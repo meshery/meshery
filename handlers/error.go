@@ -23,11 +23,11 @@ const (
 	ErrUnmarshalCode         = "2014"
 	ErrEncodingCode          = "2015"
 	ErrParseBoolCode         = "2016"
-	ErrBlankName             = "2017"
-    ErrConversion            = "2018"
-    ErrParseDuration         = "2019"
-    ErrLoadTest              = "2020"
-    ErrFetchKubernetes       = "2021"
+	ErrBlankName             = "2042"
+    ErrConversion            = "2043"
+    ErrParseDuration         = "2044"
+    ErrLoadTest              = "2045"
+    ErrFetchKubernetes       = "2046"
 )
 
 var (
@@ -87,7 +87,7 @@ func ErrParseBool(err error, obj string) error {
 }
 
 func ErrBlankName(err error) error {
-    return errors.New(ErrBlankName, errors.Alert, []string{"Error: name field is blank"}, []string{err.Error()}, []string{},[]string{"Provide a name for the test."})
+    return errors.New(ErrBlankName, errors.Alert, []string{"Error: name field is blank"}, []string{err.Error()}, []string{},[]string{"Provide a name for the test"})
 }
 
 func ErrConversion(err error) error {
@@ -97,11 +97,11 @@ func ErrParseDuration(err error) error {
     return errors.New(ErrParseDuration, errors.Alert, []string{"error parsing test duration"}, []string{err.Error()}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"}
 }   
 
-func ErrLoadTest(err error) error {
-    return errors.New(ErrLoadTest, errors.Alert, []string{"load test error:" +obj}, []string{err.Error()}, []string{}, []string{})
+func ErrLoadTest(err error, obj string) error {
+    return errors.New(ErrLoadTest, errors.Alert, []string{"load test error: " + obj}, []string{err.Error()}, []string{}, []string{})
 
 }
 
 func ErrFetchKubernetes(err error) error {
-    return errors.New(ErrLoadTest, errors.Alert, []string{"kubernetes error", +obj}, []string{err.Error()}, []string{}, []string{})
+    return errors.New(ErrLoadTest, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{}, []string{})
 

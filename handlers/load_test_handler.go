@@ -49,9 +49,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}
 	perfTest := &SMP.PerformanceTestConfig{}
 	if err := protojson.Unmarshal(jsonBody, perfTest); err != nil {
-		obj :="provided input"
-        h.log.Error(ErrParseBool(err,obj))
-        http.Error(w, ErrParseBool(err,obj).Error(), http.StatusBadRequest)
+		obj := "provided input"
+        h.log.Error(ErrParseBool(err, obj))
+        http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
         return
 	}
 
@@ -154,7 +154,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	testName := q.Get("name")
 	if testName == "" {
-		h.log.Errorf(ErrBlankName(err))
+		h.log.Error(ErrBlankName(err))
         http.Error(w, ErrBlankName(err),Error(), http.StatusForbidden)
         return
 	}
@@ -169,7 +169,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	headers := h.jsonToMap(headersString)
 	cookies := h.jsonToMap(cookiesString)
 	body := []byte(bodyString)
-	h.log.Debugf("Headers : %v", headers)
+	h.log.Debug("Headers : ", headers)
 
 	loadTestOptions := &models.LoadTestOptions{}
 	loadTestOptions.Headers = headers
@@ -193,8 +193,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 	loadTestOptions.Duration, err = time.ParseDuration(fmt.Sprintf("%d%s", tt, dur))
 	if err != nil {
-		h.log.Error(ErrParseBool(err,obj))
-        http.Error(w, ErrParseBool(err,obj).Error(), http.StatusForbidden)
+		obj := "load test duration"
+		h.log.Error(ErrParseBool(err, obj))
+        http.Error(w, ErrParseBool(err, obj).Error(), http.StatusForbidden)
         return
 	}
 
@@ -207,7 +208,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	loadTestURL := q.Get("url")
 	ltURL, err := url.Parse(loadTestURL)
 	if err != nil || !ltURL.IsAbs() {
-		obj := the provided load test url
+		obj := "the provided load test url"
         h.log.Error(ErrParseBool(err,obj))
         http.Error(w, ErrParseBool(err,obj).Error(), http.StatusBadRequest)
         return
@@ -267,8 +268,8 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		for data := range respChan {
 			bd, err := json.Marshal(data)
 			if err != nil {
-				obj:= meshery result for shipping
-                h.log.Errorf(ErrMarshal(err,obj))
+				obj:= "meshery result for shipping"
+                h.log.Error(ErrMarshal(err,obj))
                 http.Error(w, ErrMarshal(err,obj).Error(), http.StatusInternalServerError)
                 return
 			}
@@ -277,7 +278,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
 			if flusher != nil {
 				flusher.Flush()
-				log.Debugf("Flushed the messages on the wire...")
+				log.Debug("Flushed the messages on the wire...")
 			}
 		}
 		endChan <- struct{}{}
@@ -290,10 +291,10 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	}()
 	select {
 	case <-notify.Done():
-		log.Debugf("received signal to close connection and channels")
+		log.Debug("received signal to close connection and channels")
 		break
 	case <-endChan:
-		log.Debugf("load test completed")
+		log.Debug("load test completed")
 	}
 }
 
@@ -315,12 +316,13 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
 	}
 	if err != nil {
-		msg := "error: unable to perform load test"
-		err = errors.Wrap(err, msg)
+		obj :=  "unable to perform"
+	
 		h.log.Error(ErrLoadTest(err,obj))
         respChan <- &models.LoadTestResponse{
             Status:  models.LoadTestError,
-            ErrLoadTest(err,obj),Error()
+			Message: obj
+          
 		}
 		return
 	}
@@ -343,10 +345,10 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 			if len(prefObj.K8SConfig.Nodes) == 0 {
 				nodes, err = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 				if err != nil {
-					obj:="unable to ping"
+		
 					err = errors.Wrap(err, "unable to ping kubernetes")
 					// logrus.Error(err)
-					h.log.Warn(ErrFetchKubernetes(err,obj)
+					h.log.Warn(ErrFetchKubernetes(err)
 					// return
 				}
 			}
@@ -358,7 +360,6 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 			if prefObj.K8SConfig.ServerVersion == "" {
 				serverVersion, err = helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 				if err != nil {
-					obj:="unable to ping"
                     
                     h.log.Error(ErrFetchKubernetes(err,obj)
                 }
@@ -369,7 +370,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		go func() {
 			installedMeshes, err := helpers.ScanKubernetes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 			if err != nil {
-				obj:="unable to scan"
+			
                 
                 h.log.Warn(ErrFetchKubernetes(err,obj)
 
@@ -427,7 +428,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 
 	tokenVal, _ := provider.GetProviderToken(req)
 
-	h.log.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
+	h.log.Debug("promURL: , testUUID: , resultID: ", promURL, testUUID, resultID)
 	if promURL != "" && testUUID != "" && resultID != "" &&
 		(provider.GetProviderType() == models.RemoteProviderType ||
 			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
@@ -455,7 +456,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 
 // CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider
 func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
-	h.log.Debugf("initiating collecting prometheus static board metrics for test id: %s", config.TestUUID)
+	h.log.Debug("initiating collecting prometheus static board metrics for test id: ", config.TestUUID)
 	ctx := context.Background()
 	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
 	queryResults := map[string]map[string]interface{}{}
@@ -485,7 +486,7 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 
 	resultUUID, err := uuid.FromString(config.ResultID)
 	if err != nil {
-		obj:= result uuid
+		obj := "result uuid"
         h.log.Error(ErrParseBool(err, obj))
 
 		return err
