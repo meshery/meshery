@@ -337,6 +337,30 @@
       "path": "handlers/error.go"
     },
     {
+      "name": "ErrApplicationFailureCode",
+      "old_code": "2042",
+      "code": "2042",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrDecodingCode",
+      "old_code": "2043",
+      "code": "2043",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrRetrieveUserTokenCode",
+      "old_code": "2044",
+      "code": "2044",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
       "name": "ErrInvalidRequestCode",
       "old_code": "1000",
       "code": "1000",
@@ -1000,6 +1024,36 @@
         "path": "handlers/error.go"
       }
     ],
+    "2042": [
+      {
+        "name": "ErrApplicationFailureCode",
+        "old_code": "2042",
+        "code": "2042",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2043": [
+      {
+        "name": "ErrDecodingCode",
+        "old_code": "2043",
+        "code": "2043",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2044": [
+      {
+        "name": "ErrRetrieveUserTokenCode",
+        "old_code": "2044",
+        "code": "2044",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
     "3000": [
       {
         "name": "ErrGrafanaClientCode",
@@ -1034,6 +1088,17 @@
         "short_description": "Addons Subscription failed",
         "probable_cause": "Could be a network issue",
         "suggested_remediation": "Check if meshery server is reachable from the browser"
+      }
+    ],
+    "ErrApplicationFailureCode": [
+      {
+        "name": "ErrApplicationFailureCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to \nthe application",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     ],
     "ErrApplyChangeCode": [
@@ -1098,14 +1163,25 @@
         "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
       }
     ],
+    "ErrDecodingCode": [
+      {
+        "name": "ErrDecodingCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error decoding the : ",
+        "probable_cause": "Unable to decode the : ",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrEncodingCode": [
       {
         "name": "ErrEncodingCode",
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
+        "short_description": "Error encoding the : ",
+        "probable_cause": "Unable to encode the : ",
         "suggested_remediation": ""
       }
     ],
@@ -1256,7 +1332,7 @@
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "",
+        "short_description": "Unable to marshal the : ",
         "probable_cause": "",
         "suggested_remediation": ""
       }
@@ -1393,9 +1469,9 @@
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "unable to parse : ",
+        "probable_cause": "Failed due to invalid value of : ",
+        "suggested_remediation": "please provide a valid value for : "
       }
     ],
     "ErrParseFormCode": [
@@ -1574,6 +1650,17 @@
         "suggested_remediation": ""
       }
     ],
+    "ErrRetrieveUserTokenCode": [
+      {
+        "name": "ErrRetrieveUserTokenCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to get the user token",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrStaticBoardsCode": [
       {
         "name": "ErrStaticBoardsCode",
@@ -1624,7 +1711,7 @@
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "",
+        "short_description": "Unable to unmarshal the : ",
         "probable_cause": "",
         "suggested_remediation": ""
       }
