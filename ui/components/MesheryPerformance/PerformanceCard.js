@@ -174,7 +174,9 @@ function PerformanceCard({
             <b>Service Mesh:</b> <code>{serviceMesh}</code>
           </div>
         ) : null}
-        <h4>Advanced Options</h4>
+        {
+          contentType||requestBody||requestCookies||requestHeaders ?(<h4>Advanced Options</h4>):(null)
+        }
         {contentType ? (
           <div>
             <b>Content Type:</b> <code>{contentType}</code>
