@@ -432,6 +432,11 @@ class GrafanaCustomChart extends Component {
 
       const processReceivedData = (result) => {
         self.props.updateProgress({ showProgress: false });
+
+        if (typeof result == 'undefined' || result?.status != "success") {
+          return
+        }
+
         if (typeof result !== 'undefined') {
           const fullData = self.transformDataForChart(result);
           xAxis = ['x'];
@@ -485,11 +490,12 @@ class GrafanaCustomChart extends Component {
           } else {
             self.createOptions(xAxis, chartData, groups);
           }
-          self.setState({
+          self.state.error && self.setState({
             xAxis, chartData, error: '', errorCount: 0,
           });
         }
       };
+
       if (panelData && panelData[expr]) {
         processReceivedData(panelData[expr]);
       } else {
@@ -724,7 +730,9 @@ class GrafanaCustomChart extends Component {
     handleError = (error) => {
       const self = this;
       this.props.updateProgress({ showProgress: false });
-      this.setState({ error: error.message && error.message !== '' ? error.message : (error !== '' ? error : ''), errorCount: self.state.errorCount + 1 });
+      if(error){
+        this.setState({ error: error.message && error.message !== '' ? error.message : (error !== '' ? error : ''), errorCount: self.state.errorCount + 1 });
+      }
     }
 
     render() {

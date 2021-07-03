@@ -39,29 +39,9 @@ function PerformanceCard({
     >
       {/* FRONT PART */}
       <>
-        <Grid
-          style={{ marginBottom: "0.25rem" }}
-          container
-          spacing={1}
-          alignContent="space-between"
-          alignItems="center"
-        >
-          <Grid item xs={8}>
-            <Typography variant="h6" component="div">
-              {name}
-            </Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <div style={{ width: "fit-content", margin: "0 0 0 auto" }}>
-              <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
-                <EditIcon />
-              </IconButton>
-              <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
-                <DeleteIcon />
-              </IconButton>
-            </div>
-          </Grid>
-        </Grid>
+        <Typography variant="h6" component="div">
+          {name}
+        </Typography>
         <div style={{ margin: "0 0 1rem" }}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Typography variant="h2" component="div" color="primary" style={{ marginRight: "0.75rem" }}>
@@ -107,9 +87,29 @@ function PerformanceCard({
 
       {/* BACK PART */}
       <>
-        <Typography variant="h6" gutterBottom>
-          {name} Details
-        </Typography>
+        <Grid
+          style={{ marginBottom: "0.25rem" }}
+          container
+          spacing={1}
+          alignContent="space-between"
+          alignItems="center"
+        >
+          <Grid item xs={8}>
+            <Typography variant="h6" gutterBottom>
+              {name} Details
+            </Typography>
+          </Grid>
+          <Grid item xs={4}>
+            <div style={{ width: "fit-content", margin: "0 0 0 auto" }}>
+              <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          </Grid>
+        </Grid>
         {Array.isArray(endpoints) ? (
           <div>
             <b>Endpoints:</b> {endpoints.join(", ")}

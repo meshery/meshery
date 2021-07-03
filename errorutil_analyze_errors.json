@@ -105,60 +105,236 @@
       "path": "handlers/error.go"
     },
     {
-      "name": "ErrInvalidK8SConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
+      "name": "ErrMarshalCode",
+      "old_code": "2013",
+      "code": "2013",
+      "code_is_literal": true,
+      "code_is_int": true,
       "path": "handlers/error.go"
     },
     {
-      "name": "ErrNilClient",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
+      "name": "ErrUnmarshalCode",
+      "old_code": "2014",
+      "code": "2014",
+      "code_is_literal": true,
+      "code_is_int": true,
       "path": "handlers/error.go"
     },
     {
-      "name": "ErrPrometheusConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
+      "name": "ErrEncodingCode",
+      "old_code": "2015",
+      "code": "2015",
+      "code_is_literal": true,
+      "code_is_int": true,
       "path": "handlers/error.go"
     },
     {
-      "name": "ErrGrafanaConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
+      "name": "ErrParseBoolCode",
+      "old_code": "2016",
+      "code": "2016",
+      "code_is_literal": true,
+      "code_is_int": true,
       "path": "handlers/error.go"
     },
     {
-      "name": "ErrStaticBoards",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
+      "name": "ErrStreamEventsCode",
+      "old_code": "2017",
+      "code": "2017",
+      "code_is_literal": true,
+      "code_is_int": true,
       "path": "handlers/error.go"
     },
     {
-      "name": "ErrInvalidKubeConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/k8sconfig_handler.go"
+      "name": "ErrStreamClientCode",
+      "old_code": "2018",
+      "code": "2018",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
     },
     {
-      "name": "ErrInvalidK8sContextName",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/k8sconfig_handler.go"
+      "name": "ErrUnmarshalEventCode",
+      "old_code": "2019",
+      "code": "2019",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPublishSmiResultsCode",
+      "old_code": "2020",
+      "code": "2020",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrMarshalEventCode",
+      "old_code": "2021",
+      "code": "2021",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPluginOpenCode",
+      "old_code": "2022",
+      "code": "2022",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPluginLookupCode",
+      "old_code": "2023",
+      "code": "2023",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPluginRunCode",
+      "old_code": "2024",
+      "code": "2024",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrParseFormCode",
+      "old_code": "2025",
+      "code": "2025",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrQueryGetCode",
+      "old_code": "2026",
+      "code": "2026",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrGetResultCode",
+      "old_code": "2027",
+      "code": "2027",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrConvertToSpecCode",
+      "old_code": "2028",
+      "code": "2028",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrFetchSMIResultsCode",
+      "old_code": "2029",
+      "code": "2029",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrFormFileCode",
+      "old_code": "2030",
+      "code": "2030",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrReadConfigCode",
+      "old_code": "2031",
+      "code": "2031",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrLoadConfigCode",
+      "old_code": "2032",
+      "code": "2032",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrOpenFileCode",
+      "old_code": "2033",
+      "code": "2033",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrKubeVersionCode",
+      "old_code": "2034",
+      "code": "2034",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrAddAdapterCode",
+      "old_code": "2035",
+      "code": "2035",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrRetrieveDataCode",
+      "old_code": "2036",
+      "code": "2036",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrValidAdapterCode",
+      "old_code": "2037",
+      "code": "2037",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrOperationIDCode",
+      "old_code": "2038",
+      "code": "2038",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrMeshClientCode",
+      "old_code": "2039",
+      "code": "2039",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrApplyChangeCode",
+      "old_code": "2040",
+      "code": "2040",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrRetrieveMeshDataCode",
+      "old_code": "2041",
+      "code": "2041",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
     },
     {
       "name": "ErrInvalidRequestCode",
@@ -265,36 +441,12 @@
       "path": "internal/graphql/resolver/error.go"
     },
     {
-      "name": "ErrNilClient",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrInvalidRequest",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrNoMeshSync",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrEmptyHandler",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
+      "name": "ErrGrafanaClientCode",
+      "old_code": "3000",
+      "code": "3000",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "models/error.go"
     }
   ],
   "literal_codes": {
@@ -557,100 +709,322 @@
         "code_is_int": true,
         "path": "handlers/error.go"
       }
+    ],
+    "2013": [
+      {
+        "name": "ErrMarshalCode",
+        "old_code": "2013",
+        "code": "2013",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2014": [
+      {
+        "name": "ErrUnmarshalCode",
+        "old_code": "2014",
+        "code": "2014",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2015": [
+      {
+        "name": "ErrEncodingCode",
+        "old_code": "2015",
+        "code": "2015",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2016": [
+      {
+        "name": "ErrParseBoolCode",
+        "old_code": "2016",
+        "code": "2016",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2017": [
+      {
+        "name": "ErrStreamEventsCode",
+        "old_code": "2017",
+        "code": "2017",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2018": [
+      {
+        "name": "ErrStreamClientCode",
+        "old_code": "2018",
+        "code": "2018",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2019": [
+      {
+        "name": "ErrUnmarshalEventCode",
+        "old_code": "2019",
+        "code": "2019",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2020": [
+      {
+        "name": "ErrPublishSmiResultsCode",
+        "old_code": "2020",
+        "code": "2020",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2021": [
+      {
+        "name": "ErrMarshalEventCode",
+        "old_code": "2021",
+        "code": "2021",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2022": [
+      {
+        "name": "ErrPluginOpenCode",
+        "old_code": "2022",
+        "code": "2022",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2023": [
+      {
+        "name": "ErrPluginLookupCode",
+        "old_code": "2023",
+        "code": "2023",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2024": [
+      {
+        "name": "ErrPluginRunCode",
+        "old_code": "2024",
+        "code": "2024",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2025": [
+      {
+        "name": "ErrParseFormCode",
+        "old_code": "2025",
+        "code": "2025",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2026": [
+      {
+        "name": "ErrQueryGetCode",
+        "old_code": "2026",
+        "code": "2026",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2027": [
+      {
+        "name": "ErrGetResultCode",
+        "old_code": "2027",
+        "code": "2027",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2028": [
+      {
+        "name": "ErrConvertToSpecCode",
+        "old_code": "2028",
+        "code": "2028",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2029": [
+      {
+        "name": "ErrFetchSMIResultsCode",
+        "old_code": "2029",
+        "code": "2029",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2030": [
+      {
+        "name": "ErrFormFileCode",
+        "old_code": "2030",
+        "code": "2030",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2031": [
+      {
+        "name": "ErrReadConfigCode",
+        "old_code": "2031",
+        "code": "2031",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2032": [
+      {
+        "name": "ErrLoadConfigCode",
+        "old_code": "2032",
+        "code": "2032",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2033": [
+      {
+        "name": "ErrOpenFileCode",
+        "old_code": "2033",
+        "code": "2033",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2034": [
+      {
+        "name": "ErrKubeVersionCode",
+        "old_code": "2034",
+        "code": "2034",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2035": [
+      {
+        "name": "ErrAddAdapterCode",
+        "old_code": "2035",
+        "code": "2035",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2036": [
+      {
+        "name": "ErrRetrieveDataCode",
+        "old_code": "2036",
+        "code": "2036",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2037": [
+      {
+        "name": "ErrValidAdapterCode",
+        "old_code": "2037",
+        "code": "2037",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2038": [
+      {
+        "name": "ErrOperationIDCode",
+        "old_code": "2038",
+        "code": "2038",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2039": [
+      {
+        "name": "ErrMeshClientCode",
+        "old_code": "2039",
+        "code": "2039",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2040": [
+      {
+        "name": "ErrApplyChangeCode",
+        "old_code": "2040",
+        "code": "2040",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2041": [
+      {
+        "name": "ErrRetrieveMeshDataCode",
+        "old_code": "2041",
+        "code": "2041",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "3000": [
+      {
+        "name": "ErrGrafanaClientCode",
+        "old_code": "3000",
+        "code": "3000",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "models/error.go"
+      }
     ]
   },
-  "call_expr_codes": [
-    {
-      "name": "ErrInvalidK8SConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrNilClient",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrPrometheusConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrGrafanaConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrStaticBoards",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrInvalidKubeConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/k8sconfig_handler.go"
-    },
-    {
-      "name": "ErrInvalidK8sContextName",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/k8sconfig_handler.go"
-    },
-    {
-      "name": "ErrNilClient",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrInvalidRequest",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrNoMeshSync",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrEmptyHandler",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    }
-  ],
-  "deprecated_new_default": null,
+  "call_expr_codes": [],
+  "deprecated_new_default": [],
   "errors_raw": {
+    "ErrAddAdapterCode": [
+      {
+        "name": "ErrAddAdapterCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "meshLocationURL is empty to add an adapter",
+        "short_description": "meshLocationURL is empty",
+        "probable_cause": "meshLocationURL cannot be empty to add an adapter",
+        "suggested_remediation": "please provide the meshLocationURL"
+      }
+    ],
     "ErrAddonSubscriptionCode": [
       {
         "name": "ErrAddonSubscriptionCode",
@@ -662,6 +1036,17 @@
         "suggested_remediation": "Check if meshery server is reachable from the browser"
       }
     ],
+    "ErrApplyChangeCode": [
+      {
+        "name": "ErrApplyChangeCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying the change",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrControlPlaneSubscriptionCode": [
       {
         "name": "ErrControlPlaneSubscriptionCode",
@@ -671,6 +1056,17 @@
         "short_description": "Control Plane Subscription failed",
         "probable_cause": "Could be a network issue",
         "suggested_remediation": "Check if meshery server is reachable from the browser"
+      }
+    ],
+    "ErrConvertToSpecCode": [
+      {
+        "name": "ErrConvertToSpecCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to convert to spec",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     ],
     "ErrCreateDataCode": [
@@ -702,24 +1098,79 @@
         "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
       }
     ],
+    "ErrEncodingCode": [
+      {
+        "name": "ErrEncodingCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFetchSMIResultsCode": [
+      {
+        "name": "ErrFetchSMIResultsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to fetch SMI results",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFormFileCode": [
+      {
+        "name": "ErrFormFileCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error getting k8s file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrGetResultCode": [
+      {
+        "name": "ErrGetResultCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to get result",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrGrafanaBoardsCode": [
       {
         "name": "ErrGrafanaBoardsCode",
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "",
+        "short_description": "unable to get grafana boards",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Grafana endpoint is correct.\nConnect to Grafana from the settings page in the UI"
+        "suggested_remediation": "Check if your Grafana endpoint is correct\nConnect to Grafana from the settings page in the UI"
       },
       {
         "name": "ErrGrafanaBoardsCode",
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "",
+        "short_description": "unable to get Prometheus boards",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Prometheus endpoint is correct.\nConnect to Prometheus from the settings page in the UI"
+        "suggested_remediation": "Check if your Prometheus endpoint is correct\nConnect to Prometheus from the settings page in the UI"
+      }
+    ],
+    "ErrGrafanaClientCode": [
+      {
+        "name": "ErrGrafanaClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to initializes client for interacting with an instance of Grafana server",
+        "short_description": "Unable to initialize Grafana Client",
+        "probable_cause": "Invalid Grafana Endpoint or API-Key",
+        "suggested_remediation": "Update your Grafana URL and API-Key from the settings page in the UI"
       }
     ],
     "ErrGrafanaConfigCode": [
@@ -727,19 +1178,10 @@
         "name": "ErrGrafanaConfigCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Cannot find valid Prometheus endpoint in user pref",
-        "short_description": "Prometheus endpoint not configured.",
-        "probable_cause": "",
-        "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard."
-      },
-      {
-        "name": "ErrGrafanaConfigCode",
-        "code": "",
-        "severity": "Alert",
         "long_description": "Cannot find valid grafana endpoint in user pref",
-        "short_description": "Grafana endpoint not configured.",
+        "short_description": "Grafana endpoint not configured",
         "probable_cause": "",
-        "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard."
+        "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard"
       }
     ],
     "ErrGrafanaQueryCode": [
@@ -747,10 +1189,10 @@
         "name": "ErrGrafanaQueryCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Failed querying Grafana Client",
-        "short_description": "",
+        "long_description": "",
+        "short_description": "Unable to query grafana",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Grafana query is correct.\nConnect to Grafana from the settings page in the UI"
+        "suggested_remediation": "Check if your Grafana query is correct\nConnect to Grafana from the settings page in the UI"
       }
     ],
     "ErrGrafanaScanCode": [
@@ -758,10 +1200,10 @@
         "name": "ErrGrafanaScanCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Failed connecting to Grafna Client",
-        "short_description": "Unable to connect to grafana.",
+        "long_description": "",
+        "short_description": "Unable to connect to grafana",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Grafana Endpoint is correct.\nConnect to Grafana from the settings page in the UI"
+        "suggested_remediation": "Check if your Grafana Endpoint is correct\nConnect to Grafana from the settings page in the UI"
       }
     ],
     "ErrInvalidK8SConfigCode": [
@@ -784,6 +1226,50 @@
         "short_description": "Invalid query, please check syntax",
         "probable_cause": "",
         "suggested_remediation": "Check the query parameters and syntax of the query being run"
+      }
+    ],
+    "ErrKubeVersionCode": [
+      {
+        "name": "ErrKubeVersionCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to get kubernetes version",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrLoadConfigCode": [
+      {
+        "name": "ErrLoadConfigCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to load kubernetes config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrMarshalCode": [
+      {
+        "name": "ErrMarshalCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrMeshClientCode": [
+      {
+        "name": "ErrMeshClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to create a mesh client\nUnable to ping the mesh adapter",
+        "short_description": "Error creating a mesh client\nError pinging the mesh adapter",
+        "probable_cause": "Adapter could not be pinged",
+        "suggested_remediation": "Unable to connect to the Mesh adapter using the given config, please try again"
       }
     ],
     "ErrMesheryClientCode": [
@@ -868,6 +1354,28 @@
         "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
       }
     ],
+    "ErrOpenFileCode": [
+      {
+        "name": "ErrOpenFileCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to open file: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrOperationIDCode": [
+      {
+        "name": "ErrOperationIDCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error generating the operation Id",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrOperatorSubscriptionCode": [
       {
         "name": "ErrOperatorSubscriptionCode",
@@ -879,15 +1387,81 @@
         "suggested_remediation": "Check if meshery server is reachable from the browser"
       }
     ],
+    "ErrParseBoolCode": [
+      {
+        "name": "ErrParseBoolCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrParseFormCode": [
+      {
+        "name": "ErrParseFormCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to parse form",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrPluginLookupCode": [
+      {
+        "name": "ErrPluginLookupCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error performing a plugin lookup",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrPluginOpenCode": [
+      {
+        "name": "ErrPluginOpenCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error opening the plugin",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrPluginRunCode": [
+      {
+        "name": "ErrPluginRunCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error running meshery plugin",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrPrometheusConfigCode": [
+      {
+        "name": "ErrPrometheusConfigCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Cannot find valid Prometheus endpoint in user pref",
+        "short_description": "Prometheus endpoint not configured",
+        "probable_cause": "",
+        "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard"
+      }
+    ],
     "ErrPrometheusQueryCode": [
       {
         "name": "ErrPrometheusQueryCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Failed querying Prometheus Client through Grafna Proxy",
-        "short_description": "",
+        "long_description": "",
+        "short_description": "Unable to query prometheus",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Prometheus query is correct.\nConnect to Prometheus and Grafana from the settings page in the UI"
+        "suggested_remediation": "Check if your Prometheus query is correct\nConnect to Prometheus and Grafana from the settings page in the UI"
       }
     ],
     "ErrPrometheusScanCode": [
@@ -895,10 +1469,10 @@
         "name": "ErrPrometheusScanCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Failed connecting to Prometheus Client through Grafna Proxy",
-        "short_description": "Unable to connect to prometheus.",
+        "long_description": "",
+        "short_description": "Unable to connect to prometheus",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Prometheus and Grafana Endpoint are correct.\nConnect to Prometheus and Grafana from the settings page in the UI"
+        "suggested_remediation": "Check if your Prometheus and Grafana Endpoint are correct\nConnect to Prometheus and Grafana from the settings page in the UI"
       }
     ],
     "ErrPublishBrokerCode": [
@@ -912,6 +1486,17 @@
         "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
       }
     ],
+    "ErrPublishSmiResultsCode": [
+      {
+        "name": "ErrPublishSmiResultsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error publishing SMI results",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrQueryCode": [
       {
         "name": "ErrQueryCode",
@@ -923,13 +1508,35 @@
         "suggested_remediation": ""
       }
     ],
+    "ErrQueryGetCode": [
+      {
+        "name": "ErrQueryGetCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to get: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrReadConfigCode": [
+      {
+        "name": "ErrReadConfigCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrRecordPreferencesCode": [
       {
         "name": "ErrRecordPreferencesCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Failed to record User Preferences.",
-        "short_description": "unable to save user config data.",
+        "long_description": "",
+        "short_description": "unable to save user config data",
         "probable_cause": "User token might be invalid\ndb might be corrupted",
         "suggested_remediation": "Relogin to Meshery"
       }
@@ -940,8 +1547,30 @@
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to read the request body.",
+        "short_description": "unable to read the request body",
         "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrRetrieveDataCode": [
+      {
+        "name": "ErrRetrieveDataCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to retrieve the requested data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrRetrieveMeshDataCode": [
+      {
+        "name": "ErrRetrieveMeshDataCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting operations for the mesh\nError getting service mesh name",
+        "probable_cause": "unable to retrieve the requested data",
         "suggested_remediation": ""
       }
     ],
@@ -956,6 +1585,28 @@
         "suggested_remediation": ""
       }
     ],
+    "ErrStreamClientCode": [
+      {
+        "name": "ErrStreamClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Event streaming ended",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrStreamEventsCode": [
+      {
+        "name": "ErrStreamEventsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "There was an error connecting to the backend to get events",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrSubscribeChannelCode": [
       {
         "name": "ErrSubscribeChannelCode",
@@ -965,6 +1616,28 @@
         "short_description": "Unable to subscribe to channel",
         "probable_cause": "Could be a network issue\nMeshery Broker could have crashed",
         "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
+      }
+    ],
+    "ErrUnmarshalCode": [
+      {
+        "name": "ErrUnmarshalCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrValidAdapterCode": [
+      {
+        "name": "ErrValidAdapterCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "unable to find a valid adapter for the given adapter URL",
+        "short_description": "Unable to find valid Adapter URL",
+        "probable_cause": "Given adapter URL is not valid",
+        "suggested_remediation": "Please provide a valid Adapter URL"
       }
     ]
   }

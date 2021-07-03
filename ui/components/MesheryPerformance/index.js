@@ -43,6 +43,8 @@ import MesheryChart from "../MesheryChart";
 import LoadTestTimerDialog from "../load-test-timer-dialog";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import { durationOptions } from "../../lib/prePopulatedOptions";
+import fetchControlPlanes from "../graphql/queries/ControlPlanesQuery";
+
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -548,7 +550,7 @@ class MesheryPerformanceComponent extends React.Component {
       return;
     }
     dataFetch(
-      "/api/prometheus/static_board",
+      "/api/telemetry/metrics/static-board",
       {
         credentials: "include",
       },
@@ -578,26 +580,36 @@ class MesheryPerformanceComponent extends React.Component {
     if (typeof self.props.k8sConfig === "undefined" || !self.props.k8sConfig.clusterConfigured) {
       return;
     }
-    dataFetch(
-      "/api/mesh/scan",
-      {
-        credentials: "include",
-      },
-      (result) => {
+    /**
+     * ALL_MESH indicates that we are interested in control plane
+     * component of all of the service meshes supported by meshsync v2
+     */
+     
+    const ALL_MESH = {};
+
+
+    fetchControlPlanes(ALL_MESH).subscribe({
+      next: (res) => {
+        let result = res?.controlPlanesState
         if (typeof result !== "undefined" && Object.keys(result).length > 0) {
           const adaptersList = [];
-          Object.keys(result).forEach((mesh) => {
-            adaptersList.push(mesh);
+          result.forEach((mesh) => {
+            if(mesh?.members.length>0){
+              let name = mesh?.name;
+              adaptersList.push(
+                // Capatilize First Letter and replace undersocres
+                name.split(/ |_/i).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
+              );
+            }
           });
           self.setState({ availableAdapters: adaptersList });
-          Object.keys(result).forEach((mesh) => {
-            self.setState({ selectedMesh: mesh });
+          result.forEach((mesh) => {
+            self.setState({ selectedMesh: mesh?.name });
           });
         }
-        // }, self.handleError("unable to scan the kubernetes cluster"));
       },
-      () => { }
-    );
+      error: (err) => console.error(err),
+    });
   };
 
   getSMPMeshes = () => {
