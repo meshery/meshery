@@ -23,11 +23,42 @@ const (
 	ErrUnmarshalCode         = "2014"
 	ErrEncodingCode          = "2015"
 	ErrParseBoolCode         = "2016"
+	ErrStreamEventsCode      = "2017"
+	ErrStreamClientCode      = "2018"
+	ErrUnmarshalEventCode    = "2019"
+	ErrPublishSmiResultsCode = "2020"
+	ErrMarshalEventCode      = "2021"
+	ErrPluginOpenCode        = "2022"
+	ErrPluginLookupCode      = "2023"
+	ErrPluginRunCode         = "2024"
+	ErrParseFormCode         = "2025"
+	ErrQueryGetCode          = "2026"
+	ErrGetResultCode         = "2027"
+	ErrConvertToSpecCode     = "2028"
+	ErrFetchSMIResultsCode   = "2029"
+	ErrFormFileCode          = "2030"
+	ErrReadConfigCode        = "2031"
+	ErrLoadConfigCode        = "2032"
+	ErrOpenFileCode          = "2033"
+	ErrKubeVersionCode       = "2034"
+	ErrAddAdapterCode        = "2035"
+	ErrRetrieveDataCode      = "2036"
+	ErrValidAdapterCode      = "2037"
+	ErrOperationIDCode       = "2038"
+	ErrMeshClientCode        = "2039"
+	ErrApplyChangeCode       = "2040"
+	ErrRetrieveMeshDataCode  = "2041"
 	ErrBlankName             = "2042"
     ErrConversion            = "2043"
     ErrParseDuration         = "2044"
     ErrLoadTest              = "2045"
     ErrFetchKubernetes       = "2046"
+
+
+
+
+
+
 )
 
 var (
@@ -104,4 +135,23 @@ func ErrLoadTest(err error, obj string) error {
 
 func ErrFetchKubernetes(err error) error {
     return errors.New(ErrLoadTest, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{}, []string{})
+func ErrBlankName(err error) error {
+    return errors.New(ErrBlankName, errors.Alert, []string{"Error: name field is blank"}, []string{err.Error()}, []string{},[]string{"Provide a name for the test"})
+}
+
+func ErrConversion(err error) error {
+    return errors.New(ErrConversion, errors.Alert, []string{"unable to convert YAML to JSON"}, []string{err.Error()}, []string{}, []string{})
+
+func ErrParseDuration(err error) error {
+    return errors.New(ErrParseDuration, errors.Alert, []string{"error parsing test duration"}, []string{err.Error()}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"}
+}   
+
+func ErrLoadTest(err error, obj string) error {
+    return errors.New(ErrLoadTest, errors.Alert, []string{"load test error: " + obj}, []string{err.Error()}, []string{}, []string{})
+
+}
+
+func ErrFetchKubernetes(err error) error {
+    return errors.New(ErrLoadTest, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{}, []string{})
+
 
