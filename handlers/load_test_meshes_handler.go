@@ -7,7 +7,6 @@ import (
 
 	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/sirupsen/logrus"
 )
 
 // SMPMeshes defines the JSON payload structure for available meshes api
@@ -28,8 +27,9 @@ func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, r *http.Request, pr
 	}
 
 	if err := json.NewEncoder(w).Encode(meshes); err != nil {
-		logrus.Errorf("error encoding meshlist object: %v", err)
-		http.Error(w, "Error encoding meshlist object", http.StatusInternalServerError)
+		obj := "meshlist object"
+		h.log.Error(ErrEncoding(err, obj))
+		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
