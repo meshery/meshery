@@ -7,7 +7,7 @@ version: v1.0
 port: 10006/tcp
 project_status: stable
 adapter_version: v0.5.2
-github_link: https://github.com/layer5io/meshery-traefik-mesh
+github_link: https://github.com/meshery/meshery-traefik-mesh
 image: /assets/img/service-meshes/traefik-mesh.svg
 permalink: service-meshes/adapters/traefik-mesh
 ---

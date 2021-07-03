@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/layer5io/meshery/helpers"
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -47,10 +48,11 @@ func CreateK8sResource(
 	}
 
 	obj := &unstructured.Unstructured{Object: resourceMap}
-	obj.SetLabels(map[string]string{
+
+	obj.SetLabels(helpers.MergeStringMaps(obj.GetLabels(), map[string]string{
 		"controller": "meshery",
 		"source":     "pattern",
-	})
+	}))
 
 	gvr := schema.GroupVersionResource{
 		Group:    group,

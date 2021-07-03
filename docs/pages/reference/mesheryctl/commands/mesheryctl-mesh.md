@@ -6,8 +6,6 @@ type: reference
 display-title: "false"
 language: en
 lang: en
-categories: en
-list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -45,20 +43,18 @@ list: exclude
 
 
 <!-- Options/Flags available in this command -->
-## Options & Flags
+<!-- ## Options & Flags
 
+{% for subcommand_hash in site.data.mesheryctlcommands.meshes.validate.subcommand %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for subcommand_hash in site.data.mesheryctlcommands.meshes.validate.commands %}{% assign subcommand = subcommand_hash[1] %}
-    {{ subcommand.name }}  # {{ subcommand.description }}
-    {% endfor %}
-    {% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flags %}{% assign flag = flag_hash[1] %}
-    {{ flag.name }}  # {{ flag.description }}
-    {% endfor %}
+    {{ subcommand.name }}
   </div>
 </pre>
+{% endfor %}
 <br/>
-
+-->
 ## Options inherited from parent commands
 <pre class="codeblock-pre">
   <div class="codeblock">

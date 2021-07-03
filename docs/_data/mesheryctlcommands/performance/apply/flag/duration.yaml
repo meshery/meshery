@@ -1,0 +1,5 @@
+flag: --duration
+arg: apply
+description: Length of the test.
+usage: |
+    mesheryctl perf apply [profile-name]] --url [URL] --duration [time]

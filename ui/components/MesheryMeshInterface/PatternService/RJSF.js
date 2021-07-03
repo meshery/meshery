@@ -2,6 +2,7 @@ import React from "react";
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
 import { Button } from "@material-ui/core";
+import JS4 from "../../../assets/jsonschema/schema-04.json";
 
 const Form = withTheme(MaterialUITheme);
 
@@ -11,7 +12,7 @@ function deleteTitleFromJSONSchema(jsonSchema) {
 
 function RJSFButton({ handler, text }) {
   return (
-    <Button variant="contained" color="primary" style={{ marginRight: "0.5rem" }} onClick={() => handler?.()} >
+    <Button variant="contained" color="primary" style={{ marginRight: "0.5rem" }} onClick={() => handler?.()}>
       {text}
     </Button>
   );
@@ -31,6 +32,7 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete 
       onChange={(e) => setData(e.formData)}
       formData={data}
       liveValidate
+      additionalMetaSchemas={[JS4]}
       // noHtml5Validate
     >
       {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" />}

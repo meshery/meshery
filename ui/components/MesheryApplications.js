@@ -216,7 +216,7 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
         {
           credentials: "include",
           method: "POST",
-          body: JSON.stringify({ application_data: { applicationfile: data }, save: true }),
+          body: JSON.stringify({ application_data: { application_file: data }, save: true }),
         },
         () => {
           console.log("ApplicationFile API", `/api/experimental/application`);

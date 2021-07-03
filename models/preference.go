@@ -74,6 +74,12 @@ type LoadTestPreferences struct {
 	LoadGenerator      string `json:"gen,omitempty"`
 }
 
+// Parameters to updates Anonymous stats
+type PreferenceParams struct {
+	AnonymousUsageStats  bool `json:"anonymousUsageStats"`
+	AnonymousPerfResults bool `json:"anonymousPerfResults"`
+}
+
 // Preference represents the data stored in session / local DB
 type Preference struct {
 	K8SConfig            *K8SConfig           `json:"k8sConfig,omitempty"`
@@ -100,4 +106,10 @@ type PreferencePersister interface {
 	// Lock(userID string)
 	// Unlock(userID string)
 	ClosePersister()
+}
+
+// Parameters to save Grafana configuration
+type GrafanaConfigParams struct {
+	GrafanaURL    string `json:"grafanaURL,omitempty"`
+	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`
 }

@@ -1,0 +1,4 @@
+name: eks
+description: To configure Meshery to use Elastic Kubernetes Service
+example: |
+    mesheryctl system config eks --token [path-to-token]
