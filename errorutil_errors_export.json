@@ -241,7 +241,7 @@
       "code": "2013",
       "severity": "Alert",
       "long_description": "",
-      "short_description": "",
+      "short_description": "Unable to marshal the : ",
       "probable_cause": "",
       "suggested_remediation": ""
     },
@@ -250,7 +250,7 @@
       "code": "2014",
       "severity": "Alert",
       "long_description": "",
-      "short_description": "",
+      "short_description": "Unable to unmarshal the : ",
       "probable_cause": "",
       "suggested_remediation": ""
     },
@@ -259,8 +259,8 @@
       "code": "2015",
       "severity": "Alert",
       "long_description": "",
-      "short_description": "",
-      "probable_cause": "",
+      "short_description": "Error encoding the : ",
+      "probable_cause": "Unable to encode the : ",
       "suggested_remediation": ""
     },
     "2016": {
@@ -268,9 +268,9 @@
       "code": "2016",
       "severity": "Alert",
       "long_description": "",
-      "short_description": "",
-      "probable_cause": "",
-      "suggested_remediation": ""
+      "short_description": "unable to parse : ",
+      "probable_cause": "Failed due to invalid value of : ",
+      "suggested_remediation": "please provide a valid value for : "
     },
     "2017": {
       "name": "ErrStreamEventsCode",
@@ -495,6 +495,33 @@
       "long_description": "",
       "short_description": "Error getting operations for the mesh\nError getting service mesh name",
       "probable_cause": "unable to retrieve the requested data",
+      "suggested_remediation": ""
+    },
+    "2042": {
+      "name": "ErrApplicationFailureCode",
+      "code": "2042",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "failed to \nthe application",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2043": {
+      "name": "ErrDecodingCode",
+      "code": "2043",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error decoding the : ",
+      "probable_cause": "Unable to decode the : ",
+      "suggested_remediation": ""
+    },
+    "2044": {
+      "name": "ErrRetrieveUserTokenCode",
+      "code": "2044",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Failed to get the user token",
+      "probable_cause": "",
       "suggested_remediation": ""
     },
     "3000": {

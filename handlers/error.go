@@ -96,19 +96,19 @@ func ErrRequestBody(err error) error {
 }
 
 func ErrMarshal(err error, obj string) error {
-	return errors.New(ErrMarshalCode, errors.Alert, []string{"Unable to marshal the : " + obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrMarshalCode, errors.Alert, []string{"Unable to marshal the : ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrUnmarshal(err error, obj string) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the : " + obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the : ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrEncoding(err error, obj string) error {
-	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the : " + obj}, []string{err.Error()}, []string{"Unable to encode the : " + obj}, []string{})
+	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the : ", obj}, []string{err.Error()}, []string{"Unable to encode the : ", obj}, []string{})
 }
 
 func ErrParseBool(err error, obj string) error {
-	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse : " + obj}, []string{err.Error()}, []string{"Failed due to invalid value of : " + obj}, []string{"please provide a valid value for : " + obj})
+	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse : ", obj}, []string{err.Error()}, []string{"Failed due to invalid value of : ", obj}, []string{"please provide a valid value for : ", obj})
 }
 
 func ErrStreamEvents(err error) error {
@@ -192,11 +192,11 @@ func ErrRetrieveMeshData(err error) error {
 }
 
 func ErrApplicationFailure(err error, obj string) error {
-	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to " + obj + "the application"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDecoding(err error, obj string) error {
-	return errors.New(ErrDecodingCode, errors.Alert, []string{"Error decoding the : " + obj}, []string{err.Error()}, []string{"Unable to decode the : " + obj}, []string{})
+	return errors.New(ErrDecodingCode, errors.Alert, []string{"Error decoding the : ", obj}, []string{err.Error()}, []string{"Unable to decode the : ", obj}, []string{})
 }
 
 func ErrRetrieveUserToken(err error) error {
