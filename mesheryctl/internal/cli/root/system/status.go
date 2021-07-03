@@ -115,9 +115,6 @@ var statusCmd = &cobra.Command{
 				if len(pod.Spec.Containers) > 0 && len(podStatus.ContainerStatuses) > 0 {
 					// If a pod has multiple containers, get the status from all
 					for container := range pod.Spec.Containers {
-						if len(podStatus.ContainerStatuses) <= container {
-							continue
-						}
 						containerRestarts += podStatus.ContainerStatuses[container].RestartCount
 						if podStatus.ContainerStatuses[container].Ready {
 							containerReady++
