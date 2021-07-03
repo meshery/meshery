@@ -1,4 +1,3 @@
-// Package handlers - Error codes for MEshery handlers
 package handlers
 
 import (
@@ -36,19 +35,29 @@ const (
 	ErrGetResultCode         = "2027"
 	ErrConvertToSpecCode     = "2028"
 	ErrFetchSMIResultsCode   = "2029"
-	ErrFormFileCode          = "2017"
-	ErrReadConfigCode        = "2018"
-	ErrLoadConfigCode        = "2019"
-	ErrOpenFileCode          = "2020"
-	ErrKubeVersionCode       = "2021"
+	ErrFormFileCode          = "2030"
+	ErrReadConfigCode        = "2031"
+	ErrLoadConfigCode        = "2032"
+	ErrOpenFileCode          = "2033"
+	ErrKubeVersionCode       = "2034"
+	ErrAddAdapterCode        = "2035"
+	ErrRetrieveDataCode      = "2036"
+	ErrValidAdapterCode      = "2037"
+	ErrOperationIDCode       = "2038"
+	ErrMeshClientCode        = "2039"
+	ErrApplyChangeCode       = "2040"
+	ErrRetrieveMeshDataCode  = "2041"
 )
 
 var (
 	ErrInvalidK8SConfig = errors.New(ErrInvalidK8SConfigCode, errors.Alert, []string{"No valid kubernetes config found"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 	ErrNilClient        = errors.New(ErrNilClientCode, errors.Alert, []string{"Kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-	ErrPrometheusConfig = errors.New(ErrGrafanaConfigCode, errors.Alert, []string{"Prometheus endpoint not configured"}, []string{"Cannot find valid Prometheus endpoint in user pref"}, []string{}, []string{"Setup your Prometheus Endpoint via the settings dashboard"})
+	ErrPrometheusConfig = errors.New(ErrPrometheusConfigCode, errors.Alert, []string{"Prometheus endpoint not configured"}, []string{"Cannot find valid Prometheus endpoint in user pref"}, []string{}, []string{"Setup your Prometheus Endpoint via the settings dashboard"})
 	ErrGrafanaConfig    = errors.New(ErrGrafanaConfigCode, errors.Alert, []string{"Grafana endpoint not configured"}, []string{"Cannot find valid grafana endpoint in user pref"}, []string{}, []string{"Setup your Grafana Endpoint via the settings dashboard"})
 	ErrStaticBoards     = errors.New(ErrStaticBoardsCode, errors.Alert, []string{"unable to get static board"}, []string{"unable to get static board"}, []string{}, []string{})
+	ErrValidAdapter     = errors.New(ErrValidAdapterCode, errors.Alert, []string{"Unable to find valid Adapter URL"}, []string{"unable to find a valid adapter for the given adapter URL"}, []string{"Given adapter URL is not valid"}, []string{"Please provide a valid Adapter URL"})
+	ErrAddAdapter       = errors.New(ErrAddAdapterCode, errors.Alert, []string{"meshLocationURL is empty"}, []string{"meshLocationURL is empty to add an adapter"}, []string{"meshLocationURL cannot be empty to add an adapter"}, []string{"please provide the meshLocationURL"})
+	ErrMeshClient       = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
 )
 
 func ErrPrometheusScan(err error) error {
@@ -161,4 +170,20 @@ func ErrOpenFile(file string) error {
 
 func ErrKubeVersion(err error) error {
 	return errors.New(ErrKubeVersionCode, errors.Alert, []string{"unable to get kubernetes version"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRetrieveData(err error) error {
+	return errors.New(ErrRetrieveDataCode, errors.Alert, []string{"Unable to retrieve the requested data"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrOperationID(err error) error {
+	return errors.New(ErrOperationIDCode, errors.Alert, []string{"Error generating the operation Id"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrApplyChange(err error) error {
+	return errors.New(ErrApplyChangeCode, errors.Alert, []string{"Error applying the change"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRetrieveMeshData(err error) error {
+	return errors.New(ErrRetrieveMeshDataCode, errors.Alert, []string{"Error getting operations for the mesh", "Error getting service mesh name"}, []string{err.Error()}, []string{"unable to retrieve the requested data"}, []string{})
 }

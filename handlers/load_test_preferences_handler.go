@@ -112,6 +112,13 @@ func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Req
 	}
 }
 
+// swagger:route POST /api/user/prefs/perf UserAPI idPostLoadPreferences
+// Handle POST request for load test preferences
+//
+// Used for persisting load test preferences
+// responses:
+// 	200:
+
 // UserTestPreferenceStore is used for persisting load test preferences
 func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	body, err := ioutil.ReadAll(req.Body)
@@ -143,6 +150,13 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 	}
 	_, _ = w.Write([]byte(tid))
 }
+
+// swagger:route GET /api/user/prefs/perf UserAPI idGetLoadPreferences
+// Handle GET request for load test preferences
+//
+// Used for fetching load test preferences
+// responses:
+// 	200: loadTestPreferencesWrapper
 
 // UserTestPreferenceGet gets the PerformanceTestConfig object
 func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -188,6 +202,13 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		}
 	}
 }
+
+// swagger:route DELETE /api/user/prefs/perf UserAPI idDeleteLoadPreferences
+// Handle DELETE request for load test preferences
+//
+// Used for deleting load test preferences
+// responses:
+// 	200:
 
 // UserTestPreferenceDelete deletes the PerformanceTestConfig object
 func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
