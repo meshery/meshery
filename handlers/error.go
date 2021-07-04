@@ -5,48 +5,51 @@ import (
 )
 
 const (
-	ErrInvalidK8SConfigCode  = "2000"
-	ErrNilClientCode         = "2001"
-	ErrPrometheusScanCode    = "2002"
-	ErrGrafanaScanCode       = "2003"
-	ErrRecordPreferencesCode = "2004"
-	ErrGrafanaConfigCode     = "2005"
-	ErrPrometheusConfigCode  = "2006"
-	ErrGrafanaQueryCode      = "2007"
-	ErrPrometheusQueryCode   = "2008"
-	ErrGrafanaBoardsCode     = "2009"
-	ErrPrometheusBoardsCode  = "2010"
-	ErrStaticBoardsCode      = "2011"
-	ErrRequestBodyCode       = "2012"
-	ErrMarshalCode           = "2013"
-	ErrUnmarshalCode         = "2014"
-	ErrEncodingCode          = "2015"
-	ErrParseBoolCode         = "2016"
-	ErrStreamEventsCode      = "2017"
-	ErrStreamClientCode      = "2018"
-	ErrUnmarshalEventCode    = "2019"
-	ErrPublishSmiResultsCode = "2020"
-	ErrMarshalEventCode      = "2021"
-	ErrPluginOpenCode        = "2022"
-	ErrPluginLookupCode      = "2023"
-	ErrPluginRunCode         = "2024"
-	ErrParseFormCode         = "2025"
-	ErrQueryGetCode          = "2026"
-	ErrGetResultCode         = "2027"
-	ErrConvertToSpecCode     = "2028"
-	ErrFetchSMIResultsCode   = "2029"
-	ErrFormFileCode          = "2030"
-	ErrReadConfigCode        = "2031"
-	ErrLoadConfigCode        = "2032"
-	ErrOpenFileCode          = "2033"
-	ErrKubeVersionCode       = "2034"
-	ErrAddAdapterCode        = "2035"
-	ErrRetrieveDataCode      = "2036"
-	ErrValidAdapterCode      = "2037"
-	ErrOperationIDCode       = "2038"
-	ErrMeshClientCode        = "2039"
-	ErrApplyChangeCode       = "2040"
-	ErrRetrieveMeshDataCode  = "2041"
+	ErrInvalidK8SConfigCode   = "2000"
+	ErrNilClientCode          = "2001"
+	ErrPrometheusScanCode     = "2002"
+	ErrGrafanaScanCode        = "2003"
+	ErrRecordPreferencesCode  = "2004"
+	ErrGrafanaConfigCode      = "2005"
+	ErrPrometheusConfigCode   = "2006"
+	ErrGrafanaQueryCode       = "2007"
+	ErrPrometheusQueryCode    = "2008"
+	ErrGrafanaBoardsCode      = "2009"
+	ErrPrometheusBoardsCode   = "2010"
+	ErrStaticBoardsCode       = "2011"
+	ErrRequestBodyCode        = "2012"
+	ErrMarshalCode            = "2013"
+	ErrUnmarshalCode          = "2014"
+	ErrEncodingCode           = "2015"
+	ErrParseBoolCode          = "2016"
+	ErrStreamEventsCode       = "2017"
+	ErrStreamClientCode       = "2018"
+	ErrUnmarshalEventCode     = "2019"
+	ErrPublishSmiResultsCode  = "2020"
+	ErrMarshalEventCode       = "2021"
+	ErrPluginOpenCode         = "2022"
+	ErrPluginLookupCode       = "2023"
+	ErrPluginRunCode          = "2024"
+	ErrParseFormCode          = "2025"
+	ErrQueryGetCode           = "2026"
+	ErrGetResultCode          = "2027"
+	ErrConvertToSpecCode      = "2028"
+	ErrFetchSMIResultsCode    = "2029"
+	ErrFormFileCode           = "2030"
+	ErrReadConfigCode         = "2031"
+	ErrLoadConfigCode         = "2032"
+	ErrOpenFileCode           = "2033"
+	ErrKubeVersionCode        = "2034"
+	ErrAddAdapterCode         = "2035"
+	ErrRetrieveDataCode       = "2036"
+	ErrValidAdapterCode       = "2037"
+	ErrOperationIDCode        = "2038"
+	ErrMeshClientCode         = "2039"
+	ErrApplyChangeCode        = "2040"
+	ErrRetrieveMeshDataCode   = "2041"
+	ErrApplicationFailureCode = "2042"
+	ErrDecodingCode           = "2043"
+	ErrRetrieveUserTokenCode  = "2044"
 )
 
 var (
@@ -93,19 +96,19 @@ func ErrRequestBody(err error) error {
 }
 
 func ErrMarshal(err error, obj string) error {
-	return errors.New(ErrMarshalCode, errors.Alert, []string{"Unable to marshal the : " + obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrMarshalCode, errors.Alert, []string{"Unable to marshal the : ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrUnmarshal(err error, obj string) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the : " + obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the : ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrEncoding(err error, obj string) error {
-	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the : " + obj}, []string{err.Error()}, []string{"Unable to decode the : " + obj}, []string{})
+	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the : ", obj}, []string{err.Error()}, []string{"Unable to encode the : ", obj}, []string{})
 }
 
 func ErrParseBool(err error, obj string) error {
-	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse : " + obj}, []string{err.Error()}, []string{"Failed due to invalid value of : " + obj}, []string{"please provide a valid value for : " + obj})
+	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse : ", obj}, []string{err.Error()}, []string{"Failed due to invalid value of : ", obj}, []string{"please provide a valid value for : ", obj})
 }
 
 func ErrStreamEvents(err error) error {
@@ -186,4 +189,16 @@ func ErrApplyChange(err error) error {
 
 func ErrRetrieveMeshData(err error) error {
 	return errors.New(ErrRetrieveMeshDataCode, errors.Alert, []string{"Error getting operations for the mesh", "Error getting service mesh name"}, []string{err.Error()}, []string{"unable to retrieve the requested data"}, []string{})
+}
+
+func ErrApplicationFailure(err error, obj string) error {
+	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDecoding(err error, obj string) error {
+	return errors.New(ErrDecodingCode, errors.Alert, []string{"Error decoding the : ", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRetrieveUserToken(err error) error {
+	return errors.New(ErrRetrieveUserTokenCode, errors.Alert, []string{"Failed to get the user token"}, []string{err.Error()}, []string{}, []string{})
 }
