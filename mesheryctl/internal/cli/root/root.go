@@ -28,8 +28,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -71,11 +69,7 @@ var RootCmd = &cobra.Command{
 			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
 		}
 
-		fo, err := os.Create(cfgFile)
-		if err != nil {
-			log.Fatal(err)
-		}
-		stat, err := fo.Stat()
+		stat, err := os.Stat(cfgFile)
 		if err != nil {
 			log.Fatal(err)
 		}
