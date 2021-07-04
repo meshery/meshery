@@ -196,7 +196,7 @@ func ErrApplicationFailure(err error, obj string) error {
 }
 
 func ErrDecoding(err error, obj string) error {
-	return errors.New(ErrDecodingCode, errors.Alert, []string{"Error decoding the : ", obj}, []string{err.Error()}, []string{"Unable to decode the : ", obj}, []string{})
+	return errors.New(ErrDecodingCode, errors.Alert, []string{"Error decoding the : ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrRetrieveUserToken(err error) error {
