@@ -361,6 +361,22 @@
       "path": "handlers/error.go"
     },
     {
+      "name": "ErrFailToSaveCode",
+      "old_code": "2045",
+      "code": "2045",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrFailToDeleteCode",
+      "old_code": "2046",
+      "code": "2046",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
       "name": "ErrInvalidRequestCode",
       "old_code": "1000",
       "code": "1000",
@@ -1054,6 +1070,26 @@
         "path": "handlers/error.go"
       }
     ],
+    "2045": [
+      {
+        "name": "ErrFailToSaveCode",
+        "old_code": "2045",
+        "code": "2045",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2046": [
+      {
+        "name": "ErrFailToDeleteCode",
+        "old_code": "2046",
+        "code": "2046",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
     "3000": [
       {
         "name": "ErrGrafanaClientCode",
@@ -1182,6 +1218,28 @@
         "long_description": "",
         "short_description": "Error encoding the : ",
         "probable_cause": "Unable to encode the : ",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFailToDeleteCode": [
+      {
+        "name": "ErrFailToDeleteCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFailToSaveCode": [
+      {
+        "name": "ErrFailToSaveCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Save: ",
+        "probable_cause": "",
         "suggested_remediation": ""
       }
     ],
