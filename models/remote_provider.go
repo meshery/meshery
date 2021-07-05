@@ -120,7 +120,9 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 	}()
 
 	// Clear the previous capabilities before writing new one
-	l.ProviderProperties = ProviderProperties{}
+	l.ProviderProperties = ProviderProperties{
+		ProviderURL: l.RemoteProviderURL,
+	}
 	decoder := json.NewDecoder(resp.Body)
 	if err := decoder.Decode(&l.ProviderProperties); err != nil {
 		logrus.Errorf("[Initialize]: Failed to decode provider properties %s", err)
