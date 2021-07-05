@@ -1170,7 +1170,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error decoding the : ",
-        "probable_cause": "Unable to decode the : ",
+        "probable_cause": "",
         "suggested_remediation": ""
       }
     ],
