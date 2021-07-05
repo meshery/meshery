@@ -95,7 +95,8 @@ func (h *Handler) PatternFileHandler(
 	if h.kubeclient.DynamicKubeClient == nil {
 		kc, err := meshkube.New(prefObj.K8SConfig.Config)
 		if err != nil {
-			logrus.Error("failed to create kube client: ", err)
+			h.log.Error(ErrKubeClient(err))
+			http.Error(w, ErrKubeClient(err).Error(), http.StatusInternalServerError)
 			rw.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(rw, "Error:%s", err)
 			return
@@ -140,7 +141,7 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 	if method == "POST" {
 		if err := POSTOAMRegisterHandler(typ, r); err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
-			logrus.Debug(err)
+			h.log.Debug(err)
 			_, _ = rw.Write([]byte(err.Error()))
 			return
 		}
@@ -200,7 +201,8 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 		res := OAM.GetWorkloads()
 
 		if err := enc.Encode(res); err != nil {
-			logrus.Error("failed to encode workload definitions")
+			h.log.Error(ErrWorkloadDefinition(err))
+			http.Error(w, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 
@@ -209,7 +211,8 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
-			logrus.Error("failed to encode trait definitions")
+			h.log.Error(ErrTraitDefinition(err))
+			http.Error(w, ErrScopeDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 
@@ -218,7 +221,8 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
-			logrus.Error("failed to encode scope definitions")
+			h.log.Error(ErrScopeDefinition(err))
+			http.Error(w, ErrScopeDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 }

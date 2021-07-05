@@ -58,6 +58,22 @@ func ErrRecordPreferences(err error) error {
 	return errors.New(ErrRecordPreferencesCode, errors.Alert, []string{"unable to save user config data.", err.Error()}, []string{"Failed to record User Preferences.", err.Error()}, []string{"User token might be invalid", "db might be corrupted"}, []string{"Relogin to Meshery"})
 }
 
+func ErrKubeClient(err error) error {
+	return errors.New(ErrKubeClient, errors.Alert, []string{"Failed to Create Kube Client", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Kubernetes"}, []string{""})
+}
+
+func ErrTraitDefinition(err error) error {
+	return errors.New(ErrKubeClient, errors.Alert, []string{"Failed to load Workload Definition", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Workload Definition"}, []string{""})
+}
+
+func ErrTraitDefinition(err error) error {
+	return errors.New(ErrTraitDefinition, errors.Alert, []string{"Failed to Encode Trait Definition", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Trait Definition"}, []string{""})
+}
+
+func ErrScopeDefinition(err error) error {
+	return errors.New(ErrScopeDefinition, errors.Alert, []string{"Failed to Encode Scope Definition", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Trait Definition"}, []string{""})
+}
+
 func ErrRequestBody(err error) error {
 	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body.", err.Error()}, []string{"unable to read the request body" + err.Error()}, []string{}, []string{})
 }
