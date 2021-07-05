@@ -524,6 +524,24 @@
       "probable_cause": "",
       "suggested_remediation": ""
     },
+    "2045": {
+      "name": "ErrFailToSaveCode",
+      "code": "2045",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Failed to Save: ",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2046": {
+      "name": "ErrFailToDeleteCode",
+      "code": "2046",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Failed to Delete: ",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
     "3000": {
       "name": "ErrGrafanaClientCode",
       "code": "3000",
