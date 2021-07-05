@@ -23,6 +23,7 @@ spec:
       serviceAccount: meshery-server
       containers:
       - image: layer5/meshery-osm:stable-latest
+        imagePullPolicy: Always
         name: meshery-osm
         ports:
         - containerPort: 10009

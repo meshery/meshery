@@ -23,6 +23,7 @@ spec:
       serviceAccount: meshery-server
       containers:
       - image: layer5/meshery-kuma:stable-latest
+        imagePullPolicy: Always
         name: meshery-kuma
         ports:
         - containerPort: 10007

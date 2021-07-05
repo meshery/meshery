@@ -23,6 +23,7 @@ spec:
       serviceAccount: meshery-server
       containers:
         - image: layer5/meshery-nsm:stable-latest
+          imagePullPolicy: Always
           name: meshery-nsm
           ports:
             - containerPort: 10004

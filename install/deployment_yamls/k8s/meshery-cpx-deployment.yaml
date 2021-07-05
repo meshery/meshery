@@ -24,6 +24,7 @@ spec:
       serviceAccount: meshery-server
       containers:
         - image: layer5/meshery-cpx:stable-latest
+          imagePullPolicy: Always
           name: meshery-cpx
           ports:
             - containerPort: 10008
