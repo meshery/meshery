@@ -524,6 +524,69 @@
       "probable_cause": "",
       "suggested_remediation": ""
     },
+    "2045": {
+      "name": "ErrInvalidGenValueCode",
+      "code": "2045",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Invalid value for gen",
+      "probable_cause": "",
+      "suggested_remediation": "please provide a valid value for gen (load generator)"
+    },
+    "2046": {
+      "name": "ErrUserPreferencesCode",
+      "code": "2046",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Unable to save user preferences",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2047": {
+      "name": "ErrTestConfigsCode",
+      "code": "2047",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error fetching test configs",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2048": {
+      "name": "ErrReadDatabaseCode",
+      "code": "2048",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error reading databases",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2049": {
+      "name": "ErrWriteResponseCode",
+      "code": "2049",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error writing response",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2050": {
+      "name": "ErrFieldCode",
+      "code": "2050",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "field uuid not found",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2051": {
+      "name": "ErrDeleteTestConfigCode",
+      "code": "2051",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "error deleting testConfig",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
     "3000": {
       "name": "ErrGrafanaClientCode",
       "code": "3000",
