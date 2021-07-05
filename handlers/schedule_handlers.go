@@ -26,16 +26,17 @@ func (h *Handler) SaveScheduleHandler(
 		rw.WriteHeader(http.StatusBadRequest)
 		//failed to read request body
 		//fmt.Fprintf(rw, ErrRequestBody(err).Error(), err)
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		//failed to get user token
-		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+
 		return
 	}
 
@@ -43,8 +44,9 @@ func (h *Handler) SaveScheduleHandler(
 	if err != nil {
 		obj := "schedule"
 		//Failed to save the schedule
-		http.Error(rw, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
 		h.log.Error(ErrFailToSave(err, obj))
+		http.Error(rw, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
+
 		return
 	}
 
@@ -66,8 +68,8 @@ func (h *Handler) GetSchedulesHandler(
 	if err != nil {
 		obj := "schedules"
 		//unable to get schedules
-		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		h.log.Error(ErrQueryGet(obj))
+		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -89,8 +91,8 @@ func (h *Handler) DeleteScheduleHandler(
 	if err != nil {
 		obj := "schedule"
 		//unable to delete schedules
-		http.Error(rw, ErrFailToDelete(err, obj).Error(), http.StatusInternalServerError)
 		h.log.Error(ErrFailToDelete(err, obj))
+		http.Error(rw, ErrFailToDelete(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -112,8 +114,8 @@ func (h *Handler) GetScheduleHandler(
 	if err != nil {
 		obj := "schedule"
 		//failed to get schedules
-		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		h.log.Error(ErrQueryGet(obj))
+		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
