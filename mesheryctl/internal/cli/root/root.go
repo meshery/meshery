@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/auth"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
@@ -101,6 +102,7 @@ func init() {
 		perf.PerfCmd,
 		mesh.MeshCmd,
 		experimental.ExpCmd,
+		auth.AuthCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
