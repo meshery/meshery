@@ -14,11 +14,12 @@ assignees: ''
 #### Screenshots/Logs
 <!-- Add screenshots, if applicable, to help explain your problem. -->
 
-#### Environment:
-- Meshery Version: 
-- Kubernetes Version: 
-- Host OS:
-- Browser: 
+#### Environment
+
+- Host OS: Mac Linux Windows
+- Meshery Server Version: stable-v
+- Meshery Client Version: stable-v
+- Platform: Docker or Kubernetes
 
 <!-- Optional 
 #### To Reproduce
