@@ -30,6 +30,7 @@ spec:
         - name: ADAPTER_URLS
           value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002
         image: layer5/meshery:stable-latest
+        imagePullPolicy: Always
         name: meshery
         ports:
         - containerPort: 8080

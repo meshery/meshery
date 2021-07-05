@@ -24,6 +24,7 @@ spec:
       serviceAccount: meshery-server
       containers:
         - image: layer5/meshery-octarine:stable-latest
+          imagePullPolicy: Always
           name: meshery-octarine
           ports:
             - containerPort: 10003
