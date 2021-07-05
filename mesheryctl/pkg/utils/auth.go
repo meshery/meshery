@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"encoding/base64"
@@ -12,9 +11,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"strconv"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
@@ -99,25 +98,24 @@ func CreateTempAuthServer(fn func(http.ResponseWriter, *http.Request)) (*http.Se
 		return nil, -1, err
 	}
 
-	mux.HandleFunc("/api/user/token", fn)
+	mux.HandleFunc("/", fn)
 
-	if err := srv.Serve(listener); err != nil {
-		return nil, -1, err
-	}
+	go func() {
+		if err := srv.Serve(listener); err != nil {
+			if err != http.ErrServerClosed {
+				fmt.Println("error creating temporary server")
+			}
+		}
+	}()
 
 	return srv, listener.Addr().(*net.TCPAddr).Port, nil
 }
 
-func InitiateLogin() {
-	// Get mesheryctl config
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-	}
-
+func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
 	// Get the providers info
 	providers, err := GetProviderInfo(mctlCfg)
 	if err != nil {
-
+		return nil, err
 	}
 
 	// Let the user select a provider
@@ -125,27 +123,28 @@ func InitiateLogin() {
 
 	var token string
 
+	fmt.Println("Initiating login...")
+
 	// If the provider URL is empty then local provider
 	if provider.ProviderURL == "" {
 		token, err = initiateLocalProviderAuth(provider)
 		if err != nil {
-
+			return nil, err
 		}
 	} else {
 		token, err = initiateRemoteProviderAuth(provider)
 		if err != nil {
-
+			return nil, err
 		}
 	}
 
 	// Send request with the token to the meshery server
-	data, err := getTokenObjFromMesheryServer(mctlCfg, token)
+	data, err := getTokenObjFromMesheryServer(mctlCfg, provider.ProviderName, token)
 	if err != nil {
-
+		return nil, err
 	}
 
-	// Save the token json file to the filesystem
-	fmt.Println(string(data))
+	return data, nil
 }
 
 func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, error) {
@@ -168,12 +167,18 @@ func initiateLocalProviderAuth(provider Provider) (string, error) {
 }
 
 func initiateRemoteProviderAuth(provider Provider) (string, error) {
-	stopChan := make(chan struct{}, 1)
+	tokenChan := make(chan string, 1)
 
 	// Create temporary server
 	srv, port, err := CreateTempAuthServer(func(rw http.ResponseWriter, r *http.Request) {
-		fmt.Println(r.URL.String())
-		stopChan <- struct{}{}
+		token := r.URL.Query().Get("token")
+		if token == "" {
+			fmt.Fprintf(rw, "token not found")
+			return
+		}
+
+		fmt.Fprint(rw, "successfully logged in, you can close this window now")
+		tokenChan <- token
 	})
 	if err != nil {
 		return "", err
@@ -191,42 +196,41 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	}
 
 	// Pause until we get the response on the channel
-	<-stopChan
+	token := <-tokenChan
 
 	// Shut down the server
-	srv.Shutdown(context.TODO())
+	if err := srv.Shutdown(context.TODO()); err != nil {
+		return token, err
+	}
 
-	return "", nil
+	return token, nil
 }
 
 func selectProviderPrompt(provs map[string]Provider) Provider {
 	provArray := []Provider{}
+	provNames := []string{}
 
 	for _, prov := range provs {
 		provArray = append(provArray, prov)
 	}
 
-	// Print providers
-	for i, prov := range provArray {
-		fmt.Printf("%d. %s\n", i+1, prov.ProviderName)
+	for _, prov := range provArray {
+		provNames = append(provNames, prov.ProviderName)
 	}
 
-	// Scan user response
-	scanner := bufio.NewScanner(os.Stdin)
+	prompt := promptui.Select{
+		Label: "Select a Provider",
+		Items: provNames,
+	}
 
 	for {
-		scanner.Scan()
-
-		resp, err := strconv.Atoi(scanner.Text())
-		if resp > 0 && resp < len(provArray) || err != nil {
-			fmt.Printf("invalid input: enter a number between 1 - %d\n", len(provArray))
+		i, _, err := prompt.Run()
+		if err != nil {
 			continue
 		}
 
-		return provArray[resp]
+		return provArray[i]
 	}
-
-	return Provider{}
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {
@@ -237,17 +241,29 @@ func createProviderURI(provider Provider, host string, port int) (string, error)
 
 	address := fmt.Sprintf("%s:%d", host, port)
 
-	uri.Query().Add("source", base64.RawURLEncoding.EncodeToString([]byte(address)))
-	uri.Query().Add("provider_version", "v0.3.14")
+	q := uri.Query()
+	q.Add("source", base64.RawURLEncoding.EncodeToString([]byte(address)))
+	q.Add("provider_version", "v0.3.14")
+
+	uri.RawQuery = q.Encode()
 
 	return uri.String(), nil
 }
 
-func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, token string) ([]byte, error) {
-	req, err := http.NewRequest(http.MethodGet, mctl.GetBaseMesheryURL()+"/api/gettoken", nil)
+func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token string) ([]byte, error) {
+	req, err := http.NewRequest(http.MethodGet, mctl.GetBaseMesheryURL()+"/api/token", nil)
 	if err != nil {
 		return nil, err
 	}
+
+	req.AddCookie(&http.Cookie{
+		Name:  tokenName,
+		Value: token,
+	})
+	req.AddCookie(&http.Cookie{
+		Name:  "meshery-provider",
+		Value: provider,
+	})
 
 	cli := &http.Client{}
 	resp, err := cli.Do(req)
