@@ -363,6 +363,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	ck, err := req.Cookie(tokenName)
 	if err == nil {
 		ck.MaxAge = -1
+		ck.Path = "/"
 		http.SetCookie(w, ck)
 	}
 	http.Redirect(w, req, "/user/login", http.StatusFound)

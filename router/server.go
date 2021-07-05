@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/handlers"
@@ -137,6 +138,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.Handle("/api/experimental/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryFilterHandler)))).
 		Methods("DELETE")
 
+	gMux.Handle("/api/experimental/application/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileHandler)))).
+		Methods("POST", "DELETE")
 	gMux.Handle("/api/experimental/application", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileRequestHandler)))).
 		Methods("POST", "GET")
 	gMux.Handle("/api/experimental/application/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationHandler)))).
@@ -174,6 +177,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
+			logrus.Debug("Inside not OK")
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
@@ -196,7 +200,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 			return
 		}
 		h.TokenHandler(w, req, provider, false)
-	}))).Methods("POST")
+	}))).Methods("POST", "GET")
 	gMux.Handle("/api/user/token", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(
 		func(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 			provider.ExtractToken(w, req)

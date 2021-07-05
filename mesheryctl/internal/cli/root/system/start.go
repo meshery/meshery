@@ -371,15 +371,13 @@ func start() error {
 			}
 		}
 
-		if err != nil {
-			return err
-		}
+		if err == nil {
+			currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
 
-		currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
-
-		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
-		if err != nil {
-			return err
+			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			if err != nil {
+				return err
+			}
 		}
 
 		// switch to default case if the platform specified is not supported
@@ -393,10 +391,19 @@ func start() error {
 		return err
 	}
 
-	err = utils.ApplyOperatorManifest(kubeClient, false, false)
+	if !skipUpdateFlag {
+		err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
+	} else {
+		// skip applying update on operators when the flag is used
+		err = utils.ApplyOperatorManifest(kubeClient, false, false)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
