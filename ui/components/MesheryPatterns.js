@@ -108,9 +108,8 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   const [pageSize, setPageSize] = useState(10);
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-
+  const DEPLOY_URL = '/api/experimental/pattern/deploy';
   const searchTimeout = useRef(null);
-
   /**
    * fetch patterns when the page loads
    */
@@ -126,6 +125,21 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
+
+  const handleDeploy = (pattern_file) => {
+    dataFetch(
+      DEPLOY_URL,
+      {
+        credentials: "include",
+        method: "POST",
+        body:pattern_file,
+      },() => {
+        console.log("PattrnFile Deploy API", `/api/experimental/pattern/deploy`);
+      },(e) => { 
+        console.error(e) 
+      })
+  }
+
   function fetchPatterns(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
@@ -322,6 +336,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           );
         },
         customBodyRender: function CustomBody(_, tableMeta) {
+          const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
               <IconButton>
@@ -336,7 +351,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
                   title="Deploy"  
                   aria-label="deploy"
                   color="inherit"
-                  // onClick={() => dataFetch()} //deploy endpoint to be called here
+                  onClick={() => handleDeploy(rowData.pattern_file)} //deploy endpoint to be called here
                 />
               </IconButton>
             </>    
