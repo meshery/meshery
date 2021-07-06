@@ -377,6 +377,14 @@
       "path": "handlers/error.go"
     },
     {
+      "name": "ErrFailToLoadExtensionsCode",
+      "old_code": "2047",
+      "code": "2047",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
       "name": "ErrInvalidRequestCode",
       "old_code": "1000",
       "code": "1000",
@@ -1090,6 +1098,16 @@
         "path": "handlers/error.go"
       }
     ],
+    "2047": [
+      {
+        "name": "ErrFailToLoadExtensionsCode",
+        "old_code": "2047",
+        "code": "2047",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
     "3000": [
       {
         "name": "ErrGrafanaClientCode",
@@ -1228,6 +1246,17 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to Delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFailToLoadExtensionsCode": [
+      {
+        "name": "ErrFailToLoadExtensionsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Load Extensions from Package",
         "probable_cause": "",
         "suggested_remediation": ""
       }
