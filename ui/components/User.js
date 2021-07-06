@@ -52,7 +52,7 @@ class User extends React.Component {
   };
 
   handleLogout = () => {
-    window.location = '/logout';
+    window.location = '/user/logout';
   };
 
   handlePreference = () => {
@@ -60,7 +60,7 @@ class User extends React.Component {
   };
 
   handleGetToken = () => {
-    dataFetch('/api/gettoken', { credentials: 'same-origin' }, (data) => {
+    dataFetch('/api/user/gettoken', { credentials: 'same-origin' }, (data) => {
       exportToJsonFile(data, "auth.json");
     }, (error) => ({
       error,
