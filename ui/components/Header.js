@@ -16,11 +16,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import BuildIcon from "@material-ui/icons/Build";
 import MesheryNotification from './MesheryNotification';
 import User from './User';
-<<<<<<< HEAD
 import Modal from './ConfigurationWizard/utilities/Modal'
-=======
-import PopUp from './configuration-wizard/PopUp'
->>>>>>> 46caadfc (Connect Modal component  to Header)
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faHome } from '@fortawesome/free-solid-svg-icons';
 
@@ -71,37 +67,37 @@ const styles = (theme) => ({
   },
   appBarOnDrawerOpen: {
     padding: theme.spacing(1.4),
-    zIndex: theme.zIndex.drawer+1,
-    [theme.breakpoints.between(635,732)]: {
-      padding: theme.spacing(0.75,1.4),
+    zIndex: theme.zIndex.drawer + 1,
+    [theme.breakpoints.between(635, 732)]: {
+      padding: theme.spacing(0.75, 1.4),
     },
-    [theme.breakpoints.between(600,635)]: {
-      padding: theme.spacing(0.4,1.4),
+    [theme.breakpoints.between(600, 635)]: {
+      padding: theme.spacing(0.4, 1.4),
     },
   },
   appBarOnDrawerClosed: {
     padding: theme.spacing(1.4),
-    zIndex: theme.zIndex.drawer+1,
+    zIndex: theme.zIndex.drawer + 1,
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
-    paddingLeft:24,
-    paddingRight:24,
+    paddingLeft: 24,
+    paddingRight: 24,
   },
   toolbarOnDrawerOpen: {
     minHeight: 58,
-    paddingLeft:20,
-    paddingRight:20,
-    [theme.breakpoints.between(620,732)]: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    [theme.breakpoints.between(620, 732)]: {
       minHeight: 68,
-      paddingLeft:20,
-      paddingRight:20,
+      paddingLeft: 20,
+      paddingRight: 20,
     },
   },
   itemActiveItem: {
     color: '#00B39F',
   },
-  headerIcons:{
+  headerIcons: {
     fontSize: '1.5rem',
     height: '1.5rem',
     width: '1.5rem',
@@ -121,11 +117,11 @@ class Header extends React.Component {
   handleClose = () => {
     this.setState({ open: false })
   }
-  
+
   render() {
-    const { classes, title, onDrawerToggle ,onDrawerCollapse} = this.props;
+    const { classes, title, onDrawerToggle, onDrawerCollapse } = this.props;
     console.log('title', title)
-   
+
     return (
       <NoSsr>
         <React.Fragment>
@@ -160,7 +156,7 @@ class Header extends React.Component {
                   <div data-test="index-button">
                     <IconButton color="inherit">
                       <Link href="/">
-                        <DashboardIcon className={ classes.headerIcons +" "+(title === 'System Dashboard' ? classes.itemActiveItem : '')} />
+                        <DashboardIcon className={classes.headerIcons + " " + (title === 'System Dashboard' ? classes.itemActiveItem : '')} />
                         {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
                       </Link>
                     </IconButton>
@@ -169,15 +165,16 @@ class Header extends React.Component {
                   <div data-test="settings-button">
                     <IconButton color="inherit">
                       <Link href="/settings">
-                        <SettingsIcon className={classes.headerIcons +" "+(title === 'Settings' ? classes.itemActiveItem : '')} />
+                        <SettingsIcon className={classes.headerIcons + " " + (title === 'Settings' ? classes.itemActiveItem : '')} />
                       </Link>
                     </IconButton>
                   </div>
 
                   <div data-test="wizard-button">
                     <IconButton color="inherit">
-                      <BuildIcon onClick={this.handleOpen} className={title === 'Wizard' ? classes.itemActiveItem : ''} />
-                      <PopUp open={this.state.open} handleClose={this.handleClose} />
+                      <Link href="/">
+                        <BuildIcon className={title === 'Wizard' ? classes.itemActiveItem : ''} />
+                      </Link>
                     </IconButton>
                   </div>
 
@@ -194,7 +191,7 @@ class Header extends React.Component {
                   <span className={classes.userSpan}>
                     <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
                   </span>
-                  
+
                 </Grid>
               </Grid>
             </Toolbar>
@@ -209,7 +206,6 @@ class Header extends React.Component {
           <Toolbar>
             <Grid container alignItems="center" spacing={8}>
               <Grid item xs>
-
               </Grid>
               {/* <Grid item>
                 <Button className={classes.button} variant="outlined" color="inherit" size="small">
@@ -241,7 +237,7 @@ class Header extends React.Component {
           </Tabs>
         </AppBar> */}
         </React.Fragment>
-      </NoSsr>
+      </NoSsr >
     );
   }
 }
@@ -255,7 +251,7 @@ const mapStateToProps = (state) =>
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
   // console.log("state: " + JSON.stringify(state))
   ({ title: state.get('page').get('title') })
-;
+  ;
 
 // const mapDispatchToProps = dispatch => {
 //   return {
