@@ -14,6 +14,13 @@
 | Navendu Pottekkat | navendu-pottekkat |
 | Hussaina Begum    | hexxdump          |
 
+# UI maintainers
+
+| Name         | GitHub       |
+| ------------ | ------------ |
+| Lee Calcote  | leecalcote   |
+| Nikhil Ladha | Nikhil-Ladha |
+
 # Adapter maintainers
 
 | Name               | GitHub      |
