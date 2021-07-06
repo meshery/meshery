@@ -139,7 +139,7 @@ class PrometheusSelectionComponent extends Component {
       boardChange = (newVal) => {
         this.props.updateProgress({ showProgress: true });
         const self = this;
-        dataFetch('/api/prometheus/board_import', {
+        dataFetch('/api/telemetry/metrics/board_import', {
           credentials: 'same-origin',
           method: 'POST',
           credentials: 'include',
@@ -184,7 +184,7 @@ class PrometheusSelectionComponent extends Component {
 
       queryTemplateVars = (ind, templateVars, templateVarOptions, selectedTemplateVars) => {
         if (templateVars.length > 0) {
-          let queryURL = `/api/prometheus/query?query=${encodeURIComponent(templateVars[ind].query)}`;
+          let queryURL = `/api/telemetry/metrics/query?query=${encodeURIComponent(templateVars[ind].query)}`;
           for (let i = ind; i > 0; i--) {
             queryURL += `&${templateVars[i - 1].name}=${selectedTemplateVars[i - 1]}`;
           }

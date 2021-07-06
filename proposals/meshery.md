@@ -49,7 +49,7 @@ The Meshery team is currently working on the following feature improvements:
 
 The direction of the project has generally been guided by our open source community and users. There are a plethora of GitHub issues requesting various features that we prioritize based on popularity of user requests and engineering capacity.
 
-A roadmap for future features, including those listed above, can be found in GitHub at <https://github.com/layer5io/meshery>.
+A roadmap for future features, including those listed above, can be found in GitHub at <https://github.com/meshery/meshery>.
 
 The project welcomes contributions of any kind: code, documentation, bug reporting via issues, and project management to help track and prioritize workstreams.
 
@@ -75,7 +75,7 @@ CNCF Donation Details
 
 -   License: Apache 2
 
--   Source control repositories / issue tracker:  <https://github.com/layer5io/meshery>.
+-   Source control repositories / issue tracker:  <https://github.com/meshery/meshery>.
 
 -   Infrastructure Required: N/A
 

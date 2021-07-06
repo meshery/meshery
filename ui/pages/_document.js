@@ -18,7 +18,7 @@ function setupGA() {
     dataLayer.push(arguments);
   }
 
-  fetch("/api/user/stats", { credentials: 'include' })
+  fetch("/api/user/prefs", { credentials: 'include' })
     .then((res) => res.json())
     .then((res) => {
       if (res?.anonymousUsageStats) {

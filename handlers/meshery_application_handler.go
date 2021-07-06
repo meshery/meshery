@@ -18,6 +18,18 @@ type MesheryApplicationRequestBody struct {
 	ApplicationData *models.MesheryApplication `json:"application_data,omitempty"`
 }
 
+// ApplicationFileHandler handles the requested related to application files
+func (h *Handler) ApplicationFileHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	// Application files are just pattern files
+	h.PatternFileHandler(rw, r, prefObj, user, provider)
+}
+
 // ApplicationFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/experimental/application
 func (h *Handler) ApplicationFileRequestHandler(
@@ -51,14 +63,17 @@ func (h *Handler) handleApplicationPOST(
 
 	var parsedBody *MesheryApplicationRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		h.log.Error(ErrRetrieveData(err))
+		http.Error(rw, ErrRetrieveData(err).Error(), http.StatusBadRequest)
+		// rw.WriteHeader(http.StatusBadRequest)
+		// fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
 	}
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -68,7 +83,9 @@ func (h *Handler) handleApplicationPOST(
 	if parsedBody.ApplicationData != nil {
 		applicationName, err := models.GetApplicationName(parsedBody.ApplicationData.ApplicationFile)
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to save the application: %s", err), http.StatusBadRequest)
+			obj := "save"
+			h.log.Error(ErrApplicationFailure(err, obj))
+			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -91,21 +108,25 @@ func (h *Handler) handleApplicationPOST(
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 			if err != nil {
-				http.Error(rw, fmt.Sprintf("failed to save the application: %s", err), http.StatusInternalServerError)
+				obj := "save"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 				return
 			}
 
-			formatApplicationOutput(rw, resp, format)
+			h.formatApplicationOutput(rw, resp, format)
 			return
 		}
 
 		byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to encode application: %s", err), http.StatusInternalServerError)
+			obj := "application"
+			h.log.Error(ErrEncoding(err, obj))
+			http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
 
-		formatApplicationOutput(rw, byt, format)
+		h.formatApplicationOutput(rw, byt, format)
 		return
 	}
 
@@ -113,11 +134,13 @@ func (h *Handler) handleApplicationPOST(
 		resp, err := provider.RemoteApplicationFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
 
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to import application: %s", err), http.StatusInternalServerError)
+			obj := "import"
+			h.log.Error(ErrApplicationFailure(err, obj))
+			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
 
-		formatApplicationOutput(rw, resp, format)
+		h.formatApplicationOutput(rw, resp, format)
 		return
 	}
 }
@@ -134,7 +157,9 @@ func (h *Handler) GetMesheryApplicationsHandler(
 
 	resp, err := provider.GetMesheryApplications(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to fetch the applications: %s", err), http.StatusInternalServerError)
+		obj := "fetch"
+		h.log.Error(ErrApplicationFailure(err, obj))
+		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -154,7 +179,9 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 
 	resp, err := provider.DeleteMesheryApplication(r, applicationID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to delete the application: %s", err), http.StatusInternalServerError)
+		obj := "delete"
+		h.log.Error(ErrApplicationFailure(err, obj))
+		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -174,7 +201,9 @@ func (h *Handler) GetMesheryApplicationHandler(
 
 	resp, err := provider.GetMesheryApplication(r, applicationID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get the application: %s", err), http.StatusNotFound)
+		obj := "get"
+		h.log.Error(ErrApplicationFailure(err, obj))
+		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
 		return
 	}
 
@@ -182,12 +211,15 @@ func (h *Handler) GetMesheryApplicationHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func formatApplicationOutput(rw http.ResponseWriter, content []byte, format string) {
+func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, format string) {
 	contentMesheryApplicationSlice := make([]models.MesheryApplication, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryApplicationSlice); err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to decode applications data into go slice: %s", err)
+		obj := "application data into go slice"
+		h.log.Error(ErrDecoding(err, obj))
+		http.Error(rw, ErrDecoding(err, obj).Error(), http.StatusInternalServerError)
+		// rw.WriteHeader(http.StatusInternalServerError)
+		// fmt.Fprintf(rw, "failed to decode applications data into go slice: %s", err)
 		return
 	}
 
@@ -195,8 +227,11 @@ func formatApplicationOutput(rw http.ResponseWriter, content []byte, format stri
 
 	data, err := json.Marshal(&result)
 	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to marshal application file: %s", err)
+		obj := "application file"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		//rw.WriteHeader(http.StatusInternalServerError)
+		//fmt.Fprintf(rw, "failed to marshal application file: %s", err)
 		return
 	}
 

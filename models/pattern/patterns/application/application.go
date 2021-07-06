@@ -86,7 +86,11 @@ func Deploy(
 				ServiceMesh: string(mesh),
 				Replicas:    settings.Replicas,
 				Containers:  settings.Containers,
-				Delete:      isDel,
+				Metadata: RolloutEngineGenericOptionsMetadata{
+					Labels:      oamComp.Labels,
+					Annotations: oamComp.Annotations,
+				},
+				Delete: isDel,
 			}); err != nil {
 				return err
 			}

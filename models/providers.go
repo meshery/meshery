@@ -119,6 +119,8 @@ const (
 
 	PersistMesheryPatterns Feature = "persist-meshery-patterns" // /patterns
 
+	PersistMesheryPatternResources Feature = "persist-meshery-pattern-resources" // /patterns/resources
+
 	PersistMesheryFilters Feature = "persist-meshery-filters" // /filter
 
 	PersistMesheryApplications Feature = "persist-meshery-applications" // /applications
@@ -220,6 +222,10 @@ type Provider interface {
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
+	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)
+	GetMesheryPatternResource(token, resourceID string) (*PatternResource, error)
+	GetMesheryPatternResources(token, page, pageSize, search, order, name, namespace, typ, oamType string) (*PatternResourcePage, error)
+	DeleteMesheryResource(token, resourceID string) error
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
 	GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error)

@@ -16,9 +16,9 @@ builds:
     - CGO_ENABLED=0
     
   ldflags:
-    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.version={{.Tag}}
-    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.commitsha={{.ShortCommit}}
-    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.releasechannel={{.Env.RELEASE_CHANNEL}}
+    - -s -w -X github.com/meshery/meshery/mesheryctl/internal/cli/root.version={{.Tag}}
+    - -s -w -X github.com/meshery/meshery/mesheryctl/internal/cli/root.commitsha={{.ShortCommit}}
+    - -s -w -X github.com/meshery/meshery/mesheryctl/internal/cli/root.releasechannel={{.Env.RELEASE_CHANNEL}}
   # GOOS list to build for.
   # For more info refer to: https://golang.org/doc/install/source#environment
   # Defaults are darwin and linux.
@@ -83,7 +83,7 @@ brews:
 
   # Github repository to push the tap to.
   tap:
-    owner: layer5io
+    owner: meshery
     name: homebrew-tap
   
   # Template for the url which is determined by the given Token (github or gitlab)
@@ -202,7 +202,7 @@ scoop:
 
   # Repository to push the app manifest to.
   bucket:
-    owner: layer5io
+    owner: meshery
     name: scoop-bucket
 
   # Git author used to commit to the repository.

@@ -7,7 +7,7 @@ To make a report, send an email to the private
 [meshery-security-vulns-reports@meshery.dev](mailto:meshery-security-vulns-reports@meshery.dev)
 mailing list with the vulnerability details. For normal product bugs
 unrelated to latent security vulnerabilities, please head to
-the appropriate repository and submit a [new issue](https://github.com/layer5io/meshery/issues/new/choose).
+the appropriate repository and submit a [new issue](https://github.com/meshery/meshery/issues/new/choose).
 
 ### When to report a security vulnerability?
 

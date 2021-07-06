@@ -376,15 +376,13 @@ func start() error {
 			}
 		}
 
-		if err != nil {
-			return err
-		}
+		if err == nil {
+			currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
 
-		currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
-
-		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
-		if err != nil {
-			return err
+			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			if err != nil {
+				return err
+			}
 		}
 
 		// switch to default case if the platform specified is not supported
@@ -409,9 +407,17 @@ func start() error {
 		if err != nil {
 			return err
 		}
+	}
+	if !skipUpdateFlag {
+		err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
-		// apply operator manifest
+		if err != nil {
+			return err
+		}
+	} else {
+		// skip applying update on operators when the flag is used
 		err = utils.ApplyOperatorManifest(kubeClient, false, false)
+
 		if err != nil {
 			return err
 		}

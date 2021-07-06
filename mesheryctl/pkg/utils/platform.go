@@ -7,8 +7,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -580,4 +582,80 @@ func CleanPodNames(name string) string {
 	}
 
 	return split[0]
+}
+
+func Startdockerdaemon(subcommand string) error {
+	userResponse := false
+	// read user input on whether to start Docker daemon or not.
+	if SilentFlag {
+		userResponse = true
+	} else {
+		userResponse = AskForConfirmation("Start Docker now")
+	}
+	if userResponse != true {
+		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
+	}
+
+	log.Info("Attempting to start Docker...")
+	// once user gaves permission, start docker daemon on linux/macOS
+	if runtime.GOOS == "linux" {
+		if err := exec.Command("sudo", "service", "docker", "start").Run(); err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+	} else {
+		// Assuming we are on macOS, try to start Docker from default path
+		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
+		err := cmd.Start()
+		if err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+		// wait for few seconds for docker to start
+		err = exec.Command("sleep", "30").Run()
+		if err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+		// check whether docker started successfully or not, throw an error message otherwise
+		if err := exec.Command("docker", "ps").Run(); err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+	}
+	log.Info("Prerequisite Docker started.")
+	return nil
+}
+
+func InstallprereqDocker() error {
+	log.Info("Attempting Docker-Compose installation...")
+	ostype, osarch, err := prereq()
+	if err != nil {
+		return errors.Wrap(err, "failed to get prerequisites")
+	}
+
+	osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
+
+	dockerComposeBinaryURL := dockerComposeBinaryURL
+	//checks for the latest docker-compose
+	resp, err := http.Get(dockerComposeWebURL)
+	if err != nil {
+		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
+	} else {
+		var dat map[string]interface{}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, "failed to read response body")
+		}
+		if err := json.Unmarshal(body, &dat); err != nil {
+			return errors.Wrap(err, "failed to unmarshal json into object")
+		}
+		num := dat["tag_name"]
+		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
+	}
+	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
+	if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
+		return errors.Wrapf(err, "failed to download %s from %s", dockerComposeBinary, dockerComposeBinaryURL)
+	}
+	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
+		return errors.Wrap(err, "failed to execute command")
+	}
+	log.Info("Prerequisite Docker Compose is installed.")
+	return nil
 }

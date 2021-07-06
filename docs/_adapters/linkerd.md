@@ -8,7 +8,7 @@ port: 10001/tcp
 project_status: stable
 adapter_version: v0.5.2
 lab: linkerd-meshery-adapter
-github_link: https://github.com/layer5io/meshery-linkerd
+github_link: https://github.com/meshery/meshery-linkerd
 image: /assets/img/service-meshes/linkerd.svg
 permalink: service-meshes/adapters/linkerd
 ---
