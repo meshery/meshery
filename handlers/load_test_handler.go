@@ -69,7 +69,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	testDuration, err := time.ParseDuration(perfTest.Duration)
 	if err != nil {
-		msg := "error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"
+		
 		err = errors.Wrapf(err, msg)
 		h.log.Error(ErrParseDuration(err))
         http.Error(w, ErrParseDuration(err).Error(), http.StatusBadRequest)
@@ -94,6 +94,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	ltURL, err := url.Parse(loadTestOptions.URL)
 	if err != nil || !ltURL.IsAbs() {
+		obj := "the provided load test"
 		h.log.Error(ErrParseBool(err,obj))
         http.Error(w, ErrParseBool(err,obj).Error(), http.StatusBadRequest)
         return
@@ -145,7 +146,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	err := req.ParseForm()
 	if err != nil {
 		obj := "form"
-        h.log.Errorf(ErrParseBool(err,obj))
+        h.log.Error(ErrParseBool(err,obj))
         http.Error(w, ErrParseBool(err,obj),Error(), http.StatusForbidden)
         return
 
@@ -262,7 +263,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				log.Errorf("Recovered from panic: %v.", r)
+				log.Error("Recovered from panic: %v.", r)
 			}
 		}()
 		for data := range respChan {
@@ -275,7 +276,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 			}
 
 			log.Debug("received new data on response channel")
-			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
+			_, _ = fmt.Fprintf(w, "data: \n\n", bd)
 			if flusher != nil {
 				flusher.Flush()
 				log.Debug("Flushed the messages on the wire...")
@@ -321,7 +322,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		h.log.Error(ErrLoadTest(err,obj))
         respChan <- &models.LoadTestResponse{
             Status:  models.LoadTestError,
-			Message: obj
+			Message: obj,
           
 		}
 		return
@@ -348,7 +349,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		
 					err = errors.Wrap(err, "unable to ping kubernetes")
 					// logrus.Error(err)
-					h.log.Warn(ErrFetchKubernetes(err)
+					h.log.Warn(ErrFetchKubernetes(err))
 					// return
 				}
 			}
@@ -361,7 +362,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 				serverVersion, err = helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 				if err != nil {
                     
-                    h.log.Error(ErrFetchKubernetes(err,obj)
+                    h.log.Error(ErrFetchKubernetes(err, obj))
                 }
 
 			}
@@ -372,7 +373,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 			if err != nil {
 			
                 
-                h.log.Warn(ErrFetchKubernetes(err,obj)
+                h.log.Warn(ErrFetchKubernetes(err, obj))
 
 			}
 			installedMeshesChan <- installedMeshes
@@ -405,13 +406,14 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 
 	resultID, err := provider.PublishResults(req, result, mux.Vars(req)["id"])
 	if err != nil {
-		obj:="unable to persist"
+		obj := "unable to persist"
         
-        h.log.Error(ErrLoadTest(err,obj))
+        h.log.Error(ErrLoadTest(err, obj))
 
 		respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
-			ErrLoadTest(err,obj).Error()
+			Message: obj,
+			
 
 		}
 		return
