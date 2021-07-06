@@ -8,7 +8,7 @@ import {
 
 import GrafanaIcon from '../icons/GrafanaIcon'
 import PrometheusIcon from '../icons/PrometheusIcon'
-import ConfigCard from './ConfigCard'
+import ConfigCard from '../utilities/ConfigCard'
 
 const useStyles = makeStyles({
   container: {
@@ -53,7 +53,7 @@ const useStyles = makeStyles({
   },
 })
 
-const External = () => {
+const ExternalScreen = () => {
   const classes = useStyles()
   const [state, setState] = React.useState({})
 
@@ -91,4 +91,4 @@ const External = () => {
   )
 }
 
-export default External
+export default ExternalScreen
