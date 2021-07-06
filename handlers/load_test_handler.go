@@ -36,9 +36,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}()
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err) 
+		h.log.Error(ErrRequestBody(err)) 
 
-        http.Error(w, ErrRequestBody(err),Error(), http.StatusInternalServerError)
+        http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
         return
 	}
 	jsonBody, err := yamlj.YAMLToJSON(body)
@@ -486,8 +486,8 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 
 	resultUUID, err := uuid.FromString(config.ResultID)
 	if err != nil {
-		obj := "result uuid"
-        h.log.Error(ErrParseBool(err, obj))
+		
+        h.log.Error(ErrParseBool(err, "result uuid"))
 
 		return err
 	}
