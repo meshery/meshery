@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -136,6 +138,38 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) (Context, erro
 	}
 
 	return currCtx, err
+}
+
+// GetTokenForContext takes in the contextName and returns the token name and path corresponding
+// to the given current context
+func (mc *MesheryCtlConfig) GetTokenForContext(contextName string) (Token, error) {
+	ctx, ok := mc.Contexts[contextName]
+	if !ok {
+		return Token{}, fmt.Errorf("")
+	}
+
+	for _, t := range mc.Tokens {
+		if t.Name == ctx.Token {
+			return t, nil
+		}
+	}
+
+	return Token{}, fmt.Errorf("no token found for the given context")
+}
+
+func (t *Token) GetLocation() string {
+	if filepath.IsAbs(t.Location) {
+		return t.Location
+	}
+
+	// If file path is not absolute then assume that the file
+	// is in the .meshery directory
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.Warn("failed to get user home directory")
+	}
+
+	return filepath.Join(home, ".meshery", t.Location)
 }
 
 // GetBuild returns the build number for the binary

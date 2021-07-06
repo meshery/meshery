@@ -14,9 +14,12 @@ import (
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "Authenticate mesheryctl",
-	Long:  `Authenticate meheryctl`,
-	Args:  cobra.MinimumNArgs(0),
+	Short: "Authenticate with meshery server",
+	Long: `
+Authenticate with meshery server
+
+The authetication mode is web-based browser flow`,
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -31,7 +34,13 @@ var loginCmd = &cobra.Command{
 
 		log.Println("successfully authenticated")
 
-		if err := ioutil.WriteFile(utils.AuthConfigFile, tokenData, 0666); err != nil {
+		token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
+		if err != nil {
+			log.Error("failed to find token path for the current context")
+			return nil
+		}
+
+		if err := ioutil.WriteFile(token.GetLocation(), tokenData, 0666); err != nil {
 			log.Error("failed to write the token to the filesystem: ", err)
 		}
 
