@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -103,7 +104,7 @@ func CreateTempAuthServer(fn func(http.ResponseWriter, *http.Request)) (*http.Se
 	go func() {
 		if err := srv.Serve(listener); err != nil {
 			if err != http.ErrServerClosed {
-				fmt.Println("error creating temporary server")
+				log.Println("error creating temporary server")
 			}
 		}
 	}()
@@ -123,7 +124,7 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
 
 	var token string
 
-	fmt.Println("Initiating login...")
+	log.Println("Initiating login...")
 
 	// If the provider URL is empty then local provider
 	if provider.ProviderURL == "" {

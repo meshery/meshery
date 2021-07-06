@@ -1,13 +1,13 @@
 package system
 
 import (
-	"fmt"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var LoginCmd = &cobra.Command{
@@ -23,12 +23,12 @@ var LoginCmd = &cobra.Command{
 
 		tokenData, err := utils.InitiateLogin(mctlCfg)
 		if err != nil {
-			fmt.Println("authentication failed")
+			log.Println("authentication failed")
 			return nil
 		}
 
-		fmt.Println("successfully authenticated")
-		fmt.Println(string(tokenData))
+		log.Println("successfully authenticated")
+		log.Println(string(tokenData))
 
 		return nil
 	},
