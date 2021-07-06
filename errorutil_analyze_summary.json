@@ -1,21 +1,12 @@
 {
   "min_code": 1000,
   "max_code": 3000,
-  "duplicate_codes": {
-    "test": [
-      "ErrFormFileCode",
-      "ErrReadConfigCode",
-      "ErrLoadConfigCode",
-      "ErrOpenFileCode",
-      "ErrKubeVersionCode"
-    ]
-  },
+  "duplicate_codes": {},
   "duplicate_names": [
-    "ErrGrafanaConfigCode",
     "ErrGrafanaBoardsCode",
     "ErrNoMeshSyncCode",
-    "ErrMesheryClientCode",
     "ErrCreateDataCode",
+    "ErrMesheryClientCode",
     "ErrNilClientCode"
   ],
   "call_expr_codes": [],
@@ -63,6 +54,18 @@
     2027,
     2028,
     2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035,
+    2036,
+    2037,
+    2038,
+    2039,
+    2040,
+    2041,
     3000
   ],
   "deprecated_new_default": []
