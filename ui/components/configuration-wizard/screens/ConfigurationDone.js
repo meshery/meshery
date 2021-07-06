@@ -1,67 +1,75 @@
-import React from "react";
-import Link  from "next/link";
-import { makeStyles, Button, Typography } from "@material-ui/core/";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import React from 'react'
+import Link from 'next/link'
+import { makeStyles, Button, Typography, Container } from '@material-ui/core/'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 
-const useStyles = makeStyles((theme) => ({
-  buttonContainer: {
-    textAlign: "right",
-    paddingBottom: "5rem",
-    marginRight: "11.5rem",
-  },
-  button: {
-    marginRight: theme.spacing(1),
-    padding: "0.5rem 2rem",
-    textDecoration: "none",
-    background: "white",
-    color: "#647881",
-    border: "1.5px solid #647881",
-    "&:hover": {
-      backgroundColor: "#647881",
-      color: "white",
-    },
-  },
-  linkButton: {
-    textDecoration: "none",
-  },
-  completed: {
-    textAlign: "center",
+const useStyles = makeStyles(() => ({
+  container: {
+    position: 'relative',
+    height: '30rem',
+    textAlign: 'center',
   },
   checkCircleIcon: {
-    color: "#00B39F",
-    padding: "1rem",
-    height: "auto",
-    width: "4rem",
+    color: '#00B39F',
+    padding: '1rem',
+    height: 'auto',
+    width: '4rem',
   },
-}));
+  subtitle: {
+    fontWeight: '300',
+  },
+  link: {
+    textDecoration: 'none',
+  },
+  returnButton: {
+    background: '#647881',
+    color: 'white',
+    marginTop: '2rem',
+    padding: '1rem 2rem',
+  },
+  startOverButton: {
+    position: 'absolute',
+    right: '1rem',
+    bottom: '2rem',
+    padding: '0.5rem 2rem',
+    textDecoration: 'none',
+    background: 'white',
+    color: '#647881',
+    border: '1.5px solid #647881',
+    '&:hover': {
+      backgroundColor: '#647881',
+      color: 'white',
+    },
+  },
+}))
 
-const ConfigurationDone = () => {
-  const classes = useStyles();
+const ConfigurationDone = ({ handleUserClick }) => {
+  const classes = useStyles()
   return (
-    <div className={classes.completed}>
+    <Container className={classes.container}>
       <CheckCircleIcon className={classes.checkCircleIcon} />
-      <Typography
-        variant="h4"
-        gutterBottom="true"
-        className={classes.instructions}
-      >
+      <Typography variant='h4' gutterBottom='true'>
         Configuration done
       </Typography>
       <Typography
-        variant="subtitle1"
-        paragraph="true"
-        gutterBottom="true"
-        className={classes.instructions}
+        variant='subtitle1'
+        paragraph='true'
+        gutterBottom='true'
+        className={classes.subtitle}
       >
-        Your configuration was successful
+        You re ready to manage cloud native infrastructure
       </Typography>
-      <div className={classes.buttonContainer}>
-        <Link href="/" className={classes.linkButton}>
-          <Button className={classes.button}>Done</Button>
-        </Link>
-      </div>
-    </div>
-  );
-};
+      <Link href='/' className={classes.link}>
+        <Button className={classes.returnButton}>Dashboard</Button>
+      </Link>
+      <Button
+        onClick={() => handleUserClick(0)}
+        className={classes.startOverButton}
+      >
+        Start Over
+      </Button>
+    </Container>
+  )
+}
 
-export default ConfigurationDone;
+export default ConfigurationDone
