@@ -258,9 +258,9 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			log.Warn("!! cannot initialize Kubernetes client")
 			log.Warn("!! cannot query the Kubernetes API")
 			return nil
-		} else { // else we're supposed to grab the error
-			return errors.New("ctlK8sClient1000: !! cannot initialize a Kubernetes client. See https://docs.meshery.io/reference/error-codes")
 		}
+		// else we're supposed to grab the error
+		return errors.New("ctlK8sClient1000: !! cannot initialize a Kubernetes client. See https://docs.meshery.io/reference/error-codes")
 	}
 
 	if hc.Options.PrintLogs { // print logs if we're supposed to
