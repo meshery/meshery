@@ -73,11 +73,6 @@ func stop() error {
 		return errors.Wrap(err, "failed to retrieve current-context")
 	}
 
-	client, err := meshkitkube.New([]byte(""))
-	if err != nil {
-		return err
-	}
-
 	ok, err := utils.IsMesheryRunning(currCtx.Platform)
 	if err != nil {
 		return err
@@ -130,6 +125,10 @@ func stop() error {
 			return errors.New("failed to initialize healthchecker")
 		}
 		if err = hc.Run(); err != nil {
+			client, err := meshkitkube.New([]byte(""))
+			if err != nil {
+				return err
+			}
 			err = utils.ApplyOperatorManifest(client, false, true)
 			if err != nil {
 				return err
@@ -137,6 +136,10 @@ func stop() error {
 		}
 
 	case "kubernetes":
+		client, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
 		// if the platform is kubernetes, stop the deployment by deleting the manifest files
 		userResponse := false
 		if utils.SilentFlag {

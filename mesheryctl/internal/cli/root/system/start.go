@@ -57,6 +57,7 @@ var startCmd = &cobra.Command{
 			PrintLogs:  false,
 			Subcommand: cmd.Use,
 		}
+		log.Debug(hcOptions)
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
 			errors.New("failed to initialize healthchecker")
@@ -82,17 +83,6 @@ func start() error {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
 			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.MesheryFolder)))
 		}
-	}
-
-	kubeClient, err := meshkitkube.New([]byte(""))
-	if err != nil {
-		return err
-	}
-
-	err = utils.CreateManifestsFolder()
-
-	if err != nil {
-		return err
 	}
 
 	// Get viper instance used for context
@@ -314,6 +304,15 @@ func start() error {
 		}
 
 	case "kubernetes":
+		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
+
+		err = utils.CreateManifestsFolder()
+		if err != nil {
+			return err
+		}
 
 		version := currCtx.Version
 		channel := currCtx.Channel
@@ -402,24 +401,35 @@ func start() error {
 	}
 	// If k8s is available in case of platform docker than we deploy operator
 	if err = hc.Run(); err != nil {
+		// create a client
+		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
+
+		err = utils.CreateManifestsFolder()
+		if err != nil {
+			return err
+		}
 		// Download operator manifest
 		err = utils.DownloadOperatorManifest()
 		if err != nil {
 			return err
 		}
-	}
-	if !skipUpdateFlag {
-		err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
-		if err != nil {
-			return err
-		}
-	} else {
-		// skip applying update on operators when the flag is used
-		err = utils.ApplyOperatorManifest(kubeClient, false, false)
+		if !skipUpdateFlag {
+			err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
-		if err != nil {
-			return err
+			if err != nil {
+				return err
+			}
+		} else {
+			// skip applying update on operators when the flag is used
+			err = utils.ApplyOperatorManifest(kubeClient, false, false)
+
+			if err != nil {
+				return err
+			}
 		}
 	}
 

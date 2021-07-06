@@ -114,7 +114,7 @@ var checkCmd = &cobra.Command{
 		} else if adapter { // if --adapter has been passed we run checks related to adapters
 			return hc.runAdapterHealthChecks()
 		} else if operator { // if --operator has been passed we run checks related to operator
-			return hc.RunOperatorHealthChecks()
+			return hc.runOperatorHealthChecks()
 		}
 
 		// if no flags passed we run complete system check
@@ -507,7 +507,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 	return nil
 }
 
-func (hc *HealthChecker) RunOperatorHealthChecks() error {
+func (hc *HealthChecker) runOperatorHealthChecks() error {
 	//TODO
 	return nil
 }
