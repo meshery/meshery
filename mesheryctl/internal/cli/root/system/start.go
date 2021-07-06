@@ -60,7 +60,7 @@ var startCmd = &cobra.Command{
 		log.Debug(hcOptions)
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			errors.New("failed to initialize healthchecker")
+			return errors.New("failed to initialize healthchecker")
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
