@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { makeStyles } from "@material-ui/core/styles";
-import { Typography, Modal, Button, Checkbox, Zoom } from "@material-ui/core/";
+import { Typography, Modal as PopUp, Button, Checkbox, Zoom } from "@material-ui/core/";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,10 +75,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PopUp = ({ open, handleClose }) => {
+const Modal = ({ open, handleClose }) => {
   const classes = useStyles();
   return (
-    <Modal
+    <PopUp
       open={open}
       onClose={handleClose}
       aria-labelledby="simple-modal-title"
@@ -123,8 +123,8 @@ const PopUp = ({ open, handleClose }) => {
           </div>
         </div>
       </Zoom>
-    </Modal>
+    </PopUp>
   );
 };
 
-export default PopUp;
+export default Modal;

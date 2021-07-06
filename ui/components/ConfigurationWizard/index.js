@@ -1,12 +1,12 @@
 import React from "react";
 import { makeStyles, Container, Button, Fade } from "@material-ui/core/";
 
-import Stepper from "./Stepper";
+import Stepper from "./utilities/Stepper";
 import KubernetesScreen from "./screens/KubernetesScreen";
-import MesheryOperatorScreen from "./screens/MesheryOperator";
-import ServiceMeshScreen from "./screens/AddServiceMesh";
-import ExternalScreen from "./screens/External";
-import ConfigurationDoneScreen from "./screens/ConfigurationDone";
+import MesheryOperatorScreen from "./screens/MesheryOperatorScreen";
+import ServiceMeshScreen from "./screens/ServiceMeshScreen";
+import ExternalScreen from "./screens/ExternalScreen";
+import ConfigurationDoneScreen from "./screens/ConfigurationDoneScreen";
 
 const useStyles = makeStyles((theme) => ({
   container: {

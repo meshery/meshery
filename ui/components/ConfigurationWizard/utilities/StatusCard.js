@@ -28,7 +28,7 @@ const useStyles = makeStyles({
   },
 });
 
-const InfoContainer = ({ controlPlane, dataPlane }) => {
+const StatusCard = ({ controlPlane, dataPlane }) => {
   const classes = useStyles();
   return (
     <div className={classes.infoContainer}>
@@ -44,4 +44,4 @@ const InfoContainer = ({ controlPlane, dataPlane }) => {
   );
 };
 
-export default InfoContainer;
+export default StatusCard;
