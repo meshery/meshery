@@ -172,6 +172,7 @@ class Header extends React.Component {
 
                   <div data-test="wizard-button">
                     <IconButton color="inherit">
+<<<<<<< HEAD
                       <Link href="/">
                         <BuildIcon className={title === 'Wizard' ? classes.itemActiveItem : ''} />
                       </Link>
@@ -180,6 +181,8 @@ class Header extends React.Component {
 
                   <div data-test="wizard-button">
                     <IconButton color="inherit">
+=======
+>>>>>>> dc9ed2ce359b9e7fde13170be2e9b7857e9212b3
                       <BuildIcon onClick={this.handleOpen} className={title === 'Wizard' ? classes.itemActiveItem : ''} />
                       <Modal open={this.state.open} handleClose={this.handleClose} />
                     </IconButton>
