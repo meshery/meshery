@@ -54,6 +54,8 @@ module.exports = {
     "@material-ui/icons/Remove": require("@material-ui/icons/Remove"),
     "@material-ui/icons/SaveRounded":require("@material-ui/icons/SaveRounded"),
     "@material-ui/icons/DoneAllRounded": require("@material-ui/icons/DoneAllRounded"),
+    "@material-ui/icons/FileCopy": require("@material-ui/icons/FileCopy"),
+    "@material-ui/icons/Delete": require("@material-ui/icons/Delete"),
     "@material-ui/icons/Replay": require("@material-ui/icons/Replay"),
     "@material-ui/core/Paper": require("@material-ui/core/Paper"),
     "@material-ui/icons/ArrowUpward": require("@material-ui/icons/ArrowUpward"),
