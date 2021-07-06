@@ -13,11 +13,11 @@ import (
 
 var logoutCmd = &cobra.Command{
 	Use:   "logout",
-	Short: "Authenticate with meshery server",
+	Short: "Remove authentication for Meshery Server",
 	Long: `
-Authenticate with meshery server
+Remove authentication for Meshery Server
 
-The authetication mode is web-based browser flow`,
+This command removes the authentication token from the user's filesystem`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
