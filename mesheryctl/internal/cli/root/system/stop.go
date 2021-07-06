@@ -40,7 +40,17 @@ var stopCmd = &cobra.Command{
 	Long:  `Stop all Meshery containers / remove all Meshery pods.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return RunPreflightHealthChecks(true, cmd.Use)
+		//Check prerequisite
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			errors.New("failed to initialize healthchecker")
+		}
+		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := stop(); err != nil {
@@ -109,7 +119,17 @@ func stop() error {
 		}
 
 		// If k8s is available in case of platform docker than we remove operator
-		if err = RunKubernetesHealthChecks(true); err != nil {
+		hcOptions := &HealthCheckOptions{
+			PrintLogs:           false,
+			IsPreRunE:           false,
+			Subcommand:          "",
+			RunKubernetesChecks: true,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.New("failed to initialize healthchecker")
+		}
+		if err = hc.Run(); err != nil {
 			err = utils.ApplyOperatorManifest(client, false, true)
 			if err != nil {
 				return err

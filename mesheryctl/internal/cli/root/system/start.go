@@ -52,23 +52,28 @@ var startCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-
-		err := RunPreflightHealthChecks(true, cmd.Use)
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			errors.New("failed to initialize healthchecker")
+		}
+		// execute healthchecks
+		err = hc.RunPreflightHealthChecks()
 		if err != nil {
 			cmd.SilenceUsage = true
-
 		}
 
 		return err
-
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
-
 		}
 		return nil
-
 	},
 }
 
@@ -387,8 +392,18 @@ func start() error {
 		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder))
 	}
 
+	hcOptions := &HealthCheckOptions{
+		PrintLogs:           false,
+		IsPreRunE:           false,
+		Subcommand:          "",
+		RunKubernetesChecks: true,
+	}
+	hc, err := NewHealthChecker(hcOptions)
+	if err != nil {
+		return errors.New("failed to initialize healthchecker")
+	}
 	// If k8s is available in case of platform docker than we deploy operator
-	if err = RunKubernetesHealthChecks(true); err != nil {
+	if err = hc.Run(); err != nil {
 		// Download operator manifest
 		err = utils.DownloadOperatorManifest()
 		if err != nil {
