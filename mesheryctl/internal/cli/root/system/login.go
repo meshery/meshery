@@ -31,7 +31,9 @@ var loginCmd = &cobra.Command{
 
 		log.Println("successfully authenticated")
 
-		ioutil.WriteFile(utils.AuthConfigFile, tokenData, 0666)
+		if err := ioutil.WriteFile(utils.AuthConfigFile, tokenData, 0666); err != nil {
+			log.Error("failed to write the token to the filesystem: ", err)
+		}
 
 		return nil
 	},
