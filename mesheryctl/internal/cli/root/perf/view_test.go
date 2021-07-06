@@ -24,7 +24,7 @@ func TestPerfView(t *testing.T) {
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		t.Fatal("problems recovering caller information")
+		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
@@ -52,11 +52,11 @@ func TestPerfView(t *testing.T) {
 		},
 		{
 			Name:             "View Results",
-			Args:             []string{"view", "ecddef09-7411-4b9e-b06c-fd55ff5debbc", "app%20mesh"},
+			Args:             []string{"view", tempProfileID, "app%20mesh"},
 			View:             "Results",
 			ExpectedResponse: "view.result.output.golden",
 			Fixture:          "view.result.api.response.golden",
-			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results?pageSize=25&search=app%20mesh",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results?pageSize=25&search=app%20mesh",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -72,11 +72,11 @@ func TestPerfView(t *testing.T) {
 		},
 		{
 			Name:             "View Results with No token",
-			Args:             []string{"view", "ecddef09-7411-4b9e-b06c-fd55ff5debbc", "app%20mesh"},
+			Args:             []string{"view", tempProfileID, "app%20mesh"},
 			View:             "Results",
 			ExpectedResponse: "no.token.golden",
 			Fixture:          "view.result.api.response.golden",
-			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results?pageSize=25&search=app%20mesh",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results?pageSize=25&search=app%20mesh",
 			Token:            "",
 			ExpectError:      true,
 		},

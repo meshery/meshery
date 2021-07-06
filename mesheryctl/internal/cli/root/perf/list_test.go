@@ -12,6 +12,8 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
+var tempProfileID = "ecddef09-7411-4b9e-b06c-fd55ff5debbc"
+
 func TestFetchList(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
@@ -25,7 +27,7 @@ func TestFetchList(t *testing.T) {
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		t.Fatal("problems recovering caller information")
+		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
@@ -54,7 +56,7 @@ func TestFetchList(t *testing.T) {
 			Fetch:            "Results",
 			ExpectedResponse: "list.result.output.golden",
 			Fixture:          "list.result.api.response.golden",
-			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -72,7 +74,7 @@ func TestFetchList(t *testing.T) {
 			Fetch:            "Results",
 			ExpectedResponse: "no.token.golden",
 			Fixture:          "list.result.api.response.golden",
-			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results",
 			Token:            "",
 			ExpectError:      true,
 		},
@@ -96,7 +98,7 @@ func TestFetchList(t *testing.T) {
 			if tt.Fetch == "Profiles" {
 				data, _, err = fetchPerformanceProfiles(tt.URL)
 			} else {
-				data, _, err = fetchPerformanceProfileResults(tt.URL, "ecddef09-7411-4b9e-b06c-fd55ff5debbc")
+				data, _, err = fetchPerformanceProfileResults(tt.URL, tempProfileID)
 			}
 
 			testdataDir := filepath.Join(currDir, "testdata")

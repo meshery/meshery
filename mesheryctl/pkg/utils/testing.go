@@ -67,7 +67,7 @@ func Equals(tb testing.TB, exp, act interface{}) {
 func GetBasePath(t *testing.T) string {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		t.Fatal("problems recovering caller information")
+		t.Fatal("Not able to get current working directory")
 	}
 
 	return filepath.Dir(filename)
@@ -143,7 +143,7 @@ func StartMockery(t *testing.T) {
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		t.Fatal("problems recovering caller information")
+		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
