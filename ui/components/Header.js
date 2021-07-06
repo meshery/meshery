@@ -120,6 +120,7 @@ class Header extends React.Component {
   
   render() {
     const { classes, title, onDrawerToggle ,onDrawerCollapse} = this.props;
+    console.log('title', title)
    
     return (
       <NoSsr>
@@ -249,7 +250,7 @@ Header.propTypes = {
 
 const mapStateToProps = (state) =>
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
-  // console.log("state: " + JSON.stringify(state));
+  // console.log("state: " + JSON.stringify(state))
   ({ title: state.get('page').get('title') })
 ;
 
