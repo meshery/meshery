@@ -341,7 +341,7 @@ func start() error {
 		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
 
-		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes.", "Meshery deployed on Kubernetes.")
+		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 		spinner.Start()
 
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
