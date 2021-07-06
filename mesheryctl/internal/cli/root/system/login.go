@@ -1,6 +1,8 @@
 package system
 
 import (
+	"io/ioutil"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -10,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var LoginCmd = &cobra.Command{
+var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Authenticate mesheryctl",
 	Long:  `Authenticate meheryctl`,
@@ -28,7 +30,8 @@ var LoginCmd = &cobra.Command{
 		}
 
 		log.Println("successfully authenticated")
-		log.Println(string(tokenData))
+
+		ioutil.WriteFile(utils.AuthConfigFile, tokenData, 0666)
 
 		return nil
 	},

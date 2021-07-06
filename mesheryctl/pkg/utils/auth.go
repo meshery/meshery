@@ -88,6 +88,10 @@ func UpdateAuthDetails(filepath string) error {
 	return ioutil.WriteFile(filepath, data, os.ModePerm)
 }
 
+// CreateTempAuthServer creates a temporary http server
+//
+// It implements a custom mux and has a catch all route, the function passed as the
+// parameter is binded to the catch all route
 func CreateTempAuthServer(fn func(http.ResponseWriter, *http.Request)) (*http.Server, int, error) {
 	mux := http.NewServeMux()
 	srv := &http.Server{
@@ -112,6 +116,7 @@ func CreateTempAuthServer(fn func(http.ResponseWriter, *http.Request)) (*http.Se
 	return srv, listener.Addr().(*net.TCPAddr).Port, nil
 }
 
+// InitiateLogin initates the login process
 func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
 	// Get the providers info
 	providers, err := GetProviderInfo(mctlCfg)
@@ -148,6 +153,7 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
 	return data, nil
 }
 
+// GetProviderInfo queries meshery API for the provider info
 func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, error) {
 	res := map[string]Provider{}
 
@@ -163,10 +169,12 @@ func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, erro
 	return res, nil
 }
 
+// initiateLocalProviderAuth initiates login process for the local provider
 func initiateLocalProviderAuth(provider Provider) (string, error) {
 	return "", nil
 }
 
+// initiateRemoteProviderAuth intiates login process for the remote provider
 func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	tokenChan := make(chan string, 1)
 

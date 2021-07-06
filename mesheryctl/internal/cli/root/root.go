@@ -101,7 +101,6 @@ func init() {
 		perf.PerfCmd,
 		mesh.MeshCmd,
 		experimental.ExpCmd,
-		system.LoginCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
