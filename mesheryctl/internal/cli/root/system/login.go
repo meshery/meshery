@@ -1,4 +1,4 @@
-package auth
+package system
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var loginCmd = &cobra.Command{
+var LoginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Authenticate mesheryctl",
 	Long:  `Authenticate meheryctl`,
