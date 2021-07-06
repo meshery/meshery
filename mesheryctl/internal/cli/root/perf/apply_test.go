@@ -12,8 +12,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-var existingProfileId = "8f3daf25-e58e-4c59-8bf8-f474b76463ec"
-var newProfileId = "906f8876-33b5-4a97-906e-7a409d3b8ae9"
+var existingProfileID = "8f3daf25-e58e-4c59-8bf8-f474b76463ec"
+var newProfileID = "906f8876-33b5-4a97-906e-7a409d3b8ae9"
 
 func TestApplyCmd(t *testing.T) {
 	// setup current context
@@ -55,7 +55,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileId + "/run",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileID + "/run",
 					Response:     "apply.run.existing.perf.test.response.golden",
 					ResponseCode: 200,
 				},
@@ -76,7 +76,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileId + "/run",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileID + "/run",
 					Response:     "apply.run.new.perf.test.response.golden",
 					ResponseCode: 200,
 				},
@@ -97,7 +97,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileId + "/run",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileID + "/run",
 					Response:     "apply.no.protocol.response.golden",
 					ResponseCode: 400,
 				},
@@ -118,7 +118,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileId + "/run",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileID + "/run",
 					Response:     "apply.no.protocol.response.golden",
 					ResponseCode: 400,
 				},
@@ -139,7 +139,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileId + "/run",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileID + "/run",
 					Response:     "apply.run.new.profile.test.response.golden",
 					ResponseCode: 200,
 				},
@@ -160,7 +160,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileId + "/run",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileID + "/run",
 					Response:     "apply.run.new.profile.test.response.golden",
 					ResponseCode: 200,
 				},
@@ -181,7 +181,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileId + "/run",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileID + "/run",
 					Response:     "apply.run.new.profile.test.response.golden",
 					ResponseCode: 200,
 				},
@@ -202,7 +202,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileId + "/run",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileID + "/run",
 					Response:     "apply.run.new.perf.test.response.golden",
 					ResponseCode: 200,
 				},
