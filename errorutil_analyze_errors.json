@@ -1315,8 +1315,180 @@
         "long_description": "Cannot find valid Prometheus endpoint in user pref",
         "short_description": "Prometheus endpoint not configured.",
         "probable_cause": "",
-        "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard"
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrApplyChangeCode": [
+      {
+        "name": "ErrApplyChangeCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying the change",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrControlPlaneSubscriptionCode": [
+      {
+        "name": "ErrControlPlaneSubscriptionCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Control Plane stopped",
+        "short_description": "Control Plane Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Check if meshery server is reachable from the browser"
+      }
+    ],
+    "ErrConvertToSpecCode": [
+      {
+        "name": "ErrConvertToSpecCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to convert to spec",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrCreateDataCode": [
+      {
+        "name": "ErrCreateDataCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to write MeshSync data to the Meshery Database",
+        "short_description": "Error while writing meshsync data",
+        "probable_cause": "Meshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
       },
+      {
+        "name": "ErrCreateDataCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to update MeshSync data to the Meshery Database",
+        "short_description": "Error while updating meshsync data",
+        "probable_cause": "Meshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
+      },
+      {
+        "name": "ErrCreateDataCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to read MeshSync data to the Meshery Database",
+        "short_description": "Error while deleting meshsync data",
+        "probable_cause": "Meshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
+      }
+    ],
+    "ErrDecodingCode": [
+      {
+        "name": "ErrDecodingCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error decoding the : ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrEncodingCode": [
+      {
+        "name": "ErrEncodingCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error encoding the : ",
+        "probable_cause": "Unable to encode the : ",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFailToDeleteCode": [
+      {
+        "name": "ErrFailToDeleteCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFailToSaveCode": [
+      {
+        "name": "ErrFailToSaveCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Save: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFetchSMIResultsCode": [
+      {
+        "name": "ErrFetchSMIResultsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to fetch SMI results",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFormFileCode": [
+      {
+        "name": "ErrFormFileCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error getting k8s file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrGetResultCode": [
+      {
+        "name": "ErrGetResultCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to get result",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrGrafanaBoardsCode": [
+      {
+        "name": "ErrGrafanaBoardsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to get grafana boards",
+        "probable_cause": "",
+        "suggested_remediation": "Check if your Grafana endpoint is correct\nConnect to Grafana from the settings page in the UI"
+      },
+      {
+        "name": "ErrGrafanaBoardsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to get Prometheus boards",
+        "probable_cause": "",
+        "suggested_remediation": "Check if your Prometheus endpoint is correct\nConnect to Prometheus from the settings page in the UI"
+      }
+    ],
+    "ErrGrafanaClientCode": [
+      {
+        "name": "ErrGrafanaClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to initializes client for interacting with an instance of Grafana server",
+        "short_description": "Unable to initialize Grafana Client",
+        "probable_cause": "Invalid Grafana Endpoint or API-Key",
+        "suggested_remediation": "Update your Grafana URL and API-Key from the settings page in the UI"
+      }
+    ],
+    "ErrGrafanaConfigCode": [
       {
         "name": "ErrGrafanaConfigCode",
         "code": "",
