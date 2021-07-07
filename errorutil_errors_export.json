@@ -542,9 +542,9 @@
       "probable_cause": "",
       "suggested_remediation": ""
     },
-    "2048": {
+    "2047": {
       "name": "ErrFailToLoadExtensionsCode",
-      "code": "2048",
+      "code": "2047",
       "severity": "Alert",
       "long_description": "",
       "short_description": "Failed to Load Extensions from Package",
