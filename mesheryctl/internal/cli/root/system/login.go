@@ -14,11 +14,11 @@ import (
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "Authenticate with meshery server",
+	Short: "Authenticate to a Meshery Server",
 	Long: `
-Authenticate with meshery server
+Authenticate to the Local or a Remote Provider of a Meshery Server
 
-The authetication mode is web-based browser flow`,
+The authentication mode is web-based browser flow`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
