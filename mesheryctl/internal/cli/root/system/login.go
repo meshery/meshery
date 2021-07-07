@@ -26,9 +26,22 @@ The authentication mode is web-based browser flow`,
 			return errors.Wrap(err, "error processing config")
 		}
 
+		isRunning, err := utils.IsMesheryRunning(mctlCfg.GetCurrentContext().Platform)
+		if err != nil {
+			log.Error("failed to check Meshery Server status: ", err)
+			return nil
+		}
+
+		if !isRunning {
+			log.Error(`Meshery Server is not running
+
+Run "mesheryctl system start" to start meshery`)
+			return nil
+		}
+
 		tokenData, err := utils.InitiateLogin(mctlCfg)
 		if err != nil {
-			log.Println("authentication failed")
+			log.Println("authentication failed:", err)
 			return nil
 		}
 
