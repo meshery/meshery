@@ -80,6 +80,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 	if err != nil {
 		obj := "performance profile"
 		//get query performance profile
+		h.log.Error(ErrQueryGet(obj))
 		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		return
 	}

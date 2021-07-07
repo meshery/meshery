@@ -52,7 +52,7 @@ const (
 	ErrRetrieveUserTokenCode    = "2044"
 	ErrFailToSaveCode           = "2045"
 	ErrFailToDeleteCode         = "2046"
-	ErrFailToLoadExtensionsCode = "2047"
+	ErrFailToLoadExtensionsCode = "2048"
 )
 
 var (

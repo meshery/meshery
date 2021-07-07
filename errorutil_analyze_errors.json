@@ -378,8 +378,8 @@
     },
     {
       "name": "ErrFailToLoadExtensionsCode",
-      "old_code": "2047",
-      "code": "2047",
+      "old_code": "2048",
+      "code": "2048",
       "code_is_literal": true,
       "code_is_int": true,
       "path": "handlers/error.go"
@@ -1098,11 +1098,11 @@
         "path": "handlers/error.go"
       }
     ],
-    "2047": [
+    "2048": [
       {
         "name": "ErrFailToLoadExtensionsCode",
-        "old_code": "2047",
-        "code": "2047",
+        "old_code": "2048",
+        "code": "2048",
         "code_is_literal": true,
         "code_is_int": true,
         "path": "handlers/error.go"
