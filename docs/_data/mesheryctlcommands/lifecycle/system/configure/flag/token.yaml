@@ -1,0 +1,5 @@
+flag: -t, --token string
+arg: config
+description: Path to token for authenticating to Meshery API.
+usage: |
+    mesheryctl system config --token < path-to-file >

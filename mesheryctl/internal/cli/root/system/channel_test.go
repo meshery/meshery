@@ -38,7 +38,7 @@ func SetupFunc(t *testing.T) {
 	//fmt.Println(viper.AllKeys())
 	b = bytes.NewBufferString("")
 	logrus.SetOutput(b)
-	logrus.SetFormatter(&utils.OnlyStringFormatterForLogrus{})
+	utils.SetupLogrusFormatter()
 	SystemCmd.SetOut(b)
 }
 

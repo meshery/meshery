@@ -91,6 +91,8 @@ func (mrp *MesheryResultsPersister) WriteResult(key uuid.UUID, result []byte) er
 		return err
 	}
 
+	data.ID = key
+
 	t := time.Now()
 	data.TestStartTime = &t
 	return mrp.DB.Table("meshery_results").Save(convertMesheryResultToLocalRepresentation(&data)).Error
@@ -98,12 +100,6 @@ func (mrp *MesheryResultsPersister) WriteResult(key uuid.UUID, result []byte) er
 
 func marshalMesheryResultsPage(mrp *MesheryResultPage) []byte {
 	res, _ := json.Marshal(mrp)
-
-	return res
-}
-
-func marshalMesheryResult(mr *MesheryResult) []byte {
-	res, _ := json.Marshal(mr)
 
 	return res
 }

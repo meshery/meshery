@@ -66,7 +66,7 @@ curl -L https://git.io/meshery | bash -
 
 #### Instalando el binario `mesheryctl`
 
-Descarga y descomprime `mesheryctl` desde la página de [Liberaciones Meshery](https://github.com/layer5io/meshery/releases/latest). Agrega `mesheryctl` a tu PATH para facilitar el uso. Después, ejecuta:
+Descarga y descomprime `mesheryctl` desde la página de [Liberaciones Meshery](https://github.com/meshery/meshery/releases/latest). Agrega `mesheryctl` a tu PATH para facilitar el uso. Después, ejecuta:
 
 ```bash
 ./mesheryctl system start

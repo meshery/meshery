@@ -1,13 +1,11 @@
 ---
 layout: default
-title: start
+title: mesheryctl system start
 permalink: reference/mesheryctl/system/start
 type: reference
 display-title: "false"
 language: en
 lang: en
-categories: en
-list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -53,11 +51,12 @@ list: exclude
 <!-- Options/Flags available in this command -->
 ## Options
 
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
-    {{ flag.flag }} # {{ flag.description }}
-    {% endfor %}
+    {{ flag.flag }}
   </div>
 </pre>
+{% endfor %}
 <br/>

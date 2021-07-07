@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: layer5/meshery-istio:stable-latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 env: {}
 

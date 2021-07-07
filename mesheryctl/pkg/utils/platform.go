@@ -7,14 +7,19 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/spf13/viper"
+
 	"gopkg.in/yaml.v2"
 
 	v1core "k8s.io/api/core/v1"
@@ -28,6 +33,31 @@ var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
 )
+
+// ChangePlatform changes the platform specified in the current context to the specified platform
+func ChangePlatform(currCtx string, ctx config.Context) error {
+	ViperK8s.SetConfigFile(DefaultConfigPath)
+	err := ViperK8s.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	meshConfig := &config.MesheryCtlConfig{}
+	err = ViperK8s.Unmarshal(&meshConfig)
+	if err != nil {
+		return err
+	}
+
+	meshConfig.Contexts[currCtx] = ctx
+	ViperK8s.Set("contexts."+currCtx, ctx)
+
+	err = ViperK8s.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // ChangeConfigEndpoint changes the endpoint of the current context in meshconfig, based on the platform
 func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
@@ -71,6 +101,32 @@ func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+// ChangeContextVersion changes the version of the specified context to the specified version
+func ChangeContextVersion(contextName, version string) error {
+	viperConfig := viper.New()
+
+	viperConfig.SetConfigFile(DefaultConfigPath)
+	err := viperConfig.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	meshConfig := &config.MesheryCtlConfig{}
+	err = viperConfig.Unmarshal(&meshConfig)
+	if err != nil {
+		return err
+	}
+
+	viperConfig.Set("contexts."+contextName+".version", version)
+
+	err = viperConfig.WriteConfig()
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -149,11 +205,6 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 			}
 		}
 	}
-
-	if err := DownloadOperatorManifest(); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -406,7 +457,7 @@ func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool)
 }
 
 // ChangeManifestVersion changes the tag of the images in the manifest according to the pinned version
-func ChangeManifestVersion(fileName string, version string, filePath string) error {
+func ChangeManifestVersion(fileName string, channel string, version string, filePath string) error {
 	// setting up config type to yaml files
 	ViperCompose.SetConfigType("yaml")
 
@@ -428,9 +479,15 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 	if err != nil {
 		return fmt.Errorf("unable to unmarshal config %s | %s", fileName, err)
 	}
+
+	// for edge channel only the latest tag exist in Docker Hub
+	if channel == "edge" {
+		version = "latest"
+	}
+
 	image := compose.Spec.Template.Spec.Containers[0].Image
 	spliter := strings.Split(image, ":")
-	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], "stable", version)
+	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], channel, version)
 
 	log.Debug(image, " changed to ", compose.Spec.Template.Spec.Containers[0].Image)
 
@@ -460,7 +517,7 @@ func CreateManifestsFolder() error {
 	if err := os.RemoveAll(ManifestsFolder); err != nil {
 		return err
 	}
-	log.Info("creating ~/.meshery/manifests folder...")
+	log.Debug("creating ~/.meshery/manifests folder...")
 	// create a manifests folder under ~/.meshery to store the manifest files
 	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))
@@ -525,4 +582,80 @@ func CleanPodNames(name string) string {
 	}
 
 	return split[0]
+}
+
+func Startdockerdaemon(subcommand string) error {
+	userResponse := false
+	// read user input on whether to start Docker daemon or not.
+	if SilentFlag {
+		userResponse = true
+	} else {
+		userResponse = AskForConfirmation("Start Docker now")
+	}
+	if userResponse != true {
+		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
+	}
+
+	log.Info("Attempting to start Docker...")
+	// once user gaves permission, start docker daemon on linux/macOS
+	if runtime.GOOS == "linux" {
+		if err := exec.Command("sudo", "service", "docker", "start").Run(); err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+	} else {
+		// Assuming we are on macOS, try to start Docker from default path
+		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
+		err := cmd.Start()
+		if err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+		// wait for few seconds for docker to start
+		err = exec.Command("sleep", "30").Run()
+		if err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+		// check whether docker started successfully or not, throw an error message otherwise
+		if err := exec.Command("docker", "ps").Run(); err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+	}
+	log.Info("Prerequisite Docker started.")
+	return nil
+}
+
+func InstallprereqDocker() error {
+	log.Info("Attempting Docker-Compose installation...")
+	ostype, osarch, err := prereq()
+	if err != nil {
+		return errors.Wrap(err, "failed to get prerequisites")
+	}
+
+	osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
+
+	dockerComposeBinaryURL := dockerComposeBinaryURL
+	//checks for the latest docker-compose
+	resp, err := http.Get(dockerComposeWebURL)
+	if err != nil {
+		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
+	} else {
+		var dat map[string]interface{}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, "failed to read response body")
+		}
+		if err := json.Unmarshal(body, &dat); err != nil {
+			return errors.Wrap(err, "failed to unmarshal json into object")
+		}
+		num := dat["tag_name"]
+		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
+	}
+	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
+	if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
+		return errors.Wrapf(err, "failed to download %s from %s", dockerComposeBinary, dockerComposeBinaryURL)
+	}
+	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
+		return errors.Wrap(err, "failed to execute command")
+	}
+	log.Info("Prerequisite Docker Compose is installed.")
+	return nil
 }

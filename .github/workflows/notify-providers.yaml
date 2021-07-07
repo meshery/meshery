@@ -2,7 +2,7 @@ name: Notify Remote Providers
 on:
   push:
     branches:
-      - '!*'
+      - 'master'
     tags:
       - 'v*'
 
@@ -17,13 +17,17 @@ jobs:
       with:
         name: "Build and Publish"
         repo: layer5labs/meshery-extensions
-        token: ${{ secrets.GITHUB_PAT }}
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
         version: master
+    - name: set env
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      id: vars
+      run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
     - name: trigger plugins for release
       if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       uses: layer5io/trigger-remote-provider-action@master
       with:
         name: "Build and Publish"
         repo: layer5labs/meshery-extensions
-        token: ${{ secrets.GITHUB_PAT }}
-        version: ${GITHUB_REF/refs\/tags\//}
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
+        version: ${{ steps.vars.outputs.tag }}

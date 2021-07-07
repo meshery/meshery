@@ -47,7 +47,7 @@ jobs:
             # assignees:
             # reviewers:
             team-reviewers: |
-              release-team
+              ci-release-contributors
               maintainers
             # milestone: 1
             draft: false

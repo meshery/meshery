@@ -33,7 +33,7 @@ import (
 var restartCmd = &cobra.Command{
 	Use:   "restart",
 	Short: "Stop, then start Meshery",
-	Long:  `Restart all Meshery containers, their instances and their connected volumes.`,
+	Long:  `Restart all Meshery containers / pods.`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return restart()
@@ -67,32 +67,42 @@ func restart() error {
 		}
 
 	case "kubernetes":
-		// create an kubernetes client
-		client, err := meshkitkube.New([]byte(""))
-
+		running, err := utils.IsMesheryRunning(currPlatform)
 		if err != nil {
 			return err
 		}
-
-		// Create a pod interface for the MesheryNamespace
-		podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
-		// List the pods in the MesheryNamespace
-		podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-		if err != nil {
-			return err
-		}
-
-		// List all the pods similar to kubectl get pods -n MesheryNamespace
-		for _, pod := range podList.Items {
-			// Get the values from the pod status
-			name := pod.GetName()
-			log.Info("Deleting pod ", name)
-			err := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).Delete(context.TODO(), name, v1.DeleteOptions{})
-			if err != nil {
-				log.Fatal(err)
+		if !running { // Meshery is not running
+			if err := start(); err != nil {
+				return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
 			}
-			log.Info("Restarting pod ", name)
+		} else {
+			// create a kubernetes client
+			client, err := meshkitkube.New([]byte(""))
+
+			if err != nil {
+				return err
+			}
+
+			// Create a pod interface for the MesheryNamespace
+			podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
+
+			// List the pods in the MesheryNamespace
+			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			if err != nil {
+				return err
+			}
+
+			// List all the pods similar to kubectl get pods -n MesheryNamespace
+			for _, pod := range podList.Items {
+				// Get the values from the pod status
+				name := pod.GetName()
+				log.Info("Deleting pod ", name)
+				err := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).Delete(context.TODO(), name, v1.DeleteOptions{})
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Info("Restarting pod ", name)
+			}
 		}
 	}
 	return nil

@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
-	OAM "github.com/layer5io/meshery/models/oam"
+	OAM "github.com/layer5io/meshery/models/pattern"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -21,7 +21,7 @@ type MesheryPatternRequestBody struct {
 }
 
 // PatternFileRequestHandler will handle requests of both type GET and POST
-// on the route /api/experimental/patterns
+// on the route /api/experimental/pattern
 func (h *Handler) PatternFileRequestHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -39,6 +39,13 @@ func (h *Handler) PatternFileRequestHandler(
 		return
 	}
 }
+
+// swagger:route POST /api/experimental/pattern PatternsAPI idPostPatternFile
+// Handle POST requests for patterns
+//
+// Edit/update a meshery pattern
+// responses:
+// 	200: mesheryPatternResponseWrapper
 
 func (h *Handler) handlePatternPOST(
 	rw http.ResponseWriter,
@@ -176,6 +183,14 @@ func (h *Handler) handlePatternPOST(
 	}
 }
 
+// swagger:route GET /api/experimental/pattern PatternsAPI idGetPatternFiles
+// Handle GET request for patterns
+//
+// Returns the list of all the patterns saved by the current user
+// This will return all the patterns with their details
+// responses:
+// 	200: mesheryPatternsResponseWrapper
+
 // GetMesheryPatternsHandler returns the list of all the patterns saved by the current user
 func (h *Handler) GetMesheryPatternsHandler(
 	rw http.ResponseWriter,
@@ -196,6 +211,13 @@ func (h *Handler) GetMesheryPatternsHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route DELETE /api/experimental/pattern/{id} PatternsAPI idDeleteMesheryPattern
+// Handle Delete for a Meshery Pattern
+//
+// Deletes a meshery pattern with ID: id
+// responses:
+// 	200: noContentWrapper
+//
 // DeleteMesheryPatternHandler deletes a pattern with the given id
 func (h *Handler) DeleteMesheryPatternHandler(
 	rw http.ResponseWriter,
@@ -215,6 +237,13 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
+
+// swagger:route GET /api/experimental/pattern/{id} PatternsAPI idGetMesheryPattern
+// Handle GET for a Meshery Pattern
+//
+// Fetches the pattern with the given id
+// responses:
+// 	200: mesheryPatternResponseWrapper
 
 // GetMesheryPatternHandler fetched the pattern with the given id
 func (h *Handler) GetMesheryPatternHandler(

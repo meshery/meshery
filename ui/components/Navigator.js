@@ -19,6 +19,7 @@ import NoSsr from "@material-ui/core/NoSsr";
 import Avatar from "@material-ui/core/Avatar";
 import { withRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faTasks,
   faTerminal,
@@ -53,9 +54,9 @@ const styles = (theme) => ({
     paddingBottom: 16,
   },
   firebase: {
-    fontSize: 24,
-    fontFamily: theme.typography.fontFamily,
-    color: theme.palette.common.white,
+    top: 0,
+    position: "sticky",
+    zIndex: 5
   },
   link: {
     display: "inline-flex",
@@ -79,7 +80,8 @@ const styles = (theme) => ({
   },
   textDense: {},
   divider: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
   mainLogo: {
     marginRight: theme.spacing(1),
@@ -110,9 +112,6 @@ const styles = (theme) => ({
     width: 170,
     height: "100%",
     borderRadius: "unset",
-  },
-  documentation: {
-    marginTop: theme.spacing(2),
   },
   settingsIcon: {
     marginLeft: theme.spacing(2),
@@ -309,6 +308,14 @@ const categories = [
         show: true,
         link: true,
       },
+      {
+        id: "Applications",
+        icon: <img src="/static/img/web-applications.svg" style={{ width: "1.21rem" }} />, 
+        href: "/configuration/applications",
+        title: "Meshery Applications",
+        show: true,
+        link: true,
+      },
     ],
   },
   {
@@ -430,7 +437,7 @@ const externlinks = [
   },
   {
     id: "issues",
-    href: "https://github.com/layer5io/meshery/issues/new/choose",
+    href: "https://github.com/meshery/meshery/issues/new/choose",
     title: "Issues",
     icon: <GitHubIcon style={drawerIconsStyle} />,
     external_icon: ExternalLinkIcon,
@@ -869,7 +876,7 @@ class Navigator extends React.Component {
                   href={href}
                   target="_blank"
                   key={id}
-                  className={classNames(classes.item, classes.itemActionable, id == "doc" ? classes.documentation : "")}
+                  className={classNames(classes.item, classes.itemActionable)}
                 >
                   <div className={classNames(classes.link)}>
                     <Tooltip

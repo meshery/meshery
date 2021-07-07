@@ -37,7 +37,7 @@ func NewBitCaskPreferencePersister(folderName string) (*BitCaskPreferencePersist
 	}
 
 	fileName := path.Join(folderName, "db")
-	db, err := bitcask.Open(fileName, bitcask.WithSync(true))
+	db, err := bitcask.Open(fileName, bitcask.WithSync(true), bitcask.WithMaxValueSize(uint64(1<<32)))
 	if err != nil {
 		logrus.Errorf("Unable to open database: %v.", err)
 		return nil, err

@@ -44,7 +44,7 @@ describe('Settings', () => {
       cy.wait('@getMeshAdapters')
     })
     it('ping and submit Consul', () => {
-      cy.intercept('GET', '/api/mesh/adapter/ping').as('getAdapterPing')
+      cy.intercept('GET', '/api/mesh/adapter/ping*').as('getAdapterPing')
       cy.intercept('POST', '/api/mesh/manage').as('postMeshManage')
       cy.intercept('GET', '/api/mesh/adapters').as('getMeshAdapters')
 

@@ -4,7 +4,9 @@ title: Extensibility
 permalink: extensibility
 type: Extensibility
 abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different service meshes via <a href="extensibility#adapters">adapters</a>, <a href="extensibility#load-generators">load generators</a> and <a href="extensibility#providers">providers</a>.'
-redirect_from: reference/extensibility
+redirect_from:
+  - reference/extensibility
+  - extensibility/
 ---
 
 Meshery has an extensible architecture with several extension points. Meshery provides several extension points for working with different service meshes via [adapters](#adapters), different [load generators](#load-generators) and different [providers](#providers). Meshery also offers a REST API.

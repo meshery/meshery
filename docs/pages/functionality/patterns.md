@@ -86,6 +86,24 @@ traits:
         - pause: {duration: 10}
 ```
 
+### Sample Application
+
+```
+name: ApplicationPattern # display name in Meshery UI
+services:
+  myapp:
+    type: Application
+    namespace: test
+    settings:
+      replicas: 1
+      containers:
+        - name: meshy
+          image: utkarsh23/meshy:v5
+          ports:
+            - name: http
+              containerPort: 8080
+```
+
 ## Importing Patterns
 
 You may import a pattern using `mesheryctl` or Meshery UI. Patterns can be imported from local filesystem, an HTTP/S endpoint, or from GitHub. When provided a GitHub location, Meshery will recursively search the given directory (or entire repository) for existing pattern files.

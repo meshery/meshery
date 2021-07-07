@@ -3,7 +3,7 @@ package resolver
 import (
 	"context"
 	"fmt"
-	"strings"
+	"net/url"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshkit/utils"
@@ -74,9 +74,34 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 					return nil, err
 				}
 
+				if endpoint.External == nil {
+					endpoint.External = endpoint.Internal
+				} else {
+					if !utils.TcpCheck(&utils.HostPort{
+						Address: endpoint.External.Address,
+						Port:    endpoint.External.Port,
+					}, nil) {
+						if !utils.TcpCheck(&utils.HostPort{
+							Address: "host.docker.internal",
+							Port:    endpoint.External.Port,
+						}, nil) {
+							u, _ := url.Parse(r.KubeClient.RestConfig.Host)
+							if utils.TcpCheck(&utils.HostPort{
+								Address: u.Hostname(),
+								Port:    endpoint.External.Port,
+							}, nil) {
+								u, _ := url.Parse(r.KubeClient.RestConfig.Host)
+								endpoint.External.Address = u.Hostname()
+							}
+						} else {
+							endpoint.External.Address = "host.docker.internal"
+						}
+					}
+				}
+
 				addonlist = append(addonlist, &model.AddonList{
 					Name:     obj.ObjectMeta.Name,
-					Owner:    strings.ToLower(selector.String()),
+					Owner:    selector.String(),
 					Endpoint: fmt.Sprintf("%s:%d", endpoint.External.Address, endpoint.External.Port),
 				})
 			}

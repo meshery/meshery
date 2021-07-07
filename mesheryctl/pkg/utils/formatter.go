@@ -1,17 +1,20 @@
 package utils
 
 import (
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
-// OnlyStringFormatterForLogrus is a custom logrus formatter that returns only string of message as output
-type OnlyStringFormatterForLogrus struct{}
+//TerminalFormatter is exported
+type TerminalFormatter struct{}
 
 // Format defined the format of output for Logrus logs
-func (obj OnlyStringFormatterForLogrus) Format(entry *logrus.Entry) ([]byte, error) {
-	if entry != nil {
-		return []byte(entry.Message + "\n"), nil
-	}
-	return []byte(""), errors.New("no entry received")
+// Format is exported
+func (f *TerminalFormatter) Format(entry *log.Entry) ([]byte, error) {
+	return append([]byte(entry.Message), '\n'), nil
+}
+
+// Call this function to setup logrus
+func SetupLogrusFormatter() {
+	//log formatter for improved UX
+	log.SetFormatter(new(TerminalFormatter))
 }

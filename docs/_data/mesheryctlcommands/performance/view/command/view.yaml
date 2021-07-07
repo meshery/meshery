@@ -1,0 +1,9 @@
+name: view
+description: Configuration of performance profile.
+usage: |
+
+    # View performance profile
+    mesheryctl perf view [profile-name]
+
+    # View performance results
+    mesheryctl perf view [profile-id] [test-name]

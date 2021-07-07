@@ -7,7 +7,7 @@ version: v1.0
 port: 10006/tcp
 project_status: stable
 adapter_version: v0.5.2
-github_link: https://github.com/layer5io/meshery-traefik-mesh
+github_link: https://github.com/meshery/meshery-traefik-mesh
 image: /assets/img/service-meshes/traefik-mesh.svg
 permalink: service-meshes/adapters/traefik-mesh
 ---
@@ -26,9 +26,9 @@ Want to contribute? Check our [progress](page.github_link).
 
 The {{ page.name }} includes some sample applications operations. Meshery can be used to deploy any of these sample applications.
 
-- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo)
+- [Bookinfo]({{ site.baseurl }}/guides/deploying-sample-apps#bookinfo)
   - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
-- [Httpbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
+- [Httpbin]({{ site.baseurl }}/guides/deploying-sample-apps#httpbin)
   - Httpbin is a simple HTTP request and response service.
 
 ## Suggested Topics

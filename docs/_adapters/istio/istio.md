@@ -8,7 +8,7 @@ port: 10000/tcp
 project_status: stable
 adapter_version: v0.5.4
 lab: istio-meshery-adapter
-github_link: https://github.com/layer5io/meshery-istio
+github_link: https://github.com/meshery/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 permalink: service-meshes/adapters/istio
 ---
@@ -51,13 +51,13 @@ Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service m
 
 The ({{page.name}}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo)
+- [Bookinfo]({{ site.baseurl }}/guides/deploying-sample-apps#bookinfo)
   - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
-- [Httpbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
+- [Httpbin]({{ site.baseurl }}/guides/deploying-sample-apps#httpbin)
   - Httpbin is a simple HTTP request and response service.
-- [Hipster]({{ site.baseurl }}/guides/sample-apps#hipster)
+- [Hipster]({{ site.baseurl }}/guides/deploying-sample-apps#hipster)
   - Hipster Shop Application is a web-based, e-commerce demo application from the Google Cloud Platform.
-- [Image Hub]({{ site.baseurl }}/guides/sample-apps/imagehub)
+- [Image Hub]({{ site.baseurl }}/guides/deploying-sample-apps/imagehub)
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 ## Using Service Mesh Standards

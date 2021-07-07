@@ -1,4 +1,4 @@
 name : pattern
 description : 
 usage: |
-    `mesheryctl exp pattern`
+    `mesheryctl pattern`

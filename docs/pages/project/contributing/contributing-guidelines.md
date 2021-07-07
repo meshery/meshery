@@ -1,9 +1,10 @@
 ---
 layout: default
-title: Meshery Contributing Guidelines
+title: 'Meshery Contributing Guidelines'
 abstract: "Design principles and code conventions."
 permalink: project/contributing-guide
 type: project
+category: contributing
 ---
 These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.
 
@@ -81,3 +82,17 @@ If you are working on a new command or adding a new feature on an existing comma
 Broader features should have a design spec made in Google Doc using [this template](https://drive.google.com/drive/folders/1KHtJc4ToklBQ_UUsDgAL2sVZNhOQGzbh).
 
 For small changes, communicating over the [issue tracker](https://github.com/layer5io/meshery/issues) or the [discussions](https://github.com/layer5io/meshery/discussions) will be helpful.
+
+
+# Suggested Reading
+
+{% assign sorted_reading = site.pages | sort: page.title | reverse %}
+
+<ul>
+  {% for item in sorted_reading %}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+</ul>

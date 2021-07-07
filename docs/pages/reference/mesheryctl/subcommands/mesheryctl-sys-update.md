@@ -1,13 +1,11 @@
 ---
 layout: default
-title: update
+title: mesheryctl system update
 permalink: reference/mesheryctl/system/update
 type: reference
 display-title: "false"
 language: en
 lang: en
-categories: en
-list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -33,29 +31,34 @@ Meshery container images are updated by `mesheryctl system update`. The update p
 
 ## Examples
 
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.update.command %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.update.command %}{% assign subcommand = subcommand_hash[1] %}
-  # {{ subcommand.description }}
   {{ subcommand.usage }}
-  {% endfor %}
-  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.update.flag %}{% assign flag = flag_hash[1] %}
-  # {{ flag.description }}
-  {{ flag.usage }}
-  {% endfor %}
   </div>
 </pre>
+{% endfor %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.update.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ flag.usage }}
+  </div>
+</pre>
+{% endfor %}
 <br/>
 
 
 <!-- Options/Flags available in this command -->
 ## Options
 
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.update.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.update.flag %}{% assign flag = flag_hash[1] %}
-    {{ flag.flag }} # {{ flag.description }}
-    {% endfor %}
+    {{ flag.flag }}
   </div>
 </pre>
+{% endfor %}
 <br/>

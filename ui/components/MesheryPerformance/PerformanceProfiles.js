@@ -1,6 +1,7 @@
 //@ts-check
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import PromptComponent from "../PromptComponent";
 import GridOnIcon from "@material-ui/icons/GridOn";
 import CloseIcon from "@material-ui/icons/Close";
 import TableChartIcon from "@material-ui/icons/TableChart";
@@ -48,11 +49,14 @@ function ViewSwitch({ view, changeView }) {
   );
 }
 
+
+
 function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
   );
+  const modalRef = useRef(null)
 
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -106,7 +110,16 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     );
   }
 
-  function deleteProfile(id) {
+  async function deleteProfile(id) {
+    let response = await modalRef.current.show({
+      title: "Delete Performance Profile?",
+
+      subtitle: "Are you sure you want to delete this performance profile?",
+
+      options: ["YES", "NO"],
+
+    })
+    if(response == "no") return
     dataFetch(
       `${MESHERY_PERFORMANCE_URL}/${id}`,
       {
@@ -134,6 +147,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     );
   }
 
+
   function handleError(msg) {
     return function (error) {
       updateProgress({ showProgress: false });
@@ -153,48 +167,64 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
   }
 
   return (
-    <div style={{ padding: "0.5rem" }}>
-      <div style={{ margin: "0 0 2rem auto", width: "fit-content" }}>
-        <ViewSwitch view={viewType} changeView={setViewType} />
-      </div>
-      {viewType === "grid" ? (
-        <PerformanceProfileGrid
-          profiles={testProfiles}
-          deleteHandler={deleteProfile}
-          setProfileForModal={setProfileForModal}
-          pages={Math.ceil(count / pageSize)}
-          setPage={setPage}
-        />
-      ) : (
-        <PerformanceProfileTable
-          page={page}
-          setPage={setPage}
-          search={search}
-          setSearch={setSearch}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          count={count}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
-          testProfiles={testProfiles}
-          setProfileForModal={setProfileForModal}
-          handleDelete={deleteProfile}
-        />
-      )}
-      {!testProfiles.length ? (
-        <Paper style={{ padding: "0.5rem" }}>
-          <div
-            style={{
-              padding: "2rem",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-            }}
-          >
-            <Typography style={{ fontSize: "1.5rem", marginBottom: "2rem" }} align="center" color="textSecondary">
+    <>
+      <div style={{ padding: "0.5rem" }}>
+        <div style={{ margin: "0 0 2rem auto", width: "fit-content" }}>
+          <ViewSwitch view={viewType} changeView={setViewType} />
+        </div>
+        {viewType === "grid" ? (
+          <PerformanceProfileGrid
+            profiles={testProfiles}
+            deleteHandler={deleteProfile}
+            setProfileForModal={setProfileForModal}
+            pages={Math.ceil(count / pageSize)}
+            setPage={setPage}
+          />
+        ) : (
+          <PerformanceProfileTable
+            page={page}
+            setPage={setPage}
+            search={search}
+            setSearch={setSearch}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            count={count}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            testProfiles={testProfiles}
+            setProfileForModal={setProfileForModal}
+            handleDelete={deleteProfile}
+          />
+        )}
+        {!testProfiles.length ? (
+          <Paper style={{ padding: "0.5rem" }}>
+            <div
+              style={{
+                padding: "2rem",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <Typography style={{ fontSize: "1.5rem", marginBottom: "2rem" }} align="center" color="textSecondary">
               No Performance Profiles Found
-            </Typography>
+              </Typography>
+              <Button
+                aria-label="Add Performance Profile"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={() => setProfileForModal({})}
+              >
+                <AddIcon />
+              Add Performance Profile
+              </Button>
+            </div>
+          </Paper>
+        ) : (
+          <div style={{ width: "fit-content", margin: "4rem auto 0" }}>
             <Button
               aria-label="Add Performance Profile"
               variant="contained"
@@ -204,68 +234,56 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               onClick={() => setProfileForModal({})}
             >
               <AddIcon />
-              Add Performance Profile
+            Add Performance Profile
             </Button>
           </div>
-        </Paper>
-      ) : (
-        <div style={{ width: "fit-content", margin: "4rem auto 0" }}>
-          <Button
-            aria-label="Add Performance Profile"
-            variant="contained"
-            color="primary"
-            size="large"
-            // @ts-ignore
-            onClick={() => setProfileForModal({})}
-          >
-            <AddIcon />
-            Add Performance Profile
-          </Button>
-        </div>
-      )}
+        )}
 
-      <GenericModal
-        open={!!profileForModal}
-        Content={
-          <Paper style={{ margin: "auto", maxWidth: "90%", outline: "none" }}>
-            <MesheryPerformanceComponent
+        <GenericModal
+          open={!!profileForModal}
+          Content={
+            <Paper style={{ margin: "auto", maxWidth: "90%", outline: "none" }}>
+              <MesheryPerformanceComponent
               // @ts-ignore
-              loadAsPerformanceProfile
-              // @ts-ignore
-              performanceProfileID={profileForModal?.id}
-              // @ts-ignore
-              profileName={profileForModal?.name}
-              // @ts-ignore
-              meshName={profileForModal?.service_mesh}
-              // @ts-ignore
-              url={profileForModal?.endpoints?.[0]}
-              // @ts-ignore
-              qps={profileForModal?.qps}
-              // @ts-ignore
-              loadGenerator={profileForModal?.load_generators?.[0]}
-              // @ts-ignore
-              t={profileForModal?.duration}
-              // @ts-ignore
-              c={profileForModal?.concurrent_request}
-              // @ts-ignore
-              reqBody={profileForModal?.request_body}
-              // @ts-ignore
-              headers={profileForModal?.request_headers}
-              // @ts-ignore
-              cookies={profileForModal?.request_cookies}
-              // @ts-ignore
-              contentType={profileForModal?.content_type}
-              // @ts-ignore
-              runTestOnMount={!!profileForModal?.runTest}
-            />
-          </Paper>
-        }
-        handleClose={() => {
-          fetchTestProfiles(page, pageSize, search, sortOrder);
-          setProfileForModal(undefined);
-        }}
-      />
-    </div>
+                loadAsPerformanceProfile
+                // @ts-ignore
+                performanceProfileID={profileForModal?.id}
+                // @ts-ignore
+                profileName={profileForModal?.name}
+                // @ts-ignore
+                meshName={profileForModal?.service_mesh}
+                // @ts-ignore
+                url={profileForModal?.endpoints?.[0]}
+                // @ts-ignore
+                qps={profileForModal?.qps}
+                // @ts-ignore
+                loadGenerator={profileForModal?.load_generators?.[0]}
+                // @ts-ignore
+                t={profileForModal?.duration}
+                // @ts-ignore
+                c={profileForModal?.concurrent_request}
+                // @ts-ignore
+                reqBody={profileForModal?.request_body}
+                // @ts-ignore
+                headers={profileForModal?.request_headers}
+                // @ts-ignore
+                cookies={profileForModal?.request_cookies}
+                // @ts-ignore
+                contentType={profileForModal?.content_type}
+                // @ts-ignore
+                runTestOnMount={!!profileForModal?.runTest}
+              />
+            </Paper>
+          }
+          handleClose={() => {
+            fetchTestProfiles(page, pageSize, search, sortOrder);
+            setProfileForModal(undefined);
+          }}
+        />
+      </div>
+
+      <PromptComponent ref={modalRef} />
+    </>
   );
 }
 

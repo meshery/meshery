@@ -8,6 +8,35 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var dynamicUIEndpoints = map[string]string{
+	"/extension":  "/extension/[component].html",
+	"/management": "/management/[mesh].html",
+}
+
+func isDynamicUIEndpoint(reqURL string) bool {
+	if filepath.Ext(reqURL) != "" {
+		return false
+	}
+
+	for extension := range dynamicUIEndpoints {
+		if strings.HasPrefix(reqURL, extension) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func getDynamicUIEndpoint(reqURL string) string {
+	for prefix, mapping := range dynamicUIEndpoints {
+		if strings.HasPrefix(reqURL, prefix) {
+			return mapping
+		}
+	}
+
+	return ""
+}
+
 // ServeUI - helps serve static files for both meshery ui and provider ui
 func ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string) {
 	// if r.Method != http.MethodGet {
@@ -22,11 +51,9 @@ func ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath
 	filePath.WriteString(reqURL)
 	if reqURL == "/" || reqURL == "" {
 		filePath.WriteString("index.html")
-	} else if filepath.Ext(reqURL) == "" && strings.HasPrefix(reqURL, "/extension") {
+	} else if isDynamicUIEndpoint(reqURL) {
 		filePath.Reset()
-		filePath.WriteString("/extension/")
-		filePath.WriteString("[component]")
-		filePath.WriteString(".html")
+		filePath.WriteString(getDynamicUIEndpoint(reqURL))
 
 		logrus.Debug("Generated path: ", filePath.String())
 	} else if filepath.Ext(reqURL) == "" {
@@ -36,10 +63,3 @@ func ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath
 	finalPath := filepath.Join(baseFolderPath, filePath.String())
 	http.ServeFile(w, r, finalPath)
 }
-
-// else if strings.HasPrefix(reqURL, "/extension") {
-// 		filePath.WriteString("/extension/")
-// 		filePath.WriteString("[component]")
-// 		filePath.WriteString(".html")
-// 		logrus.Debug("Generated path: ", filePath.String())
-// 	}

@@ -14,3 +14,7 @@ Anytime a `mesheryctl system` command is executed, a series of preflight checks 
 1. Check whether `mesheryctl` can initialize a Kubernetes client.
 
 Situation: `mesheryctl` fails to query for pods in the default namespace of the user's current Kubernetes context.
+
+#### See Also
+
+- [Error Code Reference](/reference/error-codes)

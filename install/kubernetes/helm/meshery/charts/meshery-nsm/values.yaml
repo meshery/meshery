@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: layer5/meshery-nsm:stable-latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 ports:
   http: 10004

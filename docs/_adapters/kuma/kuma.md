@@ -8,7 +8,7 @@ port: 10007/tcp
 project_status: stable
 adapter_version: v0.5.2
 lab: kuma-meshery-adapter
-github_link: https://github.com/layer5io/meshery-kuma
+github_link: https://github.com/meshery/meshery-kuma
 image: /assets/img/service-meshes/kuma.svg
 permalink: service-meshes/adapters/kuma
 ---
@@ -39,7 +39,7 @@ Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service m
 
 The following sample applications are available in this adapter.
 
-- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo) 
+- [Bookinfo]({{ site.baseurl }}/guides/deploying-sample-apps#bookinfo) 
     - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 
 ### SMI Conformance Capability

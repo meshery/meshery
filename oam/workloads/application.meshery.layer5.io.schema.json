@@ -1,0 +1,47 @@
+{
+  "$id": "http://meshery.layer5.io/definition/Workload/Application",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Application",
+  "type": "object",
+  "properties": {
+    "replicas": {
+      "type": "integer"
+    },
+    "containers": {
+      "type": "array",
+      "items": {
+        "container": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "image": {
+              "type": "string"
+            },
+            "ports": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "default": "http"
+                  },
+                  "containerPort": {
+                    "type": "integer"
+                  }
+                },
+                "minItems": 1,
+                "required": ["containerPort"]
+              }
+            }
+          },
+          "required": ["name", "image", "ports"]
+        }
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["replicas", "containers"]
+}

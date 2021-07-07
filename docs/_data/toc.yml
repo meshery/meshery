@@ -9,10 +9,18 @@
     - title: Contributing
       url: project/contributing
       children:
+        - title: Design and Code Conventions
+          url: project/contributing-guide
+        - title: Meshery Adapters
+          url: project/contributing-adapters
         - title: Meshery CLI
           url: project/contributing-cli
+        - title: Meshery Docs
+          url: project/contributing-docs
         - title: Meshery UI
           url: project/contributing-ui
+        - title: Meshery Errors
+          url: project/contributing-error
     - title: Releases
       url: project/releases
     - title: Build & Release (CI)
@@ -21,7 +29,6 @@
       url: project/security-vulnerabilities
     - title: FAQ
       url: project/faq
-
       children:
         - title: Installing mesheryctl
           url: installation/mesheryctl
@@ -115,8 +122,6 @@
       url: extensibility/providers
     - title: "REST & GraphQL APIs"
       url: extensibility/api
-    - title: "GraphQL Reference"
-      url: extensibility/graphql-reference
 - title: Reference
   url: reference
   links:
@@ -124,3 +129,7 @@
       url: reference/mesheryctl
     - title: Error Codes
       url: reference/error-codes
+    - title: "GraphQL API Reference"
+      url: reference/graphql-apis
+    - title: "REST API Reference"
+      url: reference/rest-apis
