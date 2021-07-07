@@ -49,8 +49,14 @@ Run "mesheryctl system start" to start meshery`)
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
 		if err != nil {
-			log.Error("failed to find token path for the current context")
-			return nil
+			// Attempt to create token if it doesn't already exists
+			token.Location = utils.AuthConfigFile
+
+			// Write new entry in the config
+			if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
+				log.Error("failed to find token path for the current context")
+				return nil
+			}
 		}
 
 		if err := ioutil.WriteFile(token.GetLocation(), tokenData, 0666); err != nil {

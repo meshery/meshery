@@ -145,7 +145,7 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) (Context, erro
 func (mc *MesheryCtlConfig) GetTokenForContext(contextName string) (Token, error) {
 	ctx, ok := mc.Contexts[contextName]
 	if !ok {
-		return Token{}, fmt.Errorf("")
+		return Token{}, fmt.Errorf("no token is associated with context: %s", contextName)
 	}
 
 	for _, t := range mc.Tokens {
@@ -154,7 +154,7 @@ func (mc *MesheryCtlConfig) GetTokenForContext(contextName string) (Token, error
 		}
 	}
 
-	return Token{}, fmt.Errorf("no token found for the given context")
+	return Token{Name: ctx.Token}, fmt.Errorf("no token found for the given context")
 }
 
 func (t *Token) GetLocation() string {
