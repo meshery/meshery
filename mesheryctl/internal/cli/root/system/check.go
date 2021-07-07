@@ -42,15 +42,15 @@ type HealthCheckOptions struct {
 
 	// the command under which the healthchecks are being triggered
 	Subcommand string
-	// if RunDockerChecks is true we only run docker checks
+	// if RunDockerChecks is true we run docker checks
 	RunDockerChecks bool
-	// if RunKubernetesChecks is true we only run k8s checks
+	// if RunKubernetesChecks is true we run k8s checks
 	RunKubernetesChecks bool
-	// if RunOperatorChecks is true we only run operator checks
+	// if RunOperatorChecks is true we run operator checks
 	RunOperatorChecks bool
-	// if RunVersionChecks is true we only run version checks
+	// if RunVersionChecks is true we run version checks
 	RunVersionChecks bool
-	// if RunAdapterChecks is true we only run adapter checks
+	// if RunAdapterChecks is true we run adapter checks
 	RunAdapterChecks bool
 }
 
