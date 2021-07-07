@@ -269,10 +269,6 @@ var applyCmd = &cobra.Command{
 		}
 		log.Debug(string(data))
 
-		if err := utils.UpdateAuthDetails(tokenPath); err != nil {
-			return errors.Wrap(err, utils.PerfError("failed to update auth details"))
-		}
-
 		log.Info("Test Completed Successfully!")
 		return nil
 	},

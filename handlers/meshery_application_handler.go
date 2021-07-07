@@ -18,6 +18,18 @@ type MesheryApplicationRequestBody struct {
 	ApplicationData *models.MesheryApplication `json:"application_data,omitempty"`
 }
 
+// ApplicationFileHandler handles the requested related to application files
+func (h *Handler) ApplicationFileHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	// Application files are just pattern files
+	h.PatternFileHandler(rw, r, prefObj, user, provider)
+}
+
 // ApplicationFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/experimental/application
 func (h *Handler) ApplicationFileRequestHandler(
