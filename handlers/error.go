@@ -7,19 +7,27 @@ import (
 )
 
 const (
-	ErrInvalidK8SConfigCode  = "2000"
-	ErrNilClientCode         = "2001"
-	ErrPrometheusScanCode    = "2002"
-	ErrGrafanaScanCode       = "2003"
-	ErrRecordPreferencesCode = "2004"
-	ErrGrafanaConfigCode     = "2005"
-	ErrPrometheusConfigCode  = "2006"
-	ErrGrafanaQueryCode      = "2007"
-	ErrPrometheusQueryCode   = "2008"
-	ErrGrafanaBoardsCode     = "2009"
-	ErrPrometheusBoardsCode  = "2010"
-	ErrStaticBoardsCode      = "2011"
-	ErrRequestBodyCode       = "2012"
+	ErrInvalidK8SConfigCode  	= "2000"
+	ErrNilClientCode         	= "2001"
+	ErrPrometheusScanCode    	= "2002"
+	ErrGrafanaScanCode       	= "2003"
+	ErrRecordPreferencesCode 	= "2004"
+	ErrGrafanaConfigCode     	= "2005"
+	ErrPrometheusConfigCode  	= "2006"
+	ErrGrafanaQueryCode      	= "2007"
+	ErrPrometheusQueryCode   	= "2008"
+	ErrGrafanaBoardsCode     	= "2009"
+	ErrPrometheusBoardsCode  	= "2010"
+	ErrStaticBoardsCode      	= "2011"
+	ErrRequestBodyCode       	= "2012"
+	ErrKubeClientCode		 	= "2013"
+	ErrWorkloadDefinitionCode	= "2014"
+	ErrTraitDefinitionCode		= "2015"
+	ErrScopeDefinitionCode		= "2016"
+	ErrPatternFileCode			= "2017"
+	ErrExecutionPlanCode		= "2018"
+	ErrInvalidPatternCode		= "2019"
+	ErrCompConfigPairsCode		= "2020"
 )
 
 var (
@@ -59,19 +67,35 @@ func ErrRecordPreferences(err error) error {
 }
 
 func ErrKubeClient(err error) error {
-	return errors.New(ErrKubeClient, errors.Alert, []string{"Failed to Create Kube Client", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Kubernetes"}, []string{""})
+	return errors.New(ErrKubeClientCode, errors.Alert, []string{"Failed to Create Kube Client", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Kubernetes"}, []string{""})
+}
+
+func ErrWorkloadDefinition(err error) error {
+	return errors.New(ErrWorkloadDefinitionCode, errors.Alert, []string{"Failed to load Workload Definition", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Workload Definition"}, []string{""})
 }
 
 func ErrTraitDefinition(err error) error {
-	return errors.New(ErrKubeClient, errors.Alert, []string{"Failed to load Workload Definition", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Workload Definition"}, []string{""})
-}
-
-func ErrTraitDefinition(err error) error {
-	return errors.New(ErrTraitDefinition, errors.Alert, []string{"Failed to Encode Trait Definition", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Trait Definition"}, []string{""})
+	return errors.New(ErrTraitDefinitionCode, errors.Alert, []string{"Failed to Encode Trait Definition", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Trait Definition"}, []string{""})
 }
 
 func ErrScopeDefinition(err error) error {
-	return errors.New(ErrScopeDefinition, errors.Alert, []string{"Failed to Encode Scope Definition", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Trait Definition"}, []string{""})
+	return errors.New(ErrScopeDefinitionCode, errors.Alert, []string{"Failed to Encode Scope Definition", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Trait Definition"}, []string{""})
+}
+
+func ErrPatternFile(err error) error {
+	return errors.New(ErrPatternFileCode, errors.Alert, []string{"Failed to Parse Pattern File", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Trait Definition"}, []string{""})
+}
+
+func ErrInvalidPattern(err error) error {
+	return errors.New(ErrInvalidPatternCode, errors.Alert, []string{"Invalid Pattern, execution is infeasible", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Trait Definition"}, []string{""})
+}
+
+func ErrExecutionPlan(err error) error {
+	return errors.New(ErrExecutionPlan, errors.Alert, []string{"Failed to Create Execution Plan", err.Error()}, []string{"Failed to Create Kube Client.", err.Error()}, []string{"Check Trait Definition"}, []string{""})
+}
+
+func ErrCompConfigPairs(err error) error {
+	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to Create Comp Config.", err.Error()}, []string{"unable to read the request body" + err.Error()}, []string{}, []string{})
 }
 
 func ErrRequestBody(err error) error {

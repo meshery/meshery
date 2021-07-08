@@ -53,6 +53,9 @@ func (h *Handler) PatternFileHandler(
 	// Read the PatternFile
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+
 		rw.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
@@ -61,6 +64,9 @@ func (h *Handler) PatternFileHandler(
 	if r.Header.Get("Content-Type") == "application/json" {
 		body, err = yaml.JSONToYAML(body)
 		if err != nil {
+			h.log.Error(ErrPatternFile(err))
+			http.Error(w, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
 			return
@@ -72,14 +78,20 @@ func (h *Handler) PatternFileHandler(
 	// Generate the pattern file object
 	patternFile, err := OAM.NewPatternFile(body)
 	if err != nil {
+		h.log.Error(ErrPatternFile(err))
+		http.Error(w, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+
 		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
+		fmt.Fprintf(rw, "Failed to parse to PatternFile: %s", err)
 		return
 	}
 
 	// Get execution plan
 	plan, err := OAM.CreatePlan(patternFile, policies)
 	if err != nil {
+		h.log.Error(ErrExecutionPlan(err))
+		http.Error(w, ErrExecutionPlan(err).Error(), http.StatusInternalServerError)
+
 		rw.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(rw, "failed to create an execution plan: %s", err)
 		return
@@ -87,6 +99,9 @@ func (h *Handler) PatternFileHandler(
 
 	// Check for feasibility
 	if feasible := plan.IsFeasible(); !feasible {
+		h.log.Error(ErrInvalidPattern(err))
+		http.Error(w, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
+
 		rw.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(rw, "invalid Pattern, execution is infeasible")
 		return
@@ -95,8 +110,9 @@ func (h *Handler) PatternFileHandler(
 	if h.kubeclient.DynamicKubeClient == nil {
 		kc, err := meshkube.New(prefObj.K8SConfig.Config)
 		if err != nil {
-			h.log.Error(ErrKubeClient(err))
-			http.Error(w, ErrKubeClient(err).Error(), http.StatusInternalServerError)
+			h.log.Error(ErrInvalidPattern(err))
+			http.Error(w, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
+
 			rw.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(rw, "Error:%s", err)
 			return
@@ -116,6 +132,9 @@ func (h *Handler) PatternFileHandler(
 	)
 
 	if err != nil {
+		h.log.Error(ErrCompConfigPairs(err))
+		http.Error(w, ErrCompConfigPairs(err).Error(), http.StatusInternalServerError)
+
 		rw.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(rw, "Messages:\n%s\nErrors:%s", msg, err)
 		return
