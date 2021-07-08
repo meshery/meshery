@@ -530,6 +530,9 @@
       "severity": "",
       "long_description": "",
       "short_description": "",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Failed to Save: ",
       "probable_cause": "",
       "suggested_remediation": ""
     },
@@ -568,6 +571,12 @@
       "short_description": "Invalid value for gen",
       "probable_cause": "",
       "suggested_remediation": "please provide a valid value for gen (load generator)"
+    },
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Failed to Delete: ",
+      "probable_cause": "",
+      "suggested_remediation": ""
     },
     "3000": {
       "name": "ErrGrafanaClientCode",
