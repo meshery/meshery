@@ -136,7 +136,7 @@ func (hc *HealthChecker) Run() error {
 		}
 	}
 	// Run meshery kubernetes checks
-	if hc.Options.RunDockerChecks {
+	if hc.Options.RunKubernetesChecks {
 		if err := hc.runKubernetesHealthChecks(); err != nil {
 			return err
 		}
