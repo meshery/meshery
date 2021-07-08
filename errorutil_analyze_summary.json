@@ -3,11 +3,11 @@
   "max_code": 3000,
   "duplicate_codes": {},
   "duplicate_names": [
-    "ErrMesheryClientCode",
-    "ErrNoMeshSyncCode",
     "ErrNilClientCode",
+    "ErrNoMeshSyncCode",
     "ErrGrafanaBoardsCode",
-    "ErrCreateDataCode"
+    "ErrCreateDataCode",
+    "ErrMesheryClientCode"
   ],
   "call_expr_codes": [],
   "int_codes": [
