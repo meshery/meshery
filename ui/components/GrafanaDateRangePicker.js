@@ -650,7 +650,7 @@ class GrafanaDateRangePicker extends Component {
             <Divider light variant="fullWidth" />
             <DialogActions>
               <Button onClick={this.handleClose} color="primary" variant="outlined">
-                Done
+                Close
               </Button>
             </DialogActions>
           </Dialog>
