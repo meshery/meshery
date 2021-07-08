@@ -38,6 +38,13 @@ const grafanaStyles = (theme) => ({
   icon: {
     width: theme.spacing(2.5),
   },
+  dialogTitle: {
+    '&>*':{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    }
+  },
 });
 
 
@@ -144,22 +151,26 @@ class GrafanaCustomCharts extends Component {
                 onClose={this.chartDialogClose()}
                 aria-labelledby="max-width-dialog-title"
               >
-                <DialogTitle id="max-width-dialog-title">{chartDialogPanel.title}</DialogTitle>
-                <DialogContent>
+                <DialogTitle classes={{root:classes.dialogTitle}} id="max-width-dialog-title">
+                  <div>
+                    {chartDialogPanel.title}
+                  </div>
                   {!(chartDialogPanelData && chartDialogPanelData !== null && Object.keys(chartDialogPanelData).length > 0)
-                      && (
-                        <div className={classes.dateRangePicker}>
-                          <GrafanaDateRangePicker
-                            from={from}
-                            startDate={startDate}
-                            to={to}
-                            endDate={endDate}
-                            liveTail={liveTail}
-                            refresh={refresh}
-                            updateDateRange={this.updateDateRange}
-                          />
-                        </div>
-                      )}
+                    ? (
+                      <div className={classes.dateRangePicker}>
+                        <GrafanaDateRangePicker
+                          from={from}
+                          startDate={startDate}
+                          to={to}
+                          endDate={endDate}
+                          liveTail={liveTail}
+                          refresh={refresh}
+                          updateDateRange={this.updateDateRange}
+                        />
+                      </div>
+                    ):(<div></div>)}
+                </DialogTitle>
+                <DialogContent>
                   <GrafanaCustomChart
                     board={chartDialogBoard}
                     panel={chartDialogPanel}
