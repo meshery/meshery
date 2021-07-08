@@ -17,7 +17,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern"
 	"github.com/layer5io/meshery/router"
-	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -154,7 +154,7 @@ func main() {
 
 	kubeclient := mesherykube.Client{}
 	meshsyncCh := make(chan struct{})
-	var brokerConn broker.Handler
+	brokerConn := nats.NewEmptyConnection
 
 	err = dbHandler.AutoMigrate(
 		meshsyncmodel.KeyValue{},
@@ -182,16 +182,6 @@ func main() {
 		MesheryApplicationPersister:     &models.MesheryApplicationPersister{DB: &dbHandler},
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: &dbHandler},
 		GenericPersister:                dbHandler,
-		GraphqlHandler: graphql.New(graphql.Options{
-			Logger:          log,
-			DBHandler:       &dbHandler,
-			KubeClient:      &kubeclient,
-			MeshSyncChannel: meshsyncCh,
-			BrokerConn:      brokerConn,
-		}),
-		GraphqlPlayground: graphql.NewPlayground(graphql.Options{
-			URL: "/api/system/graphql/query",
-		}),
 	}
 	lProv.Initialize()
 	provs[lProv.Name()] = lProv
@@ -219,16 +209,6 @@ func main() {
 			ProviderVersion:            "v0.3.14",
 			SmiResultPersister:         smiResultPersister,
 			GenericPersister:           dbHandler,
-			GraphqlHandler: graphql.New(graphql.Options{
-				Logger:          log,
-				DBHandler:       &dbHandler,
-				KubeClient:      &kubeclient,
-				MeshSyncChannel: meshsyncCh,
-				BrokerConn:      brokerConn,
-			}),
-			GraphqlPlayground: graphql.NewPlayground(graphql.Options{
-				URL: "/api/system/graphql/query",
-			}),
 		}
 
 		cp.Initialize()
@@ -255,6 +235,17 @@ func main() {
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+
+		GraphQLHandler: graphql.New(graphql.Options{
+			Logger:          log,
+			DBHandler:       &dbHandler,
+			KubeClient:      &kubeclient,
+			MeshSyncChannel: meshsyncCh,
+			BrokerConn:      brokerConn,
+		}),
+		GraphQLPlaygroundHandler: graphql.NewPlayground(graphql.Options{
+			URL: "/api/system/graphql/query",
+		}),
 	}, &kubeclient, meshsyncCh, log, brokerConn)
 
 	port := viper.GetInt("PORT")
