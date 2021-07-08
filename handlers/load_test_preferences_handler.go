@@ -13,8 +13,6 @@ import (
 
 	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 // LoadTestPrefencesHandler is used for persisting load test preferences
@@ -24,8 +22,8 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 			obj := "LoadTest preference object"
 			// logrus.Errorf("Error encoding LoadTest preference object: %v", err)
 			// http.Error(w, "Error encoding LoadTest preference object", http.StatusInternalServerError)
-			h.log.Error(ErrEncodingCode(err,obj))
-			http.Error(w, ErrEncodingCode(err,obj).Error(), http.StatusInternalServerError)
+			h.log.Error(ErrEncoding(err,obj))
+			http.Error(w, ErrEncoding(err,obj).Error(), http.StatusInternalServerError)
 		}
 		return
 	}
@@ -96,8 +94,9 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		LoadGenerator:      gen,
 	}
 	if err = provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
-		h.log.Error(ErrUserPreferences(err))
-		http.Error(w, ErrUserPreferences(err).Error(), http.StatusInternalServerError)
+		obj := "user preferences"
+		h.log.Error(ErrFailToSave(err,obj))
+		http.Error(w, ErrFailToSave(err,obj).Error(), http.StatusInternalServerError)
 		// logrus.Errorf("unable to save user preferences: %v", err)
 		// http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
 		return
@@ -150,8 +149,8 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 		// err = errors.Wrapf(err, msg)
 		// logrus.Error(err)
 		// http.Error(w, msg, http.StatusBadRequest)
-		h.log.Error(ErrParseBool(err,obj))
-		http.Error(w, ErrParseBool(err,obj).Error(), http.StatusBadRequest)
+		h.log.Error(ErrUnmarshal(err,obj))
+		http.Error(w, ErrUnmarshal(err,obj).Error(), http.StatusBadRequest)
 		return
 	}
 	if err = models.SMPPerformanceTestConfigValidator(perfTest); err != nil {
@@ -163,10 +162,11 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 	}
 	tid, err := provider.SMPTestConfigStore(req, perfTest)
 	if err != nil {
+		obj := "user preference"
 		// logrus.Errorf("unable to save user preferences: %v", err)
 		// http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
-		h.log.Error(ErrUserPreferences(err))
-		http.Error(w, ErrUserPreferences(err).Error(), http.StatusBadRequest)
+		h.log.Error(ErrFailToSave(err,obj))
+		http.Error(w, ErrFailToSave(err,obj).Error(), http.StatusBadRequest)
 		return
 	}
 	_, _ = w.Write([]byte(tid))
@@ -217,8 +217,8 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		if err != nil {
 			// logrus.Errorf("error reading database: %v", err)
 			// http.Error(w, "error reading database", http.StatusInternalServerError)
-			h.log.Error(ErrReadDatabase)
-		    http.Error(w, ErrReadDatabase.Error(), http.StatusInternalServerError)
+			h.log.Error(ErrReadConfig(err))
+		    http.Error(w, ErrReadConfig(err).Error(), http.StatusInternalServerError)
 			return
 		}
 		_, err = w.Write(data)
@@ -243,17 +243,19 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	testUUID := req.URL.Query().Get("uuid")
 	if testUUID == "" {
+		obj := "field uuid"
 		// logrus.Error("field uuid not found")
 		// http.Error(w, "field uuid not found", http.StatusBadRequest)
-		h.log.Error(ErrField)
-		http.Error(w, ErrField.Error(), http.StatusBadRequest)
+		h.log.Error(ErrQueryGet(obj))
+		http.Error(w, ErrQueryGet(obj).Error(), http.StatusBadRequest)
 		return
 	}
 	if err := provider.SMPTestConfigDelete(req, testUUID); err != nil {
+		obj := "testConfig"
 		// logrus.Errorf("error deleting testConfig: %v", err)
 		// http.Error(w, "error deleting testConfig", http.StatusBadRequest)
-		h.log.Error(ErrDeleteTestConfig)
-		http.Error(w, ErrDeleteTestConfig.Error(), http.StatusBadRequest)
+		h.log.Error(ErrFailToDelete(err,obj))
+		http.Error(w, ErrFailToDelete(err,obj).Error(), http.StatusBadRequest)
 		return
 	}
 }

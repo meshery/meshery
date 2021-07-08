@@ -50,13 +50,11 @@ const (
 	ErrApplicationFailureCode = "2042"
 	ErrDecodingCode           = "2043"
 	ErrRetrieveUserTokenCode  = "2044"
-	ErrInvalidGenValueCode	  = "2045"
-	ErrUserPreferencesCode	  = "2046"
-	ErrTestConfigsCode		  = "2047"
-	ErrReadDatabaseCode		  = "2048"
-	ErrWriteResponseCode	  = "2049"
-	ErrFieldCode	          = "2050"
-	ErrDeleteTestConfigCode   = "2051"
+	ErrFailToSaveCode         = "2045"
+	ErrFailToDeleteCode       = "2046"
+	ErrWriteResponseCode	  = "2052"
+	ErrTestConfigsCode		  = "2053"
+	ErrInvalidGenValueCode 	  = "2054"
 )
 
 var (
@@ -68,12 +66,9 @@ var (
 	ErrValidAdapter     = errors.New(ErrValidAdapterCode, errors.Alert, []string{"Unable to find valid Adapter URL"}, []string{"unable to find a valid adapter for the given adapter URL"}, []string{"Given adapter URL is not valid"}, []string{"Please provide a valid Adapter URL"})
 	ErrAddAdapter       = errors.New(ErrAddAdapterCode, errors.Alert, []string{"meshLocationURL is empty"}, []string{"meshLocationURL is empty to add an adapter"}, []string{"meshLocationURL cannot be empty to add an adapter"}, []string{"please provide the meshLocationURL"})
 	ErrMeshClient       = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
-	ErrInvalidGenValue	= errors.New(ErrInvalidGenValueCode, errors.Alert, []string{"Invalid value for gen"}, []string{}, []string{}, []string{"please provide a valid value for gen (load generator)"})
-	ErrTestConfigs		= errors.New(ErrTestConfigsCode, errors.Alert, []string{"Error fetching test configs"}, []string{}, []string{}, []string{})
-	ErrReadDatabase		= errors.New(ErrReadDatabaseCode, errors.Alert, []string{"Error reading databases"}, []string{}, []string{}, []string{})
 	ErrWriteResponse	= errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{}, []string{}, []string{})
-	ErrField			= errors.New(ErrFieldCode, errors.Alert, []string{"field uuid not found"}, []string{}, []string{}, []string{})
-	ErrDeleteTestConfig	= errors.New(ErrDeleteTestConfigCode, errors.Alert, []string{"error deleting testConfig"}, []string{}, []string{}, []string{})
+	ErrTestConfigs		= errors.New(ErrTestConfigsCode, errors.Alert, []string{"Error fetching test configs"}, []string{}, []string{}, []string{})
+	ErrInvalidGenValue	= errors.New(ErrInvalidGenValueCode, errors.Alert, []string{"Invalid value for gen"}, []string{}, []string{}, []string{"please provide a valid value for gen (load generator)"})
 )
 
 func ErrPrometheusScan(err error) error {
@@ -173,7 +168,7 @@ func ErrFormFile(err error) error {
 }
 
 func ErrReadConfig(err error) error {
-	return errors.New(ErrReadConfigCode, errors.Alert, []string{"error reading config"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrReadConfigCode, errors.Alert, []string{"error reading config", "error reading database"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrLoadConfig(err error) error {

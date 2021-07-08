@@ -361,7 +361,7 @@
       "path": "handlers\\error.go"
     },
     {
-      "name": "ErrInvalidGenValueCode",
+      "name": "ErrFailToSaveCode",
       "old_code": "2045",
       "code": "2045",
       "code_is_literal": true,
@@ -369,7 +369,7 @@
       "path": "handlers\\error.go"
     },
     {
-      "name": "ErrUserPreferencesCode",
+      "name": "ErrFailToDeleteCode",
       "old_code": "2046",
       "code": "2046",
       "code_is_literal": true,
@@ -377,41 +377,25 @@
       "path": "handlers\\error.go"
     },
     {
-      "name": "ErrTestConfigsCode",
-      "old_code": "2047",
-      "code": "2047",
-      "code_is_literal": true,
-      "code_is_int": true,
-      "path": "handlers\\error.go"
-    },
-    {
-      "name": "ErrReadDatabaseCode",
-      "old_code": "2048",
-      "code": "2048",
-      "code_is_literal": true,
-      "code_is_int": true,
-      "path": "handlers\\error.go"
-    },
-    {
       "name": "ErrWriteResponseCode",
-      "old_code": "2049",
-      "code": "2049",
+      "old_code": "2052",
+      "code": "2052",
       "code_is_literal": true,
       "code_is_int": true,
       "path": "handlers\\error.go"
     },
     {
-      "name": "ErrFieldCode",
-      "old_code": "2050",
-      "code": "2050",
+      "name": "ErrTestConfigsCode",
+      "old_code": "2053",
+      "code": "2053",
       "code_is_literal": true,
       "code_is_int": true,
       "path": "handlers\\error.go"
     },
     {
-      "name": "ErrDeleteTestConfigCode",
-      "old_code": "2051",
-      "code": "2051",
+      "name": "ErrInvalidGenValueCode",
+      "old_code": "2054",
+      "code": "2054",
       "code_is_literal": true,
       "code_is_int": true,
       "path": "handlers\\error.go"
@@ -1112,7 +1096,7 @@
     ],
     "2045": [
       {
-        "name": "ErrInvalidGenValueCode",
+        "name": "ErrFailToSaveCode",
         "old_code": "2045",
         "code": "2045",
         "code_is_literal": true,
@@ -1122,7 +1106,7 @@
     ],
     "2046": [
       {
-        "name": "ErrUserPreferencesCode",
+        "name": "ErrFailToDeleteCode",
         "old_code": "2046",
         "code": "2046",
         "code_is_literal": true,
@@ -1130,51 +1114,31 @@
         "path": "handlers\\error.go"
       }
     ],
-    "2047": [
-      {
-        "name": "ErrTestConfigsCode",
-        "old_code": "2047",
-        "code": "2047",
-        "code_is_literal": true,
-        "code_is_int": true,
-        "path": "handlers\\error.go"
-      }
-    ],
-    "2048": [
-      {
-        "name": "ErrReadDatabaseCode",
-        "old_code": "2048",
-        "code": "2048",
-        "code_is_literal": true,
-        "code_is_int": true,
-        "path": "handlers\\error.go"
-      }
-    ],
-    "2049": [
+    "2052": [
       {
         "name": "ErrWriteResponseCode",
-        "old_code": "2049",
-        "code": "2049",
+        "old_code": "2052",
+        "code": "2052",
         "code_is_literal": true,
         "code_is_int": true,
         "path": "handlers\\error.go"
       }
     ],
-    "2050": [
+    "2053": [
       {
-        "name": "ErrFieldCode",
-        "old_code": "2050",
-        "code": "2050",
+        "name": "ErrTestConfigsCode",
+        "old_code": "2053",
+        "code": "2053",
         "code_is_literal": true,
         "code_is_int": true,
         "path": "handlers\\error.go"
       }
     ],
-    "2051": [
+    "2054": [
       {
-        "name": "ErrDeleteTestConfigCode",
-        "old_code": "2051",
-        "code": "2051",
+        "name": "ErrInvalidGenValueCode",
+        "old_code": "2054",
+        "code": "2054",
         "code_is_literal": true,
         "code_is_int": true,
         "path": "handlers\\error.go"
@@ -1300,17 +1264,6 @@
         "suggested_remediation": ""
       }
     ],
-    "ErrDeleteTestConfigCode": [
-      {
-        "name": "ErrDeleteTestConfigCode",
-        "code": "",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "error deleting testConfig",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      }
-    ],
     "ErrEncodingCode": [
       {
         "name": "ErrEncodingCode",
@@ -1329,17 +1282,6 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "unable to fetch SMI results",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      }
-    ],
-    "ErrFieldCode": [
-      {
-        "name": "ErrFieldCode",
-        "code": "",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "field uuid not found",
         "probable_cause": "",
         "suggested_remediation": ""
       }
@@ -1760,18 +1702,7 @@
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "error reading config",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      }
-    ],
-    "ErrReadDatabaseCode": [
-      {
-        "name": "ErrReadDatabaseCode",
-        "code": "",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error reading databases",
+        "short_description": "error reading config\nerror reading database",
         "probable_cause": "",
         "suggested_remediation": ""
       }
