@@ -47,6 +47,7 @@ const (
 	ErrMeshClientCode        = "2039"
 	ErrApplyChangeCode       = "2040"
 	ErrRetrieveMeshDataCode  = "2041"
+	ErrDataSendCode          = "2042"
 )
 
 var (
@@ -186,4 +187,8 @@ func ErrApplyChange(err error) error {
 
 func ErrRetrieveMeshData(err error) error {
 	return errors.New(ErrRetrieveMeshDataCode, errors.Alert, []string{"Error getting operations for the mesh", "Error getting service mesh name"}, []string{err.Error()}, []string{"unable to retrieve the requested data"}, []string{})
+}
+
+func ErrDataSend(err error) error {
+	return errors.New(ErrDataSendCode, errors.Alert, []string{"Unable to send data"}, []string{err.Error()}, []string{}, []string{})
 }

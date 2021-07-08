@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/tcnksm/go-latest"
 )
@@ -35,9 +34,9 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	// compare the server build with the target build
-	res, err := CheckLatestVersion(version.Build)
+	res, err := h.CheckLatestVersion(version.Build)
 	if err != nil {
-		logrus.Errorln(err)
+		h.log.Error(err)
 	} else {
 		// Add "Latest" and "Outdated" fields to the response
 		version.Latest = res.Current
@@ -48,13 +47,14 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(version)
 	if err != nil {
-		logrus.Errorf("unable to send data: %v", err)
+		h.log.Error(ErrDataSend(err))
+		http.Error(w, ErrDataSend(err).Error(), http.StatusNotFound)
 	}
 }
 
 // CheckLatestVersion takes in the current server version compares it with the target
 // and returns the result (latest.CheckResponse)
-func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
+func (h *Handler) CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 	githubTag := &latest.GithubTag{
 		Owner:      mesheryGitHubOrg,
 		Repository: mesheryGitHubRepo,
@@ -67,12 +67,12 @@ func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 	}
 	// If user is running an outdated release, let them know.
 	if res.Outdated {
-		logrus.Info("\n  ", serverVersion, " is not the latest Meshery release. Update to v", res.Current, ". Run `mesheryctl system update`")
+		h.log.Info("\n  ", serverVersion, " is not the latest Meshery release. Update to v", res.Current, ". Run `mesheryctl system update`")
 	}
 
 	// If user is running the latest release, let them know.
 	if res.Latest {
-		logrus.Info("\n  ", serverVersion, " is the latest Meshery release.")
+		h.log.Info("\n  ", serverVersion, " is the latest Meshery release.")
 	}
 
 	// Add "v" to the "Current" property of the CheckResponse
