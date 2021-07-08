@@ -4,26 +4,10 @@
   "duplicate_codes": {},
   "duplicate_names": [
     "ErrNilClientCode",
+    "ErrNoMeshSyncCode",
     "ErrGrafanaBoardsCode",
-    "ErrMesheryClientCode",
     "ErrCreateDataCode",
-    "ErrNoMeshSyncCode"
-  ],
-  "call_expr_codes": [
-    "ErrInvalidK8SConfig",
-    "ErrNilClient",
-    "ErrPrometheusConfig",
-    "ErrGrafanaConfig",
-    "ErrStaticBoards",
-    "ErrValidAdapter",
-    "ErrAddAdapter",
-    "ErrMeshClient",
-    "ErrInvalidKubeConfig",
-    "ErrInvalidK8sContextName",
-    "ErrNilClient",
-    "ErrInvalidRequest",
-    "ErrNoMeshSync",
-    "ErrEmptyHandler"
+    "ErrMesheryClientCode"
   ],
   "int_codes": [
     2011,
