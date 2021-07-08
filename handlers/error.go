@@ -211,8 +211,5 @@ func ErrRetrieveUserToken(err error) error {
 	return errors.New(ErrRetrieveUserTokenCode, errors.Alert, []string{"Failed to get the user token"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrUserPreferences(err error) error {
-	return errors.New(ErrUserPreferencesCode, errors.Alert, []string{"Unable to save user preferences"}, []string{}, []string{}, []string{})
-}
 
 
