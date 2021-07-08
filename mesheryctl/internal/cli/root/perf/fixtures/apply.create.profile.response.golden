@@ -1,0 +1,1 @@
+{"id":"906f8876-33b5-4a97-906e-7a409d3b8ae9","name":"test","user_id":"5157b2ae-4f7c-44b8-b7d6-4e13a177ef20","load_generators":["fortio"],"endpoints":["https://www.google.com"],"service_mesh":"None","duration":"30s","created_at":"2021-06-28T09:03:27.442053Z","updated_at":"2021-06-28T09:03:27.442063Z"}
