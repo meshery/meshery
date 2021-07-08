@@ -4,9 +4,9 @@
   "duplicate_codes": {},
   "duplicate_names": [
     "ErrNilClientCode",
-    "ErrCreateDataCode",
-    "ErrGrafanaBoardsCode",
     "ErrNoMeshSyncCode",
+    "ErrGrafanaBoardsCode",
+    "ErrCreateDataCode",
     "ErrMesheryClientCode"
   ],
   "call_expr_codes": [],
