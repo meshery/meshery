@@ -5,8 +5,6 @@ permalink: reference/mesheryctl/mesh/validate
 type: reference
 display-title: "false"
 language: en
-categories: en
-list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -31,63 +29,29 @@ list: exclude
 
 ## Examples
 
-<h6>(required) adapter to use for validation. Defaults to "meshery-osm:10010"<h6>
+{% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl mesh validate --adapter [name of the adapter]
+    {{ flag.usage }}
   </div>
 </pre>
-<h6>Kubernetes namespace to be used for deploying the validation tests and sample workload<h6>
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  mesheryctl mesh validate --namespace [namespace to be used]
-  </div>
-</pre>
-<h6>(required) specification to be used for conformance test. Defaults to "smi"<h6>
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  mesheryctl mesh validate --spec [specification to be used for conformance test]
-  </div>
-</pre>
-<h6>(required) path to token for authenticating to Meshery API<h6>
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  mesheryctl mesh validate --tokenPath [path to token for authentication]
-  </div>
-</pre>
-<br/>
-
+{% endfor %}
 
 <!-- Options/Flags available in this command -->
-<h2> Options & Flags </h2>
 
-<h6>(required) adapter to use for validation. Defaults to "meshery-osm:10010"<h6>
-<pre class="codeblock-pre">
-  <div class="codeblock">
-   --adapter, -a
-  </div>
-</pre>
-<h6>Kubernetes namespace to be used for deploying the validation tests and sample workload<h6>
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  --namespace, -n
-  </div>
-</pre>
-<h6>(required) specification to be used for conformance test. Defaults to "smi"<h6>
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  --spec, -s
-  </div>
-</pre>
-<h6>(required) path to token for authenticating to Meshery API<h6>
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  --tokenpath, -t
-  </div>
-</pre>
-<br/>
+## Options & Flags
 
-<h2> Options inherited from parent commands </h2>
+{% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+    {{ flag.name }}
+  </div>
+</pre>
+{% endfor %}
+
+## Options inherited from parent commands
 <pre class="codeblock-pre">
   <div class="codeblock">
   --help, -h # Shows help for the command

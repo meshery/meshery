@@ -84,7 +84,7 @@ if ! command_exists curl ; then
 fi
 
 if [ "x${MESHERY_VERSION}" = "x" ] ; then
-  MESHERY_VERSION=$(curl -L -s https://api.github.com/repos/layer5io/meshery/releases | \
+  MESHERY_VERSION=$(curl -L -s https://api.github.com/repos/meshery/meshery/releases | \
                   grep tag_name | sed "s/ *\"tag_name\": *\"\\(.*\\)\",*/\\1/" | \
                   grep -v "rc\.[0-9]$"| head -n 1 )
 fi
@@ -95,7 +95,7 @@ if [ "x${MESHERY_VERSION}" = "x" ] ; then
 fi
 
 NAME="mesheryctl-${MESHERY_VERSION}"
-URL="https://github.com/layer5io/meshery/releases/download/${MESHERY_VERSION}/mesheryctl_${MESHERY_VERSION:1}_${OSEXT}_${OSARCHITECTURE}.zip"
+URL="https://github.com/meshery/meshery/releases/download/${MESHERY_VERSION}/mesheryctl_${MESHERY_VERSION:1}_${OSEXT}_${OSARCHITECTURE}.zip"
 
 printf "\nDownloading %s for %s...\n\n" "$NAME" "$OSEXT"
 curl -L ${URL} -o ${PWD}/meshery.zip
@@ -107,11 +107,20 @@ if [ -z "$validFile" ] ; then
 fi
 
 # Generate a temporary folder to store intermediate installation files
-export temporary_dir_name=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)
+temporary_dir_name=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)
+if [ -z "$temporary_dir_name" ] ; then
+   temporary_dir_name="temp_extract_dir"
+fi
+
 mkdir $temporary_dir_name
+if [ $? -ne 0 ] ; then
+  rm ${PWD}/meshery.zip
+  printf "Disk space is low on the system, Re-try installation after cleaning up some files.\n"
+  exit 1;
+fi
 
 printf "\nExtracting %s to temporary folder %s...\n" "$NAME" "$temporary_dir_name"
-unzip ${PWD}/meshery.zip -d ${PWD}/$temporary_dir_name &&
+unzip ${PWD}/meshery.zip -d ${PWD}/$temporary_dir_name
 
 # Use user provided installation path from env variable(MESHERY_INSTALL_DIR)
 # by default its /usr/local/bin

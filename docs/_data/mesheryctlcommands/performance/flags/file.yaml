@@ -1,4 +1,0 @@
-name: --file 
-description: URL of the service mesh performance test configuration file. (default) empty string.
-usage: |
-    mesheryctl perf --file [path to file] --url [URL]

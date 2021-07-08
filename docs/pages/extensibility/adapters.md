@@ -44,7 +44,7 @@ The code hierarchy is pluggable and independent from one another. There can be N
 
 Each package inside a meshkit is a handler interface implementation, the implementation could be from any third-party packages or the go-kit.
 
-### [Meshery Adapter Libary](https://github.com/layer5io/meshery-adapter-library)
+### [Meshery Adapter Libary](https://github.com/meshery/meshery-adapter-library)
 
 This section contains a high level overview of the meshery-adapter-library, its purpose and architecture. For details, the reader is referred to the documentation and the code in the repository.
 

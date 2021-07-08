@@ -6,7 +6,7 @@ mesh_name: Tanzu Service Mesh
 version: pre-GA
 port: 10010/tcp
 project_status: alpha
-github_link: https://github.com/layer5io/meshery-tanzu-sm
+github_link: https://github.com/meshery/meshery-tanzu-sm
 image: /assets/img/service-meshes/tanzu.svg
 permalink: service-meshes/adapters/tanzu-sm
 ---

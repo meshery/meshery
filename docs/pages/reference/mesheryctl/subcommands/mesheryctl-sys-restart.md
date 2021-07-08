@@ -6,8 +6,6 @@ type: reference
 display-title: "false"
 language: en
 lang: en
-categories: en
-list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -41,7 +39,7 @@ list: exclude
   </div>
 </pre>
 {% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.restart.flags %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.restart.flag %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -54,12 +52,12 @@ list: exclude
 <!-- Options/Flags available in this command -->
 ## Options & Flags
 
-
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.restart.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.restart.flags %}{% assign flag = flag_hash[1] %}
-    {{ flag.flag }} # {{ flag.description }}
-    {% endfor %}
+    {{ flag.flag }}
   </div>
 </pre>
+{% endfor %}
 <br/>

@@ -109,10 +109,16 @@ For more details, <a href="{{ site.baseurl }}/project/contributing-error">Error 
 
 #### Build and run Meshery server
 
-To build & run the Meshery server code, run the following command:
+To build and run Meshery server from source: 
 
+1. Build the static assets for the UI by running
 ```sh
-make run-local
+make setup-ui-libs
+make build-ui
+```
+2. Build & run the server code by running
+```sh
+make run-local // Or make run-fast
 ```
 
 Any time changes are made to the GO code, you will have to stop the server and run the above command again.

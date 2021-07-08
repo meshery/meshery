@@ -69,7 +69,7 @@ run-local: error
 	./meshery; \
 	cd ..
 
-run-fast: error
+run-fast:
 	cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -156,10 +156,10 @@ chart-readme:
 	go run github.com/norwoodj/helm-docs/cmd/helm-docs -c install/kubernetes/helm/
 
 swagger-spec:
-	swagger generate spec -o ./swagger.yaml --scan-models
+	swagger generate spec -o ./helpers/swagger.yaml --scan-models
 
 swagger-run:swagger-spec
-	swagger serve ./swagger.yaml
+	swagger serve ./helpers/swagger.yaml
 
 swagger-docs:
 	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \

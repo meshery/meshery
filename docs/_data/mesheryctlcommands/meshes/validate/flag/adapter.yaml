@@ -1,3 +1,4 @@
 name: --adapter, -a
 description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
 usage: |
+    mesheryctl mesh validate --adapter [name of the adapter]

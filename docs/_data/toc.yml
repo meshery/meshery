@@ -19,6 +19,8 @@
           url: project/contributing-docs
         - title: Meshery UI
           url: project/contributing-ui
+        - title: Meshery Errors
+          url: project/contributing-error
     - title: Releases
       url: project/releases
     - title: Build & Release (CI)

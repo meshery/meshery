@@ -1,0 +1,5 @@
+flag: --file 
+arg: apply
+description: 'Path to service mesh performance test configuration file (default: empty string).'
+usage: |
+    mesheryctl perf apply [profile-name] --url [URL] --file [path to file]

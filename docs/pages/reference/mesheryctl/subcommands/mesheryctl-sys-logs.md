@@ -6,8 +6,6 @@ type: reference
 display-title: "false"
 language: en
 lang: en
-categories: en
-list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -50,6 +48,3 @@ list: exclude
 </pre>
 {% endfor %}
 <br/>
-
-<!-- Options/Flags available in this command -->
-

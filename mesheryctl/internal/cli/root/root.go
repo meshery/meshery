@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
@@ -31,9 +32,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-//TerminalFormatter is exported
-type TerminalFormatter struct{}
-
 var (
 	cfgFile        string
 	mctlCfgFile    string
@@ -42,11 +40,6 @@ var (
 	releasechannel = "Not Set"
 	verbose        = false
 )
-
-//Format is exported
-func (f *TerminalFormatter) Format(entry *log.Entry) ([]byte, error) {
-	return append([]byte(entry.Message), '\n'), nil
-}
 
 var (
 	availableSubcommands = []*cobra.Command{}
@@ -65,6 +58,7 @@ var RootCmd = &cobra.Command{
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.RootError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
+
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -74,6 +68,21 @@ var RootCmd = &cobra.Command{
 			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
 			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
 		}
+
+		stat, err := os.Stat(cfgFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		// check if config file is empty
+		if stat.Size() == 0 {
+			log.Fatal("empty meshconfig. Please populate it before running a command")
+		}
+
+		_, err = config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			utils.BackupConfigFile(cfgFile)
+		}
+
 	},
 }
 
@@ -81,7 +90,7 @@ var RootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() {
 	//log formatter for improved UX
-	log.SetFormatter(new(TerminalFormatter))
+	utils.SetupLogrusFormatter()
 	_ = RootCmd.Execute()
 }
 
@@ -93,7 +102,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
@@ -115,6 +124,7 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	utils.CfgFile = cfgFile
 	// Allow user to override config file with use of --config global flag
 	if cfgFile != "" {
 		// Use config file from the flag.
@@ -150,13 +160,13 @@ func initConfig() {
 				}
 
 				// Add Token to context file
-				err = utils.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
+				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 				if err != nil {
 					log.Fatal(err)
 				}
 
 				// Add Context to context file
-				err = utils.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
+				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
 				if err != nil {
 					log.Fatal(err)
 				}

@@ -8,7 +8,6 @@
 //
 //
 //     Schemes: http
-//     Host: localhost:30611
 //     BasePath: /
 //     Version: 0.4.27
 //     License: Apache-2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
@@ -20,11 +19,11 @@
 //     - application/json
 //
 //     Security:
-//     - token:
+//     - token: []
 //
 //     SecurityDefinitions:
 //     token:
-//          type: JWT
+//          type: apiKey
 //          name: token
 //          in: cookie
 //
@@ -33,8 +32,10 @@
 package handlers
 
 import (
-	"github.com/gofrs/uuid"
+	"github.com/go-openapi/strfmt"
 	"github.com/layer5io/meshery/models"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
+	v1 "k8s.io/api/core/v1"
 )
 
 // Returns all meshery patterns
@@ -55,10 +56,145 @@ type mesheryPatternResponseWrapper struct {
 type noContentWrapper struct {
 }
 
-// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern
+// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults
 type IDParameterWrapper struct {
-	// id to fetch the item
+	// id for a specific
 	// in: path
 	// required: true
-	ID uuid.UUID `json:"id"`
+	ID strfmt.UUID `json:"id"`
+}
+
+// Returns all the performance profiles
+// swagger:response performanceProfilesResponseWrapper
+type performanceProfilesResponseWrapper struct {
+	// in: body
+	Body models.PerformanceProfilesAPIResponse
+}
+
+// Returns all performance results
+// swagger:response performanceResultsResponseWrapper
+type performanceResultsResponseWrapper struct {
+	// in: body
+	Body models.PerformanceResultsAPIResponse
+}
+
+// Returns a single performance profile
+// swagger:response performanceProfileResponseWrapper
+type performanceProfileResponseWrapper struct {
+	// in: body
+	Body models.PerformanceProfile
+}
+
+// Save a performance profile
+// swagger:parameters idSavePerformanceProfile
+type performanceProfileParameterWrapper struct {
+	// in: body
+	Body *models.PerformanceProfileParameters
+}
+
+// Run a performance test with params
+// swagger:parameters idRunPerformanceTest
+type performanceTestParameterWrapper struct {
+	// in: query
+	Body *models.PerformanceTestParameters
+}
+
+// swagger:parameters idPostGrafanaConfig
+type grafanaConfigParamsWrapper struct {
+	// in: body
+	// required: true
+	Body *models.GrafanaConfigParams
+}
+
+// Returns Grafana configs
+// swagger:response grafanaConfigResponseWrapper
+type grafanaConfigResponseWrapper struct {
+	// in: body
+	Body *models.Grafana
+}
+
+// Parameter to search a matching grafana board
+// swagger:parameters idGetGrafanaBoards
+type grafanaBoardsParamsWrapper struct {
+	// in: query
+	DashboardSearch string `json:"dashboardSearch"`
+}
+
+// Returns Grafana boards and panels
+// swagger:response grafanaBoardsResponseWrapper
+type grafanaBoardsResponseWrapper struct {
+	// in: body
+	Body []*models.GrafanaBoard
+}
+
+// Returns a map for v1 services
+// swagger:response v1ServicesMapResponseWrapper
+type v1ServicesMapResponseWrapper struct {
+	// in: body
+	Body map[string][]v1.Service
+}
+
+// Parameters for persisting or deleting prometheus url
+// swagger:parameters idPostPrometheusConfig
+type prometheusConfigParamsWrapper struct {
+	// in: body
+	PrometheusURL string `json:"prometheusURL,omitempty"`
+}
+
+// Returns prometheus configuration
+// swagger:response prometheusConfigResponseWrapper
+type prometheusConfigResponseWrapper struct {
+	// in: body
+	Body *models.Prometheus
+}
+
+// Response for prometheus board import
+// swagger:response prometheusBoardImportRespWrapper
+type prometheusBoardImportRespWrapper struct {
+	// in: body
+	Body *models.GrafanaBoard
+}
+
+// Returns Prometheus static board
+// swagger:response prometheusStaticBoardRespWrapper
+type prometheusStaticBoardRespWrapper struct {
+	// in: body
+	Body map[string]*models.GrafanaBoard
+}
+
+// Save selected Prometheus boards
+// swagger:parameters idPostPrometheusBoard
+type prometheusBoardParamsWrapper struct {
+	// in: body
+	// required: true
+	Body []*models.SelectedGrafanaConfig
+}
+
+// Returns Anonymous stats
+// swagger:response anonymousStatsResponseWrapper
+type anonymousStatsResponseWrapper struct {
+	// in: body
+	Body *models.Preference
+}
+
+// Updates Anonymous stats
+// swagger:parameters idPostAnonymousStats
+type anonymousStatsParamsWrapper struct {
+	// in: body
+	Body *models.PreferenceParams
+}
+
+// Parameters Persists load test preferences
+// swagger:response loadTestPreferencesWrapper
+// swagger:parameters idPostLoadPreferences
+type loadTestPreferencesWrapper struct {
+	// in: body
+	Body SMP.PerformanceTestConfig
+}
+
+// Parameter
+// swagger:parameters idDeleteLoadPreferences idGetLoadPreferences
+type UUIDParamsWrapper struct {
+	// in: query
+	UUID strfmt.UUID `json:"uuid"`
 }

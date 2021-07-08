@@ -397,15 +397,20 @@ class GrafanaCustomChart extends Component {
 
     getData = async (ind, target) => {
       const {
-        prometheusURL, grafanaURL, panel, from, to, templateVars, testUUID, panelData,
+        prometheusURL, grafanaURL,grafanaAPIKey, panel, from, to, templateVars, testUUID, panelData,
       } = this.props;
       const { chartData } = this.state;
       let { xAxis } = this.state;
 
       let queryRangeURL = '';
+      let endpointURL = '';
+      let endpointAPIKey='';
       if (prometheusURL && prometheusURL !== '') {
+        endpointURL=prometheusURL;
         queryRangeURL = '/api/prometheus/query_range';
       } else if (grafanaURL && grafanaURL !== '') {
+        endpointURL = grafanaURL;
+        endpointAPIKey = grafanaAPIKey;
         queryRangeURL = '/api/grafana/query_range';
       }
       const self = this;
@@ -427,6 +432,11 @@ class GrafanaCustomChart extends Component {
 
       const processReceivedData = (result) => {
         self.props.updateProgress({ showProgress: false });
+
+        if (typeof result == 'undefined' || result?.status != "success") {
+          return
+        }
+
         if (typeof result !== 'undefined') {
           const fullData = self.transformDataForChart(result);
           xAxis = ['x'];
@@ -480,14 +490,16 @@ class GrafanaCustomChart extends Component {
           } else {
             self.createOptions(xAxis, chartData, groups);
           }
-          self.setState({
+          self.state.error && self.setState({
             xAxis, chartData, error: '', errorCount: 0,
           });
         }
       };
+
       if (panelData && panelData[expr]) {
         processReceivedData(panelData[expr]);
       } else {
+        queryParams+=`&url=${encodeURIComponent(endpointURL)}&api-key=${encodeURIComponent(endpointAPIKey)}`
         dataFetch(`${queryRangeURL}?${queryParams}`, {
           method: 'GET',
           credentials: 'include',
@@ -718,7 +730,9 @@ class GrafanaCustomChart extends Component {
     handleError = (error) => {
       const self = this;
       this.props.updateProgress({ showProgress: false });
-      this.setState({ error: error.message && error.message !== '' ? error.message : (error !== '' ? error : ''), errorCount: self.state.errorCount + 1 });
+      if(error){
+        this.setState({ error: error.message && error.message !== '' ? error.message : (error !== '' ? error : ''), errorCount: self.state.errorCount + 1 });
+      }
     }
 
     render() {
@@ -785,7 +799,7 @@ class GrafanaCustomChart extends Component {
 
 GrafanaCustomChart.propTypes = {
   classes: PropTypes.object.isRequired,
-  // grafanaURL: PropTypes.string.isRequired,
+  grafanaURL: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
   board: PropTypes.object.isRequired,
   panel: PropTypes.object.isRequired,

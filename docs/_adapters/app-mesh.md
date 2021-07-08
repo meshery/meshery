@@ -6,7 +6,7 @@ mesh_name: App Mesh
 version: v0.1.0
 port: 10005/tcp
 project_status: alpha
-github_link: https://github.com/layer5io/meshery-app-mesh
+github_link: https://github.com/meshery/meshery-app-mesh
 image: /assets/img/service-meshes/app-mesh.svg
 permalink: service-meshes/adapters/app-mesh
 ---
