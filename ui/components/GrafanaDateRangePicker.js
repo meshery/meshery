@@ -608,7 +608,7 @@ class GrafanaDateRangePicker extends Component {
                         control={(
                           <Switch
                             checked={liveTail}
-                            color="default"
+                            color="primary"
                             onChange={this.handleChange('liveTail')}
                           />
                         )}
@@ -624,7 +624,7 @@ class GrafanaDateRangePicker extends Component {
                         margin="normal"
                         variant="outlined"
                         onChange={this.handleChange('refresh')}
-                        disabled={liveTail}
+                        // disabled={liveTail}
                       >
                         {refreshIntervals.map((ri) => (
                           <MenuItem key={`ri_-_-_${ri}`} value={ri}>{ri}</MenuItem>
