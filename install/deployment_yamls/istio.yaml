@@ -27,7 +27,7 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /meshery
+        prefix: /
     route:
     - destination:
         host: meshery
