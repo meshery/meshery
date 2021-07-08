@@ -8,6 +8,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from './ExpansionPanels';
 import GrafanaCustomChart from './GrafanaCustomChart';
+import Divider from '@material-ui/core/Divider';
 
 const grafanaStyles = (theme) => ({
   root: {
@@ -33,7 +34,6 @@ const grafanaStyles = (theme) => ({
     alignItems: "center", 
     marginBottom: "1rem", 
     marginTop: "1rem", 
-    padding: "0px 2%", 
   },
   icon: {
     width: theme.spacing(2.5),
@@ -226,6 +226,7 @@ class GrafanaCustomCharts extends Component {
                               panelData={boardPanelData && boardPanelData !== null && boardPanelData[ind] && boardPanelData[ind] !== null
                                 ? boardPanelData[ind] : {}}
                             />
+                            <Divider style={{display:sparkline?null:('none')}}/>
                           </Grid>
                         ),
                         // } else return '';

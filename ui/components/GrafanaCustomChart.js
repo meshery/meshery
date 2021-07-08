@@ -13,7 +13,7 @@ import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 
-import bb, {area} from 'billboard.js'
+import bb, {area, line} from 'billboard.js'
 
 const grafanaStyles = (theme) => ({
   root: {
@@ -45,7 +45,11 @@ const grafanaStyles = (theme) => ({
   card: {
     height: '100%',
     width: "100%",
-    background:'#f3efff',
+  },
+  sparklineCardContent:{
+    display:'grid',
+    gridTemplateColumns: '1fr 3fr max-content',
+    gap:' 0.5rem',
   },
   cardContent: {
     height: '100%',
@@ -558,7 +562,7 @@ class GrafanaCustomChart extends Component {
       const xAxes = {
         type: 'timeseries',
         // type : 'category',
-        show: showAxis,
+        show: showAxis &&!this.state.sparkline,
         tick: {
           // format: self.c3TimeFormat,
           // fit: true,
@@ -604,9 +608,11 @@ class GrafanaCustomChart extends Component {
         // }
       };
 
-      const linked = !inDialog ? {
-        name: board && board.title ? board.title : '',
-      } : false;
+      const linked = this.state.sparkline?(false):(
+        !inDialog ? {
+          name: board && board.title ? board.title : '',
+        } : false
+      );
 
       let shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10;
       if (panel.type !== 'graph') {
@@ -620,7 +626,8 @@ class GrafanaCustomChart extends Component {
           bindto: self.chartRef,
           size: this.state.sparkline?(
             {
-              height: 150,
+              // width: 150,
+              height:50,
             }
           ):null,
           data: {
@@ -628,7 +635,7 @@ class GrafanaCustomChart extends Component {
             xFormat: self.bbTimeFormat,
             columns: [xAxis, ...chartData],
             groups,
-            type: area(),
+            type:this.state.sparkline?line(): area(),
           },
           axis: {
             x: xAxes,
@@ -783,6 +790,17 @@ class GrafanaCustomChart extends Component {
             <div ref={(ch) => self.chartRef = ch} className={classes.root} />
           </div>
         );
+      }
+      if(this.state.sparkline){
+        return(
+          <NoSsr>
+            <div className={classes.sparklineCardContent}>
+              <div>{panel.title}</div>
+              <div>{mainChart}</div>
+              <div>{iconComponent}</div>
+            </div>
+          </NoSsr>
+        )
       }
       return (
         <NoSsr>
