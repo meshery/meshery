@@ -401,6 +401,102 @@
       "path": "handlers\\error.go"
     },
     {
+      "name": "ErrFailToSaveCode",
+      "old_code": "2045",
+      "code": "2045",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrFailToDeleteCode",
+      "old_code": "2046",
+      "code": "2046",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrInvalidK8SConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrNilClient",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPrometheusConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrGrafanaConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrStaticBoards",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrValidAdapter",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrAddAdapter",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrMeshClient",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrInvalidKubeConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/k8sconfig_handler.go"
+    },
+    {
+      "name": "ErrInvalidK8sContextName",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/k8sconfig_handler.go"
+    },
+    {
       "name": "ErrInvalidRequestCode",
       "old_code": "1000",
       "code": "1000",
@@ -503,6 +599,38 @@
       "code_is_literal": true,
       "code_is_int": true,
       "path": "internal\\graphql\\resolver\\error.go"
+    },
+    {
+      "name": "ErrNilClient",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrInvalidRequest",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrNoMeshSync",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrEmptyHandler",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrGrafanaClientCode",
@@ -1144,6 +1272,26 @@
         "path": "handlers\\error.go"
       }
     ],
+    "2045": [
+      {
+        "name": "ErrFailToSaveCode",
+        "old_code": "2045",
+        "code": "2045",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2046": [
+      {
+        "name": "ErrFailToDeleteCode",
+        "old_code": "2046",
+        "code": "2046",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
     "3000": [
       {
         "name": "ErrGrafanaClientCode",
@@ -1155,8 +1303,121 @@
       }
     ]
   },
-  "call_expr_codes": [],
-  "deprecated_new_default": [],
+  "call_expr_codes": [
+    {
+      "name": "ErrInvalidK8SConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrNilClient",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPrometheusConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrGrafanaConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrStaticBoards",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrValidAdapter",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrAddAdapter",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrMeshClient",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrInvalidKubeConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/k8sconfig_handler.go"
+    },
+    {
+      "name": "ErrInvalidK8sContextName",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/k8sconfig_handler.go"
+    },
+    {
+      "name": "ErrNilClient",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrInvalidRequest",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrNoMeshSync",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrEmptyHandler",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    }
+  ],
+  "deprecated_new_default": null,
   "errors_raw": {
     "ErrAddAdapterCode": [
       {
@@ -1272,6 +1533,28 @@
         "long_description": "",
         "short_description": "Error encoding the : ",
         "probable_cause": "Unable to encode the : ",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFailToDeleteCode": [
+      {
+        "name": "ErrFailToDeleteCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFailToSaveCode": [
+      {
+        "name": "ErrFailToSaveCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Save: ",
+        "probable_cause": "",
         "suggested_remediation": ""
       }
     ],

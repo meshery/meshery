@@ -52,9 +52,10 @@ const (
 	ErrRetrieveUserTokenCode  = "2044"
 	ErrFailToSaveCode         = "2045"
 	ErrFailToDeleteCode       = "2046"
-	ErrWriteResponseCode	  = "2052"
-	ErrTestConfigsCode		  = "2053"
+	ErrWriteResponseCode	    = "2052"
+	ErrTestConfigsCode		    = "2053"
 	ErrInvalidGenValueCode 	  = "2054"
+
 )
 
 var (
@@ -212,4 +213,10 @@ func ErrRetrieveUserToken(err error) error {
 }
 
 
+func ErrFailToSave(err error, obj string) error {
+	return errors.New(ErrFailToSaveCode, errors.Alert, []string{"Failed to Save: ", obj}, []string{err.Error()}, []string{}, []string{})
+}
+func ErrFailToDelete(err error, obj string) error {
+	return errors.New(ErrFailToDeleteCode, errors.Alert, []string{"Failed to Delete: ", obj}, []string{err.Error()}, []string{}, []string{})
+}
 

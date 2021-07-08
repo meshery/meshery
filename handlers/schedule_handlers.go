@@ -24,19 +24,29 @@ func (h *Handler) SaveScheduleHandler(
 	var parsedBody *models.Schedule
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		//failed to read request body
+		//fmt.Fprintf(rw, ErrRequestBody(err).Error(), err)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
+		//failed to get user token
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+
 		return
 	}
 
 	resp, err := provider.SaveSchedule(token, parsedBody)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to save the schedule: %s", err), http.StatusInternalServerError)
+		obj := "schedule"
+		//Failed to save the schedule
+		h.log.Error(ErrFailToSave(err, obj))
+		http.Error(rw, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
+
 		return
 	}
 
@@ -56,7 +66,10 @@ func (h *Handler) GetSchedulesHandler(
 
 	resp, err := provider.GetSchedules(r, q.Get("page"), q.Get("page_size"), q.Get("order"))
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to fetch the schedules: %s", err), http.StatusInternalServerError)
+		obj := "schedules"
+		//unable to get schedules
+		h.log.Error(ErrQueryGet(obj))
+		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -76,7 +89,10 @@ func (h *Handler) DeleteScheduleHandler(
 
 	resp, err := provider.DeleteSchedule(r, ScheduleID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to delete the schedule: %s", err), http.StatusInternalServerError)
+		obj := "schedule"
+		//unable to delete schedules
+		h.log.Error(ErrFailToDelete(err, obj))
+		http.Error(rw, ErrFailToDelete(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -96,7 +112,10 @@ func (h *Handler) GetScheduleHandler(
 
 	resp, err := provider.GetSchedule(r, ScheduleID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get the schedule: %s", err), http.StatusInternalServerError)
+		obj := "schedule"
+		//failed to get schedules
+		h.log.Error(ErrQueryGet(obj))
+		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
