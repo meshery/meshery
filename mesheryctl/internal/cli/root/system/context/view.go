@@ -25,7 +25,7 @@ var viewContextCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		//Storing all the tokens seperately in a map, to get tokenlocation by token name.
+		//Storing all the tokens separately in a map, to get tokenlocation by token name.
 		for _, tok := range configuration.Tokens {
 			tokenNameLocation[tok.Name] = tok.Location
 		}
