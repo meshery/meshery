@@ -90,7 +90,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	// 	return
 	// }
 	// TODO: may be force login if token not found?????
-	id := req.URL.Query().Get("id")
+	id := mux.Vars(req)["id"]
 	if id == "" {
 		logrus.Error(ErrQueryGet("id"))
 		http.Error(w, "please provide a result id", http.StatusBadRequest)
