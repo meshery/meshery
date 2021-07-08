@@ -56,7 +56,7 @@ type mesheryPatternResponseWrapper struct {
 type noContentWrapper struct {
 }
 
-// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults
+// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idGetSinglePerfResult
 type IDParameterWrapper struct {
 	// id for a specific
 	// in: path
@@ -197,4 +197,33 @@ type loadTestPreferencesWrapper struct {
 type UUIDParamsWrapper struct {
 	// in: query
 	UUID strfmt.UUID `json:"uuid"`
+}
+
+// Parameters to run performance tests
+// swagger:parameters idRunPerfTest
+type perfTestParamsWrapper struct {
+	// in: query
+	Query *models.PerformanceTestParameters
+	// in: body
+	Body *SMP.PerformanceTestConfig
+}
+
+// Returns Single test result
+// swagger:response perfSingleResultRespWrapper
+type perfSingleResultRespWrapper struct {
+	// in: body
+	Body *models.PerformanceSpec
+}
+
+// Returns Perf test preference
+// swagger:response perfTestPrefsRespWrapper
+type perfTestPrefsRespWrapper struct {
+	// in: body
+	Body *models.Preference
+}
+
+// swagger:parameters idPerfPostLoadPreferences
+type perfTestPrefsParamsWrapper struct {
+	// in: body
+	Body *models.LoadTestPreferences
 }

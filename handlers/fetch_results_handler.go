@@ -40,6 +40,14 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	_, _ = w.Write(bdr)
 }
 
+// swagger:route GET /api/perf/profile/result PerfAPI idGetAllPerfResults
+// Handles GET requests for perf results
+//
+// Returns pages of all the perf results from Remote Provider
+//
+// responses:
+// 	200: performanceResultsResponseWrapper
+
 // swagger:route GET /api/user/performance/profiles/results PerformanceAPI idGetAllPerformanceResults
 // Handles GET requests for performance results
 //
@@ -66,6 +74,14 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 	w.Header().Set("content-type", "application/json")
 	_, _ = w.Write(bdr)
 }
+
+// swagger:route GET /api/perf/profile/result/{id} PerfAPI idGetSinglePerfResult
+// Handles GET requests for perf result
+//
+// Returns an individual result from provider
+//
+// responses:
+// 	200: perfSingleResultRespWrapper
 
 // GetResultHandler gets an individual result from provider
 func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {

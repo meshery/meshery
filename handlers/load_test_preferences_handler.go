@@ -17,6 +17,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// swagger:route POST /api/perf/prefs PerfAPI idPerfPostLoadPreferences
+// Handle POST request for load perf test preferences
+//
+// Used for persisting load perf test preferences
+// responses:
+// 	200:
+
+// swagger:route GET /api/perf/prefs PerfAPI idPerfGetLoadPreferences
+// Handle GET request for load perf test preferences
+//
+// Used for persisting load perf test preferences
+// responses:
+// 	200: perfTestPrefsRespWrapper
+
 // LoadTestPrefencesHandler is used for persisting load test preferences
 func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodGet {

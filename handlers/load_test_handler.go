@@ -132,6 +132,13 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 	return &headers
 }
 
+// swagger:route GET /api/perf/profile PerfAPI idRunPerfTest
+// Handle GET request to run a test
+//
+// Runs the load test with the given parameters
+// responses:
+// 	200:
+
 // swagger:route GET /api/user/performance/profiles/{id}/run PerformanceAPI idRunPerformanceTest
 // Handle GET request to run a performance test
 //
@@ -141,12 +148,22 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		msg := "unable to read request body"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
 
-	err := req.ParseForm()
+	// if values have been passed as body we run test using SMP Handler
+	if body != nil {
+		h.LoadTestUsingSMPHandler(w, req, prefObj, user, provider)
+		return
+	}
+
+	err = req.ParseForm()
 	if err != nil {
 		logrus.Errorf("Error: unable to parse form: %v", err)
 		http.Error(w, "unable to process the received data", http.StatusForbidden)
@@ -170,7 +187,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	headers := h.jsonToMap(headersString)
 	cookies := h.jsonToMap(cookiesString)
-	body := []byte(bodyString)
+	body = []byte(bodyString)
 	logrus.Debugf("Headers : %v", headers)
 
 	loadTestOptions := &models.LoadTestOptions{}
