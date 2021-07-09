@@ -626,8 +626,7 @@ class GrafanaCustomChart extends Component {
           bindto: self.chartRef,
           size: this.state.sparkline?(
             {
-              // width: 150,
-              height:50,
+              height: 50,
             }
           ):null,
           data: {
