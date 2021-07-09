@@ -48,12 +48,16 @@ var viewContextCmd = &cobra.Command{
 			for k, v := range configuration.Contexts {
 				if v.Token == "" {
 					log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", k)
+					temp, _ := addTokenLocation(&v)
+					tempcontexts[k] = *temp
+				} else {
+					temp, ok := addTokenLocation(&v)
+					tempcontexts[k] = *temp
+					if !ok {
+						log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", tempcontexts[k].Token, k)
+					}
 				}
-				temp, ok := addTokenLocation(&v)
-				tempcontexts[k] = *temp
-				if !ok {
-					log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", tempcontexts[k].Token, k)
-				}
+
 			}
 
 			log.Print(getYAML(tempcontexts))
