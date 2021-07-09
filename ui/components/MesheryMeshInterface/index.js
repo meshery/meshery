@@ -126,6 +126,7 @@ async function getJSONSchemaSets(adapter) {
 }
 
 async function submitPattern(pattern, del = false) {
+  console.log({ pattern, del })
   const res = await fetch("/api/experimental/pattern/deploy", {
     headers: {
       "Content-Type": "application/json",
