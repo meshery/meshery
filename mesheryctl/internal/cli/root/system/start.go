@@ -345,14 +345,39 @@ func start() error {
 		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
 
+		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
+		spinner.Start()
+
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, false, false)
-
 		if err != nil {
-			return err
+			break
 		}
 
-		log.Info("...Meshery deployed on Kubernetes.")
+		deadline := time.Now().Add(20 * time.Second)
+
+		// check if all the pods are running
+		for !(time.Now().After(deadline)) {
+			podsStatus, err := utils.AreAllPodsRunning()
+			if err != nil {
+				return err
+			}
+
+			if podsStatus {
+				break
+			} else {
+				time.Sleep(1 * time.Second)
+			}
+		}
+
+		spinner.Stop()
+
+		podsStatus, err := utils.AreAllPodsRunning()
+		if !podsStatus {
+			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “kubectl get pods -—namespace=meshery” before using meshery.")
+		} else {
+			log.Info("Meshery is started.")
+		}
 
 		clientset := kubeClient.KubeClient
 
@@ -363,7 +388,7 @@ func start() error {
 
 		var endpoint *meshkitutils.Endpoint
 
-		deadline := time.Now().Add(3 * time.Second)
+		deadline = time.Now().Add(3 * time.Second)
 
 		//polling for endpoint to be available within the three second deadline
 		for !(time.Now().After(deadline)) {

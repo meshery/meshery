@@ -199,7 +199,7 @@ func stop() error {
 		}
 	}
 
-	s := utils.CreateDefaultSpinner("Terminating Meshery pods", "Pods terminated                 ")
+	s := utils.CreateDefaultSpinner("Terminating Meshery pods", "\nPods terminated.")
 	s.Start()
 
 	deadline := time.Now().Add(20 * time.Second)
