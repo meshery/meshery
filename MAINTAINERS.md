@@ -1,47 +1,53 @@
-# Core maintainers
+### CLI Maintainers
 
-| Name               | GitHub      |
-| ------------------ | ----------- |
-| Lee Calcote        | leecalcote  |
-| Abishek Kumar      | kumarabd    |
-| Utkarsh Srivastava | utkarsh-pro |
+| Name              | GitHub            | Affiliation |
+| ----------------- | ----------------- | ----------- |
+| Lee Calcote       | leecalcote        | Layer5      |
+| Navendu Pottekkat | navendu-pottekkat | Layer5      |
+| Hussaina Begum    | hexxdump          | VMware      |
 
-# CLI maintainers
+### UI Maintainers
 
-| Name              | GitHub            |
-| ----------------- | ----------------- |
-| Lee Calcote       | leecalcote        |
-| Navendu Pottekkat | navendu-pottekkat |
-| Hussaina Begum    | hexxdump          |
+| Name         | GitHub       | Affiliation |
+| ------------ | ------------ | ----------- | 
+| Lee Calcote  | leecalcote   | Layer5      |
+| Nikhil Ladha | Nikhil-Ladha | Red Hat     |
+| Dhruv Patel  | dhruv0000    | Layer5      |
 
-# UI maintainers
+### Adapter Maintainers
 
-| Name         | GitHub       |
-| ------------ | ------------ |
-| Lee Calcote  | leecalcote   |
-| Nikhil Ladha | Nikhil-Ladha |
+| Name               | GitHub      | Affiliation |
+| ------------------ | ----------- | ----------- |
+| Lee Calcote        | leecalcote  | Layer5      |
+| Abishek Kumar      | kumarabd    | Layer5      |
+| Utkarsh Srivastava | utkarsh-pro | Layer5      |
+| Aisuko             | Aisuko      | Layer5      |
+| Michael Gfeller    | mgfeller    | Computas AS |
+| Haim Helman        | thehh1974   | VMware      |
+| Hussaina Begum     | hexxdump    | VMware      |
+| Dhiraj Gedam       | dheerajng   | Citrix      |
 
-# Adapter maintainers
+### CI / Build & Release Maintainers
 
-| Name               | GitHub      |
-| ------------------ | ----------- |
-| Lee Calcote        | leecalcote  |
-| Abishek Kumar      | kumarabd    |
-| Utkarsh Srivastava | utkarsh-pro |
-| Aisuko             | Aisuko      |
-| Michael Gfeller    | mgfeller    |
+| Name                  | GitHub     | Affiliation |
+| --------------------- | ---------- | ----------- |
+| Lee Calcote           | leecalcote | Layer5      |
+| Rodolfo Martínez Vega | ramrodo    | Rackspace   |
 
-# CI-release maintainers
 
-| Name                  | GitHub     |
-| --------------------- | ---------- |
-| Lee Calcote           | leecalcote |
-| Rodolfo Martínez Vega | ramrodo    |
-| Hussaina Begum        | hexxdump   |
+# Docs Maintainers
 
-# Docs maintainers
+| Name            | GitHub          | Affiliation |
+| --------------- | --------------- | ----------- |
+| Lee Calcote     | leecalcote      | Layer5      |
+| Adithya Krishna | adithyaakrishna | Red Hat     |
 
-| Name            | GitHub          |
-| --------------- | --------------- |
-| Lee Calcote     | leecalcote      |
-| Adithya Krishna | adithyaakrishna |
+
+### Core Maintainers
+
+| Name               | GitHub      | Affiliation |
+| ------------------ | ----------- | ----------- |
+| Lee Calcote        | leecalcote  | Layer5      |
+| Abishek Kumar      | kumarabd    | Layer5      |
+| Utkarsh Srivastava | utkarsh-pro | Layer5      |
+
