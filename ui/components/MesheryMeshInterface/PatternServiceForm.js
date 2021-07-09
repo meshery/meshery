@@ -3,6 +3,7 @@ import React from "react";
 import { Tab, Tabs, AppBar, Typography, Box, Card } from "@material-ui/core";
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
+import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -63,15 +64,18 @@ function createPatternFromConfig(config, namespace) {
 
   Object.keys(config).forEach((key) => {
     // Add it only if the settings are non empty or "true"
-    if (config[key].settings) pattern.services[key] = config[key];
+    if (config[key].settings) {
+      const name = PascalCaseToKebab(key);
+      pattern.services[name] = config[key];
+
+      pattern.services[name].type = key;
+      pattern.services[name].namespace = namespace;
+    }
   });
 
   Object.keys(pattern.services).forEach((key) => {
     // Delete the settings attribute/field if it is set to "true"
     if (pattern.services[key].settings === true) delete pattern.services[key].settings;
-
-    pattern.services[key].type = key;
-    pattern.services[key].namespace = namespace;
   });
 
   return pattern;
