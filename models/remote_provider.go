@@ -52,8 +52,6 @@ type RemoteProvider struct {
 	ProviderVersion    string
 	SmiResultPersister *BitCaskSmiResultsPersister
 	GenericPersister   database.Handler
-	GraphqlHandler     http.Handler
-	GraphqlPlayground  http.Handler
 	KubeClient         *mesherykube.Client
 }
 
@@ -2457,16 +2455,6 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 // GetGenericPersister - to return persister
 func (l *RemoteProvider) GetGenericPersister() *database.Handler {
 	return &l.GenericPersister
-}
-
-// GetGraphqlHandler - to return graphql handler instance
-func (l *RemoteProvider) GetGraphqlHandler() http.Handler {
-	return l.GraphqlHandler
-}
-
-// GetGraphqlPlayground - to return graphql playground instance
-func (l *RemoteProvider) GetGraphqlPlayground() http.Handler {
-	return l.GraphqlPlayground
 }
 
 // SetKubeClient - to set meshery kubernetes client

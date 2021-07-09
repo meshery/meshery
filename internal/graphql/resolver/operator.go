@@ -262,7 +262,7 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 	}
 
 	// subscribing to nats
-	r.BrokerConn, err = nats.New(nats.Options{
+	conn, err := nats.New(nats.Options{
 		URLS:           []string{endpoint},
 		ConnectionName: "meshery",
 		Username:       "",
@@ -274,6 +274,7 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 	if err != nil {
 		return endpoint, err
 	}
+	conn.DeepCopyInto(r.BrokerConn)
 
 	err = r.BrokerConn.SubscribeWithChannel(meshsyncSubject, brokerQueue, datach)
 	if err != nil {
