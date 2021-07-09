@@ -77,21 +77,34 @@ function createPatternFromConfig(config, namespace) {
   return pattern;
 }
 
+async function submitPattern(pattern, del = false) {
+  console.log({ pattern, del })
+  const res = await fetch("/api/experimental/pattern/deploy", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: del ? "DELETE" : "POST",
+    body: JSON.stringify(pattern),
+  });
+
+  return res.text();
+}
+
 /**
  * PatternServiceForm renders a form from the workloads schema and
  * traits schema
  * @param {{
  *  schemaSet: { workload: any, traits: any[], type: string };
- *  onSubmit: Function;
- *  onDelete: Function;
  *  namespace: string;
  * }} props
  * @returns
  */
-function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
+function PatternServiceForm({ schemaSet, namespace }) {
   const [tab, setTab] = React.useState(0);
-  const [settings, setSettings] = useStateCB({});
-  const [traits, setTraits] = useStateCB({});
+  const [settings, setSettings, getSettingsRefValue] = useStateCB({});
+  const [traits, setTraits, getTraitsRefValue] = useStateCB({});
+
+  console.log({ settings, traits })
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
@@ -100,11 +113,11 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
   const renderTraits = () => !!schemaSet.traits?.length;
 
   const submitHandler = (val) => {
-    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace));
+    submitPattern(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace))
   };
 
   const deleteHandler = (val) => {
-    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace));
+    submitPattern(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace), true)
   };
 
   if (schemaSet.type === "addon") {
@@ -113,14 +126,8 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
         type="workload"
         jsonSchema={schemaSet.workload}
         onChange={setSettings}
-        onSubmit={(settings) => {
-          // THIS IS A HACK!
-          submitHandler({ settings });
-        }}
-        onDelete={(settings) => {
-          // THIS IS A HACK!
-          deleteHandler({ settings });
-        }}
+        onSubmit={() => submitHandler({ settings: getSettingsRefValue() })}
+        onDelete={() => deleteHandler({ settings: getSettingsRefValue() })}
       />
     );
   }
@@ -141,8 +148,8 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
           type="workload"
           jsonSchema={schemaSet.workload}
           onChange={setSettings}
-          onSubmit={() => submitHandler({ settings, traits })}
-          onDelete={() => deleteHandler({ settings, traits })}
+          onSubmit={() => submitHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
+          onDelete={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
         />
       </TabPanel>
       {renderTraits() ? (

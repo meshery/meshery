@@ -12,7 +12,7 @@ function deleteTitleFromJSONSchema(jsonSchema) {
 
 function RJSFButton({ handler, text }) {
   return (
-    <Button variant="contained" color="primary" style={{ marginRight: "0.5rem" }} onClick={() => handler?.()}>
+    <Button variant="contained" color="primary" style={{ marginRight: "0.5rem" }} onClick={handler}>
       {text}
     </Button>
   );
