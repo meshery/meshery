@@ -15,6 +15,8 @@
 package system
 
 import (
+	"os/exec"
+
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -67,11 +69,32 @@ func dashboard() error {
 	if err != nil {
 		return err
 	}
+
+	currPlatform := currCtx.Platform
+
+	err = utils.NavigateToBrowser(currCtx.Endpoint)
+
+	if err != nil {
+
+		switch currPlatform {
+		case "docker":
+			//Nothing can be done ?
+			break
+		case "kubernetes":
+			// Probably works
+			exec.Command("kubectl proxy")
+
+		}
+
+		err = utils.NavigateToBrowser(currCtx.Endpoint)
+		if err != nil {
+			return err
+		}
+
+	}
+
 	log.Info("Meshery UI is accesible at " + currCtx.Endpoint + "status:" + string(rune(resp.StatusCode)))
 	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
-	err = utils.NavigateToBrowser(currCtx.Endpoint)
-	if err != nil {
-		return err
-	}
+
 	return nil
 }
