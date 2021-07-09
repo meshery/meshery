@@ -41,7 +41,7 @@ const styles = (theme) => ({
     margin: theme.spacing(1),
   },
   rangeButton:{
-     border:'1px solid rgba(0, 0, 0, 0.23)'
+    border:'1px solid rgba(0, 0, 0, 0.23)'
   },
 });
 
