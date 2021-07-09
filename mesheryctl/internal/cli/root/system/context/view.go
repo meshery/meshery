@@ -13,6 +13,17 @@ var context string
 var allContext bool
 var tokenNameLocation map[string]string = map[string]string{} //maps each token name to its specified location
 
+// An auxiliary context which adds location to the existing context struct.
+type contextWithLocation struct {
+	Endpoint      string   `mapstructure:"endpoint,omitempty"`
+	Token         string   `mapstructure:"token,omitempty"`
+	Tokenlocation string   `mapstructure:"token,omitempty" yaml:"token-location,omitempty"`
+	Platform      string   `mapstructure:"platform"`
+	Adapters      []string `mapstructure:"adapters,omitempty"`
+	Channel       string   `mapstructure:"channel,omitempty"`
+	Version       string   `mapstructure:"version,omitempty"`
+}
+
 // viewContextCmd represents the view command
 var viewContextCmd = &cobra.Command{
 	Use:          "view",
@@ -31,17 +42,22 @@ var viewContextCmd = &cobra.Command{
 		}
 
 		if allContext {
+			tempcontexts := make(map[string]contextWithLocation)
+
+			//Populating auxiliary struct with token-locations
 			for k, v := range configuration.Contexts {
 				if v.Token == "" {
 					log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", k)
-					v.TokenLocation = ""
-				} else {
-					addTokenLocation(&v, k)
 				}
-				configuration.Contexts[k] = v
+				temp, ok := addTokenLocation(&v)
+				tempcontexts[k] = *temp
+				if !ok {
+					log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", tempcontexts[k].Token, k)
+				}
 			}
 
-			log.Print(getYAML(configuration.Contexts))
+			log.Print(getYAML(tempcontexts))
+
 			return nil
 		}
 		if len(args) != 0 {
@@ -60,14 +76,20 @@ var viewContextCmd = &cobra.Command{
 			log.Printf("context \"%s\" doesn't exists, run the following to create:\n\nmesheryctl system context create %s", context, context)
 			return nil
 		}
+
 		if contextData.Token == "" {
 			log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", context)
-			contextData.TokenLocation = ""
+			log.Printf("\nCurrent Context: %s\n", context)
+			log.Print(getYAML(contextData))
 		} else {
-			addTokenLocation(&contextData, context)
+			temp, ok := addTokenLocation(&contextData)
+			log.Printf("\nCurrent Context: %s\n", context)
+			if !ok {
+				log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", temp.Token, context)
+			}
+			log.Print(getYAML(temp))
 		}
-		log.Printf("\nCurrent Context: %s\n", context)
-		log.Print(getYAML(contextData))
+
 		return nil
 	},
 }
@@ -83,11 +105,18 @@ func getYAML(strct interface{}) string {
 	return string(out)
 }
 
-func addTokenLocation(c *config.Context, name string) {
-	tokenName := c.Token
-	tokenlocation, ok := tokenNameLocation[tokenName]
-	if !ok {
-		log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", tokenName, name)
+func addTokenLocation(c *config.Context) (*contextWithLocation, bool) {
+	temp := contextWithLocation{
+		Endpoint:      c.Endpoint,
+		Token:         c.Token,
+		Tokenlocation: tokenNameLocation[c.Token],
+		Platform:      c.Platform,
+		Adapters:      c.Adapters,
+		Channel:       c.Channel,
+		Version:       c.Version,
 	}
-	c.TokenLocation = tokenlocation
+	if temp.Tokenlocation == "" {
+		return &temp, false
+	}
+	return &temp, true
 }

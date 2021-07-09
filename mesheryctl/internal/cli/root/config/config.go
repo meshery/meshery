@@ -34,13 +34,12 @@ type Token struct {
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint      string   `mapstructure:"endpoint,omitempty"`
-	Token         string   `mapstructure:"token,omitempty"`
-	TokenLocation string   `mapstructure:"platform" yaml:"token-location,omitempty"`
-	Platform      string   `mapstructure:"platform"`
-	Adapters      []string `mapstructure:"adapters,omitempty"`
-	Channel       string   `mapstructure:"channel,omitempty"`
-	Version       string   `mapstructure:"version,omitempty"`
+	Endpoint string   `mapstructure:"endpoint,omitempty"`
+	Token    string   `mapstructure:"token,omitempty"`
+	Platform string   `mapstructure:"platform"`
+	Adapters []string `mapstructure:"adapters,omitempty"`
+	Channel  string   `mapstructure:"channel,omitempty"`
+	Version  string   `mapstructure:"version,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object.
