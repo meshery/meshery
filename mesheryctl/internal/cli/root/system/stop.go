@@ -40,7 +40,17 @@ var stopCmd = &cobra.Command{
 	Long:  `Stop all Meshery containers / remove all Meshery pods.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return RunPreflightHealthChecks(true, cmd.Use)
+		//Check prerequisite
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.New("failed to initialize healthchecker")
+		}
+		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := stop(); err != nil {
@@ -61,11 +71,6 @@ func stop() error {
 	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
 		return errors.Wrap(err, "failed to retrieve current-context")
-	}
-
-	client, err := meshkitkube.New([]byte(""))
-	if err != nil {
-		return err
 	}
 
 	ok, err := utils.IsMesheryRunning(currCtx.Platform)
@@ -108,13 +113,33 @@ func stop() error {
 			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
 		}
 
-		err = utils.ApplyOperatorManifest(client, false, true)
-
+		// If k8s is available in case of platform docker than we remove operator
+		hcOptions := &HealthCheckOptions{
+			PrintLogs:           false,
+			IsPreRunE:           false,
+			Subcommand:          "",
+			RunKubernetesChecks: true,
+		}
+		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return err
+			return errors.New("failed to initialize healthchecker")
+		}
+		if err = hc.Run(); err != nil {
+			client, err := meshkitkube.New([]byte(""))
+			if err != nil {
+				return err
+			}
+			err = utils.ApplyOperatorManifest(client, false, true)
+			if err != nil {
+				return err
+			}
 		}
 
 	case "kubernetes":
+		client, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
 		// if the platform is kubernetes, stop the deployment by deleting the manifest files
 		userResponse := false
 		if utils.SilentFlag {
