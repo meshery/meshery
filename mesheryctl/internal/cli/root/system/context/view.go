@@ -48,10 +48,10 @@ var viewContextCmd = &cobra.Command{
 			for k, v := range configuration.Contexts {
 				if v.Token == "" {
 					log.Warnf("[Warning]: Token not specified/empty for context \"%s\"", k)
-					temp, _ := addTokenLocation(&v)
+					temp, _ := getContextWithTokenLocation(&v)
 					tempcontexts[k] = *temp
 				} else {
-					temp, ok := addTokenLocation(&v)
+					temp, ok := getContextWithTokenLocation(&v)
 					tempcontexts[k] = *temp
 					if !ok {
 						log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", tempcontexts[k].Token, k)
@@ -86,7 +86,7 @@ var viewContextCmd = &cobra.Command{
 			log.Printf("\nCurrent Context: %s\n", context)
 			log.Print(getYAML(contextData))
 		} else {
-			temp, ok := addTokenLocation(&contextData)
+			temp, ok := getContextWithTokenLocation(&contextData)
 			log.Printf("\nCurrent Context: %s\n", context)
 			if !ok {
 				log.Warnf("[Warning]: Token \"%s\" could not be found! for context \"%s\"", temp.Token, context)
@@ -109,7 +109,7 @@ func getYAML(strct interface{}) string {
 	return string(out)
 }
 
-func addTokenLocation(c *config.Context) (*contextWithLocation, bool) {
+func getContextWithTokenLocation(c *config.Context) (*contextWithLocation, bool) {
 	temp := contextWithLocation{
 		Endpoint:      c.Endpoint,
 		Token:         c.Token,
