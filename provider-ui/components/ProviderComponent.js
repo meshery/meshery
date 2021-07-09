@@ -188,7 +188,7 @@ class ProviderComponent extends React.Component {
         <div data-cy="root" className={classes.root}>
           <img
             className={classes.logo}
-            src="/static/img/meshery-logo/meshery-logo-light-text.png"
+            src="/provider/static/img/meshery-logo/meshery-logo-light-text.png"
             alt="logo"
           />
           <Typography variant="h6" gutterBottom className={classes.chartTitle}>
