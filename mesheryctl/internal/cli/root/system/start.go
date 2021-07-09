@@ -52,23 +52,29 @@ var startCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-
-		err := RunPreflightHealthChecks(true, cmd.Use)
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		log.Debug(hcOptions)
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.New("failed to initialize healthchecker")
+		}
+		// execute healthchecks
+		err = hc.RunPreflightHealthChecks()
 		if err != nil {
 			cmd.SilenceUsage = true
-
 		}
 
 		return err
-
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
-
 		}
 		return nil
-
 	},
 }
 
@@ -77,17 +83,6 @@ func start() error {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
 			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.MesheryFolder)))
 		}
-	}
-
-	kubeClient, err := meshkitkube.New([]byte(""))
-	if err != nil {
-		return err
-	}
-
-	err = utils.CreateManifestsFolder()
-
-	if err != nil {
-		return err
 	}
 
 	// Get viper instance used for context
@@ -309,6 +304,15 @@ func start() error {
 		}
 
 	case "kubernetes":
+		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
+
+		err = utils.CreateManifestsFolder()
+		if err != nil {
+			return err
+		}
 
 		version := currCtx.Version
 		channel := currCtx.Channel
@@ -341,14 +345,39 @@ func start() error {
 		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
 
+		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
+		spinner.Start()
+
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, false, false)
-
 		if err != nil {
-			return err
+			break
 		}
 
-		log.Info("...Meshery deployed on Kubernetes.")
+		deadline := time.Now().Add(20 * time.Second)
+
+		// check if all the pods are running
+		for !(time.Now().After(deadline)) {
+			podsStatus, err := utils.AreAllPodsRunning()
+			if err != nil {
+				return err
+			}
+
+			if podsStatus {
+				break
+			} else {
+				time.Sleep(1 * time.Second)
+			}
+		}
+
+		spinner.Stop()
+
+		podsStatus, err := utils.AreAllPodsRunning()
+		if !podsStatus {
+			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “kubectl get pods -—namespace=meshery” before using meshery.")
+		} else {
+			log.Info("Meshery is started.")
+		}
 
 		clientset := kubeClient.KubeClient
 
@@ -359,7 +388,7 @@ func start() error {
 
 		var endpoint *meshkitutils.Endpoint
 
-		deadline := time.Now().Add(3 * time.Second)
+		deadline = time.Now().Add(3 * time.Second)
 
 		//polling for endpoint to be available within the three second deadline
 		for !(time.Now().After(deadline)) {
@@ -371,15 +400,13 @@ func start() error {
 			}
 		}
 
-		if err != nil {
-			return err
-		}
+		if err == nil {
+			currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
 
-		currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
-
-		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
-		if err != nil {
-			return err
+			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			if err != nil {
+				return err
+			}
 		}
 
 		// switch to default case if the platform specified is not supported
@@ -387,16 +414,48 @@ func start() error {
 		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder))
 	}
 
-	err = utils.DownloadOperatorManifest()
-
-	if err != nil {
-		return err
+	hcOptions := &HealthCheckOptions{
+		PrintLogs:           false,
+		IsPreRunE:           false,
+		Subcommand:          "",
+		RunKubernetesChecks: true,
 	}
-
-	err = utils.ApplyOperatorManifest(kubeClient, false, false)
-
+	hc, err := NewHealthChecker(hcOptions)
 	if err != nil {
-		return err
+		return errors.New("failed to initialize healthchecker")
+	}
+	// If k8s is available in case of platform docker than we deploy operator
+	if err = hc.Run(); err != nil {
+		// create a client
+		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
+
+		err = utils.CreateManifestsFolder()
+		if err != nil {
+			return err
+		}
+		// Download operator manifest
+		err = utils.DownloadOperatorManifest()
+		if err != nil {
+			return err
+		}
+
+		if !skipUpdateFlag {
+			err = utils.ApplyOperatorManifest(kubeClient, true, false)
+
+			if err != nil {
+				return err
+			}
+		} else {
+			// skip applying update on operators when the flag is used
+			err = utils.ApplyOperatorManifest(kubeClient, false, false)
+
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")

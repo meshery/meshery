@@ -1,7 +1,7 @@
 import React from 'react';
-import App, { Container } from 'next/app';
+import App from 'next/app';
 import Head from 'next/head';
-import { MuiThemeProvider, createMuiTheme, withStyles } from '@material-ui/core/styles';
+import { MuiThemeProvider, createTheme, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
@@ -11,7 +11,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import { blueGrey } from '@material-ui/core/colors';
 import getPageContext from '../components/PageContext';
 
-let theme = createMuiTheme({
+let theme = createTheme({
   typography: {
     useNextVariants: true,
     h5: {
@@ -224,7 +224,6 @@ class MesheryProviderApp extends App {
     } = this.props;
     return (
       <NoSsr>
-        <Container>
           <Head>
             <title>Meshery</title>
           </Head>
@@ -252,7 +251,6 @@ class MesheryProviderApp extends App {
               </div>
             </div>
           </MuiThemeProvider>
-        </Container>
       </NoSsr>
     );
   }

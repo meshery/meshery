@@ -69,7 +69,7 @@ run-local: error
 	./meshery; \
 	cd ..
 
-run-fast: error
+run-fast:
 	cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \

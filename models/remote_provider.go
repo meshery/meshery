@@ -52,8 +52,6 @@ type RemoteProvider struct {
 	ProviderVersion    string
 	SmiResultPersister *BitCaskSmiResultsPersister
 	GenericPersister   database.Handler
-	GraphqlHandler     http.Handler
-	GraphqlPlayground  http.Handler
 	KubeClient         *mesherykube.Client
 }
 
@@ -120,7 +118,9 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 	}()
 
 	// Clear the previous capabilities before writing new one
-	l.ProviderProperties = ProviderProperties{}
+	l.ProviderProperties = ProviderProperties{
+		ProviderURL: l.RemoteProviderURL,
+	}
 	decoder := json.NewDecoder(resp.Body)
 	if err := decoder.Decode(&l.ProviderProperties); err != nil {
 		logrus.Errorf("[Initialize]: Failed to decode provider properties %s", err)
@@ -363,6 +363,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	ck, err := req.Cookie(tokenName)
 	if err == nil {
 		ck.MaxAge = -1
+		ck.Path = "/"
 		http.SetCookie(w, ck)
 	}
 	http.Redirect(w, req, "/user/login", http.StatusFound)
@@ -2456,16 +2457,6 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 // GetGenericPersister - to return persister
 func (l *RemoteProvider) GetGenericPersister() *database.Handler {
 	return &l.GenericPersister
-}
-
-// GetGraphqlHandler - to return graphql handler instance
-func (l *RemoteProvider) GetGraphqlHandler() http.Handler {
-	return l.GraphqlHandler
-}
-
-// GetGraphqlPlayground - to return graphql playground instance
-func (l *RemoteProvider) GetGraphqlPlayground() http.Handler {
-	return l.GraphqlPlayground
 }
 
 // SetKubeClient - to set meshery kubernetes client

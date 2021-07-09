@@ -23,7 +23,7 @@ jobs:
           cd docs
           make build
       - name: Zip Site
-        run: bash ./script.sh
+        run: bash docs/script.sh
       - name: Upload files
         uses: actions/upload-artifact@v2
         with:

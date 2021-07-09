@@ -20,6 +20,7 @@ import (
 	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
@@ -33,12 +34,9 @@ import (
 )
 
 var (
-	cfgFile        string
-	mctlCfgFile    string
-	version        = "Not Set"
-	commitsha      = "Not Set"
-	releasechannel = "Not Set"
-	verbose        = false
+	cfgFile     string
+	mctlCfgFile string
+	verbose     = false
 )
 
 var (
@@ -58,15 +56,32 @@ var RootCmd = &cobra.Command{
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.RootError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
+
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		latest, err := utils.GetLatestStableReleaseTag()
+		version := constants.GetMesheryctlVersion()
 		if err == nil && latest != version {
 			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
 			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
 			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
 		}
+
+		stat, err := os.Stat(cfgFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		// check if config file is empty
+		if stat.Size() == 0 {
+			log.Fatal("empty meshconfig. Please populate it before running a command")
+		}
+
+		_, err = config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			utils.BackupConfigFile(cfgFile)
+		}
+
 	},
 }
 
@@ -86,7 +101,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
@@ -108,6 +123,7 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	utils.CfgFile = cfgFile
 	// Allow user to override config file with use of --config global flag
 	if cfgFile != "" {
 		// Use config file from the flag.

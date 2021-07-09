@@ -27,7 +27,7 @@ type Options struct {
 
 // New returns a graphql handler instance
 func New(opts Options) http.Handler {
-	resolver := &resolver.Resolver{
+	res := &resolver.Resolver{
 		Log:             opts.Logger,
 		DBHandler:       opts.DBHandler,
 		KubeClient:      opts.KubeClient,
@@ -36,7 +36,7 @@ func New(opts Options) http.Handler {
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(generated.Config{
-		Resolvers: resolver,
+		Resolvers: res,
 	}))
 
 	srv.AddTransport(transport.POST{})
