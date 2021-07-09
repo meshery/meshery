@@ -39,50 +39,6 @@ jobs:
 
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true
-  unit-tests:
-    needs: [golangci]
-    name: Unit tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: Setup Go
-        uses: actions/setup-go@v1
-        with:
-          go-version: ${{ secrets.GO_VERSION }}
-      - name: Run coverage
-        run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          files: ./coverage.txt
-          flags: unittests
-          fail_ci_if_error: true
-  integration-tests:
-    needs: [golangci]
-    name: Integration tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: Setup Go
-        uses: actions/setup-go@v1
-        with:
-          go-version: ${{ secrets.GO_VERSION }}
-      - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.1.0
-        with:
-          cluster_name: "kind-cluster"
-      - name: Run coverage
-        run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          files: ./coverage.txt
-          flags: gointegrationtests
-          fail_ci_if_error: true
   build-backend:
     name: Backend build
     runs-on: ubuntu-latest
