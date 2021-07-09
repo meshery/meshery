@@ -60,6 +60,7 @@ module.exports = {
     "@material-ui/icons/Replay": require("@material-ui/icons/Replay"),
     "@material-ui/core/Paper": require("@material-ui/core/Paper"),
     "@material-ui/icons/ArrowUpward": require("@material-ui/icons/ArrowUpward"),
+    "@material-ui/icons/DoneAllRounded": require("@material-ui/icons/DoneAllRounded"),
     "@material-ui/icons/ArrowDownward": require("@material-ui/icons/ArrowDownward"),
     "@material-ui/icons/Error": require("@material-ui/icons/Error"),
     "@material-ui/core/ListItemText": require("@material-ui/core/ListItemText"),
