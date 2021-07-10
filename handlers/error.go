@@ -53,11 +53,11 @@ const (
 	ErrRetrieveUserTokenCode = "2044"
 	ErrFailToSaveCode        = "2045"
 	ErrFailToDeleteCode      = "2046"
-	ErrBlankName             = "2047"
-    ErrConversion            = "2048"
-    ErrParseDuration         = "2049"
-    ErrLoadTest              = "2050"
-    ErrFetchKubernetes       = "2051"
+	ErrBlankNameCode             = "2047"
+    ErrConversionCode            = "2048"
+    ErrParseDurationCode         = "2049"
+    ErrLoadTestCode              = "2050"
+    ErrFetchKubernetesCode       = "2051"
 
 )
 
@@ -219,23 +219,23 @@ func ErrFailToDelete(err error, obj string) error {
 }
 
 func ErrBlankName(err error) error {
-    return errors.New(ErrBlankName, errors.Alert, []string{"Error: name field is blank"}, []string{err.Error()}, []string{},[]string{"Provide a name for the test"})
+    return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank"}, []string{err.Error()}, []string{},[]string{"Provide a name for the test"})
 }
 
 func ErrConversion(err error) error {
-    return errors.New(ErrConversion, errors.Alert, []string{"unable to convert YAML to JSON"}, []string{err.Error()}, []string{}, []string{})
+    return errors.New(ErrConversionCode, errors.Alert, []string{"unable to convert YAML to JSON"}, []string{err.Error()}, []string{}, []string{})
 }	
 
 func ErrParseDuration(err error) error {
-    return errors.New(ErrParseDuration, errors.Alert, []string{"error parsing test duration"}, []string{err.Error()}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+    return errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{err.Error()}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
 }   
 
 func ErrLoadTest(err error, obj string) error {
-    return errors.New(ErrLoadTest, errors.Alert, []string{"load test error: " + obj}, []string{err.Error()}, []string{}, []string{})
+    return errors.New(ErrLoadTestCode, errors.Alert, []string{"load test error: " + obj}, []string{err.Error()}, []string{}, []string{})
 
 }
 
 func ErrFetchKubernetes(err error) error {
-    return errors.New(ErrLoadTest, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{}, []string{})
+    return errors.New(ErrLoadTestCode, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{}, []string{})
 }
 
