@@ -72,7 +72,7 @@ var validateCmd = &cobra.Command{
 			}
 		case "istio-vet":
 			{
-				if (adapterURL == "meshery-istio:10000") {
+				if adapterURL == "meshery-istio:10000" {
 					data.Set("query", "istio-vet")
 					break
 				}
