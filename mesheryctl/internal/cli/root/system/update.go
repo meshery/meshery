@@ -34,7 +34,16 @@ var updateCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		return RunPreflightHealthChecks(true, cmd.Use)
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.New("failed to initialize healthchecker")
+		}
+		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Get viper instance used for context
