@@ -63,7 +63,7 @@ var validateCmd = &cobra.Command{
 		switch spec {
 		case "smi":
 			{
-				data.Set("query", "smiConformanceTest")
+				data.Set("query", "smi_conformance")
 				break
 			}
 		case "smp":
