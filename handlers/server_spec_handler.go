@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"github.com/tcnksm/go-latest"
 )
@@ -34,7 +33,7 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	// compare the server build with the target build
-	res, err := h.CheckLatestVersion(version.Build)
+	res, err := h.checkMesheryctlClientVersion(version.Build)
 	if err != nil {
 		h.log.Error(err)
 	} else {
@@ -54,7 +53,7 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 // CheckLatestVersion takes in the current server version compares it with the target
 // and returns the result (latest.CheckResponse)
-func (h *Handler) CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
+func (h *Handler) checkMesheryctlClientVersion(serverVersion string) (*latest.CheckResponse, error) {
 	githubTag := &latest.GithubTag{
 		Owner:      mesheryGitHubOrg,
 		Repository: mesheryGitHubRepo,
@@ -63,16 +62,17 @@ func (h *Handler) CheckLatestVersion(serverVersion string) (*latest.CheckRespons
 	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
 	res, err := latest.Check(githubTag, serverVersion)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to compare latest and current version of Meshery")
+		h.log.Error(ErrVersionCompare(err))
+		// http.Error(w, ErrVersionCompare(err).Error(), http.StatusBadRequest)
 	}
 	// If user is running an outdated release, let them know.
 	if res.Outdated {
-		h.log.Info("\n  ", serverVersion, " is not the latest Meshery release. Update to v", res.Current, ". Run `mesheryctl system update`")
+		h.log.Info(serverVersion, " is not the latest Meshery release. Update to v", res.Current, ". Run `mesheryctl system update`")
 	}
 
 	// If user is running the latest release, let them know.
 	if res.Latest {
-		h.log.Info("\n  ", serverVersion, " is the latest Meshery release.")
+		h.log.Info(serverVersion, " is the latest Meshery release.")
 	}
 
 	// Add "v" to the "Current" property of the CheckResponse

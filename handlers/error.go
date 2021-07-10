@@ -48,6 +48,7 @@ const (
 	ErrApplyChangeCode       = "2040"
 	ErrRetrieveMeshDataCode  = "2041"
 	ErrDataSendCode          = "2042"
+	ErrVersionCompareCode    = "2043"
 )
 
 var (
@@ -191,4 +192,8 @@ func ErrRetrieveMeshData(err error) error {
 
 func ErrDataSend(err error) error {
 	return errors.New(ErrDataSendCode, errors.Alert, []string{"Unable to send data"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrVersionCompare(err error) error {
+	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to compare latest and current version of Meshery"}, []string{err.Error()}, []string{}, []string{})
 }
