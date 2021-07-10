@@ -512,7 +512,7 @@
       "severity": "Alert",
       "long_description": "",
       "short_description": "Error decoding the : ",
-      "probable_cause": "Unable to decode the : ",
+      "probable_cause": "",
       "suggested_remediation": ""
     },
     "2044": {
@@ -521,6 +521,24 @@
       "severity": "Alert",
       "long_description": "",
       "short_description": "Failed to get the user token",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2045": {
+      "name": "ErrFailToSaveCode",
+      "code": "2045",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Failed to Save: ",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2046": {
+      "name": "ErrFailToDeleteCode",
+      "code": "2046",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Failed to Delete: ",
       "probable_cause": "",
       "suggested_remediation": ""
     },

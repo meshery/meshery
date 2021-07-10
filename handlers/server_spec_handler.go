@@ -63,16 +63,7 @@ func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
 	res, err := latest.Check(githubTag, serverVersion)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to compare latest and current version of Meshery")
-	}
-	// If user is running an outdated release, let them know.
-	if res.Outdated {
-		logrus.Info("\n  ", serverVersion, " is not the latest Meshery release. Update to v", res.Current, ". Run `mesheryctl system update`")
-	}
-
-	// If user is running the latest release, let them know.
-	if res.Latest {
-		logrus.Info("\n  ", serverVersion, " is the latest Meshery release.")
+		return nil, errors.Wrap(err, "failed to compare latest and current version")
 	}
 
 	// Add "v" to the "Current" property of the CheckResponse

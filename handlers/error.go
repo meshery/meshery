@@ -50,6 +50,8 @@ const (
 	ErrApplicationFailureCode = "2042"
 	ErrDecodingCode           = "2043"
 	ErrRetrieveUserTokenCode  = "2044"
+	ErrFailToSaveCode         = "2045"
+	ErrFailToDeleteCode       = "2046"
 )
 
 var (
@@ -201,4 +203,10 @@ func ErrDecoding(err error, obj string) error {
 
 func ErrRetrieveUserToken(err error) error {
 	return errors.New(ErrRetrieveUserTokenCode, errors.Alert, []string{"Failed to get the user token"}, []string{err.Error()}, []string{}, []string{})
+}
+func ErrFailToSave(err error, obj string) error {
+	return errors.New(ErrFailToSaveCode, errors.Alert, []string{"Failed to Save: ", obj}, []string{err.Error()}, []string{}, []string{})
+}
+func ErrFailToDelete(err error, obj string) error {
+	return errors.New(ErrFailToDeleteCode, errors.Alert, []string{"Failed to Delete: ", obj}, []string{err.Error()}, []string{}, []string{})
 }
