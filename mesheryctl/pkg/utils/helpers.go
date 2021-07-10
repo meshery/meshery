@@ -146,7 +146,7 @@ func BackupConfigFile(cfgFile string) {
 		log.Fatal(err)
 	}
 
-	log.Fatal(errors.New("outdated config file found. Please re-run the command"))
+	log.Println(errors.New("outdated config file found. Please re-run the command"))
 }
 
 type cryptoSource struct{}
