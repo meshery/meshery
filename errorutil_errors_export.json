@@ -542,6 +542,15 @@
       "probable_cause": "",
       "suggested_remediation": ""
     },
+    "2047": {
+      "name": "ErrSaveSessionCode",
+      "code": "2047",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to save session",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
     "3000": {
       "name": "ErrGrafanaClientCode",
       "code": "3000",

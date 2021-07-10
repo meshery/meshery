@@ -52,6 +52,7 @@ const (
 	ErrRetrieveUserTokenCode  = "2044"
 	ErrFailToSaveCode         = "2045"
 	ErrFailToDeleteCode       = "2046"
+	ErrSaveSessionCode        = "2047"
 )
 
 var (
@@ -209,4 +210,8 @@ func ErrFailToSave(err error, obj string) error {
 }
 func ErrFailToDelete(err error, obj string) error {
 	return errors.New(ErrFailToDeleteCode, errors.Alert, []string{"Failed to Delete: ", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrSaveSession(err error) error {
+	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session"}, []string{err.Error()}, []string{}, []string{})
 }

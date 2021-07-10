@@ -6,7 +6,7 @@
       "code": "2000",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrNilClientCode",
@@ -14,7 +14,7 @@
       "code": "2001",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrPrometheusScanCode",
@@ -22,7 +22,7 @@
       "code": "2002",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrGrafanaScanCode",
@@ -30,7 +30,7 @@
       "code": "2003",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrRecordPreferencesCode",
@@ -38,7 +38,7 @@
       "code": "2004",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrGrafanaConfigCode",
@@ -46,7 +46,7 @@
       "code": "2005",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrPrometheusConfigCode",
@@ -54,7 +54,7 @@
       "code": "2006",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrGrafanaQueryCode",
@@ -62,7 +62,7 @@
       "code": "2007",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrPrometheusQueryCode",
@@ -70,7 +70,7 @@
       "code": "2008",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrGrafanaBoardsCode",
@@ -78,7 +78,7 @@
       "code": "2009",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrPrometheusBoardsCode",
@@ -86,7 +86,7 @@
       "code": "2010",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrStaticBoardsCode",
@@ -94,7 +94,7 @@
       "code": "2011",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrRequestBodyCode",
@@ -102,7 +102,7 @@
       "code": "2012",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrMarshalCode",
@@ -110,7 +110,7 @@
       "code": "2013",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrUnmarshalCode",
@@ -118,7 +118,7 @@
       "code": "2014",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrEncodingCode",
@@ -126,7 +126,7 @@
       "code": "2015",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrParseBoolCode",
@@ -134,7 +134,7 @@
       "code": "2016",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrStreamEventsCode",
@@ -142,7 +142,7 @@
       "code": "2017",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrStreamClientCode",
@@ -150,7 +150,7 @@
       "code": "2018",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrUnmarshalEventCode",
@@ -158,7 +158,7 @@
       "code": "2019",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrPublishSmiResultsCode",
@@ -166,7 +166,7 @@
       "code": "2020",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrMarshalEventCode",
@@ -174,7 +174,7 @@
       "code": "2021",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrPluginOpenCode",
@@ -182,7 +182,7 @@
       "code": "2022",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrPluginLookupCode",
@@ -190,7 +190,7 @@
       "code": "2023",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrPluginRunCode",
@@ -198,7 +198,7 @@
       "code": "2024",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrParseFormCode",
@@ -206,7 +206,7 @@
       "code": "2025",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrQueryGetCode",
@@ -214,7 +214,7 @@
       "code": "2026",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrGetResultCode",
@@ -222,7 +222,7 @@
       "code": "2027",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrConvertToSpecCode",
@@ -230,7 +230,7 @@
       "code": "2028",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrFetchSMIResultsCode",
@@ -238,7 +238,7 @@
       "code": "2029",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrFormFileCode",
@@ -246,7 +246,7 @@
       "code": "2030",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrReadConfigCode",
@@ -254,7 +254,7 @@
       "code": "2031",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrLoadConfigCode",
@@ -262,7 +262,7 @@
       "code": "2032",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrOpenFileCode",
@@ -270,7 +270,7 @@
       "code": "2033",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrKubeVersionCode",
@@ -278,7 +278,7 @@
       "code": "2034",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrAddAdapterCode",
@@ -286,7 +286,7 @@
       "code": "2035",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrRetrieveDataCode",
@@ -294,7 +294,7 @@
       "code": "2036",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrValidAdapterCode",
@@ -302,7 +302,7 @@
       "code": "2037",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrOperationIDCode",
@@ -310,7 +310,7 @@
       "code": "2038",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrMeshClientCode",
@@ -318,7 +318,7 @@
       "code": "2039",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrApplyChangeCode",
@@ -326,7 +326,7 @@
       "code": "2040",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrRetrieveMeshDataCode",
@@ -334,7 +334,7 @@
       "code": "2041",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrApplicationFailureCode",
@@ -342,7 +342,7 @@
       "code": "2042",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrDecodingCode",
@@ -350,7 +350,7 @@
       "code": "2043",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrRetrieveUserTokenCode",
@@ -358,7 +358,7 @@
       "code": "2044",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrFailToSaveCode",
@@ -366,7 +366,7 @@
       "code": "2045",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrFailToDeleteCode",
@@ -374,7 +374,15 @@
       "code": "2046",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "handlers/error.go"
+      "path": "handlers\\error.go"
+    },
+    {
+      "name": "ErrSaveSessionCode",
+      "old_code": "2047",
+      "code": "2047",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers\\error.go"
     },
     {
       "name": "ErrInvalidRequestCode",
@@ -382,7 +390,7 @@
       "code": "1000",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrNilClientCode",
@@ -390,7 +398,7 @@
       "code": "1001",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrCreateDataCode",
@@ -398,7 +406,7 @@
       "code": "1002",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrQueryCode",
@@ -406,7 +414,7 @@
       "code": "1003",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrMeshsyncSubscriptionCode",
@@ -414,7 +422,7 @@
       "code": "1004",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrOperatorSubscriptionCode",
@@ -422,7 +430,7 @@
       "code": "1005",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrAddonSubscriptionCode",
@@ -430,7 +438,7 @@
       "code": "1006",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrControlPlaneSubscriptionCode",
@@ -438,7 +446,7 @@
       "code": "1007",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrMesheryClientCode",
@@ -446,7 +454,7 @@
       "code": "1008",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrSubscribeChannelCode",
@@ -454,7 +462,7 @@
       "code": "1009",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrPublishBrokerCode",
@@ -462,7 +470,7 @@
       "code": "1010",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrNoMeshSyncCode",
@@ -470,7 +478,7 @@
       "code": "1011",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrNoExternalEndpointCode",
@@ -478,7 +486,7 @@
       "code": "1012",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
+      "path": "internal\\graphql\\resolver\\error.go"
     },
     {
       "name": "ErrGrafanaClientCode",
@@ -486,7 +494,7 @@
       "code": "3000",
       "code_is_literal": true,
       "code_is_int": true,
-      "path": "models/error.go"
+      "path": "models\\error.go"
     }
   ],
   "literal_codes": {
@@ -497,7 +505,7 @@
         "code": "1000",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1001": [
@@ -507,7 +515,7 @@
         "code": "1001",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1002": [
@@ -517,7 +525,7 @@
         "code": "1002",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1003": [
@@ -527,7 +535,7 @@
         "code": "1003",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1004": [
@@ -537,7 +545,7 @@
         "code": "1004",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1005": [
@@ -547,7 +555,7 @@
         "code": "1005",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1006": [
@@ -557,7 +565,7 @@
         "code": "1006",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1007": [
@@ -567,7 +575,7 @@
         "code": "1007",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1008": [
@@ -577,7 +585,7 @@
         "code": "1008",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1009": [
@@ -587,7 +595,7 @@
         "code": "1009",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1010": [
@@ -597,7 +605,7 @@
         "code": "1010",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1011": [
@@ -607,7 +615,7 @@
         "code": "1011",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "1012": [
@@ -617,7 +625,7 @@
         "code": "1012",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
+        "path": "internal\\graphql\\resolver\\error.go"
       }
     ],
     "2000": [
@@ -627,7 +635,7 @@
         "code": "2000",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2001": [
@@ -637,7 +645,7 @@
         "code": "2001",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2002": [
@@ -647,7 +655,7 @@
         "code": "2002",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2003": [
@@ -657,7 +665,7 @@
         "code": "2003",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2004": [
@@ -667,7 +675,7 @@
         "code": "2004",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2005": [
@@ -677,7 +685,7 @@
         "code": "2005",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2006": [
@@ -687,7 +695,7 @@
         "code": "2006",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2007": [
@@ -697,7 +705,7 @@
         "code": "2007",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2008": [
@@ -707,7 +715,7 @@
         "code": "2008",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2009": [
@@ -717,7 +725,7 @@
         "code": "2009",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2010": [
@@ -727,7 +735,7 @@
         "code": "2010",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2011": [
@@ -737,7 +745,7 @@
         "code": "2011",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2012": [
@@ -747,7 +755,7 @@
         "code": "2012",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2013": [
@@ -757,7 +765,7 @@
         "code": "2013",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2014": [
@@ -767,7 +775,7 @@
         "code": "2014",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2015": [
@@ -777,7 +785,7 @@
         "code": "2015",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2016": [
@@ -787,7 +795,7 @@
         "code": "2016",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2017": [
@@ -797,7 +805,7 @@
         "code": "2017",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2018": [
@@ -807,7 +815,7 @@
         "code": "2018",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2019": [
@@ -817,7 +825,7 @@
         "code": "2019",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2020": [
@@ -827,7 +835,7 @@
         "code": "2020",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2021": [
@@ -837,7 +845,7 @@
         "code": "2021",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2022": [
@@ -847,7 +855,7 @@
         "code": "2022",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2023": [
@@ -857,7 +865,7 @@
         "code": "2023",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2024": [
@@ -867,7 +875,7 @@
         "code": "2024",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2025": [
@@ -877,7 +885,7 @@
         "code": "2025",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2026": [
@@ -887,7 +895,7 @@
         "code": "2026",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2027": [
@@ -897,7 +905,7 @@
         "code": "2027",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2028": [
@@ -907,7 +915,7 @@
         "code": "2028",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2029": [
@@ -917,7 +925,7 @@
         "code": "2029",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2030": [
@@ -927,7 +935,7 @@
         "code": "2030",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2031": [
@@ -937,7 +945,7 @@
         "code": "2031",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2032": [
@@ -947,7 +955,7 @@
         "code": "2032",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2033": [
@@ -957,7 +965,7 @@
         "code": "2033",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2034": [
@@ -967,7 +975,7 @@
         "code": "2034",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2035": [
@@ -977,7 +985,7 @@
         "code": "2035",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2036": [
@@ -987,7 +995,7 @@
         "code": "2036",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2037": [
@@ -997,7 +1005,7 @@
         "code": "2037",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2038": [
@@ -1007,7 +1015,7 @@
         "code": "2038",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2039": [
@@ -1017,7 +1025,7 @@
         "code": "2039",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2040": [
@@ -1027,7 +1035,7 @@
         "code": "2040",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2041": [
@@ -1037,7 +1045,7 @@
         "code": "2041",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2042": [
@@ -1047,7 +1055,7 @@
         "code": "2042",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2043": [
@@ -1057,7 +1065,7 @@
         "code": "2043",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2044": [
@@ -1067,7 +1075,7 @@
         "code": "2044",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2045": [
@@ -1077,7 +1085,7 @@
         "code": "2045",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
       }
     ],
     "2046": [
@@ -1087,7 +1095,17 @@
         "code": "2046",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "handlers/error.go"
+        "path": "handlers\\error.go"
+      }
+    ],
+    "2047": [
+      {
+        "name": "ErrSaveSessionCode",
+        "old_code": "2047",
+        "code": "2047",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers\\error.go"
       }
     ],
     "3000": [
@@ -1097,7 +1115,7 @@
         "code": "3000",
         "code_is_literal": true,
         "code_is_int": true,
-        "path": "models/error.go"
+        "path": "models\\error.go"
       }
     ]
   },
@@ -1715,6 +1733,17 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to get the user token",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrSaveSessionCode": [
+      {
+        "name": "ErrSaveSessionCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to save session",
         "probable_cause": "",
         "suggested_remediation": ""
       }
