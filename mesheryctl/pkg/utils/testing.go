@@ -178,3 +178,11 @@ func StartMockery(t *testing.T) {
 func StopMockery(t *testing.T) {
 	httpmock.DeactivateAndReset()
 }
+
+// Set file location for testing stuff
+func SetFileLocationTesting(t *testing.T, dir string) {
+	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
+	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
+	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
+	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
+}

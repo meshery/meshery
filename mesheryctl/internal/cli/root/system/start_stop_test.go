@@ -1,6 +1,8 @@
 package system
 
 import (
+	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -8,11 +10,18 @@ import (
 )
 
 func TestSystemStartStopIntegration(t *testing.T) {
-	// initialize mock server for handling requests
-	utils.StartMockery(t)
-
 	// setup current context
 	utils.SetupContextEnv(t)
+
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	// update all location
+	utils.SetFileLocationTesting(t, currDir)
 
 	tests := []struct {
 		Name        string
@@ -29,7 +38,7 @@ func TestSystemStartStopIntegration(t *testing.T) {
 		{
 			Name:        "Stop Meshery with Docker platform",
 			Action:      "stop",
-			Args:        []string{"stop", "-p", "docker", "-y"},
+			Args:        []string{"stop", "-y"},
 			ExpectError: false,
 		},
 		{
@@ -41,7 +50,7 @@ func TestSystemStartStopIntegration(t *testing.T) {
 		{
 			Name:        "Stop Meshery with Kubernetes platform",
 			Action:      "stop",
-			Args:        []string{"stop", "-p", "kubernetes", "-y"},
+			Args:        []string{"stop", "-y"},
 			ExpectError: false,
 		},
 	}
@@ -53,7 +62,7 @@ func TestSystemStartStopIntegration(t *testing.T) {
 			t.Logf("%sing meshery", tt.Action)
 			err := SystemCmd.Execute()
 			if err != nil {
-				t.Error(err)
+				t.Fatal(err)
 			}
 
 			t.Logf("Meshery %sed", tt.Action)
@@ -63,7 +72,4 @@ func TestSystemStartStopIntegration(t *testing.T) {
 			t.Log("Sleeping finished")
 		})
 	}
-
-	// stop HTTP mock client
-	utils.StopMockery(t)
 }
