@@ -176,6 +176,7 @@ func initConfig() {
 				os.Exit(1)
 			}
 		}
+		viper.SetConfigFile(utils.DefaultConfigPath)
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
