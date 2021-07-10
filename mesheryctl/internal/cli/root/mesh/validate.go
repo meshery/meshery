@@ -70,6 +70,14 @@ var validateCmd = &cobra.Command{
 			{
 				return errors.New("support for SMP coming in a future release")
 			}
+		case "istio-vet":
+			{
+				if (adapterURL == "meshery-istio:10000") {
+					data.Set("query", "istio-vet")
+					break
+				}
+				return errors.New("only Istio supports istio-vet operation")
+			}
 		default:
 			{
 				return errors.New("specified specification not found or not yet supported")
