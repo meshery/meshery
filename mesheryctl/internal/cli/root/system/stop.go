@@ -124,7 +124,7 @@ func stop() error {
 		if err != nil {
 			return errors.New("failed to initialize healthchecker")
 		}
-		if err = hc.Run(); err != nil {
+		if err = hc.Run(); err == nil {
 			client, err := meshkitkube.New([]byte(""))
 			if err != nil {
 				return err

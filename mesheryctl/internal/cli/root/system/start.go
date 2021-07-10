@@ -57,7 +57,6 @@ var startCmd = &cobra.Command{
 			PrintLogs:  false,
 			Subcommand: cmd.Use,
 		}
-		log.Debug(hcOptions)
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
 			return errors.New("failed to initialize healthchecker")
@@ -425,7 +424,7 @@ func start() error {
 		return errors.New("failed to initialize healthchecker")
 	}
 	// If k8s is available in case of platform docker than we deploy operator
-	if err = hc.Run(); err != nil {
+	if err = hc.Run(); err == nil {
 		// create a client
 		kubeClient, err := meshkitkube.New([]byte(""))
 		if err != nil {
