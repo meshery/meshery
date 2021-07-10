@@ -61,7 +61,6 @@ func TestSystemStartStopIntegration(t *testing.T) {
 			t.Log("Sleeping for 2 minutes...")
 			time.Sleep(2 * time.Minute)
 			t.Log("Sleeping finished")
-
 		})
 	}
 
