@@ -57,7 +57,7 @@ var validateCmd = &cobra.Command{
 		data.Set("adapter", adapterURL)
 		data.Set("customBody", "")
 		data.Set("deleteOp", "")
-		data.Set("namespace", namespace)
+		data.Set("namespace", "meshery")
 
 		// Choose which specification to use for conformance test
 		switch spec {
@@ -113,7 +113,6 @@ func init() {
 	_ = validateCmd.MarkFlagRequired("spec")
 	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm:10010", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
-	validateCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
 	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = validateCmd.MarkFlagRequired("tokenPath")
 }
