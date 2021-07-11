@@ -7,9 +7,6 @@ const styles = (theme) => ({
     height: '100%',
     backgroundColor: "transparent",
     perspective: theme.spacing(125),
-    '&:hover':{
-      transform: 'scale(1.02)',
-    }
   },
   innerCard: {
     padding: theme.spacing(2),
