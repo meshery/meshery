@@ -30,6 +30,8 @@ var (
 	availableSubcommands = []*cobra.Command{}
 	// flag to change the current context to a temporary context
 	tempContext = ""
+	// token path
+	tokenPath string
 )
 
 // SystemCmd represents Meshery Lifecycle Management cli commands
