@@ -59,7 +59,7 @@ var PerfCmd = &cobra.Command{
 		}
 		hc, err := system.NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.New("failed to initialize healthchecker")
+			return errors.Wrapf(err, "failed to initialize healthchecker: %s")
 		}
 		return hc.RunPreflightHealthChecks()
 	},

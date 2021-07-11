@@ -48,7 +48,7 @@ var stopCmd = &cobra.Command{
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.New("failed to initialize healthchecker")
+			return errors.Wrapf(err, "failed to initialize healthchecker: %s")
 		}
 		return hc.RunPreflightHealthChecks()
 	},
@@ -122,7 +122,8 @@ func stop() error {
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.New("failed to initialize healthchecker")
+			return errors.Wrapf(err, "failed to initialize healthchecker: %s")
+
 		}
 		if err = hc.Run(); err == nil {
 			client, err := meshkitkube.New([]byte(""))
