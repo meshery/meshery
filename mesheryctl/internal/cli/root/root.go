@@ -67,21 +67,6 @@ var RootCmd = &cobra.Command{
 			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
 			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
 		}
-
-		stat, err := os.Stat(cfgFile)
-		if err != nil {
-			log.Fatal(err)
-		}
-		// check if config file is empty
-		if stat.Size() == 0 {
-			log.Fatal("empty meshconfig. Please populate it before running a command")
-		}
-
-		_, err = config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			utils.BackupConfigFile(cfgFile)
-		}
-
 	},
 }
 
@@ -98,6 +83,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
 
@@ -124,14 +110,21 @@ func init() {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	utils.CfgFile = cfgFile
+
 	// Allow user to override config file with use of --config global flag
-	if cfgFile != "" {
+	if cfgFile != utils.DefaultConfigPath {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 		// Otherwise, use the default `config.yaml` config file
 	} else {
-		if _, err := os.Stat(utils.DefaultConfigPath); os.IsNotExist(err) {
+		stat, err := os.Stat(utils.DefaultConfigPath)
+		if !os.IsNotExist(err) && stat.Size() == 0 {
+			log.Println("Empty meshconfig. Please populate it before running a command")
+		}
+		if os.IsNotExist(err) {
 			log.Printf("Missing Meshery config file.")
+		}
+		if os.IsNotExist(err) || (!os.IsNotExist(err) && stat.Size() == 0) {
 			// Check if Meshery config file needs to be created or not
 			// If silent flag is provided, create by default
 			// ortherwise ask for confirmation from user
@@ -183,7 +176,6 @@ func initConfig() {
 				os.Exit(1)
 			}
 		}
-
 		viper.SetConfigFile(utils.DefaultConfigPath)
 	}
 
