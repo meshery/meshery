@@ -131,10 +131,10 @@ function PerformanceCard({
           <Grid item xs={4}>
             <div style={{ width: "fit-content", margin: "0 0 0 auto" }}>
               <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
-                <EditIcon />
+                <EditIcon color="primary" />
               </IconButton>
               <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
-                <DeleteIcon />
+                <DeleteIcon color="primary" />
               </IconButton>
             </div>
           </Grid>
