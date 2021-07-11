@@ -15,8 +15,14 @@
 #!/usr/bin/env bash
 
 # Get the platform to deploy Meshery from the flag
-while getopts ":p:" opt; do
+# Get the deploy option on whether to install cli alone or to deploy Meshery server as well
+# Default option is to start Meshery server
+
+while getopts ":np:" opt; do
     case $opt in
+    n)
+        DEPLOY_MESHERY=false
+        ;;
     p)
         case $OPTARG in
         docker)
@@ -42,20 +48,24 @@ while getopts ":p:" opt; do
     esac
 done
 
-# If no flag is present, prompt the user for a platform
-if [ ! "$PLATFORM" ]; then
-    echo Enter a platform to deploy Meshery. Available platforms [docker, kubernetes]:
-    read PLATFORM < /dev/tty
+# If user wants to install the cli and deploy meshery as well, read the platform flag
+if [ "$DEPLOY_MESHERY" != false ]; then
+  # If no platform flag is present, prompt the user for a platform
+  if [ ! "$PLATFORM" ]; then
+      echo Enter a platform to deploy Meshery. Available platforms [docker, kubernetes]:
+      read PLATFORM < /dev/tty
+  fi
+
+  case "$PLATFORM" in
+  docker | kubernetes) ;;
+
+  *)
+      echo "Invalid platform: $PLATFORM"
+      exit 1
+      ;;
+  esac
 fi
 
-case "$PLATFORM" in
-docker | kubernetes) ;;
-
-*)
-    echo "Invalid platform: $PLATFORM"
-    exit 1
-    ;;
-esac
 
 ####### COMMON FUNCTIONS
 ############################
@@ -132,7 +142,7 @@ fi
 
 printf "\nInstalling mesheryctl in $install_dir.\n"
 WHOAMI=$(whoami)
-if mv ${PWD}/$temporary_dir_name/mesheryctl $install_dir/mesheryctl ; then
+if mv ${PWD}/$temporary_dir_name/mesheryctl $install_dir/mesheryctl >/dev/null 2>&1; then
   echo "mesheryctl installed."
 else
   if sudo mv ${PWD}/$temporary_dir_name/mesheryctl $install_dir/mesheryctl ; then
@@ -146,14 +156,20 @@ fi
 #Transfering permissions and ownership to client USER
 if [ "$SUDO_USER" == "" ] ;
 then
-	if chown $WHOAMI $install_dir/mesheryctl ; then
+  if chown $WHOAMI $install_dir/mesheryctl ; then
+    # Give write access to user to create .meshery folder in home directory
+    chown $WHOAMI $HOME
+    chmod u+w $HOME
     echo "permissions moved to "$WHOAMI
   else
     echo "Unable to write to $install_dir. Please verify write permission for $WHOAMI."
     exit 1
   fi
 else
-	if chown $SUDO_USER /usr/local/bin/mesheryctl ; then
+  if chown $SUDO_USER /usr/local/bin/mesheryctl ; then
+    # Give write access to SUDO_USER to create .meshery folder in home directory
+    chown $SUDO_USER $HOME
+    chmod u+w $HOME
     echo "permissions moved to "$SUDO_USER
   else
     echo "Unable to write to $install_dir/mesheryctl. Please verify write permission for $SUDO_USER."
@@ -162,7 +178,13 @@ else
 fi
 
 
-printf "Removing installation files and opening Meshery..."
+printf "Removing installation files"
 rm -rf meshery.zip ${PWD}/$temporary_dir_name/
 
-mesheryctl system start --yes -p $PLATFORM
+if [ "$DEPLOY_MESHERY" == false ] ;
+then
+    printf "\nRun \"mesheryctl system start\" to start Meshery.\n"
+    exit 0
+fi
+printf "\nStarting Meshery...\n"
+mesheryctl system start --yes --platform $PLATFORM
