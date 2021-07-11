@@ -45,6 +45,17 @@ div.overview:hover {
     div.overview {
       margin-left:20%;
       margin-right:20%;
+      overflow-x:hidden;
+    }
+}
+@media (max-width: 62rem) {
+    div.wrapper{
+        display:block;
+    }
+    div.overview{
+        margin-left: 0px;
+        margin-right: 20%;
+        overflow-x: hidden ; 
     }
 }
 

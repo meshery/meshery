@@ -18624,7 +18624,15 @@ footer {
         visibility: hidden
     }
 }
-
+@media(max-width: 62rem){
+    html,body{
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden; 
+}
+}
 .footer-icons-list{
     display:flex;
     justify-content: center;
