@@ -14,8 +14,7 @@ var (
 	version        = "Not Set"
 	commitsha      = "Not Set"
 	releasechannel = "Not Set"
-	// the token path includes location to the token for current-context
-	tokenPath = "Not Set"
+	tokenPath      = "Not Set" // the token path includes location to the token for current-context
 )
 
 func GetMesheryctlVersion() string {
