@@ -59,7 +59,7 @@ var startCmd = &cobra.Command{
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.Wrapf(err, "failed to initialize healthchecker: %s")
+			return errors.Wrapf(err, "failed to initialize healthchecker")
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -421,8 +421,7 @@ func start() error {
 	}
 	hc, err := NewHealthChecker(hcOptions)
 	if err != nil {
-		return errors.Wrapf(err, "failed to initialize healthchecker: %s")
-
+		return errors.Wrapf(err, "failed to initialize healthchecker")
 	}
 	// If k8s is available in case of platform docker than we deploy operator
 	if err = hc.Run(); err == nil {
