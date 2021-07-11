@@ -203,6 +203,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           console.log("PatternFile API", `/api/experimental/pattern/${id}`);
           updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
+          resetSelectedRowData()()
         },
         handleError
       );
