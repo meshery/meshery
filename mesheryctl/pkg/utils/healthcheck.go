@@ -157,3 +157,29 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 
 	return false, nil
 }
+
+// AreAllPodsRunning checks if all the deployment pods under kubernetes are running
+func AreAllPodsRunning() (bool, error) {
+	// create an kubernetes client
+	client, err := meshkitkube.New([]byte(""))
+
+	if err != nil {
+		return false, err
+	}
+
+	// List the pods in the MesheryNamespace
+	podList, err := GetPods(client, MesheryNamespace)
+
+	if err != nil {
+		return false, err
+	}
+
+	// List all the pods similar to kubectl get pods -n MesheryNamespace
+	for _, pod := range podList.Items {
+		// Check the status of each of the pods
+		if pod.Status.Phase != "Running" {
+			return false, nil
+		}
+	}
+	return true, nil
+}

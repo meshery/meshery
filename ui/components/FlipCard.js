@@ -4,6 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 
 const styles = (theme) => ({
   card: {
+    height: '100%',
     backgroundColor: "transparent",
     perspective: theme.spacing(125),
   },

@@ -377,6 +377,62 @@
       "path": "handlers/error.go"
     },
     {
+      "name": "ErrFailToLoadExtensionsCode",
+      "old_code": "2047",
+      "code": "2047",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrConversionCode",
+      "old_code": "2048",
+      "code": "2048",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrParseDurationCode",
+      "old_code": "2049",
+      "code": "2049",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrLoadTestCode",
+      "old_code": "2050",
+      "code": "2050",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrFetchKubernetesCode",
+      "old_code": "2051",
+      "code": "2051",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPanicRecoveryCode",
+      "old_code": "2052",
+      "code": "2052",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrBlankNameCode",
+      "old_code": "2053",
+      "code": "2053",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
       "name": "ErrInvalidRequestCode",
       "old_code": "1000",
       "code": "1000",
@@ -1090,6 +1146,76 @@
         "path": "handlers/error.go"
       }
     ],
+    "2047": [
+      {
+        "name": "ErrFailToLoadExtensionsCode",
+        "old_code": "2047",
+        "code": "2047",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2048": [
+      {
+        "name": "ErrConversionCode",
+        "old_code": "2048",
+        "code": "2048",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2049": [
+      {
+        "name": "ErrParseDurationCode",
+        "old_code": "2049",
+        "code": "2049",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2050": [
+      {
+        "name": "ErrLoadTestCode",
+        "old_code": "2050",
+        "code": "2050",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2051": [
+      {
+        "name": "ErrFetchKubernetesCode",
+        "old_code": "2051",
+        "code": "2051",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2052": [
+      {
+        "name": "ErrPanicRecoveryCode",
+        "old_code": "2052",
+        "code": "2052",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2053": [
+      {
+        "name": "ErrBlankNameCode",
+        "old_code": "2053",
+        "code": "2053",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
     "3000": [
       {
         "name": "ErrGrafanaClientCode",
@@ -1148,6 +1274,17 @@
         "suggested_remediation": ""
       }
     ],
+    "ErrBlankNameCode": [
+      {
+        "name": "ErrBlankNameCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error: name field is blank",
+        "probable_cause": "",
+        "suggested_remediation": "Provide a name for the test"
+      }
+    ],
     "ErrControlPlaneSubscriptionCode": [
       {
         "name": "ErrControlPlaneSubscriptionCode",
@@ -1157,6 +1294,17 @@
         "short_description": "Control Plane Subscription failed",
         "probable_cause": "Could be a network issue",
         "suggested_remediation": "Check if meshery server is reachable from the browser"
+      }
+    ],
+    "ErrConversionCode": [
+      {
+        "name": "ErrConversionCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to convert YAML to JSON",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     ],
     "ErrConvertToSpecCode": [
@@ -1228,6 +1376,17 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to Delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFailToLoadExtensionsCode": [
+      {
+        "name": "ErrFailToLoadExtensionsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Load Extensions from Package",
         "probable_cause": "",
         "suggested_remediation": ""
       }
@@ -1384,6 +1543,26 @@
         "suggested_remediation": ""
       }
     ],
+    "ErrLoadTestCode": [
+      {
+        "name": "ErrLoadTestCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "load test error: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      {
+        "name": "ErrLoadTestCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to ping kubernetes\nunable to scan",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrMarshalCode": [
       {
         "name": "ErrMarshalCode",
@@ -1521,6 +1700,17 @@
         "suggested_remediation": "Check if meshery server is reachable from the browser"
       }
     ],
+    "ErrPanicRecoveryCode": [
+      {
+        "name": "ErrPanicRecoveryCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Recovered from panic",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrParseBoolCode": [
       {
         "name": "ErrParseBoolCode",
@@ -1530,6 +1720,17 @@
         "short_description": "unable to parse : ",
         "probable_cause": "Failed due to invalid value of : ",
         "suggested_remediation": "please provide a valid value for : "
+      }
+    ],
+    "ErrParseDurationCode": [
+      {
+        "name": "ErrParseDurationCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error parsing test duration",
+        "probable_cause": "",
+        "suggested_remediation": "please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"
       }
     ],
     "ErrParseFormCode": [
