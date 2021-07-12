@@ -18779,3 +18779,12 @@ footer {
     display: block;
     font-weight: bold;
 }
+/* mobile responisness for video*/
+@media (max-width:62rem) {
+    .videoTest{
+        position: relative;
+        width:500px;
+
+    }
+}
+
