@@ -392,6 +392,7 @@ func start() error {
 		//polling for endpoint to be available within the three second deadline
 		for !(time.Now().After(deadline)) {
 			endpoint, err = meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
+
 			if err == nil {
 				break
 			} else {

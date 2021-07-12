@@ -73,7 +73,7 @@ func stop() error {
 		return errors.Wrap(err, "failed to retrieve current-context")
 	}
 
-	ok, err := utils.IsMesheryRunning(currCtx.Platform)
+	ok, err := utils.IsMesheryRunning()
 	if err != nil {
 		return err
 	}
@@ -205,11 +205,7 @@ func stop() error {
 	deadline := time.Now().Add(20 * time.Second)
 
 	for !(time.Now().After(deadline)) {
-		ok, err := utils.IsMesheryRunning("kubernetes")
-
-		if err != nil {
-			return err
-		}
+		ok, _ := utils.IsMesheryRunning()
 
 		if !ok {
 			break

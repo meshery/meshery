@@ -1,16 +1,17 @@
 package utils
 
 import (
-	"context"
 	"fmt"
+	"net/http"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/spf13/viper"
 	"k8s.io/apimachinery/pkg/version"
 )
 
@@ -113,49 +114,21 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 }
 
 // IsMesheryRunning checks if the meshery server containers are up and running
-func IsMesheryRunning(currPlatform string) (bool, error) {
-	switch currPlatform {
-	case "docker":
-		{
-			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
-			if err != nil {
-				return false, err
-			}
-			return strings.Contains(string(op), "meshery"), nil
-		}
-	case "kubernetes":
-		{
-			client, err := meshkitkube.New([]byte(""))
+func IsMesheryRunning() (bool, error) {
 
-			if err != nil {
-				return false, errors.Wrap(err, "failed to create new client")
-			}
-
-			//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-			//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
-
-			if err != nil {
-				return false, err
-			}
-			//for i, pod := range podList.Items {
-			//	fmt.Println(i, pod.GetName())
-			//	//if strings.Contains(pod.GetName(), "meshery") {
-			//	//	return true, nil
-			//	//}
-			//}
-			for _, deployment := range deploymentList.Items {
-				if deployment.GetName() == "meshery" {
-					return true, nil
-				}
-			}
-
-			return false, err
-		}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return false, errors.Wrap(err, "error processing config")
 	}
-
-	return false, nil
+	res, err := http.Get(mctlCfg.GetBaseMesheryURL() + "/api/server/version")
+	if err != nil {
+		return false, errors.Wrap(err, "Meshery server is not running")
+	}
+	defer SafeClose(res.Body)
+	if res.StatusCode != http.StatusOK {
+		return false, errors.New("Received unexpected response")
+	}
+	return true, nil
 }
 
 // AreAllPodsRunning checks if all the deployment pods under kubernetes are running

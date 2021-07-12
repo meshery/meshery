@@ -67,7 +67,7 @@ func restart() error {
 		}
 
 	case "kubernetes":
-		running, err := utils.IsMesheryRunning(currPlatform)
+		running, err := utils.IsMesheryRunning()
 		if err != nil {
 			return err
 		}

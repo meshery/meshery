@@ -17,7 +17,6 @@ var loginCmd = &cobra.Command{
 	Short: "Authenticate to a Meshery Server",
 	Long: `
 Authenticate to the Local or a Remote Provider of a Meshery Server
-
 The authentication mode is web-based browser flow`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -26,7 +25,7 @@ The authentication mode is web-based browser flow`,
 			return errors.Wrap(err, "error processing config")
 		}
 
-		isRunning, err := utils.IsMesheryRunning(mctlCfg.GetCurrentContext().Platform)
+		isRunning, err := utils.IsMesheryRunning()
 		if err != nil {
 			log.Error("failed to check Meshery Server status: ", err)
 			return nil
@@ -34,7 +33,6 @@ The authentication mode is web-based browser flow`,
 
 		if !isRunning {
 			log.Error(`Meshery Server is not running
-
 Run "mesheryctl system start" to start meshery`)
 			return nil
 		}

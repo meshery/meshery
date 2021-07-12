@@ -62,7 +62,7 @@ var logsCmd = &cobra.Command{
 		// switch statement for multiple platform
 		switch currPlatform {
 		case "docker":
-			ok, err := utils.IsMesheryRunning(currPlatform)
+			ok, err := utils.IsMesheryRunning()
 			if err != nil {
 				return err
 			}
@@ -99,7 +99,7 @@ var logsCmd = &cobra.Command{
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
 
-			ok, err := utils.IsMesheryRunning(currPlatform)
+			ok, err := utils.IsMesheryRunning()
 			if err != nil {
 				return err
 			}
