@@ -1,6 +1,10 @@
 package config
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -46,7 +50,7 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	// Load the config data into the object
 	err := v.Unmarshal(&c)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("invalid meshconfig")
 	}
 	return c, err
 }
@@ -84,7 +88,15 @@ func (ctx *Context) ValidateVersion() error {
 	}
 
 	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + ctx.Version + "?recursive=1"
-	resp, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
 
 	defer func() {
 		if cerr := resp.Body.Close(); cerr != nil {
@@ -136,6 +148,38 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) (Context, erro
 	return currCtx, err
 }
 
+// GetTokenForContext takes in the contextName and returns the token name and path corresponding
+// to the given current context
+func (mc *MesheryCtlConfig) GetTokenForContext(contextName string) (Token, error) {
+	ctx, ok := mc.Contexts[contextName]
+	if !ok {
+		return Token{}, fmt.Errorf("no token is associated with context: %s", contextName)
+	}
+
+	for _, t := range mc.Tokens {
+		if t.Name == ctx.Token {
+			return t, nil
+		}
+	}
+
+	return Token{Name: ctx.Token}, fmt.Errorf("no token found for the given context")
+}
+
+func (t *Token) GetLocation() string {
+	if filepath.IsAbs(t.Location) {
+		return t.Location
+	}
+
+	// If file path is not absolute then assume that the file
+	// is in the .meshery directory
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.Warn("failed to get user home directory")
+	}
+
+	return filepath.Join(home, ".meshery", t.Location)
+}
+
 // GetBuild returns the build number for the binary
 func (v *Version) GetBuild() string {
 	return v.Build
@@ -144,4 +188,88 @@ func (v *Version) GetBuild() string {
 // GetCommitSHA returns the commit sha for the binary
 func (v *Version) GetCommitSHA() string {
 	return v.CommitSHA
+}
+
+// AddTokenToConfig adds token passed to it to mesheryctl config file
+func AddTokenToConfig(token Token, configPath string) error {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	mctlCfg, err := GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	if mctlCfg.Tokens == nil {
+		mctlCfg.Tokens = []Token{}
+	}
+
+	for i := range mctlCfg.Tokens {
+		if mctlCfg.Tokens[i].Name == token.Name {
+			return errors.New("error adding token: a token with same name already exists")
+		}
+	}
+
+	mctlCfg.Tokens = append(mctlCfg.Tokens, token)
+
+	viper.Set("contexts", mctlCfg.Contexts)
+	viper.Set("current-context", mctlCfg.CurrentContext)
+	viper.Set("tokens", mctlCfg.Tokens)
+
+	err = viper.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// AddContextToConfig adds context passed to it to mesheryctl config file
+func AddContextToConfig(contextName string, context Context, configPath string, set bool) error {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	mctlCfg, err := GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	if mctlCfg.Contexts == nil {
+		mctlCfg.Contexts = map[string]Context{}
+	}
+
+	_, exists := mctlCfg.Contexts[contextName]
+	if exists {
+		return errors.New("error adding context: a context with same name already exists")
+	}
+
+	mctlCfg.Contexts[contextName] = context
+	if set {
+		mctlCfg.CurrentContext = contextName
+	}
+
+	viper.Set("contexts", mctlCfg.Contexts)
+	viper.Set("current-context", mctlCfg.CurrentContext)
+	viper.Set("tokens", mctlCfg.Tokens)
+
+	err = viper.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

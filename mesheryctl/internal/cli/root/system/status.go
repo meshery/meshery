@@ -76,9 +76,23 @@ var statusCmd = &cobra.Command{
 				log.Info(outputString)
 			}
 
-			// Also print the status of pods in the MesheryNamespace
-			fallthrough
+			hcOptions := &HealthCheckOptions{
+				PrintLogs:           false,
+				IsPreRunE:           false,
+				Subcommand:          "status",
+				RunKubernetesChecks: true,
+			}
+			hc, err := NewHealthChecker(hcOptions)
+			if err != nil {
+				return errors.Wrapf(err, "failed to initialize healthchecker")
 
+			}
+			// If k8s is available print the status of pods in the MesheryNamespace
+			if err = hc.Run(); err != nil {
+				return nil
+			}
+
+			fallthrough
 		case "kubernetes":
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
@@ -112,7 +126,7 @@ var statusCmd = &cobra.Command{
 				var containerReady int
 				var totalContainers int
 
-				if len(pod.Spec.Containers) > 0 {
+				if len(pod.Spec.Containers) > 0 && len(podStatus.ContainerStatuses) > 0 {
 					// If a pod has multiple containers, get the status from all
 					for container := range pod.Spec.Containers {
 						containerRestarts += podStatus.ContainerStatuses[container].RestartCount

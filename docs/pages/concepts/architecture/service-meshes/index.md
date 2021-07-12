@@ -2,7 +2,9 @@
 layout: default
 title: Service Meshes
 permalink: service-meshes
-redirect_from: service-meshes/adapters/
+redirect_from: 
+  - service-meshes/adapters/
+  - service-meshes/
 type: service-mesh
 list: exclude
 ---

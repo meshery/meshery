@@ -25,7 +25,11 @@
 
 [Meshery](https://meshery.io) is the multi-service mesh management plane offering lifecycle, configuration, and performance management of service meshes and their workloads.
 
-## <a name="running"></a>Run Meshery
+<h2><a name="running"></a>Run Meshery</h2>
+<p>Meshery runs as a set of containers inside or outside of your Kubernetes cluster.</p>
+
+<details>
+  <summary><strong>See all Supported Platforms</strong></summary>
 
 See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
 
@@ -52,8 +56,13 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 
 [Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
 
-## <a name="service-meshes"></a>Supported Service Meshes
+ </details>
+ 
+<h2><a name="service-meshes"></a>Supported Service Meshes</h2>
+<p>Meshery supports 10 diffferent service meshes.</p>
 
+<details>
+  <summary><strong>See all Support Service Meshes</strong></summary>
 <div class="container flex">
   <div class="text editable">
     <p>Service mesh adapters provision, configure, and manage their respective service meshes.
@@ -139,6 +148,14 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
     </table>
   </p>
 </div>
+ </details>
+
+## Overview
+
+<a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img src=".github/assets/images/meshery/meshery-logo-tag-dark-text-side.png" width="50%" /></a>
+<p>
+  <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><i>Project Overview Presentation</i></a>
+</p>
 
 ## <a name="functionality">Functionality</a>
 
@@ -241,20 +258,19 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 ✔️ <em><strong>Join</strong></em> any or all of the weekly meetings on <a href="https://calendar.google.com/calendar/b/1?cid=bGF5ZXI1LmlvX2VoMmFhOWRwZjFnNDBlbHZvYzc2MmpucGhzQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20">community calendar</a>.<br />
 ✔️ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">meeting recordings</a>.<br />
 ✔️ <em><strong>Access</strong></em> the <a href="https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA">Community Drive</a> by completing a community <a href="https://layer5.io/newcomer">Member Form</a>.<br />
+✔️ <em><strong>Discuss</strong></em> in the <a href="https://discuss.layer5.io">Community Forum</a>.<br />
 </p>
 <p align="center">
-<i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+">help-wanted label</a>.
+<i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+org%3Ameshery+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22+">help-wanted label</a>.
 </p>
 
 <div>&nbsp;</div>
 
-## Contributing (yes!)
+## Contributing (please do!)
 
 We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you and how to get started.
 
-- [General Contributing](CONTRIBUTING.md/#contributing)
-- [Write an adapter](CONTRIBUTING.md/#adapter)
-- [Build the project](CONTRIBUTING.md/#building)
+See all [Contributor Guides](https://docs.meshery.io/project/contributing) in Meshery Docs.
 
 <a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="https://docs.meshery.io/assets/img/readme/deploying-linkerd-with-meshery.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
 

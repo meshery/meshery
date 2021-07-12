@@ -29,23 +29,24 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 
 	plug, err := plugin.Open(path.Join(provider.PackageLocation(), packagePath))
 	if err != nil {
-		return err
+		return ErrPluginOpen(err)
 	}
 
 	// Run function
 	symRun, err := plug.Lookup("Run")
 	if err != nil {
-		return err
+		return ErrPluginLookup(err)
 	}
 	runFunction := symRun.(func(*models.ExtensionInput) (*models.ExtensionOutput, error))
 
 	output, err := runFunction(&models.ExtensionInput{
 		DBHandler:       provider.GetGenericPersister(),
 		MeshSyncChannel: h.meshsyncChannel,
+		BrokerConn:      h.brokerConn,
 		Logger:          h.log,
 	})
 	if err != nil {
-		return err
+		return ErrPluginRun(err)
 	}
 
 	// Add http endpoint to serve

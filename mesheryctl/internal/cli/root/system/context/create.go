@@ -1,6 +1,7 @@
 package context
 
 import (
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -42,7 +43,7 @@ var createContextCmd = &cobra.Command{
 			tempContext.Adapters = adapters
 		}
 
-		err := utils.AddContextToConfig(args[0], tempContext, viper.ConfigFileUsed(), set)
+		err := config.AddContextToConfig(args[0], tempContext, viper.ConfigFileUsed(), set)
 		if err != nil {
 			return err
 		}

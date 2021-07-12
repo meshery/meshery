@@ -47,7 +47,7 @@ docker-run-cloud:
 # Runs Meshery on your local machine and points to locally-running
 #  Meshery Cloud for user authentication.
 
-run-local-cloud:
+run-local-cloud: error
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
@@ -59,7 +59,7 @@ run-local-cloud:
 
 # Builds and runs Meshery to run on your local machine.
 #  and points to remote Meshery Cloud for user authentication.
-run-local:
+run-local: error
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -78,7 +78,7 @@ run-fast:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	go run main.go;
 
-run-fast-cloud:
+run-fast-cloud: error
 	cd cmd; go mod tidy; \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
 	PORT=9081 \
@@ -87,7 +87,7 @@ run-fast-cloud:
 	go run main.go;
 
 
-golangci-run:
+golangci-run: error
 	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.30.0;
 	$(GOPATH)/bin/golangci-lint run
 
@@ -156,10 +156,10 @@ chart-readme:
 	go run github.com/norwoodj/helm-docs/cmd/helm-docs -c install/kubernetes/helm/
 
 swagger-spec:
-	swagger generate spec -o ./swagger.yaml --scan-models
+	swagger generate spec -o ./helpers/swagger.yaml --scan-models
 
 swagger-run:swagger-spec
-	swagger serve ./swagger.yaml
+	swagger serve ./helpers/swagger.yaml
 
 swagger-docs:
 	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
@@ -170,3 +170,7 @@ graphql-docs:
 
 gqlgen-generate:
 	cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
+
+.PHONY: error
+error:
+	go run github.com/layer5io/meshkit/cmd/errorutil -d . update

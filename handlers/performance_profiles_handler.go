@@ -9,6 +9,13 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
+// swagger:route POST /api/user/performance/profiles PerformanceAPI idSavePerformanceProfile
+// Handle POST requests for saving performance profile
+//
+// Save performance profile using the current provider's persistence mechanism
+// responses:
+// 	200: performanceProfileResponseWrapper
+
 // SavePerformanceProfileHandler will save performance profile using the current provider's persistence mechanism
 func (h *Handler) SavePerformanceProfileHandler(
 	rw http.ResponseWriter,
@@ -24,26 +31,40 @@ func (h *Handler) SavePerformanceProfileHandler(
 	var parsedBody *models.PerformanceProfile
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		//failed to read request body
+		h.log.Error(ErrRequestBody(err))
+		fmt.Fprintf(rw, ErrRequestBody(err).Error(), err)
 		return
 	}
 	fmt.Printf("%+v\n", parsedBody)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
+		//unable to save user config data
+		h.log.Error(ErrRecordPreferences(err))
+		http.Error(rw, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	resp, err := provider.SavePerformanceProfile(token, parsedBody)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to save the performance profile: %s", err), http.StatusInternalServerError)
+		obj := "performance profile"
+		//fail to save performance profile
+		h.log.Error(ErrFailToSave(err, obj))
+		http.Error(rw, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
+
+// swagger:route GET /api/user/performance/profiles PerformanceAPI idGetPerformanceProfiles
+// Handle GET requests for performance profiles
+//
+// Returns the list of all the performance profiles saved by the current user
+// responses:
+// 	200: performanceProfilesResponseWrapper
 
 // GetPerformanceProfilesHandler returns the list of all the performance profiles saved by the current user
 func (h *Handler) GetPerformanceProfilesHandler(
@@ -57,13 +78,23 @@ func (h *Handler) GetPerformanceProfilesHandler(
 
 	resp, err := provider.GetPerformanceProfiles(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to fetch the performance profiles: %s", err), http.StatusInternalServerError)
+		obj := "performance profile"
+		//get query performance profile
+		h.log.Error(ErrQueryGet(obj))
+		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
+
+// swagger:route DELETE /api/user/performance/profiles/{id} PerformanceProfile idDeletePerformanceProfile
+// Handle Delete requests for performance profiles
+//
+// Deletes a performance profile with the given id
+// responses:
+// 	200: noContentWrapper
 
 // DeletePerformanceProfileHandler deletes a performance profile with the given id
 func (h *Handler) DeletePerformanceProfileHandler(
@@ -77,7 +108,10 @@ func (h *Handler) DeletePerformanceProfileHandler(
 
 	resp, err := provider.DeletePerformanceProfile(r, performanceProfileID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to delete the performance profile: %s", err), http.StatusInternalServerError)
+		obj := "performance profile"
+		//fail to delete performance profile
+		h.log.Error(ErrFailToDelete(err, obj))
+		http.Error(rw, ErrFailToDelete(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -85,6 +119,12 @@ func (h *Handler) DeletePerformanceProfileHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route GET /api/user/performance/profiles/{id} PerformanceAPI idGetSinglePerformanceProfile
+// Handle GET requests for performance results of a profile
+//
+// Returns single performance profile with the given id
+// responses:
+// 	200: performanceProfileResponseWrapper
 // GetPerformanceProfileHandler fetched the performance profile with the given id
 func (h *Handler) GetPerformanceProfileHandler(
 	rw http.ResponseWriter,
@@ -97,7 +137,10 @@ func (h *Handler) GetPerformanceProfileHandler(
 
 	resp, err := provider.GetPerformanceProfile(r, performanceProfileID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get the performance profile: %s", err), http.StatusInternalServerError)
+		obj := "performanceProfile"
+		//Queury Error performance profile
+		h.log.Error(ErrQueryGet(obj))
+		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		return
 	}
 

@@ -1,5 +1,0 @@
-flag: 
-arg: --switch
-description: switch release channel and version
-usage: |
-    mesheryctl system channel switch [stable|stable-version|edge|edge-version]

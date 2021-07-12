@@ -5,7 +5,7 @@
 
 ## Contributing to the Meshery Documentation
 
-Before contributing, please review the [Documentation Contribution Flow](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). In the following steps you will set up your development environment, fork and clone the repository, run the site locally, and finally commit, sign-off, and push any changes made for review. 
+Before contributing, please review the [Documentation Contribution Flow](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). In the following steps you will set up your development environment, fork and clone the repository, run the site locally, and finally commit, sign-off, and push any changes made for review. 
 
 ### 1. Set up your development environment
 
@@ -21,7 +21,7 @@ Before contributing, please review the [Documentation Contribution Flow](https:/
 
 ### 2. Get the code
 
-* Fork and then clone the [Meshery repository](https://github.com/layer5io/meshery)
+* Fork and then clone the [Meshery repository](https://github.com/meshery/meshery)
   ```bash
   $ git clone https://github.com/YOUR-USERNAME/meshery
   ```
@@ -52,7 +52,7 @@ Before contributing, please review the [Documentation Contribution Flow](https:/
   ```bash
   $ git push origin <branch-name>
   ```
-* Then on Github, navigate to the [Meshery repository](https://github.com/layer5io/meshery) and create a pull request from your recently pushed changes!
+* Then on Github, navigate to the [Meshery repository](https://github.com/meshery/meshery) and create a pull request from your recently pushed changes!
 
 ---
 - *See the [Meshery Documentation Google Doc](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit) for additional reference.*

@@ -1,0 +1,5 @@
+flag: --profile 
+arg: apply
+description: '(required/optional) Name for the new Performance Profile.'
+usage: |
+  mesheryctl perf apply --profile [profile-name] --url [URL]

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	models "github.com/layer5io/meshery/models"
-	"github.com/sirupsen/logrus"
 )
 
 // ProviderHandler - handles the choice of provider
@@ -41,7 +40,9 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	bd, err := json.Marshal(providers)
 	if err != nil {
-		http.Error(w, "unable to marshal the providers", http.StatusInternalServerError)
+		obj := "provider"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write(bd)
@@ -81,8 +82,9 @@ func (h *Handler) ProviderComponentsHandler(
 	} else if r.URL.Path == loadReqBasePath {
 		err := h.LoadExtensionFromPackage(w, r, provider)
 		if err != nil {
-			logrus.Error(err)
-			http.Error(w, "Failed to Load Extensions from Package", http.StatusInternalServerError)
+			// failed to load extensions from package
+			h.log.Error(ErrFailToLoadExtensions(err))
+			http.Error(w, ErrFailToLoadExtensions(err).Error(), http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("content-type", "application/json")

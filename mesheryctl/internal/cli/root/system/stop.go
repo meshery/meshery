@@ -19,6 +19,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -39,7 +40,17 @@ var stopCmd = &cobra.Command{
 	Long:  `Stop all Meshery containers / remove all Meshery pods.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return RunPreflightHealthChecks(true, cmd.Use)
+		//Check prerequisite
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := stop(); err != nil {
@@ -62,9 +73,13 @@ func stop() error {
 		return errors.Wrap(err, "failed to retrieve current-context")
 	}
 
-	client, err := meshkitkube.New([]byte(""))
+	ok, err := utils.IsMesheryRunning(currCtx.Platform)
 	if err != nil {
 		return err
+	}
+	if !ok {
+		log.Info("Meshery is not running. Nothing to stop.")
+		return nil
 	}
 
 	// Get the current platform and the specified adapters in the config.yaml
@@ -73,14 +88,6 @@ func stop() error {
 	switch currCtx.Platform {
 	case "docker":
 		// if the platform is docker, then stop all the running containers
-		ok, err := utils.IsMesheryRunning(currCtx.Platform)
-		if err != nil {
-			return err
-		}
-		if !ok {
-			log.Info("Meshery is not running. Nothing to stop.")
-			return nil
-		}
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
 				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to mkdir %s", utils.MesheryFolder)))
@@ -106,23 +113,34 @@ func stop() error {
 			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
 		}
 
-		err = utils.ApplyOperatorManifest(client, false, true)
-
+		// If k8s is available in case of platform docker than we remove operator
+		hcOptions := &HealthCheckOptions{
+			PrintLogs:           false,
+			IsPreRunE:           false,
+			Subcommand:          "",
+			RunKubernetesChecks: true,
+		}
+		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		if err = hc.Run(); err == nil {
+			client, err := meshkitkube.New([]byte(""))
+			if err != nil {
+				return err
+			}
+			err = utils.ApplyOperatorManifest(client, false, true)
+			if err != nil {
+				return err
+			}
 		}
 
 	case "kubernetes":
-		// if the platform is kubernetes, stop the deployment by deleting the manifest files
-		ok, err := utils.IsMesheryRunning(currCtx.Platform)
+		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
 			return err
 		}
-		if !ok {
-			log.Info("Meshery is not running. Nothing to stop.")
-			return nil
-		}
-
+		// if the platform is kubernetes, stop the deployment by deleting the manifest files
 		userResponse := false
 		if utils.SilentFlag {
 			userResponse = true
@@ -180,6 +198,26 @@ func stop() error {
 			return err
 		}
 	}
+
+	s := utils.CreateDefaultSpinner("Terminating Meshery pods", "\nPods terminated.")
+	s.Start()
+
+	deadline := time.Now().Add(20 * time.Second)
+
+	for !(time.Now().After(deadline)) {
+		ok, err := utils.IsMesheryRunning("kubernetes")
+
+		if err != nil {
+			return err
+		}
+
+		if !ok {
+			break
+		} else {
+			time.Sleep(1 * time.Second)
+		}
+	}
+	s.Stop()
 
 	log.Info("Meshery is stopped.")
 

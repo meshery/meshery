@@ -151,7 +151,7 @@ class UserPreference extends React.Component {
 
     const params = `${encodeURIComponent(name)}=${encodeURIComponent(!val)}`;
     this.props.updateProgress({ showProgress: true });
-    dataFetch('/api/user/stats', {
+    dataFetch('/api/user/prefs', {
       credentials: 'same-origin',
       method: 'POST',
       credentials: 'include',

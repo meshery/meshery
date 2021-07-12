@@ -132,6 +132,13 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 	return &headers
 }
 
+// swagger:route GET /api/user/performance/profiles/{id}/run PerformanceAPI idRunPerformanceTest
+// Handle GET request to run a performance test
+//
+// Runs the load test with the given parameters
+// responses:
+// 	200:
+
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodGet {

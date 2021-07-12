@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-	"strings"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshkit/utils"
@@ -102,7 +101,7 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 
 				addonlist = append(addonlist, &model.AddonList{
 					Name:     obj.ObjectMeta.Name,
-					Owner:    strings.ToLower(selector.String()),
+					Owner:    selector.String(),
 					Endpoint: fmt.Sprintf("%s:%d", endpoint.External.Address, endpoint.External.Port),
 				})
 			}

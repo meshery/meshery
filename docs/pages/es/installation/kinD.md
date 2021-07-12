@@ -131,7 +131,7 @@ Recomendamos encarecidamente utilizar Helm v3, debido a que la versión actual y
 Ejecute lo siguienteg:
 
 ```bash
-$ git clone https://github.com/layer5io/meshery.git; cd meshery
+$ git clone https://github.com/meshery/meshery.git; cd meshery
 $ kubectl create namespace meshery
 $ helm install meshery --namespace meshery install/kubernetes/helm/meshery
 ```
