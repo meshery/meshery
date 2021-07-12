@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	"github.com/layer5io/meshkit/errors"
 )
 
@@ -57,6 +59,7 @@ const (
 	ErrParseDurationCode      = "2049"
 	ErrLoadTestCode           = "2050"
 	ErrFetchKubernetesCode    = "2051"
+	ErrPanicRecoveryCode      = "2052"
 )
 
 var (
@@ -231,4 +234,8 @@ func ErrLoadTest(err error, obj string) error {
 
 func ErrFetchKubernetes(err error) error {
 	return errors.New(ErrLoadTestCode, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPanicRecovery(r interface{}) error {
+	return errors.New(ErrPanicRecoveryCode, errors.Alert, []string{"Recovered from panic"}, []string{fmt.Sprint(r)}, []string{}, []string{})
 }
