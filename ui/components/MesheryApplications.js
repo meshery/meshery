@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
-import UpdateIcon from "@material-ui/icons/Update";
+import SaveIcon from '@material-ui/icons/Save';
 import UploadIcon from "@material-ui/icons/Publish";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -21,7 +21,8 @@ import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import EditIcon from '@material-ui/icons/Edit';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
@@ -82,7 +83,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
             color="primary"
             onClick={() => onSubmit(yaml, application.id, application.name, "update")}
           >
-            <UpdateIcon />
+            <SaveIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete Application">
@@ -107,7 +108,7 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
   const [pageSize, setPageSize] = useState(10);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-
+  const DEPLOY_URL = '/api/experimental/application/deploy';
   const searchTimeout = useRef(null);
 
   /**
@@ -125,6 +126,21 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
+
+  const handleDeploy = (application_file) => {
+    dataFetch(
+      DEPLOY_URL,
+      {
+        credentials: "include",
+        method: "POST",
+        body:application_file,
+      },() => {
+        console.log("ApplicationFile Deploy API", `/api/experimental/application/deploy`);
+      },(e) => { 
+        console.error(e) 
+      })
+  }
+
   function fetchApplications(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
@@ -308,7 +324,7 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
       },
     },
     {
-      name: "Details",
+      name: "Actions",
       options: {
         filter: false,
         sort: false,
@@ -321,14 +337,25 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
           );
         },
         customBodyRender: function CustomBody(_, tableMeta) {
+          const rowData = applications[tableMeta.rowIndex]
           return (
-            <IconButton
-              aria-label="more"
-              color="inherit"
-              onClick={() => setSelectedRowData(applications[tableMeta.rowIndex])}
-            >
-              <MoreHorizIcon />
-            </IconButton>
+            <>
+              <IconButton>
+                <EditIcon
+                  title="Config"  
+                  aria-label="config"
+                  color="inherit"
+                  onClick={() => setSelectedRowData(applications[tableMeta.rowIndex])}/>
+              </IconButton>
+              <IconButton>               
+                <PlayArrowIcon
+                  title="Deploy"  
+                  aria-label="deploy"
+                  color="inherit"
+                  onClick={() => handleDeploy(rowData.application_file)} //deploy endpoint to be called here
+                />
+              </IconButton>
+            </>  
           );
         },
       },
