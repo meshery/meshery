@@ -76,9 +76,8 @@ var versionCmd = &cobra.Command{
 				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 				//return errors.New("default config created")
 				return nil
-			} else {
-				return errors.New("cannot determine version from invalid config file")
 			}
+			return errors.New("cannot determine version from invalid config file")
 		}
 		return nil
 	},
