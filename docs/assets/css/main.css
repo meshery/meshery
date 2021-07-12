@@ -18780,11 +18780,30 @@ footer {
     font-weight: bold;
 }
 /* mobile responisness for video*/
-@media (max-width:62rem) {
+
+@media(min-width:1rem) and (max-width:19.9rem){
     .videoTest{
         position: relative;
-        width:500px;
+        width:285px;
+    }
+}
+@media(min-width:20rem ) and (max-width:34.09rem) {
+    .videoTest{
+        position: relative;
+        width:345px;
 
     }
 }
+@media (min-width:34.1rem) and (max-width:38.3rem){
+    .videoTest{
+        position: relative;
+        width:450px;
+    }
+}
 
+@media (min-width:38.4rem) and (max-width:62rem){
+    .videoTest{
+        position: relative;
+        width:600px;
+    }
+}
