@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	"github.com/layer5io/meshkit/errors"
 )
 
@@ -53,6 +55,12 @@ const (
 	ErrFailToSaveCode           = "2045"
 	ErrFailToDeleteCode         = "2046"
 	ErrFailToLoadExtensionsCode = "2047"
+	ErrConversionCode           = "2048"
+	ErrParseDurationCode        = "2049"
+	ErrLoadTestCode             = "2050"
+	ErrFetchKubernetesCode      = "2051"
+	ErrPanicRecoveryCode        = "2052"
+	ErrBlankNameCode            = "2053"
 )
 
 var (
@@ -64,6 +72,7 @@ var (
 	ErrValidAdapter     = errors.New(ErrValidAdapterCode, errors.Alert, []string{"Unable to find valid Adapter URL"}, []string{"unable to find a valid adapter for the given adapter URL"}, []string{"Given adapter URL is not valid"}, []string{"Please provide a valid Adapter URL"})
 	ErrAddAdapter       = errors.New(ErrAddAdapterCode, errors.Alert, []string{"meshLocationURL is empty"}, []string{"meshLocationURL is empty to add an adapter"}, []string{"meshLocationURL cannot be empty to add an adapter"}, []string{"please provide the meshLocationURL"})
 	ErrMeshClient       = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
+	ErrParseDuration    = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
 )
 
 func ErrPrometheusScan(err error) error {
@@ -211,6 +220,27 @@ func ErrFailToSave(err error, obj string) error {
 func ErrFailToDelete(err error, obj string) error {
 	return errors.New(ErrFailToDeleteCode, errors.Alert, []string{"Failed to Delete: ", obj}, []string{err.Error()}, []string{}, []string{})
 }
+
+func ErrBlankName(err error) error {
+	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank"}, []string{err.Error()}, []string{}, []string{"Provide a name for the test"})
+}
+
+func ErrConversion(err error) error {
+	return errors.New(ErrConversionCode, errors.Alert, []string{"unable to convert YAML to JSON"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrLoadTest(err error, obj string) error {
+	return errors.New(ErrLoadTestCode, errors.Alert, []string{"load test error: ", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrFetchKubernetes(err error) error {
+	return errors.New(ErrLoadTestCode, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPanicRecovery(r interface{}) error {
+	return errors.New(ErrPanicRecoveryCode, errors.Alert, []string{"Recovered from panic"}, []string{fmt.Sprint(r)}, []string{}, []string{})
+}
+
 func ErrFailToLoadExtensions(err error) error {
 	return errors.New(ErrFailToLoadExtensionsCode, errors.Alert, []string{"Failed to Load Extensions from Package"}, []string{err.Error()}, []string{}, []string{})
 }
