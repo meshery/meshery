@@ -506,54 +506,34 @@ func AskForInput(prompt string, allowed []string) string {
 	}
 }
 
-func ParseGitHubURL(url string) (string, string, string, error) {
-	ogPath := strings.Replace(url, "https://", "", 1)
-	idx := strings.Index(ogPath, "/")
-	if idx == -1 {
-		return "", "", "", errors.New(fmt.Sprintf("failed to parse GitHub URL %s", url))
-	}
-	host := ogPath[:idx]
-	paths := strings.Split(ogPath, "/")
-	if (host == "github.com" && len(paths) < 6) || (host == "raw.githubcontent.com" && len(paths) < 5) {
-		return "", "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", url))
-	}
-	return "", "", "", nil
-}
-
-func ParseURL(URL string) (string, string, error) {
+// ParseURLGithub checks URL and returns raw URL, path, error
+func ParseURLGithub(URL string) (string, error) {
 	// GitHub URL:
 	// - https://github.com/layer5io/meshery/blob/master/.goreleaser.yml
 	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
-		return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+		return "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
 	}
 	host := parsedURL.Host
 	path := parsedURL.Path
 	paths := strings.Split(path, "/")
 	if host == "github.com" {
 		if len(paths) < 6 {
-			return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+			return "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
 		}
-		resURL := "https://" + host + strings.Join(paths[:5], "/")
-		return resURL, strings.Join(paths[5:], "/"), nil
+		// removing /blob/ from URL for turning this into raw url
+		path = strings.Replace(path, "/blob/", "/", 1)
+		resURL := "https://" + "raw.githubusercontent.com/" + path
+		return resURL, nil
 	} else if host == "raw.githubusercontent.com" {
 		if len(paths) < 5 {
-			return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+			return "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
 		}
-		resURL := "https://" + host + strings.Join(paths[:4], "/")
-		return resURL, strings.Join(paths[4:], "/"), nil
-	} else {
-		return URL, "", nil
+		resURL := "https://" + "raw.githubusercontent.com" + path
+		return resURL, nil
 	}
-}
-
-func ConstructURL(paths ...string) (string, error) {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return "", errors.Wrap(err, "error processing config")
-	}
-	return mctlCfg.GetBaseMesheryURL() + strings.Join(paths, "/"), nil
+	return "", errors.New("only github urls are supported")
 }
 
 // PrintToTableInStringFormat prints the given data into a table format but return as a string
