@@ -112,6 +112,8 @@ var (
 	PlatformFlag string
 )
 
+var CfgFile string
+
 // ListOfAdapters returns the list of adapters available
 var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh"}
 
@@ -129,6 +131,22 @@ var TemplateContext = config.Context{
 var TemplateToken = config.Token{
 	Name:     "Default",
 	Location: AuthConfigFile,
+}
+
+func BackupConfigFile(cfgFile string) {
+	// extracting file and folder name from the meshconfig path
+	dir, file := filepath.Split(cfgFile)
+	// extracting extension
+	extension := filepath.Ext(file)
+	bakLocation := filepath.Join(dir, file[:len(file)-len(extension)]+".bak.yaml")
+
+	log.Println("Backing up " + cfgFile + " to " + bakLocation)
+	err := os.Rename(cfgFile, bakLocation)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(errors.New("outdated config file found. Please re-run the command"))
 }
 
 type cryptoSource struct{}

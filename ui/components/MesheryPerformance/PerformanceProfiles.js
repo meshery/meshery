@@ -119,7 +119,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
       options: ["YES", "NO"],
 
     })
-    if(response == "no") return
+    if(response === "NO") return
     dataFetch(
       `${MESHERY_PERFORMANCE_URL}/${id}`,
       {

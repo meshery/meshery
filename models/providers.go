@@ -41,6 +41,7 @@ type ProviderProperties struct {
 	PackageURL          string       `json:"package_url,omitempty"`
 	ProviderName        string       `json:"provider_name,omitempty"`
 	ProviderDescription []string     `json:"provider_description,omitempty"`
+	ProviderURL         string       `json:"provider_url,omitempty"`
 	Extensions          Extensions   `json:"extensions,omitempty"`
 	Capabilities        Capabilities `json:"capabilities,omitempty"`
 }
@@ -211,8 +212,6 @@ type Provider interface {
 	RecordMeshSyncData(model.Object) error
 	ReadMeshSyncData() ([]model.Object, error)
 	GetGenericPersister() *database.Handler
-	GetGraphqlHandler() http.Handler
-	GetGraphqlPlayground() http.Handler
 
 	SetKubeClient(client *mesherykube.Client)
 	GetKubeClient() *mesherykube.Client
