@@ -52,7 +52,16 @@ var PerfCmd = &cobra.Command{
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
 		//Check prerequisite
-		return system.RunPreflightHealthChecks(true, cmd.Use)
+		hcOptions := &system.HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := system.NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		return hc.RunPreflightHealthChecks()
 	},
 }
 

@@ -56,7 +56,7 @@ type mesheryPatternResponseWrapper struct {
 type noContentWrapper struct {
 }
 
-// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults
+// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule
 type IDParameterWrapper struct {
 	// id for a specific
 	// in: path
@@ -184,10 +184,16 @@ type anonymousStatsParamsWrapper struct {
 	Body *models.PreferenceParams
 }
 
-// Parameters Persists load test preferences
+// Returns load test preferences
 // swagger:response loadTestPreferencesWrapper
+type loadTestPreferencesRespWrapper struct {
+	// in: body
+	Body SMP.PerformanceTestConfig
+}
+
+// Parameters Persists load test preferences
 // swagger:parameters idPostLoadPreferences
-type loadTestPreferencesWrapper struct {
+type loadTestPreferencesParamsWrapper struct {
 	// in: body
 	Body SMP.PerformanceTestConfig
 }
@@ -197,4 +203,18 @@ type loadTestPreferencesWrapper struct {
 type UUIDParamsWrapper struct {
 	// in: query
 	UUID strfmt.UUID `json:"uuid"`
+}
+
+// Returns List of saved schedules
+// swagger:response schedulesResponseWrapper
+type schedulesResponseWrapper struct {
+	// in: body
+	Body models.SchedulesAPIResponse
+}
+
+// Returns a single schedules
+// swagger:response singleScheduleResponseWrapper
+type singleScheduleResponseWrapper struct {
+	// in: body
+	Body models.Schedule
 }
