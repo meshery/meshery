@@ -74,7 +74,9 @@ var versionCmd = &cobra.Command{
 					))
 
 				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
-				//return errors.New("default config created")
+				if err != nil {
+					logrus.Errorf("error unmarshaling config file")
+				}
 				return nil
 			}
 			return errors.New("cannot determine version from invalid config file")
