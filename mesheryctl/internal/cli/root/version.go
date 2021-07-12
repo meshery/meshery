@@ -16,10 +16,10 @@ package root
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -47,20 +47,37 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			logrus.Errorf("error processing config: %v", err)
 			userResponse := false
-			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file [y/n] ?")
+			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
 			if userResponse {
-				err = os.Rename("~/.meshery/config.yaml", "~/.meshery/config.bak")
-				if err != nil {
-					logrus.Fatal(err)
-					return nil
-				}
-				fmt.Println("current meshconfig backed up to ~/.meshery/config.bak and new meshconfig generated")
+				utils.BackupConfigFile(utils.DefaultConfigPath)
+				// Create config file if not present in meshery folder
 				err = utils.CreateConfigFile()
 				if err != nil {
-					logrus.Fatal(err)
-					return nil
+					logrus.Errorf("unable to create config file")
 				}
+
+				// Add Token to context file
+				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
+				if err != nil {
+					logrus.Errorf("unable to add token to config")
+				}
+
+				// Add Context to context file
+				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
+				if err != nil {
+					logrus.Errorf("unable to add context to config")
+				}
+
+				logrus.Printf(
+					fmt.Sprintf("Default config file created at %s",
+						utils.DefaultConfigPath,
+					))
+
+				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
+				//return errors.New("default config created")
 				return nil
+			} else {
+				return errors.New("cannot determine version from invalid config file")
 			}
 		}
 		return nil
@@ -130,7 +147,7 @@ func checkMesheryctlClientVersion(build string) {
 	}
 	// If user is running an outdated release, let them know.
 	if res.Outdated {
-		logrus.Info("\n  ", build, " is not the latest release. Update to v", res.Current, ".")
+		logrus.Info("\n  ", build, " is not the latest release. Update to ", res.Current, ".")
 	}
 
 	// If user is running the latest release, let them know.
