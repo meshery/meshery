@@ -74,14 +74,28 @@ var updateCmd = &cobra.Command{
 			currCtx.Version = "latest"
 		}
 
-		log.Debug("creating new Clientset...")
-		// Create a new client
-		kubeClient, err := meshkitkube.New([]byte(""))
+		var kubeClient *meshkitkube.Client
 
-		if err != nil {
-			return errors.Wrap(err, "failed to create new client")
+		// run k8s checks to make sure if k8s cluster is running
+		hcOptions := &HealthCheckOptions{
+			PrintLogs:           false,
+			IsPreRunE:           false,
+			Subcommand:          "",
+			RunKubernetesChecks: true,
 		}
-
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		// If k8s is available in case of platform docker than we deploy operator
+		if err = hc.Run(); err == nil {
+			log.Debug("creating new Clientset...")
+			// create a client
+			kubeClient, err = meshkitkube.New([]byte(""))
+			if err != nil {
+				return err
+			}
+		}
 		switch currCtx.Platform {
 		case "docker":
 			if !utils.SkipResetFlag {
