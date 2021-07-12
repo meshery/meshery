@@ -551,6 +551,60 @@
       "probable_cause": "",
       "suggested_remediation": ""
     },
+    "2048": {
+      "name": "ErrConversionCode",
+      "code": "2048",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to convert YAML to JSON",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2049": {
+      "name": "ErrParseDurationCode",
+      "code": "2049",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "error parsing test duration",
+      "probable_cause": "",
+      "suggested_remediation": "please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"
+    },
+    "2050": {
+      "name": "ErrLoadTestCode",
+      "code": "2050",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2051": {
+      "name": "ErrFetchKubernetesCode",
+      "code": "2051",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2052": {
+      "name": "ErrPanicRecoveryCode",
+      "code": "2052",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Recovered from panic",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2053": {
+      "name": "ErrBlankNameCode",
+      "code": "2053",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error: name field is blank",
+      "probable_cause": "",
+      "suggested_remediation": "Provide a name for the test"
+    },
     "3000": {
       "name": "ErrGrafanaClientCode",
       "code": "3000",
