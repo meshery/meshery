@@ -18,6 +18,25 @@ type MesheryFilterRequestBody struct {
 	FilterData *models.MesheryFilter `json:"filter_data,omitempty"`
 }
 
+func (h *Handler) GetMesheryFilterFileHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	filterID := mux.Vars(r)["id"]
+
+	resp, err := provider.GetMesheryFilterFile(r, filterID)
+	if err != nil {
+		http.Error(rw, fmt.Sprintf("failed to get the filter: %s", err), http.StatusNotFound)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // FilterFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/experimental/filter
 func (h *Handler) FilterFileRequestHandler(
@@ -66,15 +85,11 @@ func (h *Handler) handleFilterPOST(
 
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.FilterData != nil {
-		filterName, err := models.GetFilterName(parsedBody.FilterData.FilterFile)
-		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to save the filter: %s", err), http.StatusBadRequest)
-			return
-		}
 
 		// Assign a name if no name is provided
 		if parsedBody.FilterData.Name == "" {
-			parsedBody.FilterData.Name = filterName
+			// TODO: Dynamically generate names or get the name of the file from the UI (@navendu-pottekkat)
+			parsedBody.FilterData.Name = "Test Filter"
 		}
 		// Assign a location if no location is specified
 		if parsedBody.FilterData.Location == nil {
