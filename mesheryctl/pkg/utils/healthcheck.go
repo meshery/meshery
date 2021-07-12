@@ -115,7 +115,6 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 
 // IsMesheryRunning checks if the meshery server containers are up and running
 func IsMesheryRunning() (bool, error) {
-
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return false, errors.Wrap(err, "error processing config")
@@ -126,7 +125,7 @@ func IsMesheryRunning() (bool, error) {
 	}
 	defer SafeClose(res.Body)
 	if res.StatusCode != http.StatusOK {
-		return false, errors.New("Received unexpected response")
+		return false, errors.New("received unexpected response")
 	}
 	return true, nil
 }

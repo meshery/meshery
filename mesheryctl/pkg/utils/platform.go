@@ -316,7 +316,6 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 			if ctx.Version == "latest" {
 				ctx.Version, err = GetLatestStableReleaseTag()
 				if err != nil {
-
 					return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
 				}
 			}
