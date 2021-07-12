@@ -85,7 +85,6 @@ func (h *Handler) handleFilterPOST(
 
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.FilterData != nil {
-
 		// Assign a name if no name is provided
 		if parsedBody.FilterData.Name == "" {
 			// TODO: Dynamically generate names or get the name of the file from the UI (@navendu-pottekkat)
