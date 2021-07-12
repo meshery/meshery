@@ -50,8 +50,31 @@ var validateCmd = &cobra.Command{
 			return errors.Wrap(err, "error processing config")
 		}
 
+		// sync
+		syncPath := mctlCfg.GetBaseMesheryURL() + "/api/config/sync"
+		method := "GET"
+
+		client := &http.Client{}
+
+		syncReq, err := http.NewRequest(method, syncPath, strings.NewReader(""))
+		if err != nil {
+			return err
+		}
+
+		syncReq.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
+
+		err = utils.AddAuthDetails(syncReq, tokenPath)
+		if err != nil {
+			return err
+		}
+
+		_, err = client.Do(syncReq)
+		if err != nil {
+			return err
+		}
+
 		path := mctlCfg.GetBaseMesheryURL() + "/api/mesh/ops"
-		method := "POST"
+		method = "POST"
 
 		data := url.Values{}
 		data.Set("adapter", adapterURL)
@@ -86,7 +109,6 @@ var validateCmd = &cobra.Command{
 
 		payload := strings.NewReader(data.Encode())
 
-		client := &http.Client{}
 		req, err := http.NewRequest(method, path, payload)
 
 		if err != nil {
