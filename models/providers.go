@@ -41,6 +41,7 @@ type ProviderProperties struct {
 	PackageURL          string       `json:"package_url,omitempty"`
 	ProviderName        string       `json:"provider_name,omitempty"`
 	ProviderDescription []string     `json:"provider_description,omitempty"`
+	ProviderURL         string       `json:"provider_url,omitempty"`
 	Extensions          Extensions   `json:"extensions,omitempty"`
 	Capabilities        Capabilities `json:"capabilities,omitempty"`
 }

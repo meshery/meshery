@@ -118,7 +118,9 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 	}()
 
 	// Clear the previous capabilities before writing new one
-	l.ProviderProperties = ProviderProperties{}
+	l.ProviderProperties = ProviderProperties{
+		ProviderURL: l.RemoteProviderURL,
+	}
 	decoder := json.NewDecoder(resp.Body)
 	if err := decoder.Decode(&l.ProviderProperties); err != nil {
 		logrus.Errorf("[Initialize]: Failed to decode provider properties %s", err)
@@ -323,11 +325,12 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 // It is assumed that each remote provider will support this feature
 func (l *RemoteProvider) GetSession(req *http.Request) error {
 	ts, err := l.GetToken(req)
-	if err != nil {
+	if err != nil || ts == "" {
 		err = fmt.Errorf("session not found")
 		logrus.Infof(err.Error())
 		return err
 	}
+
 	_, err = l.VerifyToken(ts)
 	if err != nil {
 		logrus.Infof("Token validation error : %v", err.Error())

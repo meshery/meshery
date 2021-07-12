@@ -20,10 +20,10 @@ categories:
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 template: |
   ## What's New
-  **General**
+  ## 🔤 General
   $CHANGES
 
-  ## Contributors
+  ## 👨🏽‍💻 Contributors
 
   Thank you to our contributors for making this release possible:
   $CONTRIBUTORS

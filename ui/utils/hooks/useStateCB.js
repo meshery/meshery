@@ -2,6 +2,7 @@ import React from "react";
 
 function useStateCB(initState) {
   const [state, _setState] = React.useState(initState);
+  const stateRef = React.useRef(initState);
 
   const callbackRef = React.useRef();
   const isFirstCBCall = React.useRef(true);
@@ -13,10 +14,14 @@ function useStateCB(initState) {
 
   const setState = (state, callback) => {
     callbackRef.current = callback;
+
+    stateRef.current = state;
     _setState(state);
   };
 
-  return [state, setState];
+  const getStateRefValue = () => stateRef.current
+
+  return [state, setState, getStateRefValue];
 }
 
 export default useStateCB;
