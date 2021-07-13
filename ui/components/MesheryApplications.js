@@ -240,7 +240,7 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
           resetSelectedRowData()()
         },
         // handleError
-        handleError(ACTION_TYPES.FETCH_APPLICATIONS)
+        handleError(ACTION_TYPES.DELETE_APPLICATIONS)
       );
     }
 
@@ -258,7 +258,7 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
           fetchApplications(page, pageSize, search, sortOrder);
         },
         // handleError
-        handleError(ACTION_TYPES.FETCH_APPLICATIONS)
+        handleError(ACTION_TYPES.UPDATE_APPLICATIONS)
       );
     }
 
@@ -276,7 +276,7 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
           fetchApplications(page, pageSize, search, sortOrder);
         },
         // handleError
-        handleError(ACTION_TYPES.FETCH_APPLICATIONS)
+        handleError(ACTION_TYPES.UPLOAD_APPLICATION)
       );
     }
   }
