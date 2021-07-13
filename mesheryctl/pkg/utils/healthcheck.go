@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -114,45 +115,56 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 
 // IsMesheryRunning checks if the meshery server containers are up and running
 func IsMesheryRunning(currPlatform string) (bool, error) {
-	switch currPlatform {
-	case "docker":
-		{
-			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
-			if err != nil {
-				return false, err
-			}
-			return strings.Contains(string(op), "meshery"), nil
-		}
-	case "kubernetes":
-		{
-			client, err := meshkitkube.New([]byte(""))
+	resp, err := http.Get("http://localhost:9081/api/server/version")
+	// Port number is subject to change depending on user's configuration on config.yaml
 
-			if err != nil {
-				return false, errors.Wrap(err, "failed to create new client")
-			}
-
-			//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-			//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
-
-			if err != nil {
-				return false, err
-			}
-			//for i, pod := range podList.Items {
-			//	fmt.Println(i, pod.GetName())
-			//	//if strings.Contains(pod.GetName(), "meshery") {
-			//	//	return true, nil
-			//	//}
-			//}
-			for _, deployment := range deploymentList.Items {
-				if deployment.GetName() == "meshery" {
-					return true, nil
+	if resp != nil {
+		return true, nil
+	} else {
+		switch currPlatform {
+		case "docker":
+			{
+				op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
+				if err != nil {
+					return false, err
 				}
+				return strings.Contains(string(op), "meshery"), nil
 			}
+		case "kubernetes":
+			{
+				client, err := meshkitkube.New([]byte(""))
 
-			return false, err
+				if err != nil {
+					return false, errors.Wrap(err, "failed to create new client")
+				}
+
+				//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
+				deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+				//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+				deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
+
+				if err != nil {
+					return false, err
+				}
+				//for i, pod := range podList.Items {
+				//	fmt.Println(i, pod.GetName())
+				//	//if strings.Contains(pod.GetName(), "meshery") {
+				//	//	return true, nil
+				//	//}
+				//}
+				for _, deployment := range deploymentList.Items {
+					if deployment.GetName() == "meshery" {
+						return true, nil
+					}
+				}
+
+				return false, err
+			}
 		}
+	}
+
+	if err != nil {
+		return false, errors.Wrap(err, "Meshery not running locally")
 	}
 
 	return false, nil
