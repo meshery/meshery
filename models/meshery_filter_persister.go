@@ -102,6 +102,13 @@ func (mfp *MesheryFilterPersister) GetMesheryFilter(id uuid.UUID) ([]byte, error
 	return marshalMesheryFilter(&mesheryFilter), err
 }
 
+func (mfp *MesheryFilterPersister) GetMesheryFilterFile(id uuid.UUID) ([]byte, error) {
+	var mesheryFilter MesheryFilter
+
+	err := mfp.DB.First(&mesheryFilter, id).Error
+	return []byte(mesheryFilter.FilterFile), err
+}
+
 func marshalMesheryFilterPage(mfp *MesheryFilterPage) []byte {
 	res, _ := json.Marshal(mfp)
 
