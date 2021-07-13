@@ -120,46 +120,45 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 
 	if resp != nil {
 		return true, nil
-	} else {
-		switch currPlatform {
-		case "docker":
-			{
-				op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
-				if err != nil {
-					return false, err
-				}
-				return strings.Contains(string(op), "meshery"), nil
-			}
-		case "kubernetes":
-			{
-				client, err := meshkitkube.New([]byte(""))
-
-				if err != nil {
-					return false, errors.Wrap(err, "failed to create new client")
-				}
-
-				//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-				deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-				//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-				deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
-
-				if err != nil {
-					return false, err
-				}
-				//for i, pod := range podList.Items {
-				//	fmt.Println(i, pod.GetName())
-				//	//if strings.Contains(pod.GetName(), "meshery") {
-				//	//	return true, nil
-				//	//}
-				//}
-				for _, deployment := range deploymentList.Items {
-					if deployment.GetName() == "meshery" {
-						return true, nil
-					}
-				}
-
+	}
+	switch currPlatform {
+	case "docker":
+		{
+			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
+			if err != nil {
 				return false, err
 			}
+			return strings.Contains(string(op), "meshery"), nil
+		}
+	case "kubernetes":
+		{
+			client, err := meshkitkube.New([]byte(""))
+
+			if err != nil {
+				return false, errors.Wrap(err, "failed to create new client")
+			}
+
+			//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
+			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+			//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
+
+			if err != nil {
+				return false, err
+			}
+			//for i, pod := range podList.Items {
+			//	fmt.Println(i, pod.GetName())
+			//	//if strings.Contains(pod.GetName(), "meshery") {
+			//	//	return true, nil
+			//	//}
+			//}
+			for _, deployment := range deploymentList.Items {
+				if deployment.GetName() == "meshery" {
+					return true, nil
+				}
+			}
+
+			return false, err
 		}
 	}
 
