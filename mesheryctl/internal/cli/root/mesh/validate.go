@@ -50,25 +50,56 @@ var validateCmd = &cobra.Command{
 			return errors.Wrap(err, "error processing config")
 		}
 
+		// sync
+		syncPath := mctlCfg.GetBaseMesheryURL() + "/api/config/sync"
+		method := "GET"
+
+		client := &http.Client{}
+
+		syncReq, err := http.NewRequest(method, syncPath, strings.NewReader(""))
+		if err != nil {
+			return err
+		}
+
+		syncReq.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
+
+		err = utils.AddAuthDetails(syncReq, tokenPath)
+		if err != nil {
+			return err
+		}
+
+		_, err = client.Do(syncReq)
+		if err != nil {
+			return err
+		}
+
 		path := mctlCfg.GetBaseMesheryURL() + "/api/mesh/ops"
-		method := "POST"
+		method = "POST"
 
 		data := url.Values{}
 		data.Set("adapter", adapterURL)
 		data.Set("customBody", "")
 		data.Set("deleteOp", "")
-		data.Set("namespace", namespace)
+		data.Set("namespace", "meshery")
 
 		// Choose which specification to use for conformance test
 		switch spec {
 		case "smi":
 			{
-				data.Set("query", "smiConformanceTest")
+				data.Set("query", "smi_conformance")
 				break
 			}
 		case "smp":
 			{
 				return errors.New("support for SMP coming in a future release")
+			}
+		case "istio-vet":
+			{
+				if adapterURL == "meshery-istio:10000" {
+					data.Set("query", "istio-vet")
+					break
+				}
+				return errors.New("only Istio supports istio-vet operation")
 			}
 		default:
 			{
@@ -78,7 +109,6 @@ var validateCmd = &cobra.Command{
 
 		payload := strings.NewReader(data.Encode())
 
-		client := &http.Client{}
 		req, err := http.NewRequest(method, path, payload)
 
 		if err != nil {
@@ -113,7 +143,6 @@ func init() {
 	_ = validateCmd.MarkFlagRequired("spec")
 	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm:10010", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
-	validateCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
 	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = validateCmd.MarkFlagRequired("tokenPath")
 }
