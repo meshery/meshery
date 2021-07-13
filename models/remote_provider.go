@@ -248,7 +248,7 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	tu := viper.GetString("MESHERY_PROVIDER_CALLBACK_URL")
 	if tu == "" {
-		tu = "http://" + r.Host + r.RequestURI
+		tu = "http://" + r.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
 	}
 
 	_, err := r.Cookie(tokenName)
