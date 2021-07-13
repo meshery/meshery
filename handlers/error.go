@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	"github.com/layer5io/meshkit/errors"
 )
 
@@ -53,6 +55,60 @@ const (
 	ErrFailToSaveCode         = "2045"
 	ErrFailToDeleteCode       = "2046"
 	ErrSaveSessionCode        = "2047"
+	ErrInvalidK8SConfigCode     = "2000"
+	ErrNilClientCode            = "2001"
+	ErrPrometheusScanCode       = "2002"
+	ErrGrafanaScanCode          = "2003"
+	ErrRecordPreferencesCode    = "2004"
+	ErrGrafanaConfigCode        = "2005"
+	ErrPrometheusConfigCode     = "2006"
+	ErrGrafanaQueryCode         = "2007"
+	ErrPrometheusQueryCode      = "2008"
+	ErrGrafanaBoardsCode        = "2009"
+	ErrPrometheusBoardsCode     = "2010"
+	ErrStaticBoardsCode         = "2011"
+	ErrRequestBodyCode          = "2012"
+	ErrMarshalCode              = "2013"
+	ErrUnmarshalCode            = "2014"
+	ErrEncodingCode             = "2015"
+	ErrParseBoolCode            = "2016"
+	ErrStreamEventsCode         = "2017"
+	ErrStreamClientCode         = "2018"
+	ErrUnmarshalEventCode       = "2019"
+	ErrPublishSmiResultsCode    = "2020"
+	ErrMarshalEventCode         = "2021"
+	ErrPluginOpenCode           = "2022"
+	ErrPluginLookupCode         = "2023"
+	ErrPluginRunCode            = "2024"
+	ErrParseFormCode            = "2025"
+	ErrQueryGetCode             = "2026"
+	ErrGetResultCode            = "2027"
+	ErrConvertToSpecCode        = "2028"
+	ErrFetchSMIResultsCode      = "2029"
+	ErrFormFileCode             = "2030"
+	ErrReadConfigCode           = "2031"
+	ErrLoadConfigCode           = "2032"
+	ErrOpenFileCode             = "2033"
+	ErrKubeVersionCode          = "2034"
+	ErrAddAdapterCode           = "2035"
+	ErrRetrieveDataCode         = "2036"
+	ErrValidAdapterCode         = "2037"
+	ErrOperationIDCode          = "2038"
+	ErrMeshClientCode           = "2039"
+	ErrApplyChangeCode          = "2040"
+	ErrRetrieveMeshDataCode     = "2041"
+	ErrApplicationFailureCode   = "2042"
+	ErrDecodingCode             = "2043"
+	ErrRetrieveUserTokenCode    = "2044"
+	ErrFailToSaveCode           = "2045"
+	ErrFailToDeleteCode         = "2046"
+	ErrFailToLoadExtensionsCode = "2047"
+	ErrConversionCode           = "2048"
+	ErrParseDurationCode        = "2049"
+	ErrLoadTestCode             = "2050"
+	ErrFetchKubernetesCode      = "2051"
+	ErrPanicRecoveryCode        = "2052"
+	ErrBlankNameCode            = "2053"
 )
 
 var (
@@ -64,6 +120,7 @@ var (
 	ErrValidAdapter     = errors.New(ErrValidAdapterCode, errors.Alert, []string{"Unable to find valid Adapter URL"}, []string{"unable to find a valid adapter for the given adapter URL"}, []string{"Given adapter URL is not valid"}, []string{"Please provide a valid Adapter URL"})
 	ErrAddAdapter       = errors.New(ErrAddAdapterCode, errors.Alert, []string{"meshLocationURL is empty"}, []string{"meshLocationURL is empty to add an adapter"}, []string{"meshLocationURL cannot be empty to add an adapter"}, []string{"please provide the meshLocationURL"})
 	ErrMeshClient       = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
+	ErrParseDuration    = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
 )
 
 func ErrPrometheusScan(err error) error {
@@ -214,4 +271,27 @@ func ErrFailToDelete(err error, obj string) error {
 
 func ErrSaveSession(err error) error {
 	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session"}, []string{err.Error()}, []string{}, []string{})
+=======
+func ErrBlankName(err error) error {
+	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank"}, []string{err.Error()}, []string{}, []string{"Provide a name for the test"})
+}
+
+func ErrConversion(err error) error {
+	return errors.New(ErrConversionCode, errors.Alert, []string{"unable to convert YAML to JSON"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrLoadTest(err error, obj string) error {
+	return errors.New(ErrLoadTestCode, errors.Alert, []string{"load test error: ", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrFetchKubernetes(err error) error {
+	return errors.New(ErrLoadTestCode, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPanicRecovery(r interface{}) error {
+	return errors.New(ErrPanicRecoveryCode, errors.Alert, []string{"Recovered from panic"}, []string{fmt.Sprint(r)}, []string{}, []string{})
+}
+
+func ErrFailToLoadExtensions(err error) error {
+	return errors.New(ErrFailToLoadExtensionsCode, errors.Alert, []string{"Failed to Load Extensions from Package"}, []string{err.Error()}, []string{}, []string{})
 }

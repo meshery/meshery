@@ -207,11 +207,11 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		if hc.context.Platform == "docker" {
 			failure++
 		}
-	}
-
-	// logging if we're supposed to
-	if hc.Options.PrintLogs {
-		log.Info("✓ Docker is running")
+	} else { // if not error we check if we are supposed to print logs
+		// logging if we're supposed to
+		if hc.Options.PrintLogs {
+			log.Info("✓ Docker is running")
+		}
 	}
 
 	//Check for installed docker-compose on client system
@@ -236,10 +236,11 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		if hc.context.Platform == "docker" {
 			failure++
 		}
-	}
-	// logging if we're supposed to
-	if hc.Options.PrintLogs {
-		log.Info("✓ docker-compose is available")
+	} else { // if not error we check if we are supposed to print logs
+		// logging if we're supposed to
+		if hc.Options.PrintLogs {
+			log.Info("✓ docker-compose is available")
+		}
 	}
 
 	return nil
@@ -253,7 +254,9 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	//Check whether k8s client can be initialized
 	client, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		failure++                 // increase failure count
+		if hc.context.Platform == "kubernetes" { // increase failure count
+			failure++
+		}
 		if hc.Options.PrintLogs { // print logs if we're supposed to
 			log.Warn("!! cannot initialize Kubernetes client")
 			log.Warn("!! cannot query the Kubernetes API")
@@ -271,12 +274,14 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	podInterface := client.KubeClient.CoreV1().Pods("")
 	_, err = podInterface.List(context.TODO(), v1.ListOptions{})
 	if err != nil {
+		if hc.context.Platform == "kubernetes" { // increase failure count
+			failure++
+		}
 		if hc.Options.PrintLogs { // log incase we're supposed to
 			log.Warn("!! cannot query the Kubernetes API")
-		} else {
-			return errors.New("ctlK8sConnect1001: !! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes")
+			return nil
 		}
-		failure++ // increase failure count
+		return errors.New("ctlK8sConnect1001: !! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes")
 	}
 
 	if hc.Options.PrintLogs { // log incase we're supposed to
@@ -296,41 +301,48 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 	var kubeVersion *k8sVersion.Info
 	kubeVersion, err := utils.GetK8sVersionInfo()
 	if err != nil {
+		if hc.context.Platform == "kubernetes" { // increase failure count
+			failure++
+		}
 		// probably kubernetes isn't running
 		if hc.Options.PrintLogs { // log if we're supposed to
 			log.Warn("!! cannot check Kubernetes version")
 		} else { // else we're supposed to catch the error
 			return err
 		}
-		failure++ // increase failure count
 	} else {
 		// kubernetes is running so check the version
 		err = utils.CheckK8sVersion(kubeVersion)
 		if err != nil {
+			if hc.context.Platform == "kubernetes" { // increase failure count
+				failure++
+			}
 			if hc.Options.PrintLogs { // log if we're supposed to
 				log.Warnf("!! %s", err)
 			} else { // else we gotta catch the error
 				return err
 			}
-			failure++
-		}
-
-		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Info("✓ is running the minimum Kubernetes version")
+		} else { // if not error we check if we are supposed to print logs
+			if hc.Options.PrintLogs { // log if we're supposed to
+				log.Info("✓ is running the minimum Kubernetes version")
+			}
 		}
 	}
 
 	err = utils.CheckKubectlVersion()
 	if err != nil {
+		if hc.context.Platform == "kubernetes" { // increase failure count
+			failure++
+		}
 		if hc.Options.PrintLogs { // log if we're supposed to
 			log.Warnf("!! %s", err)
 		} else { // else we gotta catch the error
 			return err
 		}
-		failure++
-	}
-	if hc.Options.PrintLogs { // log if we're supposed to
-		log.Info("✓ is running the minimum kubectl version")
+	} else { // if not error we check if we are supposed to print logs
+		if hc.Options.PrintLogs { // log if we're supposed to
+			log.Info("✓ is running the minimum kubectl version")
+		}
 	}
 
 	return nil
@@ -427,7 +439,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 		log.Info("\nMeshery Adapters \n--------------")
 	}
 
-	url := mctlCfg.GetBaseMesheryURL()
+	url := hc.mctlCfg.GetBaseMesheryURL()
 	client := &http.Client{}
 
 	// Request to grab running adapters and ports
@@ -437,7 +449,15 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 	}
 
 	// Add authentication token
-	err = utils.AddAuthDetails(req, constants.GetAuthenticationToken())
+	token, err := hc.mctlCfg.GetTokenForContext(hc.mctlCfg.CurrentContext)
+	if err != nil {
+		return err
+	}
+	tokenPath, err = constants.GetTokenLocation(token)
+	if err != nil {
+		return err
+	}
+	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
 		return errors.New("authentication token not found. please supply a valid user token")
 	}
@@ -459,8 +479,6 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 		return errors.Errorf("\n  Invalid response: %v", err)
 	}
 
-	log.Info(string(data))
-
 	err = json.Unmarshal(data, &adapters)
 	if err != nil {
 		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
@@ -468,7 +486,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 
 	// check for each adapter
 	for _, adapter := range adapters {
-		name := strings.Split(adapter.Name, ":")[0]
+		name := strings.Split(adapter.Location, ":")[0]
 		if adapter.Ops == nil {
 			if hc.Options.PrintLogs { // incase we're printing logs
 				log.Infof("!! %s adapter is not running", name)
@@ -498,10 +516,10 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 			} else { // or we're supposed to grab the errors
 				return errors.New(fmt.Sprintf("!! %s adapter is running but not reachable", name))
 			}
-		}
-
-		if hc.Options.PrintLogs { // incase we're printing logs
-			log.Infof("✓ %s adapter is running and reachable", name)
+		} else { // if status == 200 we check if we are supposed to print logs
+			if hc.Options.PrintLogs { // incase we're printing logs
+				log.Infof("✓ %s adapter is running and reachable", name)
+			}
 		}
 	}
 	return nil

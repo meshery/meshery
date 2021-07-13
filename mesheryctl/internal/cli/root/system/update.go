@@ -41,7 +41,7 @@ var updateCmd = &cobra.Command{
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.New("failed to initialize healthchecker")
+			return errors.Wrapf(err, "failed to initialize healthchecker")
 		}
 		return hc.RunPreflightHealthChecks()
 	},
@@ -74,14 +74,6 @@ var updateCmd = &cobra.Command{
 			currCtx.Version = "latest"
 		}
 
-		log.Debug("creating new Clientset...")
-		// Create a new client
-		kubeClient, err := meshkitkube.New([]byte(""))
-
-		if err != nil {
-			return errors.Wrap(err, "failed to create new client")
-		}
-
 		switch currCtx.Platform {
 		case "docker":
 			if !utils.SkipResetFlag {
@@ -99,12 +91,6 @@ var updateCmd = &cobra.Command{
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
 			}
 
-			err = utils.ApplyOperatorManifest(kubeClient, true, false)
-
-			if err != nil {
-				return err
-			}
-
 			err = utils.ChangeContextVersion(mctlCfg.CurrentContext, "latest")
 
 			if err != nil {
@@ -112,6 +98,11 @@ var updateCmd = &cobra.Command{
 			}
 
 		case "kubernetes":
+			// create a client
+			kubeClient, err := meshkitkube.New([]byte(""))
+			if err != nil {
+				return err
+			}
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
 				version := currCtx.Version
@@ -142,13 +133,31 @@ var updateCmd = &cobra.Command{
 
 				// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 				err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, true, false)
+				if err != nil {
+					return err
+				}
+			}
 
+			// run k8s checks to make sure if k8s cluster is running
+			hcOptions := &HealthCheckOptions{
+				PrintLogs:           false,
+				IsPreRunE:           false,
+				Subcommand:          "",
+				RunKubernetesChecks: true,
+			}
+			hc, err := NewHealthChecker(hcOptions)
+			if err != nil {
+				return errors.Wrapf(err, "failed to initialize healthchecker")
+			}
+			// If k8s is available in case of platform docker than we deploy operator
+			if err = hc.Run(); err == nil {
+				// create a client
+				kubeClient, err := meshkitkube.New([]byte(""))
 				if err != nil {
 					return err
 				}
 
 				err = utils.ApplyOperatorManifest(kubeClient, true, false)
-
 				if err != nil {
 					return err
 				}
