@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/layer5io/meshery/meshes"
+	"github.com/layer5io/meshkit/logger"
 )
 
 // Adapter represents an adapter in Meshery
@@ -20,4 +21,10 @@ type AdaptersTrackerInterface interface {
 	AddAdapter(context.Context, Adapter)
 	RemoveAdapter(context.Context, Adapter)
 	GetAdapters(context.Context) []Adapter
+}
+
+//logger for model package
+
+type ModelLogger struct {
+	log logger.Handler
 }
