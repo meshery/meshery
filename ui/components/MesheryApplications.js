@@ -469,7 +469,7 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
         <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       <MUIDataTable
-        title={<div className={classes.tableHeader}>Meshery Application</div>}
+        title={<div className={classes.tableHeader}>Application</div>}
         data={applications}
         columns={columns}
         // @ts-ignore

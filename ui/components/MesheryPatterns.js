@@ -460,7 +460,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       <MUIDataTable
-        title={<div className={classes.tableHeader}>Meshery Patterns</div>}
+        title={<div className={classes.tableHeader}>Patterns</div>}
         data={patterns}
         columns={columns}
         // @ts-ignore
