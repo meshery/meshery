@@ -109,6 +109,32 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const DEPLOY_URL = '/api/experimental/application/deploy';
+
+  
+  const ACTION_TYPES = {
+    FETCH_APPLICATIONS: {
+      name: "FETCH_APPLICATION" ,
+      error_msg: "Failed to fetch application" 
+    },
+    UPDATE_APPLICATIONS: {
+      name: "UPDATEAPPLICATION",
+      error_msg: "Failed to update application file"
+    },
+    DELETE_APPLICATIONS: {
+      name: "DELETEAPPLICATION",
+      error_msg: "Failed to delete application file"
+    },
+    DEPLOY_APPLICATIONS: {
+      name: "DEPLOY_APPLICATION",
+      error_msg: "Failed to deploy application file"
+    },
+    UPLOAD_APPLICATION: {
+      name: "UPLOAD_APPLICATION",
+      error_msg: "Failed to upload application file"
+    },
+  }
+
+
   const searchTimeout = useRef(null);
 
   /**
@@ -136,10 +162,14 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
         body:application_file,
       },() => {
         console.log("ApplicationFile Deploy API", `/api/experimental/application/deploy`);
-      },(e) => { 
-        console.error(e) 
-      })
-  }
+        // },(e) => { 
+        //   console.error(e) 
+        // })
+        updateProgress({showProgress : false})
+      },
+      handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
+    ) 
+  } 
 
   function fetchApplications(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -166,14 +196,16 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
           setCount(result.total_count || 0);
         }
       },
-      handleError
+      // handleError
+      handleError(ACTION_TYPES.FETCH_APPLICATIONS)
     );
   }
 
-  function handleError(error) {
+  // function handleError(error) {
+  const handleError = (action) => (error) =>  {  
     updateProgress({ showProgress: false });
 
-    enqueueSnackbar(`There was an error fetching results: ${error}`, {
+    enqueueSnackbar(`${action.error_msg}: ${error}`, {
       variant: "error",
       action: function Action(key) {
         return (
@@ -193,6 +225,7 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
   }
 
   function handleSubmit(data, id, name, type) {
+    updateProgress({showProgress: true})
     if (type === "delete") {
       dataFetch(
         `/api/experimental/application/${id}`,
@@ -204,8 +237,10 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
           console.log("ApplicationFile API", `/api/experimental/application/${id}`);
           updateProgress({ showProgress: false });
           fetchApplications(page, pageSize, search, sortOrder);
+          resetSelectedRowData()()
         },
-        handleError
+        // handleError
+        handleError(ACTION_TYPES.FETCH_APPLICATIONS)
       );
     }
 
@@ -222,7 +257,8 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
           updateProgress({ showProgress: false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
-        handleError
+        // handleError
+        handleError(ACTION_TYPES.FETCH_APPLICATIONS)
       );
     }
 
@@ -239,7 +275,8 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
           updateProgress({ showProgress: false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
-        handleError
+        // handleError
+        handleError(ACTION_TYPES.FETCH_APPLICATIONS)
       );
     }
   }
