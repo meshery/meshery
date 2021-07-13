@@ -61,7 +61,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	if err != nil {
 		obj := "user config data"
 		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, "unable to process the request", http.StatusInternalServerError)
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
