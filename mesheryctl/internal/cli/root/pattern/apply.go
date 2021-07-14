@@ -23,8 +23,7 @@ import (
 )
 
 var (
-	skipSave    bool   // skip saving a pattern
-	name        string // name for pattern
+	skipSave    bool // skip saving a pattern
 	patternFile string
 )
 
@@ -122,7 +121,6 @@ var applyCmd = &cobra.Command{
 							"pattern_file": text,
 						},
 						"save": true,
-						"name": name,
 					})
 					if err != nil {
 						return err
@@ -274,6 +272,5 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 
 func init() {
 	applyCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
-	applyCmd.Flags().StringVarP(&name, "name", "", "", "Name to pattern file")
 	applyCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a pattern")
 }
