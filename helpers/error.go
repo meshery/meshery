@@ -12,9 +12,9 @@ const (
 	ErrFetchNodesCode                      = "replace_me4"
 	ErrFetchKubernetesVersionCode          = "replace_me5"
 	ErrScanKubernetesCode                  = "replace_me6"
-	ErrRetrivePodListCode                  = "replace_me7"
+	ErrRetrievePodListCode                 = "replace_me7"
 	ErrDetectServiceForDeploymentImageCode = "replace_me8"
-	ErrRetriveNamespacesListCode           = "replace_me9"
+	ErrRetrieveNamespacesListCode          = "replace_me9"
 	ErrGetNamespaceDeploymentsCode         = "replace_me10"
 	ErrDetectServiceWithNameCode           = "replace_me11"
 )
@@ -48,7 +48,7 @@ func ErrScanKubernetes(err error) error {
 }
 
 func ErrRetrievePodList(err error) error {
-	return errors.New(ErrRetrivePodListCode, errors.Alert, []string{"Unable to retrive pod list"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrRetrievePodListCode, errors.Alert, []string{"Unable to retrive pod list"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDetectServiceForDeploymentImage(err error) error {
@@ -56,7 +56,7 @@ func ErrDetectServiceForDeploymentImage(err error) error {
 }
 
 func ErrRetrieveNamespacesList(err error) error {
-	return errors.New(ErrRetriveNamespacesListCode, errors.Alert, []string{"unable to get the list of namespaces"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrRetrieveNamespacesListCode, errors.Alert, []string{"unable to get the list of namespaces"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrGetNamespaceDeployments(err error, obj string) error {
