@@ -15,11 +15,18 @@ const (
 	ErrUnmarshalCode            = "replace_me"
 	ErrGenerateUUIDCode         = "replace_me"
 	ErrLocalProviderSupportCode = "replace_me"
+	ErrGrafanaOrgCode           = "replace_me"
+	ErrGrafanaBoardsCode        = "replace_me"
+	ErrGrafanaDashboardCode     = "replace_me"
+	ErrGrafanaDataSourceCode    = "replace_me"
+	ErrNilQueryCode             = "replace_me"
+	ErrGrafanaDataCode          = "replace_me"
 )
 
 var (
 	ErrResultID             = errors.New(ErrResultIDCode, errors.Alert, []string{"Given resultID is not valid"}, []string{"Given resultID is nil"}, []string{}, []string{})
 	ErrLocalProviderSupport = errors.New(ErrLocalProviderSupportCode, errors.Alert, []string{"Method not supported by local provider"}, []string{}, []string{}, []string{})
+	ErrNilQuery             = errors.New(ErrNilQueryCode, errors.Alert, []string{"Query data passed is nil"}, []string{}, []string{}, []string{})
 )
 
 func ErrGrafanaClient(err error) error {
@@ -48,4 +55,24 @@ func ErrUnmarshal(err error, obj string) error {
 
 func ErrGenerateUUID(err error) error {
 	return errors.New(ErrGenerateUUIDCode, errors.Alert, []string{"Unable to generate a new UUID"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGrafanaOrg(err error) error {
+	return errors.New(ErrGrafanaOrgCode, errors.Alert, []string{"Failed to get Org data from Grafana"}, []string{err.Error()}, []string{"Invalid URL", "Invalid API-Key"}, []string{})
+}
+
+func ErrGrafanaBoards(err error) error {
+	return errors.New(ErrGrafanaBoardsCode, errors.Alert, []string{"Unable to get Grafana Boards"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGrafanaDashboard(err error, UID string) error {
+	return errors.New(ErrGrafanaDashboardCode, errors.Alert, []string{"Error getting grafana dashboard from UID", UID}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGrafanaDataSource(err error, ds string) error {
+	return errors.New(ErrGrafanaDataSourceCode, errors.Alert, []string{"Error getting Grafana Board's Datasource", ds}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGrafanaData(err error, apiEndpoint string) error {
+	return errors.New(ErrGrafanaDataCode, errors.Alert, []string{"Error getting data from Grafana API", apiEndpoint}, []string{err.Error()}, []string{}, []string{})
 }

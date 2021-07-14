@@ -8,8 +8,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/pkg/errors"
-
 	"github.com/gosimple/slug"
 	"github.com/sirupsen/logrus"
 
@@ -63,9 +61,7 @@ func (g *GrafanaClient) Validate(ctx context.Context, BaseURL, APIKey string) er
 	}
 
 	if _, err := c.GetActualOrg(ctx); err != nil {
-		err = errors.Wrapf(err, "connection to grafana failed")
-		logrus.Error(err)
-		return err
+		return ErrGrafanaOrg(err)
 	}
 	return nil
 }
@@ -112,8 +108,7 @@ func (g *GrafanaClient) GetGrafanaBoards(ctx context.Context, BaseURL, APIKey, d
 
 	boardLinks, err := c.SearchDashboards(ctx, dashboardSearch, false)
 	if err != nil {
-		logrus.Error(errors.Wrapf(err, "error getting boards from grafana"))
-		return nil, errors.New("unable to fetch boards from grafana")
+		return nil, ErrGrafanaBoards(err)
 	}
 	boards := []*GrafanaBoard{}
 	for _, link := range boardLinks {
@@ -123,9 +118,7 @@ func (g *GrafanaClient) GetGrafanaBoards(ctx context.Context, BaseURL, APIKey, d
 		// TODO Need to do the unitest for Grafana helper
 		board, _, err := c.GetDashboardByUID(ctx, link.UID)
 		if err != nil {
-			err1 := fmt.Errorf("error getting board from grafana for URI - %s", link.URI)
-			logrus.Error(errors.Wrapf(err, err1.Error()))
-			return nil, err1
+			return nil, ErrGrafanaDashboard(err, link.UID)
 		}
 		// b, _ := json.Marshal(board)
 		// logrus.Debugf("Board before foramating: %s", b)
@@ -147,9 +140,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 	if !g.promMode {
 		org, err := c.GetActualOrg(ctx)
 		if err != nil {
-			err = errors.Wrapf(err, "connection to grafana failed")
-			logrus.Error(err)
-			return nil, err
+			return nil, ErrGrafanaOrg(err)
 		}
 		orgID = org.ID
 	}
@@ -187,9 +178,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 			if c != nil {
 				ds, err = c.GetDatasourceByName(ctx, dsName)
 				if err != nil {
-					msg := fmt.Errorf("error getting board datasource with name - %s", dsName)
-					logrus.Error(errors.Wrapf(err, msg.Error()))
-					return nil, msg
+					return nil, ErrGrafanaDataSource(err, dsName)
 				}
 			} else {
 				ds.Name = dsName
@@ -257,9 +246,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 // GrafanaQuery parses the provided query data and queries Grafana and streams response
 func (g *GrafanaClient) GrafanaQuery(ctx context.Context, BaseURL, APIKey string, queryData *url.Values) ([]byte, error) {
 	if queryData == nil {
-		err := errors.New("query data is empty")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrNilQuery
 	}
 	query := strings.TrimSpace(queryData.Get("query"))
 	dsID := queryData.Get("dsid")
@@ -333,9 +320,7 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, BaseURL, APIKey string
 
 	data, err := g.makeRequest(ctx, queryURL, APIKey)
 	if err != nil {
-		msg := errors.New("error getting data from grafana")
-		logrus.Error(errors.Wrap(err, msg.Error()))
-		return nil, msg
+		return nil, ErrGrafanaData(err, queryURL)
 	}
 	return data, nil
 }
@@ -343,9 +328,7 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, BaseURL, APIKey string
 // GrafanaQueryRange parses the given params and performs Grafana range queries
 func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, BaseURL, APIKey string, queryData *url.Values) ([]byte, error) {
 	if queryData == nil {
-		err := errors.New("query data is empty")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrNilQuery
 	}
 
 	c, err := sdk.NewClient(BaseURL, APIKey, g.httpClient)
@@ -376,9 +359,7 @@ func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, BaseURL, APIKey s
 	queryURL := newURL.String()
 	data, err := g.makeRequest(ctx, queryURL, APIKey)
 	if err != nil {
-		msg := errors.New("error getting data from grafana")
-		logrus.Error(errors.Wrap(err, msg.Error()))
-		return nil, msg
+		return nil, ErrGrafanaData(err, queryURL)
 	}
 	return data, nil
 }
