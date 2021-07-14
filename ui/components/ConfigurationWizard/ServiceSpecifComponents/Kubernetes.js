@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   withStyles,
   FormGroup,
@@ -71,46 +72,46 @@ const styles = () => ({
 const KubernetesConfig = ({classes}) => {
   return(
     <>
-       <Grid item xs={12}>
-                <TextField
-                  id="k8sfileLabelText"
-                  name="k8sfileLabelText"
-                  label="Upload kubeconfig"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <BackupIcon style={{ marginRight: "1rem" }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  disabled
-                />
-          </Grid>
-          <Grid item xs={12}>
-              <TextField
-                select
-                id="contextName"
-                name="contextName"
-                label="Context Name"
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                // disabled={inClusterConfigForm === true}
-              >
-                {false &&
+      <Grid item xs={12}>
+        <TextField
+          id="k8sfileLabelText"
+          name="k8sfileLabelText"
+          label="Upload kubeconfig"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          InputProps={{
+            readOnly: true,
+            endAdornment: (
+              <InputAdornment position="end">
+                <BackupIcon style={{ marginRight: "1rem" }} />
+              </InputAdornment>
+            ),
+          }}
+          disabled
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          select
+          id="contextName"
+          name="contextName"
+          label="Context Name"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          // disabled={inClusterConfigForm === true}
+        >
+          {false &&
                   contextsFromFile.map((ct) => (
                     <MenuItem key={`ct_---_${ct.contextName}`} value={ct.contextName}>
                       {ct.contextName}
                       {ct.currentContext ? " (default)" : ""}
                     </MenuItem>
                   ))}
-              </TextField>
-          </Grid>
-        </>
+        </TextField>
+      </Grid>
+    </>
   )
 }
 

@@ -114,7 +114,7 @@ const ServiceSwitch = ({serviceInfo, classes}) => {
               onChange={handleSwitch}
             />
           </div>
-        {isChecked && ConfigComponent}
+          {isChecked && ConfigComponent}
         </CardContent>
       </Card>
     </Container>
