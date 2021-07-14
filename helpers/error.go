@@ -7,7 +7,7 @@ import (
 const (
 	ErrErrNewDynamicClientGeneratorCode    = "replace_me"
 	ErrInvalidK8SConfigCode                = "replace_me1"
-	ErrErrCreateClientCode                 = "replace_me2"
+	ErrClientConfigCode                    = "replace_me2"
 	ErrFetchKubernetesNodesCode            = "replace_me3"
 	ErrFetchNodesCode                      = "replace_me4"
 	ErrFetchKubernetesVersionCode          = "replace_me5"
@@ -26,10 +26,9 @@ const (
 	ErrTransformingDataCode                = "replace_me18"
 	ErrRunningNighthawkServerCode          = "replace_me19"
 	ErrAddAndValidateExtraHeaderCode       = "replace_me20"
-)
-
-var (
-	ErrStartingNighthawkServer = errors.New(ErrStartingNighthawkServerCode, errors.Alert, []string{"unable to start nighthawk server"}, []string{}, []string{}, []string{})
+	ErrInClusterConfigCode                 = "replace_me21"
+	ErrNewKubeClientGeneratorCode          = "replace_me22"
+	ErrRestConfigFromKubeConfigCode        = "replace_me23"
 )
 
 func ErrNewDynamicClientGenerator(err error) error {
@@ -40,8 +39,8 @@ func ErrInvalidK8SConfig(err error) error {
 	return errors.New(ErrInvalidK8SConfigCode, errors.Alert, []string{"No valid kubernetes config found"}, []string{err.Error()}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 }
 
-func ErrCreateClient(err error, obj string) error {
-	return errors.New(ErrErrCreateClientCode, errors.Alert, []string{"Unable to create client ", obj}, []string{err.Error()}, []string{}, []string{})
+func ErrClientConfig(err error) error {
+	return errors.New(ErrClientConfigCode, errors.Alert, []string{"Unable to create client config"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrFetchKubernetesNodes(err error) error {
@@ -69,11 +68,11 @@ func ErrDetectServiceForDeploymentImage(err error) error {
 }
 
 func ErrRetrieveNamespacesList(err error) error {
-	return errors.New(ErrRetrieveNamespacesListCode, errors.Alert, []string{"unable to get the list of namespaces"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrRetrieveNamespacesListCode, errors.Alert, []string{"Unable to get the list of namespaces"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrGetNamespaceDeployments(err error, obj string) error {
-	return errors.New(ErrGetNamespaceDeploymentsCode, errors.Alert, []string{"unable to get deployments in the ", obj, "namespace"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGetNamespaceDeploymentsCode, errors.Alert, []string{"Unable to get deployments in the ", obj, "namespace"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDetectServiceWithName(err error) error {
@@ -81,7 +80,7 @@ func ErrDetectServiceWithName(err error) error {
 }
 
 func ErrGeneratingLoadTest(err error) error {
-	return errors.New(ErrGeneratingLoadTestCode, errors.Alert, []string{}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGeneratingLoadTestCode, errors.Alert, []string{"Unable to generate load test"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrRunningTest(err error) error {
@@ -101,13 +100,33 @@ func ErrGrpcSupport(err error, obj string) error {
 }
 
 func ErrTransformingData(err error) error {
-	return errors.New(ErrTransformingDataCode, errors.Alert, []string{"error while transforming data"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrTransformingDataCode, errors.Alert, []string{"Error while transforming data"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrRunningNighthawkServer(err error) error {
-	return errors.New(ErrRunningNighthawkServerCode, errors.Alert, []string{"error while running nighthawk server"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrRunningNighthawkServerCode, errors.Alert, []string{"Error while running nighthawk server"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrAddAndValidateExtraHeader(err error) error {
-	return errors.New(ErrAddAndValidateExtraHeaderCode, errors.Alert, []string{}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrAddAndValidateExtraHeaderCode, errors.Alert, []string{"Unable to add and validate extra header"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrInClusterConfig(err error) error {
+	return errors.New(ErrInClusterConfigCode, errors.Alert, []string{}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrNewKubeClientGenerator(err error) error {
+	return errors.New(ErrNewKubeClientGeneratorCode, errors.Alert, []string{"Unable to generate new kube dynamic client"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRestConfigFromKubeConfig(err error) error {
+	return errors.New(ErrRestConfigFromKubeConfigCode, errors.Alert, []string{"Unable to create rest config from kube congif"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrClientSet(err error) error {
+	return errors.New(ErrClientConfigCode, errors.Alert, []string{"Unable to create client set"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrStartingNighthawkServer(err error) error {
+	return errors.New(ErrStartingNighthawkServerCode, errors.Alert, []string{"Unable to start the nighthawk server"}, []string{err.Error()}, []string{}, []string{})
 }

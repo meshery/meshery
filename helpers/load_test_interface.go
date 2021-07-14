@@ -181,7 +181,7 @@ func startNighthawkServer(timeout int64) error {
 		err := cmd.Start()
 		if err != nil {
 			nighthawkStatus.Unlock()
-			return ErrStartingNighthawkServer
+			return ErrStartingNighthawkServer(err)
 		}
 		nighthawkRunning = true
 	}
@@ -196,7 +196,7 @@ func startNighthawkServer(timeout int64) error {
 	_, err := os.Stat(transformCommand)
 	if err != nil {
 		nighthawkStatus.Unlock()
-		return ErrStartingNighthawkServer
+		return ErrStartingNighthawkServer(err)
 	}
 
 	for timeout != 0 {
@@ -209,7 +209,7 @@ func startNighthawkServer(timeout int64) error {
 		timeout--
 		time.Sleep(1 * time.Second)
 	}
-	return ErrStartingNighthawkServer
+	return ErrStartingNighthawkServer(err)
 }
 
 // NighthawkLoadTest is the actual code which invokes nighthawk to run the load test

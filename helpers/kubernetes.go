@@ -39,7 +39,7 @@ func NewKubeClientGenerator(path string) func() (*mesherykube.Client, error) {
 	config, err := utils.ReadLocalFile(configPath)
 	return func() (*mesherykube.Client, error) {
 		if err != nil {
-			return nil, ErrNewDynamicClientGenerator(err)
+			return nil, ErrNewKubeClientGenerator(err)
 		}
 
 		return NewKubeClient([]byte(config))
@@ -56,12 +56,12 @@ func NewDynamicClient(kubeconfig []byte) (dynamic.Interface, error) {
 	if len(kubeconfig) > 0 {
 		restConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
 		if err != nil {
-			return nil, ErrNewDynamicClientGenerator(err)
+			return nil, ErrRestConfigFromKubeConfig(err)
 		}
 	} else {
 		restConfig, err = rest.InClusterConfig()
 		if err != nil {
-			return nil, ErrNewDynamicClientGenerator(err)
+			return nil, ErrInClusterConfig(err)
 		}
 	}
 
@@ -74,7 +74,7 @@ func NewKubeClient(kubeconfig []byte) (*mesherykube.Client, error) {
 		return nil, ErrNewDynamicClientGenerator(err)
 	}
 
-	return client, ErrNewDynamicClientGenerator(err)
+	return client, nil
 }
 
 func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clientset, error) {
@@ -83,7 +83,7 @@ func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clients
 	if len(kubeconfig) == 0 {
 		clientConfig, err = rest.InClusterConfig()
 		if err != nil {
-			return nil, ErrInvalidK8SConfig(err)
+			return nil, ErrInClusterConfig(err)
 		}
 	} else {
 		config, err := clientcmd.Load(kubeconfig)
@@ -95,13 +95,13 @@ func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clients
 		}
 		clientConfig, err = clientcmd.NewDefaultClientConfig(*config, &clientcmd.ConfigOverrides{}).ClientConfig()
 		if err != nil {
-			return nil, ErrCreateClient(err, "config")
+			return nil, ErrClientConfig(err)
 		}
 	}
 	clientConfig.Timeout = 2 * time.Minute
 	clientset, err := kubernetes.NewForConfig(clientConfig)
 	if err != nil {
-		return nil, ErrCreateClient(err, "set")
+		return nil, ErrClientSet(err)
 	}
 	return clientset, nil
 }
