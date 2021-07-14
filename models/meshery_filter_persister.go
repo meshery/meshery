@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -67,7 +66,7 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 	if filter.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
-			return nil, fmt.Errorf("failed to create ID for the filter: %s", err)
+			return nil, ErrGenerateUUID(err)
 		}
 
 		filter.ID = &id
@@ -83,7 +82,7 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) (
 		if filter.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {
-				return nil, fmt.Errorf("failed to create ID for the filter: %s", err)
+				return nil, ErrGenerateUUID(err)
 			}
 
 			filter.ID = &id
