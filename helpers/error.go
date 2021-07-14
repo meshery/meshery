@@ -47,7 +47,7 @@ func ErrScanKubernetes(err error) error {
 	return errors.New(ErrScanKubernetesCode, errors.Alert, []string{"Unable to scan kubernetes"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrRetrivePodList(err error) error {
+func ErrRetrievePodList(err error) error {
 	return errors.New(ErrRetrivePodListCode, errors.Alert, []string{"Unable to retrive pod list"}, []string{err.Error()}, []string{}, []string{})
 }
 
@@ -55,7 +55,7 @@ func ErrDetectServiceForDeploymentImage(err error) error {
 	return errors.New(ErrDetectServiceForDeploymentImageCode, errors.Alert, []string{"Unable to detect service for deployment image"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrRetriveNamespacesList(err error) error {
+func ErrRetrieveNamespacesList(err error) error {
 	return errors.New(ErrRetriveNamespacesListCode, errors.Alert, []string{"unable to get the list of namespaces"}, []string{err.Error()}, []string{}, []string{})
 }
 

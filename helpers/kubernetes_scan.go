@@ -46,7 +46,7 @@ func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]corev1.
 	podlist, err := clientset.CoreV1().Pods("").List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		logrus.Debug("[ScanKubernetes] Failed to retrieve Pod List")
-		return nil, ErrRetrivePodList(err)
+		return nil, ErrRetrievePodList(err)
 	}
 
 	result := map[string][]corev1.Pod{}
@@ -108,7 +108,7 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 	}
 	namespacelist, err := clientset.CoreV1().Namespaces().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
-		return nil, ErrRetriveNamespacesList(err)
+		return nil, ErrRetrieveNamespacesList(err)
 	}
 	result := map[string][]string{}
 
