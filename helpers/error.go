@@ -17,6 +17,19 @@ const (
 	ErrRetrieveNamespacesListCode          = "replace_me9"
 	ErrGetNamespaceDeploymentsCode         = "replace_me10"
 	ErrDetectServiceWithNameCode           = "replace_me11"
+	ErrGeneratingLoadTestCode              = "replace_me12"
+	ErrRunningTestCode                     = "replace_me13"
+	ErrConvertingResultToMapCode           = "replace_me14"
+	ErrUnmarshalCode                       = "replace_me15"
+	ErrGrpcSupportCode                     = "replace_me16"
+	ErrStartingNighthawkServerCode         = "replace_me17"
+	ErrTransformingDataCode                = "replace_me18"
+	ErrRunningNighthawkServerCode          = "replace_me19"
+	ErrAddAndValidateExtraHeaderCode       = "replace_me20"
+)
+
+var (
+	ErrStartingNighthawkServer = errors.New(ErrStartingNighthawkServerCode, errors.Alert, []string{"unable to start nighthawk server"}, []string{}, []string{}, []string{})
 )
 
 func ErrNewDynamicClientGenerator(err error) error {
@@ -65,4 +78,36 @@ func ErrGetNamespaceDeployments(err error, obj string) error {
 
 func ErrDetectServiceWithName(err error) error {
 	return errors.New(ErrDetectServiceWithNameCode, errors.Alert, []string{"Unable to get services from the cluster with the name given in names parameter"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGeneratingLoadTest(err error) error {
+	return errors.New(ErrGeneratingLoadTestCode, errors.Alert, []string{}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRunningTest(err error) error {
+	return errors.New(ErrRunningTestCode, errors.Alert, []string{"Unable to run test"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrConvertingResultToMap(err error) error {
+	return errors.New(ErrConvertingResultToMapCode, errors.Alert, []string{"Unable to convert from the result to map"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrUnmarshal(err error, obj string) error {
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the : ", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGrpcSupport(err error, obj string) error {
+	return errors.New(ErrGrpcSupportCode, errors.Alert, []string{obj, " does not support gRPC load testing"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTransformingData(err error) error {
+	return errors.New(ErrTransformingDataCode, errors.Alert, []string{"error while transforming data"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRunningNighthawkServer(err error) error {
+	return errors.New(ErrRunningNighthawkServerCode, errors.Alert, []string{"error while running nighthawk server"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrAddAndValidateExtraHeader(err error) error {
+	return errors.New(ErrAddAndValidateExtraHeaderCode, errors.Alert, []string{}, []string{err.Error()}, []string{}, []string{})
 }
