@@ -115,10 +115,10 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 
 // IsMesheryRunning checks if the meshery server containers are up and running
 func IsMesheryRunning(currPlatform string) (bool, error) {
-	resp, err := http.Get("http://localhost:9081/api/server/version")
-	// Port number is subject to change depending on user's configuration on config.yaml
+	resp, _ := http.Get("http://localhost:9081/api/server/version")
+	// Checking if Meshery is running with "make run-local" or "make run-fast"
 
-	if resp != nil {
+	if resp.StatusCode == 200 {
 		return true, nil
 	}
 	switch currPlatform {
@@ -160,10 +160,6 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 
 			return false, err
 		}
-	}
-
-	if err != nil {
-		return false, errors.Wrap(err, "Meshery not running locally")
 	}
 
 	return false, nil
