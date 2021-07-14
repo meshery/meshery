@@ -172,7 +172,7 @@ var switchCmd = &cobra.Command{
 			userResponse = true
 		} else {
 			// ask user for confirmation
-			userResponse = utils.AskForConfirmation("The Meshery deployment in context '"+ focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue?")
+			userResponse = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue?")
 		}
 
 		if !userResponse {
