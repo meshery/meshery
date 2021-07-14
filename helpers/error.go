@@ -5,12 +5,18 @@ import (
 )
 
 const (
-	ErrErrNewDynamicClientGeneratorCode = "replace_me"
-	ErrInvalidK8SConfigCode             = "replace_me1"
-	ErrErrCreateClientCode              = "replace_me2"
-	ErrFetchKubernetesNodesCode         = "replace_me3"
-	ErrFetchNodesCode                   = "replace_me4"
-	ErrFetchKubernetesVersionCode       = "replace_me5"
+	ErrErrNewDynamicClientGeneratorCode    = "replace_me"
+	ErrInvalidK8SConfigCode                = "replace_me1"
+	ErrErrCreateClientCode                 = "replace_me2"
+	ErrFetchKubernetesNodesCode            = "replace_me3"
+	ErrFetchNodesCode                      = "replace_me4"
+	ErrFetchKubernetesVersionCode          = "replace_me5"
+	ErrScanKubernetesCode                  = "replace_me6"
+	ErrRetrivePodListCode                  = "replace_me7"
+	ErrDetectServiceForDeploymentImageCode = "replace_me8"
+	ErrRetriveNamespacesListCode           = "replace_me9"
+	ErrGetNamespaceDeploymentsCode         = "replace_me10"
+	ErrDetectServiceWithNameCode           = "replace_me11"
 )
 
 func ErrNewDynamicClientGenerator(err error) error {
@@ -35,4 +41,28 @@ func ErrFetchNodes(err error) error {
 
 func ErrFetchKubernetesVersion(err error) error {
 	return errors.New(ErrFetchKubernetesVersionCode, errors.Alert, []string{"Unable to fetch kubernetes version"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrScanKubernetes(err error) error {
+	return errors.New(ErrScanKubernetesCode, errors.Alert, []string{"Unable to scan kubernetes"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRetrivePodList(err error) error {
+	return errors.New(ErrRetrivePodListCode, errors.Alert, []string{"Unable to retrive pod list"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDetectServiceForDeploymentImage(err error) error {
+	return errors.New(ErrDetectServiceForDeploymentImageCode, errors.Alert, []string{"Unable to detect service for deployment image"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRetriveNamespacesList(err error) error {
+	return errors.New(ErrRetriveNamespacesListCode, errors.Alert, []string{"unable to get the list of namespaces"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGetNamespaceDeployments(err error, obj string) error {
+	return errors.New(ErrGetNamespaceDeploymentsCode, errors.Alert, []string{"unable to get deployments in the ", obj, "namespace"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDetectServiceWithName(err error) error {
+	return errors.New(ErrDetectServiceWithNameCode, errors.Alert, []string{"Unable to get services from the cluster with the name given in names parameter"}, []string{err.Error()}, []string{}, []string{})
 }
