@@ -112,7 +112,7 @@ func ErrAddAndValidateExtraHeader(err error) error {
 }
 
 func ErrInClusterConfig(err error) error {
-	return errors.New(ErrInClusterConfigCode, errors.Alert, []string{}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrInClusterConfigCode, errors.Alert, []string{"unable to load in-cluster kubeconfig"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrNewKubeClientGenerator(err error) error {
