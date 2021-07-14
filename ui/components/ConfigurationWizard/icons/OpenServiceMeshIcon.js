@@ -1,12 +1,11 @@
 import React from "react";
 import SvgIcon from "@material-ui/core/SvgIcon";
 
-const OpenServiceMeshIcon = (props) => {
+const OpenServiceMeshIcon = ({isActive}) => {
   return (
     <SvgIcon
       style={{ width: "4rem", height: "auto" }}
       viewBox="0 0 204 204"
-      {...props}
     >
       <rect width="166" height="166" fill="url(#pattern3)" />
       <defs>

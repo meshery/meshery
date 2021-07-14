@@ -1,14 +1,13 @@
 import React from "react";
 import SvgIcon from "@material-ui/core/SvgIcon";
 
-const PrometheusIcon = (props) => {
+const PrometheusIcon = ({isActive}) => {
   return (
     <SvgIcon
       style={{ width: "3rem", height: "auto" }}
       viewBox="0 0 50 50"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      {...props}
     >
       <g clipPath="url(#clip0)">
         <path

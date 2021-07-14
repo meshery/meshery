@@ -1,7 +1,7 @@
 import React from "react";
 import SvgIcon from "@material-ui/core/SvgIcon";
 
-const LinkerdIcon = () => {
+const LinkerdIcon = ({isActive}) => {
   return (
     <SvgIcon style={{ width: "4rem", height: "auto" }} viewBox="0 0 85 85">
       <rect width="85" height="85" fill="url(#pattern1)" />

@@ -1,9 +1,9 @@
 import React from "react";
 import SvgIcon from "@material-ui/core/SvgIcon";
 
-const ConsulIcon = (props) => {
+const ConsulIcon = ({isActive}) => {
   return (
-    <SvgIcon style={{ width: "4rem", height: "auto" }} viewBox="0 0 85 85" {...props}>
+    <SvgIcon style={{ width: "4rem", height: "auto" }} viewBox="0 0 85 85" >
       <path
         fillRule="evenodd"
         clipRule="evenodd"

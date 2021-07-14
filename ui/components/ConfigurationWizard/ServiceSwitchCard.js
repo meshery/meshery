@@ -93,7 +93,7 @@ const ServiceSwitch = ({serviceInfo, classes}) => {
 
   const ServiceIcon = serviceInfo.logoComponent
   const ConfigComponent = serviceInfo.configComp
-  const [isChecked,setIsChecked] = useState(true)
+  const [isChecked,setIsChecked] = useState(false)
   
   const handleSwitch = () => setIsChecked(prev => !prev)
 
@@ -103,7 +103,7 @@ const ServiceSwitch = ({serviceInfo, classes}) => {
         <CardContent className={ isChecked ? classes.cardContentChecked : classes.cardContent}>
           <div className={classes.contentTop}>
             <div className={classes.iconContainer}>
-              <ServiceIcon className={classes.cardIcon} alt={` ${serviceInfo.name} icon`} />
+              <ServiceIcon isActive={isChecked}/>
               <Typography className={classes.cardIconText} color="primary">
                 {serviceInfo.name}
               </Typography>
