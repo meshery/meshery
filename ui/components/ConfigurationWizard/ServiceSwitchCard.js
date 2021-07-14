@@ -52,6 +52,11 @@ const styles = () => ({
     width: "100%",
     padding: "0 !important",
   },
+  cardContentChecked: {
+    height: "100%", //change this to increase the card size for adding configuration
+    width: "100%",
+    padding: "0 !important",
+  },
   contentTop: {
     background: "#434343",
     height: "10rem",
@@ -88,14 +93,14 @@ const ServiceSwitch = ({serviceInfo, classes}) => {
 
   const ServiceIcon = serviceInfo.logoComponent
   const ConfigComponent = serviceInfo.configComp
-  const [isChecked,setIsChecked] = useState(false)
+  const [isChecked,setIsChecked] = useState(true)
   
   const handleSwitch = () => setIsChecked(prev => !prev)
 
   return (
     <Container className={classes.cardContainer}>
       <Card className={`${classes.card} `} variant="outlined">
-        <CardContent className={classes.cardContent}>
+        <CardContent className={ isChecked ? classes.cardContentChecked : classes.cardContent}>
           <div className={classes.contentTop}>
             <div className={classes.iconContainer}>
               <ServiceIcon className={classes.cardIcon} alt={` ${serviceInfo.name} icon`} />
@@ -109,9 +114,9 @@ const ServiceSwitch = ({serviceInfo, classes}) => {
               onChange={handleSwitch}
             />
           </div>
+        {isChecked && ConfigComponent}
         </CardContent>
       </Card>
-      {isChecked && <ConfigComponent />}
     </Container>
   )
 }

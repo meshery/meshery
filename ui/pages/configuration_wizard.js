@@ -2,6 +2,8 @@ import ServiceSwitch from "../components/ConfigurationWizard/ServiceSwitchCard.j
 import KubernetesIcon from "../components/ConfigurationWizard/icons/KubernetesIcon.js"
 import GrafanaIcon from "../components/ConfigurationWizard/icons/GrafanaIcon.js"
 import PrometheusIcon from "../components/ConfigurationWizard/icons/PrometheusIcon.js"
+import ServiceSpecificConfig  from "../components/ConfigurationWizard/ServiceSpecificConfig.js"
+import KubernetesConfigComp  from "../components/ConfigurationWizard/ServiceSpecifComponents/Kubernetes.js"
 
 const ConfigurationWizard = () => {
 
@@ -13,7 +15,8 @@ const ConfigurationWizard = () => {
   const kubeserviceInfo = {
     name: "Kubernetes",
     logoComponent: KubernetesIcon,
-    configComp : () => null
+    configComp :  <ServiceSpecificConfig components={[KubernetesConfigComp]} />
+
   }
   const grafanaserviceInfo = {
     name: "Kubernetes",
@@ -23,9 +26,7 @@ const ConfigurationWizard = () => {
 
   return (
     <>
-    <ServiceSwitch serviceInfo={kubeserviceInfo}/>
-    <ServiceSwitch serviceInfo={prometheusserviceInfo}/>
-    <ServiceSwitch serviceInfo={grafanaserviceInfo}/>
+      <ServiceSwitch serviceInfo={kubeserviceInfo} /> 
     </>
   )
 }
