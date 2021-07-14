@@ -305,7 +305,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	}
 
 	if opts.SupportedLoadTestMethods == 2 {
-		return nil, nil, ErrGrpcSupport(err, "nighthawk")
+		return nil, nil, ErrGrpcSupport(err, "Nighthawk")
 	}
 
 	c, err := nighthawk_client.New(nighthawk_client.Options{
