@@ -24,6 +24,18 @@ const (
 	ErrApplicationFileNameCode  = "replace_me"
 	ErrFilterFileNameCode       = "replace_me"
 	ErrPatternFileNameCode      = "replace_me"
+	ErrMakeDirCode              = "replace_me"
+	ErrFolderStatCode           = "replace_me"
+	ErrUserIDCode               = "replace_me"
+	ErrDBConnectionCode         = "replace_me"
+	ErrNilConfigDataCode        = "replace_me"
+	ErrDBOpenCode               = "replace_me"
+	ErrDBRLockCode              = "replace_me"
+	ErrDBLockCode               = "replace_me"
+	ErrDBReadCode               = "replace_me"
+	ErrDBDeleteCode             = "replace_me"
+	ErrCopyCode                 = "replace_me"
+	ErrDBPutCode                = "replace_me"
 )
 
 var (
@@ -33,6 +45,9 @@ var (
 	ErrApplicationFileName  = errors.New(ErrApplicationFileNameCode, errors.Alert, []string{"Invalid Applicationfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 	ErrFilterFileName       = errors.New(ErrFilterFileNameCode, errors.Alert, []string{"Invalid Filterfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 	ErrPatternFileName      = errors.New(ErrPatternFileNameCode, errors.Alert, []string{"Invalid Patternfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
+	ErrUserID               = errors.New(ErrUserIDCode, errors.Alert, []string{"User ID is empty"}, []string{}, []string{}, []string{})
+	ErrDBConnection         = errors.New(ErrDBConnectionCode, errors.Alert, []string{"Connection to DataBase does not exist"}, []string{err.Error()}, []string{}, []string{})
+	ErrNilConfigData        = errors.New(ErrNilConfigDataCode, errors.Alert, []string{"Given config data is nil"}, []string{err.Error()}, []string{}, []string{})
 )
 
 func ErrGrafanaClient(err error) error {
@@ -81,4 +96,40 @@ func ErrGrafanaDataSource(err error, ds string) error {
 
 func ErrGrafanaData(err error, apiEndpoint string) error {
 	return errors.New(ErrGrafanaDataCode, errors.Alert, []string{"Error getting data from Grafana API", apiEndpoint}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrMakeDir(err error, dir string) error {
+	return errors.New(ErrMakeDirCode, errors.Alert, []string{"Unable to create directory/folder", dir}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrFolderStat(err error, dir string) error {
+	return errors.New(ErrFolderStatCode, errors.Alert, []string{"Unable to find (os.stat) the folder", dir}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDBOpen(err error) error {
+	return errors.New(ErrDBOpenCode, errors.Alert, []string{"Unable to open the database"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDBRLock(err error) error {
+	return errors.New(ErrDBRLockCode, errors.Alert, []string{"Unable to obtain read lock from bitcask store"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDBLock(err error) error {
+	return errors.New(ErrDBLockCode, errors.Alert, []string{"Unable to obtain write lock from bitcask store"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDBRead(err error) error {
+	return errors.New(ErrDBReadCode, errors.Alert, []string{"Unable to read data from bitcast store"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDBPut(err error) error {
+	return errors.New(ErrDBPutCode, errors.Alert, []string{"Unable to Persist config data."}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDBDelete(err error, user string) error {
+	return errors.New(ErrDBDeleteCode, errors.Alert, []string{"Unable to delete config data for the user", user}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrCopy(err error, obj string) error {
+	return errors.New(ErrCopyCode, errors.Alert, []string{"Error occured while copying", obj}, []string{err.Error()}, []string{}, []string{})
 }
