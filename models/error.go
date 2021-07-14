@@ -23,6 +23,7 @@ const (
 	ErrGrafanaDataCode          = "replace_me"
 	ErrApplicationFileNameCode  = "replace_me"
 	ErrFilterFileNameCode       = "replace_me"
+	ErrPatternFileNameCode      = "replace_me"
 )
 
 var (
@@ -31,6 +32,7 @@ var (
 	ErrNilQuery             = errors.New(ErrNilQueryCode, errors.Alert, []string{"Query data passed is nil"}, []string{}, []string{}, []string{})
 	ErrApplicationFileName  = errors.New(ErrApplicationFileNameCode, errors.Alert, []string{"Invalid Applicationfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 	ErrFilterFileName       = errors.New(ErrFilterFileNameCode, errors.Alert, []string{"Invalid Filterfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
+	ErrPatternFileName      = errors.New(ErrPatternFileNameCode, errors.Alert, []string{"Invalid Patternfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 )
 
 func ErrGrafanaClient(err error) error {
