@@ -48,7 +48,7 @@ func ErrScanKubernetes(err error) error {
 }
 
 func ErrRetrievePodList(err error) error {
-	return errors.New(ErrRetrievePodListCode, errors.Alert, []string{"Unable to retrive pod list"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrRetrievePodListCode, errors.Alert, []string{"Unable to retrieve pod list"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDetectServiceForDeploymentImage(err error) error {
