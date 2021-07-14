@@ -29,6 +29,7 @@ const (
 	ErrInClusterConfigCode                 = "replace_me21"
 	ErrNewKubeClientGeneratorCode          = "replace_me22"
 	ErrRestConfigFromKubeConfigCode        = "replace_me23"
+	ErrNewKubeClientCode                   = "replace_me24"
 )
 
 func ErrNewDynamicClientGenerator(err error) error {
@@ -129,4 +130,8 @@ func ErrClientSet(err error) error {
 
 func ErrStartingNighthawkServer(err error) error {
 	return errors.New(ErrStartingNighthawkServerCode, errors.Alert, []string{"Unable to start the nighthawk server"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrNewKubeClient(err error) error {
+	return errors.New(ErrNewKubeClientCode, errors.Alert, []string{"Unable to create new kube client"}, []string{err.Error()}, []string{}, []string{})
 }

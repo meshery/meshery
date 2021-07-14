@@ -71,7 +71,7 @@ func NewDynamicClient(kubeconfig []byte) (dynamic.Interface, error) {
 func NewKubeClient(kubeconfig []byte) (*mesherykube.Client, error) {
 	client, err := mesherykube.New(kubeconfig)
 	if err != nil {
-		return nil, ErrNewDynamicClientGenerator(err)
+		return nil, ErrNewKubeClient(err)
 	}
 
 	return client, nil
