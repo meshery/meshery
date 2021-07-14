@@ -118,7 +118,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	// Checking if Meshery is running with "make run-local" or "make run-fast"
 	resp, _ := http.Get("http://localhost:9081/api/server/version")
 
-	if resp.StatusCode == 200 {
+	if resp != nil && resp.StatusCode == 200 {
 		return true, nil
 	}
 	switch currPlatform {
