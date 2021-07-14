@@ -138,7 +138,7 @@ var applyCmd = &cobra.Command{
 						return err
 					}
 					log.Debug("saved pattern file")
-					var response *models.MesheryPattern
+					var response []*models.MesheryPattern
 					// failsafe (bad api call)
 					if resp.StatusCode != 200 {
 						return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
