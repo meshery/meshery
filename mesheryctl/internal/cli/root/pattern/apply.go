@@ -248,7 +248,8 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 		fmt.Printf("Index: %v\n", index)
 		fmt.Printf("Name: %v\n", a.Name)
 		fmt.Printf("ID: %s\n", a.ID.String())
-		fmt.Printf("PatternFile: %v\n", a.PatternFile)
+		fmt.Printf("PatternFile:\n")
+		fmt.Printf(a.PatternFile)
 		fmt.Println("---------------------")
 	}
 
