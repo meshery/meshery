@@ -21,12 +21,14 @@ const (
 	ErrGrafanaDataSourceCode    = "replace_me"
 	ErrNilQueryCode             = "replace_me"
 	ErrGrafanaDataCode          = "replace_me"
+	ErrApplicationFileNameCode  = "replace_me"
 )
 
 var (
 	ErrResultID             = errors.New(ErrResultIDCode, errors.Alert, []string{"Given resultID is not valid"}, []string{"Given resultID is nil"}, []string{}, []string{})
 	ErrLocalProviderSupport = errors.New(ErrLocalProviderSupportCode, errors.Alert, []string{"Method not supported by local provider"}, []string{}, []string{}, []string{})
 	ErrNilQuery             = errors.New(ErrNilQueryCode, errors.Alert, []string{"Query data passed is nil"}, []string{}, []string{}, []string{})
+	ErrApplicationFileName  = errors.New(ErrApplicationFileNameCode, errors.Alert, []string{"Invalid Applicationfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 )
 
 func ErrGrafanaClient(err error) error {
