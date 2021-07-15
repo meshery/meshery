@@ -14,7 +14,7 @@ labels:
   - name: issue/remind
     labeled:
       issue:
-        body: This issue has been labeled with 'issue/remind'. This is a reminder that this issue is still pending and if you require further assistance in completing this issue, do contact a [MeshMate](https://layer5.io/community/meshmates/)for assistance .
+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://layer5.io/community/meshmates/) or any other [community member](https://layer5.io/community/members) for assistance.
         action: open
   - name: component/ui
     labeled:
