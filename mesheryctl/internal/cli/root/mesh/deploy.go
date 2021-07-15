@@ -33,7 +33,7 @@ var (
 			}
 
 			if err = validateAdapter(mctlCfg, tokenPath, args[0]); err != nil {
-				return errors.Wrap(err, "adapter not valid")
+				return errors.Wrap(err, "unable to find adapter. Please check its spelling and port number")
 			}
 			return nil
 		},
