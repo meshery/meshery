@@ -54,7 +54,9 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.PackageURL = ""
 	l.Extensions = Extensions{}
 	l.Capabilities = Capabilities{
-		// {Feature: PersistMesheryPatterns},
+		{Feature: PersistMesheryPatterns},
+		{Feature: PersistMesheryApplications},
+		{Feature: PersistMesheryFilters},
 	}
 }
 
