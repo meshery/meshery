@@ -8,6 +8,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	smp "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -16,23 +17,29 @@ import (
 )
 
 var (
+	meshName  string
 	deployCmd = &cobra.Command{
 		Use:   "deploy",
 		Short: "deploy a service mesh in the kubernetes cluster",
-		Args:  cobra.MinimumNArgs(1),
+		Args:  cobra.MinimumNArgs(0),
 		Long:  `deploy service mesh in the connected kubernetes cluster`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			log.Infof("Verifying prerequisites...")
-			if len(args) < 1 {
-				return errors.New("no service mesh specified")
-			}
-
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				return errors.Wrap(err, "error processing config")
 			}
 
-			if err = validateAdapter(mctlCfg, tokenPath, args[0]); err != nil {
+			if len(args) < 1 {
+				meshName, err = validateMesh(mctlCfg, tokenPath, "")
+			} else {
+				meshName, err = validateMesh(mctlCfg, tokenPath, args[0])
+			}
+			if err != nil {
+				return errors.Wrap(err, "error validating request")
+			}
+
+			if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
 				return errors.Wrap(err, "adapter not valid")
 			}
 			return nil
@@ -45,7 +52,7 @@ var (
 			}
 
 			s.Start()
-			_, err = sendDeployRequest(mctlCfg, args[0], false)
+			_, err = sendDeployRequest(mctlCfg, meshName, false)
 			if err != nil {
 				return errors.Wrap(err, "error installing service mesh")
 			}
@@ -172,4 +179,44 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, tokenPath string, name st
 
 	adapterURL = adapterNames[i]
 	return nil
+}
+
+func validateMesh(mctlCfg *config.MesheryCtlConfig, tokenPath string, name string) (string, error) {
+	if name != "" {
+		if _, ok := smp.ServiceMesh_Type_value[name]; ok {
+			return strings.ToLower(name), nil
+		}
+		if _, ok := smp.ServiceMesh_Type_value[strings.ToUpper(name)]; ok {
+			return strings.ToLower(name), nil
+		}
+	}
+
+	prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
+	if err != nil {
+		return "", err
+	}
+
+	meshNameMap := make(map[string]struct{}, 0)
+	meshNames := []string{}
+	for _, adapter := range prefs.MeshAdapters {
+		if _, ok := meshNameMap[adapter.Name]; !ok {
+			meshNames = append(meshNames, adapter.Name)
+		}
+	}
+
+	if len(meshNames) == 0 {
+		return "", errors.New("no adapters available to deploy a service mesh")
+	}
+
+	prompt := promptui.Select{
+		Label: "Select a Service Mesh from the list",
+		Items: meshNames,
+	}
+
+	i, _, err := prompt.Run()
+	if err != nil {
+		return "", err
+	}
+
+	return strings.ToLower(meshNames[i]), nil
 }

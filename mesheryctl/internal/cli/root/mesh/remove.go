@@ -15,33 +15,38 @@ var (
 	removeCmd = &cobra.Command{
 		Use:   "remove",
 		Short: "remove a service mesh in the kubernetes cluster",
-		Args:  cobra.MinimumNArgs(1),
+		Args:  cobra.MinimumNArgs(0),
 		Long:  `remove service mesh in the connected kubernetes cluster`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			log.Infof("Verifying prerequisites...")
-			if len(args) < 1 {
-				return errors.New("no service mesh specified")
-			}
-
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				return errors.Wrap(err, "error processing config")
 			}
 
-			if err = validateAdapter(mctlCfg, tokenPath, args[0]); err != nil {
+			if len(args) < 1 {
+				meshName, err = validateMesh(mctlCfg, tokenPath, "")
+			} else {
+				meshName, err = validateMesh(mctlCfg, tokenPath, args[0])
+			}
+			if err != nil {
+				return errors.Wrap(err, "error validating request")
+			}
+
+			if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
 				return errors.Wrap(err, "adapter not valid")
 			}
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			s := utils.CreateDefaultSpinner(fmt.Sprintf("Removing %s", args[0]), fmt.Sprintf("\n%s service mesh removed successfully", args[0]))
+			s := utils.CreateDefaultSpinner(fmt.Sprintf("Removing %s", meshName), fmt.Sprintf("\n%s service mesh removed successfully", meshName))
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				return errors.Wrap(err, "error processing config")
 			}
 
 			s.Start()
-			_, err = sendDeployRequest(mctlCfg, args[0], true)
+			_, err = sendDeployRequest(mctlCfg, meshName, true)
 			if err != nil {
 				return errors.Wrap(err, "error installing service mesh")
 			}
@@ -49,7 +54,7 @@ var (
 
 			//log.Infof("Verifying Installation")
 			//s.Start()
-			//_, err = waitForDeployResponse(mctlCfg, args[0])
+			//_, err = waitForDeployResponse(mctlCfg, meshName)
 			//if err != nil {
 			//	return errors.Wrap(err, "error verifying installation")
 			//}
