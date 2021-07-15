@@ -232,9 +232,8 @@ var applyCmd = &cobra.Command{
 
 		if res.StatusCode == 200 {
 			log.Info("pattern successfully applied")
-		} else {
-			log.Info(string(body))
 		}
+		log.Info(string(body))
 		return nil
 	},
 }
