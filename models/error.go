@@ -43,6 +43,21 @@ const (
 	ErrPrometheusLabelSeriesCode = "replace_me"
 	ErrPrometheusQueryRangeCode  = "replace_me"
 	ErrPrometheusStaticBoardCode = "replace_me"
+	ErrTokenRefreshCode          = "replace_me"
+	ErrGetTokenCode              = "replace_me"
+	ErrDataReadCode              = "replace_me"
+	ErrTokenDecodeCode           = "replace_me"
+	ErrNilJWKsCode               = "replace_me"
+	ErrNilKeysCode               = "replace_me"
+	ErrTokenExpiredCode          = "replace_me"
+	ErrTokenClaimsCode           = "replace_me"
+	ErrTokenClientCheckCode      = "replace_me"
+	ErrTokenPraseCode            = "replace_me"
+	ErrJWKsKeysCode              = "replace_me"
+	ErrDecodeBase64Code          = "replace_me"
+	ErrMarshalPKIXCode           = "replace_me"
+	ErrEncodingPEMCode           = "replace_me"
+	ErrPraseUnverifiedCode       = "replace_me"
 )
 
 var (
@@ -55,6 +70,10 @@ var (
 	ErrUserID               = errors.New(ErrUserIDCode, errors.Alert, []string{"User ID is empty"}, []string{}, []string{}, []string{})
 	ErrDBConnection         = errors.New(ErrDBConnectionCode, errors.Alert, []string{"Connection to DataBase does not exist"}, []string{}, []string{}, []string{})
 	ErrNilConfigData        = errors.New(ErrNilConfigDataCode, errors.Alert, []string{"Given config data is nil"}, []string{}, []string{}, []string{})
+	ErrNilJWKs              = errors.New(ErrNilJWKsCode, errors.Alert, []string{"Invalid JWks"}, []string{"Value of JWKs is nil"}, []string{}, []string{})
+	ErrNilKeys              = errors.New(ErrNilKeysCode, errors.Alert, []string{"Key not found"}, []string{"JWK not found for the given KeyID"}, []string{}, []string{})
+	ErrTokenExpired         = errors.New(ErrTokenExpiredCode, errors.Alert, []string{"Token has expired"}, []string{"Token is invalid, it has expired"}, []string{}, []string{})
+	ErrTokenClaims          = errors.New(ErrTokenClaimsCode, errors.Alert, []string{"Error occured while prasing claims"}, []string{}, []string{}, []string{})
 )
 
 func ErrGrafanaClient(err error) error {
@@ -79,6 +98,26 @@ func ErrMarshal(err error, obj string) error {
 
 func ErrUnmarshal(err error, obj string) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the object", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDecodeBase64(err error, obj string) error {
+	return errors.New(ErrDecodeBase64Code, errors.Alert, []string{"Error occured while decoding base65 string", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrMarshalPKIX(err error) error {
+	return errors.New(ErrMarshalPKIXCode, errors.Alert, []string{"Error occured while marshalling PKIX"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrEncodingPEM(err error) error {
+	return errors.New(ErrEncodingPEMCode, errors.Alert, []string{"Error occured while encoding jwk to pem"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPraseUnverified(err error) error {
+	return errors.New(ErrPraseUnverifiedCode, errors.Alert, []string{"Error occured while prasing tokens (unverified)"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDataRead(err error, r string) error {
+	return errors.New(ErrDataReadCode, errors.Alert, []string{"Eeror occured while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrGenerateUUID(err error) error {
@@ -155,4 +194,28 @@ func ErrPrometheusLabelSeries(err error) error {
 
 func ErrPrometheusQueryRange(err error, query string, startTime, endTime time.Time, step time.Duration) error {
 	return errors.New(ErrPrometheusQueryRangeCode, errors.Alert, []string{"Unable to fetch data for the query", fmt.Sprintf("Query: %s, with start: %v, end: %v, step: %v", query, startTime, endTime, step)}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenRefresh(err error) error {
+	return errors.New(ErrTokenRefreshCode, errors.Alert, []string{"Error occured while Refresing the token"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGetToken(err error) error {
+	return errors.New(ErrGetTokenCode, errors.Alert, []string{"Error occured while getting token from the Browser Cookie"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenDecode(err error) error {
+	return errors.New(ErrTokenDecodeCode, errors.Alert, []string{"Error occured while Decoding Token Data"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenClientCheck(err error) error {
+	return errors.New(ErrTokenClientCheckCode, errors.Alert, []string{"Error occured while performing token check HTTP request"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenPrase(err error) error {
+	return errors.New(ErrTokenPraseCode, errors.Alert, []string{"Error occured while Prasing and validating the token"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrJWKsKeys(err error) error {
+	return errors.New(ErrJWKsKeysCode, errors.Alert, []string{"Unable to fetch JWKs keys from the remote provider"}, []string{err.Error()}, []string{}, []string{})
 }
