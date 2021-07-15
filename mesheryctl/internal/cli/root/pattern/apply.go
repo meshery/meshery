@@ -159,21 +159,41 @@ var applyCmd = &cobra.Command{
 				patternFile = text
 			} else {
 				var jsonValues []byte
-				url, err := utils.ParseURLGithub(file)
+				url, path, err := utils.ParseURLGithub(file)
 				if err != nil {
 					return err
 				}
+
+				log.Debug(url)
+				log.Debug(path)
+
 				// save the pattern with Github URL
 				if !skipSave {
-					jsonValues, _ = json.Marshal(map[string]interface{}{
-						"url":  url,
-						"save": true,
-					})
+					if path != "" {
+						jsonValues, _ = json.Marshal(map[string]interface{}{
+							"url":  url,
+							"path": path,
+							"save": true,
+						})
+					} else {
+						jsonValues, _ = json.Marshal(map[string]interface{}{
+							"url":  url,
+							"save": true,
+						})
+					}
 				} else { // we don't save the pattern
-					jsonValues, _ = json.Marshal(map[string]interface{}{
-						"url":  url,
-						"save": false,
-					})
+					if path != "" {
+						jsonValues, _ = json.Marshal(map[string]interface{}{
+							"url":  url,
+							"path": path,
+							"save": false,
+						})
+					} else {
+						jsonValues, _ = json.Marshal(map[string]interface{}{
+							"url":  url,
+							"save": false,
+						})
+					}
 				}
 				req, err = http.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
