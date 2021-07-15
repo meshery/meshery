@@ -31,7 +31,7 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		var response models.APPAPIResponse
+		var response *models.ApplicationsAPIResponse
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/application", nil)
 		if err != nil {
