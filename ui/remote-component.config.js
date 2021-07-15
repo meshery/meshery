@@ -15,7 +15,7 @@ module.exports = {
     "@material-ui/icons/Cached": require("@material-ui/icons/Cached"),
     "@material-ui/icons/ChevronLeft": require("@material-ui/icons/ChevronLeft"),
     "@material-ui/icons/Assessment": require("@material-ui/icons/Assessment"),
-    "@material-ui/icons/DestopMac": require("@material-ui/icons/DesktopMac"),
+    "@material-ui/icons/DesktopMac": require("@material-ui/icons/DesktopMac"),
     "@material-ui/icons/TouchApp": require("@material-ui/icons/TouchApp"),
     "@material-ui/icons/Traffic": require("@material-ui/icons/Traffic"),
     "@material-ui/icons/Security": require("@material-ui/icons/Security"),
