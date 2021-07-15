@@ -45,6 +45,7 @@ var versionCmd = &cobra.Command{
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
+			// get the currCtx
 			logrus.Errorf("error processing config: %v", err)
 			userResponse := false
 			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
@@ -79,7 +80,7 @@ var versionCmd = &cobra.Command{
 				}
 				return nil
 			}
-			return errors.New("cannot determine version from invalid config file")
+			return handlers.ErrUnmarshal(errors.New("invalid config file"), "meshconfig")
 		}
 		return nil
 	},
