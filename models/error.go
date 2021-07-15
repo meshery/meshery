@@ -2,40 +2,47 @@
 package models
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/layer5io/meshkit/errors"
 )
 
 const (
-	ErrGrafanaClientCode        = "3000"
-	ErrPageSizeCode             = "replace_me"
-	ErrPageNumberCode           = "replace_me"
-	ErrResultIDCode             = "replace_me"
-	ErrPerfIDCode               = "replace_me"
-	ErrMarshalCode              = "replace_me"
-	ErrUnmarshalCode            = "replace_me"
-	ErrGenerateUUIDCode         = "replace_me"
-	ErrLocalProviderSupportCode = "replace_me"
-	ErrGrafanaOrgCode           = "replace_me"
-	ErrGrafanaBoardsCode        = "replace_me"
-	ErrGrafanaDashboardCode     = "replace_me"
-	ErrGrafanaDataSourceCode    = "replace_me"
-	ErrNilQueryCode             = "replace_me"
-	ErrGrafanaDataCode          = "replace_me"
-	ErrApplicationFileNameCode  = "replace_me"
-	ErrFilterFileNameCode       = "replace_me"
-	ErrPatternFileNameCode      = "replace_me"
-	ErrMakeDirCode              = "replace_me"
-	ErrFolderStatCode           = "replace_me"
-	ErrUserIDCode               = "replace_me"
-	ErrDBConnectionCode         = "replace_me"
-	ErrNilConfigDataCode        = "replace_me"
-	ErrDBOpenCode               = "replace_me"
-	ErrDBRLockCode              = "replace_me"
-	ErrDBLockCode               = "replace_me"
-	ErrDBReadCode               = "replace_me"
-	ErrDBDeleteCode             = "replace_me"
-	ErrCopyCode                 = "replace_me"
-	ErrDBPutCode                = "replace_me"
+	ErrGrafanaClientCode         = "3000"
+	ErrPageSizeCode              = "replace_me"
+	ErrPageNumberCode            = "replace_me"
+	ErrResultIDCode              = "replace_me"
+	ErrPerfIDCode                = "replace_me"
+	ErrMarshalCode               = "replace_me"
+	ErrUnmarshalCode             = "replace_me"
+	ErrGenerateUUIDCode          = "replace_me"
+	ErrLocalProviderSupportCode  = "replace_me"
+	ErrGrafanaOrgCode            = "replace_me"
+	ErrGrafanaBoardsCode         = "replace_me"
+	ErrGrafanaDashboardCode      = "replace_me"
+	ErrGrafanaDataSourceCode     = "replace_me"
+	ErrNilQueryCode              = "replace_me"
+	ErrGrafanaDataCode           = "replace_me"
+	ErrApplicationFileNameCode   = "replace_me"
+	ErrFilterFileNameCode        = "replace_me"
+	ErrPatternFileNameCode       = "replace_me"
+	ErrMakeDirCode               = "replace_me"
+	ErrFolderStatCode            = "replace_me"
+	ErrUserIDCode                = "replace_me"
+	ErrDBConnectionCode          = "replace_me"
+	ErrNilConfigDataCode         = "replace_me"
+	ErrDBOpenCode                = "replace_me"
+	ErrDBRLockCode               = "replace_me"
+	ErrDBLockCode                = "replace_me"
+	ErrDBReadCode                = "replace_me"
+	ErrDBDeleteCode              = "replace_me"
+	ErrCopyCode                  = "replace_me"
+	ErrDBPutCode                 = "replace_me"
+	ErrPrometheusGetNodesCode    = "replace_me"
+	ErrPrometheusLabelSeriesCode = "replace_me"
+	ErrPrometheusQueryRangeCode  = "replace_me"
+	ErrPrometheusStaticBoardCode = "replace_me"
 )
 
 var (
@@ -132,4 +139,20 @@ func ErrDBDelete(err error, user string) error {
 
 func ErrCopy(err error, obj string) error {
 	return errors.New(ErrCopyCode, errors.Alert, []string{"Error occurred while copying", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPrometheusGetNodes(err error) error {
+	return errors.New(ErrPrometheusGetNodesCode, errors.Alert, []string{"Prometheus Client unable to get all nodes"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPrometheusStaticBoard(err error) error {
+	return errors.New(ErrPrometheusStaticBoardCode, errors.Alert, []string{"Unbale to get Static Boards"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPrometheusLabelSeries(err error) error {
+	return errors.New(ErrPrometheusLabelSeriesCode, errors.Alert, []string{"Unable to get the label set series"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPrometheusQueryRange(err error, query string, startTime, endTime time.Time, step time.Duration) error {
+	return errors.New(ErrPrometheusQueryRangeCode, errors.Alert, []string{"Unable to fetch data for the query", fmt.Sprintf("Query: %s, with start: %v, end: %v, step: %v", query, startTime, endTime, step)}, []string{err.Error()}, []string{}, []string{})
 }

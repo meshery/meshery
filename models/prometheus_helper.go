@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/grafana-tools/sdk"
-	"github.com/pkg/errors"
 	promAPI "github.com/prometheus/client_golang/api"
 	promQAPI "github.com/prometheus/client_golang/api/prometheus/v1"
 	promModel "github.com/prometheus/common/model"
@@ -49,9 +48,7 @@ func (p *PrometheusClient) Validate(ctx context.Context, promURL string) error {
 func (p *PrometheusClient) ImportGrafanaBoard(ctx context.Context, boardData []byte) (*GrafanaBoard, error) {
 	board := &sdk.Board{}
 	if err := json.Unmarshal(boardData, board); err != nil {
-		msg := errors.New("unable to parse grafana board data")
-		logrus.Error(errors.Wrap(err, msg.Error()))
-		return nil, msg
+		return nil, ErrUnmarshal(err, "Grafana Board")
 	}
 	return p.grafanaClient.ProcessBoard(ctx, nil, board, &sdk.FoundBoard{
 		Title: board.Title,
@@ -85,9 +82,7 @@ func (p *PrometheusClient) GetNodesStaticBoard(ctx context.Context, promURL stri
 	ttt := template.New("staticBoard").Delims("[[", "]]")
 	instances, err := p.getAllNodes(ctx, promURL)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to get all the nodes")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPrometheusGetNodes(err)
 	}
 	logrus.Debugf("Instances: %v, length: %d", instances, len(instances))
 	tpl := template.Must(ttt.Parse(staticBoardNodes))
@@ -95,9 +90,7 @@ func (p *PrometheusClient) GetNodesStaticBoard(ctx context.Context, promURL stri
 		"instances":  instances,
 		"indexCheck": len(instances) - 1,
 	}); err != nil {
-		err = errors.Wrapf(err, "unable to get the static board")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPrometheusStaticBoard(err)
 	}
 	// logrus.Debugf("Board json: %s", buf.String())
 	return p.ImportGrafanaBoard(ctx, buf.Bytes())
@@ -111,9 +104,7 @@ func (p *PrometheusClient) getAllNodes(ctx context.Context, promURL string) ([]s
 	qc := promQAPI.NewAPI(c)
 	labelSet, _, err := qc.Series(ctx, []string{`node_boot_time_seconds{cluster="", job="node-exporter"}`}, time.Now().Add(-5*time.Minute), time.Now())
 	if err != nil {
-		err = errors.Wrapf(err, "unable to get the label set series")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPrometheusLabelSeries(err)
 	}
 	result := []string{}
 	for _, l := range labelSet {
@@ -138,9 +129,7 @@ func (p *PrometheusClient) QueryRangeUsingClient(ctx context.Context, promURL, q
 		Step:  step,
 	})
 	if err != nil {
-		err := errors.Wrapf(err, "error fetching data for query: %s, with start: %v, end: %v, step: %v", query, startTime, endTime, step)
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPrometheusQueryRange(err, query, startTime, endTime, step)
 	}
 	return result, nil
 }
