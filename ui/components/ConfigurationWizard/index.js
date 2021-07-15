@@ -95,7 +95,7 @@ const ConfigurationWizard = () => {
             </Fade>
           ) : (
             <>
-              <Grid container xs={12} style={{marginTop: "4rem"}} justify="center" alignItems="center">{handleStep(activeStep)}</Grid>
+              <Grid container xs={12} style={{marginTop: "4rem"}} justify="center" alignItems="flex-start">{handleStep(activeStep)}</Grid>
               <div className={classes.buttonContainer}>
                 {activeStep === 2 || activeStep === 3 ? (
                   <Button onClick={handleNext} className={classes.skipButton}>

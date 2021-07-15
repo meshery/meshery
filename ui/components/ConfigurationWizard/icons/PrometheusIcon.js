@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import SvgIcon from "@material-ui/core/SvgIcon";
 
 const PrometheusIcon = ({isActive}) => {
   return (
     <SvgIcon
-      style={{ width: "3rem", height: "auto" }}
+      style={{ width: "3rem", height: "auto", filter : isActive ? null : "grayscale(1)"  }}
       viewBox="0 0 50 50"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
