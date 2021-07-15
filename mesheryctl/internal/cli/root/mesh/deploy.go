@@ -30,7 +30,6 @@ var (
 				return errors.Wrap(err, "error processing config")
 			}
 
-<<<<<<< HEAD
 			if len(args) < 1 {
 				meshName, err = validateMesh(mctlCfg, tokenPath, "")
 			} else {
@@ -42,10 +41,6 @@ var (
 
 			if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
 				return errors.Wrap(err, "adapter not valid")
-=======
-			if err = validateAdapter(mctlCfg, tokenPath, args[0]); err != nil {
-				return errors.Wrap(err, "unable to find adapter. Please check its spelling and port number")
->>>>>>> e1bb041b8bcce9f3ef1e42366abdb4bb97f89d8c
 			}
 			return nil
 		},
