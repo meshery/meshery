@@ -11,6 +11,11 @@ labels:
       issue:
         body: This issue has been labeled with 'design-required'. Note that prior to commencing on implementation a design specification needs to be reviewed and approved. See [Creating a Functional Specification](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing) to create a design spec.
         action: open
+  - name: issue/remind
+    labeled:
+      issue:
+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://layer5.io/community/meshmates/) or any other [community member](https://layer5.io/community/members) for assistance.
+        action: open
   - name: component/ui
     labeled:
       issue:
