@@ -9,6 +9,7 @@ on:
 jobs:
   Update-error-ref:
     name: Error codes utility
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

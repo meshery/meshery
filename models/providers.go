@@ -230,6 +230,7 @@ type Provider interface {
 	GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
+	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)

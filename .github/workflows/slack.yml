@@ -2,6 +2,7 @@ name: Slack Notify on Star
 on: watch
 jobs:
   star-notify:
+    if: github.repository == 'meshery/meshery'
     name: Notify Slack on star
     runs-on: ubuntu-latest
     steps:

@@ -117,6 +117,7 @@ func (tf *GoldenFile) WriteInByte(content []byte) {
 	}
 }
 
+// use default context /pkg/utils/TestConfig.yaml
 func SetupContextEnv(t *testing.T) {
 	path, err := os.Getwd()
 	if err != nil {
@@ -136,6 +137,23 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
+// setup custom context with SetupCustomContextEnv
+func SetupCustomContextEnv(t *testing.T, pathToContext string) {
+	viper.Reset()
+	viper.SetConfigFile(pathToContext)
+	//fmt.Println(viper.ConfigFileUsed())
+	err := viper.ReadInConfig()
+	if err != nil {
+		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
+	}
+
+	_, err = config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Error("error processing config", err)
+	}
+}
+
+// Start mock HTTP client to mock requests
 func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
@@ -156,6 +174,15 @@ func StartMockery(t *testing.T) {
 		httpmock.NewStringResponder(200, apiResponse))
 }
 
+// stop HTTP mock client
 func StopMockery(t *testing.T) {
 	httpmock.DeactivateAndReset()
+}
+
+// Set file location for testing stuff
+func SetFileLocationTesting(t *testing.T, dir string) {
+	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
+	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
+	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
+	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
 }
