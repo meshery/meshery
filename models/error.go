@@ -38,7 +38,6 @@ const (
 	ErrDBPutCode                  = "replace_me"
 	ErrResultDataCode             = "replace_me"
 	ErrUnableToPersistsResultCode = "replace_me"
-	ErrFailToConnecToDBCode       = "replace_me"
 )
 
 var (
@@ -115,10 +114,6 @@ func ErrMakeDir(err error, dir string) error {
 
 func ErrFolderStat(err error, dir string) error {
 	return errors.New(ErrFolderStatCode, errors.Alert, []string{"Unable to find (os.stat) the folder", dir}, []string{err.Error()}, []string{}, []string{})
-}
-
-func ErrFailToConnecToDB() error {
-	return errors.New(ErrFailToConnecToDBCode, errors.Alert, []string{"connection to DB does not exist"}, []string{}, []string{}, []string{})
 }
 
 func ErrDBOpen(err error) error {

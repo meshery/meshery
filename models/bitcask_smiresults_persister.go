@@ -7,7 +7,6 @@ import (
 	"path"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"
@@ -17,7 +16,6 @@ import (
 type BitCaskSmiResultsPersister struct {
 	fileName string
 	db       *bitcask.Bitcask
-	log      logger.Handler
 }
 
 // SmiResultPage - represents a page of meshery results
@@ -61,7 +59,7 @@ func NewBitCaskSmiResultsPersister(folderName string) (*BitCaskSmiResultsPersist
 // GetSmiResults - gets result for the page and pageSize
 func (s *BitCaskSmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
 	if s.db == nil {
-		return nil, ErrFailToConnecToDB()
+		return nil, ErrDBConnection
 	}
 
 RETRY:
@@ -82,10 +80,10 @@ RETRY:
 
 	start := page * pageSize
 	end := (page+1)*pageSize - 1
-	//logrus.Debugf("received page: %d, page size: %d, total: %d", page, pageSize, total)
-	s.log.Debug("received page: ", page, " page size: ", pageSize, "total:", total)
-	//logrus.Debugf("computed start index: %d, end index: %d", start, end)
-	s.log.Debug("computed start index:", start, "end index:", end)
+	logrus.Debugf("received page: %d, page size: %d, total: %d", page, pageSize, total)
+
+	logrus.Debugf("computed start index: %d, end index: %d", start, end)
+
 	if start > uint64(total) {
 		return nil, fmt.Errorf("index out of range")
 	}
@@ -131,7 +129,7 @@ RETRY:
 // WriteSmiResult persists the result
 func (s *BitCaskSmiResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
 	if s.db == nil {
-		return ErrFailToConnecToDB()
+		return ErrDBConnection
 	}
 
 	if result == nil {
