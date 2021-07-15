@@ -231,6 +231,75 @@ func AddTokenToConfig(token Token, configPath string) error {
 	return nil
 }
 
+// DeleteTokenFromConfig deletes a token passed to it to mesheryctl config file
+func DeleteTokenFromConfig(token Token, configPath string) error {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	mctlCfg, err := GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	if mctlCfg.Tokens == nil {
+		mctlCfg.Tokens = []Token{}
+	}
+
+	for i := range mctlCfg.Tokens {
+		if mctlCfg.Tokens[i].Name == token.Name {
+			mctlCfg.Tokens = append(mctlCfg.Tokens[:i], mctlCfg.Tokens[i+1:]...)
+			viper.Set("contexts", mctlCfg.Contexts)
+			viper.Set("current-context", mctlCfg.CurrentContext)
+			viper.Set("tokens", mctlCfg.Tokens)
+			err = viper.WriteConfig()
+			if err != nil {
+				return err
+			}
+
+			return nil
+		}
+	}
+	return errors.New("no such token exists")
+}
+
+func SetTokenToConfig(token string, configPath string, ctxName string) error {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	mctlCfg, err := GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return err
+	}
+	for c, context := range mctlCfg.Contexts {
+		if c == ctxName {
+			ctx := context
+			ctx.Token = token
+			mctlCfg.Contexts[c] = ctx
+			viper.Set("contexts", mctlCfg.Contexts)
+			err = viper.WriteConfig()
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+	}
+	return errors.New("invalid Context Name passed")
+}
+
 // AddContextToConfig adds context passed to it to mesheryctl config file
 func AddContextToConfig(contextName string, context Context, configPath string, set bool) error {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
