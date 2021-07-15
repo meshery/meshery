@@ -16,7 +16,7 @@ This tool analyzes, verifies and updates error codes in Meshery source code tree
 
 Inorder to create a meshery error object, you will need to create a custom wrapper object for the native golang error. This can be done from the <a href="https://github.com/layer5io/meshkit/tree/master/errors">Meshkit Error</a> package. 
 
-Use the `errors.New()` function to create a new instance of the error object and pass situation-specific attributes as function arguments. See the following example for reference.
+Use the `errors.New()` function to create a new instance of the error object and pass situation-specific attributes as function arguments. 
 The below are the listed attributes:
 - Code
 - Short Description
@@ -105,7 +105,7 @@ New
 
  
 ## Replacing logrus 
- There already exists an interface for logger in <a href="https://github.com/layer5io/meshkit/blob/master/logger/logger.go">Meshkit /a>  
+ There already exists an interface for logger in <a href="https://github.com/layer5io/meshkit/blob/master/logger/logger.go">Meshkit </a>  
 
 #### Defining a Logger 
 
@@ -115,18 +115,22 @@ New
     }
  ```
 
- #### Debug
+#### Debug
  
  Old
+
     `logrus.Debugf("meshLocationURL: %s", meshLocationURL)`
  New
+
     `l.log.Debug("meshLocationURL: ", meshLocationURL)`
 
- #### Error
+#### Error
 
-Old
+  Old
+
     `logrus.Errorf("error marshaling data: %v.", err)`
-New
+  New
+  
     `l.log.Error(ErrMarshal(err, obj))`
 
 
