@@ -6,36 +6,39 @@ import (
 )
 
 const (
-	ErrGrafanaClientCode        = "3000"
-	ErrPageSizeCode             = "replace_me"
-	ErrPageNumberCode           = "replace_me"
-	ErrResultIDCode             = "replace_me"
-	ErrPerfIDCode               = "replace_me"
-	ErrMarshalCode              = "replace_me"
-	ErrUnmarshalCode            = "replace_me"
-	ErrGenerateUUIDCode         = "replace_me"
-	ErrLocalProviderSupportCode = "replace_me"
-	ErrGrafanaOrgCode           = "replace_me"
-	ErrGrafanaBoardsCode        = "replace_me"
-	ErrGrafanaDashboardCode     = "replace_me"
-	ErrGrafanaDataSourceCode    = "replace_me"
-	ErrNilQueryCode             = "replace_me"
-	ErrGrafanaDataCode          = "replace_me"
-	ErrApplicationFileNameCode  = "replace_me"
-	ErrFilterFileNameCode       = "replace_me"
-	ErrPatternFileNameCode      = "replace_me"
-	ErrMakeDirCode              = "replace_me"
-	ErrFolderStatCode           = "replace_me"
-	ErrUserIDCode               = "replace_me"
-	ErrDBConnectionCode         = "replace_me"
-	ErrNilConfigDataCode        = "replace_me"
-	ErrDBOpenCode               = "replace_me"
-	ErrDBRLockCode              = "replace_me"
-	ErrDBLockCode               = "replace_me"
-	ErrDBReadCode               = "replace_me"
-	ErrDBDeleteCode             = "replace_me"
-	ErrCopyCode                 = "replace_me"
-	ErrDBPutCode                = "replace_me"
+	ErrGrafanaClientCode          = "3000"
+	ErrPageSizeCode               = "replace_me"
+	ErrPageNumberCode             = "replace_me"
+	ErrResultIDCode               = "replace_me"
+	ErrPerfIDCode                 = "replace_me"
+	ErrMarshalCode                = "replace_me"
+	ErrUnmarshalCode              = "replace_me"
+	ErrGenerateUUIDCode           = "replace_me"
+	ErrLocalProviderSupportCode   = "replace_me"
+	ErrGrafanaOrgCode             = "replace_me"
+	ErrGrafanaBoardsCode          = "replace_me"
+	ErrGrafanaDashboardCode       = "replace_me"
+	ErrGrafanaDataSourceCode      = "replace_me"
+	ErrNilQueryCode               = "replace_me"
+	ErrGrafanaDataCode            = "replace_me"
+	ErrApplicationFileNameCode    = "replace_me"
+	ErrFilterFileNameCode         = "replace_me"
+	ErrPatternFileNameCode        = "replace_me"
+	ErrMakeDirCode                = "replace_me"
+	ErrFolderStatCode             = "replace_me"
+	ErrUserIDCode                 = "replace_me"
+	ErrDBConnectionCode           = "replace_me"
+	ErrNilConfigDataCode          = "replace_me"
+	ErrDBOpenCode                 = "replace_me"
+	ErrDBRLockCode                = "replace_me"
+	ErrDBLockCode                 = "replace_me"
+	ErrDBReadCode                 = "replace_me"
+	ErrDBDeleteCode               = "replace_me"
+	ErrCopyCode                   = "replace_me"
+	ErrDBPutCode                  = "replace_me"
+	ErrResultDataCode             = "replace_me"
+	ErrUnableToPersistsResultCode = "replace_me"
+	ErrFailToConnecToDBCode       = "replace_me"
 )
 
 var (
@@ -74,6 +77,14 @@ func ErrUnmarshal(err error, obj string) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the object", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
+func ErrResultData() error {
+	return errors.New(ErrResultDataCode, errors.Alert, []string{"given result data is nil"}, []string{}, []string{}, []string{})
+}
+
+func ErrUnableToPersistsResult(err error) error {
+	return errors.New(ErrUnableToPersistsResultCode, errors.Alert, []string{"unable to persists the result data"}, []string{err.Error()}, []string{}, []string{})
+}
+
 func ErrGenerateUUID(err error) error {
 	return errors.New(ErrGenerateUUIDCode, errors.Alert, []string{"Unable to generate a new UUID"}, []string{err.Error()}, []string{}, []string{})
 }
@@ -104,6 +115,10 @@ func ErrMakeDir(err error, dir string) error {
 
 func ErrFolderStat(err error, dir string) error {
 	return errors.New(ErrFolderStatCode, errors.Alert, []string{"Unable to find (os.stat) the folder", dir}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrFailToConnecToDB() error {
+	return errors.New(ErrFailToConnecToDBCode, errors.Alert, []string{"connection to DB does not exist"}, []string{}, []string{}, []string{})
 }
 
 func ErrDBOpen(err error) error {

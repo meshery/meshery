@@ -7,6 +7,7 @@ import (
 	"path"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"
@@ -16,6 +17,7 @@ import (
 type BitCaskSmiResultsPersister struct {
 	fileName string
 	db       *bitcask.Bitcask
+	log      logger.Handler
 }
 
 // SmiResultPage - represents a page of meshery results
@@ -33,20 +35,21 @@ func NewBitCaskSmiResultsPersister(folderName string) (*BitCaskSmiResultsPersist
 		if os.IsNotExist(err) {
 			err = os.MkdirAll(folderName, os.ModePerm)
 			if err != nil {
-				logrus.Errorf("Unable to create the directory '%s' due to error: %v.", folderName, err)
-				return nil, err
+				// unable to create directory
+				obj := folderName
+				return nil, ErrMakeDir(err, obj)
 			}
 		} else {
-			logrus.Errorf("Unable to find/stat the folder '%s': %v,", folderName, err)
-			return nil, err
+			//unable to find folder
+			obj := folderName
+			return nil, ErrFolderStat(err, obj)
 		}
 	}
 
 	fileName := path.Join(folderName, "smiresultDB")
 	db, err := bitcask.Open(fileName, bitcask.WithSync(true))
 	if err != nil {
-		logrus.Errorf("Unable to open database: %v.", err)
-		return nil, err
+		return nil, ErrDBOpen(err)
 	}
 	bd := &BitCaskSmiResultsPersister{
 		fileName: fileName,
@@ -58,13 +61,12 @@ func NewBitCaskSmiResultsPersister(folderName string) (*BitCaskSmiResultsPersist
 // GetSmiResults - gets result for the page and pageSize
 func (s *BitCaskSmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
 	if s.db == nil {
-		return nil, errors.New("connection to DB does not exist")
+		return nil, ErrFailToConnecToDB()
 	}
 
 RETRY:
 	locked, err := s.db.TryRLock()
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to obtain read lock from bitcask store")
 		logrus.Error(err)
 	}
 	if !locked {
@@ -80,9 +82,10 @@ RETRY:
 
 	start := page * pageSize
 	end := (page+1)*pageSize - 1
-	logrus.Debugf("received page: %d, page size: %d, total: %d", page, pageSize, total)
-	logrus.Debugf("computed start index: %d, end index: %d", start, end)
-
+	//logrus.Debugf("received page: %d, page size: %d, total: %d", page, pageSize, total)
+	s.log.Debug("received page: ", page, " page size: ", pageSize, "total:", total)
+	//logrus.Debugf("computed start index: %d, end index: %d", start, end)
+	s.log.Debug("computed start index:", start, "end index:", end)
 	if start > uint64(total) {
 		return nil, fmt.Errorf("index out of range")
 	}
@@ -92,16 +95,17 @@ RETRY:
 		if localIndex >= start && localIndex <= end {
 			dd, err := s.db.Get(k)
 			if err != nil {
-				err = errors.Wrapf(err, "Unable to read data from bitcask store")
-				logrus.Error(err)
-				return nil, err
+				//err = errors.Wrapf(err, "Unable to read data from bitcask store")
+				//logrus.Error(err)
+				return nil, ErrDBRead(err)
 			}
 			if len(dd) > 0 {
 				result := &SmiResult{}
 				if err := json.Unmarshal(dd, result); err != nil {
-					err = errors.Wrapf(err, "Unable to unmarshal data.")
-					logrus.Error(err)
-					return nil, err
+					obj := "result data"
+					//err = errors.Wrapf(err, "Unable to unmarshal data.")
+					//logrus.Error(err)
+					return nil, ErrUnmarshal(err, obj)
 				}
 				results = append(results, result)
 			}
@@ -116,9 +120,9 @@ RETRY:
 		Results:    results,
 	})
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to marshal result data.")
-		logrus.Error(err)
-		return nil, err
+		obj := "result data"
+		//err = errors.Wrapf(err, "Unable to marshal result data.")
+		return nil, ErrMarshal(err, obj)
 	}
 
 	return bd, nil
@@ -127,18 +131,20 @@ RETRY:
 // WriteSmiResult persists the result
 func (s *BitCaskSmiResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
 	if s.db == nil {
-		return errors.New("connection to DB does not exist")
+		return ErrFailToConnecToDB()
 	}
 
 	if result == nil {
-		return errors.New("given result data is nil")
+		return ErrResultData()
 	}
 
 RETRY:
 	locked, err := s.db.TryLock()
 	if err != nil {
+		//obj := "bitcask store"
 		err = errors.Wrapf(err, "Unable to obtain write lock from bitcask store")
 		logrus.Error(err)
+		//l.log.Error(ErrFailWriteLock(err, obj))
 	}
 	if !locked {
 		goto RETRY
@@ -148,9 +154,11 @@ RETRY:
 	}()
 
 	if err := s.db.Put(key.Bytes(), result); err != nil {
-		err = errors.Wrapf(err, "Unable to persist result data.")
-		logrus.Error(err)
-		return err
+		//err = errors.Wrapf(err, "Unable to persist result data.")
+		//unable to persists result
+		//l.log.Error(ErrUnableToPersists(err))
+		//logrus.Error(err)
+		return ErrUnableToPersistsResult(err)
 	}
 	return nil
 }
