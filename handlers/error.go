@@ -61,6 +61,7 @@ const (
 	ErrFetchKubernetesCode      = "2051"
 	ErrPanicRecoveryCode        = "2052"
 	ErrBlankNameCode            = "2053"
+	ErrSaveSessionCode          = "2054"
 )
 
 var (
@@ -243,4 +244,8 @@ func ErrPanicRecovery(r interface{}) error {
 
 func ErrFailToLoadExtensions(err error) error {
 	return errors.New(ErrFailToLoadExtensionsCode, errors.Alert, []string{"Failed to Load Extensions from Package"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrSaveSession(err error) error {
+	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session"}, []string{err.Error()}, []string{}, []string{})
 }

@@ -1,14 +1,53 @@
 {
   "min_code": 1000,
   "max_code": 3000,
-  "duplicate_codes": {},
+  "duplicate_codes": {
+    "replace_me": [
+      "ErrErrNewDynamicClientGeneratorCode",
+      "ErrPageSizeCode",
+      "ErrPageNumberCode",
+      "ErrResultIDCode",
+      "ErrPerfIDCode",
+      "ErrMarshalCode",
+      "ErrUnmarshalCode",
+      "ErrGenerateUUIDCode",
+      "ErrLocalProviderSupportCode",
+      "ErrGrafanaOrgCode",
+      "ErrGrafanaBoardsCode",
+      "ErrGrafanaDashboardCode",
+      "ErrGrafanaDataSourceCode",
+      "ErrNilQueryCode",
+      "ErrGrafanaDataCode",
+      "ErrApplicationFileNameCode",
+      "ErrFilterFileNameCode",
+      "ErrPatternFileNameCode",
+      "ErrMakeDirCode",
+      "ErrFolderStatCode",
+      "ErrUserIDCode",
+      "ErrDBConnectionCode",
+      "ErrNilConfigDataCode",
+      "ErrDBOpenCode",
+      "ErrDBRLockCode",
+      "ErrDBLockCode",
+      "ErrDBReadCode",
+      "ErrDBDeleteCode",
+      "ErrCopyCode",
+      "ErrDBPutCode",
+      "ErrResultDataCode",
+      "ErrUnableToPersistsResultCode"
+    ]
+  },
   "duplicate_names": [
-    "ErrNoMeshSyncCode",
-    "ErrCreateDataCode",
-    "ErrLoadTestCode",
-    "ErrMesheryClientCode",
+    "ErrClientConfigCode",
     "ErrGrafanaBoardsCode",
-    "ErrNilClientCode"
+    "ErrInvalidK8SConfigCode",
+    "ErrNilClientCode",
+    "ErrMesheryClientCode",
+    "ErrCreateDataCode",
+    "ErrMarshalCode",
+    "ErrUnmarshalCode",
+    "ErrNoMeshSyncCode",
+    "ErrLoadTestCode"
   ],
   "call_expr_codes": [],
   "int_codes": [
@@ -79,6 +118,7 @@
     2051,
     2052,
     2053,
+    2054,
     3000
   ],
   "deprecated_new_default": []
