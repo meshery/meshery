@@ -76,5 +76,6 @@ module.exports = {
     notistack: require("notistack"),
     "react-dom/server": require("react-dom/server"),
     "relay-runtime": require("relay-runtime"),
+    "@material-ui/icons/LibraryAdd": require("@material-ui/icons/LibraryAdd"),
   },
 };
