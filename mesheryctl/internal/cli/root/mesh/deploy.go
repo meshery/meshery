@@ -157,7 +157,7 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, tokenPath string, name st
 	}
 
 	if len(adapterNames) == 0 {
-		return errors.New("No adapters found")
+		return errors.New("no adapters found")
 	}
 
 	prompt := promptui.Select{

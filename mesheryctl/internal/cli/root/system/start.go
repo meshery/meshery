@@ -422,9 +422,11 @@ func start() error {
 			}
 		}
 
-		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
-		if err != nil {
-			return err
+		if err == nil {
+			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			if err != nil {
+				return err
+			}
 		}
 
 		// switch to default case if the platform specified is not supported

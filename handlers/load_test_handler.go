@@ -266,7 +266,6 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 			}
 		}()
 		for data := range respChan {
-			w.Write([]byte("test: " + testUUID))
 			bd, err := json.Marshal(data)
 			if err != nil {
 				h.log.Error(ErrMarshal(err, "meshery result for shipping"))
