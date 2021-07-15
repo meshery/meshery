@@ -51,7 +51,7 @@ func getContexts(configFile, tokenPath string) ([]string, error) {
 	}
 
 	// GETCONTEXTS endpoint points to the URL return the contexts available
-	GETCONTEXTS := mctlCfg.GetBaseMesheryURL() + "/api/k8sconfig/contexts"
+	GETCONTEXTS := mctlCfg.GetBaseMesheryURL() + "/api/system/kubernetes/contexts"
 
 	req, err := utils.UploadFileWithParams(GETCONTEXTS, nil, paramName, configFile)
 	if err != nil {
@@ -96,7 +96,7 @@ func setContext(configFile, cname, tokenPath string) error {
 	}
 
 	// SETCONTEXT endpoint points to set context
-	SETCONTEXT := mctlCfg.GetBaseMesheryURL() + "/api/k8sconfig"
+	SETCONTEXT := mctlCfg.GetBaseMesheryURL() + "/api/system/kubernetes"
 	req, err := utils.UploadFileWithParams(SETCONTEXT, extraParams1, paramName, configFile)
 	if err != nil {
 		return err

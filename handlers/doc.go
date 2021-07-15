@@ -218,3 +218,30 @@ type singleScheduleResponseWrapper struct {
 	// in: body
 	Body models.Schedule
 }
+
+// Return all the adapters
+// swagger:response systemAdaptersRespWrapper
+type systemAdaptersRespWrapper struct {
+	// in: body
+	Body []models.Adapter
+}
+
+// swagger:response adapterPingParams
+type adapterPingParamsWrapper struct {
+	// in: query
+	Adapter string `json:adapter`
+}
+
+// Returns saved kubernetes config
+// swagger:response k8sConfigRespWrapper
+type k8sConfigRespWrapper struct {
+	// in: body
+	Body *models.K8SConfig
+}
+
+// Returns kubernetes context list
+// swagger:response k8sContextsRespWrapper
+type k8sContextsRespWrapper struct {
+	// in: body
+	Body []*models.K8SContext
+}

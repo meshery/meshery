@@ -443,7 +443,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 	client := &http.Client{}
 
 	// Request to grab running adapters and ports
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/mesh/adapters", url), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters", url), nil)
 	if err != nil {
 		return err
 	}
@@ -493,7 +493,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 			}
 			continue
 		}
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/mesh/adapter/ping?adapter=%s", url, adapter.Name), nil)
+		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, adapter.Name), nil)
 		if err != nil {
 			return err
 		}

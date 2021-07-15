@@ -19,11 +19,24 @@ func init() {
 	gob.Register([]*models.Adapter{})
 }
 
+// swagger:route GET /api/system/adapters SystemAPI idGetSystemAdapters
+// Handle GET request for adapters
+//
+// Fetches and returns all the adapters and ping adapters
+// Responses:
+//  200: systemAdaptersRespWrapper
+
 // GetAllAdaptersHandler is used to fetch all the adapters
-func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request, provider models.Provider) {
+func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
+	}
+
+	// if adapter found in query user is trying to ping an adapter
+	adapterLoc := req.URL.Query().Get("adapter")
+	if adapterLoc != "" {
+		h.AdapterPingHandler(w, req, prefObj, user, provider)
 	}
 
 	err := json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
@@ -192,6 +205,13 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	h.log.Debug("New adapters: ", b)
 	return newMeshAdapters, nil
 }
+
+// swagger:route POST /api/mesh/ops SystemAPI idPostAdapterOperation
+// Handle POST requests for Adapter Operations
+//
+// Used to send operations to the adapters
+// responses:
+// 	200:
 
 // MeshOpsHandler is used to send operations to the adapters
 func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

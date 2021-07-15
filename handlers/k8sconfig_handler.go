@@ -43,6 +43,13 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 	}
 }
 
+// swagger:route POST /api/system/kubernetes SystemAPI idPostK8SConfig
+// Handle POST request for Kubernetes Config
+//
+// Used to add kubernetes config to System
+// responses:
+// 	200: k8sConfigRespWrapper
+
 func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	_ = req.ParseMultipartForm(1 << 20)
 
@@ -100,6 +107,13 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 	}
 }
 
+// swagger:route DELETE /api/system/kubernetes SystemAPI idDeleteK8SConfig
+// Handle DELETE request for Kubernetes Config
+//
+// Used to delete kubernetes config to System
+// responses:
+// 	200:
+
 func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	prefObj.K8SConfig = nil
 	err := provider.RecordPreferences(req, user.UserID, prefObj)
@@ -110,6 +124,13 @@ func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference,
 	}
 	_, _ = w.Write([]byte("{}"))
 }
+
+// swagger:route POST /api/system/kubernetes/contexts SystemAPI idPostK8SContexts
+// Handle POST requests for Kubernetes Context list
+//
+// Returns the context list for a given k8s config
+// responses:
+// 	200: k8sContextsRespWrapper
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request) {
@@ -212,6 +233,13 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 	}
 	return nil
 }
+
+// swagger:route GET /api/system/kubernetes/ping SystemAPI idGetKubernetesPing
+// Handle GET request for Kubernetes ping
+//
+// Fetches server version to simulate ping
+// responses:
+// 	200:
 
 // KubernetesPingHandler - fetches server version to simulate ping
 func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

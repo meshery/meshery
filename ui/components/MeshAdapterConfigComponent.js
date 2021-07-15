@@ -101,7 +101,7 @@ class MeshAdapterConfigComponent extends React.Component {
     const self = this;
     this.props.updateProgress({ showProgress: true });
     dataFetch(
-      "/api/mesh/adapters",
+      "/api/system/adapters",
       {
         credentials: "same-origin",
         method: "GET",
@@ -228,7 +228,7 @@ class MeshAdapterConfigComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      `/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`,
+      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
       {
         credentials: "same-origin",
         credentials: "include",
