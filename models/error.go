@@ -73,7 +73,7 @@ var (
 	ErrNilJWKs              = errors.New(ErrNilJWKsCode, errors.Alert, []string{"Invalid JWks"}, []string{"Value of JWKs is nil"}, []string{}, []string{})
 	ErrNilKeys              = errors.New(ErrNilKeysCode, errors.Alert, []string{"Key not found"}, []string{"JWK not found for the given KeyID"}, []string{}, []string{})
 	ErrTokenExpired         = errors.New(ErrTokenExpiredCode, errors.Alert, []string{"Token has expired"}, []string{"Token is invalid, it has expired"}, []string{}, []string{})
-	ErrTokenClaims          = errors.New(ErrTokenClaimsCode, errors.Alert, []string{"Error occured while prasing claims"}, []string{}, []string{}, []string{})
+	ErrTokenClaims          = errors.New(ErrTokenClaimsCode, errors.Alert, []string{"Error occurred while prasing claims"}, []string{}, []string{}, []string{})
 )
 
 func ErrGrafanaClient(err error) error {
@@ -101,23 +101,23 @@ func ErrUnmarshal(err error, obj string) error {
 }
 
 func ErrDecodeBase64(err error, obj string) error {
-	return errors.New(ErrDecodeBase64Code, errors.Alert, []string{"Error occured while decoding base65 string", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDecodeBase64Code, errors.Alert, []string{"Error occurred while decoding base65 string", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrMarshalPKIX(err error) error {
-	return errors.New(ErrMarshalPKIXCode, errors.Alert, []string{"Error occured while marshalling PKIX"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrMarshalPKIXCode, errors.Alert, []string{"Error occurred while marshaling PKIX"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrEncodingPEM(err error) error {
-	return errors.New(ErrEncodingPEMCode, errors.Alert, []string{"Error occured while encoding jwk to pem"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrEncodingPEMCode, errors.Alert, []string{"Error occurred while encoding jwk to pem"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrPraseUnverified(err error) error {
-	return errors.New(ErrPraseUnverifiedCode, errors.Alert, []string{"Error occured while prasing tokens (unverified)"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPraseUnverifiedCode, errors.Alert, []string{"Error occurred while prasing tokens (unverified)"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDataRead(err error, r string) error {
-	return errors.New(ErrDataReadCode, errors.Alert, []string{"Eeror occured while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDataReadCode, errors.Alert, []string{"Eeror occurred while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrGenerateUUID(err error) error {
@@ -197,23 +197,23 @@ func ErrPrometheusQueryRange(err error, query string, startTime, endTime time.Ti
 }
 
 func ErrTokenRefresh(err error) error {
-	return errors.New(ErrTokenRefreshCode, errors.Alert, []string{"Error occured while Refresing the token"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrTokenRefreshCode, errors.Alert, []string{"Error occurred while Refresing the token"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrGetToken(err error) error {
-	return errors.New(ErrGetTokenCode, errors.Alert, []string{"Error occured while getting token from the Browser Cookie"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGetTokenCode, errors.Alert, []string{"Error occurred while getting token from the Browser Cookie"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrTokenDecode(err error) error {
-	return errors.New(ErrTokenDecodeCode, errors.Alert, []string{"Error occured while Decoding Token Data"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrTokenDecodeCode, errors.Alert, []string{"Error occurred while Decoding Token Data"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrTokenClientCheck(err error) error {
-	return errors.New(ErrTokenClientCheckCode, errors.Alert, []string{"Error occured while performing token check HTTP request"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrTokenClientCheckCode, errors.Alert, []string{"Error occurred while performing token check HTTP request"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrTokenPrase(err error) error {
-	return errors.New(ErrTokenPraseCode, errors.Alert, []string{"Error occured while Prasing and validating the token"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrTokenPraseCode, errors.Alert, []string{"Error occurred while Prasing and validating the token"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrJWKsKeys(err error) error {
