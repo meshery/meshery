@@ -50,6 +50,8 @@ fortio.org/fortio v1.6.8/go.mod h1:sbKl3MB8+XZTZ4HvLcBPUvFYPmMKG5zKsoCmgbo/YR8=
 fortio.org/fortio v1.17.0 h1:gw1lGpgpz4WqH49kEp4sXX73Abh4wQU2CcTSyTJW3MA=
 fortio.org/fortio v1.17.0/go.mod h1:radJAQIynw4V5XXPOQSHlE1V4MxvUkWpd0PW5vbVF2M=
 gioui.org v0.0.0-20210308172011-57750fc8a0a6/go.mod h1:RSH6KIUZ0p2xy5zHDxgAM4zumjgTw83q2ge/PI+yyw8=
+git.mills.io/prologic/bitcask v0.3.9 h1:ky4tmZKAQEVM99DmCKk61jMtlrA0k57BBNoP/9J1brA=
+git.mills.io/prologic/bitcask v0.3.9/go.mod h1:WQuqL23CGZcC83DhKuXH6KMHe1m25+Eb43s8yM3MnF0=
 github.com/99designs/gqlgen v0.13.0 h1:haLTcUp3Vwp80xMVEg5KRNwzfUrgFdRmtBY8fuB8scA=
 github.com/99designs/gqlgen v0.13.0/go.mod h1:NV130r6f4tpRWuAI+zsrSdooO/eWUv+Gyyoi3rEfXIk=
 github.com/Azure/azure-sdk-for-go v16.2.1+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
@@ -1061,8 +1063,6 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/polyfloyd/go-errorlint v0.0.0-20210510181950-ab96adb96fea/go.mod h1:wi9BfjxjF/bwiZ701TzmfKu6UKC357IOAtNr0Td0Lvw=
 github.com/posener/complete v1.1.1/go.mod h1:em0nMJCgc9GFtwrmVmEMR/ZL6WyhyjMBndrE9hABlRI=
 github.com/pquerna/cachecontrol v0.0.0-20171018203845-0dec1b30a021/go.mod h1:prYjPmNq4d1NPVmpShWobRqXY3q7Vp+80DqgxxUrUIA=
-github.com/prologic/bitcask v0.3.9 h1:GuSlzUUiIwyCOV4za7LipfjJC9FV0BgHIGbwOEcssL0=
-github.com/prologic/bitcask v0.3.9/go.mod h1:WQuqL23CGZcC83DhKuXH6KMHe1m25+Eb43s8yM3MnF0=
 github.com/prometheus/client_golang v0.0.0-20180209125602-c332b6f63c06/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=
 github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=
 github.com/prometheus/client_golang v0.9.3-0.20190127221311-3c4408c8b829/go.mod h1:p2iRAGwDERtqlqzRXnrOVns+ignqQo//hLXqYxZYVNs=
