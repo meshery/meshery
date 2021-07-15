@@ -416,8 +416,6 @@ func start() error {
 					Port:    endpoint.External.Port,
 				}, nil) {
 					currCtx.Endpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, u.Hostname(), endpoint.External.Port)
-				} else {
-					return errors.New("unable to discovery the endpoint")
 				}
 			}
 		}
