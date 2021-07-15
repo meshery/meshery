@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var offboradCmd = &cobra.Command{
+var offboardCmd = &cobra.Command{
 	Use:   "offboard",
 	Short: "Offboard application",
 	Long:  `Offboard application will trigger deletion of the applicationß`,
