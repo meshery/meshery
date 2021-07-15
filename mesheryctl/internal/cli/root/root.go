@@ -24,6 +24,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -101,6 +102,7 @@ func init() {
 		pattern.PatternCmd,
 		perf.PerfCmd,
 		mesh.MeshCmd,
+		app.AppCmd,
 		experimental.ExpCmd,
 	}
 
