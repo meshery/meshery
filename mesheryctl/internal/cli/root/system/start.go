@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -399,13 +400,31 @@ func start() error {
 			}
 		}
 
-		if err == nil {
-			currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
-
-			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
-			if err != nil {
-				return err
+		currCtx.Endpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.Internal.Address, endpoint.Internal.Port)
+		if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
+			Address: endpoint.Internal.Address,
+			Port:    endpoint.Internal.Port,
+		}, nil) {
+			currCtx.Endpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port)
+			if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
+				Address: endpoint.External.Address,
+				Port:    endpoint.External.Port,
+			}, nil) {
+				u, _ := url.Parse(opts.APIServerURL)
+				if meshkitutils.TcpCheck(&meshkitutils.HostPort{
+					Address: u.Hostname(),
+					Port:    endpoint.External.Port,
+				}, nil) {
+					currCtx.Endpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, u.Hostname(), endpoint.External.Port)
+				} else {
+					return errors.New("unable to discovery the endpoint")
+				}
 			}
+		}
+
+		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+		if err != nil {
+			return err
 		}
 
 		// switch to default case if the platform specified is not supported

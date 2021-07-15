@@ -61,6 +61,7 @@ const (
 	ErrFetchKubernetesCode      = "2051"
 	ErrPanicRecoveryCode        = "2052"
 	ErrBlankNameCode            = "2053"
+	ErrInvalidLTURLCode         = "2053"
 )
 
 var (
@@ -243,4 +244,8 @@ func ErrPanicRecovery(r interface{}) error {
 
 func ErrFailToLoadExtensions(err error) error {
 	return errors.New(ErrFailToLoadExtensionsCode, errors.Alert, []string{"Failed to Load Extensions from Package"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrInvalidLTURL(url string) error {
+	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid loadtest url: ", url}, []string{}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
 }

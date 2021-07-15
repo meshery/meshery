@@ -620,6 +620,7 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 		logrus.Errorf("unable to get results: %v", err)
 		return "", err
 	}
+	logrus.Info("request: ", cReq)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to send results: %v", err)
