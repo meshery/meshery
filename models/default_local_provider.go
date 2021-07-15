@@ -585,6 +585,12 @@ func (l *DefaultLocalProvider) GetMesheryFilters(req *http.Request, page, pageSi
 	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs)
 }
 
+// GetMesheryFilterFile gets filter for the given filterID without the metadata
+func (l *DefaultLocalProvider) GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(filterID)
+	return l.MesheryFilterPersister.GetMesheryFilterFile(id)
+}
+
 // GetMesheryFilter gets filter for the given filterID
 func (l *DefaultLocalProvider) GetMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)

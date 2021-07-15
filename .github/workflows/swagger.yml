@@ -1,0 +1,16 @@
+name: Open API Specification and Documentation
+on: [push, pull_request]
+jobs:
+  swaggerci:
+    name: swagger-docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup go-swagger
+        uses: minchao/setup-go-swagger@v1
+        with:
+          version: v0.26.1
+      - name: swagger-spec
+        run: swagger generate spec -o ./helpers/swagger.yaml --scan-models
+      - name: swagger-docs
+        run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models

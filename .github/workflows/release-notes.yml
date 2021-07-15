@@ -9,6 +9,7 @@ on:
 
 jobs:
   create_release_notes_pr:
+      if: github.repository == 'meshery/meshery'
       runs-on: ubuntu-latest
       steps:
         - name: Drafting release

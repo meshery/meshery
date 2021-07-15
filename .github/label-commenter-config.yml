@@ -16,7 +16,14 @@ labels:
       issue:
         body: This issue has been labeled with 'component/ui'. 🧰 Here are docs on [Contributing to Meshery UI](https://docs.meshery.io/project/contributing-ui). 🎨 Here is the [Meshery UI Figma File](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI?node-id=4%3A0) File.
         action: open
-
+  - name: component/mesheryctl
+    labeled:
+      issue:
+        body: This issue has been labeled with 'component/mesheryctl'. Note that after making changes you need to update it in the [mesheryctl command tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) spreadsheet.
+        action: open
+      pr:
+        body: This PR has been labeled with 'component/mesheryctl'. Note that after making changes you need to update it in the [mesheryctl command tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) spreadsheet.
+        action: open
       # pr:
       #   body: Hi, please note that this issue will need an approved design specification before implementation proceeds. See [Creating a Functional Specification](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing) to create a design spec.
       #   action: open
