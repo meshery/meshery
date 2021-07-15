@@ -26,6 +26,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -534,4 +535,143 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s.Suffix = " " + suffix
 	s.FinalMSG = finalMsg + "\n"
 	return s
+}
+
+// TransformYAML takes in:
+// 	yamlByt - YAML Byte slice that needs to be modified
+//	path - a "." seperated which can be used to access nested fields (only string keys are supported)
+//	transform - function that will be executed on that value, the returned value will replace the current value
+func TransformYAML(yamlByt []byte, path string, transform func(interface{}) (interface{}, error)) ([]byte, error) {
+	var data map[string]interface{}
+
+	err := yaml.Unmarshal(yamlByt, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	data = RecursiveCastMapStringInterfaceToMapStringInterface(data)
+
+	keys := strings.Split(path, ".")
+
+	val, ok := MapGet(data, keys...)
+	if !ok {
+		return nil, fmt.Errorf("invalid path")
+	}
+
+	transformed, err := transform(val)
+	if err != nil {
+		return nil, err
+	}
+
+	MapSet(data, transformed, keys...)
+
+	return yaml.Marshal(data)
+}
+
+// MapGet takes in the map keys - each key goes one level deeper in the map
+func MapGet(mp map[string]interface{}, key ...string) (interface{}, bool) {
+	if mp == nil {
+		return nil, false
+	}
+
+	if len(key) == 1 {
+		val, ok := mp[key[0]]
+		return val, ok
+	}
+
+	if len(key) > 1 {
+		val, ok := mp[key[0]]
+		if !ok {
+			return nil, false
+		}
+
+		valMap, ok := val.(map[string]interface{})
+		if !ok {
+			return val, false
+		}
+
+		return MapGet(valMap, key[1:]...)
+	}
+
+	return mp, true
+}
+
+// MapSet takes in the map that needs to be manipulated, the value that needs to
+// be assgined to be assigned and the key - each key goes one level deeper in the map
+func MapSet(mp map[string]interface{}, value interface{}, key ...string) {
+	var _mapSet func(map[string]interface{}, interface{}, ...string) map[string]interface{}
+
+	_mapSet = func(mp map[string]interface{}, value interface{}, key ...string) map[string]interface{} {
+		if mp == nil {
+			return nil
+		}
+
+		if len(key) == 0 {
+			return mp
+		}
+
+		if len(key) == 1 {
+			mp[key[0]] = value
+			return mp
+		}
+
+		val, ok := mp[key[0]]
+		if !ok {
+			return mp
+		}
+
+		valMap, ok := val.(map[string]interface{})
+		if !ok {
+			return mp
+		}
+
+		mp[key[0]] = _mapSet(valMap, value, key[1:]...)
+
+		return mp
+	}
+
+	_mapSet(mp, value, key...)
+}
+
+// RecursiveCastMapStringInterfaceToMapStringInterface will convert a
+// map[string]interface{} recursively => map[string]interface{}
+func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface{}) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(in)
+	out, ok := res.(map[string]interface{})
+	if !ok {
+		fmt.Println("failed to cast")
+	}
+
+	return out
+}
+
+// ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
+//
+// It will also convert []interface{} => []string
+func ConvertMapInterfaceMapString(v interface{}) interface{} {
+	switch x := v.(type) {
+	case map[interface{}]interface{}:
+		m := map[string]interface{}{}
+		for k, v2 := range x {
+			switch k2 := k.(type) {
+			case string:
+				m[k2] = ConvertMapInterfaceMapString(v2)
+			default:
+				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2)
+			}
+		}
+		v = m
+
+	case []interface{}:
+		for i, v2 := range x {
+			x[i] = ConvertMapInterfaceMapString(v2)
+		}
+
+	case map[string]interface{}:
+		for k, v2 := range x {
+			x[k] = ConvertMapInterfaceMapString(v2)
+		}
+	}
+
+	return v
 }
