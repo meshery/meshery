@@ -6,36 +6,38 @@ import (
 )
 
 const (
-	ErrGrafanaClientCode        = "3000"
-	ErrPageSizeCode             = "replace_me"
-	ErrPageNumberCode           = "replace_me"
-	ErrResultIDCode             = "replace_me"
-	ErrPerfIDCode               = "replace_me"
-	ErrMarshalCode              = "replace_me"
-	ErrUnmarshalCode            = "replace_me"
-	ErrGenerateUUIDCode         = "replace_me"
-	ErrLocalProviderSupportCode = "replace_me"
-	ErrGrafanaOrgCode           = "replace_me"
-	ErrGrafanaBoardsCode        = "replace_me"
-	ErrGrafanaDashboardCode     = "replace_me"
-	ErrGrafanaDataSourceCode    = "replace_me"
-	ErrNilQueryCode             = "replace_me"
-	ErrGrafanaDataCode          = "replace_me"
-	ErrApplicationFileNameCode  = "replace_me"
-	ErrFilterFileNameCode       = "replace_me"
-	ErrPatternFileNameCode      = "replace_me"
-	ErrMakeDirCode              = "replace_me"
-	ErrFolderStatCode           = "replace_me"
-	ErrUserIDCode               = "replace_me"
-	ErrDBConnectionCode         = "replace_me"
-	ErrNilConfigDataCode        = "replace_me"
-	ErrDBOpenCode               = "replace_me"
-	ErrDBRLockCode              = "replace_me"
-	ErrDBLockCode               = "replace_me"
-	ErrDBReadCode               = "replace_me"
-	ErrDBDeleteCode             = "replace_me"
-	ErrCopyCode                 = "replace_me"
-	ErrDBPutCode                = "replace_me"
+	ErrGrafanaClientCode          = "3000"
+	ErrPageSizeCode               = "replace_me"
+	ErrPageNumberCode             = "replace_me"
+	ErrResultIDCode               = "replace_me"
+	ErrPerfIDCode                 = "replace_me"
+	ErrMarshalCode                = "replace_me"
+	ErrUnmarshalCode              = "replace_me"
+	ErrGenerateUUIDCode           = "replace_me"
+	ErrLocalProviderSupportCode   = "replace_me"
+	ErrGrafanaOrgCode             = "replace_me"
+	ErrGrafanaBoardsCode          = "replace_me"
+	ErrGrafanaDashboardCode       = "replace_me"
+	ErrGrafanaDataSourceCode      = "replace_me"
+	ErrNilQueryCode               = "replace_me"
+	ErrGrafanaDataCode            = "replace_me"
+	ErrApplicationFileNameCode    = "replace_me"
+	ErrFilterFileNameCode         = "replace_me"
+	ErrPatternFileNameCode        = "replace_me"
+	ErrMakeDirCode                = "replace_me"
+	ErrFolderStatCode             = "replace_me"
+	ErrUserIDCode                 = "replace_me"
+	ErrDBConnectionCode           = "replace_me"
+	ErrNilConfigDataCode          = "replace_me"
+	ErrDBOpenCode                 = "replace_me"
+	ErrDBRLockCode                = "replace_me"
+	ErrDBLockCode                 = "replace_me"
+	ErrDBReadCode                 = "replace_me"
+	ErrDBDeleteCode               = "replace_me"
+	ErrCopyCode                   = "replace_me"
+	ErrDBPutCode                  = "replace_me"
+	ErrResultDataCode             = "replace_me"
+	ErrUnableToPersistsResultCode = "replace_me"
 )
 
 var (
@@ -72,6 +74,14 @@ func ErrMarshal(err error, obj string) error {
 
 func ErrUnmarshal(err error, obj string) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the object", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrResultData() error {
+	return errors.New(ErrResultDataCode, errors.Alert, []string{"given result data is nil"}, []string{}, []string{}, []string{})
+}
+
+func ErrUnableToPersistsResult(err error) error {
+	return errors.New(ErrUnableToPersistsResultCode, errors.Alert, []string{"unable to persists the result data"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrGenerateUUID(err error) error {
