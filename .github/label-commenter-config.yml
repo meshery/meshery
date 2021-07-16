@@ -16,6 +16,12 @@ labels:
       issue:
         body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://layer5.io/community/meshmates/) or any other [community member](https://layer5.io/community/members) for assistance.
         action: open
+  - name: issue/dco
+    labeled:
+      issue:
+        body:🚨 Alert! Git Police! We couldn’t help but notice that one or more of your commits is missing a sign-off. A what?, you say? A sign-off?
+        Yes, you can add this signoff to your commit automatically with the -s or --signoff flag to git commit like so `commit -s -m “my commit message w/signoff”`. Find out more about the DCO check [here](https://github.com/probot/dco#how-it-works). 
+        action: open
   - name: component/ui
     labeled:
       issue:
