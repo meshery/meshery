@@ -43,7 +43,6 @@ function capitalize(string) {
 }
 
 
-// const getComponentName = compose(capitalizeMeshmap,capitalize,extractComponentName,getPath);
 
 class Settings extends React.Component {
   
