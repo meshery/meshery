@@ -2,11 +2,14 @@
 package models
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/layer5io/meshkit/errors"
 )
 
 const (
-	ErrGrafanaClientCode          = "3000"
+	ErrGrafanaClientCode          = "replace_me"
 	ErrPageSizeCode               = "replace_me"
 	ErrPageNumberCode             = "replace_me"
 	ErrResultIDCode               = "replace_me"
@@ -36,6 +39,30 @@ const (
 	ErrDBDeleteCode               = "replace_me"
 	ErrCopyCode                   = "replace_me"
 	ErrDBPutCode                  = "replace_me"
+	ErrPrometheusGetNodesCode     = "replace_me"
+	ErrPrometheusLabelSeriesCode  = "replace_me"
+	ErrPrometheusQueryRangeCode   = "replace_me"
+	ErrPrometheusStaticBoardCode  = "replace_me"
+	ErrTokenRefreshCode           = "replace_me"
+	ErrGetTokenCode               = "replace_me"
+	ErrDataReadCode               = "replace_me"
+	ErrTokenDecodeCode            = "replace_me"
+	ErrNilJWKsCode                = "replace_me"
+	ErrNilKeysCode                = "replace_me"
+	ErrTokenExpiredCode           = "replace_me"
+	ErrTokenClaimsCode            = "replace_me"
+	ErrTokenClientCheckCode       = "replace_me"
+	ErrTokenPraseCode             = "replace_me"
+	ErrJWKsKeysCode               = "replace_me"
+	ErrDecodeBase64Code           = "replace_me"
+	ErrMarshalPKIXCode            = "replace_me"
+	ErrEncodingPEMCode            = "replace_me"
+	ErrPraseUnverifiedCode        = "replace_me"
+	ErrEncodingCode               = "replace_me"
+	ErrFetchCode                  = "replace_me"
+	ErrPostCode                   = "replace_me"
+	ErrDeleteCode                 = "replace_me"
+	ErrInvalidCapabilityCode      = "replace_me"
 	ErrResultDataCode             = "replace_me"
 	ErrUnableToPersistsResultCode = "replace_me"
 	ErrValidURLCode               = "replace_me"
@@ -57,6 +84,10 @@ var (
 	ErrUserID               = errors.New(ErrUserIDCode, errors.Alert, []string{"User ID is empty"}, []string{}, []string{}, []string{})
 	ErrDBConnection         = errors.New(ErrDBConnectionCode, errors.Alert, []string{"Connection to DataBase does not exist"}, []string{}, []string{}, []string{})
 	ErrNilConfigData        = errors.New(ErrNilConfigDataCode, errors.Alert, []string{"Given config data is nil"}, []string{}, []string{}, []string{})
+	ErrNilJWKs              = errors.New(ErrNilJWKsCode, errors.Alert, []string{"Invalid JWks"}, []string{"Value of JWKs is nil"}, []string{}, []string{})
+	ErrNilKeys              = errors.New(ErrNilKeysCode, errors.Alert, []string{"Key not found"}, []string{"JWK not found for the given KeyID"}, []string{}, []string{})
+	ErrTokenExpired         = errors.New(ErrTokenExpiredCode, errors.Alert, []string{"Token has expired"}, []string{"Token is invalid, it has expired"}, []string{}, []string{})
+	ErrTokenClaims          = errors.New(ErrTokenClaimsCode, errors.Alert, []string{"Error occurred while prasing claims"}, []string{}, []string{}, []string{})
 	ErrValidURL             = errors.New(ErrValidURLCode, errors.Alert, []string{"Enter valid URLs"}, []string{}, []string{}, []string{})
 	ErrTestEndpoint         = errors.New(ErrTestEndpointCode, errors.Alert, []string{"minimum one test endpoint needs to be specified"}, []string{}, []string{}, []string{})
 	ErrLoadgenerator        = errors.New(ErrLoadgeneratorCode, errors.Alert, []string{"specify valid Loadgenerator"}, []string{}, []string{}, []string{})
@@ -88,6 +119,42 @@ func ErrMarshal(err error, obj string) error {
 
 func ErrUnmarshal(err error, obj string) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the object", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrEncoding(err error, obj string) error {
+	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the object", obj}, []string{err.Error()}, []string{"Unable to encode the : ", obj}, []string{})
+}
+
+func ErrFetch(err error, obj string, statusCode int) error {
+	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+}
+
+func ErrPost(err error, obj string, statusCode int) error {
+	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+}
+
+func ErrDelete(err error, obj string, statusCode int) error {
+	return errors.New(ErrDeleteCode, errors.Alert, []string{"Unable to delete data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+}
+
+func ErrDecodeBase64(err error, obj string) error {
+	return errors.New(ErrDecodeBase64Code, errors.Alert, []string{"Error occurred while decoding base65 string", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrMarshalPKIX(err error) error {
+	return errors.New(ErrMarshalPKIXCode, errors.Alert, []string{"Error occurred while marshaling PKIX"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrEncodingPEM(err error) error {
+	return errors.New(ErrEncodingPEMCode, errors.Alert, []string{"Error occurred while encoding jwk to pem"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPraseUnverified(err error) error {
+	return errors.New(ErrPraseUnverifiedCode, errors.Alert, []string{"Error occurred while prasing tokens (unverified)"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDataRead(err error, r string) error {
+	return errors.New(ErrDataReadCode, errors.Alert, []string{"Eeror occurred while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrResultData() error {
@@ -156,4 +223,48 @@ func ErrDBDelete(err error, user string) error {
 
 func ErrCopy(err error, obj string) error {
 	return errors.New(ErrCopyCode, errors.Alert, []string{"Error occurred while copying", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPrometheusGetNodes(err error) error {
+	return errors.New(ErrPrometheusGetNodesCode, errors.Alert, []string{"Prometheus Client unable to get all nodes"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPrometheusStaticBoard(err error) error {
+	return errors.New(ErrPrometheusStaticBoardCode, errors.Alert, []string{"Unbale to get Static Boards"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPrometheusLabelSeries(err error) error {
+	return errors.New(ErrPrometheusLabelSeriesCode, errors.Alert, []string{"Unable to get the label set series"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPrometheusQueryRange(err error, query string, startTime, endTime time.Time, step time.Duration) error {
+	return errors.New(ErrPrometheusQueryRangeCode, errors.Alert, []string{"Unable to fetch data for the query", fmt.Sprintf("Query: %s, with start: %v, end: %v, step: %v", query, startTime, endTime, step)}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenRefresh(err error) error {
+	return errors.New(ErrTokenRefreshCode, errors.Alert, []string{"Error occurred while Refresing the token"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGetToken(err error) error {
+	return errors.New(ErrGetTokenCode, errors.Alert, []string{"Error occurred while getting token from the Browser Cookie"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenDecode(err error) error {
+	return errors.New(ErrTokenDecodeCode, errors.Alert, []string{"Error occurred while Decoding Token Data"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenClientCheck(err error) error {
+	return errors.New(ErrTokenClientCheckCode, errors.Alert, []string{"Error occurred while performing token check HTTP request"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenPrase(err error) error {
+	return errors.New(ErrTokenPraseCode, errors.Alert, []string{"Error occurred while Prasing and validating the token"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrJWKsKeys(err error) error {
+	return errors.New(ErrJWKsKeysCode, errors.Alert, []string{"Unable to fetch JWKs keys from the remote provider"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrInvalidCapability(capability string, provider string) error {
+	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capablity is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
 }
