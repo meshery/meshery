@@ -1,10 +1,12 @@
+/* eslint-disable no-unused-vars */
+
 import Extension from "../../components/NavigatorExtension";
-import ExtensionSandbox from "../../components/ExtensionSandbox"
+import ExtensionSandbox, { getCapabilities, getComponentTitleFromPathForNavigator } from "../../components/ExtensionSandbox"
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
-import { bindActionCreators, compose } from "redux";
+import { bindActionCreators} from "redux";
 
  
 /**
@@ -40,29 +42,30 @@ function capitalize(string) {
   return "";
 }
 
-/**
-  * converts "Meshmap" to "MeshMap"
-  *
-  * @param {string} string
-  *
-  * @returns {string}
-*/
-const capitalizeMeshmap = (string) => string == "Meshmap" ? "MeshMap" : string;
 
-const getComponentName = compose(capitalizeMeshmap,capitalize,extractComponentName,getPath);
+// const getComponentName = compose(capitalizeMeshmap,capitalize,extractComponentName,getPath);
 
 class Settings extends React.Component {
+  
+  state = {
+    componentTitle : ""
+  }  
+
   componentDidMount() {
+    getCapabilities("navigator", extensions => {
+      this.setState({componentTitle: getComponentTitleFromPathForNavigator(extensions, getPath())})
+      this.props.updatepagetitle({ title: getComponentTitleFromPathForNavigator(extensions, getPath()) });
+    })
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path: getPath() });
-    this.props.updatepagetitle({ title: getComponentName() });
+
   }
 
   render() {
     return (
       <NoSsr>
         <Head>
-          <title>{getComponentName()}</title>
+          <title>{this.state.componentTitle ? this.state.componentTitle : ""}</title>
         </Head>
         <NoSsr>
           <ExtensionSandbox type="navigator" Extension={Extension} />
