@@ -17,6 +17,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var (
+	flusherMap map[string]http.Flusher
+)
+
 // EventStreamHandler endpoint is used for streaming events to the frontend
 func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
 	// if req.Method != http.MethodGet {
@@ -25,8 +29,17 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	// }
 
 	log := logrus.WithField("file", "events_streamer")
+	client := "ui"
+	if req.URL.Query().Get("client") != "" {
+		client = req.URL.Query().Get("client")
+	}
+
+	if flusherMap == nil {
+		flusherMap = make(map[string]http.Flusher, 0)
+	}
 
 	flusher, ok := w.(http.Flusher)
+	flusherMap[client] = flusher
 
 	if !ok {
 		log.Error("Event streaming not supported.")
@@ -62,7 +75,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		log.Debug("new adapters channel closed")
 	}()
 
-	go func() {
+	go func(flusher http.Flusher) {
 		for data := range respChan {
 			log.Debug("received new data on response channel")
 			_, _ = fmt.Fprintf(w, "data: %s\n\n", data)
@@ -72,7 +85,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 			}
 		}
 		log.Debug("response channel closed")
-	}()
+	}(flusherMap[client])
 
 STOP:
 	for {
