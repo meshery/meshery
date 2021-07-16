@@ -29,12 +29,11 @@ var tokenCmd = &cobra.Command{
 
 var addTokenCmd = &cobra.Command{
 	Use:   "add",
-	Short: "Add a token to config.yaml",
-	Long: `
+	Short: "Add a token to meshery config",
+	Example: `
 	mesheryctl system token add <token-name> -f <token-path>
 	mesheryctl system token add <token-name> (default path is auth.json)
-	
-	Add a token in meshery config.`,
+	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
@@ -56,10 +55,9 @@ var addTokenCmd = &cobra.Command{
 var deleteTokenCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a token from meshery config",
-	Long: `
+	Example: `
 	mesheryctl system token delete <token-name>
-	
-	Delete token from meshery config`,
+	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
@@ -78,10 +76,11 @@ var deleteTokenCmd = &cobra.Command{
 var setTokenCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set token for context",
-	Long: `
+	Long:  "Set Token for current context or context passed with --context flag.",
+	Example: `
 	mesheryctl system token set <token-name> 
 
-	Set Token for current context or context passed with --context flag.`,
+	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
@@ -100,10 +99,10 @@ var setTokenCmd = &cobra.Command{
 var listTokenCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List tokens",
-	Long: `
+	Long:  "List all the tokens in meshery config",
+	Example: `
 	mesheryctl system token list
-	
-	List all the tokens in meshery config`,
+	`,
 	Args: cobra.ExactArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		configPath := utils.DefaultConfigPath
@@ -130,12 +129,12 @@ var listTokenCmd = &cobra.Command{
 }
 var viewTokenCmd = &cobra.Command{
 	Use:   "view",
-	Short: "View token in meshery config",
-	Long: `
+	Short: "View token",
+	Long:  "View a specific token in meshery config",
+	Example: `
 	mesheryctl system token view <token-name>
 	mesheryctl system token view (show token of current context)
-	
-	View a specific token in meshery config`,
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := ""
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
