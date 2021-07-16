@@ -506,6 +506,35 @@ func AskForInput(prompt string, allowed []string) string {
 	}
 }
 
+// ParseURLGithub checks URL and returns raw repo, path, error
+func ParseURLGithub(URL string) (string, string, error) {
+	// GitHub URL:
+	// - https://github.com/layer5io/meshery/blob/master/.goreleaser.yml
+	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
+	parsedURL, err := url.Parse(URL)
+	if err != nil {
+		return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+	}
+	host := parsedURL.Host
+	path := parsedURL.Path
+	path = strings.Replace(path, "/blob/", "/", 1)
+	paths := strings.Split(path, "/")
+	if host == "github.com" {
+		if len(paths) < 5 {
+			return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+		}
+		resURL := "https://" + host + strings.Join(paths[:4], "/")
+		return resURL, strings.Join(paths[4:], "/"), nil
+	} else if host == "raw.githubusercontent.com" {
+		if len(paths) < 5 {
+			return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+		}
+		resURL := "https://" + "raw.githubusercontent.com" + path
+		return resURL, "", nil
+	}
+	return URL, "", errors.New("only github urls are supported")
+}
+
 // PrintToTableInStringFormat prints the given data into a table format but return as a string
 func PrintToTableInStringFormat(header []string, data [][]string) string {
 	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`

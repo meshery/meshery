@@ -18624,7 +18624,15 @@ footer {
         visibility: hidden
     }
 }
-
+@media(max-width: 62rem){
+    html,body{
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden; 
+}
+}
 .footer-icons-list{
     display:flex;
     justify-content: center;
@@ -18770,4 +18778,32 @@ footer {
 .caption {
     display: block;
     font-weight: bold;
+}
+/* mobile responisness for video*/
+
+@media(min-width:1rem) and (max-width:19.9rem){
+    .videoTest{
+        position: relative;
+        width:285px;
+    }
+}
+@media(min-width:20rem ) and (max-width:34.09rem) {
+    .videoTest{
+        position: relative;
+        width:345px;
+
+    }
+}
+@media (min-width:34.1rem) and (max-width:38.3rem){
+    .videoTest{
+        position: relative;
+        width:450px;
+    }
+}
+
+@media (min-width:38.4rem) and (max-width:62rem){
+    .videoTest{
+        position: relative;
+        width:600px;
+    }
 }
