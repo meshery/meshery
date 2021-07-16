@@ -58,6 +58,11 @@ const (
 	ErrMarshalPKIXCode           = "replace_me"
 	ErrEncodingPEMCode           = "replace_me"
 	ErrPraseUnverifiedCode       = "replace_me"
+	ErrEncodingCode              = "replace_me"
+	ErrFetchCode                 = "replace_me"
+	ErrPostCode                  = "replace_me"
+	ErrDeleteCode                = "replace_me"
+	ErrInvalidCapabilityCode     = "replace_me"
 )
 
 var (
@@ -98,6 +103,22 @@ func ErrMarshal(err error, obj string) error {
 
 func ErrUnmarshal(err error, obj string) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the object", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrEncoding(err error, obj string) error {
+	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the object", obj}, []string{err.Error()}, []string{"Unable to encode the : ", obj}, []string{})
+}
+
+func ErrFetch(err error, obj string, statusCode int) error {
+	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+}
+
+func ErrPost(err error, obj string, statusCode int) error {
+	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+}
+
+func ErrDelete(err error, obj string, statusCode int) error {
+	return errors.New(ErrDeleteCode, errors.Alert, []string{"Unable to delete data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
 }
 
 func ErrDecodeBase64(err error, obj string) error {
@@ -218,4 +239,8 @@ func ErrTokenPrase(err error) error {
 
 func ErrJWKsKeys(err error) error {
 	return errors.New(ErrJWKsKeysCode, errors.Alert, []string{"Unable to fetch JWKs keys from the remote provider"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrInvalidCapability(capability string, provider string) error {
+	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capablity is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
 }

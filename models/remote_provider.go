@@ -23,7 +23,6 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
@@ -198,7 +197,7 @@ func (l *RemoteProvider) SyncPreferences() {
 func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
-		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
+		http.Error(w, ErrEncoding(err, "Provider Capablity").Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -220,7 +219,7 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 
 	bd, err := json.Marshal(sess)
 	if err != nil {
-		logrus.Errorf("unable to marshal preference data: %v", err)
+		logrus.Error(ErrMarshal(err, "preference data"))
 		return
 	}
 
@@ -272,16 +271,14 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 
 	resp, err := l.DoRequest(req, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to fetch user data: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "User Data", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bd, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "User Data")
 	}
 
 	up := &UserPref{
@@ -292,8 +289,7 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 	}
 	err = json.Unmarshal(bd, up)
 	if err != nil {
-		logrus.Errorf("unable to unmarshal user: %v", err)
-		return nil, err
+		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
 	prefLocal, _ := l.ReadFromPersister(up.UserID)
@@ -326,8 +322,7 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 func (l *RemoteProvider) GetSession(req *http.Request) error {
 	ts, err := l.GetToken(req)
 	if err != nil || ts == "" {
-		err = fmt.Errorf("session not found")
-		logrus.Infof(err.Error())
+		logrus.Infof("session not found")
 		return err
 	}
 
@@ -336,8 +331,7 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		logrus.Infof("Token validation error : %v", err.Error())
 		newts, err := l.refreshToken(ts)
 		if err != nil {
-			logrus.Errorf("Token Refresh failed : %v", err.Error())
-			return err
+			return ErrTokenRefresh(err)
 		}
 		_, err = l.VerifyToken(newts)
 		if err != nil {
@@ -373,8 +367,8 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 // FetchResults - fetches results for profile id from provider backend
 func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search, order, profileID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
-		logrus.Error("operation not available")
-		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("PersistPerformanceProfiles", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
@@ -402,21 +396,18 @@ func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search,
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get results: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get results: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Perf Results", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Result")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -424,14 +415,14 @@ func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search,
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching results: %s", bdr)
-	return nil, fmt.Errorf("error while fetching results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // FetchAllResults - fetches results from provider backend
 func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistResults) {
 		logrus.Error("operation not available")
-		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistResults, l.ProviderName)
+		return []byte{}, ErrInvalidCapability("Persist Results", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistResults)
@@ -465,21 +456,18 @@ func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, sear
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get results: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get results: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "All Perf results", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "All Perf results")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -487,14 +475,14 @@ func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, sear
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching results: %s", bdr)
-	return nil, fmt.Errorf("error while fetching results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // FetchSmiResults - fetches results from provider backend
 func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistSMIResults) {
 		logrus.Error("operation not available")
-		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistSMIResults, l.ProviderName)
+		return []byte{}, ErrInvalidCapability("PersistSMIResults", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResults)
@@ -520,13 +508,11 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get token: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get smi results: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "SMI Result", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -534,22 +520,21 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "SMI Result")
 	}
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("results successfully retrieved from remote provider")
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching smi results: %s", bdr)
-	return nil, fmt.Errorf("error while fetching smi results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, "SMI Result", resp.StatusCode)
 }
 
 // GetResult - fetches result from provider backend for the given result id
 func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
 	if !l.Capabilities.IsSupported(PersistResult) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistResult, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistResult", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistResult)
@@ -562,21 +547,19 @@ func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*Mesh
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get results: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to get results: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Perf Result "+resultID.String(), resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Result "+resultID.String())
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -585,27 +568,26 @@ func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*Mesh
 		err = json.Unmarshal(bdr, res)
 		if err != nil {
 			logrus.Errorf("unable to unmarshal meshery result: %v", err)
-			return nil, err
+			return nil, ErrUnmarshal(err, "Perf Result "+resultID.String())
 		}
 		return res, nil
 	}
 	logrus.Errorf("error while fetching result: %s", bdr)
-	return nil, fmt.Errorf("error while getting result - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // PublishResults - publishes results to the provider backend synchronously
 func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
 		logrus.Error("operation not available")
-		return "", fmt.Errorf("%s is not supported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+		return "", ErrInvalidCapability("PersistPerformanceProfiles", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
 
 	data, err := json.Marshal(result)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
-		return "", err
+		return "", ErrMarshal(err, "meshery metrics for shipping")
 	}
 
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
@@ -617,13 +599,12 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get results: %v", err)
 		return "", err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to send results: %v", err)
-		return "", err
+		return "", ErrPost(err, "Perf Results", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -632,14 +613,13 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
-		return "", err
+		return "", ErrDataRead(err, "Perf Result")
 	}
 	if resp.StatusCode == http.StatusCreated {
 		logrus.Infof("results successfully published to remote provider")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
-			logrus.Errorf("unable to unmarshal body: %v", err)
-			return "", err
+			return "", ErrUnmarshal(err, "Perf Result")
 		}
 		resultID, ok := idMap["id"]
 		if ok {
@@ -648,22 +628,21 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 		return "", nil
 	}
 	logrus.Errorf("error while sending results: %s", bdr)
-	return "", fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return "", ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // PublishSmiResults - publishes results to the provider backend synchronously
 func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	if !l.Capabilities.IsSupported(PersistSMIResult) {
 		logrus.Error("operation not available")
-		return "", fmt.Errorf("%s is not supported by provider: %s", PersistSMIResult, l.ProviderName)
+		return "", ErrInvalidCapability("PersistSMIResult", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResult)
 
 	data, err := json.Marshal(result)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
-		return "", err
+		return "", ErrMarshal(err, "meshery metrics for shipping")
 	}
 
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
@@ -675,8 +654,7 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	tokenString := viper.GetString("opt-token")
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to send results: %v", err)
-		return "", err
+		return "", ErrPost(err, "SMI Result", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -684,15 +662,13 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return "", err
+		return "", ErrDataRead(err, "SMI Result")
 	}
 	if resp.StatusCode == http.StatusCreated {
 		logrus.Infof("results successfully published to remote provider")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
-			logrus.Errorf("unable to unmarshal body: %v", err)
-			return "", err
+			return "", ErrUnmarshal(err, "idMap")
 		}
 		resultID, ok := idMap["id"]
 		if ok {
@@ -700,23 +676,21 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 		}
 		return "", nil
 	}
-	logrus.Errorf("error while sending results: %s", bdr)
-	return "", fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return "", ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
 func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResult) error {
 	if !l.Capabilities.IsSupported(PersistMetrics) {
 		logrus.Error("operation not available")
-		return fmt.Errorf("%s is not supported by provider: %s", PersistMetrics, l.ProviderName)
+		return ErrInvalidCapability("PersistMetrics", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMetrics)
 
 	data, err := json.Marshal(result)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
-		return err
+		return ErrMarshal(err, "meshery metrics for shipping")
 	}
 
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
@@ -734,7 +708,7 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to send metrics: %v", err)
-		return err
+		return ErrPost(err, "metrics", resp.StatusCode)
 	}
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("metrics successfully published to remote provider")
@@ -745,25 +719,23 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return err
+		return ErrDataRead(err, "metrics Data")
 	}
 	logrus.Errorf("error while sending metrics: %s", bdr)
-	return fmt.Errorf("error while sending metrics - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryPatternResources, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryPatternResources", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
 
 	data, err := json.Marshal(resource)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery pattern resource"))
-		return nil, err
+		return nil, ErrMarshal(err, "meshery pattern resource")
 	}
 
 	logrus.Debugf("Pattern Resource: %s, size: %d", data, len(data))
@@ -774,14 +746,13 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 	logrus.Debugf("saving pattern to remote provider - constructed URL: %s", remoteProviderURL.String())
 	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	if err != nil {
-		logrus.Errorf("unable to persist pattern resource: %v", err)
 		return nil, err
 	}
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		logrus.Errorf("unable to send pattern resource: %v", err)
-		return nil, err
+		return nil, ErrPost(err, "pattern", cReq.Response.StatusCode)
 	}
 
 	defer func() {
@@ -791,22 +762,20 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 	if resp.StatusCode == http.StatusOK {
 		var pr PatternResource
 		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
-			logrus.Errorf("unable to read response body: %v", err)
-			return nil, err
+			return nil, ErrUnmarshal(err, "Pattern Resource")
 		}
 
 		logrus.Infof("pattern successfully sent to remote provider: %+v", pr)
 		return &pr, nil
 	}
 
-	logrus.Errorf("error while sending pattern resource: %+v", resource)
-	return nil, fmt.Errorf("error while sending pattern resource - Status code: %d, Body: %+v", resp.StatusCode, string(data))
+	return nil, ErrPost(err, fmt.Sprint(resp.Body), resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*PatternResource, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatternResources, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryPatternResources", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
@@ -819,8 +788,7 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		logrus.Errorf("unable to get patterns: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Pattern Resource", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -829,8 +797,7 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 	if resp.StatusCode == http.StatusOK {
 		var pr PatternResource
 		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
-			logrus.Errorf("unable to read response body: %v", err)
-			return nil, err
+			return nil, ErrUnmarshal(err, "Pattern resource")
 		}
 
 		logrus.Infof("pattern resource successfully retrieved from remote provider")
@@ -839,12 +806,11 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Pattern Resource")
 	}
 
 	logrus.Errorf("error while fetching pattern resource: %s", bdr)
-	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetMesheryPatternResources(
@@ -900,7 +866,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		logrus.Errorf("unable to get pattern resource: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Patterns Page Resource", resp.StatusCode)
 	}
 
 	defer func() {
@@ -911,7 +877,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 		var pr PatternResourcePage
 		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
 			logrus.Errorf("unable to read response body: %v", err)
-			return nil, err
+			return nil, ErrUnmarshal(err, "Patterns Page Resource")
 		}
 
 		logrus.Infof("pattern resources successfully retrieved from remote provider")
@@ -920,18 +886,16 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Patterns Page Resource")
 	}
 
 	logrus.Errorf("error while fetching pattern resource: %s", bdr)
-	return nil, fmt.Errorf("error while fetching pattern resource - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) DeleteMesheryResource(token, resourceID string) error {
 	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
-		logrus.Error("operation not available")
-		return fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatternResources, l.ProviderName)
+		return ErrInvalidCapability("PersistMesheryPatternResources", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
@@ -944,8 +908,7 @@ func (l *RemoteProvider) DeleteMesheryResource(token, resourceID string) error {
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		logrus.Errorf("unable to get patterns: %v", err)
-		return err
+		return ErrDelete(err, "pattern: "+resourceID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -957,13 +920,12 @@ func (l *RemoteProvider) DeleteMesheryResource(token, resourceID string) error {
 	}
 
 	logrus.Errorf("error while deleting pattern resource")
-	return fmt.Errorf("error while deleting pattern resource - Status code: %d", resp.StatusCode)
+	return ErrDelete(err, "pattern: "+resourceID, resp.StatusCode)
 }
 
 // SaveMesheryPattern saves given pattern with the provider
 func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
-		logrus.Error("operation not available")
 		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryPatterns, l.ProviderName)
 	}
 
@@ -975,7 +937,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	})
 
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
 	}
 
@@ -1158,7 +1120,7 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryPatterns, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryPatterns", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
@@ -1170,8 +1132,8 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 	})
 
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
-		return nil, err
+		err = ErrMarshal(err, "meshery metrics for shipping")
+		return nil, ErrMarshal(err, "meshery metrics for shipping")
 	}
 
 	logrus.Debugf("Pattern: %s, size: %d", data, len(data))
@@ -1182,19 +1144,17 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
 	if err != nil {
-		logrus.Errorf("unable to get pattern: %v", err)
 		return nil, err
 	}
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to send patterns: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to send pattern: %v", err)
-		return nil, err
+		return nil, ErrPost(err, "Pattern File", resp.StatusCode)
 	}
 
 	defer func() {
@@ -1202,8 +1162,7 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Pattern File")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -1211,15 +1170,14 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending pattern: %s", bdr)
-	return bdr, fmt.Errorf("error while sending pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SaveMesheryFilter saves given filter with the provider
 func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryFilters, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
@@ -1230,8 +1188,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	})
 
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
-		return nil, err
+		return nil, ErrMarshal(err, "meshery metrics for shipping")
 	}
 
 	logrus.Debugf("Filter: %s, size: %d", data, len(data))
@@ -1242,13 +1199,12 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
 	if err != nil {
-		logrus.Errorf("unable to get filter: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to send filter: %v", err)
-		return nil, err
+		return nil, ErrPost(err, "Filters", resp.StatusCode)
 	}
 
 	defer func() {
@@ -1256,8 +1212,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Filters")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -1265,15 +1220,14 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending filter: %s", bdr)
-	return bdr, fmt.Errorf("error while sending filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetMesheryFilters gives the filters stored with the provider
 func (l *RemoteProvider) GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
-		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryFilters, l.ProviderName)
+		return []byte{}, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
@@ -1300,22 +1254,19 @@ func (l *RemoteProvider) GetMesheryFilters(req *http.Request, page, pageSize, se
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get filters: %v", err)
 		return nil, err
 	}
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get filters: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Filter Page", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Filter Page")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -1323,14 +1274,14 @@ func (l *RemoteProvider) GetMesheryFilters(req *http.Request, page, pageSize, se
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching filters: %s", bdr)
-	return nil, fmt.Errorf("error while fetching filters - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, "Filters page", resp.StatusCode)
 }
 
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
 func (l *RemoteProvider) GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryFilters, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
@@ -1343,36 +1294,33 @@ func (l *RemoteProvider) GetMesheryFilterFile(req *http.Request, filterID string
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get filters: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to get filters: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Filter File: "+filterID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Filter File: "+filterID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("filter successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching filter: %s", bdr)
-	return nil, fmt.Errorf("error while getting filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetMesheryFilter gets filter for the given filterID
 func (l *RemoteProvider) GetMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryFilters, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
@@ -1385,36 +1333,32 @@ func (l *RemoteProvider) GetMesheryFilter(req *http.Request, filterID string) ([
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get filters: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get filters: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Filter:"+filterID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Filter:"+filterID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("filter successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching filter: %s", bdr)
-	return nil, fmt.Errorf("error while getting filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeleteMesheryFilter deletes a meshery filter with the given id
 func (l *RemoteProvider) DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryFilters, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
@@ -1427,21 +1371,19 @@ func (l *RemoteProvider) DeleteMesheryFilter(req *http.Request, filterID string)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get filters: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to get filters: %v", err)
-		return nil, err
+		return nil, ErrDelete(err, "Filter: "+filterID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Filter: "+filterID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -1449,13 +1391,13 @@ func (l *RemoteProvider) DeleteMesheryFilter(req *http.Request, filterID string)
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching filter: %s", bdr)
-	return nil, fmt.Errorf("error while getting filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrDelete(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryFilters, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
@@ -1467,7 +1409,7 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	})
 
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
 	}
 
@@ -1479,19 +1421,16 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
 	if err != nil {
-		logrus.Errorf("unable to get filter: %v", err)
 		return nil, err
 	}
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to send filters: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to send filter: %v", err)
-		return nil, err
+		return nil, ErrPost(err, "Filter File", resp.StatusCode)
 	}
 
 	defer func() {
@@ -1499,8 +1438,7 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Filter file")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -1508,15 +1446,14 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending filter: %s", bdr)
-	return bdr, fmt.Errorf("error while sending filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SaveMesheryApplication saves given application with the provider
 func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryApplications, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
@@ -1527,7 +1464,7 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 	})
 
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
 	}
 
@@ -1539,13 +1476,11 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
 	if err != nil {
-		logrus.Errorf("unable to get application: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to send application: %v", err)
-		return nil, err
+		return nil, ErrPost(err, "Application", resp.StatusCode)
 	}
 
 	defer func() {
@@ -1553,8 +1488,7 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Application")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -1562,15 +1496,14 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending application: %s", bdr)
-	return bdr, fmt.Errorf("error while sending application - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetMesheryApplications gives the applications stored with the provider
 func (l *RemoteProvider) GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
-		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryApplications, l.ProviderName)
+		return []byte{}, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
@@ -1597,14 +1530,13 @@ func (l *RemoteProvider) GetMesheryApplications(req *http.Request, page, pageSiz
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get applications: %v", err)
 		return nil, err
 	}
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to get applications: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Application", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -1612,7 +1544,7 @@ func (l *RemoteProvider) GetMesheryApplications(req *http.Request, page, pageSiz
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Application")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -1620,14 +1552,14 @@ func (l *RemoteProvider) GetMesheryApplications(req *http.Request, page, pageSiz
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching applications: %s", bdr)
-	return nil, fmt.Errorf("error while fetching applications - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetMesheryApplication gets application for the given applicationID
 func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryApplications, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
@@ -1640,36 +1572,32 @@ func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID 
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get applications: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get applications: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Application: "+applicationID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Application: "+applicationID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("application successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching application: %s", bdr)
-	return nil, fmt.Errorf("error while getting application - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeleteMesheryApplication deletes a meshery application with the given id
 func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryApplications, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
@@ -1682,35 +1610,31 @@ func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, application
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get applications: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get applications: %v", err)
-		return nil, err
+		return nil, ErrDelete(err, "Application :"+applicationID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Application :"+applicationID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("application successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching application: %s", bdr)
-	return nil, fmt.Errorf("error while getting application - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrDelete(err, "Application :"+applicationID, resp.StatusCode)
 }
 
 func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryApplications, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
@@ -1722,7 +1646,7 @@ func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, p
 	})
 
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
 	}
 
@@ -1734,19 +1658,16 @@ func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, p
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
 	if err != nil {
-		logrus.Errorf("unable to get application: %v", err)
 		return nil, err
 	}
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to send applications: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to send application: %v", err)
-		return nil, err
+		return nil, ErrPost(err, "Application", resp.StatusCode)
 	}
 
 	defer func() {
@@ -1754,8 +1675,7 @@ func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, p
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Application")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -1763,22 +1683,21 @@ func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, p
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending application: %s", bdr)
-	return bdr, fmt.Errorf("error while sending application - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SavePerformanceProfile saves a performance profile into the remote provider
 func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *PerformanceProfile) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistPerformanceProfiles", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
 
 	data, err := json.Marshal(pp)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
 	}
 
@@ -1790,13 +1709,11 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
 	if err != nil {
-		logrus.Errorf("unable to get performance profile: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to send performance profile: %v", err)
-		return nil, err
+		return nil, ErrPost(err, "Perf Profile", resp.StatusCode)
 	}
 
 	defer func() {
@@ -1804,8 +1721,7 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Profile")
 	}
 
 	if resp.StatusCode == http.StatusCreated {
@@ -1813,15 +1729,14 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending performance profile: %s", bdr)
-	return bdr, fmt.Errorf("error while sending performance profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
 func (l *RemoteProvider) GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
 		logrus.Error("operation not available")
-		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+		return []byte{}, ErrInvalidCapability("PersistPerformanceProfiles", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
@@ -1848,37 +1763,33 @@ func (l *RemoteProvider) GetPerformanceProfiles(req *http.Request, page, pageSiz
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get performance profiles: %v", err)
 		return nil, err
 	}
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get performance profiles: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Perf Profile Page", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Profile Page")
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("performance profiles successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching performance profiles: %s", bdr)
-	return nil, fmt.Errorf("error while fetching performance profiles - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetPerformanceProfile gets performance profile for the given the performanceProfileID
 func (l *RemoteProvider) GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistPerformanceProfiles", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
@@ -1891,36 +1802,33 @@ func (l *RemoteProvider) GetPerformanceProfile(req *http.Request, performancePro
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get performance profiles: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to get performance profiles: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Perf Profile :"+performanceProfileID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Profile :"+performanceProfileID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("performance profile successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching performance profile: %s", bdr)
-	return nil, fmt.Errorf("error while getting performance profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeletePerformanceProfile deletes a performance profile with the given performanceProfileID
 func (l *RemoteProvider) DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistPerformanceProfiles", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
@@ -1933,44 +1841,39 @@ func (l *RemoteProvider) DeletePerformanceProfile(req *http.Request, performance
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to delete performance profiles: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to delete performance profiles: %v", err)
-		return nil, err
+		return nil, ErrDelete(err, "Perf Profile :"+performanceProfileID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Profile :"+performanceProfileID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("performance profile successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching performance profile: %s", bdr)
-	return nil, fmt.Errorf("error while getting performance profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrDelete(err, "Perf Profile :"+performanceProfileID, resp.StatusCode)
 }
 
 // SaveSchedule saves a SaveSchedule into the remote provider
 func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistSchedules) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistSchedules, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistSchedules", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSchedules)
 
 	data, err := json.Marshal(s)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal schedule for shipping"))
-		return nil, err
+		return nil, ErrMarshal(err, "schedule for shipping")
 	}
 
 	logrus.Debugf("schedule: %s, size: %d", data, len(data))
@@ -1981,13 +1884,12 @@ func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, 
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
 	if err != nil {
-		logrus.Errorf("unable to get schedule: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to send schedule: %v", err)
-		return nil, err
+		return nil, ErrPost(err, "Perf Schedule", resp.StatusCode)
 	}
 
 	defer func() {
@@ -1995,8 +1897,7 @@ func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, 
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Schedule")
 	}
 
 	if resp.StatusCode == http.StatusCreated {
@@ -2004,15 +1905,14 @@ func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, 
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending schedule: %s", bdr)
-	return bdr, fmt.Errorf("error while sending schedule - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetSchedules gives the schedules stored with the provider
 func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistSchedules) {
 		logrus.Error("operation not available")
-		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistSchedules, l.ProviderName)
+		return []byte{}, ErrInvalidCapability("PersistSchedules", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSchedules)
@@ -2036,22 +1936,19 @@ func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order s
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get schedules: %v", err)
 		return nil, err
 	}
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get schedules: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Perf Schedule Page", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Schedule Page")
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -2059,14 +1956,14 @@ func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order s
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching schedules: %s", bdr)
-	return nil, fmt.Errorf("error while fetching schedules - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetSchedule gets schedule for the given the scheduleID
 func (l *RemoteProvider) GetSchedule(req *http.Request, scheduleID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistSchedules) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistSchedules, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistSchedules", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSchedules)
@@ -2079,36 +1976,32 @@ func (l *RemoteProvider) GetSchedule(req *http.Request, scheduleID string) ([]by
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get schedules: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get schedules: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Perf Schedule :"+scheduleID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Schedule :"+scheduleID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("schedule successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching schedule: %s", bdr)
-	return nil, fmt.Errorf("error while getting schedule - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeleteSchedule deletes a schedule with the given scheduleID
 func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistSchedules) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistSchedules, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistSchedules", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSchedules)
@@ -2121,36 +2014,33 @@ func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to delete schedules: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to delete schedules: %v", err)
-		return nil, err
+		return nil, ErrDelete(err, "Perf Schedule :"+scheduleID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Schedule :"+scheduleID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("schedule successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching schedule: %s", bdr)
-	return nil, fmt.Errorf("error while getting schedule - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrDelete(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // RecordPreferences - records the user preference
 func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
 	if !l.Capabilities.IsSupported(SyncPrefs) {
 		logrus.Error("operation not available")
-		return fmt.Errorf("%s is not supported by provider: %s", SyncPrefs, l.ProviderName)
+		return ErrInvalidCapability("SyncPrefs", l.ProviderName)
 	}
 	if err := l.BitCaskPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err
@@ -2226,8 +2116,9 @@ func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 	}
 	logrus.Debugf("encoded response : %v", resp)
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		logrus.Errorf("Unable to extract auth details: %v", err)
-		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)
+		err = ErrEncoding(err, "Auth Details")
+		logrus.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -2235,15 +2126,14 @@ func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
 	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
 		logrus.Error("operation not available")
-		return "", fmt.Errorf("%s is not supported by provider: %s", PersistSMPTestProfile, l.ProviderName)
+		return "", ErrInvalidCapability("PersistSMPTestProfile", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
 
 	data, err := json.Marshal(perfConfig)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal testConfig for shipping"))
-		return "", err
+		return "", ErrMarshal(err, "testConfig for shipping")
 	}
 
 	bf := bytes.NewBuffer(data)
@@ -2252,13 +2142,12 @@ func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.P
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get token: %v", err)
 		return "", err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to send testConfig: %v", err)
-		return "", err
+		return "", ErrPost(err, "Perf Test Config", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -2268,15 +2157,14 @@ func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.P
 	if resp.StatusCode == http.StatusCreated || err != nil {
 		return string(bdr), err
 	}
-	logrus.Errorf("error while sending testConfig: %s", bdr)
-	return "", fmt.Errorf("error while sending testConfig - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return "", ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SMPTestConfigGet - retrieve a single test profile details
 func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
 	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistSMPTestProfile, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistSMPTestProfile", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
@@ -2289,13 +2177,11 @@ func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get token: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get testConfig: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Perf Test Config: "+testUUID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -2303,8 +2189,7 @@ func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*
 
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("error sending the request: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Perf Test Config :"+testUUID)
 	}
 	logrus.Debugf("%v", string(bdr))
 	if resp.StatusCode == http.StatusOK {
@@ -2315,15 +2200,14 @@ func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*
 		}
 		return &testConfig, nil
 	}
-	logrus.Errorf("error while getting testConfig: %s", bdr)
-	return nil, fmt.Errorf("error while getting testConfig - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SMPTestConfigFetch - retrieve list of test profiles
 func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
 		logrus.Error("operation not available")
-		return []byte{}, fmt.Errorf("%s is not supported by provider: %s", PersistSMPTestProfile, l.ProviderName)
+		return []byte{}, ErrInvalidCapability("PersistSMPTestProfile", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
@@ -2337,13 +2221,11 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get token: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get testConfigs: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Perf Test Config Page", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -2353,15 +2235,15 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 	if resp.StatusCode == http.StatusOK || err != nil {
 		return bdr, err
 	}
-	logrus.Errorf("error while getting testConfigs: %s", bdr)
-	return nil, fmt.Errorf("error while getting testConfigs - Status code: %d, Body: %s", resp.StatusCode, bdr)
+
+	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SMPTestConfigDelete - tombstone a given test profile
 func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string) error {
 	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
 		logrus.Error("operation not available")
-		return fmt.Errorf("%s is not supported by provider: %s", PersistSMPTestProfile, l.ProviderName)
+		return ErrInvalidCapability("PersistSMPTestProfile", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
@@ -2373,13 +2255,11 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get token: %v", err)
 		return err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to delete testConfig: %v", err)
-		return err
+		return ErrDelete(err, "Perf Test Config :"+testUUID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -2388,8 +2268,8 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 	if resp.StatusCode == http.StatusOK {
 		return nil
 	}
-	logrus.Errorf("error while deleting testConfig: %s", testUUID)
-	return fmt.Errorf("error while deleting testConfig - Status code: %d, Body: %s", resp.StatusCode, testUUID)
+
+	return ErrDelete(err, "Perf Test Config :"+testUUID, resp.StatusCode)
 }
 
 // RecordMeshSyncData records the mesh sync data
@@ -2441,7 +2321,7 @@ func TarXZF(srcURL, destination string) error {
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("response code is not 200")
+		return ErrFetch(err, "TarTZF file :"+srcURL, resp.StatusCode)
 	}
 
 	return TarXZ(resp.Body, destination)
