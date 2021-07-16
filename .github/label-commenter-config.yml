@@ -18,7 +18,7 @@ labels:
         action: open
   - name: issue/dco
     labeled:
-      issue:
+      pr:
         body:🚨 Alert! Git Police! We couldn’t help but notice that one or more of your commits is missing a sign-off. A what?, you say? A sign-off?
         Yes, you can add this signoff to your commit automatically with the -s or --signoff flag to git commit like so `commit -s -m “my commit message w/signoff”`. Find out more about the DCO check [here](https://github.com/probot/dco#how-it-works). 
         action: open
