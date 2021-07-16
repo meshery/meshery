@@ -24,6 +24,7 @@ jobs:
 
       - name: Build Error Utility
         run: |
+          go get github.com/layer5io/meshkit/cmd/errorutil@master
           go build -o ~/errorutil github.com/layer5io/meshkit/cmd/errorutil
 
       - name: Run Utility For Meshery Server
