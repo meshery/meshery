@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	ErrGrafanaClientCode          = "3000"
+	ErrGrafanaClientCode          = "replace_me"
 	ErrPageSizeCode               = "replace_me"
 	ErrPageNumberCode             = "replace_me"
 	ErrResultIDCode               = "replace_me"
