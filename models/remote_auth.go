@@ -124,7 +124,7 @@ func (l *RemoteProvider) UpdateJWKs() error {
 	defer SafeClose(resp.Body)
 	jsonDataFromHTTP, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return ErrDataRead(err, "Reponse Body")
+		return ErrDataRead(err, "Response Body")
 	}
 	jwksJSON := map[string][]map[string]string{}
 	if err := json.Unmarshal([]byte(jsonDataFromHTTP), &jwksJSON); err != nil {
