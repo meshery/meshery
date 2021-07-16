@@ -15,9 +15,9 @@ import (
 var ctx string
 var tokenCmd = &cobra.Command{
 	Use:   "token",
-	Short: "Perform CRUD operations on token",
+	Short: "Manage Meshery user tokens",
 	Long: `
-	Add, Delete and Modify tokens in meshery config`,
+	Manipulate user tokens and their context assignments in your meshconfig`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {

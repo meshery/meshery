@@ -297,7 +297,7 @@ func SetTokenToConfig(token string, configPath string, ctxName string) error {
 			return nil
 		}
 	}
-	return errors.New("invalid Context Name passed")
+	return errors.New("invalid context name")
 }
 
 // AddContextToConfig adds context passed to it to mesheryctl config file
