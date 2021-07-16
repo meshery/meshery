@@ -22,6 +22,8 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -563,4 +565,37 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s.Suffix = " " + suffix
 	s.FinalMSG = finalMsg + "\n"
 	return s
+}
+
+func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models.Preference, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/config/sync"
+	method := "GET"
+	client := &http.Client{}
+	req, err := http.NewRequest(method, path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	err = AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	prefs := &models.Preference{}
+	err = utils.Unmarshal(string(body), prefs)
+	if err != nil {
+		return nil, err
+	}
+
+	return prefs, nil
 }

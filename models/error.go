@@ -65,6 +65,13 @@ const (
 	ErrInvalidCapabilityCode      = "replace_me"
 	ErrResultDataCode             = "replace_me"
 	ErrUnableToPersistsResultCode = "replace_me"
+	ErrValidURLCode               = "replace_me"
+	ErrTestEndpointCode           = "replace_me"
+	ErrLoadgeneratorCode          = "replace_me"
+	ErrProtocolCode               = "replace_me"
+	ErrTestClientCode             = "replace_me"
+	ErrParsingTestCode            = "replace_me"
+	ErrFieldCode                  = "replace_me"
 )
 
 var (
@@ -81,6 +88,13 @@ var (
 	ErrNilKeys              = errors.New(ErrNilKeysCode, errors.Alert, []string{"Key not found"}, []string{"JWK not found for the given KeyID"}, []string{}, []string{})
 	ErrTokenExpired         = errors.New(ErrTokenExpiredCode, errors.Alert, []string{"Token has expired"}, []string{"Token is invalid, it has expired"}, []string{}, []string{})
 	ErrTokenClaims          = errors.New(ErrTokenClaimsCode, errors.Alert, []string{"Error occurred while prasing claims"}, []string{}, []string{}, []string{})
+	ErrValidURL             = errors.New(ErrValidURLCode, errors.Alert, []string{"Enter valid URLs"}, []string{}, []string{}, []string{})
+	ErrTestEndpoint         = errors.New(ErrTestEndpointCode, errors.Alert, []string{"minimum one test endpoint needs to be specified"}, []string{}, []string{}, []string{})
+	ErrLoadgenerator        = errors.New(ErrLoadgeneratorCode, errors.Alert, []string{"specify valid Loadgenerator"}, []string{}, []string{}, []string{})
+	ErrProtocol             = errors.New(ErrProtocolCode, errors.Alert, []string{"specify the Protocol for all clients"}, []string{}, []string{}, []string{})
+	ErrTestClient           = errors.New(ErrTestClientCode, errors.Alert, []string{"minimum one test client needs to be specified"}, []string{}, []string{}, []string{})
+	ErrParsingTest          = errors.New(ErrParsingTestCode, errors.Alert, []string{"error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"}, []string{}, []string{}, []string{})
+	ErrField                = errors.New(ErrFieldCode, errors.Alert, []string{"Error: name field is blank"}, []string{}, []string{}, []string{})
 )
 
 func ErrGrafanaClient(err error) error {
