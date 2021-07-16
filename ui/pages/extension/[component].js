@@ -4,8 +4,9 @@ import { NoSsr } from "@material-ui/core";
 import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
-import { bindActionCreators } from "redux";
+import { bindActionCreators, compose } from "redux";
 
+ 
 /**
  * getPath returns the current pathname
  * @returns {string}
@@ -39,19 +40,29 @@ function capitalize(string) {
   return "";
 }
 
+/**
+  * converts "Meshmap" to "MeshMap"
+  *
+  * @param {string} string
+  *
+  * @returns {string}
+*/
+const capitalizeMeshmap = (string) => string == "Meshmap" ? "MeshMap" : string;
+
+const getComponentName = compose(capitalizeMeshmap,capitalize,extractComponentName,getPath);
 
 class Settings extends React.Component {
   componentDidMount() {
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path: getPath() });
-    this.props.updatepagetitle({ title: capitalize(extractComponentName(getPath())) });
+    this.props.updatepagetitle({ title: getComponentName() });
   }
 
   render() {
     return (
       <NoSsr>
         <Head>
-          <title>{capitalize(extractComponentName(getPath()))}</title>
+          <title>{getComponentName()}</title>
         </Head>
         <NoSsr>
           <ExtensionSandbox type="navigator" Extension={Extension} />
