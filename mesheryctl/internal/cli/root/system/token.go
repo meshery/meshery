@@ -27,10 +27,10 @@ var tokenCmd = &cobra.Command{
 	},
 }
 
-var addTokenCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Add a token to your meshconfig",
-	Long:  "Add the token with provided token name (optionally token path) to your meshconfig tokens.",
+var createTokenCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a token in your meshconfig",
+	Long:  "Create the token with provided token name (optionally token path) to your meshconfig tokens.",
 	Example: `
 	mesheryctl system token add <token-name> -f <token-path>
 	mesheryctl system token add <token-name> (default path is auth.json)
@@ -47,9 +47,9 @@ var addTokenCmd = &cobra.Command{
 			Location: tokenPath,
 		}
 		if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
-			return errors.Wrap(err, "Could not add specified token to config")
+			return errors.Wrap(err, "Could not create specified token to config")
 		}
-		log.Printf("Token %s added.", tokenName)
+		log.Printf("Token %s created.", tokenName)
 		return nil
 	},
 }
@@ -180,8 +180,8 @@ var viewTokenCmd = &cobra.Command{
 }
 
 func init() {
-	tokenCmd.AddCommand(addTokenCmd, deleteTokenCmd, setTokenCmd, listTokenCmd, viewTokenCmd)
-	addTokenCmd.Flags().StringVarP(&tokenPath, "filepath", "f", "", "Add the token location")
+	tokenCmd.AddCommand(createTokenCmd, deleteTokenCmd, setTokenCmd, listTokenCmd, viewTokenCmd)
+	createTokenCmd.Flags().StringVarP(&tokenPath, "filepath", "f", "", "Add the token location")
 	setTokenCmd.Flags().StringVar(&ctx, "context", "", "Pass the context")
 	viewTokenCmd.Flags().BoolVar(&viewAllTokens, "all", false, "set the flag to view all the tokens.")
 }
