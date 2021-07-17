@@ -131,7 +131,7 @@ func start() error {
 		//changing the port mapping in docker compose
 		services := compose.Services // Current Services
 		//extracting the custom user port from config.yaml
-		userPort := strings.Split(currCtx.Endpoint, ":")
+		userPort := strings.Split(currCtx.GetEndpoint(), ":")
 		//extracting container port from the docker-compose
 		containerPort := strings.Split(services["meshery"].Ports[0], ":")
 		userPortMapping := userPort[len(userPort)-1] + ":" + containerPort[len(containerPort)-1]
@@ -151,7 +151,7 @@ func start() error {
 			}
 
 			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			services[v] = temp
 			AllowedServices[v] = services[v]
 		}
@@ -168,9 +168,9 @@ func start() error {
 			}
 
 			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			if v == "meshery" {
-				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, currCtx.Version)
+				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), currCtx.GetVersion())
 			}
 			services[v] = temp
 			AllowedServices[v] = services[v]
@@ -220,7 +220,7 @@ func start() error {
 
 		if userResponse {
 			endpoint.Address = utils.EndpointProtocol + "://localhost"
-			currCtx.Endpoint = endpoint.Address + ":" + userPort[len(userPort)-1]
+			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
 
 			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
 			if err != nil {
@@ -311,8 +311,8 @@ func start() error {
 			return err
 		}
 
-		version := currCtx.Version
-		channel := currCtx.Channel
+		version := currCtx.GetVersion()
+		channel := currCtx.GetChannel()
 		if version == "latest" {
 			if channel == "edge" {
 				version = "master"
@@ -397,12 +397,12 @@ func start() error {
 			}
 		}
 
-		currCtx.Endpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.Internal.Address, endpoint.Internal.Port)
+		currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.Internal.Address, endpoint.Internal.Port))
 		if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
 			Address: endpoint.Internal.Address,
 			Port:    endpoint.Internal.Port,
 		}, nil) {
-			currCtx.Endpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port)
+			currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port))
 			if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
 				Address: endpoint.External.Address,
 				Port:    endpoint.External.Port,
@@ -412,7 +412,7 @@ func start() error {
 					Address: u.Hostname(),
 					Port:    endpoint.External.Port,
 				}, nil) {
-					currCtx.Endpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, u.Hostname(), endpoint.External.Port)
+					currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, u.Hostname(), endpoint.External.Port))
 				}
 			}
 		}
@@ -473,9 +473,9 @@ func start() error {
 		}
 	}
 
-	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
+	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 
-	err = utils.NavigateToBrowser(currCtx.Endpoint)
+	err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 	if err != nil {
 		return err
 	}
