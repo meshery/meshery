@@ -44,7 +44,7 @@ type Context struct {
 	Version  string   `mapstructure:"version,omitempty"`
 }
 
-// GetMesheryCtl returns a reference to the mesheryctl configuration object.
+// GetMesheryCtl returns a reference to the mesheryctl configuration object
 func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	c := &MesheryCtlConfig{}
 	// Load the config data into the object
@@ -74,6 +74,93 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
 	}
 
 	return Context{}, errors.New("current context " + mc.CurrentContext + " does not exist")
+}
+
+// GetBaseMesheryURL returns the base meshery server URL
+func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
+	currentContext, err := mc.CheckIfCurrentContextIsValid()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return currentContext.Endpoint
+}
+
+func (mc *MesheryCtlConfig) GetCurrentContextName() string {
+	return mc.CurrentContext
+}
+
+// GetCurrentContext returns contents of the current context
+func (mc *MesheryCtlConfig) GetCurrentContext() (Context, error) {
+	currentContext, err := mc.CheckIfCurrentContextIsValid()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return currentContext, err
+}
+
+// SetCurrentContext sets current context and returns contents of the current context
+func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
+	if contextName != "" {
+		mc.CurrentContext = contextName
+	}
+	_, err := mc.CheckIfCurrentContextIsValid()
+	if err != nil {
+		log.Errorf(err.Error())
+	}
+
+	return err
+}
+
+// GetCurrentPlatform returns the platform  of the current context
+func (mc *MesheryCtlConfig) GetCurrentPlatform() string {
+	currentContext, err := mc.GetCurrentContext()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return currentContext.Platform
+}
+
+// SetCurrentPlatform sets the platform of the current context
+func (mc *MesheryCtlConfig) SetCurrentPlatform(platform string) {
+	currCtx, err := mc.GetCurrentContext()
+	if err != nil {
+		log.Errorf(err.Error())
+	}
+	currCtx.Platform = platform
+	mc.Contexts[mc.GetCurrentContextName()] = currCtx
+}
+
+// SetCurrentPlatform sets the platform of the current context
+func (ctx *Context) SetCurrentPlatform(platform string) {
+	ctx.Platform = platform
+}
+
+// GetAdapters returns the adapters in the current context
+func (mc *MesheryCtlConfig) GetAdapters() []string {
+	currentContext, err := mc.GetCurrentContext()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return currentContext.Adapters
+}
+
+// GetTokenForContext takes in the contextName and returns the token name and path corresponding
+// to the given current context
+func (mc *MesheryCtlConfig) GetTokenForContext(contextName string) (Token, error) {
+	ctx, ok := mc.Contexts[contextName]
+	if !ok {
+		return Token{}, fmt.Errorf("no token is associated with context: %s", contextName)
+	}
+
+	for _, t := range mc.Tokens {
+		if t.Name == ctx.Token {
+			return t, nil
+		}
+	}
+
+	return Token{Name: ctx.Token}, fmt.Errorf("no token found for the given context")
 }
 
 // ValidateVersion checks if the version is valid, if empty sets it to default value latest. Returns an error if the version is invalid.
@@ -113,56 +200,6 @@ func (ctx *Context) ValidateVersion() error {
 	}
 
 	return nil
-}
-
-// GetBaseMesheryURL returns the base meshery server URL
-func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
-	currentContext, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return currentContext.Endpoint
-}
-
-// GetCurrentContext returns contents of the current context
-func (mc *MesheryCtlConfig) GetCurrentContext() Context {
-	currentContext, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return currentContext
-}
-
-// SetCurrentContext sets current context and returns contents of the current context
-func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) (Context, error) {
-	if contextName != "" {
-		mc.CurrentContext = contextName
-	}
-	currCtx, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		log.Errorf(err.Error())
-	}
-
-	return currCtx, err
-}
-
-// GetTokenForContext takes in the contextName and returns the token name and path corresponding
-// to the given current context
-func (mc *MesheryCtlConfig) GetTokenForContext(contextName string) (Token, error) {
-	ctx, ok := mc.Contexts[contextName]
-	if !ok {
-		return Token{}, fmt.Errorf("no token is associated with context: %s", contextName)
-	}
-
-	for _, t := range mc.Tokens {
-		if t.Name == ctx.Token {
-			return t, nil
-		}
-	}
-
-	return Token{Name: ctx.Token}, fmt.Errorf("no token found for the given context")
 }
 
 func (t *Token) GetLocation() string {

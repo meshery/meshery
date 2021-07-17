@@ -92,25 +92,22 @@ func start() error {
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
-	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	err = mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
 		return err
 	}
 
 	if utils.PlatformFlag != "" {
-		currCtx.Platform = utils.PlatformFlag
-		err := utils.ChangePlatform(mctlCfg.CurrentContext, currCtx)
-
-		if err != nil {
-			return err
-		}
+		mctlCfg.SetCurrentPlatform(utils.PlatformFlag)
 	}
 
-	currPlatform := currCtx.Platform
-	RequestedAdapters := currCtx.Adapters // Requested Adapters / Services
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		return err
+	}
 
 	// Deploy to platform specified in the config.yaml
-	switch currPlatform {
+	switch mctlCfg.GetCurrentPlatform() {
 	case "docker":
 
 		// download the docker-compose.yaml file corresponding to the current version
@@ -143,7 +140,7 @@ func start() error {
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
-		for _, v := range RequestedAdapters {
+		for _, v := range mctlCfg.GetAdapters() {
 			if services[v].Image == "" {
 				log.Fatalf("Invalid adapter specified %s", v)
 			}
@@ -349,7 +346,7 @@ func start() error {
 		spinner.Start()
 
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, false, false)
+		err = utils.ApplyManifestFiles(manifests, mctlCfg.GetAdapters(), kubeClient, false, false)
 		if err != nil {
 			break
 		}
@@ -429,7 +426,7 @@ func start() error {
 
 		// switch to default case if the platform specified is not supported
 	default:
-		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder))
+		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", mctlCfg.GetCurrentPlatform(), utils.MesheryFolder))
 	}
 
 	hcOptions := &HealthCheckOptions{

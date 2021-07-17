@@ -26,7 +26,7 @@ The authentication mode is web-based browser flow`,
 			return errors.Wrap(err, "error processing config")
 		}
 
-		isRunning, err := utils.IsMesheryRunning(mctlCfg.GetCurrentContext().Platform)
+		isRunning, err := utils.IsMesheryRunning(mctlCfg.GetCurrentPlatform())
 		if err != nil {
 			log.Error("failed to check Meshery Server status: ", err)
 			return nil
@@ -47,7 +47,7 @@ Run "mesheryctl system start" to start meshery`)
 
 		log.Println("successfully authenticated")
 
-		token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
+		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
 			// Attempt to create token if it doesn't already exists
 			token.Location = utils.AuthConfigFile

@@ -45,11 +45,11 @@ var statusCmd = &cobra.Command{
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
-		currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+		err = mctlCfg.SetCurrentContext(tempContext)
 		if err != nil {
 			return err
 		}
-		currPlatform := currCtx.Platform
+		currPlatform := mctlCfg.GetCurrentPlatform()
 
 		ok, err := utils.IsMesheryRunning(currPlatform)
 		if err != nil {
