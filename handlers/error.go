@@ -62,6 +62,8 @@ const (
 	ErrPanicRecoveryCode        = "2052"
 	ErrBlankNameCode            = "2053"
 	ErrSaveSessionCode          = "2054"
+	ErrInvalidLTURLCode         = "2053"
+
 )
 
 var (
@@ -249,3 +251,8 @@ func ErrFailToLoadExtensions(err error) error {
 func ErrSaveSession(err error) error {
 	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session"}, []string{err.Error()}, []string{}, []string{})
 }
+=======
+func ErrInvalidLTURL(url string) error {
+	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid loadtest url: ", url}, []string{}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+}
+
