@@ -5,6 +5,9 @@ on:
       - 'master'
     tags:
       - 'v*'
+    paths-ignore:
+      - 'docs/**'
+      - 'mesheryctl/**'
 
 jobs:
   notify-meshmap-build:
