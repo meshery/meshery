@@ -2,7 +2,6 @@ package system
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -13,6 +12,7 @@ import (
 )
 
 var ctx string
+var viewAllTokens bool
 var tokenCmd = &cobra.Command{
 	Use:   "token",
 	Short: "Manage Meshery user tokens",
@@ -29,7 +29,8 @@ var tokenCmd = &cobra.Command{
 
 var addTokenCmd = &cobra.Command{
 	Use:   "add",
-	Short: "Add a token to meshery config",
+	Short: "Add a token to your meshconfig",
+	Long:  "Add the token with provided token name (optionally token path) to your meshconfig tokens.",
 	Example: `
 	mesheryctl system token add <token-name> -f <token-path>
 	mesheryctl system token add <token-name> (default path is auth.json)
@@ -48,13 +49,14 @@ var addTokenCmd = &cobra.Command{
 		if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
 			return errors.Wrap(err, "Could not add specified token to config")
 		}
-		log.Printf("Token %s added successfully!", tokenName)
+		log.Printf("Token %s added.", tokenName)
 		return nil
 	},
 }
 var deleteTokenCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete a token from meshery config",
+	Short: "Delete a token from your meshconfig",
+	Long:  "Delete the token with provided token name from your meshconfig tokens.",
 	Example: `
 	mesheryctl system token delete <token-name>
 	`,
@@ -66,17 +68,25 @@ var deleteTokenCmd = &cobra.Command{
 			Name:     tokenName,
 			Location: tokenPath,
 		}
-		if err := config.DeleteTokenFromConfig(token, utils.DefaultConfigPath); err != nil {
-			return errors.Wrap(err, "Could not delete specified token from config")
+		mctlCfg, err := config.ReadConfig(utils.DefaultConfigPath)
+		if err != nil {
+			return err
 		}
-		log.Printf("Token %s deleted successfully!", tokenName)
+		if mctlCfg, err = config.DeleteTokenFromConfig(token, mctlCfg); err != nil {
+			return errors.Wrapf(err, "Could not delete token \"%s\" from config", tokenName)
+		}
+		err = config.WriteConfig(mctlCfg)
+		if err != nil {
+			return err
+		}
+		log.Printf("Token %s deleted.", tokenName)
 		return nil
 	},
 }
 var setTokenCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set token for context",
-	Long:  "Set Token for current context or context passed with --context flag.",
+	Long:  "Set token for current context or context specified with --context flag.",
 	Example: `
 	mesheryctl system token set <token-name> 
 
@@ -88,11 +98,19 @@ var setTokenCmd = &cobra.Command{
 			ctx = viper.GetString("current-context")
 
 		}
-		if err := config.SetTokenToConfig(tokenName, utils.DefaultConfigPath, ctx); err != nil {
-			return errors.Wrapf(err, "Could not set specified token on conteext %s", ctx)
+		mctlCfg, err := config.ReadConfig(utils.DefaultConfigPath)
+		if err != nil {
+			return err
+		}
+		if mctlCfg, err = config.SetTokenToConfig(tokenName, mctlCfg, ctx); err != nil {
+			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
 
 		}
-		log.Printf("Token %s set successfully! for context %s", tokenName, ctx)
+		config.WriteConfig(mctlCfg)
+		if err != nil {
+			return err
+		}
+		log.Printf("Token %s set for context %s", tokenName, ctx)
 		return nil
 	},
 }
@@ -105,18 +123,7 @@ var listTokenCmd = &cobra.Command{
 	`,
 	Args: cobra.ExactArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		configPath := utils.DefaultConfigPath
-		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			log.Error(err)
-		}
-
-		viper.SetConfigFile(configPath)
-		err := viper.ReadInConfig()
-		if err != nil {
-			return err
-
-		}
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		mctlCfg, err := config.ReadConfig(utils.DefaultConfigPath)
 		if err != nil {
 			return err
 		}
@@ -136,16 +143,25 @@ var viewTokenCmd = &cobra.Command{
 	mesheryctl system token view (show token of current context)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		tokenName := ""
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		mctlCfg, err := config.ReadConfig(utils.DefaultConfigPath)
 		if err != nil {
-			log.Error(err)
+			return err
 		}
+		if viewAllTokens {
+			log.Info("Listing all available tokens...\n")
+			for _, t := range mctlCfg.Tokens {
+				log.Info("-> token: ", t.Name)
+				log.Info("   location: ", t.Location)
+			}
+			return nil
+		}
+		tokenName := ""
 		if len(args) == 0 {
 			token, err := mctlCfg.GetTokenForContext(viper.GetString("current-context"))
 			if err != nil {
 				return errors.Wrap(err, "Could not get token for the current context")
 			}
+			log.Warnf("Token unspecified. Displaying token for current context \"%s\"\n", viper.GetString("current-context"))
 			log.Info("token: ", token.Name)
 			log.Info("location: ", token.Location)
 			return nil
@@ -167,4 +183,5 @@ func init() {
 	tokenCmd.AddCommand(addTokenCmd, deleteTokenCmd, setTokenCmd, listTokenCmd, viewTokenCmd)
 	addTokenCmd.Flags().StringVarP(&tokenPath, "filepath", "f", "", "Add the token location")
 	setTokenCmd.Flags().StringVar(&ctx, "context", "", "Pass the context")
+	viewTokenCmd.Flags().BoolVar(&viewAllTokens, "all", false, "set the flag to view all the tokens.")
 }
