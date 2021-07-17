@@ -37,7 +37,7 @@ var onboardCmd = &cobra.Command{
 		var err error
 		client := &http.Client{}
 
-		// set default tokenpath for perf apply command.
+		// set default tokenpath for app onboard command.
 		if tokenPath == "" {
 			tokenPath = constants.GetCurrentAuthToken()
 		}

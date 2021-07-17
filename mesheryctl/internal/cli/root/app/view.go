@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -32,14 +33,15 @@ var viewCmd = &cobra.Command{
 		}
 		application := ""
 		isID := false
+		applicationID := ""
 		// if application name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [application-name|application-id] is specified")
 			}
-			application = args[0]
+			applicationID = args[0]
 			// check if the application argument is a valid uuid v4 string
-			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", application)
+			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", applicationID)
 			if err != nil {
 				return err
 			}
@@ -53,8 +55,10 @@ var viewCmd = &cobra.Command{
 			}
 		} else if isID {
 			// if application is a valid uuid, then directly fetch the application
-			url += "/api/experimental/application/" + application
+			url += "/api/experimental/application/" + applicationID
 		} else {
+			// Merge args to get app-name
+			application := strings.Join(args, "%20")
 			// else search application by name
 			url += "/api/experimental/application?search=" + application
 		}
