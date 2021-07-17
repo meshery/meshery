@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -17,7 +18,6 @@ import (
 )
 
 var (
-	token   string
 	verbose bool
 )
 
@@ -31,13 +31,17 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+		// set default tokenpath for perf apply command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+		}
 		var response *models.ApplicationsAPIResponse
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/application", nil)
 		if err != nil {
 			return err
 		}
-		err = utils.AddAuthDetails(req, token)
+		err = utils.AddAuthDetails(req, tokenPath)
 		if err != nil {
 			return err
 		}
@@ -55,14 +59,14 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		tokenObj, err := utils.ReadToken(token)
+		tokenObj, err := utils.ReadToken(tokenPath)
 		if err != nil {
 			return err
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
 
-		if verbose == true {
+		if verbose {
 			if provider == "None" {
 				for _, v := range response.Applications {
 					AppID := v.ID.String()
@@ -127,6 +131,4 @@ var listCmd = &cobra.Command{
 
 func init() {
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and app file identifiers")
-	listCmd.Flags().StringVarP(&token, "token", "t", "", "path to token")
-	_ = listCmd.MarkFlagRequired("token")
 }

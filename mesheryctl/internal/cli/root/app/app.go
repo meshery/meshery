@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -19,7 +18,7 @@ var (
 var AppCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Service Mesh Apps Management",
-	Long:  `Manage apps using service mesh`,
+	Long:  `Manage all apps operations; ;list, view, onboard and offboard`,
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
@@ -30,11 +29,7 @@ var AppCmd = &cobra.Command{
 }
 
 func init() {
-	AppCmd.PersistentFlags().StringVarP(&file, "file", "f", "", "Path to app file")
-	AppCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file")
-	_ = AppCmd.MarkFlagRequired("file")
-
-	tokenPath = os.Getenv("MESHERY_AUTH_TOKEN")
+	AppCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file default from current context")
 
 	availableSubcommands = []*cobra.Command{onboardCmd, viewCmd, offboardCmd, listCmd}
 	AppCmd.AddCommand(availableSubcommands...)

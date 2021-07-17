@@ -17,7 +17,7 @@ import (
 var offboardCmd = &cobra.Command{
 	Use:   "offboard",
 	Short: "Offboard application",
-	Long:  `Offboard application will trigger deletion of the applicationß`,
+	Long:  `Offboard application will trigger deletion of the application file`,
 	Args:  cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
