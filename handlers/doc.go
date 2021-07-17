@@ -181,7 +181,8 @@ type anonymousStatsResponseWrapper struct {
 // swagger:parameters idPostAnonymousStats
 type anonymousStatsParamsWrapper struct {
 	// in: body
-	Body *models.PreferenceParams
+	Body                *models.PreferenceParams
+	LoadTestPreferences *models.LoadTestPreferences
 }
 
 // Parameters Persists load test preferences
@@ -220,10 +221,4 @@ type perfSingleResultRespWrapper struct {
 type perfTestPrefsRespWrapper struct {
 	// in: body
 	Body *models.Preference
-}
-
-// swagger:parameters idPerfPostLoadPreferences
-type perfTestPrefsParamsWrapper struct {
-	// in: body
-	Body *models.LoadTestPreferences
 }
