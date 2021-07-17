@@ -36,7 +36,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 			// fetching server version, if it has not already been
 			version, err := h.kubeclient.KubeClient.ServerVersion()
 			if err != nil {
-				h.log.Error(ErrInvalidK8SConfig)
+				h.log.Error(ErrFetchKubernetes)
 			}
 			prefObj.K8SConfig.ServerVersion = version.String()
 		}
@@ -53,7 +53,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	} else {
 		err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
 		if err != nil {
-			h.log.Error(ErrInvalidK8SConfig)
+			h.log.Error(ErrFetchKubernetes)
 		}
 	}
 
