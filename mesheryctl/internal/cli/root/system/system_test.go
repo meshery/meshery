@@ -34,10 +34,17 @@ func TestSystemStartStopIntegration(t *testing.T) {
 		Args        []string
 		ExpectError bool
 	}{
+		// Docker platform testing
 		{
 			Name:        "Start Meshery with Docker platform",
 			Action:      "start",
 			Args:        []string{"start", "-p", "docker", "-y"},
+			ExpectError: false,
+		},
+		{
+			Name:        "Printing Meshery status with Docker platform",
+			Action:      "status",
+			Args:        []string{"status"},
 			ExpectError: false,
 		},
 		{
@@ -46,10 +53,18 @@ func TestSystemStartStopIntegration(t *testing.T) {
 			Args:        []string{"stop", "-y"},
 			ExpectError: false,
 		},
+
+		// Kubernetes platform testing
 		{
 			Name:        "Start Meshery with Kubernetes platform",
 			Action:      "start",
 			Args:        []string{"start", "-p", "kubernetes", "-y"},
+			ExpectError: false,
+		},
+		{
+			Name:        "Printing Meshery status with Kubernetes platform",
+			Action:      "status",
+			Args:        []string{"status"},
 			ExpectError: false,
 		},
 		{
@@ -71,7 +86,7 @@ func TestSystemStartStopIntegration(t *testing.T) {
 			}
 
 			t.Logf("Meshery %sed", tt.Action)
-			// Three minute timeout
+			// Two minute timeout
 			t.Log("Sleeping for 2 minutes...")
 			time.Sleep(2 * time.Minute)
 			t.Log("Sleeping finished")
