@@ -43,6 +43,20 @@ const (
 // one
 var policies = [][2]string{}
 
+// swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
+// Handle POST request for Pattern Deploy
+//
+// Deploy an attached pattern with the request
+// response:
+// 	200:
+
+// swagger:route DELETE /api/pattern/deploy PatternsAPI idDeleteDeployPattern
+// Handle DELETE request for Pattern Deploy
+//
+// Delete a deployed pattern with the request
+// response:
+// 	200:
+
 // PatternFileHandler handles the requested related to pattern files
 func (h *Handler) PatternFileHandler(
 	rw http.ResponseWriter,
