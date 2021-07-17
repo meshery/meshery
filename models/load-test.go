@@ -8,7 +8,6 @@ import (
 	"fortio.org/fortio/fhttp"
 	"fortio.org/fortio/periodic"
 	"github.com/gofrs/uuid"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -138,15 +137,11 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 		httpResults := &fhttp.HTTPRunnerResults{}
 		resJ, err := json.Marshal(m.Result)
 		if err != nil {
-			err = errors.Wrap(err, "unable to marshal Meshery performance results into SMP")
-			logrus.Error(err)
-			return nil, err
+			return nil, ErrMarshal(err, "Perf Results")
 		}
 		err = json.Unmarshal(resJ, httpResults)
 		if err != nil {
-			err = errors.Wrap(err, "could not extract Meshery performance results from SMP")
-			logrus.Error(err)
-			return nil, err
+			return nil, ErrUnmarshal(err, "Perf Results")
 		}
 
 		results = httpResults

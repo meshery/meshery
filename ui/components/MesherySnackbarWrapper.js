@@ -141,14 +141,14 @@ function MesherySnackbarWrapper(props) {
         onMouseLeave={() => setCardHover(false)}
       >
         <CardActions classes={{ root: classes.actionRoot }} >
-          <Grid container direction="row" justify="space-between" alignItems="center">
+          <Grid container direction="row" justify="space-between" alignItems="center" wrap="nowrap">
             <Typography variant="subtitle2">
               <div style={{ display: "flex", alignItems: "center" }}>
                 <Icon className={classNames(classes.icon, classes.iconVariant)} />
                 <div>{message}</div>
               </div>
             </Typography>
-            <div className={classes.icons}>
+            <Grid container item xs={4} className={classes.icons} justify="flex-end">
               <IconButton
                 aria-label="Show more"
                 className={classNames(classes.expand, { [classes.expandOpen]: expanded })}
@@ -164,7 +164,7 @@ function MesherySnackbarWrapper(props) {
                   onMouseLeave={() => setCardHover(true)}
                 />
               </IconButton>
-            </div>
+            </Grid>
           </Grid>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit >

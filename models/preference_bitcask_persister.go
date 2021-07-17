@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"
 )
@@ -27,20 +26,17 @@ func NewBitCaskPreferencePersister(folderName string) (*BitCaskPreferencePersist
 		if os.IsNotExist(err) {
 			err = os.MkdirAll(folderName, os.ModePerm)
 			if err != nil {
-				logrus.Errorf("Unable to create the directory '%s' due to error: %v.", folderName, err)
-				return nil, err
+				return nil, ErrMakeDir(err, folderName)
 			}
 		} else {
-			logrus.Errorf("Unable to find/stat the folder '%s': %v,", folderName, err)
-			return nil, err
+			return nil, ErrFolderStat(err, folderName)
 		}
 	}
 
 	fileName := path.Join(folderName, "db")
 	db, err := bitcask.Open(fileName, bitcask.WithSync(true), bitcask.WithMaxValueSize(uint64(1<<32)))
 	if err != nil {
-		logrus.Errorf("Unable to open database: %v.", err)
-		return nil, err
+		return nil, ErrDBOpen(err)
 	}
 	bd := &BitCaskPreferencePersister{
 		fileName: fileName,
@@ -53,11 +49,11 @@ func NewBitCaskPreferencePersister(folderName string) (*BitCaskPreferencePersist
 // ReadFromPersister - reads the session data for the given userID
 func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
 	if s.db == nil {
-		return nil, errors.New("connection to DB does not exist")
+		return nil, ErrDBConnection
 	}
 
 	if userID == "" {
-		return nil, errors.New("user ID is empty")
+		return nil, ErrUserID
 	}
 
 	data := &Preference{
@@ -76,8 +72,7 @@ func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Preferen
 RETRY:
 	locked, err := s.db.TryRLock()
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to obtain read lock from bitcask store")
-		logrus.Error(err)
+		logrus.Error(ErrDBRLock(err))
 	}
 	if !locked {
 		goto RETRY
@@ -88,15 +83,11 @@ RETRY:
 
 	dataCopyB, err := s.db.Get([]byte(userID))
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to read data from bitcask store")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrDBRead(err)
 	}
 	if len(dataCopyB) > 0 {
 		if err := json.Unmarshal(dataCopyB, data); err != nil {
-			err = errors.Wrapf(err, "Unable to unmarshal data.")
-			logrus.Error(err)
-			return nil, err
+			return nil, ErrUnmarshal(err, "data")
 		}
 	}
 
@@ -111,8 +102,7 @@ func (s *BitCaskPreferencePersister) writeToCache(userID string, data *Preferenc
 		AnonymousPerfResults: true,
 	}
 	if err := copier.Copy(newSess, data); err != nil {
-		logrus.Errorf("session copy error: %v", err)
-		return err
+		return ErrCopy(err, "session")
 	}
 	s.cache.Store(userID, newSess)
 	return nil
@@ -121,15 +111,15 @@ func (s *BitCaskPreferencePersister) writeToCache(userID string, data *Preferenc
 // WriteToPersister persists session for the user
 func (s *BitCaskPreferencePersister) WriteToPersister(userID string, data *Preference) error {
 	if s.db == nil {
-		return errors.New("connection to DB does not exist")
+		return ErrDBConnection
 	}
 
 	if userID == "" {
-		return errors.New("user ID is empty")
+		return ErrUserID
 	}
 
 	if data == nil {
-		return errors.New("given config data is nil")
+		return ErrNilConfigData
 	}
 
 	data.UpdatedAt = time.Now()
@@ -137,8 +127,7 @@ func (s *BitCaskPreferencePersister) WriteToPersister(userID string, data *Prefe
 RETRY:
 	locked, err := s.db.TryLock()
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to obtain write lock from bitcask store")
-		logrus.Error(err)
+		logrus.Error(ErrDBLock(err))
 	}
 	if !locked {
 		goto RETRY
@@ -153,14 +142,11 @@ RETRY:
 
 	dataB, err := json.Marshal(data)
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to marshal the user config data.")
-		logrus.Error(err)
-		return err
+		return ErrMarshal(err, "User Config Data")
 	}
 
 	if err := s.db.Put([]byte(userID), dataB); err != nil {
-		err = errors.Wrapf(err, "Unable to persist config data.")
-		return err
+		return ErrDBPut(err)
 	}
 	return nil
 }
@@ -168,18 +154,17 @@ RETRY:
 // DeleteFromPersister removes the session for the user
 func (s *BitCaskPreferencePersister) DeleteFromPersister(userID string) error {
 	if s.db == nil {
-		return errors.New("connection to DB does not exist")
+		return ErrDBConnection
 	}
 
 	if userID == "" {
-		return errors.New("user ID is empty")
+		return ErrUserID
 	}
 
 RETRY:
 	locked, err := s.db.TryLock()
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to obtain write lock from bitcask store")
-		logrus.Error(err)
+		logrus.Error(ErrDBLock(err))
 	}
 	if !locked {
 		goto RETRY
@@ -190,8 +175,7 @@ RETRY:
 
 	s.cache.Delete(userID)
 	if err := s.db.Delete([]byte(userID)); err != nil {
-		err = errors.Wrapf(err, "Unable to delete config data for the user: %s.", userID)
-		return err
+		return ErrDBDelete(err, userID)
 	}
 	return nil
 }

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -36,7 +35,7 @@ func GetPatternName(stringifiedFile string) (string, error) {
 	// Get Name from the file
 	name, ok := out["name"].(string)
 	if !ok {
-		return "", fmt.Errorf("invalid patternfile - name field is either not present or is not valid")
+		return "", ErrPatternFileName
 	}
 
 	return name, nil
