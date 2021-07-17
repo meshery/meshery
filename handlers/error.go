@@ -7,7 +7,9 @@ import (
 )
 
 const (
+	ErrHealthCheckFailedCode    = "replace me"
 	ErrInvalidK8SConfigCode     = "2000"
+	ErrInvalidAdapterCode       = "replace me"
 	ErrNilClientCode            = "2001"
 	ErrPrometheusScanCode       = "2002"
 	ErrGrafanaScanCode          = "2003"
@@ -38,6 +40,7 @@ const (
 	ErrConvertToSpecCode        = "2028"
 	ErrFetchSMIResultsCode      = "2029"
 	ErrFormFileCode             = "2030"
+	ErrDownloadFileCode         = "replace me"
 	ErrReadConfigCode           = "2031"
 	ErrLoadConfigCode           = "2032"
 	ErrOpenFileCode             = "2033"
@@ -75,6 +78,14 @@ var (
 	ErrMeshClient       = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
 	ErrParseDuration    = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
 )
+
+func ErrHealthCheckFailed(err error) error {
+	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"health checks failed"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrInvalidAdapter(err error, obj string) error {
+	return errors.New(ErrInvalidAdapterCode, errors.Alert, []string{"invalid adapter " + obj + " specified"}, []string{err.Error()}, []string{}, []string{})
+}
 
 func ErrPrometheusScan(err error) error {
 	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{}, []string{"Check if your Prometheus and Grafana Endpoint are correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
@@ -170,6 +181,10 @@ func ErrFetchSMIResults(err error) error {
 
 func ErrFormFile(err error) error {
 	return errors.New(ErrFormFileCode, errors.Alert, []string{"error getting k8s file"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDownloadFile(err error, obj string) error {
+	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"error downloading file " + obj}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrReadConfig(err error) error {
