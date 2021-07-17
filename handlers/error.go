@@ -63,7 +63,6 @@ const (
 	ErrBlankNameCode            = "2053"
 	ErrSaveSessionCode          = "2054"
 	ErrInvalidLTURLCode         = "2053"
-
 )
 
 var (
