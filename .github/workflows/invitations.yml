@@ -5,6 +5,7 @@ on:
 
 jobs:
   automate_invite:
+    if: github.repository == 'meshery/meshery'
     if: contains(github.event.issue.labels.*.name, 'issue/invite')
     runs-on: ubuntu-latest
     steps:

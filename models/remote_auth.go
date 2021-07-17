@@ -33,12 +33,11 @@ func SafeClose(co io.Closer) {
 func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
-		logrus.Error("trying after refresh")
+		logrus.Warn("trying after refresh")
 		newToken, err := l.refreshToken(tokenString)
 		logrus.Info("token refresh successful")
 		if err != nil {
-			logrus.Errorf("error doing token : %v", err.Error())
-			return nil, err
+			return nil, ErrTokenRefresh(err)
 		}
 		return l.doRequestHelper(req, newToken)
 	}
@@ -58,19 +57,16 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	}
 	jsonString, err := json.Marshal(bd)
 	if err != nil {
-		logrus.Errorf("error refreshing token : %v", err.Error())
-		return "", err
+		return "", ErrMarshal(err, "refreshing token")
 	}
 	r, err := http.Post(l.RemoteProviderURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
 	if err != nil {
-		logrus.Errorf("error refreshing token : %v", err.Error())
 		return "", err
 	}
 	defer SafeClose(r.Body)
 	var target map[string]string
 	err = json.NewDecoder(r.Body).Decode(&target)
 	if err != nil {
-		logrus.Errorf("error refreshing token : %v", err.Error())
 		return "", err
 	}
 	l.TokenStore[tokenString] = target[tokenName]
@@ -84,15 +80,13 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 func (l *RemoteProvider) doRequestHelper(req *http.Request, tokenString string) (*http.Response, error) {
 	token, err := l.DecodeTokenData(tokenString)
 	if err != nil {
-		logrus.Errorf("error performing the request, %s", err.Error())
-		return nil, err
+		return nil, ErrTokenDecode(err)
 	}
 	c := &http.Client{}
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token.AccessToken))
 	resp, err := c.Do(req)
 	if err != nil {
-		logrus.Errorf("error performing the request, %s", err.Error())
-		return nil, err
+		return nil, ErrTokenClientCheck(err)
 	}
 	return resp, nil
 }
@@ -101,8 +95,7 @@ func (l *RemoteProvider) doRequestHelper(req *http.Request, tokenString string) 
 func (l *RemoteProvider) GetToken(req *http.Request) (string, error) {
 	ck, err := req.Cookie(tokenName)
 	if err != nil {
-		logrus.Errorf("error in getting the token, %s", err.Error())
-		return "", err
+		return "", ErrGetToken(err)
 	}
 	return ck.Value, nil
 }
@@ -113,13 +106,11 @@ func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, 
 	// logrus.Debugf("Token string %s", tokenStringB64)
 	tokenString, err := base64.RawStdEncoding.DecodeString(tokenStringB64)
 	if err != nil {
-		logrus.Errorf("token decode error : %s", err.Error())
 		return nil, err
 	}
 	err = json.Unmarshal(tokenString, &token)
 	if err != nil {
-		logrus.Errorf("token extraction error : %s", err.Error())
-		return nil, err
+		return nil, ErrUnmarshal(err, "Token String")
 	}
 	return &token, nil
 }
@@ -128,27 +119,22 @@ func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, 
 func (l *RemoteProvider) UpdateJWKs() error {
 	resp, err := http.Get(l.RemoteProviderURL + "/keys")
 	if err != nil {
-		logrus.Errorf("error fetching keys from remote provider : %v", err.Error())
-		return err
+		return ErrJWKsKeys(err)
 	}
 	defer SafeClose(resp.Body)
 	jsonDataFromHTTP, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Errorf("error reading keys response as JSON : %v", err.Error())
-		return err
+		return ErrDataRead(err, "Response Body")
 	}
 	jwksJSON := map[string][]map[string]string{}
 	if err := json.Unmarshal([]byte(jsonDataFromHTTP), &jwksJSON); err != nil {
-		logrus.Errorf("error converting JSON response to map : %v", err.Error())
-		return err
+		return ErrUnmarshal(err, "JWKs Keys")
 	}
 
 	jwks := jwksJSON["keys"]
 
 	if jwks == nil {
-		err = fmt.Errorf("key response invalid")
-		logrus.Errorf("Key response invalid : %v", err.Error())
-		return err
+		return ErrNilJWKs
 	}
 
 	l.Keys = jwks
@@ -172,7 +158,7 @@ func (l *RemoteProvider) GetJWK(kid string) (JWK, error) {
 			return key, nil
 		}
 	}
-	return nil, fmt.Errorf("key not found")
+	return nil, ErrNilKeys
 }
 
 // GenerateKey - generate the actual key from the JWK
@@ -180,8 +166,7 @@ func (l *RemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 	// decode the base64 bytes for n
 	nb, err := base64.RawURLEncoding.DecodeString(jwk["n"])
 	if err != nil {
-		logrus.Fatalf("error decoding JWK, %v", err.Error())
-		return nil, err
+		return nil, ErrDecodeBase64(err, "JWK")
 	}
 
 	e := 0
@@ -191,9 +176,7 @@ func (l *RemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 		e = 65537
 	} else {
 		// need to decode "e" as a big-endian int
-		err = fmt.Errorf("error decoding JWK as big-endian int")
-		logrus.Fatalf("%v", err.Error())
-		return nil, err
+		return nil, ErrDecodeBase64(err, "JWK as big-endian int")
 	}
 
 	pk := &rsa.PublicKey{
@@ -203,8 +186,7 @@ func (l *RemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 
 	der, err := x509.MarshalPKIXPublicKey(pk)
 	if err != nil {
-		logrus.Fatalf("error mashalling PKIX, : %v", err.Error())
-		return nil, err
+		return nil, ErrMarshalPKIX(err)
 	}
 
 	block := &pem.Block{
@@ -214,8 +196,7 @@ func (l *RemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 
 	var out bytes.Buffer
 	if err := pem.Encode(&out, block); err != nil {
-		logrus.Fatalf("error encoding jwk to pem, : %v", err.Error())
-		return nil, err
+		return nil, ErrEncodingPEM(err)
 	}
 	return jwt.ParseRSAPublicKeyFromPEM(out.Bytes())
 }
@@ -224,41 +205,34 @@ func (l *RemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error) {
 	dtoken, err := l.DecodeTokenData(tokenString)
 	if err != nil {
-		logrus.Fatalf("error decoding token : %v", err.Error())
-		return nil, err
+		return nil, ErrTokenDecode(err)
 	}
 	tokenString = dtoken.AccessToken
 	tokenUP, x, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
 	if err != nil {
-		logrus.Fatalf("error parsing token (unverified) : %v", err.Error())
-		return nil, err
+		return nil, ErrPraseUnverified(err)
 	}
 	kid := tokenUP.Header["kid"].(string)
 
 	var jtk map[string]interface{}
 	t, _ := base64.RawStdEncoding.DecodeString(x[1])
 	if err := json.Unmarshal(t, &jtk); err != nil {
-		logrus.Fatalf("error parsing token (unverified) : %v", err.Error())
-		return nil, err
+		return nil, ErrPraseUnverified(err)
 	}
 
 	// TODO: Once hydra fixes https://github.com/ory/hydra/issues/1542
 	// we should rather configure hydra auth server to remove nbf field in the token
 	exp := int64(jtk["exp"].(float64))
 	if jwt.TimeFunc().Unix() > exp {
-		err := fmt.Errorf("token has expired")
-		logrus.Errorf("error validating token : %v", err.Error())
-		return nil, err
+		return nil, ErrTokenExpired
 	}
 
 	keyJSON, err := l.GetJWK(kid)
 	if err != nil {
-		logrus.Errorf("error fetching JWK corresponding to token : %v", err.Error())
 		return nil, err
 	}
 	key, err := l.GenerateKey(keyJSON)
 	if err != nil {
-		logrus.Errorf("error generating Key from JWK : %v", err.Error())
 		return nil, err
 	}
 
@@ -271,12 +245,11 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	})
 
 	if err != nil {
-		logrus.Errorf("error validating token : %v", err.Error())
-		return nil, err
+		return nil, ErrTokenPrase(err)
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, fmt.Errorf("error parsing claims")
+		return nil, ErrTokenClaims
 	}
 	return &claims, nil
 }
