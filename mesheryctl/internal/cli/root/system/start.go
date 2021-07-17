@@ -173,6 +173,10 @@ func start() error {
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			if v == "meshery" {
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, currCtx.Version)
+
+				mesheryServerCallbackURL := "MESHERY_SERVER_CALLBACK_URL"
+
+				temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", mesheryServerCallbackURL, viper.GetString(mesheryServerCallbackURL)))
 			}
 			services[v] = temp
 			AllowedServices[v] = services[v]
