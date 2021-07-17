@@ -8,6 +8,7 @@ import { updateProgress } from "../../../lib/store";
 import { withSnackbar } from "notistack";
 import { useEffect, useState } from "react"
 import {pingKubernetes}  from "../helpers/kubernetesHelpers"
+import KubernetesDataPanel from "../DataPanels/Kubernetes"
 
 
 const KubernetesScreen = ({enqueueSnackbar, k8sconfig, updateProgress, closeSnackbar}) => { 
@@ -46,8 +47,13 @@ const kubeserviceInfo = {
 
 
   return (
-    <Grid item xs={12} container justify="center" alignItems="center"> 
-      <ServiceSwitch serviceInfo={kubeserviceInfo} /> 
+    <Grid item xs={12} container justify="center" alignItems="flex-start"> 
+        <Grid item xs={6} container justify="center">
+          <ServiceSwitch serviceInfo={kubeserviceInfo} /> 
+        </Grid>
+        <Grid item xs={6} container justify="center">
+          <KubernetesDataPanel clusterInformation={kubeserviceInfo.clusterInformation}/>
+        </Grid>
     </Grid>
   )
 }
