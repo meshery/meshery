@@ -17,6 +17,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -541,7 +542,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 // 	yamlByt - YAML Byte slice that needs to be modified
 //	path - a "." seperated which can be used to access nested fields (only string keys are supported)
 //	transform - function that will be executed on that value, the returned value will replace the current value
-func TransformYAML(yamlByt []byte, path string, transform func(interface{}) (interface{}, error)) ([]byte, error) {
+func TransformYAML(yamlByt []byte, transform func(interface{}) (interface{}, error), keys ...string) ([]byte, error) {
 	var data map[string]interface{}
 
 	err := yaml.Unmarshal(yamlByt, &data)
@@ -550,8 +551,6 @@ func TransformYAML(yamlByt []byte, path string, transform func(interface{}) (int
 	}
 
 	data = RecursiveCastMapStringInterfaceToMapStringInterface(data)
-
-	keys := strings.Split(path, ".")
 
 	val, ok := MapGet(data, keys...)
 	if !ok {
@@ -574,23 +573,62 @@ func MapGet(mp map[string]interface{}, key ...string) (interface{}, bool) {
 		return nil, false
 	}
 
+	if len(key) == 0 {
+		return mp, true
+	}
+
 	if len(key) == 1 {
 		val, ok := mp[key[0]]
 		return val, ok
 	}
 
-	if len(key) > 1 {
-		val, ok := mp[key[0]]
-		if !ok {
-			return nil, false
+	val, ok := mp[key[0]]
+	if !ok {
+		return mp, false
+	}
+
+	switch v := val.(type) {
+	case map[string]interface{}:
+		return MapGet(v, key[1:]...)
+	case []interface{}:
+		// Check if we can find key in the nested structure
+		if len(key) < 2 {
+			return mp, false
 		}
 
-		valMap, ok := val.(map[string]interface{})
-		if !ok {
-			return val, false
+		// Check if the key[1] is of type uint, if it is then
+		keyNum, err := strconv.Atoi(key[1])
+		if err != nil {
+			return mp, false
 		}
 
-		return MapGet(valMap, key[1:]...)
+		if keyNum >= len(v) {
+			return mp, false
+		}
+
+		valMapM, ok := v[keyNum].(map[string]interface{})
+		if !ok {
+			return mp, false
+		}
+
+		return MapGet(valMapM, key[2:]...)
+	case []map[string]interface{}:
+		// Check if we can find key in the nested structure
+		if len(key) < 2 {
+			return mp, false
+		}
+
+		// Check if the key[1] is of type uint, if it is then
+		keyNum, err := strconv.Atoi(key[1])
+		if err != nil {
+			return mp, false
+		}
+
+		if keyNum >= len(v) {
+			return mp, false
+		}
+
+		return MapGet(v[keyNum], key[2:]...)
 	}
 
 	return mp, true
@@ -620,12 +658,58 @@ func MapSet(mp map[string]interface{}, value interface{}, key ...string) {
 			return mp
 		}
 
-		valMap, ok := val.(map[string]interface{})
-		if !ok {
+		switch v := val.(type) {
+		case map[string]interface{}:
+			mp[key[0]] = _mapSet(v, value, key[1:]...)
+			return mp
+		case []interface{}:
+			// Check if we can find key in the nested structure
+			if len(key) < 2 {
+				return mp
+			}
+
+			// Check if the key[1] is of type uint, if it is then
+			keyNum, err := strconv.Atoi(key[1])
+			if err != nil {
+				return mp
+			}
+
+			if keyNum >= len(v) {
+				return mp
+			}
+
+			valMapM, ok := v[keyNum].(map[string]interface{})
+			if !ok {
+				return mp
+			}
+
+			v[keyNum] = _mapSet(valMapM, value, key[2:]...)
+
+			mp[key[0]] = v
+
+			return mp
+		case []map[string]interface{}:
+			// Check if we can find key in the nested structure
+			if len(key) < 2 {
+				return mp
+			}
+
+			// Check if the key[1] is of type uint, if it is then
+			keyNum, err := strconv.Atoi(key[1])
+			if err != nil {
+				return mp
+			}
+
+			if keyNum >= len(v) {
+				return mp
+			}
+
+			v[keyNum] = _mapSet(v[keyNum], value, key[2:]...)
+
+			mp[key[0]] = v
+
 			return mp
 		}
-
-		mp[key[0]] = _mapSet(valMap, value, key[1:]...)
 
 		return mp
 	}
