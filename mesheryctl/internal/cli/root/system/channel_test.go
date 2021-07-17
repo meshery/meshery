@@ -109,9 +109,15 @@ func TestRunChannelWithNoCmdOrFlag(t *testing.T) {
 		t.Error(err)
 	}
 
+	currCtx, err := mctlCfg.GetCurrentContext()
+
+	if err != nil {
+		t.Error(err)
+	}
+
 	actualResponse := b.String()
 	expectedResponse := ""
-	// expectedResponse += PrintChannelAndVersionToStdout(mctlCfg.GetCurrentContext(), "local") + "\n\n"
+	expectedResponse += PrintChannelAndVersionToStdout(currCtx, "local") + "\n\n"
 	expectedResponse += channelCmd.UsageString()
 
 	if expectedResponse != actualResponse {
