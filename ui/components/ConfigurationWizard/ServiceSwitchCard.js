@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Card, CardContent, Container, FormControlLabel, Switch, Typography } from '@material-ui/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 const MeshySwitch = withStyles({
@@ -89,13 +89,36 @@ const styles = () => ({
 });
 
 
+const deteremineKubernetesSwitchState = (clusterInfo) => {
+
+  if(clusterInfo.isClusterConfigured){
+    if(clusterInfo.kubernetesPingStatus) return true
+
+  return false
+  
+}
+  }
+
+const getSwitchState = (serviceInfo) => {
+  switch (serviceInfo.name) {
+    case "Kubernetes":
+      deteremineKubernetesSwitchState(serviceInfo.clusterInformation)  
+
+    default:
+      return false;
+  }
+} 
+
+
 const ServiceSwitch = ({serviceInfo, classes}) => {
 
   const ServiceIcon = serviceInfo.logoComponent
   const ConfigComponent = serviceInfo.configComp
-  const [isChecked,setIsChecked] = useState(false)
+  const [isChecked,setIsChecked] = useState(getSwitchState(serviceInfo))
   
   const handleSwitch = () => setIsChecked(prev => !prev)
+  const showConfigComponent = () => serviceInfo.name === "Kubernetes" ? false : isChecked
+
 
   return (
     <Container className={classes.cardContainer}>
@@ -114,7 +137,7 @@ const ServiceSwitch = ({serviceInfo, classes}) => {
               onChange={handleSwitch}
             />
           </div>
-          {isChecked && ConfigComponent}
+          {showConfigComponent() && <ConfigComponent />}
         </CardContent>
       </Card>
     </Container>

@@ -6,7 +6,7 @@ import Stepper from "./Stepper.js";
 import KubernetesScreen from "./Screens/KubernetesScreen";
 import MesheryOperatorScreen from "./Screens/MesheryOperatorScreen";
 import ServiceMeshScreen from "./Screens/ServiceMeshScreen";
-import ExternalScreen from "./Screens/ExternalScreen";
+import MetricsScreen from "./Screens/MetricsScreen";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ["Kubernetes", "Meshery Operator", "Service Mesh", "External"];
+  return ["Kubernetes", "Meshery Operator", "Service Mesh", "Metrics"];
 }
 
 const ConfigurationWizard = () => {
@@ -78,7 +78,7 @@ const ConfigurationWizard = () => {
       case 2:
         return <ServiceMeshScreen />;
       case 3:
-        return <ExternalScreen />;
+        return <MetricsScreen />;
       default:
         return null;
     }

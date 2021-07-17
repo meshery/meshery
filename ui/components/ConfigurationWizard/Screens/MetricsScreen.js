@@ -1,23 +1,22 @@
 import GrafanaIcon from "../icons/GrafanaIcon.js"
 import PrometheusIcon from "../icons/PrometheusIcon.js"
-import ServiceSpecificConfig from "../ServiceSpecificConfig.js"
-import ExternalsConfig from "../ServiceSpecifComponents/ExternalsConfig.js"
+import MetricsConfig from "../SwitchConfigComponents/Metrics"
 import ServiceSwitch from "../ServiceSwitchCard.js"
 import {Grid} from "@material-ui/core"
 
 
-const KubernetesScreen = () => {
+const MetricsScreen = () => {
 
   const externalComponentsInfo = [{
     name: "Grafana",
     logoComponent: GrafanaIcon,
-    configComp :  <ServiceSpecificConfig components={[ExternalsConfig]} />
+    configComp :  MetricsConfig
 
   },
   {
     name: "Prometheus",
     logoComponent: PrometheusIcon,
-    configComp :  <ServiceSpecificConfig components={[ExternalsConfig]} />
+    configComp :  MetricsConfig
 
   }
   ]
@@ -36,4 +35,4 @@ const KubernetesScreen = () => {
 }
 
 
-export default KubernetesScreen
+export default MetricsScreen

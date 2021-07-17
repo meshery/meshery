@@ -10,7 +10,7 @@ import {
 const styles = () => ({
 }) 
 
-const ExternalsConfig = ({classes}) => {
+const MetricsConfig = ({classes}) => {
   return(
     <>
       <Grid item xs={12}>
@@ -41,4 +41,4 @@ const ExternalsConfig = ({classes}) => {
 }
 
 
-export default withStyles(styles)(ExternalsConfig)
+export default withStyles(styles)(MetricsConfig)

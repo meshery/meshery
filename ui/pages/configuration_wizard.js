@@ -11,7 +11,7 @@ const ConfigurationWizard = (props) => {
   useEffect(() => {
     console.log(`path: ${getPath()}`);
     props.updatepagepath({ path: getPath() });
-    },[]) 
+  },[]) 
     
   return (
     <NoSsr>
