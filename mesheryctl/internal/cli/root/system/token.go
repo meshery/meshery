@@ -106,7 +106,7 @@ var setTokenCmd = &cobra.Command{
 			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
 
 		}
-		config.WriteConfig(mctlCfg)
+		err = config.WriteConfig(mctlCfg)
 		if err != nil {
 			return err
 		}
