@@ -316,7 +316,7 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 			if ctx.Version == "latest" {
 				ctx.Version, err = GetLatestStableReleaseTag()
 				if err != nil {
-					return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
+					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
 			}
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ctx.Version + "/docker-compose.yaml"
@@ -366,8 +366,26 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		return errors.Wrap(err, "failed to read manifest files")
 	}
 
+	// Transform Manifests for custom configurations
+	MesheryDeploymentManifestByt, err := TransformYAML([]byte(MesheryDeploymentManifest), func(i interface{}) (interface{}, error) {
+		envVarI, ok := i.([]interface{})
+		if !ok {
+			return i, fmt.Errorf("unexpected data type")
+		}
+
+		return append(envVarI, map[string]interface{}{
+			"name":  "MESHERY_SERVER_CALLBACK_URL",
+			"value": viper.GetString("MESHERY_SERVER_CALLBACK_URL"),
+		}), nil
+
+	}, "spec", "template", "spec", "containers", "0", "env")
+	if err != nil {
+		log.Error(err)
+		return errors.Wrap(err, "failed to transform manifest")
+	}
+
 	// apply/update/delete the manifest files
-	if err = ApplyManifest([]byte(MesheryDeploymentManifest), client, update, delete); err != nil {
+	if err = ApplyManifest(MesheryDeploymentManifestByt, client, update, delete); err != nil {
 		return err
 	}
 	if err = ApplyManifest([]byte(mesheryServiceManifest), client, update, delete); err != nil {
