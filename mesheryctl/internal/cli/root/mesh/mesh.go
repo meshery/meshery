@@ -27,6 +27,6 @@ var MeshCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = []*cobra.Command{validateCmd}
+	availableSubcommands = []*cobra.Command{validateCmd, deployCmd, removeCmd}
 	MeshCmd.AddCommand(availableSubcommands...)
 }
