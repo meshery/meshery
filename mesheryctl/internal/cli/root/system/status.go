@@ -49,7 +49,13 @@ var statusCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		currPlatform := mctlCfg.GetCurrentPlatform()
+
+		currCtx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+
+		currPlatform := currCtx.GetPlatform()
 
 		ok, err := utils.IsMesheryRunning(currPlatform)
 		if err != nil {

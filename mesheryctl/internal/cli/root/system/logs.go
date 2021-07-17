@@ -57,7 +57,13 @@ var logsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		currPlatform := mctlCfg.GetCurrentPlatform()
+
+		currCtx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+
+		currPlatform := currCtx.GetPlatform()
 
 		// switch statement for multiple platform
 		switch currPlatform {

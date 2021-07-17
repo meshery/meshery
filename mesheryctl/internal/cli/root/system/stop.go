@@ -78,7 +78,7 @@ func stop() error {
 		return err
 	}
 
-	ok, err := utils.IsMesheryRunning(mctlCfg.GetCurrentPlatform())
+	ok, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 	if err != nil {
 		return err
 	}
@@ -88,9 +88,9 @@ func stop() error {
 	}
 
 	// Get the current platform and the specified adapters in the config.yaml
-	RequestedAdapters := mctlCfg.GetAdapters()
+	RequestedAdapters := currCtx.GetAdapters()
 
-	switch mctlCfg.GetCurrentPlatform() {
+	switch currCtx.GetPlatform() {
 	case "docker":
 		// if the platform is docker, then stop all the running containers
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {

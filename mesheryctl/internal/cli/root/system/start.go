@@ -97,17 +97,17 @@ func start() error {
 		return err
 	}
 
-	if utils.PlatformFlag != "" {
-		mctlCfg.SetCurrentPlatform(utils.PlatformFlag)
-	}
-
 	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
 		return err
 	}
 
+	if utils.PlatformFlag != "" {
+		currCtx.SetPlatform(utils.PlatformFlag)
+	}
+
 	// Deploy to platform specified in the config.yaml
-	switch mctlCfg.GetCurrentPlatform() {
+	switch currCtx.GetPlatform() {
 	case "docker":
 
 		// download the docker-compose.yaml file corresponding to the current version
@@ -140,7 +140,7 @@ func start() error {
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
-		for _, v := range mctlCfg.GetAdapters() {
+		for _, v := range currCtx.GetAdapters() {
 			if services[v].Image == "" {
 				log.Fatalf("Invalid adapter specified %s", v)
 			}
@@ -346,7 +346,7 @@ func start() error {
 		spinner.Start()
 
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-		err = utils.ApplyManifestFiles(manifests, mctlCfg.GetAdapters(), kubeClient, false, false)
+		err = utils.ApplyManifestFiles(manifests, currCtx.GetAdapters(), kubeClient, false, false)
 		if err != nil {
 			break
 		}
@@ -426,7 +426,7 @@ func start() error {
 
 		// switch to default case if the platform specified is not supported
 	default:
-		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", mctlCfg.GetCurrentPlatform(), utils.MesheryFolder))
+		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currCtx.GetPlatform(), utils.MesheryFolder))
 	}
 
 	hcOptions := &HealthCheckOptions{

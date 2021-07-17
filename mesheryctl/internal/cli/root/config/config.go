@@ -113,39 +113,6 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
 	return err
 }
 
-// GetCurrentPlatform returns the platform  of the current context
-func (mc *MesheryCtlConfig) GetCurrentPlatform() string {
-	currentContext, err := mc.GetCurrentContext()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return currentContext.Platform
-}
-
-// SetCurrentPlatform sets the platform of the current context
-func (mc *MesheryCtlConfig) SetCurrentPlatform(platform string) {
-	currCtx, err := mc.GetCurrentContext()
-	if err != nil {
-		log.Errorf(err.Error())
-	}
-	currCtx.Platform = platform
-	mc.Contexts[mc.GetCurrentContextName()] = currCtx
-}
-
-// SetCurrentPlatform sets the platform of the current context
-func (ctx *Context) SetCurrentPlatform(platform string) {
-	ctx.Platform = platform
-}
-
-// GetAdapters returns the adapters in the current context
-func (mc *MesheryCtlConfig) GetAdapters() []string {
-	currentContext, err := mc.GetCurrentContext()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return currentContext.Adapters
-}
-
 // GetTokenForContext takes in the contextName and returns the token name and path corresponding
 // to the given current context
 func (mc *MesheryCtlConfig) GetTokenForContext(contextName string) (Token, error) {
@@ -161,6 +128,66 @@ func (mc *MesheryCtlConfig) GetTokenForContext(contextName string) (Token, error
 	}
 
 	return Token{Name: ctx.Token}, fmt.Errorf("no token found for the given context")
+}
+
+// GetTokens returns the tokens present in the config file
+func (mc *MesheryCtlConfig) GetTokens() []Token {
+	return mc.Tokens
+}
+
+// GetEndpoint returns the endpoint of the current context
+func (ctx *Context) GetEndpoint() string {
+	return ctx.Endpoint
+}
+
+// SetEndpoint sets the endpoint of the current context
+func (ctx *Context) SetEndpoint(endpoint string) {
+	ctx.Endpoint = endpoint
+}
+
+// GetToken returns the token of the current context
+func (ctx *Context) GetToken() string {
+	return ctx.Token
+}
+
+// SetToken sets the token of the current context
+func (ctx *Context) SetToken(token string) {
+	ctx.Token = token
+}
+
+// GetPlatform returns the platform  of the current context
+func (ctx *Context) GetPlatform() string {
+	return ctx.Platform
+}
+
+// SetPlatform sets the platform of the current context
+func (ctx *Context) SetPlatform(platform string) {
+	ctx.Platform = platform
+}
+
+// GetAdapters returns the adapters in the current context
+func (ctx *Context) GetAdapters() []string {
+	return ctx.Adapters
+}
+
+// GetChannel returns the channel of the current context
+func (ctx *Context) GetChannel() string {
+	return ctx.Channel
+}
+
+// SetChannel sets the channel of the current context
+func (ctx *Context) SetChannel(channel string) {
+	ctx.Channel = channel
+}
+
+// GetVersion returns the version of the current context
+func (ctx *Context) GetVersion() string {
+	return ctx.Version
+}
+
+// SetVersion sets the version of the current context
+func (ctx *Context) SetVersion(version string) {
+	ctx.Version = version
 }
 
 // ValidateVersion checks if the version is valid, if empty sets it to default value latest. Returns an error if the version is invalid.
@@ -202,6 +229,12 @@ func (ctx *Context) ValidateVersion() error {
 	return nil
 }
 
+// GetName returns the token name
+func (t *Token) GetName() string {
+	return t.Name
+}
+
+// GetLocation returns the location of the token
 func (t *Token) GetLocation() string {
 	if filepath.IsAbs(t.Location) {
 		return t.Location

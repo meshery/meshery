@@ -54,7 +54,13 @@ func restart() error {
 	if err != nil {
 		return err
 	}
-	currPlatform := mctlCfg.GetCurrentPlatform()
+
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		return err
+	}
+
+	currPlatform := currCtx.GetPlatform()
 
 	switch currPlatform {
 	case "docker":
