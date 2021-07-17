@@ -377,7 +377,6 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 			"name":  "MESHERY_SERVER_CALLBACK_URL",
 			"value": viper.GetString("MESHERY_SERVER_CALLBACK_URL"),
 		}), nil
-
 	}, "spec", "template", "spec", "containers", "0", "env")
 	if err != nil {
 		log.Error(err)
