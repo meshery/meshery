@@ -108,7 +108,32 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   const [pageSize, setPageSize] = useState(10);
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+
   const DEPLOY_URL = '/api/experimental/pattern/deploy';
+
+  const ACTION_TYPES = {
+    FETCH_PATTERNS: {
+      name: "FETCH_PATTERNS" ,
+      error_msg: "Failed to fetch patterns" 
+    },
+    UPDATE_PATTERN: {
+      name: "UPDATE_PATTERN",
+      error_msg: "Failed to update pattern file"
+    },
+    DELETE_PATTERN: {
+      name: "DELETE_PATTERN",
+      error_msg: "Failed to delete pattern file"
+    },
+    DEPLOY_PATTERN: {
+      name: "DEPLOY_PATTERN",
+      error_msg: "Failed to deploy pattern file"
+    },
+    UPLOAD_PATTERN: {
+      name: "UPLOAD_PATTERN",
+      error_msg: "Failed to upload pattern file"
+    },
+  }
+
   const searchTimeout = useRef(null);
   /**
    * fetch patterns when the page loads
@@ -127,6 +152,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
    */
 
   const handleDeploy = (pattern_file) => {
+    updateProgress({showProgress: true})
     dataFetch(
       DEPLOY_URL,
       {
@@ -135,9 +161,10 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
         body:pattern_file,
       },() => {
         console.log("PattrnFile Deploy API", `/api/experimental/pattern/deploy`);
-      },(e) => { 
-        console.error(e) 
-      })
+        updateProgress({showProgress : false})
+      },
+      handleError(ACTION_TYPES.DEPLOY_PATTERN)
+    )
   }
 
   function fetchPatterns(page, pageSize, search, sortOrder) {
@@ -165,14 +192,14 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           setCount(result.total_count || 0);
         }
       },
-      handleError
+      handleError(ACTION_TYPES.FETCH_PATTERNS)
     );
   }
 
-  function handleError(error) {
+  const handleError = (action) => (error) =>  {
     updateProgress({ showProgress: false });
 
-    enqueueSnackbar(`There was an error fetching results: ${error}`, {
+    enqueueSnackbar(`${action.error_msg}: ${error}`, {
       variant: "error",
       action: function Action(key) {
         return (
@@ -192,6 +219,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   }
 
   function handleSubmit(data, id, name, type) {
+    updateProgress({showProgress: true})
     if (type === "delete") {
       dataFetch(
         `/api/experimental/pattern/${id}`,
@@ -203,8 +231,9 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           console.log("PatternFile API", `/api/experimental/pattern/${id}`);
           updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
+          resetSelectedRowData()()
         },
-        handleError
+        handleError(ACTION_TYPES.DELETE_PATTERN)
       );
     }
 
@@ -221,7 +250,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
-        handleError
+        handleError(ACTION_TYPES.UPDATE_PATTERN)
       );
     }
 
@@ -238,7 +267,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
-        handleError
+        handleError(ACTION_TYPES.UPLOAD_PATTERN)
       );
     }
   }
@@ -431,7 +460,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       <MUIDataTable
-        title={<div className={classes.tableHeader}>Meshery Patterns</div>}
+        title={<div className={classes.tableHeader}>Patterns</div>}
         data={patterns}
         columns={columns}
         // @ts-ignore

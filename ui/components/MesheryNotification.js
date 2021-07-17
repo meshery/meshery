@@ -303,6 +303,13 @@ class MesheryNotification extends React.Component {
     this.setState({ tabValue: newTabValue })
   }
 
+  handleBellButtonClick = () => {
+    this.setState({ 
+      tabValue: 0,
+      displayEventType: '*'
+    })
+  }
+
   render() {
     const { classes } = this.props;
     const {
@@ -360,7 +367,7 @@ class MesheryNotification extends React.Component {
                       <IconButton
                         color="inherit"
                         className={classes.drawerButton}
-                        onClick={this.handleNotifFiltering('*')}
+                        onClick={this.handleBellButtonClick}
                       >
                         <BellIcon className={classes.HeaderItem}/>
                       </IconButton>

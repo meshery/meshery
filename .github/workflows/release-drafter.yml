@@ -7,6 +7,7 @@ on:
 
 jobs:
   update_release_draft:
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
       - name: Drafting release

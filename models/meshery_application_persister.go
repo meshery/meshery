@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -67,7 +66,7 @@ func (maap *MesheryApplicationPersister) SaveMesheryApplication(application *Mes
 	if application.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
-			return nil, fmt.Errorf("failed to create ID for the application: %s", err)
+			return nil, ErrGenerateUUID(err)
 		}
 
 		application.ID = &id
@@ -83,7 +82,7 @@ func (maap *MesheryApplicationPersister) SaveMesheryApplications(applications []
 		if application.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {
-				return nil, fmt.Errorf("failed to create ID for the application: %s", err)
+				return nil, ErrGenerateUUID(err)
 			}
 
 			application.ID = &id

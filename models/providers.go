@@ -41,6 +41,7 @@ type ProviderProperties struct {
 	PackageURL          string       `json:"package_url,omitempty"`
 	ProviderName        string       `json:"provider_name,omitempty"`
 	ProviderDescription []string     `json:"provider_description,omitempty"`
+	ProviderURL         string       `json:"provider_url,omitempty"`
 	Extensions          Extensions   `json:"extensions,omitempty"`
 	Capabilities        Capabilities `json:"capabilities,omitempty"`
 }
@@ -211,8 +212,6 @@ type Provider interface {
 	RecordMeshSyncData(model.Object) error
 	ReadMeshSyncData() ([]model.Object, error)
 	GetGenericPersister() *database.Handler
-	GetGraphqlHandler() http.Handler
-	GetGraphqlPlayground() http.Handler
 
 	SetKubeClient(client *mesherykube.Client)
 	GetKubeClient() *mesherykube.Client
@@ -231,6 +230,7 @@ type Provider interface {
 	GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
+	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)

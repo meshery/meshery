@@ -69,7 +69,7 @@ run-local: error
 	./meshery; \
 	cd ..
 
-run-fast: error
+run-fast:
 	cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -173,4 +173,4 @@ gqlgen-generate:
 
 .PHONY: error
 error:
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . update
+	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers --skip-dirs mesheryctl

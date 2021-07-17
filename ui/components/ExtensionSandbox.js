@@ -18,7 +18,7 @@ function getPath() {
  * @param {string} type 
  * @param {Function} cb 
  */
-function getCapabilities(type, cb) {
+export function getCapabilities(type, cb) {
   dataFetch(
     "/api/provider/capabilities",
     {
@@ -59,6 +59,32 @@ function getComponentURIFromPathForNavigator(extensions, path) {
     for (const ext of extensions) {
       const comp = getComponentURIFromPathForNavigator(ext.children, path);
       if (comp) return comp;
+    }
+  }
+
+  return "";
+}
+
+/**
+ * getComponentTitleFromPathForNavigator takes in the navigator extensions and the current
+ * path and searches recursively for the matching component and returns title
+ * 
+ * If there are duplicate uris then the component for first match will be returned
+ * @param {import("../utils/ExtensionPointSchemaValidator").NavigatorSchema[]} extensions
+ * @param {string} path
+ * @returns {string}
+ */
+export function getComponentTitleFromPathForNavigator(extensions, path) {
+  path = normalizeURI(path);
+
+  if (Array.isArray(extensions)) {
+    const fext = extensions.find((item) => item?.href === path);
+    if (fext) return fext.title || "";
+
+    // If not found then start searching in the child of each extension
+    for (const ext of extensions) {
+      const title = getComponentURIFromPathForNavigator(ext.children, path);
+      if (title) return title;
     }
   }
 
