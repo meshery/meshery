@@ -55,25 +55,36 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	return c, err
 }
 
+// SetMesheryCtl sets the mesheryctl configuration object
+func SetContext(v *viper.Viper, context *Context, name string) error {
+	viper.Set("contexts."+name, context)
+	err := viper.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // CheckIfCurrentContextIsValid checks if current context is valid
-func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
+func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (*Context, error) {
 	if mc.CurrentContext == "" {
-		return Context{}, errors.New("current context not set")
+		return &Context{}, errors.New("current context not set")
 	}
 
 	if ctx, exists := mc.Contexts[mc.CurrentContext]; exists {
 		err := ctx.ValidateVersion()
 
 		if err != nil {
-			return Context{}, err
+			return &Context{}, err
 		}
 
 		if err == nil {
-			return ctx, nil
+			return &ctx, nil
 		}
 	}
 
-	return Context{}, errors.New("current context " + mc.CurrentContext + " does not exist")
+	return &Context{}, errors.New("current context " + mc.CurrentContext + " does not exist")
 }
 
 // GetBaseMesheryURL returns the base meshery server URL
@@ -91,7 +102,7 @@ func (mc *MesheryCtlConfig) GetCurrentContextName() string {
 }
 
 // GetCurrentContext returns contents of the current context
-func (mc *MesheryCtlConfig) GetCurrentContext() (Context, error) {
+func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
 		log.Fatal(err)
@@ -131,8 +142,8 @@ func (mc *MesheryCtlConfig) GetTokenForContext(contextName string) (Token, error
 }
 
 // GetTokens returns the tokens present in the config file
-func (mc *MesheryCtlConfig) GetTokens() []Token {
-	return mc.Tokens
+func (mc *MesheryCtlConfig) GetTokens() *[]Token {
+	return &mc.Tokens
 }
 
 // GetEndpoint returns the endpoint of the current context
@@ -331,38 +342,6 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	if set {
 		mctlCfg.CurrentContext = contextName
 	}
-
-	viper.Set("contexts", mctlCfg.Contexts)
-	viper.Set("current-context", mctlCfg.CurrentContext)
-	viper.Set("tokens", mctlCfg.Tokens)
-
-	err = viper.WriteConfig()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// UpdateCurrentContext updates the configuration of the current context
-func UpdateCurrentContext(contextName string, context Context, configPath string) error {
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return err
-	}
-
-	viper.SetConfigFile(configPath)
-	err := viper.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	mctlCfg, err := GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return errors.Wrap(err, "error processing config")
-	}
-
-	mctlCfg.CurrentContext = contextName
-	mctlCfg.Contexts[contextName] = context
 
 	viper.Set("contexts", mctlCfg.Contexts)
 	viper.Set("current-context", mctlCfg.CurrentContext)
