@@ -61,7 +61,7 @@ const (
 	ErrFetchKubernetesCode      = "2051"
 	ErrPanicRecoveryCode        = "2052"
 	ErrBlankNameCode            = "2053"
-	ErrSaveSessionCode          = "2054"
+	ErrSaveSessionCode          = "replace"
 	ErrInvalidLTURLCode         = "2053"
 )
 
