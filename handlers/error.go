@@ -254,4 +254,3 @@ func ErrSaveSession(err error) error {
 func ErrInvalidLTURL(url string) error {
 	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid loadtest url: ", url}, []string{}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
 }
-
