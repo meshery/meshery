@@ -97,8 +97,7 @@ var updateCmd = &cobra.Command{
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
 			}
 
-			currCtx.SetVersion("latest")
-			config.UpdateCurrentContext(mctlCfg.GetCurrentContextName(), currCtx, utils.DefaultConfigPath)
+			config.SetContext(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
 
 			if err != nil {
 				return err
@@ -106,43 +105,43 @@ var updateCmd = &cobra.Command{
 
 		case "kubernetes":
 			// create a client
-			kubeClient, err := meshkitkube.New([]byte(""))
+			// kubeClient, err := meshkitkube.New([]byte(""))
 			if err != nil {
 				return err
 			}
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
 				version := currCtx.Version
-				RequestedAdapters := currCtx.Adapters
+				// RequestedAdapters := currCtx.Adapters
 
 				if version == "latest" {
 					if currCtx.Channel == "edge" {
 						version = "master"
 					} else {
-						version, err = utils.GetLatestStableReleaseTag()
-						if err != nil {
-							return err
-						}
+						// version, err = utils.GetLatestStableReleaseTag()
+						// if err != nil {
+						// 	return err
+						// }
 					}
 				}
 
-				// fetch the manifest files corresponding to the version specified
-				manifests, err := utils.FetchManifests(version)
+				// // fetch the manifest files corresponding to the version specified
+				// manifests, err := utils.FetchManifests(version)
 
-				if err != nil {
-					return err
-				}
+				// if err != nil {
+				// 	return err
+				// }
 
-				// downloaded required files successfully now apply the manifest files
-				log.Info("Updating Meshery...")
+				// // downloaded required files successfully now apply the manifest files
+				// log.Info("Updating Meshery...")
 
-				log.Info("applying the manifests to Kubernetes cluster...")
+				// log.Info("applying the manifests to Kubernetes cluster...")
 
-				// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-				err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, true, false)
-				if err != nil {
-					return err
-				}
+				// // apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
+				// err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, true, false)
+				// if err != nil {
+				// 	return err
+				// }
 			}
 
 			// run k8s checks to make sure if k8s cluster is running
@@ -173,14 +172,14 @@ var updateCmd = &cobra.Command{
 			skipUpdateFlag = true
 
 			// restart the pods in meshery namespace
-			err = restart()
+			// err = restart()
 
 			if err != nil {
 				return err
 			}
 
 			currCtx.SetVersion("latest")
-			config.UpdateCurrentContext(mctlCfg.GetCurrentContextName(), currCtx, utils.DefaultConfigPath)
+			config.SetContext(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
 
 			if err != nil {
 				return err
