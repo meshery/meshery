@@ -2,10 +2,13 @@ package context
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -15,6 +18,7 @@ import (
 )
 
 var b *bytes.Buffer
+var update = flag.Bool("update", false, "update golden files")
 
 type CmdTestInput struct {
 	Name             string
@@ -46,36 +50,39 @@ func SetupFunc(t *testing.T) {
 	ContextCmd.SetOut(b)
 }
 func TestViewContextCmd(t *testing.T) {
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
 	SetupContextEnv(t, "/fixtures/.meshery/TestContext.yaml")
 
 	tests := []CmdTestInput{
 		{
 			Name:             "view for default context",
 			Args:             []string{"view"},
-			ExpectedResponse: viewExpected,
+			ExpectedResponse: "view.golden",
 		},
 		{
 			Name:             "view with specified context through context flag",
 			Args:             []string{"view", "--context", "local2"},
-			ExpectedResponse: viewWithContextExpected,
+			ExpectedResponse: "viewWithContextExpected.golden",
 		},
 		{
-			Name: "Error for viewing a non-existing context",
-			Args: []string{"view", "local3"},
-			ExpectedResponse: `context "local3" doesn't exists, run the following to create:
-
-mesheryctl system context create local3
-`,
+			Name:             "Error for viewing a non-existing context",
+			Args:             []string{"view", "local3"},
+			ExpectedResponse: "view.notexist.golden",
 		},
 		{
 			Name:             "view with specified context as argument",
 			Args:             []string{"view", "local2"},
-			ExpectedResponse: viewWithContextExpected,
+			ExpectedResponse: "viewWithContextExpected.golden",
 		},
 		{
 			Name:             "view with all flag set",
 			Args:             []string{"view", "--all"},
-			ExpectedResponse: viewAllExpected,
+			ExpectedResponse: "viewAllExpected.golden",
 		},
 	}
 	for _, tt := range tests {
@@ -88,7 +95,13 @@ mesheryctl system context create local3
 			}
 
 			actualResponse := b.String()
-			expectedResponse := tt.ExpectedResponse
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata")
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			}
@@ -97,12 +110,17 @@ mesheryctl system context create local3
 }
 func TestListContextCmd(t *testing.T) {
 	SetupContextEnv(t, "/fixtures/.meshery/TestContext.yaml")
-
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
 	tests := []CmdTestInput{
 		{
 			Name:             "list all contexts",
 			Args:             []string{"list"},
-			ExpectedResponse: listExpected,
+			ExpectedResponse: "listExpected.golden",
 		},
 	}
 	for _, tt := range tests {
@@ -115,8 +133,13 @@ func TestListContextCmd(t *testing.T) {
 			}
 
 			actualResponse := b.String()
-			expectedResponse := tt.ExpectedResponse
-
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata")
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 			}
@@ -125,13 +148,18 @@ func TestListContextCmd(t *testing.T) {
 }
 
 func TestDeleteContextCmd(t *testing.T) {
-	SetupContextEnv(t, "/testdata/context/ExpectedDelete.yaml")
-
+	SetupContextEnv(t, "/testdata/ExpectedDelete.yaml")
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
 	tests := []CmdTestInput{
 		{
 			Name:             "delete given context",
 			Args:             []string{"delete", "local2"},
-			ExpectedResponse: "deleted context local2\n",
+			ExpectedResponse: "delete.context.golden",
 		},
 	}
 	for _, tt := range tests {
@@ -144,7 +172,13 @@ func TestDeleteContextCmd(t *testing.T) {
 			}
 
 			actualResponse := b.String()
-			expectedResponse := tt.ExpectedResponse
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata")
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
 
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
@@ -153,13 +187,18 @@ func TestDeleteContextCmd(t *testing.T) {
 			if err != nil {
 				t.Error("unable to locate meshery directory")
 			}
-			filepath := path + "/testdata/context/ExpectedDelete.yaml"
+			filepath := path + "/testdata/ExpectedDelete.yaml"
 
 			content, err := ioutil.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
 			actualResponse = string(content)
+			golden = utils.NewGoldenFile(t, "deleteExpected.golden", testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			deleteExpected := golden.Load()
 			if actualResponse != deleteExpected {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", deleteExpected, actualResponse)
 			}
@@ -172,8 +211,14 @@ func TestDeleteContextCmd(t *testing.T) {
 	}
 }
 func TestAddContextCmd(t *testing.T) {
-	SetupContextEnv(t, "/testdata/context/ExpectedAdd.yaml")
+	SetupContextEnv(t, "/testdata/ExpectedAdd.yaml")
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
 
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
 	tests := []CmdTestInput{
 		{
 			Name:             "add given context",
@@ -191,7 +236,13 @@ func TestAddContextCmd(t *testing.T) {
 			}
 
 			actualResponse := b.String()
-			expectedResponse := tt.ExpectedResponse
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata")
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
 
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
@@ -200,13 +251,18 @@ func TestAddContextCmd(t *testing.T) {
 			if err != nil {
 				t.Error("unable to locate meshery directory")
 			}
-			filepath := path + "/testdata/context/ExpectedAdd.yaml"
+			filepath := path + "/testdata/ExpectedAdd.yaml"
 
 			content, err := ioutil.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
 			actualResponse = string(content)
+			golden = utils.NewGoldenFile(t, "addExpected.golden", testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			addExpected := golden.Load()
 			if actualResponse != addExpected {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", addExpected, actualResponse)
 			}
@@ -220,13 +276,19 @@ func TestAddContextCmd(t *testing.T) {
 }
 
 func TestSwitchContextCmd(t *testing.T) {
-	SetupContextEnv(t, "/testdata/context/ExpectedSwitch.yaml")
+	SetupContextEnv(t, "/testdata/ExpectedSwitch.yaml")
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
 
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
 	tests := []CmdTestInput{
 		{
 			Name:             "switch to a different context",
 			Args:             []string{"switch", "local2"},
-			ExpectedResponse: "switched to context 'local2'\n",
+			ExpectedResponse: "switch.context.golden",
 		},
 	}
 	for _, tt := range tests {
@@ -239,7 +301,13 @@ func TestSwitchContextCmd(t *testing.T) {
 			}
 
 			actualResponse := b.String()
-			expectedResponse := tt.ExpectedResponse
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata")
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
 
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
@@ -248,12 +316,17 @@ func TestSwitchContextCmd(t *testing.T) {
 			if err != nil {
 				t.Error("unable to locate meshery directory")
 			}
-			filepath := path + "/testdata/context/ExpectedSwitch.yaml"
+			filepath := path + "/testdata/ExpectedSwitch.yaml"
 			content, err := ioutil.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
 			actualResponse = string(content)
+			golden = utils.NewGoldenFile(t, "switchExpected.golden", testdataDir)
+			if *update {
+				golden.Write(actualResponse)
+			}
+			switchExpected := golden.Load()
 			if actualResponse != switchExpected {
 				t.Errorf("expected response %v and actual response %v don't match", switchExpected, actualResponse)
 			}
@@ -289,143 +362,3 @@ func copy(src, dst string) error {
 	_, err = io.Copy(destination, source)
 	return err
 }
-
-// Expected response for different cases hardcoded below for View command.
-var viewExpected = `
-Current Context: local
-
-endpoint: http://localhost:9081
-token: Default
-token-location: auth.json
-platform: kubernetes
-adapters:
-- meshery-istio
-channel: stable
-version: latest
-
-`
-var viewWithContextExpected = `
-Current Context: local2
-
-endpoint: http://localhost:32242
-token: Default2
-token-location: auth.json
-platform: docker
-adapters:
-- meshery-istio
-channel: stable
-version: latest
-
-`
-var viewAllExpected = `local:
-  endpoint: http://localhost:9081
-  token: Default
-  token-location: auth.json
-  platform: kubernetes
-  adapters:
-  - meshery-istio
-  channel: stable
-  version: latest
-local2:
-  endpoint: http://localhost:32242
-  token: Default2
-  token-location: auth.json
-  platform: docker
-  adapters:
-  - meshery-istio
-  channel: stable
-  version: latest
-
-`
-
-// Expected response for different cases hardcoded below for List command.
-var listExpected = `Current context: local
-
-Available contexts:
-
-- local
-- local2
-`
-
-// Expected response for different cases hardcoded below for Delete command.
-var deleteExpected = `contexts:
-  local:
-    endpoint: http://localhost:9081
-    token: Default
-    platform: kubernetes
-    adapters:
-    - meshery-istio
-    channel: stable
-    version: latest
-current-context: local
-tokens:
-- location: auth.json
-  name: Default
-- location: auth.json
-  name: Default2
-`
-
-var addExpected = `contexts:
-  local:
-    endpoint: http://localhost:9081
-    token: Default
-    platform: kubernetes
-    adapters:
-    - meshery-istio
-    channel: stable
-    version: latest
-  local2:
-    endpoint: http://localhost:32242
-    token: Default2
-    platform: docker
-    adapters:
-    - meshery-istio
-    channel: stable
-    version: latest
-  local3:
-    endpoint: http://localhost:9081
-    token: Default
-    platform: docker
-    adapters:
-    - meshery-istio
-    - meshery-linkerd
-    - meshery-consul
-    - meshery-nsm
-    - meshery-kuma
-    - meshery-cpx
-    - meshery-osm
-    - meshery-traefik-mesh
-    channel: stable
-    version: latest
-current-context: local
-tokens:
-- name: Default
-  location: auth.json
-- name: Default2
-  location: auth.json
-`
-
-var switchExpected = `contexts:
-  local:
-    adapters:
-    - meshery-istio
-    channel: stable
-    endpoint: http://localhost:9081
-    platform: kubernetes
-    token: Default
-    version: latest
-  local2:
-    adapters:
-    - meshery-istio
-    channel: stable
-    endpoint: http://localhost:32242
-    platform: docker
-    token: Default2
-    version: latest
-current-context: local2
-tokens:
-- location: auth.json
-  name: Default
-- location: auth.json
-  name: Default2
-`
