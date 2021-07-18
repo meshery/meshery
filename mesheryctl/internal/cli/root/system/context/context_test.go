@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -153,11 +154,8 @@ func TestDeleteContextCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/context/ExpectedDelete.yaml"
-			file, err := os.Open(filepath)
-			if err != nil {
-				t.Error(err)
-			}
-			content, err := io.ReadAll(file)
+
+			content, err := ioutil.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -203,11 +201,8 @@ func TestAddContextCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/context/ExpectedAdd.yaml"
-			file, err := os.Open(filepath)
-			if err != nil {
-				t.Error(err)
-			}
-			content, err := io.ReadAll(file)
+
+			content, err := ioutil.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -254,11 +249,7 @@ func TestSwitchContextCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/context/ExpectedSwitch.yaml"
-			file, err := os.Open(filepath)
-			if err != nil {
-				t.Error(err)
-			}
-			content, err := io.ReadAll(file)
+			content, err := ioutil.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
