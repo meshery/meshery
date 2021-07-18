@@ -343,3 +343,35 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 
 	return nil
 }
+
+// UpdateCurrentContext updates the configuration of the current context
+func UpdateCurrentContext(contextName string, context Context, configPath string) error {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	mctlCfg, err := GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	mctlCfg.CurrentContext = contextName
+	mctlCfg.Contexts[contextName] = context
+
+	viper.Set("contexts", mctlCfg.Contexts)
+	viper.Set("current-context", mctlCfg.CurrentContext)
+	viper.Set("tokens", mctlCfg.Tokens)
+
+	err = viper.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
