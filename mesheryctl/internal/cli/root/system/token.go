@@ -117,7 +117,7 @@ var setTokenCmd = &cobra.Command{
 var listTokenCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List tokens",
-	Long:  "List all the tokens in meshery config",
+	Long:  "List all the tokens in your meshconfig",
 	Example: `
 	mesheryctl system token list
 	`,
