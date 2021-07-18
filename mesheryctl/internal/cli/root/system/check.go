@@ -70,7 +70,12 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error processing config")
 	}
-	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	err = mctlCfg.SetCurrentContext(tempContext)
+	if err != nil {
+		return nil, err
+	}
+
+	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
 		return nil, err
 	}

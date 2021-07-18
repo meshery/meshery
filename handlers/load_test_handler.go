@@ -89,10 +89,15 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}
 
 	ltURL, err := url.Parse(loadTestOptions.URL)
-	if err != nil || !ltURL.IsAbs() {
+	if err != nil {
 		obj := "the provided load test"
 		h.log.Error(ErrParseBool(err, obj))
 		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
+		return
+	}
+	if !ltURL.IsAbs() {
+		h.log.Error(ErrInvalidLTURL(ltURL.String()))
+		http.Error(w, ErrInvalidLTURL(ltURL.String()).Error(), http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.Name = testName
@@ -113,7 +118,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}
 	loadTestOptions.AllowInitialErrors = true
 
-	h.loadTestHelperHandler(w, req, testName, "", testUUID, prefObj, loadTestOptions, provider)
+	h.loadTestHelperHandler(w, req, testName, "istio", testUUID, prefObj, loadTestOptions, provider)
 }
 
 func (h *Handler) jsonToMap(headersString string) *map[string]string {
