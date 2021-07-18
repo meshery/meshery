@@ -53,17 +53,19 @@ var updateCmd = &cobra.Command{
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
-		err = mctlCfg.SetCurrentContext(tempContext)
-		if err != nil {
-			return err
+		if tempContext != "" {
+			err = mctlCfg.SetCurrentContext(tempContext)
+			if err != nil {
+				return errors.Wrap(err, "failed to set temporary context")
+			}
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return err
 		}
-		if currCtx.Version != "latest" {
+		if currCtx.GetVersion() != "latest" {
 			// ask confirmation if user has pinned the version in config
-			log.Infof("You have pinned version: %s in your current context", currCtx.Version)
+			log.Infof("You have pinned version: %s in your current context", currCtx.GetVersion())
 			userResponse := false
 			if utils.SilentFlag {
 				userResponse = true
@@ -75,10 +77,10 @@ var updateCmd = &cobra.Command{
 				log.Info("Update aborted.")
 				return nil
 			}
-			currCtx.Version = "latest"
+			currCtx.SetVersion("latest")
 		}
 
-		switch currCtx.Platform {
+		switch currCtx.GetPlatform() {
 		case "docker":
 			if !utils.SkipResetFlag {
 				err := resetMesheryConfig()
@@ -95,7 +97,8 @@ var updateCmd = &cobra.Command{
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
 			}
 
-			err = utils.ChangeContextVersion(mctlCfg.CurrentContext, "latest")
+			currCtx.SetVersion("latest")
+			config.UpdateCurrentContext(mctlCfg.GetCurrentContextName(), currCtx, utils.DefaultConfigPath)
 
 			if err != nil {
 				return err
@@ -176,7 +179,8 @@ var updateCmd = &cobra.Command{
 				return err
 			}
 
-			err = utils.ChangeContextVersion(mctlCfg.CurrentContext, "latest")
+			currCtx.SetVersion("latest")
+			config.UpdateCurrentContext(mctlCfg.GetCurrentContextName(), currCtx, utils.DefaultConfigPath)
 
 			if err != nil {
 				return err
