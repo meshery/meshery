@@ -42,8 +42,8 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *model
 // responses:
 // 	200: anonymousStatsResponseWrapper
 
-// AnonymousStatsHandler updates anonymous stats for user or for persisting load test preferences
-func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+// UserPrefsHandler updates anonymous stats for user or for persisting load test preferences
+func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodGet {
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 			obj := "user preference object"

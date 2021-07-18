@@ -111,7 +111,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
     this.setState({ blockRunTest: true }); // to block the button
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    dataFetch('/api/user/prefs/perf', {
+    dataFetch('/api/user/prefs', {
       credentials: 'same-origin',
       method: 'POST',
       credentials: 'include',
@@ -155,7 +155,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     const self = this;
-    dataFetch('/api/user/prefs/perf', {
+    dataFetch('/api/user/prefs', {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',

@@ -518,7 +518,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     dataFetch(
-      "/api/user/prefs/perf",
+      "/api/user/prefs",
       {
         credentials: "same-origin",
         method: "GET",
