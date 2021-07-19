@@ -64,6 +64,7 @@ const (
 	ErrInvalidLTURLCode         = "2053"
 	ErrDataSendCode             = "replace"
 	ErrVersionCompareCode       = "replace"
+	ErrSaveSessionCode          = "2136"
 )
 
 var (
@@ -258,4 +259,8 @@ func ErrDataSend(err error) error {
 
 func ErrVersionCompare(err error) error {
 	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to compare latest and current version of Meshery"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrSaveSession(err error) error {
+	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session"}, []string{err.Error()}, []string{}, []string{})
 }
