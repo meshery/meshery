@@ -7,53 +7,61 @@ import { bindActionCreators } from "redux"
 import { updateProgress } from "../../../lib/store";
 import { withSnackbar } from "notistack";
 import { useEffect, useState } from "react"
-import {pingKubernetes}  from "../helpers/kubernetesHelpers"
+import {isKubernetesConnected, pingKubernetes}  from "../helpers/kubernetesHelpers"
 import KubernetesDataPanel from "../DataPanels/Kubernetes"
 
 
-const KubernetesScreen = ({enqueueSnackbar, k8sconfig, updateProgress, closeSnackbar}) => { 
+const KubernetesScreen = ({k8sconfig}) => { 
 
-    const [clusterInformation, setClusterInformation] = useState({
-      isClusterConfigured: false,
-      inClusterConfig: false,
-      kubernetesPingStatus: false
+  const [clusterInformation, setClusterInformation] = useState({
+    isClusterConfigured: k8sconfig.clusterConfigured,
+    inClusterConfig: k8sconfig.inClusterConfig,
+    kubernetesPingStatus: false,
+    contextName: k8sconfig.contextName,
+    serverVersion: k8sconfig.server_version
   })
-  
-
-useEffect(() => {
-
-    if(k8sconfig.clusterConfigured) setClusterInformation({...clusterInformation, isClusterConfigured: true}) 
-    else setClusterInformation({...clusterInformation, isClusterConfigured: false}) 
-
-    if(k8sconfig.inClusterConfig) setClusterInformation({...clusterInformation, inClusterConfig: true}) 
-    else setClusterInformation({...clusterInformation, inClusterConfig: false}) 
-
-}, [k8sconfig])
-
-const kubernetesPingUpdate = () => pingKubernetes(
-    () => setClusterInformation({...clusterInformation, kubernetesPingStatus: true}),
-    () => setClusterInformation({...clusterInformation, kubernetesPingStatus: false})
-  )
-
-useEffect(kubernetesPingUpdate, [])
 
 
-const kubeserviceInfo = {
-    name: "Kubernetes",
-    logoComponent: KubernetesIcon,
+
+  useEffect(() => {
+
+    pingKubernetes(
+      (res) => {
+     setClusterInformation({
+      isClusterConfigured: k8sconfig.clusterConfigured,
+      inClusterConfig: k8sconfig.inClusterConfig,
+      kubernetesPingStatus: (res !== undefined ? true : false),
+      contextName: k8sconfig.contextName,
+      serverVersion: k8sconfig.server_version
+      })
+    },
+    (err) => console.log(err)
+    )
+    
+  },[k8sconfig.clusterConfigured, k8sconfig.inClusterConfig, k8sconfig.contextName])
+
+
+
+
+  const kubeserviceInfo = {
+    name: "Kubernetes", logoComponent: KubernetesIcon,
     configComp :  KubernetesConfig,
     clusterInformation 
   }
 
+  const showDataPanel = () => isKubernetesConnected(clusterInformation.isClusterConfigured, clusterInformation.kubernetesPingStatus)
 
   return (
     <Grid item xs={12} container justify="center" alignItems="flex-start"> 
-        <Grid item xs={6} container justify="center">
-          <ServiceSwitch serviceInfo={kubeserviceInfo} /> 
-        </Grid>
-        <Grid item xs={6} container justify="center">
-          <KubernetesDataPanel clusterInformation={kubeserviceInfo.clusterInformation}/>
-        </Grid>
+      <Grid item xs={6} container justify="center">
+        <ServiceSwitch serviceInfo={kubeserviceInfo} /> 
+      </Grid>
+      <Grid item xs={6} container justify="center">
+      {
+        showDataPanel() &&
+        <KubernetesDataPanel clusterInformation={kubeserviceInfo.clusterInformation}/>
+      }
+      </Grid>
     </Grid>
   )
 }
