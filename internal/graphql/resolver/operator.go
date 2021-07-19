@@ -11,10 +11,12 @@ import (
 	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
 	"github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
+	"github.com/layer5io/meshery/models"
 	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -38,14 +40,14 @@ type controller struct {
 	namespace  string
 }
 
-func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status) (model.Status, error) {
+func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status) (model.Status, error) {
 	delete := true
 	if status == model.StatusEnabled {
 		r.Log.Info("Installing Operator")
 		delete = false
 	}
 
-	if r.KubeClient.KubeClient == nil {
+	if r.Config.KubeClient.KubeClient == nil {
 		r.Log.Error(ErrNilClient)
 		return model.StatusUnknown, ErrNilClient
 	}
@@ -66,7 +68,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status
 		r.Log.Info("Operator operation executed")
 
 		if !del {
-			endpoint, err := r.subscribeToBroker(kubeclient, r.brokerChannel)
+			endpoint, err := r.subscribeToBroker(provider, kubeclient, r.brokerChannel)
 			r.Log.Debug("Endpoint: ", endpoint)
 			if err != nil {
 				r.Log.Error(err)
@@ -100,7 +102,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status
 		r.operatorChannel <- &model.OperatorStatus{
 			Status: status,
 		}
-	}(delete, r.KubeClient)
+	}(delete, r.Config.KubeClient)
 
 	r.operatorChannel <- &model.OperatorStatus{
 		Status: model.StatusProcessing,
@@ -109,14 +111,14 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status
 	return model.StatusProcessing, nil
 }
 
-func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus, error) {
+func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provider) (*model.OperatorStatus, error) {
 	status := model.StatusUnknown
 	version := string(model.StatusUnknown)
-	if r.KubeClient == nil {
+	if r.Config.KubeClient == nil {
 		return nil, ErrMesheryClient(nil)
 	}
 
-	obj, err := getOperator(r.KubeClient)
+	obj, err := getOperator(r.Config.KubeClient)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -135,7 +137,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus
 		status = model.StatusDisabled
 	}
 
-	objs, err := getControllersInfo(r.KubeClient)
+	objs, err := getControllersInfo(r.Config.KubeClient)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -163,7 +165,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus
 	}, nil
 }
 
-func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error) {
+func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider) (<-chan *model.OperatorStatus, error) {
 	if r.operatorChannel == nil {
 		r.operatorChannel = make(chan *model.OperatorStatus)
 		r.operatorSyncChannel = make(chan struct{})
@@ -171,20 +173,20 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 
 	go func() {
 		r.Log.Info("Operator subscription started")
-		err := r.connectToBroker(context.TODO())
+		err := r.connectToBroker(context.TODO(), provider)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
 			return
 		}
 
 		// Enforce enable operator
-		status, err := r.getOperatorStatus(ctx)
+		status, err := r.getOperatorStatus(ctx, provider)
 		if err != nil {
 			r.Log.Error(ErrOperatorSubscription(err))
 			return
 		}
 		if status.Status != model.StatusEnabled {
-			_, err = r.changeOperatorStatus(ctx, model.StatusEnabled)
+			_, err = r.changeOperatorStatus(ctx, provider, model.StatusEnabled)
 			if err != nil {
 				r.Log.Error(ErrOperatorSubscription(err))
 				return
@@ -194,7 +196,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 		for {
 			select {
 			case <-r.operatorSyncChannel:
-				status, err := r.getOperatorStatus(ctx)
+				status, err := r.getOperatorStatus(ctx, provider)
 				if err != nil {
 					r.Log.Error(ErrOperatorSubscription(err))
 					return
@@ -210,8 +212,21 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 	return r.operatorChannel, nil
 }
 
-func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message) (string, error) {
+func (r *Resolver) subscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message) (string, error) {
 	var broker *operatorv1alpha1.Broker
+
+	// Clear existing data
+	err := provider.GetGenericPersister().Migrator().DropTable(
+		meshsyncmodel.KeyValue{},
+		meshsyncmodel.Object{},
+	)
+	if err != nil {
+		if provider.GetGenericPersister() == nil {
+			return "", ErrEmptyHandler
+		}
+		r.Log.Warn(ErrDeleteData(err))
+	}
+
 	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
 		if mesheryclient == nil {
@@ -247,7 +262,7 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 					Address: "host.docker.internal",
 					Port:    int32(port),
 				}, nil) {
-					u, _ := url.Parse(r.KubeClient.RestConfig.Host)
+					u, _ := url.Parse(r.Config.KubeClient.RestConfig.Host)
 					if utils.TcpCheck(&utils.HostPort{
 						Address: u.Hostname(),
 						Port:    int32(port),

@@ -32,10 +32,10 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 		logrus.Errorf("unable to save session: %v", err)
 	}
 
-	if prefObj.K8SConfig != nil && h.kubeclient != nil {
+	if prefObj.K8SConfig != nil && h.config.KubeClient != nil {
 		if prefObj.K8SConfig.ServerVersion == "" {
 			// fetching server version, if it has not already been
-			version, err := h.kubeclient.KubeClient.ServerVersion()
+			version, err := h.config.KubeClient.KubeClient.ServerVersion()
 			if err != nil {
 				logrus.Errorf("unable to ping the Kubernetes server")
 			}

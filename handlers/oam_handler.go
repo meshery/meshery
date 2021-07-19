@@ -102,7 +102,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	// If DynamicKubeClient hasn't been created yet then create one
-	if h.kubeclient.DynamicKubeClient == nil {
+	if h.config.KubeClient.DynamicKubeClient == nil {
 		kc, err := meshkube.New(prefObj.K8SConfig.Config)
 		if err != nil {
 			logrus.Error("failed to create kube client: ", err)
@@ -111,7 +111,7 @@ func (h *Handler) PatternFileHandler(
 			return
 		}
 
-		h.kubeclient = kc
+		h.config.KubeClient = kc
 	}
 
 	msg, err := createCompConfigPairsAndExecuteAction(
@@ -460,7 +460,7 @@ func handleCompConfigPairAction(
 			callType,
 			[]string{string(jsonComp)},
 			string(jsonConfig),
-			h.kubeclient,
+			h.config.KubeClient,
 		)
 		if err != nil {
 			errs = append(errs, err)

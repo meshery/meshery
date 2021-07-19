@@ -20,11 +20,11 @@ type Router struct {
 }
 
 // NewRouter returns a new ServeMux with app routes.
-func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router {
+func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler) *Router {
 	gMux := mux.NewRouter()
 
-	gMux.Handle("/api/system/graphql/query", h.GetGraphQLHandler()).Methods("GET", "POST")
-	gMux.Handle("/api/system/graphql/playground", h.GetGraphQLPlaygroundHandler()).Methods("GET", "POST")
+	gMux.Handle("/api/system/graphql/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(g))))).Methods("GET", "POST")
+	gMux.Handle("/api/system/graphql/playground", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(gp))))).Methods("GET", "POST")
 
 	gMux.HandleFunc("/api/server/version", h.ServerVersionHandler).
 		Methods("GET")
