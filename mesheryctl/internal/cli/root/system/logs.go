@@ -53,11 +53,17 @@ var logsCmd = &cobra.Command{
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
-		currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+		err = mctlCfg.SetCurrentContext(tempContext)
 		if err != nil {
 			return err
 		}
-		currPlatform := currCtx.Platform
+
+		currCtx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+
+		currPlatform := currCtx.GetPlatform()
 
 		// switch statement for multiple platform
 		switch currPlatform {
