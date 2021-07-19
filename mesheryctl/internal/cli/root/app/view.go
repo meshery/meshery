@@ -9,6 +9,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -31,6 +32,10 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+		// set default tokenpath for app offboard command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+		}
 		application := ""
 		isID := false
 		applicationID := ""
@@ -47,6 +52,8 @@ var viewCmd = &cobra.Command{
 			}
 		}
 		url := mctlCfg.GetBaseMesheryURL()
+		// Merge args to get app-name
+		application = strings.Join(args, "%20")
 		if len(application) == 0 {
 			if viewAllFlag {
 				url += "/api/experimental/application?page_size=10000"
@@ -57,8 +64,6 @@ var viewCmd = &cobra.Command{
 			// if application is a valid uuid, then directly fetch the application
 			url += "/api/experimental/application/" + applicationID
 		} else {
-			// Merge args to get app-name
-			application := strings.Join(args, "%20")
 			// else search application by name
 			url += "/api/experimental/application?search=" + application
 		}
