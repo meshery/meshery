@@ -102,9 +102,6 @@ func start() error {
 		return err
 	}
 
-	// if utils.PlatformFlag != "" {
-	// 	currCtx.SetPlatform(utils.PlatformFlag)
-	// }
     if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
         currCtx.Platform = utils.PlatformFlag
         err := utils.ChangePlatform(mctlCfg.CurrentContext, currCtx)
@@ -113,9 +110,8 @@ func start() error {
             return err
         }
     } else{
-        return errors.New(fmt.Sprintf("neha the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", utils.PlatformFlag, utils.MesheryFolder))
+        return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", utils.PlatformFlag, utils.MesheryFolder))
     }
-
 
 	// Deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
