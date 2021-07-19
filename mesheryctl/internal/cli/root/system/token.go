@@ -5,6 +5,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -150,8 +151,8 @@ var viewTokenCmd = &cobra.Command{
 		if viewAllTokens {
 			log.Info("Listing all available tokens...\n")
 			for _, t := range mctlCfg.Tokens {
-				log.Info("-> token: ", t.Name)
-				log.Info("   location: ", t.Location)
+				log.Info("- token: ", t.Name)
+				log.Info("  location: ", t.Location)
 			}
 			return nil
 		}
@@ -167,15 +168,29 @@ var viewTokenCmd = &cobra.Command{
 			return nil
 		}
 		tokenName = args[0]
-
+		var tokenNames []string
 		for _, t := range mctlCfg.Tokens {
 			if t.Name == tokenName {
 				log.Info("token: ", t.Name)
 				log.Info("location: ", t.Location)
 				return nil
 			}
+			// Collecting token names in case the provided token name is invalid and a prompt is to be shown.
+			tokenNames = append(tokenNames, t.Name)
 		}
-		return errors.Errorf("Token %s could not be found.", tokenName)
+
+		log.Info("Invalid token name. Select from available tokens-")
+		prompt := promptui.Select{
+			Label: "Select a token from the list",
+			Items: tokenNames,
+		}
+		i, _, err := prompt.Run()
+		if err != nil {
+			return err
+		}
+		log.Info("token: ", mctlCfg.Tokens[i].Name)
+		log.Info("location: ", mctlCfg.Tokens[i].Location)
+		return nil
 	},
 }
 
