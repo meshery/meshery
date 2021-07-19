@@ -27,15 +27,15 @@ const KubernetesScreen = ({k8sconfig}) => {
 
     pingKubernetes(
       (res) => {
-     setClusterInformation({
-      isClusterConfigured: k8sconfig.clusterConfigured,
-      inClusterConfig: k8sconfig.inClusterConfig,
-      kubernetesPingStatus: (res !== undefined ? true : false),
-      contextName: k8sconfig.contextName,
-      serverVersion: k8sconfig.server_version
-      })
-    },
-    (err) => console.log(err)
+        setClusterInformation({
+          isClusterConfigured: k8sconfig.clusterConfigured,
+          inClusterConfig: k8sconfig.inClusterConfig,
+          kubernetesPingStatus: (res !== undefined ? true : false),
+          contextName: k8sconfig.contextName,
+          serverVersion: k8sconfig.server_version
+        })
+      },
+      (err) => console.log(err)
     )
     
   },[k8sconfig.clusterConfigured, k8sconfig.inClusterConfig, k8sconfig.contextName])
@@ -57,10 +57,10 @@ const KubernetesScreen = ({k8sconfig}) => {
         <ServiceSwitch serviceInfo={kubeserviceInfo} /> 
       </Grid>
       <Grid item xs={6} container justify="center">
-      {
-        showDataPanel() &&
+        {
+          showDataPanel() &&
         <KubernetesDataPanel clusterInformation={kubeserviceInfo.clusterInformation}/>
-      }
+        }
       </Grid>
     </Grid>
   )

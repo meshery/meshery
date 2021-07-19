@@ -48,7 +48,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ["Kubernetes", "Meshery Operator", "Service Mesh", "Metrics"];
+  return ["Kubernetes", "Meshery Operator", "Service Mesh",
+  // "Metrics"
+  ];
 }
 
 const ConfigurationWizard = () => {
@@ -67,7 +69,6 @@ const ConfigurationWizard = () => {
   const handleUserClick = (navStep) => {
     setActiveStep(navStep);
   };
-  const handleConnectToKubernetes = (checked) => setKubernetesConnected(checked);
 
   const handleStep = (step) => {
     switch (step) {
@@ -77,8 +78,8 @@ const ConfigurationWizard = () => {
         return <MesheryOperatorScreen />;
       case 2:
         return <ServiceMeshScreen />;
-      case 3:
-        return <MetricsScreen />;
+      // case 3:
+      //   return <MetricsScreen />;
       default:
         return null;
     }

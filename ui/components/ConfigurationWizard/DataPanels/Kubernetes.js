@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import CloseIcon from "@material-ui/icons/Close";
 import {
   withStyles,
@@ -54,22 +55,22 @@ const chipStyles = (theme) => ({
 
 const KubernetesChip = withStyles(chipStyles)(({classes, handleKubernetesClick, label}) => (
 
-      <Chip
-          label={label}
-          onClick={handleKubernetesClick}
-          icon={<img src="/static/img/kubernetes.svg" className={classes.chipIcon} />}
-          className={classes.chip}
-          key="k8s-key"
-          variant="outlined"
-        />
+  <Chip
+    label={label}
+    onClick={handleKubernetesClick}
+    icon={<img src="/static/img/kubernetes.svg" className={classes.chipIcon} />}
+    className={classes.chip}
+    key="k8s-key"
+    variant="outlined"
+  />
 ))
 
 
 const KubernetesPingSnackbarAction = (closeSnackbar) => (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      )
+  <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+    <CloseIcon />
+  </IconButton>
+)
 
 const KubernetesDataPanel = ({clusterInformation, classes, updateProgress, enqueueSnackbar, closeSnackbar}) => (
 
@@ -106,4 +107,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default connect(null, mapDispatchToProps)(withStyles(styles)(withSnackbar(KubernetesDataPanel)))
+export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(KubernetesDataPanel)))

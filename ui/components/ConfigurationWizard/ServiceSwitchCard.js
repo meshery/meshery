@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Card, CardContent, Container, FormControlLabel, Switch, Typography } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { isKubernetesConnected } from './helpers/kubernetesHelpers';
+import { isMesheryOperatorConnected } from './helpers/mesheryOperator';
 
 
 const MeshySwitch = withStyles({
@@ -91,11 +92,14 @@ const styles = () => ({
 
 
 const deteremineKubernetesSwitchState = (clusterInfo) => isKubernetesConnected(clusterInfo.isClusterConfigured, clusterInfo.kubernetesPingStatus)
+const deteremineMesheryOperatorSwitchState = (operatorInformation) => isMesheryOperatorConnected(operatorInformation)
 
 const getSwitchState = (serviceInfo) => {
   switch (serviceInfo.name) {
     case "Kubernetes":
       return deteremineKubernetesSwitchState(serviceInfo.clusterInformation)  
+    case "Meshery Operator":
+      return deteremineMesheryOperatorSwitchState(serviceInfo.operatorInformation)
 
     default:
       return false;
