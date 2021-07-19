@@ -151,7 +151,7 @@ The following key principles should be taken to mind when writing tests:
 1. Golang’s standard library will be used to write tests.
 2. The tests should cover all possible use cases and not just the happy paths.
 3. Integration tests should contain the keyword **“Integration”** in the title and should be marked to be skipped under unit testing. (See below)
-4. **Fixtures** are the mock responses of an API call.
+4. **Fixtures** are mock/raw data to use(for e.g. API response to mock an HTTP call).
 5. **Testdata** is  the expected response of mesheryctl commands or functions.
 6. The mock data and the expected responses are stored in the **golden files**.
 7. Table formatted tests are performed on functions and commands.
