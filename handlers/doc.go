@@ -170,9 +170,9 @@ type prometheusBoardParamsWrapper struct {
 	Body []*models.SelectedGrafanaConfig
 }
 
-// Returns Anonymous stats
-// swagger:response anonymousStatsResponseWrapper
-type anonymousStatsResponseWrapper struct {
+// Returns User Load Test Preferencee
+// swagger:response userLoadTestPrefsRespWrapper
+type userLoadTestPrefsRespWrapper struct {
 	// in: body
 	Body *models.Preference
 }

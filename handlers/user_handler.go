@@ -28,19 +28,19 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *model
 	}
 }
 
-// swagger:route GET /api/user/prefs UserAPI idGetAnonymousStats
-// Handle GET for anonymous stats or Load Test Preferences
+// swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
+// Handle GET for User Load Test Preferences
 //
-// Returns anonymous stats for user and Load Test Preferences
+// Returns User Load Test Preferences
 // responses:
-// 	200: anonymousStatsResponseWrapper
+// 	200: userLoadTestPrefsRespWrapper
 
-// swagger:route POST /api/user/prefs UserAPI idPostAnonymousStats
-// Handle GET for anonymous stats or Load Test Preferences
+// swagger:route POST /api/user/prefs UserAPI idPostUserTestPrefs
+// Handle GET for User Load Test Preferences
 //
-// Updates anonymous stats for user or Update load test preferences
+// Updates User Load Test Preferences
 // responses:
-// 	200: anonymousStatsResponseWrapper
+// 	200: userLoadTestPrefsRespWrapper
 
 // UserPrefsHandler updates anonymous stats for user or for persisting load test preferences
 func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
