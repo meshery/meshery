@@ -1,7 +1,6 @@
 package context
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -11,44 +10,12 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
-var b *bytes.Buffer
+// var b *bytes.Buffer
 var update = flag.Bool("update", false, "update golden files")
 
-type CmdTestInput struct {
-	Name             string
-	Args             []string
-	ExpectedResponse string
-}
-
-func SetupContextEnv(t *testing.T, testfile string) {
-	path, err := os.Getwd()
-	if err != nil {
-		t.Error("unable to locate meshery directory")
-	}
-	viper.Reset()
-	viper.SetConfigFile(path + testfile)
-	err = viper.ReadInConfig()
-	if err != nil {
-		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
-	}
-
-	configuration, err = config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		t.Error("error processing config", err)
-	}
-}
-func SetupFunc(t *testing.T) {
-	b = bytes.NewBufferString("")
-	logrus.SetOutput(b)
-	utils.SetupLogrusFormatter()
-	ContextCmd.SetOut(b)
-}
 func TestViewContextCmd(t *testing.T) {
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
@@ -56,9 +23,9 @@ func TestViewContextCmd(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	SetupContextEnv(t, "/fixtures/.meshery/TestContext.yaml")
+	utils.SetupCustomContextEnv(t, currDir+"/fixtures/.meshery/TestContext.yaml")
 
-	tests := []CmdTestInput{
+	tests := []utils.CmdTestInput{
 		{
 			Name:             "view for default context",
 			Args:             []string{"view"},
@@ -87,7 +54,8 @@ func TestViewContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			b := utils.SetupLogrusGrabTesting(t)
+			ContextCmd.SetOut(b)
 			ContextCmd.SetArgs(tt.Args)
 			err := ContextCmd.Execute()
 			if err != nil {
@@ -109,14 +77,14 @@ func TestViewContextCmd(t *testing.T) {
 	}
 }
 func TestListContextCmd(t *testing.T) {
-	SetupContextEnv(t, "/fixtures/.meshery/TestContext.yaml")
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	tests := []CmdTestInput{
+	utils.SetupCustomContextEnv(t, currDir+"/fixtures/.meshery/TestContext.yaml")
+	tests := []utils.CmdTestInput{
 		{
 			Name:             "list all contexts",
 			Args:             []string{"list"},
@@ -125,7 +93,8 @@ func TestListContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			b := utils.SetupLogrusGrabTesting(t)
+			ContextCmd.SetOut(b)
 			ContextCmd.SetArgs(tt.Args)
 			err := ContextCmd.Execute()
 			if err != nil {
@@ -148,14 +117,14 @@ func TestListContextCmd(t *testing.T) {
 }
 
 func TestDeleteContextCmd(t *testing.T) {
-	SetupContextEnv(t, "/testdata/ExpectedDelete.yaml")
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	tests := []CmdTestInput{
+	utils.SetupCustomContextEnv(t, currDir+"/testdata/ExpectedDelete.yaml")
+	tests := []utils.CmdTestInput{
 		{
 			Name:             "delete given context",
 			Args:             []string{"delete", "local2"},
@@ -164,7 +133,8 @@ func TestDeleteContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			b := utils.SetupLogrusGrabTesting(t)
+			ContextCmd.SetOut(b)
 			ContextCmd.SetArgs(tt.Args)
 			err := ContextCmd.Execute()
 			if err != nil {
@@ -211,7 +181,6 @@ func TestDeleteContextCmd(t *testing.T) {
 	}
 }
 func TestAddContextCmd(t *testing.T) {
-	SetupContextEnv(t, "/testdata/ExpectedAdd.yaml")
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 
@@ -219,7 +188,8 @@ func TestAddContextCmd(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	tests := []CmdTestInput{
+	utils.SetupCustomContextEnv(t, currDir+"/testdata/ExpectedAdd.yaml")
+	tests := []utils.CmdTestInput{
 		{
 			Name:             "add given context",
 			Args:             []string{"create", "local3"},
@@ -228,7 +198,8 @@ func TestAddContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			b := utils.SetupLogrusGrabTesting(t)
+			ContextCmd.SetOut(b)
 			ContextCmd.SetArgs(tt.Args)
 			err := ContextCmd.Execute()
 			if err != nil {
@@ -276,7 +247,6 @@ func TestAddContextCmd(t *testing.T) {
 }
 
 func TestSwitchContextCmd(t *testing.T) {
-	SetupContextEnv(t, "/testdata/ExpectedSwitch.yaml")
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 
@@ -284,7 +254,8 @@ func TestSwitchContextCmd(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	tests := []CmdTestInput{
+	utils.SetupCustomContextEnv(t, currDir+"/testdata/ExpectedSwitch.yaml")
+	tests := []utils.CmdTestInput{
 		{
 			Name:             "switch to a different context",
 			Args:             []string{"switch", "local2"},
@@ -293,7 +264,8 @@ func TestSwitchContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			b := utils.SetupLogrusGrabTesting(t)
+			ContextCmd.SetOut(b)
 			ContextCmd.SetArgs(tt.Args)
 			err := ContextCmd.Execute()
 			if err != nil {
