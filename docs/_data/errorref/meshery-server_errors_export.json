@@ -1289,6 +1289,15 @@
         "short_description": "Error: name field is blank",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "2136": {
+        "name": "ErrSaveSessionCode",
+        "code": "2136",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to save session",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
