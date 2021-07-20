@@ -133,6 +133,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.Handle("/api/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler)))).
 		Methods("DELETE")
 	gMux.HandleFunc("/api/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
+	gMux.HandleFunc("/api/experimental/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
 
 	gMux.Handle("/api/experimental/filter", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FilterFileRequestHandler)))).
 		Methods("POST", "GET")
