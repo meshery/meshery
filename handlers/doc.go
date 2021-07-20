@@ -229,7 +229,7 @@ type systemAdaptersRespWrapper struct {
 // swagger:response adapterPingParams
 type adapterPingParamsWrapper struct {
 	// in: query
-	Adapter string `json:adapter`
+	Adapter string `json:"adapter"`
 }
 
 // Returns saved kubernetes config
