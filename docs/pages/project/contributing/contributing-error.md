@@ -46,7 +46,7 @@ Some things to keep in mind when creating errors:
 
 - Using errors.NewDefault(...) is deprecated. This tool emits a warning if this is detected.
 
-- Use errors.New(...) from meshkit to create actual errors with all the details.
+- Use errors.New(...) from MeshKit to create actual errors with all the details.
   This is often done in a factory function. It is important that the error code variable is used here, not a literal.
   Specify detailed descriptions, probable causes, and remedies. They need to be string literals, call expressions are ignored.
   This tool extracts this information from the code and exports it.
