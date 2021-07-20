@@ -65,14 +65,14 @@ const (
 	ErrDataSendCode             = "2137"
 	ErrVersionCompareCode       = "2138"
 	ErrSaveSessionCode          = "2136"
-	ErrKubeClientCode           = "replace_me"
-	ErrWorkloadDefinitionCode   = "replace_me"
-	ErrTraitDefinitionCode      = "replace_me"
-	ErrScopeDefinitionCode      = "replace_me"
-	ErrPatternFileCode          = "replace_me"
-	ErrExecutionPlanCode        = "replace_me"
-	ErrInvalidPatternCode       = "replace_me"
-	ErrCompConfigPairsCode      = "replace_me"
+	ErrKubeClientCode           = "2139"
+	ErrWorkloadDefinitionCode   = "2140"
+	ErrTraitDefinitionCode      = "2141"
+	ErrScopeDefinitionCode      = "2142"
+	ErrPatternFileCode          = "2143"
+	ErrExecutionPlanCode        = "2144"
+	ErrInvalidPatternCode       = "2145"
+	ErrCompConfigPairsCode      = "2146"
 )
 
 var (
