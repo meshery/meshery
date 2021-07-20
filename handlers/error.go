@@ -62,6 +62,8 @@ const (
 	ErrPanicRecoveryCode        = "2052"
 	ErrBlankNameCode            = "2053"
 	ErrInvalidLTURLCode         = "2053"
+	ErrDataSendCode             = "replace"
+	ErrVersionCompareCode       = "replace"
 	ErrSaveSessionCode          = "2136"
 )
 
@@ -249,6 +251,14 @@ func ErrFailToLoadExtensions(err error) error {
 
 func ErrInvalidLTURL(url string) error {
 	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid loadtest url: ", url}, []string{}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+}
+
+func ErrDataSend(err error) error {
+	return errors.New(ErrDataSendCode, errors.Alert, []string{"Unable to send data"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrVersionCompare(err error) error {
+	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to compare latest and current version of Meshery"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrSaveSession(err error) error {
