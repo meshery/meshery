@@ -18,7 +18,7 @@ In order to create a Meshery error object, you will need to create a custom wrap
 
 
 ## Some rules for making Errors codes
-Some things to keep in mind when creating errors:
+
 - Errors names and codes are namespaced to components, i.e. they need to be unique within a component, which is verified by this tool.
 
 - Errors are not to be reused across components and modules.
