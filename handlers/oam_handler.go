@@ -55,7 +55,7 @@ func (h *Handler) PatternFileHandler(
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 
 		rw.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(rw, "failed to read request body: %s", err)
@@ -66,10 +66,7 @@ func (h *Handler) PatternFileHandler(
 		body, err = yaml.JSONToYAML(body)
 		if err != nil {
 			h.log.Error(ErrPatternFile(err))
-			http.Error(w, ErrPatternFile(err).Error(), http.StatusInternalServerError)
-
-			rw.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
+			http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -88,10 +85,7 @@ func (h *Handler) PatternFileHandler(
 	patternFile, err := OAM.NewPatternFile(body)
 	if err != nil {
 		h.log.Error(ErrPatternFile(err))
-		http.Error(w, ErrPatternFile(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "Failed to parse to PatternFile: %s", err)
+		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -99,20 +93,14 @@ func (h *Handler) PatternFileHandler(
 	plan, err := OAM.CreatePlan(patternFile, policies)
 	if err != nil {
 		h.log.Error(ErrExecutionPlan(err))
-		http.Error(w, ErrExecutionPlan(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to create an execution plan: %s", err)
+		http.Error(rw, ErrExecutionPlan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// Check for feasibility
 	if feasible := plan.IsFeasible(); !feasible {
 		h.log.Error(ErrInvalidPattern(err))
-		http.Error(w, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(rw, "invalid Pattern, execution is infeasible")
+		http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -121,10 +109,7 @@ func (h *Handler) PatternFileHandler(
 		kc, err := meshkube.New(prefObj.K8SConfig.Config)
 		if err != nil {
 			h.log.Error(ErrInvalidPattern(err))
-			http.Error(w, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
-
-			rw.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(rw, "Error:%s", err)
+			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -145,10 +130,7 @@ func (h *Handler) PatternFileHandler(
 
 	if err != nil {
 		h.log.Error(ErrCompConfigPairs(err))
-		http.Error(w, ErrCompConfigPairs(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "Messages:\n%s\nErrors:%s", msg, err)
+		http.Error(rw, ErrCompConfigPairs(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -170,7 +152,7 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 
 	method := r.Method
 	if method == "POST" {
-		if err := POSTOAMRegisterHandler(typ, r); err != nil {
+		if err := h.POSTOAMRegisterHandler(typ, r); err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
 			h.log.Debug(err)
 			_, _ = rw.Write([]byte(err.Error()))
@@ -178,7 +160,7 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if method == "GET" {
-		GETOAMRegisterHandler(typ, rw)
+		h.GETOAMRegisterHandler(typ, rw)
 	}
 }
 
@@ -193,7 +175,7 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 // 	200:
 
 // POSTOAMRegisterHandler handles registering OMA objects
-func POSTOAMRegisterHandler(typ string, r *http.Request) error {
+func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	// Get the body
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -224,7 +206,7 @@ func POSTOAMRegisterHandler(typ string, r *http.Request) error {
 // 	200:
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
-func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
+func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
@@ -233,7 +215,7 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 
 		if err := enc.Encode(res); err != nil {
 			h.log.Error(ErrWorkloadDefinition(err))
-			http.Error(w, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+			http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 
@@ -243,7 +225,7 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
 			h.log.Error(ErrTraitDefinition(err))
-			http.Error(w, ErrScopeDefinition(err).Error(), http.StatusInternalServerError)
+			http.Error(rw, ErrScopeDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 
@@ -253,7 +235,7 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
 			h.log.Error(ErrScopeDefinition(err))
-			http.Error(w, ErrScopeDefinition(err).Error(), http.StatusInternalServerError)
+			http.Error(rw, ErrScopeDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 }
