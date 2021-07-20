@@ -66,6 +66,15 @@ const (
 	ErrBlankNameCode            = "replace me"
 	ErrInvalidLTURLCode         = "replace me"
 	ErrSaveSessionCode          = "replace me"
+	ErrWorkloadDefinitionCode   = "replace me"
+	ErrTraitDefinitionCode      = "replace me"
+	ErrScopeDefinitionCode      = "replace me"
+	ErrPatternFileCode          = "replace me"
+	ErrInvalidPatternCode       = "replace me"
+	ErrExecutionPlanCode        = "replace me"
+	ErrDataSendCode             = "replace me"
+	ErrVersionCompareCode       = "replace me"
+	ErrKubeClientCode           = "replace me"
 )
 
 var (
