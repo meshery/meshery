@@ -104,7 +104,7 @@ New
 
 
 ## Replacing logrus 
- There already exists an interface for logger in <a href="https://github.com/layer5io/meshkit/blob/master/logger/logger.go">Meshkit </a>  
+ There already exists an [interface for logger](https://github.com/layer5io/meshkit/blob/master/logger/logger.go) in MeshKit.
 
 #### Defining a Logger 
 
