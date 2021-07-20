@@ -1298,6 +1298,24 @@
         "short_description": "unable to save session",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "2137": {
+        "name": "ErrDataSendCode",
+        "code": "2137",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to send data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2138": {
+        "name": "ErrVersionCompareCode",
+        "code": "2138",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to compare latest and current version of Meshery",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }

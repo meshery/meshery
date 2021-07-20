@@ -62,8 +62,8 @@ const (
 	ErrPanicRecoveryCode        = "2052"
 	ErrBlankNameCode            = "2053"
 	ErrInvalidLTURLCode         = "2053"
-	ErrDataSendCode             = "replace"
-	ErrVersionCompareCode       = "replace"
+	ErrDataSendCode             = "2137"
+	ErrVersionCompareCode       = "2138"
 	ErrSaveSessionCode          = "2136"
 )
 
