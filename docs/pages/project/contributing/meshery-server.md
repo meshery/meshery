@@ -39,6 +39,17 @@ To build a Docker image of Meshery, please ensure you have `Docker` installed to
 make docker
 ```
 
+#### Define and validate errors
+
+Every Golang-based project that belongs to Layer5 incorporates a utility to define and manage error messages for every error instance. This is internally done with several make commands, but one can explicitely validate with the help of the following make command. This checks and validates the errors that are present in the particular project.
+
+```sh
+make error
+```
+
+For more details, <a href="{{ site.baseurl }}/project/contributing-error">Error Utility</a>
+
+
 # Suggested Reading
 
 {% assign sorted_reading = site.pages | sort: page.title | reverse %}
