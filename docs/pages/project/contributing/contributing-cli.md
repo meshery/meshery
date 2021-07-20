@@ -128,6 +128,76 @@ When designing for the command line interface, ask and consider the following qu
 
 You will need to provide a short and long description of the command for the help pages and also for the Meshery Documentation.
 
+# Writing unit tests and integration tests for mesheryctl
+
+ Unit tests and integration tests are essential to make each mesheryctl release robust and fault tolerant.
+
+ Below you will find guidelines to write unit tests and integration tests and examples of how they are implemented in mesheryctl.
+
+ Unit tests: Individual components are tested.
+
+ Integration tests: Individual components are combined and tested as a group.
+
+
+### References 
+
+- [jarcoal/httpmock](https://github.com/jarcoal/httpmock)
+- [Unit testing CLIs in Go](https://medium.com/swlh/unit-testing-cli-programs-in-go-6275c85af2e7)
+- [How to test CLI commands with Go and Cobra](https://gianarb.it/blog/golang-mockmania-cli-command-with-cobra)
+
+### Key principles
+
+The following key principles should be taken to mind when writing tests:
+1. Golang’s standard library will be used to write tests.
+2. The tests should cover all possible use cases and not just the happy paths.
+3. Integration tests should contain the keyword **“Integration”** in the title and should be marked to be skipped under unit testing. (See below)
+4. **Fixtures** are mock/raw data to use(for e.g. API response to mock an HTTP call).
+5. **Testdata** is  the expected response of mesheryctl commands or functions.
+6. The mock data and the expected responses are stored in the **golden files**.
+7. Table formatted tests are performed on functions and commands.
+8. [mesheryctl/pkg/utils/fixtures/validate.version.github.golden](https://github.com/meshery/meshery/blob/master/mesheryctl/pkg/utils/fixtures/validate.version.github.golden) file needs to be updated regularly.
+9. The version in utils.NewTestHelper() should be updated regularly.
+10. Golden files should be updated synchronously as API responses, mesheryctl outputs are updated.
+
+### Marking integration tests under unit tests
+
+Since there is no straightforward way to mark unit tests and integration tests differently. Here we use the `--short` flag while running tests to differentiate between unit tests and integration tests.
+
+<pre>
+<code>
+func TestPreflightCmdIntegration(t *testing.T) {
+   // skipping this integration test with --short flag
+   if testing.Short() {
+       t.Skip("skipping integration test")
+   }
+}
+</code>
+</pre>
+
+In the above code sample, the test is marked with **“Integration”** in the title and if a `--short` flag is passed with the command, this test is skipped.
+
+### Running tests in GitHub workflows
+
+**Unit tests:**
+
+<code>
+go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic</code>
+
+**Integration tests:**
+
+<code> go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic </code>
+
+
+To update  golden files with the test output use the `--update` flag:
+
+<code> var update = flag.Bool("update", false, "update golden files") </code>
+
+
+To grab console logs - `fmt.Println()` (check [mesheryctl/internal/cli/root/perf/view_test.go](https://github.com/meshery/meshery/blob/master/mesheryctl/internal/cli/root/perf/view_test.go) )
+
+To grab Logrus logs - `logrus.Info()` (check [mesheryctl/internal/cli/root/perf/apply_test.go](https://github.com/meshery/meshery/blob/master/mesheryctl/internal/cli/root/perf/apply_test.go) )
+
+
 # Suggested Reading
 
 {% assign sorted_reading = site.pages | sort: page.title | reverse %}

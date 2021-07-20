@@ -109,7 +109,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
 
-  const DEPLOY_URL = '/api/experimental/pattern/deploy';
+  const DEPLOY_URL = '/api/pattern/deploy';
 
   const ACTION_TYPES = {
     FETCH_PATTERNS: {
@@ -160,7 +160,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
         method: "POST",
         body:pattern_file,
       },() => {
-        console.log("PattrnFile Deploy API", `/api/experimental/pattern/deploy`);
+        console.log("PattrnFile Deploy API", `/api/pattern/deploy`);
         updateProgress({showProgress : false})
       },
       handleError(ACTION_TYPES.DEPLOY_PATTERN)
@@ -178,12 +178,12 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     updateProgress({ showProgress: true });
 
     dataFetch(
-      `/api/experimental/pattern${query}`,
+      `/api/pattern${query}`,
       {
         credentials: "include",
       },
       (result) => {
-        console.log("PatternFile API", `/api/experimental/pattern${query}`);
+        console.log("PatternFile API", `/api/pattern${query}`);
         updateProgress({ showProgress: false });
         if (result) {
           setPatterns(result.patterns || []);
@@ -222,13 +222,13 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     updateProgress({showProgress: true})
     if (type === "delete") {
       dataFetch(
-        `/api/experimental/pattern/${id}`,
+        `/api/pattern/${id}`,
         {
           credentials: "include",
           method: "DELETE",
         },
         () => {
-          console.log("PatternFile API", `/api/experimental/pattern/${id}`);
+          console.log("PatternFile API", `/api/pattern/${id}`);
           updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
           resetSelectedRowData()()
@@ -239,14 +239,14 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
     if (type === "update") {
       dataFetch(
-        `/api/experimental/pattern`,
+        `/api/pattern`,
         {
           credentials: "include",
           method: "POST",
           body: JSON.stringify({ pattern_data: { id, pattern_file: data }, save: true }),
         },
         () => {
-          console.log("PatternFile API", `/api/experimental/pattern`);
+          console.log("PatternFile API", `/api/pattern`);
           updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
@@ -256,14 +256,14 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
     if (type === "upload") {
       dataFetch(
-        `/api/experimental/pattern`,
+        `/api/pattern`,
         {
           credentials: "include",
           method: "POST",
           body: JSON.stringify({ pattern_data: { pattern_file: data }, save: true }),
         },
         () => {
-          console.log("PatternFile API", `/api/experimental/pattern`);
+          console.log("PatternFile API", `/api/pattern`);
           updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
