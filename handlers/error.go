@@ -80,11 +80,11 @@ var (
 )
 
 func ErrHealthCheckFailed(err error) error {
-	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"health checks failed"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrInvalidAdapter(err error, obj string) error {
-	return errors.New(ErrInvalidAdapterCode, errors.Alert, []string{"invalid adapter ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrInvalidAdapterCode, errors.Alert, []string{"Invalid adapter ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrPrometheusScan(err error) error {
@@ -184,7 +184,7 @@ func ErrFormFile(err error) error {
 }
 
 func ErrDownloadFile(err error, obj string) error {
-	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"error downloading file ", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrReadConfig(err error) error {
