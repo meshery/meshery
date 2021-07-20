@@ -202,8 +202,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       selectionError: false,
 
       namespace: {
-        value: "",
-        label: ""
+        value: "default",
+        label: "default"
       },
       namespaceError: false,
 
