@@ -65,6 +65,11 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
                 {{ component[1].component_name }} {{ component[1].component_type | camelcase }}
               {% endcapture %}
             {% endif %}
+            {% if component[1].component_name == 'meshery-server' %}
+              {% capture heading %}
+                Meshery Server
+              {% endcapture %}
+            {% endif %}
 
 <h2> {{ heading }} </h2>
   <table>
@@ -72,7 +77,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
     <tr>
       <th>Error Name</th>
       <th>Error Code</th>
-      <th>Severity</th>
+      <th style="white-space:nowrap; transform-origin:30% 70%; transform: rotate(-90deg);padding:0px;">Severity</th>
       <th>Short Description</th>
       <th>Long Description</th>
       <th>Probable Cause</th>
@@ -81,16 +86,15 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
   </thead>
   <tbody>
   
-
     {% for err_code in component[1].errors %}    
         <tr>
           <td >{{ err_code[1]["name"] }}</td>
           <td >{{ err_code[1]["code"] }}</td>
           <td >{{ err_code[1]["severity"] }}</td>
-          <td >{{ err_code[1]["short_description"] }}</td>
-          <td >{{ err_code[1]["long_description"] }}</td>
-          <td >{{ err_code[1]["probable_cause"] }}</td>
-          <td >{{ err_code[1]["suggested_remediation"] }}</td>
+          <td style="max-width:125px;">{{ err_code[1]["short_description"] }}</td>
+          <td style="min-width:200px;">{{ err_code[1]["long_description"] }}</td>
+          <td style="min-width:200px;">{{ err_code[1]["probable_cause"] }}</td>
+          <td style="min-width:200px;">{{ err_code[1]["suggested_remediation"] }}</td>
         </tr>
     {% endfor %}
 
