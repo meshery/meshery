@@ -17,7 +17,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
 
 ## Error Code Categories by Component
 
-<table style="margin:auto;margin-left:25%;">
+<table style="margin:auto;padding-right:25%; padding-left:20%;">
 <thead>
   <tr>
     <th align="right">Component Type</th>
