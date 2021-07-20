@@ -16,17 +16,6 @@ To help with creating error codes, MeshKit contains a tool that analyzes, verifi
 
 In order to create a Meshery error object, you will need to create a custom wrapper object for the native golang error. This can be done from the <a href="https://github.com/layer5io/meshkit/tree/master/errors">MeshKit Error</a> package. 
 
-Use the `errors.New()` function to create a new instance of the error object and pass situation-specific attributes as function arguments. 
-These attributes are:
-- Code
-- Short Description
-- Long Description
-- Probable Cause
-- Suggested Remediation
-
-### Syntax
-     errors.New(ErrExampleCode, errors.Alert, []string{"<short-description>"}, []string{"<long-description>"}, []string{"<probable-cause>"}, []string{"<suggested remediation>"})
-
 
 ## Some rules for making Errors codes
 Some things to keep in mind when creating errors:
@@ -59,6 +48,16 @@ Some things to keep in mind when creating errors:
 - Running `make error` would analyze the code and return you with a warning, if found.
 
 
+Use the `errors.New()` function to create a new instance of the error object and pass situation-specific attributes as function arguments. 
+These attributes are:
+- Code
+- Short Description
+- Long Description
+- Probable Cause
+- Suggested Remediation
+
+### Syntax
+     errors.New(ErrExampleCode, errors.Alert, []string{"<short-description>"}, []string{"<long-description>"}, []string{"<probable-cause>"}, []string{"<suggested remediation>"})
   
 
 ## Example
