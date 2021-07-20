@@ -5,7 +5,7 @@ ARG GIT_COMMITSHA
 ARG RELEASE_CHANNEL
 
 RUN adduser --disabled-login appuser
-WORKDIR /github.com/layer5io/meshery
+WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN rm go.sum; go clean -modcache; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
@@ -33,7 +33,7 @@ RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 FROM ubuntu
-RUN apt-get update; apt-get install -y ca-certificates curl; update-ca-certificates
+RUN apt-get update; apt-get install -y ca-certificates curl; update-ca-certificates && rm -rf /var/lib/apt/lists/*
 COPY ./oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd

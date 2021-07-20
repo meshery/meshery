@@ -11,12 +11,24 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/spf13/viper"
 )
 
 type TestHelper struct {
 	Version string
 	BaseURL string
+}
+
+type MockURL struct {
+	// method such as GET or POST
+	Method string
+	// url to mock the request
+	URL string
+	// response for the request
+	Response string
+	// response code
+	ResponseCode int
 }
 
 func NewTestHelper(t *testing.T) *TestHelper {
@@ -55,7 +67,7 @@ func Equals(tb testing.TB, exp, act interface{}) {
 func GetBasePath(t *testing.T) string {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		t.Fatal("problems recovering caller information")
+		t.Fatal("Not able to get current working directory")
 	}
 
 	return filepath.Dir(filename)
@@ -105,6 +117,7 @@ func (tf *GoldenFile) WriteInByte(content []byte) {
 	}
 }
 
+// use default context /pkg/utils/TestConfig.yaml
 func SetupContextEnv(t *testing.T) {
 	path, err := os.Getwd()
 	if err != nil {
@@ -124,11 +137,52 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
+// setup custom context with SetupCustomContextEnv
+func SetupCustomContextEnv(t *testing.T, pathToContext string) {
+	viper.Reset()
+	viper.SetConfigFile(pathToContext)
+	//fmt.Println(viper.ConfigFileUsed())
+	err := viper.ReadInConfig()
+	if err != nil {
+		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
+	}
+
+	_, err = config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Error("error processing config", err)
+	}
+}
+
+// Start mock HTTP client to mock requests
 func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
+
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	fixturesDir := filepath.Join(currDir, "fixtures")
+
+	apiResponse := NewGoldenFile(t, "validate.version.github.golden", fixturesDir).Load()
+
+	// For validate version requests
+	url1 := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + "v0.5.10" + "?recursive=1"
+	httpmock.RegisterResponder("GET", url1,
+		httpmock.NewStringResponder(200, apiResponse))
 }
 
+// stop HTTP mock client
 func StopMockery(t *testing.T) {
 	httpmock.DeactivateAndReset()
+}
+
+// Set file location for testing stuff
+func SetFileLocationTesting(t *testing.T, dir string) {
+	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
+	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
+	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
+	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
 }

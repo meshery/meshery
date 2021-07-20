@@ -34,7 +34,16 @@ var updateCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		return RunPreflightHealthChecks(true, cmd.Use)
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Get viper instance used for context
@@ -44,7 +53,11 @@ var updateCmd = &cobra.Command{
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
-		currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+		err = mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
+			return err
+		}
+		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return err
 		}
@@ -65,14 +78,6 @@ var updateCmd = &cobra.Command{
 			currCtx.Version = "latest"
 		}
 
-		log.Debug("creating new Clientset...")
-		// Create a new client
-		kubeClient, err := meshkitkube.New([]byte(""))
-
-		if err != nil {
-			return errors.Wrap(err, "failed to create new client")
-		}
-
 		switch currCtx.Platform {
 		case "docker":
 			if !utils.SkipResetFlag {
@@ -90,12 +95,6 @@ var updateCmd = &cobra.Command{
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
 			}
 
-			err = utils.ApplyOperatorManifest(kubeClient, true, false)
-
-			if err != nil {
-				return err
-			}
-
 			err = utils.ChangeContextVersion(mctlCfg.CurrentContext, "latest")
 
 			if err != nil {
@@ -103,6 +102,11 @@ var updateCmd = &cobra.Command{
 			}
 
 		case "kubernetes":
+			// create a client
+			kubeClient, err := meshkitkube.New([]byte(""))
+			if err != nil {
+				return err
+			}
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
 				version := currCtx.Version
@@ -133,13 +137,31 @@ var updateCmd = &cobra.Command{
 
 				// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 				err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, true, false)
+				if err != nil {
+					return err
+				}
+			}
 
+			// run k8s checks to make sure if k8s cluster is running
+			hcOptions := &HealthCheckOptions{
+				PrintLogs:           false,
+				IsPreRunE:           false,
+				Subcommand:          "",
+				RunKubernetesChecks: true,
+			}
+			hc, err := NewHealthChecker(hcOptions)
+			if err != nil {
+				return errors.Wrapf(err, "failed to initialize healthchecker")
+			}
+			// If k8s is available in case of platform docker than we deploy operator
+			if err = hc.Run(); err == nil {
+				// create a client
+				kubeClient, err := meshkitkube.New([]byte(""))
 				if err != nil {
 					return err
 				}
 
 				err = utils.ApplyOperatorManifest(kubeClient, true, false)
-
 				if err != nil {
 					return err
 				}

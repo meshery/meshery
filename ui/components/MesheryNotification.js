@@ -8,10 +8,12 @@ import {
   Tooltip, 
   Divider, 
   Typography, 
+  Tabs,
+  Tab
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ErrorIcon from '@material-ui/icons/Error';
-import ClearAllIcon from '@material-ui/icons/ClearAll';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
 import { eventTypes } from '../lib/event-types';
@@ -23,13 +25,16 @@ import { withSnackbar } from 'notistack'
 
 const styles = (theme) => ({
   sidelist: {
-    width: 350,
+    width: 450,
   },
   notificationButton: {
     height: '100%',
   },
   notificationDrawer: {
     backgroundColor: '#FFFFFF',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
   listTop: {
     display: 'grid',
@@ -41,7 +46,7 @@ const styles = (theme) => ({
     paddingBottom: theme.spacing(2),
   },
   notificationTitle: {
-    textAlign: 'center',
+    textAlign: 'left',
   },
   notifSelector: {
     display: 'flex',
@@ -76,6 +81,16 @@ const styles = (theme) => ({
     height: '1.6rem',
     width: '1.6rem',
   },
+  drawerButton: {
+    padding: '0.45rem',
+    margin: '0.2rem',
+    backgroundColor: theme.palette.secondary.dark,
+    color: '#FFFFFF',
+    "&:hover" : {
+      backgroundColor: '#FFFFFF',
+      color: theme.palette.secondary.dark
+    }
+  }
 });
 
 /**
@@ -100,6 +115,7 @@ function getNotifications(events, type) {
 
   if (type === "error") return events.filter(ev => ev.event_type === 2);
   if (type === "warning") return events.filter(ev => ev.event_type === 1)
+  if (type === "success") return events.filter(ev => ev.event_type === 0)
   
   return events;
 }
@@ -146,6 +162,7 @@ class MesheryNotification extends React.Component {
     meshAdapters: [],
     createStream: false,
     displayEventType: "*",
+    tabValue: 0,
   }
 
   handleToggle = () => {
@@ -282,6 +299,17 @@ class MesheryNotification extends React.Component {
     }
   }
 
+  handleTabChange = (event, newTabValue) => {
+    this.setState({ tabValue: newTabValue })
+  }
+
+  handleBellButtonClick = () => {
+    this.setState({ 
+      tabValue: 0,
+      displayEventType: '*'
+    })
+  }
+
   render() {
     const { classes } = this.props;
     const {
@@ -338,24 +366,15 @@ class MesheryNotification extends React.Component {
                     <Tooltip title="Show all notifications">
                       <IconButton
                         color="inherit"
-                        style={{ padding: '0 0.25rem 0 0' }}
-                        onClick={this.handleNotifFiltering('*')}
+                        className={classes.drawerButton}
+                        onClick={this.handleBellButtonClick}
                       >
                         <BellIcon className={classes.HeaderItem}/>
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Show error notifications">
-                      <IconButton
-                        color="inherit"
-                        style={{ padding: '0 0 0 0.25rem' }}
-                        onClick={this.handleNotifFiltering('error')}
-                      >
-                        <ErrorIcon className={classes.HeaderItem}/>
-                      </IconButton>
-                    </Tooltip>
                   </div>
                   <div className={classes.notificationTitle}>
-                    <Typography variant="subtitle2">
+                    <Typography variant="subtitle1" align="center">
                       Notifications
                     </Typography>
                   </div>
@@ -363,15 +382,27 @@ class MesheryNotification extends React.Component {
                     <Tooltip title="Clear all notifications">
                       <IconButton
                         color="inherit"
-                        style={{ padding: '0' }}
+                        className={classes.drawerButton}
                         onClick={this.handleClearAllNotifications()}
                       >
-                        <ClearAllIcon className={classes.HeaderItem}/>
+                        <DoneAllIcon className={classes.HeaderItem}/>
                       </IconButton>
                     </Tooltip>
                   </div>
                 </div>
                 <Divider light />
+                <Tabs
+                  value={this.state.tabValue}
+                  onChange={this.handleTabChange}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  variant="fullWidth"
+                >
+                  <Tab label="All" onClick={this.handleNotifFiltering('*')} style={{minWidth:"15%"}}/>
+                  <Tab label="Error"  onClick={this.handleNotifFiltering('error')} style={{minWidth:"15%"}}/>
+                  <Tab label="Warning" onClick={this.handleNotifFiltering('warning')} style={{minWidth:"15%"}}/>
+                  <Tab label="Success" onClick={this.handleNotifFiltering('success')} style={{minWidth:"15%"}}/>
+                </Tabs>
                 {getNotifications(events, this.state.displayEventType).map((event, ind) => (
                   <MesheryEventViewer
                     eventVariant={event.event_type}

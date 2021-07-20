@@ -40,7 +40,7 @@ _Figure: Meshery deploys inside or outside of a Kubernetes cluster_
 
 #### Adapters and Capabilities Registry
 
-Each Meshery Adapter delivers its own unique service mesh-specific functionality. As such, at time of deployment, the Meshery Adapter will registration its service mesh-specific capabilities (its operations) with Meshery Server's capability registry.
+Each Meshery Adapter delivers its own unique service mesh-specific functionality. As such, at time of deployment, the Meshery Adapter will register its service mesh-specific capabilities (its operations) with Meshery Server's capability registry.
 
 [![Meshery Adapter Operation Registration]({{ site.baseurl }}/assets/img/adapters/meshery-adapter-operation-registration.svg
 )]({{ site.baseurl }}/assets/img/adapters/meshery-adapter-operation-registration.svg)

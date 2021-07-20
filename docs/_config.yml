@@ -28,7 +28,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://docs.meshery.io" # the base hostname & protocol for your site
 
 # Social (First three Required)
-repo: "https://github.com/layer5io/meshery"
+repo: "https://github.com/meshery/meshery"
 github_user: "layer5io"
 github_repo: "meshery"
 project: https://meshery.io

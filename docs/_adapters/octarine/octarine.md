@@ -6,7 +6,7 @@ mesh_name: Octarine
 version: v1.0
 port: 10003/tcp
 project_status: retiring
-github_link: https://github.com/layer5io/meshery-octarine
+github_link: https://github.com/meshery/meshery-octarine
 image: /assets/img/service-meshes/octarine.svg
 permalink: service-meshes/adapters/octarine
 ---

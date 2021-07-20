@@ -11,9 +11,15 @@ type RolloutEngineGenericOptions struct {
 	Name        string
 	Namespace   string
 	ServiceMesh string
+	Metadata    RolloutEngineGenericOptionsMetadata
 	Replicas    int
 	Containers  []RolloutEngineContainer
 	Delete      bool
+}
+
+type RolloutEngineGenericOptionsMetadata struct {
+	Labels      map[string]string
+	Annotations map[string]string
 }
 
 type RolloutEngineContainer struct {

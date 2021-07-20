@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -42,13 +44,13 @@ type Context struct {
 	Version  string   `mapstructure:"version,omitempty"`
 }
 
-// GetMesheryCtl returns a reference to the mesheryctl configuration object.
+// GetMesheryCtl returns a reference to the mesheryctl configuration object
 func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	c := &MesheryCtlConfig{}
 	// Load the config data into the object
 	err := v.Unmarshal(&c)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("invalid meshconfig")
 	}
 	return c, err
 }
@@ -74,6 +76,120 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
 	return Context{}, errors.New("current context " + mc.CurrentContext + " does not exist")
 }
 
+// GetBaseMesheryURL returns the base meshery server URL
+func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
+	currentContext, err := mc.CheckIfCurrentContextIsValid()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return currentContext.Endpoint
+}
+
+func (mc *MesheryCtlConfig) GetCurrentContextName() string {
+	return mc.CurrentContext
+}
+
+// GetCurrentContext returns contents of the current context
+func (mc *MesheryCtlConfig) GetCurrentContext() (Context, error) {
+	currentContext, err := mc.CheckIfCurrentContextIsValid()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return currentContext, err
+}
+
+// SetCurrentContext sets current context and returns contents of the current context
+func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
+	if contextName != "" {
+		mc.CurrentContext = contextName
+	}
+	_, err := mc.CheckIfCurrentContextIsValid()
+	if err != nil {
+		log.Errorf(err.Error())
+	}
+
+	return err
+}
+
+// GetTokenForContext takes in the contextName and returns the token name and path corresponding
+// to the given current context
+func (mc *MesheryCtlConfig) GetTokenForContext(contextName string) (Token, error) {
+	ctx, ok := mc.Contexts[contextName]
+	if !ok {
+		return Token{}, fmt.Errorf("no token is associated with context: %s", contextName)
+	}
+
+	for _, t := range mc.Tokens {
+		if t.Name == ctx.Token {
+			return t, nil
+		}
+	}
+
+	return Token{Name: ctx.Token}, fmt.Errorf("no token found for the given context")
+}
+
+// GetTokens returns the tokens present in the config file
+func (mc *MesheryCtlConfig) GetTokens() []Token {
+	return mc.Tokens
+}
+
+// GetEndpoint returns the endpoint of the current context
+func (ctx *Context) GetEndpoint() string {
+	return ctx.Endpoint
+}
+
+// SetEndpoint sets the endpoint of the current context
+func (ctx *Context) SetEndpoint(endpoint string) {
+	ctx.Endpoint = endpoint
+}
+
+// GetToken returns the token of the current context
+func (ctx *Context) GetToken() string {
+	return ctx.Token
+}
+
+// SetToken sets the token of the current context
+func (ctx *Context) SetToken(token string) {
+	ctx.Token = token
+}
+
+// GetPlatform returns the platform  of the current context
+func (ctx *Context) GetPlatform() string {
+	return ctx.Platform
+}
+
+// SetPlatform sets the platform of the current context
+func (ctx *Context) SetPlatform(platform string) {
+	ctx.Platform = platform
+}
+
+// GetAdapters returns the adapters in the current context
+func (ctx *Context) GetAdapters() []string {
+	return ctx.Adapters
+}
+
+// GetChannel returns the channel of the current context
+func (ctx *Context) GetChannel() string {
+	return ctx.Channel
+}
+
+// SetChannel sets the channel of the current context
+func (ctx *Context) SetChannel(channel string) {
+	ctx.Channel = channel
+}
+
+// GetVersion returns the version of the current context
+func (ctx *Context) GetVersion() string {
+	return ctx.Version
+}
+
+// SetVersion sets the version of the current context
+func (ctx *Context) SetVersion(version string) {
+	ctx.Version = version
+}
+
 // ValidateVersion checks if the version is valid, if empty sets it to default value latest. Returns an error if the version is invalid.
 func (ctx *Context) ValidateVersion() error {
 	if ctx.Version == "" {
@@ -86,7 +202,15 @@ func (ctx *Context) ValidateVersion() error {
 	}
 
 	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + ctx.Version + "?recursive=1"
-	resp, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
 
 	defer func() {
 		if cerr := resp.Body.Close(); cerr != nil {
@@ -105,37 +229,25 @@ func (ctx *Context) ValidateVersion() error {
 	return nil
 }
 
-// GetBaseMesheryURL returns the base meshery server URL
-func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
-	currentContext, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return currentContext.Endpoint
+// GetName returns the token name
+func (t *Token) GetName() string {
+	return t.Name
 }
 
-// GetCurrentContext returns contents of the current context
-func (mc *MesheryCtlConfig) GetCurrentContext() Context {
-	currentContext, err := mc.CheckIfCurrentContextIsValid()
+// GetLocation returns the location of the token
+func (t *Token) GetLocation() string {
+	if filepath.IsAbs(t.Location) {
+		return t.Location
+	}
+
+	// If file path is not absolute then assume that the file
+	// is in the .meshery directory
+	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal(err)
+		log.Warn("failed to get user home directory")
 	}
 
-	return currentContext
-}
-
-// SetCurrentContext sets current context and returns contents of the current context
-func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) (Context, error) {
-	if contextName != "" {
-		mc.CurrentContext = contextName
-	}
-	currCtx, err := mc.CheckIfCurrentContextIsValid()
-	if err != nil {
-		log.Errorf(err.Error())
-	}
-
-	return currCtx, err
+	return filepath.Join(home, ".meshery", t.Location)
 }
 
 // GetBuild returns the build number for the binary

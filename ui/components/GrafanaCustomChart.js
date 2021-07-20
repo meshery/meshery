@@ -13,14 +13,14 @@ import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 
-import bb, {area} from 'billboard.js'
+import bb, {area, line} from 'billboard.js'
 
 const grafanaStyles = (theme) => ({
   root: {
     width: '100%',
   },
   column: {
-    flexBasis: '33.33%',
+    flex: '1',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -44,7 +44,12 @@ const grafanaStyles = (theme) => ({
   },
   card: {
     height: '100%',
-    width: "100%"
+    width: "100%",
+  },
+  sparklineCardContent:{
+    display:'grid',
+    gridTemplateColumns: '1fr 3fr max-content',
+    gap:' 0.5rem',
   },
   cardContent: {
     height: '100%',
@@ -290,10 +295,11 @@ class GrafanaCustomChart extends Component {
         // this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline ? 'sparkline':'gauge';
         break;
     }
-
+    const {sparkline} = props;
     this.datasetIndex = {};
     this.state = {
       xAxis: [],
+      sparkline:sparkline && sparkline !== null ? true : false,
       chartData: [],
       error: '',
       errorCount: 0,
@@ -432,6 +438,11 @@ class GrafanaCustomChart extends Component {
 
       const processReceivedData = (result) => {
         self.props.updateProgress({ showProgress: false });
+
+        if (typeof result == 'undefined' || result?.status != "success") {
+          return
+        }
+
         if (typeof result !== 'undefined') {
           const fullData = self.transformDataForChart(result);
           xAxis = ['x'];
@@ -485,11 +496,12 @@ class GrafanaCustomChart extends Component {
           } else {
             self.createOptions(xAxis, chartData, groups);
           }
-          self.setState({
+          self.state.error && self.setState({
             xAxis, chartData, error: '', errorCount: 0,
           });
         }
       };
+
       if (panelData && panelData[expr]) {
         processReceivedData(panelData[expr]);
       } else {
@@ -550,7 +562,7 @@ class GrafanaCustomChart extends Component {
       const xAxes = {
         type: 'timeseries',
         // type : 'category',
-        show: showAxis,
+        show: showAxis &&!this.state.sparkline,
         tick: {
           // format: self.c3TimeFormat,
           // fit: true,
@@ -565,7 +577,7 @@ class GrafanaCustomChart extends Component {
       };
 
       const yAxes = {
-        show: showAxis,
+        show: showAxis &&!this.state.sparkline,
       };
       if (panel.yaxes) {
         panel.yaxes.forEach((ya) => {
@@ -596,9 +608,11 @@ class GrafanaCustomChart extends Component {
         // }
       };
 
-      const linked = !inDialog ? {
-        name: board && board.title ? board.title : '',
-      } : false;
+      const linked = this.state.sparkline?(false):(
+        !inDialog ? {
+          name: board && board.title ? board.title : '',
+        } : false
+      );
 
       let shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10;
       if (panel.type !== 'graph') {
@@ -610,12 +624,18 @@ class GrafanaCustomChart extends Component {
           //   console.log(JSON.stringify(args));
           // },
           bindto: self.chartRef,
+          size: this.state.sparkline?(
+            {
+              // width: 150,
+              height:50,
+            }
+          ):null,
           data: {
             x: 'x',
             xFormat: self.bbTimeFormat,
             columns: [xAxis, ...chartData],
             groups,
-            type: area(),
+            type:this.state.sparkline?line(): area(),
           },
           axis: {
             x: xAxes,
@@ -628,7 +648,7 @@ class GrafanaCustomChart extends Component {
           },
           grid,
           legend: {
-            show: shouldDisplayLegend,
+            show: shouldDisplayLegend && !this.state.sparkline,
           },
 
 
@@ -724,7 +744,9 @@ class GrafanaCustomChart extends Component {
     handleError = (error) => {
       const self = this;
       this.props.updateProgress({ showProgress: false });
-      this.setState({ error: error.message && error.message !== '' ? error.message : (error !== '' ? error : ''), errorCount: self.state.errorCount + 1 });
+      if(error){
+        this.setState({ error: error.message && error.message !== '' ? error.message : (error !== '' ? error : ''), errorCount: self.state.errorCount + 1 });
+      }
     }
 
     render() {
@@ -768,6 +790,17 @@ class GrafanaCustomChart extends Component {
             <div ref={(ch) => self.chartRef = ch} className={classes.root} />
           </div>
         );
+      }
+      if(this.state.sparkline){
+        return(
+          <NoSsr>
+            <div className={classes.sparklineCardContent}>
+              <div>{panel.title}</div>
+              <div>{mainChart}</div>
+              <div>{iconComponent}</div>
+            </div>
+          </NoSsr>
+        )
       }
       return (
         <NoSsr>

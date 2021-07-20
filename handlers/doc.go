@@ -34,6 +34,7 @@ package handlers
 import (
 	"github.com/go-openapi/strfmt"
 	"github.com/layer5io/meshery/models"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -55,7 +56,7 @@ type mesheryPatternResponseWrapper struct {
 type noContentWrapper struct {
 }
 
-// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults
+// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule
 type IDParameterWrapper struct {
 	// id for a specific
 	// in: path
@@ -167,4 +168,53 @@ type prometheusBoardParamsWrapper struct {
 	// in: body
 	// required: true
 	Body []*models.SelectedGrafanaConfig
+}
+
+// Returns Anonymous stats
+// swagger:response anonymousStatsResponseWrapper
+type anonymousStatsResponseWrapper struct {
+	// in: body
+	Body *models.Preference
+}
+
+// Updates Anonymous stats
+// swagger:parameters idPostAnonymousStats
+type anonymousStatsParamsWrapper struct {
+	// in: body
+	Body *models.PreferenceParams
+}
+
+// Returns load test preferences
+// swagger:response loadTestPreferencesWrapper
+type loadTestPreferencesRespWrapper struct {
+	// in: body
+	Body SMP.PerformanceTestConfig
+}
+
+// Parameters Persists load test preferences
+// swagger:parameters idPostLoadPreferences
+type loadTestPreferencesParamsWrapper struct {
+	// in: body
+	Body SMP.PerformanceTestConfig
+}
+
+// Parameter
+// swagger:parameters idDeleteLoadPreferences idGetLoadPreferences
+type UUIDParamsWrapper struct {
+	// in: query
+	UUID strfmt.UUID `json:"uuid"`
+}
+
+// Returns List of saved schedules
+// swagger:response schedulesResponseWrapper
+type schedulesResponseWrapper struct {
+	// in: body
+	Body models.SchedulesAPIResponse
+}
+
+// Returns a single schedules
+// swagger:response singleScheduleResponseWrapper
+type singleScheduleResponseWrapper struct {
+	// in: body
+	Body models.Schedule
 }

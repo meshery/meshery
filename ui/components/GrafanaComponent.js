@@ -183,7 +183,7 @@ class GrafanaComponent extends Component {
     const self = this;
 
     dataFetch(
-      "/api/grafana/config",
+      "/api/telemetry/metrics/grafana/config",
       {
         method: "GET",
         credentials: "include",

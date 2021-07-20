@@ -104,12 +104,6 @@ func marshalMesheryResultsPage(mrp *MesheryResultPage) []byte {
 	return res
 }
 
-func marshalMesheryResult(mr *MesheryResult) []byte {
-	res, _ := json.Marshal(mr)
-
-	return res
-}
-
 func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryResultDBRepresentation) (res []*MesheryResult) {
 	for _, val := range local {
 		res = append(res, convertLocalRepresentationToMesheryResult(val))

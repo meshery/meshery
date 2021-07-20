@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -52,23 +53,28 @@ var startCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-
-		err := RunPreflightHealthChecks(true, cmd.Use)
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		// execute healthchecks
+		err = hc.RunPreflightHealthChecks()
 		if err != nil {
 			cmd.SilenceUsage = true
-
 		}
 
 		return err
-
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
-
 		}
 		return nil
-
 	},
 }
 
@@ -79,17 +85,6 @@ func start() error {
 		}
 	}
 
-	kubeClient, err := meshkitkube.New([]byte(""))
-	if err != nil {
-		return err
-	}
-
-	err = utils.CreateManifestsFolder()
-
-	if err != nil {
-		return err
-	}
-
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -97,25 +92,22 @@ func start() error {
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
-	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	err = mctlCfg.SetCurrentContext(tempContext)
+	if err != nil {
+		return err
+	}
+
+	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
 		return err
 	}
 
 	if utils.PlatformFlag != "" {
-		currCtx.Platform = utils.PlatformFlag
-		err := utils.ChangePlatform(mctlCfg.CurrentContext, currCtx)
-
-		if err != nil {
-			return err
-		}
+		currCtx.SetPlatform(utils.PlatformFlag)
 	}
 
-	currPlatform := currCtx.Platform
-	RequestedAdapters := currCtx.Adapters // Requested Adapters / Services
-
 	// Deploy to platform specified in the config.yaml
-	switch currPlatform {
+	switch currCtx.GetPlatform() {
 	case "docker":
 
 		// download the docker-compose.yaml file corresponding to the current version
@@ -139,7 +131,7 @@ func start() error {
 		//changing the port mapping in docker compose
 		services := compose.Services // Current Services
 		//extracting the custom user port from config.yaml
-		userPort := strings.Split(currCtx.Endpoint, ":")
+		userPort := strings.Split(currCtx.GetEndpoint(), ":")
 		//extracting container port from the docker-compose
 		containerPort := strings.Split(services["meshery"].Ports[0], ":")
 		userPortMapping := userPort[len(userPort)-1] + ":" + containerPort[len(containerPort)-1]
@@ -148,7 +140,7 @@ func start() error {
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
-		for _, v := range RequestedAdapters {
+		for _, v := range currCtx.GetAdapters() {
 			if services[v].Image == "" {
 				log.Fatalf("Invalid adapter specified %s", v)
 			}
@@ -159,7 +151,7 @@ func start() error {
 			}
 
 			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			services[v] = temp
 			AllowedServices[v] = services[v]
 		}
@@ -176,9 +168,9 @@ func start() error {
 			}
 
 			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			if v == "meshery" {
-				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, currCtx.Version)
+				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), currCtx.GetVersion())
 			}
 			services[v] = temp
 			AllowedServices[v] = services[v]
@@ -228,7 +220,7 @@ func start() error {
 
 		if userResponse {
 			endpoint.Address = utils.EndpointProtocol + "://localhost"
-			currCtx.Endpoint = endpoint.Address + ":" + userPort[len(userPort)-1]
+			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
 
 			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
 			if err != nil {
@@ -309,9 +301,18 @@ func start() error {
 		}
 
 	case "kubernetes":
+		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
 
-		version := currCtx.Version
-		channel := currCtx.Channel
+		err = utils.CreateManifestsFolder()
+		if err != nil {
+			return err
+		}
+
+		version := currCtx.GetVersion()
+		channel := currCtx.GetChannel()
 		if version == "latest" {
 			if channel == "edge" {
 				version = "master"
@@ -341,14 +342,39 @@ func start() error {
 		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
 
-		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, false, false)
+		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
+		spinner.Start()
 
+		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
+		err = utils.ApplyManifestFiles(manifests, currCtx.GetAdapters(), kubeClient, false, false)
 		if err != nil {
-			return err
+			break
 		}
 
-		log.Info("...Meshery deployed on Kubernetes.")
+		deadline := time.Now().Add(20 * time.Second)
+
+		// check if all the pods are running
+		for !(time.Now().After(deadline)) {
+			podsStatus, err := utils.AreAllPodsRunning()
+			if err != nil {
+				return err
+			}
+
+			if podsStatus {
+				break
+			} else {
+				time.Sleep(1 * time.Second)
+			}
+		}
+
+		spinner.Stop()
+
+		podsStatus, err := utils.AreAllPodsRunning()
+		if !podsStatus {
+			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “kubectl get pods -—namespace=meshery” before using meshery.")
+		} else {
+			log.Info("Meshery is started.")
+		}
 
 		clientset := kubeClient.KubeClient
 
@@ -359,7 +385,7 @@ func start() error {
 
 		var endpoint *meshkitutils.Endpoint
 
-		deadline := time.Now().Add(3 * time.Second)
+		deadline = time.Now().Add(3 * time.Second)
 
 		//polling for endpoint to be available within the three second deadline
 		for !(time.Now().After(deadline)) {
@@ -371,37 +397,85 @@ func start() error {
 			}
 		}
 
-		if err != nil {
-			return err
+		currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.Internal.Address, endpoint.Internal.Port))
+		if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
+			Address: endpoint.Internal.Address,
+			Port:    endpoint.Internal.Port,
+		}, nil) {
+			currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port))
+			if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
+				Address: endpoint.External.Address,
+				Port:    endpoint.External.Port,
+			}, nil) {
+				u, _ := url.Parse(opts.APIServerURL)
+				if meshkitutils.TcpCheck(&meshkitutils.HostPort{
+					Address: u.Hostname(),
+					Port:    endpoint.External.Port,
+				}, nil) {
+					currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, u.Hostname(), endpoint.External.Port))
+				}
+			}
 		}
 
-		currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
-
-		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
-		if err != nil {
-			return err
+		if err == nil {
+			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			if err != nil {
+				return err
+			}
 		}
 
 		// switch to default case if the platform specified is not supported
 	default:
-		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder))
+		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currCtx.GetPlatform(), utils.MesheryFolder))
 	}
 
-	err = utils.DownloadOperatorManifest()
-
+	hcOptions := &HealthCheckOptions{
+		PrintLogs:           false,
+		IsPreRunE:           false,
+		Subcommand:          "",
+		RunKubernetesChecks: true,
+	}
+	hc, err := NewHealthChecker(hcOptions)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to initialize healthchecker")
+	}
+	// If k8s is available in case of platform docker than we deploy operator
+	if err = hc.Run(); err == nil {
+		// create a client
+		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
+
+		err = utils.CreateManifestsFolder()
+		if err != nil {
+			return err
+		}
+		// Download operator manifest
+		err = utils.DownloadOperatorManifest()
+		if err != nil {
+			return err
+		}
+
+		if !skipUpdateFlag {
+			err = utils.ApplyOperatorManifest(kubeClient, true, false)
+
+			if err != nil {
+				return err
+			}
+		} else {
+			// skip applying update on operators when the flag is used
+			err = utils.ApplyOperatorManifest(kubeClient, false, false)
+
+			if err != nil {
+				return err
+			}
+		}
 	}
 
-	err = utils.ApplyOperatorManifest(kubeClient, false, false)
+	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 
-	if err != nil {
-		return err
-	}
-
-	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
-
-	err = utils.NavigateToBrowser(currCtx.Endpoint)
+	err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 	if err != nil {
 		return err
 	}

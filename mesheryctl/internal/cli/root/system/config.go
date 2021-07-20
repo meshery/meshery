@@ -42,8 +42,6 @@ import (
 const paramName = "k8sfile"
 const kubeConfigYaml = "kubeconfig.yaml"
 
-var tokenPath string
-
 func getContexts(configFile, tokenPath string) ([]string, error) {
 	client := &http.Client{}
 

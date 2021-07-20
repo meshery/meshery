@@ -41,6 +41,7 @@ type ProviderProperties struct {
 	PackageURL          string       `json:"package_url,omitempty"`
 	ProviderName        string       `json:"provider_name,omitempty"`
 	ProviderDescription []string     `json:"provider_description,omitempty"`
+	ProviderURL         string       `json:"provider_url,omitempty"`
 	Extensions          Extensions   `json:"extensions,omitempty"`
 	Capabilities        Capabilities `json:"capabilities,omitempty"`
 }
@@ -118,6 +119,8 @@ const (
 	PersistSMPTestProfile Feature = "persist-smp-test-profile" // /user/test-config
 
 	PersistMesheryPatterns Feature = "persist-meshery-patterns" // /patterns
+
+	PersistMesheryPatternResources Feature = "persist-meshery-pattern-resources" // /patterns/resources
 
 	PersistMesheryFilters Feature = "persist-meshery-filters" // /filter
 
@@ -209,8 +212,6 @@ type Provider interface {
 	RecordMeshSyncData(model.Object) error
 	ReadMeshSyncData() ([]model.Object, error)
 	GetGenericPersister() *database.Handler
-	GetGraphqlHandler() http.Handler
-	GetGraphqlPlayground() http.Handler
 
 	SetKubeClient(client *mesherykube.Client)
 	GetKubeClient() *mesherykube.Client
@@ -220,11 +221,16 @@ type Provider interface {
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
+	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)
+	GetMesheryPatternResource(token, resourceID string) (*PatternResource, error)
+	GetMesheryPatternResources(token, page, pageSize, search, order, name, namespace, typ, oamType string) (*PatternResourcePage, error)
+	DeleteMesheryResource(token, resourceID string) error
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
 	GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
+	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)

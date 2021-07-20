@@ -20,6 +20,7 @@ import (
 	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
@@ -33,12 +34,9 @@ import (
 )
 
 var (
-	cfgFile        string
-	mctlCfgFile    string
-	version        = "Not Set"
-	commitsha      = "Not Set"
-	releasechannel = "Not Set"
-	verbose        = false
+	cfgFile     string
+	mctlCfgFile string
+	verbose     = false
 )
 
 var (
@@ -58,10 +56,12 @@ var RootCmd = &cobra.Command{
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.RootError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
+
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		latest, err := utils.GetLatestStableReleaseTag()
+		version := constants.GetMesheryctlVersion()
 		if err == nil && latest != version {
 			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
 			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
@@ -83,10 +83,11 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
@@ -108,14 +109,22 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	utils.CfgFile = cfgFile
+
 	// Allow user to override config file with use of --config global flag
-	if cfgFile != "" {
+	if cfgFile != utils.DefaultConfigPath {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 		// Otherwise, use the default `config.yaml` config file
 	} else {
-		if _, err := os.Stat(utils.DefaultConfigPath); os.IsNotExist(err) {
+		stat, err := os.Stat(utils.DefaultConfigPath)
+		if !os.IsNotExist(err) && stat.Size() == 0 {
+			log.Println("Empty meshconfig. Please populate it before running a command")
+		}
+		if os.IsNotExist(err) {
 			log.Printf("Missing Meshery config file.")
+		}
+		if os.IsNotExist(err) || (!os.IsNotExist(err) && stat.Size() == 0) {
 			// Check if Meshery config file needs to be created or not
 			// If silent flag is provided, create by default
 			// ortherwise ask for confirmation from user
@@ -167,7 +176,6 @@ func initConfig() {
 				os.Exit(1)
 			}
 		}
-
 		viper.SetConfigFile(utils.DefaultConfigPath)
 	}
 

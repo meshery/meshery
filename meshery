@@ -84,7 +84,7 @@ if ! command_exists curl ; then
 fi
 
 if [ "x${MESHERY_VERSION}" = "x" ] ; then
-  MESHERY_VERSION=$(curl -L -s https://api.github.com/repos/layer5io/meshery/releases | \
+  MESHERY_VERSION=$(curl -L -s https://api.github.com/repos/meshery/meshery/releases | \
                   grep tag_name | sed "s/ *\"tag_name\": *\"\\(.*\\)\",*/\\1/" | \
                   grep -v "rc\.[0-9]$"| head -n 1 )
 fi
@@ -95,7 +95,7 @@ if [ "x${MESHERY_VERSION}" = "x" ] ; then
 fi
 
 NAME="mesheryctl-${MESHERY_VERSION}"
-URL="https://github.com/layer5io/meshery/releases/download/${MESHERY_VERSION}/mesheryctl_${MESHERY_VERSION:1}_${OSEXT}_${OSARCHITECTURE}.zip"
+URL="https://github.com/meshery/meshery/releases/download/${MESHERY_VERSION}/mesheryctl_${MESHERY_VERSION:1}_${OSEXT}_${OSARCHITECTURE}.zip"
 
 printf "\nDownloading %s for %s...\n\n" "$NAME" "$OSEXT"
 curl -L ${URL} -o ${PWD}/meshery.zip

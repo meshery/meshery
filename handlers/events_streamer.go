@@ -14,8 +14,11 @@ import (
 
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+)
+
+var (
+	flusherMap map[string]http.Flusher
 )
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
@@ -26,8 +29,17 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	// }
 
 	log := logrus.WithField("file", "events_streamer")
+	client := "ui"
+	if req.URL.Query().Get("client") != "" {
+		client = req.URL.Query().Get("client")
+	}
+
+	if flusherMap == nil {
+		flusherMap = make(map[string]http.Flusher, 0)
+	}
 
 	flusher, ok := w.(http.Flusher)
+	flusherMap[client] = flusher
 
 	if !ok {
 		log.Error("Event streaming not supported.")
@@ -63,7 +75,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		log.Debug("new adapters channel closed")
 	}()
 
-	go func() {
+	go func(flusher http.Flusher) {
 		for data := range respChan {
 			log.Debug("received new data on response channel")
 			_, _ = fmt.Fprintf(w, "data: %s\n\n", data)
@@ -73,7 +85,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 			}
 		}
 		log.Debug("response channel closed")
-	}()
+	}(flusherMap[client])
 
 STOP:
 	for {
@@ -147,8 +159,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
 	if err != nil {
-		err = errors.Wrapf(err, "There was an error connecting to the backend to get events.")
-		log.Error(err)
+		log.Error(ErrStreamEvents(err))
 		// errChan <- err
 		// http.Error(w, "There was an error connecting to the backend to get events", http.StatusInternalServerError)
 		return
@@ -159,16 +170,10 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		event, err := streamClient.Recv()
 		if err != nil {
 			if err == io.EOF {
-				err = errors.Wrapf(err, "Event streaming ended.")
-				log.Error(err)
-				// errChan <- nil
+				log.Error(ErrStreamClient(err))
 				return
 			}
-			err = errors.Wrapf(err, "Event streaming ended with an unknown error.")
-			log.Error(err)
-			// http.Error(w, "streaming events was interrupted", http.StatusInternalServerError)
-			// return
-			// errChan <- err
+			log.Error(ErrStreamClient(err))
 			return
 		}
 		// log.Debugf("received an event: %+#v", event)
@@ -177,11 +182,13 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			result := &models.SmiResult{}
 			err := json.Unmarshal([]byte(event.Details), result)
 			if err != nil {
+				log.Error(ErrUnmarshal(err, "event"))
 				return
 			}
 
 			id, err := p.PublishSmiResults(result)
 			if err != nil {
+				log.Error(ErrPublishSmiResults(err))
 				return
 			}
 			event.Details = fmt.Sprintf("Result-Id: %s", id)
@@ -189,11 +196,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 
 		data, err := json.Marshal(event)
 		if err != nil {
-			err = errors.Wrapf(err, "Error marshaling event to json.")
-			log.Error(err)
-			// errChan <- err
-			// log.Errorf(
-			// http.Error(w, "error while sending event to client", http.StatusInternalServerError)
+			log.Error(ErrMarshal(err, "event"))
 			return
 		}
 		respChan <- data

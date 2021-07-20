@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/handlers"
@@ -21,6 +22,9 @@ type Router struct {
 // NewRouter returns a new ServeMux with app routes.
 func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router {
 	gMux := mux.NewRouter()
+
+	gMux.Handle("/api/system/graphql/query", h.GetGraphQLHandler()).Methods("GET", "POST")
+	gMux.Handle("/api/system/graphql/playground", h.GetGraphQLPlaygroundHandler()).Methods("GET", "POST")
 
 	gMux.HandleFunc("/api/server/version", h.ServerVersionHandler).
 		Methods("GET")
@@ -45,10 +49,10 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	gMux.Handle("/api/user", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserHandler)))).
 		Methods("GET")
-	gMux.Handle("/api/user/stats", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AnonymousStatsHandler)))).
+	gMux.Handle("/api/user/prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AnonymousStatsHandler)))).
 		Methods("GET", "POST")
 
-	gMux.Handle("/api/user/test-prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserTestPreferenceHandler)))).
+	gMux.Handle("/api/user/prefs/perf", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserTestPreferenceHandler)))).
 		Methods("GET", "POST", "DELETE")
 
 	gMux.Handle("/api/k8sconfig", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.K8SConfigHandler)))).
@@ -136,7 +140,11 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("GET")
 	gMux.Handle("/api/experimental/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryFilterHandler)))).
 		Methods("DELETE")
+	gMux.Handle("/api/experimental/filter/file/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterFileHandler)))).
+		Methods("GET")
 
+	gMux.Handle("/api/experimental/application/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileHandler)))).
+		Methods("POST", "DELETE")
 	gMux.Handle("/api/experimental/application", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileRequestHandler)))).
 		Methods("POST", "GET")
 	gMux.Handle("/api/experimental/application/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationHandler)))).
@@ -168,18 +176,19 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.Handle("/api/user/schedules", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveScheduleHandler)))).
 		Methods("POST")
 
-	gMux.PathPrefix("/api/system/graphql").Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlSystemHandler)))).Methods("GET", "POST")
+	//gMux.PathPrefix("/api/system/graphql").Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlSystemHandler)))).Methods("GET", "POST")
 
-	gMux.Handle("/logout", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	gMux.Handle("/user/logout", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
+			logrus.Debug("Inside not OK")
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
 		h.LogoutHandler(w, req, provider)
 	})))
-	gMux.Handle("/login", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	gMux.Handle("/user/login", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
@@ -188,7 +197,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		}
 		h.LoginHandler(w, req, provider, false)
 	})))
-	gMux.Handle("/api/token", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	gMux.Handle("/api/user/token", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
@@ -196,11 +205,11 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 			return
 		}
 		h.TokenHandler(w, req, provider, false)
-	})))
-	gMux.Handle("/api/gettoken", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(
+	}))).Methods("POST", "GET")
+	gMux.Handle("/api/token", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(
 		func(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 			provider.ExtractToken(w, req)
-		}))))
+		})))).Methods("GET")
 
 	// TODO: have to change this too
 	gMux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -209,9 +218,9 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	}))
 
 	// Swagger Interactive Playground
-	swaggerFileGithub := "https://raw.githubusercontent.com/layer5io/meshery/master/helpers/swagger.yaml"
-	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: swaggerFileGithub}
+	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
 	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
+	gMux.Handle("/swagger.yaml", http.FileServer(http.Dir("../helpers/")))
 	gMux.Handle("/docs", swaggerSh)
 
 	gMux.PathPrefix("/").
