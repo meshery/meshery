@@ -20,6 +20,7 @@ import (
 	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
@@ -33,9 +34,8 @@ import (
 )
 
 var (
-	cfgFile     string
-	mctlCfgFile string
-	verbose     = false
+	cfgFile string
+	verbose = false
 )
 
 var (
@@ -59,13 +59,13 @@ var RootCmd = &cobra.Command{
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		// latest, err := utils.GetLatestStableReleaseTag()
-		// version := constants.GetMesheryctlVersion()
-		// if err == nil && latest != version {
-		// 	log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-		// 	log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
-		// 	log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
-		// }
+		latest, err := utils.GetLatestStableReleaseTag()
+		version := constants.GetMesheryctlVersion()
+		if err == nil && latest != version {
+			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+		}
 	},
 }
 
