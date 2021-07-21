@@ -27,18 +27,6 @@ Follow these steps and you'll be right at home.
 - **Communicate** with the Layer5 community by joining the [Slack account](http://slack.layer5.io).
 - **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/layer5io/meshery/issues/) and jump in. If needed, create a [new issue](https://github.com/layer5io/meshery/issues/new/choose). All [pull requests](https://github.com/layer5io/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 
-**Sections**
-
-- [General Contribution Flow]({{site.baseurl}}/project/contributing#general-contribution-flow)
-- <a href="#commit-signing">Developer Certificate of Origin</a>
-- Meshery Contribution Flow
-  - <a href="{{site.baseurl}}/project/contributing-docs">Meshery Documentation</a>
-  - <a href="{{site.baseurl}}/project/contributing-cli">Meshery CLI</a>
-  - <a href="#contributing-meshery">Meshery Backend</a>
-    - <a href="#adapter">Writing a Meshery Adapter</a>
-  - <a href="{{site.baseurl}}/project/contributing-ui">Meshery UI</a>
-    Relevant coding style guidelines are the Go Code Review Comments and the Formatting and style section of Peter Bourgon's Go: Best Practices for Production Environments.
-
 ## <a name="contributing">General Contribution Flow</a>
 
 To contribute to Meshery, please follow the fork-and-pull request workflow described [here]({{site.baseurl}}/project/contributing/CONTRIBUTING-gitflow.md).
