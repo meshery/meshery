@@ -27,7 +27,7 @@ const KubernetesScreen = () => {
     <>
       {serviceMeshComponents.map(comp =>
         <Grid item lg={4} md={6} sm={12}>
-          <ServiceSwitch serviceInfo={comp} /> 
+          <ServiceSwitch serviceInfo={comp} isConnected={true} /> 
         </Grid>
       )}
     </>

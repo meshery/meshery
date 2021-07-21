@@ -1,4 +1,5 @@
 /* eslint-disable react/display-name */
+/* eslint-disable no-unused-vars */
 import CloseIcon from "@material-ui/icons/Close";
 import {
   withStyles,
@@ -10,8 +11,8 @@ import {
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { updateProgress } from "../../../lib/store";
-import { pingKubernetesWithNotification } from "../helpers/kubernetesHelpers";
+import { updateProgress, updateK8SConfig } from "../../../lib/store";
+import { pingKubernetesWithNotification, reconfigureKubernetes } from "../helpers/kubernetesHelpers";
 
 const styles = theme => ({
 
@@ -53,11 +54,11 @@ const chipStyles = (theme) => ({
   },
 })
 
-const KubernetesChip = withStyles(chipStyles)(({classes, handleKubernetesClick, label}) => (
+const KubernetesChip = withStyles(chipStyles)(({classes, handleKubernetesClick, handleKubernetesDelete,  label}) => (
 
   <Chip
     label={label}
-    onDelete={() => null}
+    onDelete={handleKubernetesDelete}
     onClick={handleKubernetesClick}
     icon={<img src="/static/img/kubernetes.svg" className={classes.chipIcon} />}
     className={classes.chip}
@@ -73,39 +74,51 @@ const KubernetesPingSnackbarAction = (closeSnackbar) => (key) => (
   </IconButton>
 )
 
-const KubernetesDataPanel = ({clusterInformation, classes, updateProgress, enqueueSnackbar, closeSnackbar}) => (
 
-  <Grid container className={classes.infoContainer} xs={10}>
-    <Grid item xs={12} style={{marginBottom: "1rem"}}>
-      <Typography className={classes.infoTitle}>Status</Typography>
-    </Grid>
-    <Grid item xs={12}>
-      <KubernetesChip 
-        handleKubernetesClick={() => pingKubernetesWithNotification(updateProgress, enqueueSnackbar, KubernetesPingSnackbarAction(closeSnackbar))} 
-        label="Kubernetes" 
-      />
-    </Grid>
-    <Grid item xs={12} container>
-      <Grid item xs={12}>
-        <Typography className={classes.infoLabel}>Current-Context: {clusterInformation.contextName}</Typography>
-        <Typography className={classes.infoData}>
-          {clusterInformation.inClusterConfig ? "Using In Cluster Config" : "Using out of cluster config"}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography className={classes.infoLabel}>Kubernetes Version</Typography>
-        <Typography className={classes.infoData}>
-          {clusterInformation.serverVersion && clusterInformation.serverVersion}
-        </Typography>
-      </Grid>
-    </Grid>
-  </Grid>
+const KubernetesDataPanel = ({clusterInformation, classes, updateProgress, enqueueSnackbar, closeSnackbar, setClusterInformation, setIsConnected, updateK8SConfig}) => {
 
-)
+  const handleKubernetesDelete = () => {
+    updateProgress({showProgress: true})
+    reconfigureKubernetes(updateProgress, enqueueSnackbar, KubernetesPingSnackbarAction(closeSnackbar), setClusterInformation, updateK8SConfig)    
+  }
+  return (
+    <Grid container className={classes.infoContainer} xs={10}>
+
+      <Grid item xs={12}>
+        <KubernetesChip 
+          handleKubernetesClick={() => pingKubernetesWithNotification(updateProgress, enqueueSnackbar, KubernetesPingSnackbarAction(closeSnackbar))} 
+          handleKubernetesDelete = {handleKubernetesDelete}
+          label="Kubernetes" 
+        />
+      </Grid>
+
+      <Grid item xs={12} style={{marginBottom: "1rem"}}>
+        <Typography className={classes.infoTitle}>Status</Typography>
+      </Grid>
+
+      <Grid item xs={12} container>
+        <Grid item xs={12}>
+          <Typography className={classes.infoLabel}>Current-Context: {clusterInformation.contextName}</Typography>
+          <Typography className={classes.infoData}>
+            {clusterInformation.inClusterConfig ? "Using In Cluster Config" : "Using out of cluster config"}
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography className={classes.infoLabel}>Kubernetes Version</Typography>
+          <Typography className={classes.infoData}>
+            {clusterInformation.serverVersion && clusterInformation.serverVersion}
+          </Typography>
+        </Grid>
+      </Grid>
+    </Grid>
+
+  )
+}
 
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
 });
 
 export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(KubernetesDataPanel)))

@@ -1,25 +1,29 @@
+/* eslint-disable no-unused-vars */
 import KubernetesIcon from "../icons/KubernetesIcon.js"
 import KubernetesConfig from "../SwitchConfigComponents/Kubernetes.js"
 import ServiceSwitch from "../ServiceSwitchCard.js"
 import { Grid } from "@material-ui/core"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { updateProgress } from "../../../lib/store";
+import { updateProgress, updateK8SConfig } from "../../../lib/store";
 import { withSnackbar } from "notistack";
 import { useEffect, useState } from "react"
 import {isKubernetesConnected, pingKubernetes}  from "../helpers/kubernetesHelpers"
 import KubernetesDataPanel from "../DataPanels/Kubernetes"
 
 
-const KubernetesScreen = ({k8sconfig}) => { 
+const KubernetesScreen = ({k8sconfig, updateK8sConfig}) => { 
 
   const [clusterInformation, setClusterInformation] = useState({
     isClusterConfigured: k8sconfig.clusterConfigured,
     inClusterConfig: k8sconfig.inClusterConfig,
     kubernetesPingStatus: false,
     contextName: k8sconfig.contextName,
-    serverVersion: k8sconfig.server_version
+    serverVersion: k8sconfig.server_version,
+    k8sfile: k8sconfig.k8sfile
   })
+
+  const [isConnected, setIsConnected] = useState(false)
 
 
 
@@ -28,6 +32,7 @@ const KubernetesScreen = ({k8sconfig}) => {
     pingKubernetes(
       (res) => {
         setClusterInformation({
+          ...clusterInformation,
           isClusterConfigured: k8sconfig.clusterConfigured,
           inClusterConfig: k8sconfig.inClusterConfig,
           kubernetesPingStatus: (res !== undefined ? true : false),
@@ -41,7 +46,11 @@ const KubernetesScreen = ({k8sconfig}) => {
   },[k8sconfig.clusterConfigured, k8sconfig.inClusterConfig, k8sconfig.contextName])
 
 
+  useEffect(() => {
 
+    setIsConnected(isKubernetesConnected(clusterInformation.isClusterConfigured, clusterInformation.kubernetesPingStatus))
+
+  },[clusterInformation])
 
   const kubeserviceInfo = {
     name: "Kubernetes", logoComponent: KubernetesIcon,
@@ -49,17 +58,17 @@ const KubernetesScreen = ({k8sconfig}) => {
     clusterInformation 
   }
 
-  const showDataPanel = () => !isKubernetesConnected(clusterInformation.isClusterConfigured, clusterInformation.kubernetesPingStatus)
+  const showDataPanel = () => isKubernetesConnected(clusterInformation.isClusterConfigured, clusterInformation.kubernetesPingStatus)
 
   return (
     <Grid item xs={12} container justify="center" alignItems="flex-start"> 
       <Grid item xs={6} container justify="center">
-        <ServiceSwitch serviceInfo={kubeserviceInfo} /> 
+        <ServiceSwitch serviceInfo={kubeserviceInfo} isConnected={isConnected}/> 
       </Grid>
       <Grid item xs={6} container justify="center">
         {
           showDataPanel() &&
-        <KubernetesDataPanel clusterInformation={kubeserviceInfo.clusterInformation}/>
+        <KubernetesDataPanel clusterInformation={kubeserviceInfo.clusterInformation} setIsConnected={setIsConnected} setClusterInformation={setClusterInformation}/>
         }
       </Grid>
     </Grid>
@@ -76,6 +85,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
 });
 
 

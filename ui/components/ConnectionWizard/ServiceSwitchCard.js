@@ -1,24 +1,21 @@
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Container, FormControlLabel, Switch, Typography } from '@material-ui/core';
-import { useEffect, useState } from 'react';
-import { isKubernetesConnected } from './helpers/kubernetesHelpers';
-import { isMesheryOperatorConnected } from './helpers/mesheryOperator';
+import { Card, CardContent, Container, Typography } from '@material-ui/core';
 
 
-const MeshySwitch = withStyles({
-  switchBase: {
-    color: "grey",
-    "&$checked": {
-      color: "#00B39F",
-    },
-    "&$checked + $track": {
-      backgroundColor: "#00B39F",
-    },
-  },
-  checked: {},
-  track: {},
-})(Switch);
+// const MeshySwitch = withStyles({
+//   switchBase: {
+//     color: "grey",
+//     "&$checked": {
+//       color: "#00B39F",
+//     },
+//     "&$checked + $track": {
+//       backgroundColor: "#00B39F",
+//     },
+//   },
+//   checked: {},
+//   track: {},
+// })(Switch);
 
 const styles = () => ({
 
@@ -93,36 +90,15 @@ const styles = () => ({
 });
 
 
-const deteremineKubernetesConnectionStatus = (clusterInfo) => isKubernetesConnected(clusterInfo.isClusterConfigured, clusterInfo.kubernetesPingStatus)
-
-const deteremineMesheryOperatorConnectionStatus = (operatorInformation) => isMesheryOperatorConnected(operatorInformation)
-
-const getServiceConnectionStatus = (serviceInfo) => {
-  switch (serviceInfo.name) {
-    
-    case "Kubernetes":
-      return deteremineKubernetesConnectionStatus(serviceInfo.clusterInformation)  
-
-    case "Meshery Operator":
-      return deteremineMesheryOperatorConnectionStatus(serviceInfo.operatorInformation)
-
-    default:
-      return false;
-  }
-} 
 
 
-const ServiceSwitch = ({serviceInfo, classes}) => {
+const ServiceSwitch = ({serviceInfo, classes, isConnected}) => {
 
   const ServiceIcon = serviceInfo.logoComponent
   const ConfigComponent = serviceInfo.configComp
-  const [isConnected,setIsConnected] = useState(false)
   
-  const showConfigComponent = () =>  !isConnected
-
-  useEffect(() => setIsConnected(getServiceConnectionStatus(serviceInfo)), [serviceInfo])
-
-
+  const showConfigComponent = () => !isConnected
+  
   return (
     <Container className={ classes.cardContainer} key={ serviceInfo.name }>
       <Card className={`${classes.card} `} variant="outlined">
@@ -140,11 +116,11 @@ const ServiceSwitch = ({serviceInfo, classes}) => {
               onChange={handleSwitch}
             />*/}
           </div>
-        {showConfigComponent() && 
+          {showConfigComponent() && 
           <div style={{paddingLeft: "0.6rem", paddingRight: "0.6rem"}}>
-           <ConfigComponent />
-         </div>
-        }
+            <ConfigComponent />
+          </div>
+          }
 
         </CardContent>
       </Card>

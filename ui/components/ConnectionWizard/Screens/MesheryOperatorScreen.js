@@ -19,6 +19,7 @@ const MesheryOperatorScreen = () => {
     meshSyncVersion:"N/A",
     NATSVersion:"N/A",
   })
+  const [isConnected,setIsConnected] = useState(false)
 
   const mesheryOperatorinfo = {
     name: "Meshery Operator",
@@ -39,7 +40,11 @@ const MesheryOperatorScreen = () => {
       error: (err) => console.log("error at operator scan: " + err),
     });
 
-  },[])
+  },[operatorInformation])
+
+  useEffect(() => {
+    setIsConnected(isMesheryOperatorConnected(operatorInformation))
+  },[operatorInformation])
 
   const setOperatorState = (res) => {
     const [isReachable, operatorInformation] = getOperatorStatusFromQueryResult(res) 
@@ -49,7 +54,7 @@ const MesheryOperatorScreen = () => {
   return (
     <Grid item xs={12} container justify="center" alignItems="flex-start" style={{marginBottom :"2rem"}}> 
       <Grid item container justify="center" alignItems="center" xs={6}>
-        <ServiceSwitch serviceInfo={mesheryOperatorinfo} /> 
+        <ServiceSwitch serviceInfo={mesheryOperatorinfo} isConnected={isConnected} /> 
       </Grid>
       <Grid item xs={6} container justify="center">
         {
