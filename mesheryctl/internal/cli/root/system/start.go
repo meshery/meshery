@@ -110,7 +110,11 @@ func start() error {
 			return err
 		}
 	} else {
-		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", utils.PlatformFlag, utils.MesheryFolder))
+		if utils.CfgFile != utils.DefaultConfigPath {
+			return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s file.", utils.PlatformFlag, utils.CfgFile))
+		} else {
+			return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", utils.PlatformFlag, utils.MesheryFolder))
+		}
 	}
 
 	// Deploy to platform specified in the config.yaml
@@ -491,6 +495,7 @@ func start() error {
 }
 
 func init() {
+	//startCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
 	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
