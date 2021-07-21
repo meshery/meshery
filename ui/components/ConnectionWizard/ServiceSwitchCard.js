@@ -64,7 +64,7 @@ const styles = () => ({
     height: "10rem",
     width: "100%",
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
   },
   contentTopSwitcher: {
@@ -75,7 +75,7 @@ const styles = () => ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: "1rem",
+    // marginLeft: "1rem",
   },
   cardIcon: {
     width: "3rem",
@@ -130,11 +130,11 @@ const ServiceSwitch = ({serviceInfo, classes}) => {
                 {serviceInfo.name}
               </Typography>
             </div>
-            <FormControlLabel
+            {/* <FormControlLabel
               className={classes.contentTopSwitcher}
               control={<MeshySwitch checked={isChecked} name={`{serviceInfo.name}`} />}
               onChange={handleSwitch}
-            />
+            />*/}
           </div>
           {showConfigComponent() && <ConfigComponent />}
         </CardContent>
