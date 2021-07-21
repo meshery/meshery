@@ -21,10 +21,7 @@ import { withRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
-  faTerminal,
-  faTachometerAlt,
   faChevronCircleLeft,
-  faPollH,
   faExternalLinkAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
