@@ -8,6 +8,8 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import NoSsr from "@material-ui/core/NoSsr";
+import Avatar from "@material-ui/core/Avatar";
 import RemoveIcon from "@material-ui/icons/Remove";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
@@ -15,13 +17,10 @@ import MailIcon from "@material-ui/icons/Mail";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import NoSsr from "@material-ui/core/NoSsr";
-import Avatar from "@material-ui/core/Avatar";
 import { withRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
-  faTasks,
   faTerminal,
   faTachometerAlt,
   faChevronCircleLeft,
@@ -243,7 +242,7 @@ const categories = [
   {
     id: "Performance",
     icon:
-      <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" style={drawerIconsStyle} />,
+    <img src="/static/img/drawerIcons/performance.svg" transform="shrink-2" style={drawerIconsStyle} />,
     href: "/performance",
     title: "Performance Profile Management",
     show: true,
@@ -251,7 +250,7 @@ const categories = [
     children: [
       {
         id: "Profiles",
-        icon: <FontAwesomeIcon icon={faPollH} style={drawerIconsStyle} />,
+        icon: <img src="/static/img/drawerIcons/board_icon.svg"  style={drawerIconsStyle} />,
         href: "/performance/profiles",
         title: "Performance Profiles",
         show: true,
@@ -268,7 +267,7 @@ const categories = [
   }, // title is used for comparison in the Header.js file as well
   {
     id: "Conformance",
-    icon: <FontAwesomeIcon icon={faTasks} transform="shrink-2" style={drawerIconsStyle} />,
+    icon: <img src="/static/img/drawerIcons/smi-conformance.svg" transform="shrink-2" style={drawerIconsStyle} />,
     href: "/smi_results", //Temp
     title: "Conformance",
     show: true,
@@ -276,7 +275,7 @@ const categories = [
     children: [
       {
         id: "SMI Results",
-        icon: <FontAwesomeIcon icon={faPollH} style={drawerIconsStyle} />,
+        icon:  <img src="/static/img/drawerIcons/board_icon.svg"  style={drawerIconsStyle} />,
         href: "/smi_results",
         title: "Service Mesh Interface Results",
         show: true,
@@ -319,10 +318,10 @@ const categories = [
     ],
   },
   {
-    id: "Management",
-    icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" style={drawerIconsStyle} />,
+    id: "Lifecycle",
+    icon: <img src="/static/img/drawerIcons/lifecycle_mgmt.svg" transform="shrink-4"  style={drawerIconsStyle} />,
     href: "/management",
-    title: "Management",
+    title: "Lifecycle",
     show: true,
     link: true,
     children: [
@@ -556,7 +555,7 @@ class Navigator extends React.Component {
   updateCategoriesMenus() {
     const self = this;
     categories.forEach((cat, ind) => {
-      if (cat.id === "Management") {
+      if (cat.id === "Lifecycle") {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
           const icon = self.pickIcon(catc.id);
@@ -584,7 +583,7 @@ class Navigator extends React.Component {
 
   updateAdaptersLink() {
     categories.forEach((cat, ind) => {
-      if (cat.id === "Management") {
+      if (cat.id === "Lifecycle") {
         cat.children.forEach((catc, ind1) => {
           if (
             typeof categories[ind].children[ind1].children[0] !== "undefined" &&
@@ -712,7 +711,7 @@ class Navigator extends React.Component {
         </List>
       );
     }
-    if (idname == "Management") {
+    if (idname == "Lifecycle") {
       if (children && children.length > 1) {
         return (
           <List disablePadding>
