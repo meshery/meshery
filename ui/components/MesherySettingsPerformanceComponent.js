@@ -283,7 +283,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   className={classes.button}
                   disabled={blockRunTest}
                 >
-                  {blockRunTest ? <CircularProgress size={30} /> : 'Submit Preferences'}
+                  {blockRunTest ? <CircularProgress size={30} /> : 'Save'}
                 </Button>
               </div>
           </div>
