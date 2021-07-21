@@ -216,7 +216,7 @@ The following is a concise summary of the steps to contribute to Meshery documen
   {% endfor %}
 </ul>
 
-### toc
+###  Table of Contents in Sidebar (toc)
 
 Sidebars use toc to create a table of contents. It is written in the following manner:
 
