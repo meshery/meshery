@@ -61,7 +61,7 @@ var startCmd = &cobra.Command{
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return handlers.ErrHealthCheckFailed(err)
+			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -113,7 +113,7 @@ func start() error {
 
 		// download the docker-compose.yaml file corresponding to the current version
 		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
-			return handlers.ErrDownloadFile(err, utils.DockerComposeFile)
+			return ErrDownloadFile(err, utils.DockerComposeFile)
 		}
 
 		// Viper instance used for docker compose
@@ -438,7 +438,7 @@ func start() error {
 	}
 	hc, err := NewHealthChecker(hcOptions)
 	if err != nil {
-		return handlers.ErrHealthCheckFailed(err)
+		return ErrHealthCheckFailed(err)
 	}
 	// If k8s is available in case of platform docker than we deploy operator
 	if err = hc.Run(); err == nil {
@@ -455,7 +455,7 @@ func start() error {
 		// Download operator manifest
 		err = utils.DownloadOperatorManifest()
 		if err != nil {
-			return handlers.ErrDownloadFile(err, "operator manifest")
+			return ErrDownloadFile(err, "operator manifest")
 		}
 
 		if !skipUpdateFlag {
