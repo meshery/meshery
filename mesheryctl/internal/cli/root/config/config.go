@@ -261,6 +261,16 @@ func (t *Token) GetLocation() string {
 	return filepath.Join(home, ".meshery", t.Location)
 }
 
+// SetName sets the token name
+func (t *Token) SetName(name string) {
+	t.Name = name
+}
+
+// SetLocation sets the location of the token
+func (t *Token) SetLocation(location string) {
+	t.Location = location
+}
+
 // GetBuild returns the build number for the binary
 func (v *Version) GetBuild() string {
 	return v.Build
