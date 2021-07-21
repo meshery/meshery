@@ -43,6 +43,20 @@ const (
 // one
 var policies = [][2]string{}
 
+// swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
+// Handle POST request for Pattern Deploy
+//
+// Deploy an attached pattern with the request
+// response:
+// 	200:
+
+// swagger:route DELETE /api/pattern/deploy PatternsAPI idDeleteDeployPattern
+// Handle DELETE request for Pattern Deploy
+//
+// Delete a deployed pattern with the request
+// response:
+// 	200:
+
 // PatternFileHandler handles the requested related to pattern files
 func (h *Handler) PatternFileHandler(
 	rw http.ResponseWriter,
@@ -105,7 +119,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	// If DynamicKubeClient hasn't been created yet then create one
-	if h.kubeclient.DynamicKubeClient == nil {
+	if h.config.KubeClient.DynamicKubeClient == nil {
 		kc, err := meshkube.New(prefObj.K8SConfig.Config)
 		if err != nil {
 			h.log.Error(ErrInvalidPattern(err))
@@ -113,7 +127,7 @@ func (h *Handler) PatternFileHandler(
 			return
 		}
 
-		h.kubeclient = kc
+		h.config.KubeClient = kc
 	}
 
 	msg, err := createCompConfigPairsAndExecuteAction(
@@ -465,7 +479,7 @@ func handleCompConfigPairAction(
 			callType,
 			[]string{string(jsonComp)},
 			string(jsonConfig),
-			h.kubeclient,
+			h.config.KubeClient,
 		)
 		if err != nil {
 			errs = append(errs, err)
