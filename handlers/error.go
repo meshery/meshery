@@ -7,74 +7,72 @@ import (
 )
 
 const (
-	ErrHealthCheckFailedCode    = "replace me"
-	ErrInvalidK8SConfigCode     = "replace me"
-	ErrInvalidAdapterCode       = "replace me"
-	ErrNilClientCode            = "replace me"
-	ErrPrometheusScanCode       = "replace me"
-	ErrGrafanaScanCode          = "replace me"
-	ErrRecordPreferencesCode    = "replace me"
-	ErrGrafanaConfigCode        = "replace me"
-	ErrPrometheusConfigCode     = "replace me"
-	ErrGrafanaQueryCode         = "replace me"
-	ErrPrometheusQueryCode      = "replace me"
-	ErrGrafanaBoardsCode        = "replace me"
-	ErrPrometheusBoardsCode     = "replace me"
-	ErrStaticBoardsCode         = "replace me"
-	ErrRequestBodyCode          = "replace me"
-	ErrMarshalCode              = "replace me"
-	ErrUnmarshalCode            = "replace me"
-	ErrEncodingCode             = "replace me"
-	ErrParseBoolCode            = "replace me"
-	ErrStreamEventsCode         = "replace me"
-	ErrStreamClientCode         = "replace me"
-	ErrUnmarshalEventCode       = "replace me"
-	ErrPublishSmiResultsCode    = "replace me"
-	ErrMarshalEventCode         = "replace me"
-	ErrPluginOpenCode           = "replace me"
-	ErrPluginLookupCode         = "replace me"
-	ErrPluginRunCode            = "replace me"
-	ErrParseFormCode            = "replace me"
-	ErrQueryGetCode             = "replace me"
-	ErrGetResultCode            = "replace me"
-	ErrConvertToSpecCode        = "replace me"
-	ErrFetchSMIResultsCode      = "replace me"
-	ErrFormFileCode             = "replace me"
-	ErrDownloadFileCode         = "replace me"
-	ErrReadConfigCode           = "replace me"
-	ErrLoadConfigCode           = "replace me"
-	ErrOpenFileCode             = "replace me"
-	ErrKubeVersionCode          = "replace me"
-	ErrAddAdapterCode           = "replace me"
-	ErrRetrieveDataCode         = "replace me"
-	ErrValidAdapterCode         = "replace me"
-	ErrOperationIDCode          = "replace me"
-	ErrMeshClientCode           = "replace me"
-	ErrApplyChangeCode          = "replace me"
-	ErrRetrieveMeshDataCode     = "replace me"
-	ErrApplicationFailureCode   = "replace me"
-	ErrDecodingCode             = "replace me"
-	ErrRetrieveUserTokenCode    = "replace me"
-	ErrFailToSaveCode           = "replace me"
-	ErrFailToDeleteCode         = "replace me"
-	ErrFailToLoadExtensionsCode = "replace me"
-	ErrConversionCode           = "replace me"
-	ErrParseDurationCode        = "replace me"
-	ErrLoadTestCode             = "replace me"
-	ErrFetchKubernetesCode      = "replace me"
-	ErrPanicRecoveryCode        = "replace me"
-	ErrBlankNameCode            = "replace me"
-	ErrInvalidLTURLCode         = "replace me"
-	ErrSaveSessionCode          = "replace me"
-	ErrWorkloadDefinitionCode   = "replace me"
-	ErrTraitDefinitionCode      = "replace me"
-	ErrScopeDefinitionCode      = "replace me"
-	ErrPatternFileCode          = "replace me"
-	ErrInvalidPatternCode       = "replace me"
-	ErrExecutionPlanCode        = "replace me"
-	ErrDataSendCode             = "replace me"
-	ErrVersionCompareCode       = "replace me"
-	ErrKubeClientCode           = "replace me"
+	ErrInvalidK8SConfigCode     = "2000"
+	ErrNilClientCode            = "2001"
+	ErrPrometheusScanCode       = "2002"
+	ErrGrafanaScanCode          = "2003"
+	ErrRecordPreferencesCode    = "2004"
+	ErrGrafanaConfigCode        = "2005"
+	ErrPrometheusConfigCode     = "2006"
+	ErrGrafanaQueryCode         = "2007"
+	ErrPrometheusQueryCode      = "2008"
+	ErrGrafanaBoardsCode        = "2009"
+	ErrPrometheusBoardsCode     = "2010"
+	ErrStaticBoardsCode         = "2011"
+	ErrRequestBodyCode          = "2012"
+	ErrMarshalCode              = "2013"
+	ErrUnmarshalCode            = "2014"
+	ErrEncodingCode             = "2015"
+	ErrParseBoolCode            = "2016"
+	ErrStreamEventsCode         = "2017"
+	ErrStreamClientCode         = "2018"
+	ErrUnmarshalEventCode       = "2019"
+	ErrPublishSmiResultsCode    = "2020"
+	ErrMarshalEventCode         = "2021"
+	ErrPluginOpenCode           = "2022"
+	ErrPluginLookupCode         = "2023"
+	ErrPluginRunCode            = "2024"
+	ErrParseFormCode            = "2025"
+	ErrQueryGetCode             = "2026"
+	ErrGetResultCode            = "2027"
+	ErrConvertToSpecCode        = "2028"
+	ErrFetchSMIResultsCode      = "2029"
+	ErrFormFileCode             = "2030"
+	ErrReadConfigCode           = "2031"
+	ErrLoadConfigCode           = "2032"
+	ErrOpenFileCode             = "2033"
+	ErrKubeVersionCode          = "2034"
+	ErrAddAdapterCode           = "2035"
+	ErrRetrieveDataCode         = "2036"
+	ErrValidAdapterCode         = "2037"
+	ErrOperationIDCode          = "2038"
+	ErrMeshClientCode           = "2039"
+	ErrApplyChangeCode          = "2040"
+	ErrRetrieveMeshDataCode     = "2041"
+	ErrApplicationFailureCode   = "2042"
+	ErrDecodingCode             = "2043"
+	ErrRetrieveUserTokenCode    = "2044"
+	ErrFailToSaveCode           = "2045"
+	ErrFailToDeleteCode         = "2046"
+	ErrFailToLoadExtensionsCode = "2047"
+	ErrConversionCode           = "2048"
+	ErrParseDurationCode        = "2049"
+	ErrLoadTestCode             = "2050"
+	ErrFetchKubernetesCode      = "2051"
+	ErrPanicRecoveryCode        = "2052"
+	ErrBlankNameCode            = "2053"
+	ErrInvalidLTURLCode         = "2053"
+	ErrDataSendCode             = "2137"
+	ErrVersionCompareCode       = "2138"
+	ErrSaveSessionCode          = "2136"
+	ErrKubeClientCode           = "2139"
+	ErrWorkloadDefinitionCode   = "2140"
+	ErrTraitDefinitionCode      = "2141"
+	ErrScopeDefinitionCode      = "2142"
+	ErrPatternFileCode          = "2143"
+	ErrExecutionPlanCode        = "2144"
+	ErrInvalidPatternCode       = "2145"
+	ErrCompConfigPairsCode      = "2146"
 )
 
 var (
@@ -88,14 +86,6 @@ var (
 	ErrMeshClient       = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
 	ErrParseDuration    = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
 )
-
-func ErrHealthCheckFailed(err error) error {
-	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{}, []string{})
-}
-
-func ErrInvalidAdapter(err error, obj string) error {
-	return errors.New(ErrInvalidAdapterCode, errors.Alert, []string{"Invalid adapter ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
-}
 
 func ErrPrometheusScan(err error) error {
 	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{}, []string{"Check if your Prometheus and Grafana Endpoint are correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
@@ -223,10 +213,6 @@ func ErrFetchSMIResults(err error) error {
 
 func ErrFormFile(err error) error {
 	return errors.New(ErrFormFileCode, errors.Alert, []string{"error getting k8s file"}, []string{err.Error()}, []string{}, []string{})
-}
-
-func ErrDownloadFile(err error, obj string) error {
-	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrReadConfig(err error) error {
