@@ -216,4 +216,84 @@ The following is a concise summary of the steps to contribute to Meshery documen
   {% endfor %}
 </ul>
 
+### toc
+
+Sidebars use toc to create a table of contents. It is written in the following manner:
+
+```
+    toc:
+  - title: Group 1
+    subfolderitems:
+      - page: Thing 1
+        url: /thing1.html
+      - page: Thing 2
+        url: /thing2.html
+      - page: Thing 3
+        url: /thing3.html
+```
+
+The output of the code snippet would be:
+
+```
+    Group 1
+      Thing 1
+      Thing 2
+      Thing 3
+```
+
+### if
+
+This executes the block of code only if the given condition is true. It is executed in the following manner:
+
+```
+    {% if product.title == "Awesome Shoes" %}
+    These shoes are awesome!
+    {% endif %}
+```
+
+If the condition is true, the output would be:
+
+```
+    How are you?
+```
+
+### for
+
+The for statement executes a block of code repeatedly. It is wriiten in the following manner:
+
+```
+    {% for names in collection.names %}
+    {{ name.title }}
+    {% endfor %}
+```
+
+The output produced by the above code snippet:
+
+```
+    Sam Ham Ethan
+```
+
+### Comment
+
+Comments allow to leave a block of code unattended, any statements between opening and closing comment would not be executed. 
+
+
+### Include
+
+The above tag is used to insert a already rendered file within the current template. It is written in the following manner:
+
+```
+    {% include file.html %}
+```
+
+### Assign
+
+The assign tag is used to create a new variable. It is written in the following manner:
+
+```
+    {% assign variable1 = true %}
+```
+
+
+
 
