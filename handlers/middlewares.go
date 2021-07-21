@@ -110,3 +110,10 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		next(w, req, prefObj, user, provider)
 	})
 }
+
+// GraphqlSessionInjectorMiddleware - is a middleware which injects user and session object
+func (h *Handler) GraphqlMiddleware(next http.Handler) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
+	return func(w http.ResponseWriter, req *http.Request, pref *models.Preference, user *models.User, prov models.Provider) {
+		next.ServeHTTP(w, req)
+	}
+}
