@@ -44,7 +44,7 @@ const MesheryOperatorChip = withStyles(chipStyles)(({classes, handleMesheryOpera
   <Chip
     // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
     label={label}
-    // onDelete={self.handleReconfigure}
+    onDelete={() => null}
     onClick={handleMesheryOperatorClick}
     icon={<img src="/static/img/meshery-operator.svg" className={classes.chipIcon} />}
     variant="outlined"

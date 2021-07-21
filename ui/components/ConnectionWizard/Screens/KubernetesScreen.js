@@ -49,7 +49,7 @@ const KubernetesScreen = ({k8sconfig}) => {
     clusterInformation 
   }
 
-  const showDataPanel = () => isKubernetesConnected(clusterInformation.isClusterConfigured, clusterInformation.kubernetesPingStatus)
+  const showDataPanel = () => !isKubernetesConnected(clusterInformation.isClusterConfigured, clusterInformation.kubernetesPingStatus)
 
   return (
     <Grid item xs={12} container justify="center" alignItems="flex-start"> 

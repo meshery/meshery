@@ -57,6 +57,7 @@ const KubernetesChip = withStyles(chipStyles)(({classes, handleKubernetesClick, 
 
   <Chip
     label={label}
+    onDelete={() => null}
     onClick={handleKubernetesClick}
     icon={<img src="/static/img/kubernetes.svg" className={classes.chipIcon} />}
     className={classes.chip}
