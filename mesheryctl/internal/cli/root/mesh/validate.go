@@ -73,6 +73,9 @@ var validateCmd = &cobra.Command{
 			return err
 		}
 
+		s := utils.CreateDefaultSpinner("Validation started", "\nValidation complete")
+
+		s.Start()
 		path := mctlCfg.GetBaseMesheryURL() + "/api/mesh/ops"
 		method = "POST"
 
@@ -133,6 +136,15 @@ var validateCmd = &cobra.Command{
 		}
 
 		log.Infof(string(body))
+		s.Stop()
+
+		log.Infof("Verifying Operation")
+		s.Start()
+		_, err = waitForDeployResponse(mctlCfg, "")
+		if err != nil {
+			return errors.Wrap(err, "error verifying installation")
+		}
+		s.Stop()
 
 		return nil
 	},
@@ -145,4 +157,32 @@ func init() {
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = validateCmd.MarkFlagRequired("tokenPath")
+}
+
+func waitForResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli"
+	method := "GET"
+	client := &http.Client{}
+	req, err := http.NewRequest(method, path, nil)
+	req.Header.Add("Accept", "text/event-stream")
+	if err != nil {
+		return "", err
+	}
+
+	err = utils.AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return "", err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
 }
