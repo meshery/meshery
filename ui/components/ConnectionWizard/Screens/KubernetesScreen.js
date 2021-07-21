@@ -12,11 +12,12 @@ import {isKubernetesConnected, pingKubernetes}  from "../helpers/kubernetesHelpe
 import KubernetesDataPanel from "../DataPanels/Kubernetes"
 
 
-const KubernetesScreen = ({k8sconfig, updateK8sConfig}) => { 
+const KubernetesScreen = ({k8sconfig, updateK8SConfig, updateProgress}) => { 
 
   const [clusterInformation, setClusterInformation] = useState({
     isClusterConfigured: k8sconfig.clusterConfigured,
     inClusterConfig: k8sconfig.inClusterConfig,
+    configuredServer: k8sconfig.configuredServer,
     kubernetesPingStatus: false,
     contextName: k8sconfig.contextName,
     serverVersion: k8sconfig.server_version,
@@ -37,7 +38,8 @@ const KubernetesScreen = ({k8sconfig, updateK8sConfig}) => {
           inClusterConfig: k8sconfig.inClusterConfig,
           kubernetesPingStatus: (res !== undefined ? true : false),
           contextName: k8sconfig.contextName,
-          serverVersion: k8sconfig.server_version
+          serverVersion: k8sconfig.server_version,
+          configuredServer: k8sconfig.configuredServer,
         })
       },
       (err) => console.log(err)
@@ -54,7 +56,7 @@ const KubernetesScreen = ({k8sconfig, updateK8sConfig}) => {
 
   const kubeserviceInfo = {
     name: "Kubernetes", logoComponent: KubernetesIcon,
-    configComp :  KubernetesConfig,
+    configComp :  <KubernetesConfig updateProgress={updateProgress} updateK8SConfig={updateK8SConfig}/>, 
     clusterInformation 
   }
 

@@ -79,7 +79,7 @@ const KubernetesDataPanel = ({clusterInformation, classes, updateProgress, enque
 
   const handleKubernetesDelete = () => {
     updateProgress({showProgress: true})
-    reconfigureKubernetes(updateProgress, enqueueSnackbar, KubernetesPingSnackbarAction(closeSnackbar), setClusterInformation, updateK8SConfig)    
+    reconfigureKubernetes(updateProgress, enqueueSnackbar, KubernetesPingSnackbarAction(closeSnackbar), updateK8SConfig)    
   }
   return (
     <Grid container className={classes.infoContainer} xs={10}>

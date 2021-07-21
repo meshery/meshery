@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import {
-  withStyles,
   FormGroup,
   TextField,
   InputAdornment,
@@ -8,72 +7,52 @@ import {
   Grid,
 } from "@material-ui/core/";
 import BackupIcon from "@material-ui/icons/Backup";
+import { withSnackbar } from "notistack";
+import { useState } from "react";
+import { fetchContexts, submitConfig} from "../helpers/kubernetesHelpers";
+
+const KubernetesConfig = ({enqueueSnackbar, closeSnackbar, updateK8SConfig, updateProgress}) => {
+
+  const [state, setState] = useState({
+    contextNameForForm: "",
+    contextsFromFile: [],
+    k8sfile: "",
+    k8sfileError: false,
+    k8sfileElement: null,
+    k8sfileElementVal: "",
+    inClusterConfigForm: false,
+    contextNameForForm: ""
+  })
 
 
-const styles = () => ({
-  contentBottomInputChecked: {
-    background: "white",
-    height: "6rem",
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  contentBottomInputUnchecked: {
-    display: "none",
-  },
-  contentBottomInput: {
-    border: "1px solid lightgray",
-    borderRadius: "5px",
-    width: "9rem",
-    height: "2rem",
-    marginBottom: "0.15rem",
-    fontSize: "0.75rem",
-    padding: "0.50rem",
-  },
-  topInputIcon: {
-    position: "absolute",
-    fontSize: "1.25rem",
-    color: "lightgray",
-    bottom: "4.25rem",
-    left: "9rem",
-    cursor: "pointer",
-    zIndex: "99999",
-    "&:hover": {
-      color: "grey",
-    },
-  },
-  file: {
-    display: "none",
-  },
-  // Inputs
-  contentBottomChecked: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
-  contentBottomUpperInput: {
-    width: "11rem",
-    fontSize: "0.75rem",
-    marginLeft: "2.4rem",
-    marginTop: "-1rem",
-    marginBottom: "0rem",
-  },
-  contentBottomLowerInput: {
-    width: "11rem",
-    marginBottom: "-1rem",
-    fontSize: "0.75rem",
-    marginTop: "0",
-  },
-})
+  const handleChange = (name) => {
+    return (event) => {
+      if (name === "k8sfile") {
+        if (event.target.value !== "") {
+          setState({...state, k8sfileError: false});
+        }
 
-const KubernetesConfig = ({classes}) => {
+        let fileInput = document.querySelector("#k8sfile");
+        let k8sfile = fileInput.files[0] 
+
+        fetchContexts(updateProgress, k8sfile )
+          .then(res => {
+            setState({...state, contextsFromFile: res.result, k8sfile, contextNameForForm: res.currentContextName})
+            if(res.result.length === 1)
+              submitConfig(enqueueSnackbar, updateProgress, updateK8SConfig, () => null, res.currentContextName, k8sfile);
+          })
+          .catch(err => alert(err))
+      }
+      if( name === "contextNameChange"){
+        submitConfig(enqueueSnackbar, updateProgress, updateK8SConfig, action, event.target.value, k8sfile);
+      }
+    };
+  };
+
   return(
     <>
       <Grid item xs={12}>
-        <TextField
+        {/*<TextField
           id="k8sfileLabelText"
           name="k8sfileLabelText"
           label="Upload kubeconfig"
@@ -109,11 +88,62 @@ const KubernetesConfig = ({classes}) => {
                       {ct.currentContext ? " (default)" : ""}
                     </MenuItem>
                   ))}
+        </TextField> */}
+        
+        <FormGroup>
+          <input
+            id="k8sfile"
+            type="file"
+            value={state.k8sfileElementVal}
+            hidden
+            onChange={handleChange("k8sfile")}
+            // className={classes.fileInputStyle}
+          />
+          <TextField
+            id="k8sfileLabelText"
+            name="k8sfileLabelText"
+            // className={classes.fileLabelText}
+            label="Upload kubeconfig"
+            variant="outlined"
+            fullWidth
+            value={""}
+            onClick={() => document.querySelector("#k8sfile").click()}
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+              endAdornment: (
+                <InputAdornment position="end">
+                  <BackupIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </FormGroup>
+        <TextField
+          select
+          id="contextName"
+          name="contextName"
+          label="Context Name"
+          fullWidth
+          value={state.contextNameForForm}
+          margin="normal"
+          variant="outlined"
+          // disabled={inClusterConfigForm === true}
+          onChange={handleChange("contextNameChange")}
+        >
+          {state.contextsFromFile &&
+                      state.contextsFromFile.map((ct) => (
+                        <MenuItem key={`ct_---_${ct.contextName}`} value={ct.contextName}>
+                          {ct.contextName}
+                          {ct.currentContext ? " (default)" : ""}
+                        </MenuItem>
+                      ))}
         </TextField>
+
       </Grid>
     </>
   )
 }
 
 
-export default withStyles(styles)(KubernetesConfig)
+export default withSnackbar(KubernetesConfig)

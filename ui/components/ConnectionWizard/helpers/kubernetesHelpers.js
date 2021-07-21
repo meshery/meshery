@@ -76,21 +76,12 @@ export const deleteKubernetesConfig = (successCb,errorCb) =>
     errorCb
   )
 
-export const reconfigureKubernetes = (updateProgress, enqueueSnackbar, action, setState, updateK8SConfig) => {
+export const reconfigureKubernetes = (updateProgress, enqueueSnackbar, action, updateK8SConfig) => {
 
   const successCb = (result) => {
     updateProgress({ showProgress: false });
     if (typeof result !== "undefined") {
-      setState({
-        // inClusterConfigForm: false,
-        inClusterConfig: false,
-        k8sfile: "",
-        // k8sfileElementVal: "",
-        // k8sfileError: false,
-        contextName: "",
-        // contextNameForForm: "",
-        isClusterConfigured: false,
-      });
+      
       updateK8SConfig({
         k8sConfig: {
           inClusterConfig: false,
@@ -123,3 +114,87 @@ export const reconfigureKubernetes = (updateProgress, enqueueSnackbar, action, s
   )
 
 }
+
+
+export const fetchContexts = (updateProgress, k8sfile) => {
+
+  const formData = new FormData();
+  // if (inClusterConfigForm) {
+  //   return;
+  // }
+    
+  // formData.append('contextName', contextName);
+  formData.append("k8sfile", k8sfile);
+
+  updateProgress({ showProgress: true });
+
+  return new Promise((res, rej) => {
+    dataFetch(
+      "/api/k8sconfig/contexts",
+      {
+        credentials: "same-origin",
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      },
+      (result) => {
+        updateProgress({ showProgress: false });
+
+        if (typeof result !== "undefined") {
+          let ctName = "";
+          result.forEach(({ contextName, currentContext }) => {
+            if (currentContext) {
+              ctName = contextName;
+            }
+          });
+
+          res({result, currentContextName: ctName})
+        }
+      },
+      (err) => rej(err)
+    );
+  })
+    
+};
+
+
+export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, action, contextName, k8sfile) => {
+
+  const inClusterConfigForm = false
+  const formData = new FormData();
+  formData.append("inClusterConfig", inClusterConfigForm ? "on" : ""); // to simulate form behaviour of a checkbox
+  if (!inClusterConfigForm) {
+    formData.append("contextName", contextName);
+    formData.append("k8sfile", k8sfile);
+  }
+  updateProgress({ showProgress: true });
+  dataFetch(
+    "/api/k8sconfig",
+    {
+      credentials: "same-origin",
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    },
+    (result) => {
+      updateProgress({ showProgress: false });
+      if (typeof result !== "undefined") {
+        enqueueSnackbar("Kubernetes config was successfully validated!", {
+          variant: "success",
+          autoHideDuration: 2000,
+          action
+        });
+        updateK8SConfig({
+          k8sConfig: {
+            inClusterConfig: inClusterConfigForm,
+            k8sfile,
+            contextName: result.contextName,
+            clusterConfigured: true,
+            configuredServer: result.configuredServer,
+          },
+        });
+      }
+    },
+    (err) => alert(err)
+  );
+};

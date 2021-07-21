@@ -118,7 +118,7 @@ const ServiceSwitch = ({serviceInfo, classes, isConnected}) => {
           </div>
           {showConfigComponent() && 
           <div style={{paddingLeft: "0.6rem", paddingRight: "0.6rem"}}>
-            <ConfigComponent />
+            {ConfigComponent}
           </div>
           }
 
