@@ -97,42 +97,6 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 1. `npm` and `node` should be installed on your machine, preferably the latest versions.
 1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
 
-#### Define and validate error
-
-Every Golang-based project that belongs to Layer5 incorporates a utility to define and manage error messages for every error instance. This is internally done with several make commands, but one can explicitely validate with the help of the following make command. This checks and validates the errors that are present in the particular project.
-
-```sh
-make error
-```
-
-For more details, <a href="{{ site.baseurl }}/project/contributing-error">Error Utility</a>
-
-#### Build and run Meshery server
-
-To build and run Meshery server from source: 
-
-1. Build the static assets for the UI by running
-```sh
-make setup-ui-libs
-make build-ui
-```
-2. Build & run the server code by running
-```sh
-make run-local // Or make run-fast
-```
-
-Any time changes are made to the GO code, you will have to stop the server and run the above command again.
-Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
-After running Meshery server, you will need to select your **Cloud Provider** by navigating to `localhost:9081`. Only then you will be able to use the Meshery UI on port `3000`.
-
-#### Building Docker image
-
-To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
-
-```sh
-make docker
-```
-
 # Suggested Reading
 
 {% assign sorted_reading = site.pages | sort: page.title | reverse %}
