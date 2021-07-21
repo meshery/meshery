@@ -65,7 +65,17 @@ var viewCmd = &cobra.Command{
 			log.Printf("Current Context: %v", focusedContext)
 			return nil
 		}
-		log.Print(PrintChannelAndVersionToStdout(mctlCfg.Contexts[focusedContext], focusedContext))
+
+		err = mctlCfg.SetCurrentContext(focusedContext)
+		if err != nil {
+			return err
+		}
+
+		currCtx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		log.Print(PrintChannelAndVersionToStdout(*currCtx, focusedContext))
 		log.Println()
 		return nil
 	},
