@@ -21,6 +21,7 @@ const MeshySwitch = withStyles({
 })(Switch);
 
 const styles = () => ({
+
   cardContainer: {
     position: "relative",
     display: "flex",
@@ -28,6 +29,7 @@ const styles = () => ({
     justifyContent: "space-between",
     // padding: "2rem 6rem",
   },
+
   // Card
   card: {
     position: "relative",
@@ -91,15 +93,18 @@ const styles = () => ({
 });
 
 
-const deteremineKubernetesSwitchState = (clusterInfo) => isKubernetesConnected(clusterInfo.isClusterConfigured, clusterInfo.kubernetesPingStatus)
-const deteremineMesheryOperatorSwitchState = (operatorInformation) => isMesheryOperatorConnected(operatorInformation)
+const deteremineKubernetesConnectionStatus = (clusterInfo) => isKubernetesConnected(clusterInfo.isClusterConfigured, clusterInfo.kubernetesPingStatus)
 
-const getSwitchState = (serviceInfo) => {
+const deteremineMesheryOperatorConnectionStatus = (operatorInformation) => isMesheryOperatorConnected(operatorInformation)
+
+const getServiceConnectionStatus = (serviceInfo) => {
   switch (serviceInfo.name) {
+    
     case "Kubernetes":
-      return deteremineKubernetesSwitchState(serviceInfo.clusterInformation)  
+      return deteremineKubernetesConnectionStatus(serviceInfo.clusterInformation)  
+
     case "Meshery Operator":
-      return deteremineMesheryOperatorSwitchState(serviceInfo.operatorInformation)
+      return deteremineMesheryOperatorConnectionStatus(serviceInfo.operatorInformation)
 
     default:
       return false;
@@ -111,21 +116,20 @@ const ServiceSwitch = ({serviceInfo, classes}) => {
 
   const ServiceIcon = serviceInfo.logoComponent
   const ConfigComponent = serviceInfo.configComp
-  const [isChecked,setIsChecked] = useState(getSwitchState(serviceInfo))
+  const [isConnected,setIsConnected] = useState(false)
   
-  const handleSwitch = () => setIsChecked(prev => !prev)
-  const showConfigComponent = () => serviceInfo.name === "Kubernetes" ? false : isChecked
+  const showConfigComponent = () =>  !isConnected
 
-  useEffect(() => setIsChecked(getSwitchState(serviceInfo)), [serviceInfo])
+  useEffect(() => setIsConnected(getServiceConnectionStatus(serviceInfo)), [serviceInfo])
 
 
   return (
-    <Container className={classes.cardContainer}>
+    <Container className={ classes.cardContainer} key={ serviceInfo.name }>
       <Card className={`${classes.card} `} variant="outlined">
-        <CardContent className={ isChecked ? classes.cardContentChecked : classes.cardContent}>
+        <CardContent className={ showConfigComponent() ? classes.cardContentChecked : classes.cardContent}>
           <div className={classes.contentTop}>
             <div className={classes.iconContainer}>
-              <ServiceIcon isActive={isChecked}/>
+              <ServiceIcon isActive={isConnected}/>
               <Typography className={classes.cardIconText} color="primary">
                 {serviceInfo.name}
               </Typography>
@@ -136,7 +140,12 @@ const ServiceSwitch = ({serviceInfo, classes}) => {
               onChange={handleSwitch}
             />*/}
           </div>
-          {showConfigComponent() && <ConfigComponent />}
+        {showConfigComponent() && 
+          <div style={{paddingLeft: "0.6rem", paddingRight: "0.6rem"}}>
+           <ConfigComponent />
+         </div>
+        }
+
         </CardContent>
       </Card>
     </Container>
