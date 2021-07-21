@@ -12,7 +12,7 @@ Meshery pervasively uses MeshKit as a golang and service mesh management-specifi
 
 Meshery pervasively uses MeshKit as a golang and service mesh management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes. 
 
-To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the at Meshery [error codes reference page](https://docs.meshery.io/reference/error-codes). The objective to create this was to avoid centralized handling of error codes and automating everything
+To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery [error codes reference page](https://docs.meshery.io/reference/error-codes). The objective to create this was to avoid centralized handling of error codes and automating everything
 
 In order to create a Meshery error object, you will need to create a custom wrapper object for the native golang error. This can be done from the <a href="https://github.com/layer5io/meshkit/tree/master/errors">MeshKit Error</a> package. 
 
@@ -25,7 +25,7 @@ In order to create a Meshery error object, you will need to create a custom wrap
 
 - Codes carry no meaning, as e.g. HTTP status codes do.
 
-- In the code, create string var's or const's with names starting with Err[A-Z] and ending in Code, e.g. 'ErrApplyManifestCode'.
+- For the Code argument in the errors.New use the same Error name and append a "Code" after it. e.g error name : ErrApplyManifest then the error code is ErrApplyManifestCode
 
 - Set the value to any string, like "replace_me" (no convention here), e.g. ErrApplyManifestCode = "replace_me".
 
@@ -39,6 +39,8 @@ In order to create a Meshery error object, you will need to create a custom wrap
   This is often done in a factory function. It is important that the error code variable is used here, not a literal.
   Specify detailed descriptions, probable causes, and remedies. They need to be string literals, call expressions are ignored.
   This tool extracts this information from the code and exports it.
+
+- First letter of the every error description need to capitalized
 
 - By convention, error codes and the factory functions live in files called error.go. The tool checks all files, but updates only error.go files.
 
