@@ -82,12 +82,19 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("POST")
 	gMux.Handle("/api/system/adapters", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
-		_, ok := providerI.(models.Provider)
+		provider, ok := providerI.(models.Provider)
 		if !ok {
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
-		h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetAllAdaptersHandler))
+		// if adapter found in query user is trying to ping an adapter
+		adapterLoc := req.URL.Query().Get("adapter")
+		if adapterLoc != "" {
+			logrus.Debug("adapter pinging")
+			h.AuthMiddleware(h.SessionInjectorMiddleware(h.AdapterPingHandler))
+			return
+		}
+		h.GetAllAdaptersHandler(w, req, provider)
 	})))
 	gMux.Handle("/api/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler)))).
 		Methods("GET")

@@ -27,16 +27,10 @@ func init() {
 //  200: systemAdaptersRespWrapper
 
 // GetAllAdaptersHandler is used to fetch all the adapters
-func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	// if adapter found in query user is trying to ping an adapter
-	adapterLoc := req.URL.Query().Get("adapter")
-	if adapterLoc != "" {
-		h.AdapterPingHandler(w, req, prefObj, user, provider)
 	}
 
 	err := json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
