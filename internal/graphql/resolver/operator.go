@@ -309,7 +309,7 @@ func (r *Resolver) subscribeToBroker(provider models.Provider, mesheryKubeClient
 }
 
 func getOperator(kubeclient *mesherykube.Client) ([]*controller, error) {
-	if kubeclient == nil || kubeclient.KubeClient == nil || kubeclient.KubeClient.AppsV1() == nil {
+	if kubeclient == nil || kubeclient.KubeClient == nil || kubeclient.KubeClient.AppsV1() == nil { //nolint
 		return nil, ErrMesheryClient(nil)
 	}
 
