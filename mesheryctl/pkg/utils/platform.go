@@ -288,7 +288,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			if ctx.Version == "latest" {
 				ctx.Version, err = GetLatestStableReleaseTag()
 				if err != nil {
-					return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
+					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
 			}
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ctx.Version + "/docker-compose.yaml"
@@ -534,7 +534,7 @@ func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]stri
 		if index := StringContainedInSlice(sp, availablePodsName); index != -1 {
 			requiredPods = append(requiredPods, availablePodsName[index])
 		} else {
-			return nil, errors.New(fmt.Sprintf("Invalid pod \"%s\" specified. Run mesheryctl `system status` to view the available pods.", sp))
+			return nil, fmt.Errorf("invalid pod \"%s\" specified. Run mesheryctl `system status` to view the available pods", sp)
 		}
 	}
 	return requiredPods, nil
@@ -564,7 +564,7 @@ func Startdockerdaemon(subcommand string) error {
 	} else {
 		userResponse = AskForConfirmation("Start Docker now")
 	}
-	if userResponse != true {
+	if !userResponse {
 		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
 	}
 

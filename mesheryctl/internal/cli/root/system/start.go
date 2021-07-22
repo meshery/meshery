@@ -429,7 +429,7 @@ func start() error {
 
 		// switch to default case if the platform specified is not supported
 	default:
-		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currCtx.GetPlatform(), utils.MesheryFolder))
+		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.GetPlatform(), utils.MesheryFolder)
 	}
 
 	hcOptions := &HealthCheckOptions{
