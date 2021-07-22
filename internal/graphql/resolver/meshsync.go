@@ -6,7 +6,6 @@ import (
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
-	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -37,7 +36,6 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 }
 
 func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions) (model.Status, error) {
-
 	if actions.ClearDb == "true" {
 		// Clear existing data
 		err := provider.GetGenericPersister().Migrator().DropTable(
@@ -52,9 +50,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		}
 	}
 	if actions.ReSync == "true" {
-		err := r.BrokerConn.Publish(requestSubject, &brokerpkg.Message{
-			Request: &brokerpkg.RequestObject{
-				Entity: brokerpkg.ReSyncDiscoveryEntity,
+		err := r.BrokerConn.Publish(requestSubject, &broker.Message{
+			Request: &broker.RequestObject{
+				Entity: broker.ReSyncDiscoveryEntity,
 			},
 		})
 		if err != nil {

@@ -12,7 +12,6 @@ import (
 	"github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshkit/broker"
 	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
@@ -298,7 +297,7 @@ func (r *Resolver) subscribeToBroker(provider models.Provider, mesheryKubeClient
 }
 
 func getOperator(kubeclient *mesherykube.Client) (string, string, error) {
-	if kubeclient == nil || kubeclient.KubeClient == nil || kubeclient.KubeClient.AppsV1() == nil {
+	if kubeclient == nil || kubeclient.KubeClient == nil {
 		return "", "", ErrMesheryClient(nil)
 	}
 
@@ -319,7 +318,7 @@ func getOperator(kubeclient *mesherykube.Client) (string, string, error) {
 	return dep.ObjectMeta.Name, version, nil
 }
 
-func getControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker.Handler, ch chan struct{}) ([]*model.OperatorControllerStatus, error) {
+func getControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler, ch chan struct{}) ([]*model.OperatorControllerStatus, error) {
 	controllers := make([]*model.OperatorControllerStatus, 0)
 	var broker *operatorv1alpha1.Broker
 	var meshsync *operatorv1alpha1.MeshSync

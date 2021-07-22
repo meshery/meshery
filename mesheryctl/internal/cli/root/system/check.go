@@ -31,7 +31,7 @@ var (
 	pre       bool
 	adapter   bool
 	operator  bool
-	failure   int = 0
+	failure   int
 )
 
 type HealthCheckOptions struct {
