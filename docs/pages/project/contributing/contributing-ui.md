@@ -11,6 +11,27 @@ category: contributing
 ### <a name="contributing-ui">UI Contribution Flow</a>
 Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
 
+#### Design Prologue
+Meshery UI is a significant component of the value proposition Meshery offers to individuals and organizations seeking to adopt and operate a service mesh or collection of service meshes.
+
+#### Design Goals
+The designs in this specification should result in enabling:
+
+- **User experience should be intuitive**
+  
+  This is achieved through sensible defaults, consistency of user interaction paradigms and features that delight the user.
+- **Meshery UI should simplify user management of workloads and service meshes**
+  
+  Meshery UI needs to be simple, but powerful. This is achieved through intuitive layouts and predefined filters that accommodate common tasks.
+- **Extensible**
+  
+  Meshery UI should be a first-class component of Meshery, but also facilitate third-party integrations.
+
+#### Design Objectives
+The designs in this specification should result in enabling:
+- Meshery UI should be event-driven where possible.
+
+
 #### Install UI dependencies
 To install/update the UI dependencies:
 ```
