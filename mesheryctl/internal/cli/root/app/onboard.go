@@ -110,8 +110,8 @@ var onboardCmd = &cobra.Command{
 				// if --skip-save is not passed we save the apps first
 				if !skipSave {
 					jsonValues, err := json.Marshal(map[string]interface{}{
-						"app_data": map[string]interface{}{
-							"app_file": text,
+						"application_data": map[string]interface{}{
+							"application_file": text,
 						},
 						"save": true,
 					})
