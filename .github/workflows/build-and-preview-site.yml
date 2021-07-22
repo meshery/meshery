@@ -6,7 +6,7 @@ on:
     paths:
       - 'docs/**'
 jobs:
-  triger-previewing-site:
+  trigger-site-preview:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
