@@ -84,7 +84,7 @@ linters:
     # - gocyclo
     - gofmt
     - goimports
-    - golint
+    - revive
     # todo[kusthedude]: restore gosec check, once this issue is resolved https://github.com/golangci/golangci-lint/issues/177
     # - gosec
     # - gomnd
