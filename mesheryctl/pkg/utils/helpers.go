@@ -3,8 +3,6 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	crand "crypto/rand"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -149,23 +147,6 @@ func BackupConfigFile(cfgFile string) {
 	}
 
 	log.Println(errors.New("outdated config file found. Please re-run the command"))
-}
-
-type cryptoSource struct{}
-
-func (s cryptoSource) Seed(seed int64) {}
-
-// Int63 to generate high security rand through crypto
-func (s cryptoSource) Int63() int64 {
-	return int64(s.Uint64() & ^uint64(1<<63))
-}
-
-func (s cryptoSource) Uint64() (v uint64) {
-	err := binary.Read(crand.Reader, binary.BigEndian, &v)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return v
 }
 
 const tokenName = "token"
@@ -515,7 +496,7 @@ func ParseURLGithub(URL string) (string, string, error) {
 	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
-		return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+		return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
 	}
 	host := parsedURL.Host
 	path := parsedURL.Path
@@ -523,13 +504,13 @@ func ParseURLGithub(URL string) (string, string, error) {
 	paths := strings.Split(path, "/")
 	if host == "github.com" {
 		if len(paths) < 5 {
-			return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+			return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
 		}
 		resURL := "https://" + host + strings.Join(paths[:4], "/")
 		return resURL, strings.Join(paths[4:], "/"), nil
 	} else if host == "raw.githubusercontent.com" {
 		if len(paths) < 5 {
-			return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+			return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
 		}
 		resURL := "https://" + "raw.githubusercontent.com" + path
 		return resURL, "", nil
