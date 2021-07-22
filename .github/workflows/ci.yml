@@ -98,9 +98,12 @@ jobs:
         cd ..
         cd provider-ui
         npm i
-    - name: build app
+    - name: build meshery-ui
       run: |
-        make build-ui
+        make build-meshery-ui
+    - name: build provider-ui
+      run: |
+        make build-provider-ui
   tests-ui:
     needs: [build-ui]
     name: UI integration tests
