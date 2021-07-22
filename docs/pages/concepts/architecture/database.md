@@ -24,5 +24,5 @@ Meshery Database has several kinds of database implementations to support variou
 
 | Component      | Library                               |
 | :------------- | :------------------------------------ |
-| Bitcask        | git.mills.io/prologic/bitcask           |
+| Bitcask        | git.mills.io/prologic/bitcask         |
 | SQLite         | gorm.io/gorm, gorm.io/driver/sqlite   |
