@@ -63,7 +63,7 @@ const styles = (theme) => ({
   },
   fileLabelText: {
     cursor: 'pointer',
-    "& *":{
+    "& *": {
       cursor: 'pointer',
     }
   },
@@ -78,7 +78,7 @@ const styles = (theme) => ({
     marginBottom: theme.spacing(2),
   },
   fileInputStyle: {
-    display:'none',
+    display: 'none',
   },
   icon: {
     width: theme.spacing(2.5),
@@ -185,6 +185,8 @@ class MeshConfigComponent extends React.Component {
       NATSVersion: "N/A",
 
       operatorSwitch: false,
+
+      isMeshConfigured: k8sfile !== ''
     };
     this.ref = React.createRef();
   }
@@ -200,6 +202,7 @@ class MeshConfigComponent extends React.Component {
         clusterConfigured,
         configuredServer,
         ts: props.ts,
+        isMeshConfigured: k8sfile !== ''
       };
 
       // If contextsFromFile is empty then add the default value to it
@@ -232,7 +235,8 @@ class MeshConfigComponent extends React.Component {
   setOperatorState = (res) => {
     const self = this;
     if (res.operator?.error) {
-      self.handleError("Operator could not be reached")(res.operator?.error?.description)
+      if (this.state.isMeshConfigured)
+        self.handleError("Operator could not be reached")(res.operator?.error?.description)
       return false
     }
 
@@ -253,7 +257,7 @@ class MeshConfigComponent extends React.Component {
       self.setState({
         operatorInstalled: true,
         operatorSwitch: true,
-        operatorVersion:res.operator?.version,
+        operatorVersion: res.operator?.version,
       })
       return true
     }
@@ -263,9 +267,9 @@ class MeshConfigComponent extends React.Component {
       NATSInstalled: false,
       meshSyncInstalled: false,
       operatorSwitch: false,
-      operatorVersion:"N/A",
-      meshSyncVersion:"N/A",
-      NATSVersion:"N/A",
+      operatorVersion: "N/A",
+      meshSyncVersion: "N/A",
+      NATSVersion: "N/A",
     })
 
     return false
