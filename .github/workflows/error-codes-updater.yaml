@@ -2,9 +2,9 @@ name: Meshkit Error Codes Utility Runner
 on:
   push:
     branches:
-      - 'master'
+      - "master"
     paths:
-      - '**.go'
+      - "**.go"
 
 jobs:
   Update-error-codes:
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
-          ref: 'master'
+          ref: "master"
 
       - name: Setup Go
         uses: actions/setup-go@v1
@@ -35,9 +35,8 @@ jobs:
       - name: Run Utility For Mesheryctl
         run: |
           cd ./mesheryctl
-        # comment out later
-        # ~/errorutil update -d . -i ./helpers -o ./helpers --skip-dirs mesheryctl
-        # echo '{ "errors_export": "" }' | jq --slurpfile export ./helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/_data/errorref/mesheryctl_errors_export.json
+          ~/errorutil update -d . -i ./helpers -o ./helpers --skip-dirs mesheryctl
+          echo '{ "errors_export": "" }' | jq --slurpfile export ./helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/_data/errorref/mesheryctl_errors_export.json
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -46,5 +45,5 @@ jobs:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: '--signoff'
+          commit_options: "--signoff"
           commit_message: "[Error Codes]: Update Meshery server and mehseryctl error codes and reference"
