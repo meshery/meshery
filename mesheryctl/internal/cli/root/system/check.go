@@ -80,7 +80,7 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 		return nil, err
 	}
 
-	hc.context = &currCtx
+	hc.context = currCtx
 	hc.mctlCfg = mctlCfg
 
 	return hc, nil
