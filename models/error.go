@@ -72,6 +72,9 @@ const (
 	ErrTestClientCode             = "2133"
 	ErrParsingTestCode            = "2134"
 	ErrFieldCode                  = "2135"
+	ErrCreateDirectoryCode        = "replace_me"
+	ErrUnableToFetchResultCode    = "replace_me"
+	ErrIndexOutOfRangeCode        = "replace_me"
 )
 
 var (
@@ -95,6 +98,7 @@ var (
 	ErrTestClient           = errors.New(ErrTestClientCode, errors.Alert, []string{"minimum one test client needs to be specified"}, []string{}, []string{}, []string{})
 	ErrParsingTest          = errors.New(ErrParsingTestCode, errors.Alert, []string{"error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"}, []string{}, []string{}, []string{})
 	ErrField                = errors.New(ErrFieldCode, errors.Alert, []string{"Error: name field is blank"}, []string{}, []string{}, []string{})
+	ErrIndexOutOfRange      = errors.New(ErrIndexOutOfRangeCode, errors.Alert, []string{"Index out of range"}, []string{}, []string{}, []string{})
 )
 
 func ErrGrafanaClient(err error) error {
@@ -267,4 +271,12 @@ func ErrJWKsKeys(err error) error {
 
 func ErrInvalidCapability(capability string, provider string) error {
 	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capablity is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
+}
+
+func ErrCreateDirectory(err error, dir string) error {
+	return errors.New(ErrCreateDirectoryCode, errors.Alert, []string{fmt.Sprintf("Unable to create the directory %s due to error : %v", dir, err)}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrUnableToFetchResult(err error) error {
+	return errors.New(ErrUnableToFetchResultCode, errors.Alert, []string{"Unable to fetch result data"}, []string{err.Error()}, []string{}, []string{})
 }
