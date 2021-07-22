@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/copier"
-	"github.com/prologic/bitcask"
+	"git.mills.io/prologic/bitcask"
 	"github.com/sirupsen/logrus"
 )
 
