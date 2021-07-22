@@ -32,8 +32,7 @@ import (
 
 var (
 	// Mesheryctl config - holds config handler
-	mctlCfg    *config.MesheryCtlConfig
-	mesheryCfg *config.Version
+	mctlCfg *config.MesheryCtlConfig
 )
 
 // versionCmd represents the version command

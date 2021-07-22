@@ -231,9 +231,9 @@
       "2012": {
         "name": "ErrRequestBodyCode",
         "code": "2012",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "unable to read the request body",
+        "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -1287,6 +1287,105 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error: name field is blank",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2136": {
+        "name": "ErrSaveSessionCode",
+        "code": "2136",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to save session",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2137": {
+        "name": "ErrDataSendCode",
+        "code": "2137",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to send data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2138": {
+        "name": "ErrVersionCompareCode",
+        "code": "2138",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to compare latest and current version of Meshery",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2139": {
+        "name": "ErrKubeClientCode",
+        "code": "2139",
+        "severity": "Alert",
+        "long_description": "Failed to Create Kube Client.",
+        "short_description": "Failed to Create Kube Client",
+        "probable_cause": "Check Kubernetes",
+        "suggested_remediation": ""
+      },
+      "2140": {
+        "name": "ErrWorkloadDefinitionCode",
+        "code": "2140",
+        "severity": "Alert",
+        "long_description": "Failed to Create Kube Client.",
+        "short_description": "Failed to load Workload Definition",
+        "probable_cause": "Check Workload Definition",
+        "suggested_remediation": ""
+      },
+      "2141": {
+        "name": "ErrTraitDefinitionCode",
+        "code": "2141",
+        "severity": "Alert",
+        "long_description": "Failed to Create Kube Client.",
+        "short_description": "Failed to Encode Trait Definition",
+        "probable_cause": "Check Trait Definition",
+        "suggested_remediation": ""
+      },
+      "2142": {
+        "name": "ErrScopeDefinitionCode",
+        "code": "2142",
+        "severity": "Alert",
+        "long_description": "Failed to Create Kube Client.",
+        "short_description": "Failed to Encode Scope Definition",
+        "probable_cause": "Check Trait Definition",
+        "suggested_remediation": ""
+      },
+      "2143": {
+        "name": "ErrPatternFileCode",
+        "code": "2143",
+        "severity": "Alert",
+        "long_description": "Failed to Create Kube Client.",
+        "short_description": "Failed to Parse Pattern File",
+        "probable_cause": "Check Trait Definition",
+        "suggested_remediation": ""
+      },
+      "2144": {
+        "name": "ErrExecutionPlanCode",
+        "code": "2144",
+        "severity": "Alert",
+        "long_description": "Failed to Create Kube Client.",
+        "short_description": "Failed to Create Execution Plan",
+        "probable_cause": "Check Trait Definition",
+        "suggested_remediation": ""
+      },
+      "2145": {
+        "name": "ErrInvalidPatternCode",
+        "code": "2145",
+        "severity": "Alert",
+        "long_description": "Failed to Create Kube Client.",
+        "short_description": "Invalid Pattern, execution is infeasible",
+        "probable_cause": "Check Trait Definition",
+        "suggested_remediation": ""
+      },
+      "2146": {
+        "name": "ErrCompConfigPairsCode",
+        "code": "2146",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
       }

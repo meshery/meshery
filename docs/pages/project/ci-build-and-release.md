@@ -31,7 +31,7 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 
 - `DOCKER_USERNAME`: Username of the Docker Hub user with the right privileges to push images
 - `DOCKER_PASSWORD`: Password for the Docker Hub user
-- `GO_VERSION`: As of December 9th 2020 it is 1.15
+- `GO_VERSION`: As of July 21st 2021 it is 1.16
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `layer5io` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
 - CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
