@@ -102,7 +102,6 @@ func start() error {
 		return err
 	}
 
-	//check platform supported
 	if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
 		currCtx.Platform = utils.PlatformFlag
 		err := utils.ChangePlatform(mctlCfg.CurrentContext, currCtx)
