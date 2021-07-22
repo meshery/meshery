@@ -126,10 +126,6 @@ var configCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if len(tokenPath) < 0 {
-			log.Fatal("fetch me a token path invalid")
-
-		}
 		if tokenPath == "" {
 			log.Fatal("Token path invalid")
 		}

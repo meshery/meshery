@@ -8,8 +8,8 @@ type: project
 category: contributing
 ---
 
-Meshery pervasively uses MeshKit as a golang and service mesh management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes. 
-The below are the listed attributes:
+Meshery pervasively uses MeshKit as a golang and service mesh management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes:
+
 - Code
 - Short Description
 - Long Description
@@ -33,3 +33,16 @@ func ErrExample(err error) error {
     return errors.New(ErrExampleCode, errors.Alert, []string{"<short-description>"}, []string{"<long-description>"}, []string{"<probable-cause>"}, []string{"<suggested remediation>"})
 }
 ```
+
+# Suggested Reading
+
+{% assign sorted_reading = site.pages | sort: page.title | reverse %}
+
+<ul>
+  {% for item in sorted_reading %}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+</ul>

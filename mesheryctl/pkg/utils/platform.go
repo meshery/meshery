@@ -18,8 +18,6 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/spf13/viper"
-
 	"gopkg.in/yaml.v2"
 
 	v1core "k8s.io/api/core/v1"
@@ -60,7 +58,7 @@ func ChangePlatform(currCtx string, ctx config.Context) error {
 }
 
 // ChangeConfigEndpoint changes the endpoint of the current context in meshconfig, based on the platform
-func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
+func ChangeConfigEndpoint(currCtx string, ctx *config.Context) error {
 	if ctx.Platform == "kubernetes" {
 		ViperK8s.SetConfigFile(DefaultConfigPath)
 		err := ViperK8s.ReadInConfig()
@@ -74,7 +72,7 @@ func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
 			return err
 		}
 
-		kubeCompose.Contexts[currCtx] = ctx
+		kubeCompose.Contexts[currCtx] = *ctx
 		ViperK8s.Set("contexts."+currCtx, ctx)
 
 		err = ViperK8s.WriteConfig()
@@ -94,39 +92,13 @@ func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
 			return err
 		}
 
-		dockerConfig.Contexts[currCtx] = ctx
+		dockerConfig.Contexts[currCtx] = *ctx
 		ViperDocker.Set("contexts."+currCtx, ctx)
 
 		err = ViperDocker.WriteConfig()
 		if err != nil {
 			return err
 		}
-	}
-
-	return nil
-}
-
-// ChangeContextVersion changes the version of the specified context to the specified version
-func ChangeContextVersion(contextName, version string) error {
-	viperConfig := viper.New()
-
-	viperConfig.SetConfigFile(DefaultConfigPath)
-	err := viperConfig.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	meshConfig := &config.MesheryCtlConfig{}
-	err = viperConfig.Unmarshal(&meshConfig)
-	if err != nil {
-		return err
-	}
-
-	viperConfig.Set("contexts."+contextName+".version", version)
-
-	err = viperConfig.WriteConfig()
-	if err != nil {
-		return err
 	}
 
 	return nil
@@ -306,7 +278,7 @@ func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
 
 // DownloadDockerComposeFile fetches docker-compose.yaml based on passed context if it does not exists.
 // Use force to override download anyway
-func DownloadDockerComposeFile(ctx config.Context, force bool) error {
+func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) || force {
 		fileURL := ""
 
