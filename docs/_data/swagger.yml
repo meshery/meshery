@@ -19,7 +19,7 @@ info:
   version: 0.4.27
 basePath: /
 paths:
-  /api/experimental/pattern:
+  /api/pattern:
     get:
       description: |-
         Returns the list of all the patterns saved by the current user
@@ -148,7 +148,7 @@ paths:
                 type: string
                 x-go-name: UserID
             x-go-package: github.com/layer5io/meshery/models
-  /api/experimental/pattern/{id}:
+  /api/pattern/{id}:
     get:
       description: Fetches the pattern with the given id
       tags:

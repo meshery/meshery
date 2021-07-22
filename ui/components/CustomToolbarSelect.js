@@ -126,7 +126,7 @@ class CustomToolbarSelect extends React.Component {
                 aria-label="download"
                 color="inherit"
                 // onClick={() => self.props.closeSnackbar(key) }
-                href={`/api/perf/result?id=${encodeURIComponent(fullData[0].meshery_id)}`}
+                href={`/api/perf/profile/result/${encodeURIComponent(fullData[0].meshery_id)}`}
                 download={`${fullData[0].name}_test_result.json`}
               >
                 <GetAppIcon className={classes.icon} />
