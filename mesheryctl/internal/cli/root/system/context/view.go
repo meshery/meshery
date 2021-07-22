@@ -11,7 +11,7 @@ import (
 
 var context string
 var allContext bool
-var tokenNameLocation map[string]string = map[string]string{} //maps each token name to its specified location
+var tokenNameLocation = map[string]string{} //maps each token name to its specified location
 
 // An auxiliary context which adds location to the existing context struct.
 type contextWithLocation struct {
