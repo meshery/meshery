@@ -29,7 +29,7 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: v1.32
+          version: v1.41
 
           # Optional: working directory, useful for monorepos
           # working-directory: somedir
@@ -48,18 +48,17 @@ jobs:
       with:
         fetch-depth: 1
     - name: Setup Go
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v2
       with:
         go-version: ${{ secrets.GO_VERSION }}
     - name: Setup Cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
     - run: |
-        go mod tidy
         GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
@@ -157,7 +156,7 @@ jobs:
         with:
           name: meshery
       - name: Setup go
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v2
         with:
           go-version: ${{ secrets.GO_VERSION }}
       - name: Setup node
