@@ -12,11 +12,11 @@ import (
 	"github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/broker"
 	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -30,15 +30,6 @@ const (
 	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
 )
-
-type controller struct {
-	id         string
-	name       string
-	version    string
-	kind       string
-	apiversion string
-	namespace  string
-}
 
 func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status) (model.Status, error) {
 	delete := true
@@ -68,6 +59,22 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		r.Log.Info("Operator operation executed")
 
 		if !del {
+			status, err := r.resyncCluster(context.TODO(), provider, &model.ReSyncActions{
+				ReSync:  "false",
+				ClearDb: "true",
+			})
+			if err != nil {
+				r.Log.Error(err)
+				r.operatorChannel <- &model.OperatorStatus{
+					Status: status,
+					Error: &model.Error{
+						Code:        "",
+						Description: err.Error(),
+					},
+				}
+				return
+			}
+
 			endpoint, err := r.subscribeToBroker(provider, kubeclient, r.brokerChannel)
 			r.Log.Debug("Endpoint: ", endpoint)
 			if err != nil {
@@ -118,7 +125,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 		return nil, ErrMesheryClient(nil)
 	}
 
-	obj, err := getOperator(r.Config.KubeClient)
+	name, version, err := getOperator(r.Config.KubeClient)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -129,15 +136,13 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 			},
 		}, nil
 	}
-
-	if len(obj) > 0 {
-		status = model.StatusEnabled
-		version = obj[0].version
-	} else {
+	if name == "" {
 		status = model.StatusDisabled
+	} else {
+		status = model.StatusEnabled
 	}
 
-	objs, err := getControllersInfo(r.Config.KubeClient)
+	controllers, err := getControllersInfo(r.Config.KubeClient, r.BrokerConn, r.meshsyncLivenessChannel)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -147,15 +152,6 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 				Description: err.Error(),
 			},
 		}, nil
-	}
-
-	controllers := make([]*model.OperatorControllerStatus, 0)
-	for _, obj := range objs {
-		controllers = append(controllers, &model.OperatorControllerStatus{
-			Name:    obj.name,
-			Version: obj.version,
-			Status:  model.StatusEnabled,
-		})
 	}
 
 	return &model.OperatorStatus{
@@ -168,7 +164,12 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider) (<-chan *model.OperatorStatus, error) {
 	if r.operatorChannel == nil {
 		r.operatorChannel = make(chan *model.OperatorStatus)
+	}
+	if r.operatorSyncChannel == nil {
 		r.operatorSyncChannel = make(chan struct{})
+	}
+	if r.meshsyncLivenessChannel == nil {
+		r.meshsyncLivenessChannel = make(chan struct{})
 	}
 
 	go func() {
@@ -214,18 +215,6 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 
 func (r *Resolver) subscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message) (string, error) {
 	var broker *operatorv1alpha1.Broker
-
-	// Clear existing data
-	err := provider.GetGenericPersister().Migrator().DropTable(
-		meshsyncmodel.KeyValue{},
-		meshsyncmodel.Object{},
-	)
-	if err != nil {
-		if provider.GetGenericPersister() == nil {
-			return "", ErrEmptyHandler
-		}
-		r.Log.Warn(ErrDeleteData(err))
-	}
 
 	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
@@ -308,39 +297,30 @@ func (r *Resolver) subscribeToBroker(provider models.Provider, mesheryKubeClient
 	return endpoint, nil
 }
 
-func getOperator(kubeclient *mesherykube.Client) ([]*controller, error) {
+func getOperator(kubeclient *mesherykube.Client) (string, string, error) {
 	if kubeclient == nil || kubeclient.KubeClient == nil || kubeclient.KubeClient.AppsV1() == nil {
-		return nil, ErrMesheryClient(nil)
+		return "", "", ErrMesheryClient(nil)
 	}
 
 	dep, err := kubeclient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-operator", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
-		return nil, ErrMesheryClient(err)
+		return "", "", ErrMesheryClient(err)
 	}
 
-	deploys := make([]*controller, 0)
+	version := ""
 	if err == nil {
-		version := ""
 		for _, container := range dep.Spec.Template.Spec.Containers {
 			if container.Name == "manager" {
 				version = strings.Split(container.Image, ":")[1]
 			}
 		}
-
-		deploys = append(deploys, &controller{
-			version:    version,
-			name:       dep.ObjectMeta.Name,
-			kind:       dep.Kind,
-			apiversion: dep.APIVersion,
-			namespace:  dep.ObjectMeta.Namespace,
-		})
 	}
 
-	return deploys, nil
+	return dep.ObjectMeta.Name, version, nil
 }
 
-func getControllersInfo(mesheryKubeClient *mesherykube.Client) ([]*controller, error) {
-	controllers := make([]*controller, 0)
+func getControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker.Handler, ch chan struct{}) ([]*model.OperatorControllerStatus, error) {
+	controllers := make([]*model.OperatorControllerStatus, 0)
 	var broker *operatorv1alpha1.Broker
 	var meshsync *operatorv1alpha1.MeshSync
 	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
@@ -356,9 +336,14 @@ func getControllersInfo(mesheryKubeClient *mesherykube.Client) ([]*controller, e
 		return controllers, ErrMesheryClient(err)
 	}
 	if err == nil {
-		controllers = append(controllers, &controller{
-			name:    "broker",
-			version: broker.Labels["version"],
+		status := model.StatusEnabled
+		if brokerConn.Info() == brokerpkg.NotConnected {
+			status = model.StatusDisabled
+		}
+		controllers = append(controllers, &model.OperatorControllerStatus{
+			Name:    "broker",
+			Version: broker.Labels["version"],
+			Status:  status,
 		})
 	}
 
@@ -367,9 +352,24 @@ func getControllersInfo(mesheryKubeClient *mesherykube.Client) ([]*controller, e
 		return controllers, ErrMesheryClient(err)
 	}
 	if err == nil {
-		controllers = append(controllers, &controller{
-			name:    "meshsync",
-			version: meshsync.Labels["version"],
+		status := model.StatusDisabled
+		flag := false
+		for start := time.Now(); time.Since(start) < 5*time.Second; {
+			select {
+			case <-ch:
+				flag = true
+				break
+			default:
+				continue
+			}
+		}
+		if flag {
+			status = model.StatusEnabled
+		}
+		controllers = append(controllers, &model.OperatorControllerStatus{
+			Name:    "meshsync",
+			Version: meshsync.Labels["version"],
+			Status:  status,
 		})
 	}
 	return controllers, nil

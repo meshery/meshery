@@ -6,6 +6,7 @@ import (
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
+	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -14,7 +15,6 @@ import (
 )
 
 var (
-	meshsyncName = "meshsync"
 	meshsyncYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
 )
 
@@ -26,7 +26,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("MeshSync subscription started")
-		go listernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel)
+		go listernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.meshsyncLivenessChannel)
 
 		// signal to install operator when initialized
 		r.MeshSyncChannel <- struct{}{}
@@ -34,6 +34,34 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 	}(channel)
 
 	return channel, nil
+}
+
+func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions) (model.Status, error) {
+
+	if actions.ClearDb == "true" {
+		// Clear existing data
+		err := provider.GetGenericPersister().Migrator().DropTable(
+			meshsyncmodel.KeyValue{},
+			meshsyncmodel.Object{},
+		)
+		if err != nil {
+			if provider.GetGenericPersister() == nil {
+				return "", ErrEmptyHandler
+			}
+			r.Log.Warn(ErrDeleteData(err))
+		}
+	}
+	if actions.ReSync == "true" {
+		err := r.BrokerConn.Publish(requestSubject, &brokerpkg.Message{
+			Request: &brokerpkg.RequestObject{
+				Entity: brokerpkg.ReSyncDiscoveryEntity,
+			},
+		})
+		if err != nil {
+			return "", ErrPublishBroker(err)
+		}
+	}
+	return model.StatusProcessing, nil
 }
 
 func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider) error {
