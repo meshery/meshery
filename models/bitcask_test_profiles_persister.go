@@ -159,7 +159,7 @@ func (s *BitCaskTestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 RETRY:
 	locked, err := s.db.TryRLock()
 	if err != nil {
-		return nil, ErrDBRLock(err)
+		return ErrDBRLock(err)
 	}
 	if !locked {
 		goto RETRY
@@ -194,7 +194,7 @@ func (s *BitCaskTestProfilesPersister) WriteTestConfig(key uuid.UUID, result []b
 RETRY:
 	locked, err := s.db.TryLock()
 	if err != nil {
-		return nil, ErrDBLock(err)
+		return ErrDBLock(err)
 	}
 	if !locked {
 		goto RETRY
