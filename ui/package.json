@@ -33,7 +33,7 @@
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@cypress/code-coverage": "^3.9.7",
+    "@cypress/code-coverage": "^3.9.9",
     "@date-io/moment": "^2.11.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-brands-svg-icons": "^5.15.3",
