@@ -7,9 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/copier"
 	"git.mills.io/prologic/bitcask"
-	"github.com/sirupsen/logrus"
+	"github.com/jinzhu/copier"
 )
 
 // BitCaskPreferencePersister assists with persisting session in a Bitcask store
@@ -69,18 +68,6 @@ func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Preferen
 		}
 	}
 
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		logrus.Error(ErrDBRLock(err))
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
-
 	dataCopyB, err := s.db.Get([]byte(userID))
 	if err != nil {
 		return nil, ErrDBRead(err)
@@ -124,18 +111,6 @@ func (s *BitCaskPreferencePersister) WriteToPersister(userID string, data *Prefe
 
 	data.UpdatedAt = time.Now()
 
-RETRY:
-	locked, err := s.db.TryLock()
-	if err != nil {
-		logrus.Error(ErrDBLock(err))
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
-
 	if err := s.writeToCache(userID, data); err != nil {
 		return err
 	}
@@ -160,18 +135,6 @@ func (s *BitCaskPreferencePersister) DeleteFromPersister(userID string) error {
 	if userID == "" {
 		return ErrUserID
 	}
-
-RETRY:
-	locked, err := s.db.TryLock()
-	if err != nil {
-		logrus.Error(ErrDBLock(err))
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	s.cache.Delete(userID)
 	if err := s.db.Delete([]byte(userID)); err != nil {
