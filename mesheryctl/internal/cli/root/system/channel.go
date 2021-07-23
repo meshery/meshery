@@ -121,7 +121,7 @@ var setCmd = &cobra.Command{
 					currCtx.Version = channelNameSeperated[1]
 					err := (&currCtx).ValidateVersion()
 					if err != nil {
-						return errors.New(fmt.Sprintf("%v is not a valid version tag", channelNameSeperated[1]))
+						return fmt.Errorf("%v is not a valid version tag", channelNameSeperated[1])
 					}
 				}
 			}
