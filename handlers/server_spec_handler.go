@@ -47,8 +47,8 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(version)
 	if err != nil {
-		h.log.Error(ErrDataSend(err))
-		http.Error(w, ErrDataSend(err).Error(), http.StatusNotFound)
+		h.log.Error(ErrEncoding(err, "server-version"))
+		http.Error(w, ErrEncoding(err, "server-version").Error(), http.StatusNotFound)
 	}
 }
 

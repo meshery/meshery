@@ -6,7 +6,6 @@ replace (
 	//golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
 	github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
-	github.com/prologic/bitcask => git.mills.io/prologic/bitcask v0.3.9
 	github.com/spf13/afero => github.com/spf13/afero v1.5.1 // Until viper bug is resolved #1161
 	go.mongodb.org/mongo-driver v1.5.1 => github.com/mongodb/mongo-go-driver v1.5.1
 	gonum.org/v1/plot v0.9.0 => github.com/gonum/plot v0.9.0
@@ -15,6 +14,7 @@ replace (
 
 require (
 	fortio.org/fortio v1.17.0
+	git.mills.io/prologic/bitcask v0.3.14
 	github.com/99designs/gqlgen v0.13.0
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.16.0
@@ -36,7 +36,7 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.2.19
-	github.com/layer5io/meshkit v0.2.18
+	github.com/layer5io/meshkit v0.2.19
 	github.com/layer5io/meshsync v0.1.23
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.3
@@ -47,7 +47,6 @@ require (
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/errors v0.9.1
-	github.com/prologic/bitcask v0.3.9
 	github.com/prometheus/client_golang v1.11.0
 	github.com/prometheus/common v0.29.0
 	github.com/qri-io/jsonschema v0.2.1
@@ -56,7 +55,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.8.1
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
-	github.com/vektah/gqlparser/v2 v2.2.0
+	github.com/vektah/gqlparser/v2 v2.1.0
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
 	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c

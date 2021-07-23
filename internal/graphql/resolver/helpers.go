@@ -40,6 +40,7 @@ func listernToEvents(log logger.Handler,
 	datach chan *broker.Message,
 	meshsyncCh chan struct{},
 	operatorSyncChannel chan struct{},
+	meshsyncLivenessChannel chan struct{},
 ) {
 	var wg sync.WaitGroup
 	wg.Wait()
@@ -47,6 +48,7 @@ func listernToEvents(log logger.Handler,
 		select {
 		case msg := <-datach:
 			wg.Add(1)
+			meshsyncLivenessChannel <- struct{}{}
 			go persistData(*msg, log, handler, meshsyncCh, operatorSyncChannel, &wg)
 		}
 	}
