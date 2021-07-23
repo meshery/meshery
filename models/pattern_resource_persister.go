@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -23,7 +22,7 @@ func (prp *PatternResourcePersister) SavePatternResource(pr *PatternResource) (*
 	if pr.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
-			return nil, fmt.Errorf("failed to create ID for the pattern resource: %s", err)
+			return nil, ErrGenerateUUID(err)
 		}
 
 		pr.ID = &id

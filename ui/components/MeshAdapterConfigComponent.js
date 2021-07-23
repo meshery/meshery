@@ -325,7 +325,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 className={classes.button}
                 data-cy="btnSubmitMeshAdapter"
               >
-                Submit
+                Connect
               </Button>
             </div>
           </React.Fragment>

@@ -40,7 +40,17 @@ var stopCmd = &cobra.Command{
 	Long:  `Stop all Meshery containers / remove all Meshery pods.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return RunPreflightHealthChecks(true, cmd.Use)
+		//Check prerequisite
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := stop(); err != nil {
@@ -58,17 +68,17 @@ func stop() error {
 	}
 
 	// if a temp context is set using the -c flag, use it as the current context
-	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	err = mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
 		return errors.Wrap(err, "failed to retrieve current-context")
 	}
 
-	client, err := meshkitkube.New([]byte(""))
+	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
 		return err
 	}
 
-	ok, err := utils.IsMesheryRunning(currCtx.Platform)
+	ok, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 	if err != nil {
 		return err
 	}
@@ -78,9 +88,9 @@ func stop() error {
 	}
 
 	// Get the current platform and the specified adapters in the config.yaml
-	RequestedAdapters := currCtx.Adapters
+	RequestedAdapters := currCtx.GetAdapters()
 
-	switch currCtx.Platform {
+	switch currCtx.GetPlatform() {
 	case "docker":
 		// if the platform is docker, then stop all the running containers
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
@@ -107,14 +117,11 @@ func stop() error {
 		if err := stop.Run(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
 		}
-
-		err = utils.ApplyOperatorManifest(client, false, true)
-
+	case "kubernetes":
+		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
 			return err
 		}
-
-	case "kubernetes":
 		// if the platform is kubernetes, stop the deployment by deleting the manifest files
 		userResponse := false
 		if utils.SilentFlag {
@@ -135,9 +142,9 @@ func stop() error {
 			return err
 		}
 
-		version := currCtx.Version
+		version := currCtx.GetVersion()
 		if version == "latest" {
-			if currCtx.Channel == "edge" {
+			if currCtx.GetChannel() == "edge" {
 				version = "master"
 			} else {
 				version, err = utils.GetLatestStableReleaseTag()
@@ -162,37 +169,53 @@ func stop() error {
 
 		// delete the Meshery deployment using the manifest files to stop Meshery
 		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, true)
-
 		if err != nil {
 			return err
 		}
+	}
 
+	// If k8s is available in case of platform docker than we remove operator
+	hcOptions := &HealthCheckOptions{
+		PrintLogs:           false,
+		IsPreRunE:           false,
+		Subcommand:          "",
+		RunKubernetesChecks: true,
+	}
+	hc, err := NewHealthChecker(hcOptions)
+	if err != nil {
+		return errors.Wrapf(err, "failed to initialize healthchecker")
+	}
+	// stopping meshery operator pods if k8s is running
+	if err = hc.Run(); err == nil {
+		client, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
 		err = utils.ApplyOperatorManifest(client, false, true)
-
-		if err != nil {
-			return err
-		}
-	}
-
-	s := utils.CreateDefaultSpinner("Terminating Meshery pods", "Pods terminated                 ")
-	s.Start()
-
-	deadline := time.Now().Add(20 * time.Second)
-
-	for !(time.Now().After(deadline)) {
-		ok, err := utils.IsMesheryRunning("kubernetes")
-
 		if err != nil {
 			return err
 		}
 
-		if !ok {
-			break
-		} else {
-			time.Sleep(1 * time.Second)
+		s := utils.CreateDefaultSpinner("Terminating Meshery pods", "\nPods terminated.")
+		s.Start()
+
+		deadline := time.Now().Add(20 * time.Second)
+
+		for !(time.Now().After(deadline)) {
+			ok, err := utils.IsMesheryRunning("kubernetes")
+
+			if err != nil {
+				return err
+			}
+
+			if !ok {
+				break
+			} else {
+				time.Sleep(1 * time.Second)
+			}
 		}
+		s.Stop()
 	}
-	s.Stop()
 
 	log.Info("Meshery is stopped.")
 

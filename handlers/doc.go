@@ -56,7 +56,7 @@ type mesheryPatternResponseWrapper struct {
 type noContentWrapper struct {
 }
 
-// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults
+// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule
 type IDParameterWrapper struct {
 	// id for a specific
 	// in: path
@@ -170,9 +170,9 @@ type prometheusBoardParamsWrapper struct {
 	Body []*models.SelectedGrafanaConfig
 }
 
-// Returns Anonymous stats
-// swagger:response anonymousStatsResponseWrapper
-type anonymousStatsResponseWrapper struct {
+// Returns User Load Test Preferencee
+// swagger:response userLoadTestPrefsRespWrapper
+type userLoadTestPrefsRespWrapper struct {
 	// in: body
 	Body *models.Preference
 }
@@ -181,13 +181,20 @@ type anonymousStatsResponseWrapper struct {
 // swagger:parameters idPostAnonymousStats
 type anonymousStatsParamsWrapper struct {
 	// in: body
-	Body *models.PreferenceParams
+	Body                *models.PreferenceParams
+	LoadTestPreferences *models.LoadTestPreferences
+}
+
+// Returns load test preferences
+// swagger:response loadTestPreferencesWrapper
+type loadTestPreferencesRespWrapper struct {
+	// in: body
+	Body SMP.PerformanceTestConfig
 }
 
 // Parameters Persists load test preferences
-// swagger:response loadTestPreferencesWrapper
 // swagger:parameters idPostLoadPreferences
-type loadTestPreferencesWrapper struct {
+type loadTestPreferencesParamsWrapper struct {
 	// in: body
 	Body SMP.PerformanceTestConfig
 }
@@ -197,4 +204,41 @@ type loadTestPreferencesWrapper struct {
 type UUIDParamsWrapper struct {
 	// in: query
 	UUID strfmt.UUID `json:"uuid"`
+}
+
+// Parameters to run performance tests
+// swagger:parameters idRunPerfTest
+type perfTestParamsWrapper struct {
+	// in: query
+	Query *models.PerformanceTestParameters
+	// in: body
+	Body *SMP.PerformanceTestConfig
+}
+
+// Returns Single test result
+// swagger:response perfSingleResultRespWrapper
+type perfSingleResultRespWrapper struct {
+	// in: body
+	Body *models.PerformanceSpec
+}
+
+// Returns Perf test preference
+// swagger:response perfTestPrefsRespWrapper
+type perfTestPrefsRespWrapper struct {
+	// in: body
+	Body *models.Preference
+}
+
+// Returns List of saved schedules
+// swagger:response schedulesResponseWrapper
+type schedulesResponseWrapper struct {
+	// in: body
+	Body models.SchedulesAPIResponse
+}
+
+// Returns a single schedules
+// swagger:response singleScheduleResponseWrapper
+type singleScheduleResponseWrapper struct {
+	// in: body
+	Body models.Schedule
 }

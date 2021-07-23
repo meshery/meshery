@@ -130,6 +130,14 @@ build-ui:
 	cd ui; npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 
+# Builds only the meshery user interface on your local machine
+build-meshery-ui:
+	cd ui; npm run build && npm run export; cd ..
+
+# Builds only the provider user interface on your local machine
+build-provider-ui:
+	cd provider-ui; npm run build && npm run export; cd ..
+
 # setup wrk2 for local dev
 # NOTE: setup-wrk does not work on Mac Catalina at the moment
 setup-wrk2:
@@ -173,4 +181,4 @@ gqlgen-generate:
 
 .PHONY: error
 error:
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . update
+	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers --skip-dirs mesheryctl

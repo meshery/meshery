@@ -36,7 +36,7 @@ import PatternServiceForm from "./PatternServiceForm";
  */
 async function getWorkloadDefinitionsForAdapter(adapter) {
   try {
-    const res = await promisifiedDataFetch("/api/experimental/oam/workload");
+    const res = await promisifiedDataFetch("/api/oam/workload");
 
     return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
   } catch (error) {
@@ -53,7 +53,7 @@ async function getWorkloadDefinitionsForAdapter(adapter) {
  */
 async function getTraitDefinitionsForAdapter(adapter) {
   try {
-    const res = await promisifiedDataFetch("/api/experimental/oam/trait");
+    const res = await promisifiedDataFetch("/api/oam/trait");
 
     return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
   } catch (error) {
@@ -126,7 +126,8 @@ async function getJSONSchemaSets(adapter) {
 }
 
 async function submitPattern(pattern, del = false) {
-  const res = await fetch("/api/experimental/pattern/deploy", {
+  console.log({ pattern, del })
+  const res = await fetch("/api/pattern/deploy", {
     headers: {
       "Content-Type": "application/json",
     },

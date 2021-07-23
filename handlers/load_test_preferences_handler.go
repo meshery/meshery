@@ -2,108 +2,15 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
-	"time"
 
 	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
-
-// LoadTestPrefencesHandler is used for persisting load test preferences
-func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method == http.MethodGet {
-		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
-			obj := "LoadTest preference object"
-			// logrus.Errorf("Error encoding LoadTest preference object: %v", err)
-			// http.Error(w, "Error encoding LoadTest preference object", http.StatusInternalServerError)
-			h.log.Error(ErrEncoding(err, obj))
-			http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-	// if req.Method != http.MethodPost {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-
-	// qps, _ := strconv.ParseInt(q.Get("qps"), 32)
-	qs := req.FormValue("qps")
-	qps, err := strconv.Atoi(qs)
-	if err != nil {
-		obj := "qps"
-		// logrus.Error(err)
-		// http.Error(w, "please provide a valid value for qps", http.StatusBadRequest)
-		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
-		return
-	}
-	if qps < 0 {
-		http.Error(w, "please provide a valid value for qps", http.StatusBadRequest)
-		return
-	}
-	dur := req.FormValue("t")
-	if _, err = time.ParseDuration(dur); err != nil {
-		// err = errors.Wrap(err, "unable to parse t as a duration")
-		obj := "t as a duration"
-		// logrus.Error(err)
-		// http.Error(w, "please provide a valid value for t", http.StatusBadRequest)
-		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
-		return
-	}
-	cu := req.FormValue("c")
-	c, err := strconv.Atoi(cu)
-	if err != nil {
-		// err = errors.Wrap(err, "unable to parse c")
-		obj := "c"
-		// logrus.Error(err)
-		// http.Error(w, "please provide a valid value for c", http.StatusBadRequest)
-		h.log.Error(ErrParseBool(err, obj))
-		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
-		return
-	}
-	if c < 0 {
-		http.Error(w, "please provide a valid value for c", http.StatusBadRequest)
-		return
-	}
-	gen := req.FormValue("gen")
-	genTrack := false
-	// TODO: after we have interfaces for load generators in place, we need to make a generic check, for now using a hard coded one
-	for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
-		if lg.Name() == gen {
-			genTrack = true
-		}
-	}
-	if !genTrack {
-		// logrus.Error("invalid value for gen")
-		// http.Error(w, "please provide a valid value for gen (load generator)", http.StatusBadRequest)
-		h.log.Error(ErrInvalidGenValue)
-		http.Error(w, ErrInvalidGenValue.Error(), http.StatusBadRequest)
-		return
-	}
-	prefObj.LoadTestPreferences = &models.LoadTestPreferences{
-		ConcurrentRequests: c,
-		Duration:           dur,
-		QueriesPerSecond:   qps,
-		LoadGenerator:      gen,
-	}
-	if err = provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
-		obj := "user preferences"
-		h.log.Error(ErrFailToSave(err, obj))
-		http.Error(w, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
-		// logrus.Errorf("unable to save user preferences: %v", err)
-		// http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
-		return
-	}
-
-	_, _ = w.Write([]byte("{}"))
-}
 
 // UserTestPreferenceHandler is used for persisting load test preferences
 func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

@@ -19,7 +19,6 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -55,7 +54,9 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.PackageURL = ""
 	l.Extensions = Extensions{}
 	l.Capabilities = Capabilities{
-		// {Feature: PersistMesheryPatterns},
+		{Feature: PersistMesheryPatterns},
+		{Feature: PersistMesheryApplications},
+		{Feature: PersistMesheryFilters},
 	}
 }
 
@@ -142,15 +143,11 @@ func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) 
 func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, search, order, profileID string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page number")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page size")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageSize(err)
 	}
 	return l.ResultPersister.GetResults(pg, pgs, profileID)
 }
@@ -165,15 +162,11 @@ func (l *DefaultLocalProvider) FetchAllResults(req *http.Request, page, pageSize
 	}
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page number")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page size")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageSize(err)
 	}
 
 	return l.ResultPersister.GetAllResults(pg, pgs)
@@ -183,7 +176,7 @@ func (l *DefaultLocalProvider) FetchAllResults(req *http.Request, page, pageSize
 func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
 	// key := uuid.FromStringOrNil(resultID)
 	if resultID == uuid.Nil {
-		return nil, fmt.Errorf("given resultID is not valid")
+		return nil, ErrResultID
 	}
 	return l.ResultPersister.GetResult(resultID)
 }
@@ -192,15 +185,13 @@ func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) 
 func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error) {
 	profileUUID, err := uuid.FromString(profileID)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - invalid performance profile id"))
-		return "", err
+		return "", ErrPerfID(err)
 	}
 
 	result.PerformanceProfile = &profileUUID
 	data, err := json.Marshal(result)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for shipping"))
-		return "", err
+		return "", ErrMarshal(err, "meshery result for shipping")
 	}
 	user, _ := l.GetUserDetails(req)
 	pref, _ := l.ReadFromPersister(user.UserID)
@@ -218,8 +209,7 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 		result.ID = key
 		data, err = json.Marshal(result)
 		if err != nil {
-			logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for persisting"))
-			return "", err
+			return "", ErrMarshal(err, "Meshery Result for Persisting")
 		}
 	}
 	if err := l.ResultPersister.WriteResult(key, data); err != nil {
@@ -233,15 +223,11 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page number")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page size")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageSize(err)
 	}
 	return l.SmiResultPersister.GetResults(pg, pgs)
 }
@@ -252,8 +238,7 @@ func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, err
 	result.ID = key
 	data, err := json.Marshal(result)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for persisting"))
-		return "", err
+		return "", ErrMarshal(err, "Meshery Results for Persisting")
 	}
 
 	if err := l.SmiResultPersister.WriteResult(key, data); err != nil {
@@ -304,8 +289,7 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
-		return err
+		return ErrMarshal(err, "Meshery Matrics for shipping")
 	}
 
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
@@ -365,14 +349,12 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 func (l *DefaultLocalProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
 	uid, err := uuid.NewV4()
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
-		return "", err
+		return "", ErrGenerateUUID(err)
 	}
 	perfConfig.Id = uid.String()
 	data, err := json.Marshal(perfConfig)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal test config for persisting"))
-		return "", err
+		return "", ErrMarshal(err, "test config for persisting")
 	}
 	return uid.String(), l.TestProfilesPersister.WriteTestConfig(uid, data)
 }
@@ -381,8 +363,7 @@ func (l *DefaultLocalProvider) SMPTestConfigStore(req *http.Request, perfConfig 
 func (l *DefaultLocalProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
-		return nil, err
+		return nil, ErrGenerateUUID(err)
 	}
 	return l.TestProfilesPersister.GetTestConfig(uid)
 }
@@ -391,15 +372,11 @@ func (l *DefaultLocalProvider) SMPTestConfigGet(req *http.Request, testUUID stri
 func (l *DefaultLocalProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page number")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page size")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageSize(err)
 	}
 	return l.TestProfilesPersister.GetTestConfigs(pg, pgs)
 }
@@ -408,8 +385,7 @@ func (l *DefaultLocalProvider) SMPTestConfigFetch(req *http.Request, page, pageS
 func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID string) error {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
-		return err
+		return ErrGenerateUUID(err)
 	}
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
 }
@@ -443,16 +419,12 @@ func (l *DefaultLocalProvider) GetMesheryPatternResources(
 
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page number")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page size")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageSize(err)
 	}
 
 	return l.MesheryPatternResourcePersister.GetPatternResources(
@@ -481,16 +453,12 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(req *http.Request, page, pageS
 
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page number")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page size")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageSize(err)
 	}
 
 	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs)
@@ -570,19 +538,21 @@ func (l *DefaultLocalProvider) GetMesheryFilters(req *http.Request, page, pageSi
 
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page number")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page size")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageSize(err)
 	}
 
 	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs)
+}
+
+// GetMesheryFilterFile gets filter for the given filterID without the metadata
+func (l *DefaultLocalProvider) GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(filterID)
+	return l.MesheryFilterPersister.GetMesheryFilterFile(id)
 }
 
 // GetMesheryFilter gets filter for the given filterID
@@ -659,16 +629,12 @@ func (l *DefaultLocalProvider) GetMesheryApplications(req *http.Request, page, p
 
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page number")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page size")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageSize(err)
 	}
 
 	return l.MesheryApplicationPersister.GetMesheryApplications(search, order, pg, pgs)
@@ -741,16 +707,14 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, perfor
 		var err error
 		uid, err = uuid.NewV4()
 		if err != nil {
-			logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
-			return nil, err
+			return nil, ErrGenerateUUID(err)
 		}
 		performanceProfile.ID = &uid
 	}
 
 	data, err := json.Marshal(performanceProfile)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal performance profile for persisting"))
-		return nil, err
+		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
 
 	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(uid, performanceProfile)
@@ -767,16 +731,12 @@ func (l *DefaultLocalProvider) GetPerformanceProfiles(req *http.Request, page, p
 
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page number")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page size")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrPageSize(err)
 	}
 
 	return l.PerformanceProfilesPersister.GetPerformanceProfiles("", "", "", pg, pgs)
@@ -786,20 +746,17 @@ func (l *DefaultLocalProvider) GetPerformanceProfiles(req *http.Request, page, p
 func (l *DefaultLocalProvider) GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
 	uid, err := uuid.FromString(performanceProfileID)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
-		return nil, err
+		return nil, ErrPerfID(err)
 	}
 
 	profile, err := l.PerformanceProfilesPersister.GetPerformanceProfile(uid)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to get performance profile"))
 		return nil, err
 	}
 
 	profileJSON, err := json.Marshal(profile)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal performance profile"))
-		return nil, err
+		return nil, ErrMarshal(err, "Perf Profile")
 	}
 
 	return profileJSON, nil
@@ -809,8 +766,7 @@ func (l *DefaultLocalProvider) GetPerformanceProfile(req *http.Request, performa
 func (l *DefaultLocalProvider) DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
 	uid, err := uuid.FromString(performanceProfileID)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
-		return nil, err
+		return nil, ErrPerfID(err)
 	}
 
 	return l.PerformanceProfilesPersister.DeletePerformanceProfile(uid)
@@ -818,22 +774,22 @@ func (l *DefaultLocalProvider) DeletePerformanceProfile(req *http.Request, perfo
 
 // SaveSchedule saves a schedule
 func (l *DefaultLocalProvider) SaveSchedule(tokenString string, schedule *Schedule) ([]byte, error) {
-	return []byte{}, fmt.Errorf("function not supported by local provider")
+	return []byte{}, ErrLocalProviderSupport
 }
 
 // GetSchedules gets the schedules stored by the current user
 func (l *DefaultLocalProvider) GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error) {
-	return []byte{}, fmt.Errorf("function not supported by local provider")
+	return []byte{}, ErrLocalProviderSupport
 }
 
 // GetSchedule gets a schedule with the given id
 func (l *DefaultLocalProvider) GetSchedule(req *http.Request, scheduleID string) ([]byte, error) {
-	return []byte{}, fmt.Errorf("function not supported by local provider")
+	return []byte{}, ErrLocalProviderSupport
 }
 
 // DeleteSchedule deletes a schedule with the given id
 func (l *DefaultLocalProvider) DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error) {
-	return []byte{}, fmt.Errorf("function not supported by local provider")
+	return []byte{}, ErrLocalProviderSupport
 }
 
 // RecordMeshSyncData records the mesh sync data

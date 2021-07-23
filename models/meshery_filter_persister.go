@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -67,7 +66,7 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 	if filter.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
-			return nil, fmt.Errorf("failed to create ID for the filter: %s", err)
+			return nil, ErrGenerateUUID(err)
 		}
 
 		filter.ID = &id
@@ -83,7 +82,7 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) (
 		if filter.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {
-				return nil, fmt.Errorf("failed to create ID for the filter: %s", err)
+				return nil, ErrGenerateUUID(err)
 			}
 
 			filter.ID = &id
@@ -100,6 +99,13 @@ func (mfp *MesheryFilterPersister) GetMesheryFilter(id uuid.UUID) ([]byte, error
 
 	err := mfp.DB.First(&mesheryFilter, id).Error
 	return marshalMesheryFilter(&mesheryFilter), err
+}
+
+func (mfp *MesheryFilterPersister) GetMesheryFilterFile(id uuid.UUID) ([]byte, error) {
+	var mesheryFilter MesheryFilter
+
+	err := mfp.DB.First(&mesheryFilter, id).Error
+	return []byte(mesheryFilter.FilterFile), err
 }
 
 func marshalMesheryFilterPage(mfp *MesheryFilterPage) []byte {
