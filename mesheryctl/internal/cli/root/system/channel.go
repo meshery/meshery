@@ -65,7 +65,17 @@ var viewCmd = &cobra.Command{
 			log.Printf("Current Context: %v", focusedContext)
 			return nil
 		}
-		log.Print(PrintChannelAndVersionToStdout(mctlCfg.Contexts[focusedContext], focusedContext))
+
+		err = mctlCfg.SetCurrentContext(focusedContext)
+		if err != nil {
+			return err
+		}
+
+		currCtx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		log.Print(PrintChannelAndVersionToStdout(*currCtx, focusedContext))
 		log.Println()
 		return nil
 	},
@@ -111,7 +121,7 @@ var setCmd = &cobra.Command{
 					currCtx.Version = channelNameSeperated[1]
 					err := (&currCtx).ValidateVersion()
 					if err != nil {
-						return errors.New(fmt.Sprintf("%v is not a valid version tag", channelNameSeperated[1]))
+						return fmt.Errorf("%v is not a valid version tag", channelNameSeperated[1])
 					}
 				}
 			}

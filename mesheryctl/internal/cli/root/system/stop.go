@@ -68,12 +68,17 @@ func stop() error {
 	}
 
 	// if a temp context is set using the -c flag, use it as the current context
-	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	err = mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
 		return errors.Wrap(err, "failed to retrieve current-context")
 	}
 
-	ok, err := utils.IsMesheryRunning(currCtx.Platform)
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		return err
+	}
+
+	ok, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 	if err != nil {
 		return err
 	}
@@ -83,9 +88,9 @@ func stop() error {
 	}
 
 	// Get the current platform and the specified adapters in the config.yaml
-	RequestedAdapters := currCtx.Adapters
+	RequestedAdapters := currCtx.GetAdapters()
 
-	switch currCtx.Platform {
+	switch currCtx.GetPlatform() {
 	case "docker":
 		// if the platform is docker, then stop all the running containers
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
@@ -137,9 +142,9 @@ func stop() error {
 			return err
 		}
 
-		version := currCtx.Version
+		version := currCtx.GetVersion()
 		if version == "latest" {
-			if currCtx.Channel == "edge" {
+			if currCtx.GetChannel() == "edge" {
 				version = "master"
 			} else {
 				version, err = utils.GetLatestStableReleaseTag()

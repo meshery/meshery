@@ -31,7 +31,7 @@ var (
 	pre       bool
 	adapter   bool
 	operator  bool
-	failure   int = 0
+	failure   int
 )
 
 type HealthCheckOptions struct {
@@ -70,12 +70,17 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error processing config")
 	}
-	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	err = mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
 		return nil, err
 	}
 
-	hc.context = &currCtx
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		return nil, err
+	}
+
+	hc.context = currCtx
 	hc.mctlCfg = mctlCfg
 
 	return hc, nil
@@ -355,11 +360,8 @@ func (hc *HealthChecker) runKubernetesHealthChecks() error {
 		return err
 	}
 	// Run k8s plus kubectl minimum version healthchecks
-	if err = hc.runKubernetesVersionHealthCheck(); err != nil {
-		return err
-	}
-
-	return nil
+	err = hc.runKubernetesVersionHealthCheck()
+	return err
 }
 
 // runMesheryVersionHealthChecks runs checks regarding meshery version and mesheryctl version
@@ -503,7 +505,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 			if hc.Options.PrintLogs { // incase we're printing logs
 				log.Infof("!! Failed to check %s adapter", name)
 			} else { // or we're supposed to grab the errors
-				return errors.New(fmt.Sprintf("!! Failed to check %s adapter: %s", name, err))
+				return fmt.Errorf("!! Failed to check %s adapter: %s", name, err)
 			}
 			continue
 		}
@@ -514,7 +516,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 			if hc.Options.PrintLogs { // incase we're printing logs
 				log.Infof("!! %s adapter is running but not reachable", name)
 			} else { // or we're supposed to grab the errors
-				return errors.New(fmt.Sprintf("!! %s adapter is running but not reachable", name))
+				return fmt.Errorf("!! %s adapter is running but not reachable", name)
 			}
 		} else { // if status == 200 we check if we are supposed to print logs
 			if hc.Options.PrintLogs { // incase we're printing logs

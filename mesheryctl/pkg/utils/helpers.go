@@ -3,8 +3,6 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	crand "crypto/rand"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -22,6 +20,8 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -147,23 +147,6 @@ func BackupConfigFile(cfgFile string) {
 	}
 
 	log.Println(errors.New("outdated config file found. Please re-run the command"))
-}
-
-type cryptoSource struct{}
-
-func (s cryptoSource) Seed(seed int64) {}
-
-// Int63 to generate high security rand through crypto
-func (s cryptoSource) Int63() int64 {
-	return int64(s.Uint64() & ^uint64(1<<63))
-}
-
-func (s cryptoSource) Uint64() (v uint64) {
-	err := binary.Read(crand.Reader, binary.BigEndian, &v)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return v
 }
 
 const tokenName = "token"
@@ -506,6 +489,35 @@ func AskForInput(prompt string, allowed []string) string {
 	}
 }
 
+// ParseURLGithub checks URL and returns raw repo, path, error
+func ParseURLGithub(URL string) (string, string, error) {
+	// GitHub URL:
+	// - https://github.com/layer5io/meshery/blob/master/.goreleaser.yml
+	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
+	parsedURL, err := url.Parse(URL)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
+	}
+	host := parsedURL.Host
+	path := parsedURL.Path
+	path = strings.Replace(path, "/blob/", "/", 1)
+	paths := strings.Split(path, "/")
+	if host == "github.com" {
+		if len(paths) < 5 {
+			return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
+		}
+		resURL := "https://" + host + strings.Join(paths[:4], "/")
+		return resURL, strings.Join(paths[4:], "/"), nil
+	} else if host == "raw.githubusercontent.com" {
+		if len(paths) < 5 {
+			return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
+		}
+		resURL := "https://" + "raw.githubusercontent.com" + path
+		return resURL, "", nil
+	}
+	return URL, "", errors.New("only github urls are supported")
+}
+
 // PrintToTableInStringFormat prints the given data into a table format but return as a string
 func PrintToTableInStringFormat(header []string, data [][]string) string {
 	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
@@ -534,4 +546,37 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s.Suffix = " " + suffix
 	s.FinalMSG = finalMsg + "\n"
 	return s
+}
+
+func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models.Preference, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/config/sync"
+	method := "GET"
+	client := &http.Client{}
+	req, err := http.NewRequest(method, path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	err = AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	prefs := &models.Preference{}
+	err = utils.Unmarshal(string(body), prefs)
+	if err != nil {
+		return nil, err
+	}
+
+	return prefs, nil
 }

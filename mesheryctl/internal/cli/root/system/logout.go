@@ -25,7 +25,7 @@ This command removes the authentication token from the user's filesystem`,
 			return errors.Wrap(err, "error processing config")
 		}
 
-		token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
+		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
 			log.Error("failed to find token path for the current context")
 			return nil

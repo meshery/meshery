@@ -5,12 +5,13 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
+	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	corev1 "k8s.io/api/core/v1"
 )
 
-func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error) {
+func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provider, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error) {
 	objects := make([]meshsyncmodel.Object, 0)
 	controlplanelist := make([]*model.ControlPlane, 0)
 	selectors := make([]model.MeshType, 0)
@@ -23,7 +24,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPl
 	}
 
 	for _, selector := range selectors {
-		result := r.DBHandler.
+		result := provider.GetGenericPersister().
 			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[model.MeshType(selector)]).
 			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
@@ -63,20 +64,20 @@ func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPl
 	}
 	return controlplanelist, nil
 }
-func (r *Resolver) listenToControlPlaneState(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error) {
+func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider models.Provider, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error) {
 	if r.controlPlaneChannel == nil {
 		r.controlPlaneChannel = make(chan []*model.ControlPlane)
 	}
 	go func() {
 		r.Log.Info("ControlPlane subscription started")
-		err := r.connectToBroker(context.TODO())
+		err := r.connectToBroker(context.TODO(), provider)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
 			return
 		}
 		select {
 		case <-r.MeshSyncChannel:
-			status, err := r.getControlPlanes(ctx, filter)
+			status, err := r.getControlPlanes(ctx, provider, filter)
 			if err != nil {
 				r.Log.Error(ErrControlPlaneSubscription(err))
 				return
