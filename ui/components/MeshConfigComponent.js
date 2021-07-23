@@ -223,20 +223,21 @@ class MeshConfigComponent extends React.Component {
       }
     });
 
-    subscribeOperatorStatusEvents(self.setOperatorState);
-    fetchMesheryOperatorStatus().subscribe({
-      next: (res) => {
-        self.setOperatorState(res);
-      },
-      error: (err) => console.log("error at operator scan: " + err),
-    });
+    if(this.state.isMetricsConfigured){
+      subscribeOperatorStatusEvents(self.setOperatorState);
+      fetchMesheryOperatorStatus().subscribe({
+        next: (res) => {
+          self.setOperatorState(res);
+        },
+        error: (err) => console.log("error at operator scan: " + err),
+      });
+    }
   }
 
   setOperatorState = (res) => {
     const self = this;
     if (res.operator?.error) {
-      if (this.state.isMetricsConfigured)
-        self.handleError("Operator could not be reached")(res.operator?.error?.description)
+      self.handleError("Operator could not be reached")(res.operator?.error?.description)
       return false
     }
 
