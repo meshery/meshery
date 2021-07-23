@@ -109,10 +109,9 @@ func start() error {
 		currCtx.SetPlatform(utils.PlatformFlag)
 	} else {
 		if utils.CfgFile != utils.DefaultConfigPath {
-			return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s file.", utils.PlatformFlag, utils.CfgFile))
-		} else {
-			return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", utils.PlatformFlag, utils.MesheryFolder))
+			return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s file", utils.PlatformFlag, utils.CfgFile)
 		}
+		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config file", utils.PlatformFlag, utils.MesheryFolder)
 	}
 
 	// Deploy to platform specified in the config.yaml
