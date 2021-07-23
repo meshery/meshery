@@ -552,15 +552,6 @@
         "probable_cause": "Plugin is not available in the location\nplugin does not match with meshery version",
         "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
       },
-      "2054": {
-        "name": "ErrScanKubernetesCode",
-        "code": "2054",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to scan kubernetes",
-        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server",
-        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server"
-      },
       "2055": {
         "name": "ErrRetrievePodListCode",
         "code": "2055",
