@@ -74,6 +74,7 @@ const (
 	ErrFieldCode                  = "2135"
 	ErrFetchDataCode              = "replace"
 	ErrIndexOutOfRangeCode        = "replace"
+	ErrSessionCopyCode            = "replace"
 )
 
 var (
@@ -274,4 +275,8 @@ func ErrInvalidCapability(capability string, provider string) error {
 
 func ErrFetchData(err error) error {
 	return errors.New(ErrFetchDataCode, errors.Alert, []string{"unable to fetch result data"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrSessionCopy(err error) error {
+	return errors.New(ErrSessionCopyCode, errors.Alert, []string{"Error: session copy error"}, []string{err.Error()}, []string{}, []string{})
 }

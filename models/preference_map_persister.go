@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/jinzhu/copier"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -29,11 +28,11 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 	}
 
 	if s.db == nil {
-		return nil, errors.New("connection to DB does not exist")
+		return nil, ErrDBConnection
 	}
 
 	if userID == "" {
-		return nil, errors.New("user ID is empty")
+		return nil, ErrUserID
 	}
 
 	dataCopyB, ok := s.db.Load(userID)
@@ -55,15 +54,15 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 // WriteToPersister persists session for the user
 func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preference) error {
 	if s.db == nil {
-		return errors.New("connection to DB does not exist")
+		return ErrDBConnection
 	}
 
 	if userID == "" {
-		return errors.New("user ID is empty")
+		return ErrUserID
 	}
 
 	if data == nil {
-		return errors.New("given config data is nil")
+		return ErrNilConfigData
 	}
 	data.UpdatedAt = time.Now()
 	newSess := &Preference{
@@ -71,8 +70,7 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 		AnonymousPerfResults: true,
 	}
 	if err := copier.Copy(newSess, data); err != nil {
-		logrus.Errorf("session copy error: %v", err)
-		return err
+		return ErrSessionCopy(err)
 	}
 
 	s.db.Store(userID, newSess)
@@ -83,11 +81,11 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 // DeleteFromPersister removes the session for the user
 func (s *MapPreferencePersister) DeleteFromPersister(userID string) error {
 	if s.db == nil {
-		return errors.New("connection to DB does not exist")
+		return ErrDBConnection
 	}
 
 	if userID == "" {
-		return errors.New("user ID is empty")
+		return ErrUserID
 	}
 	s.db.Delete(userID)
 	return nil
