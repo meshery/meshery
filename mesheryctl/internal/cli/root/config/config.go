@@ -382,7 +382,7 @@ func DeleteTokenFromConfig(tokenName string, configPath string) error {
 		}
 	}
 
-	return errors.New("No such token exists.")
+	return errors.New("no such token exists")
 }
 
 func SetTokenToConfig(tokenName string, configPath string, ctxName string) error {
@@ -405,7 +405,8 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 		return err
 	}
 	context.Token = tokenName
-	if err := SetContext(viper.GetViper(), context, ctxName); err != nil {
+	err = SetContext(viper.GetViper(), context, ctxName)
+	if err != nil {
 		return err
 	}
 	return nil
