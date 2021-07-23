@@ -48,6 +48,11 @@ func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.OperatorS
 	return r.getOperatorStatus(ctx, provider)
 }
 
+func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.resyncCluster(ctx, provider, selector)
+}
+
 func (r *queryResolver) GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getAvailableNamespaces(ctx, provider)
