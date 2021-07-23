@@ -59,9 +59,11 @@ func resetMesheryConfig() error {
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
-	err = mctlCfg.SetCurrentContext(tempContext)
-	if err != nil {
-		return errors.Wrap(err, "failed to retrieve current-context")
+	if tempContext != "" {
+		err = mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
+			return errors.Wrap(err, "failed to set temporary context")
+		}
 	}
 
 	currCtx, err := mctlCfg.GetCurrentContext()
@@ -70,15 +72,15 @@ func resetMesheryConfig() error {
 	}
 
 	log.Info("Meshery resetting...\n")
-	log.Printf("Current Context: %s", mctlCfg.CurrentContext)
-	log.Printf("Channel: %s", currCtx.Channel)
-	log.Printf("Version: %s", currCtx.Version)
-	log.Printf("Platform: %s\n", currCtx.Platform)
+	log.Printf("Current Context: %s", mctlCfg.GetCurrentContextName())
+	log.Printf("Channel: %s", currCtx.GetChannel())
+	log.Printf("Version: %s", currCtx.GetVersion())
+	log.Printf("Platform: %s\n", currCtx.GetPlatform())
 
-	switch currCtx.Platform {
+	switch currCtx.GetPlatform() {
 	case "docker":
 
-		log.Printf("Fetching default docker-compose file as per current-context: %s...\n", mctlCfg.CurrentContext)
+		log.Printf("Fetching default docker-compose file as per current-context: %s...\n", mctlCfg.GetCurrentContextName())
 		err = utils.DownloadDockerComposeFile(currCtx, true)
 		if err != nil {
 			return errors.Wrap(err, "failed to fetch docker-compose file")
@@ -101,9 +103,9 @@ func resetMesheryConfig() error {
 
 	case "kubernetes":
 
-		version := currCtx.Version
+		version := currCtx.GetVersion()
 		if version == "latest" {
-			if currCtx.Channel == "edge" {
+			if currCtx.GetChannel() == "edge" {
 				version = "master"
 			} else {
 				version, err = utils.GetLatestStableReleaseTag()
@@ -124,7 +126,7 @@ func resetMesheryConfig() error {
 		log.Info("...meshconfig has been reset to default settings.")
 
 	default:
-		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currCtx.Platform, utils.MesheryFolder))
+		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.Platform, utils.MesheryFolder)
 	}
 	return nil
 }

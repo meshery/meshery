@@ -1,6 +1,6 @@
 module github.com/layer5io/meshery
 
-go 1.15
+go 1.16
 
 replace (
 	//golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
@@ -37,7 +37,7 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.2.19
-	github.com/layer5io/meshkit v0.2.17
+	github.com/layer5io/meshkit v0.2.18
 	github.com/layer5io/meshsync v0.1.23
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.3

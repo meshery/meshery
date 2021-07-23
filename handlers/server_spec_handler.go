@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/tcnksm/go-latest"
 )
@@ -37,7 +36,7 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 	// compare the server build with the target build
 	res, err := CheckLatestVersion(version.Build)
 	if err != nil {
-		logrus.Errorln(err)
+		h.log.Error(err)
 	} else {
 		// Add "Latest" and "Outdated" fields to the response
 		version.Latest = res.Current
@@ -48,7 +47,8 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(version)
 	if err != nil {
-		logrus.Errorf("unable to send data: %v", err)
+		h.log.Error(ErrDataSend(err))
+		http.Error(w, ErrDataSend(err).Error(), http.StatusNotFound)
 	}
 }
 
