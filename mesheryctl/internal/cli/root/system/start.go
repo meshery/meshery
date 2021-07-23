@@ -103,12 +103,7 @@ func start() error {
 	}
 
 	if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
-		currCtx.Platform = utils.PlatformFlag
-		err := utils.ChangePlatform(mctlCfg.CurrentContext, currCtx)
-
-		if err != nil {
-			return err
-		}
+		currCtx.SetPlatform(utils.PlatformFlag)
 	} else {
 		if utils.CfgFile != utils.DefaultConfigPath {
 			return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s file.", utils.PlatformFlag, utils.CfgFile))
