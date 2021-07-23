@@ -19,6 +19,7 @@
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
+    "glob-parent": ">=5.1.2",
     "@cypress/code-coverage": "^3.9.7",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
