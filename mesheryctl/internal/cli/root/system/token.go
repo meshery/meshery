@@ -2,6 +2,7 @@ package system
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -65,20 +66,8 @@ var deleteTokenCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
 
-		token := config.Token{
-			Name:     tokenName,
-			Location: tokenPath,
-		}
-		mctlCfg, err := config.ReadConfig(utils.DefaultConfigPath)
-		if err != nil {
-			return err
-		}
-		if mctlCfg, err = config.DeleteTokenFromConfig(token, mctlCfg); err != nil {
+		if err = config.DeleteTokenFromConfig(tokenName, utils.DefaultConfigPath); err != nil {
 			return errors.Wrapf(err, "Could not delete token \"%s\" from config", tokenName)
-		}
-		err = config.WriteConfig(mctlCfg)
-		if err != nil {
-			return err
 		}
 		log.Printf("Token %s deleted.", tokenName)
 		return nil
@@ -99,17 +88,10 @@ var setTokenCmd = &cobra.Command{
 			ctx = viper.GetString("current-context")
 
 		}
-		mctlCfg, err := config.ReadConfig(utils.DefaultConfigPath)
-		if err != nil {
-			return err
-		}
-		if mctlCfg, err = config.SetTokenToConfig(tokenName, mctlCfg, ctx); err != nil {
+
+		if err = config.SetTokenToConfig(tokenName, utils.DefaultConfigPath, ctx); err != nil {
 			return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
 
-		}
-		err = config.WriteConfig(mctlCfg)
-		if err != nil {
-			return err
 		}
 		log.Printf("Token %s set for context %s", tokenName, ctx)
 		return nil
@@ -124,12 +106,22 @@ var listTokenCmd = &cobra.Command{
 	`,
 	Args: cobra.ExactArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.ReadConfig(utils.DefaultConfigPath)
+		if _, err := os.Stat(utils.DefaultConfigPath); os.IsNotExist(err) {
+			return err
+		}
+
+		viper.SetConfigFile(utils.DefaultConfigPath)
+		err := viper.ReadInConfig()
 		if err != nil {
 			return err
 		}
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
 		log.Print("Available tokens: ")
-		for _, t := range mctlCfg.Tokens {
+		for _, t := range *mctlCfg.GetTokens() {
 			log.Info(t.Name)
 		}
 		return nil
@@ -144,13 +136,23 @@ var viewTokenCmd = &cobra.Command{
 	mesheryctl system token view (show token of current context)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.ReadConfig(utils.DefaultConfigPath)
+		if _, err := os.Stat(utils.DefaultConfigPath); os.IsNotExist(err) {
+			return err
+		}
+
+		viper.SetConfigFile(utils.DefaultConfigPath)
+		err := viper.ReadInConfig()
 		if err != nil {
 			return err
 		}
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
 		if viewAllTokens {
 			log.Info("Listing all available tokens...\n")
-			for _, t := range mctlCfg.Tokens {
+			for _, t := range *mctlCfg.GetTokens() {
 				log.Info("- token: ", t.Name)
 				log.Info("  location: ", t.Location)
 			}
