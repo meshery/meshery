@@ -811,8 +811,8 @@ github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 h1:P6pPBnrTSX3DEVR4fDembhR
 github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0/go.mod h1:vmVJ0l/dxyfGW6FmdpVm2joNMFikkuWg0EoCKLGUMNw=
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87 h1:qMO4fkVja8WatRrvEz6JCoq+81rNJZMjblqyRwywLns=
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87/go.mod h1:l7fQujTUkq0/ecH98qdKAgy9aCV+YvoyEF3nj2IIP50=
-github.com/layer5io/meshery-operator v0.2.19 h1:M5cspKD5z+VEBNTD76hQV1V9KlK7CIVVoKJtPDnxRUM=
-github.com/layer5io/meshery-operator v0.2.19/go.mod h1:B/LRFS6usaIZbJuTXptpYnlxSecKCS31jfOJV9i5+XY=
+github.com/layer5io/meshery-operator v0.2.20 h1:OWDHLG5W3Qbfq5JIpiUe60k9SJTUGDhAdIkpXZyQcUQ=
+github.com/layer5io/meshery-operator v0.2.20/go.mod h1:B/LRFS6usaIZbJuTXptpYnlxSecKCS31jfOJV9i5+XY=
 github.com/layer5io/meshkit v0.2.7/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
 github.com/layer5io/meshkit v0.2.14/go.mod h1:QPtkxJOzaLMCEcb77+HJ4ig14rV7sVP2zK6LVVZG/Ng=
 github.com/layer5io/meshkit v0.2.15/go.mod h1:QPtkxJOzaLMCEcb77+HJ4ig14rV7sVP2zK6LVVZG/Ng=
