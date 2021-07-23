@@ -8,8 +8,6 @@ type: project
 category: contributing
 ---
 
-Meshery pervasively uses MeshKit as a golang and service mesh management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes:
-
 Meshery pervasively uses MeshKit as a golang and service mesh management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes. 
 
 To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery [error codes reference page](https://docs.meshery.io/reference/error-codes). The objective to create this was to avoid centralized handling of error codes and automating everything
@@ -47,7 +45,8 @@ In order to create a Meshery error object, you will need to create a custom wrap
 - This tool will create a couple of files, one of them is designed to be used to generate the error reference on the meshery website.
   The file errorutil_analyze_summary.json contains a summary of the analysis, notably lists of duplicates etc.
 
-- Running `make error` would analyze the code and return you with a warning, if found.
+- Running `make error` would analyze the code and return you with a warning.
+
 
 
 Use the `errors.New()` function to create a new instance of the error object and pass situation-specific attributes as function arguments. 
@@ -61,6 +60,7 @@ These attributes are:
 ### Syntax
      errors.New(ErrExampleCode, errors.Alert, []string{"<short-description>"}, []string{"<long-description>"}, []string{"<probable-cause>"}, []string{"<suggested remediation>"})
   
+
 
 ## Example
 
@@ -104,6 +104,7 @@ New
 
 
 
+
 ## Replacing logrus 
  There already exists an [interface for logger](https://github.com/layer5io/meshkit/blob/master/logger/logger.go) in MeshKit.
 
@@ -130,6 +131,8 @@ New
   `logrus.Errorf("error marshaling data: %v.", err)`
 ##### New
   `l.log.Error(ErrMarshal(err, obj))`
+
+
 
 
 # Suggested Reading
