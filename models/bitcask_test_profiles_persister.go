@@ -60,7 +60,7 @@ func (s *BitCaskTestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]
 RETRY:
 	locked, err := s.db.TryRLock()
 	if err != nil {
-		return ErrDBRLock(err)
+		return nil, ErrDBRLock(err)
 	}
 	if !locked {
 		goto RETRY
@@ -122,7 +122,7 @@ func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.Perfor
 RETRY:
 	locked, err := s.db.TryRLock()
 	if err != nil {
-		return ErrDBRLock(err)
+		return nil, ErrDBRLock(err)
 	}
 	if !locked {
 		goto RETRY
@@ -159,7 +159,7 @@ func (s *BitCaskTestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 RETRY:
 	locked, err := s.db.TryRLock()
 	if err != nil {
-		ErrDBRLock(err)
+		return nil, ErrDBRLock(err)
 	}
 	if !locked {
 		goto RETRY
@@ -194,7 +194,7 @@ func (s *BitCaskTestProfilesPersister) WriteTestConfig(key uuid.UUID, result []b
 RETRY:
 	locked, err := s.db.TryLock()
 	if err != nil {
-		ErrDBLock(err)
+		return nil, ErrDBLock(err)
 	}
 	if !locked {
 		goto RETRY
