@@ -186,7 +186,7 @@ class MeshConfigComponent extends React.Component {
 
       operatorSwitch: false,
 
-      isMeshConfigured: k8sfile !== ''
+      isMetricsConfigured: k8sfile !== ''
     };
     this.ref = React.createRef();
   }
@@ -202,7 +202,7 @@ class MeshConfigComponent extends React.Component {
         clusterConfigured,
         configuredServer,
         ts: props.ts,
-        isMeshConfigured: k8sfile !== ''
+        isMetricsConfigured: k8sfile !== ''
       };
 
       // If contextsFromFile is empty then add the default value to it
@@ -235,7 +235,7 @@ class MeshConfigComponent extends React.Component {
   setOperatorState = (res) => {
     const self = this;
     if (res.operator?.error) {
-      if (this.state.isMeshConfigured)
+      if (this.state.isMetricsConfigured)
         self.handleError("Operator could not be reached")(res.operator?.error?.description)
       return false
     }
