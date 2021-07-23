@@ -63,3 +63,7 @@ var deleteCmd = &cobra.Command{
 		return nil
 	},
 }
+
+func init() {
+	deleteCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
+}
