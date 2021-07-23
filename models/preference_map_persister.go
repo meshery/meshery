@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
+	"fortio.org/fortio/log"
 	"github.com/jinzhu/copier"
-	"github.com/sirupsen/logrus"
 )
 
 // MapPreferencePersister assists with persisting session in a badger store
@@ -37,16 +37,16 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 
 	dataCopyB, ok := s.db.Load(userID)
 	if ok {
-		logrus.Debugf("retrieved session for user with id: %s", userID)
+		log.Debugf("retrieved session for user with id: %s", userID)
 		newData, ok1 := dataCopyB.(*Preference)
 		if ok1 {
-			logrus.Debugf("session for user with id: %s was read in tact.", userID)
+			log.Debugf("session for user with id: %s was read in tact.", userID)
 			data = newData
 		} else {
-			logrus.Warnf("session for user with id: %s was NOT read in tact.", userID)
+			log.Warnf("session for user with id: %s was NOT read in tact.", userID)
 		}
 	} else {
-		logrus.Warnf("unable to find session for user with id: %s.", userID)
+		log.Warnf("unable to find session for user with id: %s.", userID)
 	}
 	return data, nil
 }

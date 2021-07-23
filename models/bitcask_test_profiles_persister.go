@@ -5,10 +5,10 @@ import (
 	"os"
 	"path"
 
+	"fortio.org/fortio/log"
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/prologic/bitcask"
-	"github.com/sirupsen/logrus"
 )
 
 // BitCaskTestProfilesPersister assists with persisting session in a Bitcask store
@@ -75,8 +75,8 @@ RETRY:
 
 	start := page * pageSize
 	end := (page+1)*pageSize - 1
-	logrus.Debugf("received page: %d, page size: %d, total: %d", page, pageSize, total)
-	logrus.Debugf("computed start index: %d, end index: %d", start, end)
+	log.Debugf("received page: %d, page size: %d, total: %d", page, pageSize, total)
+	log.Debugf("computed start index: %d, end index: %d", start, end)
 
 	if start > uint64(total) {
 		return nil, ErrIndexOutOfRange
