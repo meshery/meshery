@@ -6,9 +6,9 @@ import (
 	"path"
 
 	"fortio.org/fortio/log"
+	"git.mills.io/prologic/bitcask"
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/prologic/bitcask"
 )
 
 // BitCaskTestProfilesPersister assists with persisting session in a Bitcask store
@@ -56,18 +56,6 @@ func (s *BitCaskTestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]
 	if s.db == nil {
 		return nil, ErrDBConnection
 	}
-
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		return nil, ErrDBRLock(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	total := s.db.Len()
 
@@ -119,18 +107,6 @@ func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.Perfor
 		return nil, ErrDBConnection
 	}
 
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		return nil, ErrDBRLock(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
-
 	keyb := key.Bytes()
 	if !s.db.Has(keyb) {
 		return nil, ErrNilKeys
@@ -156,24 +132,12 @@ func (s *BitCaskTestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 		return ErrDBConnection
 	}
 
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		return ErrDBRLock(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
-
 	keyb := key.Bytes()
 	if !s.db.Has(keyb) {
 		return ErrNilKeys
 	}
 
-	err = s.db.Delete(keyb)
+	err := s.db.Delete(keyb)
 	if err != nil {
 		return ErrFetchData(err)
 	}
@@ -190,18 +154,6 @@ func (s *BitCaskTestProfilesPersister) WriteTestConfig(key uuid.UUID, result []b
 	if result == nil {
 		return ErrResultData()
 	}
-
-RETRY:
-	locked, err := s.db.TryLock()
-	if err != nil {
-		return ErrDBLock(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	if err := s.db.Put(key.Bytes(), result); err != nil {
 		return ErrUnableToPersistsResult(err)
