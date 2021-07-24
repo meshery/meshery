@@ -18,6 +18,20 @@ type MesheryApplicationRequestBody struct {
 	ApplicationData *models.MesheryApplication `json:"application_data,omitempty"`
 }
 
+// swagger:route POST /api/experimental/application/deploy ApplicationAPI idPostApplicationFile
+// Handle POST request for Application File Deploy
+//
+// Deploy an attached application file with the request
+// response:
+// 	200:
+
+// swagger:route DELETE /api/experimental/application/deploy ApplicationAPI idDeleteApplicationFile
+// Handle DELETE request for Application File Deploy
+//
+// Delete a deployed application file with the request
+// response:
+// 	200:
+
 // ApplicationFileHandler handles the requested related to application files
 func (h *Handler) ApplicationFileHandler(
 	rw http.ResponseWriter,
@@ -166,6 +180,13 @@ func (h *Handler) GetMesheryApplicationsHandler(
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
+
+// swagger:route DELETE /api/experimental/application/{id} ApplicationAPI idDeleteMesheryApplicationFile
+// Handle Delete for a Meshery Application File
+//
+// Deletes a meshery application file with ID: id
+// response:
+// 	200: IDParameterWrapper
 
 // DeleteMesheryApplicationHandler deletes a application with the given id
 func (h *Handler) DeleteMesheryApplicationHandler(
