@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 function getSteps() {
   return ["Kubernetes", "Meshery Operator", "Service Mesh",
-  // "Metrics"
+    "Metrics"
   ];
 }
 
@@ -78,8 +78,8 @@ const ConfigurationWizard = () => {
         return <MesheryOperatorScreen />;
       case 2:
         return <ServiceMeshScreen />;
-      // case 3:
-      //   return <MetricsScreen />;
+      case 3:
+        return <MetricsScreen />;
       default:
         return null;
     }
@@ -113,7 +113,7 @@ const ConfigurationWizard = () => {
                   </Button>
                 )}
                 <Button
-                  disabled={activeStep === 0 && !kubernetesConnected}
+                  // disabled={activeStep === 0 && !iskubernetesConnected}
                   variant="contained"
                   onClick={handleNext}
                   className={classes.button}

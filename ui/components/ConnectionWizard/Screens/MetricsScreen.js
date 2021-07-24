@@ -10,13 +10,13 @@ const MetricsScreen = () => {
   const externalComponentsInfo = [{
     name: "Grafana",
     logoComponent: GrafanaIcon,
-    configComp :  MetricsConfig
+    configComp :  <MetricsConfig />
 
   },
   {
     name: "Prometheus",
     logoComponent: PrometheusIcon,
-    configComp :  MetricsConfig
+    configComp : <MetricsConfig/>
 
   }
   ]
@@ -26,7 +26,7 @@ const MetricsScreen = () => {
       {externalComponentsInfo && externalComponentsInfo.map(info => (
         <Grid item lg={6} md={12} sm={12} container justify="center" alignItems="center">
           <Grid item>
-            <ServiceSwitch serviceInfo={info} /> 
+            <ServiceSwitch serviceInfo={info} isConnected={false} /> 
           </Grid>
         </Grid>
       ))}

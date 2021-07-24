@@ -24,7 +24,7 @@ const MesheryOperatorScreen = () => {
   const mesheryOperatorinfo = {
     name: "Meshery Operator",
     logoComponent: MesheryOperatorIcon,
-    configComp :  () => null,
+    configComp :  <div />,
     operatorInformation
   }
 
