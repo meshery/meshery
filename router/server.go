@@ -26,7 +26,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.Handle("/api/system/graphql/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(g))))).Methods("GET", "POST")
 	gMux.Handle("/api/system/graphql/playground", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(gp))))).Methods("GET", "POST")
 
-	gMux.HandleFunc("/api/server/version", h.ServerVersionHandler).
+	gMux.HandleFunc("/api/system/version", h.ServerVersionHandler).
 		Methods("GET")
 
 	gMux.HandleFunc("/api/provider", h.ProviderHandler)

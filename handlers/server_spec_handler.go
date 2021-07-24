@@ -19,7 +19,7 @@ type Version struct {
 	ReleaseChannel string `json:"release_channel,omitempty"`
 }
 
-// swagger:route GET /api/server/version SystemAPI idGetSystemVersion
+// swagger:route GET /api/system/version SystemAPI idGetSystemVersion
 // Handle GET request for system/server version
 //
 // Returns the running Meshery version
