@@ -120,7 +120,7 @@ func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.Perfor
 	testConfig := &SMP.PerformanceTestConfig{}
 	err = json.Unmarshal(data, testConfig)
 	if err != nil {
-		return nil, ErrMarshal(err, "testConfigdata")
+		return nil, ErrMarshal(err, "testConfig data")
 	}
 
 	return testConfig, nil
