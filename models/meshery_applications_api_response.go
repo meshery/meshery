@@ -4,6 +4,6 @@ package models
 type ApplicationsAPIResponse struct {
 	Page         uint                 `json:"page"`
 	PageSize     uint                 `json:"page_size"`
-	TotalCount   uint                 `json:"total_size"`
-	Applications []MesheryApplication `json:"patterns"`
+	TotalCount   uint                 `json:"total_count"`
+	Applications []MesheryApplication `json:"applications"`
 }
