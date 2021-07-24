@@ -53,7 +53,7 @@
     "billboard.js": "=3.1.2",
     "caniuse-lite": "^1.0.30001194",
     "classnames": "^2.3.1",
-    "codemirror": "^5.59.4",
+    "codemirror": "^5.62.2",
     "cron-time-generator": "^1.2.0",
     "eslint-loader": "^4.0.2",
     "graphql": "^15.5.1",
