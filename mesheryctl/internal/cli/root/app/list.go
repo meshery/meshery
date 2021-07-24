@@ -35,7 +35,7 @@ var listCmd = &cobra.Command{
 		if tokenPath == "" {
 			tokenPath = constants.GetCurrentAuthToken()
 		}
-		var response models.ApplicationsAPIResponse
+		var response *models.ApplicationsAPIResponse
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/application", nil)
 		if err != nil {
@@ -55,7 +55,6 @@ var listCmd = &cobra.Command{
 			return err
 		}
 		err = json.Unmarshal(body, &response)
-
 		if err != nil {
 			return err
 		}
