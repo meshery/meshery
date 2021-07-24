@@ -366,7 +366,7 @@ const categories = [
     icon:
       <img src="/static/img/drawerIcons/performance.svg" transform="shrink-2" style={drawerIconsStyle} />,
     href: "/performance",
-    title: "Performance Profile Management",
+    title: "Performance",
     show: true,
     link: true,
     children: [
@@ -399,7 +399,7 @@ const categories = [
         id: "SMI Results",
         icon: <img src="/static/img/drawerIcons/board_icon.svg" style={drawerIconsStyle} />,
         href: "/smi_results",
-        title: "Service Mesh Interface Results",
+        title: "SMI Results",
         show: true,
         link: true,
       },
@@ -718,10 +718,10 @@ class Navigator extends React.Component {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
 
-    if (idname != "Management" && children && children.length > 0) {
+    if (idname != "Lifecycle" && children && children.length > 0) {
       return (
         <List disablePadding>
-          {children.map(({ id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
+          {children.map(({ id: idc, title: titlec, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
             }
@@ -738,7 +738,7 @@ class Navigator extends React.Component {
                     isDrawerCollapsed && classes.noPadding
                   )}
                 >
-                  {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
+                  {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                 </ListItem>
                 {this.renderChildren(idname, childrenc, depth + 1)}
               </React.Fragment>
@@ -855,7 +855,7 @@ class Navigator extends React.Component {
 
               {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
             </ListItem>
-            {categories.map(({ id: childId, icon, href, show, link, children }) => {
+            {categories.map(({ id: childId, title, icon, href, show, link, children }) => {
               if (typeof show !== "undefined" && !show) {
                 return "";
               }
@@ -888,7 +888,7 @@ class Navigator extends React.Component {
                             primary: classes.itemPrimary,
                           }}
                         >
-                          {childId}
+                          {title}
                         </ListItemText>
                       </div>
                     </Link>
