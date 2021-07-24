@@ -37,3 +37,7 @@ $(BINNAME_WINDOWS):
 .PHONY: clean
 clean:
 	rm -rf $(OUTDIR)
+
+.PHONY: error
+error:
+	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers
