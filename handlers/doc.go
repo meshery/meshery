@@ -219,13 +219,6 @@ type singleScheduleResponseWrapper struct {
 	Body models.Schedule
 }
 
-// Returns Meshery server version
-// swagger:response mesheryServerRespWrapper
-type mesheryServerRespWrapper struct {
-	// in: body
-	Body Version
-}
-
 // Parameters for updating provider choice
 // swagger:parameters idChoiceProvider
 type mesheryProviderParamsWrapper struct {
