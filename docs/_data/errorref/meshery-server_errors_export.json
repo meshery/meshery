@@ -144,7 +144,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to connect to prometheus",
-        "probable_cause": "",
+        "probable_cause": "Prometheus endpoint might not be reachable from meshery\nPrometheus endpoint is incorrect",
         "suggested_remediation": "Check if your Prometheus and Grafana Endpoint are correct\nConnect to Prometheus and Grafana from the settings page in the UI"
       },
       "2003": {
@@ -153,7 +153,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to connect to grafana",
-        "probable_cause": "",
+        "probable_cause": "Grafana endpoint might not be reachable from meshery\nGrafana endpoint is incorrect",
         "suggested_remediation": "Check if your Grafana Endpoint is correct\nConnect to Grafana from the settings page in the UI"
       },
       "2004": {
@@ -171,7 +171,7 @@
         "severity": "Alert",
         "long_description": "Cannot find valid grafana endpoint in user pref",
         "short_description": "Grafana endpoint not configured",
-        "probable_cause": "",
+        "probable_cause": "Grafana endpoint might not be reachable from meshery",
         "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard"
       },
       "2006": {
@@ -180,7 +180,7 @@
         "severity": "Alert",
         "long_description": "Cannot find valid Prometheus endpoint in user pref",
         "short_description": "Prometheus endpoint not configured",
-        "probable_cause": "",
+        "probable_cause": "Prometheus endpoint might not be reachable from meshery",
         "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard"
       },
       "2007": {
@@ -189,7 +189,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to query grafana",
-        "probable_cause": "",
+        "probable_cause": "Grafana query did not get executed from meshery\nGrafana query is invalid",
         "suggested_remediation": "Check if your Grafana query is correct\nConnect to Grafana from the settings page in the UI"
       },
       "2008": {
@@ -198,7 +198,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to query prometheus",
-        "probable_cause": "",
+        "probable_cause": "Prometheus query did not get executed from meshery\nPrometheus query is invalid",
         "suggested_remediation": "Check if your Prometheus query is correct\nConnect to Prometheus and Grafana from the settings page in the UI"
       },
       "2009": {
@@ -225,15 +225,15 @@
         "severity": "Alert",
         "long_description": "unable to get static board",
         "short_description": "unable to get static board",
-        "probable_cause": "",
+        "probable_cause": "No boards could be available in grafana",
         "suggested_remediation": ""
       },
       "2012": {
         "name": "ErrRequestBodyCode",
         "code": "2012",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "unable to read the request body",
+        "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -279,8 +279,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "There was an error connecting to the backend to get events",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Websocket is blocked in the network\nMeshery UI is not able to reach the Meshery server",
+        "suggested_remediation": "Ensure Meshery UI is able to reach the Meshery server"
       },
       "2018": {
         "name": "ErrStreamClientCode",
@@ -288,8 +288,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Event streaming ended",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Websocket is blocked in the network\nMeshery UI is not able to reach the Meshery server",
+        "suggested_remediation": "Ensure Meshery UI is able to reach the Meshery server"
       },
       "2019": {
         "name": "ErrUnmarshalEventCode",
@@ -306,8 +306,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error publishing SMI results",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Meshery Cloud is not functional or reachable",
+        "suggested_remediation": "Make sure meshery cloud is up and reachable"
       },
       "2021": {
         "name": "ErrMarshalEventCode",
@@ -324,8 +324,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error opening the plugin",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Plugin is not available in the location\nplugin does not match with meshery version",
+        "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
       },
       "2023": {
         "name": "ErrPluginLookupCode",
@@ -333,8 +333,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error performing a plugin lookup",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Plugin is not available in the location",
+        "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
       },
       "2024": {
         "name": "ErrPluginRunCode",
@@ -342,8 +342,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error running meshery plugin",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "plugin does not match with meshery version",
+        "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
       },
       "2025": {
         "name": "ErrParseFormCode",
@@ -351,8 +351,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "unable to parse form",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "The data provided could be invalid",
+        "suggested_remediation": "Make sure to enter valid parameters in the form"
       },
       "2026": {
         "name": "ErrQueryGetCode",
@@ -360,8 +360,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "unable to get: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Query parameter is not a part of the request",
+        "suggested_remediation": "Make sure to pass the query paramater in the request"
       },
       "2027": {
         "name": "ErrGetResultCode",
@@ -369,8 +369,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "unable to get result",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Result Identifier provided is not valid\nResult did not persist in the database",
+        "suggested_remediation": "Make sure to provide the correct identifier for the result"
       },
       "2028": {
         "name": "ErrConvertToSpecCode",
@@ -378,8 +378,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "unable to convert to spec",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "The performance spec format is invalid",
+        "suggested_remediation": "Make sure to provide the correct spec"
       },
       "2029": {
         "name": "ErrFetchSMIResultsCode",
@@ -387,8 +387,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "unable to fetch SMI results",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "SMI results did not get persisted\nResult identifier is invalid",
+        "suggested_remediation": "Make sure to provide the correct identifier for the result"
       },
       "2030": {
         "name": "ErrFormFileCode",
@@ -396,8 +396,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "error getting k8s file",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "The kube config file does not exist in the location",
+        "suggested_remediation": "Make sure to upload the correct kubeconfig file"
       },
       "2031": {
         "name": "ErrReadConfigCode",
@@ -405,8 +405,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "error reading config",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "The kubeconfig file is empty or not valid",
+        "suggested_remediation": "Make sure to upload the correct kubeconfig file"
       },
       "2032": {
         "name": "ErrLoadConfigCode",
@@ -414,8 +414,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "unable to load kubernetes config",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "The kubeconfig file is empty or not valid",
+        "suggested_remediation": "Make sure to upload the correct kubeconfig file"
       },
       "2033": {
         "name": "ErrOpenFileCode",
@@ -423,8 +423,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "unable to open file: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "The file does not exist in the location",
+        "suggested_remediation": "Make sure to upload the correct file"
       },
       "2034": {
         "name": "ErrKubeVersionCode",
@@ -432,8 +432,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "unable to get kubernetes version",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Kubernetes might not be reachable from meshery",
+        "suggested_remediation": "Make sure meshery has connectivity to kubernetes"
       },
       "2035": {
         "name": "ErrAddAdapterCode",
@@ -450,8 +450,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to retrieve the requested data",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Adapter operation invalid",
+        "suggested_remediation": "Make sure adapter is reachable and running"
       },
       "2037": {
         "name": "ErrValidAdapterCode",
@@ -468,8 +468,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error generating the operation Id",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Adapter operation invalid",
+        "suggested_remediation": "Make sure adapter is reachable and running"
       },
       "2039": {
         "name": "ErrMeshClientCode",
@@ -486,8 +486,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error applying the change",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Adapter operation invalid",
+        "suggested_remediation": "Make sure adapter is reachable and running"
       },
       "2041": {
         "name": "ErrRetrieveMeshDataCode",
@@ -496,7 +496,7 @@
         "long_description": "",
         "short_description": "Error getting operations for the mesh\nError getting service mesh name",
         "probable_cause": "unable to retrieve the requested data",
-        "suggested_remediation": ""
+        "suggested_remediation": "Make sure adapter is reachable and running"
       },
       "2042": {
         "name": "ErrApplicationFailureCode",
@@ -513,8 +513,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error decoding the : ",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Object is not a valid json object",
+        "suggested_remediation": "Make sure if the object passed is a valid json"
       },
       "2044": {
         "name": "ErrRetrieveUserTokenCode",
@@ -522,8 +522,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to get the user token",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "User token could be expired",
+        "suggested_remediation": "Re-initiate login"
       },
       "2045": {
         "name": "ErrFailToSaveCode",
@@ -531,8 +531,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to Save: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Meshery Database could be down or not reachable",
+        "suggested_remediation": "Restart Meshery instance and make sure database is up and reachable"
       },
       "2046": {
         "name": "ErrFailToDeleteCode",
@@ -540,8 +540,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to Delete: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Meshery Database could be down or not reachable",
+        "suggested_remediation": "Restart Meshery instance and make sure database is up and reachable"
       },
       "2047": {
         "name": "ErrFailToLoadExtensionsCode",
@@ -549,17 +549,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to Load Extensions from Package",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2054": {
-        "name": "ErrScanKubernetesCode",
-        "code": "2054",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to scan kubernetes",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Plugin is not available in the location\nplugin does not match with meshery version",
+        "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
       },
       "2055": {
         "name": "ErrRetrievePodListCode",
@@ -567,8 +558,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to retrieve pod list",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
       },
       "2056": {
         "name": "ErrDetectServiceForDeploymentImageCode",
@@ -576,8 +567,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to detect service for deployment image",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
       },
       "2057": {
         "name": "ErrRetrieveNamespacesListCode",
@@ -585,8 +576,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to get the list of namespaces",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
       },
       "2058": {
         "name": "ErrGetNamespaceDeploymentsCode",
@@ -594,8 +585,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to get deployments in the \nnamespace",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
       },
       "2059": {
         "name": "ErrDetectServiceWithNameCode",
@@ -603,8 +594,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to get services from the cluster with the name given in names parameter",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not reachable from Meshery server",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure the network connectivity is up between meshery server and the service endpoint"
       },
       "2060": {
         "name": "ErrGeneratingLoadTestCode",
@@ -1287,6 +1278,105 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error: name field is blank",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2136": {
+        "name": "ErrSaveSessionCode",
+        "code": "2136",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to save session",
+        "probable_cause": "User session could be expired",
+        "suggested_remediation": "Re-initiate login"
+      },
+      "2137": {
+        "name": "ErrDataSendCode",
+        "code": "2137",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2138": {
+        "name": "ErrVersionCompareCode",
+        "code": "2138",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to compare latest and current version of Meshery",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2139": {
+        "name": "ErrKubeClientCode",
+        "code": "2139",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Create Kube Client",
+        "probable_cause": "Check Kubernetes",
+        "suggested_remediation": "Check your kubeconfig if valid\nEnsure meshery is able to reach the kubernetes cluster"
+      },
+      "2140": {
+        "name": "ErrWorkloadDefinitionCode",
+        "code": "2140",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to load Workload Definition",
+        "probable_cause": "Workload Definition is invalid or unable to process",
+        "suggested_remediation": "Check Workload Definition"
+      },
+      "2141": {
+        "name": "ErrTraitDefinitionCode",
+        "code": "2141",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Encode Trait Definition",
+        "probable_cause": "Trait Definition is invalid or unable to process",
+        "suggested_remediation": "Check Trait Definition"
+      },
+      "2142": {
+        "name": "ErrScopeDefinitionCode",
+        "code": "2142",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Encode Scope Definition",
+        "probable_cause": "Trait Definition is invalid or unable to process",
+        "suggested_remediation": "Check Trait Definition"
+      },
+      "2143": {
+        "name": "ErrPatternFileCode",
+        "code": "2143",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Parse Pattern File",
+        "probable_cause": "Trait Definition is invalid or unable to process",
+        "suggested_remediation": "Check Trait Definition"
+      },
+      "2144": {
+        "name": "ErrExecutionPlanCode",
+        "code": "2144",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Create Execution Plan",
+        "probable_cause": "Trait Definition is invalid or unable to process",
+        "suggested_remediation": "Check Trait Definition"
+      },
+      "2145": {
+        "name": "ErrInvalidPatternCode",
+        "code": "2145",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Pattern, execution is infeasible",
+        "probable_cause": "Trait Definition is invalid or unable to process",
+        "suggested_remediation": "Check Trait Definition"
+      },
+      "2146": {
+        "name": "ErrCompConfigPairsCode",
+        "code": "2146",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
       }

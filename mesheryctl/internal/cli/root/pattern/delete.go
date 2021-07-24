@@ -32,7 +32,7 @@ var deleteCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/experimental/pattern/deploy", fileReader)
+		req, err := http.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/pattern/deploy", fileReader)
 		if err != nil {
 			return err
 		}
@@ -57,4 +57,8 @@ var deleteCmd = &cobra.Command{
 
 		return nil
 	},
+}
+
+func init() {
+	deleteCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
 }

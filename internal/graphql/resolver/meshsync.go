@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
+	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -13,11 +14,10 @@ import (
 )
 
 var (
-	meshsyncName = "meshsync"
 	meshsyncYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
 )
 
-func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
+func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.Provider) (<-chan *model.OperatorControllerStatus, error) {
 	channel := make(chan *model.OperatorControllerStatus)
 	if r.brokerChannel == nil {
 		r.brokerChannel = make(chan *broker.Message)
@@ -25,7 +25,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.Op
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("MeshSync subscription started")
-		go listernToEvents(r.Log, r.DBHandler, r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel)
+		go listernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.meshsyncLivenessChannel)
 
 		// signal to install operator when initialized
 		r.MeshSyncChannel <- struct{}{}
@@ -35,13 +35,40 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.Op
 	return channel, nil
 }
 
-func (r *Resolver) connectToBroker(ctx context.Context) error {
-	status, err := r.getOperatorStatus(ctx)
+func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions) (model.Status, error) {
+	if actions.ClearDb == "true" {
+		// Clear existing data
+		err := provider.GetGenericPersister().Migrator().DropTable(
+			meshsyncmodel.KeyValue{},
+			meshsyncmodel.Object{},
+		)
+		if err != nil {
+			if provider.GetGenericPersister() == nil {
+				return "", ErrEmptyHandler
+			}
+			r.Log.Warn(ErrDeleteData(err))
+		}
+	}
+	if actions.ReSync == "true" {
+		err := r.BrokerConn.Publish(requestSubject, &broker.Message{
+			Request: &broker.RequestObject{
+				Entity: broker.ReSyncDiscoveryEntity,
+			},
+		})
+		if err != nil {
+			return "", ErrPublishBroker(err)
+		}
+	}
+	return model.StatusProcessing, nil
+}
+
+func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider) error {
+	status, err := r.getOperatorStatus(ctx, provider)
 	if err != nil {
 		return err
 	}
 	if r.BrokerConn.IsEmpty() && status != nil && status.Status == model.StatusEnabled {
-		endpoint, err := r.subscribeToBroker(r.KubeClient, r.brokerChannel)
+		endpoint, err := r.subscribeToBroker(provider, r.Config.KubeClient, r.brokerChannel)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
 			r.operatorChannel <- &model.OperatorStatus{
@@ -72,6 +99,7 @@ func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, o
 		return ErrEmptyHandler
 	}
 
+	handler.Lock()
 	switch eventtype {
 	case broker.Add, broker.Update:
 		result := handler.Create(object)
@@ -89,5 +117,6 @@ func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, o
 	case broker.ErrorEvent:
 		return nil
 	}
+	handler.Unlock()
 	return nil
 }

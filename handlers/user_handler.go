@@ -3,8 +3,12 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"encoding/json"
+
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshery/models"
 )
@@ -24,22 +28,22 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *model
 	}
 }
 
-// swagger:route GET /api/user/prefs UserAPI idGetAnonymousStats
-// Handle GET for anonymous stats
+// swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
+// Handle GET for User Load Test Preferences
 //
-// Returns anonymous stats for user
+// Returns User Load Test Preferences
 // responses:
-// 	200: anonymousStatsResponseWrapper
+// 	200: userLoadTestPrefsRespWrapper
 
-// swagger:route POST /api/user/prefs UserAPI idPostAnonymousStats
-// Handle GET for anonymous stats
+// swagger:route POST /api/user/prefs UserAPI idPostUserTestPrefs
+// Handle GET for User Load Test Preferences
 //
-// Updates anonymous stats for user
+// Updates User Load Test Preferences
 // responses:
-// 	200: anonymousStatsResponseWrapper
+// 	200: userLoadTestPrefsRespWrapper
 
-// AnonymousStatsHandler updates anonymous stats for user
-func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+// UserPrefsHandler updates anonymous stats for user or for persisting load test preferences
+func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodGet {
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 			obj := "user preference object"
@@ -85,6 +89,8 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 		}
 		trackStats = true
 	}
+
+	// if api has been used to update AnonymousStats we return here
 	if trackStats {
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 			obj := "user preferences"
@@ -95,5 +101,67 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	http.Error(w, "no stats update requested", http.StatusBadRequest)
+	// or we update Load Test preferences
+	qs := req.FormValue("qps")
+	qps, err := strconv.Atoi(qs)
+	if err != nil {
+		err = errors.Wrap(err, "unable to parse qps")
+		logrus.Error(err)
+		http.Error(w, "please provide a valid value for qps", http.StatusBadRequest)
+		return
+	}
+	if qps < 0 {
+		http.Error(w, "please provide a valid value for qps", http.StatusBadRequest)
+		return
+	}
+	dur := req.FormValue("t")
+	if _, err = time.ParseDuration(dur); err != nil {
+		err = errors.Wrap(err, "unable to parse t as a duration")
+		logrus.Error(err)
+		http.Error(w, "please provide a valid value for t", http.StatusBadRequest)
+		return
+	}
+	cu := req.FormValue("c")
+	c, err := strconv.Atoi(cu)
+	if err != nil {
+		err = errors.Wrap(err, "unable to parse c")
+		logrus.Error(err)
+		http.Error(w, "please provide a valid value for c", http.StatusBadRequest)
+		return
+	}
+	if c < 0 {
+		http.Error(w, "please provide a valid value for c", http.StatusBadRequest)
+		return
+	}
+	gen := req.FormValue("gen")
+	genTrack := false
+	// TODO: after we have interfaces for load generators in place, we need to make a generic check, for now using a hard coded one
+	for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
+		if lg.Name() == gen {
+			genTrack = true
+		}
+	}
+	if !genTrack {
+		logrus.Error("invalid value for gen")
+		http.Error(w, "please provide a valid value for gen (load generator)", http.StatusBadRequest)
+		return
+	}
+	prefObj.LoadTestPreferences = &models.LoadTestPreferences{
+		ConcurrentRequests: c,
+		Duration:           dur,
+		QueriesPerSecond:   qps,
+		LoadGenerator:      gen,
+	}
+	if err = provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
+		logrus.Errorf("unable to save user preferences: %v", err)
+		http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(prefObj); err != nil {
+		obj := "user preferences"
+		h.log.Error(ErrEncoding(err, obj))
+		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
 }

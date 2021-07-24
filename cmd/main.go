@@ -206,7 +206,7 @@ func main() {
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
 			BitCaskPreferencePersister: cPreferencePersister,
-			ProviderVersion:            "v0.3.14",
+			ProviderVersion:            viper.GetString("BUILD"),
 			SmiResultPersister:         smiResultPersister,
 			GenericPersister:           dbHandler,
 		}
@@ -218,7 +218,7 @@ func main() {
 		provs[cp.Name()] = cp
 	}
 
-	h := handlers.NewHandlerInstance(&models.HandlerConfig{
+	hc := &models.HandlerConfig{
 		Providers:              provs,
 		ProviderCookieName:     "meshery-provider",
 		ProviderCookieDuration: 30 * 24 * time.Hour,
@@ -229,28 +229,30 @@ func main() {
 		Queue: mainQueue,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
+		KubeClient:       &kubeclient,
 
 		GrafanaClient:         models.NewGrafanaClient(),
 		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+	}
 
-		GraphQLHandler: graphql.New(graphql.Options{
-			Logger:          log,
-			DBHandler:       &dbHandler,
-			KubeClient:      &kubeclient,
-			MeshSyncChannel: meshsyncCh,
-			BrokerConn:      brokerConn,
-		}),
-		GraphQLPlaygroundHandler: graphql.NewPlayground(graphql.Options{
-			URL: "/api/system/graphql/query",
-		}),
-	}, &kubeclient, meshsyncCh, log, brokerConn)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn)
+
+	g := graphql.New(graphql.Options{
+		Config:          hc,
+		Logger:          log,
+		MeshSyncChannel: meshsyncCh,
+		BrokerConn:      brokerConn,
+	})
+
+	gp := graphql.NewPlayground(graphql.Options{
+		URL: "/api/system/graphql/query",
+	})
 
 	port := viper.GetInt("PORT")
-	r := router.NewRouter(ctx, h, port)
-
+	r := router.NewRouter(ctx, h, port, g, gp)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
