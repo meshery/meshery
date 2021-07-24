@@ -179,7 +179,7 @@ class DashboardComponent extends React.Component {
       activeMeshScanNamespace: {},
       meshScanNamespaces: {},
 
-      isMeshConfigured: grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured
+      isMetricsConfigured: grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured
     };
   }
 
@@ -233,101 +233,102 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
-    this.fetchMetricComponents();
+
+    if(this.state.isMetricsConfigured){
+      this.fetchMetricComponents();
+    }
     this.initMeshSyncControlPlaneSubscription();
   };
 
   fetchMetricComponents = () => {
     const self = this;
 
-    if(this.state.isMeshConfigured){
-      dataFetch(
-        "/api/telemetry/metrics/config",
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-          },
+    dataFetch(
+      "/api/telemetry/metrics/config",
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
         },
-        (result) => {
-          self.props.updateProgress({ showProgress: false });
-          if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL != "") {
-            let selector = {
-              serviceMesh: "ALL_MESH",
-            };
-            fetchAvailableAddons(selector).subscribe({
-              next: (res) => {
-                res?.addonsState?.forEach((addon) => {
-                  if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-                    self.setState({prometheusURL: "http://" + addon.endpoint})
-                    submitPrometheusConfigure(self, () => console.log("Prometheus added"));
-                  }
-                });
-              },
-              error: (err) => console.log("error registering prometheus: " + err),
-            });
-          }
-        },
-        self.handleError("There was an error getting prometheus config")
-      )
-
-      dataFetch(
-        "/api/telemetry/metrics/grafana/config",
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-          },
-        },
-        (result) => {
-          self.props.updateProgress({ showProgress: false });
-          if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="") {
-            let selector = {
-              serviceMesh: "ALL_MESH",
-            };
-            fetchAvailableAddons(selector).subscribe({
-              next: (res) => {
-                res?.addonsState?.forEach((addon) => {
-                  if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-                    self.setState({grafanaURL: "http://" + addon.endpoint})
-                    submitGrafanaConfigure(self, () => {
-                      self.state.selectedBoardsConfigs.push(self.state.boardConfigs)
-                      console.log("Grafana added")
-                    });
-                  }
-                });
-              },
-              error: (err) => console.log("error registering grafana: " + err),
-            });
-          }
-        },
-        self.handleError("There was an error communicating with grafana config")
-      )
-
-      let selector = {
-        serviceMesh: "ALL_MESH",
-      };
-
-      fetchAvailableAddons(selector).subscribe({
-        next: (res) => {
-          res?.addonsState?.forEach((addon) => {
-            if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-              self.setState({prometheusURL: "http://" + addon.endpoint})
-              submitPrometheusConfigure(self, () => console.log("Prometheus added"));
-            } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-              self.setState({grafanaURL: "http://" + addon.endpoint})
-              submitGrafanaConfigure(self, () => {
-                self.state.selectedBoardsConfigs.push(self.state.boardConfigs)
-                console.log("Grafana added")
+      },
+      (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL != "") {
+          let selector = {
+            serviceMesh: "ALL_MESH",
+          };
+          fetchAvailableAddons(selector).subscribe({
+            next: (res) => {
+              res?.addonsState?.forEach((addon) => {
+                if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
+                  self.setState({prometheusURL: "http://" + addon.endpoint})
+                  submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+                }
               });
-            }
+            },
+            error: (err) => console.log("error registering prometheus: " + err),
           });
+        }
+      },
+      self.handleError("There was an error getting prometheus config")
+    )
+
+    dataFetch(
+      "/api/telemetry/metrics/grafana/config",
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
         },
-        error: (err) => console.log("error registering addons: " + err),
-      })
-    }
+      },
+      (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="") {
+          let selector = {
+            serviceMesh: "ALL_MESH",
+          };
+          fetchAvailableAddons(selector).subscribe({
+            next: (res) => {
+              res?.addonsState?.forEach((addon) => {
+                if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
+                  self.setState({grafanaURL: "http://" + addon.endpoint})
+                  submitGrafanaConfigure(self, () => {
+                    self.state.selectedBoardsConfigs.push(self.state.boardConfigs)
+                    console.log("Grafana added")
+                  });
+                }
+              });
+            },
+            error: (err) => console.log("error registering grafana: " + err),
+          });
+        }
+      },
+      self.handleError("There was an error communicating with grafana config")
+    )
+
+    let selector = {
+      serviceMesh: "ALL_MESH",
+    };
+
+    fetchAvailableAddons(selector).subscribe({
+      next: (res) => {
+        res?.addonsState?.forEach((addon) => {
+          if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
+            self.setState({prometheusURL: "http://" + addon.endpoint})
+            submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+          } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
+            self.setState({grafanaURL: "http://" + addon.endpoint})
+            submitGrafanaConfigure(self, () => {
+              self.state.selectedBoardsConfigs.push(self.state.boardConfigs)
+              console.log("Grafana added")
+            });
+          }
+        });
+      },
+      error: (err) => console.log("error registering addons: " + err),
+    })
   };
 
   fetchAvailableAdapters = () => {

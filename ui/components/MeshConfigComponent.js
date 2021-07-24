@@ -63,7 +63,7 @@ const styles = (theme) => ({
   },
   fileLabelText: {
     cursor: 'pointer',
-    "& *": {
+    "& *":{
       cursor: 'pointer',
     }
   },
@@ -78,7 +78,7 @@ const styles = (theme) => ({
     marginBottom: theme.spacing(2),
   },
   fileInputStyle: {
-    display: 'none',
+    display:'none',
   },
   icon: {
     width: theme.spacing(2.5),
@@ -185,8 +185,6 @@ class MeshConfigComponent extends React.Component {
       NATSVersion: "N/A",
 
       operatorSwitch: false,
-
-      isMetricsConfigured: k8sfile !== ''
     };
     this.ref = React.createRef();
   }
@@ -202,7 +200,6 @@ class MeshConfigComponent extends React.Component {
         clusterConfigured,
         configuredServer,
         ts: props.ts,
-        isMetricsConfigured: k8sfile !== ''
       };
 
       // If contextsFromFile is empty then add the default value to it
@@ -223,15 +220,13 @@ class MeshConfigComponent extends React.Component {
       }
     });
 
-    if(this.state.isMetricsConfigured){
-      subscribeOperatorStatusEvents(self.setOperatorState);
-      fetchMesheryOperatorStatus().subscribe({
-        next: (res) => {
-          self.setOperatorState(res);
-        },
-        error: (err) => console.log("error at operator scan: " + err),
-      });
-    }
+    subscribeOperatorStatusEvents(self.setOperatorState);
+    fetchMesheryOperatorStatus().subscribe({
+      next: (res) => {
+        self.setOperatorState(res);
+      },
+      error: (err) => console.log("error at operator scan: " + err),
+    });
   }
 
   setOperatorState = (res) => {
@@ -258,7 +253,7 @@ class MeshConfigComponent extends React.Component {
       self.setState({
         operatorInstalled: true,
         operatorSwitch: true,
-        operatorVersion: res.operator?.version,
+        operatorVersion:res.operator?.version,
       })
       return true
     }
@@ -268,9 +263,9 @@ class MeshConfigComponent extends React.Component {
       NATSInstalled: false,
       meshSyncInstalled: false,
       operatorSwitch: false,
-      operatorVersion: "N/A",
-      meshSyncVersion: "N/A",
-      NATSVersion: "N/A",
+      operatorVersion:"N/A",
+      meshSyncVersion:"N/A",
+      NATSVersion:"N/A",
     })
 
     return false
