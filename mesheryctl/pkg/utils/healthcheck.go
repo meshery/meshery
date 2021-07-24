@@ -9,8 +9,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/version"
 )
@@ -115,12 +118,23 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 
 // IsMesheryRunning checks if the meshery server containers are up and running
 func IsMesheryRunning(currPlatform string) (bool, error) {
-	// Checking if Meshery is running with "make run-local" or "make run-fast"
-	resp, _ := http.Get("http://localhost:9081/api/server/version")
+	// Get viper instance used for context to extract the endpoint from config file
+	mctlCfg, _ := config.GetMesheryCtl(viper.GetViper())
+
+	currCtx, _ := mctlCfg.GetCurrentContext()
+
+	urlEndpoint := currCtx.GetEndpoint()
+
+	urlTest := urlEndpoint + "/api/server/version"
+
+	// Checking if Meshery is running with the URL obtained
+	resp, _ := http.Get(urlTest)
 
 	if resp != nil && resp.StatusCode == 200 {
 		return true, nil
 	}
+
+	//If not, use the platforms to check if Meshery is running or not
 	switch currPlatform {
 	case "docker":
 		{
