@@ -26,7 +26,7 @@ var viewCmd = &cobra.Command{
 	Use:   "view <application name>",
 	Short: "Display application(s)",
 	Long:  `Displays the contents of a specific application based on name or id`,
-	Args:  cobra.MaximumNArgs(1),
+	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

@@ -63,3 +63,7 @@ var offboardCmd = &cobra.Command{
 		return nil
 	},
 }
+
+func init() {
+	offboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to app file")
+}
