@@ -45,7 +45,8 @@ Go [here](https://docs.meshery.io/extensibility/api#rest) for the docs.
 
 - Meshery UI in [Figma](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI)
 
-  > You need to ask for access in [Slack](http://slack.layer5.io/)
+  > Access the [Community Drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) by completing the community [Member Form](https://layer5.io/newcomer)
+  > You need to ask for the access to the above Figma File in [Slack](http://slack.layer5.io/)
 
 #### Design Prologue
 
