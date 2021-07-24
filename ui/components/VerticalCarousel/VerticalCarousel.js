@@ -1,6 +1,8 @@
 import React from 'react';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import PropTypes from 'prop-types';
-import {Grid} from "@material-ui/core"
+import {Button, Grid, IconButton} from "@material-ui/core"
 
 const VerticalCarousel = ({
   item,
@@ -14,23 +16,19 @@ const VerticalCarousel = ({
   }
 
   return (
-    <Grid direction="column" container style={{position: "relative"}}>
-	    <div>
-        <button
-          type="button"
+    <Grid direction="column" container style={{position: "relative"}} alignItems="center" item>
+        <IconButton
           onClick={() => handleClick('prev')}
-          style={{position: "absolute", top:"-2rem" , zIndex: 3}}
+          style={{position: "absolute", top:"-3rem" , zIndex: 3, marginLeft: "auto", marginRight: "auto", left: 0, right: 0, textAlign:"center"}}
         >
-          <div> Prev </div>
-        </button>
-        <button
-          type="button"
+          <ArrowUpwardIcon />
+        </IconButton>
+        <IconButton
           onClick={() => handleClick('next')}
-          style={{position: "absolute", bottom:"2rem" , zIndex: 3}}
+          style={{position: "absolute", bottom:"2rem" , zIndex: 3, marginLeft: "auto", marginRight: "auto", left: 0, right: 0, textAlign:"center"}}
         >
-          <div> Next </div>
-        </button>
-      </div>
+          <ArrowDownwardIcon />
+        </IconButton>
       <Grid item> {item} </Grid>  
     </Grid>
   );
