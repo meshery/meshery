@@ -125,7 +125,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 
 	urlEndpoint := currCtx.GetEndpoint()
 
-	urlTest := urlEndpoint + "/api/server/version"
+	urlTest := urlEndpoint + "/api/system/version"
 
 	// Checking if Meshery is running with the URL obtained
 	resp, _ := http.Get(urlTest)
