@@ -1,5 +1,11 @@
 name: Open API Specification and Documentation
-on: [push, pull_request]
+on: 
+  push:
+    paths-ignore:
+      - '.github/**'
+  pull_request:
+      paths-ignore:
+      - '.github/**'
 jobs:
   swaggerci:
     name: swagger-docs
