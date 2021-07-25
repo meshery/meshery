@@ -206,7 +206,7 @@ func main() {
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
 			BitCaskPreferencePersister: cPreferencePersister,
-			ProviderVersion:            viper.GetString("BUILD"),
+			ProviderVersion:            "v0.3.14",
 			SmiResultPersister:         smiResultPersister,
 			GenericPersister:           dbHandler,
 		}
