@@ -37,6 +37,7 @@ RUN apt-get update; apt-get install -y ca-certificates curl; update-ca-certifica
 COPY ./oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
+COPY --from=meshery-server /github.com/meshery/meshery/helpers/swagger.yaml /github.com/meshery/helpers/
 COPY --from=ui /out /app/ui/out
 COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2
@@ -53,4 +54,4 @@ RUN curl -Lo nighthawk_output_transform-ubuntu-amd64-v1.0.1.tar.gz https://githu
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
 USER appuser
 WORKDIR /app/cmd
-CMD ./meshery
+ENTRYPOINT ./meshery
