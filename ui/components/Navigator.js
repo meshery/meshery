@@ -25,6 +25,7 @@ import HelpIcon from '@material-ui/icons/Help';
 import {
   faChevronCircleLeft,
   faExternalLinkAlt,
+  faDigitalTachograph,
 } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
 import { updatepagetitle } from "../lib/store";
@@ -260,7 +261,7 @@ const styles = (theme) => ({
 });
 
 const drawerIconsStyle = { height: "1.21rem", width: "1.21rem", fontSize: "1.21rem" };
-const externalLinkIconStyle = { height: "1.11rem", width: "1.11rem", fontSize: "1.11rem" };
+const externalLinkIconStyle = { width: "1.11rem", fontSize: "1.11rem" };
 
 const categories = [
   {
@@ -272,7 +273,7 @@ const categories = [
   },
   {
     id: "Lifecycle",
-    icon: <img src="/static/img/drawerIcons/lifecycle_mgmt.svg" transform="shrink-4" style={drawerIconsStyle} />,
+    icon: <img src="/static/img/drawer-icons/lifecycle_mgmt.svg" transform="shrink-4" style={drawerIconsStyle} />,
     href: "/management",
     title: "Lifecycle",
     show: true,
@@ -280,7 +281,6 @@ const categories = [
     children: [
       {
         id: "Citrix_Service_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/citrix",
         title: "Citrix Service Mesh",
         link: false,
@@ -288,7 +288,6 @@ const categories = [
       },
       {
         id: "Consul",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/consul",
         title: "Consul",
         link: false,
@@ -296,7 +295,6 @@ const categories = [
       },
       {
         id: "Istio",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/istio",
         title: "Istio",
         link: false,
@@ -304,7 +302,6 @@ const categories = [
       },
       {
         id: "Kuma",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/kuma",
         title: "Kuma",
         link: false,
@@ -312,7 +309,6 @@ const categories = [
       },
       {
         id: "Linkerd",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/linkerd",
         title: "Linkerd",
         link: false,
@@ -320,7 +316,6 @@ const categories = [
       },
       {
         id: "Network_Service_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/nsm",
         title: "Network Service Mesh",
         link: false,
@@ -337,7 +332,6 @@ const categories = [
       // },
       {
         id: "Octarine",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/octarine",
         title: "Octarine",
         link: false,
@@ -345,7 +339,6 @@ const categories = [
       },
       {
         id: "Open_Service_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/osm",
         title: "Open Service Mesh",
         link: false,
@@ -353,7 +346,6 @@ const categories = [
       },
       {
         id: "Traefik_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/traefik-mesh",
         title: "Traefik Mesh",
         link: false,
@@ -362,9 +354,43 @@ const categories = [
     ],
   },
   {
+    id: "Configuration",
+    icon: <img src="/static/img/configuration_trans.svg" style={{ width: "1.21rem" }} />,
+    href: "/configuration",
+    title: "Configuration",
+    show: false,
+    link: false,
+    children: [
+      {
+        id: "Applications",
+        icon: <img src="/static/img/web-applications.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/applications",
+        title: "Applications",
+        show: true,
+        link: true,
+      },
+      {
+        id: "Filters",
+        icon: <img src="/static/img/web-filters.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/filters",
+        title: "Filters",
+        show: true,
+        link: true,
+      },
+      {
+        id: "Patterns",
+        icon: <img src="/static/img/pattern_trans.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/patterns",
+        title: "Patterns",
+        show: false,
+        link: true,
+      },
+    ],
+  },
+  {
     id: "Performance",
     icon:
-      <img src="/static/img/drawerIcons/performance.svg" transform="shrink-2" style={drawerIconsStyle} />,
+      <img src="/static/img/drawer-icons/performance.svg" style={{ margin: "auto", width: "1.81rem", verticalAlign: "top" }} />,
     href: "/performance",
     title: "Performance",
     show: true,
@@ -372,9 +398,10 @@ const categories = [
     children: [
       {
         id: "Profiles",
-        icon: <img src="/static/img/drawerIcons/board_icon.svg" style={drawerIconsStyle} />,
+        icon:
+          <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ height: "1.8rem", verticalAlign: "top" }} />,
         href: "/performance/profiles",
-        title: "Performance Profiles",
+        title: "Profiles",
         show: true,
         link: true,
       },
@@ -389,51 +416,17 @@ const categories = [
   }, // title is used for comparison in the Header.js file as well
   {
     id: "Conformance",
-    icon: <img src="/static/img/drawerIcons/smi-conformance.svg" transform="shrink-2" style={drawerIconsStyle} />,
+    icon: <img src="/static/img/drawer-icons/conformance.svg" transform="shrink-2" style={drawerIconsStyle} />,
     href: "/smi_results", //Temp
     title: "Conformance",
     show: true,
     link: true,
     children: [
       {
-        id: "SMI Results",
-        icon: <img src="/static/img/drawerIcons/board_icon.svg" style={drawerIconsStyle} />,
+        id: "Service Mesh Interface",
+        icon: <img src="/static/img/drawer-icons/servicemeshinterface-icon-white.svg" style={drawerIconsStyle} />,
         href: "/smi_results",
-        title: "SMI Results",
-        show: true,
-        link: true,
-      },
-    ],
-  },
-  {
-    id: "Configuration",
-    icon: <img src="/static/img/configuration_trans.svg" style={{ width: "1.21rem" }} />,
-    href: "/configuration",
-    title: "Meshery Configurations",
-    show: false,
-    link: false,
-    children: [
-      {
-        id: "Patterns",
-        icon: <img src="/static/img/pattern_trans.svg" style={{ width: "1.21rem" }} />,
-        href: "/configuration/patterns",
-        title: "Patterns",
-        show: false,
-        link: true,
-      },
-      {
-        id: "Filters",
-        icon: <img src="/static/img/web-filters.svg" style={{ width: "1.21rem" }} />,
-        href: "/configuration/filters",
-        title: "Filters",
-        show: true,
-        link: true,
-      },
-      {
-        id: "Applications",
-        icon: <img src="/static/img/web-applications.svg" style={{ width: "1.21rem" }} />,
-        href: "/configuration/applications",
-        title: "Applications",
+        title: "Service Mesh Interface",
         show: true,
         link: true,
       },
@@ -446,7 +439,7 @@ const ExternalLinkIcon = <FontAwesomeIcon style={externalLinkIconStyle} icon={fa
 const externlinks = [
   {
     id: "doc",
-    href: "http://docs.meshery.io",
+    href: "https://docs.meshery.io",
     title: "Documentation",
     icon: <DescriptionOutlinedIcon style={drawerIconsStyle} />,
     external_icon: ExternalLinkIcon,
@@ -671,7 +664,6 @@ class Navigator extends React.Component {
       }
       children.push({
         id: adapter.adapter_location,
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         icon: <RemoveIcon />,
         href: `/management?adapter=${adapter.adapter_location}`,
         title: `Management - ${adapter.adapter_location}`,
@@ -908,7 +900,7 @@ class Navigator extends React.Component {
           </List>
           <div className={classes.fixedSidebarFooter}>
             <ButtonGroup
-              size="small"
+              size="large"
               className={!isDrawerCollapsed ? classes.marginLeft : ""}
               orientation={isDrawerCollapsed ? "vertical" : "horizontal"}
             >
