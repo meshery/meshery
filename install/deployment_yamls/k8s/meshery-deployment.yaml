@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery
     spec:
-      serviceAccountName: "meshery-server"
+      serviceAccountName: meshery-server
       containers:
         - env:
             - name: EVENT

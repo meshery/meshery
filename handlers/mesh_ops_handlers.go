@@ -119,8 +119,8 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		h.log.Error(ErrNilClient)
 		return nil, ErrNilClient
 	}
-	*h.kubeclient = *kubeclient
-	provider.SetKubeClient(h.kubeclient)
+	*h.config.KubeClient = *kubeclient
+	provider.SetKubeClient(h.config.KubeClient)
 
 	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshLocationURL)
 	if err != nil || prefObj.K8SConfig == nil {
@@ -235,8 +235,6 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	if namespace == "" {
 		namespace = "default"
 	}
-
-	h.log.Info("cpfig:", prefObj.K8SConfig.Config)
 
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 		h.log.Error(ErrInvalidK8SConfig)

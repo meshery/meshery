@@ -40,6 +40,14 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	_, _ = w.Write(bdr)
 }
 
+// swagger:route GET /api/perf/profile/result PerfAPI idGetAllPerfResults
+// Handles GET requests for perf results
+//
+// Returns pages of all the perf results from Remote Provider
+//
+// responses:
+// 	200: performanceResultsResponseWrapper
+
 // swagger:route GET /api/user/performance/profiles/results PerformanceAPI idGetAllPerformanceResults
 // Handles GET requests for performance results
 //
@@ -67,6 +75,14 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 	_, _ = w.Write(bdr)
 }
 
+// swagger:route GET /api/perf/profile/result/{id} PerfAPI idGetSinglePerfResult
+// Handles GET requests for perf result
+//
+// Returns an individual result from provider
+//
+// responses:
+// 	200: perfSingleResultRespWrapper
+
 // GetResultHandler gets an individual result from provider
 func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	// if req.Method != http.MethodGet {
@@ -74,7 +90,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	// 	return
 	// }
 	// TODO: may be force login if token not found?????
-	id := req.URL.Query().Get("id")
+	id := mux.Vars(req)["id"]
 	if id == "" {
 		logrus.Error(ErrQueryGet("id"))
 		http.Error(w, "please provide a result id", http.StatusBadRequest)

@@ -1,7 +1,7 @@
-- title: Quick Start
+- title: 🚀 Quick Start
   url: installation/quick-start
   
-- title: Overview
+- title: 🗺 Overview
   url: project
   links:
     - title: Community
@@ -17,10 +17,12 @@
           url: project/contributing-cli
         - title: Meshery Docs
           url: project/contributing-docs
+        - title: Meshery Errors
+          url: project/contributing-error            
+        - title: Meshery Server
+          url: project/contributing-server        
         - title: Meshery UI
           url: project/contributing-ui
-        - title: Meshery Errors
-          url: project/contributing-error
     - title: Releases
       url: project/releases
     - title: Build & Release (CI)
@@ -51,14 +53,14 @@
           url: installation/platforms/minikube
         - title: Windows
           url: installation/platforms/windows
-- title: Concepts
+- title: 🧠 Concepts
   url: concepts
   links:
     - title: Architecture
       url: concepts/architecture
     - title: Adapters
       url: concepts/architecture/adapters
-- title: Functionality
+- title: ⚙️ Functionality
   url: functionality
   links:
     - title: Lifecycle Management
@@ -69,7 +71,7 @@
       url: functionality/performance-management
     - title: Service Mesh Interface (SMI)
       url: functionality/service-mesh-interface
-- title: Service Meshes
+- title: 🦾 Service Meshes
   url: service-meshes
   links:
     - title: App Mesh
@@ -96,7 +98,7 @@
       url: service-meshes/adapters/tanzu-sm
     - title: Traefik Mesh
       url: service-meshes/adapters/traefik-mesh
-- title: Guides
+- title: 📚 Guides
   url: guides
   links:
     - title: Deploying Sample Applications
@@ -111,7 +113,7 @@
       url: guides/mesheryctl
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
-- title: Extensibility
+- title: 🛠 Extensibility
   url: extensibility
   links:
     - title: "Service Mesh Adapters"
@@ -122,7 +124,7 @@
       url: extensibility/providers
     - title: "REST & GraphQL APIs"
       url: extensibility/api
-- title: Reference
+- title: 📖 Reference
   url: reference
   links:
     - title: mesheryctl Commands

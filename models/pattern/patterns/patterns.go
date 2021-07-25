@@ -10,7 +10,7 @@ import (
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-func ProcessOAM(kClient *meshkube.Client, oamComps []string, oamConfig string, isDel bool) (string, error) {
+func ProcessOAM(kubeClient *meshkube.Client, oamComps []string, oamConfig string, isDel bool) (string, error) {
 	var comps []v1alpha1.Component
 	var config v1alpha1.Configuration
 
@@ -32,7 +32,7 @@ func ProcessOAM(kClient *meshkube.Client, oamComps []string, oamConfig string, i
 
 	for _, comp := range comps {
 		if comp.Spec.Type == "Application" {
-			if err := application.Deploy(kClient, comp, config, isDel); err != nil {
+			if err := application.Deploy(kubeClient, comp, config, isDel); err != nil {
 				errs = append(errs, err)
 			}
 
