@@ -2,7 +2,7 @@
 name: ⌨️ [Component] mesheryctl (Meshery CLI)
 about: Report a bug or feature request for mesheryctl (Meshery CLI)
 title: '[mesheryctl]'
-labels: 'component/mesheryctl'
+labels: 'component/mesheryctl', 'language/go'
 assignees: ''
 ---
 
@@ -23,7 +23,7 @@ _See [mesheryctl Command Tracker](https://bit.ly/3dqXy1q) for current status of 
 - Host OS: Mac Linux Windows
 - Meshery Server Version: stable-v
 - Meshery Client Version: stable-v
-- Platform: Docker or Kubernetes
+- Platform: Docker Kubernetes
 
 <!-- Optional for feature requests -->
 
