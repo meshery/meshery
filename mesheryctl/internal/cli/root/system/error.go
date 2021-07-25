@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	ErrHealthCheckFailedCode = "replace me"
-	ErrInvalidAdapterCode    = "replace me"
-	ErrDownloadFileCode      = "replace me"
+	ErrHealthCheckFailedCode = "1000"
+	ErrInvalidAdapterCode    = "1001"
+	ErrDownloadFileCode      = "1002"
 )
 
 func ErrHealthCheckFailed(err error) error {
