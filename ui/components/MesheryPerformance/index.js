@@ -518,7 +518,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     dataFetch(
-      "/api/perf/load-test-prefs",
+      "/api/user/prefs",
       {
         credentials: "same-origin",
         method: "GET",
@@ -1006,7 +1006,7 @@ class MesheryPerformanceComponent extends React.Component {
                     aria-label="download"
                     color="inherit"
                     // onClick={() => self.props.closeSnackbar(key) }
-                    href={`/api/perf/result?id=${encodeURIComponent(result.meshery_id)}`}
+                    href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
                   >
                     <GetAppIcon />
                   </IconButton>
