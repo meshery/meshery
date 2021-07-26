@@ -242,3 +242,10 @@ type singleScheduleResponseWrapper struct {
 	// in: body
 	Body models.Schedule
 }
+
+// Returns Meshery version
+// swagger:response mesheryVersionRespWrapper
+type mesheryVersionRespWrapper struct {
+	// in: body
+	Body Version
+}
