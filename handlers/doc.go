@@ -243,6 +243,27 @@ type singleScheduleResponseWrapper struct {
 	Body models.Schedule
 }
 
+// Parameters for updating provider choice
+// swagger:parameters idChoiceProvider
+type mesheryProviderParamsWrapper struct {
+	// in: query
+	Provider string `json:"provider"`
+}
+
+// Returns a list of available providers
+// swagger:response listProvidersRespWrapper
+type listProvidersRespWrapper struct {
+	// in: body
+	Body map[string]models.ProviderProperties
+}
+
+// Returns provider capabilities
+// swaggere:response providerPropertiesRespWrapper
+type providerPropertiesRespWrapper struct {
+	// in: body
+	Body models.ProviderProperties
+}
+
 // Returns Meshery version
 // swagger:response mesheryVersionRespWrapper
 type mesheryVersionRespWrapper struct {
