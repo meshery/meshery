@@ -35,6 +35,25 @@ var restartCmd = &cobra.Command{
 	Short: "Stop, then start Meshery",
 	Long:  `Restart all Meshery containers / pods.`,
 	Args:  cobra.NoArgs,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		// execute healthchecks
+		err = hc.RunPreflightHealthChecks()
+		if err != nil {
+			cmd.SilenceUsage = true
+		}
+
+		return err
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return restart()
 	},
