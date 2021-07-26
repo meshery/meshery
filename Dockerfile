@@ -54,4 +54,4 @@ RUN curl -Lo nighthawk_output_transform-ubuntu-amd64-v1.0.1.tar.gz https://githu
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
 USER appuser
 WORKDIR /app/cmd
-ENTRYPOINT ./meshery
+CMD ./meshery
