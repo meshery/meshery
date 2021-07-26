@@ -170,9 +170,9 @@ type prometheusBoardParamsWrapper struct {
 	Body []*models.SelectedGrafanaConfig
 }
 
-// Returns Anonymous stats
-// swagger:response anonymousStatsResponseWrapper
-type anonymousStatsResponseWrapper struct {
+// Returns User Load Test Preferencee
+// swagger:response userLoadTestPrefsRespWrapper
+type userLoadTestPrefsRespWrapper struct {
 	// in: body
 	Body *models.Preference
 }
@@ -181,7 +181,8 @@ type anonymousStatsResponseWrapper struct {
 // swagger:parameters idPostAnonymousStats
 type anonymousStatsParamsWrapper struct {
 	// in: body
-	Body *models.PreferenceParams
+	Body                *models.PreferenceParams
+	LoadTestPreferences *models.LoadTestPreferences
 }
 
 // Returns load test preferences
@@ -205,6 +206,29 @@ type UUIDParamsWrapper struct {
 	UUID strfmt.UUID `json:"uuid"`
 }
 
+// Parameters to run performance tests
+// swagger:parameters idRunPerfTest
+type perfTestParamsWrapper struct {
+	// in: query
+	Query *models.PerformanceTestParameters
+	// in: body
+	Body *SMP.PerformanceTestConfig
+}
+
+// Returns Single test result
+// swagger:response perfSingleResultRespWrapper
+type perfSingleResultRespWrapper struct {
+	// in: body
+	Body *models.PerformanceSpec
+}
+
+// Returns Perf test preference
+// swagger:response perfTestPrefsRespWrapper
+type perfTestPrefsRespWrapper struct {
+	// in: body
+	Body *models.Preference
+}
+
 // Returns List of saved schedules
 // swagger:response schedulesResponseWrapper
 type schedulesResponseWrapper struct {
@@ -217,4 +241,11 @@ type schedulesResponseWrapper struct {
 type singleScheduleResponseWrapper struct {
 	// in: body
 	Body models.Schedule
+}
+
+// Returns Meshery version
+// swagger:response mesheryVersionRespWrapper
+type mesheryVersionRespWrapper struct {
+	// in: body
+	Body Version
 }

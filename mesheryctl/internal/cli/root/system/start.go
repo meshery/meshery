@@ -28,6 +28,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
@@ -60,7 +61,7 @@ var startCmd = &cobra.Command{
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.Wrapf(err, "failed to initialize healthchecker")
+			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -114,7 +115,7 @@ func start() error {
 
 		// download the docker-compose.yaml file corresponding to the current version
 		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file", utils.DockerComposeFile)))
+			return ErrDownloadFile(err, utils.DockerComposeFile)
 		}
 
 		// Viper instance used for docker compose
@@ -127,7 +128,7 @@ func start() error {
 		compose := &utils.DockerCompose{}
 		err = utils.ViperCompose.Unmarshal(&compose)
 		if err != nil {
-			return err
+			return handlers.ErrUnmarshal(err, utils.DockerComposeFile)
 		}
 
 		//changing the port mapping in docker compose
@@ -172,6 +173,7 @@ func start() error {
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			if v == "meshery" {
+				temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), currCtx.GetVersion())
 			}
 			services[v] = temp
@@ -428,7 +430,7 @@ func start() error {
 
 		// switch to default case if the platform specified is not supported
 	default:
-		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currCtx.GetPlatform(), utils.MesheryFolder))
+		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.GetPlatform(), utils.MesheryFolder)
 	}
 
 	hcOptions := &HealthCheckOptions{
@@ -439,7 +441,7 @@ func start() error {
 	}
 	hc, err := NewHealthChecker(hcOptions)
 	if err != nil {
-		return errors.Wrapf(err, "failed to initialize healthchecker")
+		return ErrHealthCheckFailed(err)
 	}
 	// If k8s is available in case of platform docker than we deploy operator
 	if err = hc.Run(); err == nil {
@@ -456,7 +458,7 @@ func start() error {
 		// Download operator manifest
 		err = utils.DownloadOperatorManifest()
 		if err != nil {
-			return err
+			return ErrDownloadFile(err, "operator manifest")
 		}
 
 		if !skipUpdateFlag {

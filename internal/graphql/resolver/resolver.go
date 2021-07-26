@@ -17,9 +17,10 @@ type Resolver struct {
 	MeshSyncChannel chan struct{}
 	Config          *models.HandlerConfig
 
-	operatorSyncChannel chan struct{}
-	operatorChannel     chan *model.OperatorStatus
-	brokerChannel       chan *broker.Message
-	addonChannel        chan []*model.AddonList
-	controlPlaneChannel chan []*model.ControlPlane
+	operatorSyncChannel     chan struct{}
+	meshsyncLivenessChannel chan struct{}
+	operatorChannel         chan *model.OperatorStatus
+	brokerChannel           chan *broker.Message
+	addonChannel            chan []*model.AddonList
+	controlPlaneChannel     chan []*model.ControlPlane
 }

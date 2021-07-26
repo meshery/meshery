@@ -354,7 +354,7 @@ class DashboardComponent extends React.Component {
     const self = this;
     this.props.updateProgress({ showProgress: true });
     dataFetch(
-      "/api/server/version",
+      "/api/system/version",
       {
         credentials: "same-origin",
         method: "GET",

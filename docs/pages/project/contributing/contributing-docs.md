@@ -176,12 +176,15 @@ Most popular clipboard plugins like Clipboard JS require the manual creation of 
 ``` 
 _\<pre\> tags are optional unless the code snippet is in a paragraph format_
 
-
-Or
+A full block:
 
 ````
-code snippet          or         ```code snippet```
+```code snippet```
 ````
+
+Inline formatting: 
+
+\`code snippet\`: `code snippet`
 
 Whenever the code tags are detected, the clipboard javascript file is automatically loaded. Each code element is given a custom id and a clipboard-copy icon to copy the content.
 
@@ -201,20 +204,6 @@ The following is a concise summary of the steps to contribute to Meshery documen
 1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
    `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.
-
-
-# Suggested Reading
-
-{% assign sorted_reading = site.pages | sort: page.title | reverse %}
-
-<ul>
-  {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
 
 ###  Table of Contents in Sidebar (toc)
 
@@ -241,14 +230,14 @@ The output of the code snippet would be:
       Thing 3
 ```
 
-### if
+### `if` condititional
 
 This executes the block of code only if the given condition is true. It is executed in the following manner:
 
 ```
-    {% if product.title == "Awesome Shoes" %}
+    {{ "{% if product.title == 'Awesome Shoes' " }}%}
     These shoes are awesome!
-    {% endif %}
+    {{ "{% endif " }}%}
 ```
 
 If the condition is true, the output would be:
@@ -257,14 +246,14 @@ If the condition is true, the output would be:
     How are you?
 ```
 
-### for
+### `for` loop
 
 The for statement executes a block of code repeatedly. It is wriiten in the following manner:
 
 ```
-    {% for names in collection.names %}
-    {{ name.title }}
-    {% endfor %}
+    {{ "{% for names in collection.names " }}%}
+    {{ "{{ name.title "}}}}
+    {{ "{% endfor " }}%}
 ```
 
 The output produced by the above code snippet:
@@ -283,7 +272,7 @@ Comments allow to leave a block of code unattended, any statements between openi
 The above tag is used to insert a already rendered file within the current template. It is written in the following manner:
 
 ```
-    {% include file.html %}
+    {{ "{% include file.html " }}%}
 ```
 
 ### Assign
@@ -291,9 +280,18 @@ The above tag is used to insert a already rendered file within the current templ
 The assign tag is used to create a new variable. It is written in the following manner:
 
 ```
-    {% assign variable1 = true %}
+    {{ "{% assign variable1 = true " }}%}
 ```
 
+# Suggested Reading
 
+{% assign sorted_reading = site.pages | sort: page.title | reverse %}
 
-
+<ul>
+  {% for item in sorted_reading %}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+</ul>

@@ -66,7 +66,7 @@ var applyCmd = &cobra.Command{
 				return err
 			}
 
-			req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/perf/load-test-smps", bytes.NewBuffer(smpConfig))
+			req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/perf/profile", bytes.NewBuffer(smpConfig))
 			if err != nil {
 				return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 			}

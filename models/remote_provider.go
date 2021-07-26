@@ -245,7 +245,10 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 //
 // It is assumed that every remote provider will offer this feature
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
-	tu := "http://" + r.Host + r.RequestURI
+	tu := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
+	if tu == "" {
+		tu = "http://" + r.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
+	}
 
 	_, err := r.Cookie(tokenName)
 	// logrus.Debugf("url token: %v %v", token, err)

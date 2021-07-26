@@ -98,7 +98,7 @@ var versionCmd = &cobra.Command{
 		header := []string{"", "Version", "GitSHA"}
 		rows := [][]string{{"Client", build, commitsha}, {"Server", version.GetBuild(), version.GetCommitSHA()}}
 
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/server/version", url), nil)
+		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 		if err != nil {
 			utils.PrintToTable(header, rows)
 			logrus.Errorf("\nUnable to get request context: %v", err)
