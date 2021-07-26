@@ -25,6 +25,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 
 	return controlplanelist, nil
 }
+
 func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider models.Provider, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error) {
 	if r.controlPlaneChannel == nil {
 		r.controlPlaneChannel = make(chan []*model.ControlPlane)

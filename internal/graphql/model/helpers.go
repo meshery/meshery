@@ -96,7 +96,7 @@ func applyYaml(client *mesherykube.Client, delete bool, file string) error {
 	}
 
 	err = client.ApplyManifest([]byte(contents), mesherykube.ApplyOptions{
-		Namespace: namespace,
+		Namespace: Namespace,
 		Update:    true,
 		Delete:    delete,
 	})

@@ -8,16 +8,6 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-const (
-	namespace       = "meshery"
-	requestSubject  = "meshery.meshsync.request"
-	meshsyncSubject = "meshery.meshsync.core"
-	brokerQueue     = "meshery"
-
-	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
-	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
-)
-
 func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status) (model.Status, error) {
 	delete := true
 	if status == model.StatusEnabled {

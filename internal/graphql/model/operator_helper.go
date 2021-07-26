@@ -20,10 +20,10 @@ import (
 )
 
 const (
-	namespace       = "meshery"
-	requestSubject  = "meshery.meshsync.request"
-	meshsyncSubject = "meshery.meshsync.core"
-	brokerQueue     = "meshery"
+	Namespace       = "meshery"
+	RequestSubject  = "meshery.meshsync.request"
+	MeshsyncSubject = "meshery.meshsync.core"
+	BrokerQueue     = "meshery"
 
 	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
@@ -79,7 +79,7 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 		return controllers, ErrMesheryClient(err)
 	}
 
-	broker, err = mesheryclient.CoreV1Alpha1().Brokers(namespace).Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
+	broker, err = mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return controllers, ErrMesheryClient(err)
 	}
@@ -95,7 +95,7 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 		})
 	}
 
-	meshsync, err = mesheryclient.CoreV1Alpha1().MeshSyncs(namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
+	meshsync, err = mesheryclient.CoreV1Alpha1().MeshSyncs(Namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return controllers, ErrMesheryClient(err)
 	}
@@ -136,7 +136,7 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 
 	timeout := 60
 	for timeout > 0 {
-		broker, err = mesheryclient.CoreV1Alpha1().Brokers(namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
+		broker, err = mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
 		if err == nil && broker.Status.Endpoint.External != "" {
 			break
 		}
@@ -190,12 +190,12 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	}
 	conn.DeepCopyInto(brokerConn)
 
-	err = brokerConn.SubscribeWithChannel(meshsyncSubject, brokerQueue, datach)
+	err = brokerConn.SubscribeWithChannel(MeshsyncSubject, BrokerQueue, datach)
 	if err != nil {
 		return endpoint, ErrSubscribeChannel(err)
 	}
 
-	err = brokerConn.Publish(requestSubject, &brokerpkg.Message{
+	err = brokerConn.Publish(RequestSubject, &brokerpkg.Message{
 		Request: &brokerpkg.RequestObject{
 			Entity: brokerpkg.ReSyncDiscoveryEntity,
 		},

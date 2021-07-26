@@ -46,7 +46,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		}
 	}
 	if actions.ReSync == "true" {
-		err := r.BrokerConn.Publish(requestSubject, &broker.Message{
+		err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
 			Request: &broker.RequestObject{
 				Entity: broker.ReSyncDiscoveryEntity,
 			},
