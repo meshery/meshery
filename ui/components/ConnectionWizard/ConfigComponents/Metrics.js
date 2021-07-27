@@ -80,7 +80,7 @@ const MetricsConfig = ({classes, componentName, prometheusScannedUrls, grafanaSc
           size="large"
           onClick={handleConfigurationSubmit}
         >
-            Submit
+            Connect
         </Button>
       </Grid>
     </>

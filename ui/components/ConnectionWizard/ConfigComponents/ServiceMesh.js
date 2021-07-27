@@ -39,7 +39,7 @@ const ServiceMeshConfig = ({classes, adapterLoc, updateProgress, enqueueSnackbar
           color="primary"
           onClick={handleAdapterConfigure}
         > 
-          Configure Adapter
+          Connect Adapter
         </Button>
       </Grid>
     </>
