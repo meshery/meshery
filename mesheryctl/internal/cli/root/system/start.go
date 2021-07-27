@@ -380,7 +380,7 @@ func start() error {
 
 		podsStatus, err := utils.AreAllPodsRunning()
 		if !podsStatus {
-			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “kubectl get pods -—namespace=meshery” before using meshery.")
+			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “mesheryctl system status” before using meshery.")
 		} else {
 			log.Info("Meshery is started.")
 		}
