@@ -22,14 +22,14 @@ type MesheryApplicationRequestBody struct {
 // Handle POST request for Application File Deploy
 //
 // Deploy an attached application file with the request
-// response:
+// responses:
 // 	200: applicationFilesResponseWrapper
 
 // swagger:route DELETE /api/experimental/application/deploy ApplicationAPI idDeleteApplicationFile
 // Handle DELETE request for Application File Deploy
 //
 // Delete a deployed application file with the request
-// response:
+// responses:
 // 	200:
 
 // ApplicationFileHandler handles the requested related to application files
@@ -185,7 +185,7 @@ func (h *Handler) GetMesheryApplicationsHandler(
 // Handle Delete for a Meshery Application File
 //
 // Deletes a meshery application file with ID: id
-// response:
+// responses:
 // 	200: noContentWrapper
 
 // DeleteMesheryApplicationHandler deletes a application with the given id
