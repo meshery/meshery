@@ -543,7 +543,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 				continue
 			}
 
-			// skip the adapter as we failed to recieve response for adapter
+			// skip the adapter as we failed to receive response for adapter
 			if !skipAdapter {
 				// needs multiple defer as Body.Close needs a valid response
 				defer resp.Body.Close()
