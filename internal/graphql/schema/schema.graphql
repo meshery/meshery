@@ -185,6 +185,48 @@ type NameSpace {
 	namespace: String!
 }
 
+# ============== Perf =================================
+
+type PerfPageResult {
+	page: Int!
+	pageSize: Int!
+	totalCount: Int!
+
+	result: [PerfResult]!
+}
+
+type LatenciesMs {
+	min: Int 
+	average: Int
+	p50: Int
+	p90: Int
+	p99: Int
+	max: Int
+}
+
+type PerfResult {
+	smp_version: String
+	id: String
+	labels: [String]
+	start_time: Int
+	end_time: Int
+	latencies_ms: LatenciesMs
+	actual_qps: Int
+	details_uri: String
+	test_id: String
+	mesh_config_id: String
+	env_id: String
+}
+
+input PageFilter {
+	page: Int!
+	pageSize: Int!
+	order: String!
+	search: String
+	from: String
+	to: String
+}
+
 # ============== ROOT =================================
 
 type Query {
@@ -206,6 +248,9 @@ type Query {
 
 	# Query available Namesapces in your cluster
 	getAvailableNamespaces: [NameSpace!]!
+
+	# Query for performance result
+	getPerfResult(id: ID): PerfResult!
 }
 
 # 
@@ -238,4 +283,11 @@ type Subscription {
 
 	# Listen to changes in the list of available Namesapces in your cluster
     listenToMeshSyncEvents: OperatorControllerStatus!
+
+	# Listen to changes in Performance Results	
+	subscribePerfResults(selector: PageFilter): PerfPageResult!
+
+	# Listen to changes in Performance Profile
+	subscribePerfProfile(selector: PageFilter): PerfPageResult!
+
 }
