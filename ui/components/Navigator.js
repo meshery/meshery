@@ -21,6 +21,7 @@ import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HelpIcon from '@material-ui/icons/Help';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import {
   faChevronCircleLeft,
@@ -276,9 +277,10 @@ const externalLinkIconStyle = { width: "1.11rem", fontSize: "1.11rem" };
 const categories = [
   {
     id: "Dashboard",
+    icon: <DashboardIcon style={{ color: '#fff', opacity: 0.7, ...drawerIconsStyle }} />,
     href: "/",
     title: "System Dashboard",
-    show: false,
+    show: true,
     link: true,
   },
   {
@@ -430,7 +432,7 @@ const categories = [
     href: "/smi_results", //Temp
     title: "Conformance",
     show: true,
-    link: true,
+    link: false,
     children: [
       {
         id: "Service Mesh Interface",
@@ -864,12 +866,12 @@ class Navigator extends React.Component {
               return (
                 <React.Fragment key={childId}>
                   <ListItem
-                    button
+                    button={!!link}
                     dense
                     key={childId}
                     className={classNames(
                       classes.item,
-                      classes.itemActionable,
+                      link && classes.itemActionable,
                       path === href && classes.itemActiveItem
                     )}
                   >
