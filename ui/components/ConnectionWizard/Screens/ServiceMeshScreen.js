@@ -16,12 +16,11 @@ import { updateProgress } from "../../../lib/store.js";
 const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
 
 
-  const [state, setState] = useState({
-    availableAdapters: [],
-    activeAdapters: meshAdapters
-  })
 
-  const serviceMeshComponents = state.availableAdapters.map(adapter => ({
+  const [availableAdapters, setAvailableAdapters] = useState([])
+  const [activeAdapters, setActiveAdapters] = useState(meshAdapters)
+
+  const serviceMeshComponents = availableAdapters.map(adapter => ({
     name: adapter.name ? adapter.name : adapter.label.split(":")[0],
     logoComponent:  OpenServiceMeshIcon,
     configComp :  <ServiceMeshConfig adapterLoc={adapter.value}/>,
@@ -30,7 +29,7 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
 
   const isAdapterActive = (adapterLoc) => {
     let isActive = false
-    state.activeAdapters.forEach(adapter => {
+    activeAdapters.forEach(adapter => {
       if(adapter.adapter_location === adapterLoc) isActive = true
     }) 
     return isActive
@@ -55,11 +54,14 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
   useEffect(() => {
     fetchAvailableAdapters()
       .then(res => {
-        setState({...state, availableAdapters: res})
-        console.log("available adapters",res)
+        setAvailableAdapters( res)
       })
       .catch( err => alert(err))
-  },[])
+  },[meshAdapters])
+
+  useEffect(() => {
+    setActiveAdapters(meshAdapters) 
+  }, [meshAdapters])
 
 
 
@@ -70,7 +72,7 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
           {itemToDisplay(itemsToBeRendered, activeIndex)} setActiveIndex={setActiveIndex}/>
       </Grid>
       <Grid item xs={8} container justify="center">
-        <ServiceMeshDataPanel adapterInfo={itemToDisplay(serviceMeshComponents, activeIndex)?.adapterInfo}  />
+        <ServiceMeshDataPanel adapterInfo={itemToDisplay(serviceMeshComponents, activeIndex)?.adapterInfo} isActive={isAdapterActive(itemToDisplay(serviceMeshComponents, activeIndex)?.adapterInfo.value)}  />
       </Grid>
     </Grid>
   )

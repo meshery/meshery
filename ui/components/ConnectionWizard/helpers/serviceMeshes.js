@@ -74,7 +74,7 @@ export const pingAdapter = (adapterLoc, successCb, errorCb) => {
   );
 }
 
-export const configureAdapterWithNotification = (enqueueSnackbar, updateProgress, action, adapterLocation) => {
+export const configureAdapterWithNotification = (enqueueSnackbar, updateProgress, action, adapterLocation, updateAdaptersInfo) => {
 
   const successCb = (result) => {
     updateProgress({ showProgress: false });
@@ -85,8 +85,7 @@ export const configureAdapterWithNotification = (enqueueSnackbar, updateProgress
         autoHideDuration: 2000,
         action
       });
-      self.props.updateAdaptersInfo({ meshAdapters: result });
-      self.fetchAvailableAdapters();
+      updateAdaptersInfo({ meshAdapters: result });
     }
   }
 
@@ -125,3 +124,18 @@ export const configureAdapter = (successCb, errorCb, adapterLocation) => {
     errorCb
   );
 }
+
+
+export const handleDeleteAdapter =  (successCb, errorCb) => (adapterLoc) => {
+
+  return  dataFetch(
+      `/api/mesh/manage?adapter=${encodeURIComponent(adapterLoc)}`,
+      {
+        credentials: "same-origin",
+        method: "DELETE",
+        credentials: "include",
+      },
+      successCb,
+      errorCb
+  );
+};

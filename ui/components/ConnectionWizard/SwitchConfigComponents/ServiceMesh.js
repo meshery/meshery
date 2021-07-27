@@ -11,16 +11,16 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { updateProgress} from "../../../lib/store";
+import { updateAdaptersInfo, updateProgress} from "../../../lib/store";
 
 
 const styles = () => ({
 }) 
 
-const ServiceMeshConfig = ({classes, adapterLoc, updateProgress, enqueueSnackbar, closeSnackbar}) => {
+const ServiceMeshConfig = ({classes, adapterLoc, updateProgress, enqueueSnackbar, closeSnackbar, updateAdaptersInfo}) => {
 
   const handleAdapterConfigure = () => {
-    configureAdapterWithNotification(enqueueSnackbar, updateProgress, ServiceMeshConfigNotificationAction(closeSnackbar), adapterLoc)
+    configureAdapterWithNotification(enqueueSnackbar, updateProgress, ServiceMeshConfigNotificationAction(closeSnackbar), adapterLoc, updateAdaptersInfo)
   }
 
   const ServiceMeshConfigNotificationAction = (closeSnackbar) => (key) => (
@@ -49,6 +49,7 @@ const ServiceMeshConfig = ({classes, adapterLoc, updateProgress, enqueueSnackbar
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateAdaptersInfo: bindActionCreators(updateAdaptersInfo, dispatch),
 });
 
 export default connect(null, mapDispatchToProps)(withStyles(styles)(withSnackbar(ServiceMeshConfig)))

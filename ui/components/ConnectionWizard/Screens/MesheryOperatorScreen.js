@@ -40,11 +40,11 @@ const MesheryOperatorScreen = () => {
       error: (err) => console.log("error at operator scan: " + err),
     });
 
-  },[operatorInformation])
+  },[])
 
   useEffect(() => {
     setIsConnected(isMesheryOperatorConnected(operatorInformation))
-  },[operatorInformation])
+  },[])
 
   const setOperatorState = (res) => {
     const [isReachable, operatorInformation] = getOperatorStatusFromQueryResult(res) 

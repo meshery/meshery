@@ -1,44 +1,96 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable react/display-name */
 import {
   withStyles,
   TextField,
   MenuItem,
   Grid,
+  Button,
+  IconButton,
 } from "@material-ui/core/";
+import { withSnackbar } from "notistack";
+import { useState } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../../../lib/store";
+import ReactSelectWrapper from "../../ReactSelectWrapper"
+import { handleGrafanaConfigure, handlePrometheusConfigure } from "../helpers/metrics";
+import CloseIcon from "@material-ui/icons/Close";
 
 
 const styles = () => ({
 }) 
 
-const MetricsConfig = ({classes}) => {
+const configurationNotificationAction = (closeSnackbar) => (key) => (
+  <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+    <CloseIcon />
+  </IconButton>
+)
+
+const MetricsConfig = ({classes, componentName, prometheusScannedUrls, grafanaScannedUrls,updatePrometheusConfig, updateGrafanaConfig, closeSnackbar, enqueueSnackbar, updateProgress }) => {
+  
+  const  handleConfigurationSubmit = () => {
+
+    if(componentName === "Grafana") handleGrafanaConfigure(url,apiKey, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updateGrafanaConfig  )
+    if(componentName === "Prometheus") handlePrometheusConfigure(url, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updatePrometheusConfig  )
+  }
+  const getOptions = () => {
+    if(componentName === "Grafana") 
+      return grafanaScannedUrls?.map((graf) => ({ label: graf, value: graf })) 
+    if(componentName === "Prometheus") 
+      return prometheusScannedUrls?.map((prom) => ({ label: prom, value: prom })) 
+  }
+
+  const [url, setUrl] = useState()
+  const [apiKey, setApiKey] = useState("")
+
+
+
   return(
-    <>
+    <Grid container item alignItems="center" justify="center" style={{paddingTop: "0.6rem", paddingBottom: "0.6rem"}}>
       <Grid item xs={12}>
-        <TextField
-          id="external-config-url-input"
-          name="externalConfigURL"
-          label="URL"
-          variant="outlined"
-          fullWidth
-          margin="normal"
+        <ReactSelectWrapper
+          onChange={(select) => setUrl(select ? select.value : "")}
+          options={getOptions()}
+          value={{label:url, value:url}}
+          label={`${componentName} Base URL`}
+          error={false}
+          placeholder={`Address of ${componentName} Server`}
+          noOptionsMessage={`No ${componentName} servers discovered`}
         />
       </Grid>
-      <Grid item xs={12}>
-        <TextField
-          select
-          id="external-config-api-key-input"
-          name="externalConfigapiKey"
-          label="API key"
-          fullWidth
-          margin="normal"
-          variant="outlined"
-          // disabled={inClusterConfigForm === true}
+      {componentName === "Grafana" && 
+        <Grid item xs={12}>
+          <TextField
+            id="external-config-api-key-input"
+            name="externalConfigapiKey"
+            label="API key"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            // disabled={inClusterConfigForm === true}
+          />
+        </Grid>
+      }
+      <Grid item style={{marginTop: "0.6rem"}}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleConfigurationSubmit}
         >
-        </TextField>
+            Submit
+        </Button>
       </Grid>
-    </>
+    </Grid>
   )
 }
 
+const mapDispatchToProps = (dispatch) => ({
+  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
 
-export default withStyles(styles)(MetricsConfig)
+export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(MetricsConfig)))

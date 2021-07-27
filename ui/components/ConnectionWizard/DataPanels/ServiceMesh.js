@@ -11,8 +11,8 @@ import {
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { updateProgress, updateK8SConfig } from "../../../lib/store";
-import {pingAdapterWithNotification} from "../helpers/serviceMeshes"
+import { updateProgress, updateK8SConfig, updateAdaptersInfo } from "../../../lib/store";
+import {pingAdapterWithNotification, handleDeleteAdapter} from "../helpers/serviceMeshes"
 
 const styles = theme => ({
 
@@ -55,7 +55,7 @@ const chipStyles = (theme) => ({
 })
 
 
-const AdapterChip = withStyles(chipStyles)(({classes, handleAdapterClick, adapter}) => {
+const AdapterChip = withStyles(chipStyles)(({classes, handleAdapterClick, isActive, adapter, handleAdapterDelete}) => {
   console.log(adapter)
   let image = "/static/img/meshery-logo.png";
   let logoIcon = <img src={image} className={classes.chipIcon} />;
@@ -65,6 +65,8 @@ const AdapterChip = withStyles(chipStyles)(({classes, handleAdapterClick, adapte
       onClick={() => handleAdapterClick(adapter?.value)}
       icon={logoIcon}
       className={classes.chip}
+      onDelete={isActive ? () =>  handleAdapterDelete(adapter?.value) : null}
+      variant={isActive ? "outlined" : "default"}
       key={`adapters-${adapter?.label}`}
     />
   )
@@ -79,14 +81,37 @@ const AdapterPingSnackbarAction = (closeSnackbar) => (key) => (
 
 
 
-const ServiceMeshDataPlane= ({classes, updateProgress, enqueueSnackbar, closeSnackbar, adapterInfo}) => {
-  console.log("in the main component", adapterInfo)
+const ServiceMeshDataPlane= ({classes, updateProgress, enqueueSnackbar, closeSnackbar, adapterInfo, isActive, updateAdaptersInfo}) => {
+
+  const handleAdapterDelete =  handleDeleteAdapter(
+
+    (result) => {
+      updateProgress({ showProgress: false });
+      if (typeof result !== "undefined") {
+        enqueueSnackbar("Adapter was successfully removed!", {
+          variant: "success",
+          autoHideDuration: 2000,
+          action: AdapterPingSnackbarAction(closeSnackbar)
+        });
+        updateAdaptersInfo({ meshAdapters: result });
+      }
+    },
+
+    (err) => {
+      updateProgress({ showProgress: false });
+      enqueueSnackbar("Adapter was not removed! "+err, {
+        variant: "error",
+        autoHideDuration: 2000,
+        action: AdapterPingSnackbarAction(closeSnackbar)
+      });
+    }
+  )
 
   return (
     <Grid container className={classes.infoContainer} xs={10}>
 
       <Grid item xs={12}>
-        <AdapterChip adapter={adapterInfo} handleAdapterClick={(location) => pingAdapterWithNotification(
+        <AdapterChip adapter={adapterInfo} handleAdapterDelete={handleAdapterDelete} isActive={isActive} handleAdapterClick={(location) => pingAdapterWithNotification(
           updateProgress,
           enqueueSnackbar,
           AdapterPingSnackbarAction(closeSnackbar),
@@ -118,6 +143,7 @@ const ServiceMeshDataPlane= ({classes, updateProgress, enqueueSnackbar, closeSna
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateAdaptersInfo: bindActionCreators(updateAdaptersInfo, dispatch),
 });
 
 export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(ServiceMeshDataPlane)))

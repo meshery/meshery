@@ -11,8 +11,9 @@ import {
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { updateProgress, updateK8SConfig } from "../../../lib/store";
+import { updateProgress, updateK8SConfig, updateGrafanaConfig, updatePrometheusConfig } from "../../../lib/store";
 import {pingAdapterWithNotification} from "../helpers/serviceMeshes"
+import { deleteMetricsComponentConfig, pingGrafanaWithNotification, pingPrometheusWithNotification } from "../helpers/metrics";
 
 const styles = theme => ({
 
@@ -55,16 +56,18 @@ const chipStyles = (theme) => ({
 })
 
 
-const AdapterChip = withStyles(chipStyles)(({classes, handleAdapterClick}) => {
-  let image = "/static/img/meshery-logo.png";
+const AdapterChip = withStyles(chipStyles)(({classes, handleAdapterClick, isConnected, handleAdapterDelete, componentName}) => {
+  let image = componentName === "Grafana" ? "/static/img/grafana_icon.svg" : "/static/img/prometheus_logo_orange_circle.svg";
   let logoIcon = <img src={image} className={classes.chipIcon} />;
   return(
     <Chip
-      label={"Nothing"}
-      onClick={() => null}
+      label={componentName}
+      onClick={handleAdapterClick}
+      onDelete={isConnected ? handleAdapterDelete : null}
       icon={logoIcon}
       className={classes.chip}
       key={`adapters-${11}`}
+      variant={isConnected ? "outlined" : "default"}
     />
   )
 })
@@ -78,18 +81,75 @@ const AdapterPingSnackbarAction = (closeSnackbar) => (key) => (
 
 
 
-const MetricsDataPlane = ({classes, updateProgress, enqueueSnackbar, closeSnackbar}) => {
+const MetricsDataPlane = ({classes, updateProgress, enqueueSnackbar,grafana, prometheus, closeSnackbar, isConnected, componentName, updateGrafanaConfig, updatePrometheusConfig}) => {
+
+  const handleDeleteAdapter = () => {
+
+    updateProgress({ showProgress: true });
+
+    const successCb = (result) => {
+      updateProgress({ showProgress: false });
+      if (typeof result !== "undefined") {
+
+        if(componentName === "Grafana")
+          console.log("Updating grafana config")
+        updateGrafanaConfig({
+          grafana: {
+            grafanaURL: "",
+            grafanaAPIKey: "",
+            grafanaBoardSearch: "",
+            grafanaBoards: [],
+            selectedBoardsConfigs: [],
+          },
+        })
+      
+
+        if(componentName === "Prometheus")
+          console.log("Updating prometheus config")
+
+        updatePrometheusConfig({
+          prometheus: {
+            prometheusURL: "",
+            selectedPrometheusBoardsConfigs: [],
+          },
+        });
+
+        enqueueSnackbar(`${componentName} was successfully disconnected!` , {
+          variant: "success",
+          autoHideDuration: 2000,
+          action: AdapterPingSnackbarAction
+        })
+      }
+    }
+
+    const errorCb = (error) => {
+      updateProgress({ showProgress: false });
+      enqueueSnackbar(`${componentName} could not be disconnected!: ${error}` , {
+        variant: "error",
+        autoHideDuration: 2000,
+        action: AdapterPingSnackbarAction
+      })
+    }
+
+    deleteMetricsComponentConfig(componentName)(successCb, errorCb)
+  }
+
+
+  const handleAdapterClick = () => {
+    if(componentName === "Prometheus") pingPrometheusWithNotification(updateProgress, AdapterPingSnackbarAction(closeSnackbar), enqueueSnackbar)
+    if(componentName === "Grafana") pingGrafanaWithNotification(updateProgress, AdapterPingSnackbarAction(closeSnackbar), enqueueSnackbar)
+  } 
 
   return (
     <Grid container className={classes.infoContainer} xs={10}>
 
       <Grid item xs={12}>
-        <AdapterChip  handleAdapterClick={(location) => pingAdapterWithNotification(
-          updateProgress,
-          enqueueSnackbar,
-          AdapterPingSnackbarAction(closeSnackbar),
-          location)
-        }/>
+        <AdapterChip
+          handleAdapterClick={handleAdapterClick} 
+          isConnected={isConnected}
+          handleAdapterDelete= {handleDeleteAdapter}
+          componentName={componentName}
+        />
       </Grid>
 
       <Grid item xs={12} style={{marginBottom: "1rem"}}>
@@ -98,14 +158,14 @@ const MetricsDataPlane = ({classes, updateProgress, enqueueSnackbar, closeSnackb
 
       <Grid item xs={12} container>
         <Grid item xs={12}>
-          <Typography className={classes.infoLabel}>Adapter Server Location:</Typography>
+          <Typography className={classes.infoLabel}>Adapter Server Location:{componentName ==="Grafana" ? grafana.grafanaURL : prometheus.prometheusURL}</Typography>
         </Grid>
-          <Grid item xs={12}>
-            <Typography className={classes.infoLabel}>Adapter Version</Typography>
-            <Typography className={classes.infoData}>
+        <Grid item xs={12}>
+          <Typography className={classes.infoLabel}>Adapter Version</Typography>
+          <Typography className={classes.infoData}>
               
-            </Typography>
-          </Grid>
+          </Typography>
+        </Grid>
       </Grid>
     </Grid>
 
@@ -115,6 +175,17 @@ const MetricsDataPlane = ({classes, updateProgress, enqueueSnackbar, closeSnackb
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
 });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(MetricsDataPlane)))
+const mapStateToProps = (state) => {
+  const grafana = state.get("grafana").toJS();
+  const prometheus = state.get("prometheus").toJS();
+  return {
+    grafana,
+    prometheus
+  };
+};
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MetricsDataPlane)))
