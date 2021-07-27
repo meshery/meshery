@@ -144,6 +144,7 @@ You will need to provide a short and long description of the command for the hel
 - [jarcoal/httpmock](https://github.com/jarcoal/httpmock)
 - [Unit testing CLIs in Go](https://medium.com/swlh/unit-testing-cli-programs-in-go-6275c85af2e7)
 - [How to test CLI commands with Go and Cobra](https://gianarb.it/blog/golang-mockmania-cli-command-with-cobra)
+- [Contributing to Meshery API Swagger Documentation](https://www.youtube.com/watch?v=NAvt6B5kNIQ)
 
 ### Key principles
 
