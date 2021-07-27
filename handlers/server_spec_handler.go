@@ -19,12 +19,14 @@ type Version struct {
 	ReleaseChannel string `json:"release_channel,omitempty"`
 }
 
+
 // swagger :route GET /api/server/version SystemAPI idGetSystemVersion
 // Handle GET reqest for system/server version
 //
 //Returns the running Meshery version
 // responses:
 //200: mesheryVersionRespWrapper
+
 
 // ServerVersionHandler handles the version api request for the server
 func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,8 +56,8 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(version)
 	if err != nil {
-		h.log.Error(ErrDataSend(err))
-		http.Error(w, ErrDataSend(err).Error(), http.StatusNotFound)
+		h.log.Error(ErrEncoding(err, "server-version"))
+		http.Error(w, ErrEncoding(err, "server-version").Error(), http.StatusNotFound)
 	}
 }
 

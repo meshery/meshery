@@ -142,9 +142,9 @@ func stop() error {
 			return err
 		}
 
-		version := currCtx.Version
+		version := currCtx.GetVersion()
 		if version == "latest" {
-			if currCtx.Channel == "edge" {
+			if currCtx.GetChannel() == "edge" {
 				version = "master"
 			} else {
 				version, err = utils.GetLatestStableReleaseTag()

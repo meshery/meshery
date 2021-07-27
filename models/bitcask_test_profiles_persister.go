@@ -6,10 +6,10 @@ import (
 	"os"
 	"path"
 
+	"git.mills.io/prologic/bitcask"
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
-	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"
 )
 
@@ -61,19 +61,6 @@ func (s *BitCaskTestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]
 	if s.db == nil {
 		return nil, errors.New("connection to DB does not exist")
 	}
-
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		err = errors.Wrapf(err, "unable to obtain read lock from bitcask store")
-		logrus.Error(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	total := s.db.Len()
 
@@ -131,22 +118,9 @@ func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.Perfor
 		return nil, errors.New("connection to DB does not exist")
 	}
 
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		err = errors.Wrapf(err, "unable to obtain read lock from bitcask store")
-		logrus.Error(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
-
 	keyb := key.Bytes()
 	if !s.db.Has(keyb) {
-		err = errors.New("given key not found")
+		err := errors.New("given key not found")
 		logrus.Error(err)
 		return nil, err
 	}
@@ -175,27 +149,14 @@ func (s *BitCaskTestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 		return errors.New("connection to DB does not exist")
 	}
 
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		err = errors.Wrapf(err, "unable to obtain read lock from bitcask store")
-		logrus.Error(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
-
 	keyb := key.Bytes()
 	if !s.db.Has(keyb) {
-		err = errors.New("given key not found")
+		err := errors.New("given key not found")
 		logrus.Error(err)
 		return err
 	}
 
-	err = s.db.Delete(keyb)
+	err := s.db.Delete(keyb)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to fetch result data")
 		logrus.Error(err)
@@ -214,19 +175,6 @@ func (s *BitCaskTestProfilesPersister) WriteTestConfig(key uuid.UUID, result []b
 	if result == nil {
 		return errors.New("given result data is nil")
 	}
-
-RETRY:
-	locked, err := s.db.TryLock()
-	if err != nil {
-		err = errors.Wrapf(err, "unable to obtain write lock from bitcask store")
-		logrus.Error(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	if err := s.db.Put(key.Bytes(), result); err != nil {
 		err = errors.Wrapf(err, "unable to persist result data.")

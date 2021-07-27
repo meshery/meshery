@@ -39,7 +39,7 @@ type PatternConfigurationRolloutStrategy struct {
 
 // Deploy will deploy the application
 func Deploy(
-	kclient *meshkube.Client,
+	kubeClient *meshkube.Client,
 	oamComp v1alpha1.Component,
 	oamConfig v1alpha1.Configuration,
 	isDel bool,
@@ -56,18 +56,18 @@ func Deploy(
 
 		mesh := settings.Mesh
 		if mesh == "" {
-			mesh = detectServiceMesh(kclient)
+			mesh = detectServiceMesh(kubeClient)
 		}
 
 		var engineName rolloutEngine
-		detectedEngine := detectRolloutEngine(kclient)
+		detectedEngine := detectRolloutEngine(kubeClient)
 		if detectedEngine == "" {
 			engineName = argo
 		} else {
 			engineName = detectedEngine
 		}
 
-		engine, err := NewRolloutEngine(kclient, string(engineName))
+		engine, err := NewRolloutEngine(kubeClient, string(engineName))
 		if err != nil {
 			return err
 		}
@@ -80,7 +80,7 @@ func Deploy(
 		}
 
 		if config.RolloutStrategy == nil {
-			if err := engine.Native(RolloutEngineGenericOptions{
+			return engine.Native(RolloutEngineGenericOptions{
 				Name:        oamComp.Name,
 				Namespace:   oamComp.Namespace,
 				ServiceMesh: string(mesh),
@@ -91,11 +91,7 @@ func Deploy(
 					Annotations: oamComp.Annotations,
 				},
 				Delete: isDel,
-			}); err != nil {
-				return err
-			}
-
-			return nil
+			})
 		}
 
 		return fmt.Errorf("strategy not supported")
@@ -146,13 +142,13 @@ func getApplicationPatternConfiguration(compName string, oamConfig v1alpha1.Conf
 }
 
 // detectServiceMesh will detect available service mesh in the k8s cluster
-func detectServiceMesh(kclient *meshkube.Client) serviceMesh {
+func detectServiceMesh(kubeClient *meshkube.Client) serviceMesh {
 	return ""
 }
 
 // detectRolloutEngine will detect available rollout engine in the k8s cluster
-func detectRolloutEngine(kclient *meshkube.Client) rolloutEngine {
-	if detectArgoRollout(kclient) {
+func detectRolloutEngine(kubeClient *meshkube.Client) rolloutEngine {
+	if detectArgoRollout(kubeClient) {
 		return argo
 	}
 
@@ -160,13 +156,13 @@ func detectRolloutEngine(kclient *meshkube.Client) rolloutEngine {
 }
 
 // detectArgoRollout returns true if argo rollout is present in the cluster
-func detectArgoRollout(kclient *meshkube.Client) bool {
+func detectArgoRollout(kubeClient *meshkube.Client) bool {
 	deployments := []string{"argo-rollouts"}
-	nsList := findNamespaces(kclient)
+	nsList := findNamespaces(kubeClient)
 
 	for _, deployment := range deployments {
 		for _, ns := range nsList {
-			if _, err := kclient.
+			if _, err := kubeClient.
 				DynamicKubeClient.
 				Resource(schema.GroupVersionResource{
 					Group:    "apps",
@@ -186,8 +182,8 @@ func detectArgoRollout(kclient *meshkube.Client) bool {
 	return false
 }
 
-func findNamespaces(kClient *meshkube.Client) []string {
-	list, err := kClient.KubeClient.CoreV1().Namespaces().List(context.TODO(), v1.ListOptions{})
+func findNamespaces(kubeClient *meshkube.Client) []string {
+	list, err := kubeClient.KubeClient.CoreV1().Namespaces().List(context.TODO(), v1.ListOptions{})
 	if err != nil {
 		return []string{}
 	}
