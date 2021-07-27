@@ -277,7 +277,7 @@ const externalLinkIconStyle = { width: "1.11rem", fontSize: "1.11rem" };
 const categories = [
   {
     id: "Dashboard",
-    icon: <DashboardIcon style={{ color: '#fff', opacity: 0.7, ...drawerIconsStyle }} />,
+    icon: <DashboardIcon style={drawerIconsStyle } />,
     href: "/",
     title: "System Dashboard",
     show: true,
@@ -460,7 +460,7 @@ const externlinks = [
     id: "community",
     href: "http://slack.layer5.io",
     title: "Community",
-    icon: <FontAwesomeIcon style={drawerIconsStyle} icon={faSlack} transform="shrink-2" />,
+    icon: <FontAwesomeIcon style={{marginBottom: 2, ...drawerIconsStyle}} icon={faSlack} transform="grow-1" />,
     external_icon: ExternalLinkIcon,
   },
   {
