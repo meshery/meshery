@@ -20,8 +20,7 @@ The following is a list of top-level frameworks, libraries, design system used i
 - [ReactJS](https://reactjs.org/) - User Interface library
 - [Material UI](https://material-ui.com/) - Design System
 - [BillboardJS](https://naver.github.io/billboard.js/) - Charting library, used for exposing Grafana and Prometheus-collected metrics
-
-- [MeshMap only] [CytoscapeJS](https://js.cytoscape.org/) - a visualization tool for canvas-based, visual topology (networks)
+- [CytoscapeJS](https://js.cytoscape.org/) - a visualization tool for canvas-based, visual topology (networks)
 
 #### Meshery Server APIs
 

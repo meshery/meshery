@@ -10,7 +10,7 @@ describe('Settings', () => {
     })
 
     it('click on Discover Cluster and send a ping to the cluster', () => {
-      cy.intercept('GET', '/api/config/sync').as('getConfigSync')
+      cy.intercept('GET', '/api/system/sync').as('getConfigSync')
       cy.intercept('GET', '/api/k8sconfig/ping').as('getK8sConfigPing')
 
       cy.get('[data-cy="tabInClusterDeployment"]').click()

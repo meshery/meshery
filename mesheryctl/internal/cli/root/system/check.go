@@ -372,7 +372,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 
 	url := hc.mctlCfg.GetBaseMesheryURL()
 	var serverVersion *config.Version
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/server/version", url), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 	if err != nil {
 		return err
 	}
