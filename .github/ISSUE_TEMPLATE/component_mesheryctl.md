@@ -2,7 +2,7 @@
 name: ⌨️ [Component] mesheryctl (Meshery CLI)
 about: Report a bug or feature request for mesheryctl (Meshery CLI)
 title: '[mesheryctl]'
-labels: 'component/mesheryctl', 'language/go'
+labels: component/mesheryctl, language/go
 assignees: ''
 ---
 
