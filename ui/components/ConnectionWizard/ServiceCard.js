@@ -65,6 +65,16 @@ const styles = () => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    transition: "backgroudn 1s ease"
+  },
+  contentTopConnected: {
+    background: "white",
+    height: "10rem",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    transition: "backgroudn 1s ease"
   },
   contentTopSwitcher: {
     paddingLeft: "2rem",
@@ -87,12 +97,20 @@ const styles = () => ({
       textTransform: "capitalize",
     },
   },
+  cardIconTextConnected: {
+    color: "black",
+    fontSize: "0.85rem",
+    textAlign: "center",
+    "&:first-letter": {
+      textTransform: "capitalize",
+    },
+  },
 });
 
 
 
 
-const ServiceSwitch = ({serviceInfo, classes, isConnected}) => {
+const ServiceSwitch = ({serviceInfo, classes,isConnected }) => {
 
   const ServiceIcon = serviceInfo.logoComponent
   const ConfigComponent = serviceInfo.configComp
@@ -103,10 +121,10 @@ const ServiceSwitch = ({serviceInfo, classes, isConnected}) => {
     <Container className={ classes.cardContainer} key={ serviceInfo.name }>
       <Card className={`${classes.card} `} variant="outlined">
         <CardContent className={ showConfigComponent() ? classes.cardContentChecked : classes.cardContent}>
-          <div className={classes.contentTop}>
+          <div className={isConnected ? classes.contentTopConnected : classes.contentTop}>
             <div className={classes.iconContainer}>
               <ServiceIcon isActive={isConnected}/>
-              <Typography className={classes.cardIconText} color="primary">
+              <Typography className={isConnected ? classes.cardIconTextConnected : classes.cardIconText}  color="primary">
                 {serviceInfo.name}
               </Typography>
             </div>
