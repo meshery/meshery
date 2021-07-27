@@ -30,6 +30,20 @@ func (h *Handler) ApplicationFileHandler(
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
 }
 
+// swagger:route POST /api/experimental/application/ ApplicationsAPI idPostApplicationFileRequest
+// Handle POST request for Application Files
+
+// Sends requests for Application files
+// responses:
+// 	200: applicationFileRequestWrapper
+
+// swagger:route GET /api/experimental/application/ ApplicationsAPI idGetApplicationFileRequest
+// Handle GET request for Application Files
+
+// Fetches requests for Application files
+// responses:
+// 	200: noContentWrapper
+
 // ApplicationFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/experimental/application
 func (h *Handler) ApplicationFileRequestHandler(
@@ -144,6 +158,13 @@ func (h *Handler) handleApplicationPOST(
 		return
 	}
 }
+
+// swagger:route GET /api/experimental/application/{id} ApplicationsAPI idGetMesheryApplication
+// Handle GET request for Meshery Application with the given id
+//
+// Fetches the list of all applications saved by the current user
+// responses:
+// 	200: mesheryApplicationResponseWrapper
 
 // GetMesheryApplicationsHandler returns the list of all the applications saved by the current user
 func (h *Handler) GetMesheryApplicationsHandler(

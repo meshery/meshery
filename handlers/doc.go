@@ -56,7 +56,7 @@ type mesheryPatternResponseWrapper struct {
 type noContentWrapper struct {
 }
 
-// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule
+// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule idGetMesheryApplication
 type IDParameterWrapper struct {
 	// id for a specific
 	// in: path
@@ -241,4 +241,19 @@ type schedulesResponseWrapper struct {
 type singleScheduleResponseWrapper struct {
 	// in: body
 	Body models.Schedule
+}
+
+// Fetches Meshery Application
+// swagger:response mesheryApplicationResponseWrapper
+type mesheryApplicationResponseWrapper struct {
+	// in: body
+	Body models.MesheryApplication
+}
+
+// Posts and fetches Application file requests
+// swagger:response applicationFileRequestWrapper
+
+type applicationFileRequestWrapper struct {
+	//in: body
+	Body models.MesheryApplication
 }
