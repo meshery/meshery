@@ -96,6 +96,27 @@ make build-ui
 
 > Changes are not recompiled directly, you will have to run to rebuild the UI to see them
 
+
+#### Build Meshery-UI
+
+```
+make build-meshery-ui
+```
+
+> While `make build-ui` builds all user interfaces on your local machine. 
+
+> `make build-meshery-ui` builds only meshery user interface on your local machine.
+
+
+#### Run Meshery
+To start running Meshery locally:
+```
+make run-fast
+```
+
+> Now, Meshery will run on the default port `http:localhost:9081`.
+
+
 #### UI Development Server
 
 If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
