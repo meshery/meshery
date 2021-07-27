@@ -40,9 +40,7 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
 
   const itemsToBeRendered = serviceMeshComponents.map(comp => {
     return(
-      <Grid item lg={4} md={6} sm={12}>
         <ServiceCard serviceInfo={comp} isConnected={isAdapterActive(comp.adapterInfo.value)} /> 
-      </Grid>
     ) 
   })
 
@@ -66,12 +64,12 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
 
 
   return (
-    <Grid xs={12} container>
-      <Grid item xs={4} container justify="center">
+    <Grid xs={12} container justify="center" alignItems="flex-start">
+      <Grid item xs={6} container justify="flex-start" >
         <VerticalCarousel item=
           {itemToDisplay(itemsToBeRendered, activeIndex)} setActiveIndex={setActiveIndex}/>
       </Grid>
-      <Grid item xs={8} container justify="center">
+      <Grid item xs={6} container justify="center">
         <ServiceMeshDataPanel adapterInfo={itemToDisplay(serviceMeshComponents, activeIndex)?.adapterInfo} isActive={isAdapterActive(itemToDisplay(serviceMeshComponents, activeIndex)?.adapterInfo.value)}  />
       </Grid>
     </Grid>

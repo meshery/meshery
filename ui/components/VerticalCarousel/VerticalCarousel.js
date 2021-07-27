@@ -17,7 +17,7 @@ const VerticalCarousel = ({
   }
 
   return (
-    <Grid direction="column" container style={{position: "relative"}} alignItems="center" item>
+    <div style={{position: "relative"}}>
       <IconButton
         onClick={() => handleClick('prev')}
         style={{position: "absolute", top:"-3rem" , zIndex: 3, marginLeft: "auto", marginRight: "auto", left: 0, right: 0, textAlign:"center"}}
@@ -30,8 +30,8 @@ const VerticalCarousel = ({
       >
         <ArrowDownwardIcon />
       </IconButton>
-      <Grid item> {item} </Grid>  
-    </Grid>
+      {item} 
+    </div>
   );
 }
 

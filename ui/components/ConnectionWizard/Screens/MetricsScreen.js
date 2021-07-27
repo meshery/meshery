@@ -75,9 +75,7 @@ const MetricsScreen = ({ grafana, prometheus}) => {
 
   const itemsToBeRendered = metricsComponents.map(comp => {
     return(
-      <Grid item lg={4} md={6} sm={12}>
         <ServiceCard serviceInfo={comp} isConnected={getConnectionStatus(comp.name)} /> 
-      </Grid>
     ) 
   })
 
@@ -89,11 +87,11 @@ const MetricsScreen = ({ grafana, prometheus}) => {
 
   return (
     <Grid xs={12} container>
-      <Grid item xs={4} container justify="center">
+      <Grid item xs={6} container justify="flex-start">
         <VerticalCarousel item=
           {itemToDisplay(itemsToBeRendered, activeIndex)} setActiveIndex={setActiveIndex}/>
       </Grid>
-      <Grid item xs={8} container justify="center">
+      <Grid item xs={6} container justify="center">
         <MetricsDataPanel isConnected={itemToDisplay(metricsComponents, activeIndex).name === "Grafana" ? isGrafanaConnected : isPrometheusConnected} 
           componentName={itemToDisplay(metricsComponents, activeIndex).name}
         />
