@@ -270,3 +270,10 @@ type mesheryVersionRespWrapper struct {
 	// in: body
 	Body Version
 }
+
+// Returns the response of the application files
+// swagger:response applicationFilesResponseWrapper
+type applicationFilesResponseWrapper struct {
+	// in: body
+	Body *models.MesheryApplication
+}
