@@ -4,8 +4,8 @@ import OpenServiceMeshIcon from "../icons/OpenServiceMeshIcon.js"
 import LinkerdIcon from "../icons/LinkerdIcon.js"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import ServiceMeshConfig from "../SwitchConfigComponents/ServiceMesh"
-import ServiceSwitch from "../ServiceSwitchCard.js"
+import ServiceMeshConfig from "../ConfigComponents/ServiceMesh"
+import ServiceCard from "../ServiceCard"
 import {Grid} from "@material-ui/core"
 import VerticalCarousel from "../../VerticalCarousel/VerticalCarousel"
 import ServiceMeshDataPanel from "../DataPanels/ServiceMesh"
@@ -41,7 +41,7 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
   const itemsToBeRendered = serviceMeshComponents.map(comp => {
     return(
       <Grid item lg={4} md={6} sm={12}>
-        <ServiceSwitch serviceInfo={comp} isConnected={isAdapterActive(comp.adapterInfo.value)} /> 
+        <ServiceCard serviceInfo={comp} isConnected={isAdapterActive(comp.adapterInfo.value)} /> 
       </Grid>
     ) 
   })

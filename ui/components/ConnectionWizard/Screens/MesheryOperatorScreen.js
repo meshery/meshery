@@ -2,7 +2,7 @@
 import MesheryOperatorIcon from "../icons/MesheryOperatorIcon.js"
 import fetchMesheryOperatorStatus from '../../graphql/queries/OperatorStatusQuery';
 import subscribeOperatorStatusEvents from '../../graphql/subscriptions/OperatorStatusSubscription';
-import ServiceSwitch from "../ServiceSwitchCard.js"
+import ServiceCard from "../ServiceCard"
 import {Grid} from "@material-ui/core"
 import MesheryOperatorDataPanel from "../DataPanels/MesheryOperator"
 import { useEffect, useState } from "react"
@@ -54,7 +54,7 @@ const MesheryOperatorScreen = () => {
   return (
     <Grid item xs={12} container justify="center" alignItems="flex-start" style={{marginBottom :"2rem"}}> 
       <Grid item container justify="center" alignItems="center" xs={6}>
-        <ServiceSwitch serviceInfo={mesheryOperatorinfo} isConnected={isConnected} /> 
+        <ServiceCard serviceInfo={mesheryOperatorinfo} isConnected={isConnected} /> 
       </Grid>
       <Grid item xs={6} container justify="center">
         {
