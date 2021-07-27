@@ -61,6 +61,7 @@ const styles = (theme) => ({
     display: "inline-flex",
     width: "100%",
     height: "30px",
+    alignItems: "center"
   },
   itemActionable: {
     "&:hover": {
@@ -183,6 +184,7 @@ const styles = (theme) => ({
     display: "none",
     [theme.breakpoints.up("sm")]: {
       display: "flex",
+      flexDirection: "column",
       "margin-top": "auto",
       "margin-bottom": "0.5rem",
     },
@@ -232,11 +234,18 @@ const styles = (theme) => ({
     }
   },
   marginLeft: {
-    marginLeft: "auto",
+    marginLeft: 8,
     "& .MuiListItem-gutters": {
-      paddingLeft: 4,
-      paddingRight: 4
+      paddingLeft: 8,
+      paddingRight: 8
     }
+  },
+  rightMargin: {
+    marginRight: 8
+  },
+  btnGrpMarginRight: {
+    marginRight: 4,
+    alignItems: 'center'
   },
   helpIcon: {
     color: '#fff',
@@ -253,10 +262,11 @@ const styles = (theme) => ({
   },
   helperIcons: {
     textAlign: "right",
-    paddingRight: 0,
-    "&:hover": {
-      color: "#fff"
-    },
+    marginLeft: "auto",
+  },
+  extraPadding: {
+    paddingTop: 4,
+    paddingBottom: 4
   }
 });
 
@@ -899,39 +909,40 @@ class Navigator extends React.Component {
 
           </List>
           <div className={classes.fixedSidebarFooter}>
+
             <ButtonGroup
               size="large"
-              className={!isDrawerCollapsed ? classes.marginLeft : ""}
+              className={!isDrawerCollapsed ? classes.marginLeft : classes.btnGrpMarginRight}
               orientation={isDrawerCollapsed ? "vertical" : "horizontal"}
             >
               {externlinks.map(({ id, icon, title, href }, index) => {
                 return (
                   <ListItem
-                    dense
                     key={id}
                     className={classes.item}
                   >
                     <Grow
                       in={showHelperButton}
-                      {...(showHelperButton ? { timeout: 200 * index } : { timeout: 100 * index })}
+                      timeout={{ enter: (510 - index * 170), exit: 100 * index }}
                     >
-                      <div
-                        component="a"
+                      <a
                         href={href}
                         target="_blank"
-                        className={classNames(classes.link)}>
+                        className={classNames(classes.link, isDrawerCollapsed ? classes.extraPadding : "")}>
                         <Tooltip
                           title={title}
                           placement={isDrawerCollapsed ? "right" : "top"}
                         >
-                          <ListItemIcon className={classNames(classes.listIcon, classes.itemActionable, classes.helperIcons)}>{icon}</ListItemIcon>
+                          <ListItemIcon className={classNames(classes.listIcon, classes.helperIcons, classes.helpIcon)}>{icon}</ListItemIcon>
                         </Tooltip>
-                      </div>
+                      </a>
                     </Grow>
                   </ListItem>
                 );
               })}
-              <ListItem dense>
+              <ListItem
+                className={classes.rightMargin}
+              >
                 <Tooltip
                   title="Help"
                   placement={isDrawerCollapsed ? "right" : "top"}
@@ -941,16 +952,17 @@ class Navigator extends React.Component {
                   </IconButton>
                 </Tooltip>
               </ListItem>
-              <ListItem dense button className={classname} onClick={() => this.toggleMiniDrawer()}>
-                <FontAwesomeIcon
-                  icon={faChevronCircleLeft}
-                  fixedWidth
-                  color="#FFFFFF"
-                  size="lg"
-                  alt="Sidebar collapse toggle icon"
-                />
-              </ListItem>
             </ButtonGroup>
+
+            <ListItem button className={classname} onClick={() => this.toggleMiniDrawer()}>
+              <FontAwesomeIcon
+                icon={faChevronCircleLeft}
+                fixedWidth
+                color="#FFFFFF"
+                size="lg"
+                alt="Sidebar collapse toggle icon"
+              />
+            </ListItem>
           </div>
         </Drawer>
       </NoSsr>
