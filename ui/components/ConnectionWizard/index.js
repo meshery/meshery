@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ["Kubernetes", "Meshery Operator", "Service Mesh",
+  return ["Kubernetes", "Meshery Operator", "Meshery Adapters",
     "Metrics"
   ];
 }

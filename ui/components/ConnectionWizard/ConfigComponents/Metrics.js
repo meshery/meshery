@@ -72,7 +72,7 @@ const MetricsConfig = ({classes, componentName, prometheusScannedUrls, grafanaSc
           />
         </Grid>
       }
-      <Grid item style={{marginTop: "0.6rem", marginBottom: "0.6rem"}}>
+      <Grid item style={{marginTop: "0.6rem", marginBottom: "0.6rem", textAlign:"center"}}>
         <Button
           type="submit"
           variant="contained"

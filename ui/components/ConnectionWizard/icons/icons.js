@@ -365,7 +365,7 @@ const icons = (completed, active) => {
           viewBox="-1.5 0 50 52"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          style={{padding: "0.2rem", paddingRight : 0, paddingTop: 0}} 
+          style={{padding: "0.2rem", paddingRight : 0, paddingTop: 0, position: "absolute", marginRight: "-0.4rem"}} 
         >
           <g clipPath="url(#clip3)">
             <path
@@ -389,7 +389,7 @@ const icons = (completed, active) => {
           viewBox="2.5 0 50 52"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          style={{padding: "0.2rem", paddingLeft : 0, paddingTop: 0}} 
+          style={{padding: "0.2rem", paddingLeft : 0, paddingTop: 0, marginRight: "0.3rem", position:"absolute"}} 
         >
           <g clipPath="url(#clip4)">
             <path

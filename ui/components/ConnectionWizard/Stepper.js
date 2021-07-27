@@ -76,6 +76,7 @@ function ColorlibStepIcon(props) {
         [classes.active]: active,
         [classes.completed]: completed,
       })}
+      style={{position: "relative"}}
     >
       {icons[String(props.icon)]}
     </div>
