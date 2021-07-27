@@ -109,7 +109,7 @@ func start() error {
 		currCtx.SetPlatform(utils.PlatformFlag)
 	}
 
-	// Deploy to platform specified in the config.yaml
+	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
 
@@ -118,7 +118,7 @@ func start() error {
 			return ErrDownloadFile(err, utils.DockerComposeFile)
 		}
 
-		// Viper instance used for docker compose
+		// viper instance used for docker compose
 		utils.ViperCompose.SetConfigFile(utils.DockerComposeFile)
 		err = utils.ViperCompose.ReadInConfig()
 		if err != nil {
