@@ -366,6 +366,8 @@ func (hc *HealthChecker) runKubernetesHealthChecks() error {
 
 // runMesheryVersionHealthChecks runs checks regarding meshery version and mesheryctl version
 func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
+	skipServerLogs := false
+
 	if hc.Options.PrintLogs {
 		log.Info("\nMeshery Version \n--------------")
 	}
@@ -377,59 +379,81 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		return err
 	}
 
+	tokenPath = constants.GetCurrentAuthToken()
+
+	err = utils.AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return errors.New("authentication token not found. please supply a valid user token. login with `mesheryctl system login`")
+	}
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	if err != nil {
+	// failed to fetch response for server version
+	if err != nil || resp.StatusCode != 200 {
 		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Info("!! Failed to check server version")
+			log.Info("!! failed to check server version. try starting Meshery with `mesheryctl system start`")
+			skipServerLogs = true
 		} else {
 			return err
 		}
 	}
 
-	// needs multiple defer as Body.Close needs a valid response
-	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return errors.Errorf("\n  Invalid response: %v", err)
-	}
-
-	err = json.Unmarshal(data, &serverVersion)
-	if err != nil {
-		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
-	}
-
-	res, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
-	if err != nil {
-		return err
-	}
-	if hc.Options.PrintLogs { // log if we're supposed to
-		if res.Latest {
-			log.Infof("✓ server is up-to-date (stable-%s)", serverVersion.GetBuild())
-		} else {
-			log.Info("!! server is not up-to-date")
+	// skip this part as we failed to get a response from the api
+	if !skipServerLogs {
+		// needs multiple defer as Body.Close needs a valid response
+		defer resp.Body.Close()
+		data, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Errorf("\n  Invalid response: %v", err)
 		}
-	} else { // else we grab the error
-		if !res.Latest {
-			return errors.New("!! server is not up-to-date")
+
+		log.Info(string(data))
+		err = json.Unmarshal(data, &serverVersion)
+		if err != nil {
+			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
+		}
+
+		res, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
+		if err != nil {
+			return err
+		}
+		if hc.Options.PrintLogs { // log if we're supposed to
+			if res.Latest {
+				log.Infof("✓ server is up-to-date (stable-%s)", serverVersion.GetBuild())
+			} else {
+				log.Info("!! server is not up-to-date")
+			}
+		} else { // else we grab the error
+			if !res.Latest {
+				return errors.New("!! server is not up-to-date")
+			}
 		}
 	}
 
+	skipClientLogs := false
 	latest, err := utils.GetLatestStableReleaseTag()
 	if err != nil {
-		return err
+		if hc.Options.PrintLogs { // log if we're supposed to
+			log.Info("!! failed to fetch latest release tag")
+			skipClientLogs = true
+		} else {
+			return err
+		}
 	}
 
-	version := constants.GetMesheryctlVersion()
-	if hc.Options.PrintLogs { // log if we're supposed to
-		if latest == version {
-			log.Infof("✓ cli is up-to-date (stable-%s)", version)
-		} else {
-			log.Info("!! cli is not up-to-date")
-		}
-	} else { // else we grab the error
-		if latest != version {
-			return errors.New("!! cli is not up-to-date")
+	// skip logs for client as we failed to check latest tag on github
+	if !skipClientLogs {
+		version := constants.GetMesheryctlVersion()
+		if hc.Options.PrintLogs { // log if we're supposed to
+			if latest == version {
+				log.Infof("✓ cli is up-to-date (stable-%s)", version)
+			} else {
+				log.Info("!! cli is not up-to-date")
+			}
+		} else { // else we grab the error
+			if latest != version {
+				return errors.New("!! cli is not up-to-date")
+			}
 		}
 	}
 
@@ -437,6 +461,8 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 }
 
 func (hc *HealthChecker) runAdapterHealthChecks() error {
+	skipAllAdapters := false
+
 	if hc.Options.PrintLogs {
 		log.Info("\nMeshery Adapters \n--------------")
 	}
@@ -461,66 +487,77 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 	}
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return errors.New("authentication token not found. please supply a valid user token")
+		return errors.New("authentication token not found. please supply a valid user token. login with `mesheryctl system login`")
 	}
 
 	var adapters []*models.Adapter
 	resp, err := client.Do(req)
-	if err != nil {
+	// failed to grab response from the request
+	if err != nil || resp.StatusCode != 200 {
 		if hc.Options.PrintLogs {
-			log.Info("!! Failed to grab running adapters")
+			log.Info("!! failed to grab running adapters")
+			skipAllAdapters = true
 		} else {
 			return err
 		}
 	}
 
-	// needs multiple defer as Body.Close needs a valid response
-	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return errors.Errorf("\n  Invalid response: %v", err)
-	}
-
-	err = json.Unmarshal(data, &adapters)
-	if err != nil {
-		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
-	}
-
-	// check for each adapter
-	for _, adapter := range adapters {
-		name := strings.Split(adapter.Location, ":")[0]
-		if adapter.Ops == nil {
-			if hc.Options.PrintLogs { // incase we're printing logs
-				log.Infof("!! %s adapter is not running", name)
-			}
-			continue
-		}
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/mesh/adapter/ping?adapter=%s", url, adapter.Name), nil)
-		if err != nil {
-			return err
-		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			if hc.Options.PrintLogs { // incase we're printing logs
-				log.Infof("!! Failed to check %s adapter", name)
-			} else { // or we're supposed to grab the errors
-				return fmt.Errorf("!! Failed to check %s adapter: %s", name, err)
-			}
-			continue
-		}
-
+	// skip this as we failed to grab a respnose from the api
+	if !skipAllAdapters {
 		// needs multiple defer as Body.Close needs a valid response
 		defer resp.Body.Close()
-		if resp.StatusCode != 200 {
-			if hc.Options.PrintLogs { // incase we're printing logs
-				log.Infof("!! %s adapter is running but not reachable", name)
-			} else { // or we're supposed to grab the errors
-				return fmt.Errorf("!! %s adapter is running but not reachable", name)
+		data, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Errorf("\n  Invalid response: %v", err)
+		}
+
+		err = json.Unmarshal(data, &adapters)
+		if err != nil {
+			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
+		}
+
+		// check for each adapter
+		for _, adapter := range adapters {
+			skipAdapter := false
+
+			name := strings.Split(adapter.Location, ":")[0]
+			if adapter.Ops == nil {
+				if hc.Options.PrintLogs { // incase we're printing logs
+					log.Infof("!! %s adapter is not running", name)
+				}
+				continue
 			}
-		} else { // if status == 200 we check if we are supposed to print logs
-			if hc.Options.PrintLogs { // incase we're printing logs
-				log.Infof("✓ %s adapter is running and reachable", name)
+			req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/mesh/adapter/ping?adapter=%s", url, adapter.Name), nil)
+			if err != nil {
+				return err
+			}
+
+			resp, err := client.Do(req)
+			if err != nil {
+				if hc.Options.PrintLogs { // incase we're printing logs
+					log.Infof("!! Failed to check %s adapter", name)
+					skipAdapter = true
+				} else { // or we're supposed to grab the errors
+					return fmt.Errorf("!! Failed to check %s adapter: %s", name, err)
+				}
+				continue
+			}
+
+			// skip the adapter as we failed to recieve response for adapter
+			if !skipAdapter {
+				// needs multiple defer as Body.Close needs a valid response
+				defer resp.Body.Close()
+				if resp.StatusCode != 200 {
+					if hc.Options.PrintLogs { // incase we're printing logs
+						log.Infof("!! %s adapter is running but not reachable", name)
+					} else { // or we're supposed to grab the errors
+						return fmt.Errorf("!! %s adapter is running but not reachable", name)
+					}
+				} else { // if status == 200 we check if we are supposed to print logs
+					if hc.Options.PrintLogs { // incase we're printing logs
+						log.Infof("✓ %s adapter is running and reachable", name)
+					}
+				}
 			}
 		}
 	}
