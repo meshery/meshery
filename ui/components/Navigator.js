@@ -62,7 +62,7 @@ const styles = (theme) => ({
     display: "inline-flex",
     width: "100%",
     height: "30px",
-    alignItems: "center"
+    alignItems: "self-end"
   },
   itemActionable: {
     "&:hover": {
@@ -930,6 +930,7 @@ class Navigator extends React.Component {
                       <a
                         href={href}
                         target="_blank"
+                        rel="noreferrer"
                         className={classNames(classes.link, isDrawerCollapsed ? classes.extraPadding : "")}>
                         <Tooltip
                           title={title}
