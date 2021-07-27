@@ -35,6 +35,7 @@ const styles = theme => ({
     fontSize: ".9rem",
     color: theme.palette.text.primary,
     marginRight: "1rem",
+    fontWeight: 500
   },
   infoData: {
     fontSize: ".9rem",
@@ -93,12 +94,13 @@ const KubernetesDataPanel = ({clusterInformation, classes, updateProgress, enque
       </Grid>
 
       <Grid item xs={12} style={{marginBottom: "1rem"}}>
-        <Typography className={classes.infoTitle}>Status</Typography>
+        <Typography className={classes.infoTitle}>Details</Typography>
       </Grid>
 
       <Grid item xs={12} container>
         <Grid item xs={12}>
-          <Typography className={classes.infoLabel}>Current-Context: {clusterInformation.contextName}</Typography>
+          <Typography className={classes.infoLabel}>Current-Context:  </Typography>
+          <Typography className={classes.infoData}>{clusterInformation.contextName}</Typography>
           <Typography className={classes.infoData}>
             {clusterInformation.inClusterConfig ? "Using In Cluster Config" : "Using out of cluster config"}
           </Typography>

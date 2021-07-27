@@ -54,7 +54,7 @@ const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress }) => {
     clusterInformation,
   };
 
-  const showDataPanel = () =>
+  const showDataPanel = () => 
     isKubernetesConnected(clusterInformation.isClusterConfigured, clusterInformation.kubernetesPingStatus);
 
   return (

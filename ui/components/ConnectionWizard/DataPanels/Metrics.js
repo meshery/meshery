@@ -36,6 +36,7 @@ const styles = theme => ({
     fontSize: ".9rem",
     color: theme.palette.text.primary,
     marginRight: "1rem",
+    fontWeight: 500
   },
   infoData: {
     fontSize: ".9rem",
@@ -153,12 +154,13 @@ const MetricsDataPlane = ({classes, updateProgress, enqueueSnackbar,grafana, pro
       </Grid>
 
       <Grid item xs={12} style={{marginBottom: "1rem"}}>
-        <Typography className={classes.infoTitle}>Status</Typography>
+        <Typography className={classes.infoTitle}>Details</Typography>
       </Grid>
 
       <Grid item xs={12} container>
         <Grid item xs={12}>
-          <Typography className={classes.infoLabel}>Adapter Server Location:{componentName ==="Grafana" ? grafana.grafanaURL : prometheus.prometheusURL}</Typography>
+          <Typography className={classes.infoLabel}>Adapter Server Location:</Typography>
+          <Typography className={classes.infoData}>{componentName ==="Grafana" ? grafana.grafanaURL : prometheus.prometheusURL}</Typography>
         </Grid>
         <Grid item xs={12}>
           <Typography className={classes.infoLabel}>Adapter Version</Typography>
