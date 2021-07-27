@@ -51,7 +51,7 @@ const KubernetesConfig = ({enqueueSnackbar, closeSnackbar, updateK8SConfig, upda
 
   return(
     <>
-      <Grid item xs={12}>
+      <Grid item xs={12} style={{marginBottom: "0.6rem"}}>
         {/*<TextField
           id="k8sfileLabelText"
           name="k8sfileLabelText"

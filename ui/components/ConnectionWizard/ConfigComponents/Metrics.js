@@ -47,8 +47,8 @@ const MetricsConfig = ({classes, componentName, prometheusScannedUrls, grafanaSc
 
 
   return(
-    <Grid container item alignItems="center" justify="center" style={{paddingTop: "0.6rem", paddingBottom: "0.6rem"}}>
-      <Grid item xs={12}>
+    <>
+      <Grid item xs={12} style={{marginTop: "1rem"}}>
         <ReactSelectWrapper
           onChange={(select) => setUrl(select ? select.value : "")}
           options={getOptions()}
@@ -60,7 +60,7 @@ const MetricsConfig = ({classes, componentName, prometheusScannedUrls, grafanaSc
         />
       </Grid>
       {componentName === "Grafana" && 
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{marginTop:"0.6rem"}}>
           <TextField
             id="external-config-api-key-input"
             name="externalConfigapiKey"
@@ -72,7 +72,7 @@ const MetricsConfig = ({classes, componentName, prometheusScannedUrls, grafanaSc
           />
         </Grid>
       }
-      <Grid item style={{marginTop: "0.6rem"}}>
+      <Grid item style={{marginTop: "0.6rem", marginBottom: "0.6rem"}}>
         <Button
           type="submit"
           variant="contained"
@@ -83,7 +83,7 @@ const MetricsConfig = ({classes, componentName, prometheusScannedUrls, grafanaSc
             Submit
         </Button>
       </Grid>
-    </Grid>
+    </>
   )
 }
 
