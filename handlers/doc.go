@@ -14,6 +14,7 @@
 //
 //     Consumes:
 //     - application/json
+//	   - multipart/form-data
 //
 //     Produces:
 //     - application/json
@@ -32,6 +33,8 @@
 package handlers
 
 import (
+	"bytes"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
@@ -276,4 +279,22 @@ type mesheryVersionRespWrapper struct {
 type applicationFilesResponseWrapper struct {
 	// in: body
 	Body *models.MesheryApplication
+}
+
+// Parameters for uploading a yaml file
+// swagger:parameters idPostDeployApplicationFile
+type applicationFileParamsWrapper struct {
+	// in: formData
+	//
+	// swagger:file
+	FormFile *bytes.Buffer `json:"Upload Yaml/Yml File"`
+}
+
+// Parameters for uploading a yaml file
+// swagger:parameters idPostDeployPattern
+type patternFileParamsWrapper struct {
+	// in: formData
+	//
+	// swagger:file
+	FormFile *bytes.Buffer `json:"Upload Yaml/Yml File"`
 }

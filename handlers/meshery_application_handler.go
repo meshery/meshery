@@ -18,7 +18,7 @@ type MesheryApplicationRequestBody struct {
 	ApplicationData *models.MesheryApplication `json:"application_data,omitempty"`
 }
 
-// swagger:route POST /api/experimental/application/deploy ApplicationAPI idPostApplicationFile
+// swagger:route POST /api/experimental/application/deploy ApplicationAPI idPostDeployApplicationFile
 // Handle POST request for Application File Deploy
 //
 // Deploy an attached application file with the request
