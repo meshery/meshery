@@ -26,8 +26,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-var configuration config.MesheryCtlConfig
-
+var configuration *config.MesheryCtlConfig
+var tempContext string = "local"
 var (
 	availableSubcommands []*cobra.Command
 )
@@ -64,5 +64,6 @@ func init() {
 		viewContextCmd,
 		listContextCmd,
 	}
+	ContextCmd.PersistentFlags().StringVarP(&tempContext, "context", "c", "", "(optional) temporarily change the current context.")
 	ContextCmd.AddCommand(availableSubcommands...)
 }
