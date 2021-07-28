@@ -15,6 +15,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,6 +27,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -244,7 +246,9 @@ func NavigateToBrowser(endpoint string) error {
 		// Meshery running on Linux host
 		_, err := exec.LookPath("xdg-open")
 		if err != nil {
-			return errors.Wrap(err, SystemError("failed to exec command"))
+			// return errors.Wrap(err, SystemError("failed to exec command"))
+			log.Warn(err)
+			return nil
 			//find out what to do here!
 		}
 		err = exec.Command("xdg-open", endpoint).Start()
@@ -549,7 +553,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 }
 
 func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models.Preference, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/config/sync"
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
 	client := &http.Client{}
 	req, err := http.NewRequest(method, path, nil)
@@ -579,4 +583,226 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models
 	}
 
 	return prefs, nil
+}
+
+// TransformYAML takes in:
+// 	yamlByt - YAML Byte slice that needs to be modified
+//	transform - function that will be executed on that value, the returned value will replace the current value
+// 	keys - takes in a series of keys which are supposed to be nested, numbers can also be passed to access an array
+func TransformYAML(yamlByt []byte, transform func(interface{}) (interface{}, error), keys ...string) ([]byte, error) {
+	var data map[string]interface{}
+
+	err := yaml.Unmarshal(yamlByt, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	data = RecursiveCastMapStringInterfaceToMapStringInterface(data)
+
+	val, ok := MapGet(data, keys...)
+	if !ok {
+		return nil, fmt.Errorf("invalid path")
+	}
+
+	transformed, err := transform(val)
+	if err != nil {
+		return nil, err
+	}
+
+	MapSet(data, transformed, keys...)
+
+	return yaml.Marshal(data)
+}
+
+// MapGet takes in the map keys - each key goes one level deeper in the map
+func MapGet(mp map[string]interface{}, key ...string) (interface{}, bool) {
+	if mp == nil {
+		return nil, false
+	}
+
+	if len(key) == 0 {
+		return mp, true
+	}
+
+	if len(key) == 1 {
+		val, ok := mp[key[0]]
+		return val, ok
+	}
+
+	val, ok := mp[key[0]]
+	if !ok {
+		return mp, false
+	}
+
+	switch v := val.(type) {
+	case map[string]interface{}:
+		return MapGet(v, key[1:]...)
+	case []interface{}:
+		// Check if we can find key in the nested structure
+		if len(key) < 2 {
+			return mp, false
+		}
+
+		// Check if the key[1] is of type uint, if it is then
+		keyNum, err := strconv.Atoi(key[1])
+		if err != nil {
+			return mp, false
+		}
+
+		if keyNum >= len(v) {
+			return mp, false
+		}
+
+		valMapM, ok := v[keyNum].(map[string]interface{})
+		if !ok {
+			return mp, false
+		}
+
+		return MapGet(valMapM, key[2:]...)
+	case []map[string]interface{}:
+		// Check if we can find key in the nested structure
+		if len(key) < 2 {
+			return mp, false
+		}
+
+		// Check if the key[1] is of type uint, if it is then
+		keyNum, err := strconv.Atoi(key[1])
+		if err != nil {
+			return mp, false
+		}
+
+		if keyNum >= len(v) {
+			return mp, false
+		}
+
+		return MapGet(v[keyNum], key[2:]...)
+	}
+
+	return mp, true
+}
+
+// MapSet takes in the map that needs to be manipulated, the value that needs to
+// be assgined to be assigned and the key - each key goes one level deeper in the map
+func MapSet(mp map[string]interface{}, value interface{}, key ...string) {
+	var _mapSet func(map[string]interface{}, interface{}, ...string) map[string]interface{}
+
+	_mapSet = func(mp map[string]interface{}, value interface{}, key ...string) map[string]interface{} {
+		if mp == nil {
+			return nil
+		}
+
+		if len(key) == 0 {
+			return mp
+		}
+
+		if len(key) == 1 {
+			mp[key[0]] = value
+			return mp
+		}
+
+		val, ok := mp[key[0]]
+		if !ok {
+			return mp
+		}
+
+		switch v := val.(type) {
+		case map[string]interface{}:
+			mp[key[0]] = _mapSet(v, value, key[1:]...)
+			return mp
+		case []interface{}:
+			// Check if we can find key in the nested structure
+			if len(key) < 2 {
+				return mp
+			}
+
+			// Check if the key[1] is of type uint, if it is then
+			keyNum, err := strconv.Atoi(key[1])
+			if err != nil {
+				return mp
+			}
+
+			if keyNum >= len(v) {
+				return mp
+			}
+
+			valMapM, ok := v[keyNum].(map[string]interface{})
+			if !ok {
+				return mp
+			}
+
+			v[keyNum] = _mapSet(valMapM, value, key[2:]...)
+
+			mp[key[0]] = v
+
+			return mp
+		case []map[string]interface{}:
+			// Check if we can find key in the nested structure
+			if len(key) < 2 {
+				return mp
+			}
+
+			// Check if the key[1] is of type uint, if it is then
+			keyNum, err := strconv.Atoi(key[1])
+			if err != nil {
+				return mp
+			}
+
+			if keyNum >= len(v) {
+				return mp
+			}
+
+			v[keyNum] = _mapSet(v[keyNum], value, key[2:]...)
+
+			mp[key[0]] = v
+
+			return mp
+		}
+
+		return mp
+	}
+
+	_mapSet(mp, value, key...)
+}
+
+// RecursiveCastMapStringInterfaceToMapStringInterface will convert a
+// map[string]interface{} recursively => map[string]interface{}
+func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface{}) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(in)
+	out, ok := res.(map[string]interface{})
+	if !ok {
+		fmt.Println("failed to cast")
+	}
+
+	return out
+}
+
+// ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
+//
+// It will also convert []interface{} => []string
+func ConvertMapInterfaceMapString(v interface{}) interface{} {
+	switch x := v.(type) {
+	case map[interface{}]interface{}:
+		m := map[string]interface{}{}
+		for k, v2 := range x {
+			switch k2 := k.(type) {
+			case string:
+				m[k2] = ConvertMapInterfaceMapString(v2)
+			default:
+				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2)
+			}
+		}
+		v = m
+
+	case []interface{}:
+		for i, v2 := range x {
+			x[i] = ConvertMapInterfaceMapString(v2)
+		}
+
+	case map[string]interface{}:
+		for k, v2 := range x {
+			x[k] = ConvertMapInterfaceMapString(v2)
+		}
+	}
+
+	return v
 }

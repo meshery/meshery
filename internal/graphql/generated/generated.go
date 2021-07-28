@@ -96,6 +96,7 @@ type ComplexityRoot struct {
 		GetAvailableNamespaces func(childComplexity int) int
 		GetControlPlanes       func(childComplexity int, filter *model.ControlPlaneFilter) int
 		GetOperatorStatus      func(childComplexity int) int
+		ResyncCluster          func(childComplexity int, selector *model.ReSyncActions) int
 	}
 
 	Subscription struct {
@@ -114,6 +115,7 @@ type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error)
 	GetControlPlanes(ctx context.Context, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error)
 	GetOperatorStatus(ctx context.Context) (*model.OperatorStatus, error)
+	ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error)
 	GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error)
 }
 type SubscriptionResolver interface {
@@ -339,6 +341,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetOperatorStatus(childComplexity), true
+
+	case "Query.resyncCluster":
+		if e.complexity.Query.ResyncCluster == nil {
+			break
+		}
+
+		args, err := ec.field_Query_resyncCluster_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ResyncCluster(childComplexity, args["selector"].(*model.ReSyncActions)), true
 
 	case "Subscription.listenToAddonState":
 		if e.complexity.Subscription.ListenToAddonState == nil {
@@ -646,6 +660,14 @@ type NameSpace {
 	namespace: String!
 }
 
+# ============== RESYNC =============================
+
+# Type ReSyncActions define the actions involved during resync
+input ReSyncActions {
+    clearDB: String!
+    ReSync: String!
+}
+
 # ============== ROOT =================================
 
 type Query {
@@ -664,6 +686,12 @@ type Query {
     
 	# Query status of Meshery Operator in your cluster
 	getOperatorStatus: OperatorStatus
+	
+    # Query to resync the cluster discovery
+    resyncCluster(
+        # Selector to control several resync actions
+        selector: ReSyncActions
+    ): Status!
 
 	# Query available Namesapces in your cluster
 	getAvailableNamespaces: [NameSpace!]!
@@ -780,6 +808,21 @@ func (ec *executionContext) field_Query_getControlPlanes_args(ctx context.Contex
 		}
 	}
 	args["filter"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_resyncCluster_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.ReSyncActions
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalOReSyncActions2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐReSyncActions(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
 	return args, nil
 }
 
@@ -1743,6 +1786,48 @@ func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field 
 	res := resTmp.(*model.OperatorStatus)
 	fc.Result = res
 	return ec.marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_resyncCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_resyncCluster_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ResyncCluster(rctx, args["selector"].(*model.ReSyncActions))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Status)
+	fc.Result = res
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAvailableNamespaces(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3200,6 +3285,34 @@ func (ec *executionContext) unmarshalInputOperatorStatusInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputReSyncActions(ctx context.Context, obj interface{}) (model.ReSyncActions, error) {
+	var it model.ReSyncActions
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "clearDB":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearDB"))
+			it.ClearDb, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "ReSync":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ReSync"))
+			it.ReSync, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -3544,6 +3657,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getOperatorStatus(ctx, field)
+				return res
+			})
+		case "resyncCluster":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_resyncCluster(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "getAvailableNamespaces":
@@ -4443,6 +4570,14 @@ func (ec *executionContext) unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlaye
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputOperatorStatusInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOReSyncActions2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐReSyncActions(ctx context.Context, v interface{}) (*model.ReSyncActions, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputReSyncActions(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
