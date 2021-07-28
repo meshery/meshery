@@ -187,7 +187,7 @@ As of release v0.5.39, Meshery Server has extended its capability to configure t
 
 ### Example Deployment Scenario: Meshery Cloud, Istio, and Azure Kubernetes Service
 
-User has deployed the Meshery behind a Istio ingressgateway and the Istio is also behind a Application Gateway (in a cloud infrastructure). Generally when you use github remote provider for authentication, it redirect the request to ingressgateway FQDN. But in this setup the redirection won't be successful becuase the ingress gateway is behind an addition application Gateway. In this case you have to define where the request should be redirected once it is authenticated from github.
+User has deployed the Meshery behind a Istio Ingress Gateway and the Istio is also behind an Application Gateway (e.g. AKS Application Gateway). Generally, when you use a GitHub Remote Provider for authentication, it redirect the request to the Istio Ingress Gateway FQDN. In this setup, redirection won't be successful because the Ingress Gateway is behind an additional Application Gateway. In this case, you have to define where the request should be redirected once it is authenticated from GitHub.
 
 ***Solution:***
 
