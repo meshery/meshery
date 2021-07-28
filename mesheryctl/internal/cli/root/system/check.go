@@ -379,13 +379,6 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		return err
 	}
 
-	tokenPath = constants.GetCurrentAuthToken()
-
-	err = utils.AddAuthDetails(req, tokenPath)
-	if err != nil {
-		return errors.New("authentication token not found. please supply a valid user token. login with `mesheryctl system login`")
-	}
-
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	// failed to fetch response for server version
