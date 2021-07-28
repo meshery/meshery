@@ -83,6 +83,7 @@ const VerticalCarousel = ({handleAfterSlideChange, slides, sliderRef}) => {
     slidesToShow: 1,
     arrows: true,
     slidesToScroll: 1,
+    centerMode:true,
     vertical: true,
     verticalSwiping: true,
     swipeToSlide: true,
