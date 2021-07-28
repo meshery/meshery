@@ -282,17 +282,8 @@ type applicationFilesResponseWrapper struct {
 }
 
 // Parameters for uploading a yaml file
-// swagger:parameters idPostDeployApplicationFile
+// swagger:parameters idPostDeployApplicationFile idPostDeployPattern
 type applicationFileParamsWrapper struct {
-	// in: formData
-	//
-	// swagger:file
-	FormFile *bytes.Buffer `json:"Upload Yaml/Yml File"`
-}
-
-// Parameters for uploading a yaml file
-// swagger:parameters idPostDeployPattern
-type patternFileParamsWrapper struct {
 	// in: formData
 	//
 	// swagger:file
