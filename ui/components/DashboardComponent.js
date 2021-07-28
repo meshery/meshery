@@ -178,6 +178,8 @@ class DashboardComponent extends React.Component {
       meshScan: [],
       activeMeshScanNamespace: {},
       meshScanNamespaces: {},
+
+      isMetricsConfigured: grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured
     };
   }
 
@@ -231,7 +233,10 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
-    this.fetchMetricComponents();
+
+    if(this.state.isMetricsConfigured){
+      this.fetchMetricComponents();
+    }
     this.initMeshSyncControlPlaneSubscription();
   };
 
@@ -323,7 +328,7 @@ class DashboardComponent extends React.Component {
         });
       },
       error: (err) => console.log("error registering addons: " + err),
-    });
+    })
   };
 
   fetchAvailableAdapters = () => {
