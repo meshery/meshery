@@ -9,7 +9,7 @@ import { useEffect, useState } from "react"
 import { getOperatorStatusFromQueryResult, isMesheryOperatorConnected } from "../helpers/mesheryOperator.js";
  
 
-const MesheryOperatorScreen = () => {
+const MesheryOperatorScreen = ({setStepStatus}) => {
 
   const [operatorInformation,setOperatorInformation] = useState({
     operatorInstalled: false,
@@ -30,6 +30,10 @@ const MesheryOperatorScreen = () => {
 
   const showDataPanel = () => 
     isMesheryOperatorConnected(operatorInformation)
+
+  useEffect(() => {
+    setStepStatus(prev => ({...prev, operator: isConnected}))
+  },[isConnected])
 
   useEffect(() => {
 

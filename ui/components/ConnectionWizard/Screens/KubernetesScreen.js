@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { isKubernetesConnected, pingKubernetes } from "../helpers/kubernetesHelpers";
 import KubernetesDataPanel from "../DataPanels/Kubernetes";
 
-const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress }) => {
+const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress, setStepStatus }) => {
   const [clusterInformation, setClusterInformation] = useState({
     isClusterConfigured: k8sconfig.clusterConfigured,
     inClusterConfig: k8sconfig.inClusterConfig,
@@ -23,6 +23,11 @@ const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress }) => {
   });
 
   const [isConnected, setIsConnected] = useState(false);
+
+
+  useEffect(() => {
+    setStepStatus(prev => ({...prev, kubernetes: isConnected}))
+  },[isConnected])
 
   useEffect(() => {
     pingKubernetes(

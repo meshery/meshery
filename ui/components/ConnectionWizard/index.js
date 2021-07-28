@@ -56,7 +56,10 @@ function getSteps() {
 const ConfigurationWizard = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
-  const [kubernetesConnected, setKubernetesConnected] = React.useState(false);
+  const [stepStatus, setStepStatus] = React.useState({
+      kubernetes: false,
+      operator: false,
+  })
   const steps = getSteps();
 
   const handleNext = () => {
@@ -67,15 +70,16 @@ const ConfigurationWizard = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
   const handleUserClick = (navStep) => {
-    setActiveStep(navStep);
+    // setActiveStep(navStep);
+    return null
   };
 
   const handleStep = (step) => {
     switch (step) {
       case 0:
-        return <KubernetesScreen />;
+        return <KubernetesScreen setStepStatus={setStepStatus}/>;
       case 1:
-        return <MesheryOperatorScreen />;
+        return <MesheryOperatorScreen setStepStatus={setStepStatus}/>;
       case 2:
         return <ServiceMeshScreen />;
       case 3:
@@ -84,6 +88,12 @@ const ConfigurationWizard = () => {
         return null;
     }
   };
+
+  const isNextDisabled = () => {
+    if(activeStep === 0 && !stepStatus.kubernetes) return true
+    if(activeStep === 1 && !stepStatus.operator) return true
+    return false
+  }
 
   return (
     <Container className={classes.container}>
@@ -116,6 +126,7 @@ const ConfigurationWizard = () => {
                   // disabled={activeStep === 0 && !iskubernetesConnected}
                   variant="contained"
                   onClick={handleNext}
+                  disabled={isNextDisabled()}
                   className={classes.button}
                 >
                   {activeStep === steps.length - 1 ? "Finish" : "Next"}
