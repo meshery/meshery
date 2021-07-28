@@ -183,7 +183,7 @@ Meshery enables you as a service mesh owner to customize your service mesh deplo
 
 ## Meshery Server supports for custom callback URL for connected Remote Providers
 
-As of release v0.5.39, Meshery Server has extended its capability to support callback URL for connected Remote Providers. It enables user to define there own redirect endpoints for the connected remote provider. This is helpful for the user who are deploying meshery behind the reverse proxy or ingress gateway.
+As of release v0.5.39, Meshery Server has extended its capability to configure the callback URL for connected Remote Providers. Helpful when you are deploying Meshery behind an ingress gateway or reverse proxy. You can specify a custom, redirect endpoints for the connected Remote Provider. 
 
 **Sample UseCase:**
 
