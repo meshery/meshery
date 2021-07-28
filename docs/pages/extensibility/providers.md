@@ -185,7 +185,7 @@ Meshery enables you as a service mesh owner to customize your service mesh deplo
 
 As of release v0.5.39, Meshery Server has extended its capability to configure the callback URL for connected Remote Providers. Helpful when you are deploying Meshery behind an ingress gateway or reverse proxy. You can specify a custom, redirect endpoints for the connected Remote Provider. 
 
-**Sample UseCase:**
+### Example Deployment Scenario: Meshery Cloud, Istio, and Azure Kubernetes Service
 
 User has deployed the Meshery behind a Istio ingressgateway and the Istio is also behind a Application Gateway (in a cloud infrastructure). Generally when you use github remote provider for authentication, it redirect the request to ingressgateway FQDN. But in this setup the redirection won't be successful becuase the ingress gateway is behind an addition application Gateway. In this case you have to define where the request should be redirected once it is authenticated from github.
 
