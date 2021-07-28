@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import ConsulIcon from "../icons/ConsulIcon.js"
 import OpenServiceMeshIcon from "../icons/OpenServiceMeshIcon.js"
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import LinkerdIcon from "../icons/LinkerdIcon.js"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -9,16 +10,24 @@ import ServiceCard from "../ServiceCard"
 import {Grid} from "@material-ui/core"
 import VerticalCarousel from "../../VerticalCarousel/VerticalCarousel"
 import ServiceMeshDataPanel from "../DataPanels/ServiceMesh"
-import {useEffect, useState} from "react"
+import {createRef, useEffect, useState} from "react"
 import {fetchAvailableAdapters} from "../helpers/serviceMeshes"
 import { updateProgress } from "../../../lib/store.js";
+import {ScrollIndicator} from "../ScrollIndicator"
 
+
+ 
 const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
 
 
 
   const [availableAdapters, setAvailableAdapters] = useState([])
   const [activeAdapters, setActiveAdapters] = useState(meshAdapters)
+  const [activeIndex, setActiveIndex] = useState(0);
+  const sliderRef = createRef()
+ 
+
+  const handleAfterSlideChange = (curSlide) => setActiveIndex(curSlide) 
 
   const serviceMeshComponents = availableAdapters.map(adapter => ({
     name: adapter.name ? adapter.name : adapter.label.split(":")[0],
@@ -36,17 +45,14 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
   }
 
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollItems = serviceMeshComponents.map(smesh => "/static/img/meshery-logo.png")
+
 
   const itemsToBeRendered = serviceMeshComponents.map(comp => {
     return(
-        <ServiceCard serviceInfo={comp} isConnected={isAdapterActive(comp.adapterInfo.value)} /> 
+      <ServiceCard serviceInfo={comp} isConnected={isAdapterActive(comp.adapterInfo.value)} /> 
     ) 
   })
-
-  const itemToDisplay = (items, curIndex) => {
-    return  items[curIndex] ? items[curIndex] : null
-  }
 
 
   useEffect(() => {
@@ -61,16 +67,22 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
     setActiveAdapters(meshAdapters) 
   }, [meshAdapters])
 
+  const handleIndicatorClick = (index) => () => {
+     sliderRef?.current?.slickGoTo(index,false) 
+  }
+
 
 
   return (
     <Grid xs={12} container justify="center" alignItems="flex-start">
       <Grid item xs={6} container justify="flex-start" >
-        <VerticalCarousel item=
-          {itemToDisplay(itemsToBeRendered, activeIndex)} setActiveIndex={setActiveIndex}/>
+        <VerticalCarousel slides={itemsToBeRendered} handleAfterSlideChange={handleAfterSlideChange} sliderRef={sliderRef}/>
+        <div style={{height: "21.3rem", overflow: "scroll", marginTop: '-1.2rem'}} className="hide-scrollbar"> 
+          <ScrollIndicator items={scrollItems} handleClick={handleIndicatorClick} activeIndex={activeIndex} />
+        </div>
       </Grid>
       <Grid item xs={6} container justify="center">
-        <ServiceMeshDataPanel adapterInfo={itemToDisplay(serviceMeshComponents, activeIndex)?.adapterInfo} isActive={isAdapterActive(itemToDisplay(serviceMeshComponents, activeIndex)?.adapterInfo.value)}  />
+        <ServiceMeshDataPanel adapterInfo={serviceMeshComponents[activeIndex]?.adapterInfo} isActive={isAdapterActive(serviceMeshComponents[activeIndex]?.adapterInfo.value)}  />
       </Grid>
     </Grid>
   )

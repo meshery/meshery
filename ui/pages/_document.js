@@ -39,6 +39,18 @@ class MesheryDocument extends Document {
           <meta charSet="utf-8" />
           <link rel="icon" href="/static/favicon.png" />
 
+          <link
+            rel="stylesheet"
+            type="text/css"
+            charSet="UTF-8"
+            href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
+          />
+          <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
+          />
+
           <script async src={`https://www.googletagmanager.com/gtag/js?id=G-8Q51RLT8TZ`} />
 
           <script
@@ -46,6 +58,12 @@ class MesheryDocument extends Document {
               __html: `${"" + setupGA}; setupGA();`,
             }}
           />
+        <style type="text/css">{"\
+            .hide-scrollbar::-webkit-scrollbar {\
+              width: 0 !important;\
+            }\
+          "}
+        </style>
         </Head>
         <body>
           <Main />

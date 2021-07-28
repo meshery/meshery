@@ -8,15 +8,22 @@ import ServiceCard from "../ServiceCard.js"
 import {Grid} from "@material-ui/core"
 import VerticalCarousel from "../../VerticalCarousel/VerticalCarousel"
 import MetricsDataPanel from "../DataPanels/Metrics"
-import {useEffect, useRef, useState} from "react"
+import {createRef, useEffect, useRef, useState} from "react"
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../../../lib/store.js";
 import {fetchPromGrafanaScanData, verifyGrafanaConnection, verifyPrometheusConnection} from "../helpers/metrics"
+import {ScrollIndicator} from "../ScrollIndicator"
 
 const MetricsScreen = ({ grafana, prometheus}) => {
 
   const [isGrafanaConnected, setIsGrafanaConnected] = useState(false)
   const [isPrometheusConnected, setIsPrometheusConnected] = useState(false)
   const [metricsScanUrls, setMetricsScanUrls] = useState({grafana: [], prometheus: []})
+  const [activeIndex, setActiveIndex] = useState(0);
+  const sliderRef = createRef()
+
+  const handleIndicatorClick = (index) => () => {
+     sliderRef?.current?.slickGoTo(index,false) 
+  }
 
   const metricsComponents = [{
     name: "Grafana",
@@ -31,6 +38,8 @@ const MetricsScreen = ({ grafana, prometheus}) => {
 
   }
   ]
+
+  const handleAfterSlideChange = (curSlide) => setActiveIndex(curSlide) 
 
   const getConnectionStatus = (name) => {
     if(name === "Grafana") return isGrafanaConnected
@@ -71,29 +80,30 @@ const MetricsScreen = ({ grafana, prometheus}) => {
 
 
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollItems = metricsComponents.map(metricComp => {
+    if(metricComp.name === "Grafana") return "/static/img/grafana_icon.svg"
+    if(metricComp.name === "Prometheus") return "/static/img/prometheus_logo_orange_circle.svg"
+  })
 
   const itemsToBeRendered = metricsComponents.map(comp => {
     return(
-        <ServiceCard serviceInfo={comp} isConnected={getConnectionStatus(comp.name)} /> 
+      <ServiceCard serviceInfo={comp} isConnected={getConnectionStatus(comp.name)} /> 
     ) 
   })
-
-  const itemToDisplay = (items, curIndex) => {
-    return  items[curIndex] ? items[curIndex] : null
-  }
-
 
 
   return (
     <Grid xs={12} container>
-      <Grid item xs={6} container justify="flex-start">
-        <VerticalCarousel item=
-          {itemToDisplay(itemsToBeRendered, activeIndex)} setActiveIndex={setActiveIndex}/>
+      <Grid item xs={6} container justify="flex-start" style={{overflow: "hidden"}}>
+        <VerticalCarousel slides={itemsToBeRendered} handleAfterSlideChange={handleAfterSlideChange} sliderRef={sliderRef}/>
+        <div style={{height: "21.3rem", overflow: "scroll", marginTop: '-1.2rem'}} className="hide-scrollbar"> 
+          <ScrollIndicator items={scrollItems} handleClick={handleIndicatorClick} activeIndex={activeIndex} />
+        </div>
+
       </Grid>
       <Grid item xs={6} container justify="center">
-        <MetricsDataPanel isConnected={itemToDisplay(metricsComponents, activeIndex).name === "Grafana" ? isGrafanaConnected : isPrometheusConnected} 
-          componentName={itemToDisplay(metricsComponents, activeIndex).name}
+        <MetricsDataPanel isConnected={metricsComponents[activeIndex].name === "Grafana" ? isGrafanaConnected : isPrometheusConnected} 
+          componentName={metricsComponents[activeIndex].name}
         />
       </Grid>
     </Grid>

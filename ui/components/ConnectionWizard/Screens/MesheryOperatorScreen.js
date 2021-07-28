@@ -29,7 +29,7 @@ const MesheryOperatorScreen = () => {
   }
 
   const showDataPanel = () => 
-  isMesheryOperatorConnected(operatorInformation)
+    isMesheryOperatorConnected(operatorInformation)
 
   useEffect(() => {
 
