@@ -6,7 +6,6 @@ import (
 
 	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -41,13 +40,13 @@ var meshesMeta = map[string][]string{
 func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]corev1.Pod, error) {
 	clientset, err := getK8SClientSet(kubeconfig, contextName)
 	if err != nil {
-		return nil, err
+		return nil, ErrScanKubernetes(err)
 	}
 	// equivalent to GET request to /api/v1/pods
 	podlist, err := clientset.CoreV1().Pods("").List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		logrus.Debug("[ScanKubernetes] Failed to retrieve Pod List")
-		return nil, err
+		return nil, ErrRetrievePodList(err)
 	}
 
 	result := map[string][]corev1.Pod{}
@@ -105,13 +104,11 @@ func ScanGrafana(kubeconfig []byte, contextName string) (map[string][]corev1.Ser
 func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imageNames []string) (map[string][]string, error) {
 	clientset, err := getK8SClientSet(kubeconfig, contextName)
 	if err != nil {
-		return nil, err
+		return nil, ErrDetectServiceForDeploymentImage(err)
 	}
 	namespacelist, err := clientset.CoreV1().Namespaces().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
-		err = errors.Wrap(err, "unable to get the list of namespaces")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrRetrieveNamespacesList(err)
 	}
 	result := map[string][]string{}
 
@@ -121,9 +118,7 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 		deploymentsClient := clientset.AppsV1().Deployments(ns.GetName())
 		deplist, err := deploymentsClient.List(context.Background(), metav1.ListOptions{})
 		if err != nil {
-			err = errors.Wrapf(err, "unable to get deployments in the %s namespace", ns.GetName())
-			logrus.Error(err)
-			return nil, err
+			return nil, ErrGetNamespaceDeployments(err, ns.GetName())
 		}
 
 		for _, d := range deplist.Items {
@@ -148,9 +143,7 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 					LabelSelector: labels.SelectorFromSet(lbls).String(),
 				})
 				if err != nil {
-					err = errors.Wrapf(err, "unable to get deployments in the %s namespace", ns.GetName())
-					logrus.Error(err)
-					return nil, err
+					return nil, ErrGetNamespaceDeployments(err, ns.GetName())
 				}
 				for _, sv := range svcList.Items {
 					logrus.Debugf("Service Name: %s", sv.GetName())
@@ -176,16 +169,14 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 func detectServiceWithName(kubeconfig []byte, contextName string, names []string) (map[string][]corev1.Service, error) {
 	clientset, err := getK8SClientSet(kubeconfig, contextName)
 	if err != nil {
-		return nil, err
+		return nil, ErrDetectServiceWithName(err)
 	}
 
 	// Get all the running services
 	// analogous to GET request to /api/v1/services
 	svcList, err := clientset.CoreV1().Services("").List(context.Background(), metav1.ListOptions{})
 	if err != nil {
-		err = errors.Wrapf(err, "[DetectServiceWithName] Unable to get services")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrDetectServiceWithName(err)
 	}
 
 	result := map[string][]corev1.Service{}

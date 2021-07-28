@@ -202,8 +202,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       selectionError: false,
 
       namespace: {
-        value: "",
-        label: ""
+        value: "default",
+        label: "default"
       },
       namespaceError: false,
 
@@ -693,7 +693,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       renderExpandableRow: (rowData, rowMeta) => {
         const column = ["Specification", "Assertions", "Time", "Version", "Capability", "Result", "Reason"];
         const data = smi_result.results[rowMeta.dataIndex].more_details.map((val) => {
-          return [val.smi_specification, val.assertions, val.time, "alpha1/v1", val.capability, val.status, val.reason];
+          return [val.smi_specification, val.assertions, val.time, val.smi_version, val.capability, val.status, val.reason];
         });
         const colSpan = rowData.length + 1;
         return (

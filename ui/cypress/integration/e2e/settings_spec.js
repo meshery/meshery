@@ -1,15 +1,16 @@
 describe('Settings', () => {
   describe('Environment', () => {
     beforeEach(() => {
-      cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
+      // cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
 
       cy.selectProviderNone()
 
       cy.visit('/settings')
-      cy.wait('@getScan')
+      // cy.wait('@getScan')
     })
 
     it('click on Discover Cluster and send a ping to the cluster', () => {
+
       cy.intercept('GET', '/api/config/sync').as('getConfigSync')
       cy.intercept('GET', '/api/system/kubernetes/ping').as('getK8sConfigPing')
 
@@ -23,7 +24,7 @@ describe('Settings', () => {
         .should('have.text', 'kind-kind-cluster')
         .click()
 
-      cy.wait('@getK8sConfigPing')
+      // cy.wait('@getK8sConfigPing')
 
       cy
         .get('[data-cy="itemListContextName"] > .MuiListItemText-secondary')
@@ -38,7 +39,7 @@ describe('Settings', () => {
 
       cy.selectProviderNone()
       cy.visit('/settings')
-      cy.wait('@getScan')
+      // cy.wait('@getScan')
 
       cy.get('[data-cy="tabServiceMeshes"]').click()
       cy.wait('@getMeshAdapters')

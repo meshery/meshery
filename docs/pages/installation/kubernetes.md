@@ -46,6 +46,12 @@ Deploy Meshery to your Kubernetes cluster by executing:
  </div></div>
 </pre>
 
+Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+<pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+    $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
+ </div></div>
+</pre>
 
 ### **Using Helm Charts**
 
@@ -69,6 +75,9 @@ Customize of deployment the Meshery adapters:
 
  # Example : Disabled the Linkerd2 adapter and check the deployment manifest that the helm will deploy
  $ helm install --set meshery-linkerd.enabled=false meshery/meshery --version 2.1.2 --dry-run
+
+ # Example : Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+ $ helm install meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host meshery/meshery
  </div></div>
  </pre>
 

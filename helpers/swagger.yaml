@@ -3480,7 +3480,7 @@ info:
   title: Meshery API.
   version: 0.4.27
 paths:
-  /api/experimental/pattern:
+  /api/pattern:
     get:
       description: |-
         Returns the list of all the patterns saved by the current user
@@ -3501,7 +3501,7 @@ paths:
       summary: Handle POST requests for patterns
       tags:
       - PatternsAPI
-  /api/experimental/pattern/{id}:
+  /api/pattern/{id}:
     delete:
       description: 'Deletes a meshery pattern with ID: id'
       operationId: idDeleteMesheryPattern

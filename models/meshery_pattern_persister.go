@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -67,7 +66,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	if pattern.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
-			return nil, fmt.Errorf("failed to create ID for the pattern: %s", err)
+			return nil, ErrGenerateUUID(err)
 		}
 
 		pattern.ID = &id
@@ -83,7 +82,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(patterns []MesheryPatter
 		if pattern.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {
-				return nil, fmt.Errorf("failed to create ID for the pattern: %s", err)
+				return nil, ErrGenerateUUID(err)
 			}
 
 			pattern.ID = &id

@@ -34,9 +34,8 @@ import (
 )
 
 var (
-	cfgFile     string
-	mctlCfgFile string
-	verbose     = false
+	cfgFile string
+	verbose = false
 )
 
 var (

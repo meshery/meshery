@@ -216,7 +216,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 			AnonymousPerfResults: true,
 		}
 	}
-	if prefObj.K8SConfig == nil || h.kubeclient == nil {
+	if prefObj.K8SConfig == nil || h.config.KubeClient == nil {
 		kc, err := h.loadK8SConfigFromDisk()
 		if err != nil {
 			kc, err = h.loadInClusterK8SConfig()
@@ -248,7 +248,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	version, err := h.kubeclient.KubeClient.ServerVersion()
+	version, err := h.config.KubeClient.KubeClient.ServerVersion()
 	if err != nil {
 		logrus.Error(ErrKubeVersion(err))
 		http.Error(w, ErrKubeVersion(err).Error(), http.StatusInternalServerError)
@@ -291,7 +291,7 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 	//if err != nil {
 	//	return nil, fmt.Errorf("unable to fetch nodes metadata from the Kubernetes server")
 	//}
-	*h.kubeclient = *mclient
+	*h.config.KubeClient = *mclient
 	kc.ClusterConfigured = true
 	return kc, nil
 }

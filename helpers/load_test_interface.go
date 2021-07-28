@@ -20,7 +20,6 @@ import (
 	"github.com/layer5io/meshkit/utils"
 	nighthawk_client "github.com/layer5io/nighthawk-go/pkg/client"
 	nighthawk_proto "github.com/layer5io/nighthawk-go/pkg/proto"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/durationpb"
 
@@ -38,7 +37,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	defaults := &periodic.DefaultRunnerOptions
 	httpOpts, err := sharedHTTPOptions(opts)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "generating load test options failed")
+		return nil, nil, ErrGeneratingLoadTest(err)
 	}
 	if opts.IsInsecure {
 		httpOpts.Insecure = true
@@ -86,9 +85,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 		res, err = fhttp.RunHTTPTest(&o)
 	}
 	if err != nil {
-		err = errors.Wrap(err, "error while running tests")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrRunningTest(err)
 	}
 	logrus.Debugf("original version of the test: %+#v", res)
 
@@ -104,17 +101,13 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 		result = hres.Result()
 	}
 	if err != nil {
-		err = errors.Wrap(err, "error while converting results to map")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrConvertingResultToMap(err)
 	}
 
 	resultsMap := map[string]interface{}{}
 	err = json.Unmarshal(bd, &resultsMap)
 	if err != nil {
-		err = errors.Wrap(err, "error while unmarshaling data to map")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrUnmarshal(err, "data to map")
 	}
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil
@@ -140,9 +133,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	var res periodic.HasRunnerResult
 	var err error
 	if opts.SupportedLoadTestMethods == 2 {
-		err = errors.New("wrk2 does not support gRPC at the moment")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrGrpcSupport(err, "Wrk2")
 	}
 	var gres *api.GoWRK2
 	gres, err = api.WRKRun(ro)
@@ -152,9 +143,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	}
 
 	if err != nil {
-		err = errors.Wrap(err, "error while running tests")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrRunningTest(err)
 	}
 	logrus.Debugf("original version of the test: %+#v", res)
 
@@ -170,17 +159,13 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		result = hres.Result()
 	}
 	if err != nil {
-		err = errors.Wrap(err, "error while converting results to map")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrConvertingResultToMap(err)
 	}
 
 	resultsMap := map[string]interface{}{}
 	err = json.Unmarshal(bd, &resultsMap)
 	if err != nil {
-		err = errors.Wrap(err, "error while unmarshaling data to map")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrUnmarshal(err, "data to map")
 	}
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil
@@ -196,7 +181,7 @@ func startNighthawkServer(timeout int64) error {
 		err := cmd.Start()
 		if err != nil {
 			nighthawkStatus.Unlock()
-			return err
+			return ErrStartingNighthawkServer(err)
 		}
 		nighthawkRunning = true
 	}
@@ -211,7 +196,7 @@ func startNighthawkServer(timeout int64) error {
 	_, err := os.Stat(transformCommand)
 	if err != nil {
 		nighthawkStatus.Unlock()
-		return err
+		return ErrStartingNighthawkServer(err)
 	}
 
 	for timeout != 0 {
@@ -224,16 +209,14 @@ func startNighthawkServer(timeout int64) error {
 		timeout--
 		time.Sleep(1 * time.Second)
 	}
-	return errors.New("unable to start nighthawk server")
+	return ErrStartingNighthawkServer(err)
 }
 
 // NighthawkLoadTest is the actual code which invokes nighthawk to run the load test
 func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
 	err := startNighthawkServer(int64(opts.Duration))
 	if err != nil {
-		err = errors.Wrap(err, "error while running nighthawk server")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrRunningNighthawkServer(err)
 	}
 
 	qps := opts.HTTPQPS
@@ -244,9 +227,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 
 	u, err := url.Parse(opts.URL)
 	if err != nil {
-		err = errors.Wrap(err, "error while running tests")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrRunningTest(err)
 	}
 	rURL := u.Host
 	if u.Hostname() == "localhost" {
@@ -324,9 +305,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	}
 
 	if opts.SupportedLoadTestMethods == 2 {
-		err := errors.New("nighthawk does not support gRPC load testing")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrGrpcSupport(err, "Nighthawk")
 	}
 
 	c, err := nighthawk_client.New(nighthawk_client.Options{
@@ -334,18 +313,14 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		ServerPort: 8443,
 	})
 	if err != nil {
-		err = errors.Wrap(err, "error while running tests")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrRunningTest(err)
 	}
 
 	logrus.Info("starting test")
 
 	client, err := c.Handler.ExecutionStream(context.TODO())
 	if err != nil {
-		err = errors.Wrap(err, "error while running tests")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrRunningTest(err)
 	}
 
 	err = client.Send(&nighthawk_proto.ExecutionRequest{
@@ -356,9 +331,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		},
 	})
 	if err != nil {
-		err = errors.Wrap(err, "error while running tests")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrRunningTest(err)
 	}
 
 	var res1 *nighthawk_proto.ExecutionResponse
@@ -367,9 +340,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		var err error
 		res1, err = client.Recv()
 		if err != nil {
-			err = errors.Wrap(err, "error while running tests")
-			logrus.Error(err)
-			return nil, nil, err
+			return nil, nil, ErrRunningTest(err)
 		}
 		if res1 != nil {
 			break
@@ -378,9 +349,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 
 	d, err := nighthawk_client.Transform(res1, "fortio")
 	if err != nil {
-		err = errors.Wrap(err, "error while transforming data")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrTransformingData(err)
 	}
 
 	var result *periodic.RunnerResults
@@ -388,33 +357,25 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		gres := &fgrpc.GRPCRunnerResults{}
 		err := json.Unmarshal(d, gres)
 		if err != nil {
-			err = errors.Wrap(err, "error while unmarshaling data to object")
-			logrus.Error(err)
-			return nil, nil, err
+			return nil, nil, ErrUnmarshal(err, "data to object")
 		}
 		result = gres.Result()
 	} else {
 		hres := &fhttp.HTTPRunnerResults{}
 		err := json.Unmarshal(d, hres)
 		if err != nil {
-			err = errors.Wrap(err, "error while unmarshaling data to object")
-			logrus.Error(err)
-			return nil, nil, err
+			return nil, nil, ErrUnmarshal(err, "data to object")
 		}
 		result = hres.Result()
 	}
 	if err != nil {
-		err = errors.Wrap(err, "error while converting results to map")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrUnmarshal(err, "results to map")
 	}
 
 	resultsMap := map[string]interface{}{}
 	err = json.Unmarshal(d, &resultsMap)
 	if err != nil {
-		err = errors.Wrap(err, "error while unmarshaling data to map")
-		logrus.Error(err)
-		return nil, nil, err
+		return nil, nil, ErrUnmarshal(err, "data to map")
 	}
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil
@@ -442,7 +403,7 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) (*fhttp.HTTPOptions, error)
 		for key, val := range *opts.Headers {
 			err := httpOpts.AddAndValidateExtraHeader(key + ":" + val)
 			if err != nil {
-				return nil, err
+				return nil, ErrAddAndValidateExtraHeader(err)
 			}
 		}
 	}
@@ -454,7 +415,7 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) (*fhttp.HTTPOptions, error)
 		}
 		err := httpOpts.AddAndValidateExtraHeader("Cookie" + ":" + cookies)
 		if err != nil {
-			return nil, err
+			return nil, ErrAddAndValidateExtraHeader(err)
 		}
 	}
 	if len(opts.Body) > 0 {

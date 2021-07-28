@@ -89,10 +89,15 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}
 
 	ltURL, err := url.Parse(loadTestOptions.URL)
-	if err != nil || !ltURL.IsAbs() {
+	if err != nil {
 		obj := "the provided load test"
 		h.log.Error(ErrParseBool(err, obj))
 		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
+		return
+	}
+	if !ltURL.IsAbs() {
+		h.log.Error(ErrInvalidLTURL(ltURL.String()))
+		http.Error(w, ErrInvalidLTURL(ltURL.String()).Error(), http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.Name = testName
@@ -113,7 +118,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}
 	loadTestOptions.AllowInitialErrors = true
 
-	h.loadTestHelperHandler(w, req, testName, "", testUUID, prefObj, loadTestOptions, provider)
+	h.loadTestHelperHandler(w, req, testName, "istio", testUUID, prefObj, loadTestOptions, provider)
 }
 
 func (h *Handler) jsonToMap(headersString string) *map[string]string {
@@ -125,6 +130,13 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 	return &headers
 }
 
+// swagger:route GET /api/perf/profile PerfAPI idRunPerfTest
+// Handle GET request to run a test
+//
+// Runs the load test with the given parameters
+// responses:
+// 	200:
+
 // swagger:route GET /api/user/performance/profiles/{id}/run PerformanceAPI idRunPerformanceTest
 // Handle GET request to run a performance test
 //
@@ -134,12 +146,22 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		msg := "unable to read request body"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
 
-	err := req.ParseForm()
+	// if values have been passed as body we run test using SMP Handler
+	if body != nil {
+		h.LoadTestUsingSMPHandler(w, req, prefObj, user, provider)
+		return
+	}
+
+	err = req.ParseForm()
 	if err != nil {
 		obj := "form"
 		h.log.Error(ErrParseBool(err, obj))
@@ -164,7 +186,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	headers := h.jsonToMap(headersString)
 	cookies := h.jsonToMap(cookiesString)
-	body := []byte(bodyString)
+	body = []byte(bodyString)
 	h.log.Debug("Headers : ", headers)
 
 	loadTestOptions := &models.LoadTestOptions{}

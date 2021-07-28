@@ -1,7 +1,7 @@
 describe("Settings", () => {
     describe("Environment", () => {
       before(() => {
-        cy.intercept('GET', '/api/config/sync', { fixture: 'sync.json' }).as('getConfigSync')
+        cy.intercept('GET', '/api/system/sync', { fixture: 'sync.json' }).as('getConfigSync')
 
         cy.visit("/settings");
         cy.wait('@getConfigSync')
