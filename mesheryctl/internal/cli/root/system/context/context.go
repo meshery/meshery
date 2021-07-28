@@ -26,10 +26,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var configuration *config.MesheryCtlConfig
-var tempContext string = "local"
 var (
 	availableSubcommands []*cobra.Command
+	configuration        *config.MesheryCtlConfig
+	tempContext          = "local"
 )
 
 // ContextCmd represents the context command
