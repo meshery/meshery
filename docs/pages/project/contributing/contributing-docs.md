@@ -147,6 +147,25 @@ Meshery documentation is made of these components:
 
   _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
 
+#### Note
+While performing the above step, if you're facing errors with message like below...
+
+`Your ruby version is x.x.x but your Gemfile specified 2.7.x`
+
+This is because Jekyll always consider the exact version of Ruby unlike JS
+
+So, you need to follow either of the two steps to resolve this problem
+  - Install the required ruby version by using `rvm` or by any means given above
+  - If you can't unable to install the required version, then manually configure the `Gemfile` as below
+  ```
+  source "https://rubygems.org" 
+  ruby '2.7.1' //to any version you have installed
+  ```
+  Automatically the `Gemfile.lock` will update once the `make site` is given
+
+
+**WARNING: If you have followed the second step then please revert back the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
+
 ### Create a Pull Request
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
