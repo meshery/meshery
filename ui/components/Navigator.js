@@ -268,6 +268,9 @@ const styles = (theme) => ({
   extraPadding: {
     paddingTop: 4,
     paddingBottom: 4
+  },
+  restrictPointer: {
+    pointerEvents: 'none'
   }
 });
 
@@ -866,12 +869,12 @@ class Navigator extends React.Component {
               return (
                 <React.Fragment key={childId}>
                   <ListItem
-                    button={!!link}
+                    button
                     dense
                     key={childId}
                     className={classNames(
                       classes.item,
-                      link && classes.itemActionable,
+                      link ? classes.itemActionable : classes.restrictPointer,
                       path === href && classes.itemActiveItem
                     )}
                   >
