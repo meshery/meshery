@@ -1,0 +1,17 @@
+apiVersion: meshery.layer5.io/v1alpha1
+kind: MeshSync
+metadata:
+  name: meshery-meshsync
+  namespace: meshery
+  labels:
+    app: meshery
+    component: controller
+    version: v0.1.15
+  annotations:
+    meshery/component-type: management-plane
+spec:
+  size: 1
+  broker:
+    native:
+      name: meshery-broker
+      namespace: meshery

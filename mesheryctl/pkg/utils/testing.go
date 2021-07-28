@@ -196,3 +196,11 @@ func SetFileLocationTesting(t *testing.T, dir string) {
 	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
 	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
 }
+
+// setup logrus formatter and return the buffer in which commands output is to be set.
+func SetupLogrusGrabTesting(t *testing.T) *bytes.Buffer {
+	b := bytes.NewBufferString("")
+	logrus.SetOutput(b)
+	SetupLogrusFormatter()
+	return b
+}

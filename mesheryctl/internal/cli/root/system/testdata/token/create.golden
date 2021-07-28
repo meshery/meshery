@@ -1,0 +1,17 @@
+Usage:
+  system token create [flags]
+
+Examples:
+
+	mesheryctl system token create <token-name> -f <token-path>
+	mesheryctl system token create <token-name> (default path is auth.json)
+	
+
+Flags:
+  -f, --filepath string   Add the token location
+  -h, --help              help for create
+
+Global Flags:
+  -c, --context string   (optional) temporarily change the current context.
+  -y, --yes              (optional) assume yes for user interactive prompts.
+
