@@ -105,6 +105,9 @@ func start() error {
 		return err
 	}
 
+	if utils.PlatformFlag == "" {
+		utils.PlatformFlag = currCtx.GetPlatform()
+	}
 	if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
 		currCtx.SetPlatform(utils.PlatformFlag)
 	} else {
