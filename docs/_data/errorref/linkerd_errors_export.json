@@ -1,17 +1,125 @@
 {
-    "errors_export": {
-        "component_name": "Linkerd",
-        "component_type": "adapter",
-        "errors": {
-            "11300": {
-                "name": "ErrEmptyConfigCode",
-                "code": "11300",
-                "severity": "",
-                "long_description": "",
-                "short_description": "",
-                "probable_cause": "",
-                "suggested_remediation": ""
-            }
-        }
+  "errors_export": {
+    "component_name": "linkerd",
+    "component_type": "adapter",
+    "errors": {
+      "1000": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1000",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1001": {
+        "name": "ErrGetLatestReleasesCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "Unable to get the latest release info from the GithubAPI",
+        "short_description": "unable to fetch release info",
+        "probable_cause": "Checkout https://docs.github.com/en/rest/reference/repos#releases for more info",
+        "suggested_remediation": ""
+      },
+      "1002": {
+        "name": "ErrGetLatestReleaseNamesCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to extract release names",
+        "probable_cause": "Invalid release format",
+        "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrInstallLinkerdCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with Linkerd operation: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrMeshConfigCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error configuration mesh: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1005": {
+        "name": "ErrFetchManifestCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error fetching mesh manifest: %s",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1006": {
+        "name": "ErrDownloadBinaryCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error downloading Linkerd binary: ",
+        "probable_cause": "Checkout https://docs.github.com/en/rest/reference/repos#releases for more details",
+        "suggested_remediation": ""
+      },
+      "1007": {
+        "name": "ErrInstallBinaryCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error installing Linkerd binary: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1008": {
+        "name": "ErrClientConfigCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error setting client config: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1009": {
+        "name": "ErrClientSetCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error setting clientset: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1011": {
+        "name": "ErrSampleAppCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "Error occured while trying to install a sample application using manifests",
+        "short_description": "Error with sample app operation",
+        "probable_cause": "Invalid kubeclient config\nInvalid manifest",
+        "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
+      },
+      "1012": {
+        "name": "ErrCustomOperationCode",
+        "code": "1012",
+        "severity": "Alert",
+        "long_description": "Error occured while applying custom manifest to the cluster",
+        "short_description": "Error with custom operation",
+        "probable_cause": "Invalid kubeclient config\nInvalid manifest",
+        "suggested_remediation": "Make sure to apply a valid kubernetes manifest"
+      },
+      "1013": {
+        "name": "ErrOpInvalidCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
     }
+  }
 }
