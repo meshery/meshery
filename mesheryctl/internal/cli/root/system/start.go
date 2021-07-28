@@ -109,9 +109,6 @@ func start() error {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
 			currCtx.SetPlatform(utils.PlatformFlag)
 		} else {
-			if utils.CfgFile != utils.DefaultConfigPath {
-				return fmt.Errorf("the platform '%s' is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at %s or verify by executing `mesheryctl system context view`", utils.PlatformFlag, utils.CfgFile)
-			}
 			return fmt.Errorf("the platform '%s' is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at %s or verify by executing `mesheryctl system context view`", utils.PlatformFlag, utils.CfgFile)
 		}
 	}
