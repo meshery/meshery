@@ -407,7 +407,6 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 			return errors.Errorf("\n  Invalid response: %v", err)
 		}
 
-		log.Info(string(data))
 		err = json.Unmarshal(data, &serverVersion)
 		if err != nil {
 			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
