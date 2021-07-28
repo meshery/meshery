@@ -72,6 +72,9 @@ const (
 	ErrTestClientCode             = "2133"
 	ErrParsingTestCode            = "2134"
 	ErrFieldCode                  = "2135"
+	ErrFetchDataCode              = "replace"
+	ErrIndexOutOfRangeCode        = "replace"
+	ErrSessionCopyCode            = "replace"
 )
 
 var (
@@ -95,6 +98,7 @@ var (
 	ErrTestClient           = errors.New(ErrTestClientCode, errors.Alert, []string{"minimum one test client needs to be specified"}, []string{}, []string{}, []string{})
 	ErrParsingTest          = errors.New(ErrParsingTestCode, errors.Alert, []string{"error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"}, []string{}, []string{}, []string{})
 	ErrField                = errors.New(ErrFieldCode, errors.Alert, []string{"Error: name field is blank"}, []string{}, []string{}, []string{})
+	ErrIndexOutOfRange      = errors.New(ErrIndexOutOfRangeCode, errors.Alert, []string{"Error: index out of range"}, []string{}, []string{}, []string{})
 )
 
 func ErrGrafanaClient(err error) error {
@@ -267,4 +271,12 @@ func ErrJWKsKeys(err error) error {
 
 func ErrInvalidCapability(capability string, provider string) error {
 	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capablity is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
+}
+
+func ErrFetchData(err error) error {
+	return errors.New(ErrFetchDataCode, errors.Alert, []string{"unable to fetch result data"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrSessionCopy(err error) error {
+	return errors.New(ErrSessionCopyCode, errors.Alert, []string{"Error: session copy error"}, []string{err.Error()}, []string{}, []string{})
 }
