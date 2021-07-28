@@ -45,7 +45,7 @@ done
 # If no flag is present, prompt the user for a platform
 if [ ! "$PLATFORM" ]; then
     echo Enter a platform to deploy Meshery. Available platforms [docker, kubernetes]:
-    read PLATFORM
+    read PLATFORM < /dev/tty
 fi
 
 case "$PLATFORM" in
