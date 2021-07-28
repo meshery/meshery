@@ -195,7 +195,10 @@ You can define your custom callback URL by setting up `MESHERY_SERVER_CALLBACK_U
 
 Example:
 
-If you are deploying meshery through HELM and your Meshery is expected to be accessed through URL `https://k8s-staging.test.io/`, then the command is:
+If you are deploying Meshery using Helm, you can configure the MESHERY_SERVER_CALLBACK_URL as shown in the following example.
+
+- **Custom URL:** `https://k8s-staging.test.io/`
+- **Auth Endpoint:** `api/user/token` (append at the end of your custom URL)
 ```
 helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token
 ```
