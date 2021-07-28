@@ -201,7 +201,7 @@ helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVE
 ```
 points to remember here:
 - for user authentication, Meshery expect `api/user/token` to be appended at the end of your custom URL
-- if you are setting up meshery with proxy and accessing it via path (like: `https://k8s-staging.test.io/meshery` ) then your callback URL would be `https://k8s-staging.test.io/meshery/user/token`
+- if you are setting up meshery with proxy and accessing it via path (like: `https://k8s-staging.test.io/meshery` ) then your callback URL would be `https://k8s-staging.test.io/meshery/api/user/token`
 
 ## Managing your Remote Provider Extension Code
 
