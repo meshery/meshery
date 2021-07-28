@@ -246,7 +246,9 @@ func NavigateToBrowser(endpoint string) error {
 		// Meshery running on Linux host
 		_, err := exec.LookPath("xdg-open")
 		if err != nil {
-			return errors.Wrap(err, SystemError("failed to exec command"))
+			// return errors.Wrap(err, SystemError("failed to exec command"))
+			log.Warn(err)
+			return nil
 			//find out what to do here!
 		}
 		err = exec.Command("xdg-open", endpoint).Start()

@@ -106,7 +106,11 @@ func start() error {
 	}
 
 	if utils.PlatformFlag != "" {
-		currCtx.SetPlatform(utils.PlatformFlag)
+		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
+			currCtx.SetPlatform(utils.PlatformFlag)
+		} else {
+			return fmt.Errorf("the platform '%s' is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at %s or verify by executing `mesheryctl system context view`", utils.PlatformFlag, utils.CfgFile)
+		}
 	}
 
 	// deploy to platform specified in the config.yaml
@@ -375,7 +379,7 @@ func start() error {
 
 		podsStatus, err := utils.AreAllPodsRunning()
 		if !podsStatus {
-			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “kubectl get pods -—namespace=meshery” before using meshery.")
+			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “mesheryctl system status” before using meshery.")
 		} else {
 			log.Info("Meshery is started.")
 		}
