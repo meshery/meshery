@@ -72,9 +72,9 @@ const (
 	ErrTestClientCode             = "2133"
 	ErrParsingTestCode            = "2134"
 	ErrFieldCode                  = "2135"
-	ErrFetchDataCode              = "replace"
-	ErrIndexOutOfRangeCode        = "replace"
-	ErrSessionCopyCode            = "replace"
+	ErrFetchDataCode              = "2147"
+	ErrIndexOutOfRangeCode        = "2148"
+	ErrSessionCopyCode            = "2149"
 )
 
 var (
