@@ -57,8 +57,8 @@ const ConfigurationWizard = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [stepStatus, setStepStatus] = React.useState({
-      kubernetes: false,
-      operator: false,
+    kubernetes: false,
+    operator: false,
   })
   const steps = getSteps();
 
