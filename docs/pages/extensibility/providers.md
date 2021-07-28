@@ -203,7 +203,6 @@ If you are deploying Meshery using Helm, you can configure the MESHERY_SERVER_CA
 helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token
 ```
 ##### Note
-- for user authentication, Meshery expect `api/user/token` to be appended at the end of your custom URL
 With a path like, `https://k8s-staging.test.io/meshery`, your callback URL will be `https://k8s-staging.test.io/meshery/api/user/token`. 
 
 ## Managing your Remote Provider Extension Code
