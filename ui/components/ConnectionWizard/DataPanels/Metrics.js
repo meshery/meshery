@@ -153,7 +153,7 @@ const MetricsDataPlane = ({classes, updateProgress, enqueueSnackbar,grafana, pro
         />
       </Grid>
 
-      <Grid item xs={12} style={{marginBottom: "1rem"}}>
+      <Grid item xs={12}>
         <Typography className={classes.infoTitle}>Details</Typography>
       </Grid>
 
