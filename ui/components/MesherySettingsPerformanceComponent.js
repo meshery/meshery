@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
-import SaveIcon from '@material-ui/icons/Save';
+import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import { withStyles } from '@material-ui/core/styles';
 import { Autocomplete } from '@material-ui/lab'
 import Grid from '@material-ui/core/Grid';
@@ -284,7 +284,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   className={classes.button}
                   disabled={blockRunTest}
                 >
-                  <SaveIcon />
+                  <SaveOutlinedIcon />
                   {blockRunTest ? <CircularProgress size={30} /> : 'Save'}
                 </Button>
               </div>
