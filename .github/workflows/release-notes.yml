@@ -1,59 +1,29 @@
 name: Release Notes Publisher
 
 on:
-  push:
-    branches:
-      - '!*'
-    tags:
-      - 'v*'
+  release:
+    types: 'published'
 
 jobs:
-  create_release_notes_pr:
-      if: github.repository == 'meshery/meshery'
+  update_release_notes_docs:
       runs-on: ubuntu-latest
       steps:
-        - name: Drafting release
-          id: release_drafter
-          uses: release-drafter/release-drafter@v5
-          with:
-            config-name: release-drafter.yml
-          env:
-            GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
-
         - name: Checkout
           uses: actions/checkout@v2
 
-        - name: Write release notes to markdown file
+        - name: Get Release Info
           run: |
-            echo "Tag: " ${{ steps.release_drafter.outputs.tag_name }}
-            printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
+            echo "RELEASE_TAG=$(curl -s https://api.github.com/repos/meshery/meshery/releases/latest | jq '.["tag_name"]' | tr -d '"')" >> $GITHUB_ENV
+            echo $RELEASE_TAG
+            printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: $RELEASE_TAG\n---\n\n`curl -s https://api.github.com/repos/meshery/meshery/releases/latest | jq -r '.["body"]'`" > ./docs/_releases/$RELEASE_TAG.md
 
-        - name: Create Pull Request
-          id: cpr
-          uses: peter-evans/create-pull-request@v3
+        - name: Commit
+          uses: stefanzweifel/git-auto-commit-action@v4
           with:
-            token: ${{ secrets.RELEASEDRAFTER_PAT }}
-            commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
-            committer: l5io <ci@layer5.io>
-            author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-            signoff: true
-            branch: docs/automated-release-notes
-            base: master
-            title: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
-            body: |
-              An auto-generated pull request to document release notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}
-            labels: |
-              area/ci
-              kind/chore
-            # assignees:
-            # reviewers:
-            team-reviewers: |
-              ci-release-contributors
-              maintainers
-            # milestone: 1
-            draft: false
-
-        - name: Verify PR
-          run: |
-            echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-            echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+            file_pattern: docs
+            commit_user_name: l5io
+            commit_user_email: ci@layer5.io
+            commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+            commit_options: '--signoff'
+            commit_message: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
+            branch: master
