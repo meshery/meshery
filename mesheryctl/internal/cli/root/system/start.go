@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
@@ -481,10 +482,39 @@ func start() error {
 		}
 	}
 
-	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+	// Check for Meshery status before opening it in browser
+	client := &http.Client{}
+	url := currCtx.GetEndpoint()
+	// Can not wait for ever, so setting a limit of 10 seconds
+	waittime := time.Now().Add(10 * time.Second)
+
+	for !(time.Now().After(waittime)) {
+		// Request to check whether endpoint is up or not
+		req, err := http.NewRequest("GET", fmt.Sprintf("%s", url), nil)
+		if err != nil {
+			log.Info("To open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+			return nil
+		}
+
+		resp, err := client.Do(req)
+
+		if resp != nil {
+			defer resp.Body.Close()
+		}
+		if err != nil || resp.StatusCode != 200 {
+			// wait and try accessing the endpoint after one second
+			time.Sleep(1 * time.Second)
+		} else {
+			// meshery server is up and responding, break out of loop and open Meshery in browser
+			break
+		}
+	}
+
+	log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
 
 	err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 	if err != nil {
+		log.Info("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 		return err
 	}
 
