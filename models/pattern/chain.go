@@ -16,6 +16,13 @@ type Chain struct {
 	mu *sync.Mutex
 }
 
+// CreateChain returns a pointer to the chain object
+func CreateChain() *Chain {
+	return &Chain{
+		stages: make(ChainStages, 0),
+	}
+}
+
 // Add adds a function to the chain and returns a pointer to the Chain object
 func (ch *Chain) Add(fn ChainStageFunction) *Chain {
 	ch.mu.Lock()
