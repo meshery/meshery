@@ -278,11 +278,6 @@ const styles = (theme) => ({
   restrictPointer: {
     pointerEvents: 'none'
   },
-  i1: {
-    height: '100px',
-    width: '100px',
-    fill: "#fff"
-  }
 });
 
 const drawerIconsStyle = { height: "1.21rem", width: "1.21rem", fontSize: "1.21rem" };
@@ -293,7 +288,7 @@ const categories = [
     id: "Dashboard",
     icon: <DashboardIcon style={drawerIconsStyle} />,
     href: "/",
-    title: "System Dashboard",
+    title: "Dashboard",
     show: true,
     link: true,
   },
