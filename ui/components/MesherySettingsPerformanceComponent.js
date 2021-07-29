@@ -286,7 +286,9 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   className={classes.button}
                   disabled={blockRunTest}
                 >
-                  <SaveOutlinedIcon />
+                  <SaveOutlinedIcon
+                    style={{ marginRight: '3px' }}
+                  />
                   {blockRunTest ? <CircularProgress size={30} /> : 'Save'}
                 </Button>
               </div>
