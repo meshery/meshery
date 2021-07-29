@@ -128,6 +128,17 @@ When designing for the command line interface, ask and consider the following qu
 
 You will need to provide a short and long description of the command for the help pages and also for the Meshery Documentation.
 
+## Refactoring Mesheryctl Code
+
+The mesheryctl code needs to be refactored for the ease of management, to improve the readbility of the code, for making it easier for using the utility packages. 
+
+For now, the meshconfig has been refactored to have getters and setters which can further be used to manipulate any config. For example, reading or changing the context version has now been a lot easier with the help of specific getters and setters, a central function has also been added to write the config.yaml file.
+
+The workflow for changing the contexts would be:
+- Change the context struct
+- Update the config struct with the new context
+- Write the new config to the config.yaml file
+
 # Writing unit tests and integration tests for mesheryctl
 
  Unit tests and integration tests are essential to make each mesheryctl release robust and fault tolerant.
