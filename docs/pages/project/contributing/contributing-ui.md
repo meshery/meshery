@@ -103,7 +103,7 @@ To start running Meshery locally:
 make run-fast
 ```
 
-> Now, Meshery will run on the default port `http:localhost:9081`.
+> Now, Meshery will run on the default port `http://localhost:9081`.
 
 
 #### UI Development Server
