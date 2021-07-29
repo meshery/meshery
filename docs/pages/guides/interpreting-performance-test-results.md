@@ -10,9 +10,9 @@ Once a performance tests and run, it's disco analysis is performed and test resu
 
 ## Graphical View
 
-[![{{ site.baseurl }}/assets/img/performance-management/dashboard.png](https://layer5io.github.io/meshery/assets/img/performance-management/dashboard.png)]({{ site.baseurl }}/assets/img/performance-management/dashboard.png)
+<img src="{{ site.baseurl }}/assets/img/performance-management/dashboard.png" />
 
-[![{{ site.baseurl }}/assets/img/performance-management/chart.png](https://layer5io.github.io/meshery/assets/img/performance-management/chart.png)]({{ site.baseurl }}/assets/img/performance-management/chart.png)
+<img src="{{ site.baseurl }}/assets/img/performance-management/chart.png" />
 
 ## Tests
 
