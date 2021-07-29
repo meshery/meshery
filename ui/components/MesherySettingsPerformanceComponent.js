@@ -224,6 +224,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleChange('c')}
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} lg={4}>
@@ -239,6 +240,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleChange('qps')}
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} lg={4}>
