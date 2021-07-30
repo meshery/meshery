@@ -145,7 +145,7 @@ Let us take an example of the `struct Context`, having the parameter `Token`, th
 
 Similarly, for the `struct Mesheryctlconfig`, having the `Tokens` parameter has a function named `func (mc *MesheryCtlConfig) GetTokens() *[]Token` which is being used to return the tokens present in the config file.
 
-There are more similar changes made, the changes can be viewed in `/mesheryctl/internal/cli/root/config/config.go` file and all the usages of the config/struct throughout the codebase has been modified to use the new struct functions.
+There are more similar changes made, the changes can be viewed in `/mesheryctl/internal/cli/root/config/config.go` file and all the usages of the config and struct throughout the codebase has been modified to use the new struct functions.
 
 # Writing unit tests and integration tests for mesheryctl
 
