@@ -22,6 +22,10 @@ import { withRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
+import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
+import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
+import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
 
 import {
   faChevronCircleLeft,
@@ -46,6 +50,7 @@ const styles = (theme) => ({
     paddingTop: 4,
     paddingBottom: 4,
     color: "rgba(255, 255, 255, 0.7)",
+    fill: "#fff"
   },
   itemCategory: {
     backgroundColor: "#263238",
@@ -71,6 +76,7 @@ const styles = (theme) => ({
   },
   itemActiveItem: {
     color: "#4fc3f7",
+    fill: "#4fc3f7"
   },
   itemPrimary: {
     color: "inherit",
@@ -271,6 +277,11 @@ const styles = (theme) => ({
   },
   restrictPointer: {
     pointerEvents: 'none'
+  },
+  i1: {
+    height: '100px',
+    width: '100px',
+    fill: "#fff"
   }
 });
 
@@ -280,7 +291,7 @@ const externalLinkIconStyle = { width: "1.11rem", fontSize: "1.11rem" };
 const categories = [
   {
     id: "Dashboard",
-    icon: <DashboardIcon style={drawerIconsStyle } />,
+    icon: <DashboardIcon style={drawerIconsStyle} />,
     href: "/",
     title: "System Dashboard",
     show: true,
@@ -288,7 +299,7 @@ const categories = [
   },
   {
     id: "Lifecycle",
-    icon: <img src="/static/img/drawer-icons/lifecycle_mgmt.svg" transform="shrink-4" style={drawerIconsStyle} />,
+    icon: <LifecycleIcon style={drawerIconsStyle} />,
     href: "/management",
     title: "Lifecycle",
     show: true,
@@ -405,7 +416,7 @@ const categories = [
   {
     id: "Performance",
     icon:
-      <img src="/static/img/drawer-icons/performance.svg" style={{ margin: "auto", width: "1.81rem", verticalAlign: "top" }} />,
+      <PerformanceIcon style={{ transform: "scale(1.3)", ...drawerIconsStyle }} />,
     href: "/performance",
     title: "Performance",
     show: true,
@@ -431,7 +442,7 @@ const categories = [
   }, // title is used for comparison in the Header.js file as well
   {
     id: "Conformance",
-    icon: <img src="/static/img/drawer-icons/conformance.svg" transform="shrink-2" style={drawerIconsStyle} />,
+    icon: <ConformanceIcon style={drawerIconsStyle} />,
     href: "/smi_results", //Temp
     title: "Conformance",
     show: true,
@@ -439,7 +450,7 @@ const categories = [
     children: [
       {
         id: "Service Mesh Interface",
-        icon: <img src="/static/img/drawer-icons/servicemeshinterface-icon-white.svg" style={drawerIconsStyle} />,
+        icon: <SmiIcon style={drawerIconsStyle} />,
         href: "/smi_results",
         title: "Service Mesh Interface",
         show: true,
@@ -463,7 +474,7 @@ const externlinks = [
     id: "community",
     href: "http://slack.layer5.io",
     title: "Community",
-    icon: <FontAwesomeIcon style={{marginBottom: 2, ...drawerIconsStyle}} icon={faSlack} transform="grow-1" />,
+    icon: <FontAwesomeIcon style={{ marginBottom: 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
     external_icon: ExternalLinkIcon,
   },
   {
@@ -928,7 +939,7 @@ class Navigator extends React.Component {
                   >
                     <Grow
                       in={showHelperButton}
-                      timeout={{ enter: (510 - index * 170), exit: 100 * index }}
+                      timeout={{ enter: (600 - index * 200), exit: 100 * index }}
                     >
                       <a
                         href={href}
@@ -954,7 +965,12 @@ class Navigator extends React.Component {
                   placement={isDrawerCollapsed ? "right" : "top"}
                 >
                   <IconButton onClick={() => this.toggleSpacing()}>
-                    <HelpIcon className={classes.helpIcon} />
+                    <HelpIcon
+                      className={classes.helpIcon}
+                      style={showHelperButton
+                        ? { color: "#8ed7f8", opacity: 1 }
+                        : { color: "#8ed7f8" }}
+                    />
                   </IconButton>
                 </Tooltip>
               </ListItem>
