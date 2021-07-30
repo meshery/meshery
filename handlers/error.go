@@ -76,6 +76,7 @@ const (
 	ErrExecutionPlanCode        = "2144"
 	ErrInvalidPatternCode       = "2145"
 	ErrCompConfigPairsCode      = "2146"
+	ErrCreateDirCode            = "replace me"
 )
 
 var (
@@ -306,4 +307,8 @@ func ErrVersionCompare(err error) error {
 
 func ErrSaveSession(err error) error {
 	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session"}, []string{err.Error()}, []string{"User session could be expired"}, []string{"Re-initiate login"})
+}
+
+func ErrCreateDir(err error, obj string) error {
+	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
 }

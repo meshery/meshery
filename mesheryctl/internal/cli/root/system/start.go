@@ -83,7 +83,7 @@ var startCmd = &cobra.Command{
 func start() error {
 	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.MesheryFolder)))
+			return handlers.ErrCreateDir(err, utils.MesheryFolder)
 		}
 	}
 
@@ -470,14 +470,14 @@ func start() error {
 			err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
 			if err != nil {
-				return err
+				return ErrApplyOperatorManifest(err, true, false)
 			}
 		} else {
 			// skip applying update on operators when the flag is used
 			err = utils.ApplyOperatorManifest(kubeClient, false, false)
 
 			if err != nil {
-				return err
+				return ErrApplyOperatorManifest(err, false, false)
 			}
 		}
 	}
