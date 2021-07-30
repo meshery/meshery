@@ -382,7 +382,7 @@ func start() error {
 		if !podsStatus {
 			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “mesheryctl system status” before using meshery.")
 		} else {
-			log.Info("Meshery is started.")
+			log.Info("Meshery is starting...")
 		}
 
 		clientset := kubeClient.KubeClient
