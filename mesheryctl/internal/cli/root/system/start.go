@@ -211,7 +211,7 @@ func start() error {
 		if utils.ResetFlag {
 			err := resetMesheryConfig()
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
+				return ErrResetMeshconfig(err)
 			}
 		}
 
@@ -357,7 +357,7 @@ func start() error {
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = utils.ApplyManifestFiles(manifests, currCtx.GetAdapters(), kubeClient, false, false)
 		if err != nil {
-			break
+			return ErrApplyManifest(err, false, false)
 		}
 
 		deadline := time.Now().Add(20 * time.Second)
