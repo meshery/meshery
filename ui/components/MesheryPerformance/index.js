@@ -143,6 +143,12 @@ const styles = (theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  smallIcons: {
+    width: "10px",
+    height: "15px",
+    marginBottom: theme.spacing(1),
+    marginLeft: theme.spacing(0.3),
+  },
 });
 
 class MesheryPerformanceComponent extends React.Component {
@@ -945,7 +951,7 @@ class MesheryPerformanceComponent extends React.Component {
               </Grid>
               <Grid item xs={12} md={4}>
                 <FormControl component="loadGenerator" className={classes.margin}>
-                  <FormLabel component="loadGenerator" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap',}}>Load generator<Tooltip title={infoloadGenerators} interactive><HelpOutlineOutlinedIcon /></Tooltip></FormLabel>
+                  <FormLabel component="loadGenerator" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap',}}>Load generator<Tooltip title={infoloadGenerators} interactive><HelpOutlineOutlinedIcon className={classes.smallIcons}/></Tooltip></FormLabel>
                   <RadioGroup
                     aria-label="loadGenerator"
                     name="loadGenerator"
