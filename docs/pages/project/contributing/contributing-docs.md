@@ -148,23 +148,23 @@ Meshery documentation is made of these components:
   _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
 
 #### Note
-While performing the above step, if you're facing errors with message like below...
+While performing the above step, if you're facing errors with a message like below...
 
 `Your ruby version is x.x.x but your Gemfile specified 2.7.x`
 
-This is because Jekyll always consider the exact version of Ruby unlike JS
+This is because Jekyll always considers the exact version of Ruby unlike JavaScript.
 
-So, you need to follow either of the two steps to resolve this problem
-  - Install the required ruby version by using `rvm` or by any means given above
-  - If you can't unable to install the required version, then manually configure the `Gemfile` as below
+So, you need to follow either of the two steps to resolve this problem;
+  - Install the required Ruby version by using `rvm` or by any means given above
+  - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below;
   ```
   source "https://rubygems.org" 
   ruby '2.7.1' //to any version you have installed
   ```
-  Automatically the `Gemfile.lock` will update once the `make site` is given
+  Automatically the `Gemfile.lock` will update once the `make site` is given (for Windows, run `bundle exec jekyll serve` alongside `make site`)
 
 
-**WARNING: If you have followed the second step then please revert back the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
+**WARNING: If you have followed the second step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
 
 ### Create a Pull Request
 
