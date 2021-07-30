@@ -158,6 +158,12 @@ Run the following:
  $ helm install meshery --namespace meshery install/kubernetes/helm/meshery
  </div></div>
  </pre>
+ - Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ $ helm install meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host meshery/meshery
+ </div></div>
+ </pre>
 
 - **NodePort** - If your cluster does not have an Ingress Controller or a load balancer, then use NodePort to expose Meshery and that can be modify under the chart `values.yaml`:
 

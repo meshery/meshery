@@ -55,6 +55,14 @@ You're ready to run Meshery. To do so, execute the following command.
 </div></div>
 </pre>
 
+Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+ $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
+
+</div></div>
+</pre>
+
 `mesheryctl` uses your current Kubernetes context, your KUBECONFIG environment variable (`~/.kube/config` by default). Confirm if this Kubernetes cluster you want Meshery to interact with by running the following command: `kubectl config get-contexts`.
 
 If there are multiple contexts in your kubeconfig file, specify the one you want to use with the `use-context` subcommand: `kubectl config use-context <context-to-use>`.

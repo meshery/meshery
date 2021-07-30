@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
@@ -106,7 +107,11 @@ func start() error {
 	}
 
 	if utils.PlatformFlag != "" {
-		currCtx.SetPlatform(utils.PlatformFlag)
+		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
+			currCtx.SetPlatform(utils.PlatformFlag)
+		} else {
+			return fmt.Errorf("the platform '%s' is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at %s or verify by executing `mesheryctl system context view`", utils.PlatformFlag, utils.CfgFile)
+		}
 	}
 
 	// Deploy to platform specified in the config.yaml
@@ -375,7 +380,7 @@ func start() error {
 
 		podsStatus, err := utils.AreAllPodsRunning()
 		if !podsStatus {
-			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “kubectl get pods -—namespace=meshery” before using meshery.")
+			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “mesheryctl system status” before using meshery.")
 		} else {
 			log.Info("Meshery is started.")
 		}
@@ -477,10 +482,39 @@ func start() error {
 		}
 	}
 
-	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+	// Check for Meshery status before opening it in browser
+	client := &http.Client{}
+	url := currCtx.GetEndpoint()
+	// Can not wait for ever, so setting a limit of 10 seconds
+	waittime := time.Now().Add(10 * time.Second)
+
+	for !(time.Now().After(waittime)) {
+		// Request to check whether endpoint is up or not
+		req, err := http.NewRequest("GET", fmt.Sprintf("%s", url), nil)
+		if err != nil {
+			log.Info("To open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+			return nil
+		}
+
+		resp, err := client.Do(req)
+
+		if resp != nil {
+			defer resp.Body.Close()
+		}
+		if err != nil || resp.StatusCode != 200 {
+			// wait and try accessing the endpoint after one second
+			time.Sleep(1 * time.Second)
+		} else {
+			// meshery server is up and responding, break out of loop and open Meshery in browser
+			break
+		}
+	}
+
+	log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
 
 	err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 	if err != nil {
+		log.Info("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 		return err
 	}
 
