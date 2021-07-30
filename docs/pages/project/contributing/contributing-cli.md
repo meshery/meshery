@@ -139,6 +139,14 @@ The workflow for changing the contexts would be:
 - Update the config struct with the new context
 - Write the new config to the config.yaml file
 
+Here are some examples of how the getters and setters of some defined structs are being used:
+
+Let us take an example of the `struct Context`, having the parameter `Token`, the code has been refactored to use `func(ctx *Context) GetToken()` for returning the token of the current context, and `func(ctx *Context) SetToken()` has been used for setting the token of the current context.
+
+Similarly, for the `struct Mesheryctlconfig`, having the `Tokens` parameter has a function named `func (mc *MesheryCtlConfig) GetTokens() *[]Token` which is being used to return the tokens present in the config file.
+
+There are more similar changes made, the changes can be viewed in `/mesheryctl/internal/cli/root/config/config.go` file and all the usages of the config/struct throughout the codebase has been modified to use the new struct functions.
+
 # Writing unit tests and integration tests for mesheryctl
 
  Unit tests and integration tests are essential to make each mesheryctl release robust and fault tolerant.
