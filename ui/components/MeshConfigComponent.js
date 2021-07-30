@@ -1,57 +1,68 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
+import React from "react";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
 import {
-  NoSsr, FormGroup, InputAdornment, Chip, IconButton, MenuItem, Tooltip, Paper, Grid, FormControlLabel, Switch
-} from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import blue from '@material-ui/core/colors/blue';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
-import { withSnackbar } from 'notistack';
-import CloseIcon from '@material-ui/icons/Close';
+  NoSsr,
+  Button,
+  FormGroup,
+  InputAdornment,
+  Chip,
+  IconButton,
+  MenuItem,
+  Tooltip,
+  Paper,
+  Grid,
+  FormControlLabel,
+  Switch,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+} from "@material-ui/core";
+import blue from "@material-ui/core/colors/blue";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { withRouter } from "next/router";
+import { withSnackbar } from "notistack";
+import CloseIcon from "@material-ui/icons/Close";
 import { updateK8SConfig, updateProgress } from "../lib/store";
-import dataFetch from '../lib/data-fetch';
-import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
-import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
-import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
-import fetchMesheryOperatorStatus from './graphql/queries/OperatorStatusQuery';
+import dataFetch from "../lib/data-fetch";
+import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
+import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
+import changeOperatorState from "./graphql/mutations/OperatorStatusMutation";
+import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 import PromptComponent from "./PromptComponent";
+import { getOperatorStatusFromQueryResult } from "./ConnectionWizard/helpers/mesheryOperator.js";
 
 const styles = (theme) => ({
   root: {
     padding: theme.spacing(5),
   },
   buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
+    display: "flex",
+    justifyContent: "flex-end",
   },
   button: {
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
   buttonsCluster: {
-    display: 'flex',
-    justifyContent: 'center',
+    display: "flex",
+    justifyContent: "center",
   },
   margin: {
     margin: theme.spacing(1),
   },
   alreadyConfigured: {
-    textAlign: 'center',
+    textAlign: "center",
     padding: theme.spacing(20),
   },
   colorSwitchBase: {
     color: blue[300],
-    '&$colorChecked': {
+    "&$colorChecked": {
       color: blue[500],
-      '& + $colorBar': {
+      "& + $colorBar": {
         backgroundColor: blue[500],
       },
     },
@@ -59,105 +70,105 @@ const styles = (theme) => ({
   colorBar: {},
   colorChecked: {},
   fileLabel: {
-    width: '100%',
+    width: "100%",
   },
   fileLabelText: {
-    cursor: 'pointer',
-    "& *":{
-      cursor: 'pointer',
-    }
+    cursor: "pointer",
+    "& *": {
+      cursor: "pointer",
+    },
   },
   inClusterLabel: {
     paddingRight: theme.spacing(2),
   },
   alignCenter: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   alignLeft: {
-    textAlign: 'left',
+    textAlign: "left",
     marginBottom: theme.spacing(2),
   },
   fileInputStyle: {
-    display:'none',
+    display: "none",
   },
   icon: {
     width: theme.spacing(2.5),
   },
   configure: {
-    display: 'inline-block',
-    width: '48%',
-    wordWrap: 'break-word',
+    display: "inline-block",
+    width: "48%",
+    wordWrap: "break-word",
     [theme.breakpoints.down(945)]: {
-      width: '100%',
+      width: "100%",
     },
   },
   vertical: {
-    display: 'inline-block',
+    display: "inline-block",
     height: 150,
     marginBottom: -60,
     [theme.breakpoints.down(945)]: {
-      display: 'none',
+      display: "none",
     },
   },
   horizontal: {
-    display: 'none',
+    display: "none",
     [theme.breakpoints.down(945)]: {
-      display: 'block',
+      display: "block",
     },
   },
   formconfig: {
-    display: 'inline-block',
+    display: "inline-block",
     marginLeft: 30,
     [theme.breakpoints.up(946)]: {
-      width: '45%',
+      width: "45%",
     },
     [theme.breakpoints.down(945)]: {
-      width: '100%',
+      width: "100%",
       marginLeft: 0,
     },
   },
   currentConfigHeading: {
-    display: 'inline-block',
-    width: '48%',
-    textAlign: 'center',
+    display: "inline-block",
+    width: "48%",
+    textAlign: "center",
     [theme.breakpoints.down(945)]: {
-      width: '100%',
+      width: "100%",
     },
   },
   changeConfigHeading: {
-    display: 'inline-block',
-    width: '48%',
-    textAlign: 'center',
+    display: "inline-block",
+    width: "48%",
+    textAlign: "center",
     [theme.breakpoints.down(945)]: {
-      display: 'none',
+      display: "none",
     },
   },
   changeConfigHeadingOne: {
-    display: 'none',
+    display: "none",
     [theme.breakpoints.down(945)]: {
-      display: 'inline-block',
-      width: '100%',
-      textAlign: 'center',
+      display: "inline-block",
+      width: "100%",
+      textAlign: "center",
     },
   },
   buttonconfig: {
-    display: 'inline-block',
-    width: '48%',
+    display: "inline-block",
+    width: "48%",
     [theme.breakpoints.down(945)]: {
-      width: '100%',
+      width: "100%",
     },
   },
   paper: {
     padding: theme.spacing(2),
   },
   heading: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   grey: {
     background: "WhiteSmoke",
     padding: theme.spacing(2),
     borderRadius: "inherit",
-  }
+  },
 });
 
 class MeshConfigComponent extends React.Component {
@@ -232,8 +243,8 @@ class MeshConfigComponent extends React.Component {
   setOperatorState = (res) => {
     const self = this;
     if (res.operator?.error) {
-      self.handleError("Operator could not be reached")(res.operator?.error?.description)
-      return false
+      self.handleError("Operator could not be reached")(res.operator?.error?.description);
+      return false;
     }
 
     if (res.operator?.status === "ENABLED") {
@@ -253,9 +264,9 @@ class MeshConfigComponent extends React.Component {
       self.setState({
         operatorInstalled: true,
         operatorSwitch: true,
-        operatorVersion:res.operator?.version,
-      })
-      return true
+        operatorVersion: res.operator?.version,
+      });
+      return true;
     }
 
     self.setState({
@@ -263,13 +274,13 @@ class MeshConfigComponent extends React.Component {
       NATSInstalled: false,
       meshSyncInstalled: false,
       operatorSwitch: false,
-      operatorVersion:"N/A",
-      meshSyncVersion:"N/A",
-      NATSVersion:"N/A",
-    })
+      operatorVersion: "N/A",
+      meshSyncVersion: "N/A",
+      NATSVersion: "N/A",
+    });
 
-    return false
-  }
+    return false;
+  };
 
   handleOperatorSwitch = () => {
     const self = this;
@@ -393,7 +404,8 @@ class MeshConfigComponent extends React.Component {
             setTimeout(async () => {
               let response = await modal.show({
                 title: "Remove Meshery Operator from this cluster?",
-                subtitle: "Meshery is now disconnected from your Kubernetes cluster. Do you want to remove the Meshery Operator from your cluster as well?",
+                subtitle:
+                  "Meshery is now disconnected from your Kubernetes cluster. Do you want to remove the Meshery Operator from your cluster as well?",
                 options: ["yes", "no"],
               });
               if (response == "yes") {
@@ -486,34 +498,56 @@ class MeshConfigComponent extends React.Component {
   handleOperatorClick = () => {
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    fetchMesheryOperatorStatus()
-      .subscribe({
-        next: res => {
-          let state = self.setOperatorState(res)
-          self.props.updateProgress({ showProgress: false });
-          if (state == true) {
-            this.props.enqueueSnackbar('Operator was successfully pinged!', {
-              variant: 'success',
-              autoHideDuration: 2000,
-              action: (key) => (
-                <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key)}
-                >
-                  <CloseIcon />
-                </IconButton>
-              ),
-            });
-          } else {
-            self.handleError("Operator could not be reached")("Operator is disabled")
-          }
-        },
-        error: self.handleError("Operator could not be pinged"),
-      })
-  }
-
+    fetchMesheryOperatorStatus().subscribe({
+      next: (res) => {
+        console.log(res);
+        let state = self.setOperatorState(res);
+        self.props.updateProgress({ showProgress: false });
+        if (state == true) {
+          this.props.enqueueSnackbar("Operator was successfully pinged!", {
+            variant: "success",
+            autoHideDuration: 2000,
+            action: (key) => (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+        } else {
+          self.handleError("Operator could not be reached")("Operator is disabled");
+        }
+      },
+      error: self.handleError("Operator could not be pinged"),
+    });
+  };
+  handleMeshSyncClick = () => {
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
+    fetchMesheryOperatorStatus().subscribe({
+      next: (res) => {
+        let [, operatorInformation] = getOperatorStatusFromQueryResult(res);
+        self.props.updateProgress({ showProgress: false });
+        setState({
+          meshSyncVersion: operatorInformation.meshSyncVersion,
+          meshSyncInstalled: operatorInformation.meshSyncInstalled,
+        });
+        if (operatorInformation.meshSyncInstalled == true) {
+          this.props.enqueueSnackbar("MeshSync was successfully pinged!", {
+            variant: "success",
+            autoHideDuration: 2000,
+            action: (key) => (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+        } else {
+          self.handleError("MeshSync could not be reached")("MeshSync is disabled");
+        }
+      },
+      error: self.handleError("MeshSync could not be pinged"),
+    });
+  };
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress: false });
     const self = this;
@@ -547,7 +581,8 @@ class MeshConfigComponent extends React.Component {
             setTimeout(async () => {
               let response = await modal.show({
                 title: "Remove Meshery Operator from this cluster?",
-                subtitle: "Meshery is now disconnected from your Kubernetes cluster. Do you want to remove the Meshery Operator from your cluster as well?",
+                subtitle:
+                  "Meshery is now disconnected from your Kubernetes cluster. Do you want to remove the Meshery Operator from your cluster as well?",
                 options: ["yes", "no"],
               });
               if (response == "yes") {
@@ -696,7 +731,15 @@ class MeshConfigComponent extends React.Component {
             variant="outlined"
             data-cy="chipOperator"
           />
-
+          <Tooltip title={meshSyncInstalled ? `Version: ${meshSyncVersion}` : "Not Available"} aria-label="meshSync">
+            <Chip
+              label={"MeshSync"}
+              onClick={self.handleMeshSyncClick}
+              icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+              variant="outlined"
+              data-cy="chipMeshSync"
+            />
+          </Tooltip>
           <Grid container spacing={1}>
             <Grid item xs={12} md={4}>
               <List>
@@ -892,11 +935,10 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig').toJS();
+  const k8sconfig = state.get("k8sConfig").toJS();
   return k8sconfig;
 };
 
-export default withStyles(styles)(connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(withSnackbar(MeshConfigComponent))));
+export default withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MeshConfigComponent)))
+);
