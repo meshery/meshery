@@ -93,7 +93,7 @@ func get(rawurl string) (*http.Response, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("got response status code %d\n", resp.StatusCode)
+		return nil, fmt.Errorf("got response status code %d", resp.StatusCode)
 	}
 
 	return resp, nil
