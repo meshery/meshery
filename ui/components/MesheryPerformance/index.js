@@ -144,8 +144,8 @@ const styles = (theme) => ({
     padding: theme.spacing(2, 4, 3),
   },
   smallIcons: {
-    width: "10px",
-    height: "15px",
+    width: "15px",
+    height: "18px",
     marginBottom: theme.spacing(1),
     marginLeft: theme.spacing(0.3),
   },
