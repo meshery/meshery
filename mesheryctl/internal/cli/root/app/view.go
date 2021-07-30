@@ -2,20 +2,35 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/ghodss/yaml"
+	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+type appStruct struct {
+	Name            string
+	ID              *uuid.UUID
+	ApplicationFile string
+	UserID          *string
+	Location        sql.Map
+	UpdatedAt       *time.Time
+	CreatedAt       *time.Time
+}
 
 var (
 	viewAllFlag   bool
@@ -26,7 +41,17 @@ var viewCmd = &cobra.Command{
 	Use:   "view <application name>",
 	Short: "Display application(s)",
 	Long:  `Displays the contents of a specific application based on name or id`,
-	Args:  cobra.MinimumNArgs(1),
+	Example: `
+	View applictaions with name
+	mesheryctl app view <app-name>
+
+	View applications with id
+	mesheryctl app view <app-id>
+
+	View all applications
+	mesheryctl app view --all
+	`,
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -51,7 +76,9 @@ var viewCmd = &cobra.Command{
 				return err
 			}
 		}
+		var req *http.Request
 		url := mctlCfg.GetBaseMesheryURL()
+		var response *models.ApplicationsAPIResponse
 		// Merge args to get app-name
 		application = strings.Join(args, "%20")
 		if len(application) == 0 {
@@ -69,7 +96,7 @@ var viewCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", url, nil)
+		req, err = http.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}
@@ -98,7 +125,9 @@ var viewCmd = &cobra.Command{
 		if err = json.Unmarshal(body, &dat); err != nil {
 			return errors.Wrap(err, "failed to unmarshal response body")
 		}
-
+		if err = json.Unmarshal(body, &response); err != nil {
+			return errors.Wrap(err, "failed to unmarshal response body")
+		}
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
 				return err
@@ -109,14 +138,38 @@ var viewCmd = &cobra.Command{
 				return err
 			}
 		} else {
-			// use the first match from the result when searching by application name
-			arr := dat["applications"].([]interface{})
-			if len(arr) == 0 {
-				log.Infof("application with name: %s not found", application)
-				return nil
+			var a appStruct
+			if response.TotalCount == 0 {
+				return errors.New("application does not exit. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")
 			}
-			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
-				return err
+			for _, app := range response.Applications {
+				if response.Applications == nil {
+					return errors.New("application name not provide. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")
+				}
+				if app.Name == application {
+					a = appStruct{
+						Name:            app.Name,
+						ID:              app.ID,
+						ApplicationFile: app.ApplicationFile,
+						UserID:          app.UserID,
+						Location:        app.Location,
+						UpdatedAt:       app.UpdatedAt,
+						CreatedAt:       app.CreatedAt,
+					}
+					body, err = json.MarshalIndent(&a, "", "  ")
+					if err != nil {
+						return err
+					}
+					fmt.Printf("Name: %v\n", a.Name)
+					fmt.Printf("ID: %s\n", a.ID.String())
+					fmt.Printf("ApplicationFile: %v\n", a.ApplicationFile)
+					fmt.Printf("UpdatedAt: %s\n", a.UpdatedAt.String())
+					fmt.Printf("CreatedAt: %s\n", a.CreatedAt.String())
+					fmt.Printf("UserID: %s\n", a.UserID)
+					fmt.Printf("Location: %v\n", a.Location)
+					fmt.Println("#####################")
+					continue
+				}
 			}
 		}
 
