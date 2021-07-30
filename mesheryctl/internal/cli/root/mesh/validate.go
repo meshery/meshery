@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -140,7 +142,7 @@ var validateCmd = &cobra.Command{
 
 		log.Infof("Verifying Operation")
 		s.Start()
-		_, err = waitForDeployResponse(mctlCfg, "")
+		_, err = waitForValidateResponse(mctlCfg, "SMI")
 		if err != nil {
 			return errors.Wrap(err, "error verifying installation")
 		}
@@ -159,8 +161,11 @@ func init() {
 	_ = validateCmd.MarkFlagRequired("tokenPath")
 }
 
-func waitForResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli"
+func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_validate"
 	method := "GET"
 	client := &http.Client{}
 	req, err := http.NewRequest(method, path, nil)
@@ -178,11 +183,32 @@ func waitForResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, er
 	if err != nil {
 		return "", err
 	}
-	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	event, _ := utils.ConvertRespToSSE(res)
+
+	//Run a goroutine to wait for the response
+	go func() {
+		for i := range event {
+			log.Infof("Event :" + i.Data)
+			if strings.Contains(i.Data, query) {
+				wg.Done()
+			}
+		}
+	}()
+
+	//Run a goroutine to wait for time out
+	go func() {
+		time.Sleep(time.Second * 300)
+		err = errors.New("timeout")
+		wg.Done()
+	}()
+
+	//Wait till any one of the goroutines ends and return
+	wg.Wait()
+
 	if err != nil {
 		return "", err
 	}
-	return string(body), nil
+
+	return "", nil
 }
