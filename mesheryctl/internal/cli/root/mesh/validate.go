@@ -29,6 +29,7 @@ var spec string
 var adapterURL string
 var namespace string
 var tokenPath string
+var watch bool
 var err error
 
 // validateCmd represents the service mesh validation command
@@ -140,13 +141,15 @@ var validateCmd = &cobra.Command{
 		log.Infof(string(body))
 		s.Stop()
 
-		log.Infof("Verifying Operation")
-		s.Start()
-		_, err = waitForValidateResponse(mctlCfg, "SMI")
-		if err != nil {
-			return errors.Wrap(err, "error verifying installation")
+		if watch {
+			log.Infof("Verifying Operation")
+			s.Start()
+			_, err = waitForValidateResponse(mctlCfg, "SMI")
+			if err != nil {
+				return errors.Wrap(err, "error verifying installation")
+			}
+			s.Stop()
 		}
-		s.Stop()
 
 		return nil
 	},
@@ -159,6 +162,7 @@ func init() {
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = validateCmd.MarkFlagRequired("tokenPath")
+	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 
 func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
