@@ -17,7 +17,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -165,7 +164,7 @@ var viewCmd = &cobra.Command{
 					fmt.Printf("ApplicationFile: %v\n", a.ApplicationFile)
 					fmt.Printf("UpdatedAt: %s\n", a.UpdatedAt.String())
 					fmt.Printf("CreatedAt: %s\n", a.CreatedAt.String())
-					fmt.Printf("UserID: %s\n", a.UserID)
+					fmt.Printf("UserID: %v\n", a.UserID)
 					fmt.Printf("Location: %v\n", a.Location)
 					fmt.Println("#####################")
 					continue
@@ -180,7 +179,6 @@ var viewCmd = &cobra.Command{
 		} else if outFormatFlag != "json" {
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
-		log.Info(string(body))
 		return nil
 	},
 }
