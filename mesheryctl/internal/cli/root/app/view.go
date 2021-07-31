@@ -131,22 +131,20 @@ var viewCmd = &cobra.Command{
 				if response.Applications == nil {
 					return errors.New("application name not provide. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")
 				}
-				if app.Name == application {
-					body, err = json.MarshalIndent(&app, "", "  ")
-					if err != nil {
-						return err
+				body, err = json.MarshalIndent(&app, "", "  ")
+				if err != nil {
+					return err
+				}
+				if outFormatFlag == "json" {
+					log.Info(string(body))
+					continue
+				}
+				if outFormatFlag == "yaml" {
+					if body, err = yaml.JSONToYAML(body); err != nil {
+						return errors.Wrap(err, "failed to convert json to yaml")
 					}
-					if outFormatFlag == "json" {
-						log.Info(string(body))
-						continue
-					}
-					if outFormatFlag == "yaml" {
-						if body, err = yaml.JSONToYAML(body); err != nil {
-							return errors.Wrap(err, "failed to convert json to yaml")
-						}
-						log.Info(string(body))
-						continue
-					}
+					log.Info(string(body))
+					continue
 				}
 			}
 		}
