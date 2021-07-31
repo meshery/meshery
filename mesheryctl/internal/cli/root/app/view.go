@@ -17,6 +17,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -120,22 +121,19 @@ var viewCmd = &cobra.Command{
 			return err
 		}
 
-		var dat map[string]interface{}
-		if err = json.Unmarshal(body, &dat); err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
-		}
 		if err = json.Unmarshal(body, &response); err != nil {
 			return errors.Wrap(err, "failed to unmarshal response body")
 		}
 		if isID {
-			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				return err
+			if body, err = yaml.JSONToYAML(body); err != nil {
+				return errors.Wrap(err, "failed to convert json to yaml")
 			}
+			log.Info(string(body))
 		} else if viewAllFlag {
-			// only keep the application key from the response when viewing all the applications
-			if body, err = json.MarshalIndent(map[string]interface{}{"applications": dat["applications"]}, "", "  "); err != nil {
-				return err
+			if body, err = yaml.JSONToYAML(body); err != nil {
+				return errors.Wrap(err, "failed to convert json to yaml")
 			}
+			log.Info(string(body))
 		} else {
 			var a appStruct
 			if response.TotalCount == 0 {
