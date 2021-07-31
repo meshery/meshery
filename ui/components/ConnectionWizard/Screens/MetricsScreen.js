@@ -25,18 +25,20 @@ const MetricsScreen = ({ grafana, prometheus}) => {
      sliderRef?.current?.slickGoTo(index,false) 
   }
 
-  const metricsComponents = [{
-    name: "Grafana",
-    logoComponent: GrafanaIcon,
-    configComp :  <MetricsConfig componentName="Grafana" grafanaScannedUrls={metricsScanUrls.grafana}/>
+  const metricsComponents = [
+    {
+      name: "Prometheus",
+      logoComponent: PrometheusIcon,
+      configComp : <MetricsConfig componentName="Prometheus" prometheusScannedUrls={metricsScanUrls.prometheus}/>
 
-  },
-  {
-    name: "Prometheus",
-    logoComponent: PrometheusIcon,
-    configComp : <MetricsConfig componentName="Prometheus" prometheusScannedUrls={metricsScanUrls.prometheus}/>
+    },
+    {
+      name: "Grafana",
+      logoComponent: GrafanaIcon,
+      configComp :  <MetricsConfig componentName="Grafana" grafanaScannedUrls={metricsScanUrls.grafana}/>
 
-  }
+    }
+  
   ]
 
   const handleAfterSlideChange = (curSlide) => setActiveIndex(curSlide) 
