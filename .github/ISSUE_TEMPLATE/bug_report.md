@@ -33,4 +33,4 @@ Steps to reproduce the behavior:
 ---
 
 **Contributor Resources:**
-- (Contributing Docs](https://docs.meshery.io/project/contributing)
+- [Contributing](https://docs.meshery.io/project/contributing)
