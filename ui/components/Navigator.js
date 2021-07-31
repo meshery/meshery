@@ -6,8 +6,11 @@ import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import Grow from '@material-ui/core/Grow';
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import NoSsr from "@material-ui/core/NoSsr";
+import Avatar from "@material-ui/core/Avatar";
 import RemoveIcon from "@material-ui/icons/Remove";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
@@ -15,22 +18,23 @@ import MailIcon from "@material-ui/icons/Mail";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import NoSsr from "@material-ui/core/NoSsr";
-import Avatar from "@material-ui/core/Avatar";
 import { withRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import HelpIcon from '@material-ui/icons/Help';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
+import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
+import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
+import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
 
 import {
-  faTasks,
-  faTerminal,
-  faTachometerAlt,
   faChevronCircleLeft,
-  faPollH,
   faExternalLinkAlt,
+  faDigitalTachograph,
 } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
 import { updatepagetitle } from "../lib/store";
-import { Tooltip } from "@material-ui/core";
+import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
 
@@ -46,6 +50,7 @@ const styles = (theme) => ({
     paddingTop: 4,
     paddingBottom: 4,
     color: "rgba(255, 255, 255, 0.7)",
+    fill: "#fff"
   },
   itemCategory: {
     backgroundColor: "#263238",
@@ -62,6 +67,7 @@ const styles = (theme) => ({
     display: "inline-flex",
     width: "100%",
     height: "30px",
+    alignItems: "self-end"
   },
   itemActionable: {
     "&:hover": {
@@ -70,6 +76,7 @@ const styles = (theme) => ({
   },
   itemActiveItem: {
     color: "#4fc3f7",
+    fill: "#4fc3f7"
   },
   itemPrimary: {
     color: "inherit",
@@ -184,6 +191,7 @@ const styles = (theme) => ({
     display: "none",
     [theme.breakpoints.up("sm")]: {
       display: "flex",
+      flexDirection: "column",
       "margin-top": "auto",
       "margin-bottom": "0.5rem",
     },
@@ -222,113 +230,78 @@ const styles = (theme) => ({
     paddingLeft: "16px",
     paddingRight: "16px",
   },
-  drawerIcons: { 
-    height: "1.21rem", 
-    width: "1.21rem", 
-    fontSize: "1.21rem" 
-  }
+  drawerIcons: {
+    height: "1.21rem",
+    width: "1.21rem",
+    fontSize: "1.21rem"
+  },
+  avatarGroup: {
+    '& .MuiAvatarGroup-avatar': {
+      border: 'none',
+    }
+  },
+  marginLeft: {
+    marginLeft: 8,
+    "& .MuiListItem-gutters": {
+      paddingLeft: 8,
+      paddingRight: 8
+    }
+  },
+  rightMargin: {
+    marginRight: 8
+  },
+  btnGrpMarginRight: {
+    marginRight: 4,
+    alignItems: 'center'
+  },
+  helpIcon: {
+    color: '#fff',
+    opacity: "0.7",
+    transition: "opacity 200ms linear",
+    "&:hover": {
+      opacity: 1,
+      background: "transparent",
+    },
+    "&:focus": {
+      opacity: 1,
+      background: "transparent",
+    },
+  },
+  helperIcons: {
+    textAlign: "right",
+    marginLeft: "auto",
+  },
+  extraPadding: {
+    paddingTop: 4,
+    paddingBottom: 4
+  },
+  restrictPointer: {
+    pointerEvents: 'none'
+  },
 });
 
-const drawerIconsStyle={ height: "1.21rem", width: "1.21rem", fontSize: "1.21rem" };
-const externalLinkIconStyle={height: "1.11rem", width: "1.11rem", fontSize: "1.11rem" };
+const drawerIconsStyle = { height: "1.21rem", width: "1.21rem", fontSize: "1.21rem" };
+const externalLinkIconStyle = { width: "1.11rem", fontSize: "1.11rem" };
 
 const categories = [
   {
     id: "Dashboard",
+    icon: <DashboardIcon style={drawerIconsStyle} />,
     href: "/",
-    title: "System Dashboard",
-    show: false,
-    link: true,
-  },
-  {
-    id: "Performance",
-    icon:
-      <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" style={drawerIconsStyle} />,
-    href: "/performance",
-    title: "Performance Profile Management",
+    title: "Dashboard",
     show: true,
     link: true,
-    children: [
-      {
-        id: "Profiles",
-        icon: <FontAwesomeIcon icon={faPollH} style={drawerIconsStyle} />,
-        href: "/performance/profiles",
-        title: "Performance Profiles",
-        show: true,
-        link: true,
-      },
-    ],
   },
   {
-    id: "Settings",
-    href: "/settings",
-    title: "Settings",
-    show: false,
-    link: true,
-  }, // title is used for comparison in the Header.js file as well
-  {
-    id: "Conformance",
-    icon: <FontAwesomeIcon icon={faTasks} transform="shrink-2" style={drawerIconsStyle} />,
-    href: "/smi_results", //Temp
-    title: "Conformance",
-    show: true,
-    link: true,
-    children: [
-      {
-        id: "SMI Results",
-        icon: <FontAwesomeIcon icon={faPollH} style={drawerIconsStyle} />,
-        href: "/smi_results",
-        title: "Service Mesh Interface Results",
-        show: true,
-        link: true,
-      },
-    ],
-  },
-  {
-    id: "Configuration",
-    icon: <img src="/static/img/configuration_trans.svg" style={{ width: "1.21rem" }} />,
-    href: "/configuration",
-    title: "Meshery Configurations",
-    show: false,
-    link: false,
-    children: [
-      {
-        id: "Patterns",
-        icon: <img src="/static/img/pattern_trans.svg" style={{ width: "1.21rem" }} />,
-        href: "/configuration/patterns",
-        title: "Patterns",
-        show: false,
-        link: true,
-      },
-      {
-        id: "Filters",
-        icon: <img src="/static/img/web-filters.svg" style={{ width: "1.21rem" }} />,
-        href: "/configuration/filters",
-        title: "Filters",
-        show: true,
-        link: true,
-      },
-      {
-        id: "Applications",
-        icon: <img src="/static/img/web-applications.svg" style={{ width: "1.21rem" }} />, 
-        href: "/configuration/applications",
-        title: "Applications",
-        show: true,
-        link: true,
-      },
-    ],
-  },
-  {
-    id: "Management",
-    icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" style={drawerIconsStyle} />,
+    id: "Lifecycle",
+    icon: <LifecycleIcon style={drawerIconsStyle} />,
     href: "/management",
-    title: "Management",
+    title: "Lifecycle",
     show: true,
     link: true,
     children: [
       {
         id: "Citrix_Service_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/citrix",
         title: "Citrix Service Mesh",
         link: false,
@@ -336,7 +309,6 @@ const categories = [
       },
       {
         id: "Consul",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/consul",
         title: "Consul",
         link: false,
@@ -344,7 +316,6 @@ const categories = [
       },
       {
         id: "Istio",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/istio",
         title: "Istio",
         link: false,
@@ -352,7 +323,6 @@ const categories = [
       },
       {
         id: "Kuma",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/kuma",
         title: "Kuma",
         link: false,
@@ -360,7 +330,6 @@ const categories = [
       },
       {
         id: "Linkerd",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/linkerd",
         title: "Linkerd",
         link: false,
@@ -368,7 +337,6 @@ const categories = [
       },
       {
         id: "Network_Service_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/nsm",
         title: "Network Service Mesh",
         link: false,
@@ -385,7 +353,6 @@ const categories = [
       // },
       {
         id: "Octarine",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/octarine",
         title: "Octarine",
         link: false,
@@ -393,7 +360,6 @@ const categories = [
       },
       {
         id: "Open_Service_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/osm",
         title: "Open Service Mesh",
         link: false,
@@ -401,11 +367,89 @@ const categories = [
       },
       {
         id: "Traefik_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/traefik-mesh",
         title: "Traefik Mesh",
         link: false,
         show: true,
+      },
+    ],
+  },
+  {
+    id: "Configuration",
+    icon: <img src="/static/img/configuration_trans.svg" style={{ width: "1.21rem" }} />,
+    href: "/configuration",
+    title: "Configuration",
+    show: false,
+    link: false,
+    children: [
+      {
+        id: "Applications",
+        icon: <img src="/static/img/web-applications.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/applications",
+        title: "Applications",
+        show: true,
+        link: true,
+      },
+      {
+        id: "Filters",
+        icon: <img src="/static/img/web-filters.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/filters",
+        title: "Filters",
+        show: true,
+        link: true,
+      },
+      {
+        id: "Patterns",
+        icon: <img src="/static/img/pattern_trans.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/patterns",
+        title: "Patterns",
+        show: false,
+        link: true,
+      },
+    ],
+  },
+  {
+    id: "Performance",
+    icon:
+      <PerformanceIcon style={{ transform: "scale(1.3)", ...drawerIconsStyle }} />,
+    href: "/performance",
+    title: "Performance",
+    show: true,
+    link: true,
+    children: [
+      {
+        id: "Profiles",
+        icon:
+          <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ height: "1.8rem", verticalAlign: "top" }} />,
+        href: "/performance/profiles",
+        title: "Profiles",
+        show: true,
+        link: true,
+      },
+    ],
+  },
+  {
+    id: "Settings",
+    href: "/settings",
+    title: "Settings",
+    show: false,
+    link: true,
+  }, // title is used for comparison in the Header.js file as well
+  {
+    id: "Conformance",
+    icon: <ConformanceIcon style={drawerIconsStyle} />,
+    href: "/smi_results", //Temp
+    title: "Conformance",
+    show: true,
+    link: false,
+    children: [
+      {
+        id: "Service Mesh Interface",
+        icon: <SmiIcon style={drawerIconsStyle} />,
+        href: "/smi_results",
+        title: "Service Mesh Interface",
+        show: true,
+        link: true,
       },
     ],
   },
@@ -416,7 +460,7 @@ const ExternalLinkIcon = <FontAwesomeIcon style={externalLinkIconStyle} icon={fa
 const externlinks = [
   {
     id: "doc",
-    href: "http://docs.meshery.io",
+    href: "https://docs.meshery.io",
     title: "Documentation",
     icon: <DescriptionOutlinedIcon style={drawerIconsStyle} />,
     external_icon: ExternalLinkIcon,
@@ -425,7 +469,7 @@ const externlinks = [
     id: "community",
     href: "http://slack.layer5.io",
     title: "Community",
-    icon: <FontAwesomeIcon style={drawerIconsStyle} icon={faSlack} transform="shrink-2" />,
+    icon: <FontAwesomeIcon style={{ marginBottom: 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
     external_icon: ExternalLinkIcon,
   },
   {
@@ -457,7 +501,7 @@ class Navigator extends React.Component {
       // decoder which in turn will return an empty array when there is no content
       // passed into it
       navigator: ExtensionPointSchemaValidator("navigator")(),
-
+      showHelperButton: false,
       capabilities: [],
     };
   }
@@ -556,7 +600,7 @@ class Navigator extends React.Component {
   updateCategoriesMenus() {
     const self = this;
     categories.forEach((cat, ind) => {
-      if (cat.id === "Management") {
+      if (cat.id === "Lifecycle") {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
           const icon = self.pickIcon(catc.id);
@@ -584,7 +628,7 @@ class Navigator extends React.Component {
 
   updateAdaptersLink() {
     categories.forEach((cat, ind) => {
-      if (cat.id === "Management") {
+      if (cat.id === "Lifecycle") {
         cat.children.forEach((catc, ind1) => {
           if (
             typeof categories[ind].children[ind1].children[0] !== "undefined" &&
@@ -641,7 +685,6 @@ class Navigator extends React.Component {
       }
       children.push({
         id: adapter.adapter_location,
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         icon: <RemoveIcon />,
         href: `/management?adapter=${adapter.adapter_location}`,
         title: `Management - ${adapter.adapter_location}`,
@@ -679,14 +722,19 @@ class Navigator extends React.Component {
     onCollapseDrawer();
   };
 
+  toggleSpacing = () => {
+    const { showHelperButton } = this.state;
+    this.setState({ showHelperButton: !showHelperButton });
+  }
+
   renderChildren(idname, children, depth) {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
 
-    if (idname != "Management" && children && children.length > 0) {
+    if (idname != "Lifecycle" && children && children.length > 0) {
       return (
         <List disablePadding>
-          {children.map(({ id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
+          {children.map(({ id: idc, title: titlec, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
             }
@@ -703,7 +751,7 @@ class Navigator extends React.Component {
                     isDrawerCollapsed && classes.noPadding
                   )}
                 >
-                  {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
+                  {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                 </ListItem>
                 {this.renderChildren(idname, childrenc, depth + 1)}
               </React.Fragment>
@@ -712,7 +760,7 @@ class Navigator extends React.Component {
         </List>
       );
     }
-    if (idname == "Management") {
+    if (idname == "Lifecycle") {
       if (children && children.length > 1) {
         return (
           <List disablePadding>
@@ -782,7 +830,7 @@ class Navigator extends React.Component {
 
   render() {
     const { classes, isDrawerCollapsed, ...other } = this.props;
-    const { path } = this.state;
+    const { path, showHelperButton } = this.state;
     this.updateCategoriesMenus();
     let classname;
     if (isDrawerCollapsed) {
@@ -820,7 +868,7 @@ class Navigator extends React.Component {
 
               {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
             </ListItem>
-            {categories.map(({ id: childId, icon, href, show, link, children }) => {
+            {categories.map(({ id: childId, title, icon, href, show, link, children }) => {
               if (typeof show !== "undefined" && !show) {
                 return "";
               }
@@ -832,7 +880,7 @@ class Navigator extends React.Component {
                     key={childId}
                     className={classNames(
                       classes.item,
-                      classes.itemActionable,
+                      link ? classes.itemActionable : classes.restrictPointer,
                       path === href && classes.itemActiveItem
                     )}
                   >
@@ -853,7 +901,7 @@ class Navigator extends React.Component {
                             primary: classes.itemPrimary,
                           }}
                         >
-                          {childId}
+                          {title}
                         </ListItemText>
                       </div>
                     </Link>
@@ -869,51 +917,61 @@ class Navigator extends React.Component {
               </React.Fragment>
             ) : null}
             <Divider className={classes.divider} />
-            {externlinks.map(({ id, icon, title, href, external_icon }) => {
-              return (
-                <ListItem
-                  component="a"
-                  href={href}
-                  target="_blank"
-                  key={id}
-                  className={classNames(classes.item, classes.itemActionable)}
-                >
-                  <div className={classNames(classes.link)}>
-                    <Tooltip
-                      title={title}
-                      placement="right"
-                      disableFocusListener={!isDrawerCollapsed}
-                      disableHoverListener={!isDrawerCollapsed}
-                      disableTouchListener={!isDrawerCollapsed}
-                    >
-                      <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
-                    </Tooltip>
-                    <ListItemText
-                      className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                      classes={{
-                        primary: classes.itemPrimary,
-                      }}
-                    >
-                      {title}
-                    </ListItemText>
-                    <Tooltip
-                      title={title}
-                      placement="left"
-                      disableFocusListener={!isDrawerCollapsed}
-                      disableHoverListener={!isDrawerCollapsed}
-                      disableTouchListener={!isDrawerCollapsed}
-                    >
-                      <ListItemIcon className={id === "community" ? classes.listIconSlack : classes.listIcon1}>
-                        {external_icon}
-                      </ListItemIcon>
-                    </Tooltip>
-                  </div>
-                </ListItem>
-              );
-            })}
+
           </List>
           <div className={classes.fixedSidebarFooter}>
-            <ListItem button onClick={() => this.toggleMiniDrawer()} className={classname}>
+
+            <ButtonGroup
+              size="large"
+              className={!isDrawerCollapsed ? classes.marginLeft : classes.btnGrpMarginRight}
+              orientation={isDrawerCollapsed ? "vertical" : "horizontal"}
+            >
+              {externlinks.map(({ id, icon, title, href }, index) => {
+                return (
+                  <ListItem
+                    key={id}
+                    className={classes.item}
+                  >
+                    <Grow
+                      in={showHelperButton}
+                      timeout={{ enter: (600 - index * 200), exit: 100 * index }}
+                    >
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={classNames(classes.link, isDrawerCollapsed ? classes.extraPadding : "")}>
+                        <Tooltip
+                          title={title}
+                          placement={isDrawerCollapsed ? "right" : "top"}
+                        >
+                          <ListItemIcon className={classNames(classes.listIcon, classes.helperIcons, classes.helpIcon)}>{icon}</ListItemIcon>
+                        </Tooltip>
+                      </a>
+                    </Grow>
+                  </ListItem>
+                );
+              })}
+              <ListItem
+                className={classes.rightMargin}
+              >
+                <Tooltip
+                  title="Help"
+                  placement={isDrawerCollapsed ? "right" : "top"}
+                >
+                  <IconButton onClick={() => this.toggleSpacing()}>
+                    <HelpIcon
+                      className={classes.helpIcon}
+                      style={showHelperButton
+                        ? { color: "#8ed7f8", opacity: 1 }
+                        : { color: "#8ed7f8" }}
+                    />
+                  </IconButton>
+                </Tooltip>
+              </ListItem>
+            </ButtonGroup>
+
+            <ListItem button className={classname} onClick={() => this.toggleMiniDrawer()}>
               <FontAwesomeIcon
                 icon={faChevronCircleLeft}
                 fixedWidth
