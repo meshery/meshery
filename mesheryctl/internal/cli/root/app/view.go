@@ -121,24 +121,27 @@ var viewCmd = &cobra.Command{
 			return err
 		}
 
-		if err = json.Unmarshal(body, &response); err != nil {
+		var dat map[string]interface{}
+		if err = json.Unmarshal(body, &dat); err != nil {
 			return errors.Wrap(err, "failed to unmarshal response body")
 		}
 		if isID {
-			if body, err = yaml.JSONToYAML(body); err != nil {
-				return errors.Wrap(err, "failed to convert json to yaml")
+			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
+				return err
 			}
-			log.Info(string(body))
 		} else if viewAllFlag {
-			if body, err = yaml.JSONToYAML(body); err != nil {
-				return errors.Wrap(err, "failed to convert json to yaml")
+			if body, err = json.MarshalIndent(map[string]interface{}{"applications": dat["applications"]}, "", "  "); err != nil {
+				return err
 			}
-			log.Info(string(body))
 		} else {
+			if err = json.Unmarshal(body, &response); err != nil {
+				return errors.Wrap(err, "failed to unmarshal response body")
+			}
 			var a appStruct
 			if response.TotalCount == 0 {
 				return errors.New("application does not exit. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")
 			}
+			// Manage more than one apps with similar name
 			for _, app := range response.Applications {
 				if response.Applications == nil {
 					return errors.New("application name not provide. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")
@@ -157,15 +160,21 @@ var viewCmd = &cobra.Command{
 					if err != nil {
 						return err
 					}
-					fmt.Printf("Name: %v\n", a.Name)
-					fmt.Printf("ID: %s\n", a.ID.String())
-					fmt.Printf("ApplicationFile: %v\n", a.ApplicationFile)
-					fmt.Printf("UpdatedAt: %s\n", a.UpdatedAt.String())
-					fmt.Printf("CreatedAt: %s\n", a.CreatedAt.String())
-					fmt.Printf("UserID: %v\n", a.UserID)
-					fmt.Printf("Location: %v\n", a.Location)
-					fmt.Println("#####################")
-					continue
+					if outFormatFlag == "yaml" {
+						fmt.Printf("ApplicationFile: %v\n", a.ApplicationFile)
+						fmt.Printf("CreatedAt: %s\n", a.CreatedAt.String())
+						fmt.Printf("ID: %s\n", a.ID.String())
+						fmt.Printf("Location: %v\n", a.Location)
+						fmt.Printf("Name: %v\n", a.Name)
+						fmt.Printf("UpdatedAt: %s\n", a.UpdatedAt.String())
+						fmt.Printf("UserID: %v\n", a.UserID)
+						fmt.Println("#####################")
+						continue
+					}
+					if outFormatFlag == "json" {
+						log.Info(string(body))
+						continue
+					}
 				}
 			}
 		}
@@ -176,6 +185,9 @@ var viewCmd = &cobra.Command{
 			}
 		} else if outFormatFlag != "json" {
 			return errors.New("output-format choice invalid, use [json|yaml]")
+		}
+		if viewAllFlag || isID {
+			log.Info(string(body))
 		}
 		return nil
 	},
