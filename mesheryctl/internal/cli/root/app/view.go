@@ -2,16 +2,12 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/ghodss/yaml"
-	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -21,16 +17,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
-
-type appStruct struct {
-	Name            string
-	ID              *uuid.UUID
-	ApplicationFile string
-	UserID          *string
-	Location        sql.Map
-	UpdatedAt       *time.Time
-	CreatedAt       *time.Time
-}
 
 var (
 	viewAllFlag   bool
@@ -137,7 +123,6 @@ var viewCmd = &cobra.Command{
 			if err = json.Unmarshal(body, &response); err != nil {
 				return errors.Wrap(err, "failed to unmarshal response body")
 			}
-			var a appStruct
 			if response.TotalCount == 0 {
 				return errors.New("application does not exit. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")
 			}
@@ -147,31 +132,18 @@ var viewCmd = &cobra.Command{
 					return errors.New("application name not provide. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")
 				}
 				if app.Name == application {
-					a = appStruct{
-						Name:            app.Name,
-						ID:              app.ID,
-						ApplicationFile: app.ApplicationFile,
-						UserID:          app.UserID,
-						Location:        app.Location,
-						UpdatedAt:       app.UpdatedAt,
-						CreatedAt:       app.CreatedAt,
-					}
-					body, err = json.MarshalIndent(&a, "", "  ")
+					body, err = json.MarshalIndent(&app, "", "  ")
 					if err != nil {
 						return err
 					}
-					if outFormatFlag == "yaml" {
-						fmt.Printf("ApplicationFile: %v\n", a.ApplicationFile)
-						fmt.Printf("CreatedAt: %s\n", a.CreatedAt.String())
-						fmt.Printf("ID: %s\n", a.ID.String())
-						fmt.Printf("Location: %v\n", a.Location)
-						fmt.Printf("Name: %v\n", a.Name)
-						fmt.Printf("UpdatedAt: %s\n", a.UpdatedAt.String())
-						fmt.Printf("UserID: %v\n", a.UserID)
-						fmt.Println("#####################")
+					if outFormatFlag == "json" {
+						log.Info(string(body))
 						continue
 					}
-					if outFormatFlag == "json" {
+					if outFormatFlag == "yaml" {
+						if body, err = yaml.JSONToYAML(body); err != nil {
+							return errors.Wrap(err, "failed to convert json to yaml")
+						}
 						log.Info(string(body))
 						continue
 					}
