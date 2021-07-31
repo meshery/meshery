@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import Head from 'next/head';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import ConnectionWizardComponent from "../components/ConnectionWizard/index.js"
-import { updatepagepath, updatepagetitle } from "../lib/store";
-import { getPath } from "../lib/path";
+import ConnectionWizardComponent from "../../components/ConnectionWizard/index.js"
+import { updatepagepath, updatepagetitle } from "../../lib/store";
+import { getPath } from "../../lib/path";
 import { NoSsr } from "@material-ui/core";
 
 const ConnectionWizard = (props) => {
