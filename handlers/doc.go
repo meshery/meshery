@@ -243,7 +243,7 @@ type singleScheduleResponseWrapper struct {
 	Body models.Schedule
 }
 
-// Fetches Meshery Application
+// Fetches a Single Meshery Application
 // swagger:response mesheryApplicationResponseWrapper
 type mesheryApplicationResponseWrapper struct {
 	// in: body
