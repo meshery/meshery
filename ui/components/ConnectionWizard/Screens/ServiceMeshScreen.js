@@ -76,10 +76,10 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
   return (
     <Grid xs={12} container justify="center" alignItems="flex-start">
       <Grid item xs={6} container justify="flex-start" >
-        <VerticalCarousel slides={itemsToBeRendered} handleAfterSlideChange={handleAfterSlideChange} sliderRef={sliderRef}/>
-        <div style={{height: "21.3rem", overflow: "scroll", marginTop: '-1.2rem'}} className="hide-scrollbar"> 
+        <div style={{height: "18rem", overflow: "scroll", marginTop: '1.3rem'}} className="hide-scrollbar"> 
           <ScrollIndicator items={scrollItems} handleClick={handleIndicatorClick} activeIndex={activeIndex} />
         </div>
+        <VerticalCarousel slides={itemsToBeRendered} handleAfterSlideChange={handleAfterSlideChange} sliderRef={sliderRef}/>
       </Grid>
       <Grid item xs={6} container justify="center">
         <ServiceMeshDataPanel adapterInfo={serviceMeshComponents[activeIndex]?.adapterInfo} isActive={isAdapterActive(serviceMeshComponents[activeIndex]?.adapterInfo.value)}  />
