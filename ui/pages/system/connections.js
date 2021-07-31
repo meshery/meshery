@@ -11,7 +11,7 @@ const ConnectionWizard = (props) => {
 
   useEffect(() => {
     props.updatepagepath({ path: getPath() });
-    props.updatepagetitle({ title: "Connectivity Wizard" });
+    props.updatepagetitle({ title: "Connection Wizard" });
   },[]) 
     
   return (
@@ -34,7 +34,7 @@ const ConnectionWizard = (props) => {
           href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
         />
 
-        <title>Connectivity wizard | Meshery</title>
+        <title>Connection wizard | Meshery</title>
       </Head>
       <ConnectionWizardComponent />
     </NoSsr>
