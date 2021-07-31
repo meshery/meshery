@@ -56,6 +56,8 @@ jobs:
         uses: helm/kind-action@v1.1.0
         with:
           cluster_name: "kind-cluster"
+      - name: Deploy docker-compose
+        uses: hasnat/deploy-docker-compose@v0.1-alpha
       - name: Run coverage
         run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
