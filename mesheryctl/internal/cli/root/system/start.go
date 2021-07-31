@@ -29,7 +29,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
@@ -83,7 +82,7 @@ var startCmd = &cobra.Command{
 func start() error {
 	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-			return handlers.ErrCreateDir(err, utils.MesheryFolder)
+			return ErrCreateDir(err, utils.MesheryFolder)
 		}
 	}
 
@@ -133,7 +132,7 @@ func start() error {
 		compose := &utils.DockerCompose{}
 		err = utils.ViperCompose.Unmarshal(&compose)
 		if err != nil {
-			return handlers.ErrUnmarshal(err, utils.DockerComposeFile)
+			return ErrUnmarshal(err, utils.DockerComposeFile)
 		}
 
 		//changing the port mapping in docker compose

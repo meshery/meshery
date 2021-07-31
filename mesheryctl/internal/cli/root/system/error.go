@@ -14,6 +14,8 @@ const (
 	ErrResetMeshconfigCode       = "replace me"
 	ErrApplyManifestCode         = "replace me"
 	ErrApplyOperatorManifestCode = "replace me"
+	ErrCreateDirCode             = "replace me"
+	ErrUnmarshalCode             = "replace me"
 )
 
 func ErrHealthCheckFailed(err error) error {
@@ -42,4 +44,12 @@ func ErrApplyManifest(err error, deleteStatus, updateStatus bool) error {
 
 func ErrApplyOperatorManifest(err error, deleteStatus, updateStatus bool) error {
 	return errors.New(ErrApplyOperatorManifestCode, errors.Alert, []string{"Error applying operator manifests with update: ", strconv.FormatBool(updateStatus), " and delete: ", strconv.FormatBool(deleteStatus)}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrCreateDir(err error, obj string) error {
+	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrUnmarshal(err error, obj string) error {
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling file ", obj}, []string{err.Error()}, []string{}, []string{})
 }

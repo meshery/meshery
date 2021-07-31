@@ -22,7 +22,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
@@ -95,7 +94,7 @@ func stop() error {
 		// if the platform is docker, then stop all the running containers
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-				return handlers.ErrCreateDir(err, utils.MesheryFolder)
+				return ErrCreateDir(err, utils.MesheryFolder)
 			}
 		}
 
