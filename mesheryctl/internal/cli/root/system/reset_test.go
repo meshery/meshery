@@ -66,12 +66,10 @@ func TestResetCmdIntegration(t *testing.T) {
 			}
 			RemoveFileAndDirectory()
 		})
-
 	}
 }
 
 func RemoveFileAndDirectory() {
-
 	// Removing the meshery.yaml file
 	// from the directory
 	removeMesheryYaml := os.Remove("meshery.yaml")
@@ -84,5 +82,4 @@ func RemoveFileAndDirectory() {
 	if removeMesheryHiddenDirectory != nil {
 		log.Fatal(removeMesheryHiddenDirectory)
 	}
-
 }
