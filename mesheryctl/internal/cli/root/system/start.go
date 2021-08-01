@@ -29,7 +29,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
@@ -83,7 +82,7 @@ var startCmd = &cobra.Command{
 func start() error {
 	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.MesheryFolder)))
+			return ErrCreateDir(err, utils.MesheryFolder)
 		}
 	}
 
@@ -133,7 +132,7 @@ func start() error {
 		compose := &utils.DockerCompose{}
 		err = utils.ViperCompose.Unmarshal(&compose)
 		if err != nil {
-			return handlers.ErrUnmarshal(err, utils.DockerComposeFile)
+			return ErrUnmarshal(err, utils.DockerComposeFile)
 		}
 
 		//changing the port mapping in docker compose
@@ -214,7 +213,7 @@ func start() error {
 		if utils.ResetFlag {
 			err := resetMesheryConfig()
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
+				return ErrResetMeshconfig(err)
 			}
 		}
 
@@ -360,7 +359,7 @@ func start() error {
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = utils.ApplyManifestFiles(manifests, currCtx.GetAdapters(), kubeClient, false, false)
 		if err != nil {
-			break
+			return ErrApplyManifest(err, false, false)
 		}
 
 		deadline := time.Now().Add(20 * time.Second)
@@ -473,14 +472,14 @@ func start() error {
 			err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
 			if err != nil {
-				return err
+				return ErrApplyOperatorManifest(err, true, false)
 			}
 		} else {
 			// skip applying update on operators when the flag is used
 			err = utils.ApplyOperatorManifest(kubeClient, false, false)
 
 			if err != nil {
-				return err
+				return ErrApplyOperatorManifest(err, false, false)
 			}
 		}
 	}
