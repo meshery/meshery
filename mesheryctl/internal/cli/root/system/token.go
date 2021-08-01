@@ -86,7 +86,6 @@ var setTokenCmd = &cobra.Command{
 		tokenName := args[0]
 		if ctx == "" {
 			ctx = viper.GetString("current-context")
-
 		}
 
 		if err = config.SetTokenToConfig(tokenName, utils.DefaultConfigPath, ctx); err != nil {
