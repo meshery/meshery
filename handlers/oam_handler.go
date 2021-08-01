@@ -663,3 +663,14 @@ func patternResourceExists(
 
 	return len(res.Resources) > 0
 }
+
+func _processPattern() {
+	// Process pattern in multiple stages
+	// Stages:
+	// 1. Authorization
+	// 2. Filler
+	// 3. Validity check
+	// 4. Optional Static Analysis
+	// 5. Provider persistence
+	// 6. Invoke hosts to process the components
+}
