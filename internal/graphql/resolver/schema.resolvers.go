@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/layer5io/meshery/internal/graphql/generated"
 	"github.com/layer5io/meshery/internal/graphql/model"
@@ -53,6 +54,16 @@ func (r *queryResolver) GetAvailableNamespaces(ctx context.Context) ([]*model.Na
 	return r.getAvailableNamespaces(ctx, provider)
 }
 
+func (r *queryResolver) GetPerfResult(ctx context.Context, id *string) (*model.MesheryResult, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if id != nil {
+		return r.getPerfResult(ctx, provider, id)
+	}
+
+	return nil, ErrInvalidRequest
+	// panic(fmt.Errorf("not implemented"))
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if selector != nil {
@@ -79,6 +90,14 @@ func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context) (<-cha
 func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.listenToMeshSyncEvents(ctx, provider)
+}
+
+func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector *model.PageFilter) (<-chan *model.PerfPageResult, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *subscriptionResolver) SubscribePerfProfile(ctx context.Context, selector *model.PageFilter) (<-chan *model.PerfPageResult, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 // Mutation returns generated.MutationResolver implementation.

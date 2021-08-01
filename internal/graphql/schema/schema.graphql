@@ -196,12 +196,12 @@ type PerfPageResult {
 }
 
 type LatenciesMs {
-	min: Int 
-	average: Int
-	p50: Int
-	p90: Int
-	p99: Int
-	max: Int
+	min: Float
+	average: Float
+	p50: Float
+	p90: Float
+	p99: Float
+	max: Float
 }
 
 type PerfResult {
@@ -211,11 +211,48 @@ type PerfResult {
 	start_time: Int
 	end_time: Int
 	latencies_ms: LatenciesMs
-	actual_qps: Int
+	actual_qps: Float
 	details_uri: String
 	test_id: String
 	mesh_config_id: String
 	env_id: String
+}
+
+type Percentiles {
+	Percentile: Int
+	Value: Float
+}
+
+type DurationHistogram {
+	Avg: Float
+	Max: Float
+	Min: Float
+	Percentiles: [Percentiles]
+}
+
+type RunnerResults {
+	url: String
+	load_generator: String
+	ActualDuration: Int
+	ActualQPS: Int
+	StartTime: Int
+	DurationHistogram: DurationHistogram
+}
+
+type MesheryResult {
+	meshery_id: String
+	name: String
+	mesh: String
+	performance_profile: String
+	test_id: String
+	# runner_results: RunnerResults
+	runner_results: String
+	server_metrics: String
+	server_board_config: String
+	test_start_time: Int
+	user_id: String
+	updated_at: String
+	created_at: String
 }
 
 input PageFilter {
@@ -250,7 +287,7 @@ type Query {
 	getAvailableNamespaces: [NameSpace!]!
 
 	# Query for performance result
-	getPerfResult(id: ID): PerfResult!
+	getPerfResult(id: ID): MesheryResult
 }
 
 # 
