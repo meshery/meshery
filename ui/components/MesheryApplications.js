@@ -413,7 +413,7 @@ function MesheryApplications({ updateProgress, enqueueSnackbar, closeSnackbar, u
     responsive: "scrollFullHeight",
     resizableColumns: true,
     serverSide: true,
-    selectableRows: "none",
+    selection: true,
     count,
     rowsPerPage: pageSize,
     rowsPerPageOptions: [10, 20, 25],
