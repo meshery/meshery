@@ -1,4 +1,4 @@
-package pattern
+package app
 
 import (
 	"fmt"
@@ -15,17 +15,21 @@ import (
 	"github.com/spf13/viper"
 )
 
-var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Delete pattern file",
-	Long:  `delete pattern file will trigger deletion of the pattern file`,
+var offboardCmd = &cobra.Command{
+	Use:   "offboard",
+	Short: "Offboard application",
+	Long:  `Offboard application will trigger deletion of the application file`,
 	Args:  cobra.MinimumNArgs(0),
+	Example: `
+	Offboard application by providing file path
+	mesheryctl app offboard -f <filepath>
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		// set default tokenpath for pattern delete command.
+		// set default tokenpath for app offboard command.
 		if tokenPath == "" {
 			tokenPath = constants.GetCurrentAuthToken()
 		}
@@ -37,7 +41,7 @@ var deleteCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/pattern/deploy", fileReader)
+		req, err := http.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/experimental/application/deploy", fileReader)
 		if err != nil {
 			return err
 		}
@@ -65,5 +69,5 @@ var deleteCmd = &cobra.Command{
 }
 
 func init() {
-	deleteCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
+	offboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to app file")
 }
