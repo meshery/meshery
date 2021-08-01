@@ -116,6 +116,12 @@ var startCmd = &cobra.Command{
 }
 
 func start() error {
+	// Get viper instance used for context
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
 	// fetch current context
 	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
