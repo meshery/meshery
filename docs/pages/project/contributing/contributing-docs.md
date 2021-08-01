@@ -147,6 +147,15 @@ Meshery documentation is made of these components:
 
   _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
 
+### Using Docker
+If you've Docker and `make` installed in your system, then you can serve the site locally
+  ```
+  $ make docker-docs
+  ```
+
+This doesn't require the need for installing Jekyll and Ruby in your system
+
+**But, you need to make sure that GNU make is working in your system (might not work in Windows)** 
 #### Note
 While performing the above step, if you're facing errors with a message like below...
 
@@ -156,6 +165,7 @@ This is because Jekyll always considers the exact version of Ruby unlike JavaScr
 
 So, you need to follow either of the two steps to resolve this problem;
   - Install the required Ruby version by using `rvm` or by any means given above
+  - Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes given above
   - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below:
   ```
   source "https://rubygems.org" 
