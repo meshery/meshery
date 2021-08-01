@@ -16,7 +16,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 	}
 
 	// setup current context
-	utils.SetupContextEnv(t)
+	// utils.SetupContextEnv(t)
 
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
