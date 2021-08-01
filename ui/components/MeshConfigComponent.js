@@ -722,24 +722,46 @@ class MeshConfigComponent extends React.Component {
     const operator = (
       <React.Fragment>
         <div>
-          <Chip
-            // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
-            label={"Operator"}
-            // onDelete={self.handleReconfigure}
-            onClick={self.handleOperatorClick}
-            icon={<img src="/static/img/meshery-operator.svg" className={classes.icon} />}
-            variant="outlined"
-            data-cy="chipOperator"
-          />
-          <Tooltip title={meshSyncInstalled ? `Version: ${meshSyncVersion}` : "Not Available"} aria-label="meshSync">
-            <Chip
-              label={"MeshSync"}
-              onClick={self.handleMeshSyncClick}
-              icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
-              variant="outlined"
-              data-cy="chipMeshSync"
-            />
-          </Tooltip>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={4}>
+              <List>
+                <ListItem>
+                  <Tooltip
+                    title={operatorInstalled ? `Version: ${operatorVersion}` : "Not Available"}
+                    aria-label="meshSync"
+                  >
+                    <Chip
+                      // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
+                      label={"Operator"}
+                      // onDelete={self.handleReconfigure}
+                      onClick={self.handleOperatorClick}
+                      icon={<img src="/static/img/meshery-operator.svg" className={classes.icon} />}
+                      variant="outlined"
+                      data-cy="chipOperator"
+                    />
+                  </Tooltip>
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <List>
+                <ListItem>
+                  <Tooltip
+                    title={meshSyncInstalled ? `Version: ${meshSyncVersion}` : "Not Available"}
+                    aria-label="meshSync"
+                  >
+                    <Chip
+                      label={"MeshSync"}
+                      onClick={self.handleMeshSyncClick}
+                      icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+                      variant="outlined"
+                      data-cy="chipMeshSync"
+                    />
+                  </Tooltip>
+                </ListItem>
+              </List>
+            </Grid>
+          </Grid>
           <Grid container spacing={1}>
             <Grid item xs={12} md={4}>
               <List>
