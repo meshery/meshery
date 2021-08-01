@@ -165,7 +165,7 @@ This is because Jekyll always considers the exact version of Ruby unlike JavaScr
 
 So, you need to follow either of the two steps to resolve this problem;
   - Install the required Ruby version by using `rvm` or by any means given above
-  - Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes given above
+  - Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes
   - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below:
   ```
   source "https://rubygems.org" 
