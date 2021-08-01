@@ -74,6 +74,13 @@ func TestSystemCmdIntegration(t *testing.T) {
 			TimeoutRequired: 0,
 		},
 		{
+			Name:            "Printing Meshery logs with Kubernetes platform",
+			Action:          "logs",
+			Args:            []string{"logs"},
+			ExpectError:     false,
+			TimeoutRequired: 0,
+		},
+		{
 			Name:            "Stop Meshery with Kubernetes platform",
 			Action:          "stop",
 			Args:            []string{"stop", "-y"},

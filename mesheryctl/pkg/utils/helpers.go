@@ -558,6 +558,17 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models
 	return prefs, nil
 }
 
+// ContainsStringPrefix takes a string slice and a string and returns true if it is present
+func ContainsStringPrefix(arr []string, str string) bool {
+	for _, el := range arr {
+		if strings.HasPrefix(el, str) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // TransformYAML takes in:
 // 	yamlByt - YAML Byte slice that needs to be modified
 //	transform - function that will be executed on that value, the returned value will replace the current value

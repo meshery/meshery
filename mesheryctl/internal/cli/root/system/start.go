@@ -186,7 +186,10 @@ func start() error {
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			if v == "meshery" {
-				temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
+				if !utils.ContainsStringPrefix(temp.Environment, "MESHERY_SERVER_CALLBACK_URL") {
+					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
+				}
+
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), currCtx.GetVersion())
 			}
 			services[v] = temp
