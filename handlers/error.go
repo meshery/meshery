@@ -76,7 +76,7 @@ const (
 	ErrExecutionPlanCode        = "2144"
 	ErrInvalidPatternCode       = "2145"
 	ErrCompConfigPairsCode      = "2146"
-	ErrCreateDirCode            = "replace me"
+	ErrCreateDirCode            = "2150"
 )
 
 var (

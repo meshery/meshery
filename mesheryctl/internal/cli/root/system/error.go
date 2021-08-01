@@ -10,12 +10,12 @@ const (
 	ErrHealthCheckFailedCode     = "1000"
 	ErrInvalidAdapterCode        = "1001"
 	ErrDownloadFileCode          = "1002"
-	ErrStopMesheryCode           = "replace me"
-	ErrResetMeshconfigCode       = "replace me"
-	ErrApplyManifestCode         = "replace me"
-	ErrApplyOperatorManifestCode = "replace me"
-	ErrCreateDirCode             = "replace me"
-	ErrUnmarshalCode             = "replace me"
+	ErrStopMesheryCode           = "1003"
+	ErrResetMeshconfigCode       = "1004"
+	ErrApplyManifestCode         = "1005"
+	ErrApplyOperatorManifestCode = "1006"
+	ErrCreateDirCode             = "1007"
+	ErrUnmarshalCode             = "1008"
 )
 
 func ErrHealthCheckFailed(err error) error {
