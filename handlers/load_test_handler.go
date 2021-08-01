@@ -156,7 +156,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 
 	// if values have been passed as body we run test using SMP Handler
-	if body != nil {
+	if string(body) != "" {
 		h.LoadTestUsingSMPHandler(w, req, prefObj, user, provider)
 		return
 	}
