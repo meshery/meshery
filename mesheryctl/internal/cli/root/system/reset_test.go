@@ -14,11 +14,7 @@ import (
 //var update1 = flag.Bool("update", true, "update golden files")
 
 // This is an Integration test
-func TestResetCmdIntegration(t *testing.T) {
-	// skipping this integration test with --short flag
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
+func TestResetCmd(t *testing.T) {
 	SetupContextEnv(t)
 	tests := []utils.CmdTestInput{
 		{
