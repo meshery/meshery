@@ -1262,6 +1262,42 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "2147": {
+        "name": "ErrFetchDataCode",
+        "code": "2147",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to fetch result data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2148": {
+        "name": "ErrIndexOutOfRangeCode",
+        "code": "2148",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error: index out of range",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2149": {
+        "name": "ErrSessionCopyCode",
+        "code": "2149",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error: session copy error",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2150": {
+        "name": "ErrCreateDirCode",
+        "code": "2150",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating directory ",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
