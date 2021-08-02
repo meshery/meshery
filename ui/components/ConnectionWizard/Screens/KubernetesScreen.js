@@ -64,7 +64,7 @@ const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress, setStepS
 
   return (
     <Grid item xs={12} container justify="center" alignItems="flex-start">
-      <Grid item xs={6} container justify="center" alignItems="center" style={{paddingLeft: "1rem"}}>
+      <Grid item xs={6} container justify="center" alignItems="flex-start" style={{paddingLeft: "1rem"}}>
         <ServiceCard serviceInfo={kubeserviceInfo} isConnected={isConnected} />
       </Grid>
       <Grid item xs={6} container justify="center" style={{paddingRight: "1rem"}}>

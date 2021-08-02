@@ -58,7 +58,7 @@ const MesheryOperatorScreen = ({setStepStatus}) => {
      
   return (
     <Grid item xs={12} container justify="center" alignItems="flex-start"> 
-      <Grid item container justify="center" alignItems="center" xs={6} style={{paddingLeft: "1rem"}}>
+      <Grid item container justify="center" alignItems="flex-start" xs={6} style={{paddingLeft: "1rem"}}>
         <ServiceCard serviceInfo={mesheryOperatorinfo} isConnected={isConnected} style={{paddingRight: "1rem"}}/> 
       </Grid>
       <Grid item xs={6} container justify="center">
