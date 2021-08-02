@@ -144,7 +144,7 @@ var validateCmd = &cobra.Command{
 		if watch {
 			log.Infof("Verifying Operation")
 			s.Start()
-			_, err = waitForValidateResponse(mctlCfg, "SMI")
+			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
 			if err != nil {
 				return errors.Wrap(err, "error verifying installation")
 			}
@@ -200,9 +200,9 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 		}
 	}()
 
-	//Run a goroutine to wait for time out
+	//Run a goroutine to wait for time out of 20 mins
 	go func() {
-		time.Sleep(time.Second * 300)
+		time.Sleep(time.Second * 1200)
 		err = errors.New("timeout")
 		wg.Done()
 	}()
