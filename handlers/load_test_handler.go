@@ -291,7 +291,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 			}
 
 			h.log.Debug("received new data on response channel")
-			_, _ = fmt.Print(w, "data: \n\n", bd)
+			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
 			if flusher != nil {
 				flusher.Flush()
 				h.log.Debug("Flushed the messages on the wire...")
@@ -311,6 +311,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		break
 	case <-endChan:
 		h.log.Debug("load test completed")
+		_ = req.Body.Close()
 	}
 }
 
