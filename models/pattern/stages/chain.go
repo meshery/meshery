@@ -3,13 +3,26 @@ package stages
 import (
 	"sync"
 
+	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/models/pattern/planner"
 )
 
-// ChainStageFunction is the type for function that will be invoked on each stage of the chain
-type ChainStageFunction func(plan *planner.Plan, err error, next ChainStageNextFunction)
+// Data is the struct that will be passed on each stage
+type Data struct {
+	// Plan - Generated Plan
+	Plan *planner.Plan
 
-type ChainStageNextFunction func(plan *planner.Plan, err error)
+	// PatternFile - User specified pattern file
+	PatternFile *core.Pattern
+
+	// Other is for passing metadata across different stages
+	Other map[string]interface{}
+}
+
+// ChainStageFunction is the type for function that will be invoked on each stage of the chain
+type ChainStageFunction func(data *Data, err error, next ChainStageNextFunction)
+
+type ChainStageNextFunction func(data *Data, err error)
 
 // ChainStages type represents a slice of ChainStageFunction
 type ChainStages []ChainStageNextFunction
@@ -42,8 +55,8 @@ func (ch *Chain) Add(fn ChainStageFunction) *Chain {
 	nextIdxStageFn := len(ch.nexts) - 1
 
 	// Create the stage function
-	stageFn := func(plan *planner.Plan, err error) {
-		fn(plan, err, ch.nexts[nextIdxStageFn])
+	stageFn := func(data *Data, err error) {
+		fn(data, err, ch.nexts[nextIdxStageFn])
 	}
 
 	// Modify next function of previous stage to point
@@ -61,12 +74,12 @@ func (ch *Chain) Add(fn ChainStageFunction) *Chain {
 // Process takes in a plan and starts the chain of the functions
 //
 // Returns a pointer to the Chain object
-func (ch *Chain) Process(plan *planner.Plan) *Chain {
+func (ch *Chain) Process(data *Data) *Chain {
 	ch.mu.Lock()
 	defer ch.mu.Unlock()
 
 	if len(ch.stages) > 0 {
-		ch.stages[0](plan, nil)
+		ch.stages[0](data, nil)
 	}
 
 	return ch
