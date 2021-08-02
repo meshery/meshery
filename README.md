@@ -57,7 +57,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 [Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
 
  </details>
- 
+
 <h2><a name="service-meshes"></a>Supported Service Meshes</h2>
 <p>Meshery supports 10 diffferent service meshes.</p>
 
@@ -153,6 +153,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 ## Overview
 
 <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img src=".github/assets/images/meshery/meshery-logo-tag-dark-text-side.png" width="50%" /></a>
+
 <p>
   <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><i>Project Overview Presentation</i></a>
 </p>
@@ -214,7 +215,7 @@ Meshery provides tooling to validate any service mesh that claims to implement a
 
 <img alt="WebAssembly Logo" src="docs/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" />
 <h3> Manage data plane intelligence with WebAssembly filters </h3>
-Dynamically load and manage your own WebAssembly filters in Envoy-based service meshes. 
+Dynamically load and manage your own WebAssembly filters in Envoy-based service meshes.
 <br>
 See <a href="https://github.com/layer5io/image-hub">Image Hub</a>.
 <br /><br />
