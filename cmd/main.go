@@ -15,7 +15,7 @@ import (
 	"github.com/layer5io/meshery/internal/graphql"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshery/models/pattern"
+	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/router"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
@@ -75,10 +75,10 @@ func main() {
 	store.Initialize()
 
 	// Register local OAM traits and workloads
-	if err := pattern.RegisterMesheryOAMTraits(); err != nil {
+	if err := core.RegisterMesheryOAMTraits(); err != nil {
 		logrus.Error(err)
 	}
-	if err := pattern.RegisterMesheryOAMWorkloads(); err != nil {
+	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
 		logrus.Error(err)
 	}
 	logrus.Info("Registered Meshery local Capabilities")

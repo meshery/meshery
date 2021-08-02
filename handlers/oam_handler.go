@@ -15,8 +15,10 @@ import (
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
-	OAM "github.com/layer5io/meshery/models/pattern"
+	pCore "github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/models/pattern/patterns"
+	pPlanner "github.com/layer5io/meshery/models/pattern/planner"
+	pStages "github.com/layer5io/meshery/models/pattern/stages"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
@@ -96,7 +98,7 @@ func (h *Handler) PatternFileHandler(
 	isDel := r.Method == http.MethodDelete
 
 	// Generate the pattern file object
-	patternFile, err := OAM.NewPatternFile(body)
+	patternFile, err := pCore.NewPatternFile(body)
 	if err != nil {
 		h.log.Error(ErrPatternFile(err))
 		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
@@ -104,7 +106,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	// Get execution plan
-	plan, err := OAM.CreatePlan(patternFile, policies)
+	plan, err := pPlanner.CreatePlan(patternFile, policies)
 	if err != nil {
 		h.log.Error(ErrExecutionPlan(err))
 		http.Error(rw, ErrExecutionPlan(err).Error(), http.StatusInternalServerError)
@@ -197,13 +199,13 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	}
 
 	if typ == "workload" {
-		return OAM.RegisterWorkload(body)
+		return pCore.RegisterWorkload(body)
 	}
 	if typ == "trait" {
-		return OAM.RegisterTrait(body)
+		return pCore.RegisterTrait(body)
 	}
 	if typ == "scope" {
-		return OAM.RegisterScope(body)
+		return pCore.RegisterScope(body)
 	}
 
 	return nil
@@ -225,7 +227,7 @@ func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 	enc := json.NewEncoder(rw)
 
 	if typ == "workload" {
-		res := OAM.GetWorkloads()
+		res := pCore.GetWorkloads()
 
 		if err := enc.Encode(res); err != nil {
 			h.log.Error(ErrWorkloadDefinition(err))
@@ -234,7 +236,7 @@ func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 	}
 
 	if typ == "trait" {
-		res := OAM.GetTraits()
+		res := pCore.GetTraits()
 
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
@@ -244,7 +246,7 @@ func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 	}
 
 	if typ == "scope" {
-		res := OAM.GetScopes()
+		res := pCore.GetScopes()
 
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
@@ -261,8 +263,8 @@ func createCompConfigPairsAndExecuteAction(
 	user *models.User,
 	provider models.Provider,
 	token string,
-	plan *OAM.Plan,
-	patternFile OAM.Pattern,
+	plan *pPlanner.Plan,
+	patternFile pCore.Pattern,
 	isDel bool,
 ) (string, error) {
 	var internalErrs []error
@@ -273,7 +275,7 @@ func createCompConfigPairsAndExecuteAction(
 		return "", err
 	}
 
-	_ = plan.Execute(func(svcName string, _ OAM.Service) bool {
+	_ = plan.Execute(func(svcName string, _ pCore.Service) bool {
 		compcon := compConfigPair{
 			Hosts: make(map[string]bool),
 		}
@@ -355,7 +357,7 @@ func createCompConfigPairsAndExecuteAction(
 		}
 
 		// Validate the configuration against the workloadDefinition schema
-		workloadCap, err := OAM.ValidateWorkload(workload, comp)
+		workloadCap, err := pStages.ValidateWorkload(workload, comp)
 		if err != nil {
 			internalErrs = append(internalErrs, fmt.Errorf("invalid Pattern: %s", err))
 			return false
@@ -396,7 +398,7 @@ func createCompConfigPairsAndExecuteAction(
 				return false
 			}
 
-			traitCap, err := OAM.ValidateTrait(traitDef, configComp, patternFile)
+			traitCap, err := pStages.ValidateTrait(traitDef, configComp, patternFile)
 			if err != nil {
 				internalErrs = append(internalErrs, err)
 				return false

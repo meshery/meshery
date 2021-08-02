@@ -1,17 +1,18 @@
-package pattern
+package stages
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
 
+	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/qri-io/jsonschema"
 )
 
 // ValidateWorkload takes in a workload and validates it against the corresponding schema
-func ValidateWorkload(workload interface{}, component v1alpha1.Component) (*WorkloadCapability, error) {
-	castedWorklod, ok := workload.(WorkloadCapability)
+func ValidateWorkload(workload interface{}, component v1alpha1.Component) (*core.WorkloadCapability, error) {
+	castedWorklod, ok := workload.(core.WorkloadCapability)
 	if !ok {
 		return nil, fmt.Errorf("instance is not of type WorkloadCapability")
 	}
@@ -48,9 +49,9 @@ func ValidateWorkload(workload interface{}, component v1alpha1.Component) (*Work
 func ValidateTrait(
 	trait interface{},
 	configSpecComp v1alpha1.ConfigurationSpecComponent,
-	af Pattern,
-) (*TraitCapability, error) {
-	castedTrait, ok := trait.(TraitCapability)
+	af core.Pattern,
+) (*core.TraitCapability, error) {
+	castedTrait, ok := trait.(core.TraitCapability)
 	if !ok {
 		return nil, fmt.Errorf("instance is not of type TraitCapability")
 	}
@@ -94,9 +95,9 @@ func ValidateTrait(
 }
 
 func isLegalTrait(
-	trait TraitCapability,
+	trait core.TraitCapability,
 	configSpecComp v1alpha1.ConfigurationSpecComponent,
-	af Pattern,
+	af core.Pattern,
 ) (v1alpha1.ConfigurationSpecComponentTrait, bool) {
 	for _, tr := range configSpecComp.Traits {
 		if tr.Name == trait.OAMDefinition.Name {

@@ -1,4 +1,4 @@
-package pattern
+package core
 
 import (
 	"encoding/json"
@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/layer5io/meshery/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/sirupsen/logrus"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
@@ -36,8 +37,8 @@ func NewPatternFile(yml []byte) (af Pattern, err error) {
 	err = yaml.Unmarshal(yml, &af)
 
 	for _, svc := range af.Services {
-		svc.Settings = RecursiveCastMapStringInterfaceToMapStringInterface(svc.Settings)
-		svc.Traits = RecursiveCastMapStringInterfaceToMapStringInterface(svc.Traits)
+		svc.Settings = utils.RecursiveCastMapStringInterfaceToMapStringInterface(svc.Settings)
+		svc.Traits = utils.RecursiveCastMapStringInterfaceToMapStringInterface(svc.Traits)
 
 		if svc.Settings == nil {
 			svc.Settings = map[string]interface{}{}

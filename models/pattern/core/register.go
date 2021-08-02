@@ -1,4 +1,4 @@
-package pattern
+package core
 
 import (
 	"encoding/json"
