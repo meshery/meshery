@@ -32,7 +32,7 @@ jobs:
         with:
           go-version: ${{ secrets.GO_VERSION }}
       - name: Run coverage
-        run: go test --short -timeout 20m ./... -race -coverprofile=coverage.txt -covermode=atomic
+        run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
@@ -57,7 +57,7 @@ jobs:
         with:
           cluster_name: "kind-cluster"
       - name: Run coverage
-        run: go test -run Integration -timeout 30m ./... -race -coverprofile=coverage.txt -covermode=atomic
+        run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

@@ -29,6 +29,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
@@ -53,40 +54,6 @@ var startCmd = &cobra.Command{
 	Long:  `Start Meshery and each of its service mesh adapters.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// create .meshery folder
-		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
-			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.MesheryFolder)))
-			}
-		}
-
-		// Get viper instance used for context
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return errors.Wrap(err, "error processing config")
-		}
-		// get the platform, channel and the version of the current context
-		// if a temp context is set using the -c flag, use it as the current context
-		if tempContext != "" {
-			err = mctlCfg.SetCurrentContext(tempContext)
-			if err != nil {
-				return errors.Wrap(err, "failed to set temporary context")
-			}
-		}
-
-		currCtx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-
-		if utils.PlatformFlag != "" {
-			if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
-				currCtx.SetPlatform(utils.PlatformFlag)
-			} else {
-				return fmt.Errorf("the platform '%s' is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at %s or verify by executing `mesheryctl system context view`", utils.PlatformFlag, utils.CfgFile)
-			}
-		}
-
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
 			IsPreRunE:  true,
@@ -97,8 +64,7 @@ var startCmd = &cobra.Command{
 		if err != nil {
 			return ErrHealthCheckFailed(err)
 		}
-
-		// execute preflight healthchecks
+		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
 		if err != nil {
 			cmd.SilenceUsage = true
@@ -115,16 +81,37 @@ var startCmd = &cobra.Command{
 }
 
 func start() error {
+	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
+		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.MesheryFolder)))
+		}
+	}
+
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
+	// get the platform, channel and the version of the current context
+	// if a temp context is set using the -c flag, use it as the current context
+	if tempContext != "" {
+		err = mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
+			return errors.Wrap(err, "failed to set temporary context")
+		}
+	}
 
-	// fetch current context
 	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
 		return err
+	}
+
+	if utils.PlatformFlag != "" {
+		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
+			currCtx.SetPlatform(utils.PlatformFlag)
+		} else {
+			return fmt.Errorf("the platform '%s' is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at %s or verify by executing `mesheryctl system context view`", utils.PlatformFlag, utils.CfgFile)
+		}
 	}
 
 	// Deploy to platform specified in the config.yaml
@@ -146,7 +133,7 @@ func start() error {
 		compose := &utils.DockerCompose{}
 		err = utils.ViperCompose.Unmarshal(&compose)
 		if err != nil {
-			return ErrUnmarshal(err, utils.DockerComposeFile)
+			return handlers.ErrUnmarshal(err, utils.DockerComposeFile)
 		}
 
 		//changing the port mapping in docker compose
@@ -191,10 +178,7 @@ func start() error {
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			if v == "meshery" {
-				if !utils.ContainsStringPrefix(temp.Environment, "MESHERY_SERVER_CALLBACK_URL") {
-					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
-				}
-
+				temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), currCtx.GetVersion())
 			}
 			services[v] = temp
@@ -227,7 +211,7 @@ func start() error {
 		if utils.ResetFlag {
 			err := resetMesheryConfig()
 			if err != nil {
-				return ErrResetMeshconfig(err)
+				return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
 			}
 		}
 
@@ -373,7 +357,7 @@ func start() error {
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = utils.ApplyManifestFiles(manifests, currCtx.GetAdapters(), kubeClient, false, false)
 		if err != nil {
-			return ErrApplyManifest(err, false, false)
+			break
 		}
 
 		deadline := time.Now().Add(20 * time.Second)
@@ -486,14 +470,14 @@ func start() error {
 			err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
 			if err != nil {
-				return ErrApplyOperatorManifest(err, true, false)
+				return err
 			}
 		} else {
 			// skip applying update on operators when the flag is used
 			err = utils.ApplyOperatorManifest(kubeClient, false, false)
 
 			if err != nil {
-				return ErrApplyOperatorManifest(err, false, false)
+				return err
 			}
 		}
 	}
