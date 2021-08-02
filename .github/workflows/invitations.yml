@@ -1,0 +1,41 @@
+name: Invite User to GH Org
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  automate_invite:
+    if: contains(github.event.issue.labels.*.name, 'issue/invite') && github.repository == 'meshery/'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invite on label
+        uses: vj-abigo/invite-on-label@v1.2
+        with:
+          organization: layer5io
+          label: issue/invite
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          comment: "We are sending you an invitation to join the Layer5 GitHub Organization. :partying_face: <b>Welcome to the community! 🎉</b><br /><br />&nbsp;&nbsp;&nbsp;Be sure to :star: [star the projects](../stargazers), if you haven't already.<br />"
+        env:
+          INVITE_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
+
+      - name: View context attributes
+        uses: actions/github-script@v4
+        id: set-url
+        with:
+          script: |
+            const url = context.issue.url
+            return url
+          result-encoding: string
+
+      - name: Get url
+        run: |
+          echo "URL=${{steps.set-url.outputs.result}}" >> $GITHUB_ENV
+          echo "ISSUE=${{steps.set-url.outputs.url}}" >> $GITHUB_ENV
+
+      - name: Notify slack
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: pullreminders/slack-action@master
+        with:
+          args: '{\"channel\":\"CF9RK4H89\",\"text\":\"An invitation to join the layer5io GitHub org has been sent\"}'
+          # to the author of: ${{env.URL}}\"}'

@@ -1,0 +1,26 @@
+{
+	"k8sConfig": {
+		"contextName": "kind-kind",
+		"clusterConfigured": true,
+		"server_version": "v1.19.4",
+		"nodes": [
+			{
+				"internal_ip": "172.18.0.2",
+				"hostname": "kind-control-plane",
+				"allocatable_cpu": "4",
+				"allocatable_memory": "8015368Ki",
+				"capacity_cpu": "4",
+				"capacity_memory": "8015368Ki",
+				"os_image": "Ubuntu 20.10",
+				"operating_system": "linux",
+				"kubelet_version": "v1.19.4",
+				"kubeproxy_version": "v1.19.4",
+				"container_runtime_version": "containerd://1.4.0-106-gce4439a8",
+				"architecture": "amd64"
+			}
+		]
+	},
+	"anonymousUsageStats": true,
+	"anonymousPerfResults": true,
+	"updated_at": "2021-03-14T12:23:17.893607574+05:30"
+}

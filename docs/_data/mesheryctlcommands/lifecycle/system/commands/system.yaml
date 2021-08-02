@@ -1,0 +1,5 @@
+---
+name : system
+description: Lifecycle management of Meshery deployments
+usage: |
+    `mesheryctl system`

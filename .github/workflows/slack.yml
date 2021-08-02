@@ -1,0 +1,17 @@
+name: Slack Notify on Star
+on: watch
+jobs:
+  star-notify:
+    if: github.repository == 'meshery/meshery'
+    name: Notify Slack on star
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get current star count
+      run: |
+        echo "STARS=$(curl --silent 'https://api.github.com/repos/meshery/meshery' -H 'Accept: application/vnd.github.preview' | jq '.stargazers_count')" >> $GITHUB_ENV
+    - name: Notify slack
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      uses: pullreminders/slack-action@master
+      with:
+        args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"Someone just starred Meshery! (https://github.com/meshery/meshery/stargazers) Total ⭐️: ${{env.STARS}}\"}'

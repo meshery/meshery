@@ -1,0 +1,62 @@
+# mesheryctl
+mesheryctl/cmd/mesheryctl/mesheryctl
+mesheryctl/.meshery/
+mesheryctl/mesheryctl
+mesheryctl/default.profraw
+main
+
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+.DS_Store
+
+.vscode/
+
+*.config
+
+Chart.min.js
+
+fortio_chart.js
+
+**/node_modules/
+
+**/out/
+
+**/.next/
+
+cmd/meshery
+
+log.txt
+
+**/_site
+**/.sass-cache
+**/.jekyll-metadata
+**/.jekyll-cache
+
+dist/
+
+*/npm-debug.log
+
+**/.idea
+
+yarn.lock
+
+# Generated binaries
+**/bin
+*.Identifier
+
+default.profraw
+**errorutil_analyze_errors.json
+**errorutil_analyze_summary.json
+**errorutil_errors_export.json

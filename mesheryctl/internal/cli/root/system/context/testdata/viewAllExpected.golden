@@ -1,0 +1,19 @@
+local:
+  endpoint: http://localhost:9081
+  token: Default
+  token-location: auth.json
+  platform: kubernetes
+  adapters:
+  - meshery-istio
+  channel: stable
+  version: latest
+local2:
+  endpoint: http://localhost:32242
+  token: Default2
+  token-location: auth.json
+  platform: docker
+  adapters:
+  - meshery-istio
+  channel: stable
+  version: latest
+

@@ -1,0 +1,64 @@
+version: 2
+updates:
+- package-ecosystem: gomod
+  directory: "/"
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 10
+  labels:
+  - pr/dependencies
+  - kind/chore
+  ignore:
+  - dependency-name: git.mills.io/prologic/bitcask
+    versions:
+    - "> 0.3.9"
+    - "< 0.4"
+  - dependency-name: k8s.io/api
+    versions:
+    - ">= 0.20.a"
+    - "< 0.21"
+  - dependency-name: k8s.io/apimachinery
+    versions:
+    - ">= 0.20.a"
+    - "< 0.21"
+  - dependency-name: k8s.io/client-go
+    versions:
+    - ">= 0.20.a"
+    - "< 0.21"
+- package-ecosystem: npm
+  directory: "/ui"
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 10
+  reviewers:
+  - dhruv0000
+  labels:
+  - kind/chore
+  - pr/dependencies
+  ignore:
+  - dependency-name: "@material-ui/core"
+    versions:
+    - "> 4.9.13"
+    - "< 5"
+  - dependency-name: next
+    versions:
+    - "> 10.0.1"
+    - "< 10.1"
+  - dependency-name: next-redux-wrapper
+    versions:
+    - ">= 6.a"
+    - "< 7"
+  - dependency-name: react-select
+    versions:
+    - ">= 3.1.a"
+    - "< 3.2"
+- package-ecosystem: npm
+  directory: "/provider-ui"
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 10
+  reviewers:
+  - ramrodo
+  labels:
+  - kind/chore
+  - pr/dependencies

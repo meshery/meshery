@@ -1,0 +1,68 @@
+name: Mesheryctl
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'mesheryctl/**'
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'mesheryctl/**'
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+
+jobs:
+  golangci:
+    name: golangci-lint
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
+          version: v1.41
+          # Optional: working directory, useful for monorepos
+          working-directory: mesheryctl
+
+          # Optional: golangci-lint command line arguments.
+          # args: --issues-exit-code=0
+
+          # Optional: show only new issues if it's a pull request. The default value is `false`.
+          # only-new-issues: true
+  mesheryctl_build:
+    name: Mesheryctl build & release
+    if: github.repository == 'meshery/meshery'
+    runs-on: macos-latest
+    needs: [golangci]
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+    - name: Unshallow
+      run: git fetch --prune --unshallow
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.16.x'
+    - name: Setup Cache
+      uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    - name: goreleaser WITHOUT tag
+      uses: goreleaser/goreleaser-action@v2
+      if: success() && startsWith(github.ref, 'refs/tags/') == false
+      env:
+        RELEASE_CHANNEL: "edge"
+      with:
+        version: latest
+        args: release --snapshot --skip-publish --rm-dist

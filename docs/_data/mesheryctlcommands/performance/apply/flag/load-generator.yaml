@@ -1,0 +1,5 @@
+flag: --load-generator 
+arg: apply
+description: 'Choice of load generator - fortio (OR) wrk2 (default: fortio).'
+usage: |
+    mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio/wrk2]

@@ -1,0 +1,60 @@
+name: Meshery Build and Releaser (stable)
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Docker build and push
+    if: github.repository == 'meshery/meshery'
+    env:
+      RELEASE_CHANNEL: "stable"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Docker login
+        uses: azure/docker-login@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker stable build & tag
+        run: |
+          DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+      - name: Docker stable push
+        run: |
+          docker push ${{ secrets.IMAGE_NAME }}:stable-latest
+          docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+          docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v2.0.0
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
+  release:
+    name: Meshery build & release
+    if: github.repository == 'meshery/meshery'
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+            fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ secrets.GO_VERSION }}
+      - name: goreleaser with tag
+        uses: goreleaser/goreleaser-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
+          RELEASE_CHANNEL: "stable"
+        with:
+          version: latest
+          args: release --rm-dist --skip-validate

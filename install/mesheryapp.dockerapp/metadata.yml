@@ -1,0 +1,12 @@
+# Version of the application
+version: 0.2.0
+# Name of the application
+name: mesheryapp
+# A short description of the application
+description: Meshery by Docker App
+# List of application maintainers with name and email for each
+maintainers:
+  - name: nunix
+    email: nunix@layer5.io
+  - name: leecalcote
+    email: leecalcote@gmail.com

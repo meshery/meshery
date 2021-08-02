@@ -1,0 +1,47 @@
+{
+  "name": "provider-ui",
+  "version": "1.0.0",
+  "description": "the service mesh management plane",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ui_dev_server.js",
+    "lint": "eslint --fix .",
+    "next": "next",
+    "build": "next build",
+    "start": "NODE_ENV=production node ui_dev_server.js",
+    "export": "next export",
+    "cy:run": "cypress run",
+    "cy:open": "cypress open",
+    "test": "start-server-and-test dev http://localhost:3001 cy:run && eslint ."
+  },
+  "keywords": [],
+  "author": "Layer5",
+  "repository": "https://github.com/meshery/meshery",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "glob-parent": ">=6.0.1",
+    "@cypress/code-coverage": "^3.9.9",
+    "@material-ui/core": "^4.12.2",
+    "@material-ui/icons": "^4.11.2",
+    "babel-plugin-istanbul": "^6.0.0",
+    "isomorphic-unfetch": "^3.1.0",
+    "jss": "latest",
+    "next": "11.0.1",
+    "prop-types": "latest",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "styled-jsx": "latest"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "cypress": "^8.0.0",
+    "eslint": "^7.31.0",
+    "eslint-config-next": "^11.0.1",
+    "eslint-plugin-cypress": "^2.11.3",
+    "eslint-plugin-react": "^7.24.0",
+    "http-proxy": "^1.18.1",
+    "nodemon": "^2.0.12",
+    "nyc": "^15.1.0",
+    "start-server-and-test": "^1.13.0"
+  }
+}

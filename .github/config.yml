@@ -1,0 +1,44 @@
+#-------------------------------------------------------------------------------
+# Configuration for new-issue-welcome - https://github.com/behaviorbot/new-issue-welcome
+ # Comment to be posted to on first time issues
+newIssueWelcomeComment: >
+   Thanks for opening this issue. A contributor will be by to give feedback soon. In the meantime, please review the [Layer5 Contributors' Welcome Guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit?usp=sharing) and sure to join the [community Slack](http://slack.layer5.io/).
+ # Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
+ # Comment to be posted to on PRs from first time contributors in your repository
+newPRWelcomeComment: >
+   Yay, your first pull request! :thumbsup: A contributor will be by to give feedback soon. In the meantime, please review the [Layer5 Contributors' Welcome Guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit?usp=sharing) and sure to join the [community Slack](http://slack.layer5.io/).
+
+   Be sure to double-check that you have signed your commits. Here are instructions for [making signing an implicit activity while peforming a commit](https://github.com/layer5io/layer5/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin).
+
+
+#-------------------------------------------------------------------------------
+# Configuration for first-pr-merge - https://github.com/behaviorbot/first-pr-merge
+# Comment to be posted to on pull requests merged by a first time user
+firstPRMergeComment: >
+  Thanks for your contribution to the Layer5 community! :tada:
+   
+  ![Congrats!](https://raw.githubusercontent.com/meshery/meshery.io/master/.github/welcome/Layer5-celebration.png)
+
+  &nbsp; &#9; &nbsp; &#9;  &nbsp; &#9;  &nbsp; &#9; [Join the community](http://slack.layer5.io), if you haven't yet and please leave a :star: [star on the project](../stargazers). :smile:
+  
+#-------------------------------------------------------------------------------
+# Configuration for request-info - https://github.com/behaviorbot/request-info
+# Comment to reply with
+requestInfoReplyComment: >
+  Thanks for opening this issue. We welcome all input! If you could provide a little more information, this will greatly aide in its resolution. :thumbsup:
+# *OPTIONAL* Add a list of people whose Issues/PRs will not be commented on
+# keys must be GitHub usernames
+#requestInfoUserstoExclude:
+#  - layer5io/maintainers
+
+
+#-------------------------------------------------------------------------------
+# Configuration for sentiment-bot - https://github.com/behaviorbot/sentiment-bot
+# *Required* toxicity threshold between 0 and .99 with the higher numbers being the most toxic
+# Anything higher than this threshold will be marked as toxic and commented on
+sentimentBotToxicityThreshold: .9
+
+# *Required* Comment to reply with
+sentimentBotReplyComment: >
+  Please be sure to review the code of conduct and be respectful of other users. // @layer5io/maintainers 
+  

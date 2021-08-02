@@ -1,0 +1,229 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+
+project_name: mesheryctl
+
+before:
+  hooks:
+    # you may remove this if you don't use vgo
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    # - go generate ./...
+builds:
+- main: ./mesheryctl/cmd/mesheryctl/main.go
+
+  env:
+    - CGO_ENABLED=0
+    
+  ldflags:
+    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.version={{.Tag}}
+    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.commitsha={{.ShortCommit}}
+    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.releasechannel={{.Env.RELEASE_CHANNEL}}
+  # GOOS list to build for.
+  # For more info refer to: https://golang.org/doc/install/source#environment
+  # Defaults are darwin and linux.
+  goos:
+    - darwin
+    - linux
+    - freebsd
+    - windows
+
+  # # GOARCH to build for.
+  # # For more info refer to: https://golang.org/doc/install/source#environment
+  # # Defaults are 386 and amd64.
+  goarch:
+    - 386
+    - amd64
+    - arm
+    - arm64
+ 
+  # List of combinations of GOOS + GOARCH + GOARM to ignore.
+  ignore:
+      - goos: freebsd
+        goarch: arm64
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+
+archives:
+- replacements:
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+    386: i386
+    amd64: x86_64
+  format: zip
+#   format_overrides:
+#     - goos: windows
+#       format: zip
+  # files:
+  #   - setup_scripts/*
+
+brews:
+-
+  # Name template of the recipe
+  # Default to project name
+  # name: mesheryctl
+
+  # IDs of the archives to use.
+  # Defaults to all.
+  # ids:
+  # - foo
+  # - bar
+
+  # GOARM to specify which 32-bit arm version to use if there are multiple versions
+  # from the build section. Brew formulas support atm only one 32-bit version.
+  # Default is 6 for all artifacts or each id if there a multiple versions.
+  # goarm: 6
+
+
+  # NOTE: make sure the url_template, the token and given repo (github or gitlab) owner and name are from the
+  # same kind. We will probably unify this in the next major version like it is done with scoop.
+
+  # Github repository to push the tap to.
+  tap:
+    owner: meshery
+    name: homebrew-tap
+  
+  # Template for the url which is determined by the given Token (github or gitlab)
+  # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  # Git author used to commit to the repository.
+  # Defaults are shown.
+  commit_author:
+    name: mesheryctl releaser
+    email: community@layer5.io
+
+  # Folder inside the repository to put the formula.
+  # Default is the root folder.
+  folder: Formula
+
+  # Caveats for the user of your binary.
+  # Default is empty.
+  # caveats: "How to use this binary"
+
+  # Your app's homepage.
+  # Default is empty.
+  homepage: "https://layer5.io/meshery"
+
+  # Your app's description.
+  # Default is empty.
+  description: "The Multi-Service Mesh Management Plane."
+
+  # Setting this will prevent goreleaser to actually try to commit the updated
+  # formula - instead, the formula file will be stored on the dist folder only,
+  # leaving the responsibility of publishing it to the user.
+  # If set to auto, the release will not be uploaded to the homebrew tap
+  # in case there is an indicator for prerelease in the tag e.g. v1.0.0-rc1
+  # Default is false.
+  skip_upload: false
+
+  # Custom block for brew.
+  # Can be used to specify alternate downloads for devel or head releases.
+  # Default is empty.
+  # custom_block: |
+  #   head "https://github.com/some/package.git"
+  #   ...
+
+  # Packages your package depends on.
+  # dependencies:
+  #   - git
+  #   - zsh
+
+  # Packages that conflict with your package.
+  # conflicts:
+  #   - svn
+  #   - bash
+
+  # Specify for packages that run as a service.
+  # Default is empty.
+  # plist: |
+  #   <?xml version="1.0" encoding="UTF-8"?>
+  #   ...
+
+  # So you can `brew test` your formula.
+  # Default is empty.
+  # test: |
+  #   system "#{bin}/program --version"
+  #   ...
+
+  # Custom install script for brew.
+  # Default is 'bin.install "program"'.
+  # install: |
+  #   bin.install "program"
+  #   ...
+
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+
+release:
+  # Repo in which the release will be created.
+  # Default is extracted from the origin remote URL.
+  # Note: it can only be one: either github or gitlab or gitea
+  # github:
+  #   owner: user
+  #   name: repo
+
+  # IDs of the archives to use.
+  # Defaults to all.
+  # ids:
+  #   - foo
+  #   - bar
+
+  # If set to true, will not auto-publish the release.
+  # Default is false.
+  # draft: true
+
+  # If set to auto, will mark the release as not ready for production
+  # in case there is an indicator for this in the tag e.g. v1.0.0-rc1
+  # If set to true, will mark the release as not ready for production.
+  # Default is false.
+  # prerelease: auto
+
+  # You can change the name of the GitHub release.
+  # Default is `{{.Tag}}`
+  name_template: "Meshery {{.Tag}}"
+
+# Extending the GoRelease to publish app manifest to scoop-bucket repository for Meshery
+scoop:
+  # Template for the url which is determined by the given Token (github or gitlab)
+  # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  # Default for gitlab is "https://gitlab.com/<repo_owner>/<repo_name>/uploads/{{ .ArtifactUploadHash }}/{{ .ArtifactName }}"
+  # Gitea is not supported yet, but the support coming
+  # url_template: "http://github.mycompany.com/foo/bar/releases/{{ .Tag }}/{{ .ArtifactName }}"
+
+  # Repository to push the app manifest to.
+  bucket:
+    owner: meshery
+    name: scoop-bucket
+
+  # Git author used to commit to the repository.
+  # Defaults are shown.
+  commit_author:
+    name: mesheryctl releaser
+    email: community@layer5.io
+
+  # Your app's homepage.
+  # Default is empty.
+  homepage: "https://layer5.io/meshery"
+
+  # Your app's description.
+  # Default is empty.
+  description: "The Multi-Service Mesh Management Plane."
+
+  # Your app's license
+  # Default is empty.
+  license: Apache 2.0
+
+  # Persist data between application updates
+  # persist:
+  # - "data"
+  # - "config.toml"

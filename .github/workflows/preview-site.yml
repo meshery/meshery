@@ -1,0 +1,49 @@
+name: Deploy Preview
+on:
+  workflow_run:
+    workflows:
+      - Build and Preview Site
+    types:
+      - completed
+
+jobs:
+  deploy-preview:
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2.3.1
+
+      - name: Download Site dir
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ secrets.GH_ACCESS_TOKEN }}
+          workflow: build-and-preview-site.yml
+          run_id: ${{ github.event.workflow_run.id }}
+          name: site-dir
+
+      - name: Unzip Site
+        run: |
+          rm -rf ./docs/_site
+          unzip site-dir.zip
+          rm -f site-dir.zip
+
+      - name: Deploy to Netlify
+        id: netlify
+        uses: nwtgck/actions-netlify@v1.1
+        with:
+          publish-dir: 'docs/_site'
+          production-deploy: false
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          enable-commit-comment: false
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Comment Deploy URL
+        uses: ./.github/actions/comment-preview-on-pr
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          deploy_url: "${{ steps.netlify.outputs.deploy-url }}"
+
+

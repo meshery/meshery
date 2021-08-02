@@ -1,0 +1,79 @@
+syntax="proto3";
+
+package metadata;
+option go_package = "github.com/layer5io/meshery/metadata;metadata";
+
+enum RequestStatus {
+    SUCCESSFUL = 1;
+    PROGRESSING = 2;
+    FAILED = 3;
+    UNKNOWN = 4;
+}
+
+enum ComponentStatus {
+    SUCCESSFUL = 1;
+    FAILED = 2;
+    UNKNOWN = 3;
+}
+
+message Component {
+    string name = 1;
+    ComponentType type = 3;
+    string version = 2;
+}
+
+message Server {
+    string port = 1;
+    string trace_url = 2;
+    string metrics_url = 3;
+    string git_sha = 4;
+}
+
+message Health {
+    string component_id = 1;
+    string component_name = 2;
+    string component_version = 3;
+    ComponentStatus status = 4;
+    string details = 5;
+}
+
+message Policy {}
+
+message Registration {}
+
+message Error {
+    string code = 1;
+    string short_description = 2;
+    string long_description = 3;
+    string severity = 4;
+    string cause = 5;
+    string remediation = 6;
+}
+
+message Identity {
+    string id = 1;
+    string token = 2;
+}
+
+enum EventClass {
+    HEALTH = 1;
+    OPERATION = 2;
+    POLICY = 3;
+    REGISTRATION = 4;
+    ERROR = 5;
+}
+
+message Message {
+    string id = 1;
+    EventClass class = 2;
+    string source_id = 3;
+    string correlation_id = 4;
+    string timestamp = 5;
+    oneof message_oneof {
+        metadata.Health message = 1;
+        OperationResponse message = 2;
+        metadata.Policy message = 3;
+        metadata.Registration message = 4;
+    }
+    metadata.Error error = 6;
+}

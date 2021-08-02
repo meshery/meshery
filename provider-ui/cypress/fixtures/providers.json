@@ -1,0 +1,14 @@
+{
+  "Meshery":{
+    "ProviderType":"remote",
+    "DisplayName":"Meshery",
+    "Description":"Provider: Meshery (default)\n\t- persistent sessions \n\t- save environment setup \n\t- retrieve performance test results \n\t- free use",
+    "Capabilities":[]
+  },
+  "None":{
+    "ProviderType":"local",
+    "DisplayName":"None",
+    "Description":"Provider: None\n\t- ephemeral sessions\n\t- environment setup not saved\n\t- no performance test result history\n\t- free use",
+    "Capabilities":[]
+  }
+}

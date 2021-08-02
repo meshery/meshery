@@ -1,0 +1,35 @@
+{
+  "errors_export": {
+    "component_name": "mesheryctl",
+    "component_type": "client",
+    "errors": {
+      "1000": {
+        "name": "ErrHealthCheckFailedCode",
+        "code": "1000",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Health checks failed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1001": {
+        "name": "ErrInvalidAdapterCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid adapter \n specified",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1002": {
+        "name": "ErrDownloadFileCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error downloading file ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    }
+  }
+}
