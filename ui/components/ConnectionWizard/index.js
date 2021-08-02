@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { makeStyles, Container, Button, Fade, Grid } from "@material-ui/core";
+import {useRouter} from "next/router"
 
 import Stepper from "./Stepper.js";
 import KubernetesScreen from "./Screens/KubernetesScreen";
@@ -47,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
   },
   skipButton: {
     color: "#647881",
+    "&:hover": {
+      backgroundColor: "white"
+    }
   },
 }));
 
@@ -59,6 +63,7 @@ function getSteps() {
 const ConfigurationWizard = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
+  const router = useRouter()
   const [stepStatus, setStepStatus] = React.useState({
     kubernetes: false,
     operator: false,
@@ -98,6 +103,23 @@ const ConfigurationWizard = () => {
     return false
   }
 
+  const handleAdvancedSettingsClick = () => {
+     switch (activeStep) {
+      case 0:
+      return
+      case 1:
+        return
+      case 2:
+        router.push("/settings#service-mesh")
+        return
+      case 3:
+        router.push("/settings#metrics")
+        return
+      default:
+        return null;
+    } 
+  }
+
   return (
     <Container className={classes.container}>
       <Stepper steps={steps} activeStep={activeStep} handleUserClick={handleUserClick} />
@@ -114,8 +136,8 @@ const ConfigurationWizard = () => {
       </Fade>
       <div className={classes.buttonContainer}>
                 {activeStep === 2 || activeStep === 3 ? (
-                  <Button onClick={handleNext} className={classes.skipButton}>
-                    Skip
+                  <Button onClick={handleAdvancedSettingsClick} className={classes.skipButton}>
+                    Advanced Settings
                   </Button>
                 ) : null}
                 {activeStep === 0 ? null : (
@@ -127,6 +149,7 @@ const ConfigurationWizard = () => {
                     Back
                   </Button>
                 )}
+        {activeStep === steps.length - 1 ? null :  
                 <Button
                   // disabled={activeStep === 0 && !iskubernetesConnected}
                   variant="contained"
@@ -134,8 +157,8 @@ const ConfigurationWizard = () => {
                   disabled={isNextDisabled()}
                   className={classes.button}
                 >
-                  {activeStep === steps.length - 1 ? "Finish" : "Next"}
-                </Button>
+                  Next
+                </Button>}
               </div>
 
     </Container>
