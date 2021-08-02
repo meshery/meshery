@@ -78,7 +78,6 @@ var validateCmd = &cobra.Command{
 
 		s := utils.CreateDefaultSpinner("Validation started", "\nValidation complete")
 
-		s.Start()
 		path := mctlCfg.GetBaseMesheryURL() + "/api/mesh/ops"
 		method = "POST"
 
@@ -139,7 +138,6 @@ var validateCmd = &cobra.Command{
 		}
 
 		log.Infof(string(body))
-		s.Stop()
 
 		if watch {
 			log.Infof("Verifying Operation")
