@@ -45,6 +45,9 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 				return
 			}
 			r.controlPlaneChannel <- status
+		case <-ctx.Done():
+			r.Log.Info("ControlPlane subscription stopped")
+			return
 		}
 	}()
 	return r.controlPlaneChannel, nil
