@@ -83,8 +83,8 @@ const MetricsScreen = ({ grafana, prometheus}) => {
 
 
   const scrollItems = metricsComponents.map(metricComp => {
-    if(metricComp.name === "Grafana") return "/static/img/grafana_icon.svg"
-    if(metricComp.name === "Prometheus") return "/static/img/prometheus_logo_orange_circle.svg"
+    if(metricComp.name === "Grafana") return {activeIcon: "/static/img/grafana_icon.svg", inactiveIcon: "/static/img/grafana_icon.svg"}
+    if(metricComp.name === "Prometheus") return {activeIcon: "/static/img/prometheus_logo_orange_circle.svg",inactiveIcon: "/static/img/prometheus_logo_orange_circle.svg" }
   })
 
   const itemsToBeRendered = metricsComponents.map(comp => {

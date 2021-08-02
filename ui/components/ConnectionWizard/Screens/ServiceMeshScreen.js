@@ -45,7 +45,7 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
   }
 
 
-  const scrollItems = serviceMeshComponents.map(smesh => "/static/img/meshery-logo.png")
+  const scrollItems = serviceMeshComponents.map(smesh => ({ activeIcon: "/static/img/meshery-logo.png", inactiveIcon:"/static/img/meshery-logo/meshery-white.png"}))
 
 
   const itemsToBeRendered = serviceMeshComponents.map(comp => {
