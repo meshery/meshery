@@ -149,16 +149,16 @@ const ConfigurationWizard = () => {
                     Back
                   </Button>
                 )}
-        {activeStep === steps.length - 1 ? null :  
                 <Button
                   // disabled={activeStep === 0 && !iskubernetesConnected}
                   variant="contained"
                   onClick={handleNext}
                   disabled={isNextDisabled()}
                   className={classes.button}
+                  style={activeStep === steps.length -1 ? {opacity: 0} : null }
                 >
-                  Next
-                </Button>}
+                Next
+                </Button>
               </div>
 
     </Container>

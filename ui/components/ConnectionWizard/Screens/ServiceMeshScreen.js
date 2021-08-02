@@ -1,7 +1,4 @@
 /* eslint-disable no-unused-vars */
-import ConsulIcon from "../icons/ConsulIcon.js"
-import OpenServiceMeshIcon from "../icons/OpenServiceMeshIcon.js"
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import LinkerdIcon from "../icons/LinkerdIcon.js"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -31,7 +28,7 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
 
   const serviceMeshComponents = availableAdapters.map(adapter => ({
     name: adapter.name ? adapter.name : adapter.label.split(":")[0],
-    logoComponent:  OpenServiceMeshIcon,
+    logoComponent:  LinkerdIcon,
     configComp :  <ServiceMeshConfig adapterLoc={adapter.value}/>,
     adapterInfo: adapter
   }))
@@ -76,13 +73,13 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
 
   return (
     <Grid xs={12} container justify="center" alignItems="flex-start">
-      <Grid item xs={6} container justify="center" alignItems="flex-start" style={{paddingLeft: "1rem"}}>
+      <Grid item lg={6} sm={12} md={12} container justify="center" alignItems="flex-start" style={{paddingLeft: "1rem"}}>
         <div style={{height: "18rem", overflow: "scroll", marginTop: "-1.2rem"}} className="hide-scrollbar"> 
           <ScrollIndicator items={scrollItems} handleClick={handleIndicatorClick} activeIndex={activeIndex} />
         </div>
         <VerticalCarousel slides={itemsToBeRendered} handleAfterSlideChange={handleAfterSlideChange} sliderRef={sliderRef}/>
       </Grid>
-      <Grid item xs={6} container justify="center" style={{paddingRight: "1rem"}}>
+      <Grid item lg={6} sm={12} md={12} container justify="center" style={{paddingRight: "1rem"}}>
         <ServiceMeshDataPanel adapterInfo={serviceMeshComponents[activeIndex]?.adapterInfo} isActive={isAdapterActive(serviceMeshComponents[activeIndex]?.adapterInfo.value)}  />
       </Grid>
     </Grid>

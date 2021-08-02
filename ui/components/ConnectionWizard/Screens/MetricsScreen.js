@@ -97,14 +97,14 @@ const MetricsScreen = ({ grafana, prometheus}) => {
 
   return (
     <Grid xs={12} item justify="center" alignItems="flex-start" container>
-      <Grid item xs={6} container justify="center" alignItems="flex-start" style={{paddingLeft: "1rem"}}>
+      <Grid item lg={6} sm={12} md={12} container justify="center" alignItems="flex-start" style={{paddingLeft: "1rem"}}>
         <div style={{height: "18rem", overflow: "scroll", marginTop: '-1.2rem'}} className="hide-scrollbar"> 
           <ScrollIndicator items={scrollItems} handleClick={handleIndicatorClick} activeIndex={activeIndex} />
         </div>
         <VerticalCarousel slides={itemsToBeRendered} handleAfterSlideChange={handleAfterSlideChange} sliderRef={sliderRef}/>
         
       </Grid>
-      <Grid item xs={6} container justify="center" style={{paddingRight: "1rem"}}>
+      <Grid item lg={6} sm={12} md={12} container justify="center" style={{paddingRight: "1rem"}}>
         <MetricsDataPanel isConnected={metricsComponents[activeIndex].name === "Grafana" ? isGrafanaConnected : isPrometheusConnected} 
           componentName={metricsComponents[activeIndex].name}
         />
