@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/sirupsen/logrus"
@@ -18,18 +19,21 @@ import (
 // Pattern is the golang representation of the Pattern
 // config file model
 type Pattern struct {
-	Name     string              `yaml:"name,omitempty"`
-	Services map[string]*Service `yaml:"services,omitempty"`
+	Name     string              `yaml:"name,omitempty" json:"name,omitempty"`
+	Services map[string]*Service `yaml:"services,omitempty" json:"services,omitempty"`
 }
 
 // Service represents the services defined within the appfile
 type Service struct {
-	Type      string   `yaml:"type,omitempty"`
-	Namespace string   `yaml:"namespace,omitempty"`
-	DependsOn []string `yaml:"dependsOn,omitempty"`
+	// ID is the id of the service and is completely internal to
+	// Meshery Server and meshery providers
+	ID        *uuid.UUID `yaml:"id,omitempty" json:"id,omitempty"`
+	Type      string     `yaml:"type,omitempty" json:"type,omitempty"`
+	Namespace string     `yaml:"namespace,omitempty" json:"namespace,omitempty"`
+	DependsOn []string   `yaml:"dependsOn,omitempty" json:"dependsOn,omitempty"`
 
-	Settings map[string]interface{} `yaml:"settings,omitempty"`
-	Traits   map[string]interface{} `yaml:"traits,omitempty"`
+	Settings map[string]interface{} `yaml:"settings,omitempty" json:"settings,omitempty"`
+	Traits   map[string]interface{} `yaml:"traits,omitempty" json:"traits,omitempty"`
 }
 
 // NewPatternFile takes in raw yaml and encodes it into a construct

@@ -1,6 +1,11 @@
 package utils
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
 // map[string]interface{} recursively => map[string]interface{}
@@ -43,4 +48,46 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 	}
 
 	return v
+}
+
+// FlattenMap flattens the given map and writes the flattened map in the dest
+func FlattenMap(prefix string, src map[string]interface{}, dest map[string]interface{}) {
+	if len(prefix) > 0 {
+		prefix += "."
+	}
+
+	for k, v := range src {
+		switch cnode := v.(type) {
+		case map[string]interface{}:
+			if strings.ContainsAny(k, ".") {
+				FlattenMap(prefix+"["+k+"]", cnode, dest)
+			} else {
+				FlattenMap(prefix+k, cnode, dest)
+			}
+		case []interface{}:
+			for i, v := range cnode {
+				dest[prefix+k+"."+strconv.Itoa(i)] = v
+			}
+		default:
+			dest[prefix+k] = v
+		}
+	}
+}
+
+// ToMapStringInterface takes in data of type interface and returns
+// a map[string]interface{} from that data
+//
+// If the conversion fails then returns an empty map
+func ToMapStringInterface(mp interface{}) map[string]interface{} {
+	byt, err := json.Marshal(mp)
+	if err != nil {
+		return map[string]interface{}{}
+	}
+
+	res := map[string]interface{}{}
+	if err := json.Unmarshal(byt, &res); err != nil {
+		return map[string]interface{}{}
+	}
+
+	return res
 }

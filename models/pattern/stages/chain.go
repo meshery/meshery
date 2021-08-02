@@ -4,16 +4,11 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshery/models/pattern/core"
-	"github.com/layer5io/meshery/models/pattern/planner"
 )
 
 // Data is the struct that will be passed on each stage
 type Data struct {
-	// Plan - Generated Plan
-	Plan *planner.Plan
-
-	// PatternFile - User specified pattern file
-	PatternFile *core.Pattern
+	Pattern *core.Pattern
 
 	// Other is for passing metadata across different stages
 	Other map[string]interface{}
