@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme) => ({
   container: {
     minHeight: "32.5rem",
     margin: "5rem auto",
+    padding: "2rem",
+    paddingRight: "4rem",
+    paddingLeft: "4rem",
     background: "white",
     boxShadow: "lightgrey 0px 0px 10px",
     display: "flex",
@@ -20,8 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonContainer: {
     textAlign: "right",
-    paddingBottom: "5rem",
-    marginRight: "11.5rem",
+    paddingRight: "2rem"
   },
   button: {
     boxContent: "border-box",
@@ -105,9 +107,11 @@ const ConfigurationWizard = () => {
               {null}
             </Fade>
           ) : (
-            <>
               <Grid container xs={12} style={{marginTop: "4rem"}} justify="center" alignItems="flex-start">{handleStep(activeStep)}</Grid>
-              <div className={classes.buttonContainer}>
+          )}
+        </div>
+      </Fade>
+      <div className={classes.buttonContainer}>
                 {activeStep === 2 || activeStep === 3 ? (
                   <Button onClick={handleNext} className={classes.skipButton}>
                     Skip
@@ -132,10 +136,7 @@ const ConfigurationWizard = () => {
                   {activeStep === steps.length - 1 ? "Finish" : "Next"}
                 </Button>
               </div>
-            </>
-          )}
-        </div>
-      </Fade>
+
     </Container>
   );
 };
