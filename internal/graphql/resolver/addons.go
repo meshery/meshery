@@ -51,6 +51,9 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 				return
 			}
 			r.addonChannel <- status
+		case <-ctx.Done():
+			r.Log.Info("Addons subscription stopped")
+			return
 		}
 	}()
 
