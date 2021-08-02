@@ -70,7 +70,7 @@ export const verifyPrometheusConnection =  (prometheusUrl) => {
 
 export const pingPrometheusWithNotification = (updateProgress, action, enqueueSnackbar) => {
 
-  updateProgress({showProgress: false})
+  updateProgress({showProgress: true})
 
   const successCb = (result) => {
     updateProgress({ showProgress: false });
@@ -85,13 +85,11 @@ export const pingPrometheusWithNotification = (updateProgress, action, enqueueSn
     
   const errorCb = (error) => {
     updateProgress({ showProgress: false });
-    if (typeof result !== "undefined") {
       enqueueSnackbar("Prometheus could not be pinged! : "+error, {
         variant: "error",
         autoHideDuration: 2000,
         action
       });
-    }
   }
 
   pingPrometheus(successCb, errorCb)
