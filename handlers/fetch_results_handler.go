@@ -103,7 +103,9 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 
-	bdr, err := p.GetResult(req, key)
+	tokenString := req.Context().Value("token").(string)
+
+	bdr, err := p.GetResult(tokenString, key)
 	if err != nil {
 		logrus.Error(ErrGetResult(err))
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
