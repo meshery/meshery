@@ -27,7 +27,7 @@ export const ScrollIndicator = ({items, handleClick, activeIndex}) => {
   return (
     <Timeline>
       {items && items.map((item,index) => 
-        <TimelineItem>
+        <TimelineItem key={item+index}>
           <TimelineSeparator>
             <TimelineDot variant={activeIndex === index ?"outlined": "default"} style={{cursor: "pointer"}} onClick={handleClick(index)}>
               <img src={item.activeIcon} style={activeIndex === index ? null : {filter: "brightness(100)"}} className={classes.chipIcon} />

@@ -23,7 +23,8 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonContainer: {
     textAlign: "right",
-    paddingRight: "2rem"
+    paddingRight: "3rem",
+    marginTop: "2rem"
   },
   button: {
     boxContent: "border-box",

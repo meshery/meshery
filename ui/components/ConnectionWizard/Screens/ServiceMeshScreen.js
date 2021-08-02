@@ -58,7 +58,7 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
   useEffect(() => {
     fetchAvailableAdapters()
       .then(res => {
-        setAvailableAdapters( res)
+        setAvailableAdapters(res.sort((fe,se) => isAdapterActive(se.value) ? -1: 1))
       })
       .catch( err => alert(err))
   },[meshAdapters])
@@ -67,10 +67,11 @@ const ServiceMeshScreen = ({meshAdapters, meshAdaptersts, updateProgress}) => {
     setActiveAdapters(meshAdapters) 
   }, [meshAdapters])
 
-  const handleIndicatorClick = (index) => () => {
+  const handleIndicatorClick = (index) => (e) => {
+     e.preventDefault()
      sliderRef?.current?.slickGoTo(index,false) 
+     setActiveIndex(index)
   }
-
 
 
   return (
