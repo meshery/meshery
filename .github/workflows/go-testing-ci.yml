@@ -57,7 +57,7 @@ jobs:
         with:
           cluster_name: "kind-cluster"
       - name: Run coverage
-        run: go test -run Integration -timeout 20m ./... -race -coverprofile=coverage.txt -covermode=atomic
+        run: go test -run Integration -timeout 30m ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
