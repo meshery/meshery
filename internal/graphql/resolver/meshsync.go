@@ -20,7 +20,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 	}
 
 	go func(ch chan *model.OperatorControllerStatus) {
-		r.Log.Info("MeshSync subscription started")
+		r.Log.Info("Initializing MeshSync subscription")
 		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.meshsyncLivenessChannel)
 
 		// signal to install operator when initialized

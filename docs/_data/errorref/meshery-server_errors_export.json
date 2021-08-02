@@ -1289,6 +1289,15 @@
         "short_description": "Error: session copy error",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "2150": {
+        "name": "ErrCreateDirCode",
+        "code": "2150",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating directory ",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
