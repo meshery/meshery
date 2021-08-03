@@ -2,6 +2,6 @@ package handlers
 
 const (
 	cookieSuffix      = "_referrer"
-	mesheryGitHubOrg  = "layer5io"
+	mesheryGitHubOrg  = "meshery"
 	mesheryGitHubRepo = "meshery"
 )

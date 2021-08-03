@@ -919,7 +919,7 @@ class DashboardComponent extends React.Component {
       if (release_channel === "edge") return `${release_channel}-latest`;
       if (release_channel === "stable") return `${release_channel}-${build}`;
 
-      return ``;
+      return `${build}`;
     };
 
     /**
