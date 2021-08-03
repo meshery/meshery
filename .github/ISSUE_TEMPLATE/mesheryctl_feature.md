@@ -1,5 +1,5 @@
 ---
-name: 💡 ⌨️ mesheryctl Feature Request
+name: ⌨️ 💡 mesheryctl Feature Request
 about: Request an enhancement in Meshery's CLI
 title: '[mesheryctl]'
 labels: component/mesheryctl, language/go, kind/enhancement
