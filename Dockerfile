@@ -37,6 +37,7 @@ RUN apt-get update; apt-get install -y ca-certificates curl; update-ca-certifica
 COPY ./oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
+COPY --from=meshery-server /github.com/meshery/meshery/helpers/swagger.yaml /app/helpers/swagger.yaml
 COPY --from=ui /out /app/ui/out
 COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2

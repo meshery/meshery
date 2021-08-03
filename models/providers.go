@@ -140,6 +140,9 @@ const (
 
 	// ProviderCtxKey is the context key for persisting provider to context
 	ProviderCtxKey = "provider"
+
+	// TokenCtxKey is the context key for persisting token to context
+	TokenCtxKey = "token"
 )
 
 // IsSupported returns true if the given feature is listed as one of
@@ -193,7 +196,7 @@ type Provider interface {
 	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)
 	GetProviderToken(req *http.Request) (string, error)
-	UpdateToken(http.ResponseWriter, *http.Request)
+	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request)
 	FetchResults(req *http.Request, page, pageSize, search, order, profileID string) ([]byte, error)
 	FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error)
@@ -201,7 +204,7 @@ type Provider interface {
 	FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	PublishSmiResults(result *SmiResult) (string, error)
 	PublishMetrics(tokenVal string, data *MesheryResult) error
-	GetResult(*http.Request, uuid.UUID) (*MesheryResult, error)
+	GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
 	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
