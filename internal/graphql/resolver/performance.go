@@ -66,15 +66,12 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		First(&meshery_result)
 
 	r.Log.Info("1")
-	r.Log.Error(ErrQuery(res.Error))
-	r.Log.Info("1.1")
 
 	if res.Error != nil {
 		fmt.Printf(*id)
 		fmt.Printf(res.Error.Error())
 		r.Log.Info("1.2")
-		r.Log.Error(ErrQuery(res.Error))
-		return nil, ErrQuery(res.Error)
+		return nil, res.Error
 	}
 
 	r.Log.Info("2")

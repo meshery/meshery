@@ -20,6 +20,7 @@ on:
 jobs:
   golangci:
     name: golangci-lint
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +28,7 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: v1.32
+          version: v1.41
           # Optional: working directory, useful for monorepos
           working-directory: mesheryctl
 
@@ -38,6 +39,7 @@ jobs:
           # only-new-issues: true
   mesheryctl_build:
     name: Mesheryctl build & release
+    if: github.repository == 'meshery/meshery'
     runs-on: macos-latest
     needs: [golangci]
     steps:

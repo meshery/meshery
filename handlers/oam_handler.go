@@ -569,7 +569,7 @@ func executeAction(
 	callType patternCallType,
 	oamComps []string,
 	oamConfig string,
-	kClient *meshkube.Client,
+	kubeClient *meshkube.Client,
 ) (string, error) {
 	logrus.Debugf("Adapter to execute operations on: %s", adapter)
 
@@ -580,7 +580,7 @@ func executeAction(
 	}
 
 	if callType == noneLocal {
-		resp, err := patterns.ProcessOAM(kClient, oamComps, oamConfig, delete)
+		resp, err := patterns.ProcessOAM(kubeClient, oamComps, oamConfig, delete)
 
 		return resp, err
 	}

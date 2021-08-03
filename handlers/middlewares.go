@@ -106,8 +106,12 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			logrus.Errorf("Unable to load default kubernetes config: %v", err)
 		}
 
-		provider.UpdateToken(w, req)
-		next(w, req, prefObj, user, provider)
+		token := provider.UpdateToken(w, req)
+		//lint:ignore SA1029 we want to make sure that no two results of errors
+		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token) // nolint
+		req1 := req.WithContext(ctx)
+
+		next(w, req1, prefObj, user, provider)
 	})
 }
 

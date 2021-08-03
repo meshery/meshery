@@ -10,8 +10,8 @@
     "containers": {
       "type": "array",
       "items": {
-        "container": {
           "type": "object",
+          "title": "container",
           "properties": {
             "name": {
               "type": "string"
@@ -38,7 +38,6 @@
             }
           },
           "required": ["name", "image", "ports"]
-        }
       },
       "minItems": 1
     }

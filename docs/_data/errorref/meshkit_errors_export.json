@@ -9,8 +9,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "No Database selected",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "database name is empty",
+        "suggested_remediation": "Input a name for the database"
       },
       "11011": {
         "name": "ErrDatabaseOpenCode",
@@ -18,8 +18,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to open database",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Database is unreachable",
+        "suggested_remediation": "Make sure your database is reachable"
       },
       "11012": {
         "name": "ErrSQLMapUnmarshalJSONCode",
@@ -72,8 +72,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error Applying manifest",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Manifest could be invalid",
+        "suggested_remediation": "Make sure manifest yaml is valid"
       },
       "11022": {
         "name": "ErrServiceDiscoveryCode",
@@ -81,8 +81,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error Discovering service",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Network not reachable to the service",
+        "suggested_remediation": "Make sure the endpoint is reachable"
       },
       "11023": {
         "name": "ErrApplyHelmChartCode",
@@ -90,8 +90,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error applying helm chart",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Chart could be invalid",
+        "suggested_remediation": "Make sure to apply valid chart"
       },
       "11024": {
         "name": "ErrNewKubeClientCode",
@@ -99,8 +99,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error creating kubernetes clientset",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
       "11025": {
         "name": "ErrNewDynClientCode",
@@ -108,8 +108,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error creating dynamic client",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
       "11026": {
         "name": "ErrNewDiscoveryCode",
@@ -117,8 +117,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error creating discovery client",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Discovery resource is invalid or doesnt exist",
+        "suggested_remediation": "Makes sure the you input valid resource for discovery"
       },
       "11027": {
         "name": "ErrNewInformerCode",
@@ -126,8 +126,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error creating informer client",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Informer is invalid or doesnt exist",
+        "suggested_remediation": "Makes sure the you input valid resource for the informer"
       },
       "11028": {
         "name": "ErrEndpointNotFoundCode",
@@ -153,8 +153,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error loading kubernetes config",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
       "11031": {
         "name": "ErrValidateConfigCode",
@@ -162,8 +162,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Validation failed in the kubernetes config",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
       "11032": {
         "name": "ErrExposeResourceCode",
@@ -270,8 +270,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unmarshal unknown error: %s",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
       },
       "11044": {
         "name": "ErrUnmarshalInvalidCode",
@@ -279,8 +279,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unmarshal invalid error for type: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
       },
       "11045": {
         "name": "ErrUnmarshalSyntaxCode",
@@ -288,8 +288,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unmarshal syntax error at offest: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
       },
       "11046": {
         "name": "ErrUnmarshalTypeCode",
@@ -297,8 +297,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unmarshal type error at key: %s. Error: %s",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
       },
       "11047": {
         "name": "ErrUnmarshalUnsupportedTypeCode",
@@ -306,8 +306,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unmarshal unsupported type error at key: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
       },
       "11048": {
         "name": "ErrUnmarshalUnsupportedValueCode",
@@ -315,8 +315,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unmarshal unsupported value error at key: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
       },
       "11049": {
         "name": "ErrMarshalCode",
@@ -324,8 +324,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Marshal error, Description: %s",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
       },
       "11050": {
         "name": "ErrGetBoolCode",
@@ -333,8 +333,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error while getting Boolean value for key: %s, error: %s",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Not a valid boolean",
+        "suggested_remediation": "Make sure it is a boolean"
       },
       "11051": {
         "name": "ErrInvalidProtocolCode",
@@ -342,8 +342,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "invalid protocol: only http, https and file are valid protocols",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Network protocol is incorrect",
+        "suggested_remediation": "Make sure to specify the right network protocol"
       },
       "11052": {
         "name": "ErrRemoteFileNotFoundCode",
@@ -351,8 +351,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "remote file not found at",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
+        "suggested_remediation": "Make sure to input the right file name and location"
       },
       "11053": {
         "name": "ErrReadingRemoteFileCode",
@@ -360,8 +360,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "error reading remote file",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
+        "suggested_remediation": "Make sure to input the right file name and location"
       },
       "11054": {
         "name": "ErrReadingLocalFileCode",
@@ -369,8 +369,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "error reading local file",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
+        "suggested_remediation": "Make sure to input the right file name and location"
       },
       "11055": {
         "name": "ErrEmptyConfigCode",
@@ -378,8 +378,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Config not initialized",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Viper is crashing",
+        "suggested_remediation": "Make sure viper is configured properly"
       },
       "11056": {
         "name": "ErrViperCode",
@@ -387,8 +387,8 @@
         "severity": "Fatal",
         "long_description": "",
         "short_description": "Viper configuration initialization failed",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Viper is crashing",
+        "suggested_remediation": "Make sure viper is configured properly"
       },
       "11057": {
         "name": "ErrInMemCode",
@@ -396,8 +396,8 @@
         "severity": "Fatal",
         "long_description": "",
         "short_description": "InMem configuration initialization failed",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "In memory map is crashing",
+        "suggested_remediation": "Make sure map is configured properly"
       },
       "11058": {
         "name": "ErrPodHasNoLabelsCode",

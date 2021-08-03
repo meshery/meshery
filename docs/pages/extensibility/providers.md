@@ -179,8 +179,31 @@ Meshery Seerver will proxy all requests to remote provider endpoints. Endpoints 
 }
 
 ```
-
 Meshery enables you as a service mesh owner to customize your service mesh deployment.
+
+## Configurable OAuth Callback URL
+
+As of release v0.5.39, Meshery Server has extended its capability to configure the callback URL for connected Remote Providers. Helpful when you are deploying Meshery behind an ingress gateway or reverse proxy. You can specify a custom, redirect endpoints for the connected Remote Provider. 
+
+### Example Deployment Scenario: Meshery Cloud, Istio, and Azure Kubernetes Service
+
+User has deployed the Meshery behind a Istio Ingress Gateway and the Istio is also behind an Application Gateway (e.g. AKS Application Gateway). Generally, when you use a GitHub Remote Provider for authentication, it redirect the request to the Istio Ingress Gateway FQDN. In this setup, redirection won't be successful because the Ingress Gateway is behind an additional Application Gateway. In this case, you have to define where the request should be redirected once it is authenticated from GitHub.
+
+***Solution:***
+
+You can define your custom callback URL by setting up `MESHERY_SERVER_CALLBACK_URL` env variable while installing meshery in your K8s cluster.
+
+Example:
+
+If you are deploying Meshery using Helm, you can configure the MESHERY_SERVER_CALLBACK_URL as shown in the following example.
+
+- **Custom URL:** `https://k8s-staging.test.io/`
+- **Auth Endpoint:** `api/user/token` (append at the end of your custom URL)
+```
+helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token
+```
+##### Note
+With a path like, `https://k8s-staging.test.io/meshery`, your callback URL will be `https://k8s-staging.test.io/meshery/api/user/token`. 
 
 ## Managing your Remote Provider Extension Code
 

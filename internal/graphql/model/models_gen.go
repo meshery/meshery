@@ -128,6 +128,11 @@ type PerfResult struct {
 	EnvID        *string      `json:"env_id"`
 }
 
+type ReSyncActions struct {
+	ClearDb string `json:"clearDB"`
+	ReSync  string `json:"ReSync"`
+}
+
 type RunnerResults struct {
 	URL               *string            `json:"url"`
 	LoadGenerator     *string            `json:"load_generator"`

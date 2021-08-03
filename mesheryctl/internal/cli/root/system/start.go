@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
@@ -60,7 +61,7 @@ var startCmd = &cobra.Command{
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.Wrapf(err, "failed to initialize healthchecker")
+			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -81,7 +82,7 @@ var startCmd = &cobra.Command{
 func start() error {
 	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.MesheryFolder)))
+			return ErrCreateDir(err, utils.MesheryFolder)
 		}
 	}
 
@@ -105,19 +106,23 @@ func start() error {
 	}
 
 	if utils.PlatformFlag != "" {
-		currCtx.SetPlatform(utils.PlatformFlag)
+		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
+			currCtx.SetPlatform(utils.PlatformFlag)
+		} else {
+			return fmt.Errorf("the platform '%s' is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at %s or verify by executing `mesheryctl system context view`", utils.PlatformFlag, utils.CfgFile)
+		}
 	}
 
-	// Deploy to platform specified in the config.yaml
+	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
 
 		// download the docker-compose.yaml file corresponding to the current version
 		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file", utils.DockerComposeFile)))
+			return ErrDownloadFile(err, utils.DockerComposeFile)
 		}
 
-		// Viper instance used for docker compose
+		// viper instance used for docker compose
 		utils.ViperCompose.SetConfigFile(utils.DockerComposeFile)
 		err = utils.ViperCompose.ReadInConfig()
 		if err != nil {
@@ -127,7 +132,7 @@ func start() error {
 		compose := &utils.DockerCompose{}
 		err = utils.ViperCompose.Unmarshal(&compose)
 		if err != nil {
-			return err
+			return ErrUnmarshal(err, utils.DockerComposeFile)
 		}
 
 		//changing the port mapping in docker compose
@@ -172,6 +177,10 @@ func start() error {
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			if v == "meshery" {
+				if !utils.ContainsStringPrefix(temp.Environment, "MESHERY_SERVER_CALLBACK_URL") {
+					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
+				}
+
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), currCtx.GetVersion())
 			}
 			services[v] = temp
@@ -204,7 +213,7 @@ func start() error {
 		if utils.ResetFlag {
 			err := resetMesheryConfig()
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
+				return ErrResetMeshconfig(err)
 			}
 		}
 
@@ -350,7 +359,7 @@ func start() error {
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = utils.ApplyManifestFiles(manifests, currCtx.GetAdapters(), kubeClient, false, false)
 		if err != nil {
-			break
+			return ErrApplyManifest(err, false, false)
 		}
 
 		deadline := time.Now().Add(20 * time.Second)
@@ -373,9 +382,9 @@ func start() error {
 
 		podsStatus, err := utils.AreAllPodsRunning()
 		if !podsStatus {
-			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “kubectl get pods -—namespace=meshery” before using meshery.")
+			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “mesheryctl system status” before using meshery.")
 		} else {
-			log.Info("Meshery is started.")
+			log.Info("Meshery is starting...")
 		}
 
 		clientset := kubeClient.KubeClient
@@ -428,7 +437,7 @@ func start() error {
 
 		// switch to default case if the platform specified is not supported
 	default:
-		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currCtx.GetPlatform(), utils.MesheryFolder))
+		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.GetPlatform(), utils.MesheryFolder)
 	}
 
 	hcOptions := &HealthCheckOptions{
@@ -439,7 +448,7 @@ func start() error {
 	}
 	hc, err := NewHealthChecker(hcOptions)
 	if err != nil {
-		return errors.Wrapf(err, "failed to initialize healthchecker")
+		return ErrHealthCheckFailed(err)
 	}
 	// If k8s is available in case of platform docker than we deploy operator
 	if err = hc.Run(); err == nil {
@@ -456,29 +465,58 @@ func start() error {
 		// Download operator manifest
 		err = utils.DownloadOperatorManifest()
 		if err != nil {
-			return err
+			return ErrDownloadFile(err, "operator manifest")
 		}
 
 		if !skipUpdateFlag {
 			err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
 			if err != nil {
-				return err
+				return ErrApplyOperatorManifest(err, true, false)
 			}
 		} else {
 			// skip applying update on operators when the flag is used
 			err = utils.ApplyOperatorManifest(kubeClient, false, false)
 
 			if err != nil {
-				return err
+				return ErrApplyOperatorManifest(err, false, false)
 			}
 		}
 	}
 
-	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+	// Check for Meshery status before opening it in browser
+	client := &http.Client{}
+	url := currCtx.GetEndpoint()
+	// Can not wait for ever, so setting a limit of 10 seconds
+	waittime := time.Now().Add(10 * time.Second)
+
+	for !(time.Now().After(waittime)) {
+		// Request to check whether endpoint is up or not
+		req, err := http.NewRequest("GET", fmt.Sprintf("%s", url), nil)
+		if err != nil {
+			log.Info("To open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+			return nil
+		}
+
+		resp, err := client.Do(req)
+
+		if resp != nil {
+			defer resp.Body.Close()
+		}
+		if err != nil || resp.StatusCode != 200 {
+			// wait and try accessing the endpoint after one second
+			time.Sleep(1 * time.Second)
+		} else {
+			// meshery server is up and responding, break out of loop and open Meshery in browser
+			break
+		}
+	}
+
+	log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
 
 	err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 	if err != nil {
+		log.Info("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 		return err
 	}
 
