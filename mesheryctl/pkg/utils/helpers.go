@@ -568,7 +568,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 }
 
 func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models.Preference, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/config/sync"
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
 	client := &http.Client{}
 	req, err := http.NewRequest(method, path, nil)
