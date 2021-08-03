@@ -143,6 +143,12 @@ const (
 
 	// TokenCtxKey is the context key for persisting token to context
 	TokenCtxKey = "token"
+
+	// UserCtxKey is the context key for persisting user to context
+	UserCtxKey = "user"
+
+	// UserPrefsCtxKey is the context key for persisting user preferences to context
+	PerfObjCtxKey = "perf_obj"
 )
 
 // IsSupported returns true if the given feature is listed as one of
