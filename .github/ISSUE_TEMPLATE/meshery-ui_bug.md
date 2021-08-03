@@ -1,5 +1,5 @@
 ---
-name: 🖥 💡 Meshery UI Bug Report
+name: 🖥 🐛 Meshery UI Bug Report
 about: Report a bug in Meshery's UI
 title: '[UI]'
 labels: component/ui, language/javascript, framework/react, kind/bug
