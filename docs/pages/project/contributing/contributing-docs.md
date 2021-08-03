@@ -31,7 +31,8 @@ Meshery documentation is made of these components:
 **Note:** Windows users can run Jekyll by following the [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) and also installing Ruby Version Manager [RVM](https://rvm.io). RVM is a command-line tool which allows you to work with multiple Ruby environments on your local machine. Alternatively, if you're running Windows 10 version 1903 Build 18362 or higher, you can upgrade to Windows Subsystem for Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and run Jekyll in Linux instead.
 
 - Fire up your WSL VM and install the ruby version manager (RVM): 
-  ```bash
+
+```bash
   sudo apt update
   sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
     	libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool \
@@ -39,10 +40,12 @@ Meshery documentation is made of these components:
     	libreadline-dev libssl-dev
   sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
   curl -sSL https://get.rvm.io | sudo bash -s stable
-  sudo usermod -a -G rvm `whoami`
-  ```
+  sudo usermod -a -G rvm `whoami` 
+```
 
+  
   If `gpg --keyserver` gives an error, you can use:
+
   ```bash
     sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
   ```
@@ -123,6 +126,7 @@ Meshery documentation is made of these components:
   $ git clone https://github.com/YOUR-USERNAME/meshery
   ```
 - Change to the docs directory
+
   ```bash
   $ cd docs
   ```
@@ -170,11 +174,12 @@ Meshery documentation is made of these components:
 Most popular clipboard plugins like Clipboard JS require the manual creation of a new ID for each code snippet. A different approach is used here. For code snippets, we either use html tags or markdown in the following manner:
 
 ```
-   <pre><code>
+   <pre class="codeblock-pre"><div class="codeblock">
+   <code class="clipboardjs">
      code snippet
-   </code></pre>
+   </code></div></pre>
 ``` 
-_\<pre\> tags are optional unless the code snippet is in a paragraph format_
+_\<pre\> tags are optional unless the code snippet is in a paragraph format and also gives a terminal like effect to the code_
 
 A full block:
 
@@ -185,6 +190,14 @@ A full block:
 Inline formatting: 
 
 \`code snippet\`: `code snippet`
+
+Language specific:
+
+```
+```(language name)
+  code snippet
+```
+```
 
 Whenever the code tags are detected, the clipboard javascript file is automatically loaded. Each code element is given a custom id and a clipboard-copy icon to copy the content.
 
@@ -270,7 +283,7 @@ Comments allow to leave a block of code unattended, any statements between openi
 ### Include
 
 The above tag is used to insert a already rendered file within the current template. It is written in the following manner:
-
+{% include codeHeader.html %}
 ```
     {{ "{% include file.html " }}%}
 ```
