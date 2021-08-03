@@ -73,54 +73,17 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 
 	bdr, err := provider.GetResult(tokenString, resultID)
 
-	r.Log.Info("1")
-
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err
 	}
 
-	r.Log.Info("2")
-	// sp, err := meshery_result.ConvertToSpec()
-
-	// if err != nil {
-	// 	r.Log.Error(ErrQuery(res.Error))
-	// 	return nil, ErrQuery(res.Error)
-
-	// }
-
-	// start_time := int(sp.StartTime.Unix())
-	// end_time := int(sp.EndTime.Unix())
-
-	// return &graphqlModels.PerfResult{
-	// 	SmpVersion: &sp.SMPVersion,
-	// 	// ID:         &sp.EnvID,
-	// 	// labels:     &sp.,
-	// 	StartTime: &start_time,
-	// 	EndTime:   &end_time,
-	// 	LatenciesMs: &graphqlModels.LatenciesMs{
-	// 		Min:     &sp.Latencies.Min,
-	// 		Average: &sp.Latencies.Min,
-	// 		P50:     &sp.Latencies.P50,
-	// 		P90:     &sp.Latencies.P90,
-	// 		P99:     &sp.Latencies.P99,
-	// 		Max:     &sp.Latencies.Max,
-	// 	},
-	// 	ActualQPS:    &sp.ActualQPS,
-	// 	DetailsURI:   &sp.DetailsURI,
-	// 	TestID:       &sp.TestID,
-	// 	MeshConfigID: &sp.MeshConfigID,
-	// 	EnvID:        &sp.EnvID,
-	// }, nil
-
-	r.Log.Info("3")
 	start_time := int(bdr.TestStartTime.Unix())
 	server_board_config := fmt.Sprintf("%v", bdr.ServerBoardConfig)
 	server_metrics := fmt.Sprintf("%v", bdr.ServerMetrics)
 	runner_results := fmt.Sprintf("%v", bdr.Result)
 	meshery_id := fmt.Sprintf("%v", bdr.ID)
 	performance_profile := fmt.Sprintf("%v", bdr.PerformanceProfileInfo.ID)
-	r.Log.Info("4")
 
 	return &graphqlModels.MesheryResult{
 		MesheryID:          &meshery_id,
@@ -137,5 +100,4 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		// CreatedAt: &meshery_result.Name,
 	}, nil
 
-	// return meshery_result, nil
 }
