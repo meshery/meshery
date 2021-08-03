@@ -1,6 +1,8 @@
 package context
 
 import (
+	"sort"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -36,8 +38,16 @@ var listContextCmd = &cobra.Command{
 			log.Printf("Current context: %s\n", currContext)
 		}
 		log.Print("Available contexts:\n")
-		for context := range contexts {
-			log.Printf("- %s", context)
+
+		//sorting the contexts to get a consistent order on each subsequent run
+		keys := make([]string, 0, len(contexts))
+		for k := range contexts {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+
+		for _, k := range keys {
+			log.Printf("- %s", k)
 		}
 
 		if currContext == "" {

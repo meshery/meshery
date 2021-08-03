@@ -38,7 +38,7 @@ For example, `mesheryctl system context create <context name>` assumes a default
 
 ### User Experience: GUI vs CLI
 
-Ideally, all functionaly provided in Meshery UI should be available to users via CLI (in `mesherctl`). Meshery strives for parity of functionality between it's two clients. For example, viewing a performance profile in the GUI and with `mesheryctl system perf view <profile name>` in the CLI should show the same data.
+Ideally, all functionality provided in Meshery UI should be available to users via CLI (in `mesherctl`). Meshery strives for parity of functionality between it's two clients. For example, viewing a performance profile in the GUI and with `mesheryctl system perf view <profile name>` in the CLI should show the same data.
 
 Command line interfaces offer less context to the user, which makes them inherently less intuitive compared to graphical user interfaces. Both of these user interfaces, however, are the same in that they are both clients of Meshery Server. Both clients *are* a user experience and as such, to be attended to in this way. The following considerations should be accounted for when designing `mesheryctl` experiences:
 

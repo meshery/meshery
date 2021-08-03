@@ -1,0 +1,49 @@
+name: Meshkit Error Codes Utility Runner
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - '**.go'
+
+jobs:
+  Update-error-codes:
+    name: Error codes utility
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          ref: 'master'
+
+      - name: Setup Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ secrets.GO_VERSION }}
+
+      - name: Build Error Utility
+        run: |
+          go get github.com/layer5io/meshkit/cmd/errorutil@master
+          go build -o ~/errorutil github.com/layer5io/meshkit/cmd/errorutil
+
+      - name: Run Utility For Meshery Server
+        run: |
+          ~/errorutil update -d . -i ./helpers -o ./helpers --skip-dirs mesheryctl
+          echo '{ "errors_export": "" }' | jq --slurpfile export ./helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ./docs/_data/errorref/meshery-server_errors_export.json
+
+      - name: Run Utility For Mesheryctl
+        run: |
+          cd ./mesheryctl
+          ~/errorutil update -d . -i ./helpers -o ./helpers
+          echo '{ "errors_export": "" }' | jq --slurpfile export ./helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/_data/errorref/mesheryctl_errors_export.json
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: mesheryctl/helpers helpers/ **.go docs/
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: '--signoff'
+          commit_message: "[Error Codes]: Update Meshery server and mehseryctl error codes and reference"

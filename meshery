@@ -186,6 +186,7 @@ then
     printf "\nRun \"mesheryctl system start\" to start Meshery.\n"
     exit 0
 fi
+
 # if ADAPTERS are empty then we'd use default local context else go we'd create custom context, which only fetches required adapters
 # Valid adapter option are
 # cpx

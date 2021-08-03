@@ -43,6 +43,20 @@ const (
 // one
 var policies = [][2]string{}
 
+// swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
+// Handle POST request for Pattern Deploy
+//
+// Deploy an attached pattern with the request
+// response:
+// 	200:
+
+// swagger:route DELETE /api/pattern/deploy PatternsAPI idDeleteDeployPattern
+// Handle DELETE request for Pattern Deploy
+//
+// Delete a deployed pattern with the request
+// response:
+// 	200:
+
 // PatternFileHandler handles the requested related to pattern files
 func (h *Handler) PatternFileHandler(
 	rw http.ResponseWriter,
@@ -54,6 +68,9 @@ func (h *Handler) PatternFileHandler(
 	// Read the PatternFile
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+
 		rw.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
@@ -62,8 +79,8 @@ func (h *Handler) PatternFileHandler(
 	if r.Header.Get("Content-Type") == "application/json" {
 		body, err = yaml.JSONToYAML(body)
 		if err != nil {
-			rw.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
+			h.log.Error(ErrPatternFile(err))
+			http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -81,37 +98,36 @@ func (h *Handler) PatternFileHandler(
 	// Generate the pattern file object
 	patternFile, err := OAM.NewPatternFile(body)
 	if err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
+		h.log.Error(ErrPatternFile(err))
+		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// Get execution plan
 	plan, err := OAM.CreatePlan(patternFile, policies)
 	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to create an execution plan: %s", err)
+		h.log.Error(ErrExecutionPlan(err))
+		http.Error(rw, ErrExecutionPlan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// Check for feasibility
 	if feasible := plan.IsFeasible(); !feasible {
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(rw, "invalid Pattern, execution is infeasible")
+		h.log.Error(ErrInvalidPattern(err))
+		http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// If DynamicKubeClient hasn't been created yet then create one
-	if h.kubeclient.DynamicKubeClient == nil {
+	if h.config.KubeClient.DynamicKubeClient == nil {
 		kc, err := meshkube.New(prefObj.K8SConfig.Config)
 		if err != nil {
-			logrus.Error("failed to create kube client: ", err)
-			rw.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(rw, "Error:%s", err)
+			h.log.Error(ErrInvalidPattern(err))
+			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
-		h.kubeclient = kc
+		h.config.KubeClient = kc
 	}
 
 	msg, err := createCompConfigPairsAndExecuteAction(
@@ -127,8 +143,8 @@ func (h *Handler) PatternFileHandler(
 	)
 
 	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "Messages:\n%s\nErrors:%s", msg, err)
+		h.log.Error(ErrCompConfigPairs(err))
+		http.Error(rw, ErrCompConfigPairs(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -150,15 +166,15 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 
 	method := r.Method
 	if method == "POST" {
-		if err := POSTOAMRegisterHandler(typ, r); err != nil {
+		if err := h.POSTOAMRegisterHandler(typ, r); err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
-			logrus.Debug(err)
+			h.log.Debug(err)
 			_, _ = rw.Write([]byte(err.Error()))
 			return
 		}
 	}
 	if method == "GET" {
-		GETOAMRegisterHandler(typ, rw)
+		h.GETOAMRegisterHandler(typ, rw)
 	}
 }
 
@@ -173,7 +189,7 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 // 	200:
 
 // POSTOAMRegisterHandler handles registering OMA objects
-func POSTOAMRegisterHandler(typ string, r *http.Request) error {
+func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	// Get the body
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -204,7 +220,7 @@ func POSTOAMRegisterHandler(typ string, r *http.Request) error {
 // 	200:
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
-func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
+func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
@@ -212,7 +228,8 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 		res := OAM.GetWorkloads()
 
 		if err := enc.Encode(res); err != nil {
-			logrus.Error("failed to encode workload definitions")
+			h.log.Error(ErrWorkloadDefinition(err))
+			http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 
@@ -221,7 +238,8 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
-			logrus.Error("failed to encode trait definitions")
+			h.log.Error(ErrTraitDefinition(err))
+			http.Error(rw, ErrScopeDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 
@@ -230,7 +248,8 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
-			logrus.Error("failed to encode scope definitions")
+			h.log.Error(ErrScopeDefinition(err))
+			http.Error(rw, ErrScopeDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 }
@@ -460,7 +479,7 @@ func handleCompConfigPairAction(
 			callType,
 			[]string{string(jsonComp)},
 			string(jsonConfig),
-			h.kubeclient,
+			h.config.KubeClient,
 		)
 		if err != nil {
 			errs = append(errs, err)
@@ -550,7 +569,7 @@ func executeAction(
 	callType patternCallType,
 	oamComps []string,
 	oamConfig string,
-	kClient *meshkube.Client,
+	kubeClient *meshkube.Client,
 ) (string, error) {
 	logrus.Debugf("Adapter to execute operations on: %s", adapter)
 
@@ -561,7 +580,7 @@ func executeAction(
 	}
 
 	if callType == noneLocal {
-		resp, err := patterns.ProcessOAM(kClient, oamComps, oamConfig, delete)
+		resp, err := patterns.ProcessOAM(kubeClient, oamComps, oamConfig, delete)
 
 		return resp, err
 	}

@@ -37,6 +37,9 @@ This command updates your kubeconfig to provide Meshery with access to your mana
 Once configured, proceed with using Meshery:
 `mesheryctl system start`
 
+Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+`MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start`
+
 ### Manual Configuration (Optional)
 
 If the [Automatic Configuration](#automatic-configuration-recommended) procedure fails or you would like to manually prepare your kubeconfig file to provide Meshery with the necessary access to your managed Kubernetes instance, perform the following actions:
@@ -55,6 +58,12 @@ If the [Automatic Configuration](#automatic-configuration-recommended) procedure
     <pre class="codeblock-pre"><div class="codeblock">
     <div class="clipboardjs">
     $ mesheryctl system start
+    </div></div>
+    </pre>
+    - Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+    <pre class="codeblock-pre"><div class="codeblock">
+    <div class="clipboardjs">
+    $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
     </div></div>
     </pre>
 1. In your browser, navigate to Meshery (e.g., `http://localhost:9081`) and login.

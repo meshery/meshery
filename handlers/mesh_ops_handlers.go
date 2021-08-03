@@ -119,8 +119,8 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		h.log.Error(ErrNilClient)
 		return nil, ErrNilClient
 	}
-	*h.kubeclient = *kubeclient
-	provider.SetKubeClient(h.kubeclient)
+	*h.config.KubeClient = *kubeclient
+	provider.SetKubeClient(h.config.KubeClient)
 
 	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshLocationURL)
 	if err != nil || prefObj.K8SConfig == nil {

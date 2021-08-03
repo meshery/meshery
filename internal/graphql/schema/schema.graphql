@@ -185,6 +185,14 @@ type NameSpace {
 	namespace: String!
 }
 
+# ============== RESYNC =============================
+
+# Type ReSyncActions define the actions involved during resync
+input ReSyncActions {
+    clearDB: String!
+    ReSync: String!
+}
+
 # ============== ROOT =================================
 
 type Query {
@@ -203,6 +211,12 @@ type Query {
     
 	# Query status of Meshery Operator in your cluster
 	getOperatorStatus: OperatorStatus
+	
+    # Query to resync the cluster discovery
+    resyncCluster(
+        # Selector to control several resync actions
+        selector: ReSyncActions
+    ): Status!
 
 	# Query available Namesapces in your cluster
 	getAvailableNamespaces: [NameSpace!]!

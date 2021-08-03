@@ -22,6 +22,12 @@ Start Meshery by executing:
  mesheryctl system start
  </div></div>
  </pre>
+ - Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
+ </div></div>
+ </pre>
 
 Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081). Log into the [Provider](/extensibility/providers) of your choice.
 

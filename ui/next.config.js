@@ -12,6 +12,7 @@ module.exports = compose([
         '/configure': { page: '/configure' },
         '/playground': { page: '/playground' },
         '/provider/*': { page: '/provider' },
+        '/settings/*': { page: '/settings' },
         '/404': { page: '/_error' },
       }
     },
