@@ -63,26 +63,26 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		return nil, err
 	}
 
-	start_time := int(bdr.TestStartTime.Unix())
-	server_board_config := fmt.Sprintf("%v", bdr.ServerBoardConfig)
-	server_metrics := fmt.Sprintf("%v", bdr.ServerMetrics)
-	runner_results := fmt.Sprintf("%v", bdr.Result)
-	meshery_id := fmt.Sprintf("%v", bdr.ID)
-	performance_profile := fmt.Sprintf("%v", bdr.PerformanceProfileInfo.ID)
+	startTime := int(bdr.TestStartTime.Unix())
+	serverBoardConfig := fmt.Sprintf("%v", bdr.ServerBoardConfig)
+	serverMetrics := fmt.Sprintf("%v", bdr.ServerMetrics)
+	runnerResults := fmt.Sprintf("%v", bdr.Result)
+	mesheryId := fmt.Sprintf("%v", bdr.ID)
+	performanceProfile := fmt.Sprintf("%v", bdr.PerformanceProfileInfo.ID)
 
 	return &graphqlModels.MesheryResult{
-		MesheryID:          &meshery_id,
+		MesheryID:          &mesheryId,
 		Name:               &bdr.Name,
 		Mesh:               &bdr.Mesh,
-		PerformanceProfile: &performance_profile,
+		PerformanceProfile: &performanceProfile,
 		TestID:             &bdr.TestID,
-		RunnerResults:      &runner_results,
-		ServerMetrics:      &server_metrics,
-		ServerBoardConfig:  &server_board_config,
-		TestStartTime:      &start_time,
-		// UserID: &meshery_result,
-		// UpdatedAt: &meshery_result.Name,
-		// CreatedAt: &meshery_result.Name,
+		RunnerResults:      &runnerResults,
+		ServerMetrics:      &serverMetrics,
+		ServerBoardConfig:  &serverBoardConfig,
+		TestStartTime:      &startTime,
+		UserID:             &bdr.UserID,
+		UpdatedAt:          &bdr.UpdatedAt,
+		CreatedAt:          &bdr.CreatedAt,
 	}, nil
 
 }
