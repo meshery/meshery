@@ -4,7 +4,7 @@
   "description": "the service mesh management plane",
   "main": "index.js",
   "scripts": {
-    "dev": "eslint . && nodemon ui_dev_server.js",
+    "dev": "eslint . && node ui_dev_server.js",
     "lint": "eslint --fix .",
     "next": "next",
     "build": "next build",
