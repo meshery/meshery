@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/handlers"
 	graphqlModels "github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
@@ -57,21 +58,26 @@ import (
 // }
 
 func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, id *string) (*graphqlModels.MesheryResult, error) {
-	var meshery_result *models.MesheryResult
 	if *id == "" {
 		return nil, handlers.ErrQueryGet("*id")
 	}
 
-	res := provider.GetGenericPersister().
-		First(&meshery_result)
+	resultID, err := uuid.FromString(*id)
+
+	if err != nil {
+		r.Log.Error(err)
+		return nil, err
+	}
+
+	tokenString := ctx.Value("token").(string)
+
+	bdr, err := provider.GetResult(tokenString, resultID)
 
 	r.Log.Info("1")
 
-	if res.Error != nil {
-		fmt.Printf(*id)
-		fmt.Printf(res.Error.Error())
-		r.Log.Info("1.2")
-		return nil, res.Error
+	if err != nil {
+		r.Log.Error(err)
+		return nil, err
 	}
 
 	r.Log.Info("2")
@@ -108,20 +114,20 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 	// }, nil
 
 	r.Log.Info("3")
-	start_time := int(meshery_result.TestStartTime.Unix())
-	server_board_config := fmt.Sprintf("%v", meshery_result.ServerBoardConfig)
-	server_metrics := fmt.Sprintf("%v", meshery_result.ServerMetrics)
-	runner_results := fmt.Sprintf("%v", meshery_result.Result)
-	meshery_id := fmt.Sprintf("%v", meshery_result.ID)
-	performance_profile := fmt.Sprintf("%v", meshery_result.PerformanceProfileInfo.ID)
+	start_time := int(bdr.TestStartTime.Unix())
+	server_board_config := fmt.Sprintf("%v", bdr.ServerBoardConfig)
+	server_metrics := fmt.Sprintf("%v", bdr.ServerMetrics)
+	runner_results := fmt.Sprintf("%v", bdr.Result)
+	meshery_id := fmt.Sprintf("%v", bdr.ID)
+	performance_profile := fmt.Sprintf("%v", bdr.PerformanceProfileInfo.ID)
 	r.Log.Info("4")
 
 	return &graphqlModels.MesheryResult{
 		MesheryID:          &meshery_id,
-		Name:               &meshery_result.Name,
-		Mesh:               &meshery_result.Mesh,
+		Name:               &bdr.Name,
+		Mesh:               &bdr.Mesh,
 		PerformanceProfile: &performance_profile,
-		TestID:             &meshery_result.TestID,
+		TestID:             &bdr.TestID,
 		RunnerResults:      &runner_results,
 		ServerMetrics:      &server_metrics,
 		ServerBoardConfig:  &server_board_config,
