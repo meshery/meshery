@@ -176,7 +176,7 @@ Most popular clipboard plugins like Clipboard JS require the manual creation of 
      code snippet
    </code></div></pre>
 ``` 
-_\<pre\> tags are optional unless the code snippet is in a paragraph format and also gives a terminal like effect to the code_
+ **<pre></pre>** _tags are optional unless the code snippet is in a paragraph format and also gives a terminal like effect to the code_
 
 A full block:
 
@@ -190,11 +190,11 @@ Inline formatting:
 
 Language specific:
 
-```
+````
 ```(language name)
-  code snippet
+  code snippet  
 ```
-```
+````
 
 Whenever the code tags are detected, the clipboard javascript file is automatically loaded. Each code element is given a custom id and a clipboard-copy icon to copy the content.
 
