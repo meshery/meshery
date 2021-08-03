@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
