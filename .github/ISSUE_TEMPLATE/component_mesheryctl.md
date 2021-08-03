@@ -1,6 +1,6 @@
 ---
-name: ⌨️ [Component] mesheryctl (Meshery CLI)
-about: Report a bug or feature request for mesheryctl (Meshery CLI)
+name: 🐛 ⌨️ [Component] Bug in mesheryctl
+about: Report a bug in Meshery's CLI
 title: '[mesheryctl]'
 labels: component/mesheryctl, language/go
 assignees: ''
@@ -39,7 +39,6 @@ _See [mesheryctl Command Tracker](https://bit.ly/3dqXy1q) for current status of 
 ---
 
 #### Contributor Resources
-
 - [mesheryctl Contributing Guide](https://github.com/meshery/meshery/blob/master/mesheryctl/README.md)
 - [Beginner's guide to contributing to Meshery and mesheryctl](https://youtu.be/hh_kFLZx3G4)
 - [mesheryctl Command Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0)
