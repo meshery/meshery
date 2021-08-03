@@ -104,9 +104,9 @@ const ConfigurationWizard = () => {
   }
 
   const handleAdvancedSettingsClick = () => {
-     switch (activeStep) {
+    switch (activeStep) {
       case 0:
-      return
+        return
       case 1:
         return
       case 2:
@@ -130,36 +130,36 @@ const ConfigurationWizard = () => {
               {null}
             </Fade>
           ) : (
-              <Grid container xs={12} style={{marginTop: "4rem"}} justify="center" alignItems="flex-start">{handleStep(activeStep)}</Grid>
+            <Grid container xs={12} style={{marginTop: "4rem"}} justify="center" alignItems="flex-start">{handleStep(activeStep)}</Grid>
           )}
         </div>
       </Fade>
       <div className={classes.buttonContainer}>
-                {activeStep === 2 || activeStep === 3 ? (
-                  <Button onClick={handleAdvancedSettingsClick} className={classes.skipButton}>
+        {activeStep === 2 || activeStep === 3 ? (
+          <Button onClick={handleAdvancedSettingsClick} className={classes.skipButton}>
                     Advanced Settings
-                  </Button>
-                ) : null}
-                {activeStep === 0 ? null : (
-                  <Button
-                    disabled={activeStep === 0}
-                    onClick={handleBack}
-                    className={(classes.button, classes.backButton)}
-                  >
+          </Button>
+        ) : null}
+        {activeStep === 0 ? null : (
+          <Button
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            className={(classes.button, classes.backButton)}
+          >
                     Back
-                  </Button>
-                )}
-                <Button
-                  // disabled={activeStep === 0 && !iskubernetesConnected}
-                  variant="contained"
-                  onClick={handleNext}
-                  disabled={isNextDisabled()}
-                  className={classes.button}
-                  style={activeStep === steps.length -1 ? {opacity: 0} : null }
-                >
+          </Button>
+        )}
+        <Button
+          // disabled={activeStep === 0 && !iskubernetesConnected}
+          variant="contained"
+          onClick={handleNext}
+          disabled={isNextDisabled()}
+          className={classes.button}
+          style={activeStep === steps.length -1 ? {opacity: 0} : null }
+        >
                 Next
-                </Button>
-              </div>
+        </Button>
+      </div>
 
     </Container>
   );

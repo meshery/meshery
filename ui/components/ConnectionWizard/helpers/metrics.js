@@ -85,11 +85,11 @@ export const pingPrometheusWithNotification = (updateProgress, action, enqueueSn
     
   const errorCb = (error) => {
     updateProgress({ showProgress: false });
-      enqueueSnackbar("Prometheus could not be pinged! : "+error, {
-        variant: "error",
-        autoHideDuration: 2000,
-        action
-      });
+    enqueueSnackbar("Prometheus could not be pinged! : "+error, {
+      variant: "error",
+      autoHideDuration: 2000,
+      action
+    });
   }
 
   pingPrometheus(successCb, errorCb)
