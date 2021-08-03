@@ -280,7 +280,6 @@ Comments allow to leave a block of code unattended, any statements between openi
 ### Include
 
 The above tag is used to insert a already rendered file within the current template. It is written in the following manner:
-{% include codeHeader.html %}
 ```
     {{ "{% include file.html " }}%}
 ```
