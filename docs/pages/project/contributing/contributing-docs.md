@@ -31,7 +31,6 @@ Meshery documentation is made of these components:
 **Note:** Windows users can run Jekyll by following the [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) and also installing Ruby Version Manager [RVM](https://rvm.io). RVM is a command-line tool which allows you to work with multiple Ruby environments on your local machine. Alternatively, if you're running Windows 10 version 1903 Build 18362 or higher, you can upgrade to Windows Subsystem for Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and run Jekyll in Linux instead.
 
 - Fire up your WSL VM and install the ruby version manager (RVM): 
-
 ```bash
   sudo apt update
   sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
@@ -45,7 +44,6 @@ Meshery documentation is made of these components:
 
   
   If `gpg --keyserver` gives an error, you can use:
-
   ```bash
     sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
   ```
@@ -126,7 +124,6 @@ Meshery documentation is made of these components:
   $ git clone https://github.com/YOUR-USERNAME/meshery
   ```
 - Change to the docs directory
-
   ```bash
   $ cd docs
   ```
