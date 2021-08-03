@@ -4,8 +4,7 @@ import KubernetesConfig from "../ConfigComponents/Kubernetes.js";
 import ServiceCard from "../ServiceCard.js";
 import { Grid } from "@material-ui/core";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { updateProgress, updateK8SConfig } from "../../../lib/store";
+import { bindActionCreators } from "redux"; import { updateProgress, updateK8SConfig } from "../../../lib/store";
 import { withSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { isKubernetesConnected, pingKubernetes } from "../helpers/kubernetesHelpers";
@@ -68,7 +67,7 @@ const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress, setStepS
         <ServiceCard serviceInfo={kubeserviceInfo} isConnected={isConnected} />
       </Grid>
       <Grid item lg={6} sm={12} md={12} container justify="center" style={{paddingRight: "1rem"}}>
-        {showDataPanel() && (
+        {true && (
           <KubernetesDataPanel
             clusterInformation={kubeserviceInfo.clusterInformation}
             setIsConnected={setIsConnected}
