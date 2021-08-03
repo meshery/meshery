@@ -10,33 +10,18 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
-// func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Provider, filter *model.PageFilter) (<-chan *model.PerfPageResult, error) {
+// func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Provider, filter *graphqlModels.PageFilter) (<-chan *graphqlModels.PerfPageResult, error) {
 // 	if r.performanceChannel == nil {
-// 		r.performanceChannel = make(chan *model.PerfPageResult)
+// 		r.performanceChannel = make(chan *graphqlModels.PerfPageResult)
 // 		r.operatorSyncChannel = make(chan struct{})
 // 	}
 
 // 	go func() {
 // 		r.Log.Info("Performance subscription started")
-// 		// err := r.connectToBroker(context.TODO(), provider)
-// 		// if err != nil && err != ErrNoMeshSync {
-// 		// 	r.Log.Error(err)
-// 		// 	return
-// 		// }
 
-// 		// Enforce enable operator
-// 		status, err := r.getOperatorStatus(ctx, provider)
-// 		if err != nil {
-// 			r.Log.Error(ErrOperatorSubscription(err))
-// 			return
-// 		}
-// 		if status.Status != model.StatusEnabled {
-// 			_, err = r.changeOperatorStatus(ctx, provider, model.StatusEnabled)
-// 			if err != nil {
-// 				r.Log.Error(ErrOperatorSubscription(err))
-// 				return
-// 			}
-// 		}
+// 		tokenString := ctx.Value("token").(string)
+
+// 		provider.FetchAllResults()
 
 // 		for {
 // 			select {
