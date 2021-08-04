@@ -27,7 +27,11 @@ func Set(key string, value interface{}) {
 	globalStore.Lock()
 	defer globalStore.Unlock()
 
-	globalStore.store[key] = value
+	if globalStore.store[key] == nil {
+		globalStore.store[key] = []interface{}{}
+	}
+
+	globalStore.store[key] = append(globalStore.store[key], value)
 }
 
 // Get will get the value corresponding to the given key
@@ -36,7 +40,24 @@ func Get(key string) (interface{}, bool) {
 	defer globalStore.RUnlock()
 
 	val, ok := globalStore.store[key]
-	return val, ok
+	if ok && len(val) > 0 {
+		return val[0], true
+	}
+
+	return nil, false
+}
+
+// GetAll returns all the values stored against the key
+func GetAll(key string) []interface{} {
+	globalStore.RLock()
+	defer globalStore.RUnlock()
+
+	val, ok := globalStore.store[key]
+	if !ok {
+		return []interface{}{}
+	}
+
+	return val
 }
 
 // PrefixMatch will return all the values which matches the given key

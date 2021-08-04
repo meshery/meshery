@@ -3,7 +3,10 @@
 
 package store
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestSet(t *testing.T) {
 	// Initialize the store
@@ -28,10 +31,19 @@ func TestSet(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			Set(tt.args.key, tt.args.value)
 
-			// Check if the value was saved
-			if globalStore.store[tt.args.key] != tt.args.value {
+			if !includes(globalStore.store[tt.args.key], tt.args.value) {
 				t.Errorf("Set() = %v, want %v", globalStore.store[tt.args.key], tt.args.value)
 			}
 		})
 	}
+}
+
+func includes(s []interface{}, v interface{}) bool {
+	for _, si := range s {
+		if reflect.DeepEqual(si, v) {
+			return true
+		}
+	}
+
+	return false
 }
