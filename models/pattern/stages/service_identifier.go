@@ -2,17 +2,8 @@ package stages
 
 import "github.com/gofrs/uuid"
 
-type ServiceIdentityProvider interface {
-	GetMesheryPatternResource(
-		name string,
-		namespace string,
-		typ string,
-		oamType string,
-	) (ID *uuid.UUID, err error)
-}
-
 // ServiceIdentifier takes in a service identity provider and returns a ChainStageFunction
-func ServiceIdentifier(prov ServiceIdentityProvider) ChainStageFunction {
+func ServiceIdentifier(prov ServiceInfoProvider) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		// Find the ID of the resources
 		for svcName, svc := range data.Pattern.Services {
