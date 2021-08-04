@@ -39,7 +39,6 @@ import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
-import { Button } from "@material-ui/core";
 
 const styles = (theme) => ({
   categoryHeader: {
@@ -972,6 +971,7 @@ class Navigator extends React.Component {
                   <ListItem
                     key={id}
                     className={classes.item}
+                    style={isDrawerCollapsed && !showHelperButton ? { display: 'none' } : {}}
                   >
                     <Grow
                       in={showHelperButton}
