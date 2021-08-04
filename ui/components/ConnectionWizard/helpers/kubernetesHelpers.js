@@ -8,7 +8,7 @@ import dataFetch from "../../../lib/data-fetch";
 */
 export const pingKubernetes = (successHandler,errorHandler) => {
   dataFetch(
-    "/api/k8sconfig/ping",
+    "/api/system/kubernetes/ping",
     {
       credentials: "same-origin",
       credentials: "include",
@@ -66,7 +66,7 @@ export const isKubernetesConnected = (isClusterConfigured,kubernetesPingStatus) 
 
 export const deleteKubernetesConfig = (successCb,errorCb) => 
   dataFetch(
-    "/api/k8sconfig",
+    "/api/system/kubernetes",
     {
       credentials: "same-origin",
       method: "DELETE",
@@ -130,7 +130,7 @@ export const fetchContexts = (updateProgress, k8sfile) => {
 
   return new Promise((res, rej) => {
     dataFetch(
-      "/api/k8sconfig/contexts",
+      "/api/system/kubernetes/contexts",
       {
         credentials: "same-origin",
         method: "POST",
@@ -169,7 +169,7 @@ export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, a
   }
   updateProgress({ showProgress: true });
   dataFetch(
-    "/api/k8sconfig",
+    "/api/system/kubernetes",
     {
       credentials: "same-origin",
       method: "POST",

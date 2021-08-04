@@ -109,6 +109,8 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		token := provider.UpdateToken(w, req)
 		//lint:ignore SA1029 we want to make sure that no two results of errors
 		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token) // nolint
+		ctx = context.WithValue(ctx, models.UserCtxKey, user)              // nolint
+		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)        // nolint
 		req1 := req.WithContext(ctx)
 
 		next(w, req1, prefObj, user, provider)

@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -51,20 +53,20 @@ var (
 				return errors.Wrap(err, "error processing config")
 			}
 
-			s.Start()
 			_, err = sendDeployRequest(mctlCfg, meshName, false)
 			if err != nil {
 				return errors.Wrap(err, "error installing service mesh")
 			}
-			s.Stop()
 
-			//log.Infof("Verifying Installation")
-			//s.Start()
-			//_, err = waitForDeployResponse(mctlCfg, args[0])
-			//if err != nil {
-			//	return errors.Wrap(err, "error verifying installation")
-			//}
-			//s.Stop()
+			if watch {
+				log.Infof("Verifying Operation")
+				s.Start()
+				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
+				if err != nil {
+					return errors.Wrap(err, "error verifying installation")
+				}
+				s.Stop()
+			}
 
 			return nil
 		},
@@ -76,6 +78,7 @@ func init() {
 	deployCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
 	deployCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = deployCmd.MarkFlagRequired("tokenPath")
+	deployCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 
 func sendDeployRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
@@ -121,7 +124,10 @@ func sendDeployRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bo
 }
 
 func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli"
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_deploy"
 	method := "GET"
 	client := &http.Client{}
 	req, err := http.NewRequest(method, path, nil)
@@ -140,11 +146,31 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	event, _ := utils.ConvertRespToSSE(res)
+
+	//Run a goroutine to wait for the response
+	go func() {
+		for i := range event {
+			log.Infof("Event :" + i.Data)
+			if strings.Contains(i.Data, query) {
+				wg.Done()
+			}
+		}
+	}()
+
+	//Run a goroutine to wait for time out
+	go func() {
+		time.Sleep(time.Second * 300)
+		err = errors.New("timeout")
+		wg.Done()
+	}()
+
+	//Wait till any one of the goroutines ends and return
+	wg.Wait()
 	if err != nil {
 		return "", err
 	}
-	return string(body), nil
+	return "", nil
 }
 
 func validateAdapter(mctlCfg *config.MesheryCtlConfig, tokenPath string, name string) error {

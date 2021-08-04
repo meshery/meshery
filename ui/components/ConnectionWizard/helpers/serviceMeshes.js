@@ -8,7 +8,7 @@ export const fetchAvailableAdapters = () => {
   return new Promise((res, rej) => 
 
     dataFetch(
-      "/api/mesh/adapters",
+      "/api/system/adapters",
 
       {
         credentials: "same-origin",
@@ -64,7 +64,7 @@ export const pingAdapterWithNotification = (updateProgress, enqueueSnackbar, act
 export const pingAdapter = (adapterLoc, successCb, errorCb) => {
 
   dataFetch(
-      `/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`,
+      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
       {
         credentials: "same-origin",
         credentials: "include",
