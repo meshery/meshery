@@ -20,8 +20,7 @@ The following is a list of top-level frameworks, libraries, design system used i
 - [ReactJS](https://reactjs.org/) - User Interface library
 - [Material UI](https://material-ui.com/) - Design System
 - [BillboardJS](https://naver.github.io/billboard.js/) - Charting library, used for exposing Grafana and Prometheus-collected metrics
-
-- [MeshMap only] [CytoscapeJS](https://js.cytoscape.org/) - a visualization tool for canvas-based, visual topology (networks)
+- [CytoscapeJS](https://js.cytoscape.org/) - a visualization tool for canvas-based, visual topology (networks)
 
 #### Meshery Server APIs
 
@@ -95,6 +94,16 @@ make build-ui
 > Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.
 
 > Changes are not recompiled directly, you will have to run to rebuild the UI to see them
+
+
+#### Run Meshery
+To start running Meshery locally:
+```
+make run-fast
+```
+
+> Now, Meshery will run on the default port `http://localhost:9081`.
+
 
 #### UI Development Server
 

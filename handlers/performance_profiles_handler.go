@@ -89,7 +89,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route DELETE /api/user/performance/profiles/{id} PerformanceProfile idDeletePerformanceProfile
+// swagger:route DELETE /api/user/performance/profiles/{id} PerformanceAPI idDeletePerformanceProfile
 // Handle Delete requests for performance profiles
 //
 // Deletes a performance profile with the given id

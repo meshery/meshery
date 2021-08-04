@@ -242,3 +242,58 @@ type singleScheduleResponseWrapper struct {
 	// in: body
 	Body models.Schedule
 }
+
+// Return all the adapters
+// swagger:response systemAdaptersRespWrapper
+type systemAdaptersRespWrapper struct {
+	// in: body
+	Body []models.Adapter
+}
+
+// swagger:response adapterPingParams
+type adapterPingParamsWrapper struct {
+	// in: query
+	Adapter string `json:"adapter"`
+}
+
+// Returns saved kubernetes config
+// swagger:response k8sConfigRespWrapper
+type k8sConfigRespWrapper struct {
+	// in: body
+	Body *models.K8SConfig
+}
+
+// Returns kubernetes context list
+// swagger:response k8sContextsRespWrapper
+type k8sContextsRespWrapper struct {
+	// in: body
+	Body []*models.K8SContext
+}
+
+// Parameters for updating provider choice
+// swagger:parameters idChoiceProvider
+type mesheryProviderParamsWrapper struct {
+	// in: query
+	Provider string `json:"provider"`
+}
+
+// Returns a list of available providers
+// swagger:response listProvidersRespWrapper
+type listProvidersRespWrapper struct {
+	// in: body
+	Body map[string]models.ProviderProperties
+}
+
+// Returns provider capabilities
+// swaggere:response providerPropertiesRespWrapper
+type providerPropertiesRespWrapper struct {
+	// in: body
+	Body models.ProviderProperties
+}
+
+// Returns Meshery version
+// swagger:response mesheryVersionRespWrapper
+type mesheryVersionRespWrapper struct {
+	// in: body
+	Body Version
+}

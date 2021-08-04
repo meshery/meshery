@@ -173,7 +173,7 @@ func (l *DefaultLocalProvider) FetchAllResults(req *http.Request, page, pageSize
 }
 
 // GetResult - fetches result from provider backend for the given result id
-func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
+func (l *DefaultLocalProvider) GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error) {
 	// key := uuid.FromStringOrNil(resultID)
 	if resultID == uuid.Nil {
 		return nil, ErrResultID
@@ -326,7 +326,9 @@ func (l *DefaultLocalProvider) RecordPreferences(req *http.Request, userID strin
 }
 
 // UpdateToken - specific to remote auth
-func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) {}
+func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) string {
+	return ""
+}
 
 // TokenHandler - specific to remote auth
 func (l *DefaultLocalProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {

@@ -35,7 +35,7 @@
 | Rodolfo Martínez Vega | ramrodo    | Rackspace   |
 
 
-# Docs Maintainers
+### Docs Maintainers
 
 | Name            | GitHub          | Affiliation |
 | --------------- | --------------- | ----------- |

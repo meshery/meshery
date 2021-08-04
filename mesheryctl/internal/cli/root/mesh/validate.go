@@ -51,7 +51,7 @@ var validateCmd = &cobra.Command{
 		}
 
 		// sync
-		syncPath := mctlCfg.GetBaseMesheryURL() + "/api/config/sync"
+		syncPath := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 		method := "GET"
 
 		client := &http.Client{}

@@ -45,6 +45,25 @@ var logsCmd = &cobra.Command{
 
 It also shows the logs of a specific component.`,
 	Args: cobra.ArbitraryArgs,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		// execute healthchecks
+		err = hc.RunPreflightHealthChecks()
+		if err != nil {
+			cmd.SilenceUsage = true
+		}
+
+		return err
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("Starting Meshery logging...")
 

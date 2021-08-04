@@ -14,7 +14,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -24,6 +23,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
+	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -233,35 +233,10 @@ func SetFileLocation() error {
 	return nil
 }
 
-// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer, based on the host operating system.
+// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer.
 func NavigateToBrowser(endpoint string) error {
-	//check for os of host machine
-	if runtime.GOOS == "windows" {
-		// Meshery running on Windows host
-		err := exec.Command("rundll32", "url.dll,FileProtocolHandler", endpoint).Start()
-		if err != nil {
-			return errors.Wrap(err, SystemError("failed to exec command"))
-		}
-	} else if runtime.GOOS == "linux" {
-		// Meshery running on Linux host
-		_, err := exec.LookPath("xdg-open")
-		if err != nil {
-			return errors.Wrap(err, SystemError("failed to exec command"))
-			//find out what to do here!
-		}
-		err = exec.Command("xdg-open", endpoint).Start()
-		if err != nil {
-			return errors.Wrap(err, SystemError("failed to exec command"))
-		}
-	} else {
-		// Assume Meshery running on MacOS host
-		err := exec.Command("open", endpoint).Start()
-		if err != nil {
-			return errors.Wrap(err, SystemError("failed to exec command"))
-		}
-	}
-
-	return nil
+	err := browser.OpenURL(endpoint)
+	return err
 }
 
 // UploadFileWithParams returns a request configured to upload files with other values
@@ -551,7 +526,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 }
 
 func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models.Preference, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/config/sync"
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
 	client := &http.Client{}
 	req, err := http.NewRequest(method, path, nil)
@@ -581,6 +556,17 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models
 	}
 
 	return prefs, nil
+}
+
+// ContainsStringPrefix takes a string slice and a string and returns true if it is present
+func ContainsStringPrefix(arr []string, str string) bool {
+	for _, el := range arr {
+		if strings.HasPrefix(el, str) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // TransformYAML takes in:
