@@ -11,7 +11,7 @@ import (
 )
 
 func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*ControlPlane, error) {
-	objects := []meshsyncmodel.Object{}
+	object := []meshsyncmodel.Object{}
 	controlplanelist := make([]*ControlPlane, 0)
 
 	for _, selector := range selectors {
@@ -21,12 +21,12 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*Co
 			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
 			Preload("Spec").
 			Preload("Status").
-			Find(&objects, "kind = ?", "Pod")
+			Find(&object, "kind = ?", "Pod")
 		if result.Error != nil {
 			return nil, ErrQuery(result.Error)
 		}
 		members := make([]*ControlPlaneMember, 0)
-		for _, obj := range objects {
+		for _, obj := range object {
 			if meshsyncmodel.IsObject(obj) {
 				objspec := corev1.PodSpec{}
 				err := utils.Unmarshal(obj.Spec.Attribute, &objspec)
