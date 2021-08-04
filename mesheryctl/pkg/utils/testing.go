@@ -46,7 +46,7 @@ type CmdTestInput struct {
 	Args                 []string
 	ExpectedResponse     string
 	ExpectedResponseYaml string
-	ExpectErr            bool
+	ExpectError          bool
 }
 
 type GoldenFile struct {
@@ -199,9 +199,8 @@ func SetFileLocationTesting(t *testing.T, dir string) {
 	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
 	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
 	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
-	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
 }
-func Copy(src, dst string) error {
+func Populate(src, dst string) error {
 	sourceFileStat, err := os.Stat(src)
 	if err != nil {
 		return err

@@ -172,7 +172,7 @@ func TestDeleteContextCmd(t *testing.T) {
 			}
 
 			//Repopulating Expected yaml
-			if err := utils.Copy(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
+			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
 		})
@@ -237,7 +237,7 @@ func TestAddContextCmd(t *testing.T) {
 			}
 
 			//Repopulating Expected yaml
-			if err := utils.Copy(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
+			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
 		})
@@ -300,7 +300,7 @@ func TestSwitchContextCmd(t *testing.T) {
 			if actualResponse != switchExpected {
 				t.Errorf("expected response %v and actual response %v don't match", switchExpected, actualResponse)
 			}
-			if err := utils.Copy(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
+			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
 		})

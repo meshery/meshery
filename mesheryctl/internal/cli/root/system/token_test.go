@@ -24,21 +24,21 @@ func TestTokenCreateCmd(t *testing.T) {
 			Args:                 []string{"token", "create", "Default2"},
 			ExpectedResponse:     "create_default.golden",
 			ExpectedResponseYaml: "create_default.yaml",
-			ExpectErr:            false,
+			ExpectError:          false,
 		},
 		{
 			Name:                 "create the passed token with passed location",
 			Args:                 []string{"token", "create", "Default2", "-f", "~/.meshery/auth.json"},
 			ExpectedResponse:     "create.golden",
 			ExpectedResponseYaml: "create.yaml",
-			ExpectErr:            false,
+			ExpectError:          false,
 		},
 		{
 			Name:                 "creating a token which already exists",
 			Args:                 []string{"token", "create", "Default"},
 			ExpectedResponse:     "create_err.golden",
 			ExpectedResponseYaml: "create_err.yaml",
-			ExpectErr:            true,
+			ExpectError:          true,
 		},
 	}
 
@@ -47,7 +47,7 @@ func TestTokenCreateCmd(t *testing.T) {
 			utils.SetupCustomContextEnv(t, currDir+"/testdata/token/"+tt.ExpectedResponseYaml)
 			var b *bytes.Buffer
 			var e *bytes.Buffer
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				e = utils.SetupLogrusGrabTesting(t)
 				SystemCmd.SetErr(e)
 			} else {
@@ -58,13 +58,13 @@ func TestTokenCreateCmd(t *testing.T) {
 			var actualResponse string
 			err := SystemCmd.Execute()
 			if err != nil {
-				if !tt.ExpectErr {
+				if !tt.ExpectError {
 					t.Error(err)
 					return
 				}
 			}
 			//Check the stdout/stderr against the golden file
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				actualResponse = e.String()
 			} else {
 				actualResponse = b.String()
@@ -80,7 +80,7 @@ func TestTokenCreateCmd(t *testing.T) {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			}
 			//Skip checking the yamls if we had an error
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				return
 			}
 			//Check the modified yaml against the golden file
@@ -102,7 +102,7 @@ func TestTokenCreateCmd(t *testing.T) {
 			if actualResponse != createExpected {
 				t.Errorf("expected response %v and actual response %v don't match", createExpected, actualResponse)
 			}
-			if err := utils.Copy(path+"/fixtures/.meshery/config.yaml", filepath); err != nil {
+			if err := utils.Populate(path+"/fixtures/.meshery/config.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure create test file")
 			}
 			BreakupFunc(t)
@@ -122,14 +122,14 @@ func TestTokenDeleteCmd(t *testing.T) {
 			Args:                 []string{"token", "delete", "Default"},
 			ExpectedResponse:     "delete_default.golden",
 			ExpectedResponseYaml: "delete_default.yaml",
-			ExpectErr:            false,
+			ExpectError:          false,
 		},
 		{
 			Name:                 "delete the passed token(with a token name that doesn't exist)",
 			Args:                 []string{"token", "create", "Default2"},
 			ExpectedResponse:     "delete.golden",
 			ExpectedResponseYaml: "delete_err.yaml",
-			ExpectErr:            true,
+			ExpectError:          true,
 		},
 	}
 
@@ -138,7 +138,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 			utils.SetupCustomContextEnv(t, currDir+"/testdata/token/"+tt.ExpectedResponseYaml)
 			var b *bytes.Buffer
 			var e *bytes.Buffer
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				e = utils.SetupLogrusGrabTesting(t)
 				SystemCmd.SetErr(e)
 			} else {
@@ -149,13 +149,13 @@ func TestTokenDeleteCmd(t *testing.T) {
 			var actualResponse string
 			err := SystemCmd.Execute()
 			if err != nil {
-				if !tt.ExpectErr {
+				if !tt.ExpectError {
 					t.Error(err)
 					return
 				}
 			}
 			//Check the stdout/stderr against the golden file
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				actualResponse = e.String()
 			} else {
 				actualResponse = b.String()
@@ -171,7 +171,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			}
 			//Skip checking the yamls if we had an error
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				return
 			}
 			//Check the modified yaml against the golden file
@@ -193,7 +193,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 			if actualResponse != createExpected {
 				t.Errorf("expected response %v and actual response %v don't match", createExpected, actualResponse)
 			}
-			if err := utils.Copy(path+"/fixtures/.meshery/config.yaml", filepath); err != nil {
+			if err := utils.Populate(path+"/fixtures/.meshery/config.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure create test file")
 			}
 			BreakupFunc(t)
@@ -214,21 +214,21 @@ func TestTokenSetCmd(t *testing.T) {
 			Args:                 []string{"token", "set", "DefaultNew"},
 			ExpectedResponse:     "set_default.golden",
 			ExpectedResponseYaml: "set_default.yaml",
-			ExpectErr:            false,
+			ExpectError:          false,
 		},
 		{
-			Name:                 "set the token for custom context",
+			Name:                 "set the token for different context",
 			Args:                 []string{"token", "set", "DefaultNew", "--context", "local2"},
 			ExpectedResponse:     "set.golden",
 			ExpectedResponseYaml: "set.yaml",
-			ExpectErr:            false,
+			ExpectError:          false,
 		},
 		{
 			Name:                 "set the token(without passing any token name)",
 			Args:                 []string{"token", "set"},
 			ExpectedResponse:     "set_err.golden",
 			ExpectedResponseYaml: "set_err.yaml",
-			ExpectErr:            true,
+			ExpectError:          true,
 		},
 	}
 
@@ -237,7 +237,7 @@ func TestTokenSetCmd(t *testing.T) {
 			utils.SetupCustomContextEnv(t, currDir+"/testdata/token/"+tt.ExpectedResponseYaml)
 			var b *bytes.Buffer
 			var e *bytes.Buffer
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				e = utils.SetupLogrusGrabTesting(t)
 				SystemCmd.SetErr(e)
 			} else {
@@ -248,13 +248,13 @@ func TestTokenSetCmd(t *testing.T) {
 			var actualResponse string
 			err := SystemCmd.Execute()
 			if err != nil {
-				if !tt.ExpectErr {
+				if !tt.ExpectError {
 					t.Error(err)
 					return
 				}
 			}
 			//Check the stdout/stderr against the golden file
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				actualResponse = e.String()
 			} else {
 				actualResponse = b.String()
@@ -270,7 +270,7 @@ func TestTokenSetCmd(t *testing.T) {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			}
 			//Skip checking the yamls if we had an error
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				return
 			}
 			//Check the modified yaml against the golden file
@@ -292,7 +292,7 @@ func TestTokenSetCmd(t *testing.T) {
 			if actualResponse != createExpected {
 				t.Errorf("expected response %v and actual response %v don't match", createExpected, actualResponse)
 			}
-			if err := utils.Copy(path+"/testdata/token/set_reset.yaml", filepath); err != nil {
+			if err := utils.Populate(path+"/testdata/token/set_reset.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure create test file")
 			}
 			BreakupFunc(t)
@@ -317,7 +317,7 @@ func TestTokenViewCmd(t *testing.T) {
 			Name:             "view with token name unspecified",
 			Args:             []string{"token", "view"},
 			ExpectedResponse: "view_err.golden",
-			ExpectErr:        true,
+			ExpectError:      true,
 		},
 	}
 
@@ -326,7 +326,7 @@ func TestTokenViewCmd(t *testing.T) {
 			var b *bytes.Buffer
 			var e *bytes.Buffer
 
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				e = utils.SetupLogrusGrabTesting(t)
 				SystemCmd.SetErr(e)
 			} else {
@@ -336,14 +336,14 @@ func TestTokenViewCmd(t *testing.T) {
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
-				if !tt.ExpectErr {
+				if !tt.ExpectError {
 					t.Error(err)
 					return
 				}
 			}
 			var actualResponse string
 			//Check the stdout against the golden file
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				actualResponse = e.String()
 			} else {
 				actualResponse = b.String()
@@ -380,7 +380,7 @@ func TestTokenListCmd(t *testing.T) {
 			Name:             "list command with an extra argument passed to token",
 			Args:             []string{"token", "list", "random"},
 			ExpectedResponse: "list_err.golden",
-			ExpectErr:        true,
+			ExpectError:      true,
 		},
 	}
 
@@ -388,7 +388,7 @@ func TestTokenListCmd(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			var b *bytes.Buffer
 			var e *bytes.Buffer
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				e = utils.SetupLogrusGrabTesting(t)
 				SystemCmd.SetErr(e)
 			} else {
@@ -398,14 +398,14 @@ func TestTokenListCmd(t *testing.T) {
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
-				if !tt.ExpectErr {
+				if !tt.ExpectError {
 					t.Error(err)
 					return
 				}
 			}
 			var actualResponse string
 			//Check the stdout/stderr against the golden file
-			if tt.ExpectErr {
+			if tt.ExpectError {
 				actualResponse = e.String()
 			} else {
 				actualResponse = b.String()
