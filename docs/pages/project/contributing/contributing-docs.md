@@ -188,7 +188,7 @@ Inline formatting:
 
 \`code snippet\`: `code snippet`
 
-Language specific:
+**Language specific:**
 
 ````
 ```(language name)
