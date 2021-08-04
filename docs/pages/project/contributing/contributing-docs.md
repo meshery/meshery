@@ -178,7 +178,7 @@ Most popular clipboard plugins like Clipboard JS require the manual creation of 
 ``` 
  **<pre></pre>** _tags are optional unless the code snippet is in a paragraph format and also gives a terminal like effect to the code_
 
-A full block:
+**A full block:**
 
 ````
 ```code snippet```
