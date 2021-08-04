@@ -340,7 +340,7 @@ class MeshConfigComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/k8sconfig/contexts",
+      "/api/system/kubernetes/contexts",
       {
         credentials: "same-origin",
         method: "POST",
@@ -376,7 +376,7 @@ class MeshConfigComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/k8sconfig",
+      "/api/system/kubernetes",
       {
         credentials: "same-origin",
         method: "POST",
@@ -459,7 +459,7 @@ class MeshConfigComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/k8sconfig/ping",
+      "/api/system/kubernetes/ping",
       {
         credentials: "same-origin",
         credentials: "include",
@@ -531,7 +531,7 @@ class MeshConfigComponent extends React.Component {
   handleReconfigure = () => {
     const self = this;
     dataFetch(
-      "/api/k8sconfig",
+      "/api/system/kubernetes",
       {
         credentials: "same-origin",
         method: "DELETE",

@@ -446,7 +446,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      `/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`,
+      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
       {
         credentials: "same-origin",
         credentials: "include",
