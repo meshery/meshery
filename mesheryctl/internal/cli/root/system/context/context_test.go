@@ -193,7 +193,7 @@ func TestAddContextCmd(t *testing.T) {
 		{
 			Name:             "add given context",
 			Args:             []string{"create", "local3"},
-			ExpectedResponse: "createContext.golden\n",
+			ExpectedResponse: "createContext.golden",
 		},
 	}
 	for _, tt := range tests {
