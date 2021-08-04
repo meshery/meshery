@@ -5,11 +5,7 @@ on:
       - 'master'
     paths:
       - 'internal/graphql/schema/schema.graphql'
-  pull_request:
-    branches:
-      - 'master'
-    paths:
-      - 'internal/graphql/schema/schema.graphql'
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -24,14 +20,15 @@ jobs:
       with:
         ruby-version: 2.7.1
         bundler-cache: true
+
     - name: graphql-docs
       run: |
         cd docs
         bundle install
         bundle exec rake graphql:compile_docs
+
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v4
-      if: github.event_name != 'pull_request'
       with:
         file_pattern: docs/
         commit_user_name: l5io
