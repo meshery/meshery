@@ -35,6 +35,25 @@ var restartCmd = &cobra.Command{
 	Short: "Stop, then start Meshery",
 	Long:  `Restart all Meshery containers / pods.`,
 	Args:  cobra.NoArgs,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		// execute healthchecks
+		err = hc.RunPreflightHealthChecks()
+		if err != nil {
+			cmd.SilenceUsage = true
+		}
+
+		return err
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return restart()
 	},
@@ -50,9 +69,11 @@ func restart() error {
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
-	err = mctlCfg.SetCurrentContext(tempContext)
-	if err != nil {
-		return err
+	if tempContext != "" {
+		err = mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
+			return errors.Wrap(err, "failed to set temporary context")
+		}
 	}
 
 	currCtx, err := mctlCfg.GetCurrentContext()

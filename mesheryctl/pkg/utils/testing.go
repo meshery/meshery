@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -12,6 +13,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -135,6 +137,14 @@ func SetupContextEnv(t *testing.T) {
 	if err != nil {
 		t.Error("error processing config", err)
 	}
+}
+
+// setup logrus formatter and return the buffer in which commands output is to be set.
+func SetupLogrusGrabTesting(t *testing.T) *bytes.Buffer {
+	b := bytes.NewBufferString("")
+	logrus.SetOutput(b)
+	SetupLogrusFormatter()
+	return b
 }
 
 // setup custom context with SetupCustomContextEnv

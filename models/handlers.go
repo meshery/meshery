@@ -45,7 +45,7 @@ type HandlerInterface interface {
 
 	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request, provider Provider)
+	AdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -67,8 +67,7 @@ type HandlerInterface interface {
 	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	UserTestPreferenceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

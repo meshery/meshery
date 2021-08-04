@@ -2,14 +2,12 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path"
 
+	"git.mills.io/prologic/bitcask"
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/pkg/errors"
-	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"
 )
 
@@ -34,20 +32,17 @@ func NewBitCaskTestProfilesPersister(folderName string) (*BitCaskTestProfilesPer
 		if os.IsNotExist(err) {
 			err = os.MkdirAll(folderName, os.ModePerm)
 			if err != nil {
-				logrus.Errorf("Unable to create the directory '%s' due to error: %v.", folderName, err)
-				return nil, err
+				return nil, ErrMakeDir(err, folderName)
 			}
 		} else {
-			logrus.Errorf("Unable to find/stat the folder '%s': %v,", folderName, err)
-			return nil, err
+			return nil, ErrFolderStat(err, folderName)
 		}
 	}
 
 	fileName := path.Join(folderName, "testConfigDB")
 	db, err := bitcask.Open(fileName, bitcask.WithSync(true))
 	if err != nil {
-		logrus.Errorf("Unable to open database: %v.", err)
-		return nil, err
+		return nil, ErrDBOpen(err)
 	}
 	bd := &BitCaskTestProfilesPersister{
 		fileName: fileName,
@@ -59,21 +54,8 @@ func NewBitCaskTestProfilesPersister(folderName string) (*BitCaskTestProfilesPer
 // GetTestConfigs - gets result for the page and pageSize
 func (s *BitCaskTestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, error) {
 	if s.db == nil {
-		return nil, errors.New("connection to DB does not exist")
+		return nil, ErrDBConnection
 	}
-
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		err = errors.Wrapf(err, "unable to obtain read lock from bitcask store")
-		logrus.Error(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	total := s.db.Len()
 
@@ -85,7 +67,7 @@ RETRY:
 	logrus.Debugf("computed start index: %d, end index: %d", start, end)
 
 	if start > uint64(total) {
-		return nil, fmt.Errorf("index out of range")
+		return nil, ErrIndexOutOfRange
 	}
 	var localIndex uint64
 
@@ -93,16 +75,12 @@ RETRY:
 		if localIndex >= start && localIndex <= end {
 			dd, err := s.db.Get(k)
 			if err != nil {
-				err = errors.Wrapf(err, "unable to read data from bitcask store")
-				logrus.Error(err)
-				return nil, err
+				return nil, ErrDBRead(err)
 			}
 			if len(dd) > 0 {
 				testConfig := &SMP.PerformanceTestConfig{}
 				if err := json.Unmarshal(dd, testConfig); err != nil {
-					err = errors.Wrapf(err, "unable to unmarshal data.")
-					logrus.Error(err)
-					return nil, err
+					return nil, ErrUnmarshal(err, "data")
 				}
 				testConfigs = append(testConfigs, testConfig)
 			}
@@ -117,9 +95,7 @@ RETRY:
 		TestConfigs: testConfigs,
 	})
 	if err != nil {
-		err = errors.Wrapf(err, "unable to marshal result data.")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrMarshal(err, "result data")
 	}
 
 	return bd, nil
@@ -128,42 +104,23 @@ RETRY:
 // GetTestConfig - gets result for a specific key
 func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.PerformanceTestConfig, error) {
 	if s.db == nil {
-		return nil, errors.New("connection to DB does not exist")
+		return nil, ErrDBConnection
 	}
-
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		err = errors.Wrapf(err, "unable to obtain read lock from bitcask store")
-		logrus.Error(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	keyb := key.Bytes()
 	if !s.db.Has(keyb) {
-		err = errors.New("given key not found")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrNilKeys
 	}
 
 	data, err := s.db.Get(keyb)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to fetch result data")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrFetchData(err)
 	}
 
 	testConfig := &SMP.PerformanceTestConfig{}
 	err = json.Unmarshal(data, testConfig)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to marshal testConfig data.")
-		logrus.Error(err)
-		return nil, err
+		return nil, ErrMarshal(err, "testConfig data")
 	}
 
 	return testConfig, nil
@@ -172,34 +129,17 @@ RETRY:
 // DeleteTestConfig - delete result for a specific key
 func (s *BitCaskTestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 	if s.db == nil {
-		return errors.New("connection to DB does not exist")
+		return ErrDBConnection
 	}
-
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		err = errors.Wrapf(err, "unable to obtain read lock from bitcask store")
-		logrus.Error(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	keyb := key.Bytes()
 	if !s.db.Has(keyb) {
-		err = errors.New("given key not found")
-		logrus.Error(err)
-		return err
+		return ErrNilKeys
 	}
 
-	err = s.db.Delete(keyb)
+	err := s.db.Delete(keyb)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to fetch result data")
-		logrus.Error(err)
-		return err
+		return ErrFetchData(err)
 	}
 
 	return nil
@@ -208,30 +148,15 @@ RETRY:
 // WriteTestConfig persists the result
 func (s *BitCaskTestProfilesPersister) WriteTestConfig(key uuid.UUID, result []byte) error {
 	if s.db == nil {
-		return errors.New("connection to DB does not exist")
+		return ErrDBConnection
 	}
 
 	if result == nil {
-		return errors.New("given result data is nil")
+		return ErrResultData()
 	}
-
-RETRY:
-	locked, err := s.db.TryLock()
-	if err != nil {
-		err = errors.Wrapf(err, "unable to obtain write lock from bitcask store")
-		logrus.Error(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	if err := s.db.Put(key.Bytes(), result); err != nil {
-		err = errors.Wrapf(err, "unable to persist result data.")
-		logrus.Error(err)
-		return err
+		return ErrUnableToPersistsResult(err)
 	}
 	return nil
 }

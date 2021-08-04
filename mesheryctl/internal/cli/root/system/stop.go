@@ -15,7 +15,6 @@
 package system
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -48,7 +47,7 @@ var stopCmd = &cobra.Command{
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.Wrapf(err, "failed to initialize healthchecker")
+			return ErrHealthCheckFailed(err)
 		}
 		return hc.RunPreflightHealthChecks()
 	},
@@ -95,7 +94,7 @@ func stop() error {
 		// if the platform is docker, then stop all the running containers
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to mkdir %s", utils.MesheryFolder)))
+				return ErrCreateDir(err, utils.MesheryFolder)
 			}
 		}
 
@@ -115,7 +114,7 @@ func stop() error {
 		stop.Stderr = os.Stderr
 
 		if err := stop.Run(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
+			return ErrStopMeshery(err)
 		}
 	case "kubernetes":
 		client, err := meshkitkube.New([]byte(""))
@@ -142,9 +141,9 @@ func stop() error {
 			return err
 		}
 
-		version := currCtx.Version
+		version := currCtx.GetVersion()
 		if version == "latest" {
-			if currCtx.Channel == "edge" {
+			if currCtx.GetChannel() == "edge" {
 				version = "master"
 			} else {
 				version, err = utils.GetLatestStableReleaseTag()
@@ -170,7 +169,7 @@ func stop() error {
 		// delete the Meshery deployment using the manifest files to stop Meshery
 		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, true)
 		if err != nil {
-			return err
+			return ErrApplyManifest(err, false, true)
 		}
 	}
 
@@ -183,7 +182,7 @@ func stop() error {
 	}
 	hc, err := NewHealthChecker(hcOptions)
 	if err != nil {
-		return errors.Wrapf(err, "failed to initialize healthchecker")
+		return ErrHealthCheckFailed(err)
 	}
 	// stopping meshery operator pods if k8s is running
 	if err = hc.Run(); err == nil {
@@ -193,7 +192,7 @@ func stop() error {
 		}
 		err = utils.ApplyOperatorManifest(client, false, true)
 		if err != nil {
-			return err
+			return ErrApplyOperatorManifest(err, false, true)
 		}
 
 		s := utils.CreateDefaultSpinner("Terminating Meshery pods", "\nPods terminated.")
@@ -223,7 +222,7 @@ func stop() error {
 	if utils.ResetFlag {
 		err := resetMesheryConfig()
 		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
+			return ErrResetMeshconfig(err)
 		}
 	}
 	return nil

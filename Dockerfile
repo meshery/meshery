@@ -1,4 +1,4 @@
-FROM golang:1.15 as meshery-server
+FROM golang:1.16 as meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -7,7 +7,7 @@ ARG RELEASE_CHANNEL
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
 ADD . .
-RUN rm go.sum; go clean -modcache; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
+RUN go clean -modcache; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
 FROM node as ui
 ADD ui ui
@@ -37,6 +37,7 @@ RUN apt-get update; apt-get install -y ca-certificates curl; update-ca-certifica
 COPY ./oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
+COPY --from=meshery-server /github.com/meshery/meshery/helpers/swagger.yaml /app/helpers/swagger.yaml
 COPY --from=ui /out /app/ui/out
 COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2

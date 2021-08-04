@@ -1,0 +1,12 @@
+
+Current Context: local
+
+endpoint: http://localhost:9081
+token: Default
+token-location: auth.json
+platform: kubernetes
+adapters:
+- meshery-istio
+channel: stable
+version: latest
+

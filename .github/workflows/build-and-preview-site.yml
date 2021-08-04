@@ -4,9 +4,10 @@ on:
     branches: [ master ]
     types: [opened, synchronize, reopened]
     paths:
+      - '!**'
       - 'docs/**'
 jobs:
-  triger-previewing-site:
+  trigger-site-preview:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -30,5 +31,5 @@ jobs:
           name: site-dir
           path: ./site-dir.zip
           retention-days: 1
-      - name: Triger Inner workflow
-        run: echo "trigering inner workflow"
+      - name: Trigger Inner workflow
+        run: echo "triggering workflow"

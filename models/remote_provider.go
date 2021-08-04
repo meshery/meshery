@@ -245,7 +245,10 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 //
 // It is assumed that every remote provider will offer this feature
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
-	tu := "http://" + r.Host + r.RequestURI
+	tu := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
+	if tu == "" {
+		tu = "http://" + r.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
+	}
 
 	_, err := r.Cookie(tokenName)
 	// logrus.Debugf("url token: %v %v", token, err)
@@ -531,7 +534,7 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 }
 
 // GetResult - fetches result from provider backend for the given result id
-func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
+func (l *RemoteProvider) GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error) {
 	if !l.Capabilities.IsSupported(PersistResult) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistResult", l.ProviderName)
@@ -545,11 +548,11 @@ func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*Mesh
 	logrus.Debugf("constructed result url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, tokenString)
+	// tokenString, err := l.GetToken(req)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	resp, err := l.DoRequest(cReq, tokenVal)
 	if err != nil {
 		logrus.Errorf("unable to get results: %v", err)
 		return nil, ErrFetch(err, "Perf Result "+resultID.String(), resp.StatusCode)
@@ -2079,7 +2082,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 }
 
 // UpdateToken - in case the token was refreshed, this routine updates the response with the new token
-func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) {
+func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) string {
 	l.TokenStoreMut.Lock()
 	defer l.TokenStoreMut.Unlock()
 
@@ -2093,7 +2096,9 @@ func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) {
 			Path:     "/",
 			HttpOnly: true,
 		})
+		return newts
 	}
+	return tokenString
 }
 
 // ExtractToken - Returns the auth token and the provider type

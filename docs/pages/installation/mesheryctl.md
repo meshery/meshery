@@ -14,16 +14,23 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
 ## Bash
 
 **Install** and **Upgrade**
-<h6>Install on Docker</h6>
+<h6>Install `mesheryctl` command</h6>
+ <pre class="codeblock-pre">
+ <div class="codeblock">
+ <div class="clipboardjs">
+  $ curl -L https://git.io/meshery | DEPLOY_MESHERY=false bash -
+ </div></div>
+ </pre>
+
+<h6>Install `mesheryctl` command and deploy Meshery on Docker</h6>
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
   $ curl -L https://git.io/meshery | PLATFORM=docker bash -
  </div></div>
  </pre>
- 
 
-<h6>Install on Kubernetes</h6>
+<h6>Install `mesheryctl` command and deploy Meshery on Kubernetes</h6>
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
@@ -51,6 +58,14 @@ You're ready to run Meshery. To do so, execute the following command.
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
  $ mesheryctl system start
+
+</div></div>
+</pre>
+
+Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+ $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
 
 </div></div>
 </pre>

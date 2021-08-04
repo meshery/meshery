@@ -6,9 +6,8 @@ import (
 	"os"
 	"path"
 
+	"git.mills.io/prologic/bitcask"
 	"github.com/gofrs/uuid"
-	"github.com/pkg/errors"
-	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"
 )
 
@@ -61,18 +60,6 @@ func (s *BitCaskSmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, 
 	if s.db == nil {
 		return nil, ErrDBConnection
 	}
-
-RETRY:
-	locked, err := s.db.TryRLock()
-	if err != nil {
-		logrus.Error(err)
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	total := s.db.Len()
 
@@ -135,21 +122,6 @@ func (s *BitCaskSmiResultsPersister) WriteResult(key uuid.UUID, result []byte) e
 	if result == nil {
 		return ErrResultData()
 	}
-
-RETRY:
-	locked, err := s.db.TryLock()
-	if err != nil {
-		//obj := "bitcask store"
-		err = errors.Wrapf(err, "Unable to obtain write lock from bitcask store")
-		logrus.Error(err)
-		//l.log.Error(ErrFailWriteLock(err, obj))
-	}
-	if !locked {
-		goto RETRY
-	}
-	defer func() {
-		_ = s.db.Unlock()
-	}()
 
 	if err := s.db.Put(key.Bytes(), result); err != nil {
 		//err = errors.Wrapf(err, "Unable to persist result data.")
