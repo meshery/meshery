@@ -147,6 +147,35 @@ Meshery documentation is made of these components:
 
   _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
 
+### Using Docker
+If you've Docker and `make` installed in your system, then you can serve the site locally
+  ```
+  $ make docker-docs
+  ```
+
+This doesn't require the need for installing Jekyll and Ruby in your system
+
+**But, you need to make sure that GNU make is working in your system (might not work in Windows)** 
+#### Note
+While performing the above step, if you're facing errors with a message like below...
+
+`Your ruby version is x.x.x but your Gemfile specified 2.7.x`
+
+This is because Jekyll always considers the exact version of Ruby unlike JavaScript.
+
+So, you need to follow either of the two steps to resolve this problem;
+  - Install the required Ruby version by using `rvm` or by any means given above
+  - Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes
+  - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below (do only if you have Ruby version <3.0):
+  ```
+  source "https://rubygems.org" 
+  ruby '2.7.1' //to any version you have installed
+  ```
+  Automatically the `Gemfile.lock` will update once the `make site` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
+
+
+**WARNING: If you have followed the second step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
+
 ### Create a Pull Request
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
