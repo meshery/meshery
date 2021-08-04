@@ -6,9 +6,126 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/layer5io/meshery/models/pattern/resource/selector"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/qri-io/jsonschema"
 )
+
+func Validator(prov ServiceInfoProvider, terminator func(error)) ChainStageFunction {
+	s := selector.New(prov)
+
+	return func(data *Data, err error, next ChainStageNextFunction) {
+		for _, svc := range data.Pattern.Services {
+			wc, ok := s.Workload(svc.Type)
+			if !ok {
+				terminator(fmt.Errorf("invalid workload of type: %s", svc.Type))
+				return
+			}
+
+			// Validate workload definition
+			if err := validateWorkload(svc.Settings, wc); err != nil {
+				terminator(fmt.Errorf("invalid workload definition: %s", err))
+				return
+			}
+
+			// Validate traits applied to this workload
+			for trName, tr := range svc.Traits {
+				tc, ok := s.Trait(trName)
+				if !ok {
+					terminator(fmt.Errorf("invalid trait of type: %s", svc.Type))
+					return
+				}
+
+				if err := validateTrait(tr, tc, svc.Type); err != nil {
+					terminator(err)
+					return
+				}
+			}
+		}
+
+		if next != nil {
+			next(data, nil)
+		}
+	}
+}
+
+func validateWorkload(comp map[string]interface{}, wc core.WorkloadCapability) error {
+	// Create schema validator from the schema
+	rs := &jsonschema.Schema{}
+	if err := json.Unmarshal([]byte(wc.OAMRefSchema), rs); err != nil {
+		return fmt.Errorf("failed to create schema: %s", err)
+	}
+
+	// Create json settings
+	jsonSettings, err := json.Marshal(comp)
+	if err != nil {
+		return fmt.Errorf("failed to generate schema from the PatternFile settings: %s", err)
+	}
+
+	// Validate the json against the schema
+	errs, err := rs.ValidateBytes(context.TODO(), jsonSettings)
+	if err != nil {
+		return fmt.Errorf("error occurred during schema validation: %s", err)
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("invalid settings: %s", errs)
+	}
+
+	return nil
+}
+
+func validateTrait(trait interface{}, tc core.TraitCapability, compType string) error {
+	// Create schema validator from the schema
+	rs := &jsonschema.Schema{}
+	if err := json.Unmarshal([]byte(tc.OAMRefSchema), rs); err != nil {
+		return fmt.Errorf("failed to create schema: %s", err)
+	}
+
+	// Check if the trait applied to the component is legal or not
+	isLegal := _isLegalTrait(tc, compType)
+	if !isLegal {
+		return fmt.Errorf(
+			"%s trait is not applicable to %s",
+			tc.OAMDefinition.Name,
+			compType,
+		)
+	}
+
+	// Create json of the trait's properties for validation
+	jsonCompTraitProp, err := json.Marshal(trait)
+	if err != nil {
+		return fmt.Errorf(
+			"failed to generate schema from the PatternFile's service type %s trait: %s",
+			compType,
+			err,
+		)
+	}
+
+	// Validate the json against the schema
+	errs, err := rs.ValidateBytes(context.TODO(), jsonCompTraitProp)
+	if err != nil {
+		return fmt.Errorf("error occurred during schema validation: %s", err)
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("invalid traits: %s", errs)
+	}
+
+	return nil
+}
+
+func _isLegalTrait(tc core.TraitCapability, compType string) bool {
+	if len(tc.OAMDefinition.Spec.AppliesToWorkloads) == 0 {
+		return true
+	}
+
+	for _, wl := range tc.OAMDefinition.Spec.AppliesToWorkloads {
+		if wl == compType {
+			return true
+		}
+	}
+
+	return false
+}
 
 // ValidateWorkload takes in a workload and validates it against the corresponding schema
 func ValidateWorkload(workload interface{}, component v1alpha1.Component) (*core.WorkloadCapability, error) {
