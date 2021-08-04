@@ -19,6 +19,7 @@ import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -37,6 +38,8 @@ import { updatepagetitle } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
+import { Collapse } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 
 const styles = (theme) => ({
   categoryHeader: {
@@ -50,7 +53,13 @@ const styles = (theme) => ({
     paddingTop: 4,
     paddingBottom: 4,
     color: "rgba(255, 255, 255, 0.7)",
-    fill: "#fff"
+    fill: "#fff",
+    '&:hover': {
+      '& $expandMoreIcon': {
+        opacity: 1,
+        transition: "opacity 200ms ease-in",
+      }
+    }
   },
   itemCategory: {
     backgroundColor: "#263238",
@@ -278,6 +287,16 @@ const styles = (theme) => ({
   restrictPointer: {
     pointerEvents: 'none'
   },
+  expandMoreIcon: {
+    opacity: 0,
+    cursor: 'pointer',
+    '&:hover': {
+      color: "#4fc3f7",
+    }
+  },
+  collapsed: {
+    transform: 'rotate(180deg)',
+  }
 });
 
 const drawerIconsStyle = { height: "1.21rem", width: "1.21rem", fontSize: "1.21rem" };
@@ -503,6 +522,9 @@ class Navigator extends React.Component {
       navigator: ExtensionPointSchemaValidator("navigator")(),
       showHelperButton: false,
       capabilities: [],
+      openItems: [
+        "Lifecycle", "Performance", "Conformance",
+      ],
     };
   }
 
@@ -727,6 +749,16 @@ class Navigator extends React.Component {
     this.setState({ showHelperButton: !showHelperButton });
   }
 
+  toggleItemCollapse = (id) => {
+    const activeItems = [...this.state.openItems];
+    if (this.state.openItems.includes(id)) {
+      this.setState({ openItems: activeItems.filter(item => item !== id) })
+    } else {
+      activeItems.push(id);
+      this.setState({ openItems: activeItems })
+    }
+  }
+
   renderChildren(idname, children, depth) {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
@@ -875,12 +907,12 @@ class Navigator extends React.Component {
               return (
                 <React.Fragment key={childId}>
                   <ListItem
-                    button
+                    button={!!link}
                     dense
                     key={childId}
                     className={classNames(
                       classes.item,
-                      link ? classes.itemActionable : classes.restrictPointer,
+                      link ? classes.itemActionable : '',
                       path === href && classes.itemActiveItem
                     )}
                   >
@@ -905,8 +937,17 @@ class Navigator extends React.Component {
                         </ListItemText>
                       </div>
                     </Link>
+                    <ExpandMoreIcon
+                      onClick={() => this.toggleItemCollapse(childId)}
+                      className={classNames(classes.expandMoreIcon, {
+                        [classes.collapsed]: this.state.openItems.includes(childId)
+                      })}
+                      style={isDrawerCollapsed || !children ? { opacity: 0 } : {}}
+                    />
                   </ListItem>
-                  {this.renderChildren(childId, children, 1)}
+                  <Collapse in={isDrawerCollapsed || this.state.openItems.includes(childId)}>
+                    {this.renderChildren(childId, children, 1)}
+                  </Collapse>
                 </React.Fragment>
               );
             })}
