@@ -11,11 +11,11 @@ import (
 )
 
 func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*ControlPlane, error) {
-	objects := make([]meshsyncmodel.Object, 0)
+	objects := []meshsyncmodel.Object{}
 	controlplanelist := make([]*ControlPlane, 0)
 
 	for _, selector := range selectors {
-		result := provider.GetGenericPersister().
+		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
 			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
