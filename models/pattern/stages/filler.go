@@ -33,6 +33,8 @@ func Filler(data *Data, err error, next ChainStageNextFunction) {
 	flatSvc := map[string]interface{}{}
 	utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flatSvc)
 
+	fmt.Printf("%+#v\n", flatSvc)
+
 	err = fill(data.Pattern, flatSvc)
 
 	if next != nil {
@@ -142,22 +144,39 @@ func fillMap(mp map[string]interface{}, flatSvc map[string]interface{}) (map[str
 		for k, v := range mp {
 			switch cNode := v.(type) {
 			case string:
-				res, ok := matchPattern(cNode)
+				val, ok, err := fillMapString(cNode, flatSvc)
+				if err != nil {
+					return mp, err
+				}
+
 				if !ok {
 					continue
 				}
 
-				val, found := flatSvc[res]
-				if !found {
-					return mp, fmt.Errorf("invalid reference query: %s", res)
-				}
+				mp[k] = val
+			case []interface{}:
+				for i, el := range cNode {
+					switch ccNode := el.(type) {
+					case string:
+						val, ok, err := fillMapString(ccNode, flatSvc)
+						if err != nil {
+							return mp, err
+						}
 
-				cval, ok := val.(string)
-				if !ok {
-					return mp, fmt.Errorf("resolved reference query [%s] does not return string", res)
-				}
+						if !ok {
+							continue
+						}
 
-				mp[k] = cval
+						mp[k].([]interface{})[i] = val
+					case map[string]interface{}:
+						val, err := _fillMap(ccNode)
+						if err != nil {
+							return mp, err
+						}
+
+						mp[k].([]interface{})[i] = val
+					}
+				}
 			case map[string]interface{}:
 				var err error
 				mp[k], err = _fillMap(cNode)
@@ -171,6 +190,25 @@ func fillMap(mp map[string]interface{}, flatSvc map[string]interface{}) (map[str
 	}
 
 	return _fillMap(mp)
+}
+
+func fillMapString(str string, flatSvc map[string]interface{}) (string, bool, error) {
+	res, ok := matchPattern(str)
+	if !ok {
+		return "", false, nil
+	}
+
+	val, found := flatSvc[res]
+	if !found {
+		return "", false, fmt.Errorf("invalid reference query: %s", res)
+	}
+
+	cval, ok := val.(string)
+	if !ok {
+		return "", false, fmt.Errorf("resolved reference query [%s] does not return string", res)
+	}
+
+	return cval, true, nil
 }
 
 // matchPattern takes in a string and tests it against the pattern

@@ -21,9 +21,16 @@ services:
     namespace: istio-system
     settings:
       some: "$(#ref.services.entity2.namespace)"
+      some2:
+        - some2Some1:
+            data:
+              - name: 123
+                value: "1234"
   entity2:
     type: XYZ
     namespace: test
+    settings:
+      some: "$(#ref.services.entity1.settings.some2.0.some2Some1.data.0.value)"
   entity3:
     type: ABCD
     namespace: "$(#ref.services.entity1.namespace)"
@@ -46,6 +53,10 @@ services:
 				},
 				err: nil,
 				next: func(data *Data, err error) {
+					if err != nil {
+						t.Fatalf("got error: %s", err)
+					}
+
 					if data.Pattern.Services["entity1"].Settings["some"] != "test" {
 						t.Errorf("expected: %s\nGot: %s", "test", data.Pattern.Services["entity1"].Settings["some"])
 					}
@@ -54,6 +65,13 @@ services:
 						t.Errorf(
 							"expected: %s\nGot: %s", "istio-system",
 							data.Pattern.Services["entity3"].Namespace,
+						)
+					}
+
+					if data.Pattern.Services["entity2"].Settings["some"] != "1234" {
+						t.Errorf(
+							"expected: %s\nGot: %s", "1234",
+							data.Pattern.Services["entity2"].Settings["some"],
 						)
 					}
 				},

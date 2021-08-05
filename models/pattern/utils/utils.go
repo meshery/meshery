@@ -66,7 +66,12 @@ func FlattenMap(prefix string, src map[string]interface{}, dest map[string]inter
 			}
 		case []interface{}:
 			for i, v := range cnode {
-				dest[prefix+k+"."+strconv.Itoa(i)] = v
+				switch ccNode := v.(type) {
+				case map[string]interface{}:
+					FlattenMap(prefix+k+"."+strconv.Itoa(i), ccNode, dest)
+				default:
+					dest[prefix+k+"."+strconv.Itoa(i)] = v
+				}
 			}
 		default:
 			dest[prefix+k] = v
