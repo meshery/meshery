@@ -130,22 +130,24 @@ You will need to provide a short and long description of the command for the hel
 
 ## Refactoring Mesheryctl Code
 
-The mesheryctl code needs to be refactored for the ease of management, to improve the readbility of the code, for making it easier for using the utility packages. 
+In the latest update of Meshery, the meshconfig has been refactored to have getters and setters which can further be used to manipulate any config, making it more easier to perform specific functions. 
 
-For now, the meshconfig has been refactored to have getters and setters which can further be used to manipulate any config. For example, reading or changing the context version has now been a lot easier with the help of specific getters and setters, a central function has also been added to write the config.yaml file.
+A central struct has been configured to contain the Meshery Config File, where all the operations to manipulate the config into a central struct with getters and setters have been defined. A central function has also been added to write the config.yaml file.
+
+The `mesheryctl` needs refactoring in order to support the newly updated meshconfig. For example, reading or changing the context version has been updated to work with the help of specific getters and setters.
 
 The workflow for changing the contexts would be:
 - Change the context struct
 - Update the config struct with the new context
 - Write the new config to the config.yaml file
 
-Here are some examples of how the getters and setters of some defined structs are being used:
+To understand the updated structs, consider the following examples:
 
-Let us take an example of the `struct Context`, having the parameter `Token`, the code has been refactored to use `func(ctx *Context) GetToken()` for returning the token of the current context, and `func(ctx *Context) SetToken()` has been used for setting the token of the current context.
+Consider an example of the `struct Context`, having the parameter `Token`, the code has been refactored to use `func(ctx *Context) GetToken()` for returning the token of the current context, and `func(ctx *Context) SetToken()` has been used for setting the token of the current context.
 
-Similarly, for the `struct Mesheryctlconfig`, having the `Tokens` parameter has a function named `func (mc *MesheryCtlConfig) GetTokens() *[]Token` which is being used to return the tokens present in the config file.
+For the `struct Mesheryctlconfig`, `Tokens` parameter has a function named `func (mc *MesheryCtlConfig) GetTokens() *[]Token` which is being used to return the tokens present in the config file.
 
-There are more similar changes made, the changes can be viewed in `/mesheryctl/internal/cli/root/config/config.go` file and all the usages of the config/struct throughout the codebase has been modified to use the new struct functions.
+To understand more about the updated config, refer `/mesheryctl/internal/cli/root/config/config.go` file to know more about all the usages which is now updated throughout the codebase to use new `struct` functions.   
 
 # Writing unit tests and integration tests for mesheryctl
 
