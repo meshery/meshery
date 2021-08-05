@@ -11,35 +11,46 @@ import (
 	"github.com/qri-io/jsonschema"
 )
 
-func Validator(prov ServiceInfoProvider, terminator func(error)) ChainStageFunction {
+func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
 	s := selector.New(prov)
 
 	return func(data *Data, err error, next ChainStageNextFunction) {
-		for _, svc := range data.Pattern.Services {
+		data.PatternSvcWorkloadCapabilities = map[string]core.WorkloadCapability{}
+		data.PatternSvcTraitCapabilities = map[string][]core.TraitCapability{}
+
+		for svcName, svc := range data.Pattern.Services {
 			wc, ok := s.Workload(svc.Type)
 			if !ok {
-				terminator(fmt.Errorf("invalid workload of type: %s", svc.Type))
+				act.Terminate(fmt.Errorf("invalid workload of type: %s", svc.Type))
 				return
 			}
 
 			// Validate workload definition
 			if err := validateWorkload(svc.Settings, wc); err != nil {
-				terminator(fmt.Errorf("invalid workload definition: %s", err))
+				act.Terminate(fmt.Errorf("invalid workload definition: %s", err))
 				return
 			}
+
+			// Store the workload capability in the metadata
+			data.PatternSvcWorkloadCapabilities[svcName] = wc
+
+			data.PatternSvcTraitCapabilities[svcName] = []core.TraitCapability{}
 
 			// Validate traits applied to this workload
 			for trName, tr := range svc.Traits {
 				tc, ok := s.Trait(trName)
 				if !ok {
-					terminator(fmt.Errorf("invalid trait of type: %s", svc.Type))
+					act.Terminate(fmt.Errorf("invalid trait of type: %s", svc.Type))
 					return
 				}
 
 				if err := validateTrait(tr, tc, svc.Type); err != nil {
-					terminator(err)
+					act.Terminate(err)
 					return
 				}
+
+				// Store the trait capability in the metadata
+				data.PatternSvcTraitCapabilities[svcName] = append(data.PatternSvcTraitCapabilities[svcName], tc)
 			}
 		}
 
