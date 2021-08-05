@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/gofrs/uuid"
@@ -42,12 +43,12 @@ import (
 // 	return r.performanceChannel, nil
 // }
 
-func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, id *string) (*graphqlModels.MesheryResult, error) {
-	if *id == "" {
+func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, id string) (*graphqlModels.MesheryResult, error) {
+	if id == "" {
 		return nil, handlers.ErrQueryGet("*id")
 	}
 
-	resultID, err := uuid.FromString(*id)
+	resultID, err := uuid.FromString(id)
 
 	if err != nil {
 		r.Log.Error(err)
@@ -63,10 +64,9 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		return nil, err
 	}
 
-	startTime := int(bdr.TestStartTime.Unix())
+	startTime := fmt.Sprintf("%v", bdr.TestStartTime)
 	serverBoardConfig := fmt.Sprintf("%v", bdr.ServerBoardConfig)
 	serverMetrics := fmt.Sprintf("%v", bdr.ServerMetrics)
-	// runnerResults := fmt.Sprintf("%v", bdr.Result)
 	mesheryId := fmt.Sprintf("%v", bdr.ID)
 	performanceProfile := fmt.Sprintf("%v", bdr.PerformanceProfileInfo.ID)
 
@@ -84,5 +84,28 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		UpdatedAt:          &bdr.UpdatedAt,
 		CreatedAt:          &bdr.CreatedAt,
 	}, nil
+}
 
+func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, selector graphqlModels.PageFilter, profileID string) (interface{}, error) {
+	if profileID == "" {
+		return nil, handlers.ErrQueryGet("*profileID")
+	}
+
+	tokenString := ctx.Value("token").(string)
+
+	bdr, err := provider.FetchResults(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, profileID)
+
+	if err != nil {
+		r.Log.Error(err)
+		return nil, err
+	}
+
+	result := &graphqlModels.PerfPageResult{}
+
+	if err := json.Unmarshal(bdr, result); err != nil {
+		obj := "result data"
+		return nil, handlers.ErrUnmarshal(err, obj)
+	}
+
+	return result, nil
 }
