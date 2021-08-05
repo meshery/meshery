@@ -64,6 +64,12 @@ const useColorlibStepIconStyles = makeStyles({
   },
 });
 
+const useStepperStyles = makeStyles({
+  removePadding: {
+    padding: "0 !important"
+  }
+})
+
 function ColorlibStepIcon(props) {
   const classes = useColorlibStepIconStyles();
   const { active, completed } = props;
@@ -83,14 +89,15 @@ function ColorlibStepIcon(props) {
   );
 }
 
-const Stepper = ({ steps, activeStep, handleUserClick }) => {
+const Stepper = ({ steps, activeStep, handleUserClick}) => {
   const handleChange = (label, steps) => handleUserClick(steps.indexOf(label));
-
+  const classes = useStepperStyles();
   return (
     <Stepperr
       alternativeLabel
       activeStep={activeStep}
       connector={<ColorlibConnector />}
+      className={classes.removePadding}
     >
       {steps.map((label) => (
         <Step

@@ -16,30 +16,6 @@ export const pingMesheryOperator = (fetchMesheryOperatorStatus, successcb, error
     })
 }
 
-export const pingMesheryOperatorWithNotification = (updateProgress, snackbar, action, fetchMesheryOperatorStatus) => {
-  updateProgress({showProgress: true}) 
-  pingMesheryOperator(
-    fetchMesheryOperatorStatus, 
-    res => {
-      updateProgress({ showProgress: false });
-      if (res?.operator?.status == "ENABLED") {
-        snackbar('Operator was successfully pinged!', {
-          variant: 'success',
-          autoHideDuration: 2000,
-          action
-        })
-      } else {
-        snackbar('Operator was not successfully pinged!', {
-          variant: 'failure',
-          autoHideDuration: 2000,
-          action          
-        })
-      }
-    },
-
-  )
-}
-
 /**
   * Returns the connection status of Operator, Meshsync, and Broker (NATS)
   * using the result of graphql `operatorStatusQuery` query
