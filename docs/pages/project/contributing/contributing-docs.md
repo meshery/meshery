@@ -163,10 +163,10 @@ While performing the above step, if you're facing errors with a message like bel
 
 This is because Jekyll always considers the exact version of Ruby unlike JavaScript.
 
-So, you need to follow either of the two steps to resolve this problem;
+So, you need to follow either of the three steps to resolve this problem;
   - Install the required Ruby version by using `rvm` or by any means given above
   - Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes
-  - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below (do only if you have Ruby version <3.0):
+  - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below (not recommended! Do only if above two steps fail):
   ```
   source "https://rubygems.org" 
   ruby '2.7.1' //to any version you have installed
@@ -174,7 +174,7 @@ So, you need to follow either of the two steps to resolve this problem;
   Automatically the `Gemfile.lock` will update once the `make site` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
 
 
-**WARNING: If you have followed the second step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
+**WARNING: If you have followed the third step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
 
 ### Create a Pull Request
 
