@@ -225,6 +225,9 @@ const styles = (theme) => ({
     opacity: "0.7",
     transition: "opacity 200ms linear",
     transform: "rotate(180deg)",
+    justifyContent: "center",
+    alignSelf: "baseline",
+    marginLeft: "3px",
     "&:hover": {
       opacity: 1,
       background: "transparent",
@@ -275,10 +278,6 @@ const styles = (theme) => ({
       background: "transparent",
     },
   },
-  helperIcons: {
-    textAlign: "right",
-    marginLeft: "auto",
-  },
   extraPadding: {
     paddingTop: 4,
     paddingBottom: 4
@@ -295,6 +294,11 @@ const styles = (theme) => ({
   },
   collapsed: {
     transform: 'rotate(180deg)',
+  },
+  collapsedHelpButton: {
+    height: '30px',
+    marginTop: '-4px',
+    transform: 'translateX(-1px)'
   }
 });
 
@@ -986,7 +990,7 @@ class Navigator extends React.Component {
                           title={title}
                           placement={isDrawerCollapsed ? "right" : "top"}
                         >
-                          <ListItemIcon className={classNames(classes.listIcon, classes.helperIcons, classes.helpIcon)}>{icon}</ListItemIcon>
+                          <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>{icon}</ListItemIcon>
                         </Tooltip>
                       </a>
                     </Grow>
@@ -1000,12 +1004,10 @@ class Navigator extends React.Component {
                   title="Help"
                   placement={isDrawerCollapsed ? "right" : "top"}
                 >
-                  <IconButton onClick={() => this.toggleSpacing()}>
+                  <IconButton className={{ [classes.collapsedHelpButton]: isDrawerCollapsed }} onClick={() => this.toggleSpacing()}>
                     <HelpIcon
                       className={classes.helpIcon}
-                      style={showHelperButton
-                        ? { color: "#8ed7f8", opacity: 1 }
-                        : { color: "#8ed7f8" }}
+                      style={{ fontSize: '1.45rem', }}
                     />
                   </IconButton>
                 </Tooltip>
