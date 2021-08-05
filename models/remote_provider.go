@@ -368,7 +368,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 }
 
 // FetchResults - fetches results for profile id from provider backend
-func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search, order, profileID string) ([]byte, error) {
+func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistPerformanceProfiles", l.ProviderName)
@@ -397,11 +397,11 @@ func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search,
 	logrus.Debugf("constructed results url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, tokenString)
+	// tokenString, err := l.GetToken(req)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	resp, err := l.DoRequest(cReq, tokenVal)
 	if err != nil {
 		return nil, ErrFetch(err, "Perf Results", resp.StatusCode)
 	}

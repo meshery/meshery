@@ -21,6 +21,7 @@ type Resolver struct {
 	operatorSyncChannel     chan struct{}
 	meshsyncLivenessChannel chan struct{}
 	operatorChannel         chan *model.OperatorStatus
+	performanceChannel      chan *model.PerfPageResult
 	brokerChannel           chan *broker.Message
 	addonChannel            chan []*model.AddonList
 	controlPlaneChannel     chan []*model.ControlPlane
