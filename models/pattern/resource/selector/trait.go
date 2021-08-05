@@ -70,6 +70,12 @@ func (s *Selector) selectMeshTrait(ws []core.TraitCapability) (core.TraitCapabil
 
 	meshName, meshVersion := s.helpers.GetServiceMesh()
 
+	// If we failed to get service mesh version or we didn't find any service mesh
+	// running in the cluster then proceed to randomly select a workload
+	if meshName == "" || meshVersion == "" {
+		return ws[0], true
+	}
+
 	var selected *core.TraitCapability
 	for _, w := range ws {
 		version := w.OAMDefinition.Spec.Metadata["meshVersion"]

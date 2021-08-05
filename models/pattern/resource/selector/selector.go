@@ -12,7 +12,7 @@ const (
 
 type SelectorHelpers interface {
 	GetServiceMesh() (name string, version string)
-	GetAPIVersionForKind() string
+	GetAPIVersionForKind(kind string) string
 }
 
 type Selector struct {

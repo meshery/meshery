@@ -70,6 +70,12 @@ func (s *Selector) selectMeshWorkload(ws []core.WorkloadCapability) (core.Worklo
 
 	meshName, meshVersion := s.helpers.GetServiceMesh()
 
+	// If we failed to get service mesh version or we didn't find any service mesh
+	// running in the cluster then proceed to randomly select a workload
+	if meshName == "" || meshVersion == "" {
+		return ws[0], true
+	}
+
 	var selected *core.WorkloadCapability
 	for _, w := range ws {
 		version := w.OAMDefinition.Spec.Metadata["meshVersion"]
