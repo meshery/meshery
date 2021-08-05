@@ -15,6 +15,7 @@ type RolloutEngineGenericOptions struct {
 	Replicas    int
 	Containers  []RolloutEngineContainer
 	Delete      bool
+	Advanced    PatternSettingAdvanced
 }
 
 type RolloutEngineGenericOptionsMetadata struct {

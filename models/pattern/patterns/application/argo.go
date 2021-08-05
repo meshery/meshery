@@ -48,6 +48,10 @@ func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
 			return fmt.Errorf("failed to delete resource with name \"%s\" in namespace \"%s\"", opt.Name, opt.Namespace)
 		}
 
+		if opt.Advanced.SkipService {
+			return nil
+		}
+
 		// Delete the service
 		if err := patternUtils.DeleteK8sResource(
 			ar.kubeclient.DynamicKubeClient,
@@ -75,6 +79,10 @@ func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
 	); err != nil {
 		logrus.Error("[Native Rollout]:", err)
 		return fmt.Errorf("failed to create resource with name \"%s\" in namespace \"%s\"", opt.Name, opt.Namespace)
+	}
+
+	if opt.Advanced.SkipService {
+		return nil
 	}
 
 	// Create service

@@ -7,6 +7,14 @@
     "replicas": {
       "type": "integer"
     },
+    "advanced": {
+      "type": "object",
+      "properties": {
+        "skip_service": {
+          "type": "boolean"
+        }
+      }
+    },
     "containers": {
       "type": "array",
       "items": {
