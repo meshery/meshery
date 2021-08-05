@@ -490,7 +490,7 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResults)
 
-	logrus.Infof("attempting to fetch SMI results from cloud")
+	logrus.Infof("attempting to fetch SMI conformance results from remote provider")
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
