@@ -84,5 +84,4 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		UpdatedAt:          &bdr.UpdatedAt,
 		CreatedAt:          &bdr.CreatedAt,
 	}, nil
-
 }
