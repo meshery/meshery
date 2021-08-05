@@ -48,35 +48,32 @@ const styles = theme => ({
 
 const KubernetesDataPanel = ({clusterInformation, classes, updateProgress, enqueueSnackbar, closeSnackbar, setClusterInformation, setIsConnected, updateK8SConfig}) => {
 
-const resetKubernetesConfig = () => updateK8SConfig({
-                    k8sConfig: {
-                      inClusterConfig: false,
-                      k8sfile: "",
-                      contextName: "",
-                      clusterConfigured: false,
-                    },
-                  })
+  const resetKubernetesConfig = () => updateK8SConfig({
+    k8sConfig: {
+      inClusterConfig: false,
+      k8sfile: "",
+      contextName: "",
+      clusterConfigured: false,
+    },
+  })
 
 
   const handleKubernetesDelete = () => {
-    showProgress(updateProgress)
+    showProgress()
 
-    const handlerCb = () => {
-      hideProgress(updateProgress)
-      resetKubernetesConfig()
-    }
+    const handlerCb = () => resetKubernetesConfig()
 
     deleteKubernetesConfig(
       successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed", handlerCb),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config", () => hideProgress(updateProgress))
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config")
     )    
   }
 
   const handleKubernetesClick = () => {
-    showProgress(updateProgress)
+    showProgress()
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress(updateProgress)),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress(updateProgress))
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
     )
 
   }
@@ -85,7 +82,7 @@ const resetKubernetesConfig = () => updateK8SConfig({
     <Grid container className={classes.infoContainer} xs={10}>
 
       <Grid item xs={12}>
-         <AdapterChip
+        <AdapterChip
           label="Kubernetes"
           handleDelete={handleKubernetesDelete}
           handleClick={handleKubernetesClick}

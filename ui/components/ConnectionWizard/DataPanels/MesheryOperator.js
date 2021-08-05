@@ -14,8 +14,10 @@ import { bindActionCreators } from "redux";
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { updateProgress } from "../../../lib/store";
-import { pingMesheryOperatorWithNotification } from "../helpers/mesheryOperator";
+import { pingMesheryOperator, pingMesheryOperatorWithNotification } from "../helpers/mesheryOperator";
 import fetchMesheryOperatorStatus from "../../graphql/queries/OperatorStatusQuery";
+import AdapterChip from "./AdapterChip"
+import {closeButtonForSnackbarAction, errorHandlerGenerator,successHandlerGenerator} from "../helpers/common"
 
 
 const chipStyles = (theme) => ({
@@ -28,37 +30,58 @@ const chipStyles = (theme) => ({
   },
 })
 
-const mesheryOperatorPingSnackbarAction = closeSnackbar => key => (
-  <IconButton
-    key="close"
-    aria-label="Close"
-    color="inherit"
-    onClick={() => closeSnackbar(key)}
-  >
-    <CloseIcon />
-  </IconButton>
+
+
+
+
+
+
+
+
+const MesheryOperatorDataPanel = ({operatorInformation, updateProgress, enqueueSnackbar, closeSnackbar}) => {
+
+const handleMesheryOperatorClick = () =>{
+
+    const successCb = (res) =>{
+      if (res?.operator?.status == "ENABLED") {
+              enqueueSnackbar('Operator was successfully pinged!', {
+                variant: 'success',
+                autoHideDuration: 2000,
+                action: closeButtonForSnackbarAction(closeSnackbar)
+              })
+            } else {
+              enqueueSnackbar('Operator was not successfully pinged!', {
+                variant: 'failure',
+                autoHideDuration: 2000,
+                action: closeButtonForSnackbarAction(closeSnackbar)          
+              })
+            }
+          } 
+
+    const errorCb = (err) =>{
+              enqueueSnackbar('Unable to ping meshery operator!'+err, {
+                variant: 'error',
+                autoHideDuration: 2000,
+                action: closeButtonForSnackbarAction(closeSnackbar)
+              })
+           }
+
+
+   pingMesheryOperator(
+      fetchMesheryOperatorStatus,
+      successCb,
+      errorCb
 )
 
-
-const MesheryOperatorChip = withStyles(chipStyles)(({classes, handleMesheryOperatorClick, label}) => (
-  <Chip
-    // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
-    label={label}
-    // onDelete={() => null}
-    onClick={handleMesheryOperatorClick}
-    icon={<img src="/static/img/meshery-operator.svg" className={classes.chipIcon} />}
-    variant="outlined"
-    data-cy="chipOperator"
-  />
-))
+}
 
 
-
-const MesheryOperatorDataPanel = ({operatorInformation, updateProgress, enqueueSnackbar, closeSnackbar}) => (
-
+return (
   <Paper style={{padding: "2rem"}}>
-    <MesheryOperatorChip
-      handleMesheryOperatorClick={() => pingMesheryOperatorWithNotification(updateProgress, enqueueSnackbar, mesheryOperatorPingSnackbarAction(closeSnackbar), fetchMesheryOperatorStatus )} 
+    <AdapterChip
+      handleClick={handleMesheryOperatorClick}
+      isActive={true}
+      image="/static/img/meshery-operator.svg"
       label="Meshery Operator"
     />
     <Grid container spacing={1}>
@@ -94,7 +117,7 @@ const MesheryOperatorDataPanel = ({operatorInformation, updateProgress, enqueueS
       </Grid>
     </Grid>
   </Paper>
-)
+)}
 
 
 const mapDispatchToProps = (dispatch) => ({

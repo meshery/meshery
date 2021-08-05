@@ -144,7 +144,7 @@ class Header extends React.Component {
                       </Link>
                     </IconButton>
                   </div>*/}
-                 <div data-test="connection-wizard-button">
+                  <div data-test="connection-wizard-button">
                     <IconButton color="inherit">
                       <Link href="/system/connections">
                         <img src={title === 'Connection Wizard' ? "/static/img/connection_wizard/connection-wizard-green.svg" : "/static/img/connection_wizard/connection-wizard-white.svg"} className={ classes.headerIcons +" "+(title === 'Connection Wizard' ? classes.itemActiveItem : '')} />
