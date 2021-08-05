@@ -1,6 +1,6 @@
 // @ts-check
 import React from "react";
-import { Tab, Tabs, AppBar, Typography, Box, Card } from "@material-ui/core";
+import { Tab, Tabs, AppBar, Typography } from "@material-ui/core";
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
 import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
@@ -17,9 +17,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
+        <Typography>{children}</Typography>
       )}
     </div>
   );
@@ -89,10 +87,11 @@ function createPatternFromConfig(config, namespace) {
  *  onSubmit: Function;
  *  onDelete: Function;
  *  namespace: string;
+ *  isMeshery: boolean;
  * }} props
  * @returns
  */
-function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
+function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, isMeshery }) {
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB({});
   const [traits, setTraits, getTraitsRefValue] = useStateCB({});
@@ -121,21 +120,22 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
         onChange={setSettings}
         onSubmit={() => submitHandler({ settings: getSettingsRefValue() })}
         onDelete={() => deleteHandler({ settings: getSettingsRefValue() })}
+        isMeshery={isMeshery}
       />
     );
   }
 
   return (
-    <Card style={{ padding: "1rem" }}>
-      <Typography variant="h6" gutterBottom>
+    <div style={{ padding: "0.5rem" }}>
+      {isMeshery && (<Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
-      </Typography>
-      <AppBar position="static">
+      </Typography>)}
+      {(isMeshery || renderTraits()) && (<AppBar position="static">
         <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service">
           <Tab label="Settings" {...a11yProps(0)} />
           {renderTraits() ? <Tab label="Traits" {...a11yProps(1)} /> : null}
         </Tabs>
-      </AppBar>
+      </AppBar>)}
       <TabPanel value={tab} index={0}>
         <PatternService
           type="workload"
@@ -143,6 +143,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
           onChange={setSettings}
           onSubmit={() => submitHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
           onDelete={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
+          isMeshery={isMeshery}
         />
       </TabPanel>
       {renderTraits() ? (
@@ -152,11 +153,12 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
               type="trait"
               jsonSchema={trait}
               onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)]: val }))}
+              isMeshery={isMeshery}
             />
           ))}
         </TabPanel>
       ) : null}
-    </Card>
+    </div>
   );
 }
 

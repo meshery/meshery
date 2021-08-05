@@ -18,7 +18,7 @@ function RJSFButton({ handler, text }) {
   );
 }
 
-function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete }) {
+function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, isMeshery }) {
   const [data, setData] = React.useState();
 
   React.useEffect(() => {

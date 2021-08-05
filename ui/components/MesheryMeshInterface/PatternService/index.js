@@ -24,11 +24,12 @@ function componentType(jsonSchema) {
  *  onChange: Function;
  *  onSubmit?: Function;
  *  onDelete?: Function;
- *  type: "trait" | "workload"
+ *  type: "trait" | "workload";
+ *  isMeshery: boolean;
  * }} props
  * @returns
  */
-function PatternService({ jsonSchema, onChange, type, onSubmit, onDelete }) {
+function PatternService({ jsonSchema, onChange, type, onSubmit, onDelete, isMeshery }) {
   const ctype = componentType(jsonSchema);
 
   if (ctype === "rjsf")
@@ -40,6 +41,7 @@ function PatternService({ jsonSchema, onChange, type, onSubmit, onDelete }) {
         onChange={onChange}
         onSubmit={onSubmit}
         onDelete={onDelete}
+        isMeshery={isMeshery}
       />
     );
   if (ctype === "switch")
