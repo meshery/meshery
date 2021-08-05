@@ -86,7 +86,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 	}, nil
 }
 
-func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, selector graphqlModels.PageFilter, profileID string) (interface{}, error) {
+func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, selector graphqlModels.PageFilter, profileID string) (*graphqlModels.PerfPageResult, error) {
 	if profileID == "" {
 		return nil, handlers.ErrQueryGet("*profileID")
 	}

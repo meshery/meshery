@@ -144,7 +144,7 @@ type QueryResolver interface {
 	ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error)
 	GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error)
 	GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error)
-	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (interface{}, error)
+	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
@@ -904,7 +904,6 @@ type MesheryResult {
 	mesh: String
 	performance_profile: String
 	test_id: String
-	# runner_results: RunnerResults
 	runner_results: Map
 	server_metrics: String
 	server_board_config: String
@@ -962,7 +961,7 @@ type Query {
 	getPerfResult(id: ID!): MesheryResult
 
 	# Query for fetching all results for profile ID
-	fetchResults(selector: PageFilter!, profileID: String!): Any!
+	fetchResults(selector: PageFilter!, profileID: String!): PerfPageResult!
 }
 
 # 
@@ -2806,9 +2805,9 @@ func (ec *executionContext) _Query_fetchResults(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(interface{})
+	res := resTmp.(*model.PerfPageResult)
 	fc.Result = res
-	return ec.marshalNAny2interface(ctx, field.Selections, res)
+	return ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5242,27 +5241,6 @@ func (ec *executionContext) marshalNAddonList2ᚖgithubᚗcomᚋlayer5ioᚋmeshe
 		return graphql.Null
 	}
 	return ec._AddonList(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
-	res, err := graphql.UnmarshalAny(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNAny2interface(ctx context.Context, sel ast.SelectionSet, v interface{}) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := graphql.MarshalAny(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
 }
 
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

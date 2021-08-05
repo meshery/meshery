@@ -296,7 +296,7 @@ type Query {
 	getPerfResult(id: ID!): MesheryResult
 
 	# Query for fetching all results for profile ID
-	fetchResults(selector: PageFilter!, profileID: String!): Any!
+	fetchResults(selector: PageFilter!, profileID: String!): PerfPageResult!
 }
 
 # 
