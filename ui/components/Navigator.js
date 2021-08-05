@@ -288,17 +288,21 @@ const styles = (theme) => ({
   expandMoreIcon: {
     opacity: 0,
     cursor: 'pointer',
+    transform: 'translateX(3px)',
     '&:hover': {
       color: "#4fc3f7",
     }
   },
   collapsed: {
-    transform: 'rotate(180deg)',
+    transform: 'rotate(180deg) translateX(-3px)',
   },
   collapsedHelpButton: {
     height: '30px',
     marginTop: '-4px',
     transform: 'translateX(-1px)'
+  },
+  rightTranslate: {
+    transform: 'translateX(0.5px)'
   }
 });
 
@@ -916,11 +920,7 @@ class Navigator extends React.Component {
                       link ? classes.itemActionable : '',
                       path === href && classes.itemActiveItem
                     )}
-                    onClick={
-                      !this.state.openItems.includes(childId)
-                        ? () => this.toggleItemCollapse(childId)
-                        : undefined
-                    }
+                    onClick={() => this.toggleItemCollapse(childId)}
                   >
                     <Link href={link ? href : ""}>
                       <div className={classNames(classes.link)}>
@@ -1007,7 +1007,7 @@ class Navigator extends React.Component {
                   title="Help"
                   placement={isDrawerCollapsed ? "right" : "top"}
                 >
-                  <IconButton className={{ [classes.collapsedHelpButton]: isDrawerCollapsed }} onClick={() => this.toggleSpacing()}>
+                  <IconButton className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate} onClick={() => this.toggleSpacing()}>
                     <HelpIcon
                       className={classes.helpIcon}
                       style={{ fontSize: '1.45rem', }}
