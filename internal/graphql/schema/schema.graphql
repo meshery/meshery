@@ -6,6 +6,7 @@
 
 scalar Map
 scalar Time
+scalar Any
 
 # Service Mesh Types
 enum MeshType {
@@ -192,10 +193,10 @@ type NameSpace {
 
 type PerfPageResult {
 	page: Int!
-	pageSize: Int!
-	totalCount: Int!
+	page_size: Int!
+	total_count: Int!
 
-	result: [MesheryResult]!
+	results: [MesheryResult]
 }
 
 # type PerfResult {
@@ -238,23 +239,22 @@ type MesheryResult {
 	mesh: String
 	performance_profile: String
 	test_id: String
-	# runner_results: RunnerResults
 	runner_results: Map
 	server_metrics: String
 	server_board_config: String
-	test_start_time: Int
+	test_start_time: String
 	user_id: String
 	updated_at: String
 	created_at: String
 }
 
 input PageFilter {
-	page: Int!
-	pageSize: Int!
-	order: String!
-	search: String
-	from: String
-	to: String
+	page: String!
+	pageSize: String!
+	order: String = ""
+	search: String = ""
+	from: String = ""
+	to: String = ""
 }
 # ============== RESYNC =============================
 
@@ -293,7 +293,10 @@ type Query {
 	getAvailableNamespaces: [NameSpace!]!
 
 	# Query for performance result
-	getPerfResult(id: ID): MesheryResult
+	getPerfResult(id: ID!): MesheryResult
+
+	# Query for fetching all results for profile ID
+	fetchResults(selector: PageFilter!, profileID: String!): Any!
 }
 
 # 
