@@ -525,9 +525,7 @@ class Navigator extends React.Component {
       navigator: ExtensionPointSchemaValidator("navigator")(),
       showHelperButton: false,
       capabilities: [],
-      openItems: [
-        "Lifecycle", "Performance", "Conformance",
-      ],
+      openItems: [],
     };
   }
 
@@ -918,6 +916,11 @@ class Navigator extends React.Component {
                       link ? classes.itemActionable : '',
                       path === href && classes.itemActiveItem
                     )}
+                    onClick={
+                      !this.state.openItems.includes(childId)
+                        ? () => this.toggleItemCollapse(childId)
+                        : undefined
+                    }
                   >
                     <Link href={link ? href : ""}>
                       <div className={classNames(classes.link)}>
