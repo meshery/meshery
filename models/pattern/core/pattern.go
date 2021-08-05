@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
-	"strings"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -131,16 +130,14 @@ func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
 
 	// Set up the nodes
 	for name, svc := range p.Services {
-		// Skip if type is either prometheus or grafana
-		if !notIn(svc.Type, []string{"prometheus", "grafana"}) {
-			continue
-		}
-
 		elemData := cytoscapejs.ElemData{
 			ID: name, // Assuming that the service names are unique
 		}
 
 		elemPosition := getCytoscapeJSPosition(svc)
+		src, dest := getCytoscapeJSEdges(svc)
+		elemData.Source = src
+		elemData.Target = dest
 
 		elem := cytoscapejs.Element{
 			Data:       elemData,
@@ -203,10 +200,16 @@ func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
 		}
 
 		// Add other meshmap specific data into service
-		svc.Traits["meshmap"] = map[string]map[string]float64{
-			"position": {
+		svc.Traits["meshmap"] = map[string]interface{}{
+			"position": map[string]float64{
 				"posX": elem.Position.X,
 				"posY": elem.Position.Y,
+			},
+			"edges": []map[string]interface{}{
+				{
+					"from": elem.Data.Source,
+					"to":   elem.Data.Target,
+				},
 			},
 		}
 
@@ -273,12 +276,42 @@ func getCytoscapeJSPosition(svc *Service) (pos cytoscapejs.Position) {
 	return
 }
 
-func notIn(name string, prohibited []string) bool {
-	for _, p := range prohibited {
-		if strings.HasPrefix(strings.ToLower(name), p) {
-			return false
-		}
+func getCytoscapeJSEdges(svc *Service) (source string, target string) {
+	// Check if the service has "meshmap" as a trait
+	mpi, ok := svc.Traits["meshmap"]
+	if !ok {
+		return "", ""
 	}
 
-	return true
+	mpStrInterface, ok := mpi.(map[string]interface{})
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (MPI): %+#v", mpi)
+		return "", ""
+	}
+
+	edgeInterface, ok := mpStrInterface["edges"].([]map[string]interface{})
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (edgeMap): %+#v", edgeInterface)
+		return "", ""
+	}
+
+	if len(edgeInterface) < 1 {
+		return "", ""
+	}
+
+	edge := edgeInterface[0]
+
+	from, ok := edge["from"].(string)
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (edgeMapFrom): %+#v", from)
+		return "", ""
+	}
+
+	to, ok := edge["to"].(string)
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (edgeMapTo): %+#v", to)
+		return "", ""
+	}
+
+	return from, to
 }
