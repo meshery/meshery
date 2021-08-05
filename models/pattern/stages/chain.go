@@ -8,7 +8,9 @@ import (
 
 // Data is the struct that will be passed on each stage
 type Data struct {
-	Pattern *core.Pattern
+	Pattern                        *core.Pattern
+	PatternSvcWorkloadCapabilities map[string]core.WorkloadCapability
+	PatternSvcTraitCapabilities    map[string][]core.TraitCapability
 
 	// Other is for passing metadata across different stages
 	Other map[string]interface{}
@@ -28,7 +30,7 @@ type Chain struct {
 	stages ChainStages
 	nexts  ChainStages
 
-	mu *sync.Mutex
+	mu sync.Mutex
 }
 
 // CreateChain returns a pointer to the chain object
