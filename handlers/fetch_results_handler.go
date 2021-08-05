@@ -31,7 +31,9 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	}
 	q := req.Form
 
-	bdr, err := p.FetchResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), profileID)
+	tokenString := req.Context().Value("token").(string)
+
+	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return

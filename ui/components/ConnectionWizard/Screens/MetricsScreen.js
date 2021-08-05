@@ -23,20 +23,23 @@ const MetricsScreen = ({ grafana, prometheus}) => {
 
   const handleIndicatorClick = (index) => () => {
      sliderRef?.current?.slickGoTo(index,false) 
+     setActiveIndex(index)
   }
 
-  const metricsComponents = [{
-    name: "Grafana",
-    logoComponent: GrafanaIcon,
-    configComp :  <MetricsConfig componentName="Grafana" grafanaScannedUrls={metricsScanUrls.grafana}/>
+  const metricsComponents = [
+    {
+      name: "Prometheus",
+      logoComponent: PrometheusIcon,
+      configComp : <MetricsConfig componentName="Prometheus" prometheusScannedUrls={metricsScanUrls.prometheus}/>
 
-  },
-  {
-    name: "Prometheus",
-    logoComponent: PrometheusIcon,
-    configComp : <MetricsConfig componentName="Prometheus" prometheusScannedUrls={metricsScanUrls.prometheus}/>
+    },
+    {
+      name: "Grafana",
+      logoComponent: GrafanaIcon,
+      configComp :  <MetricsConfig componentName="Grafana" grafanaScannedUrls={metricsScanUrls.grafana}/>
 
-  }
+    }
+  
   ]
 
   const handleAfterSlideChange = (curSlide) => setActiveIndex(curSlide) 
@@ -81,8 +84,8 @@ const MetricsScreen = ({ grafana, prometheus}) => {
 
 
   const scrollItems = metricsComponents.map(metricComp => {
-    if(metricComp.name === "Grafana") return "/static/img/grafana_icon.svg"
-    if(metricComp.name === "Prometheus") return "/static/img/prometheus_logo_orange_circle.svg"
+    if(metricComp.name === "Grafana") return {activeIcon: "/static/img/grafana_icon.svg", inactiveIcon: "/static/img/grafana_icon.svg"}
+    if(metricComp.name === "Prometheus") return {activeIcon: "/static/img/prometheus_logo_orange_circle.svg",inactiveIcon: "/static/img/prometheus_logo_orange_circle.svg" }
   })
 
   const itemsToBeRendered = metricsComponents.map(comp => {
@@ -93,15 +96,15 @@ const MetricsScreen = ({ grafana, prometheus}) => {
 
 
   return (
-    <Grid xs={12} container>
-      <Grid item xs={6} container justify="flex-start" style={{overflow: "hidden"}}>
-        <VerticalCarousel slides={itemsToBeRendered} handleAfterSlideChange={handleAfterSlideChange} sliderRef={sliderRef}/>
-        <div style={{height: "21.3rem", overflow: "scroll", marginTop: '-1.2rem'}} className="hide-scrollbar"> 
+    <Grid xs={12} item justify="center" alignItems="flex-start" container>
+      <Grid item lg={6} sm={12} md={12} container justify="center" alignItems="flex-start" style={{paddingLeft: "1rem"}}>
+        <div style={{height: "18rem", overflow: "scroll", marginTop: '-1.2rem'}} className="hide-scrollbar"> 
           <ScrollIndicator items={scrollItems} handleClick={handleIndicatorClick} activeIndex={activeIndex} />
         </div>
-
+        <VerticalCarousel slides={itemsToBeRendered} handleAfterSlideChange={handleAfterSlideChange} sliderRef={sliderRef}/>
+        
       </Grid>
-      <Grid item xs={6} container justify="center">
+      <Grid item lg={6} sm={12} md={12} container justify="center" style={{paddingRight: "1rem"}}>
         <MetricsDataPanel isConnected={metricsComponents[activeIndex].name === "Grafana" ? isGrafanaConnected : isPrometheusConnected} 
           componentName={metricsComponents[activeIndex].name}
         />

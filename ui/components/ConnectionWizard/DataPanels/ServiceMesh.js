@@ -13,6 +13,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress, updateK8SConfig, updateAdaptersInfo } from "../../../lib/store";
 import {pingAdapterWithNotification, handleDeleteAdapter} from "../helpers/serviceMeshes"
+import AdapterChip from "./AdapterChip"
 
 const styles = theme => ({
 
@@ -56,22 +57,18 @@ const chipStyles = (theme) => ({
 })
 
 
-const AdapterChip = withStyles(chipStyles)(({classes, handleAdapterClick, isActive, adapter, handleAdapterDelete}) => {
-  console.log(adapter)
+const MeshAdapterChip = ({handleAdapterClick, isActive, adapter, handleAdapterDelete}) => {
   let image = "/static/img/meshery-logo.png";
-  let logoIcon = <img src={image} className={classes.chipIcon} />;
   return(
-    <Chip
+    <AdapterChip
       label={adapter?.label.split(":")[0]}
-      onClick={() => handleAdapterClick(adapter?.value)}
-      icon={logoIcon}
-      className={classes.chip}
+      handleClick={() => handleAdapterClick(adapter?.value)}
+      image={image}
       onDelete={isActive ? () =>  handleAdapterDelete(adapter?.value) : null}
-      variant={isActive ? "outlined" : "default"}
-      key={`adapters-${adapter?.label}`}
+      isActive={isActive}
     />
   )
-})
+}
 
 
 const AdapterPingSnackbarAction = (closeSnackbar) => (key) => (
@@ -112,7 +109,7 @@ const ServiceMeshDataPlane= ({classes, updateProgress, enqueueSnackbar, closeSna
     <Grid container className={classes.infoContainer} xs={10}>
 
       <Grid item xs={12}>
-        <AdapterChip adapter={adapterInfo} handleAdapterDelete={handleAdapterDelete} isActive={isActive} handleAdapterClick={(location) => pingAdapterWithNotification(
+        <MeshAdapterChip adapter={adapterInfo} handleAdapterDelete={handleAdapterDelete} isActive={isActive} handleAdapterClick={(location) => pingAdapterWithNotification(
           updateProgress,
           enqueueSnackbar,
           AdapterPingSnackbarAction(closeSnackbar),

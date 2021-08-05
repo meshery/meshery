@@ -23,6 +23,19 @@ Fields that are deprecated are marked with **{warning-solid}**.
 
 The `Query` type contains the API's top-level entry points for all executable queries.
 
+### `Query.fetchResults`
+
+Query for fetching all results for profile ID.
+
+###### **Returns** [`PerfPageResult!`](#perfpageresult).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="queryfetchresultsprofileid"></a>`profileID` | [`String!`](#string) |  |
+| <a id="queryfetchresultsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
+
 ### `Query.getAvailableAddons`
 
 Query details about Addons available (Eg. Prometheus and Grafana).
@@ -58,6 +71,30 @@ Query Control Plane data for a Service Mesh (or all) in your cluster.
 Query status of Meshery Operator in your cluster.
 
 ###### **Returns** [`OperatorStatus`](#operatorstatus).
+
+### `Query.getPerfResult`
+
+Query for performance result.
+
+###### **Returns** [`MesheryResult`](#mesheryresult).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetperfresultid"></a>`id` | [`ID!`](#id) |  |
+
+### `Query.resyncCluster`
+
+Query to resync the cluster discovery.
+
+###### **Returns** [`Status!`](#status).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="queryresyncclusterselector"></a>`selector` | [`ReSyncActions`](#resyncactions) | Selector to control several resync actions. |
 
 ## `Mutation` type
 
@@ -134,6 +171,30 @@ Listen to changes in status of Meshery Operator in your cluster.
 
 ###### **Returns** [`OperatorStatus!`](#operatorstatus).
 
+### `Subscription.subscribePerfProfile`
+
+Listen to changes in Performance Profile.
+
+###### **Returns** [`PerfPageResult!`](#perfpageresult).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribeperfprofileselector"></a>`selector` | [`PageFilter`](#pagefilter) |  |
+
+### `Subscription.subscribePerfResults`
+
+Listen to changes in Performance Results.
+
+###### **Returns** [`PerfPageResult!`](#perfpageresult).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribeperfresultsselector"></a>`selector` | [`PageFilter`](#pagefilter) |  |
+
 ## Object types
 
 Object types represent the resources that the Meshery GraphQL API can return.
@@ -192,6 +253,25 @@ Member Details.
 | <a id="errorcode"></a>`code` | [`String!`](#string) | Error Code. |
 | <a id="errordescription"></a>`description` | [`String!`](#string) | Error Details. |
 
+### `MesheryResult`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="mesheryresultcreated_at"></a>`created_at` | [`String`](#string) |  |
+| <a id="mesheryresultmesh"></a>`mesh` | [`String`](#string) |  |
+| <a id="mesheryresultmeshery_id"></a>`meshery_id` | [`String`](#string) |  |
+| <a id="mesheryresultname"></a>`name` | [`String`](#string) |  |
+| <a id="mesheryresultperformance_profile"></a>`performance_profile` | [`String`](#string) |  |
+| <a id="mesheryresultrunner_results"></a>`runner_results` | [`Map`](#map) |  |
+| <a id="mesheryresultserver_board_config"></a>`server_board_config` | [`String`](#string) |  |
+| <a id="mesheryresultserver_metrics"></a>`server_metrics` | [`String`](#string) |  |
+| <a id="mesheryresulttest_id"></a>`test_id` | [`String`](#string) |  |
+| <a id="mesheryresulttest_start_time"></a>`test_start_time` | [`String`](#string) |  |
+| <a id="mesheryresultupdated_at"></a>`updated_at` | [`String`](#string) |  |
+| <a id="mesheryresultuser_id"></a>`user_id` | [`String`](#string) |  |
+
 ### `NameSpace`
 
 Type to define a k8s Namespace.
@@ -227,6 +307,17 @@ Status of Meshery Operator and its controllers.
 | <a id="operatorstatuserror"></a>`error` | [`Error`](#error) | Error Logs encountered by Meshery Operator. |
 | <a id="operatorstatusstatus"></a>`status` | [`Status!`](#status) | Status of Meshery Operator. |
 | <a id="operatorstatusversion"></a>`version` | [`String!`](#string) | Verion of Meshery Operator. |
+
+### `PerfPageResult`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="perfpageresultpage"></a>`page` | [`Int!`](#int) |  |
+| <a id="perfpageresultpage_size"></a>`page_size` | [`Int!`](#int) |  |
+| <a id="perfpageresultresults"></a>`results` | [`[MesheryResult]`](#mesheryresult) |  |
+| <a id="perfpageresulttotal_count"></a>`total_count` | [`Int!`](#int) |  |
 
 ## Enumeration types
 
@@ -278,13 +369,27 @@ each kind of object.
 
 For more information, read about [Scalar Types](https://graphql.org/learn/schema/#scalar-types) on `graphql.org`.
 
+### `Any`
+
 ### `Boolean`
 
 Represents `true` or `false` values.
 
+### `ID`
+
+Represents a unique identifier that is Base64 obfuscated. It is often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"VXNlci0xMA=="`) or integer (such as `4`) input value will be accepted as an ID.
+
+### `Int`
+
+Represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+
+### `Map`
+
 ### `String`
 
 Represents textual data as UTF-8 character sequences. This type is most often used by GraphQL to represent free-form human-readable text.
+
+### `Time`
 
 ## Input types
 
@@ -305,3 +410,27 @@ Filter Control Plane Query.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="controlplanefiltertype"></a>`type` | [`MeshType`](#meshtype) | Filter by Service Mesh. |
+
+### `PageFilter`
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="pagefilterfrom"></a>`from` | [`String`](#string) |  |
+| <a id="pagefilterorder"></a>`order` | [`String`](#string) |  |
+| <a id="pagefilterpage"></a>`page` | [`String!`](#string) |  |
+| <a id="pagefilterpagesize"></a>`pageSize` | [`String!`](#string) |  |
+| <a id="pagefiltersearch"></a>`search` | [`String`](#string) |  |
+| <a id="pagefilterto"></a>`to` | [`String`](#string) |  |
+
+### `ReSyncActions`
+
+Type ReSyncActions define the actions involved during resync.
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="resyncactionsresync"></a>`ReSync` | [`String!`](#string) |  |
+| <a id="resyncactionscleardb"></a>`clearDB` | [`String!`](#string) |  |
