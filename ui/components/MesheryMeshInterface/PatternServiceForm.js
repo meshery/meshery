@@ -1,6 +1,7 @@
 // @ts-check
 import React from "react";
-import { Tab, Tabs, AppBar, Typography } from "@material-ui/core";
+import { Tab, Tabs, AppBar, Typography, IconButton } from "@material-ui/core";
+import { Close, Delete } from "@material-ui/icons";
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
 import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
@@ -127,13 +128,22 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, isMesher
 
   return (
     <div style={{ padding: "0.5rem" }}>
-      {isMeshery && (<Typography variant="h6" gutterBottom>
+      {isMeshery ? (<Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
-      </Typography>)}
+      </Typography>) : (
+        <div style={{ right: 0, position: "absolute" }}>
+          <IconButton onClick={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}>
+            <Delete />
+          </IconButton>
+          <IconButton onClick={() => submitHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}>
+            <Close />
+          </IconButton>
+        </div>
+      )}
       {(isMeshery || renderTraits()) && (<AppBar position="static">
         <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service">
-          <Tab label="Settings" {...a11yProps(0)} />
-          {renderTraits() ? <Tab label="Traits" {...a11yProps(1)} /> : null}
+          <Tab label="Settings" style={{ minWidth: "100px" }} {...a11yProps(0)} />
+          {renderTraits() ? <Tab label="Traits" style={{ minWidth: "100px" }} {...a11yProps(1)} /> : null}
         </Tabs>
       </AppBar>)}
       <TabPanel value={tab} index={0}>
