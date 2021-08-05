@@ -63,25 +63,9 @@ type ComplexityRoot struct {
 		Version   func(childComplexity int) int
 	}
 
-	DurationHistogram struct {
-		Avg         func(childComplexity int) int
-		Max         func(childComplexity int) int
-		Min         func(childComplexity int) int
-		Percentiles func(childComplexity int) int
-	}
-
 	Error struct {
 		Code        func(childComplexity int) int
 		Description func(childComplexity int) int
-	}
-
-	LatenciesMs struct {
-		Average func(childComplexity int) int
-		Max     func(childComplexity int) int
-		Min     func(childComplexity int) int
-		P50     func(childComplexity int) int
-		P90     func(childComplexity int) int
-		P99     func(childComplexity int) int
 	}
 
 	MesheryResult struct {
@@ -122,30 +106,11 @@ type ComplexityRoot struct {
 		Version     func(childComplexity int) int
 	}
 
-	Percentiles struct {
-		Percentile func(childComplexity int) int
-		Value      func(childComplexity int) int
-	}
-
 	PerfPageResult struct {
 		Page       func(childComplexity int) int
 		PageSize   func(childComplexity int) int
 		Result     func(childComplexity int) int
 		TotalCount func(childComplexity int) int
-	}
-
-	PerfResult struct {
-		ActualQPS    func(childComplexity int) int
-		DetailsURI   func(childComplexity int) int
-		EndTime      func(childComplexity int) int
-		EnvID        func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Labels       func(childComplexity int) int
-		LatenciesMs  func(childComplexity int) int
-		MeshConfigID func(childComplexity int) int
-		SmpVersion   func(childComplexity int) int
-		StartTime    func(childComplexity int) int
-		TestID       func(childComplexity int) int
 	}
 
 	Query struct {
@@ -155,15 +120,6 @@ type ComplexityRoot struct {
 		GetOperatorStatus      func(childComplexity int) int
 		GetPerfResult          func(childComplexity int, id *string) int
 		ResyncCluster          func(childComplexity int, selector *model.ReSyncActions) int
-	}
-
-	RunnerResults struct {
-		ActualDuration    func(childComplexity int) int
-		ActualQPS         func(childComplexity int) int
-		DurationHistogram func(childComplexity int) int
-		LoadGenerator     func(childComplexity int) int
-		StartTime         func(childComplexity int) int
-		URL               func(childComplexity int) int
 	}
 
 	Subscription struct {
@@ -275,34 +231,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ControlPlaneMember.Version(childComplexity), true
 
-	case "DurationHistogram.Avg":
-		if e.complexity.DurationHistogram.Avg == nil {
-			break
-		}
-
-		return e.complexity.DurationHistogram.Avg(childComplexity), true
-
-	case "DurationHistogram.Max":
-		if e.complexity.DurationHistogram.Max == nil {
-			break
-		}
-
-		return e.complexity.DurationHistogram.Max(childComplexity), true
-
-	case "DurationHistogram.Min":
-		if e.complexity.DurationHistogram.Min == nil {
-			break
-		}
-
-		return e.complexity.DurationHistogram.Min(childComplexity), true
-
-	case "DurationHistogram.Percentiles":
-		if e.complexity.DurationHistogram.Percentiles == nil {
-			break
-		}
-
-		return e.complexity.DurationHistogram.Percentiles(childComplexity), true
-
 	case "Error.code":
 		if e.complexity.Error.Code == nil {
 			break
@@ -316,48 +244,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Error.Description(childComplexity), true
-
-	case "LatenciesMs.average":
-		if e.complexity.LatenciesMs.Average == nil {
-			break
-		}
-
-		return e.complexity.LatenciesMs.Average(childComplexity), true
-
-	case "LatenciesMs.max":
-		if e.complexity.LatenciesMs.Max == nil {
-			break
-		}
-
-		return e.complexity.LatenciesMs.Max(childComplexity), true
-
-	case "LatenciesMs.min":
-		if e.complexity.LatenciesMs.Min == nil {
-			break
-		}
-
-		return e.complexity.LatenciesMs.Min(childComplexity), true
-
-	case "LatenciesMs.p50":
-		if e.complexity.LatenciesMs.P50 == nil {
-			break
-		}
-
-		return e.complexity.LatenciesMs.P50(childComplexity), true
-
-	case "LatenciesMs.p90":
-		if e.complexity.LatenciesMs.P90 == nil {
-			break
-		}
-
-		return e.complexity.LatenciesMs.P90(childComplexity), true
-
-	case "LatenciesMs.p99":
-		if e.complexity.LatenciesMs.P99 == nil {
-			break
-		}
-
-		return e.complexity.LatenciesMs.P99(childComplexity), true
 
 	case "MesheryResult.created_at":
 		if e.complexity.MesheryResult.CreatedAt == nil {
@@ -530,20 +416,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OperatorStatus.Version(childComplexity), true
 
-	case "Percentiles.Percentile":
-		if e.complexity.Percentiles.Percentile == nil {
-			break
-		}
-
-		return e.complexity.Percentiles.Percentile(childComplexity), true
-
-	case "Percentiles.Value":
-		if e.complexity.Percentiles.Value == nil {
-			break
-		}
-
-		return e.complexity.Percentiles.Value(childComplexity), true
-
 	case "PerfPageResult.page":
 		if e.complexity.PerfPageResult.Page == nil {
 			break
@@ -571,83 +443,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PerfPageResult.TotalCount(childComplexity), true
-
-	case "PerfResult.actual_qps":
-		if e.complexity.PerfResult.ActualQPS == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.ActualQPS(childComplexity), true
-
-	case "PerfResult.details_uri":
-		if e.complexity.PerfResult.DetailsURI == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.DetailsURI(childComplexity), true
-
-	case "PerfResult.end_time":
-		if e.complexity.PerfResult.EndTime == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.EndTime(childComplexity), true
-
-	case "PerfResult.env_id":
-		if e.complexity.PerfResult.EnvID == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.EnvID(childComplexity), true
-
-	case "PerfResult.id":
-		if e.complexity.PerfResult.ID == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.ID(childComplexity), true
-
-	case "PerfResult.labels":
-		if e.complexity.PerfResult.Labels == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.Labels(childComplexity), true
-
-	case "PerfResult.latencies_ms":
-		if e.complexity.PerfResult.LatenciesMs == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.LatenciesMs(childComplexity), true
-
-	case "PerfResult.mesh_config_id":
-		if e.complexity.PerfResult.MeshConfigID == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.MeshConfigID(childComplexity), true
-
-	case "PerfResult.smp_version":
-		if e.complexity.PerfResult.SmpVersion == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.SmpVersion(childComplexity), true
-
-	case "PerfResult.start_time":
-		if e.complexity.PerfResult.StartTime == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.StartTime(childComplexity), true
-
-	case "PerfResult.test_id":
-		if e.complexity.PerfResult.TestID == nil {
-			break
-		}
-
-		return e.complexity.PerfResult.TestID(childComplexity), true
 
 	case "Query.getAvailableAddons":
 		if e.complexity.Query.GetAvailableAddons == nil {
@@ -710,48 +505,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ResyncCluster(childComplexity, args["selector"].(*model.ReSyncActions)), true
-
-	case "RunnerResults.ActualDuration":
-		if e.complexity.RunnerResults.ActualDuration == nil {
-			break
-		}
-
-		return e.complexity.RunnerResults.ActualDuration(childComplexity), true
-
-	case "RunnerResults.ActualQPS":
-		if e.complexity.RunnerResults.ActualQPS == nil {
-			break
-		}
-
-		return e.complexity.RunnerResults.ActualQPS(childComplexity), true
-
-	case "RunnerResults.DurationHistogram":
-		if e.complexity.RunnerResults.DurationHistogram == nil {
-			break
-		}
-
-		return e.complexity.RunnerResults.DurationHistogram(childComplexity), true
-
-	case "RunnerResults.load_generator":
-		if e.complexity.RunnerResults.LoadGenerator == nil {
-			break
-		}
-
-		return e.complexity.RunnerResults.LoadGenerator(childComplexity), true
-
-	case "RunnerResults.StartTime":
-		if e.complexity.RunnerResults.StartTime == nil {
-			break
-		}
-
-		return e.complexity.RunnerResults.StartTime(childComplexity), true
-
-	case "RunnerResults.url":
-		if e.complexity.RunnerResults.URL == nil {
-			break
-		}
-
-		return e.complexity.RunnerResults.URL(childComplexity), true
 
 	case "Subscription.listenToAddonState":
 		if e.complexity.Subscription.ListenToAddonState == nil {
@@ -901,6 +654,9 @@ var sources = []*ast.Source{
 # If these things change, then doc geneartion for GraphQL will break.
 
 # ================= COMMONS =========================
+
+scalar Map
+scalar Time
 
 # Service Mesh Types
 enum MeshType {
@@ -1090,52 +846,42 @@ type PerfPageResult {
 	pageSize: Int!
 	totalCount: Int!
 
-	result: [PerfResult]!
+	result: [MesheryResult]!
 }
 
-type LatenciesMs {
-	min: Float
-	average: Float
-	p50: Float
-	p90: Float
-	p99: Float
-	max: Float
-}
+# type PerfResult {
+# 	smp_version: String
+# 	id: String
+# 	labels: [String]
+# 	start_time: Int
+# 	end_time: Int
+# 	latencies_ms: LatenciesMs
+# 	actual_qps: Float
+# 	details_uri: String
+# 	test_id: String
+# 	mesh_config_id: String
+# 	env_id: String
+# }
 
-type PerfResult {
-	smp_version: String
-	id: String
-	labels: [String]
-	start_time: Int
-	end_time: Int
-	latencies_ms: LatenciesMs
-	actual_qps: Float
-	details_uri: String
-	test_id: String
-	mesh_config_id: String
-	env_id: String
-}
-
-type Percentiles {
-	Percentile: Int
-	Value: Float
-}
-
-type DurationHistogram {
-	Avg: Float
-	Max: Float
-	Min: Float
-	Percentiles: [Percentiles]
-}
-
-type RunnerResults {
-	url: String
-	load_generator: String
-	ActualDuration: Int
-	ActualQPS: Int
-	StartTime: Int
-	DurationHistogram: DurationHistogram
-}
+# type PerformanceProfile {
+# 	id: String
+# 	name: String
+# 	last_run: Time
+# 	schedule: String
+# 	load_generators: [String]
+# 	endpoints: [String]
+# 	service_mesh: String
+# 	concurrent_request: String
+# 	qps: Int
+# 	duration: String
+# 	total_results: Int
+# 	request_headers: String
+# 	request_cookies: String
+# 	request_body: String
+# 	content_type: String
+# 	updated_at: Time
+# 	created_at: Time
+# }
 
 type MesheryResult {
 	meshery_id: String
@@ -1144,7 +890,7 @@ type MesheryResult {
 	performance_profile: String
 	test_id: String
 	# runner_results: RunnerResults
-	runner_results: String
+	runner_results: Map
 	server_metrics: String
 	server_board_config: String
 	test_start_time: Int
@@ -1765,134 +1511,6 @@ func (ec *executionContext) _ControlPlaneMember_namespace(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _DurationHistogram_Avg(ctx context.Context, field graphql.CollectedField, obj *model.DurationHistogram) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "DurationHistogram",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Avg, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _DurationHistogram_Max(ctx context.Context, field graphql.CollectedField, obj *model.DurationHistogram) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "DurationHistogram",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Max, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _DurationHistogram_Min(ctx context.Context, field graphql.CollectedField, obj *model.DurationHistogram) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "DurationHistogram",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Min, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _DurationHistogram_Percentiles(ctx context.Context, field graphql.CollectedField, obj *model.DurationHistogram) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "DurationHistogram",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Percentiles, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Percentiles)
-	fc.Result = res
-	return ec.marshalOPercentiles2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPercentiles(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Error_code(ctx context.Context, field graphql.CollectedField, obj *model.Error) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1961,198 +1579,6 @@ func (ec *executionContext) _Error_description(ctx context.Context, field graphq
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _LatenciesMs_min(ctx context.Context, field graphql.CollectedField, obj *model.LatenciesMs) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "LatenciesMs",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Min, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _LatenciesMs_average(ctx context.Context, field graphql.CollectedField, obj *model.LatenciesMs) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "LatenciesMs",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Average, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _LatenciesMs_p50(ctx context.Context, field graphql.CollectedField, obj *model.LatenciesMs) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "LatenciesMs",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.P50, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _LatenciesMs_p90(ctx context.Context, field graphql.CollectedField, obj *model.LatenciesMs) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "LatenciesMs",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.P90, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _LatenciesMs_p99(ctx context.Context, field graphql.CollectedField, obj *model.LatenciesMs) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "LatenciesMs",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.P99, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _LatenciesMs_max(ctx context.Context, field graphql.CollectedField, obj *model.LatenciesMs) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "LatenciesMs",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Max, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _MesheryResult_meshery_id(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
@@ -2342,9 +1768,9 @@ func (ec *executionContext) _MesheryResult_runner_results(ctx context.Context, f
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(map[string]interface{})
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOMap2map(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _MesheryResult_server_metrics(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
@@ -2932,70 +2358,6 @@ func (ec *executionContext) _OperatorStatus_error(ctx context.Context, field gra
 	return ec.marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐError(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Percentiles_Percentile(ctx context.Context, field graphql.CollectedField, obj *model.Percentiles) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Percentiles",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Percentile, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Percentiles_Value(ctx context.Context, field graphql.CollectedField, obj *model.Percentiles) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Percentiles",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Value, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _PerfPageResult_page(ctx context.Context, field graphql.CollectedField, obj *model.PerfPageResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3131,361 +2493,9 @@ func (ec *executionContext) _PerfPageResult_result(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.PerfResult)
+	res := resTmp.([]*model.MesheryResult)
 	fc.Result = res
-	return ec.marshalNPerfResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_smp_version(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SmpVersion, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_id(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_labels(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Labels, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*string)
-	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_start_time(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.StartTime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_end_time(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EndTime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_latencies_ms(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LatenciesMs, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.LatenciesMs)
-	fc.Result = res
-	return ec.marshalOLatenciesMs2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLatenciesMs(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_actual_qps(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ActualQPS, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_details_uri(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DetailsURI, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_test_id(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TestID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_mesh_config_id(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.MeshConfigID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PerfResult_env_id(ctx context.Context, field graphql.CollectedField, obj *model.PerfResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PerfResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EnvID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNMesheryResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAvailableAddons(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3789,198 +2799,6 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	res := resTmp.(*introspection.Schema)
 	fc.Result = res
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _RunnerResults_url(ctx context.Context, field graphql.CollectedField, obj *model.RunnerResults) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "RunnerResults",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.URL, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _RunnerResults_load_generator(ctx context.Context, field graphql.CollectedField, obj *model.RunnerResults) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "RunnerResults",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LoadGenerator, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _RunnerResults_ActualDuration(ctx context.Context, field graphql.CollectedField, obj *model.RunnerResults) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "RunnerResults",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ActualDuration, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _RunnerResults_ActualQPS(ctx context.Context, field graphql.CollectedField, obj *model.RunnerResults) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "RunnerResults",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ActualQPS, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _RunnerResults_StartTime(ctx context.Context, field graphql.CollectedField, obj *model.RunnerResults) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "RunnerResults",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.StartTime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _RunnerResults_DurationHistogram(ctx context.Context, field graphql.CollectedField, obj *model.RunnerResults) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "RunnerResults",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DurationHistogram, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.DurationHistogram)
-	fc.Result = res
-	return ec.marshalODurationHistogram2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐDurationHistogram(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Subscription_listenToAddonState(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
@@ -5643,36 +4461,6 @@ func (ec *executionContext) _ControlPlaneMember(ctx context.Context, sel ast.Sel
 	return out
 }
 
-var durationHistogramImplementors = []string{"DurationHistogram"}
-
-func (ec *executionContext) _DurationHistogram(ctx context.Context, sel ast.SelectionSet, obj *model.DurationHistogram) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, durationHistogramImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("DurationHistogram")
-		case "Avg":
-			out.Values[i] = ec._DurationHistogram_Avg(ctx, field, obj)
-		case "Max":
-			out.Values[i] = ec._DurationHistogram_Max(ctx, field, obj)
-		case "Min":
-			out.Values[i] = ec._DurationHistogram_Min(ctx, field, obj)
-		case "Percentiles":
-			out.Values[i] = ec._DurationHistogram_Percentiles(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var errorImplementors = []string{"Error"}
 
 func (ec *executionContext) _Error(ctx context.Context, sel ast.SelectionSet, obj *model.Error) graphql.Marshaler {
@@ -5694,40 +4482,6 @@ func (ec *executionContext) _Error(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var latenciesMsImplementors = []string{"LatenciesMs"}
-
-func (ec *executionContext) _LatenciesMs(ctx context.Context, sel ast.SelectionSet, obj *model.LatenciesMs) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, latenciesMsImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("LatenciesMs")
-		case "min":
-			out.Values[i] = ec._LatenciesMs_min(ctx, field, obj)
-		case "average":
-			out.Values[i] = ec._LatenciesMs_average(ctx, field, obj)
-		case "p50":
-			out.Values[i] = ec._LatenciesMs_p50(ctx, field, obj)
-		case "p90":
-			out.Values[i] = ec._LatenciesMs_p90(ctx, field, obj)
-		case "p99":
-			out.Values[i] = ec._LatenciesMs_p99(ctx, field, obj)
-		case "max":
-			out.Values[i] = ec._LatenciesMs_max(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5926,32 +4680,6 @@ func (ec *executionContext) _OperatorStatus(ctx context.Context, sel ast.Selecti
 	return out
 }
 
-var percentilesImplementors = []string{"Percentiles"}
-
-func (ec *executionContext) _Percentiles(ctx context.Context, sel ast.SelectionSet, obj *model.Percentiles) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, percentilesImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Percentiles")
-		case "Percentile":
-			out.Values[i] = ec._Percentiles_Percentile(ctx, field, obj)
-		case "Value":
-			out.Values[i] = ec._Percentiles_Value(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var perfPageResultImplementors = []string{"PerfPageResult"}
 
 func (ec *executionContext) _PerfPageResult(ctx context.Context, sel ast.SelectionSet, obj *model.PerfPageResult) graphql.Marshaler {
@@ -5983,50 +4711,6 @@ func (ec *executionContext) _PerfPageResult(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var perfResultImplementors = []string{"PerfResult"}
-
-func (ec *executionContext) _PerfResult(ctx context.Context, sel ast.SelectionSet, obj *model.PerfResult) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, perfResultImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("PerfResult")
-		case "smp_version":
-			out.Values[i] = ec._PerfResult_smp_version(ctx, field, obj)
-		case "id":
-			out.Values[i] = ec._PerfResult_id(ctx, field, obj)
-		case "labels":
-			out.Values[i] = ec._PerfResult_labels(ctx, field, obj)
-		case "start_time":
-			out.Values[i] = ec._PerfResult_start_time(ctx, field, obj)
-		case "end_time":
-			out.Values[i] = ec._PerfResult_end_time(ctx, field, obj)
-		case "latencies_ms":
-			out.Values[i] = ec._PerfResult_latencies_ms(ctx, field, obj)
-		case "actual_qps":
-			out.Values[i] = ec._PerfResult_actual_qps(ctx, field, obj)
-		case "details_uri":
-			out.Values[i] = ec._PerfResult_details_uri(ctx, field, obj)
-		case "test_id":
-			out.Values[i] = ec._PerfResult_test_id(ctx, field, obj)
-		case "mesh_config_id":
-			out.Values[i] = ec._PerfResult_mesh_config_id(ctx, field, obj)
-		case "env_id":
-			out.Values[i] = ec._PerfResult_env_id(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6135,40 +4819,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
 			out.Values[i] = ec._Query___schema(ctx, field)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var runnerResultsImplementors = []string{"RunnerResults"}
-
-func (ec *executionContext) _RunnerResults(ctx context.Context, sel ast.SelectionSet, obj *model.RunnerResults) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, runnerResultsImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("RunnerResults")
-		case "url":
-			out.Values[i] = ec._RunnerResults_url(ctx, field, obj)
-		case "load_generator":
-			out.Values[i] = ec._RunnerResults_load_generator(ctx, field, obj)
-		case "ActualDuration":
-			out.Values[i] = ec._RunnerResults_ActualDuration(ctx, field, obj)
-		case "ActualQPS":
-			out.Values[i] = ec._RunnerResults_ActualQPS(ctx, field, obj)
-		case "StartTime":
-			out.Values[i] = ec._RunnerResults_StartTime(ctx, field, obj)
-		case "DurationHistogram":
-			out.Values[i] = ec._RunnerResults_DurationHistogram(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6626,6 +5276,43 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) marshalNMesheryResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx context.Context, sel ast.SelectionSet, v []*model.MesheryResult) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.NameSpace) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -6750,43 +5437,6 @@ func (ec *executionContext) marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋ
 		return graphql.Null
 	}
 	return ec._PerfPageResult(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNPerfResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfResult(ctx context.Context, sel ast.SelectionSet, v []*model.PerfResult) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOPerfResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfResult(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
 }
 
 func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, v interface{}) (model.Status, error) {
@@ -7083,33 +5733,11 @@ func (ec *executionContext) unmarshalOControlPlaneFilter2ᚖgithubᚗcomᚋlayer
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalODurationHistogram2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐDurationHistogram(ctx context.Context, sel ast.SelectionSet, v *model.DurationHistogram) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._DurationHistogram(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐError(ctx context.Context, sel ast.SelectionSet, v *model.Error) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Error(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalFloat(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return graphql.MarshalFloat(*v)
 }
 
 func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
@@ -7142,11 +5770,19 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return graphql.MarshalInt(*v)
 }
 
-func (ec *executionContext) marshalOLatenciesMs2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLatenciesMs(ctx context.Context, sel ast.SelectionSet, v *model.LatenciesMs) graphql.Marshaler {
+func (ec *executionContext) unmarshalOMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalMap(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOMap2map(ctx context.Context, sel ast.SelectionSet, v map[string]interface{}) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._LatenciesMs(ctx, sel, v)
+	return graphql.MarshalMap(v)
 }
 
 func (ec *executionContext) unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx context.Context, v interface{}) (*model.MeshType, error) {
@@ -7195,60 +5831,6 @@ func (ec *executionContext) unmarshalOPageFilter2ᚖgithubᚗcomᚋlayer5ioᚋme
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOPercentiles2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPercentiles(ctx context.Context, sel ast.SelectionSet, v []*model.Percentiles) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOPercentiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPercentiles(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalOPercentiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPercentiles(ctx context.Context, sel ast.SelectionSet, v *model.Percentiles) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Percentiles(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOPerfResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfResult(ctx context.Context, sel ast.SelectionSet, v *model.PerfResult) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._PerfResult(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalOReSyncActions2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐReSyncActions(ctx context.Context, v interface{}) (*model.ReSyncActions, error) {
 	if v == nil {
 		return nil, nil
@@ -7264,42 +5846,6 @@ func (ec *executionContext) unmarshalOString2string(ctx context.Context, v inter
 
 func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	return graphql.MarshalString(v)
-}
-
-func (ec *executionContext) unmarshalOString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

@@ -35,40 +35,24 @@ type ControlPlaneMember struct {
 	Namespace string `json:"namespace"`
 }
 
-type DurationHistogram struct {
-	Avg         *float64       `json:"Avg"`
-	Max         *float64       `json:"Max"`
-	Min         *float64       `json:"Min"`
-	Percentiles []*Percentiles `json:"Percentiles"`
-}
-
 type Error struct {
 	Code        string `json:"code"`
 	Description string `json:"description"`
 }
 
-type LatenciesMs struct {
-	Min     *float64 `json:"min"`
-	Average *float64 `json:"average"`
-	P50     *float64 `json:"p50"`
-	P90     *float64 `json:"p90"`
-	P99     *float64 `json:"p99"`
-	Max     *float64 `json:"max"`
-}
-
 type MesheryResult struct {
-	MesheryID          *string `json:"meshery_id"`
-	Name               *string `json:"name"`
-	Mesh               *string `json:"mesh"`
-	PerformanceProfile *string `json:"performance_profile"`
-	TestID             *string `json:"test_id"`
-	RunnerResults      *string `json:"runner_results"`
-	ServerMetrics      *string `json:"server_metrics"`
-	ServerBoardConfig  *string `json:"server_board_config"`
-	TestStartTime      *int    `json:"test_start_time"`
-	UserID             *string `json:"user_id"`
-	UpdatedAt          *string `json:"updated_at"`
-	CreatedAt          *string `json:"created_at"`
+	MesheryID          *string                `json:"meshery_id"`
+	Name               *string                `json:"name"`
+	Mesh               *string                `json:"mesh"`
+	PerformanceProfile *string                `json:"performance_profile"`
+	TestID             *string                `json:"test_id"`
+	RunnerResults      map[string]interface{} `json:"runner_results"`
+	ServerMetrics      *string                `json:"server_metrics"`
+	ServerBoardConfig  *string                `json:"server_board_config"`
+	TestStartTime      *int                   `json:"test_start_time"`
+	UserID             *string                `json:"user_id"`
+	UpdatedAt          *string                `json:"updated_at"`
+	CreatedAt          *string                `json:"created_at"`
 }
 
 type NameSpace struct {
@@ -102,44 +86,16 @@ type PageFilter struct {
 	To       *string `json:"to"`
 }
 
-type Percentiles struct {
-	Percentile *int     `json:"Percentile"`
-	Value      *float64 `json:"Value"`
-}
-
 type PerfPageResult struct {
-	Page       int           `json:"page"`
-	PageSize   int           `json:"pageSize"`
-	TotalCount int           `json:"totalCount"`
-	Result     []*PerfResult `json:"result"`
-}
-
-type PerfResult struct {
-	SmpVersion   *string      `json:"smp_version"`
-	ID           *string      `json:"id"`
-	Labels       []*string    `json:"labels"`
-	StartTime    *int         `json:"start_time"`
-	EndTime      *int         `json:"end_time"`
-	LatenciesMs  *LatenciesMs `json:"latencies_ms"`
-	ActualQPS    *float64     `json:"actual_qps"`
-	DetailsURI   *string      `json:"details_uri"`
-	TestID       *string      `json:"test_id"`
-	MeshConfigID *string      `json:"mesh_config_id"`
-	EnvID        *string      `json:"env_id"`
+	Page       int              `json:"page"`
+	PageSize   int              `json:"pageSize"`
+	TotalCount int              `json:"totalCount"`
+	Result     []*MesheryResult `json:"result"`
 }
 
 type ReSyncActions struct {
 	ClearDb string `json:"clearDB"`
 	ReSync  string `json:"ReSync"`
-}
-
-type RunnerResults struct {
-	URL               *string            `json:"url"`
-	LoadGenerator     *string            `json:"load_generator"`
-	ActualDuration    *int               `json:"ActualDuration"`
-	ActualQPS         *int               `json:"ActualQPS"`
-	StartTime         *int               `json:"StartTime"`
-	DurationHistogram *DurationHistogram `json:"DurationHistogram"`
 }
 
 type MeshType string

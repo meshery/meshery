@@ -4,6 +4,9 @@
 
 # ================= COMMONS =========================
 
+scalar Map
+scalar Time
+
 # Service Mesh Types
 enum MeshType {
 
@@ -192,52 +195,42 @@ type PerfPageResult {
 	pageSize: Int!
 	totalCount: Int!
 
-	result: [PerfResult]!
+	result: [MesheryResult]!
 }
 
-type LatenciesMs {
-	min: Float
-	average: Float
-	p50: Float
-	p90: Float
-	p99: Float
-	max: Float
-}
+# type PerfResult {
+# 	smp_version: String
+# 	id: String
+# 	labels: [String]
+# 	start_time: Int
+# 	end_time: Int
+# 	latencies_ms: LatenciesMs
+# 	actual_qps: Float
+# 	details_uri: String
+# 	test_id: String
+# 	mesh_config_id: String
+# 	env_id: String
+# }
 
-type PerfResult {
-	smp_version: String
-	id: String
-	labels: [String]
-	start_time: Int
-	end_time: Int
-	latencies_ms: LatenciesMs
-	actual_qps: Float
-	details_uri: String
-	test_id: String
-	mesh_config_id: String
-	env_id: String
-}
-
-type Percentiles {
-	Percentile: Int
-	Value: Float
-}
-
-type DurationHistogram {
-	Avg: Float
-	Max: Float
-	Min: Float
-	Percentiles: [Percentiles]
-}
-
-type RunnerResults {
-	url: String
-	load_generator: String
-	ActualDuration: Int
-	ActualQPS: Int
-	StartTime: Int
-	DurationHistogram: DurationHistogram
-}
+# type PerformanceProfile {
+# 	id: String
+# 	name: String
+# 	last_run: Time
+# 	schedule: String
+# 	load_generators: [String]
+# 	endpoints: [String]
+# 	service_mesh: String
+# 	concurrent_request: String
+# 	qps: Int
+# 	duration: String
+# 	total_results: Int
+# 	request_headers: String
+# 	request_cookies: String
+# 	request_body: String
+# 	content_type: String
+# 	updated_at: Time
+# 	created_at: Time
+# }
 
 type MesheryResult {
 	meshery_id: String
@@ -246,7 +239,7 @@ type MesheryResult {
 	performance_profile: String
 	test_id: String
 	# runner_results: RunnerResults
-	runner_results: String
+	runner_results: Map
 	server_metrics: String
 	server_board_config: String
 	test_start_time: Int

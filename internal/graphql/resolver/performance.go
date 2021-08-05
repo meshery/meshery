@@ -66,7 +66,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 	startTime := int(bdr.TestStartTime.Unix())
 	serverBoardConfig := fmt.Sprintf("%v", bdr.ServerBoardConfig)
 	serverMetrics := fmt.Sprintf("%v", bdr.ServerMetrics)
-	runnerResults := fmt.Sprintf("%v", bdr.Result)
+	// runnerResults := fmt.Sprintf("%v", bdr.Result)
 	mesheryId := fmt.Sprintf("%v", bdr.ID)
 	performanceProfile := fmt.Sprintf("%v", bdr.PerformanceProfileInfo.ID)
 
@@ -76,7 +76,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		Mesh:               &bdr.Mesh,
 		PerformanceProfile: &performanceProfile,
 		TestID:             &bdr.TestID,
-		RunnerResults:      &runnerResults,
+		RunnerResults:      bdr.Result,
 		ServerMetrics:      &serverMetrics,
 		ServerBoardConfig:  &serverBoardConfig,
 		TestStartTime:      &startTime,
