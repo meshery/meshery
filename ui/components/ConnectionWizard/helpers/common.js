@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import { IconButton } from "@material-ui/core"
 import CloseIcon from "@material-ui/icons/Close";
 import {updateProgress} from "../../../lib/store"

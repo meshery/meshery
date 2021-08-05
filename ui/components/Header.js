@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
