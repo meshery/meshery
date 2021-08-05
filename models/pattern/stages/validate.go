@@ -14,6 +14,11 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 	s := selector.New(prov)
 
 	return func(data *Data, err error, next ChainStageNextFunction) {
+		if err != nil {
+			act.Terminate(err)
+			return
+		}
+
 		data.PatternSvcWorkloadCapabilities = map[string]core.WorkloadCapability{}
 		data.PatternSvcTraitCapabilities = map[string][]core.TraitCapability{}
 

@@ -1,6 +1,7 @@
 package stages
 
 import (
+	"fmt"
 	"log"
 	"regexp"
 	"strings"
@@ -23,86 +24,121 @@ func init() {
 
 // Filler - filler stage processes the pattern to subsitute Pattern
 func Filler(data *Data, err error, next ChainStageNextFunction) {
+	if err != nil {
+		next(data, err)
+		return
+	}
+
 	// Flatten the service map to perform queries
 	flatSvc := map[string]interface{}{}
 	utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flatSvc)
 
-	fill(data.Pattern, flatSvc)
+	err = fill(data.Pattern, flatSvc)
 
 	if next != nil {
-		next(data, nil)
+		next(data, err)
 	}
 }
 
-func fill(p *core.Pattern, flatSvc map[string]interface{}) {
+func fill(p *core.Pattern, flatSvc map[string]interface{}) error {
 	for _, v := range p.Services {
-		fillDependsOn(v, flatSvc)
-		fillNamespace(v, flatSvc)
-		fillSettings(v, flatSvc)
-		fillTraits(v, flatSvc)
-		fillType(v, flatSvc)
+		if err := fillDependsOn(v, flatSvc); err != nil {
+			return err
+		}
+		if err := fillNamespace(v, flatSvc); err != nil {
+			return err
+		}
+		if err := fillSettings(v, flatSvc); err != nil {
+			return err
+		}
+		if err := fillTraits(v, flatSvc); err != nil {
+			return err
+		}
+		if err := fillType(v, flatSvc); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func fillDependsOn(svc *core.Service, flatSvc map[string]interface{}) {
+func fillDependsOn(svc *core.Service, flatSvc map[string]interface{}) error {
 	for i, d := range svc.DependsOn {
 		k, ok := matchPattern(d)
 		if !ok {
 			continue
 		}
 
-		val, ok := flatSvc[k].(string)
-		if !ok {
-			d = ""
-			continue
+		val, found := flatSvc[k]
+		if !found {
+			return fmt.Errorf("invalid reference query: %s", k)
 		}
 
-		svc.DependsOn[i] = val
+		cval, ok := val.(string)
+		if !ok {
+			return fmt.Errorf("resolved reference query [%s] does not return string", k)
+		}
+
+		svc.DependsOn[i] = cval
 	}
+
+	return nil
 }
 
-func fillNamespace(svc *core.Service, flatSvc map[string]interface{}) {
+func fillNamespace(svc *core.Service, flatSvc map[string]interface{}) error {
 	nsKey, ok := matchPattern(svc.Namespace)
 	if !ok {
-		return
+		return nil
 	}
 
-	nsVal, ok := flatSvc[nsKey].(string)
+	val, found := flatSvc[nsKey]
+	if !found {
+		return fmt.Errorf("invalid reference query: %s", nsKey)
+	}
+
+	nsVal, ok := val.(string)
 	if !ok {
-		svc.Namespace = ""
-		return
+		return fmt.Errorf("resolved reference query [%s] does not return string", nsKey)
 	}
 
 	svc.Namespace = nsVal
+	return nil
 }
 
-func fillType(svc *core.Service, flatSvc map[string]interface{}) {
+func fillType(svc *core.Service, flatSvc map[string]interface{}) error {
 	tKey, ok := matchPattern(svc.Type)
 	if !ok {
-		return
+		return nil
 	}
 
-	tVal, ok := flatSvc[tKey].(string)
+	val, found := flatSvc[tKey]
+	if !found {
+		return fmt.Errorf("invalid reference query: %s", tKey)
+	}
+
+	tVal, ok := val.(string)
 	if !ok {
-		svc.Type = ""
-		return
+		return fmt.Errorf("resolved reference query [%s] does not return string", tKey)
 	}
 
 	svc.Type = tVal
+	return nil
 }
 
-func fillSettings(svc *core.Service, flatSvc map[string]interface{}) {
-	svc.Settings = fillMap(svc.Settings, flatSvc)
+func fillSettings(svc *core.Service, flatSvc map[string]interface{}) (err error) {
+	svc.Settings, err = fillMap(svc.Settings, flatSvc)
+	return
 }
 
-func fillTraits(svc *core.Service, flatSvc map[string]interface{}) {
-	svc.Traits = fillMap(svc.Traits, flatSvc)
+func fillTraits(svc *core.Service, flatSvc map[string]interface{}) (err error) {
+	svc.Traits, err = fillMap(svc.Traits, flatSvc)
+	return
 }
 
-func fillMap(mp map[string]interface{}, flatSvc map[string]interface{}) map[string]interface{} {
-	var _fillMap func(mp map[string]interface{}) map[string]interface{}
+func fillMap(mp map[string]interface{}, flatSvc map[string]interface{}) (map[string]interface{}, error) {
+	var _fillMap func(mp map[string]interface{}) (map[string]interface{}, error)
 
-	_fillMap = func(mp map[string]interface{}) map[string]interface{} {
+	_fillMap = func(mp map[string]interface{}) (map[string]interface{}, error) {
 		for k, v := range mp {
 			switch cNode := v.(type) {
 			case string:
@@ -111,18 +147,27 @@ func fillMap(mp map[string]interface{}, flatSvc map[string]interface{}) map[stri
 					continue
 				}
 
-				val, ok := flatSvc[res].(string)
-				if !ok {
-					continue
+				val, found := flatSvc[res]
+				if !found {
+					return mp, fmt.Errorf("invalid reference query: %s", res)
 				}
 
-				mp[k] = val
+				cval, ok := val.(string)
+				if !ok {
+					return mp, fmt.Errorf("resolved reference query [%s] does not return string", res)
+				}
+
+				mp[k] = cval
 			case map[string]interface{}:
-				mp[k] = _fillMap(cNode)
+				var err error
+				mp[k], err = _fillMap(cNode)
+				if err != nil {
+					return mp, err
+				}
 			}
 		}
 
-		return mp
+		return mp, nil
 	}
 
 	return _fillMap(mp)
