@@ -67,11 +67,11 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 	startTime := fmt.Sprintf("%v", bdr.TestStartTime)
 	serverBoardConfig := fmt.Sprintf("%v", bdr.ServerBoardConfig)
 	serverMetrics := fmt.Sprintf("%v", bdr.ServerMetrics)
-	mesheryId := fmt.Sprintf("%v", bdr.ID)
+	mesheryID := fmt.Sprintf("%v", bdr.ID)
 	performanceProfile := fmt.Sprintf("%v", bdr.PerformanceProfileInfo.ID)
 
 	return &graphqlModels.MesheryResult{
-		MesheryID:          &mesheryId,
+		MesheryID:          &mesheryID,
 		Name:               &bdr.Name,
 		Mesh:               &bdr.Mesh,
 		PerformanceProfile: &performanceProfile,
