@@ -64,7 +64,6 @@ func fillDependsOn(svc *core.Service, flatSvc map[string]interface{}) {
 func fillNamespace(svc *core.Service, flatSvc map[string]interface{}) {
 	nsKey, ok := matchPattern(svc.Namespace)
 	if !ok {
-		svc.Namespace = ""
 		return
 	}
 
@@ -80,7 +79,6 @@ func fillNamespace(svc *core.Service, flatSvc map[string]interface{}) {
 func fillType(svc *core.Service, flatSvc map[string]interface{}) {
 	tKey, ok := matchPattern(svc.Type)
 	if !ok {
-		svc.Type = ""
 		return
 	}
 
