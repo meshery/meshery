@@ -34,6 +34,20 @@
               "minItems": 1,
               "required": ["containerPort"]
             }
+          },
+          "envs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
           }
         },
         "required": ["name", "image", "ports"],

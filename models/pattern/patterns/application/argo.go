@@ -141,6 +141,7 @@ func createNativeArgoResource(opt RolloutEngineGenericOptions) v1alpha1.Rollout 
 			Name:  container.Name,
 			Image: container.Image,
 			Ports: ports,
+			Env:   container.Envs,
 		})
 	}
 

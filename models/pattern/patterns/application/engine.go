@@ -27,6 +27,7 @@ type RolloutEngineContainer struct {
 	Image     string
 	Ports     []RolloutEngineContainerPort
 	Resources []RolloutEngineContainerResource
+	Envs      []v1.EnvVar
 }
 
 type RolloutEngineContainerPort struct {
