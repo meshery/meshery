@@ -1,9 +1,15 @@
 package stages
 
-import "github.com/gofrs/uuid"
+import (
+	"fmt"
+
+	"github.com/gofrs/uuid"
+)
+
+const UpdateSuffixKey = ".isUpdate"
 
 // ServiceIdentifier takes in a service identity provider and returns a ChainStageFunction
-func ServiceIdentifier(prov ServiceInfoProvider) ChainStageFunction {
+func ServiceIdentifier(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		// Find the ID of the resources
 		for svcName, svc := range data.Pattern.Services {
@@ -18,14 +24,17 @@ func ServiceIdentifier(prov ServiceInfoProvider) ChainStageFunction {
 				// Don't terminate - assign new ID instead
 				uid, err := uuid.NewV4()
 				if err != nil {
+					act.Terminate(err)
 					return // Terminate if ID generation fails
 				}
 
-				id = &uid
+				svc.ID = &uid
+				continue
 			}
 
 			// Assign the ID to the service
 			svc.ID = id
+			data.Other[fmt.Sprintf("%s%s", svcName, UpdateSuffixKey)] = true
 		}
 
 		if next != nil {
