@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/models/pattern/planner"
+	"github.com/layer5io/meshery/models/pattern/resource/selector"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 )
 
@@ -65,6 +67,12 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				"resource.pattern.meshery.io/id": svc.ID.String(),
 			})
 
+			// Get annotations for the component, if any
+			comp.Annotations = helpers.MergeStringMaps(
+				selector.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
+				comp.Annotations,
+			)
+
 			ccp.Component = comp
 
 			// Add configuration only if traits are applied to the component
@@ -113,15 +121,3 @@ func mergeErrors(errs []error) error {
 
 	return fmt.Errorf(strings.Join(errMsg, "\n"))
 }
-
-// func mergeMsgs(msgs []string) string {
-// 	var finalMsgs []string
-
-// 	for _, msg := range msgs {
-// 		if msg != "" {
-// 			finalMsgs = append(finalMsgs, msg)
-// 		}
-// 	}
-
-// 	return strings.Join(finalMsgs, "\n")
-// }
