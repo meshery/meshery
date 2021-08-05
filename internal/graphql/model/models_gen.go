@@ -49,7 +49,7 @@ type MesheryResult struct {
 	RunnerResults      map[string]interface{} `json:"runner_results"`
 	ServerMetrics      *string                `json:"server_metrics"`
 	ServerBoardConfig  *string                `json:"server_board_config"`
-	TestStartTime      *int                   `json:"test_start_time"`
+	TestStartTime      *string                `json:"test_start_time"`
 	UserID             *string                `json:"user_id"`
 	UpdatedAt          *string                `json:"updated_at"`
 	CreatedAt          *string                `json:"created_at"`
@@ -78,9 +78,9 @@ type OperatorStatusInput struct {
 }
 
 type PageFilter struct {
-	Page     int     `json:"page"`
-	PageSize int     `json:"pageSize"`
-	Order    string  `json:"order"`
+	Page     string  `json:"page"`
+	PageSize string  `json:"pageSize"`
+	Order    *string `json:"order"`
 	Search   *string `json:"search"`
 	From     *string `json:"from"`
 	To       *string `json:"to"`
@@ -88,9 +88,9 @@ type PageFilter struct {
 
 type PerfPageResult struct {
 	Page       int              `json:"page"`
-	PageSize   int              `json:"pageSize"`
-	TotalCount int              `json:"totalCount"`
-	Result     []*MesheryResult `json:"result"`
+	PageSize   int              `json:"page_size"`
+	TotalCount int              `json:"total_count"`
+	Results    []*MesheryResult `json:"results"`
 }
 
 type ReSyncActions struct {

@@ -59,13 +59,15 @@ func (r *queryResolver) GetAvailableNamespaces(ctx context.Context) ([]*model.Na
 	return r.getAvailableNamespaces(ctx, provider)
 }
 
-func (r *queryResolver) GetPerfResult(ctx context.Context, id *string) (*model.MesheryResult, error) {
+func (r *queryResolver) GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	if id != nil {
-		return r.getPerfResult(ctx, provider, id)
-	}
+	return r.getPerfResult(ctx, provider, id)
+	// panic(fmt.Errorf("not implemented"))
+}
 
-	return nil, ErrInvalidRequest
+func (r *queryResolver) FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (interface{}, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.fetchResults(ctx, provider, selector, profileID)
 	// panic(fmt.Errorf("not implemented"))
 }
 
