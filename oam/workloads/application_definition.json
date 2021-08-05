@@ -7,11 +7,6 @@
     "spec": {
         "definitionRef": {
             "name": "application.meshery.layer5.io"
-        },
-        "metadata": {
-            "@type": "pattern.meshery.io/k8s",
-            "k8sAPIVersion": "<-- API VERSION OF THE RESOURCE -->",
-            "k8sKind": "<-- KIND OF THE RESOURCE -->"
         }
     }
 }
