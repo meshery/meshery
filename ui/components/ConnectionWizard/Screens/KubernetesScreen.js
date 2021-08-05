@@ -67,7 +67,7 @@ const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress, setStepS
         <ServiceCard serviceInfo={kubeserviceInfo} isConnected={isConnected} />
       </Grid>
       <Grid item lg={6} sm={12} md={12} container justify="center" style={{paddingRight: "1rem"}}>
-        {true && (
+        {showDataPanel() && (
           <KubernetesDataPanel
             clusterInformation={kubeserviceInfo.clusterInformation}
             setIsConnected={setIsConnected}
