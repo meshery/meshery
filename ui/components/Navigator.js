@@ -725,6 +725,7 @@ class Navigator extends React.Component {
   toggleSpacing = () => {
     const { showHelperButton } = this.state;
     this.setState({ showHelperButton: !showHelperButton });
+
   }
 
   renderChildren(idname, children, depth) {
@@ -971,7 +972,7 @@ class Navigator extends React.Component {
               </ListItem>
             </ButtonGroup>
 
-            <ListItem button className={classname} onClick={() => this.toggleMiniDrawer()}>
+            <ListItem button className={classname} onClick={() => this.toggleMiniDrawer()}  style={{position:"sticky", zIndex:"1", bottom:"0", right: "0" }}>
               <FontAwesomeIcon
                 icon={faChevronCircleLeft}
                 fixedWidth
