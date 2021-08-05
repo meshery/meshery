@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { makeStyles, Container, Button, Fade, Grid } from "@material-ui/core";
+import {useRouter} from "next/router"
 
 import Stepper from "./Stepper.js";
 import KubernetesScreen from "./Screens/KubernetesScreen";
@@ -12,6 +13,9 @@ const useStyles = makeStyles((theme) => ({
   container: {
     minHeight: "32.5rem",
     margin: "5rem auto",
+    padding: "2rem",
+    paddingRight: "4rem",
+    paddingLeft: "4rem",
     background: "white",
     boxShadow: "lightgrey 0px 0px 10px",
     display: "flex",
@@ -20,8 +24,8 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonContainer: {
     textAlign: "right",
-    paddingBottom: "5rem",
-    marginRight: "11.5rem",
+    paddingRight: "3rem",
+    marginTop: "2rem"
   },
   button: {
     boxContent: "border-box",
@@ -44,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
   },
   skipButton: {
     color: "#647881",
+    "&:hover": {
+      backgroundColor: "white"
+    }
   },
 }));
 
@@ -56,6 +63,7 @@ function getSteps() {
 const ConfigurationWizard = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
+  const router = useRouter()
   const [stepStatus, setStepStatus] = React.useState({
     kubernetes: false,
     operator: false,
@@ -95,6 +103,23 @@ const ConfigurationWizard = () => {
     return false
   }
 
+  const handleAdvancedSettingsClick = () => {
+    switch (activeStep) {
+      case 0:
+        return
+      case 1:
+        return
+      case 2:
+        router.push("/settings#service-mesh")
+        return
+      case 3:
+        router.push("/settings#metrics")
+        return
+      default:
+        return null;
+    } 
+  }
+
   return (
     <Container className={classes.container}>
       <Stepper steps={steps} activeStep={activeStep} handleUserClick={handleUserClick} />
@@ -105,37 +130,37 @@ const ConfigurationWizard = () => {
               {null}
             </Fade>
           ) : (
-            <>
-              <Grid container xs={12} style={{marginTop: "4rem"}} justify="center" alignItems="flex-start">{handleStep(activeStep)}</Grid>
-              <div className={classes.buttonContainer}>
-                {activeStep === 2 || activeStep === 3 ? (
-                  <Button onClick={handleNext} className={classes.skipButton}>
-                    Skip
-                  </Button>
-                ) : null}
-                {activeStep === 0 ? null : (
-                  <Button
-                    disabled={activeStep === 0}
-                    onClick={handleBack}
-                    className={(classes.button, classes.backButton)}
-                  >
-                    Back
-                  </Button>
-                )}
-                <Button
-                  // disabled={activeStep === 0 && !iskubernetesConnected}
-                  variant="contained"
-                  onClick={handleNext}
-                  disabled={isNextDisabled()}
-                  className={classes.button}
-                >
-                  {activeStep === steps.length - 1 ? "Finish" : "Next"}
-                </Button>
-              </div>
-            </>
+            <Grid container xs={12} style={{marginTop: "4rem"}} justify="center" alignItems="flex-start">{handleStep(activeStep)}</Grid>
           )}
         </div>
       </Fade>
+      <div className={classes.buttonContainer}>
+        {activeStep === 2 || activeStep === 3 ? (
+          <Button onClick={handleAdvancedSettingsClick} className={classes.skipButton}>
+                    Advanced Settings
+          </Button>
+        ) : null}
+        {activeStep === 0 ? null : (
+          <Button
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            className={(classes.button, classes.backButton)}
+          >
+                    Back
+          </Button>
+        )}
+        <Button
+          // disabled={activeStep === 0 && !iskubernetesConnected}
+          variant="contained"
+          onClick={handleNext}
+          disabled={isNextDisabled()}
+          className={classes.button}
+          style={activeStep === steps.length -1 ? {opacity: 0} : null }
+        >
+                Next
+        </Button>
+      </div>
+
     </Container>
   );
 };

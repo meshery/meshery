@@ -420,7 +420,7 @@ const categories = [
       {
         id: "Profiles",
         icon:
-          <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ height: "1.8rem", verticalAlign: "top" }} />,
+          <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ verticalAlign: "top"}} />,
         href: "/performance/profiles",
         title: "Profiles",
         show: true,
