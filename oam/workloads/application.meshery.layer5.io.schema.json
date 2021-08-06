@@ -12,6 +12,12 @@
       "properties": {
         "skip_service": {
           "type": "boolean"
+        },
+        "labels": {
+          "type": "object"
+        },
+        "annotations": {
+          "type": "object"
         }
       }
     },
