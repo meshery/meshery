@@ -2,6 +2,7 @@ package selector
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/layer5io/meshery/models/pattern/core"
 )
@@ -34,7 +35,11 @@ func GetAnnotationsForWorkload(w core.WorkloadCapability) map[string]string {
 	typ, ok := metadata["@type"]
 	if ok {
 		for k, v := range metadata {
-			res[fmt.Sprintf("%s.%s", typ, k)] = v
+			if k == "@type" {
+				continue
+			}
+
+			res[fmt.Sprintf("%s.%s", strings.ReplaceAll(typ, "/", "."), k)] = v
 		}
 	}
 
