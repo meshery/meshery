@@ -197,6 +197,9 @@ fi
 # cpx
 # osm
 # traefik
+# nginx
+# tanzu
+# app
 
 ## Any adapter other than above would be ignored
 if [ ! -z "$ADAPTERS" ]; then
@@ -206,7 +209,10 @@ if [ ! -z "$ADAPTERS" ]; then
             cpx|consul|istio|linkerd|nsm|kuma|cpx|osm)
                 adapterString="$adapterString -a meshery-$adapter "
             ;;
-            traefik)
+            nginx|tanzu)
+                adapterString="$adapterString -a meshery-$adapter-sm "
+            
+            traefik|app)
                 adapterString="$adapterString -a meshery-$adapter-mesh "
             ;;
             *)
