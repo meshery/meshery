@@ -134,32 +134,32 @@ func TestTokenDeleteCmd(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			utils.SetupCustomContextEnv(t, currDir+"/testdata/token/"+tt.ExpectedResponseYaml)
 			var b *bytes.Buffer
-			var e *bytes.Buffer
-			if tt.ExpectError {
-				e = utils.SetupLogrusGrabTesting(t)
-				SystemCmd.SetErr(e)
-			} else {
-				b = utils.SetupLogrusGrabTesting(t)
-				SystemCmd.SetOut(b)
-			}
-			SystemCmd.SetArgs(tt.Args)
-			var actualResponse string
-			err := SystemCmd.Execute()
-			if err != nil {
-				if !tt.ExpectError {
-					t.Error(err)
-					return
-				}
-			}
-			//Check the stdout/stderr against the golden file
-			if tt.ExpectError {
-				actualResponse = e.String()
-			} else {
-				actualResponse = b.String()
-			}
+
 			// Expected response
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
+
+			b = utils.SetupLogrusGrabTesting(t)
+			SystemCmd.SetOut(b)
+			SystemCmd.SetArgs(tt.Args)
+			err := SystemCmd.Execute()
+			if err != nil {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// write it in file
+					if *update {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
+
+					utils.Equals(t, expectedResponse, err.Error())
+					return
+				}
+				t.Error(err)
+			}
+
+			//Check the stdout/stderr against the golden file
+			actualResponse := b.String()
 			if *update {
 				golden.Write(actualResponse)
 			}
@@ -233,32 +233,32 @@ func TestTokenSetCmd(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			utils.SetupCustomContextEnv(t, currDir+"/testdata/token/"+tt.ExpectedResponseYaml)
 			var b *bytes.Buffer
-			var e *bytes.Buffer
-			if tt.ExpectError {
-				e = utils.SetupLogrusGrabTesting(t)
-				SystemCmd.SetErr(e)
-			} else {
-				b = utils.SetupLogrusGrabTesting(t)
-				SystemCmd.SetOut(b)
-			}
-			SystemCmd.SetArgs(tt.Args)
-			var actualResponse string
-			err := SystemCmd.Execute()
-			if err != nil {
-				if !tt.ExpectError {
-					t.Error(err)
-					return
-				}
-			}
-			//Check the stdout/stderr against the golden file
-			if tt.ExpectError {
-				actualResponse = e.String()
-			} else {
-				actualResponse = b.String()
-			}
+
 			// Expected response
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
+
+			b = utils.SetupLogrusGrabTesting(t)
+			SystemCmd.SetOut(b)
+			SystemCmd.SetArgs(tt.Args)
+			err := SystemCmd.Execute()
+			if err != nil {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// write it in file
+					if *update {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
+
+					utils.Equals(t, expectedResponse, err.Error())
+					return
+				}
+				t.Error(err)
+			}
+
+			//Check the stdout/stderr against the golden file
+			actualResponse := b.String()
 			if *update {
 				golden.Write(actualResponse)
 			}
@@ -321,33 +321,32 @@ func TestTokenViewCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			var b *bytes.Buffer
-			var e *bytes.Buffer
 
-			if tt.ExpectError {
-				e = utils.SetupLogrusGrabTesting(t)
-				SystemCmd.SetErr(e)
-			} else {
-				b = utils.SetupLogrusGrabTesting(t)
-				SystemCmd.SetOut(b)
-			}
-			SystemCmd.SetArgs(tt.Args)
-			err := SystemCmd.Execute()
-			if err != nil {
-				if !tt.ExpectError {
-					t.Error(err)
-					return
-				}
-			}
-			var actualResponse string
-			//Check the stdout against the golden file
-			if tt.ExpectError {
-				actualResponse = e.String()
-			} else {
-				actualResponse = b.String()
-			}
 			// Expected response
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
+
+			b = utils.SetupLogrusGrabTesting(t)
+			SystemCmd.SetOut(b)
+			SystemCmd.SetArgs(tt.Args)
+			err := SystemCmd.Execute()
+			if err != nil {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// write it in file
+					if *update {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
+
+					utils.Equals(t, expectedResponse, err.Error())
+					return
+				}
+				t.Error(err)
+			}
+
+			//Check the stdout/stderr against the golden file
+			actualResponse := b.String()
 			if *update {
 				golden.Write(actualResponse)
 			}
@@ -384,32 +383,32 @@ func TestTokenListCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			var b *bytes.Buffer
-			var e *bytes.Buffer
-			if tt.ExpectError {
-				e = utils.SetupLogrusGrabTesting(t)
-				SystemCmd.SetErr(e)
-			} else {
-				b = utils.SetupLogrusGrabTesting(t)
-				SystemCmd.SetOut(b)
-			}
-			SystemCmd.SetArgs(tt.Args)
-			err := SystemCmd.Execute()
-			if err != nil {
-				if !tt.ExpectError {
-					t.Error(err)
-					return
-				}
-			}
-			var actualResponse string
-			//Check the stdout/stderr against the golden file
-			if tt.ExpectError {
-				actualResponse = e.String()
-			} else {
-				actualResponse = b.String()
-			}
+
 			// Expected response
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
+
+			b = utils.SetupLogrusGrabTesting(t)
+			SystemCmd.SetOut(b)
+			SystemCmd.SetArgs(tt.Args)
+			err := SystemCmd.Execute()
+			if err != nil {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// write it in file
+					if *update {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
+
+					utils.Equals(t, expectedResponse, err.Error())
+					return
+				}
+				t.Error(err)
+			}
+
+			//Check the stdout/stderr against the golden file
+			actualResponse := b.String()
 			if *update {
 				golden.Write(actualResponse)
 			}
