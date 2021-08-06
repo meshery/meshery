@@ -160,8 +160,8 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
       </Grid>
       <Grid>
         <Paper className={classes.paper}>
-      <PerformanceCalendar style={{ height: "40rem", margin: "2rem 0 0" }} />
-      </Paper>
+          <PerformanceCalendar style={{ height:"40rem", margin: "2rem 0 0" }} />
+        </Paper>
       </Grid>
 
       
