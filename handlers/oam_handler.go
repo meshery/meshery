@@ -271,6 +271,7 @@ func _processPattern(
 		Add(stages.Provision(sip, sap)).
 		Add(stages.Persist(sip, sap)).
 		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
+			data.Lock.Lock()
 			for k, v := range data.Other {
 				if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
 					msg, ok := v.(string)
@@ -279,6 +280,7 @@ func _processPattern(
 					}
 				}
 			}
+			data.Lock.Unlock()
 
 			sap.err = err
 		}).
