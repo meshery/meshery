@@ -153,15 +153,20 @@ const styles = (theme) => ({
     borderRadius: 4,
   },
   chipNamespace: {
-    gap:'2rem',
+    gap: '2rem',
     margin: "0px",
   },
   cardMesh: {
     margin: "-8px 0px",
   },
-  inputContainer:{
-    flex:'1',
-    minWidth:'250px'
+  inputContainer: {
+    flex: '1',
+    minWidth: '250px'
+  },
+  card: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column'
   }
 });
 
@@ -202,8 +207,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       selectionError: false,
 
       namespace: {
-        value: "",
-        label: ""
+        value: "default",
+        label: "default"
       },
       namespaceError: false,
 
@@ -268,9 +273,9 @@ class MesheryAdapterPlayComponent extends React.Component {
             })
           }
           namespaces.sort((a, b) => (
-            a.value > b.value? 1: -1
+            a.value > b.value ? 1 : -1
           ))
-          self.setState({ namespaceList: namespaces})
+          self.setState({ namespaceList: namespaces })
         },
         error: (err) => console.log("error at namespace fetch: " + err),
       })
@@ -693,7 +698,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       renderExpandableRow: (rowData, rowMeta) => {
         const column = ["Specification", "Assertions", "Time", "Version", "Capability", "Result", "Reason"];
         const data = smi_result.results[rowMeta.dataIndex].more_details.map((val) => {
-          return [val.smi_specification, val.assertions, val.time, "alpha1/v1", val.capability, val.status, val.reason];
+          return [val.smi_specification, val.assertions, val.time, val.smi_version, val.capability, val.status, val.reason];
         });
         const colSpan = rowData.length + 1;
         return (
@@ -954,7 +959,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     }
     return (
       <Card className={classes.card}>
-        <CardHeader title={content} subheader={description} />
+        <CardHeader title={content} subheader={description} style={{ flexGrow: 1 }} />
         <CardActions disableSpacing>
           <IconButton
             aria-label="install"

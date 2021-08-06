@@ -82,7 +82,7 @@ class MesheryResults extends Component {
       query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
       self.props.updateProgress({ showProgress: true });
 
-      const endpoint = self.props.endpoint || "/api/perf/results";
+      const endpoint = self.props.endpoint || "/api/perf/profile/result";
       dataFetch(`${endpoint}${query}`, {
         credentials: 'same-origin',
         method: 'GET',

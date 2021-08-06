@@ -62,6 +62,11 @@ type OperatorStatusInput struct {
 	TargetStatus Status `json:"targetStatus"`
 }
 
+type ReSyncActions struct {
+	ClearDb string `json:"clearDB"`
+	ReSync  string `json:"ReSync"`
+}
+
 type MeshType string
 
 const (

@@ -32,11 +32,7 @@ func (m *Map) Scan(src interface{}) error {
 		return fmt.Errorf("scan source was not []byte nor string but %T", src)
 	}
 
-	if err := json.Unmarshal(b, m); err != nil {
-		return err
-	}
-
-	return nil
+	return json.Unmarshal(b, m)
 }
 
 // Value implements the driver.Valuer interface.
@@ -73,9 +69,5 @@ func (m *Map) UnmarshalJSON(b []byte) error {
 // UnmarshalText will unmarshall text value into
 // the map representation of this value.
 func (m Map) UnmarshalText(text []byte) error {
-	if err := json.Unmarshal(text, &m); err != nil {
-		return err
-	}
-
-	return nil
+	return json.Unmarshal(text, &m)
 }

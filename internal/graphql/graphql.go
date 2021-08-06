@@ -10,18 +10,16 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/layer5io/meshery/internal/graphql/generated"
 	"github.com/layer5io/meshery/internal/graphql/resolver"
+	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 type Options struct {
-	DBHandler       *database.Handler
 	Logger          logger.Handler
-	KubeClient      *mesherykube.Client
 	MeshSyncChannel chan struct{}
 	BrokerConn      broker.Handler
+	Config          *models.HandlerConfig
 	URL             string
 }
 
@@ -29,10 +27,9 @@ type Options struct {
 func New(opts Options) http.Handler {
 	res := &resolver.Resolver{
 		Log:             opts.Logger,
-		DBHandler:       opts.DBHandler,
-		KubeClient:      opts.KubeClient,
 		MeshSyncChannel: opts.MeshSyncChannel,
 		BrokerConn:      opts.BrokerConn,
+		Config:          opts.Config,
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(generated.Config{

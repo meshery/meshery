@@ -3,13 +3,17 @@ package utils
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/version"
 )
@@ -114,12 +118,29 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 
 // IsMesheryRunning checks if the meshery server containers are up and running
 func IsMesheryRunning(currPlatform string) (bool, error) {
+	// Get viper instance used for context to extract the endpoint from config file
+	mctlCfg, _ := config.GetMesheryCtl(viper.GetViper())
+
+	currCtx, _ := mctlCfg.GetCurrentContext()
+
+	urlEndpoint := currCtx.GetEndpoint()
+
+	urlTest := urlEndpoint + "/api/system/version"
+
+	// Checking if Meshery is running with the URL obtained
+	resp, _ := http.Get(urlTest)
+
+	if resp != nil && resp.StatusCode == 200 {
+		return true, nil
+	}
+
+	//If not, use the platforms to check if Meshery is running or not
 	switch currPlatform {
 	case "docker":
 		{
 			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
 			if err != nil {
-				return false, err
+				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
 			}
 			return strings.Contains(string(op), "meshery"), nil
 		}

@@ -31,7 +31,7 @@ var (
 	pre       bool
 	adapter   bool
 	operator  bool
-	failure   int = 0
+	failure   int
 )
 
 type HealthCheckOptions struct {
@@ -70,12 +70,17 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error processing config")
 	}
-	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	err = mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
 		return nil, err
 	}
 
-	hc.context = &currCtx
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		return nil, err
+	}
+
+	hc.context = currCtx
 	hc.mctlCfg = mctlCfg
 
 	return hc, nil
@@ -207,11 +212,11 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		if hc.context.Platform == "docker" {
 			failure++
 		}
-	}
-
-	// logging if we're supposed to
-	if hc.Options.PrintLogs {
-		log.Info("✓ Docker is running")
+	} else { // if not error we check if we are supposed to print logs
+		// logging if we're supposed to
+		if hc.Options.PrintLogs {
+			log.Info("✓ Docker is running")
+		}
 	}
 
 	//Check for installed docker-compose on client system
@@ -236,10 +241,11 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		if hc.context.Platform == "docker" {
 			failure++
 		}
-	}
-	// logging if we're supposed to
-	if hc.Options.PrintLogs {
-		log.Info("✓ docker-compose is available")
+	} else { // if not error we check if we are supposed to print logs
+		// logging if we're supposed to
+		if hc.Options.PrintLogs {
+			log.Info("✓ docker-compose is available")
+		}
 	}
 
 	return nil
@@ -253,7 +259,9 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	//Check whether k8s client can be initialized
 	client, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		failure++                 // increase failure count
+		if hc.context.Platform == "kubernetes" { // increase failure count
+			failure++
+		}
 		if hc.Options.PrintLogs { // print logs if we're supposed to
 			log.Warn("!! cannot initialize Kubernetes client")
 			log.Warn("!! cannot query the Kubernetes API")
@@ -271,12 +279,14 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	podInterface := client.KubeClient.CoreV1().Pods("")
 	_, err = podInterface.List(context.TODO(), v1.ListOptions{})
 	if err != nil {
+		if hc.context.Platform == "kubernetes" { // increase failure count
+			failure++
+		}
 		if hc.Options.PrintLogs { // log incase we're supposed to
 			log.Warn("!! cannot query the Kubernetes API")
-		} else {
-			return errors.New("ctlK8sConnect1001: !! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes")
+			return nil
 		}
-		failure++ // increase failure count
+		return errors.New("ctlK8sConnect1001: !! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes")
 	}
 
 	if hc.Options.PrintLogs { // log incase we're supposed to
@@ -296,41 +306,48 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 	var kubeVersion *k8sVersion.Info
 	kubeVersion, err := utils.GetK8sVersionInfo()
 	if err != nil {
+		if hc.context.Platform == "kubernetes" { // increase failure count
+			failure++
+		}
 		// probably kubernetes isn't running
 		if hc.Options.PrintLogs { // log if we're supposed to
 			log.Warn("!! cannot check Kubernetes version")
 		} else { // else we're supposed to catch the error
 			return err
 		}
-		failure++ // increase failure count
 	} else {
 		// kubernetes is running so check the version
 		err = utils.CheckK8sVersion(kubeVersion)
 		if err != nil {
+			if hc.context.Platform == "kubernetes" { // increase failure count
+				failure++
+			}
 			if hc.Options.PrintLogs { // log if we're supposed to
 				log.Warnf("!! %s", err)
 			} else { // else we gotta catch the error
 				return err
 			}
-			failure++
-		}
-
-		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Info("✓ is running the minimum Kubernetes version")
+		} else { // if not error we check if we are supposed to print logs
+			if hc.Options.PrintLogs { // log if we're supposed to
+				log.Info("✓ is running the minimum Kubernetes version")
+			}
 		}
 	}
 
 	err = utils.CheckKubectlVersion()
 	if err != nil {
+		if hc.context.Platform == "kubernetes" { // increase failure count
+			failure++
+		}
 		if hc.Options.PrintLogs { // log if we're supposed to
 			log.Warnf("!! %s", err)
 		} else { // else we gotta catch the error
 			return err
 		}
-		failure++
-	}
-	if hc.Options.PrintLogs { // log if we're supposed to
-		log.Info("✓ is running the minimum kubectl version")
+	} else { // if not error we check if we are supposed to print logs
+		if hc.Options.PrintLogs { // log if we're supposed to
+			log.Info("✓ is running the minimum kubectl version")
+		}
 	}
 
 	return nil
@@ -343,66 +360,75 @@ func (hc *HealthChecker) runKubernetesHealthChecks() error {
 		return err
 	}
 	// Run k8s plus kubectl minimum version healthchecks
-	if err = hc.runKubernetesVersionHealthCheck(); err != nil {
-		return err
-	}
-
-	return nil
+	err = hc.runKubernetesVersionHealthCheck()
+	return err
 }
 
 // runMesheryVersionHealthChecks runs checks regarding meshery version and mesheryctl version
 func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
+	skipServerLogs := false
+
 	if hc.Options.PrintLogs {
 		log.Info("\nMeshery Version \n--------------")
 	}
 
 	url := hc.mctlCfg.GetBaseMesheryURL()
 	var serverVersion *config.Version
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/server/version", url), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 	if err != nil {
 		return err
 	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	if err != nil {
+	// failed to fetch response for server version
+	if err != nil || resp.StatusCode != 200 {
 		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Info("!! Failed to check server version")
+			log.Info("!! failed to check server version. try starting Meshery with `mesheryctl system start`")
+			skipServerLogs = true
 		} else {
 			return err
 		}
 	}
 
-	// needs multiple defer as Body.Close needs a valid response
-	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return errors.Errorf("\n  Invalid response: %v", err)
-	}
-
-	err = json.Unmarshal(data, &serverVersion)
-	if err != nil {
-		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
-	}
-
-	res, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
-	if err != nil {
-		return err
-	}
-	if hc.Options.PrintLogs { // log if we're supposed to
-		if res.Latest {
-			log.Infof("✓ server is up-to-date (stable-%s)", serverVersion.GetBuild())
-		} else {
-			log.Info("!! server is not up-to-date")
+	// skip this part as we failed to get a response from the api
+	if !skipServerLogs {
+		// needs multiple defer as Body.Close needs a valid response
+		defer resp.Body.Close()
+		data, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Errorf("\n  Invalid response: %v", err)
 		}
-	} else { // else we grab the error
-		if !res.Latest {
-			return errors.New("!! server is not up-to-date")
+
+		err = json.Unmarshal(data, &serverVersion)
+		if err != nil {
+			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
+		}
+
+		res, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
+		if err != nil {
+			return err
+		}
+		if hc.Options.PrintLogs { // log if we're supposed to
+			if res.Latest {
+				log.Infof("✓ server is up-to-date (stable-%s)", serverVersion.GetBuild())
+			} else {
+				log.Info("!! server is not up-to-date")
+			}
+		} else { // else we grab the error
+			if !res.Latest {
+				return errors.New("!! server is not up-to-date")
+			}
 		}
 	}
 
 	latest, err := utils.GetLatestStableReleaseTag()
 	if err != nil {
+		if hc.Options.PrintLogs { // log if we're supposed to
+			log.Info("!! failed to fetch latest release tag of mesheryctl")
+			// skip further for client as we failed to check latest tag on github
+			return nil
+		}
 		return err
 	}
 
@@ -411,7 +437,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		if latest == version {
 			log.Infof("✓ cli is up-to-date (stable-%s)", version)
 		} else {
-			log.Info("!! cli is not up-to-date")
+			log.Infof("!! cli is not up-to-date (stable-%s)", version)
 		}
 	} else { // else we grab the error
 		if latest != version {
@@ -427,7 +453,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 		log.Info("\nMeshery Adapters \n--------------")
 	}
 
-	url := mctlCfg.GetBaseMesheryURL()
+	url := hc.mctlCfg.GetBaseMesheryURL()
 	client := &http.Client{}
 
 	// Request to grab running adapters and ports
@@ -437,19 +463,34 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 	}
 
 	// Add authentication token
-	err = utils.AddAuthDetails(req, constants.GetAuthenticationToken())
+	token, err := hc.mctlCfg.GetTokenForContext(hc.mctlCfg.CurrentContext)
 	if err != nil {
-		return errors.New("authentication token not found. please supply a valid user token")
+		return err
+	}
+	tokenPath, err = constants.GetTokenLocation(token)
+	if err != nil {
+		return err
+	}
+	err = utils.AddAuthDetails(req, tokenPath)
+	if err != nil {
+		if hc.Options.PrintLogs {
+			log.Info("!! authentication token not found. please supply a valid user token. login with `mesheryctl system login`")
+			// skip further as we failed to attach token
+			return nil
+		}
+		return errors.New("authentication token not found. please supply a valid user token. login with `mesheryctl system login`")
 	}
 
 	var adapters []*models.Adapter
 	resp, err := client.Do(req)
-	if err != nil {
+	// failed to grab response from the request
+	if err != nil || resp.StatusCode != 200 {
 		if hc.Options.PrintLogs {
-			log.Info("!! Failed to grab running adapters")
-		} else {
-			return err
+			log.Info("!! failed to grab running adapters")
+			// skip further as we failed to grab the response from server
+			return nil
 		}
+		return err
 	}
 
 	// needs multiple defer as Body.Close needs a valid response
@@ -459,8 +500,6 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 		return errors.Errorf("\n  Invalid response: %v", err)
 	}
 
-	log.Info(string(data))
-
 	err = json.Unmarshal(data, &adapters)
 	if err != nil {
 		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
@@ -468,7 +507,9 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 
 	// check for each adapter
 	for _, adapter := range adapters {
-		name := strings.Split(adapter.Name, ":")[0]
+		skipAdapter := false
+
+		name := strings.Split(adapter.Location, ":")[0]
 		if adapter.Ops == nil {
 			if hc.Options.PrintLogs { // incase we're printing logs
 				log.Infof("!! %s adapter is not running", name)
@@ -483,27 +524,32 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 		resp, err := client.Do(req)
 		if err != nil {
 			if hc.Options.PrintLogs { // incase we're printing logs
-				log.Infof("!! Failed to check %s adapter", name)
+				log.Infof("!! failed to check %s adapter", name)
+				skipAdapter = true
 			} else { // or we're supposed to grab the errors
-				return errors.New(fmt.Sprintf("!! Failed to check %s adapter: %s", name, err))
+				return fmt.Errorf("!! failed to check %s adapter: %s", name, err)
 			}
 			continue
 		}
 
-		// needs multiple defer as Body.Close needs a valid response
-		defer resp.Body.Close()
-		if resp.StatusCode != 200 {
-			if hc.Options.PrintLogs { // incase we're printing logs
-				log.Infof("!! %s adapter is running but not reachable", name)
-			} else { // or we're supposed to grab the errors
-				return errors.New(fmt.Sprintf("!! %s adapter is running but not reachable", name))
+		// skip the adapter as we failed to receive response for adapter
+		if !skipAdapter {
+			// needs multiple defer as Body.Close needs a valid response
+			defer resp.Body.Close()
+			if resp.StatusCode != 200 {
+				if hc.Options.PrintLogs { // incase we're printing logs
+					log.Infof("!! %s adapter is running but not reachable", name)
+				} else { // or we're supposed to grab the errors
+					return fmt.Errorf("!! %s adapter is running but not reachable", name)
+				}
+			} else { // if status == 200 we check if we are supposed to print logs
+				if hc.Options.PrintLogs { // incase we're printing logs
+					log.Infof("✓ %s adapter is running and reachable", name)
+				}
 			}
 		}
-
-		if hc.Options.PrintLogs { // incase we're printing logs
-			log.Infof("✓ %s adapter is running and reachable", name)
-		}
 	}
+
 	return nil
 }
 

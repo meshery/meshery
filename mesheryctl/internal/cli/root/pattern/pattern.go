@@ -2,7 +2,6 @@ package pattern
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -30,11 +29,7 @@ var PatternCmd = &cobra.Command{
 }
 
 func init() {
-	PatternCmd.PersistentFlags().StringVarP(&file, "file", "f", "", "Path to pattern file")
-	PatternCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file")
-	_ = PatternCmd.MarkFlagRequired("file")
-
-	tokenPath = os.Getenv("MESHERY_AUTH_TOKEN")
+	PatternCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file default from current context")
 
 	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd}
 	PatternCmd.AddCommand(availableSubcommands...)

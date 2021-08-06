@@ -41,8 +41,29 @@ import (
 var logsCmd = &cobra.Command{
 	Use:   "logs",
 	Short: "Print logs",
-	Long:  `Print history of Meshery's logs and begin tailing them.`,
-	Args:  cobra.ArbitraryArgs,
+	Long: `Print history of Meshery's logs and begin tailing them.
+
+It also shows the logs of a specific component.`,
+	Args: cobra.ArbitraryArgs,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		// execute healthchecks
+		err = hc.RunPreflightHealthChecks()
+		if err != nil {
+			cmd.SilenceUsage = true
+		}
+
+		return err
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("Starting Meshery logging...")
 
@@ -53,11 +74,19 @@ var logsCmd = &cobra.Command{
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
-		currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+		if tempContext != "" {
+			err = mctlCfg.SetCurrentContext(tempContext)
+			if err != nil {
+				return errors.Wrap(err, "failed to set temporary context")
+			}
+		}
+
+		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return err
 		}
-		currPlatform := currCtx.Platform
+
+		currPlatform := currCtx.GetPlatform()
 
 		// switch statement for multiple platform
 		switch currPlatform {

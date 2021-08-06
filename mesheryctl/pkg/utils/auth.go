@@ -194,7 +194,7 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	}
 
 	// Create provider URI
-	uri, err := createProviderURI(provider, "localhost", port)
+	uri, err := createProviderURI(provider, "http://localhost", port)
 	if err != nil {
 		return "", err
 	}

@@ -37,6 +37,25 @@ var statusCmd = &cobra.Command{
 	Short: "Check Meshery status",
 	Args:  cobra.NoArgs,
 	Long:  `Check status of Meshery and Meshery adapters.`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to initialize healthchecker")
+		}
+		// execute healthchecks
+		err = hc.RunPreflightHealthChecks()
+		if err != nil {
+			cmd.SilenceUsage = true
+		}
+
+		return err
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -45,11 +64,19 @@ var statusCmd = &cobra.Command{
 		}
 		// get the platform, channel and the version of the current context
 		// if a temp context is set using the -c flag, use it as the current context
-		currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+		if tempContext != "" {
+			err = mctlCfg.SetCurrentContext(tempContext)
+			if err != nil {
+				return errors.Wrap(err, "failed to set temporary context")
+			}
+		}
+
+		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return err
 		}
-		currPlatform := currCtx.Platform
+
+		currPlatform := currCtx.GetPlatform()
 
 		ok, err := utils.IsMesheryRunning(currPlatform)
 		if err != nil {
@@ -76,9 +103,23 @@ var statusCmd = &cobra.Command{
 				log.Info(outputString)
 			}
 
-			// Also print the status of pods in the MesheryNamespace
-			fallthrough
+			hcOptions := &HealthCheckOptions{
+				PrintLogs:           false,
+				IsPreRunE:           false,
+				Subcommand:          "status",
+				RunKubernetesChecks: true,
+			}
+			hc, err := NewHealthChecker(hcOptions)
+			if err != nil {
+				return errors.Wrapf(err, "failed to initialize healthchecker")
 
+			}
+			// If k8s is available print the status of pods in the MesheryNamespace
+			if err = hc.Run(); err != nil {
+				return nil
+			}
+
+			fallthrough
 		case "kubernetes":
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
