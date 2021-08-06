@@ -40,6 +40,9 @@ func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v
 func createSvcFromComp(oamComp v1alpha1.Component) (v1.Service, error) {
 	svc := v1.Service{}
 
+	svc.SetName(oamComp.Name)
+	svc.SetNamespace(oamComp.Namespace)
+
 	byt, err := json.Marshal(oamComp.Spec.Settings)
 	if err != nil {
 		return svc, fmt.Errorf("failed to construct service from the settings")
