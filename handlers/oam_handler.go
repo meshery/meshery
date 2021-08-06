@@ -247,8 +247,9 @@ func _processPattern(
 	isDelete bool,
 ) (string, error) {
 	sip := &serviceInfoProvider{
-		token:    token,
-		provider: provider,
+		token:      token,
+		provider:   provider,
+		opIsDelete: isDelete,
 	}
 	sap := &serviceActionProvider{
 		token:      token,
@@ -290,8 +291,9 @@ func _processPattern(
 }
 
 type serviceInfoProvider struct {
-	provider models.Provider
-	token    string
+	provider   models.Provider
+	token      string
+	opIsDelete bool
 }
 
 func (sip *serviceInfoProvider) GetMesheryPatternResource(name, namespace, typ, oamType string) (*uuid.UUID, error) {
@@ -315,6 +317,10 @@ func (sip *serviceInfoProvider) GetServiceMesh() (string, string) {
 
 func (sip *serviceInfoProvider) GetAPIVersionForKind(string) string {
 	return ""
+}
+
+func (sip *serviceInfoProvider) IsDelete() bool {
+	return sip.opIsDelete
 }
 
 type serviceActionProvider struct {

@@ -34,7 +34,9 @@ func ServiceIdentifier(prov ServiceInfoProvider, act ServiceActionProvider) Chai
 
 			// Assign the ID to the service
 			svc.ID = id
+			data.Lock.Lock()
 			data.Other[fmt.Sprintf("%s%s", svcName, UpdateSuffixKey)] = true
+			data.Lock.Unlock()
 		}
 
 		if next != nil {

@@ -14,6 +14,7 @@ func Persist(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunc
 			return
 		}
 
+		data.Lock.Lock()
 		for k := range data.Other {
 			// Find the services which where provisioned successfully
 			if strings.HasSuffix(k, ProvisionSuffixKey) {
@@ -26,6 +27,7 @@ func Persist(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunc
 				}
 			}
 		}
+		data.Lock.Unlock()
 
 		if next != nil {
 			next(data, nil)

@@ -14,6 +14,7 @@ type ServiceInfoProvider interface {
 	) (ID *uuid.UUID, err error)
 	GetServiceMesh() (name string, version string)
 	GetAPIVersionForKind(kind string) string
+	IsDelete() bool
 }
 
 type ServiceActionProvider interface {

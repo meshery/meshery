@@ -13,6 +13,7 @@ type Data struct {
 	PatternSvcTraitCapabilities    map[string][]core.TraitCapability
 
 	// Other is for passing metadata across different stages
+	Lock  sync.Mutex
 	Other map[string]interface{}
 }
 

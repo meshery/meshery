@@ -27,7 +27,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 		}
 
 		// Create provision plan
-		plan, err := planner.CreatePlan(*data.Pattern, nil)
+		plan, err := planner.CreatePlan(*data.Pattern, prov.IsDelete())
 		if err != nil {
 			act.Terminate(err)
 			return
@@ -86,8 +86,10 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				return false
 			}
 
+			data.Lock.Lock()
 			// Store that this service was provisioned successfully
 			data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = msg
+			data.Lock.Unlock()
 
 			return true
 		})
