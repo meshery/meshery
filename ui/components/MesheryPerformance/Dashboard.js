@@ -112,7 +112,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
             <Grid container spacing={1}>
               <Grid item xs>
                 <Paper className={classes.paper}>
-                  <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center" , height: "6.8rem"}}>
                     <Typography variant="h2" component="div" color="primary" style={{ marginRight: "0.75rem" }}>
                       {(tests.count).toLocaleString('en')}
                     </Typography>
@@ -129,7 +129,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
               </Grid>
               <Grid item xs>
                 <Paper className={classes.paper}>
-                  <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", height: "6.8rem" }}>
                     <Typography variant="h2" component="div" color="primary" style={{ marginRight: "0.75rem" }}>
                       {profiles.count}
                     </Typography>
@@ -145,7 +145,6 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
                 </Paper>
               </Grid>
             </Grid>
-            <PerformanceCalendar style={{ height: "40rem", margin: "2rem 0 0" }} />
           </Paper>
         </Grid>
         <Grid item lg={6} xs={12}>
@@ -159,7 +158,13 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
           </Paper>
         </Grid>
       </Grid>
+      <Grid>
+        <Paper className={classes.paper}>
+      <PerformanceCalendar style={{ height: "40rem", margin: "2rem 0 0" }} />
+      </Paper>
+      </Grid>
 
+      
       <GenericModal
         open={!!runTest}
         Content={
