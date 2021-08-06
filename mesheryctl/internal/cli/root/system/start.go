@@ -86,6 +86,12 @@ func start() error {
 		}
 	}
 
+	if _, err := os.Stat(utils.ManifestsFolder); os.IsNotExist(err) {
+		if err := os.Mkdir(utils.ManifestsFolder, 0777); err != nil {
+			return ErrCreateDir(err, utils.ManifestsFolder)
+		}
+	}
+
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -113,7 +119,7 @@ func start() error {
 		}
 	}
 
-	// Deploy to platform specified in the config.yaml
+	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
 
@@ -122,7 +128,7 @@ func start() error {
 			return ErrDownloadFile(err, utils.DockerComposeFile)
 		}
 
-		// Viper instance used for docker compose
+		// viper instance used for docker compose
 		utils.ViperCompose.SetConfigFile(utils.DockerComposeFile)
 		err = utils.ViperCompose.ReadInConfig()
 		if err != nil {
@@ -313,11 +319,6 @@ func start() error {
 
 	case "kubernetes":
 		kubeClient, err := meshkitkube.New([]byte(""))
-		if err != nil {
-			return err
-		}
-
-		err = utils.CreateManifestsFolder()
 		if err != nil {
 			return err
 		}

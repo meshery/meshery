@@ -57,9 +57,7 @@ The authentication mode is web-based browser flow`,
 		}
 
 		if !isRunning {
-			log.Error(`Meshery Server is not running
-
-Run "mesheryctl system start" to start meshery`)
+			log.Error(`Meshery Server is not running. Run "mesheryctl system start" to start Meshery.`)
 			return nil
 		}
 

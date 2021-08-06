@@ -43,14 +43,19 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 			return
 		}
 
-		select {
-		case <-r.MeshSyncChannel:
-			status, err := r.getAvailableAddons(ctx, provider, selector)
-			if err != nil {
-				r.Log.Error(ErrAddonSubscription(err))
+		for {
+			select {
+			case <-r.MeshSyncChannel:
+				status, err := r.getAvailableAddons(ctx, provider, selector)
+				if err != nil {
+					r.Log.Error(ErrAddonSubscription(err))
+					break
+				}
+				r.addonChannel <- status
+			case <-ctx.Done():
+				r.Log.Info("Addons subscription stopped")
 				return
 			}
-			r.addonChannel <- status
 		}
 	}()
 

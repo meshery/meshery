@@ -330,7 +330,7 @@ class DashboardComponent extends React.Component {
     const self = this;
     this.props.updateProgress({ showProgress: true });
     dataFetch(
-      "/api/mesh/adapters",
+      "/api/system/adapters",
       {
         credentials: "same-origin",
         method: "GET",
@@ -500,7 +500,7 @@ class DashboardComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      `/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`,
+      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
       {
         credentials: "same-origin",
         credentials: "include",
@@ -531,7 +531,7 @@ class DashboardComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/k8sconfig/ping",
+      "/api/system/kubernetes/ping",
       {
         credentials: "same-origin",
         credentials: "include",
@@ -919,7 +919,7 @@ class DashboardComponent extends React.Component {
       if (release_channel === "edge") return `${release_channel}-latest`;
       if (release_channel === "stable") return `${release_channel}-${build}`;
 
-      return ``;
+      return `${build}`;
     };
 
     /**

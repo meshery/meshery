@@ -1,18 +1,18 @@
 /* eslint-disable react/display-name */
 /* eslint-disable no-unused-vars */
-import CloseIcon from "@material-ui/icons/Close";
 import {
   withStyles,
   Typography,
   Grid,
-  Chip,
   IconButton,
 } from "@material-ui/core/";
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress, updateK8SConfig } from "../../../lib/store";
-import { pingKubernetesWithNotification, reconfigureKubernetes } from "../helpers/kubernetesHelpers";
+import AdapterChip from "./AdapterChip"
+import {deleteKubernetesConfig, pingKubernetes} from "../helpers/kubernetesHelpers"
+import {successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction, showProgress, hideProgress} from "../helpers/common"
 
 const styles = theme => ({
 
@@ -45,51 +45,49 @@ const styles = theme => ({
 
 })
 
-const chipStyles = (theme) => ({
-  chipIcon: {
-    width: theme.spacing(2.5)
-  },
-  chip: {
-    marginRight: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-})
-
-const KubernetesChip = withStyles(chipStyles)(({classes, handleKubernetesClick, handleKubernetesDelete,  label}) => (
-
-  <Chip
-    label={label}
-    onDelete={handleKubernetesDelete}
-    onClick={handleKubernetesClick}
-    icon={<img src="/static/img/kubernetes.svg" className={classes.chipIcon} />}
-    className={classes.chip}
-    key="k8s-key"
-    variant="outlined"
-  />
-))
-
-
-const KubernetesPingSnackbarAction = (closeSnackbar) => (key) => (
-  <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-    <CloseIcon />
-  </IconButton>
-)
-
 
 const KubernetesDataPanel = ({clusterInformation, classes, updateProgress, enqueueSnackbar, closeSnackbar, setClusterInformation, setIsConnected, updateK8SConfig}) => {
 
+  const resetKubernetesConfig = () => updateK8SConfig({
+    k8sConfig: {
+      inClusterConfig: false,
+      k8sfile: "",
+      contextName: "",
+      clusterConfigured: false,
+    },
+  })
+
+
   const handleKubernetesDelete = () => {
-    updateProgress({showProgress: true})
-    reconfigureKubernetes(updateProgress, enqueueSnackbar, KubernetesPingSnackbarAction(closeSnackbar), updateK8SConfig)    
+    showProgress()
+
+    const handlerCb = () => resetKubernetesConfig()
+
+    deleteKubernetesConfig(
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed", handlerCb),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config")
+    )    
   }
+
+  const handleKubernetesClick = () => {
+    showProgress()
+    pingKubernetes(
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
+    )
+
+  }
+
   return (
     <Grid container className={classes.infoContainer} xs={10}>
 
       <Grid item xs={12}>
-        <KubernetesChip 
-          handleKubernetesClick={() => pingKubernetesWithNotification(updateProgress, enqueueSnackbar, KubernetesPingSnackbarAction(closeSnackbar))} 
-          handleKubernetesDelete = {handleKubernetesDelete}
-          label="Kubernetes" 
+        <AdapterChip
+          label="Kubernetes"
+          handleDelete={handleKubernetesDelete}
+          handleClick={handleKubernetesClick}
+          isActive={true}
+          image="/static/img/kubernetes.svg"
         />
       </Grid>
 

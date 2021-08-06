@@ -4,7 +4,7 @@
   "description": "the service mesh management plane",
   "main": "index.js",
   "scripts": {
-    "dev": "eslint . && nodemon ui_dev_server.js",
+    "dev": "eslint . && node ui_dev_server.js",
     "lint": "eslint --fix .",
     "next": "next",
     "build": "next build",
@@ -96,7 +96,7 @@
     "@babel/types": "^7.14.9",
     "@types/react-relay": "^11.0.2",
     "babel-eslint": "^10.1.0",
-    "cypress": "^7.6.0",
+    "cypress": "^8.1.0",
     "eslint": "^7.31.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-google": "^0.14.0",

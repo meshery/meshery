@@ -44,7 +44,7 @@ var applyCmd = &cobra.Command{
 		var err error
 		client := &http.Client{}
 
-		// set default tokenpath for perf apply command.
+		// set default tokenpath for command.
 		if tokenPath == "" {
 			tokenPath = constants.GetCurrentAuthToken()
 		}
