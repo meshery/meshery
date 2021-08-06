@@ -135,9 +135,6 @@ func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
 		}
 
 		elemPosition := getCytoscapeJSPosition(svc)
-		src, dest := getCytoscapeJSEdges(svc)
-		elemData.Source = src
-		elemData.Target = dest
 
 		elem := cytoscapejs.Element{
 			Data:       elemData,
@@ -194,23 +191,20 @@ func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
 		}
 
 		// Unmarshal the JSON into a service
-		var svc Service
-		if err := json.Unmarshal(svcByt, &svc); err != nil {
-			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
+		svc := Service{
+			Settings: map[string]interface{}{},
+			Traits:   map[string]interface{}{},
 		}
 
-		// Add other meshmap specific data into service
+		// Add meshmap position
 		svc.Traits["meshmap"] = map[string]interface{}{
 			"position": map[string]float64{
 				"posX": elem.Position.X,
 				"posY": elem.Position.Y,
 			},
-			"edges": []map[string]interface{}{
-				{
-					"from": elem.Data.Source,
-					"to":   elem.Data.Target,
-				},
-			},
+		}
+		if err := json.Unmarshal(svcByt, &svc); err != nil {
+			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
 
 		pf.Services[elem.Data.ID] = &svc
@@ -274,44 +268,4 @@ func getCytoscapeJSPosition(svc *Service) (pos cytoscapejs.Position) {
 	}
 
 	return
-}
-
-func getCytoscapeJSEdges(svc *Service) (source string, target string) {
-	// Check if the service has "meshmap" as a trait
-	mpi, ok := svc.Traits["meshmap"]
-	if !ok {
-		return "", ""
-	}
-
-	mpStrInterface, ok := mpi.(map[string]interface{})
-	if !ok {
-		logrus.Debugf("failed to cast meshmap trait (MPI): %+#v", mpi)
-		return "", ""
-	}
-
-	edgeInterface, ok := mpStrInterface["edges"].([]map[string]interface{})
-	if !ok {
-		logrus.Debugf("failed to cast meshmap trait (edgeMap): %+#v", edgeInterface)
-		return "", ""
-	}
-
-	if len(edgeInterface) < 1 {
-		return "", ""
-	}
-
-	edge := edgeInterface[0]
-
-	from, ok := edge["from"].(string)
-	if !ok {
-		logrus.Debugf("failed to cast meshmap trait (edgeMapFrom): %+#v", from)
-		return "", ""
-	}
-
-	to, ok := edge["to"].(string)
-	if !ok {
-		logrus.Debugf("failed to cast meshmap trait (edgeMapTo): %+#v", to)
-		return "", ""
-	}
-
-	return from, to
 }
