@@ -1,4 +1,4 @@
-package application
+package app
 
 import (
 	"encoding/json"
@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -17,7 +18,6 @@ import (
 )
 
 var (
-	token   string
 	verbose bool
 )
 
@@ -26,10 +26,18 @@ var listCmd = &cobra.Command{
 	Short: "List applications",
 	Long:  `Display list of all available applications.`,
 	Args:  cobra.MinimumNArgs(0),
+	Example: `
+	List all the applications
+	mesheryctl app list
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
+		}
+		// set default tokenpath for perf apply command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
 		}
 		var response *models.ApplicationsAPIResponse
 		client := &http.Client{}
@@ -37,7 +45,7 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		err = utils.AddAuthDetails(req, token)
+		err = utils.AddAuthDetails(req, tokenPath)
 		if err != nil {
 			return err
 		}
@@ -51,11 +59,10 @@ var listCmd = &cobra.Command{
 			return err
 		}
 		err = json.Unmarshal(body, &response)
-
 		if err != nil {
 			return err
 		}
-		tokenObj, err := utils.ReadToken(token)
+		tokenObj, err := utils.ReadToken(tokenPath)
 		if err != nil {
 			return err
 		}
@@ -65,30 +72,30 @@ var listCmd = &cobra.Command{
 		if verbose {
 			if provider == "None" {
 				for _, v := range response.Applications {
-					ApplicationID := v.ID.String()
-					ApplicationName := v.Name
+					AppID := v.ID.String()
+					AppName := v.Name
 					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
-					data = append(data, []string{ApplicationID, ApplicationName, CreatedAt, UpdatedAt})
+					data = append(data, []string{AppID, AppName, CreatedAt, UpdatedAt})
 				}
-				utils.PrintToTableWithFooter([]string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
+				utils.PrintToTableWithFooter([]string{"APP ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
 				return nil
 			}
 
 			for _, v := range response.Applications {
-				ApplicationID := utils.TruncateID(v.ID.String())
+				AppID := utils.TruncateID(v.ID.String())
 				var UserID string
 				if v.UserID != nil {
 					UserID = *v.UserID
 				} else {
 					UserID = "null"
 				}
-				ApplicationName := v.Name
+				AppName := v.Name
 				CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
 				UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
-				data = append(data, []string{ApplicationID, UserID, ApplicationName, CreatedAt, UpdatedAt})
+				data = append(data, []string{AppID, UserID, AppName, CreatedAt, UpdatedAt})
 			}
-			utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
+			utils.PrintToTableWithFooter([]string{"APP ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
 
 			return nil
 		}
@@ -96,29 +103,29 @@ var listCmd = &cobra.Command{
 		// Check if messhery provider is set
 		if provider == "None" {
 			for _, v := range response.Applications {
-				ApplicationName := fmt.Sprintf("%s", strings.Trim(v.Name, filepath.Ext(v.Name)))
-				ApplicationID := utils.TruncateID(v.ID.String())
+				AppName := fmt.Sprintf("%s", strings.Trim(v.Name, filepath.Ext(v.Name)))
+				AppID := utils.TruncateID(v.ID.String())
 				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-				data = append(data, []string{ApplicationID, ApplicationName, CreatedAt, UpdatedAt})
+				data = append(data, []string{AppID, AppName, CreatedAt, UpdatedAt})
 			}
-			utils.PrintToTableWithFooter([]string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
+			utils.PrintToTableWithFooter([]string{"APP ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
 			return nil
 		}
 		for _, v := range response.Applications {
-			ApplicationID := utils.TruncateID(v.ID.String())
+			AppID := utils.TruncateID(v.ID.String())
 			var UserID string
 			if v.UserID != nil {
 				UserID = *v.UserID
 			} else {
 				UserID = "null"
 			}
-			ApplicationName := v.Name
+			AppName := v.Name
 			CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
 			UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-			data = append(data, []string{ApplicationID, UserID, ApplicationName, CreatedAt, UpdatedAt})
+			data = append(data, []string{AppID, UserID, AppName, CreatedAt, UpdatedAt})
 		}
-		utils.PrintToTableWithFooter([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
+		utils.PrintToTableWithFooter([]string{"APP ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
 
 		return nil
 
@@ -126,7 +133,5 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
-	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and application file identifiers")
-	listCmd.Flags().StringVarP(&token, "token", "t", "", "path to token")
-	_ = listCmd.MarkFlagRequired("token")
+	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and app file identifiers")
 }

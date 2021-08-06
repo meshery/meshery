@@ -35,14 +35,14 @@ const (
 // Handle POST request for Pattern Deploy
 //
 // Deploy an attached pattern with the request
-// response:
+// responses:
 // 	200:
 
 // swagger:route DELETE /api/pattern/deploy PatternsAPI idDeleteDeployPattern
 // Handle DELETE request for Pattern Deploy
 //
 // Delete a deployed pattern with the request
-// response:
+// responses:
 // 	200:
 
 // PatternFileHandler handles the requested related to pattern files

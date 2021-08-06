@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -27,6 +29,7 @@ var spec string
 var adapterURL string
 var namespace string
 var tokenPath string
+var watch bool
 var err error
 
 // validateCmd represents the service mesh validation command
@@ -72,6 +75,8 @@ var validateCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
+		s := utils.CreateDefaultSpinner("Validation started", "\nValidation complete")
 
 		path := mctlCfg.GetBaseMesheryURL() + "/api/mesh/ops"
 		method = "POST"
@@ -134,6 +139,16 @@ var validateCmd = &cobra.Command{
 
 		log.Infof(string(body))
 
+		if watch {
+			log.Infof("Verifying Operation")
+			s.Start()
+			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
+			if err != nil {
+				return errors.Wrap(err, "error verifying installation")
+			}
+			s.Stop()
+		}
+
 		return nil
 	},
 }
@@ -145,4 +160,57 @@ func init() {
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = validateCmd.MarkFlagRequired("tokenPath")
+	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
+}
+
+func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_validate"
+	method := "GET"
+	client := &http.Client{}
+	req, err := http.NewRequest(method, path, nil)
+	req.Header.Add("Accept", "text/event-stream")
+	if err != nil {
+		return "", err
+	}
+
+	err = utils.AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return "", err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	event, _ := utils.ConvertRespToSSE(res)
+
+	//Run a goroutine to wait for the response
+	go func() {
+		for i := range event {
+			log.Infof("Event :" + i.Data)
+			if strings.Contains(i.Data, query) {
+				wg.Done()
+			}
+		}
+	}()
+
+	//Run a goroutine to wait for time out of 20 mins
+	go func() {
+		time.Sleep(time.Second * 1200)
+		err = errors.New("timeout")
+		wg.Done()
+	}()
+
+	//Wait till any one of the goroutines ends and return
+	wg.Wait()
+
+	if err != nil {
+		return "", err
+	}
+
+	return "", nil
 }

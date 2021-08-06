@@ -153,15 +153,20 @@ const styles = (theme) => ({
     borderRadius: 4,
   },
   chipNamespace: {
-    gap:'2rem',
+    gap: '2rem',
     margin: "0px",
   },
   cardMesh: {
     margin: "-8px 0px",
   },
-  inputContainer:{
-    flex:'1',
-    minWidth:'250px'
+  inputContainer: {
+    flex: '1',
+    minWidth: '250px'
+  },
+  card: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column'
   }
 });
 
@@ -268,9 +273,9 @@ class MesheryAdapterPlayComponent extends React.Component {
             })
           }
           namespaces.sort((a, b) => (
-            a.value > b.value? 1: -1
+            a.value > b.value ? 1 : -1
           ))
-          self.setState({ namespaceList: namespaces})
+          self.setState({ namespaceList: namespaces })
         },
         error: (err) => console.log("error at namespace fetch: " + err),
       })
@@ -441,7 +446,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      `/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`,
+      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
       {
         credentials: "same-origin",
         credentials: "include",
@@ -954,7 +959,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     }
     return (
       <Card className={classes.card}>
-        <CardHeader title={content} subheader={description} />
+        <CardHeader title={content} subheader={description} style={{ flexGrow: 1 }} />
         <CardActions disableSpacing>
           <IconButton
             aria-label="install"

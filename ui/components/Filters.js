@@ -14,6 +14,7 @@ import {
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import UploadIcon from "@material-ui/icons/Publish";
+// import Checkbox from '@material-ui/core/Checkbox';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
@@ -378,7 +379,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     responsive: "scrollFullHeight",
     resizableColumns: true,
     serverSide: true,
-    selectableRows: "true",
+    selection: true,
     count,
     rowsPerPage: pageSize,
     rowsPerPageOptions: [10, 20, 25],
