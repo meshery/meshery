@@ -32,7 +32,9 @@ type PatternSetting struct {
 }
 
 type PatternSettingAdvanced struct {
-	SkipService bool `json:"skip_service,omitempty"`
+	SkipService bool              `json:"skip_service,omitempty"`
+	Labels      map[string]string `json:"labels,omitempty"`
+	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
 type PatternConfiguration struct {
