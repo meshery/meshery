@@ -472,6 +472,7 @@ class DashboardComponent extends React.Component {
       action: (key) => (
         <>
           <Button
+            variant="contained"
             key="configure-close"
             aria-label="Configure"
             className={classes.redirectButton}
@@ -480,6 +481,7 @@ class DashboardComponent extends React.Component {
               self.props.closeSnackbar(key);
             }}
           >
+            <SettingsIcon className={classes.settingsIcon} />
             Settings
           </Button>
 
