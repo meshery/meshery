@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -41,9 +42,11 @@ func NewTestHelper(t *testing.T) *TestHelper {
 }
 
 type CmdTestInput struct {
-	Name             string
-	Args             []string
-	ExpectedResponse string
+	Name                 string
+	Args                 []string
+	ExpectedResponse     string
+	ExpectedResponseYaml string
+	ExpectError          bool
 }
 
 type GoldenFile struct {
@@ -127,6 +130,7 @@ func SetupContextEnv(t *testing.T) {
 	}
 	viper.Reset()
 	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
+	DefaultConfigPath = path + "/../../../../pkg/utils/TestConfig.yaml"
 	//fmt.Println(viper.ConfigFileUsed())
 	err = viper.ReadInConfig()
 	if err != nil {
@@ -151,6 +155,7 @@ func SetupLogrusGrabTesting(t *testing.T) *bytes.Buffer {
 func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	viper.Reset()
 	viper.SetConfigFile(pathToContext)
+	DefaultConfigPath = pathToContext
 	//fmt.Println(viper.ConfigFileUsed())
 	err := viper.ReadInConfig()
 	if err != nil {
@@ -194,5 +199,28 @@ func SetFileLocationTesting(t *testing.T, dir string) {
 	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
 	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
 	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
-	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
+}
+func Populate(src, dst string) error {
+	sourceFileStat, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+
+	if !sourceFileStat.Mode().IsRegular() {
+		return fmt.Errorf("%s is not a regular file", src)
+	}
+
+	source, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+
+	destination, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destination.Close()
+	_, err = io.Copy(destination, source)
+	return err
 }
