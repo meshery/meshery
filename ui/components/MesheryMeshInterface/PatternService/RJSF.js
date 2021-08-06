@@ -28,6 +28,12 @@ function ArrayFieldTemplate(props) {
   );
 }
 
+const uiSchema = {
+  replicas: {
+    "ui:widget" : "range"
+  }
+};
+
 // function CustomFieldTemplate(props) {
 //   const {id, classNames, label, help, required, description, errors, children} = props;
 //   console.log(label, props);
@@ -71,8 +77,10 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete,
           onChange={(e) => setData(e.formData)}
           formData={data}
           liveValidate
+          showErrorList={false}
           additionalMetaSchemas={[JS4]}
           ArrayFieldTemplate={ArrayFieldTemplate}
+          uiSchema={uiSchema}
           // noHtml5Validate
         >
           {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />}

@@ -131,7 +131,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, isMesher
       {isMeshery ? (<Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
       </Typography>) : (
-        <div style={{ right: 0, position: "absolute" }}>
+        <div style={{ right: 0, position: "absolute", zIndex: 1 }}>
           <IconButton onClick={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}>
             <Delete />
           </IconButton>
