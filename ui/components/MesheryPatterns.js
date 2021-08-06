@@ -159,7 +159,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
         credentials: "include",
         method: "POST",
         body: pattern_file,
-      }, (res) => {
+      }, () => {
         console.log("PatternFile Deploy API", `/api/pattern/deploy`);
         updateProgress({ showProgress: false });
         enqueueSnackbar("Pattern Successfully Deployed!", {
