@@ -159,10 +159,14 @@ func createNativeArgoResource(opt RolloutEngineGenericOptions) v1alpha1.Rollout 
 			Kind:       "Rollout",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        opt.Name,
-			Namespace:   opt.Namespace,
-			Labels:      opt.Metadata.Labels,
-			Annotations: opt.Metadata.Annotations,
+			Name:      opt.Name,
+			Namespace: opt.Namespace,
+			Labels: helpers.MergeStringMaps(
+				map[string]string{"app": opt.Name},
+				opt.Advanced.Labels,
+				opt.Metadata.Labels,
+			),
+			Annotations: helpers.MergeStringMaps(opt.Metadata.Annotations, opt.Metadata.Annotations),
 		},
 		Spec: v1alpha1.RolloutSpec{
 			Replicas:             &replicas,
@@ -174,9 +178,13 @@ func createNativeArgoResource(opt RolloutEngineGenericOptions) v1alpha1.Rollout 
 			},
 			Template: v1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Labels: helpers.MergeStringMaps(map[string]string{
-						"app": opt.Name,
-					}, opt.Metadata.Labels),
+					Labels: helpers.MergeStringMaps(
+						map[string]string{
+							"app": opt.Name,
+						},
+						opt.Advanced.Labels,
+						opt.Metadata.Labels,
+					),
 				},
 				Spec: v1.PodSpec{
 					Containers: containers,
