@@ -1,7 +1,6 @@
 package system
 
 import (
-	"bytes"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -13,32 +12,40 @@ import (
 
 //var update1 = flag.Bool("update", true, "update golden files")
 
-// This is an Integration test
+// This is an Unit test
 func TestResetCmd(t *testing.T) {
-	SetupContextEnv(t)
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	utils.SetupCustomContextEnv(t, currDir+"/testdata/reset/TestResetContexts.yaml")
+
 	tests := []utils.CmdTestInput{
 		{
+			Name:             "Reset the meshery config file with kubernetes platform",
+			Args:             []string{"reset", "-y", "-c", "local"},
+			ExpectedResponse: "reset_kubernetes.output.golden",
+		},
+		{
 			Name:             "Reset the meshery config file with docker platform",
-			Args:             []string{"reset", "-y"},
-			ExpectedResponse: "reset.output.golden",
+			Args:             []string{"reset", "-y", "-c", "local2"},
+			ExpectedResponse: "reset_docker.output.golden",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			// setting up log to grab logs
-			var buf bytes.Buffer
-			log.SetOutput(&buf)
-			utils.SetupLogrusFormatter()
-
+			b := utils.SetupLogrusGrabTesting(t)
+			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
 
-			output := buf.String()
-			actualResponse := output
+			actualResponse := b.String()
 
 			// get current directory
 			_, filename, _, ok := runtime.Caller(0)

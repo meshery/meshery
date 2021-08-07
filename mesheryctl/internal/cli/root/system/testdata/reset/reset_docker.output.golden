@@ -1,11 +1,11 @@
 Meshery resetting...
 
-Current Context: local
+Current Context: local2
 Channel: stable
-Version: v0.5.10
+Version: latest
 Platform: docker
 
-Fetching default docker-compose file as per current-context: local...
+Fetching default docker-compose file as per current-context: local2...
 
 Fetching Meshery Operator manifests...
 
