@@ -29,6 +29,60 @@
         "short_description": "Error downloading file ",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrStopMesheryCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error stopping meshery",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrResetMeshconfigCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error resetting meshconfig",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1005": {
+        "name": "ErrApplyManifestCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying manifest with update: \n and delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1006": {
+        "name": "ErrApplyOperatorManifestCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying operator manifests with update: \n and delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1007": {
+        "name": "ErrCreateDirCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating directory ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1008": {
+        "name": "ErrUnmarshalCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error unmarshalling file ",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }

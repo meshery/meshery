@@ -2,30 +2,33 @@
 
 | Name              | GitHub            | Affiliation |
 | ----------------- | ----------------- | ----------- |
+| Hussaina Begum    | hexxdump          | VMware      |
 | Lee Calcote       | leecalcote        | Layer5      |
 | Navendu Pottekkat | navendu-pottekkat | Layer5      |
-| Hussaina Begum    | hexxdump          | VMware      |
+
 
 ### UI Maintainers
 
 | Name         | GitHub       | Affiliation |
-| ------------ | ------------ | ----------- | 
+| ------------ | ------------ | ----------- |
+| Dhruv Patel  | dhruv0000    | Layer5      | 
 | Lee Calcote  | leecalcote   | Layer5      |
 | Nikhil Ladha | Nikhil-Ladha | Red Hat     |
-| Dhruv Patel  | dhruv0000    | Layer5      |
+
 
 ### Adapter Maintainers
 
 | Name               | GitHub      | Affiliation |
 | ------------------ | ----------- | ----------- |
-| Lee Calcote        | leecalcote  | Layer5      |
 | Abishek Kumar      | kumarabd    | Layer5      |
-| Utkarsh Srivastava | utkarsh-pro | Layer5      |
 | Aisuko             | Aisuko      | Layer5      |
-| Michael Gfeller    | mgfeller    | Computas AS |
+| Dhiraj Gedam       | dheerajng   | Citrix      |
 | Haim Helman        | thehh1974   | VMware      |
 | Hussaina Begum     | hexxdump    | VMware      |
-| Dhiraj Gedam       | dheerajng   | Citrix      |
+| Lee Calcote        | leecalcote  | Layer5      |
+| Michael Gfeller    | mgfeller    | Computas AS |
+| Utkarsh Srivastava | utkarsh-pro | Layer5      |
+
 
 ### CI / Build & Release Maintainers
 
@@ -39,15 +42,15 @@
 
 | Name            | GitHub          | Affiliation |
 | --------------- | --------------- | ----------- |
-| Lee Calcote     | leecalcote      | Layer5      |
 | Adithya Krishna | adithyaakrishna | Red Hat     |
+| Lee Calcote     | leecalcote      | Layer5      |
 
 
 ### Core Maintainers
 
 | Name               | GitHub      | Affiliation |
 | ------------------ | ----------- | ----------- |
-| Lee Calcote        | leecalcote  | Layer5      |
 | Abishek Kumar      | kumarabd    | Layer5      |
+| Lee Calcote        | leecalcote  | Layer5      |
 | Utkarsh Srivastava | utkarsh-pro | Layer5      |
 

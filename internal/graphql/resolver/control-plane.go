@@ -30,6 +30,7 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 	if r.controlPlaneChannel == nil {
 		r.controlPlaneChannel = make(chan []*model.ControlPlane)
 	}
+
 	go func() {
 		r.Log.Info("Initializing ControlPlane subscription")
 		err := r.connectToBroker(context.TODO(), provider)
@@ -37,14 +38,20 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 			r.Log.Error(err)
 			return
 		}
-		select {
-		case <-r.MeshSyncChannel:
-			status, err := r.getControlPlanes(ctx, provider, filter)
-			if err != nil {
-				r.Log.Error(ErrControlPlaneSubscription(err))
+
+		for {
+			select {
+			case <-r.MeshSyncChannel:
+				status, err := r.getControlPlanes(ctx, provider, filter)
+				if err != nil {
+					r.Log.Error(ErrControlPlaneSubscription(err))
+					break
+				}
+				r.controlPlaneChannel <- status
+			case <-ctx.Done():
+				r.Log.Info("ControlPlane subscription stopped")
 				return
 			}
-			r.controlPlaneChannel <- status
 		}
 	}()
 	return r.controlPlaneChannel, nil

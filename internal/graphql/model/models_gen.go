@@ -40,6 +40,21 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type MesheryResult struct {
+	MesheryID          *string                `json:"meshery_id"`
+	Name               *string                `json:"name"`
+	Mesh               *string                `json:"mesh"`
+	PerformanceProfile *string                `json:"performance_profile"`
+	TestID             *string                `json:"test_id"`
+	RunnerResults      map[string]interface{} `json:"runner_results"`
+	ServerMetrics      *string                `json:"server_metrics"`
+	ServerBoardConfig  *string                `json:"server_board_config"`
+	TestStartTime      *string                `json:"test_start_time"`
+	UserID             *string                `json:"user_id"`
+	UpdatedAt          *string                `json:"updated_at"`
+	CreatedAt          *string                `json:"created_at"`
+}
+
 type NameSpace struct {
 	Namespace string `json:"namespace"`
 }
@@ -60,6 +75,22 @@ type OperatorStatus struct {
 
 type OperatorStatusInput struct {
 	TargetStatus Status `json:"targetStatus"`
+}
+
+type PageFilter struct {
+	Page     string  `json:"page"`
+	PageSize string  `json:"pageSize"`
+	Order    *string `json:"order"`
+	Search   *string `json:"search"`
+	From     *string `json:"from"`
+	To       *string `json:"to"`
+}
+
+type PerfPageResult struct {
+	Page       int              `json:"page"`
+	PageSize   int              `json:"page_size"`
+	TotalCount int              `json:"total_count"`
+	Results    []*MesheryResult `json:"results"`
 }
 
 type ReSyncActions struct {

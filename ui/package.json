@@ -4,7 +4,7 @@
   "description": "the service mesh management plane",
   "main": "index.js",
   "scripts": {
-    "dev": "eslint . && nodemon ui_dev_server.js",
+    "dev": "eslint . && node ui_dev_server.js",
     "lint": "eslint --fix .",
     "next": "next",
     "build": "next build",
@@ -16,7 +16,8 @@
     "test-integration": "cypress run --spec 'cypress/integration/integration/**/*'",
     "test-e2e": "cypress run --spec 'cypress/integration/e2e/**/*'",
     "ci-test-integration": "start-server-and-test dev http://localhost:3000 test-integration",
-    "relay": "relay-compiler --src ./components --schema ../internal/graphql/schema/schema.graphql"
+    "relay": "relay-compiler --src ./components --schema ../internal/graphql/schema/schema.graphql",
+    "prepare": "cd .. && husky install ui/.husky"
   },
   "husky": {
     "hooks": {
@@ -33,7 +34,7 @@
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@cypress/code-coverage": "^3.9.9",
+    "@cypress/code-coverage": "^3.9.10",
     "@date-io/moment": "^2.11.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-brands-svg-icons": "^5.15.3",
@@ -42,16 +43,16 @@
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@material-ui/core": "^4.9.12",
     "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.58",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "@material-ui/pickers": "^3.3.10",
     "@paciolan/remote-component": "^2.11.0",
-    "@rjsf/core": "^2.5.1",
+    "@rjsf/core": "^3.0.0",
     "@rjsf/material-ui": "^3.0.0",
     "@zeit/next-css": "^1.0.1",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-relay": "^11.0.2",
     "billboard.js": "=3.1.2",
-    "caniuse-lite": "^1.0.30001194",
+    "caniuse-lite": "^1.0.30001248",
     "classnames": "^2.3.1",
     "codemirror": "^5.62.2",
     "cron-time-generator": "^1.2.0",
@@ -93,10 +94,10 @@
   },
   "devDependencies": {
     "@babel/traverse": "^7.14.7",
-    "@babel/types": "^7.14.8",
+    "@babel/types": "^7.14.9",
     "@types/react-relay": "^11.0.2",
     "babel-eslint": "^10.1.0",
-    "cypress": "^7.6.0",
+    "cypress": "^8.1.0",
     "eslint": "^7.31.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-google": "^0.14.0",
@@ -107,10 +108,10 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "http-proxy": "^1.18.1",
     "husky": "^7.0.1",
-    "lint-staged": "^11.0.0",
-    "nodemon": "^2.0.9",
+    "lint-staged": "^11.1.1",
+    "nodemon": "^2.0.12",
     "nyc": "^15.1.0",
     "relay-compiler": "^11.0.2",
-    "start-server-and-test": "^1.13.0"
+    "start-server-and-test": "^1.13.1"
   }
 }

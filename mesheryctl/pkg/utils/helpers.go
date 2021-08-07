@@ -227,7 +227,8 @@ func SetFileLocation() error {
 		return errors.Wrap(err, "failed to get users home directory")
 	}
 	MesheryFolder = filepath.Join(home, MesheryFolder)
-	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
+	ManifestsFolder = filepath.Join(MesheryFolder, ManifestsFolder)
+	DockerComposeFile = filepath.Join(ManifestsFolder, DockerComposeFile)
 	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
 	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
 	return nil
@@ -556,6 +557,17 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models
 	}
 
 	return prefs, nil
+}
+
+// ContainsStringPrefix takes a string slice and a string and returns true if it is present
+func ContainsStringPrefix(arr []string, str string) bool {
+	for _, el := range arr {
+		if strings.HasPrefix(el, str) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // TransformYAML takes in:

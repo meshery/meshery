@@ -113,8 +113,8 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
   const ACTION_TYPES = {
     FETCH_PATTERNS: {
-      name: "FETCH_PATTERNS" ,
-      error_msg: "Failed to fetch patterns" 
+      name: "FETCH_PATTERNS",
+      error_msg: "Failed to fetch patterns"
     },
     UPDATE_PATTERN: {
       name: "UPDATE_PATTERN",
@@ -152,18 +152,29 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
    */
 
   const handleDeploy = (pattern_file) => {
-    updateProgress({showProgress: true})
+    updateProgress({ showProgress: true })
     dataFetch(
       DEPLOY_URL,
       {
         credentials: "include",
         method: "POST",
-        body:pattern_file,
-      },() => {
-        console.log("PattrnFile Deploy API", `/api/pattern/deploy`);
-        updateProgress({showProgress : false})
+        body: pattern_file,
+      }, () => {
+        console.log("PatternFile Deploy API", `/api/pattern/deploy`);
+        updateProgress({ showProgress: false });
+        enqueueSnackbar("Pattern Successfully Deployed!", {
+          variant: "success",
+          action: function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration: 2000,
+        });
       },
-      handleError(ACTION_TYPES.DEPLOY_PATTERN)
+      handleError(ACTION_TYPES.DEPLOY_PATTERN),
     )
   }
 
@@ -196,7 +207,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     );
   }
 
-  const handleError = (action) => (error) =>  {
+  const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
 
     enqueueSnackbar(`${action.error_msg}: ${error}`, {
@@ -219,7 +230,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({showProgress: true})
+    updateProgress({ showProgress: true })
     if (type === "delete") {
       dataFetch(
         `/api/pattern/${id}`,
@@ -281,9 +292,9 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
       handleSubmit(
-        event.target.result, 
-        "", 
-        file?.name || "meshery_" + Math.floor(Math.random() * 100), 
+        event.target.result,
+        "",
+        file?.name || "meshery_" + Math.floor(Math.random() * 100),
         "upload",
       );
     });
@@ -370,20 +381,20 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
             <>
               <IconButton>
                 <EditIcon
-                  title="Config"  
+                  title="Config"
                   aria-label="config"
                   color="inherit"
-                  onClick={() => setSelectedRowData(patterns[tableMeta.rowIndex])}/>
+                  onClick={() => setSelectedRowData(patterns[tableMeta.rowIndex])} />
               </IconButton>
-              <IconButton>               
+              <IconButton>
                 <PlayArrowIcon
-                  title="Deploy"  
+                  title="Deploy"
                   aria-label="deploy"
                   color="inherit"
                   onClick={() => handleDeploy(rowData.pattern_file)} //deploy endpoint to be called here
                 />
               </IconButton>
-            </>    
+            </>
           );
         },
       },
@@ -404,7 +415,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     responsive: "scrollFullHeight",
     resizableColumns: true,
     serverSide: true,
-    selectableRows: "none",
+    selection: true,
     count,
     rowsPerPage: pageSize,
     rowsPerPageOptions: [10, 20, 25],

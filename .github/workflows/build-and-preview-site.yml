@@ -4,6 +4,7 @@ on:
     branches: [ master ]
     types: [opened, synchronize, reopened]
     paths:
+      - '!**'
       - 'docs/**'
 jobs:
   trigger-site-preview:

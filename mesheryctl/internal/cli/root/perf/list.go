@@ -12,6 +12,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -44,6 +45,11 @@ var listCmd = &cobra.Command{
 	Example: "mesheryctl perf list \nmesheryctl perf list [profile-id]",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		page = 0 //Set the page number for API response to be zero
+
+		// set default tokenpath for command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+		}
 
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -309,8 +315,4 @@ func printOutputInFormat(mctlCfg *config.MesheryCtlConfig, args []string) error 
 	log.Info(string(body))
 
 	return nil
-}
-
-func init() {
-	_ = listCmd.MarkFlagRequired("token")
 }

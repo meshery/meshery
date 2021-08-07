@@ -1,14 +1,17 @@
-package application
+package app
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -24,27 +27,46 @@ var viewCmd = &cobra.Command{
 	Use:   "view <application name>",
 	Short: "Display application(s)",
 	Long:  `Displays the contents of a specific application based on name or id`,
-	Args:  cobra.MaximumNArgs(1),
+	Example: `
+	View applictaions with name
+	mesheryctl app view <app-name>
+
+	View applications with id
+	mesheryctl app view <app-id>
+
+	View all applications
+	mesheryctl app view --all
+	`,
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+		// set default tokenpath for app offboard command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+		}
 		application := ""
 		isID := false
+		applicationID := ""
 		// if application name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [application-name|application-id] is specified")
 			}
-			application = args[0]
+			applicationID = args[0]
 			// check if the application argument is a valid uuid v4 string
-			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", application)
+			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", applicationID)
 			if err != nil {
 				return err
 			}
 		}
+		var req *http.Request
 		url := mctlCfg.GetBaseMesheryURL()
+		var response *models.ApplicationsAPIResponse
+		// Merge args to get app-name
+		application = strings.Join(args, "%20")
 		if len(application) == 0 {
 			if viewAllFlag {
 				url += "/api/experimental/application?page_size=10000"
@@ -53,14 +75,14 @@ var viewCmd = &cobra.Command{
 			}
 		} else if isID {
 			// if application is a valid uuid, then directly fetch the application
-			url += "/api/experimental/application/" + application
+			url += "/api/experimental/application/" + applicationID
 		} else {
 			// else search application by name
 			url += "/api/experimental/application?search=" + application
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", url, nil)
+		req, err = http.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}
@@ -89,25 +111,41 @@ var viewCmd = &cobra.Command{
 		if err = json.Unmarshal(body, &dat); err != nil {
 			return errors.Wrap(err, "failed to unmarshal response body")
 		}
-
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
 				return err
 			}
 		} else if viewAllFlag {
-			// only keep the application key from the response when viewing all the applications
 			if body, err = json.MarshalIndent(map[string]interface{}{"applications": dat["applications"]}, "", "  "); err != nil {
 				return err
 			}
 		} else {
-			// use the first match from the result when searching by application name
-			arr := dat["applications"].([]interface{})
-			if len(arr) == 0 {
-				log.Infof("application with name: %s not found", application)
-				return nil
+			if err = json.Unmarshal(body, &response); err != nil {
+				return errors.Wrap(err, "failed to unmarshal response body")
 			}
-			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
-				return err
+			if response.TotalCount == 0 {
+				return errors.New("application does not exit. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")
+			}
+			// Manage more than one apps with similar name
+			for _, app := range response.Applications {
+				if response.Applications == nil {
+					return errors.New("application name not provide. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")
+				}
+				body, err = json.MarshalIndent(&app, "", "  ")
+				if err != nil {
+					return err
+				}
+				if outFormatFlag == "json" {
+					log.Info(string(body))
+					continue
+				}
+				if outFormatFlag == "yaml" {
+					if body, err = yaml.JSONToYAML(body); err != nil {
+						return errors.Wrap(err, "failed to convert json to yaml")
+					}
+					log.Info(string(body))
+					continue
+				}
 			}
 		}
 
@@ -118,7 +156,9 @@ var viewCmd = &cobra.Command{
 		} else if outFormatFlag != "json" {
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
-		log.Info(string(body))
+		if viewAllFlag || isID {
+			log.Info(string(body))
+		}
 		return nil
 	},
 }

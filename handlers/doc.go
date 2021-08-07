@@ -14,6 +14,7 @@
 //
 //     Consumes:
 //     - application/json
+//	   - multipart/form-data
 //
 //     Produces:
 //     - application/json
@@ -32,6 +33,8 @@
 package handlers
 
 import (
+	"bytes"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
@@ -56,7 +59,7 @@ type mesheryPatternResponseWrapper struct {
 type noContentWrapper struct {
 }
 
-// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule
+// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule idDeleteMesheryApplicationFile
 type IDParameterWrapper struct {
 	// id for a specific
 	// in: path
@@ -243,6 +246,33 @@ type singleScheduleResponseWrapper struct {
 	Body models.Schedule
 }
 
+// Return all the adapters
+// swagger:response systemAdaptersRespWrapper
+type systemAdaptersRespWrapper struct {
+	// in: body
+	Body []models.Adapter
+}
+
+// swagger:response adapterPingParams
+type adapterPingParamsWrapper struct {
+	// in: query
+	Adapter string `json:"adapter"`
+}
+
+// Returns saved kubernetes config
+// swagger:response k8sConfigRespWrapper
+type k8sConfigRespWrapper struct {
+	// in: body
+	Body *models.K8SConfig
+}
+
+// Returns kubernetes context list
+// swagger:response k8sContextsRespWrapper
+type k8sContextsRespWrapper struct {
+	// in: body
+	Body []*models.K8SContext
+}
+
 // Parameters for updating provider choice
 // swagger:parameters idChoiceProvider
 type mesheryProviderParamsWrapper struct {
@@ -269,4 +299,20 @@ type providerPropertiesRespWrapper struct {
 type mesheryVersionRespWrapper struct {
 	// in: body
 	Body Version
+}
+
+// Returns the response of the application files
+// swagger:response applicationFilesResponseWrapper
+type applicationFilesResponseWrapper struct {
+	// in: body
+	Body *models.MesheryApplication
+}
+
+// Parameters for uploading a yaml file
+// swagger:parameters idPostDeployApplicationFile idPostDeployPattern
+type applicationFileParamsWrapper struct {
+	// in: formData
+	//
+	// swagger:file
+	FormFile *bytes.Buffer `json:"Upload Yaml/Yml File"`
 }

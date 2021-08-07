@@ -31,7 +31,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
-import SaveIcon from "@material-ui/icons/Save";
+import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import {
   updateLoadTestData,
   updateStaticPrometheusBoardConfig,
@@ -142,6 +142,12 @@ const styles = (theme) => ({
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
+  },
+  smallIcons: {
+    width: "15px",
+    height: "18px",
+    marginBottom: theme.spacing(1),
+    marginLeft: theme.spacing(0.3),
   },
 });
 
@@ -837,6 +843,7 @@ class MesheryPerformanceComponent extends React.Component {
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleChange("c")}
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -852,6 +859,7 @@ class MesheryPerformanceComponent extends React.Component {
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleChange("qps")}
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -943,7 +951,7 @@ class MesheryPerformanceComponent extends React.Component {
               </Grid>
               <Grid item xs={12} md={4}>
                 <FormControl component="loadGenerator" className={classes.margin}>
-                  <FormLabel component="loadGenerator" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap',}}>Load generator<Tooltip title={infoloadGenerators} interactive><HelpOutlineOutlinedIcon /></Tooltip></FormLabel>
+                  <FormLabel component="loadGenerator" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap',}}>Load generator<Tooltip title={infoloadGenerators} interactive><HelpOutlineOutlinedIcon className={classes.smallIcons}/></Tooltip></FormLabel>
                   <RadioGroup
                     aria-label="loadGenerator"
                     name="loadGenerator"
@@ -968,7 +976,7 @@ class MesheryPerformanceComponent extends React.Component {
                   onClick={() => this.submitProfile()}
                   className={classes.button}
                   disabled={disableTest}
-                  startIcon={<SaveIcon />}
+                  startIcon={<SaveOutlinedIcon />}
                 >
                   Save Profile
                 </Button>

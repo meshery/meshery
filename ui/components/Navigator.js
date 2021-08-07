@@ -19,6 +19,7 @@ import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -37,6 +38,7 @@ import { updatepagetitle } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
+import { Collapse } from "@material-ui/core";
 
 const styles = (theme) => ({
   categoryHeader: {
@@ -50,7 +52,13 @@ const styles = (theme) => ({
     paddingTop: 4,
     paddingBottom: 4,
     color: "rgba(255, 255, 255, 0.7)",
-    fill: "#fff"
+    fill: "#fff",
+    '&:hover': {
+      '& $expandMoreIcon': {
+        opacity: 1,
+        transition: "opacity 200ms ease-in",
+      }
+    }
   },
   itemCategory: {
     backgroundColor: "#263238",
@@ -217,6 +225,9 @@ const styles = (theme) => ({
     opacity: "0.7",
     transition: "opacity 200ms linear",
     transform: "rotate(180deg)",
+    justifyContent: "center",
+    alignSelf: "baseline",
+    marginLeft: "3px",
     "&:hover": {
       opacity: 1,
       background: "transparent",
@@ -267,10 +278,6 @@ const styles = (theme) => ({
       background: "transparent",
     },
   },
-  helperIcons: {
-    textAlign: "right",
-    marginLeft: "auto",
-  },
   extraPadding: {
     paddingTop: 4,
     paddingBottom: 4
@@ -278,6 +285,25 @@ const styles = (theme) => ({
   restrictPointer: {
     pointerEvents: 'none'
   },
+  expandMoreIcon: {
+    opacity: 0,
+    cursor: 'pointer',
+    transform: 'translateX(3px)',
+    '&:hover': {
+      color: "#4fc3f7",
+    }
+  },
+  collapsed: {
+    transform: 'rotate(180deg) translateX(-3px)',
+  },
+  collapsedHelpButton: {
+    height: '30px',
+    marginTop: '-4px',
+    transform: 'translateX(-1px)'
+  },
+  rightTranslate: {
+    transform: 'translateX(0.5px)'
+  }
 });
 
 const drawerIconsStyle = { height: "1.21rem", width: "1.21rem", fontSize: "1.21rem" };
@@ -420,7 +446,7 @@ const categories = [
       {
         id: "Profiles",
         icon:
-          <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ height: "1.8rem", verticalAlign: "top" }} />,
+          <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ verticalAlign: "top"}} />,
         href: "/performance/profiles",
         title: "Profiles",
         show: true,
@@ -503,6 +529,7 @@ class Navigator extends React.Component {
       navigator: ExtensionPointSchemaValidator("navigator")(),
       showHelperButton: false,
       capabilities: [],
+      openItems: [],
     };
   }
 
@@ -725,6 +752,17 @@ class Navigator extends React.Component {
   toggleSpacing = () => {
     const { showHelperButton } = this.state;
     this.setState({ showHelperButton: !showHelperButton });
+
+  }
+
+  toggleItemCollapse = (id) => {
+    const activeItems = [...this.state.openItems];
+    if (this.state.openItems.includes(id)) {
+      this.setState({ openItems: activeItems.filter(item => item !== id) })
+    } else {
+      activeItems.push(id);
+      this.setState({ openItems: activeItems })
+    }
   }
 
   renderChildren(idname, children, depth) {
@@ -875,14 +913,15 @@ class Navigator extends React.Component {
               return (
                 <React.Fragment key={childId}>
                   <ListItem
-                    button
+                    button={!!link}
                     dense
                     key={childId}
                     className={classNames(
                       classes.item,
-                      link ? classes.itemActionable : classes.restrictPointer,
+                      link ? classes.itemActionable : '',
                       path === href && classes.itemActiveItem
                     )}
+                    onClick={() => this.toggleItemCollapse(childId)}
                   >
                     <Link href={link ? href : ""}>
                       <div className={classNames(classes.link)}>
@@ -905,8 +944,17 @@ class Navigator extends React.Component {
                         </ListItemText>
                       </div>
                     </Link>
+                    <ExpandMoreIcon
+                      onClick={() => this.toggleItemCollapse(childId)}
+                      className={classNames(classes.expandMoreIcon, {
+                        [classes.collapsed]: this.state.openItems.includes(childId)
+                      })}
+                      style={isDrawerCollapsed || !children ? { opacity: 0 } : {}}
+                    />
                   </ListItem>
-                  {this.renderChildren(childId, children, 1)}
+                  <Collapse in={isDrawerCollapsed || this.state.openItems.includes(childId)}>
+                    {this.renderChildren(childId, children, 1)}
+                  </Collapse>
                 </React.Fragment>
               );
             })}
@@ -931,6 +979,7 @@ class Navigator extends React.Component {
                   <ListItem
                     key={id}
                     className={classes.item}
+                    style={isDrawerCollapsed && !showHelperButton ? { display: 'none' } : {}}
                   >
                     <Grow
                       in={showHelperButton}
@@ -945,7 +994,7 @@ class Navigator extends React.Component {
                           title={title}
                           placement={isDrawerCollapsed ? "right" : "top"}
                         >
-                          <ListItemIcon className={classNames(classes.listIcon, classes.helperIcons, classes.helpIcon)}>{icon}</ListItemIcon>
+                          <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>{icon}</ListItemIcon>
                         </Tooltip>
                       </a>
                     </Grow>
@@ -959,19 +1008,17 @@ class Navigator extends React.Component {
                   title="Help"
                   placement={isDrawerCollapsed ? "right" : "top"}
                 >
-                  <IconButton onClick={() => this.toggleSpacing()}>
+                  <IconButton className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate} onClick={() => this.toggleSpacing()}>
                     <HelpIcon
                       className={classes.helpIcon}
-                      style={showHelperButton
-                        ? { color: "#8ed7f8", opacity: 1 }
-                        : { color: "#8ed7f8" }}
+                      style={{ fontSize: '1.45rem', }}
                     />
                   </IconButton>
                 </Tooltip>
               </ListItem>
             </ButtonGroup>
 
-            <ListItem button className={classname} onClick={() => this.toggleMiniDrawer()}>
+            <ListItem button className={classname} onClick={() => this.toggleMiniDrawer()}  style={{position:"sticky", zIndex:"1", bottom:"0", right: "0" }}>
               <FontAwesomeIcon
                 icon={faChevronCircleLeft}
                 fixedWidth

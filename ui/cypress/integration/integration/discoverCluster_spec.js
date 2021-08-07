@@ -10,8 +10,8 @@ describe("Settings", () => {
       });
 
       it("search Cluster Deployment & ping k8s cluster", () => {
-        cy.intercept('GET', '/api/k8sconfig/ping', { fixture: 'clusterVersion.json' }).as('getK8sVersion')
-        cy.intercept('GET', '/api/system/sync', { fixture: 'sync.json' }).as('getConfigSync')
+        cy.intercept('GET', '/api/system/kubernetes/ping', { fixture: 'clusterVersion.json' }).as('getK8sVersion')
+        cy.intercept('GET', '/api/config/sync', { fixture: 'sync.json' }).as('getConfigSync')
 
         cy.get("[data-cy=tabInClusterDeployment]").click();
         cy.get("[data-cy=btnDiscoverCluster]").click();

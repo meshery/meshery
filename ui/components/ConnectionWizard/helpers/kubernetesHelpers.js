@@ -8,7 +8,7 @@ import dataFetch from "../../../lib/data-fetch";
 */
 export const pingKubernetes = (successHandler,errorHandler) => {
   dataFetch(
-    "/api/k8sconfig/ping",
+    "/api/system/kubernetes/ping",
     {
       credentials: "same-origin",
       credentials: "include",
@@ -18,31 +18,7 @@ export const pingKubernetes = (successHandler,errorHandler) => {
   );
 }
 
-export const pingKubernetesWithNotification = (updateProgress, snackbar, action) => {
 
-  const successHandler = (res) => {
-    updateProgress({showProgress: false})  
-    if(res !== undefined)
-      snackbar(`Kubernetes sucessfully pinged`, {
-        variant: "success",
-        action,
-        autoHideDuration: 7000,
-      })
-  }
-
-  const errorHandler = (err) => {
-    updateProgress({showProgress: false})  
-    snackbar(`Failed to ping kubernetes: ${err}`, {
-      variant: "error",
-      action,
-      autoHideDuration: 7000,
-    })
-  }
-
-  updateProgress({showProgress : true})
-  pingKubernetes(successHandler, errorHandler)
-
-}
   
 /**
   * Figures out if kubernetes connection is established or not
@@ -66,7 +42,7 @@ export const isKubernetesConnected = (isClusterConfigured,kubernetesPingStatus) 
 
 export const deleteKubernetesConfig = (successCb,errorCb) => 
   dataFetch(
-    "/api/k8sconfig",
+    "/api/system/kubernetes",
     {
       credentials: "same-origin",
       method: "DELETE",
@@ -76,44 +52,7 @@ export const deleteKubernetesConfig = (successCb,errorCb) =>
     errorCb
   )
 
-export const reconfigureKubernetes = (updateProgress, enqueueSnackbar, action, updateK8SConfig) => {
 
-  const successCb = (result) => {
-    updateProgress({ showProgress: false });
-    if (typeof result !== "undefined") {
-      
-      updateK8SConfig({
-        k8sConfig: {
-          inClusterConfig: false,
-          k8sfile: "",
-          contextName: "",
-          clusterConfigured: false,
-        },
-      });
-      enqueueSnackbar("Kubernetes config was successfully removed!", {
-        variant: "success",
-        autoHideDuration: 2000,
-        action
-      });
-    }
-  }
-      
-  const errorCb = (err) => {
-
-    updateProgress({ showProgress: false });
-    enqueueSnackbar("Not able to remove kubernetes cluster: "+err, {
-      variant: "error",
-      autoHideDuration: 2000,
-      action 
-    });
-  }
-
-  deleteKubernetesConfig(
-    successCb,
-    errorCb
-  )
-
-}
 
 
 export const fetchContexts = (updateProgress, k8sfile) => {
@@ -130,7 +69,7 @@ export const fetchContexts = (updateProgress, k8sfile) => {
 
   return new Promise((res, rej) => {
     dataFetch(
-      "/api/k8sconfig/contexts",
+      "/api/system/kubernetes/contexts",
       {
         credentials: "same-origin",
         method: "POST",
@@ -169,7 +108,7 @@ export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, a
   }
   updateProgress({ showProgress: true });
   dataFetch(
-    "/api/k8sconfig",
+    "/api/system/kubernetes",
     {
       credentials: "same-origin",
       method: "POST",
