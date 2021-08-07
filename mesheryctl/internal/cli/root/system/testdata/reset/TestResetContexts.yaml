@@ -6,9 +6,9 @@ contexts:
     adapters:
       - meshery-istio
     channel: stable
-    version: latest
+    version: v0.5.40
   local2:
-    endpoint: http://localhost:9081
+    endpoint: http://localhost:32242
     token: Default
     platform: docker
     adapters:

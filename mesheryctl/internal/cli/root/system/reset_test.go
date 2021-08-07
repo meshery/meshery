@@ -12,7 +12,7 @@ import (
 
 //var update1 = flag.Bool("update", true, "update golden files")
 
-// This is an Unit test
+// This is a Unit test
 func TestResetCmd(t *testing.T) {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -23,14 +23,14 @@ func TestResetCmd(t *testing.T) {
 
 	tests := []utils.CmdTestInput{
 		{
-			Name:             "Reset the meshery config file with kubernetes platform",
-			Args:             []string{"reset", "-y", "-c", "local"},
-			ExpectedResponse: "reset_kubernetes.output.golden",
-		},
-		{
 			Name:             "Reset the meshery config file with docker platform",
 			Args:             []string{"reset", "-y", "-c", "local2"},
 			ExpectedResponse: "reset_docker.output.golden",
+		},
+		{
+			Name:             "Reset the meshery config file with kubernetes platform",
+			Args:             []string{"reset", "-y", "-c", "local"},
+			ExpectedResponse: "reset_kubernetes.output.golden",
 		},
 	}
 
@@ -47,15 +47,8 @@ func TestResetCmd(t *testing.T) {
 
 			actualResponse := b.String()
 
-			// get current directory
-			_, filename, _, ok := runtime.Caller(0)
-			if !ok {
-				t.Fatal("Not able to get current working directory")
-			}
-
-			currDir := filepath.Dir(filename)
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, filepath.Join(testdataDir, "reset"))
+			testdataDir := filepath.Join(currDir, "testdata/reset/")
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			//if *update1 {
 			//	golden.Write(actualResponse)
@@ -64,10 +57,10 @@ func TestResetCmd(t *testing.T) {
 
 			//Comparing the expected response with the actual response
 			if expectedResponse != actualResponse {
-				utils.Equals(t, expectedResponse, actualResponse)
-				// t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
+				//utils.Equals(t, expectedResponse, actualResponse)
+				t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 			}
-			RemoveFileAndDirectory()
+			//RemoveFileAndDirectory()
 		})
 	}
 }
