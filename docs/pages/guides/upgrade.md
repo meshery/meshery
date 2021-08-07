@@ -60,8 +60,10 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         <td></td>
         <td><code>mesheryctl</code> manages the lifecycle of Meshery Server. <br /><br />
         <ul> 
-            <li><code>system start</code> calls system update by default, which updates server and existing adapters, but doesn’t update meshery.yaml.</li>
+            <li><code>system start</code> calls system update by default, which updates server and existing adapters, but doesn’t update meshery.yaml. Unless the <code>skipUpdate</code> flag is used, operators are also updated here.</li>
             <li><code>system reset</code> retrieving docker-compose.yaml from GitHub (use git tag to reset to the right Meshery version).</li>
+            <li><code>system restart</code> also updates operators, unless the <code>skipUpdate</code> flag is used</li>
+            <li><code>system update</code> updates operators in case of a kubernetes deployment</li>
             <li><code>system context</code> manages config.yaml, which manages meshery.yaml. </li>
             <li><code>mesheryctl</code> should generally be checking for latest release and informing user.</li>
         </ul>
