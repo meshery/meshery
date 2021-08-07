@@ -1,7 +1,6 @@
 package app
 
 import (
-	"bytes"
 	"flag"
 
 	// "io/ioutil"
@@ -53,7 +52,7 @@ func TestAppView(t *testing.T) {
 			View:             "Applications",
 			ExpectedResponse: "view.application.output.golden",
 			Fixture:          "view.application.api.response.golden",
-			URL:              testContext.BaseURL + "/api/experimental/application?page_size=10000",
+			URL:              testContext.BaseURL + "/api/experimental/application",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -117,15 +116,9 @@ func TestAppView(t *testing.T) {
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			//Grab Logs
-			var buf bytes.Buffer
-			log.SetOutput(&buf)
-			utils.SetupLogrusFormatter()
+			b := utils.SetupLogrusGrabTesting(t)
 
-			// Grab console prints
-			// rescueStdout := os.Stdout
-			// r, w, _ := os.Pipe()
-			// os.Stdout = w
-
+			AppCmd.SetOut(b)
 			AppCmd.SetArgs(tt.Args)
 			// AppCmd.SetOutput(rescueStdout)
 			err := AppCmd.Execute()
@@ -146,14 +139,8 @@ func TestAppView(t *testing.T) {
 				t.Error(err)
 			}
 
-			// w.Close()
-			// log.Print("We are safeeeeeeeeeeeeeeeeee")
-			// out, _ := ioutil.ReadAll(r)
-			// os.Stdout = rescueStdout
-
-			// // response being printed in console
-			// actualResponse := string(out)
-			actualResponse := buf.String()
+			// response being printed in console
+			actualResponse := b.String()
 
 			// write it in file
 			if *update {
