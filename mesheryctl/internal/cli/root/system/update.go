@@ -180,11 +180,6 @@ var updateCmd = &cobra.Command{
 
 			currCtx.SetVersion("latest")
 			err = config.SetContext(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
-
-			if err != nil {
-				return err
-			}
-
 			if err != nil {
 				return err
 			}
