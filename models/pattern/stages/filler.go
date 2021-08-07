@@ -212,7 +212,7 @@ func fillMapString(str string, flatSvc map[string]interface{}) (string, bool, er
 }
 
 // matchPattern takes in a string and tests it against the pattern
-// if match is successfull it returns the string after removing the pattern
+// if match is successful it returns the string after removing the pattern
 // specific details from it
 func matchPattern(str string) (string, bool) {
 	res := FillerRegex.FindString(str)

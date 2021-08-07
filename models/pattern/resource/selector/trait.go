@@ -87,10 +87,10 @@ func (s *Selector) selectMeshTrait(ws []core.TraitCapability) (core.TraitCapabil
 				continue
 			}
 
-			sApiVersion := selected.OAMDefinition.Spec.Metadata["k8sAPIVersion"]
+			sAPIVersion := selected.OAMDefinition.Spec.Metadata["k8sAPIVersion"]
 			apiVersion := w.OAMDefinition.Spec.Metadata["k8sAPIVersion"]
 
-			if apiVersion > sApiVersion {
+			if apiVersion > sAPIVersion {
 				selected = &w
 			}
 		}

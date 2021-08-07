@@ -48,7 +48,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 		errs := []error{}
 
 		// Execute the plan
-		plan.Execute(func(name string, svc core.Service) bool {
+		_ = plan.Execute(func(name string, svc core.Service) bool {
 			ccp := CompConfigPair{}
 
 			// Create application component

@@ -13,16 +13,16 @@ const (
 	K8sResource  = "pattern.meshery.io/k8s"
 )
 
-type SelectorHelpers interface {
+type Helpers interface {
 	GetServiceMesh() (name string, version string)
 	GetAPIVersionForKind(kind string) string
 }
 
 type Selector struct {
-	helpers SelectorHelpers
+	helpers Helpers
 }
 
-func New(helpers SelectorHelpers) *Selector {
+func New(helpers Helpers) *Selector {
 	return &Selector{
 		helpers: helpers,
 	}
