@@ -47,21 +47,6 @@ func Set(key string, value interface{}) {
 	globalStore.store[key][hash] = value
 }
 
-// Get will get the value corresponding to the given key
-func Get(key string) (interface{}, bool) {
-	globalStore.RLock()
-	defer globalStore.RUnlock()
-
-	val, ok := globalStore.store[key]
-	if ok && len(val) > 0 {
-		for _, v := range val {
-			return v, true
-		}
-	}
-
-	return nil, false
-}
-
 // GetAll returns all the values stored against the key
 func GetAll(key string) []interface{} {
 	globalStore.RLock()

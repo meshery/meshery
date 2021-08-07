@@ -41,66 +41,6 @@ func TestSet(t *testing.T) {
 	}
 }
 
-func TestGet(t *testing.T) {
-	// Reset global store
-	globalStore = newThreadSafeStore()
-
-	// Initialize the store
-	Initialize()
-
-	type args struct {
-		key string
-	}
-
-	// Add data to the store
-	Set("key1", 1234)
-	Set("key1", 1234)
-	Set("key2", struct{ name string }{name: "val1"})
-
-	tests := []struct {
-		name  string
-		args  args
-		want  interface{}
-		want1 bool
-	}{
-		{
-			name: "When more than one value against a key exists",
-			args: args{
-				key: "key1",
-			},
-			want:  1234,
-			want1: true,
-		},
-		{
-			name: "When only one value against a key exists",
-			args: args{
-				key: "key2",
-			},
-			want:  struct{ name string }{name: "val1"},
-			want1: true,
-		},
-		{
-			name: "When key does not exits",
-			args: args{
-				key: "key3",
-			},
-			want:  nil,
-			want1: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := Get(tt.args.key)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Get() got = %v, want %v", got, tt.want)
-			}
-			if got1 != tt.want1 {
-				t.Errorf("Get() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
-}
-
 func TestGetAll(t *testing.T) {
 	// Reset global store
 	globalStore = newThreadSafeStore()
@@ -151,7 +91,7 @@ func TestGetAll(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetAll(tt.args.key); !reflect.DeepEqual(got, tt.want) {
+			if got := GetAll(tt.args.key); !matchSlice(got, tt.want) {
 				t.Errorf("GetAll() = %v, want %v", got, tt.want)
 			}
 		})
@@ -196,7 +136,7 @@ func TestPrefixMatch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotRes := PrefixMatch(tt.args.key); !reflect.DeepEqual(gotRes, tt.wantRes) {
+			if gotRes := PrefixMatch(tt.args.key); !matchSlice(gotRes, tt.wantRes) {
 				t.Errorf("PrefixMatch() = %v, want %v", gotRes, tt.wantRes)
 			}
 		})
@@ -211,4 +151,19 @@ func includes(s map[string]interface{}, v interface{}) bool {
 	}
 
 	return false
+}
+
+func matchSlice(arr1 []interface{}, arr2 []interface{}) bool {
+	mp := map[interface{}]bool{}
+	for _, el := range arr1 {
+		mp[el] = true
+	}
+
+	for _, el := range arr2 {
+		if !mp[el] {
+			return false
+		}
+	}
+
+	return true
 }

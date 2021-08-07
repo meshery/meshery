@@ -9,7 +9,6 @@ import (
 
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
-	"github.com/sirupsen/logrus"
 )
 
 type genericCapability struct {
@@ -49,9 +48,6 @@ func RegisterWorkload(data []byte) (err error) {
 	)
 	store.Set(key, workload)
 
-	v, _ := store.Get(key)
-	logrus.Debugf("Stored workload with key %s: %+v", key, v)
-
 	return
 }
 
@@ -80,9 +76,6 @@ func RegisterTrait(data []byte) (err error) {
 	)
 	store.Set(key, trait)
 
-	v, _ := store.Get(key)
-	logrus.Debugf("Stored trait: %+v", v)
-
 	return
 }
 
@@ -110,9 +103,6 @@ func RegisterScope(data []byte) (err error) {
 		scope.OAMDefinition.Name,
 	)
 	store.Set(key, scope)
-
-	v, _ := store.Get(key)
-	logrus.Debugf("Stored scope: %+v", v)
 
 	return
 }
