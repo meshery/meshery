@@ -83,6 +83,15 @@
         "short_description": "Error unmarshalling file ",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1009": {
+        "name": "ErrUnsupportedPlatformCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "the platform \n is not supported. Supported platforms are:\\n\\n- docker\\n- kubernetes\\n\\nVerify this setting in your meshconfig at \n or verify by executing `mesheryctl system context view`",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
