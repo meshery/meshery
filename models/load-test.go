@@ -113,6 +113,10 @@ type MesheryResult struct {
 
 	TestStartTime          *time.Time         `json:"test_start_time,omitempty"`
 	PerformanceProfileInfo PerformanceProfile `json:"-,omitempty" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
+
+	UpdatedAt string `json:"updated_at,omitempty"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UserID    string `json:"user_id,omitempty"`
 }
 
 // ConvertToSpec - converts meshery result to SMP

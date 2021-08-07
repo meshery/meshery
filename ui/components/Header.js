@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -135,11 +134,19 @@ class Header extends React.Component {
                 <Grid item className={classes.userContainer}>
                   {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
-                </IconButton> */}
+                </IconButton> 
                   <div data-test="index-button">
                     <IconButton color="inherit">
                       <Link href="/">
                         <DashboardIcon className={ classes.headerIcons +" "+(title === 'System Dashboard' ? classes.itemActiveItem : '')} />
+                        <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} />
+                      </Link>
+                    </IconButton>
+                  </div>*/}
+                  <div data-test="connection-wizard-button">
+                    <IconButton color="inherit">
+                      <Link href="/system/connections">
+                        <img src={title === 'Connection Wizard' ? "/static/img/connection_wizard/connection-wizard-green.svg" : "/static/img/connection_wizard/connection-wizard-white.svg"} className={ classes.headerIcons +" "+(title === 'Connection Wizard' ? classes.itemActiveItem : '')} />
                         {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
                       </Link>
                     </IconButton>
