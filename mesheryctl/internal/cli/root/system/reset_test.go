@@ -22,11 +22,13 @@ func TestResetCmd(t *testing.T) {
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/reset/TestResetContexts.yaml")
 
 	tests := []utils.CmdTestInput{
+		//Test for platform docker
 		{
 			Name:             "Reset the meshery config file with docker platform",
 			Args:             []string{"reset", "-y", "-c", "local2"},
 			ExpectedResponse: "reset_docker.output.golden",
 		},
+		//Test for platform kubernetes
 		{
 			Name:             "Reset the meshery config file with kubernetes platform",
 			Args:             []string{"reset", "-y", "-c", "local"},
@@ -44,7 +46,7 @@ func TestResetCmd(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-
+			//Collecting the actual response
 			actualResponse := b.String()
 
 			testdataDir := filepath.Join(currDir, "testdata/reset/")
@@ -53,16 +55,19 @@ func TestResetCmd(t *testing.T) {
 			//if *update1 {
 			//	golden.Write(actualResponse)
 			//}
+
+			//Collecting the expected response
 			expectedResponse := golden.Load()
 
 			//Comparing the expected response with the actual response
 			if expectedResponse != actualResponse {
-				//utils.Equals(t, expectedResponse, actualResponse)
-				t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
+				utils.Equals(t, expectedResponse, actualResponse)
+				//t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 			}
-
 		})
 	}
+	//Removing the files and directory that
+	//were created during the test
 	RemoveFileAndDirectory()
 }
 
