@@ -60,9 +60,10 @@ func TestResetCmd(t *testing.T) {
 				//utils.Equals(t, expectedResponse, actualResponse)
 				t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 			}
-			//RemoveFileAndDirectory()
+
 		})
 	}
+	RemoveFileAndDirectory()
 }
 
 func RemoveFileAndDirectory() {
