@@ -217,7 +217,7 @@ if [ ! -z "$ADAPTERS" ]; then
             ;;
             nginx|tanzu)
                 adapterString="$adapterString -a meshery-$adapter-sm "
-            
+            ;;
             traefik|app)
                 adapterString="$adapterString -a meshery-$adapter-mesh "
             ;;
