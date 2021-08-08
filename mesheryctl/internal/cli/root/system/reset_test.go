@@ -60,12 +60,10 @@ func TestResetCmd(t *testing.T) {
 			//Comparing the expected response with the actual response
 			if expectedResponse != actualResponse {
 				utils.Equals(t, expectedResponse, actualResponse)
-				//t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 			}
 		})
 	}
-	//Removing the files and directory that
-	//were created during the test
+	//Removing the files and directory that were created during the test
 	RemoveFileAndDirectory()
 }
 
