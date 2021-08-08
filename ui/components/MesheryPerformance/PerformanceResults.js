@@ -9,12 +9,13 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateResultsSelection, clearResultsSelection, updateProgress } from "../../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import dataFetch from "../../lib/data-fetch";
+// import dataFetch from "../../lib/data-fetch";
 import CustomToolbarSelect from "../CustomToolbarSelect";
 import MesheryChart from "../MesheryChart";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import GenericModal from "../GenericModal";
 import BarChartIcon from '@material-ui/icons/BarChart';
+import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
 
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
@@ -306,33 +307,35 @@ function MesheryResults({
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
 
-    const query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-      sortOrder
-    )}`;
     updateProgress({ showProgress: true });
 
-    dataFetch(
-      `${endpoint}${query}`,
-      {
-        method: "GET",
-        credentials: "include",
+    fetchPerformanceResults({
+      selector: {
+        pageSize: `${pageSize}`,
+        page: `${page}`,
+        search: `${encodeURIComponent(search)}`,
+        order: `${encodeURIComponent(sortOrder)}`
       },
-      (result) => {
-        console.log("Results API", `${endpoint}${query}`);
+      profileID: endpoint.split("/")[endpoint.split("/").length - 2]
+    }).subscribe({
+      next: (res) => {
+        // @ts-ignore
+        let result = res?.fetchResults
+        if (typeof result !== "undefined") {
+          updateProgress({ showProgress: false })
 
-        updateProgress({ showProgress: false });
-
-        if (result) {
-          setCount(result.total_count);
-          setPageSize(result.page_size);
-          setSortOrder(sortOrder);
-          setSearch(search);
-          setResults(result.results);
-          setPageSize(result.page_size);
+          if (result) {
+            setCount(result.total_count);
+            setPageSize(result.page_size);
+            setSortOrder(sortOrder);
+            setSearch(search);
+            setResults(result.results);
+            setPageSize(result.page_size);
+          }
         }
       },
-      handleError
-    );
+      error: handleError,
+    });
   }
 
   function handleError(error) {
