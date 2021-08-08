@@ -8,7 +8,7 @@ const (
 	mesheryGitHubRepo string = "meshery"
 )
 
-//Used in testing to update golden files
+//Update ...Used in testing to update golden files
 var Update = flag.Bool("update", false, "update golden files")
 
 // GetMesheryGitHubOrg retrieves the name of the GitHub organization under which the Meshery repository resides.
