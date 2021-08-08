@@ -10,8 +10,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-//var update1 = flag.Bool("update", true, "update golden files")
-
 // This is a Unit test
 func TestResetCmd(t *testing.T) {
 	_, filename, _, ok := runtime.Caller(0)
@@ -52,9 +50,9 @@ func TestResetCmd(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata/reset/")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			//if *update1 {
-			//	golden.Write(actualResponse)
-			//}
+			if *update {
+				golden.Write(actualResponse)
+			}
 
 			//Collecting the expected response
 			expectedResponse := golden.Load()
