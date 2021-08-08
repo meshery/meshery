@@ -2,10 +2,6 @@ package app
 
 import (
 	"flag"
-
-	// "io/ioutil"
-	"log"
-	// "os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -16,6 +12,7 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 var tempAppID = "e39df138-bd73-47f1-8db4-edfc4027f178"
+var tempAppName = "OApplicationPattern"
 
 func TestAppView(t *testing.T) {
 	// setup current context
@@ -47,7 +44,37 @@ func TestAppView(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "View Applications",
+			Name:             "View Applications with ID",
+			Args:             []string{"view", tempAppID},
+			View:             "ApplicationId",
+			ExpectedResponse: "view.applicationid.output.golden",
+			Fixture:          "view.applicationid.api.response.golden",
+			URL:              testContext.BaseURL + "/api/experimental/application/" + tempAppID,
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
+		{
+			Name:             "View Applications with Name",
+			Args:             []string{"view", tempAppName},
+			View:             "ApplicationName",
+			ExpectedResponse: "view.applicationName.output.golden",
+			Fixture:          "view.applicationName.api.response.golden",
+			URL:              testContext.BaseURL + "/api/experimental/application?search=" + tempAppName,
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
+		{
+			Name:             "View Invalid Application Name",
+			Args:             []string{"view", "invalid-name"},
+			View:             "ApplicationsName",
+			ExpectedResponse: "view.invalid.application.output.golden",
+			Fixture:          "view.invalid.application.api.response.golden",
+			URL:              testContext.BaseURL + "/api/experimental/application?search=invalid-name",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+		},
+		{
+			Name:             "View All Applications",
 			Args:             []string{"view", "--all"},
 			View:             "Applications",
 			ExpectedResponse: "view.application.output.golden",
@@ -56,46 +83,6 @@ func TestAppView(t *testing.T) {
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
-		// {
-		// 	Name:             "View Applications with ID",
-		// 	Args:             []string{"view", tempAppID},
-		// 	View:             "Results",
-		// 	ExpectedResponse: "view.result.output.golden",
-		// 	Fixture:          "view.result.api.response.golden",
-		// 	URL:              testContext.BaseURL + "/api/experimental/application/" + tempAppID,
-		// 	Token:            filepath.Join(fixturesDir, "token.golden"),
-		// 	ExpectError:      false,
-		// },
-		// {
-		// 	Name:             "View Applications with no token",
-		// 	Args:             []string{"view", "test"},
-		// 	View:             "Applications",
-		// 	ExpectedResponse: "no.token.golden",
-		// 	Fixture:          "view.application.api.response.golden",
-		// 	URL:              testContext.BaseURL + "/api/experimental/application?page_size=10000&search=test",
-		// 	Token:            "",
-		// 	ExpectError:      true,
-		// },
-		// {
-		// 	Name:             "View Results with No token",
-		// 	Args:             []string{"view", tempAppID, "app%20mesh"},
-		// 	View:             "Results",
-		// 	ExpectedResponse: "no.token.golden",
-		// 	Fixture:          "view.result.api.response.golden",
-		// 	URL:              testContext.BaseURL + "/api/experimental/application/" + tempAppID + "/results?pageSize=25&search=app%20mesh",
-		// 	Token:            "",
-		// 	ExpectError:      true,
-		// },
-		// {
-		// 	Name:             "View Invalid Application Name",
-		// 	Args:             []string{"view", "invalid-name", "-t", filepath.Join(fixturesDir, "token.golden")},
-		// 	View:             "Applications",
-		// 	ExpectedResponse: "view.invalid.application.output.golden",
-		// 	Fixture:          "view.invalid.application.api.response.golden",
-		// 	URL:              testContext.BaseURL + "/api/experimental/application?page_size=25&search=invalid-name",
-		// 	Token:            filepath.Join(fixturesDir, "token.golden"),
-		// 	ExpectError:      true,
-		// },
 	}
 
 	// Run tests
@@ -119,12 +106,12 @@ func TestAppView(t *testing.T) {
 			b := utils.SetupLogrusGrabTesting(t)
 
 			AppCmd.SetOut(b)
+			t.Log(tt.Args)
 			AppCmd.SetArgs(tt.Args)
 			// AppCmd.SetOutput(rescueStdout)
 			err := AppCmd.Execute()
 			t.Log("Executed")
 			if err != nil {
-				log.Print("We got errorrrrrrrrrrr")
 				// if we're supposed to get an error
 				if tt.ExpectError {
 					// write it in file
