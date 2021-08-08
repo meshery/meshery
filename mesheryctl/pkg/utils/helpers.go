@@ -227,7 +227,8 @@ func SetFileLocation() error {
 		return errors.Wrap(err, "failed to get users home directory")
 	}
 	MesheryFolder = filepath.Join(home, MesheryFolder)
-	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
+	ManifestsFolder = filepath.Join(MesheryFolder, ManifestsFolder)
+	DockerComposeFile = filepath.Join(ManifestsFolder, DockerComposeFile)
 	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
 	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
 	return nil

@@ -7,6 +7,7 @@ on:
       - 'docs/**'
       - 'ui/**'
       - 'provider-ui/**'
+      - '.github/**'
   pull_request:
     branches:
       - 'master'

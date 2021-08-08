@@ -93,6 +93,11 @@ if ! command_exists curl ; then
     exit;
 fi
 
+if ! command_exists unzip ; then
+    echo "Missing required utility: 'unzip'. Please install 'unzip' and try again."
+    exit;
+fi
+
 if [ "x${MESHERY_VERSION}" = "x" ] ; then
   MESHERY_VERSION=$(curl -L -s https://api.github.com/repos/meshery/meshery/releases | \
                   grep tag_name | sed "s/ *\"tag_name\": *\"\\(.*\\)\",*/\\1/" | \
@@ -117,7 +122,7 @@ if [ -z "$validFile" ] ; then
 fi
 
 # Generate a temporary folder to store intermediate installation files
-temporary_dir_name=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)
+temporary_dir_name=$(tr -dc A-Za-z0-9 </dev/urandom 2>/dev/null | head -c 16)
 if [ -z "$temporary_dir_name" ] ; then
    temporary_dir_name="temp_extract_dir"
 fi
@@ -186,5 +191,44 @@ then
     printf "\nRun \"mesheryctl system start\" to start Meshery.\n"
     exit 0
 fi
+
+# if ADAPTERS are empty then we'd use default local context else go we'd create custom context, which only fetches required adapters
+# Valid adapter option are
+# cpx
+# consul
+# istio
+# linkerd
+# nsm
+# kuma
+# cpx
+# osm
+# traefik
+# nginx
+# tanzu
+# app
+
+## Any adapter other than above would be ignored
+if [ ! -z "$ADAPTERS" ]; then
+    adpaterString=
+    for adapter in $ADAPTERS; do
+        case $adapter in
+            cpx|consul|istio|linkerd|nsm|kuma|cpx|osm)
+                adapterString="$adapterString -a meshery-$adapter "
+            ;;
+            nginx|tanzu)
+                adapterString="$adapterString -a meshery-$adapter-sm "
+            ;;
+            traefik|app)
+                adapterString="$adapterString -a meshery-$adapter-mesh "
+            ;;
+            *)
+                # We are just neglecting invalid mesh options
+            ;;
+        esac    
+    done
+
+    mesheryctl system context create custom -s $adapterString --yes
+fi
+
 printf "\nStarting Meshery...\n"
 mesheryctl system start --yes --platform $PLATFORM

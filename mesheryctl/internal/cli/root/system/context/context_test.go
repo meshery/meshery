@@ -2,8 +2,6 @@ package context
 
 import (
 	"flag"
-	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -174,7 +172,7 @@ func TestDeleteContextCmd(t *testing.T) {
 			}
 
 			//Repopulating Expected yaml
-			if err := copy(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
+			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
 		})
@@ -193,7 +191,7 @@ func TestAddContextCmd(t *testing.T) {
 		{
 			Name:             "add given context",
 			Args:             []string{"create", "local3"},
-			ExpectedResponse: "Added `local3` context\n",
+			ExpectedResponse: "createContext.golden",
 		},
 	}
 	for _, tt := range tests {
@@ -239,7 +237,7 @@ func TestAddContextCmd(t *testing.T) {
 			}
 
 			//Repopulating Expected yaml
-			if err := copy(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
+			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
 		})
@@ -302,35 +300,9 @@ func TestSwitchContextCmd(t *testing.T) {
 			if actualResponse != switchExpected {
 				t.Errorf("expected response %v and actual response %v don't match", switchExpected, actualResponse)
 			}
-			if err := copy(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
+			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
 		})
 	}
-}
-
-//utility function to repopulate config
-func copy(src, dst string) error {
-	sourceFileStat, err := os.Stat(src)
-	if err != nil {
-		return err
-	}
-
-	if !sourceFileStat.Mode().IsRegular() {
-		return fmt.Errorf("%s is not a regular file", src)
-	}
-
-	source, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer source.Close()
-
-	destination, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer destination.Close()
-	_, err = io.Copy(destination, source)
-	return err
 }

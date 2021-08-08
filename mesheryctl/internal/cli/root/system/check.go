@@ -80,6 +80,14 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 		return nil, err
 	}
 
+	if utils.PlatformFlag != "" {
+		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
+			currCtx.SetPlatform(utils.PlatformFlag)
+		} else {
+			return nil, ErrUnsupportedPlatform(utils.PlatformFlag, utils.CfgFile)
+		}
+	}
+
 	hc.context = currCtx
 	hc.mctlCfg = mctlCfg
 
@@ -457,7 +465,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 	client := &http.Client{}
 
 	// Request to grab running adapters and ports
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/mesh/adapters", url), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters", url), nil)
 	if err != nil {
 		return err
 	}
@@ -516,7 +524,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 			}
 			continue
 		}
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/mesh/adapter/ping?adapter=%s", url, adapter.Name), nil)
+		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, adapter.Name), nil)
 		if err != nil {
 			return err
 		}

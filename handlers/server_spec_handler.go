@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"github.com/tcnksm/go-latest"
 )
@@ -70,7 +69,7 @@ func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
 	res, err := latest.Check(githubTag, serverVersion)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to compare latest and current version")
+		return nil, ErrVersionCompare(err)
 	}
 
 	// Add "v" to the "Current" property of the CheckResponse
