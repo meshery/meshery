@@ -25,7 +25,10 @@ import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import dataFetch from "../lib/data-fetch";
+import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
+import jsYaml from 'js-yaml';
 
 const styles = (theme) => ({
   grid: {
@@ -56,6 +59,7 @@ function CustomToolbar(onClick) {
 
 function YAMLEditor({ pattern, onClose, onSubmit }) {
   const [yaml, setYaml] = useState("");
+  const [show, setShow] = useState(false);
 
   return (
     <Dialog onClose={onClose} aria-labelledby="pattern-dialog-title" open fullWidth maxWidth="md">
@@ -100,6 +104,51 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
   );
 }
 
+function getOamFormData(data) {
+  try {
+    const patternFile = jsYaml.load(data['pattern_file']);
+    const services = Object.values(patternFile.services);
+    return {
+      pattern: services[0].settings,
+      namespace: services[0].namespace,
+      type: services[0].type
+    };
+  } catch (e) {
+    console.log("unable to perform action, reason: ", e)
+    return null;
+  }
+}
+
+function getTraits(data) {
+  try {
+    const patternFile = jsYaml.load(data['pattern_file']);
+    const traits = Object.values(patternFile.traits);
+    return {
+      pattern: traits[0].settings,
+      namespace: traits[0].namespace,
+      type: traits[0].type
+    };
+  } catch (e) {
+    console.log("unable to perform action, reason: ", e)
+    return null;
+  }
+}
+
+function RjsfForm({ schemaSet, onSubmit, onClose, namespace }) {
+  {
+    console.log("SchemaSet", schemaSet)
+  }
+  return (
+    <Dialog onClose={onClose} open fullWidth>
+      <PatternServiceForm
+        schemaSet={schemaSet}
+        onSubmit={onSubmit}
+        namespace={namespace}
+      />
+    </Dialog>
+  )
+}
+
 function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
@@ -108,6 +157,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   const [pageSize, setPageSize] = useState(10);
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [selectedRjsfData, setSelectedRjfsData] = useState(null);
 
   const DEPLOY_URL = '/api/pattern/deploy';
 
@@ -140,6 +190,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
    */
   useEffect(() => {
     fetchPatterns(page, pageSize, search, sortOrder);
+    fetchOamSchema();
   }, []);
 
   /**
@@ -205,6 +256,32 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS)
     );
+  }
+
+  async function fetchOamSchema() {
+    try {
+      const workload = await promisifiedDataFetch("/api/oam/workload");
+      const traits = await promisifiedDataFetch("/api/oam/trait");
+
+      setSelectedRjfsData({
+        workload: JSON.parse(workload[0]['oam_ref_schema']),
+        traits: [JSON.parse(traits[0]['oam_ref_schema'])],
+      })
+    } catch (e) {
+      return (
+        enqueueSnackbar("Failed to Fetch OAM Schema", {
+          variant: "error",
+          action: function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration: 8000,
+        })
+      )
+    }
   }
 
   const handleError = (action) => (error) => {
@@ -281,6 +358,11 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
         handleError(ACTION_TYPES.UPLOAD_PATTERN)
       );
     }
+  }
+
+  async function submitPattern(pattern, del = false) {
+    const patternData = jsYaml.dump(pattern);
+    handleSubmit(patternData, "", pattern.name, "upload")
   }
 
   function uploadHandler(ev) {
@@ -387,6 +469,18 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
                   onClick={() => setSelectedRowData(patterns[tableMeta.rowIndex])} />
               </IconButton>
               <IconButton>
+                <ListAltIcon
+                  title="oam-schema"
+                  aria-label="oam-schema"
+                  color="inherit"
+                  onClick={() => setSelectedRjfsData({
+                    ...selectedRjsfData,
+                    name: patterns[tableMeta.rowIndex].name,
+                    ...getOamFormData(patterns[tableMeta.rowIndex]),
+                  })
+                  } />
+              </IconButton>
+              <IconButton>
                 <PlayArrowIcon
                   title="Deploy"
                   aria-label="deploy"
@@ -465,11 +559,37 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     },
   };
 
+  const onSubmittingOamPattern = (cfg) => {
+    console.log('cfg', cfg);
+    submitPattern(cfg)
+      .then((res) => console.log(res))
+      .catch((err) => console.error(err));
+
+    handleOamClose();
+  };
+
+  const handleOamClose = () => {
+    setSelectedRjfsData({ ...selectedRjsfData, pattern: null });
+  }
+
   return (
     <NoSsr>
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
+
+      {selectedRjsfData
+        && selectedRjsfData.pattern
+        && Object.keys(selectedRjsfData.pattern).length > 0
+        && (
+          <RjsfForm
+            schemaSet={selectedRjsfData}
+            onSubmit={onSubmittingOamPattern}
+            onClose={handleOamClose}
+            namespace={selectedRjsfData.namespace}
+          />
+        )}
+
       <MUIDataTable
         title={<div className={classes.tableHeader}>Patterns</div>}
         data={patterns}

@@ -21,6 +21,7 @@ function componentType(jsonSchema) {
  * PatternService returns a component for the given jsonSchema
  * @param {{
  *  jsonSchema: Record<string, any>;
+ *  formData: Record<string,any>
  *  onChange: Function;
  *  onSubmit?: Function;
  *  onDelete?: Function;
@@ -28,12 +29,13 @@ function componentType(jsonSchema) {
  * }} props
  * @returns
  */
-function PatternService({ jsonSchema, onChange, type, onSubmit, onDelete }) {
+function PatternService({ jsonSchema, formData, onChange, type, onSubmit, onDelete }) {
   const ctype = componentType(jsonSchema);
 
   if (ctype === "rjsf")
     return (
       <RJSF
+        formData={formData}
         hideSubmit={type === "trait"}
         hideTitle={type === "workload"}
         jsonSchema={jsonSchema}

@@ -18,8 +18,8 @@ function RJSFButton({ handler, text }) {
   );
 }
 
-function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete }) {
-  const [data, setData] = React.useState();
+function RJSF({ jsonSchema, formData, onChange, hideSubmit, hideTitle, onSubmit, onDelete }) {
+  const [data, setData] = React.useState(formData);
 
   React.useEffect(() => {
     onChange?.(data);
@@ -33,7 +33,7 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete 
       formData={data}
       liveValidate
       additionalMetaSchemas={[JS4]}
-      // noHtml5Validate
+      showErrorList={false}
     >
       {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" />}
       {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />}

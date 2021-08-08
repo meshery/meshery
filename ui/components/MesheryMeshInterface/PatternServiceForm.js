@@ -70,6 +70,7 @@ function createPatternFromConfig(config, namespace) {
 
       pattern.services[name].type = key;
       pattern.services[name].namespace = namespace;
+      pattern.services[name] = config[key];
     }
   });
 
@@ -97,7 +98,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
   const [settings, setSettings, getSettingsRefValue] = useStateCB({});
   const [traits, setTraits, getTraitsRefValue] = useStateCB({});
 
-  console.log({ settings, traits })
+  console.log("psform", { settings, traits })
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
@@ -116,6 +117,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
   if (schemaSet.type === "addon") {
     return (
       <PatternService
+        formData={schemaSet['pattern']}
         type="workload"
         jsonSchema={schemaSet.workload}
         onChange={setSettings}
@@ -126,7 +128,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
   }
 
   return (
-    <Card style={{ padding: "1rem" }}>
+    <Card style={{ padding: "1rem", overflow: 'scroll' }}>
       <Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
       </Typography>
@@ -138,6 +140,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
       </AppBar>
       <TabPanel value={tab} index={0}>
         <PatternService
+          formData={schemaSet['pattern']}
           type="workload"
           jsonSchema={schemaSet.workload}
           onChange={setSettings}
@@ -149,6 +152,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
         <TabPanel value={tab} index={1}>
           {schemaSet.traits?.map((trait) => (
             <PatternService
+              formData={schemaSet['traits']}
               type="trait"
               jsonSchema={trait}
               onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)]: val }))}
