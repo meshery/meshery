@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
@@ -59,7 +60,7 @@ func TestTokenCreateCmd(t *testing.T) {
 				// if we're supposed to get an error
 				if tt.ExpectError {
 					// write it in file
-					if *update {
+					if *constants.Update {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
@@ -72,7 +73,7 @@ func TestTokenCreateCmd(t *testing.T) {
 
 			//Check the stdout/stderr against the golden file
 			actualResponse := b.String()
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
@@ -92,7 +93,7 @@ func TestTokenCreateCmd(t *testing.T) {
 			}
 			actualResponse = string(content)
 			golden = utils.NewGoldenFile(t, tt.ExpectedResponseYaml, testdatatokenDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			createExpected := golden.Load()
@@ -147,7 +148,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 				// if we're supposed to get an error
 				if tt.ExpectError {
 					// write it in file
-					if *update {
+					if *constants.Update {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
@@ -160,7 +161,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 
 			//Check the stdout/stderr against the golden file
 			actualResponse := b.String()
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
@@ -183,7 +184,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 			}
 			actualResponse = string(content)
 			golden = utils.NewGoldenFile(t, tt.ExpectedResponseYaml, testdatatokenDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			createExpected := golden.Load()
@@ -246,7 +247,7 @@ func TestTokenSetCmd(t *testing.T) {
 				// if we're supposed to get an error
 				if tt.ExpectError {
 					// write it in file
-					if *update {
+					if *constants.Update {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
@@ -259,7 +260,7 @@ func TestTokenSetCmd(t *testing.T) {
 
 			//Check the stdout/stderr against the golden file
 			actualResponse := b.String()
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
@@ -282,7 +283,7 @@ func TestTokenSetCmd(t *testing.T) {
 			}
 			actualResponse = string(content)
 			golden = utils.NewGoldenFile(t, tt.ExpectedResponseYaml, testdatatokenDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			createExpected := golden.Load()
@@ -334,7 +335,7 @@ func TestTokenViewCmd(t *testing.T) {
 				// if we're supposed to get an error
 				if tt.ExpectError {
 					// write it in file
-					if *update {
+					if *constants.Update {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
@@ -347,7 +348,7 @@ func TestTokenViewCmd(t *testing.T) {
 
 			//Check the stdout/stderr against the golden file
 			actualResponse := b.String()
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
@@ -396,7 +397,7 @@ func TestTokenListCmd(t *testing.T) {
 				// if we're supposed to get an error
 				if tt.ExpectError {
 					// write it in file
-					if *update {
+					if *constants.Update {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
@@ -409,7 +410,7 @@ func TestTokenListCmd(t *testing.T) {
 
 			//Check the stdout/stderr against the golden file
 			actualResponse := b.String()
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()

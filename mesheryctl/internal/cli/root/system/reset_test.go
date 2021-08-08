@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 )
@@ -50,7 +51,7 @@ func TestResetCmd(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata/reset/")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 

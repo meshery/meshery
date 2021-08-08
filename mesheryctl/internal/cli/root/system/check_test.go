@@ -2,16 +2,14 @@ package system
 
 import (
 	"bytes"
-	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 )
-
-var update = flag.Bool("update", false, "update golden files")
 
 // This is an Integration test
 func TestPreflightCmdIntegration(t *testing.T) {
@@ -60,7 +58,7 @@ func TestPreflightCmdIntegration(t *testing.T) {
 			// testdataDir := filepath.Join(filepath.Dir(filename), tf.dir, tf.name)
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, filepath.Join(testdataDir, "check"))
 
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()

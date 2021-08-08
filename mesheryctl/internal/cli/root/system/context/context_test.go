@@ -1,18 +1,15 @@
 package context
 
 import (
-	"flag"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
-
-// var b *bytes.Buffer
-var update = flag.Bool("update", false, "update golden files")
 
 func TestViewContextCmd(t *testing.T) {
 	// get current directory
@@ -64,7 +61,7 @@ func TestViewContextCmd(t *testing.T) {
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
@@ -103,7 +100,7 @@ func TestListContextCmd(t *testing.T) {
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
@@ -143,7 +140,7 @@ func TestDeleteContextCmd(t *testing.T) {
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
@@ -163,7 +160,7 @@ func TestDeleteContextCmd(t *testing.T) {
 			}
 			actualResponse = string(content)
 			golden = utils.NewGoldenFile(t, "deleteExpected.golden", testdataDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			deleteExpected := golden.Load()
@@ -208,7 +205,7 @@ func TestAddContextCmd(t *testing.T) {
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
@@ -228,7 +225,7 @@ func TestAddContextCmd(t *testing.T) {
 			}
 			actualResponse = string(content)
 			golden = utils.NewGoldenFile(t, "addExpected.golden", testdataDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			addExpected := golden.Load()
@@ -274,7 +271,7 @@ func TestSwitchContextCmd(t *testing.T) {
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
@@ -293,7 +290,7 @@ func TestSwitchContextCmd(t *testing.T) {
 			}
 			actualResponse = string(content)
 			golden = utils.NewGoldenFile(t, "switchExpected.golden", testdataDir)
-			if *update {
+			if *constants.Update {
 				golden.Write(actualResponse)
 			}
 			switchExpected := golden.Load()
