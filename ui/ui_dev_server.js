@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const { createServer } = require('http')
 const { parse } = require('url')
 const next = require('next')
@@ -40,7 +41,10 @@ app.prepare().then(() => {
 
   })
   server.on("upgrade", (req,socket,head) => {
-    proxy.ws(req,socket, head)
+    proxy.ws(req,socket, head, err => {
+      socket.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n");
+      socket.end();
+    })
   })
 
   server.listen(port, err => {
