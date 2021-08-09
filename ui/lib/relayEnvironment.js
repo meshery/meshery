@@ -16,11 +16,19 @@ function fetchQuery(operation, variables) {
   });
 }
 
-function setupSubscription(config, variables, cacheConfig, observer) {
-  const query = config.text;
-  const subscriptionClient = new SubscriptionClient("ws://"+window.location.host+"/api/system/graphql/query", {
+ let subscriptionClient;
+
+ if(typeof window !== "undefined"){
+
+subscriptionClient = new SubscriptionClient("ws://"+window.location.host+"/api/system/graphql/query", {
     reconnect: true,
   });
+
+}
+
+function setupSubscription(config, variables, cacheConfig, observer) {
+  const query = config.text;
+
 
   const subscribeObservable = subscriptionClient.request({ query, variables }, (error, result) => {
     if (error) {
