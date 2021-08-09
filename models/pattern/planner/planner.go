@@ -1,8 +1,10 @@
-package pattern
+package planner
+
+import "github.com/layer5io/meshery/models/pattern/core"
 
 // Plan struct represents a node of an execution plan
 type Plan struct {
-	Data Pattern
+	Data core.Pattern
 	*Graph
 }
 
@@ -13,14 +15,14 @@ func (p *Plan) IsFeasible() bool {
 
 // Execute traverses the plan and calls the callback function
 // on each of the node
-func (p *Plan) Execute(cb func(string, Service) bool) error {
+func (p *Plan) Execute(cb func(string, core.Service) bool) error {
 	parallelGraph := NewParallelProcessGraph(p.Graph)
 	parallelGraph.Traverse(cb)
 	return nil
 }
 
 // CreatePlan takes in the application components and creates a plan of execution for it
-func CreatePlan(pattern Pattern, policies [][2]string) (*Plan, error) {
+func CreatePlan(pattern core.Pattern, invert bool) (*Plan, error) {
 	g := NewGraph()
 
 	for name, svc := range pattern.Services {
@@ -28,13 +30,16 @@ func CreatePlan(pattern Pattern, policies [][2]string) (*Plan, error) {
 	}
 
 	for name, svc := range pattern.Services {
-		for _, deps := range svc.DependsOn {
-			g.AddEdge(deps, name)
-		}
+		for _, dep := range svc.DependsOn {
+			from := dep
+			to := name
 
-		// Inject "policies"
-		for _, policy := range policies {
-			g.AddEdge(policy[0], policy[1])
+			if invert {
+				from = name
+				to = dep
+			}
+
+			g.AddEdge(from, to)
 		}
 	}
 

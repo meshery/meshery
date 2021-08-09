@@ -897,7 +897,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) DeleteMesheryResource(token, resourceID string) error {
+func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) error {
 	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
 		return ErrInvalidCapability("PersistMesheryPatternResources", l.ProviderName)
 	}

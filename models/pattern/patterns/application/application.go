@@ -28,6 +28,13 @@ type PatternSetting struct {
 	Replicas   int                      `json:"replicas,omitempty"`
 	Mesh       serviceMesh              `json:"mesh,omitempty"`
 	Containers []RolloutEngineContainer `json:"containers,omitempty"`
+	Advanced   PatternSettingAdvanced   `json:"advanced,omitempty"`
+}
+
+type PatternSettingAdvanced struct {
+	SkipService bool              `json:"skip_service,omitempty"`
+	Labels      map[string]string `json:"labels,omitempty"`
+	Annotations map[string]string `json:"annotations,omitempty"`
 }
 
 type PatternConfiguration struct {
@@ -90,7 +97,8 @@ func Deploy(
 					Labels:      oamComp.Labels,
 					Annotations: oamComp.Annotations,
 				},
-				Delete: isDel,
+				Delete:   isDel,
+				Advanced: settings.Advanced,
 			})
 		}
 

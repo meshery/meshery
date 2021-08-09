@@ -233,7 +233,7 @@ type Provider interface {
 	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)
 	GetMesheryPatternResource(token, resourceID string) (*PatternResource, error)
 	GetMesheryPatternResources(token, page, pageSize, search, order, name, namespace, typ, oamType string) (*PatternResourcePage, error)
-	DeleteMesheryResource(token, resourceID string) error
+	DeleteMesheryPatternResource(token, resourceID string) error
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
 	GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error)
