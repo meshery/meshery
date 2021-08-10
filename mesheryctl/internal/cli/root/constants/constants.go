@@ -1,6 +1,7 @@
 package constants
 
 import (
+	"flag"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,6 +19,9 @@ var (
 	releasechannel = "Not Set"
 	tokenPath      = "Not Set" // the token path includes location to the token for current-context
 )
+
+//Update ...Used in testing to update golden files
+var Update = flag.Bool("update", false, "update golden files")
 
 func GetMesheryctlVersion() string {
 	return version
