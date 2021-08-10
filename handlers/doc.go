@@ -324,13 +324,6 @@ type mesheryApplicationResponseWrapper struct {
 	Body models.MesheryApplication
 }
 
-// Posts Application file requests
-// swagger:response mesheryApplicationFileRequestWrapper
-type mesheryApplicationFileRequestWrapper struct {
-	//in: body
-	Body models.MesheryApplication
-}
-
 // Returns all meshery applications
 // swagger:response mesheryApplicationsResponseWrapper
 type mesheryApplicationsResponseWrapper struct {
