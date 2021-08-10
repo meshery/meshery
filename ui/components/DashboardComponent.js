@@ -41,6 +41,7 @@ import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
+import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
@@ -256,8 +257,11 @@ class DashboardComponent extends React.Component {
           fetchAvailableAddons(selector).subscribe({
             next: (res) => {
               res?.addonsState?.forEach((addon) => {
-                if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-                  self.setState({prometheusURL: "http://" + addon.endpoint})
+                if (
+                  addon.name === "prometheus" &&
+                  (self.state.prometheusURL === "" || self.state.prometheusURL == undefined)
+                ) {
+                  self.setState({ prometheusURL: "http://" + addon.endpoint });
                   submitPrometheusConfigure(self, () => console.log("Prometheus added"));
                 }
               });
@@ -267,7 +271,7 @@ class DashboardComponent extends React.Component {
         }
       },
       self.handleError("There was an error getting prometheus config")
-    )
+    );
 
     dataFetch(
       "/api/telemetry/metrics/grafana/config",
@@ -280,18 +284,18 @@ class DashboardComponent extends React.Component {
       },
       (result) => {
         self.props.updateProgress({ showProgress: false });
-        if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="") {
+        if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL != "") {
           let selector = {
             serviceMesh: "ALL_MESH",
           };
           fetchAvailableAddons(selector).subscribe({
             next: (res) => {
               res?.addonsState?.forEach((addon) => {
-                if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-                  self.setState({grafanaURL: "http://" + addon.endpoint})
+                if (addon.name === "grafana" && (self.state.grafanaURL === "" || self.state.grafanaURL == undefined)) {
+                  self.setState({ grafanaURL: "http://" + addon.endpoint });
                   submitGrafanaConfigure(self, () => {
-                    self.state.selectedBoardsConfigs.push(self.state.boardConfigs)
-                    console.log("Grafana added")
+                    self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
+                    console.log("Grafana added");
                   });
                 }
               });
@@ -301,7 +305,7 @@ class DashboardComponent extends React.Component {
         }
       },
       self.handleError("There was an error communicating with grafana config")
-    )
+    );
 
     let selector = {
       serviceMesh: "ALL_MESH",
@@ -310,14 +314,17 @@ class DashboardComponent extends React.Component {
     fetchAvailableAddons(selector).subscribe({
       next: (res) => {
         res?.addonsState?.forEach((addon) => {
-          if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-            self.setState({prometheusURL: "http://" + addon.endpoint})
+          if (
+            addon.name === "prometheus" &&
+            (self.state.prometheusURL === "" || self.state.prometheusURL == undefined)
+          ) {
+            self.setState({ prometheusURL: "http://" + addon.endpoint });
             submitPrometheusConfigure(self, () => console.log("Prometheus added"));
-          } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-            self.setState({grafanaURL: "http://" + addon.endpoint})
+          } else if (addon.name === "grafana" && (self.state.grafanaURL === "" || self.state.grafanaURL == undefined)) {
+            self.setState({ grafanaURL: "http://" + addon.endpoint });
             submitGrafanaConfigure(self, () => {
-              self.state.selectedBoardsConfigs.push(self.state.boardConfigs)
-              console.log("Grafana added")
+              self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
+              console.log("Grafana added");
             });
           }
         });
@@ -945,6 +952,29 @@ class DashboardComponent extends React.Component {
       return <>Running latest Meshery version.</>;
     };
 
+    /**
+     * openReleaseNotesInNew returns the appropriate link to the release note
+     * based on the meshery's current running channel and version.
+     *
+     * @returns {React.ReactNode} react component to display
+     */
+    const openReleaseNotesInNew = () => {
+      const { release_channel, build } = this.state.versionDetail;
+
+      if (release_channel === "edge")
+        return (
+          <Link href="https://docs.meshery.io/project/releases" target="_blank">
+            <OpenInNewIcon style={{ height: "1rem", width: "1rem" }} />
+          </Link>
+        );
+
+      return (
+        <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
+          <OpenInNewIcon style={{ height: "1rem", width: "1rem" }} />
+        </Link>
+      );
+    };
+
     const showRelease = (
       <>
         <Grid container justify="space-between" spacing={1}>
@@ -956,7 +986,10 @@ class DashboardComponent extends React.Component {
           </Grid>
           <Grid item xs={12} md={6} style={{ padding: "0" }}>
             <Typography style={{ fontWeight: "bold", paddingBottom: "4px" }}>Version</Typography>
-            <Typography style={{ paddingTop: "2px", paddingBottom: "8px" }}>{getMesheryVersionText()}</Typography>
+            <Typography style={{ paddingTop: "2px", paddingBottom: "8px" }}>
+              {getMesheryVersionText()}
+              {openReleaseNotesInNew()}
+            </Typography>
           </Grid>
         </Grid>
         <Typography component="div" style={{ marginTop: "1.5rem" }}>
