@@ -135,12 +135,11 @@ function MesherySnackbarWrapper(props) {
   return (
     <SnackbarContent className={classes.root}>
       <Card className={classNames(classes.card, classes[variant], className)} 
-        onClick={handleExpandClick}
         aria-label="Show more"
         onMouseEnter={() => setCardHover(true)}
         onMouseLeave={() => setCardHover(false)}
       >
-        <CardActions classes={{ root: classes.actionRoot }} >
+        <CardActions classes={{ root: classes.actionRoot }} onClick={handleExpandClick}>
           <Grid container direction="row" justify="space-between" alignItems="center" wrap="nowrap">
             <Typography variant="subtitle2">
               <div style={{ display: "flex", alignItems: "center" }}>
