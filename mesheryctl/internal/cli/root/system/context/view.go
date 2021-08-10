@@ -99,7 +99,7 @@ var viewContextCmd = &cobra.Command{
 }
 
 func init() {
-	viewContextCmd.Flags().StringVar(&context, "context", "", "Show config for the context")
+	viewContextCmd.Flags().StringVarP(&context, "context", "c", "", "Show config for the context")
 	viewContextCmd.Flags().BoolVar(&allContext, "all", false, "Show configs for all of the context")
 }
 
