@@ -47,9 +47,9 @@ func (h *Handler) ApplicationFileHandler(
 // swagger:route POST /api/experimental/application/ ApplicationsAPI idPostApplicationFileRequest
 // Handle POST request for Application Files
 //
-// Deploys requests for all Meshery Application Files
+// Save attached Meshery Application File
 // responses:
-//  200: mesheryApplicationFileRequestWrapper
+//  200: mesheryApplicationResponseWrapper
 
 // swagger:route GET /api/experimental/application/ ApplicationsAPI idGetApplicationFileRequest
 // Handle GET request for Application Files
