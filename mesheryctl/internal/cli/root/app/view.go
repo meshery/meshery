@@ -69,16 +69,16 @@ var viewCmd = &cobra.Command{
 		application = strings.Join(args, "%20")
 		if len(application) == 0 {
 			if viewAllFlag {
-				url += "/api/experimental/application?page_size=10000"
+				url += "/api/application?page_size=10000"
 			} else {
 				return errors.New("[application-name|application-id] not specified, use -a to view all applications")
 			}
 		} else if isID {
 			// if application is a valid uuid, then directly fetch the application
-			url += "/api/experimental/application/" + applicationID
+			url += "/api/application/" + applicationID
 		} else {
 			// else search application by name
-			url += "/api/experimental/application?search=" + application
+			url += "/api/application?search=" + application
 		}
 
 		client := &http.Client{}
