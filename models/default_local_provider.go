@@ -434,7 +434,7 @@ func (l *DefaultLocalProvider) GetMesheryPatternResources(
 	)
 }
 
-func (l *DefaultLocalProvider) DeleteMesheryResource(token, resourceID string) error {
+func (l *DefaultLocalProvider) DeleteMesheryPatternResource(token, resourceID string) error {
 	id := uuid.FromStringOrNil(resourceID)
 	return l.MesheryPatternResourcePersister.DeletePatternResource(id)
 }

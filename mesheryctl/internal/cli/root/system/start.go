@@ -86,12 +86,6 @@ func start() error {
 		}
 	}
 
-	if _, err := os.Stat(utils.ManifestsFolder); os.IsNotExist(err) {
-		if err := os.Mkdir(utils.ManifestsFolder, 0777); err != nil {
-			return ErrCreateDir(err, utils.ManifestsFolder)
-		}
-	}
-
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -319,6 +313,11 @@ func start() error {
 
 	case "kubernetes":
 		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
+
+		err = utils.CreateManifestsFolder()
 		if err != nil {
 			return err
 		}

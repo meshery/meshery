@@ -15,6 +15,21 @@
                 }
             },
             "required": ["posX", "posY"]
+        },
+        "edges": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "to": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "string"
+                    }
+                },
+                "required": ["posX", "posY"]
+            }
         }
     },
     "required": ["position"]

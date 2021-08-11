@@ -47,7 +47,7 @@ const MesheryOperatorScreen = ({ setStepStatus }) => {
 
   useEffect(() => {
     setIsConnected(isMesheryOperatorConnected(operatorInformation))
-  },[clusterInformation])
+  },[operatorInformation])
 
   const setOperatorState = (res) => {
     const [isReachable, operatorInformation] = getOperatorStatusFromQueryResult(res)

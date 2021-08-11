@@ -1,9 +1,10 @@
-package pattern
+package planner
 
 import (
-	"fmt"
 	"sync"
 	"sync/atomic"
+
+	"github.com/layer5io/meshery/models/pattern/core"
 )
 
 // Graph represents the graph data structure
@@ -16,7 +17,7 @@ type Graph struct {
 
 // Node is a graph node
 type Node struct {
-	Data Service
+	Data core.Service
 }
 
 // NewGraph creates a new instance of the graph and returns a pointer to it
@@ -28,10 +29,10 @@ func NewGraph() *Graph {
 }
 
 // VisitFn is the function definition for the visitor function
-type VisitFn func(name string, node Service) bool
+type VisitFn func(name string, node core.Service) bool
 
 // AddNode adds a node to the graph
-func (g *Graph) AddNode(name string, data Service) *Graph {
+func (g *Graph) AddNode(name string, data core.Service) *Graph {
 	g.Lock()
 	defer g.Unlock()
 
@@ -73,7 +74,7 @@ func (g *Graph) AddEdge(src, dest string) *Graph {
 // DetectCycle will return true if there is a cycle
 // in the graph
 func (g *Graph) DetectCycle() bool {
-	return !g.topologicalSort(func(_ string, _ Service) bool { return true })
+	return !g.topologicalSort(func(_ string, _ core.Service) bool { return true })
 }
 
 // Traverse traverses the graph in topological sorted order
@@ -91,15 +92,10 @@ func (g *Graph) topologicalSort(fn VisitFn) bool {
 		indegree[node] = 0
 	}
 
-	g.Visit(func(name string, _ Service) bool {
-		// indegree.Increment(name)
+	g.Visit(func(name string, _ core.Service) bool {
 		indegree[name]++
 		return true
 	})
-
-	for k, v := range indegree {
-		fmt.Println(k, ": ", v)
-	}
 
 	// Hold all the vertices with 0 degree
 	var queue Queue

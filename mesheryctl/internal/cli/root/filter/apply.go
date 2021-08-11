@@ -58,3 +58,7 @@ var applyCmd = &cobra.Command{
 		return nil
 	},
 }
+
+func init() {
+	applyCmd.PersistentFlags().StringVarP(&file, "file", "f", "", "Path to filter file")
+}
