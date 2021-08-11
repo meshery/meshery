@@ -12,7 +12,7 @@ on:
       - ".github/**"
 jobs:
   swaggerci:
-    if: github.repository == 'sayantan1413/meshery'
+    if: github.repository == 'meshery/meshery'
     name: swagger-docs
     runs-on: ubuntu-latest
     steps:
