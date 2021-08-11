@@ -1,12 +1,12 @@
 describe('Settings', () => {
   describe('Environment', () => {
     beforeEach(() => {
-      cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
+      // cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
 
       cy.selectProviderNone()
 
       cy.visit('/settings')
-      cy.wait('@getScan')
+      // cy.wait('@getScan')
     })
 
     it('click on Discover Cluster and send a ping to the cluster', () => {
@@ -34,12 +34,12 @@ describe('Settings', () => {
 
   describe('Service Meshes', () => {
     beforeEach(() => {
-      cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
+      // cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters')
 
       cy.selectProviderNone()
       cy.visit('/settings')
-      cy.wait('@getScan')
+      // cy.wait('@getScan')
 
       cy.get('[data-cy="tabServiceMeshes"]').click()
       cy.wait('@getMeshAdapters')
