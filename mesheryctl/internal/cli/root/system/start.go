@@ -317,11 +317,6 @@ func start() error {
 			return err
 		}
 
-		err = utils.CreateManifestsFolder()
-		if err != nil {
-			return err
-		}
-
 		version := currCtx.GetVersion()
 		channel := currCtx.GetChannel()
 		if version == "latest" {
