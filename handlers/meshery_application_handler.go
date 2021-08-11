@@ -18,14 +18,14 @@ type MesheryApplicationRequestBody struct {
 	ApplicationData *models.MesheryApplication `json:"application_data,omitempty"`
 }
 
-// swagger:route POST /api/experimental/application/deploy ApplicationsAPI idPostDeployApplicationFile
+// swagger:route POST /api/application/deploy ApplicationsAPI idPostDeployApplicationFile
 // Handle POST request for Application File Deploy
 //
 // Deploy an attached application file with the request
 // responses:
 //  200: applicationFilesResponseWrapper
 
-// swagger:route DELETE /api/experimental/application/deploy ApplicationsAPI idDeleteApplicationFile
+// swagger:route DELETE /api/application/deploy ApplicationsAPI idDeleteApplicationFile
 // Handle DELETE request for Application File Deploy
 //
 // Delete a deployed application file with the request
@@ -44,14 +44,14 @@ func (h *Handler) ApplicationFileHandler(
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
 }
 
-// swagger:route POST /api/experimental/application/ ApplicationsAPI idPostApplicationFileRequest
+// swagger:route POST /api/application/ ApplicationsAPI idPostApplicationFileRequest
 // Handle POST request for Application Files
 //
 // Save attached Meshery Application File
 // responses:
 //  200: mesheryApplicationResponseWrapper
 
-// swagger:route GET /api/experimental/application/ ApplicationsAPI idGetApplicationFileRequest
+// swagger:route GET /api/application/ ApplicationsAPI idGetApplicationFileRequest
 // Handle GET request for Application Files
 //
 // Returns requests for all Meshery Applications
@@ -59,7 +59,7 @@ func (h *Handler) ApplicationFileHandler(
 //  200: mesheryApplicationsResponseWrapper
 
 // ApplicationFileRequestHandler will handle requests of both type GET and POST
-// on the route /api/experimental/application
+// on the route /api/application
 func (h *Handler) ApplicationFileRequestHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -173,7 +173,7 @@ func (h *Handler) handleApplicationPOST(
 	}
 }
 
-// swagger:route GET /api/experimental/application/{id} ApplicationsAPI idGetMesheryApplication
+// swagger:route GET /api/application/{id} ApplicationsAPI idGetMesheryApplication
 // Handle GET request for Meshery Application with the given id
 //
 // Fetches the list of all applications saved by the current user
@@ -202,7 +202,7 @@ func (h *Handler) GetMesheryApplicationsHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route DELETE /api/experimental/application/{id} ApplicationsAPI idDeleteMesheryApplicationFile
+// swagger:route DELETE /api/application/{id} ApplicationsAPI idDeleteMesheryApplicationFile
 // Handle Delete for a Meshery Application File
 //
 // Deletes a meshery application file with ID: id
