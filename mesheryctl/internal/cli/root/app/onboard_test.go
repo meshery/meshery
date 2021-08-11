@@ -47,7 +47,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/experimental/application",
-					Response:     "onboard.application.response.golden",
+					Response:     "onboard.applicationSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -58,7 +58,7 @@ func TestOnboardCmd(t *testing.T) {
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
+			ExpectError: false,
 		},
 	}
 

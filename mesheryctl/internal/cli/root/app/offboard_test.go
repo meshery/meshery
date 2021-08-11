@@ -41,7 +41,7 @@ func TestOffboardCmd(t *testing.T) {
 	}{
 		{
 			Name:             "Offboard Application",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden")},
+			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden")},
 			ExpectedResponse: "offboard.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -52,7 +52,7 @@ func TestOffboardCmd(t *testing.T) {
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
+			ExpectError: false,
 		},
 	}
 
