@@ -4,20 +4,22 @@ on:
     branches:
       - "master"
     paths:
-      - handlers/**
+      - "handlers/**"
     paths-ignore:
       - ".github/**"
   pull_request:
     paths-ignore:
       - ".github/**"
-
 jobs:
   swaggerci:
+    if: github.repository == 'sayantan1413/meshery'
     name: swagger-docs
-    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          ref: "master"
       - name: Setup go-swagger
         uses: minchao/setup-go-swagger@v1
         with:
