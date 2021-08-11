@@ -127,11 +127,12 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, isMesher
   }
 
   return (
-    <div style={{ padding: "0.5rem" }}>
+    <div>
       {isMeshery ? (<Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
-      </Typography>) : (
-        <div style={{ right: 0, position: "absolute", zIndex: 1 }}>
+      </Typography>) : ( 
+        <div style={{ background: "#00b39f", margin: "-10px -10px 0 -10px", padding: "5px", display: "flex"}}>
+          <p style={{ margin: "auto auto auto 10px", fontSize: "18px" }}>{schemaSet.workload.title}</p>
           <IconButton onClick={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}>
             <Delete />
           </IconButton>
@@ -140,12 +141,19 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, isMesher
           </IconButton>
         </div>
       )}
-      {(isMeshery || renderTraits()) && (<AppBar position="static">
+      {isMeshery && (<AppBar position="static">
         <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service">
-          <Tab label="Settings" style={{ minWidth: "100px" }} {...a11yProps(0)} />
-          {renderTraits() ? <Tab label="Traits" style={{ minWidth: "100px" }} {...a11yProps(1)} /> : null}
+          <Tab label="Settings" {...a11yProps(0)} />
+          {renderTraits() ? <Tab label="Traits" {...a11yProps(1)} /> : null}
         </Tabs>
-      </AppBar>)}
+      </AppBar>)}  
+      {!isMeshery && renderTraits() && (
+        <AppBar style={{background: 'inherit', boxShadow: 'none', color: 'black'}} position="static">
+          <Tabs TabIndicatorProps={{style: {background:'#00b39f'}}} style={{ margin: 0 }} value={tab} onChange={handleTabChange} aria-label="Pattern Service">
+            <Tab label="Settings" style={{ minWidth: "50%", margin: 0 }} {...a11yProps(0)} />
+            <Tab label="Traits" style={{ minWidth: "50%", margin: 0 }} {...a11yProps(1)} />
+          </Tabs>
+        </AppBar>)}
       <TabPanel value={tab} index={0}>
         <PatternService
           type="workload"
