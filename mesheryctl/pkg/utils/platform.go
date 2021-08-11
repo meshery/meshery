@@ -204,8 +204,34 @@ func DownloadOperatorManifest() error {
 	return nil
 }
 
+// returns the Channel and Version given a context
+func GetChannelAndVersion(currCtx *(config.Context)) (string, string, error) {
+	var version, channel string
+	var err error
+
+	version = currCtx.GetVersion()
+	channel = currCtx.GetChannel()
+	if version == "latest" {
+		if channel == "edge" {
+			version = "master"
+		} else {
+			version, err = GetLatestStableReleaseTag()
+			if err != nil {
+				return "", "", err
+			}
+		}
+	}
+
+	return channel, version, nil
+}
+
 // FetchManifests is a wrapper function that identifies the required manifest files as downloads them
-func FetchManifests(version string) ([]Manifest, error) {
+func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
+	_, version, err := GetChannelAndVersion(currCtx)
+	if err != nil {
+		return []Manifest{}, err
+	}
+
 	log.Debug("fetching required Kubernetes manifest files...")
 	// get correct minfestsURL based on version
 	manifestsURL, err := GetManifestTreeURL(version)
