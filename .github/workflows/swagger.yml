@@ -5,11 +5,9 @@ on:
       - "master"
     paths:
       - "handlers/**"
-    paths-ignore:
-      - ".github/**"
   pull_request:
-    paths-ignore:
-      - ".github/**"
+    paths:
+      - "handlers/**"
 jobs:
   swaggerci:
     if: github.repository == 'meshery/meshery'
