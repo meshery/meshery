@@ -28,7 +28,9 @@ function componentType(jsonSchema) {
  * }} props
  * @returns
  */
-function PatternService({ jsonSchema, onChange, type, onSubmit, onDelete }) {
+function PatternService({
+  jsonSchema, onChange, type, onSubmit, onDelete
+}) {
   const ctype = componentType(jsonSchema);
 
   if (ctype === "rjsf")

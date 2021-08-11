@@ -7,18 +7,20 @@ import JS4 from "../../../assets/jsonschema/schema-04.json";
 const Form = withTheme(MaterialUITheme);
 
 function deleteTitleFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, title: "" };
+  return { ...jsonSchema, title : "" };
 }
 
 function RJSFButton({ handler, text }) {
   return (
-    <Button variant="contained" color="primary" style={{ marginRight: "0.5rem" }} onClick={handler}>
+    <Button variant="contained" color="primary" style={{ marginRight : "0.5rem" }} onClick={handler}>
       {text}
     </Button>
   );
 }
 
-function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete }) {
+function RJSF({
+  jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete
+}) {
   const [data, setData] = React.useState();
 
   React.useEffect(() => {
@@ -27,7 +29,9 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete 
 
   return (
     <Form
-      schema={hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema}
+      schema={hideTitle
+        ? deleteTitleFromJSONSchema(jsonSchema)
+        : jsonSchema}
       idPrefix={jsonSchema?.title}
       onChange={(e) => setData(e.formData)}
       formData={data}
@@ -35,8 +39,12 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete 
       additionalMetaSchemas={[JS4]}
       // noHtml5Validate
     >
-      {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" />}
-      {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />}
+      {hideSubmit
+        ? true
+        : <RJSFButton handler={onSubmit} text="Submit" />}
+      {hideSubmit
+        ? true
+        : <RJSFButton handler={onDelete} text="Delete" />}
     </Form>
   );
 }

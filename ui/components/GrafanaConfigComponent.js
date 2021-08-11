@@ -7,19 +7,12 @@ import {
 import ReactSelectWrapper from './ReactSelectWrapper'
 
 const grafanaStyles = (theme) => ({
-  root: {
-    padding: theme.spacing(5),
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  inputContainer: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(1)
-  },
-  button: {
-    marginTop: theme.spacing(3),
+  root : { padding : theme.spacing(5), },
+  buttons : { display : 'flex',
+    justifyContent : 'flex-end', },
+  inputContainer : { marginTop : theme.spacing(2),
+    marginBottom : theme.spacing(1) },
+  button : { marginTop : theme.spacing(3),
     //   marginLeft: theme.spacing(1),
   },
 });
@@ -37,7 +30,9 @@ class GrafanaConfigComponent extends Component {
                 <Grid item xs={12} md={6}>
                   <div className={classes.inputContainer}>
                     <ReactSelectWrapper
-                      onChange={(select) => handleChange('grafanaURL')(select ? select.value : '')}
+                      onChange={(select) => handleChange('grafanaURL')(select
+                        ? select.value
+                        : '')}
                       options={options}
                       value={grafanaURL}
                       label="Grafana Base URL"
@@ -85,11 +80,11 @@ class GrafanaConfigComponent extends Component {
 }
 
 GrafanaConfigComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-  grafanaURL: PropTypes.object.isRequired,
-  grafanaAPIKey: PropTypes.string.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleGrafanaConfigure: PropTypes.func.isRequired,
+  classes : PropTypes.object.isRequired,
+  grafanaURL : PropTypes.object.isRequired,
+  grafanaAPIKey : PropTypes.string.isRequired,
+  handleChange : PropTypes.func.isRequired,
+  handleGrafanaConfigure : PropTypes.func.isRequired,
 };
 
 export default withStyles(grafanaStyles)(GrafanaConfigComponent);

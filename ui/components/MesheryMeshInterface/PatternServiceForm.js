@@ -1,12 +1,16 @@
 // @ts-check
 import React from "react";
-import { Tab, Tabs, AppBar, Typography, Box, Card } from "@material-ui/core";
+import {
+  Tab, Tabs, AppBar, Typography, Box, Card
+} from "@material-ui/core";
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
 import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const {
+    children, value, index, ...other
+  } = props;
 
   return (
     <div
@@ -26,10 +30,8 @@ function TabPanel(props) {
 }
 
 function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
+  return { id : `simple-tab-${index}`,
+    "aria-controls" : `simple-tabpanel-${index}`, };
 }
 
 function getPatternAttributeName(jsonSchema) {
@@ -55,10 +57,8 @@ function recursiveCleanObject(obj) {
  * @param {*} config
  */
 function createPatternFromConfig(config, namespace) {
-  const pattern = {
-    name: `pattern-${Math.random().toString(36).substr(2, 5)}`,
-    services: {},
-  };
+  const pattern = { name : `pattern-${Math.random().toString(36).substr(2, 5)}`,
+    services : {}, };
 
   recursiveCleanObject(config);
 
@@ -92,7 +92,9 @@ function createPatternFromConfig(config, namespace) {
  * }} props
  * @returns
  */
-function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
+function PatternServiceForm({
+  schemaSet, onSubmit, onDelete, namespace
+}) {
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB({});
   const [traits, setTraits, getTraitsRefValue] = useStateCB({});
@@ -106,11 +108,11 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
   const renderTraits = () => !!schemaSet.traits?.length;
 
   const submitHandler = (val) => {
-    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace))
+    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace))
   };
 
   const deleteHandler = (val) => {
-    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace), true)
+    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace), true)
   };
 
   if (schemaSet.type === "addon") {
@@ -119,21 +121,23 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
         type="workload"
         jsonSchema={schemaSet.workload}
         onChange={setSettings}
-        onSubmit={() => submitHandler({ settings: getSettingsRefValue() })}
-        onDelete={() => deleteHandler({ settings: getSettingsRefValue() })}
+        onSubmit={() => submitHandler({ settings : getSettingsRefValue() })}
+        onDelete={() => deleteHandler({ settings : getSettingsRefValue() })}
       />
     );
   }
 
   return (
-    <Card style={{ padding: "1rem" }}>
+    <Card style={{ padding : "1rem" }}>
       <Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
       </Typography>
       <AppBar position="static">
         <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service">
           <Tab label="Settings" {...a11yProps(0)} />
-          {renderTraits() ? <Tab label="Traits" {...a11yProps(1)} /> : null}
+          {renderTraits()
+            ? <Tab label="Traits" {...a11yProps(1)} />
+            : null}
         </Tabs>
       </AppBar>
       <TabPanel value={tab} index={0}>
@@ -141,21 +145,23 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
           type="workload"
           jsonSchema={schemaSet.workload}
           onChange={setSettings}
-          onSubmit={() => submitHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
-          onDelete={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
+          onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}
+          onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}
         />
       </TabPanel>
-      {renderTraits() ? (
-        <TabPanel value={tab} index={1}>
-          {schemaSet.traits?.map((trait) => (
-            <PatternService
-              type="trait"
-              jsonSchema={trait}
-              onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)]: val }))}
-            />
-          ))}
-        </TabPanel>
-      ) : null}
+      {renderTraits()
+        ? (
+          <TabPanel value={tab} index={1}>
+            {schemaSet.traits?.map((trait) => (
+              <PatternService
+                type="trait"
+                jsonSchema={trait}
+                onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)] : val }))}
+              />
+            ))}
+          </TabPanel>
+        )
+        : null}
     </Card>
   );
 }
