@@ -11,7 +11,7 @@ const styles = (theme) => ({
   },
 });
 
-class MesheryEventViewer extends React.Component {
+function MesheryEventViewer(props) {
   state = {
     dialogShow: false,
   }
@@ -19,29 +19,28 @@ class MesheryEventViewer extends React.Component {
   handleSnackbarClose = (_, reason) => {
     if (reason === 'clickaway') return;
 
-    this.props.deleteEvent();
+    props.deleteEvent();
   };
 
-  render() {
-    const {
-      classes, eventVariant, eventSummary, eventDetails,
-    } = this.props;
 
-    return (
-      <NoSsr>
-        <React.Fragment>
-          <MesherySnackbarWrapper
-            key={`event_-_${eventVariant}`}
-            variant={eventTypes[eventVariant] ? eventTypes[eventVariant].type : eventTypes[0].type}
-            message={eventSummary}
-            details={eventDetails}
-            onClose={this.handleSnackbarClose}
-            className={classes.event}
-          />
-        </React.Fragment>
-      </NoSsr>
-    );
-  }
+  const {
+    classes, eventVariant, eventSummary, eventDetails,
+  } = props;
+
+  return (
+    <NoSsr>
+      <>
+        <MesherySnackbarWrapper
+          key={`event_-_${eventVariant}`}
+          variant={eventTypes[eventVariant] ? eventTypes[eventVariant].type : eventTypes[0].type}
+          message={eventSummary}
+          details={eventDetails}
+          onClose={this.handleSnackbarClose}
+          className={classes.event}
+        />
+      </>
+    </NoSsr>
+  );
 }
 
 MesheryEventViewer.propTypes = {
