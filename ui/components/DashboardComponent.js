@@ -126,18 +126,20 @@ class DashboardComponent extends React.Component {
         release_channel : "NA",
       },
 
-      urlError : false,
-      grafanaConfigSuccess : props.grafana.grafanaURL !== "",
-      grafanaBoardSearch : "",
-      grafanaURL : props.grafana.grafanaURL,
-      grafanaAPIKey : props.grafana.grafanaAPIKey,
-      grafanaBoards : props.grafana.grafanaBoards,
-      selectedBoardsConfigs : props.grafana.selectedBoardsConfigs,
-      ts : props.grafana.ts,
+      urlError: false,
+      grafanaConfigSuccess: props.grafana.grafanaURL !== "",
+      grafanaBoardSearch: "",
+      grafanaURL: props.grafana.grafanaURL,
+      grafanaAPIKey: props.grafana.grafanaAPIKey,
+      grafanaBoards: props.grafana.grafanaBoards,
+      selectedBoardsConfigs: props.grafana.selectedBoardsConfigs,
+      ts: props.grafana.ts,
 
-      meshScan : [],
-      activeMeshScanNamespace : {},
-      meshScanNamespaces : {},
+      meshScan: [],
+      activeMeshScanNamespace: {},
+      meshScanNamespaces: {},
+
+      isMetricsConfigured: grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured
     };
   }
 
@@ -191,7 +193,10 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
-    this.fetchMetricComponents();
+
+    if(this.state.isMetricsConfigured){
+      this.fetchMetricComponents();
+    }
     this.initMeshSyncControlPlaneSubscription();
   };
 
