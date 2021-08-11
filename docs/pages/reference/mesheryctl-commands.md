@@ -12,6 +12,7 @@ Meshery CLI commands are categorized by function, which are:
 
 - `mesheryctl` - Global flags and CLI configuration
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
+- `mesheryctl app` - Service Mesh Apps Management
 - `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management: provisioning and configuration best practices
 - `mesheryctl perf` -  Service Mesh Performance Management: Workload and service mesh performance characterization
 - `mesheryctl pattern` - Service Mesh Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
@@ -368,6 +369,70 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td>{{ flag.flag }}</td>
         <td>{{ flag.description }}</td>
       </tr>
+  {% endfor %}
+</thead>
+</table>
+
+
+## Service Mesh Apps Management
+
+<table>
+<thead>
+  <tr>
+    <th>Main Command</th>
+    <th>Command</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% for command_hash in site.data.mesheryctlcommands.apps.commands %}{% assign command = command_hash[1] %}
+    <tr>
+      <td rowspan=12><a href="{{ site.baseurl }}/reference/mesheryctl/apps">{{ command.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ command.description }}</td>
+    </tr>
+    {% for flag_hash in site.data.mesheryctlcommands.apps.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+        {% for subcommand_hash in site.data.mesheryctlcommands.apps.onboard %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/onboard">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.apps.onboard %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/onboard">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.apps.list %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/list">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.apps.view.commands %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/view">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+      </tr>
+      {% for flag_hash in site.data.mesheryctlcommands.apps.view.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td></td>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+      </tr>
+      {% endfor %}
+    {% endfor %}
   {% endfor %}
 </thead>
 </table>

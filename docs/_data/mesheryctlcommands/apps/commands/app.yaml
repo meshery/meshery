@@ -1,0 +1,4 @@
+name: app
+description: Apps management of service meshes
+usage: |
+    `mesheryctl app`

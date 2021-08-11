@@ -1,0 +1,4 @@
+name: offboard --file
+description: offboard application file
+usage: |
+    mesheryctl app offboard --file
