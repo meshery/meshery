@@ -113,9 +113,10 @@ const styles = (theme) => ({
 function getNotifications(events, type) {
   if (!Array.isArray(events)) return [];
 
+  if (type === "*") return events.filter(ev => ev.event_type === 3);
   if (type === "error") return events.filter(ev => ev.event_type === 2);
-  if (type === "warning") return events.filter(ev => ev.event_type === 1)
-  if (type === "success") return events.filter(ev => ev.event_type === 0)
+  if (type === "warning") return events.filter(ev => ev.event_type === 1);
+  if (type === "success") return events.filter(ev => ev.event_type === 0);
   
   return events;
 }
@@ -295,11 +296,13 @@ class MesheryNotification extends React.Component {
 
   handleNotifFiltering(type) {
     return () => {
+      console.log(type)
       this.setState({ displayEventType: type })
     }
   }
 
   handleTabChange = (event, newTabValue) => {
+    console.log(newTabValue)
     this.setState({ tabValue: newTabValue })
   }
 
@@ -405,6 +408,7 @@ class MesheryNotification extends React.Component {
                 </Tabs>
                 {getNotifications(events, this.state.displayEventType).map((event, ind) => (
                   <MesheryEventViewer
+                    key={ind}
                     eventVariant={event.event_type}
                     eventSummary={event.summary}
                     deleteEvent={self.deleteEvent(ind)}
