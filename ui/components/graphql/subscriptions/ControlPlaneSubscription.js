@@ -10,6 +10,25 @@ const controlPlaneSubscription = graphql`
         version
         component
         namespace
+        data_planes {
+          name
+          image
+          ports {
+            name
+            containerPort
+            protocol
+          }
+          resources {
+            limits {
+              cpu
+              memory
+            }
+            requests {
+              cpu
+              memory
+            }
+          }
+        }
       }
     }
   }

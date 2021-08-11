@@ -137,6 +137,35 @@ type ControlPlaneMember {
 
 	# Namespace
 	namespace: String!
+
+	# DataPlanes
+	data_planes: [Container]
+}
+
+type Container {
+	name: String!
+	image: String!
+	# args: NOT IMPLEMENTED 
+	ports: [Container_Port]
+	# env: NOT IMPLEMENTED,
+	resources: Container_Resource
+}
+
+type Container_Port {
+	name: String
+	containerPort: Int!
+	protocol: String!
+
+}
+
+type Container_Resource {
+	limits: Resource
+	requests: Resource
+}
+
+type Resource {
+	cpu: String
+	memory: String
 }
 
 # ============== OPERATOR =============================

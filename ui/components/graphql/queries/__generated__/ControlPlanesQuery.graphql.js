@@ -23,6 +23,25 @@ export type ControlPlanesQueryResponse = {|
       +version: string,
       +component: string,
       +namespace: string,
+      +data_planes: ?$ReadOnlyArray<?{|
+        +name: string,
+        +image: string,
+        +ports: ?$ReadOnlyArray<?{|
+          +name: ?string,
+          +containerPort: number,
+          +protocol: string,
+        |}>,
+        +resources: ?{|
+          +limits: ?{|
+            +cpu: ?string,
+            +memory: ?string,
+          |},
+          +requests: ?{|
+            +cpu: ?string,
+            +memory: ?string,
+          |},
+        |},
+      |}>,
     |}>,
   |}>
 |};
@@ -44,6 +63,25 @@ query ControlPlanesQuery(
       version
       component
       namespace
+      data_planes {
+        name
+        image
+        ports {
+          name
+          containerPort
+          protocol
+        }
+        resources {
+          limits {
+            cpu
+            memory
+          }
+          requests {
+            cpu
+            memory
+          }
+        }
+      }
     }
   }
 }
@@ -65,6 +103,22 @@ v1 = {
   "storageKey": null
 },
 v2 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "cpu",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "memory",
+    "storageKey": null
+  }
+],
+v3 = [
   {
     "alias": "controlPlanesState",
     "args": [
@@ -109,6 +163,82 @@ v2 = [
             "kind": "ScalarField",
             "name": "namespace",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Container",
+            "kind": "LinkedField",
+            "name": "data_planes",
+            "plural": true,
+            "selections": [
+              (v1/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "image",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Container_Port",
+                "kind": "LinkedField",
+                "name": "ports",
+                "plural": true,
+                "selections": [
+                  (v1/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "containerPort",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "protocol",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Container_Resource",
+                "kind": "LinkedField",
+                "name": "resources",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Resource",
+                    "kind": "LinkedField",
+                    "name": "limits",
+                    "plural": false,
+                    "selections": (v2/*: any*/),
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Resource",
+                    "kind": "LinkedField",
+                    "name": "requests",
+                    "plural": false,
+                    "selections": (v2/*: any*/),
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -123,7 +253,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ControlPlanesQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -132,19 +262,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ControlPlanesQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "81a16f9e33537974469a4c1f541dab63",
+    "cacheID": "888fad655c1f17982872307f10259894",
     "id": null,
     "metadata": {},
     "name": "ControlPlanesQuery",
     "operationKind": "query",
-    "text": "query ControlPlanesQuery(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: getControlPlanes(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n    }\n  }\n}\n"
+    "text": "query ControlPlanesQuery(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: getControlPlanes(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n      data_planes {\n        name\n        image\n        ports {\n          name\n          containerPort\n          protocol\n        }\n        resources {\n          limits {\n            cpu\n            memory\n          }\n          requests {\n            cpu\n            memory\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7749867bb95be6f805c7da4520e1fc1f';
+(node/*: any*/).hash = 'b9f5a5c87cb29179a4b60c175db91fd3';
 
 module.exports = node;

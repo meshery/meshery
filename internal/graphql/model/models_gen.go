@@ -19,6 +19,24 @@ type AddonStatusInput struct {
 	TargetStatus Status    `json:"targetStatus"`
 }
 
+type Container struct {
+	Name      string             `json:"name"`
+	Image     string             `json:"image"`
+	Ports     []*ContainerPort   `json:"ports"`
+	Resources *ContainerResource `json:"resources"`
+}
+
+type ContainerPort struct {
+	Name          *string `json:"name"`
+	ContainerPort int     `json:"containerPort"`
+	Protocol      string  `json:"protocol"`
+}
+
+type ContainerResource struct {
+	Limits   *Resource `json:"limits"`
+	Requests *Resource `json:"requests"`
+}
+
 type ControlPlane struct {
 	Name    string                `json:"name"`
 	Members []*ControlPlaneMember `json:"members"`
@@ -29,10 +47,11 @@ type ControlPlaneFilter struct {
 }
 
 type ControlPlaneMember struct {
-	Name      string `json:"name"`
-	Component string `json:"component"`
-	Version   string `json:"version"`
-	Namespace string `json:"namespace"`
+	Name       string       `json:"name"`
+	Component  string       `json:"component"`
+	Version    string       `json:"version"`
+	Namespace  string       `json:"namespace"`
+	DataPlanes []*Container `json:"data_planes"`
 }
 
 type Error struct {
@@ -96,6 +115,11 @@ type PerfPageResult struct {
 type ReSyncActions struct {
 	ClearDb string `json:"clearDB"`
 	ReSync  string `json:"ReSync"`
+}
+
+type Resource struct {
+	CPU    *string `json:"cpu"`
+	Memory *string `json:"memory"`
 }
 
 type MeshType string
