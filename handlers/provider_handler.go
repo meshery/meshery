@@ -79,7 +79,7 @@ func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 //
 // Returns the capabilities.json for the provider
 // responses:
-// 	200: providerPropertiesRespWrapper
+// 	200:
 
 // ProviderCapabilityHandler returns the capabilities.json for the provider
 func (h *Handler) ProviderCapabilityHandler(
