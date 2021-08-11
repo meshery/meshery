@@ -164,9 +164,9 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	}()
 
 	select {
-	case <- timer.C:
+	case <-timer.C:
 		return "", errors.New("timeout")
-	case event := <- eventChan:
+	case event := <-eventChan:
 		if event != "successful" {
 			return "", errors.New("Failed to deploy")
 		}

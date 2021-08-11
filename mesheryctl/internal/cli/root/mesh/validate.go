@@ -127,9 +127,9 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	}()
 
 	select {
-	case <- timer.C:
+	case <-timer.C:
 		return "", errors.New("timeout")
-	case event := <- eventChan:
+	case event := <-eventChan:
 		if event != "successful" {
 			return "", errors.New("SMI conformance tests failed")
 		}
