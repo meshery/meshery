@@ -8,6 +8,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -30,6 +31,11 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+		// set default tokenpath for perf apply command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+		}
+
 		filter := ""
 		isID := false
 		// if filter name/id available
