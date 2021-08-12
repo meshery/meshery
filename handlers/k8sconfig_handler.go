@@ -201,12 +201,13 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 	}
 
 	ncfg, err := helpers.FlattenMinifyKubeConfig([]byte(k8sConfig))
-	fmt.Printf("Error: %s\n", err)
-	fmt.Printf("New Config: %s\n", ncfg)
+	if err != nil {
+		logrus.Error(ErrLoadConfig(err))
+		return nil, ErrLoadConfig(err)
+	}
 
 	ccfg, err := clientcmd.Load(ncfg)
 	if err != nil {
-		println("error came in: ", err.Error())
 		logrus.Error(ErrLoadConfig(err))
 		return nil, ErrLoadConfig(err)
 	}
@@ -225,7 +226,6 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 	if prefObj.K8SConfig == nil || h.config.KubeClient == nil {
 		kc, err := h.loadK8SConfigFromDisk()
 		if err != nil {
-			println("Oopsiee: ", err.Error())
 			kc, err = h.loadInClusterK8SConfig()
 			if err != nil {
 				return err
