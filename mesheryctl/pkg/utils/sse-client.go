@@ -17,9 +17,9 @@ type Event struct {
 }
 
 type EventData struct {
-	Details string `json:"details"`
+	Details     string `json:"details"`
 	OperationID string `json:"operation_id"`
-	Summary string `json:summary"`
+	Summary     string `json:summary"`
 }
 
 // ConvertRespToSSE converts a connection to a stream of server sent events
