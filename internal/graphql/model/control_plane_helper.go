@@ -17,7 +17,7 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*Co
 
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]). // milih istio/kuma atau service mesh lainnya
+			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
 			Preload("Spec").
