@@ -51,7 +51,7 @@ func FlattenMinifyKubeConfig(config []byte) ([]byte, error) {
 			return key, value
 		}
 
-		// Valid filepath found => replace the value with the file data
+		// Valid filepath found => get the file data
 		data, err := ResolveFSRef(strV)
 		if err != nil {
 			return key, value
@@ -70,23 +70,22 @@ func NestedMapExplorer(
 ) {
 	for k, v := range mp {
 		switch cNode := v.(type) {
-		case string:
-			delete(mp, k)
-			key, val := fn(k, cNode)
-			mp[key] = val
 		case map[interface{}]interface{}:
 			NestedMapExplorer(cNode, fn)
 		case []interface{}:
-			for _, el := range cNode {
+			for i, el := range cNode {
 				switch ccNode := el.(type) {
-				case string:
-					delete(mp, k)
-					key, val := fn(k, cNode)
-					mp[key] = val
 				case map[interface{}]interface{}:
 					NestedMapExplorer(ccNode, fn)
+				default:
+					_, nv := fn(i, el)
+					cNode[i] = nv
 				}
 			}
+		default:
+			delete(mp, k)
+			key, val := fn(k, cNode)
+			mp[key] = val
 		}
 	}
 }
