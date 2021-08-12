@@ -13,6 +13,27 @@ const controlPlaneSubscription = graphql`
         data_planes {
           name
           image
+          status {
+            ready
+            started
+            state
+            # state {
+            #   waiting {
+            #     reason
+            #     message
+            #   }
+            #   running {
+            #     startedAt
+            #   }
+            #   terminated {
+            #     reason
+            #     message
+            #     startedAt
+            #     finishedAt
+            #     containerID
+            #   }
+            # }
+          }
           ports {
             name
             containerPort

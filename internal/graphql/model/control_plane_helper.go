@@ -1,8 +1,6 @@
 package model
 
 import (
-	// "encoding/json"
-	// "fmt"
 	"reflect"
 	"strings"
 
@@ -29,55 +27,75 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*Co
 			return nil, ErrQuery(result.Error)
 		}
 
-		// result2 := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-		// Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]). // milih istio/kuma atau service mesh lainnya
-		// Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
-		// Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
-		// Preload("Spec").
-		// Preload("Status").
-		// Find(&object, "kind = ?", "Pod")
-
 		members := make([]*ControlPlaneMember, 0)
 		for _, obj := range object {
 			if meshsyncmodel.IsObject(obj) {
 				objspec := corev1.PodSpec{}
+				objstatus := corev1.PodStatus{}
 				err := utils.Unmarshal(obj.Spec.Attribute, &objspec)
 				if err != nil {
 					return nil, err
 				}
-
-				// fmt.Println("OBJSPEC!")
-				// fmt.Println("..")
-				// fmt.Println("..")
-				// fmt.Println("..")
-
+				err = utils.Unmarshal(obj.Status.Attribute, &objstatus)
+				if err != nil {
+					return nil, err
+				}
 				proxyContainers := make([]*Container, 0)
 
-				for _, container := range objspec.Containers {
-					// fmt.Println("CONTAINER!")
-					// s, _ := json.MarshalIndent(container, "", "\t")
-					// fmt.Println(string(s))
-					// fmt.Println("..")
-					// fmt.Println("..")
-					if strings.Contains(container.Name, "proxy") || strings.Contains(container.Image, "proxy") {
-
-						proxyPorts := make([]*ContainerPort, 0)
-						for _, port := range container.Ports {
-							proxyPorts = append(proxyPorts, &ContainerPort{
-								Name:          &port.Name,
-								ContainerPort: int(port.ContainerPort),
-								Protocol:      reflect.ValueOf(port.Protocol).String(),
+				containers := objspec.Containers
+				statuses := objstatus.ContainerStatuses
+				if len(containers) == len(statuses) {
+					for i := range containers {
+						container := containers[i]
+						status := statuses[i]
+						var proxyStatus *ContainerStatus
+						// Statuses
+						if strings.Contains(status.Name, "proxy") || strings.Contains(status.Image, "proxy") {
+							proxyStatus = &ContainerStatus{
+								Name:  status.Name,
+								State: status.State,
+								// State: &ContainerStatusState{
+								// 	Waiting: &ContainerStatusStateWaiting{
+								// 		Reason:  &status.State.Waiting.Reason,
+								// 		Message: &status.State.Waiting.Message,
+								// 	},
+								// 	Running: &ContainerStatusStateRunning{
+								// 		StartedAt: &status.State.Running.StartedAt.Time,
+								// 	},
+								// 	Terminated: &ContainerStatusStateTerminated{
+								// 		Reason:  &status.State.Terminated.Reason,
+								// 		Message: &status.State.Terminated.Message,
+								// 		// ExitCode:    &exitCode,
+								// 		// Signal:      &signal,
+								// 		StartedAt:   &status.State.Terminated.StartedAt.Time,
+								// 		FinishedAt:  &status.State.Terminated.FinishedAt.Time,
+								// 		ContainerID: &status.State.Terminated.ContainerID,
+								// 	},
+								// },
+								Started: *status.Started,
+								Ready:   status.Ready,
+								// RestartCount: reflect.ValueOf(status.RestartCount).Addr().Int(),
+							}
+						}
+						// Container
+						if strings.Contains(container.Name, "proxy") || strings.Contains(container.Image, "proxy") {
+							proxyPorts := make([]*ContainerPort, 0)
+							for _, port := range container.Ports {
+								proxyPorts = append(proxyPorts, &ContainerPort{
+									Name:          &port.Name,
+									ContainerPort: int(port.ContainerPort),
+									Protocol:      reflect.ValueOf(port.Protocol).String(),
+								})
+							}
+							proxyContainers = append(proxyContainers, &Container{
+								Name:   container.Name,
+								Image:  container.Image,
+								Ports:  proxyPorts,
+								Status: proxyStatus,
 							})
 						}
-
-						proxyContainers = append(proxyContainers, &Container{
-							Name:  container.Name,
-							Image: container.Image,
-							Ports: proxyPorts,
-						})
 					}
 				}
-
 				version := "unknown"
 				if len(strings.Split(objspec.Containers[0].Image, ":")) > 0 {
 					version = strings.Split(objspec.Containers[0].Image, ":")[1]

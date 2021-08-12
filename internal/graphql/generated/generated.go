@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -56,6 +57,7 @@ type ComplexityRoot struct {
 		Name      func(childComplexity int) int
 		Ports     func(childComplexity int) int
 		Resources func(childComplexity int) int
+		Status    func(childComplexity int) int
 	}
 
 	ContainerPort struct {
@@ -67,6 +69,36 @@ type ComplexityRoot struct {
 	ContainerResource struct {
 		Limits   func(childComplexity int) int
 		Requests func(childComplexity int) int
+	}
+
+	ContainerStatus struct {
+		Name    func(childComplexity int) int
+		Ready   func(childComplexity int) int
+		Started func(childComplexity int) int
+		State   func(childComplexity int) int
+	}
+
+	ContainerStatusState struct {
+		Running    func(childComplexity int) int
+		Terminated func(childComplexity int) int
+		Waiting    func(childComplexity int) int
+	}
+
+	ContainerStatusStateRunning struct {
+		StartedAt func(childComplexity int) int
+	}
+
+	ContainerStatusStateTerminated struct {
+		ContainerID func(childComplexity int) int
+		FinishedAt  func(childComplexity int) int
+		Message     func(childComplexity int) int
+		Reason      func(childComplexity int) int
+		StartedAt   func(childComplexity int) int
+	}
+
+	ContainerStatusStateWaiting struct {
+		Message func(childComplexity int) int
+		Reason  func(childComplexity int) int
 	}
 
 	ControlPlane struct {
@@ -243,6 +275,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Container.Resources(childComplexity), true
 
+	case "Container.status":
+		if e.complexity.Container.Status == nil {
+			break
+		}
+
+		return e.complexity.Container.Status(childComplexity), true
+
 	case "Container_Port.containerPort":
 		if e.complexity.ContainerPort.ContainerPort == nil {
 			break
@@ -277,6 +316,111 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ContainerResource.Requests(childComplexity), true
+
+	case "Container_Status.name":
+		if e.complexity.ContainerStatus.Name == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatus.Name(childComplexity), true
+
+	case "Container_Status.ready":
+		if e.complexity.ContainerStatus.Ready == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatus.Ready(childComplexity), true
+
+	case "Container_Status.started":
+		if e.complexity.ContainerStatus.Started == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatus.Started(childComplexity), true
+
+	case "Container_Status.state":
+		if e.complexity.ContainerStatus.State == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatus.State(childComplexity), true
+
+	case "Container_Status_State.running":
+		if e.complexity.ContainerStatusState.Running == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusState.Running(childComplexity), true
+
+	case "Container_Status_State.terminated":
+		if e.complexity.ContainerStatusState.Terminated == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusState.Terminated(childComplexity), true
+
+	case "Container_Status_State.waiting":
+		if e.complexity.ContainerStatusState.Waiting == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusState.Waiting(childComplexity), true
+
+	case "Container_Status_State_Running.startedAt":
+		if e.complexity.ContainerStatusStateRunning.StartedAt == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusStateRunning.StartedAt(childComplexity), true
+
+	case "Container_Status_State_Terminated.containerID":
+		if e.complexity.ContainerStatusStateTerminated.ContainerID == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusStateTerminated.ContainerID(childComplexity), true
+
+	case "Container_Status_State_Terminated.finishedAt":
+		if e.complexity.ContainerStatusStateTerminated.FinishedAt == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusStateTerminated.FinishedAt(childComplexity), true
+
+	case "Container_Status_State_Terminated.message":
+		if e.complexity.ContainerStatusStateTerminated.Message == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusStateTerminated.Message(childComplexity), true
+
+	case "Container_Status_State_Terminated.reason":
+		if e.complexity.ContainerStatusStateTerminated.Reason == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusStateTerminated.Reason(childComplexity), true
+
+	case "Container_Status_State_Terminated.startedAt":
+		if e.complexity.ContainerStatusStateTerminated.StartedAt == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusStateTerminated.StartedAt(childComplexity), true
+
+	case "Container_Status_State_Waiting.message":
+		if e.complexity.ContainerStatusStateWaiting.Message == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusStateWaiting.Message(childComplexity), true
+
+	case "Container_Status_State_Waiting.reason":
+		if e.complexity.ContainerStatusStateWaiting.Reason == nil {
+			break
+		}
+
+		return e.complexity.ContainerStatusStateWaiting.Reason(childComplexity), true
 
 	case "ControlPlane.members":
 		if e.complexity.ControlPlane.Members == nil {
@@ -912,16 +1056,54 @@ type ControlPlaneMember {
 	namespace: String!
 
 	# DataPlanes
-	data_planes: [Container]
+	data_planes: [Container!]
 }
 
 type Container {
 	name: String!
 	image: String!
+	status: Container_Status
 	# args: NOT IMPLEMENTED 
 	ports: [Container_Port]
 	# env: NOT IMPLEMENTED,
 	resources: Container_Resource
+}
+
+type Container_Status {
+	name: String!
+	state: Any
+	# lastState: Container_Status_State!
+	ready: Boolean!
+	# restartCount: Int
+	# image: String!
+	# imageID: String!
+	# containerID: String!
+	started: Boolean!
+}
+
+type Container_Status_State {
+	waiting: Container_Status_State_Waiting
+	running: Container_Status_State_Running
+	terminated: Container_Status_State_Terminated
+}
+
+type Container_Status_State_Waiting {
+	reason: String
+	message: String
+}
+
+type Container_Status_State_Running {
+	startedAt: Time
+}
+
+type Container_Status_State_Terminated {
+	# exitCode: Int
+	# signal: Int
+	reason: String
+	message: String
+	startedAt: Time
+	finishedAt: Time
+	containerID: String
 }
 
 type Container_Port {
@@ -1549,6 +1731,38 @@ func (ec *executionContext) _Container_image(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Container_status(ctx context.Context, field graphql.CollectedField, obj *model.Container) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.ContainerStatus)
+	fc.Result = res
+	return ec.marshalOContainer_Status2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerStatus(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Container_ports(ctx context.Context, field graphql.CollectedField, obj *model.Container) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1777,6 +1991,495 @@ func (ec *executionContext) _Container_Resource_requests(ctx context.Context, fi
 	res := resTmp.(*model.Resource)
 	fc.Result = res
 	return ec.marshalOResource2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐResource(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_name(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_state(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.State, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(interface{})
+	fc.Result = res
+	return ec.marshalOAny2interface(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_ready(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Ready, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_started(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Started, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_waiting(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusState) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Waiting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.ContainerStatusStateWaiting)
+	fc.Result = res
+	return ec.marshalOContainer_Status_State_Waiting2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerStatusStateWaiting(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_running(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusState) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Running, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.ContainerStatusStateRunning)
+	fc.Result = res
+	return ec.marshalOContainer_Status_State_Running2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerStatusStateRunning(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_terminated(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusState) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Terminated, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.ContainerStatusStateTerminated)
+	fc.Result = res
+	return ec.marshalOContainer_Status_State_Terminated2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerStatusStateTerminated(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_Running_startedAt(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusStateRunning) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State_Running",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StartedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_Terminated_reason(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusStateTerminated) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State_Terminated",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reason, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_Terminated_message(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusStateTerminated) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State_Terminated",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Message, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_Terminated_startedAt(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusStateTerminated) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State_Terminated",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StartedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_Terminated_finishedAt(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusStateTerminated) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State_Terminated",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FinishedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_Terminated_containerID(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusStateTerminated) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State_Terminated",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ContainerID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_Waiting_reason(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusStateWaiting) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State_Waiting",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reason, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Container_Status_State_Waiting_message(ctx context.Context, field graphql.CollectedField, obj *model.ContainerStatusStateWaiting) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Container_Status_State_Waiting",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Message, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ControlPlane_name(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlane) (ret graphql.Marshaler) {
@@ -2018,7 +2721,7 @@ func (ec *executionContext) _ControlPlaneMember_data_planes(ctx context.Context,
 	}
 	res := resTmp.([]*model.Container)
 	fc.Result = res
-	return ec.marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx, field.Selections, res)
+	return ec.marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Error_code(ctx context.Context, field graphql.CollectedField, obj *model.Error) (ret graphql.Marshaler) {
@@ -5021,6 +5724,8 @@ func (ec *executionContext) _Container(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "status":
+			out.Values[i] = ec._Container_status(ctx, field, obj)
 		case "ports":
 			out.Values[i] = ec._Container_ports(ctx, field, obj)
 		case "resources":
@@ -5085,6 +5790,155 @@ func (ec *executionContext) _Container_Resource(ctx context.Context, sel ast.Sel
 			out.Values[i] = ec._Container_Resource_limits(ctx, field, obj)
 		case "requests":
 			out.Values[i] = ec._Container_Resource_requests(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var container_StatusImplementors = []string{"Container_Status"}
+
+func (ec *executionContext) _Container_Status(ctx context.Context, sel ast.SelectionSet, obj *model.ContainerStatus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, container_StatusImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Container_Status")
+		case "name":
+			out.Values[i] = ec._Container_Status_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "state":
+			out.Values[i] = ec._Container_Status_state(ctx, field, obj)
+		case "ready":
+			out.Values[i] = ec._Container_Status_ready(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "started":
+			out.Values[i] = ec._Container_Status_started(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var container_Status_StateImplementors = []string{"Container_Status_State"}
+
+func (ec *executionContext) _Container_Status_State(ctx context.Context, sel ast.SelectionSet, obj *model.ContainerStatusState) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, container_Status_StateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Container_Status_State")
+		case "waiting":
+			out.Values[i] = ec._Container_Status_State_waiting(ctx, field, obj)
+		case "running":
+			out.Values[i] = ec._Container_Status_State_running(ctx, field, obj)
+		case "terminated":
+			out.Values[i] = ec._Container_Status_State_terminated(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var container_Status_State_RunningImplementors = []string{"Container_Status_State_Running"}
+
+func (ec *executionContext) _Container_Status_State_Running(ctx context.Context, sel ast.SelectionSet, obj *model.ContainerStatusStateRunning) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, container_Status_State_RunningImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Container_Status_State_Running")
+		case "startedAt":
+			out.Values[i] = ec._Container_Status_State_Running_startedAt(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var container_Status_State_TerminatedImplementors = []string{"Container_Status_State_Terminated"}
+
+func (ec *executionContext) _Container_Status_State_Terminated(ctx context.Context, sel ast.SelectionSet, obj *model.ContainerStatusStateTerminated) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, container_Status_State_TerminatedImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Container_Status_State_Terminated")
+		case "reason":
+			out.Values[i] = ec._Container_Status_State_Terminated_reason(ctx, field, obj)
+		case "message":
+			out.Values[i] = ec._Container_Status_State_Terminated_message(ctx, field, obj)
+		case "startedAt":
+			out.Values[i] = ec._Container_Status_State_Terminated_startedAt(ctx, field, obj)
+		case "finishedAt":
+			out.Values[i] = ec._Container_Status_State_Terminated_finishedAt(ctx, field, obj)
+		case "containerID":
+			out.Values[i] = ec._Container_Status_State_Terminated_containerID(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var container_Status_State_WaitingImplementors = []string{"Container_Status_State_Waiting"}
+
+func (ec *executionContext) _Container_Status_State_Waiting(ctx context.Context, sel ast.SelectionSet, obj *model.ContainerStatusStateWaiting) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, container_Status_State_WaitingImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Container_Status_State_Waiting")
+		case "reason":
+			out.Values[i] = ec._Container_Status_State_Waiting_reason(ctx, field, obj)
+		case "message":
+			out.Values[i] = ec._Container_Status_State_Waiting_message(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5915,6 +6769,16 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalNContainer2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx context.Context, sel ast.SelectionSet, v *model.Container) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Container(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlaneᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ControlPlane) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -6432,6 +7296,21 @@ func (ec *executionContext) unmarshalOAddonStatusInput2ᚖgithubᚗcomᚋlayer5i
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalAny(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.SelectionSet, v interface{}) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalAny(v)
+}
+
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6456,7 +7335,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
-func (ec *executionContext) marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx context.Context, sel ast.SelectionSet, v []*model.Container) graphql.Marshaler {
+func (ec *executionContext) marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Container) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -6483,7 +7362,7 @@ func (ec *executionContext) marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOContainer2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx, sel, v[i])
+			ret[i] = ec.marshalNContainer2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -6494,13 +7373,6 @@ func (ec *executionContext) marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 	}
 	wg.Wait()
 	return ret
-}
-
-func (ec *executionContext) marshalOContainer2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx context.Context, sel ast.SelectionSet, v *model.Container) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Container(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOContainer_Port2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerPort(ctx context.Context, sel ast.SelectionSet, v []*model.ContainerPort) graphql.Marshaler {
@@ -6555,6 +7427,34 @@ func (ec *executionContext) marshalOContainer_Resource2ᚖgithubᚗcomᚋlayer5i
 		return graphql.Null
 	}
 	return ec._Container_Resource(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOContainer_Status2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerStatus(ctx context.Context, sel ast.SelectionSet, v *model.ContainerStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Container_Status(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOContainer_Status_State_Running2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerStatusStateRunning(ctx context.Context, sel ast.SelectionSet, v *model.ContainerStatusStateRunning) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Container_Status_State_Running(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOContainer_Status_State_Terminated2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerStatusStateTerminated(ctx context.Context, sel ast.SelectionSet, v *model.ContainerStatusStateTerminated) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Container_Status_State_Terminated(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOContainer_Status_State_Waiting2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerStatusStateWaiting(ctx context.Context, sel ast.SelectionSet, v *model.ContainerStatusStateWaiting) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Container_Status_State_Waiting(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOControlPlaneFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlaneFilter(ctx context.Context, v interface{}) (*model.ControlPlaneFilter, error) {
@@ -6710,6 +7610,21 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalString(*v)
+}
+
+func (ec *executionContext) unmarshalOTime2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalTime(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalTime(*v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

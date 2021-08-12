@@ -23,9 +23,14 @@ export type ControlPlaneSubscriptionResponse = {|
       +version: string,
       +component: string,
       +namespace: string,
-      +data_planes: ?$ReadOnlyArray<?{|
+      +data_planes: ?$ReadOnlyArray<{|
         +name: string,
         +image: string,
+        +status: ?{|
+          +ready: boolean,
+          +started: boolean,
+          +state: ?any,
+        |},
         +ports: ?$ReadOnlyArray<?{|
           +name: ?string,
           +containerPort: number,
@@ -66,6 +71,11 @@ subscription ControlPlaneSubscription(
       data_planes {
         name
         image
+        status {
+          ready
+          started
+          state
+        }
         ports {
           name
           containerPort
@@ -183,6 +193,38 @@ v3 = [
               {
                 "alias": null,
                 "args": null,
+                "concreteType": "Container_Status",
+                "kind": "LinkedField",
+                "name": "status",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "ready",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "started",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "state",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "Container_Port",
                 "kind": "LinkedField",
                 "name": "ports",
@@ -265,16 +307,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "f33b684c926f5b6afbafe460140230ef",
+    "cacheID": "17d2d1c9e5d3dc647d66ea9bb599990b",
     "id": null,
     "metadata": {},
     "name": "ControlPlaneSubscription",
     "operationKind": "subscription",
-    "text": "subscription ControlPlaneSubscription(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: listenToControlPlaneState(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n      data_planes {\n        name\n        image\n        ports {\n          name\n          containerPort\n          protocol\n        }\n        resources {\n          limits {\n            cpu\n            memory\n          }\n          requests {\n            cpu\n            memory\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "subscription ControlPlaneSubscription(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: listenToControlPlaneState(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n      data_planes {\n        name\n        image\n        status {\n          ready\n          started\n          state\n        }\n        ports {\n          name\n          containerPort\n          protocol\n        }\n        resources {\n          limits {\n            cpu\n            memory\n          }\n          requests {\n            cpu\n            memory\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '9db33629b704e6233c09375d7c89f7fe';
+(node/*: any*/).hash = '0075848312d915eb46f2515109c55d8a';
 
 module.exports = node;

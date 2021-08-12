@@ -645,8 +645,15 @@ class DashboardComponent extends React.Component {
                               return (
                                 <div key={cont.name} style={{color: '#ffff', paddingBottom: '10px'}}>
                                   <p>Name: {cont?.name ? cont.name : 'Unspecified'}</p>
+                                  <p>Status: {cont?.status?.ready ? 'Ready' : 'Not ready'}</p>
+                                  {/* {Object.keys(cont?.status?.state).length > 0 && (
+                                    <p>State: {Object.keys(cont?.status?.state)[0]}</p>
+                                  )} */}
+                                  {/* {cont?.status?.restartCount && (
+                                    <p>Restart Count: {cont?.status.restartCount}</p>
+                                  )} */}
                                   <p>Image: {cont.image}</p>
-                                  <p>Ports: {cont?.ports && cont.ports.map(port => `[${port.name},${port.containerPort},${port.protocol}]`).join(', ')}</p>
+                                  <p>Ports: {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
                                 </div>
                               )
                             })

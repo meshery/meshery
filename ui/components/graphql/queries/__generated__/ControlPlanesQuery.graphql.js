@@ -23,9 +23,14 @@ export type ControlPlanesQueryResponse = {|
       +version: string,
       +component: string,
       +namespace: string,
-      +data_planes: ?$ReadOnlyArray<?{|
+      +data_planes: ?$ReadOnlyArray<{|
         +name: string,
         +image: string,
+        +status: ?{|
+          +ready: boolean,
+          +started: boolean,
+          +state: ?any,
+        |},
         +ports: ?$ReadOnlyArray<?{|
           +name: ?string,
           +containerPort: number,
@@ -66,6 +71,11 @@ query ControlPlanesQuery(
       data_planes {
         name
         image
+        status {
+          ready
+          started
+          state
+        }
         ports {
           name
           containerPort
@@ -183,6 +193,38 @@ v3 = [
               {
                 "alias": null,
                 "args": null,
+                "concreteType": "Container_Status",
+                "kind": "LinkedField",
+                "name": "status",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "ready",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "started",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "state",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "Container_Port",
                 "kind": "LinkedField",
                 "name": "ports",
@@ -265,16 +307,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "888fad655c1f17982872307f10259894",
+    "cacheID": "0cd0de0e783c2d752355d1d82b05e238",
     "id": null,
     "metadata": {},
     "name": "ControlPlanesQuery",
     "operationKind": "query",
-    "text": "query ControlPlanesQuery(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: getControlPlanes(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n      data_planes {\n        name\n        image\n        ports {\n          name\n          containerPort\n          protocol\n        }\n        resources {\n          limits {\n            cpu\n            memory\n          }\n          requests {\n            cpu\n            memory\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ControlPlanesQuery(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: getControlPlanes(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n      data_planes {\n        name\n        image\n        status {\n          ready\n          started\n          state\n        }\n        ports {\n          name\n          containerPort\n          protocol\n        }\n        resources {\n          limits {\n            cpu\n            memory\n          }\n          requests {\n            cpu\n            memory\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b9f5a5c87cb29179a4b60c175db91fd3';
+(node/*: any*/).hash = '6638721aef7c56a632996157605013cb';
 
 module.exports = node;
