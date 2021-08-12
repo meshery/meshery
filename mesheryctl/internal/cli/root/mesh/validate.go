@@ -127,10 +127,10 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 
 	select {
 	case <-timer.C:
-		return "", ErrTimeoutWaitingForValidateResponse(errors.New("timeout"))
+		return "", ErrTimeoutWaitingForValidateResponse
 	case event := <-eventChan:
 		if event != "successful" {
-			return "", ErrSMIConformanceTestsFailed(errors.New("Operation failed"))
+			return "", ErrSMIConformanceTestsFailed
 		}
 	}
 

@@ -153,7 +153,7 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 			log.Infof("Event :" + i.Data)
 			if strings.Contains(i.Data, query) {
 				eventChan <- "successful"
-			} else if strings.Contains(i.Data, "error") {
+			} else if strings.Contains(i.Data, "Error") {
 				eventChan <- "error"
 			}
 		}
