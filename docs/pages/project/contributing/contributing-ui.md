@@ -75,7 +75,11 @@ The designs in this specification should result in enabling:
 
 - Meshery UI should be event-driven where possible.
 
-### Configurations
+
+
+### Setting up
+
+#### Linting-UI
 
 - When contributing to this project, it is advisable to
 
@@ -85,10 +89,6 @@ The designs in this specification should result in enabling:
 
 - For Visual Studio Code, when using the `eslint` plugin, it automatically picks up the rules.
 
-
-
-
-### Setting up
 
 #### Install UI dependencies
 
