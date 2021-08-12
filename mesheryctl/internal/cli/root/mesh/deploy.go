@@ -47,7 +47,6 @@ var (
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			s := utils.CreateDefaultSpinner("Installation started", "\nInstallation complete")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				return errors.Wrap(err, "error processing config")
@@ -60,12 +59,10 @@ var (
 
 			if watch {
 				log.Infof("Verifying Operation")
-				s.Start()
 				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
 				if err != nil {
 					return errors.Wrap(err, "error verifying installation")
 				}
-				s.Stop()
 			}
 
 			return nil
@@ -146,30 +143,35 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	}
 	defer res.Body.Close()
 
-	event, _ := utils.ConvertRespToSSE(res)
+	event, err := utils.ConvertRespToSSE(res)
+	if err != nil {
+		return "", err
+	}
+
+	timer := time.NewTimer(time.Duration(1200) * time.Second)
+	eventChan := make(chan string)
 
 	//Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
 			log.Infof("Event :" + i.Data)
 			if strings.Contains(i.Data, query) {
-				wg.Done()
+				eventChan <- "successful"
+			} else if strings.Contains(i.Data, "error") {
+				eventChan <- "error"
 			}
 		}
 	}()
 
-	//Run a goroutine to wait for time out
-	go func() {
-		time.Sleep(time.Second * 300)
-		err = errors.New("timeout")
-		wg.Done()
-	}()
-
-	//Wait till any one of the goroutines ends and return
-	wg.Wait()
-	if err != nil {
-		return "", err
+	select {
+	case <-timer.C:
+		return "", errors.New("timeout")
+	case event := <-eventChan:
+		if event != "successful" {
+			return "", errors.New("Failed to deploy")
+		}
 	}
+
 	return "", nil
 }
 
