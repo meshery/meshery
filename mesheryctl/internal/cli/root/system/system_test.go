@@ -51,6 +51,20 @@ func TestSystemCmdIntegration(t *testing.T) {
 			TimeoutRequired: 0,
 		},
 		{
+			Name:            "Restart Meshery",
+			Action:          "restart",
+			Args:            []string{"restart"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
+		},
+		{
+			Name:            "Restart Meshery and skiping update",
+			Action:          "restart",
+			Args:            []string{"restart", "--skip-update"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
+		},
+		{
 			Name:            "Stop Meshery with Docker platform",
 			Action:          "stop",
 			Args:            []string{"stop", "-y"},
@@ -79,6 +93,20 @@ func TestSystemCmdIntegration(t *testing.T) {
 			Args:            []string{"logs"},
 			ExpectError:     false,
 			TimeoutRequired: 0,
+		},
+		{
+			Name:            "Restart Meshery",
+			Action:          "restart",
+			Args:            []string{"restart"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
+		},
+		{
+			Name:            "Restart Meshery and skiping update",
+			Action:          "restart",
+			Args:            []string{"restart", "--skip-update"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
 		},
 		{
 			Name:            "Stop Meshery with Kubernetes platform",
