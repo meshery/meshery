@@ -87,8 +87,6 @@ The designs in this specification should result in enabling:
 
     - Disable plugins other than `eslint` for formatting and linting, if any.
 
-- For Visual Studio Code, when using the `eslint` plugin, it automatically picks up the rules.
-
 
 #### Install UI dependencies
 
