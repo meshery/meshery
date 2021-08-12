@@ -9,7 +9,13 @@ import {
   DialogContent,
   DialogActions,
   Divider,
-  Tooltip
+  Tooltip,
+  Grid,
+  Typography,
+  Paper,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -25,7 +31,10 @@ import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import dataFetch from "../lib/data-fetch";
+import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
+import { CircularProgress } from "@material-ui/core";
+import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 
 const styles = (theme) => ({
   grid: {
@@ -467,7 +476,8 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
   return (
     <NoSsr>
-      {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+      <PatternForm />
+      {/* {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       <MUIDataTable
@@ -476,7 +486,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
         columns={columns}
         // @ts-ignore
         options={options}
-      />
+      /> */}
     </NoSsr>
   );
 }
@@ -493,3 +503,141 @@ const mapStateToProps = (state) => {
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPatterns)));
+
+// --------------------------------------------------------------------------------------------------
+// -------------------------------------------- PATTERNS FORM ---------------------------------------
+// --------------------------------------------------------------------------------------------------
+
+function PatternForm() {
+  const [schemaSet, setSchemaSet] = useState();
+
+  async function fetchWorkloadAndTraitsSchema() {
+    try {
+      const workloads = await promisifiedDataFetch("/api/oam/workload");
+      const traits = await promisifiedDataFetch("/api/oam/trait");
+
+      console.log({ workloads, traits });
+
+      const workloadTraitSets = createWorkloadTraitSets(workloads, traits);
+
+      return workloadTraitSets;
+    } catch (e) {
+      console.log("Error in Fetching Workload or traits", e);
+      return {};
+    }
+  }
+
+  function createWorkloadTraitSets(workloads, traits) {
+    const sets = [];
+    workloads?.forEach((w) => {
+      const item = { workload: w, traits: [] };
+
+      item.traits = traits?.filter((t) => {
+        if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
+          return t?.oam_definition?.spec?.appliesToWorkloads?.includes(w?.oam_definition?.metadata?.name);
+
+        return false;
+      });
+
+      sets.push(item);
+    });
+
+    return sets;
+  }
+
+  /**
+   * getJSONSchemaSets
+   * @returns Schema Sets
+   */
+  async function getJSONSchemaSets() {
+    const wtSets = await fetchWorkloadAndTraitsSchema();
+
+    return wtSets?.map((s) => {
+      const item = {
+        workload: JSON.parse(s.workload?.oam_ref_schema),
+        traits: s.traits?.map((t) => {
+          const trait = JSON.parse(t?.oam_ref_schema);
+
+          // Attaching internal metadata to the json schema
+          trait._internal = {
+            patternAttributeName: t?.oam_definition.metadata.name,
+          };
+
+          return trait;
+        }),
+        type: s.workload?.metadata?.["ui.meshery.io/category"],
+      };
+
+      // Attaching internal metadata to the json schema
+      item.workload._internal = {
+        patternAttributeName: s.workload?.oam_definition.metadata.name,
+      };
+
+      return item;
+    });
+  }
+
+  const handleSubmit = (cfg) => {
+    console.log("submitted", cfg)
+  }
+
+  const handleDelete = (cfg) => {
+    console.log("deleted", cfg);
+  }
+
+  const ns = "default";
+
+  useEffect(() => {
+    getJSONSchemaSets().then((res) => setSchemaSet(res));
+  }, []);
+
+  if (!schemaSet) {
+    return <CircularProgress />
+  }
+
+  return (
+    <>
+      {
+        console.log("schemaSet:::", schemaSet)
+      }
+      <div>
+        {schemaSet
+          .filter((s) => s.type !== "addon")
+          .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
+          .map((s) => (
+            accordion(s)
+          ))}
+      </div>
+      <Accordion style={{ width: '100%' }}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6">
+            Configure Addons
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {schemaSet
+            .filter((s) => s.type === "addon")
+            .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
+            .map((s) => (
+              <Grid item>
+                <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
+              </Grid>
+            ))}
+        </AccordionDetails>
+      </Accordion>
+    </>
+  );
+
+  function accordion(s) {
+    return <Accordion style={{ width: '100%' }}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography variant="h6">
+          {s?.workload?.title || "Expand More"}
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
+      </AccordionDetails>
+    </Accordion>;
+  }
+}
