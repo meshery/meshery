@@ -150,7 +150,7 @@ class MesherySettings extends React.Component {
     const self = this;
     self.props.updateProgress({ showProgress: true });
     dataFetch(
-      '/api/promGrafana/scan',
+      '/api/system/meshsync/grafana',
       {
         credentials: "same-origin",
         method: "GET",

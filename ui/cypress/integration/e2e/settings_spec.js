@@ -1,7 +1,7 @@
 describe('Settings', () => {
   describe('Environment', () => {
     beforeEach(() => {
-      // cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
+      // cy.intercept('GET', '/api/system/meshsync/grafana').as('getScan')
 
       cy.selectProviderNone()
 
@@ -34,7 +34,7 @@ describe('Settings', () => {
 
   describe('Service Meshes', () => {
     beforeEach(() => {
-      // cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
+      // cy.intercept('GET', '/api/system/meshsync/grafana').as('getScan')
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters')
 
       cy.selectProviderNone()
