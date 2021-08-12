@@ -86,7 +86,6 @@ func init() {
 }
 
 func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-
 	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_validate"
 	method := "GET"
 	client := &http.Client{}
