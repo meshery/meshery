@@ -13,7 +13,13 @@ import (
 type Event struct {
 	Name string
 	ID   string
-	Data string
+	Data EventData
+}
+
+type EventData struct {
+	Details string `json:"details"`
+	OperationID string `json:"operation_id"`
+	Summary string `json:summary"`
 }
 
 // ConvertRespToSSE converts a connection to a stream of server sent events
@@ -68,12 +74,12 @@ func loop(reader *bufio.Reader, events chan Event) {
 			b := buf.Bytes()
 
 			if hasPrefix(b, "{") {
-				var data map[string]interface{}
+				var data EventData
 
 				err := json.Unmarshal(b, &data)
 
 				if err == nil {
-					ev.Data = fmt.Sprintf("%v", data)
+					ev.Data = data
 					buf.Reset()
 					events <- ev
 					ev = Event{}
