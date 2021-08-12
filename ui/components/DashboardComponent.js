@@ -224,7 +224,6 @@ class DashboardComponent extends React.Component {
 
     fetchControlPlanes(ALL_MESH).subscribe({
       next: (res) => {
-        console.log({res})
         self.setMeshScanData(res);
       },
       error: (err) => console.error(err),
@@ -636,53 +635,38 @@ class DashboardComponent extends React.Component {
               <TableBody>
                 {components
                   .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
-                  .map((component) => (
-                    <div>
-                      <TableRow key={component.name.full}>
-                        {/* <TableCell scope="row" align="center">
-                          <Tooltip title={component.name.full}>
-                            <div style={{ textAlign: "center" }}>
-                              {component.name.trimmed}
-                            </div>
-                          </Tooltip>
-                        </TableCell> */}
-                        <TableCell align="center">{component.name}</TableCell>
-                        <TableCell align="center">{component.component}</TableCell>
-                        <TableCell align="center">{component.version}</TableCell>
-                      </TableRow>
-                      
-                      {Array.isArray(component?.data_planes) && component.data_planes.length > 0 && (
-                        <TableContainer>
-                          <Table aria-label="mesh details table">
-                            <TableHead>
-                              <TableRow>
-                                <TableCell align="center">Name</TableCell>
-                                <TableCell align="center">Image</TableCell>
-                                <TableCell align="center">Ports</TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {components?.data_planes && components.data_planes
-                                .map((cont) => (
-                                  <TableRow key={cont.name}>
-                                    {/* <TableCell scope="row" align="center">
-                                      <Tooltip title={component.name.full}>
-                                        <div style={{ textAlign: "center" }}>
-                                          {component.name.trimmed}
-                                        </div>
-                                      </Tooltip>
-                                    </TableCell> */}
-                                    <TableCell align="center">{cont.name}</TableCell>
-                                    <TableCell align="center">{cont.image}</TableCell>
-                                    <TableCell align="center">{cont?.ports && cont.ports.map(port => `[${port.name},${port.containerPort},${port.protocol}]`).join(', ')}</TableCell>
-                                  </TableRow>
-                                ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      )}
-                    </div>
-                  ))}
+                  .map((component) => {
+                    return (
+                      <Tooltip
+                        key={`component-${component.name}`}
+                        title={
+                          Array.isArray(component?.data_planes) && component.data_planes.length > 0 ? (
+                            component.data_planes.map((cont) => {
+                              return (
+                                <div key={cont.name} style={{color: '#ffff', paddingBottom: '10px'}}>
+                                  <p>Name: {cont?.name ? cont.name : 'Unspecified'}</p>
+                                  <p>Image: {cont.image}</p>
+                                  <p>Ports: {cont?.ports && cont.ports.map(port => `[${port.name},${port.containerPort},${port.protocol}]`).join(', ')}</p>
+                                </div>
+                              )
+                            })
+                          ) : "No data plane is running"}
+                      >
+                        <TableRow key={component.name.full}>
+                          {/* <TableCell scope="row" align="center">
+                            <Tooltip title={component.name.full}>
+                              <div style={{ textAlign: "center" }}>
+                                {component.name.trimmed}
+                              </div>
+                            </Tooltip>
+                          </TableCell> */}
+                          <TableCell align="center">{component.name}</TableCell>
+                          <TableCell align="center">{component.component}</TableCell>
+                          <TableCell align="center">{component.version}</TableCell>
+                        </TableRow>
+                      </Tooltip>
+                    )
+                  })}
               </TableBody>
             </Table>
           </TableContainer>
