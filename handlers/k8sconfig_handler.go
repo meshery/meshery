@@ -14,6 +14,7 @@ import (
 
 	"os"
 
+	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -193,19 +194,24 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 		logrus.Error(ErrOpenFile(configFile))
 		return nil, ErrOpenFile(configFile)
 	}
-	k8sConfigBytes, err := utils.ReadFileSource(fmt.Sprintf("file://%s", configFile))
+	k8sConfig, err := utils.ReadFileSource(fmt.Sprintf("file://%s", configFile))
 	if err != nil {
 		logrus.Error(err)
 		return nil, err
 	}
 
-	ccfg, err := clientcmd.Load([]byte(k8sConfigBytes))
+	ncfg, err := helpers.FlattenMinifyKubeConfig([]byte(k8sConfig))
+	fmt.Printf("Error: %s\n", err)
+	fmt.Printf("New Config: %s\n", ncfg)
+
+	ccfg, err := clientcmd.Load(ncfg)
 	if err != nil {
+		println("error came in: ", err.Error())
 		logrus.Error(ErrLoadConfig(err))
 		return nil, ErrLoadConfig(err)
 	}
 
-	return h.setupK8sConfig(false, []byte(k8sConfigBytes), ccfg.CurrentContext)
+	return h.setupK8sConfig(false, ncfg, ccfg.CurrentContext)
 }
 
 // ATM used only in the SessionSyncHandler
@@ -219,6 +225,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 	if prefObj.K8SConfig == nil || h.config.KubeClient == nil {
 		kc, err := h.loadK8SConfigFromDisk()
 		if err != nil {
+			println("Oopsiee: ", err.Error())
 			kc, err = h.loadInClusterK8SConfig()
 			if err != nil {
 				return err
