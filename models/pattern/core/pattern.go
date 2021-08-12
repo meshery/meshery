@@ -1,12 +1,13 @@
-package pattern
+package core
 
 import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
-	"strings"
 	"time"
 
+	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/sirupsen/logrus"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
@@ -17,18 +18,21 @@ import (
 // Pattern is the golang representation of the Pattern
 // config file model
 type Pattern struct {
-	Name     string              `yaml:"name,omitempty"`
-	Services map[string]*Service `yaml:"services,omitempty"`
+	Name     string              `yaml:"name,omitempty" json:"name,omitempty"`
+	Services map[string]*Service `yaml:"services,omitempty" json:"services,omitempty"`
 }
 
 // Service represents the services defined within the appfile
 type Service struct {
-	Type      string   `yaml:"type,omitempty"`
-	Namespace string   `yaml:"namespace,omitempty"`
-	DependsOn []string `yaml:"dependsOn,omitempty"`
+	// ID is the id of the service and is completely internal to
+	// Meshery Server and meshery providers
+	ID        *uuid.UUID `yaml:"id,omitempty" json:"id,omitempty"`
+	Type      string     `yaml:"type,omitempty" json:"type,omitempty"`
+	Namespace string     `yaml:"namespace,omitempty" json:"namespace,omitempty"`
+	DependsOn []string   `yaml:"dependsOn,omitempty" json:"dependsOn,omitempty"`
 
-	Settings map[string]interface{} `yaml:"settings,omitempty"`
-	Traits   map[string]interface{} `yaml:"traits,omitempty"`
+	Settings map[string]interface{} `yaml:"settings,omitempty" json:"settings,omitempty"`
+	Traits   map[string]interface{} `yaml:"traits,omitempty" json:"traits,omitempty"`
 }
 
 // NewPatternFile takes in raw yaml and encodes it into a construct
@@ -36,8 +40,8 @@ func NewPatternFile(yml []byte) (af Pattern, err error) {
 	err = yaml.Unmarshal(yml, &af)
 
 	for _, svc := range af.Services {
-		svc.Settings = RecursiveCastMapStringInterfaceToMapStringInterface(svc.Settings)
-		svc.Traits = RecursiveCastMapStringInterfaceToMapStringInterface(svc.Traits)
+		svc.Settings = utils.RecursiveCastMapStringInterfaceToMapStringInterface(svc.Settings)
+		svc.Traits = utils.RecursiveCastMapStringInterfaceToMapStringInterface(svc.Traits)
 
 		if svc.Settings == nil {
 			svc.Settings = map[string]interface{}{}
@@ -126,11 +130,6 @@ func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
 
 	// Set up the nodes
 	for name, svc := range p.Services {
-		// Skip if type is either prometheus or grafana
-		if !notIn(svc.Type, []string{"prometheus", "grafana"}) {
-			continue
-		}
-
 		elemData := cytoscapejs.ElemData{
 			ID: name, // Assuming that the service names are unique
 		}
@@ -192,17 +191,20 @@ func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
 		}
 
 		// Unmarshal the JSON into a service
-		var svc Service
-		if err := json.Unmarshal(svcByt, &svc); err != nil {
-			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
+		svc := Service{
+			Settings: map[string]interface{}{},
+			Traits:   map[string]interface{}{},
 		}
 
-		// Add other meshmap specific data into service
-		svc.Traits["meshmap"] = map[string]map[string]float64{
-			"position": {
+		// Add meshmap position
+		svc.Traits["meshmap"] = map[string]interface{}{
+			"position": map[string]float64{
 				"posX": elem.Position.X,
 				"posY": elem.Position.Y,
 			},
+		}
+		if err := json.Unmarshal(svcByt, &svc); err != nil {
+			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
 
 		pf.Services[elem.Data.ID] = &svc
@@ -266,14 +268,4 @@ func getCytoscapeJSPosition(svc *Service) (pos cytoscapejs.Position) {
 	}
 
 	return
-}
-
-func notIn(name string, prohibited []string) bool {
-	for _, p := range prohibited {
-		if strings.HasPrefix(strings.ToLower(name), p) {
-			return false
-		}
-	}
-
-	return true
 }

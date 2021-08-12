@@ -5,7 +5,7 @@ title: ''
 labels: 'kind/bug'
 assignees: ''
 ---
-#### Description
+#### Current Behavior
 <!-- A brief description of the issue. -->
 
 #### Expected Behavior
@@ -16,14 +16,13 @@ assignees: ''
 
 #### Environment
 
-- Host OS: Mac Linux Windows
-- Meshery Server Version: stable-v
-- Meshery Client Version: stable-v
-- Platform: Docker or Kubernetes
+- **Host OS:** Mac Linux Windows
+- **Platform:** Docker or Kubernetes
+- **Meshery Server Version:** stable-v
+- **Meshery Client Version:** stable-v
 
 <!-- Optional 
 #### To Reproduce
-Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'

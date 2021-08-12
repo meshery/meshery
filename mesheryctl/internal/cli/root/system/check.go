@@ -80,6 +80,14 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 		return nil, err
 	}
 
+	if utils.PlatformFlag != "" {
+		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
+			currCtx.SetPlatform(utils.PlatformFlag)
+		} else {
+			return nil, ErrUnsupportedPlatform(utils.PlatformFlag, utils.CfgFile)
+		}
+	}
+
 	hc.context = currCtx
 	hc.mctlCfg = mctlCfg
 

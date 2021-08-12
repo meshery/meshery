@@ -86,12 +86,6 @@ func start() error {
 		}
 	}
 
-	if _, err := os.Stat(utils.ManifestsFolder); os.IsNotExist(err) {
-		if err := os.Mkdir(utils.ManifestsFolder, 0777); err != nil {
-			return ErrCreateDir(err, utils.ManifestsFolder)
-		}
-	}
-
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -115,7 +109,7 @@ func start() error {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
 			currCtx.SetPlatform(utils.PlatformFlag)
 		} else {
-			return fmt.Errorf("the platform '%s' is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at %s or verify by executing `mesheryctl system context view`", utils.PlatformFlag, utils.CfgFile)
+			return ErrUnsupportedPlatform(utils.PlatformFlag, utils.CfgFile)
 		}
 	}
 
@@ -319,6 +313,11 @@ func start() error {
 
 	case "kubernetes":
 		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
+
+		err = utils.CreateManifestsFolder()
 		if err != nil {
 			return err
 		}

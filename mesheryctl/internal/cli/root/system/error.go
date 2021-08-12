@@ -16,6 +16,7 @@ const (
 	ErrApplyOperatorManifestCode = "1006"
 	ErrCreateDirCode             = "1007"
 	ErrUnmarshalCode             = "1008"
+	ErrUnsupportedPlatformCode   = "1009"
 )
 
 func ErrHealthCheckFailed(err error) error {
@@ -52,4 +53,8 @@ func ErrCreateDir(err error, obj string) error {
 
 func ErrUnmarshal(err error, obj string) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling file ", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrUnsupportedPlatform(platform string, config string) error {
+	return errors.New(ErrUnsupportedPlatformCode, errors.Alert, []string{"the platform ", platform, " is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"}, []string{err.Error()}, []string{}, []string{})
 }

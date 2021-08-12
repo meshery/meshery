@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -17,7 +18,6 @@ import (
 )
 
 var (
-	token   string
 	verbose bool
 )
 
@@ -31,13 +31,18 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+		// set default tokenpath for perf apply command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+		}
+
 		var response models.FiltersAPIResponse
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/filter", nil)
 		if err != nil {
 			return err
 		}
-		err = utils.AddAuthDetails(req, token)
+		err = utils.AddAuthDetails(req, tokenPath)
 		if err != nil {
 			return err
 		}
@@ -50,12 +55,15 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if res.StatusCode != http.StatusOK {
+			return errors.New("Server returned with status code: " + fmt.Sprint(res.StatusCode) + "\n" + "Response: " + string(body))
+		}
 		err = json.Unmarshal(body, &response)
 
 		if err != nil {
 			return err
 		}
-		tokenObj, err := utils.ReadToken(token)
+		tokenObj, err := utils.ReadToken(tokenPath)
 		if err != nil {
 			return err
 		}
@@ -71,10 +79,8 @@ var listCmd = &cobra.Command{
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 					data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
 				}
-				if len(data) > 0 {
-					utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
-				}
-				return errors.New("no filters available")
+				utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
+				return nil
 			}
 
 			for _, v := range response.Filters {
@@ -90,10 +96,8 @@ var listCmd = &cobra.Command{
 				UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 				data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
 			}
-			if len(data) > 0 {
-				utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
-			}
-			return errors.New("no filters available")
+			utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
+			return nil
 		}
 
 		// Check if messhery provider is set
@@ -105,10 +109,8 @@ var listCmd = &cobra.Command{
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 				data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
 			}
-			if len(data) > 0 {
-				utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
-			}
-			return errors.New("no filters available")
+			utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
+			return nil
 		}
 		for _, v := range response.Filters {
 			FilterID := utils.TruncateID(v.ID.String())
@@ -123,16 +125,11 @@ var listCmd = &cobra.Command{
 			UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 			data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
 		}
-		if len(data) > 0 {
-			utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
-		}
-		return errors.New("no filters available")
-
+		utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
+		return nil
 	},
 }
 
 func init() {
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
-	listCmd.Flags().StringVarP(&token, "token", "t", "", "path to token")
-	_ = listCmd.MarkFlagRequired("token")
 }

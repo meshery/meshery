@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
-	OAM "github.com/layer5io/meshery/models/pattern"
+	pCore "github.com/layer5io/meshery/models/pattern/core"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -131,7 +131,7 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	if parsedBody.CytoscapeJSON != "" {
-		pf, err := OAM.NewPatternFileFromCytoscapeJSJSON([]byte(parsedBody.CytoscapeJSON))
+		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON([]byte(parsedBody.CytoscapeJSON))
 		if err != nil {
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "%s", err)
@@ -278,7 +278,7 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 
 	for _, content := range contentMesheryPatternSlice {
 		if format == "cytoscape" {
-			patternFile, err := OAM.NewPatternFile([]byte(content.PatternFile))
+			patternFile, err := pCore.NewPatternFile([]byte(content.PatternFile))
 			if err != nil {
 				rw.WriteHeader(http.StatusBadRequest)
 				fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
