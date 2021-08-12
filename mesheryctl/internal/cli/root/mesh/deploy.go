@@ -5,14 +5,12 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	smp "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/manifoldco/promptui"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -29,7 +27,7 @@ var (
 			log.Infof("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return errors.Wrap(err, "error processing config")
+				log.Fatalln(err)
 			}
 
 			if len(args) < 1 {
@@ -38,30 +36,31 @@ var (
 				meshName, err = validateMesh(mctlCfg, tokenPath, args[0])
 			}
 			if err != nil {
-				return errors.Wrap(err, "error validating request")
+				log.Fatalln(err)
 			}
 
 			if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
-				return errors.Wrap(err, "adapter not valid")
+				// ErrValidatingAdapter
+				log.Fatalln(err)
 			}
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return errors.Wrap(err, "error processing config")
+				log.Fatalln(err)
 			}
 
 			_, err = sendDeployRequest(mctlCfg, meshName, false)
 			if err != nil {
-				return errors.Wrap(err, "error installing service mesh")
+				log.Fatalln(err)
 			}
 
 			if watch {
 				log.Infof("Verifying Operation")
 				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
 				if err != nil {
-					return errors.Wrap(err, "error verifying installation")
+					log.Fatalln(err)
 				}
 			}
 
@@ -98,18 +97,18 @@ func sendDeployRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bo
 	client := &http.Client{}
 	req, err := http.NewRequest(method, path, payload)
 	if err != nil {
-		return "", err
+		return "", ErrCreatingDeployRequest(err)
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
 
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return "", err
+		return "", ErrAddingAuthDetails(err)
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return "", ErrCreatingDeployRequest(err)
 	}
 	defer res.Body.Close()
 
@@ -121,31 +120,28 @@ func sendDeployRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bo
 }
 
 func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-	var wg sync.WaitGroup
-	wg.Add(1)
-
 	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_deploy"
 	method := "GET"
 	client := &http.Client{}
 	req, err := http.NewRequest(method, path, nil)
 	if err != nil {
-		return "", err
+		return "", ErrCreatingDeployResponseRequest(err)
 	}
 
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return "", err
+		return "", ErrAddingAuthDetails(err)
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return "", ErrCreatingDeployResponseRequest(err)
 	}
 	defer res.Body.Close()
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {
-		return "", err
+		return "", ErrCreatingDeployResponseStream(err)
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
@@ -165,10 +161,10 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 
 	select {
 	case <-timer.C:
-		return "", errors.New("timeout")
+		return "", ErrTimeoutWaitingForDeployResponse
 	case event := <-eventChan:
 		if event != "successful" {
-			return "", errors.New("Failed to deploy")
+			return "", ErrFailedDeployingMesh
 		}
 	}
 
@@ -178,7 +174,7 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 func validateAdapter(mctlCfg *config.MesheryCtlConfig, tokenPath string, name string) error {
 	prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
 	if err != nil {
-		return err
+		return ErrGettingSessionData(err)
 	}
 
 	adapterNames := []string{}
@@ -192,7 +188,7 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, tokenPath string, name st
 	}
 
 	if len(adapterNames) == 0 {
-		return errors.New("no adapters found")
+		return ErrNoAdapters
 	}
 
 	prompt := promptui.Select{
@@ -202,7 +198,7 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, tokenPath string, name st
 
 	i, _, err := prompt.Run()
 	if err != nil {
-		return err
+		return ErrPrompt(err)
 	}
 
 	adapterURL = adapterNames[i]
@@ -221,7 +217,8 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, tokenPath string, name strin
 
 	prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
 	if err != nil {
-		return "", err
+		// ErrGettingSessionData
+		return "", ErrGettingSessionData(err)
 	}
 
 	meshNameMap := make(map[string]struct{}, 0)
@@ -233,7 +230,7 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, tokenPath string, name strin
 	}
 
 	if len(meshNames) == 0 {
-		return "", errors.New("no adapters available to deploy a service mesh")
+		return "", ErrNoAdapters
 	}
 
 	prompt := promptui.Select{
@@ -243,7 +240,7 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, tokenPath string, name strin
 
 	i, _, err := prompt.Run()
 	if err != nil {
-		return "", err
+		return "", ErrPrompt(err)
 	}
 
 	return strings.ToLower(meshNames[i]), nil
