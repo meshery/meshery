@@ -104,7 +104,7 @@ function MesheryApplications({
   const [pageSize, setPageSize] = useState(10);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const DEPLOY_URL = '/api/experimental/application/deploy';
+  const DEPLOY_URL = '/api/application/deploy';
 
 
   const ACTION_TYPES = {
@@ -145,7 +145,7 @@ function MesheryApplications({
       { credentials : "include",
         method : "POST",
         body : application_file, },() => {
-        console.log("ApplicationFile Deploy API", `/api/experimental/application/deploy`);
+        console.log("ApplicationFile Deploy API", `/api/application/deploy`);
         // },(e) => {
         //   console.error(e)
         // })
@@ -166,10 +166,10 @@ function MesheryApplications({
     updateProgress({ showProgress : true });
 
     dataFetch(
-      `/api/experimental/application${query}`,
+      `/api/application${query}`,
       { credentials : "include", },
       (result) => {
-        console.log("ApplicationFile API", `/api/experimental/application${query}`);
+        console.log("ApplicationFile API", `/api/application${query}`);
         updateProgress({ showProgress : false });
         if (result) {
           setApplications(result.applications|| []);
@@ -208,11 +208,11 @@ function MesheryApplications({
     updateProgress({ showProgress : true })
     if (type === "delete") {
       dataFetch(
-        `/api/experimental/application/${id}`,
+        `/api/application/${id}`,
         { credentials : "include",
           method : "DELETE", },
         () => {
-          console.log("ApplicationFile API", `/api/experimental/application/${id}`);
+          console.log("ApplicationFile API", `/api/application/${id}`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
           resetSelectedRowData()()
@@ -224,12 +224,12 @@ function MesheryApplications({
 
     if (type === "update") {
       dataFetch(
-        `/api/experimental/application`,
+        `/api/application`,
         { credentials : "include",
           method : "POST",
           body : JSON.stringify({ application_data : { id, application_file : data }, save : true }), },
         () => {
-          console.log("ApplicationFile API", `/api/experimental/application`);
+          console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
@@ -240,12 +240,12 @@ function MesheryApplications({
 
     if (type === "upload") {
       dataFetch(
-        `/api/experimental/application`,
+        `/api/application`,
         { credentials : "include",
           method : "POST",
           body : JSON.stringify({ application_data : { application_file : data }, save : true }), },
         () => {
-          console.log("ApplicationFile API", `/api/experimental/application`);
+          console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
