@@ -150,10 +150,10 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	//Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
-			if strings.Contains(i.Data.Summary, query) {
+			if strings.Contains(i.Data.Details, query) {
 				eventChan <- "successful"
 				log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
-			} else if strings.Contains(i.Data.Summary, "Error") {
+			} else if strings.Contains(i.Data.Details, "Error") {
 				eventChan <- "error"
 				log.Infof("%s\n", i.Data.Summary)
 			}

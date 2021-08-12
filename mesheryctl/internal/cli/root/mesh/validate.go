@@ -119,7 +119,7 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 			if strings.Contains(i.Data.Summary, query) {
 				eventChan <- "successful"
 				log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
-			} else if strings.Contains(i.Data.Summary, "error") {
+			} else if strings.Contains(i.Data.Details, "error") {
 				eventChan <- "error"
 				log.Infof("%s", i.Data.Summary)
 			}
