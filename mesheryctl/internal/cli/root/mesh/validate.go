@@ -41,11 +41,11 @@ var validateCmd = &cobra.Command{
 		log.Infof("Verifying prerequisites...")
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			log.Fatalln(err)
 		}
 		// sync with available adapters
 		if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
-			return errors.Wrap(err, "adapter not valid")
+			log.Fatalln(err)
 		}
 		return nil
 	},
@@ -55,19 +55,19 @@ var validateCmd = &cobra.Command{
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			log.Fatalln(err)
 		}
 
 		_, err = sendValidateRequest(mctlCfg, meshName, false)
 		if err != nil {
-			return errors.Wrap(err, "error sending request")
+			log.Fatalln(err)
 		}
 
 		if watch {
 			log.Infof("Verifying Operation")
 			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
 			if err != nil {
-				return errors.Wrap(err, "error verifying installation")
+				log.Fatalln(err)
 			}
 		}
 
@@ -92,22 +92,22 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	req, err := http.NewRequest(method, path, nil)
 	req.Header.Add("Accept", "text/event-stream")
 	if err != nil {
-		return "", err
+		return "", ErrCreatingDeployResponseRequest(err)
 	}
 
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return "", err
+		return "", ErrAddingAuthDetails(err)
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return "", ErrCreatingValidateRequest(err)
 	}
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {
-		return "", err
+		return "", ErrCreatingValidateResponseStream(err)
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
@@ -116,21 +116,22 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	//Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
-			log.Infof("Event :" + i.Data)
-			if strings.Contains(i.Data, query) {
+			if strings.Contains(i.Data.Summary, query) {
 				eventChan <- "successful"
-			} else if strings.Contains(i.Data, "error") {
+				log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
+			} else if strings.Contains(i.Data.Details, "error") {
 				eventChan <- "error"
+				log.Infof("%s", i.Data.Summary)
 			}
 		}
 	}()
 
 	select {
 	case <-timer.C:
-		return "", errors.New("timeout")
+		return "", ErrTimeoutWaitingForValidateResponse
 	case event := <-eventChan:
 		if event != "successful" {
-			return "", errors.New("SMI conformance tests failed")
+			return "", ErrSMIConformanceTestsFailed
 		}
 	}
 
@@ -178,18 +179,18 @@ func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete 
 	client := &http.Client{}
 	req, err := http.NewRequest(method, path, payload)
 	if err != nil {
-		return "", err
+		return "", ErrCreatingValidateRequest(err)
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
 
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return "", err
+		return "", ErrAddingAuthDetails(err)
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return "", ErrCreatingDeployRequest(err)
 	}
 	defer res.Body.Close()
 
