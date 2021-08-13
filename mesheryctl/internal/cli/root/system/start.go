@@ -503,8 +503,7 @@ func start() error {
 
 	err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 	if err != nil {
-		log.Info("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
-		return err
+		log.Warn("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 	}
 
 	return nil
