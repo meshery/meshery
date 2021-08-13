@@ -317,26 +317,13 @@ func start() error {
 			return err
 		}
 
-		err = utils.CreateManifestsFolder()
+		channel, version, err := utils.GetChannelAndVersion(currCtx)
 		if err != nil {
 			return err
 		}
 
-		version := currCtx.GetVersion()
-		channel := currCtx.GetChannel()
-		if version == "latest" {
-			if channel == "edge" {
-				version = "master"
-			} else {
-				version, err = utils.GetLatestStableReleaseTag()
-				if err != nil {
-					return err
-				}
-			}
-		}
-
 		// fetch the manifest files corresponding to the version specified
-		manifests, err := utils.FetchManifests(version)
+		manifests, err := utils.FetchManifests(currCtx)
 
 		if err != nil {
 			return err
