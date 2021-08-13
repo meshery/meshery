@@ -36,6 +36,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 		TimeoutRequired int
 	}{
 		// Docker platform testing
+		//start
 		{
 			Name:            "Start Meshery with Docker platform",
 			Action:          "start",
@@ -43,6 +44,15 @@ func TestSystemCmdIntegration(t *testing.T) {
 			ExpectError:     false,
 			TimeoutRequired: 1,
 		},
+		//restart
+		{
+			Name:            "Restart Meshery",
+			Action:          "restart",
+			Args:            []string{"restart"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
+		},
+		//status
 		{
 			Name:            "Printing Meshery status with Docker platform",
 			Action:          "status",
@@ -50,6 +60,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 			ExpectError:     false,
 			TimeoutRequired: 0,
 		},
+		//stop
 		{
 			Name:            "Stop Meshery with Docker platform",
 			Action:          "stop",
@@ -59,6 +70,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 		},
 
 		// Kubernetes platform testing
+		//start
 		{
 			Name:            "Start Meshery with Kubernetes platform",
 			Action:          "start",
@@ -66,6 +78,15 @@ func TestSystemCmdIntegration(t *testing.T) {
 			ExpectError:     false,
 			TimeoutRequired: 1,
 		},
+		//restart
+		{
+			Name:            "Restart Meshery",
+			Action:          "restart",
+			Args:            []string{"restart"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
+		},
+		//status
 		{
 			Name:            "Printing Meshery status with Kubernetes platform",
 			Action:          "status",
@@ -73,6 +94,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 			ExpectError:     false,
 			TimeoutRequired: 0,
 		},
+		//logs
 		{
 			Name:            "Printing Meshery logs with Kubernetes platform",
 			Action:          "logs",
@@ -80,6 +102,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 			ExpectError:     false,
 			TimeoutRequired: 0,
 		},
+		//stop
 		{
 			Name:            "Stop Meshery with Kubernetes platform",
 			Action:          "stop",
