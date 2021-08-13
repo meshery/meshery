@@ -82,7 +82,7 @@ func init() {
 }
 
 func sendDeployRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/mesh/ops"
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
 	method := "POST"
 
 	data := url.Values{}

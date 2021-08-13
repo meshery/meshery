@@ -253,8 +253,8 @@ type systemAdaptersRespWrapper struct {
 	Body []models.Adapter
 }
 
-// swagger:response adapterPingParams
-type adapterPingParamsWrapper struct {
+// swagger:parameters idDeleteAdapterConfig idGetSystemAdapters
+type adapterParamsWrapper struct {
 	// in: query
 	Adapter string `json:"adapter"`
 }
@@ -329,4 +329,28 @@ type mesheryApplicationResponseWrapper struct {
 type mesheryApplicationsResponseWrapper struct {
 	// in: body
 	Body models.ApplicationsAPIResponse
+}
+
+// Returns all the meshery adapters
+// swagger:response mesheryAdaptersRespWrapper
+type mesheryAdaptersRespWrapper struct {
+	// in: body
+	Body []*models.Adapter
+}
+
+// Parameter for meshery adapter location-url
+// swagger:parameters idPostAdapterConfig
+type mesheryAdapterParamsWrapper struct {
+	// in: body
+	MeshLocationURL string `json:"meshLocationURL"`
+}
+
+// Parameters for meshery operations
+// swagger:parameters idPostAdapterOperation
+type adapterOpsParamsWrapper struct {
+	Adapter    string `json:"adapter"`
+	Query      string `json:"query"`
+	CustomBody string `json:"customBody"`
+	Namespace  string `json:"namespace"`
+	Delete     string `json:"deleteOp"`
 }

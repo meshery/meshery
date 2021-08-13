@@ -78,7 +78,7 @@ var validateCmd = &cobra.Command{
 
 		s := utils.CreateDefaultSpinner("Validation started", "\nValidation complete")
 
-		path := mctlCfg.GetBaseMesheryURL() + "/api/mesh/ops"
+		path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
 		method = "POST"
 
 		data := url.Values{}
