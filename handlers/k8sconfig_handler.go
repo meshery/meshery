@@ -179,6 +179,13 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	}
 }
 
+// swagger:route POST /api/system/kubernetes/contexts SystemAPI idGetKubernetesContexts
+// Handle GET requests for kubernetes contexts
+//
+// Get list of kubernetes contexts
+// responses:
+// 	200:
+
 func (h *Handler) GetContexts(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if err := json.NewEncoder(w).Encode(prefObj.K8SConfig.Contexts); err != nil {
 		err = errors.Wrap(err, "unable to marshal the payload")
@@ -322,6 +329,14 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 	return kc, nil
 }
 
+// swagger:route PUT /api/system/kubernetes/context SystemAPI idPutKubernetesContext
+// Handle PUT request for changing Kubernetes Context
+//
+// Changes the current context of the in memory kubeconfig without interfering with the on-disk config file
+// responses:
+// 	200:
+
+// ChangeK8sContext - change k8s context
 func (h *Handler) ChangeK8sContext(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	contextReqObj := map[string]interface{}{}
 
