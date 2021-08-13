@@ -47,7 +47,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 		//restart
 		{
 			Name:            "Restart Meshery",
-			Action:          "restart docker",
+			Action:          "restart",
 			Args:            []string{"restart"},
 			ExpectError:     false,
 			TimeoutRequired: 1,
@@ -81,7 +81,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 		//restart
 		{
 			Name:            "Restart Meshery",
-			Action:          "restart kubernetes",
+			Action:          "restart",
 			Args:            []string{"restart"},
 			ExpectError:     false,
 			TimeoutRequired: 1,
