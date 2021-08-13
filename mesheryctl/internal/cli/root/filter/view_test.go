@@ -40,11 +40,30 @@ func TestPatternView(t *testing.T) {
 		ExpectedResponse string
 		ExpectError      bool
 	}{
+
 		{
 			Name:             "Fetch Filter View",
 			Args:             []string{"view", "KumaTest"},
 			ExpectedResponse: "view.filter.output.golden",
 			Fixture:          "view.filter.api.response.golden",
+			URL:              testContext.BaseURL + "/api/experimental/filter",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
+		{
+			Name:             "Fetch Kuma Filter View with ID",
+			Args:             []string{"view", "957fbc9b-a655-4892-823d-375102a9587c"},
+			ExpectedResponse: "view.id.filter.output.golden",
+			Fixture:          "view.id.filter.api.response.golden",
+			URL:              testContext.BaseURL + "/api/experimental/filter/957fbc9b-a655-4892-823d-375102a9587c",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
+		{
+			Name:             "Fetch Filter View for non existing filter",
+			Args:             []string{"view", "xyz"},
+			ExpectedResponse: "view.nonexisting.filter.output.golden",
+			Fixture:          "view.nonexisting.filter.api.response.golden",
 			URL:              testContext.BaseURL + "/api/experimental/filter",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
