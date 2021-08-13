@@ -46,13 +46,28 @@ func TestOnboardCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/experimental/application",
+					URL:          testContext.BaseURL + "/api/application",
 					Response:     "onboard.applicationSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/experimental/application/deploy",
+					URL:          testContext.BaseURL + "/api/application/deploy",
+					Response:     "onboard.applicationdeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
+		{
+			Name:             "Onboard Application with --skip-save",
+			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden"), "--skip-save"},
+			ExpectedResponse: "onboard.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/application/deploy",
 					Response:     "onboard.applicationdeploy.response.golden",
 					ResponseCode: 200,
 				},

@@ -46,7 +46,7 @@ func TestOffboardCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/experimental/application/deploy",
+					URL:          testContext.BaseURL + "/api/application/deploy",
 					Response:     "offboard.response.golden",
 					ResponseCode: 200,
 				},
