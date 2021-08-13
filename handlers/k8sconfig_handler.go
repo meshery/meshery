@@ -189,7 +189,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 func (h *Handler) GetContexts(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if err := json.NewEncoder(w).Encode(prefObj.K8SConfig.Contexts); err != nil {
 		err = errors.Wrap(err, "unable to marshal the payload")
-		logrus.Error(ErrMarshal(err, "contexts"))
+		h.log.Error(ErrMarshal(err, "contexts"))
 		http.Error(w, ErrMarshal(err, "contexts").Error(), http.StatusInternalServerError)
 	}
 }
@@ -202,24 +202,24 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 	// try to load k8s config from local disk
 	configFile := path.Join(h.config.KubeConfigFolder, "config") // is it ok to hardcode the name 'config'?
 	if _, err := os.Stat(configFile); err != nil {
-		logrus.Error(ErrOpenFile(configFile))
+		h.log.Error(ErrOpenFile(configFile))
 		return nil, ErrOpenFile(configFile)
 	}
 	k8sConfig, err := utils.ReadFileSource(fmt.Sprintf("file://%s", configFile))
 	if err != nil {
-		logrus.Error(err)
+		h.log.Error(err)
 		return nil, err
 	}
 
 	ncfg, err := helpers.FlattenMinifyKubeConfig([]byte(k8sConfig))
 	if err != nil {
-		logrus.Error(ErrLoadConfig(err))
+		h.log.Error(ErrLoadConfig(err))
 		return nil, ErrLoadConfig(err)
 	}
 
 	ccfg, err := clientcmd.Load(ncfg)
 	if err != nil {
-		logrus.Error(ErrLoadConfig(err))
+		h.log.Error(ErrLoadConfig(err))
 		return nil, ErrLoadConfig(err)
 	}
 
@@ -307,7 +307,7 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 
 	ccfg, err := clientcmd.Load(k8sConfigBytes)
 	if err != nil {
-		logrus.Error(ErrLoadConfig(err))
+		h.log.Error(ErrLoadConfig(err))
 		return nil, ErrLoadConfig(err)
 	}
 
@@ -346,7 +346,7 @@ func (h *Handler) ChangeK8sContext(w http.ResponseWriter, req *http.Request, pre
 
 	if err := json.NewDecoder(req.Body).Decode(&contextReqObj); err != nil {
 		err = errors.Wrap(err, "unable to marshal the payload")
-		logrus.Error(ErrMarshal(err, "context-name"))
+		h.log.Error(ErrMarshal(err, "context-name"))
 		http.Error(w, ErrMarshal(err, "context-name").Error(), http.StatusBadRequest)
 		return
 	}
