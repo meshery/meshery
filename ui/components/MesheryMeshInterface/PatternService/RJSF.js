@@ -39,7 +39,7 @@ const uiSchema = {
   }
 };
 
-function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, isMeshery }) {
+function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, renderAsTooltip }) {
   const [data, setData] = React.useState();
 
   React.useEffect(() => {
@@ -48,7 +48,7 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete,
 
   return (
     <>
-      {isMeshery ? (
+      {!renderAsTooltip ? (
         <Form
           schema={hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema}
           idPrefix={jsonSchema?.title}

@@ -88,11 +88,11 @@ function createPatternFromConfig(config, namespace) {
  *  onSubmit: Function;
  *  onDelete: Function;
  *  namespace: string;
- *  isMeshery: boolean;
+ *  renderAsTooltip: boolean;
  * }} props
  * @returns
  */
-function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, isMeshery }) {
+function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAsTooltip }) {
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB({});
   const [traits, setTraits, getTraitsRefValue] = useStateCB({});
@@ -121,14 +121,14 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, isMesher
         onChange={setSettings}
         onSubmit={() => submitHandler({ settings: getSettingsRefValue() })}
         onDelete={() => deleteHandler({ settings: getSettingsRefValue() })}
-        isMeshery={isMeshery}
+        renderAsTooltip={renderAsTooltip}
       />
     );
   }
 
   return (
     <div>
-      {isMeshery ? (<Typography variant="h6" gutterBottom>
+      {!renderAsTooltip ? (<Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
       </Typography>) : ( 
         <div style={{ background: "#00b39f", margin: "-10px -10px 0 -10px", padding: "5px", display: "flex"}}>
@@ -141,13 +141,13 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, isMesher
           </IconButton>
         </div>
       )}
-      {isMeshery && (<AppBar position="static">
+      {!renderAsTooltip && (<AppBar position="static">
         <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service">
           <Tab label="Settings" {...a11yProps(0)} />
           {renderTraits() ? <Tab label="Traits" {...a11yProps(1)} /> : null}
         </Tabs>
       </AppBar>)}  
-      {!isMeshery && renderTraits() && (
+      {renderAsTooltip && renderTraits() && (
         <AppBar style={{background: 'inherit', boxShadow: 'none', color: 'black'}} position="static">
           <Tabs TabIndicatorProps={{style: {background:'#00b39f'}}} style={{ margin: 0 }} value={tab} onChange={handleTabChange} aria-label="Pattern Service">
             <Tab label="Settings" style={{ minWidth: "50%", margin: 0 }} {...a11yProps(0)} />
@@ -161,7 +161,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, isMesher
           onChange={setSettings}
           onSubmit={() => submitHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
           onDelete={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
-          isMeshery={isMeshery}
+          renderAsTooltip={renderAsTooltip}
         />
       </TabPanel>
       {renderTraits() ? (
@@ -171,7 +171,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, isMesher
               type="trait"
               jsonSchema={trait}
               onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)]: val }))}
-              isMeshery={isMeshery}
+              renderAsTooltip={renderAsTooltip}
             />
           ))}
         </TabPanel>
