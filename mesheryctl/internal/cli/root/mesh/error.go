@@ -3,19 +3,19 @@ package mesh
 import "github.com/layer5io/meshkit/errors"
 
 const (
-	ErrGettingSessionDataCode                = "blah"
-	ErrNoAdaptersCode                        = "blah"
-	ErrPromptCode                            = "blah"
-	ErrCreatingDeployRequestCode             = "blah"
-	ErrCreatingDeployResponseRequestCode     = "blah"
-	ErrAddingAuthDetailsCode                 = "blah"
-	ErrCreatingDeployResponseStreamCode      = "blah"
-	ErrTimeoutWaitingForDeployResponseCode   = "blah"
-	ErrFailedDeployingMeshCode               = "blah"
-	ErrCreatingValidateRequestCode           = "blah"
-	ErrCreatingValidateResponseRequestCode   = "blah"
-	ErrTimeoutWaitingForValidateResponseCode = "blah"
-	ErrSMIConformanceTestsFailedCode         = "blah"
+	ErrGettingSessionDataCode                = "1009"
+	ErrNoAdaptersCode                        = "1010"
+	ErrPromptCode                            = "1011"
+	ErrCreatingDeployRequestCode             = "1012"
+	ErrCreatingDeployResponseRequestCode     = "1013"
+	ErrAddingAuthDetailsCode                 = "1014"
+	ErrCreatingDeployResponseStreamCode      = "1015"
+	ErrTimeoutWaitingForDeployResponseCode   = "1016"
+	ErrFailedDeployingMeshCode               = "1017"
+	ErrCreatingValidateRequestCode           = "1018"
+	ErrCreatingValidateResponseRequestCode   = "1019"
+	ErrTimeoutWaitingForValidateResponseCode = "1020"
+	ErrSMIConformanceTestsFailedCode         = "1021"
 )
 
 var (
