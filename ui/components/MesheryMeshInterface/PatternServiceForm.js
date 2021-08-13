@@ -97,6 +97,8 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
   const [settings, setSettings, getSettingsRefValue] = useStateCB({});
   const [traits, setTraits, getTraitsRefValue] = useStateCB({});
 
+  console.log(getTraitsRefValue());
+
   console.log({ settings, traits })
 
   const handleTabChange = (_, newValue) => {
@@ -116,6 +118,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
   if (schemaSet.type === "addon") {
     return (
       <PatternService
+        formData={settings}
         type="workload"
         jsonSchema={schemaSet.workload}
         onChange={setSettings}
@@ -139,19 +142,21 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
       <TabPanel value={tab} index={0}>
         <PatternService
           type="workload"
+          formData={settings}
           jsonSchema={schemaSet.workload}
           onChange={setSettings}
-          onSubmit={() => submitHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
-          onDelete={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
+          onSubmit={() => submitHandler({ settings: getSettingsRefValue(), traits })}
+          onDelete={() => deleteHandler({ settings: getSettingsRefValue(), traits })}
         />
       </TabPanel>
       {renderTraits() ? (
         <TabPanel value={tab} index={1}>
           {schemaSet.traits?.map((trait) => (
             <PatternService
+              formData={traits[getPatternAttributeName(trait)]}
               type="trait"
               jsonSchema={trait}
-              onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)]: val }))}
+              onChange={(val) => setTraits({ ...traits, [getPatternAttributeName(trait)]: val })}
             />
           ))}
         </TabPanel>

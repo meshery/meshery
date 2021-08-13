@@ -15,7 +15,11 @@ import {
   Paper,
   Accordion,
   AccordionSummary,
-  AccordionDetails
+  AccordionDetails,
+  Collapse,
+  CardContent,
+  Card,
+  CardActions
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -35,6 +39,9 @@ import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+import { Button } from "@material-ui/core";
+import jsYaml from "js-yaml";
+import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 
 const styles = (theme) => ({
   grid: {
@@ -508,8 +515,13 @@ export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(w
 // -------------------------------------------- PATTERNS FORM ---------------------------------------
 // --------------------------------------------------------------------------------------------------
 
+
+
 function PatternForm() {
   const [schemaSet, setSchemaSet] = useState();
+  const [deployServiceConfig, setDeployServiceConfig] = useState({});
+  const [yaml, setYaml] = useState("");
+  const [expanded, setExpanded] = useState([]);
 
   async function fetchWorkloadAndTraitsSchema() {
     try {
@@ -577,12 +589,50 @@ function PatternForm() {
     });
   }
 
-  const handleSubmit = (cfg) => {
-    console.log("submitted", cfg)
+  function getPatternKey(cfg) {
+    return Object.keys(cfg?.services)?.[0] || undefined;
+  }
+
+  const handleSubmit = (cfg, patternName) => {
+    console.log("submitted", { cfg, patternName })
+    const key = getPatternKey(cfg);
+    if (key)
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
+    handleExpansion(patternName)
   }
 
   const handleDelete = (cfg) => {
     console.log("deleted", cfg);
+  }
+
+  const handleDeploy = (action) => {
+    const deployConfig = {};
+    deployConfig.name = "Deployed Config";
+    deployConfig.services = deployServiceConfig;
+    const deployConfigYaml = jsYaml.dump(deployConfig);
+    if (action === "PREVIEW") {
+      console.log("preview")
+      setYaml(deployConfigYaml);
+    } else {
+
+    }
+
+    console.log(deployConfigYaml);
+  }
+
+  const handleExpansion = (item) => {
+    let expandedItems = [...expanded];
+    if (expandedItems.includes(item)) {
+      expandedItems = expandedItems.filter(el => el !== item);
+    } else {
+      expandedItems.push(item);
+    }
+
+    setExpanded(expandedItems);
+
+    if (yaml) {
+      setYaml("");
+    }
   }
 
   const ns = "default";
@@ -598,17 +648,19 @@ function PatternForm() {
   return (
     <>
       {
-        console.log("schemaSet:::", schemaSet)
+        console.log("schemaSet:::", deployServiceConfig)
       }
-      <div>
-        {schemaSet
-          .filter((s) => s.type !== "addon")
-          .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
-          .map((s) => (
-            accordion(s)
-          ))}
-      </div>
-      <Accordion style={{ width: '100%' }}>
+      {schemaSet
+        .filter((s) => s.type !== "addon")
+        .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
+        .map((s) => (
+          accordion(s)
+        ))}
+      <Accordion
+        expanded={expanded.includes('addon')}
+        onChange={() => handleExpansion('addon')}
+        style={{ width: '100%' }}
+      >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">
             Configure Addons
@@ -625,19 +677,95 @@ function PatternForm() {
             ))}
         </AccordionDetails>
       </Accordion>
+      <Collapse in={!!yaml} >
+        <CodeEditor />
+      </Collapse>
+      {!yaml && <CustomButton title="Preview Pattern" onClick={() => handleDeploy("PREVIEW")} />}
+      <Typography variant="caption" style={{ color: "#666666" }}>
+        Forms are converted to deployable yaml and configuration is generated
+      </Typography>
     </>
   );
 
-  function accordion(s) {
-    return <Accordion style={{ width: '100%' }}>
+  function CustomButton({ title, onClick }) {
+    return <Button
+      fullWidth
+      color="primary"
+      variant="contained"
+      onClick={onClick}
+      style={{
+        marginTop: "16px",
+        padding: "10px"
+      }}
+    >
+      {title}
+    </Button>;
+  }
+
+  function accordion(schema) {
+    const patternName = schema?.workload?.title;
+
+    return <Accordion
+      expanded={expanded.includes(patternName)}
+      onChange={() => handleExpansion(patternName)}
+      style={{ width: '100%' }}
+    >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography variant="h6">
-          {s?.workload?.title || "Expand More"}
+          {patternName || "Expand More"}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
+        <PatternServiceForm schemaSet={schema} onSubmit={(val) => handleSubmit(val, patternName)} onDelete={handleDelete} namespace={ns} />
       </AccordionDetails>
     </Accordion>;
+  }
+
+  function CodeEditor() {
+    const cardStyle = { margin: "16px 0px" };
+    const cardcontentStyle = { margin: "16px" };
+
+    return (
+      <Card style={cardStyle}>
+        <CardContent style={cardcontentStyle}>
+          <CodeMirror
+            value={yaml}
+            options={{
+              theme: "material",
+              lineNumbers: true,
+              lineWrapping: true,
+              gutters: ["CodeMirror-lint-markers"],
+              lint: true,
+              mode: "text/x-yaml",
+            }}
+          // onChange={(_, data, val) => setYaml(val)}
+          />
+          <CustomButton title="Save Pattern" onClick={() => handleDeploy("SAVE")} />
+          <CardActions style={{ justifyContent: "flex-end" }}>
+            <Tooltip title="Update Pattern">
+              <IconButton
+                aria-label="Update"
+                color="primary"
+              // onClick={() => onSubmit(yaml, pattern.id, pattern.name, "update")}
+              >
+                <SaveIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete Pattern">
+              <IconButton
+                aria-label="Delete"
+                color="primary"
+              // onClick={() => onSubmit(yaml, pattern.id, pattern.name, "delete")}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            <IconButton style={{ transform: "rotate(180deg)" }} onClick={() => { setYaml("") }}>
+              <ArrowDropDownCircleIcon color="primary" />
+            </IconButton>
+          </CardActions>
+        </CardContent>
+      </Card>
+    )
   }
 }
