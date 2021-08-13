@@ -38,6 +38,8 @@ Go [here](https://docs.meshery.io/extensibility/api#rest) for the docs.
 - Meshery provides a GraphQl API available through the default port of `9081/tcp`.
 - [Relay](https://relay.dev) is the client used.
 
+
+
 ### Design
 
 #### Wireframing / Mockups
@@ -73,7 +75,18 @@ The designs in this specification should result in enabling:
 
 - Meshery UI should be event-driven where possible.
 
+
+
 ### Setting up
+
+#### Linting-UI
+
+- When contributing to this project, it is advisable to
+
+    - Use [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) plugin for Visual Studio Code.
+
+    - Disable plugins other than `eslint` for formatting and linting, if any.
+
 
 #### Install UI dependencies
 

@@ -41,7 +41,7 @@ var offboardCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/experimental/application/deploy", fileReader)
+		req, err := http.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/application/deploy", fileReader)
 		if err != nil {
 			return err
 		}
