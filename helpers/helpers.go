@@ -72,12 +72,12 @@ func ChangeK8sContext(config []byte, context string) ([]byte, error) {
 	}
 
 	NestedMapExplorer(cfg, func(key, value interface{}) (interface{}, interface{}) {
-		kStr, ok := key.(string)
+		str, ok := key.(string)
 		if !ok {
 			return key, value
 		}
 
-		if kStr != "current-context" {
+		if str != "current-context" {
 			return key, value
 		}
 
