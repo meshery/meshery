@@ -77,6 +77,8 @@ const (
 	ErrInvalidPatternCode       = "2145"
 	ErrCompConfigPairsCode      = "2146"
 	ErrCreateDirCode            = "2150"
+	ErrInvalidRequestObjectCode = "2151"
+	ErrChangeK8sContextCode     = "2152"
 )
 
 var (
@@ -311,4 +313,12 @@ func ErrSaveSession(err error) error {
 
 func ErrCreateDir(err error, obj string) error {
 	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrInvalidRequestObject(fields ...string) error {
+	return errors.New(ErrCreateDirCode, errors.Alert, append([]string{"Error invalid request object:"}, fields...), []string{}, []string{}, []string{})
+}
+
+func ErrChangeK8sContext(err error) error {
+	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{}, []string{})
 }

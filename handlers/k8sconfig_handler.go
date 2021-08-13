@@ -135,10 +135,6 @@ func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference,
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request) {
-	// if req.Method != http.MethodPost {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
 	_ = req.ParseMultipartForm(1 << 20)
 	var k8sConfigBytes []byte
 
@@ -180,6 +176,14 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 		logrus.Error(ErrMarshal(err, "kube-context"))
 		http.Error(w, ErrMarshal(err, "kube-context").Error(), http.StatusInternalServerError)
 		return
+	}
+}
+
+func (h *Handler) GetContexts(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if err := json.NewEncoder(w).Encode(prefObj.K8SConfig.Contexts); err != nil {
+		err = errors.Wrap(err, "unable to marshal the payload")
+		logrus.Error(ErrMarshal(err, "contexts"))
+		http.Error(w, ErrMarshal(err, "contexts").Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -294,6 +298,21 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 	}
 	kc.ServerVersion = version.String()
 
+	ccfg, err := clientcmd.Load(k8sConfigBytes)
+	if err != nil {
+		logrus.Error(ErrLoadConfig(err))
+		return nil, ErrLoadConfig(err)
+	}
+
+	kc.Contexts = []models.K8SContext{}
+	for name, ctx := range ccfg.Contexts {
+		kc.Contexts = append(kc.Contexts, models.K8SContext{
+			ContextName:      name,
+			ClusterName:      ctx.Cluster,
+			IsCurrentContext: name == contextName,
+		})
+	}
+
 	//kc.Nodes, err = helpers.FetchKubernetesNodes(kc.Config, kc.ContextName)
 	//if err != nil {
 	//	return nil, fmt.Errorf("unable to fetch nodes metadata from the Kubernetes server")
@@ -301,4 +320,58 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 	*h.config.KubeClient = *mclient
 	kc.ClusterConfigured = true
 	return kc, nil
+}
+
+func (h *Handler) ChangeK8sContext(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	contextReqObj := map[string]interface{}{}
+
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	if err := json.NewDecoder(req.Body).Decode(&contextReqObj); err != nil {
+		err = errors.Wrap(err, "unable to marshal the payload")
+		logrus.Error(ErrMarshal(err, "context-name"))
+		http.Error(w, ErrMarshal(err, "context-name").Error(), http.StatusBadRequest)
+		return
+	}
+
+	contextName, ok := contextReqObj["Context"]
+	if !ok {
+		http.Error(w, ErrInvalidRequestObject("Context").Error(), http.StatusBadRequest)
+		return
+	}
+
+	contextNameStr, ok := contextName.(string)
+	if !ok {
+		http.Error(w, ErrInvalidRequestObject("Context").Error(), http.StatusBadRequest)
+		return
+	}
+
+	ncfg, err := helpers.ChangeK8sContext(prefObj.K8SConfig.Config, contextNameStr)
+	if err != nil {
+		err = ErrChangeK8sContext(err)
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	kc, err := h.setupK8sConfig(false, ncfg, contextNameStr)
+	if err != nil {
+		err = ErrChangeK8sContext(err)
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	prefObj.K8SConfig = kc
+	err = provider.RecordPreferences(req, user.UserID, prefObj)
+	if err != nil {
+		err = ErrRecordPreferences(err)
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	h.GetContexts(w, req, prefObj, user, provider)
 }
