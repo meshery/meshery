@@ -230,7 +230,7 @@ jobs:
           fail_ci_if_error: true
   docker-build-test:
     name: Docker build
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'sayantan1413/meshery'
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -259,7 +259,7 @@ jobs:
           DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
   # validate the swagger docs
   swaggerci:
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'sayantan1413/meshery'
     name: swagger-docs
     runs-on: ubuntu-latest
     steps:
