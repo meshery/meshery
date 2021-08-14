@@ -24,13 +24,12 @@ function componentType(jsonSchema) {
  *  onChange: Function;
  *  onSubmit?: Function;
  *  onDelete?: Function;
- *  type: "trait" | "workload"
+ *  type: "trait" | "workload";
+ *  renderAsTooltip: boolean;
  * }} props
  * @returns
  */
-function PatternService({
-  jsonSchema, onChange, type, onSubmit, onDelete
-}) {
+function PatternService({ jsonSchema, onChange, type, onSubmit, onDelete, renderAsTooltip }) {
   const ctype = componentType(jsonSchema);
 
   if (ctype === "rjsf")
@@ -42,6 +41,7 @@ function PatternService({
         onChange={onChange}
         onSubmit={onSubmit}
         onDelete={onDelete}
+        renderAsTooltip={renderAsTooltip}
       />
     );
   if (ctype === "switch")
