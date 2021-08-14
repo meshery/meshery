@@ -140,7 +140,7 @@ async function submitPattern(pattern, del = false) {
 
 function MesheryMeshInterface({ adapter }) {
   const [schemeSets, setSchemaSets] = useState([]);
-  const [ns, setNS] = useState("default")
+  const [ns, setNS] = useState("default");
 
   const handleSubmit = (cfg) => {
     submitPattern(cfg)
@@ -178,7 +178,7 @@ function MesheryMeshInterface({ adapter }) {
               .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
               .map((s) => (
                 <Grid item xs={12}>
-                  <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
+                  <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} renderAsTooltip={false} />
                 </Grid>
               ))}
           </Grid>
@@ -195,7 +195,7 @@ function MesheryMeshInterface({ adapter }) {
               .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
               .map((s) => (
                 <Grid item>
-                  <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns}/>
+                  <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} renderAsTooltip={false} />
                 </Grid>
               ))}
           </Grid>
