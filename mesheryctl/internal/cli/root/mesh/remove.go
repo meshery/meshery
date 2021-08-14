@@ -72,6 +72,10 @@ func init() {
 	_ = removeCmd.MarkFlagRequired("tokenPath")
 }
 
+func sendRemoveRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
+	return "", nil
+}
+
 func waitForRemoveResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
 	return "",nil
 }
