@@ -169,6 +169,23 @@ const styles = (theme) => ({
     padding: theme.spacing(2),
     borderRadius: "inherit",
   },
+  operationButton:{
+    [theme.breakpoints.down(1180)]: {
+      marginRight:"25px",
+    },
+  },
+  contentContainer:{
+    [theme.breakpoints.down(1050)]: {
+      flexDirection:"column",
+    },
+  },
+  configBoxContainer:{
+    [theme.breakpoints.down(1050)]: {
+      flexGrow: 0,
+      maxWidth: '100%',
+      flexBasis: '100%',
+    },
+  },
 });
 
 class MeshConfigComponent extends React.Component {
@@ -722,8 +739,8 @@ class MeshConfigComponent extends React.Component {
     const operator = (
       <React.Fragment>
         <div>
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={4}>
+          <Grid container spacing={1} >
+            <Grid item xs={12} md={4} className={classes.operationButton}>
               <List>
                 <ListItem>
                   <Tooltip
@@ -827,8 +844,8 @@ class MeshConfigComponent extends React.Component {
       <NoSsr>
         <PromptComponent ref={this.ref} />
         <div className={classes.root}>
-          <Grid container spacing={5}>
-            <Grid item spacing={1} xs={12} md={6}>
+          <Grid container spacing={5} className={classes.contentContainer}>
+            <Grid item spacing={1} xs={12} md={6} className={classes.configBoxContainer}>
               <div className={classes.heading}>
                 <h4>Cluster Configuration</h4>
               </div>
@@ -887,7 +904,7 @@ class MeshConfigComponent extends React.Component {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} md={6} spacing={1}>
+            <Grid item spacing={1} xs={12} md={6} className={classes.configBoxContainer}>
               <div className={classes.heading}>
                 <h4>Operator Configuration</h4>
               </div>
