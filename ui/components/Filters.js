@@ -39,7 +39,7 @@ const styles = (theme) => ({
   },
 });
 
-function CustomToolbar(onClick) {
+function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
     return (
       <>
@@ -59,7 +59,7 @@ function CustomToolbar(onClick) {
           </Tooltip>
         </label>
 
-        <URLUploader />
+        <URLUploader onSubmit={urlOnClick} />
       </>
     );
   };
@@ -261,7 +261,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
     reader.readAsText(file);
   }
-
+  function urlUploadHandler(link) {
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    console.log(link, "valid");
+  }
   const columns = [
     {
       name : "name",
@@ -422,9 +425,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     page,
     print : false,
     download : false,
-    // handleDelete,
-
-    customToolbar : CustomToolbar(uploadHandler),
+    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onRowsDelete : function handleDelete(row) {
       const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
