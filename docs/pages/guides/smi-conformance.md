@@ -111,37 +111,21 @@ A sample workflow that could be added to your `.github/workflows` folder is give
  name: SMI Conformance with Meshery
  on:
    push:
-     branches:
-       - 'main'
+     tags:
+       - 'v*'
  
  jobs:
    smi-conformance:
      name: SMI Conformance
      runs-on: ubuntu-latest
      steps:
-       - name: Setup MiniKube
-         uses: manusa/actions-setup-minikube@v2.4.1
-         with:
-           minikube version: 'v1.21.0'
-           kubernetes version: 'v1.20.7'
-           driver: docker
  
-       - name: Install OSM
-         run: |
-            curl -LO https://github.com/openservicemesh/osm/releases/download/v0.6.0/osm-v0.6.0-linux-amd64.tar. gz
-            tar -xzf osm-v0.6.0-linux-amd64.tar.gz
-            mkdir -p ~/osm/bin
-            mv ./linux-amd64/osm ~/osm/bin/osm-bin
-            PATH="$PATH:$HOME/osm/bin/"
-            osm-bin install --osm-namespace default
- 
-       - name: SMI Conformance Action
+       - name: Validate SMI Conformance
          uses: layer5io/mesheryctl-smi-conformance-action@master
          with:
-           platform: docker
-           spec: smi
-           service_mesh: osm
+           service_mesh: open_service_mesh
            provider_token: ${{ secrets.MESHERY_TOKEN }}
+           mesh_deployed: false
  </div></div>
  </pre>
 
