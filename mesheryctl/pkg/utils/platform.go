@@ -247,15 +247,7 @@ func GetDeploymentVersion(filePath, fileName string) (string, error) {
 	err = yaml.Unmarshal(yamlFile, &compose)
 	if err != nil {
 		return "", fmt.Errorf("unable to unmarshal config %s | %s", fileName, err)
-
 	}
-
-	/*
-		    // for edge channel only the latest tag exist in Docker Hub
-			if channel == "edge" {
-				version = "latest"
-			}
-	*/
 
 	image := compose.Spec.Template.Spec.Containers[0].Image
 	spliter := strings.Split(image, ":")
@@ -281,15 +273,14 @@ func CanUseCachedManifests(currCtx *(config.Context)) error {
 
 	// compare versions in currCtx and meshery-deployment.yaml
 	deploymentVersion, err := GetDeploymentVersion(deploymentsPath, MesheryDeployment)
+	if err != nil {
+		return errors.Wrap(err, "could not get deployment file version")
+	}
 	var currVersion string
 	if currCtx.GetVersion() != "latest" {
 		currVersion = currCtx.GetVersion()
-
-		fmt.Println("deployment version,curr version", deploymentVersion, currVersion)
 		if currVersion != deploymentVersion {
 			return errors.New("deployment version mismatch")
-		} else {
-			fmt.Println("versions matched!")
 		}
 	}
 
@@ -333,11 +324,6 @@ func CanUseCachedManifests(currCtx *(config.Context)) error {
 
 // FetchManifests is a wrapper function that identifies the required manifest files as downloads them
 func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
-	err := CanUseCachedManifests(currCtx)
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	_, version, err := GetChannelAndVersion(currCtx)
 	if err != nil {
 		return []Manifest{}, err
