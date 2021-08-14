@@ -322,22 +322,41 @@ func start() error {
 			return err
 		}
 
-		// fetch the manifest files corresponding to the version specified
-		manifests, err := utils.FetchManifests(currCtx)
+		var manifests []utils.Manifest
+		// check if skipUpdate flag is used
+		// if it is, check if cached manifests can be used
+		if skipUpdateFlag {
+			err = utils.CanUseCachedManifests(currCtx)
+			if err != nil {
+				return errors.Wrap(err, "cannot start Meshery")
+			}
+			for _, adapter := range currCtx.GetAdapters() {
+				var temp utils.Manifest
+				temp.Path = adapter + "-deployment.yaml"
+				manifests = append(manifests, temp)
+			}
+		} else {
+			// fetch the manifest files corresponding to the version specified
+			manifests, err = utils.FetchManifests(currCtx)
+			// here, if there is some error fetching manifests, check if cached manifests can be used
+			// if there is an error using cached manifests too(err from CanUseCachedManifests), return error
+			if err != nil {
+				err = utils.CanUseCachedManifests(currCtx)
+				if err != nil {
+					return errors.Wrap(err, "cannot fetch manifests or use cached manifests")
+				}
+			} else { // case when fetch manifests works as expected
+				// path to the manifest files ~/.meshery/manifests
+				manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
 
-		if err != nil {
-			return err
+				// change version in meshery-deployment manifest
+				err = utils.ChangeManifestVersion(utils.MesheryDeployment, channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
+				if err != nil {
+					return err
+				}
+			}
 		}
-		// path to the manifest files ~/.meshery/manifests
-		manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
 
-		// change version in meshery-deployment manifest
-		err = utils.ChangeManifestVersion(utils.MesheryDeployment, channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
-		if err != nil {
-			return err
-		}
-
-		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
 
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
@@ -449,6 +468,7 @@ func start() error {
 		if err != nil {
 			return err
 		}
+
 		// Download operator manifest
 		err = utils.DownloadOperatorManifest()
 		if err != nil {
