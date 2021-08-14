@@ -71,3 +71,7 @@ func init() {
 	removeCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = removeCmd.MarkFlagRequired("tokenPath")
 }
+
+func waitForRemoveResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
+	return "",nil
+}
