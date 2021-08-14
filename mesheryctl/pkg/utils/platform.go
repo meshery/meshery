@@ -256,6 +256,26 @@ func GetDeploymentVersion(filePath, fileName string) (string, error) {
 	return version, nil
 }
 
+// CanUseCachedOperatorManifests returns an error if it is not possible to use cached operator manifests
+func CanUseCachedOperatorManifests(currCtx *(config.Context)) error {
+	_, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator))
+	if errors.Is(err, fs.ErrNotExist) {
+		return errors.New("operator manifest file does not exist")
+	}
+
+	_, err = os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker))
+	if errors.Is(err, fs.ErrNotExist) {
+		return errors.New("broker manifest file does not exist")
+	}
+
+	_, err = os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync))
+	if errors.Is(err, fs.ErrNotExist) {
+		return errors.New("meshsync manifest file does not exist")
+	}
+
+	return nil
+}
+
 // CanUseCachedManifests returns an error if it is not possible to use cached manifests
 func CanUseCachedManifests(currCtx *(config.Context)) error {
 	// checks if meshery folder are present
@@ -303,20 +323,8 @@ func CanUseCachedManifests(currCtx *(config.Context)) error {
 
 	default:
 		// check if operator-related manifests are present, for both platforms
-		_, err = os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator))
-		if errors.Is(err, fs.ErrNotExist) {
-			return errors.New("operator manifest file does not exist")
-		}
-
-		_, err = os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker))
-		if errors.Is(err, fs.ErrNotExist) {
-			return errors.New("broker manifest file does not exist")
-		}
-
-		_, err = os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync))
-		if errors.Is(err, fs.ErrNotExist) {
-			return errors.New("meshsync manifest file does not exist")
-		}
+		err = CanUseCachedOperatorManifests(currCtx)
+		return err
 	}
 
 	return nil
