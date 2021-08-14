@@ -12,7 +12,6 @@ import (
 var update = flag.Bool("update", false, "update golden files")
 
 func TestGetManifestTreeURL(t *testing.T) {
-
 	// initialize mock server for handling requests
 	StartMockery(t)
 
