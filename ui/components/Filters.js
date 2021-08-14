@@ -389,6 +389,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     download: false,
     customToolbar: CustomToolbar(uploadHandler),
 
+    onRowsDelete: (rowsDeleted) => {
+      console.log(rowsDeleted.data) 
+      // console.log("PatternFile API", `/api/pattern/${id}`)
+    },
+    
+    selection:'mulitple',
     onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
       let order = "";
