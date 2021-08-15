@@ -156,6 +156,13 @@ func (h *Handler) GetMesheryFiltersHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route DELETE /api/experimental/filter/{id} FiltersAPI idDeleteMesheryFilter
+// Handle Delete for a Meshery Filter
+//
+// Deletes a meshery filter with ID: id
+// responses:
+// 	200: noContentWrapper
+//
 // DeleteMesheryFilterHandler deletes a filter with the given id
 func (h *Handler) DeleteMesheryFilterHandler(
 	rw http.ResponseWriter,
