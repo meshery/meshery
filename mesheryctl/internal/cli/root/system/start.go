@@ -469,24 +469,29 @@ func start() error {
 			return err
 		}
 
-		// Download operator manifest
-		err = utils.DownloadOperatorManifest()
-		if err != nil {
-			return ErrDownloadFile(err, "operator manifest")
-		}
-
-		if !skipUpdateFlag {
-			err = utils.ApplyOperatorManifest(kubeClient, true, false)
-
+		if skipUpdateFlag {
+			err = utils.CanUseCachedOperatorManifests(currCtx)
 			if err != nil {
-				return ErrApplyOperatorManifest(err, true, false)
+				return errors.Wrap(err, "no cached operator manifests")
 			}
-		} else {
+			log.Println("using cached operator manifests...")
 			// skip applying update on operators when the flag is used
 			err = utils.ApplyOperatorManifest(kubeClient, false, false)
 
 			if err != nil {
 				return ErrApplyOperatorManifest(err, false, false)
+			}
+		} else {
+			// Download operator manifest
+			err = utils.DownloadOperatorManifest()
+			if err != nil {
+				return ErrDownloadFile(err, "operator manifest")
+			}
+
+			err = utils.ApplyOperatorManifest(kubeClient, true, false)
+
+			if err != nil {
+				return ErrApplyOperatorManifest(err, true, false)
 			}
 		}
 	}
