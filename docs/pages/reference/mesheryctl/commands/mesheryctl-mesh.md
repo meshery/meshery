@@ -37,6 +37,8 @@ lang: en
     mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
 
     mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test]
+
+    mesheryctl mesh deploy
   </div>
  </pre>
 <br/>

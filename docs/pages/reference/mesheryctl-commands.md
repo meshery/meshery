@@ -403,6 +403,12 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         </tr>
       {% endfor %}
     {% endfor %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.meshes.deploy.subcommand %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/mesh/deploy">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+      </tr>
   {% endfor %}
 </thead>
 </table>
