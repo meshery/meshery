@@ -39,11 +39,12 @@ func TestGetManifestTreeURL(t *testing.T) {
 			version:      "v0.5.45",
 		},
 		{
-			name:      "Test getting manifest tree url with wrong url",
-			expectErr: true,
-			fixture:   "manifesturl.err.api.response.golden",
-			url:       "https://api.github.com/repos/meshery/meshery/git/trees/v0000000?recursive=1",
-			version:   "v0000000",
+			name:         "Test getting manifest tree url with wrong url",
+			expectErr:    true,
+			expectOutput: "manifesturl.out.err.golden",
+			fixture:      "manifesturl.err.api.response.golden",
+			url:          "https://api.github.com/repos/meshery/meshery/git/trees/v0000000?recursive=1",
+			version:      "v0000000",
 		},
 	}
 	for _, tt := range tests {
@@ -61,7 +62,7 @@ func TestGetManifestTreeURL(t *testing.T) {
 					if *update {
 						golden.Write(err.Error())
 					}
-					expectedResponse := tt.expectOutput
+					expectedResponse := golden.Load()
 					Equals(t, expectedResponse, err.Error())
 					return
 				}
