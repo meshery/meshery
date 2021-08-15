@@ -320,11 +320,6 @@ func CanUseCachedManifests(currCtx *(config.Context)) error {
 				return errors.New("adapter deployment file does not exist")
 			}
 		}
-
-	default:
-		// check if operator-related manifests are present, for both platforms
-		err = CanUseCachedOperatorManifests(currCtx)
-		return err
 	}
 
 	return nil
