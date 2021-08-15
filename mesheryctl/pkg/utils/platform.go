@@ -226,7 +226,7 @@ func GetChannelAndVersion(currCtx *(config.Context)) (string, string, error) {
 	return channel, version, nil
 }
 
-func GetDeploymentVersion(filePath, fileName string) (string, error) {
+func GetDeploymentVersion(filePath string) (string, error) {
 	// setting up config type to yaml files
 	ViperCompose.SetConfigType("yaml")
 
@@ -234,7 +234,7 @@ func GetDeploymentVersion(filePath, fileName string) (string, error) {
 	ViperCompose.SetConfigFile(filePath)
 	err := ViperCompose.ReadInConfig()
 	if err != nil {
-		return "", fmt.Errorf("unable to read config %s | %s", fileName, err)
+		return "", fmt.Errorf("unable to read config %s | %s", MesheryDeployment, err)
 	}
 
 	compose := K8sCompose{}
@@ -246,7 +246,7 @@ func GetDeploymentVersion(filePath, fileName string) (string, error) {
 	// unmarshal the file into structs
 	err = yaml.Unmarshal(yamlFile, &compose)
 	if err != nil {
-		return "", fmt.Errorf("unable to unmarshal config %s | %s", fileName, err)
+		return "", fmt.Errorf("unable to unmarshal config %s | %s", MesheryDeployment, err)
 	}
 
 	image := compose.Spec.Template.Spec.Containers[0].Image
@@ -292,7 +292,7 @@ func CanUseCachedManifests(currCtx *(config.Context)) error {
 	}
 
 	// compare versions in currCtx and meshery-deployment.yaml
-	deploymentVersion, err := GetDeploymentVersion(deploymentsPath, MesheryDeployment)
+	deploymentVersion, err := GetDeploymentVersion(deploymentsPath)
 	if err != nil {
 		return errors.Wrap(err, "could not get deployment file version")
 	}
