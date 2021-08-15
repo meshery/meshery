@@ -880,7 +880,7 @@ class Navigator extends React.Component {
                         : {}}
                     />
                   </ListItem>
-                  <Collapse in={isDrawerCollapsed || this.state.openItems.includes(childId)}>
+                  <Collapse in={this.state.openItems.includes(childId)}>
                     {this.renderChildren(childId, children, 1)}
                   </Collapse>
                 </React.Fragment>
