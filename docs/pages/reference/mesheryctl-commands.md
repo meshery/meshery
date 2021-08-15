@@ -392,7 +392,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     </tr>
     {% for subcommand_hash in site.data.mesheryctlcommands.meshes.validate.subcommand %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
-        <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/mesh/validate">{{ subcommand.name }}</a></td>
+        <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/mesh/validate">{{ subcommand.name }}</a></td>
         <td></td>
         <td>{{ subcommand.description }}</td>
       </tr>
