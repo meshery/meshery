@@ -11,63 +11,57 @@ import {
 } from "@material-ui/core";
 
 const styles = () => ({
-  title: {
-    textAlign: 'center',
-    minWidth: 400,
-    padding: '10px',
-    color: '#fff',
-    backgroundColor: '#607d8b'
+  title : {
+    textAlign : 'center',
+    minWidth : 400,
+    padding : '10px',
+    color : '#fff',
+    backgroundColor : '#607d8b'
   },
-  subtitle: {
-    minWidth: 400,
-    overflowWrap: 'anywhere',
-    textAlign: 'center',
-    padding: '5px'
+  subtitle : {
+    minWidth : 400,
+    overflowWrap : 'anywhere',
+    textAlign : 'center',
+    padding : '5px'
   },
-  actions: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  button: {
-    margin: '8px 0px',
-  }
+  actions : { display : 'flex',
+    justifyContent : 'center', },
+  button : { margin : '8px 0px', }
 });
 
 class PromptComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: false,
-      title: "",
-      subtitle: "",
-      options: []
+      show : false,
+      title : "",
+      subtitle : "",
+      options : []
     }
     this.promiseInfo = {};
   }
 
   show = async (passed) => {
     return new Promise((resolve, reject) => {
-      this.promiseInfo = {
-        resolve,
-        reject
-      };
+      this.promiseInfo = { resolve,
+        reject };
       this.setState({
-        title: passed.title,
-        subtitle: passed.subtitle,
-        options: passed.options,
-        show: true
+        title : passed.title,
+        subtitle : passed.subtitle,
+        options : passed.options,
+        show : true
       });
     });
   };
 
   hide = () => {
-    this.setState({
-      show: false
-    });
+    this.setState({ show : false });
   };
 
   render() {
-    const { show, options, title, subtitle } = this.state;
+    const {
+      show, options, title, subtitle
+    } = this.state;
     const { classes } = this.props;
     const { resolve } = this.promiseInfo;
     return (

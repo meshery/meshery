@@ -18,18 +18,12 @@ import { updateProgress } from "../../../lib/store";
 import { pingMesheryOperator, pingMesheryOperatorWithNotification } from "../helpers/mesheryOperator";
 import fetchMesheryOperatorStatus from "../../graphql/queries/OperatorStatusQuery";
 import AdapterChip from "./AdapterChip"
-import {closeButtonForSnackbarAction, errorHandlerGenerator,successHandlerGenerator} from "../helpers/common"
+import { closeButtonForSnackbarAction, errorHandlerGenerator,successHandlerGenerator } from "../helpers/common"
 
 
-const chipStyles = (theme) => ({
-  chipIcon: {
-    width: theme.spacing(2.5)
-  },
-  chip: {
-    marginRight: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-})
+const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
+  chip : { marginRight : theme.spacing(1),
+    marginBottom : theme.spacing(1), }, })
 
 
 
@@ -39,32 +33,28 @@ const chipStyles = (theme) => ({
 
 
 
-const MesheryOperatorDataPanel = ({operatorInformation, updateProgress, enqueueSnackbar, closeSnackbar}) => {
+const MesheryOperatorDataPanel = ({
+  operatorInformation, updateProgress, enqueueSnackbar, closeSnackbar
+}) => {
 
   const handleMesheryOperatorClick = () => {
 
     const successCb = (res) => {
       if (res?.operator?.status == "ENABLED") {
-        enqueueSnackbar('Operator was successfully pinged!', {
-          variant: 'success',
-          autoHideDuration: 2000,
-          action: closeButtonForSnackbarAction(closeSnackbar)
-        })
+        enqueueSnackbar('Operator was successfully pinged!', { variant : 'success',
+          autoHideDuration : 2000,
+          action : closeButtonForSnackbarAction(closeSnackbar) })
       } else {
-        enqueueSnackbar('Operator was not successfully pinged!', {
-          variant: 'failure',
-          autoHideDuration: 2000,
-          action: closeButtonForSnackbarAction(closeSnackbar)          
-        })
+        enqueueSnackbar('Operator was not successfully pinged!', { variant : 'failure',
+          autoHideDuration : 2000,
+          action : closeButtonForSnackbarAction(closeSnackbar) })
       }
-    } 
+    }
 
     const errorCb = (err) => {
-      enqueueSnackbar('Unable to ping meshery operator!'+err, {
-        variant: 'error',
-        autoHideDuration: 2000,
-        action: closeButtonForSnackbarAction(closeSnackbar)
-      })
+      enqueueSnackbar('Unable to ping meshery operator!'+err, { variant : 'error',
+        autoHideDuration : 2000,
+        action : closeButtonForSnackbarAction(closeSnackbar) })
     }
 
 
@@ -78,7 +68,7 @@ const MesheryOperatorDataPanel = ({operatorInformation, updateProgress, enqueueS
 
 
   return (
-    <Paper style={{padding: "2rem"}}>
+    <Paper style={{ padding : "2rem" }}>
       <AdapterChip
         handleClick={handleMesheryOperatorClick}
         isActive={true}
@@ -89,7 +79,9 @@ const MesheryOperatorDataPanel = ({operatorInformation, updateProgress, enqueueS
         <Grid item xs={12} md={4}>
           <List>
             <ListItem>
-              <ListItemText primary="Operator State" secondary={operatorInformation.operatorInstalled ? "Active" : "Disabled"} />
+              <ListItemText primary="Operator State" secondary={operatorInformation.operatorInstalled
+                ? "Active"
+                : "Disabled"} />
             </ListItem>
             <ListItem>
               <ListItemText primary="Operator Version" secondary={operatorInformation.operatorVersion} />
@@ -99,7 +91,9 @@ const MesheryOperatorDataPanel = ({operatorInformation, updateProgress, enqueueS
         <Grid item xs={12} md={4}>
           <List>
             <ListItem>
-              <ListItemText primary="MeshSync State" secondary={operatorInformation.meshSyncInstalled ? "Active" : "Disabled"} />
+              <ListItemText primary="MeshSync State" secondary={operatorInformation.meshSyncInstalled
+                ? "Active"
+                : "Disabled"} />
             </ListItem>
             <ListItem>
               <ListItemText primary="MeshSync Version" secondary={operatorInformation.meshSyncVersion} />
@@ -109,7 +103,9 @@ const MesheryOperatorDataPanel = ({operatorInformation, updateProgress, enqueueS
         <Grid item xs={12} md={4}>
           <List>
             <ListItem>
-              <ListItemText primary="NATS State" secondary={operatorInformation.NATSInstalled ? "Active" : "Disabled"} />
+              <ListItemText primary="NATS State" secondary={operatorInformation.NATSInstalled
+                ? "Active"
+                : "Disabled"} />
             </ListItem>
             <ListItem>
               <ListItemText primary="NATS Version" secondary={operatorInformation.NATSVersion} />
@@ -118,12 +114,10 @@ const MesheryOperatorDataPanel = ({operatorInformation, updateProgress, enqueueS
         </Grid>
       </Grid>
     </Paper>
-  ) 
+  )
 }
 
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 export default connect(null, mapDispatchToProps)(withSnackbar(MesheryOperatorDataPanel))

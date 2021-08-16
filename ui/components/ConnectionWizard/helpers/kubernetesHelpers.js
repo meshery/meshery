@@ -1,7 +1,7 @@
 import dataFetch from "../../../lib/data-fetch";
 
 
-/** 
+/**
   * Pings kuberenetes server endpoint
   * @param  {(res) => void} successHandler
   * @param  {(err) => void} errorHandler
@@ -9,17 +9,15 @@ import dataFetch from "../../../lib/data-fetch";
 export const pingKubernetes = (successHandler,errorHandler) => {
   dataFetch(
     "/api/system/kubernetes/ping",
-    {
-      credentials: "same-origin",
-      credentials: "include",
-    },
+    { credentials : "same-origin",
+      credentials : "include", },
     successHandler,
     errorHandler
   );
 }
 
 
-  
+
 /**
   * Figures out if kubernetes connection is established or not
   *
@@ -32,22 +30,20 @@ export const pingKubernetes = (successHandler,errorHandler) => {
 */
 export const isKubernetesConnected = (isClusterConfigured,kubernetesPingStatus) => {
 
-  if(isClusterConfigured){
-    if(kubernetesPingStatus) return true
+  if (isClusterConfigured){
+    if (kubernetesPingStatus) return true
   }
 
   return false
 }
 
 
-export const deleteKubernetesConfig = (successCb,errorCb) => 
+export const deleteKubernetesConfig = (successCb,errorCb) =>
   dataFetch(
     "/api/system/kubernetes",
-    {
-      credentials: "same-origin",
-      method: "DELETE",
-      credentials: "include",
-    },
+    { credentials : "same-origin",
+      method : "DELETE",
+      credentials : "include", },
     successCb,
     errorCb
   )
@@ -61,23 +57,23 @@ export const fetchContexts = (updateProgress, k8sfile) => {
   // if (inClusterConfigForm) {
   //   return;
   // }
-    
+
   // formData.append('contextName', contextName);
   formData.append("k8sfile", k8sfile);
 
-  updateProgress({ showProgress: true });
+  updateProgress({ showProgress : true });
 
   return new Promise((res, rej) => {
     dataFetch(
       "/api/system/kubernetes/contexts",
       {
-        credentials: "same-origin",
-        method: "POST",
-        credentials: "include",
-        body: formData,
+        credentials : "same-origin",
+        method : "POST",
+        credentials : "include",
+        body : formData,
       },
       (result) => {
-        updateProgress({ showProgress: false });
+        updateProgress({ showProgress : false });
 
         if (typeof result !== "undefined") {
           let ctName = "";
@@ -87,13 +83,13 @@ export const fetchContexts = (updateProgress, k8sfile) => {
             }
           });
 
-          res({result, currentContextName: ctName})
+          res({ result, currentContextName : ctName })
         }
       },
       (err) => rej(err)
     );
   })
-    
+
 };
 
 
@@ -101,37 +97,35 @@ export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, a
 
   const inClusterConfigForm = false
   const formData = new FormData();
-  formData.append("inClusterConfig", inClusterConfigForm ? "on" : ""); // to simulate form behaviour of a checkbox
+  formData.append("inClusterConfig", inClusterConfigForm
+    ? "on"
+    : ""); // to simulate form behaviour of a checkbox
   if (!inClusterConfigForm) {
     formData.append("contextName", contextName);
     formData.append("k8sfile", k8sfile);
   }
-  updateProgress({ showProgress: true });
+  updateProgress({ showProgress : true });
   dataFetch(
     "/api/system/kubernetes",
     {
-      credentials: "same-origin",
-      method: "POST",
-      credentials: "include",
-      body: formData,
+      credentials : "same-origin",
+      method : "POST",
+      credentials : "include",
+      body : formData,
     },
     (result) => {
-      updateProgress({ showProgress: false });
+      updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Kubernetes config was successfully validated!", {
-          variant: "success",
-          autoHideDuration: 2000,
-          action
-        });
-        updateK8SConfig({
-          k8sConfig: {
-            inClusterConfig: inClusterConfigForm,
-            k8sfile,
-            contextName: result.contextName,
-            clusterConfigured: true,
-            configuredServer: result.configuredServer,
-          },
-        });
+        enqueueSnackbar("Kubernetes config was successfully validated!", { variant : "success",
+          autoHideDuration : 2000,
+          action });
+        updateK8SConfig({ k8sConfig : {
+          inClusterConfig : inClusterConfigForm,
+          k8sfile,
+          contextName : result.contextName,
+          clusterConfigured : true,
+          configuredServer : result.configuredServer,
+        }, });
       }
     },
     (err) => alert(err)

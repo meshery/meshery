@@ -23,16 +23,17 @@ const muiTheme = createTheme({
 });
 
 function deleteTitleFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, title: "" };
+  return { ...jsonSchema, title : "" };
 }
 
 function RJSFButton({ handler, text }) {
   return (
-    <Button variant="contained" color="primary" style={{ marginRight: "0.5rem" }} onClick={handler}>
+    <Button variant="contained" color="primary" style={{ marginRight : "0.5rem" }} onClick={handler}>
       {text}
     </Button>
   );
 }
+
 
 const uiSchema = {
   replicas: {
@@ -41,6 +42,7 @@ const uiSchema = {
 };
 
 function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, renderAsTooltip }) {
+
   const [data, setData] = React.useState();
 
   React.useEffect(() => {

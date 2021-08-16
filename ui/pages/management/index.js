@@ -19,12 +19,12 @@ class Manage extends React.Component {
   }
   componentDidMount() {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path: getPath() });
+    this.props.updatepagepath({ path : getPath() });
   }
 
   componentDidUpdate() {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path: getPath() });
+    this.props.updatepagepath({ path : getPath() });
   }
 
   render() {
@@ -40,9 +40,7 @@ class Manage extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    updatepagepath: bindActionCreators(updatepagepath, dispatch),
-  };
+  return { updatepagepath : bindActionCreators(updatepagepath, dispatch), };
 };
 
 export default connect(null, mapDispatchToProps)(Manage);

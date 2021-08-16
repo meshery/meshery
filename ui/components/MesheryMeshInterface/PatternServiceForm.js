@@ -7,7 +7,9 @@ import useStateCB from "../../utils/hooks/useStateCB";
 import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const {
+    children, value, index, ...other
+  } = props;
 
   return (
     <div
@@ -25,10 +27,8 @@ function TabPanel(props) {
 }
 
 function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
+  return { id : `simple-tab-${index}`,
+    "aria-controls" : `simple-tabpanel-${index}`, };
 }
 
 function getPatternAttributeName(jsonSchema) {
@@ -54,10 +54,8 @@ function recursiveCleanObject(obj) {
  * @param {*} config
  */
 function createPatternFromConfig(config, namespace) {
-  const pattern = {
-    name: `pattern-${Math.random().toString(36).substr(2, 5)}`,
-    services: {},
-  };
+  const pattern = { name : `pattern-${Math.random().toString(36).substr(2, 5)}`,
+    services : {}, };
 
   recursiveCleanObject(config);
 
@@ -106,11 +104,11 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAs
   const renderTraits = () => !!schemaSet.traits?.length;
 
   const submitHandler = (val) => {
-    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace))
+    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace))
   };
 
   const deleteHandler = (val) => {
-    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace), true)
+    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace), true)
   };
 
   if (schemaSet.type === "addon") {
@@ -144,7 +142,9 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAs
       {!renderAsTooltip && (<AppBar position="static">
         <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service">
           <Tab label="Settings" {...a11yProps(0)} />
-          {renderTraits() ? <Tab label="Traits" {...a11yProps(1)} /> : null}
+          {renderTraits()
+            ? <Tab label="Traits" {...a11yProps(1)} />
+            : null}
         </Tabs>
       </AppBar>)}  
       {renderAsTooltip && renderTraits() && (
