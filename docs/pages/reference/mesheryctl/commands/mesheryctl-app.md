@@ -30,7 +30,7 @@ lang: en
 
 ## Examples
 
-{% for flag_hash in site.data.mesheryctlcommands.apps.flags %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in site.data.mesheryctlcommands.apps.view.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
