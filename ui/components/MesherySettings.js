@@ -13,12 +13,14 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faCloud, faPoll } from '@fortawesome/free-solid-svg-icons';
+// import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './PrometheusComponent';
+// import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
 import dataFetch from '../lib/data-fetch';
 import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
@@ -76,9 +78,9 @@ class MesherySettings extends React.Component {
         case 'metrics':
           tabVal = 2;
           break;
-        case 'performance':
-          tabVal = 3;
-          break;
+        // case 'performance':
+        //   tabVal = 3;
+        //   break;
       }
       if (subTabPath.length >= 2 && subTabPath[1]) {
         switch (subTabPath[1]) {
@@ -106,7 +108,7 @@ class MesherySettings extends React.Component {
       tabVal,
       subTabVal,
 
-      isMeshConfigured: k8sconfig.clusterConfigured && grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
+      isMeshConfigured : k8sconfig.clusterConfigured && grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
 
       // Array of scanned prometheus urls
       scannedPrometheus : [],
@@ -129,7 +131,7 @@ class MesherySettings extends React.Component {
   }
 
   componentDidMount() {
-    if (this.state.isMeshConfigured) 
+    if (this.state.isMeshConfigured)
       this.fetchPromGrafanaScanData()
   }
 
@@ -232,6 +234,9 @@ class MesherySettings extends React.Component {
           case 2:
             newRoute += '#metrics'
             break;
+          // case 3:
+          //   newRoute += '#performance'
+          //   break;
         }
         if (this.props.router.route != newRoute)
           this.props.router.push(newRoute)
@@ -320,6 +325,16 @@ class MesherySettings extends React.Component {
                 tab="tabMetrics"
               />
             </Tooltip>
+            {/* <Tooltip title="Choose Performance Test Defaults" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
+                }
+                label="Performance"
+                tab="tabPerformance"
+              />
+            </Tooltip> */}
           </Tabs>
         </Paper>
         {tabVal === 0 && (
@@ -393,6 +408,13 @@ class MesherySettings extends React.Component {
               )}
             </TabContainer>
           )}
+        {/* {tabVal === 3 && (
+          <TabContainer>
+            <MesherySettingsPerformanceComponent />
+
+          </TabContainer>
+        )} */}
+
         {backToPlay}
       </div>
     );
