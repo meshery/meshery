@@ -7,16 +7,20 @@ import (
 )
 
 const (
-	ErrHealthCheckFailedCode     = "1000"
-	ErrInvalidAdapterCode        = "1001"
-	ErrDownloadFileCode          = "1002"
-	ErrStopMesheryCode           = "1003"
-	ErrResetMeshconfigCode       = "1004"
-	ErrApplyManifestCode         = "1005"
-	ErrApplyOperatorManifestCode = "1006"
-	ErrCreateDirCode             = "1007"
-	ErrUnmarshalCode             = "1008"
-	ErrUnsupportedPlatformCode   = "1009"
+	ErrHealthCheckFailedCode        = "1000"
+	ErrInvalidAdapterCode           = "1001"
+	ErrDownloadFileCode             = "1002"
+	ErrStopMesheryCode              = "1003"
+	ErrResetMeshconfigCode          = "1004"
+	ErrApplyManifestCode            = "1005"
+	ErrApplyOperatorManifestCode    = "1006"
+	ErrCreateDirCode                = "1007"
+	ErrUnmarshalCode                = "1008"
+	ErrUnsupportedPlatformCode      = "1009"
+	ErrRetrievingCurrentContextCode = "replace me"
+	ErrSettingTemporaryContextCode  = "replace me"
+	ErrCreateManifestsFolderCode    = "replace me"
+	ErrProcessingMctlConfigCode     = "replace me"
 )
 
 func ErrHealthCheckFailed(err error) error {
@@ -57,4 +61,20 @@ func ErrUnmarshal(err error, obj string) error {
 
 func ErrUnsupportedPlatform(platform string, config string) error {
 	return errors.New(ErrUnsupportedPlatformCode, errors.Alert, []string{"the platform ", platform, " is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRetrievingCurrentContext(err error) error {
+	return errors.New(ErrRetrievingCurrentContextCode, errors.Alert, []string{"Error retrieving current context"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrSettingTemporaryContext(err error) error {
+	return errors.New(ErrSettingTemporaryContextCode, errors.Alert, []string{"Error setting temporary context"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrCreateManifestsFolder(err error) error {
+	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrProcessingMctlConfig(err error) error {
+	return errors.New(ErrProcessingMctlConfigCode, errors.Alert, []string{"Error processing config"}, []string{err.Error()}, []string{}, []string{})
 }
