@@ -325,6 +325,9 @@ class MesherySettings extends React.Component {
                 tab="tabMetrics"
               />
             </Tooltip>
+
+            {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
+
             {/* <Tooltip title="Choose Performance Test Defaults" placement="top">
               <Tab
                 className={classes.tab}
