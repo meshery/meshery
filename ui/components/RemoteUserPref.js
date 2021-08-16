@@ -5,9 +5,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 const requires = createRequires(getDependencies);
 
-const useRemoteComponent = createUseRemoteComponent({
-  requires
-});
+const useRemoteComponent = createUseRemoteComponent({ requires });
 
 const RemoteUserPref = ({ startOnZoom, handleToggle, url }) => {
   const [loading, err, RemoteComponent] = useRemoteComponent(url.url);

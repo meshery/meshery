@@ -10,41 +10,22 @@ import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 
 const grafanaStyles = (theme) => ({
-  root: {
-    padding: theme.spacing(5),
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  button: {
-    marginTop: theme.spacing(3),
+  root : { padding : theme.spacing(5), },
+  buttons : { display : 'flex',
+    justifyContent : 'flex-end', },
+  button : { marginTop : theme.spacing(3),
     //   marginLeft: theme.spacing(1),
   },
-  margin: {
-    margin: theme.spacing(1),
-  },
-  chartTitle: {
-    textAlign: 'center',
-  },
-  icon: {
-    width: theme.spacing(2.5),
-  },
-  alignRight: {
-    textAlign: 'right',
-    marginBottom: theme.spacing(2),
-  },
-  formControl: {
-    marginTop: theme.spacing(2),
-    minWidth: window.innerWidth * 0.25,
-  },
-  panelChips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  panelChip: {
-    margin: theme.spacing(0.25),
-  },
+  margin : { margin : theme.spacing(1), },
+  chartTitle : { textAlign : 'center', },
+  icon : { width : theme.spacing(2.5), },
+  alignRight : { textAlign : 'right',
+    marginBottom : theme.spacing(2), },
+  formControl : { marginTop : theme.spacing(2),
+    minWidth : window.innerWidth * 0.25, },
+  panelChips : { display : 'flex',
+    flexWrap : 'wrap', },
+  panelChip : { margin : theme.spacing(0.25), },
 });
 
 class GrafanaSelectionComponent extends Component {
@@ -52,15 +33,15 @@ class GrafanaSelectionComponent extends Component {
     super(props);
 
     this.state = {
-      grafanaBoards: [],
-      grafanaBoard: '',
-      grafanaBoardObject: {},
-      templateVars: [],
-      templateVarOptions: [], // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
+      grafanaBoards : [],
+      grafanaBoard : '',
+      grafanaBoardObject : {},
+      templateVars : [],
+      templateVarOptions : [], // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
 
-      panels: [],
-      selectedPanels: [],
-      selectedTemplateVars: [], // will contain the selected val at the respective index: [v1, v3]
+      panels : [],
+      selectedPanels : [],
+      selectedTemplateVars : [], // will contain the selected val at the respective index: [v1, v3]
     };
   }
 
@@ -70,13 +51,15 @@ class GrafanaSelectionComponent extends Component {
         } else if (name.startsWith('template_var_')) {
           this.setSelectedTemplateVar(parseInt(name.replace('template_var_', '')), event.target.value);
         } else {
-          this.setState({ [name]: event.target.value });
+          this.setState({ [name] : event.target.value });
         }
       };
 
       getSelectedTemplateVar = (ind) => {
         const { selectedTemplateVars } = this.state;
-        const retVal = typeof selectedTemplateVars[ind] !== 'undefined' ? selectedTemplateVars[ind] : undefined;
+        const retVal = typeof selectedTemplateVars[ind] !== 'undefined'
+          ? selectedTemplateVars[ind]
+          : undefined;
         return retVal;
       }
 
@@ -97,12 +80,14 @@ class GrafanaSelectionComponent extends Component {
         this.props.grafanaBoards.forEach((board) => {
           if (board.uri === newVal) {
             this.setState({
-              grafanaBoard: newVal,
-              panels: board.panels,
-              selectedPanels: board.panels?.map((panel) => panel.id), // selecting all panels by default
-              templateVars: board.template_vars && board.template_vars.length > 0 ? board.template_vars : [],
-              templateVarOptions: [],
-              selectedTemplateVars: [],
+              grafanaBoard : newVal,
+              panels : board.panels,
+              selectedPanels : board.panels?.map((panel) => panel.id), // selecting all panels by default
+              templateVars : board.template_vars && board.template_vars.length > 0
+                ? board.template_vars
+                : [],
+              templateVarOptions : [],
+              selectedTemplateVars : [],
             });
             if (board.template_vars && board.template_vars.length > 0) {
               this.queryTemplateVars(0, board.template_vars, [], []);
@@ -126,13 +111,11 @@ class GrafanaSelectionComponent extends Component {
             sd.setDate(sd.getDate() - 1);
             queryURL += `&start=${Math.floor(sd.getTime() / 1000)}&end=${Math.floor(ed.getTime() / 1000)}`; // accounts for the last 24hrs
           }
-          this.props.updateProgress({ showProgress: true });
+          this.props.updateProgress({ showProgress : true });
           const self = this;
-          dataFetch(queryURL, {
-            credentials: 'same-origin',
-            credentials: 'include',
-          }, (result) => {
-            this.props.updateProgress({ showProgress: false });
+          dataFetch(queryURL, { credentials : 'same-origin',
+            credentials : 'include', }, (result) => {
+            this.props.updateProgress({ showProgress : false });
             if (typeof result !== 'undefined') {
               let tmpVarOpts = [];
               // result.data check if it is an array or object
@@ -174,11 +157,9 @@ class GrafanaSelectionComponent extends Component {
 
       static getDerivedStateFromProps(props, state) {
         if (JSON.stringify(state.grafanaBoards.sort()) !== JSON.stringify(props.grafanaBoards.sort())) {
-          return {
-            grafanaBoards: props.grafanaBoards,
-            grafanaBoard: '',
-            selectedPanels: [],
-          };
+          return { grafanaBoards : props.grafanaBoards,
+            grafanaBoard : '',
+            selectedPanels : [], };
         }
         return null;
       }
@@ -198,7 +179,8 @@ class GrafanaSelectionComponent extends Component {
       boardConfig.panels = panels.filter(({ id }) => selectedPanels.indexOf(id) > -1);
 
       boardConfig.templateVars = templateVars.map(({ name }, index) => (typeof selectedTemplateVars[index] !== 'undefined'
-        ? `${name}=${selectedTemplateVars[index]}` : ''));
+        ? `${name}=${selectedTemplateVars[index]}`
+        : ''));
 
       this.props.addSelectedBoardPanelConfig(boardConfig);
     }
@@ -298,9 +280,8 @@ class GrafanaSelectionComponent extends Component {
                     margin="normal"
                     variant="outlined"
                     onChange={this.handleChange('selectedPanels')}
-                    SelectProps={{
-                      multiple: true,
-                      renderValue: (selected) => (
+                    SelectProps={{ multiple : true,
+                      renderValue : (selected) => (
                         <div className={classes.panelChips}>
                           {selected.map((value) => {
                             let selVal = '';
@@ -316,8 +297,7 @@ class GrafanaSelectionComponent extends Component {
                             );
                           })}
                         </div>
-                      ),
-                    }}
+                      ), }}
                   >
                     {panels?.map((panel) => (
                       <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>{panel.title}</MenuItem>
@@ -345,19 +325,17 @@ class GrafanaSelectionComponent extends Component {
 }
 
 GrafanaSelectionComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-  grafanaURL: PropTypes.string.isRequired,
+  classes : PropTypes.object.isRequired,
+  grafanaURL : PropTypes.string.isRequired,
   // grafanaBoards: PropTypes.array.isRequired,
-  handleGrafanaBoardSearchChange: PropTypes.func.isRequired,
-  handleGrafanaChipDelete: PropTypes.func.isRequired,
-  handleGrafanaClick: PropTypes.func.isRequired,
-  addSelectedBoardPanelConfig: PropTypes.func.isRequired,
-  handleError: PropTypes.func.isRequired,
+  handleGrafanaBoardSearchChange : PropTypes.func.isRequired,
+  handleGrafanaChipDelete : PropTypes.func.isRequired,
+  handleGrafanaClick : PropTypes.func.isRequired,
+  addSelectedBoardPanelConfig : PropTypes.func.isRequired,
+  handleError : PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 const mapStateToProps = () => ({});
 
 export default withStyles(grafanaStyles)(connect(

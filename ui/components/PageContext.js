@@ -3,17 +3,14 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 // a theme with custom primary and secondary color.
 // it's optional.
-const theme = createMuiTheme({
-
-});
+const theme = createMuiTheme({});
 
 function createPageContext() {
-  return {
-    theme,
+  return { theme,
     // this is needed in order to deduplicate the injection of CSS in the page.
-    sheetsManager: new Map(),
+    sheetsManager : new Map(),
     // this is needed in order to inject the critical CSS.
-    sheetsRegistry: new SheetsRegistry(),
+    sheetsRegistry : new SheetsRegistry(),
     // the standard class name generator.
     // generateClassName: createGenerateClassName(),
   };

@@ -84,14 +84,113 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1009": {
-        "name": "ErrUnsupportedPlatformCode",
-        "code": "1009",
-        "severity": "Alert",
+      "1010": {
+        "name": "ErrNoAdaptersCode",
+        "code": "1010",
+        "severity": "Fatal",
         "long_description": "",
-        "short_description": "the platform \n is not supported. Supported platforms are:\\n\\n- docker\\n- kubernetes\\n\\nVerify this setting in your meshconfig at \n or verify by executing `mesheryctl system context view`",
+        "short_description": "Adapter for required mesh not found",
+        "probable_cause": "",
+        "suggested_remediation": "Deploy the proper Meshery Adapter for your service mesh"
+      },
+      "1011": {
+        "name": "ErrPromptCode",
+        "code": "1011",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error while reading selected option",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1012": {
+        "name": "ErrCreatingDeployRequestCode",
+        "code": "1012",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error sending deploy request",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1013": {
+        "name": "ErrCreatingDeployResponseRequestCode",
+        "code": "1013",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error creating request for deploy response",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1014": {
+        "name": "ErrAddingAuthDetailsCode",
+        "code": "1014",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error adding auth details",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrCreatingDeployResponseStreamCode",
+        "code": "1015",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1016": {
+        "name": "ErrTimeoutWaitingForDeployResponseCode",
+        "code": "1016",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Timed out waiting for deploy event",
+        "probable_cause": "",
+        "suggested_remediation": "Check your environment and try again"
+      },
+      "1017": {
+        "name": "ErrFailedDeployingMeshCode",
+        "code": "1017",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to deploy the service mesh",
+        "probable_cause": "",
+        "suggested_remediation": "Check your environment and try again"
+      },
+      "1018": {
+        "name": "ErrCreatingValidateRequestCode",
+        "code": "1018",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error sending Validate request",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1019": {
+        "name": "ErrCreatingValidateResponseRequestCode",
+        "code": "1019",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error creating request for validate response",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1020": {
+        "name": "ErrTimeoutWaitingForValidateResponseCode",
+        "code": "1020",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Timed out waiting for validate response",
+        "probable_cause": "",
+        "suggested_remediation": "Check your environment and try again"
+      },
+      "1021": {
+        "name": "ErrSMIConformanceTestsFailedCode",
+        "code": "1021",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "SMI conformance tests failed",
+        "probable_cause": "",
+        "suggested_remediation": "Join https://layer5io.slack.com/archives/C010H0HE2E6"
       }
     }
   }

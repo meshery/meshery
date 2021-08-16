@@ -27,15 +27,9 @@ import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 
-const styles = (theme) => ({
-  grid: {
-    padding: theme.spacing(2),
-  },
-  tableHeader: {
-    fontWeight: "bolder",
-    fontSize: 18,
-  },
-});
+const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
+  tableHeader : { fontWeight : "bolder",
+    fontSize : 18, }, });
 
 function CustomToolbar(onClick) {
   return function Toolbar() {
@@ -65,12 +59,12 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
         <CodeMirror
           value={pattern.pattern_file}
           options={{
-            theme: "material",
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ["CodeMirror-lint-markers"],
-            lint: true,
-            mode: "text/x-yaml",
+            theme : "material",
+            lineNumbers : true,
+            lineWrapping : true,
+            gutters : ["CodeMirror-lint-markers"],
+            lint : true,
+            mode : "text/x-yaml",
           }}
           onChange={(_, data, val) => setYaml(val)}
         />
@@ -100,7 +94,9 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
   );
 }
 
-function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes }) {
+function MesheryPatterns({
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
+}) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -112,26 +108,16 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   const DEPLOY_URL = '/api/pattern/deploy';
 
   const ACTION_TYPES = {
-    FETCH_PATTERNS: {
-      name: "FETCH_PATTERNS",
-      error_msg: "Failed to fetch patterns"
-    },
-    UPDATE_PATTERN: {
-      name: "UPDATE_PATTERN",
-      error_msg: "Failed to update pattern file"
-    },
-    DELETE_PATTERN: {
-      name: "DELETE_PATTERN",
-      error_msg: "Failed to delete pattern file"
-    },
-    DEPLOY_PATTERN: {
-      name: "DEPLOY_PATTERN",
-      error_msg: "Failed to deploy pattern file"
-    },
-    UPLOAD_PATTERN: {
-      name: "UPLOAD_PATTERN",
-      error_msg: "Failed to upload pattern file"
-    },
+    FETCH_PATTERNS : { name : "FETCH_PATTERNS",
+      error_msg : "Failed to fetch patterns" },
+    UPDATE_PATTERN : { name : "UPDATE_PATTERN",
+      error_msg : "Failed to update pattern file" },
+    DELETE_PATTERN : { name : "DELETE_PATTERN",
+      error_msg : "Failed to delete pattern file" },
+    DEPLOY_PATTERN : { name : "DEPLOY_PATTERN",
+      error_msg : "Failed to deploy pattern file" },
+    UPLOAD_PATTERN : { name : "UPLOAD_PATTERN",
+      error_msg : "Failed to upload pattern file" },
   }
 
   const searchTimeout = useRef(null);
@@ -152,27 +138,23 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
    */
 
   const handleDeploy = (pattern_file) => {
-    updateProgress({ showProgress: true })
+    updateProgress({ showProgress : true })
     dataFetch(
       DEPLOY_URL,
-      {
-        credentials: "include",
-        method: "POST",
-        body: pattern_file,
-      }, () => {
+      { credentials : "include",
+        method : "POST",
+        body : pattern_file, }, () => {
         console.log("PatternFile Deploy API", `/api/pattern/deploy`);
-        updateProgress({ showProgress: false });
-        enqueueSnackbar("Pattern Successfully Deployed!", {
-          variant: "success",
-          action: function Action(key) {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Pattern Successfully Deployed!", { variant : "success",
+          action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             );
           },
-          autoHideDuration: 2000,
-        });
+          autoHideDuration : 2000, });
       },
       handleError(ACTION_TYPES.DEPLOY_PATTERN),
     )
@@ -186,16 +168,14 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
       sortOrder
     )}`;
 
-    updateProgress({ showProgress: true });
+    updateProgress({ showProgress : true });
 
     dataFetch(
       `/api/pattern${query}`,
-      {
-        credentials: "include",
-      },
+      { credentials : "include", },
       (result) => {
         console.log("PatternFile API", `/api/pattern${query}`);
-        updateProgress({ showProgress: false });
+        updateProgress({ showProgress : false });
         if (result) {
           setPatterns(result.patterns || []);
           setPage(result.page || 0);
@@ -208,19 +188,17 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   }
 
   const handleError = (action) => (error) => {
-    updateProgress({ showProgress: false });
+    updateProgress({ showProgress : false });
 
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant: "error",
-      action: function Action(key) {
+    enqueueSnackbar(`${action.error_msg}: ${error}`, { variant : "error",
+      action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
         );
       },
-      autoHideDuration: 8000,
-    });
+      autoHideDuration : 8000, });
   }
 
   function resetSelectedRowData() {
@@ -230,17 +208,15 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({ showProgress: true })
+    updateProgress({ showProgress : true })
     if (type === "delete") {
       dataFetch(
         `/api/pattern/${id}`,
-        {
-          credentials: "include",
-          method: "DELETE",
-        },
+        { credentials : "include",
+          method : "DELETE", },
         () => {
           console.log("PatternFile API", `/api/pattern/${id}`);
-          updateProgress({ showProgress: false });
+          updateProgress({ showProgress : false });
           fetchPatterns(page, pageSize, search, sortOrder);
           resetSelectedRowData()()
         },
@@ -251,14 +227,12 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     if (type === "update") {
       dataFetch(
         `/api/pattern`,
-        {
-          credentials: "include",
-          method: "POST",
-          body: JSON.stringify({ pattern_data: { id, pattern_file: data }, save: true }),
-        },
+        { credentials : "include",
+          method : "POST",
+          body : JSON.stringify({ pattern_data : { id, pattern_file : data }, save : true }), },
         () => {
           console.log("PatternFile API", `/api/pattern`);
-          updateProgress({ showProgress: false });
+          updateProgress({ showProgress : false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPDATE_PATTERN)
@@ -268,14 +242,12 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     if (type === "upload") {
       dataFetch(
         `/api/pattern`,
-        {
-          credentials: "include",
-          method: "POST",
-          body: JSON.stringify({ pattern_data: { pattern_file: data }, save: true }),
-        },
+        { credentials : "include",
+          method : "POST",
+          body : JSON.stringify({ pattern_data : { pattern_file : data }, save : true }), },
         () => {
           console.log("PatternFile API", `/api/pattern`);
-          updateProgress({ showProgress: false });
+          updateProgress({ showProgress : false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPLOAD_PATTERN)
@@ -302,14 +274,13 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   }
 
   const columns = [
-    {
-      name: "name",
-      label: "Pattern Name",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+    { name : "name",
+      label : "Pattern Name",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -318,16 +289,14 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
             </TableCell>
           );
         },
-      },
-    },
-    {
-      name: "created_at",
-      label: "Upload Timestamp",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+      }, },
+    { name : "created_at",
+      label : "Upload Timestamp",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -336,19 +305,17 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(value) {
+        customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      },
-    },
-    {
-      name: "updated_at",
-      label: "Update Timestamp",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+      }, },
+    { name : "updated_at",
+      label : "Update Timestamp",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -357,25 +324,23 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(value) {
+        customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      },
-    },
-    {
-      name: "Actions",
-      options: {
-        filter: false,
-        sort: false,
-        searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
+      }, },
+    { name : "Actions",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(_, tableMeta) {
+        customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
@@ -397,8 +362,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
             </>
           );
         },
-      },
-    },
+      }, },
   ];
 
   columns.forEach((column, idx) => {
@@ -408,25 +372,27 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   });
 
   const options = {
-    filter: false,
-    sort: !(user && user.user_id === "meshery"),
-    search: !(user && user.user_id === "meshery"),
-    filterType: "textField",
-    responsive: "scrollFullHeight",
-    resizableColumns: true,
-    serverSide: true,
-    selection: true,
+    filter : false,
+    sort : !(user && user.user_id === "meshery"),
+    search : !(user && user.user_id === "meshery"),
+    filterType : "textField",
+    responsive : "scrollFullHeight",
+    resizableColumns : true,
+    serverSide : true,
+    selection : true,
     count,
-    rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 25],
-    fixedHeader: true,
+    rowsPerPage : pageSize,
+    rowsPerPageOptions : [10, 20, 25],
+    fixedHeader : true,
     page,
-    print: false,
-    download: false,
-    customToolbar: CustomToolbar(uploadHandler),
+    print : false,
+    download : false,
+    customToolbar : CustomToolbar(uploadHandler),
 
-    onTableChange: (action, tableState) => {
-      const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
+    onTableChange : (action, tableState) => {
+      const sortInfo = tableState.announceText
+        ? tableState.announceText.split(" : ")
+        : [];
       let order = "";
       if (tableState.activeColumn) {
         order = `${columns[tableState.activeColumn].name} desc`;
@@ -445,7 +411,9 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchPatterns(page, pageSize, tableState.searchText !== null ? tableState.searchText : "", sortOrder);
+              fetchPatterns(page, pageSize, tableState.searchText !== null
+                ? tableState.searchText
+                : "", sortOrder);
             }
           }, 500);
           break;
@@ -481,14 +449,10 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return {
-    user: state.get("user").toObject(),
-  };
+  return { user : state.get("user").toObject(), };
 };
 
 // @ts-ignore
