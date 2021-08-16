@@ -17,6 +17,9 @@ import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import ExtensionSandbox from "./ExtensionSandbox";
 import RemoteUserPref from "./RemoteUserPref";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceComponent';
 
 
 const styles = (theme) => ({
@@ -30,7 +33,7 @@ const styles = (theme) => ({
   },
   paperRoot: {
     flexGrow: 1,
-    maxWidth: "20%",
+    maxWidth: "30%",
     marginLeft: 0,
     borderTopLeftRadius: 3,
     borderTopRightRadius: 3,
@@ -39,7 +42,7 @@ const styles = (theme) => ({
     marginLeft: 0
   },
   tab: {
-    minWidth: "50%",
+    minWidth: "33%",
     margin: 0
   },
   icon: {
@@ -207,6 +210,7 @@ class UserPreference extends React.Component {
     const { anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs } = this.state;
     const { classes } = this.props;
 
+    const mainIconScale = 'grow-10';
     const handleToggle = this.handleToggle('startOnZoom');
 
     return (
@@ -240,6 +244,15 @@ class UserPreference extends React.Component {
                 />
               </Tooltip>
             }
+            <Tooltip title="Choose Performance Test Defaults" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
+                }
+                label="Performance"
+              />
+            </Tooltip>
           </Tabs>
         </Paper>
         <Paper className={classes.root}>
@@ -289,7 +302,10 @@ class UserPreference extends React.Component {
             </div>
           }
           {tabVal == 1 && userPrefs &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({startOnZoom, handleToggle,url})}/>
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
+          }
+          {tabVal === 2 && 
+            <MesherySettingsPerformanceComponent />
           }
         </Paper>
       </NoSsr>
