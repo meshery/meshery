@@ -26,16 +26,6 @@ func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *mode
 	return r.changeOperatorStatus(ctx, provider, input.TargetStatus)
 }
 
-func (r *mutationResolver) DeployMeshsync(ctx context.Context) (model.Status, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.deployMeshsync(ctx, provider)
-}
-
-func (r *mutationResolver) ConnectToNats(ctx context.Context) (model.Status, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.connectToNats(ctx, provider)
-}
-
 func (r *queryResolver) GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if selector != nil {
@@ -62,6 +52,16 @@ func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.OperatorS
 func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.resyncCluster(ctx, provider, selector)
+}
+
+func (r *queryResolver) DeployMeshsync(ctx context.Context) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.deployMeshsync(ctx, provider)
+}
+
+func (r *queryResolver) ConnectToNats(ctx context.Context) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.connectToNats(ctx, provider)
 }
 
 func (r *queryResolver) GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error) {

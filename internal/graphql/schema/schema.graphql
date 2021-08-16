@@ -292,6 +292,12 @@ type Query {
         selector: ReSyncActions
     ): Status!
 
+	# Check the Meshsync Status and deploy if not enabled
+	deployMeshsync: Status!
+
+	# Check is Meshey Server is connected to NATS, if not connect to the NATS Server
+	connectToNats: Status!
+
 	# Query available Namesapces in your cluster
 	getAvailableNamespaces: [NameSpace!]!
 
@@ -312,11 +318,6 @@ type Mutation {
 	# Change the Operator Status
 	changeOperatorStatus(input: OperatorStatusInput): Status!
 
-	# Check the Meshsync Status and deploy if not enabled
-	deployMeshsync: Status!
-
-	# Check is Meshey Server is connected to NATS, if not connect to the NATS Server
-	connectToNats: Status!
 }
 
 type Subscription {
