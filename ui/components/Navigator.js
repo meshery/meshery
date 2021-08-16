@@ -147,13 +147,11 @@ const styles = (theme) => ({
     overflowX : "hidden",
     transition : theme.transitions.create("width", { easing : theme.transitions.easing.sharp,
       duration : theme.transitions.duration.enteringScreen, }), },
-  fixedSidebarFooter : { display : "none",
-    [theme.breakpoints.up("sm")] : {
-      display : "flex",
-      flexDirection : "column",
-      "margin-top" : "auto",
-      "margin-bottom" : "0.5rem",
-    }, },
+  fixedSidebarFooter : { display : "flex",
+    flexDirection : "column",
+    "margin-top" : "auto",
+    "margin-bottom" : "0.5rem",
+  },
   collapseButtonWrapper : {
     width : "auto",
     "margin-left" : "auto",
