@@ -1,5 +1,5 @@
 name: deploy
-description: deploy a service mesh into the cluster
+description: Deploy a service mesh into the cluster
 usage: |
 
     mesheryctl mesh deploy

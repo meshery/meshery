@@ -16,8 +16,8 @@ language: en
 <!-- Description of the command. Preferably a paragraph -->
 ## Description
 
-{% for subcommand_hash in site.data.mesheryctlcommands.meshes.deploy.subcommand %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
+{% for command_hash in site.data.mesheryctlcommands.meshes.deploy.command %}{% assign command = command_hash[1] %}
+{{ command.description }}
 {% endfor %}
 
 <!-- Basic usage of the command -->
