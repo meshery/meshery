@@ -92,6 +92,8 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		Status: model.StatusProcessing,
 	}
 
+	r.operatorSyncChannel <- struct{}{}
+
 	return model.StatusProcessing, nil
 }
 

@@ -63,6 +63,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 	if err != nil {
 		return err
 	}
+
 	if r.BrokerConn.IsEmpty() && status != nil && status.Status == model.StatusEnabled {
 		endpoint, err := model.SubscribeToBroker(provider, r.Config.KubeClient, r.brokerChannel, r.BrokerConn)
 		if err != nil {
@@ -77,7 +78,47 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
+
+		r.operatorSyncChannel <- struct{}{}
 		return nil
 	}
-	return ErrNoMeshSync
+
+	if r.BrokerConn.Info() == broker.NotConnected {
+		return ErrBrokerNotConnected
+	}
+
+	return nil
+}
+
+func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider) (model.Status, error) {
+	// status, err := r.getOperatorStatus(ctx, provider)
+	// if err != nil {
+	// 	return model.StatusUnknown, err
+	// }
+	// for _, controller := range status.Controllers {
+	// 	if controller.Name == "meshsync" && controller.Status == model.StatusEnabled {
+	// 		return model.StatusEnabled, nil
+	// 	}
+	// }
+
+	err := model.RunMeshSync(r.Config.KubeClient, false)
+	if err != nil {
+		r.Log.Error(err)
+		r.operatorSyncChannel <- struct{}{}
+		return model.StatusDisabled, err
+	}
+
+	r.operatorSyncChannel <- struct{}{}
+	r.Log.Info("Installing Meshsync")
+	return model.StatusProcessing, nil
+}
+
+func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider) (model.Status, error) {
+	err := r.connectToBroker(ctx, provider)
+	if err != nil {
+		r.Log.Error(err)
+		return model.StatusDisabled, err
+	}
+
+	return model.StatusConnected, nil
 }

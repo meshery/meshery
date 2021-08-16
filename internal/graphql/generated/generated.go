@@ -86,6 +86,8 @@ type ComplexityRoot struct {
 	Mutation struct {
 		ChangeAddonStatus    func(childComplexity int, input *model.AddonStatusInput) int
 		ChangeOperatorStatus func(childComplexity int, input *model.OperatorStatusInput) int
+		ConnectToNats        func(childComplexity int) int
+		DeployMeshsync       func(childComplexity int) int
 	}
 
 	NameSpace struct {
@@ -136,6 +138,8 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	ChangeAddonStatus(ctx context.Context, input *model.AddonStatusInput) (model.Status, error)
 	ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error)
+	DeployMeshsync(ctx context.Context) (model.Status, error)
+	ConnectToNats(ctx context.Context) (model.Status, error)
 }
 type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error)
@@ -354,6 +358,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ChangeOperatorStatus(childComplexity, args["input"].(*model.OperatorStatusInput)), true
+
+	case "Mutation.connectToNats":
+		if e.complexity.Mutation.ConnectToNats == nil {
+			break
+		}
+
+		return e.complexity.Mutation.ConnectToNats(childComplexity), true
+
+	case "Mutation.deployMeshsync":
+		if e.complexity.Mutation.DeployMeshsync == nil {
+			break
+		}
+
+		return e.complexity.Mutation.DeployMeshsync(childComplexity), true
 
 	case "NameSpace.namespace":
 		if e.complexity.NameSpace.Namespace == nil {
@@ -724,6 +742,9 @@ enum Status {
 	# Enabled
 	ENABLED
 
+	# Connected (Applicable only for NATS status for now)
+	CONNECTED
+
 	# Disabled
 	DISABLED
 
@@ -973,6 +994,12 @@ type Mutation {
 
 	# Change the Operator Status
 	changeOperatorStatus(input: OperatorStatusInput): Status!
+
+	# Check the Meshsync Status and deploy if not enabled
+	deployMeshsync: Status!
+
+	# Check is Meshey Server is connected to NATS, if not connect to the NATS Server
+	connectToNats: Status!
 }
 
 type Subscription {
@@ -2074,6 +2101,76 @@ func (ec *executionContext) _Mutation_changeOperatorStatus(ctx context.Context, 
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().ChangeOperatorStatus(rctx, args["input"].(*model.OperatorStatusInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Status)
+	fc.Result = res
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deployMeshsync(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeployMeshsync(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Status)
+	fc.Result = res
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_connectToNats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ConnectToNats(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4641,6 +4738,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "changeOperatorStatus":
 			out.Values[i] = ec._Mutation_changeOperatorStatus(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deployMeshsync":
+			out.Values[i] = ec._Mutation_deployMeshsync(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "connectToNats":
+			out.Values[i] = ec._Mutation_connectToNats(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
