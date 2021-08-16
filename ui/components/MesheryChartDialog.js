@@ -26,7 +26,9 @@ class MesheryChartDialog extends React.Component {
           onClose={handleClose}
           aria-labelledby="chart-dialog-title"
         >
-          <DialogTitle id="chart-dialog-title">{title && title.length ? title : 'Comparison'}</DialogTitle>
+          <DialogTitle id="chart-dialog-title">{title && title.length
+            ? title
+            : 'Comparison'}</DialogTitle>
           <DialogContent>
             <DialogContentText className={classes.dialogContent}>
               {content}
@@ -44,10 +46,10 @@ class MesheryChartDialog extends React.Component {
 }
 
 MesheryChartDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
-  open: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  content: PropTypes.node.isRequired,
+  classes : PropTypes.object.isRequired,
+  open : PropTypes.bool.isRequired,
+  handleClose : PropTypes.func.isRequired,
+  content : PropTypes.node.isRequired,
 };
 
 export default withStyles(styles)(MesheryChartDialog);

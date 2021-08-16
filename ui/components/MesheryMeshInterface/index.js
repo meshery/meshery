@@ -1,5 +1,7 @@
 // @ts-check
-import { Grid, Paper, TextField, Typography } from "@material-ui/core";
+import {
+  Grid, Paper, TextField, Typography
+} from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import PatternServiceForm from "./PatternServiceForm";
@@ -77,7 +79,7 @@ async function createWorkloadTraitSets(adapter) {
 
   const sets = [];
   workloads?.forEach((w) => {
-    const item = { workload: w, traits: [] };
+    const item = { workload : w, traits : [] };
 
     item.traits = traits?.filter((t) => {
       if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
@@ -101,25 +103,19 @@ async function getJSONSchemaSets(adapter) {
   const wtSets = await createWorkloadTraitSets(adapter);
 
   return wtSets?.map((s) => {
-    const item = {
-      workload: JSON.parse(s.workload?.oam_ref_schema),
-      traits: s.traits?.map((t) => {
+    const item = { workload : JSON.parse(s.workload?.oam_ref_schema),
+      traits : s.traits?.map((t) => {
         const trait = JSON.parse(t?.oam_ref_schema);
 
         // Attaching internal metadata to the json schema
-        trait._internal = {
-          patternAttributeName: t?.oam_definition.metadata.name,
-        };
+        trait._internal = { patternAttributeName : t?.oam_definition.metadata.name, };
 
         return trait;
       }),
-      type: s.workload?.metadata?.["ui.meshery.io/category"],
-    };
+      type : s.workload?.metadata?.["ui.meshery.io/category"], };
 
     // Attaching internal metadata to the json schema
-    item.workload._internal = {
-      patternAttributeName: s.workload?.oam_definition.metadata.name,
-    };
+    item.workload._internal = { patternAttributeName : s.workload?.oam_definition.metadata.name, };
 
     return item;
   });
@@ -127,13 +123,11 @@ async function getJSONSchemaSets(adapter) {
 
 async function submitPattern(pattern, del = false) {
   console.log({ pattern, del })
-  const res = await fetch("/api/pattern/deploy", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: del ? "DELETE" : "POST",
-    body: JSON.stringify(pattern),
-  });
+  const res = await fetch("/api/pattern/deploy", { headers : { "Content-Type" : "application/json", },
+    method : del
+      ? "DELETE"
+      : "POST",
+    body : JSON.stringify(pattern), });
 
   return res.text();
 }
@@ -175,7 +169,9 @@ function MesheryMeshInterface({ adapter }) {
           <Grid container spacing={1}>
             {schemeSets
               .filter((s) => s.type !== "addon")
-              .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
+              .sort((a, b) => (a.workload?.title < b.workload?.title
+                ? -1
+                : 1))
               .map((s) => (
                 <Grid item xs={12}>
                   <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} renderAsTooltip={false} />
@@ -185,14 +181,16 @@ function MesheryMeshInterface({ adapter }) {
         </div>
       </Grid>
       <Grid item md={4} xs={12}>
-        <Paper style={{ padding: "1rem" }}>
+        <Paper style={{ padding : "1rem" }}>
           <Typography variant="h6" gutterBottom>
             Addons
           </Typography>
           <Grid container spacing={1}>
             {schemeSets
               .filter((s) => s.type === "addon")
-              .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
+              .sort((a, b) => (a.workload?.title < b.workload?.title
+                ? -1
+                : 1))
               .map((s) => (
                 <Grid item>
                   <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} renderAsTooltip={false} />
