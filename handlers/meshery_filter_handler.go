@@ -21,8 +21,8 @@ type MesheryFilterRequestBody struct {
 // swagger:route GET /api/experimental/filter/file/{id} FiltersAPI idGetFilterFiles
 // Handle GET request for filter file with given id
 //
-// Returns the list of all the filter files saved by the current user with the given id
-// This will return all the filter file with their details of the given id
+// Returns the Meshery Filter file saved by the current user with the given id
+// This will return the Meshery Filter file with their details of the given id
 // responses:
 // 	200: mesheryFilterResponseWrapper
 //
@@ -48,8 +48,8 @@ func (h *Handler) GetMesheryFilterFileHandler(
 // swagger:route GET /api/experimental/filter FiltersAPI idGetFilterFile
 // Handle GET request for filters
 //
-// Returns the list of all the filters saved by the current user
-// This will return all the filters with their details
+// Returns the Meshery Filter saved by the current user
+// This will return the Meshery Filter with the details
 // responses:
 // 	200: mesheryFilterResponseWrapper
 //
@@ -76,7 +76,7 @@ func (h *Handler) FilterFileRequestHandler(
 // swagger:route POST /api/experimental/filter FiltersAPI idPostFilterFile
 // Handle POST requests for filters
 //
-// Edit/update a meshery filter
+// Used to save/update a Meshery Filter
 // responses:
 // 	200: mesheryFilterResponseWrapper
 //
@@ -207,9 +207,9 @@ func (h *Handler) DeleteMesheryFilterHandler(
 }
 
 // swagger:route GET /api/experimental/filter/{id} FiltersAPI idGetMesheryFilter
-// Handle GET for a Meshery Filter
+// Handle GET request for a Meshery Filter
 //
-// Fetches the pattern with the given id
+// Fetches the Meshery Filter with the given id
 // responses:
 // 	200: mesheryFilterResponseWrapper
 
