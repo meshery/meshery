@@ -197,6 +197,10 @@ class MeshConfigComponent extends React.Component {
       NATSVersion: "N/A",
 
       operatorSwitch: false,
+
+
+      meshSyncStatusEventsSubscription: null,
+      operatorStatusEventsSubscription: null,
     };
     this.ref = React.createRef();
   }
@@ -222,23 +226,33 @@ class MeshConfigComponent extends React.Component {
     return {};
   }
 
+
   componentDidMount() {
     const self = this;
     // Subscribe to the operator events
-    subscribeMeshSyncStatusEvents((res) => {
+    let meshSyncStatusEventsSubscription = subscribeMeshSyncStatusEvents((res) => {
       if (res.meshsync?.error) {
         self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
         return;
       }
     });
 
-    subscribeOperatorStatusEvents(self.setOperatorState);
+
+    let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState);
     fetchMesheryOperatorStatus().subscribe({
       next: (res) => {
         self.setOperatorState(res);
       },
       error: (err) => console.log("error at operator scan: " + err),
     });
+
+    self.setState({meshSyncStatusEventsSubscription, operatorStatusEventsSubscription})
+  }
+
+
+  componentWillUnmount () {
+    this.state.meshSyncStatusEventsSubscription.dispose()
+    this.state.operatorStatusEventsSubscription.dispose()
   }
 
   setOperatorState = (res) => {
