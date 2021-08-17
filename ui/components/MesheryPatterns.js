@@ -379,7 +379,7 @@ function MesheryPatterns({
 
       subtitle : "Are you sure you want to delete this pattern?",
 
-      options : ["YES", "NO"],
+      options : ["yes", "no"],
 
     })
     if (response === "NO") return
