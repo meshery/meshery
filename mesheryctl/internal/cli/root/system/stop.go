@@ -17,7 +17,6 @@ package system
 import (
 	"os"
 	"os/exec"
-	"path/filepath"
 	"time"
 
 	"github.com/pkg/errors"
@@ -89,6 +88,19 @@ func stop() error {
 	// Get the current platform and the specified adapters in the config.yaml
 	RequestedAdapters := currCtx.GetAdapters()
 
+	userResponse := false
+	if utils.SilentFlag {
+		userResponse = true
+	} else {
+		// ask user for confirmation
+		userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+	}
+
+	if !userResponse {
+		log.Info("Stop aborted.")
+		return nil
+	}
+
 	switch currCtx.GetPlatform() {
 	case "docker":
 		// if the platform is docker, then stop all the running containers
@@ -97,8 +109,6 @@ func stop() error {
 				return ErrCreateDir(err, utils.MesheryFolder)
 			}
 		}
-
-		log.Info("Stopping Meshery...")
 
 		// Stop all Docker containers
 		stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
@@ -116,48 +126,36 @@ func stop() error {
 		if err := stop.Run(); err != nil {
 			return ErrStopMeshery(err)
 		}
-	case "kubernetes":
+	}
+
+	// If k8s is available in case of platform docker then we remove check the meshery namespace and remove all pods
+	hcOptions := &HealthCheckOptions{
+		PrintLogs:           false,
+		IsPreRunE:           false,
+		Subcommand:          "",
+		RunKubernetesChecks: true,
+	}
+	hc, err := NewHealthChecker(hcOptions)
+	if err != nil {
+		return ErrHealthCheckFailed(err)
+	}
+	// stopping meshery pods if k8s is running
+	if err = hc.Run(); err == nil {
 		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
 			return err
 		}
-		// if the platform is kubernetes, stop the deployment by deleting the manifest files
-		userResponse := false
-		if utils.SilentFlag {
-			userResponse = true
-		} else {
-			// ask user for confirmation
-			userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
-		}
 
-		if !userResponse {
-			log.Info("Stop aborted.")
-			return nil
+		_, version, err := utils.GetChannelAndVersion(currCtx)
+		if err != nil {
+			log.Println("failed to get version")
 		}
-
-		// check if the manifest folder exists on the machine
-		if _, err := os.Stat(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)); os.IsNotExist(err) {
-			log.Errorf("%s folder does not exist.", utils.ManifestsFolder)
-			return err
-		}
-
-		version := currCtx.GetVersion()
-		if version == "latest" {
-			if currCtx.GetChannel() == "edge" {
-				version = "master"
-			} else {
-				version, err = utils.GetLatestStableReleaseTag()
-				if err != nil {
-					return err
-				}
-			}
-		}
-		// get correct manfestsURL based on version
+		// get correct manifestsURL based on version
 		manifestsURL, err := utils.GetManifestTreeURL(version)
 		if err != nil {
 			return errors.Wrap(err, "failed to make GET request")
 		}
-		// pick all the manifest files stored in minfestsURL
+		// pick all the manifest files stored in manifestsURL
 		manifests, err := utils.ListManifests(manifestsURL)
 
 		if err != nil {
@@ -171,25 +169,7 @@ func stop() error {
 		if err != nil {
 			return ErrApplyManifest(err, false, true)
 		}
-	}
 
-	// If k8s is available in case of platform docker than we remove operator
-	hcOptions := &HealthCheckOptions{
-		PrintLogs:           false,
-		IsPreRunE:           false,
-		Subcommand:          "",
-		RunKubernetesChecks: true,
-	}
-	hc, err := NewHealthChecker(hcOptions)
-	if err != nil {
-		return ErrHealthCheckFailed(err)
-	}
-	// stopping meshery operator pods if k8s is running
-	if err = hc.Run(); err == nil {
-		client, err := meshkitkube.New([]byte(""))
-		if err != nil {
-			return err
-		}
 		err = utils.ApplyOperatorManifest(client, false, true)
 		if err != nil {
 			return ErrApplyOperatorManifest(err, false, true)
