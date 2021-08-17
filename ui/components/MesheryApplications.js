@@ -15,6 +15,7 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
 import UploadIcon from "@material-ui/icons/Publish";
+import PromptComponent from "./PromptComponent";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
@@ -102,6 +103,7 @@ function MesheryApplications({
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const modalRef = useRef(null);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const DEPLOY_URL = '/api/application/deploy';
@@ -371,6 +373,42 @@ function MesheryApplications({
     }
   });
 
+  async function deleteApplication(id) {
+    let response = await modalRef.current.show({
+      title : "Delete Application?",
+
+      subtitle : "Are you sure you want to delete this application?",
+
+      options : ["YES", "NO"],
+
+    })
+    if (response === "NO") return
+    dataFetch(
+      `/api/application/${id}`,
+      {
+        method : "DELETE",
+        credentials : "include",
+      },
+      () => {
+        updateProgress({ showProgress : false });
+
+        enqueueSnackbar("Application Successfully Deleted!", {
+          variant : "success",
+          autoHideDuration : 2000,
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+        });
+        fetchApplications(page, pageSize, search, sortOrder);
+      },
+      handleError("Failed To Delete Application")
+    );
+  }
+
   const options = {
     filter : false,
     sort : !(user && user.user_id === "meshery"),
@@ -388,6 +426,11 @@ function MesheryApplications({
     print : false,
     download : false,
     customToolbar : CustomToolbar(uploadHandler),
+
+    onRowsDelete : function handleDelete(row) {
+      const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id)
+      fid.forEach(fid => deleteApplication(fid))
+    },
 
     onTableChange : (action, tableState) => {
       const sortInfo = tableState.announceText
@@ -445,6 +488,7 @@ function MesheryApplications({
         // @ts-ignore
         options={options}
       />
+      <PromptComponent ref={modalRef} />
     </NoSsr>
   );
 }
