@@ -32,8 +32,9 @@ import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatu
 import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
 import changeOperatorState from "./graphql/mutations/OperatorStatusMutation";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
+import deployMeshSync from "./graphql/queries/DeployMeshSyncQuery";
+import connectToNats from "./graphql/queries/DeployNatsQuery";
 import PromptComponent from "./PromptComponent";
-import { getOperatorStatusFromQueryResult } from "./ConnectionWizard/helpers/mesheryOperator.js";
 
 const styles = (theme) => ({
   root: {
@@ -520,36 +521,72 @@ class MeshConfigComponent extends React.Component {
       error: self.handleError("Operator could not be pinged"),
     });
   };
+
+handleNATSClick = () => {
+  this.props.updateProgress({ showProgress: true });
+  const self = this;
+
+  connectToNats().subscribe({
+    next: (res) => {
+      if(res.connectToNats === "PROCESSING") {
+        this.props.updateProgress({ showProgress: false });
+        this.props.enqueueSnackbar(`Reconnecting to NATS...`, {
+          variant: "info",
+          action: (key) => (
+            <iconbutton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <closeicon />
+            </iconbutton>
+          ),
+          autohideduration: 7000,
+        })
+      }
+      if(res.connectToNats === "CONNECTED") {
+        this.props.updateProgress({ showProgress: false });
+        this.props.enqueueSnackbar(`Already connected to NATS`, {
+          variant: "success",
+          action: (key) => (
+            <iconbutton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <closeicon />
+            </iconbutton>
+          ),
+          autohideduration: 7000,
+        })
+      }
+          
+    },
+    error: self.handleError("Failed to request reconnection with NATS"),
+  });
+
+};
+
   handleMeshSyncClick = () => {
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    fetchMesheryOperatorStatus().subscribe({
+
+    deployMeshSync().subscribe({
       next: (res) => {
-        let [, operatorInformation] = getOperatorStatusFromQueryResult(res);
-        self.props.updateProgress({ showProgress: false });
-        setState({
-          meshSyncVersion: operatorInformation.meshSyncVersion,
-          meshSyncInstalled: operatorInformation.meshSyncInstalled,
-        });
-        if (operatorInformation.meshSyncInstalled == true) {
-          this.props.enqueueSnackbar("MeshSync was successfully pinged!", {
-            variant: "success",
-            autoHideDuration: 2000,
+        if(res.deployMeshsync === "PROCESSING") {
+          this.props.updateProgress({ showProgress: false });
+          this.props.enqueueSnackbar(`Meshsync deployment in progress`, {
+            variant: "info",
             action: (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
+              <iconbutton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+                <closeicon />
+              </iconbutton>
             ),
-          });
-        } else {
-          self.handleError("MeshSync could not be reached")("MeshSync is disabled");
+            autohideduration: 7000,
+          })
         }
+
       },
-      error: self.handleError("MeshSync could not be pinged"),
+      error: self.handleError("Failed to request Meshsync redeployment"),
     });
+
   };
+
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress: false });
+    self.setOperatorState(res);
     const self = this;
     this.props.enqueueSnackbar(`${msg}: ${error}`, {
       variant: "error",
@@ -747,7 +784,7 @@ class MeshConfigComponent extends React.Component {
               <List>
                 <ListItem>
                   <Tooltip
-                    title={meshSyncInstalled ? `Version: ${meshSyncVersion}` : "Not Available"}
+                    title={meshSyncInstalled ? `Redeploy MeshSync` : "Not Available"}
                     aria-label="meshSync"
                   >
                     <Chip
@@ -756,6 +793,24 @@ class MeshConfigComponent extends React.Component {
                       icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
                       variant="outlined"
                       data-cy="chipMeshSync"
+                    />
+                  </Tooltip>
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <List>
+                <ListItem>
+                  <Tooltip
+                    title={meshSyncInstalled ? `Reconnect NATS` : "Not Available"}
+                    aria-label="nats"
+                  >
+                    <Chip
+                      label={"NATS"}
+                      onClick={self.handleNATSClick}
+                      icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+                      variant="outlined"
+                      data-cy="chipNATS"
                     />
                   </Tooltip>
                 </ListItem>
