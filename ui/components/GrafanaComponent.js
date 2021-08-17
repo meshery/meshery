@@ -181,7 +181,7 @@ class GrafanaComponent extends Component {
                 }
               });
               },
-              error: (err) => console.log("error registering grafana: " + err),
+              error: (err) => console.log("error registering Grafana: " + err),
             });
           }
         },
