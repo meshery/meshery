@@ -359,7 +359,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   {% endfor %}
   {% for command_hash in site.data.mesheryctlcommands.performance.view.command %}{% assign command = command_hash[1] %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/perf/view">{{ command.name }}</a></td>
+        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/perf/view">{{ command.name }}</a></td>
         <td></td>
         <td>{{ command.description }}</td>
       </tr>
@@ -398,18 +398,32 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td>{{ flag.description }}</td>
       </tr>
     {% endfor %}
-        {% for subcommand_hash in site.data.mesheryctlcommands.apps.onboard %}{% assign subcommand = subcommand_hash[1] %}
+        {% for subcommand_hash in site.data.mesheryctlcommands.apps.onboard.commands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
         <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/onboard">{{ subcommand.name }}</a></td>
         <td></td>
         <td>{{ subcommand.description }}</td>
       </tr>
     {% endfor %}
-    {% for subcommand_hash in site.data.mesheryctlcommands.apps.onboard %}{% assign subcommand = subcommand_hash[1] %}
+    {% for flag_hash in site.data.mesheryctlcommands.apps.onboard.flags %}{% assign flag = flag_hash[1] %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/onboard">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.apps.offboard.commands %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/offboard">{{ subcommand.name }}</a></td>
         <td></td>
         <td>{{ subcommand.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for flag_hash in site.data.mesheryctlcommands.apps.offboard.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
       </tr>
     {% endfor %}
     {% for subcommand_hash in site.data.mesheryctlcommands.apps.list %}{% assign subcommand = subcommand_hash[1] %}

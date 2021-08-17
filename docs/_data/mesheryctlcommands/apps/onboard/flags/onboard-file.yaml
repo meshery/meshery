@@ -1,4 +1,4 @@
-name: onboard --file
+name: --file, -f
 description: onboard application with application file
 usage: |
     mesheryctl app onboard --file

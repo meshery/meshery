@@ -1,0 +1,4 @@
+name: onboard
+description: onboard application file
+usage: |
+    mesheryctl app onboard [flags]

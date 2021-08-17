@@ -1,4 +1,4 @@
 name: --all, -a
 description: show all appliaction file content
 usage: |
-    mesheryctl app view [appliaction-name|appliaction-id] --all
+    mesheryctl app view --all
