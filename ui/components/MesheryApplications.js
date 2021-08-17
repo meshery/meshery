@@ -392,7 +392,7 @@ function MesheryApplications({
       () => {
         updateProgress({ showProgress : false });
 
-        enqueueSnackbar("Application Successfully Deleted!", {
+        enqueueSnackbar("Application deleted.", {
           variant : "success",
           autoHideDuration : 2000,
           action : function Action(key) {
