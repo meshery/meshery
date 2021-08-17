@@ -126,7 +126,7 @@ class PrometheusComponent extends Component {
                 }
               });
               },
-              error: (err) => console.log("error registering prometheus: " + err),
+              error: (err) => console.log("error registering Prometheus: " + err),
             });
           }
         },
