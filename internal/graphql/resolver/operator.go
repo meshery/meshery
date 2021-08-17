@@ -86,13 +86,13 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		r.operatorChannel <- &model.OperatorStatus{
 			Status: status,
 		}
+
+		r.operatorSyncChannel <- false
 	}(delete, r.Config.KubeClient)
 
 	r.operatorChannel <- &model.OperatorStatus{
 		Status: model.StatusProcessing,
 	}
-
-	r.operatorSyncChannel <- struct{}{}
 
 	return model.StatusProcessing, nil
 }
@@ -145,7 +145,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 		r.operatorChannel = make(chan *model.OperatorStatus)
 	}
 	if r.operatorSyncChannel == nil {
-		r.operatorSyncChannel = make(chan struct{})
+		r.operatorSyncChannel = make(chan bool)
 	}
 	if r.meshsyncLivenessChannel == nil {
 		r.meshsyncLivenessChannel = make(chan struct{})
@@ -172,15 +172,20 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 				return
 			}
 		}
-
 		for {
 			select {
-			case <-r.operatorSyncChannel:
+			case processing := <-r.operatorSyncChannel:
+				r.Log.Info("Operator sync channel called")
 				status, err := r.getOperatorStatus(ctx, provider)
 				if err != nil {
 					r.Log.Error(ErrOperatorSubscription(err))
 					return
 				}
+
+				if processing {
+					status.Status = model.StatusProcessing
+				}
+
 				r.operatorChannel <- status
 			case <-ctx.Done():
 				r.Log.Info("Operator subscription flushed")

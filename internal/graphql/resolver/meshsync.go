@@ -79,7 +79,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
 
-		r.operatorSyncChannel <- struct{}{}
+		r.operatorSyncChannel <- false
 		return nil
 	}
 
@@ -102,23 +102,28 @@ func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider)
 	// }
 
 	err := model.RunMeshSync(r.Config.KubeClient, false)
+	r.Log.Info("Installing Meshsync")
+	r.operatorSyncChannel <- true
+
 	if err != nil {
 		r.Log.Error(err)
-		r.operatorSyncChannel <- struct{}{}
+		r.operatorSyncChannel <- false
 		return model.StatusDisabled, err
 	}
 
-	r.operatorSyncChannel <- struct{}{}
-	r.Log.Info("Installing Meshsync")
+	r.operatorSyncChannel <- false
 	return model.StatusProcessing, nil
 }
 
 func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider) (model.Status, error) {
+	r.operatorSyncChannel <- true
 	err := r.connectToBroker(ctx, provider)
 	if err != nil {
 		r.Log.Error(err)
+		r.operatorSyncChannel <- false
 		return model.StatusDisabled, err
 	}
 
+	r.operatorSyncChannel <- false
 	return model.StatusConnected, nil
 }

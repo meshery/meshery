@@ -39,7 +39,7 @@ func ListernToEvents(log logger.Handler,
 	handler *database.Handler,
 	datach chan *broker.Message,
 	meshsyncCh chan struct{},
-	operatorSyncChannel chan struct{},
+	operatorSyncChannel chan bool,
 	controlPlaneSyncChannel chan struct{},
 	meshsyncLivenessChannel chan struct{},
 ) {
@@ -60,7 +60,7 @@ func persistData(msg broker.Message,
 	log logger.Handler,
 	handler *database.Handler,
 	meshsyncCh chan struct{},
-	operatorSyncChannel chan struct{},
+	operatorSyncChannel chan bool,
 	controlPlaneSyncChannel chan struct{},
 	wg *sync.WaitGroup,
 ) {
@@ -78,7 +78,7 @@ func persistData(msg broker.Message,
 		// persist the object
 		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
 		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
-			operatorSyncChannel <- struct{}{}
+			operatorSyncChannel <- false
 		}
 		err = recordMeshSyncData(msg.EventType, handler, &object)
 		if err != nil {
