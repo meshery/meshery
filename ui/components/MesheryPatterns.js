@@ -392,7 +392,7 @@ function MesheryPatterns({
       () => {
         updateProgress({ showProgress : false });
 
-        enqueueSnackbar("Pattern Successfully Deleted!", {
+        enqueueSnackbar("Pattern deleted.", {
           variant : "success",
           autoHideDuration : 2000,
           action : function Action(key) {
