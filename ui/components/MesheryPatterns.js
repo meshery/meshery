@@ -15,6 +15,7 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
 import UploadIcon from "@material-ui/icons/Publish";
+import PromptComponent from "./PromptComponent";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
@@ -102,6 +103,7 @@ function MesheryPatterns({
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const modalRef = useRef(null);
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
 
@@ -371,6 +373,42 @@ function MesheryPatterns({
     }
   });
 
+  async function deletePattern(id) {
+    let response = await modalRef.current.show({
+      title : "Delete Pattern?",
+
+      subtitle : "Are you sure you want to delete this pattern?",
+
+      options : ["yes", "no"],
+
+    })
+    if (response === "NO") return
+    dataFetch(
+      `/api/pattern/${id}`,
+      {
+        method : "DELETE",
+        credentials : "include",
+      },
+      () => {
+        updateProgress({ showProgress : false });
+
+        enqueueSnackbar("Pattern deleted.", {
+          variant : "success",
+          autoHideDuration : 2000,
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+        });
+        fetchPatterns(page, pageSize, search, sortOrder);
+      },
+      handleError("Failed to delete pattern")
+    );
+  }
+
   const options = {
     filter : false,
     sort : !(user && user.user_id === "meshery"),
@@ -379,7 +417,8 @@ function MesheryPatterns({
     responsive : "scrollFullHeight",
     resizableColumns : true,
     serverSide : true,
-    selection : true,
+    selectableRows : true,
+    // selection : true,
     count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
@@ -388,6 +427,11 @@ function MesheryPatterns({
     print : false,
     download : false,
     customToolbar : CustomToolbar(uploadHandler),
+
+    onRowsDelete : function handleDelete(row) {
+      const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
+      fid.forEach(fid => deletePattern(fid))
+    },
 
     onTableChange : (action, tableState) => {
       const sortInfo = tableState.announceText
@@ -445,6 +489,7 @@ function MesheryPatterns({
         // @ts-ignore
         options={options}
       />
+      <PromptComponent ref={modalRef} />
     </NoSsr>
   );
 }
