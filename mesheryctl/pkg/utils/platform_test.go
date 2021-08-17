@@ -67,14 +67,14 @@ func TestGetManifestTreeURL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata")
+			golden := NewGoldenFile(t, tt.expectOutput, testdataDir)
 			// mock response
 			apiResponse := NewGoldenFile(t, tt.fixture, fixturesDir).Load()
 			httpmock.RegisterResponder("GET", tt.url,
 				httpmock.NewStringResponder(200, apiResponse))
 			actualurl, err := GetManifestTreeURL(tt.version)
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := NewGoldenFile(t, tt.expectOutput, testdataDir)
 			if err != nil {
 				if tt.expectErr {
 					if *update {
@@ -131,14 +131,14 @@ func TestListManifests(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata")
+			golden := NewGoldenFile(t, tt.expectOutput, testdataDir)
 			// mock response
 			apiResponse := NewGoldenFile(t, tt.fixture, fixturesDir).Load()
 			httpmock.RegisterResponder("GET", tt.url,
 				httpmock.NewStringResponder(200, apiResponse))
 			manifests, err := ListManifests(tt.url)
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := NewGoldenFile(t, tt.expectOutput, testdataDir)
 			if err != nil {
 				if tt.expectErr {
 					if *update {
