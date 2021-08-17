@@ -42,6 +42,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import { Button } from "@material-ui/core";
 import jsYaml from "js-yaml";
 import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
+import ListAltIcon from '@material-ui/icons/ListAlt';
 
 const styles = (theme) => ({
   grid: {
@@ -124,6 +125,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   const [pageSize, setPageSize] = useState(10);
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
   const DEPLOY_URL = '/api/pattern/deploy';
 
@@ -402,6 +404,9 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
                   color="inherit"
                   onClick={() => setSelectedRowData(patterns[tableMeta.rowIndex])} />
               </IconButton>
+              <IconButton onClick={() => setShowForm(true)}>
+                <ListAltIcon />
+              </IconButton>
               <IconButton>
                 <PlayArrowIcon
                   title="Deploy"
@@ -483,17 +488,22 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
   return (
     <NoSsr>
-      <PatternForm />
-      {/* {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+      <PatternForm onSave={handleSubmit} show={setShowForm} />
+      {/* {showForm &&
+        <PatternForm onSave={handleSubmit} show={setShowForm} />}
+
+      {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
-      <MUIDataTable
-        title={<div className={classes.tableHeader}>Patterns</div>}
-        data={patterns}
-        columns={columns}
-        // @ts-ignore
-        options={options}
-      /> */}
+      {
+        !showForm && <MUIDataTable
+          title={<div className={classes.tableHeader}>Patterns</div>}
+          data={patterns}
+          columns={columns}
+          // @ts-ignore
+          options={options}
+        />
+      } */}
     </NoSsr>
   );
 }
@@ -515,9 +525,10 @@ export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(w
 // -------------------------------------------- PATTERNS FORM ---------------------------------------
 // --------------------------------------------------------------------------------------------------
 
+export const SettingContext = React.createContext({});
+export const TraitsContext = React.createContext({});
 
-
-function PatternForm() {
+function PatternForm({ onSave, show }) {
   const [schemaSet, setSchemaSet] = useState();
   const [deployServiceConfig, setDeployServiceConfig] = useState({});
   const [yaml, setYaml] = useState("");
@@ -596,25 +607,36 @@ function PatternForm() {
   const handleSubmit = (cfg, patternName) => {
     console.log("submitted", { cfg, patternName })
     const key = getPatternKey(cfg);
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] }, "PREVIEW");
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
-    handleExpansion(patternName)
+    // handleExpansion(patternName)
+  }
+
+  const handleChangeData = (cfg, patternName) => {
+    console.log("Ran Changed", { cfg, patternName })
+    const key = getPatternKey(cfg);
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] }, "PREVIEW");
+    if (key)
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
+    // handleExpansion(patternName)
   }
 
   const handleDelete = (cfg) => {
     console.log("deleted", cfg);
   }
 
-  const handleDeploy = (action) => {
+  const handleDeploy = (cfg, action) => {
     const deployConfig = {};
     deployConfig.name = "Deployed Config";
-    deployConfig.services = deployServiceConfig;
+    deployConfig.services = cfg;
     const deployConfigYaml = jsYaml.dump(deployConfig);
     if (action === "PREVIEW") {
-      console.log("preview")
+      console.log("Ran", deployConfigYaml)
       setYaml(deployConfigYaml);
     } else {
-
+      onSave(deployConfigYaml, "", deployConfig.name, "upload");
+      show(false);
     }
 
     console.log(deployConfigYaml);
@@ -627,12 +649,7 @@ function PatternForm() {
     } else {
       expandedItems.push(item);
     }
-
     setExpanded(expandedItems);
-
-    if (yaml) {
-      setYaml("");
-    }
   }
 
   const ns = "default";
@@ -650,40 +667,48 @@ function PatternForm() {
       {
         console.log("schemaSet:::", deployServiceConfig)
       }
-      {schemaSet
-        .filter((s) => s.type !== "addon")
-        .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
-        .map((s) => (
-          accordion(s)
-        ))}
-      <Accordion
-        expanded={expanded.includes('addon')}
-        onChange={() => handleExpansion('addon')}
-        style={{ width: '100%' }}
-      >
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">
-            Configure Addons
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
           {schemaSet
-            .filter((s) => s.type === "addon")
+            .filter((s) => s.type !== "addon")
             .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
             .map((s) => (
-              <Grid item>
-                <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
-              </Grid>
+              accordion(s)
             ))}
-        </AccordionDetails>
-      </Accordion>
+          <Accordion
+            expanded={expanded.includes('addon')}
+            onChange={() => handleExpansion('addon')}
+            style={{ width: '100%' }}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6">
+                Configure Addons
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {schemaSet
+                .filter((s) => s.type === "addon")
+                .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
+                .map((s) => (
+                  <Grid item>
+                    <PatternServiceForm onChange={handleChangeData}  schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
+                  </Grid>
+                ))}
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
+        <Grid item xs={12} md={6} >
+          <CodeEditor />
+        </Grid>
+      </Grid>
+      {/* 
       <Collapse in={!!yaml} >
         <CodeEditor />
       </Collapse>
       {!yaml && <CustomButton title="Preview Pattern" onClick={() => handleDeploy("PREVIEW")} />}
       <Typography variant="caption" style={{ color: "#666666" }}>
         Forms are converted to deployable yaml and configuration is generated
-      </Typography>
+      </Typography> */}
     </>
   );
 
@@ -716,56 +741,61 @@ function PatternForm() {
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <PatternServiceForm schemaSet={schema} onSubmit={(val) => handleSubmit(val, patternName)} onDelete={handleDelete} namespace={ns} />
+        <PatternServiceForm onChange={handleChangeData} schemaSet={schema} onSubmit={(val) => handleSubmit(val, patternName)} onDelete={handleDelete} namespace={ns} />
       </AccordionDetails>
     </Accordion>;
   }
 
   function CodeEditor() {
-    const cardStyle = { margin: "16px 0px" };
+    const cardStyle = { marginBottom: "16px", position: "sticky", float: "right", minWidth: "100%" };
     const cardcontentStyle = { margin: "16px" };
 
     return (
-      <Card style={cardStyle}>
-        <CardContent style={cardcontentStyle}>
-          <CodeMirror
-            value={yaml}
-            options={{
-              theme: "material",
-              lineNumbers: true,
-              lineWrapping: true,
-              gutters: ["CodeMirror-lint-markers"],
-              lint: true,
-              mode: "text/x-yaml",
-            }}
-          // onChange={(_, data, val) => setYaml(val)}
-          />
-          <CustomButton title="Save Pattern" onClick={() => handleDeploy("SAVE")} />
-          <CardActions style={{ justifyContent: "flex-end" }}>
-            <Tooltip title="Update Pattern">
-              <IconButton
-                aria-label="Update"
-                color="primary"
-              // onClick={() => onSubmit(yaml, pattern.id, pattern.name, "update")}
-              >
-                <SaveIcon />
+      <div>
+        <Card style={cardStyle}>
+          <CardContent style={cardcontentStyle}>
+            <CodeMirror
+              value={yaml}
+              style={{
+                minHeight: "800px"
+              }}
+              options={{
+                theme: "material",
+                lineNumbers: true,
+                lineWrapping: true,
+                gutters: ["CodeMirror-lint-markers"],
+                lint: true,
+                mode: "text/x-yaml",
+              }}
+            // onChange={(_, data, val) => setYaml(val)}
+            />
+            <CustomButton title="Save Pattern" onClick={() => handleDeploy("SAVE")} />
+            <CardActions style={{ justifyContent: "flex-end" }}>
+              <Tooltip title="Update Pattern">
+                <IconButton
+                  aria-label="Update"
+                  color="primary"
+                // onClick={() => onSubmit(yaml, pattern.id, pattern.name, "update")}
+                >
+                  <SaveIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete PatternsubmitHandler({ settings: getSettingsRefValue(), traits })">
+                <IconButton
+                  aria-label="Delete"
+                  color="primary"
+                // onClick={() => onSubmit(yaml, pattern.id, pattern.name, "delete")}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+              <IconButton style={{ transform: "rotate(180deg)" }} onClick={() => { setYaml("") }}>
+                <ArrowDropDownCircleIcon color="primary" />
               </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete Pattern">
-              <IconButton
-                aria-label="Delete"
-                color="primary"
-              // onClick={() => onSubmit(yaml, pattern.id, pattern.name, "delete")}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-            <IconButton style={{ transform: "rotate(180deg)" }} onClick={() => { setYaml("") }}>
-              <ArrowDropDownCircleIcon color="primary" />
-            </IconButton>
-          </CardActions>
-        </CardContent>
-      </Card>
+            </CardActions>
+          </CardContent>
+        </Card>
+      </div>
     )
   }
 }

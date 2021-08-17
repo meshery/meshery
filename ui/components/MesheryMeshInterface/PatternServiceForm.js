@@ -1,5 +1,5 @@
 // @ts-check
-import React from "react";
+import React, { useEffect } from "react";
 import { Tab, Tabs, AppBar, Typography, Box, Card } from "@material-ui/core";
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
@@ -46,6 +46,17 @@ function recursiveCleanObject(obj) {
   }
 }
 
+function recursiveCleanObjectExceptEmptyArray(obj) {
+
+  for (const k in obj) {
+    if (!obj[k] || typeof obj[k] !== "object" || Array.isArray(obj[k])) continue;
+
+    recursiveCleanObjectExceptEmptyArray(obj[k]);
+
+    if (Object.keys(obj[k]).length === 0) delete obj[k];
+  }
+}
+
 /**
  * createPatternFromConfig will take in the form data
  * and will create a valid pattern from it
@@ -54,13 +65,13 @@ function recursiveCleanObject(obj) {
  * given inputs
  * @param {*} config
  */
-function createPatternFromConfig(config, namespace) {
+function createPatternFromConfig(config, namespace, partialClean = false) {
   const pattern = {
     name: `pattern-${Math.random().toString(36).substr(2, 5)}`,
     services: {},
   };
 
-  recursiveCleanObject(config);
+  partialClean ? recursiveCleanObjectExceptEmptyArray(config) : recursiveCleanObject(config);
 
   Object.keys(config).forEach((key) => {
     // Add it only if the settings are non empty or "true"
@@ -89,10 +100,11 @@ function createPatternFromConfig(config, namespace) {
  *  onSubmit: Function;
  *  onDelete: Function;
  *  namespace: string;
+ *  onChange?: Function
  * }} props
  * @returns
  */
-function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
+function PatternServiceForm({ schemaSet, onChange, onSubmit, onDelete, namespace }) {
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB({});
   const [traits, setTraits, getTraitsRefValue] = useStateCB({});
@@ -144,7 +156,13 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
           type="workload"
           formData={settings}
           jsonSchema={schemaSet.workload}
-          onChange={setSettings}
+          onChange={(val) => {
+            console.log("rana", val)
+            onChange(
+              createPatternFromConfig(
+                { [getPatternAttributeName(schemaSet.workload)]: { settings: val, traits } }, namespace, true), "");
+            setSettings(val);
+          }}
           onSubmit={() => submitHandler({ settings: getSettingsRefValue(), traits })}
           onDelete={() => deleteHandler({ settings: getSettingsRefValue(), traits })}
         />

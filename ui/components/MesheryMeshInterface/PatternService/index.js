@@ -25,11 +25,12 @@ function componentType(jsonSchema) {
  *  onSubmit?: Function;
  *  onDelete?: Function;
  *  type: "trait" | "workload"
- *  formData: any
+ *  formData: Record<string, any>;
  * }} props
+ * 
  * @returns
  */
-function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete }) {
+function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, ...rest }) {
   const ctype = componentType(jsonSchema);
 
   if (ctype === "rjsf")
@@ -42,6 +43,7 @@ function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDele
         onChange={onChange}
         onSubmit={onSubmit}
         onDelete={onDelete}
+        {...rest}
       />
     );
   if (ctype === "switch")
