@@ -129,36 +129,37 @@ class PrometheusComponent extends Component {
   componentDidMount() {
     const self = this;
 
-    dataFetch(
-      "/api/telemetry/metrics/config",
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+    if(self.props.isMeshConfigured)
+      dataFetch(
+        "/api/telemetry/metrics/config",
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+          },
         },
-      },
-      (result) => {
-        self.props.updateProgress({ showProgress: false });
-        if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL !="") {
-          let selector = {
-            serviceMesh: "ALL_MESH",
-          };
-          fetchAvailableAddons(selector).subscribe({
-            next: (res) => {
+        (result) => {
+          self.props.updateProgress({ showProgress: false });
+          if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL !="") {
+            let selector = {
+              serviceMesh: "ALL_MESH",
+            };
+            fetchAvailableAddons(selector).subscribe({
+              next: (res) => {
               res?.addonsState?.forEach((addon) => {
                 if (addon.name === "prometheus" && self.state.prometheusURL === "") {
                   self.setState({ prometheusURL: "http://" + addon.endpoint })
                   submitPrometheusConfigure(self);
                 }
               });
-            },
-            error: (err) => console.log("error registering prometheus: " + err),
-          });
-        }
-      },
-      self.handleError("There was an error communicating with grafana config")
-    )
+              },
+              error: (err) => console.log("error registering prometheus: " + err),
+            });
+          }
+        },
+        self.handleError("There was an error communicating with grafana config")
+      )
   }
 
   static getDerivedStateFromProps(props, state) {
