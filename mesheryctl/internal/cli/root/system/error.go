@@ -21,6 +21,7 @@ const (
 	ErrSettingTemporaryContextCode  = "replace me"
 	ErrCreateManifestsFolderCode    = "replace me"
 	ErrProcessingMctlConfigCode     = "replace me"
+	ErrRestartMesheryCode           = "replace me"
 )
 
 func ErrHealthCheckFailed(err error) error {
@@ -77,4 +78,8 @@ func ErrCreateManifestsFolder(err error) error {
 
 func ErrProcessingMctlConfig(err error) error {
 	return errors.New(ErrProcessingMctlConfigCode, errors.Alert, []string{"Error processing config"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRestartMeshery(err error) error {
+	return errors.New(ErrRestartMesheryCode, errors.Alert, []string{"Error restarting meshery"}, []string{err.Error()}, []string{}, []string{})
 }
