@@ -19,6 +19,9 @@ import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import ExtensionSandbox from "./ExtensionSandbox";
 import RemoteUserPref from "./RemoteUserPref";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceComponent';
 
 
 const styles = (theme) => ({
@@ -30,24 +33,28 @@ const styles = (theme) => ({
     borderBottomLeftRadius : 3,
     borderBottomRightRadius : 3,
   },
-  paperRoot : {
-    flexGrow : 1,
-    maxWidth : "20%",
-    marginLeft : 0,
-    borderTopLeftRadius : 3,
-    borderTopRightRadius : 3,
+  paperRoot: {
+    flexGrow: 1,
+    maxWidth: "30%",
+    marginLeft: 0,
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
   },
   tabs : { marginLeft : 0 },
-  tab : { minWidth : "50%",
-    margin : 0 },
+  tab : { 
+    minWidth : "33%",
+    margin : 0 
+  },
   icon : {
     display : 'inline',
     verticalAlign : 'text-top',
     width : theme.spacing(1.75),
     marginLeft : theme.spacing(0.5),
   },
-  iconText : { display : 'inline',
-    verticalAlign : 'middle', },
+  iconText : { 
+    display : 'inline',
+    verticalAlign : 'middle', 
+  },
   backToPlay : { margin : theme.spacing(2), },
   link : { cursor : 'pointer', },
   formContainer : {
@@ -56,12 +63,16 @@ const styles = (theme) => ({
     'justify-content' : 'space-evenly',
     padding : 50
   },
-  formGrp : { padding : 20,
-    border : '1.5px solid #969696', },
+  formGrp : { 
+    padding : 20,
+    border : '1.5px solid #969696', 
+  },
   formLegend : { fontSize : 20, },
-  switchBase : { color : '#647881',
+  switchBase : { 
+    color : '#647881',
     "&$checked" : { color : '#00b39f' },
-    "&$checked + $track" : { backgroundColor : 'rgba(0,179,159,0.5)' }, },
+    "&$checked + $track" : { backgroundColor : 'rgba(0,179,159,0.5)' }, 
+  },
   track : { backgroundColor : 'rgba(100,120,129,0.5)', },
   checked : {},
 });
@@ -184,6 +195,7 @@ class UserPreference extends React.Component {
     } = this.state;
     const { classes } = this.props;
 
+    const mainIconScale = 'grow-10';
     const handleToggle = this.handleToggle('startOnZoom');
 
     return (
@@ -217,6 +229,15 @@ class UserPreference extends React.Component {
                 />
               </Tooltip>
             }
+            <Tooltip title="Choose Performance Test Defaults" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
+                }
+                label="Performance"
+              />
+            </Tooltip>
           </Tabs>
         </Paper>
         <Paper className={classes.root}>
@@ -262,7 +283,10 @@ class UserPreference extends React.Component {
             </div>
           }
           {tabVal == 1 && userPrefs &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle,url })}/>
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
+          }
+          {tabVal === 2 && 
+            <MesherySettingsPerformanceComponent />
           }
         </Paper>
       </NoSsr>
