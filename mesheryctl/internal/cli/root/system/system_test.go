@@ -78,6 +78,14 @@ func TestSystemCmdIntegration(t *testing.T) {
 			ExpectError:     false,
 			TimeoutRequired: 1,
 		},
+		//update
+		{
+			Name:            "Update Meshery",
+			Action:          "update",
+			Args:            []string{"update"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
+		},
 		//restart
 		{
 			Name:            "Restart Meshery",
