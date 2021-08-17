@@ -405,7 +405,7 @@ function MesheryPatterns({
         });
         fetchPatterns(page, pageSize, search, sortOrder);
       },
-      handleError("Failed To Delete Pattern")
+      handleError("Failed to delete pattern")
     );
   }
 
