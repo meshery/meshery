@@ -154,16 +154,24 @@ class GrafanaComponent extends Component {
   componentDidMount() {
     const self = this;
 
-    dataFetch(
-      "/api/telemetry/metrics/grafana/config",
-      { method : "GET",
-        credentials : "include",
-        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", }, },
-      (result) => {
-        self.props.updateProgress({ showProgress : false });
-        if (!(typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="")) {
-          let selector = { serviceMesh : "ALL_MESH", };
-          fetchAvailableAddons(selector).subscribe({ next : (res) => {
+    if(self.props.isMeshConfigured)
+      dataFetch(
+        "/api/telemetry/metrics/grafana/config",
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+          },
+        },
+        (result) => {
+          self.props.updateProgress({ showProgress: false });
+          if (!(typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="")) {
+            let selector = {
+              serviceMesh: "ALL_MESH",
+            };
+            fetchAvailableAddons(selector).subscribe({
+              next: (res) => {
               res?.addonsState?.forEach((addon) => {
                 if (addon.name === "grafana" && self.state.grafanaURL === "") {
                   self.setState({ grafanaURL : "http://" + addon.endpoint })
@@ -172,13 +180,13 @@ class GrafanaComponent extends Component {
                     : [] }));
                 }
               });
-          },
-          error : (err) => console.log("error registering grafana: " + err), });
-        }
-      },
-      self.handleError("There was an error communicating with grafana config")
-    )
-
+              },
+              error: (err) => console.log("error registering Grafana: " + err),
+            });
+          }
+        },
+        self.handleError("There was an error communicating with grafana config")
+      )
   }
 
   handleChange = (name) => (event) => {
