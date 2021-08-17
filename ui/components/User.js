@@ -15,11 +15,7 @@ import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 
 
-const styles = () => ({
-  popover: {
-    color: 'black',
-  },
-});
+const styles = () => ({ popover : { color : 'black', }, });
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -35,20 +31,18 @@ function exportToJsonFile(jsonData, filename) {
 }
 
 class User extends React.Component {
-  state = {
-    user: null,
-    open: false,
-  }
+  state = { user : null,
+    open : false, }
 
   handleToggle = () => {
-    this.setState((state) => ({ open: !state.open }));
+    this.setState((state) => ({ open : !state.open }));
   };
 
   handleClose = (event) => {
     if (this.anchorEl.contains(event.target)) {
       return;
     }
-    this.setState({ open: false });
+    this.setState({ open : false });
   };
 
   handleLogout = () => {
@@ -60,28 +54,24 @@ class User extends React.Component {
   };
 
   handleGetToken = () => {
-    dataFetch('/api/token', { credentials: 'same-origin' }, (data) => {
+    dataFetch('/api/token', { credentials : 'same-origin' }, (data) => {
       exportToJsonFile(data, "auth.json");
-    }, (error) => ({
-      error,
-    }));
+    }, (error) => ({ error, }));
   };
 
   componentDidMount() {
     // console.log("fetching user data");
-    dataFetch('/api/user', { credentials: 'same-origin' }, (user) => {
+    dataFetch('/api/user', { credentials : 'same-origin' }, (user) => {
       this.setState({ user });
       this.props.updateUser({ user });
-    }, (error) => ({
-      error,
-    }));
+    }, (error) => ({ error, }));
   }
 
   render() {
     const {
       color, iconButtonClassName, avatarClassName, classes,
     } = this.props;
-    let avatar_url; 
+    let avatar_url;
     if (this.state.user && this.state.user !== null) {
       avatar_url = this.state.user.avatar_url;
     }
@@ -96,19 +86,23 @@ class User extends React.Component {
               buttonRef={(node) => {
                 this.anchorEl = node;
               }}
-              aria-owns={open ? 'menu-list-grow' : undefined}
+              aria-owns={open
+                ? 'menu-list-grow'
+                : undefined}
               aria-haspopup="true"
               onClick={this.handleToggle}
             >
               <Avatar className={avatarClassName} src={avatar_url} />
             </IconButton>
           </div>
-          <Popper open={open} anchorEl={this.anchorEl} transition  style={{zIndex: 10000}} placement="top-end">
+          <Popper open={open} anchorEl={this.anchorEl} transition  style={{ zIndex : 10000 }} placement="top-end">
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
                 id="menu-list-grow"
-                style={{ transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom' }}
+                style={{ transformOrigin : placement === 'bottom'
+                  ? 'left top'
+                  : 'left bottom' }}
               >
                 <Paper className={classes.popover}>
                   <ClickAwayListener onClickAway={this.handleClose}>
@@ -128,9 +122,7 @@ class User extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateUser: bindActionCreators(updateUser, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch), });
 
 export default withStyles(styles)(connect(
   null,

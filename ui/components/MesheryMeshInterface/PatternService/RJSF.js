@@ -4,6 +4,7 @@ import { Theme as MaterialUITheme } from "@rjsf/material-ui";
 import { Button } from "@material-ui/core";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import JS4 from "../../../assets/jsonschema/schema-04.json";
+import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
 
 const Form = withTheme(MaterialUITheme);
 
@@ -22,16 +23,17 @@ const muiTheme = createTheme({
 });
 
 function deleteTitleFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, title: "" };
+  return { ...jsonSchema, title : "" };
 }
 
 function RJSFButton({ handler, text }) {
   return (
-    <Button variant="contained" color="primary" style={{ marginRight: "0.5rem" }} onClick={handler}>
+    <Button variant="contained" color="primary" style={{ marginRight : "0.5rem" }} onClick={handler}>
       {text}
     </Button>
   );
 }
+
 
 const uiSchema = {
   replicas: {
@@ -40,6 +42,7 @@ const uiSchema = {
 };
 
 function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, renderAsTooltip }) {
+
   const [data, setData] = React.useState();
 
   React.useEffect(() => {
@@ -69,6 +72,7 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete,
             formData={data}
             liveValidate
             showErrorList={false}
+            ArrayFieldTemplate={ArrayFieldTemplate}
             additionalMetaSchemas={[JS4]}
             uiSchema={uiSchema}
             // noHtml5Validate

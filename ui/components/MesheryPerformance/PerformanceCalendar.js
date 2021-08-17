@@ -48,10 +48,10 @@ function generateCalendarEventsFromResults(results) {
     ntzEndTime.setSeconds(ntzEndTime.getSeconds() + (runner_results.ActualDuration / 1e9));
 
     return {
-      title: name,
-      start: ntzStartTime,
-      end: ntzEndTime,
-      resource: index
+      title : name,
+      start : ntzStartTime,
+      end : ntzEndTime,
+      resource : index
     };
   });
 }
@@ -68,16 +68,12 @@ function generateCalendarEventsFromResults(results) {
  */
 function generateDateRange(from, to) {
   if (from && to) {
-    return {
-      start: moment(from).format("YYYY-MM-DD"),
-      end: moment(to).format("YYYY-MM-DD"),
-    };
+    return { start : moment(from).format("YYYY-MM-DD"),
+      end : moment(to).format("YYYY-MM-DD"), };
   }
 
-  return {
-    start: moment().startOf("M").format("YYYY-MM-DD"),
-    end: moment().add(1, "M").startOf("M").format("YYYY-MM-DD"),
-  };
+  return { start : moment().startOf("M").format("YYYY-MM-DD"),
+    end : moment().add(1, "M").startOf("M").format("YYYY-MM-DD"), };
 }
 
 /**
@@ -90,7 +86,9 @@ function generateDateRange(from, to) {
  * }} props
  * @returns
  */
-function PerformanceCalendar({ style, updateProgress, enqueueSnackbar, closeSnackbar }) {
+function PerformanceCalendar({
+  style, updateProgress, enqueueSnackbar, closeSnackbar
+}) {
   const [time, setTime] = useState(generateDateRange());
   const [results, setResults] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState();
@@ -100,14 +98,14 @@ function PerformanceCalendar({ style, updateProgress, enqueueSnackbar, closeSnac
   }, [time]);
 
   async function fetchResults(start, end) {
-    updateProgress({ showProgress: true });
+    updateProgress({ showProgress : true });
 
     try {
       const res = await promisifiedDataFetch(
-        `${PERFORMANCE_PROFILE_RESULTS_URL}?from=${start}&to=${end}`, 
-        { credentials: "include" }
+        `${PERFORMANCE_PROFILE_RESULTS_URL}?from=${start}&to=${end}`,
+        { credentials : "include" }
       );
-      updateProgress({ showProgress: false });
+      updateProgress({ showProgress : false });
       if (res) {
         setResults(res.results || []);
       }
@@ -119,19 +117,17 @@ function PerformanceCalendar({ style, updateProgress, enqueueSnackbar, closeSnac
 
   function handleError(msg) {
     return function (error) {
-      updateProgress({ showProgress: false });
+      updateProgress({ showProgress : false });
 
-      enqueueSnackbar(`${msg}: ${error}`, {
-        variant: "error",
-        action: function Action(key) {
+      enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+        action : function Action(key) {
           return (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
               <CloseIcon />
             </IconButton>
           );
         },
-        autoHideDuration: 8000,
-      });
+        autoHideDuration : 8000, });
     };
   }
 
@@ -141,7 +137,7 @@ function PerformanceCalendar({ style, updateProgress, enqueueSnackbar, closeSnac
 
   function ResultChart({ result }) {
     if (!result) return <div />;
-  
+
     const row = result.runner_results;
     const boardConfig = result.server_board_config;
     const serverMetrics = result.server_metrics;
@@ -149,15 +145,15 @@ function PerformanceCalendar({ style, updateProgress, enqueueSnackbar, closeSnac
     const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
     return (
       <Paper
-        style={{
-          width: "100%",
-          maxWidth: "90vw",
-          padding: "0.5rem"
-        }}
+        style={{ width : "100%",
+          maxWidth : "90vw",
+          padding : "0.5rem" }}
       >
         <div>
           <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
-          <MesheryChart data={[result && result.runner_results ? result.runner_results : {}]} />
+          <MesheryChart data={[result && result.runner_results
+            ? result.runner_results
+            : {}]} />
         </div>
         {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
           <div>
@@ -186,9 +182,7 @@ function PerformanceCalendar({ style, updateProgress, enqueueSnackbar, closeSnac
         showMultiDayTimes
         defaultDate={new Date()}
         localizer={localizer}
-        style={{
-          height: "100%",
-        }}
+        style={{ height : "100%", }}
         // @ts-ignore
         onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
         onSelectEvent={(results) => handleEventClick(results)}
@@ -204,8 +198,6 @@ function PerformanceCalendar({ style, updateProgress, enqueueSnackbar, closeSnac
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 export default connect(null, mapDispatchToProps)(withSnackbar(PerformanceCalendar));
