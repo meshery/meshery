@@ -111,22 +111,10 @@ var updateCmd = &cobra.Command{
 			}
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
-				version := currCtx.Version
 				RequestedAdapters := currCtx.Adapters
 
-				if version == "latest" {
-					if currCtx.Channel == "edge" {
-						version = "master"
-					} else {
-						version, err = utils.GetLatestStableReleaseTag()
-						if err != nil {
-							return err
-						}
-					}
-				}
-
 				// fetch the manifest files corresponding to the version specified
-				manifests, err := utils.FetchManifests(version)
+				manifests, err := utils.FetchManifests(currCtx)
 
 				if err != nil {
 					return err

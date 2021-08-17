@@ -10,29 +10,19 @@ import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from './ExpansionPanels';
 
 const grafanaStyles = (theme) => ({
-  root: {
-    width: '100%',
+  root : { width : '100%', },
+  column : { flexBasis : '33.33%', },
+  heading : { fontSize : theme.typography.pxToRem(15), },
+  secondaryHeading : { fontSize : theme.typography.pxToRem(15),
+    color : theme.palette.text.secondary, },
+  dateRangePicker : {
+    display : 'flex',
+    justifyContent : 'flex-end',
+    marginRight : theme.spacing(1),
+    marginBottom : theme.spacing(2),
   },
-  column: {
-    flexBasis: '33.33%',
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-  },
-  secondaryHeading: {
-    fontSize: theme.typography.pxToRem(15),
-    color: theme.palette.text.secondary,
-  },
-  dateRangePicker: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginRight: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-  iframe: {
-    minHeight: theme.spacing(55),
-    minWidth: theme.spacing(55),
-  },
+  iframe : { minHeight : theme.spacing(55),
+    minWidth : theme.spacing(55), },
 });
 
 class GrafanaCharts extends Component {
@@ -43,11 +33,11 @@ class GrafanaCharts extends Component {
     startDate.setMinutes(startDate.getMinutes() - 5);
     this.state = {
       startDate,
-      from: 'now-5m',
-      endDate: new Date(),
-      to: 'now',
-      liveTail: true,
-      refresh: '10s',
+      from : 'now-5m',
+      endDate : new Date(),
+      to : 'now',
+      liveTail : true,
+      refresh : '10s',
     };
   }
 
@@ -89,7 +79,9 @@ class GrafanaCharts extends Component {
                       <Typography variant="subtitle1" gutterBottom>{config.board.title}</Typography>
                     </div>
                     <div className={classes.column}>
-                      <Typography variant="subtitle2">{config.templateVars && config.templateVars.length > 0 ? `Template variables: ${config.templateVars.join(' ')}` : ''}</Typography>
+                      <Typography variant="subtitle2">{config.templateVars && config.templateVars.length > 0
+                        ? `Template variables: ${config.templateVars.join(' ')}`
+                        : ''}</Typography>
                     </div>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
@@ -120,10 +112,8 @@ class GrafanaCharts extends Component {
     }
 }
 
-GrafanaCharts.propTypes = {
-  classes: PropTypes.object.isRequired,
-  grafanaURL: PropTypes.string.isRequired,
-  boardPanelConfigs: PropTypes.array.isRequired,
-};
+GrafanaCharts.propTypes = { classes : PropTypes.object.isRequired,
+  grafanaURL : PropTypes.string.isRequired,
+  boardPanelConfigs : PropTypes.array.isRequired, };
 
 export default withStyles(grafanaStyles)(GrafanaCharts);

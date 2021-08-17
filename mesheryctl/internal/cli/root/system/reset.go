@@ -102,21 +102,9 @@ func resetMesheryConfig() error {
 
 	case "kubernetes":
 
-		version := currCtx.GetVersion()
-		if version == "latest" {
-			if currCtx.GetChannel() == "edge" {
-				version = "master"
-			} else {
-				version, err = utils.GetLatestStableReleaseTag()
-				if err != nil {
-					return err
-				}
-			}
-		}
-
 		log.Printf("Fetching Meshery Server and Meshery Operator manifests...")
 		// fetch the manifest files corresponding to the version specified
-		_, err := utils.FetchManifests(version)
+		_, err := utils.FetchManifests(currCtx)
 
 		if err != nil {
 			return err

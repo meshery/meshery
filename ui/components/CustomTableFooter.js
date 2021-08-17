@@ -8,13 +8,9 @@ import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 
-const actionsStyles = (theme) => ({
-  root: {
-    flexShrink: 0,
-    color: theme.palette.text.secondary,
-    marginLeft: theme.spacing(2.5),
-  },
-});
+const actionsStyles = (theme) => ({ root : { flexShrink : 0,
+  color : theme.palette.text.secondary,
+  marginLeft : theme.spacing(2.5), }, });
 
 class TablePaginationActions extends React.Component {
   handleFirstPageButtonClick = () => {
@@ -47,32 +43,33 @@ class TablePaginationActions extends React.Component {
           disabled={page === 0}
           aria-label="Previous Page"
         >
-          {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+          {theme.direction === 'rtl'
+            ? <KeyboardArrowRight />
+            : <KeyboardArrowLeft />}
         </IconButton>
         <IconButton
           onClick={this.handleNextButtonClick}
           disabled={page >= Math.ceil(count / rowsPerPage) - 1}
           aria-label="Next Page"
         >
-          {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+          {theme.direction === 'rtl'
+            ? <KeyboardArrowLeft />
+            : <KeyboardArrowRight />}
         </IconButton>
       </div>
     );
   }
 }
 
-TablePaginationActions.propTypes = {
-  classes: PropTypes.object.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-};
+TablePaginationActions.propTypes = { classes : PropTypes.object.isRequired,
+  onChangePage : PropTypes.func.isRequired,
+  page : PropTypes.number.isRequired, };
 
-const TablePaginationActionsWrapper = withStyles(actionsStyles, { withTheme: true })(
+const TablePaginationActionsWrapper = withStyles(actionsStyles, { withTheme : true })(
   TablePaginationActions,
 );
 
-const defaultFooterStyles = {
-};
+const defaultFooterStyles = {};
 
 class CustomTableFooter extends Component {
     customLabelDisplayedRows = () => `Page ${this.props.page + 1}`
@@ -89,9 +86,7 @@ class CustomTableFooter extends Component {
               count={this.props.count}
               rowsPerPage={this.props.rowsPerPage}
               page={this.props.page}
-              SelectProps={{
-                native: true,
-              }}
+              SelectProps={{ native : true, }}
               onChangePage={this.props.changePage}
               // onChangeRowsPerPage={this.handleChangeRowsPerPage}
               ActionsComponent={TablePaginationActionsWrapper}
@@ -102,10 +97,8 @@ class CustomTableFooter extends Component {
     }
 }
 
-CustomTableFooter.propTypes = {
-  changePage: PropTypes.func.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-  page: PropTypes.number.isRequired,
-};
+CustomTableFooter.propTypes = { changePage : PropTypes.func.isRequired,
+  rowsPerPage : PropTypes.number.isRequired,
+  page : PropTypes.number.isRequired, };
 
-export default withStyles(defaultFooterStyles, { name: 'CustomFooter' })(CustomTableFooter);
+export default withStyles(defaultFooterStyles, { name : 'CustomFooter' })(CustomTableFooter);
