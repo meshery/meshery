@@ -41,7 +41,7 @@ var listCmd = &cobra.Command{
 		}
 		var response *models.ApplicationsAPIResponse
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/application", nil)
+		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/application", nil)
 		if err != nil {
 			return err
 		}

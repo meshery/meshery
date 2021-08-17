@@ -28,15 +28,9 @@ import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 
-const styles = (theme) => ({
-  grid: {
-    padding: theme.spacing(2),
-  },
-  tableHeader: {
-    fontWeight: "bolder",
-    fontSize: 18,
-  },
-});
+const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
+  tableHeader : { fontWeight : "bolder",
+    fontSize : 18, }, });
 
 function CustomToolbar(onClick) {
   return function Toolbar() {
@@ -66,12 +60,12 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
         <CodeMirror
           value={filter.filter_file}
           options={{
-            theme: "material",
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ["CodeMirror-lint-markers"],
-            lint: true,
-            mode: "text/x-yaml",
+            theme : "material",
+            lineNumbers : true,
+            lineWrapping : true,
+            gutters : ["CodeMirror-lint-markers"],
+            lint : true,
+            mode : "text/x-yaml",
           }}
           onChange={(val) => setYaml(val)}
         />
@@ -92,7 +86,10 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
   );
 }
 
-function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes}) {
+function MesheryFilters({
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
+}) {
+  
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -105,22 +102,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
 
   const ACTION_TYPES = {
-    FETCH_FILTERS: {
-      name: "FETCH_FILTERS" ,
-      error_msg: "Failed to fetch filter" 
-    },
-    DELETE_FILTERS: {
-      name: "DELETE_FILTERS",
-      error_msg: "Failed to delete filter file"
-    },
-    DEPLOY_FILTERS: {
-      name: "DEPLOY_FILTERS",
-      error_msg: "Failed to deploy filter file"
-    },
-    UPLOADFILTERS: {
-      name: "UPLOAD_FILTERS",
-      error_msg: "Failed to upload filter file"
-    },
+    FETCH_FILTERS : { name : "FETCH_FILTERS" ,
+      error_msg : "Failed to fetch filter" },
+    DELETE_FILTERS : { name : "DELETE_FILTERS",
+      error_msg : "Failed to delete filter file" },
+    DEPLOY_FILTERS : { name : "DEPLOY_FILTERS",
+      error_msg : "Failed to deploy filter file" },
+    UPLOADFILTERS : { name : "UPLOAD_FILTERS",
+      error_msg : "Failed to upload filter file" },
   }
 
   const searchTimeout = useRef(null);
@@ -144,18 +133,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const handleDeploy = (filter_file) => {
     dataFetch(
       DEPLOY_URL,
-      {
-        credentials: "include",
-        method: "POST",
-        body:filter_file,
-      },() => {
+      { credentials : "include",
+        method : "POST",
+        body : filter_file, },() => {
         console.log("FilterFile Deploy API", `/api/experimental/filter/deploy`);
-        updateProgress({showProgress : false})
+        updateProgress({ showProgress : false })
       },
       handleError(ACTION_TYPES.DEPLOY_FILTERS)
-    ) 
-  } 
-  
+    )
+  }
+
 
   function fetchFilters(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -165,16 +152,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       sortOrder
     )}`;
 
-    updateProgress({ showProgress: true });
+    updateProgress({ showProgress : true });
 
     dataFetch(
       `/api/experimental/filter${query}`,
-      {
-        credentials: "include",
-      },
+      { credentials : "include", },
       (result) => {
         console.log("FilterFile API", `/api/experimental/filter${query}`);
-        updateProgress({ showProgress: false });
+        updateProgress({ showProgress : false });
         if (result) {
           setFilters(result.filters || []);
           setPage(result.page || 0);
@@ -188,20 +173,18 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   // function handleError(error) {
-  const handleError = (action) => (error) =>  {  
-    updateProgress({ showProgress: false });
+  const handleError = (action) => (error) =>  {
+    updateProgress({ showProgress : false });
 
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant: "error",
-      action: function Action(key) {
+    enqueueSnackbar(`${action.error_msg}: ${error}`, { variant : "error",
+      action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
         );
       },
-      autoHideDuration: 8000,
-    });
+      autoHideDuration : 8000, });
   }
 
   function resetSelectedRowData() {
@@ -211,17 +194,15 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({showProgress: true})
+    updateProgress({ showProgress : true })
     if (type === "delete") {
       dataFetch(
         `/api/experimental/filter/${id}`,
-        {
-          credentials: "include",
-          method: "DELETE",
-        },
+        { credentials : "include",
+          method : "DELETE", },
         () => {
           console.log("FilterFile API", `/api/experimental/filter/${id}`);
-          updateProgress({ showProgress: false });
+          updateProgress({ showProgress : false });
           fetchFilters(page, pageSize, search, sortOrder);
           resetSelectedRowData()()
         },
@@ -233,14 +214,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     if (type === "upload") {
       dataFetch(
         `/api/experimental/filter`,
-        {
-          credentials: "include",
-          method: "POST",
-          body: JSON.stringify({ filter_data: { filter_file: data }, save: true }),
-        },
+        { credentials : "include",
+          method : "POST",
+          body : JSON.stringify({ filter_data : { filter_file : data }, save : true }), },
         () => {
           console.log("FilterFile API", `/api/experimental/filter`);
-          updateProgress({ showProgress: false });
+          updateProgress({ showProgress : false });
           fetchFilters(page, pageSize, search, sortOrder);
         },
         // handleError
@@ -258,9 +237,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
       handleSubmit(
-        event.target.result, 
-        "", 
-        file?.name || "meshery_" + Math.floor(Math.random() * 100), 
+        event.target.result,
+        "",
+        file?.name || "meshery_" + Math.floor(Math.random() * 100),
         "upload",
       );
     });
@@ -268,14 +247,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   const columns = [
-    {
-      name: "name",
-      label: "Filter Name",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+    { name : "name",
+      label : "Filter Name",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -284,16 +262,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             </TableCell>
           );
         },
-      },
-    },
-    {
-      name: "created_at",
-      label: "Upload Timestamp",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+      }, },
+    { name : "created_at",
+      label : "Upload Timestamp",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -302,19 +278,17 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(value) {
+        customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      },
-    },
-    {
-      name: "updated_at",
-      label: "Update Timestamp",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+      }, },
+    { name : "updated_at",
+      label : "Update Timestamp",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -323,48 +297,45 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(value) {
+        customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      },
-    },
-    {
-      name: "Actions",
-      options: {
-        filter: false,
-        sort: false,
-        searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
+      }, },
+    { name : "Actions",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(_, tableMeta) {
+        customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex]
           return (
             <>
               <IconButton>
                 <EditIcon
-                  title="Config"  
+                  title="Config"
                   aria-label="config"
                   color="inherit"
                   onClick={() => setSelectedRowData(filters[tableMeta.rowIndex])}/>
               </IconButton>
-              <IconButton>               
+              <IconButton>
                 <PlayArrowIcon
-                  title="Deploy"  
+                  title="Deploy"
                   aria-label="deploy"
                   color="inherit"
                   onClick={() => handleDeploy(rowData.filter_file)} //deploy endpoint to be called here
                 />
               </IconButton>
-            </>  
+            </>
           );
         },
-      },
-    },
+      }, },
   ];
 
   columns.forEach((column, idx) => {
@@ -421,9 +392,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     serverSide: true,
     // selection: true,
     count,
-    rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 25],
-    fixedHeader: true,
+    rowsPerPage : pageSize,
+    rowsPerPageOptions : [10, 20, 25],
+    fixedHeader : true,
     page,
     print: false,
     download: false,
@@ -457,7 +428,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchFilters(page, pageSize, tableState.searchText !== null ? tableState.searchText : "", sortOrder);
+              fetchFilters(page, pageSize, tableState.searchText !== null
+                ? tableState.searchText
+                : "", sortOrder);
             }
           }, 500);
           break;
@@ -495,14 +468,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return {
-    user: state.get("user").toObject(),
-  };
+  return { user : state.get("user").toObject(), };
 };
 
 // @ts-ignore

@@ -55,6 +55,9 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if res.StatusCode != http.StatusOK {
+			return errors.New("Server returned with status code: " + fmt.Sprint(res.StatusCode) + "\n" + "Response: " + string(body))
+		}
 		err = json.Unmarshal(body, &response)
 
 		if err != nil {
