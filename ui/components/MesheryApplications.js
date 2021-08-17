@@ -379,7 +379,7 @@ function MesheryApplications({
 
       subtitle : "Are you sure you want to delete this application?",
 
-      options : ["YES", "NO"],
+      options : ["yes", "no"],
 
     })
     if (response === "NO") return
