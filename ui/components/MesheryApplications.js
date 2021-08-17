@@ -405,7 +405,7 @@ function MesheryApplications({
         });
         fetchApplications(page, pageSize, search, sortOrder);
       },
-      handleError("Failed To Delete Application")
+      handleError("Failed to delete application")
     );
   }
 
