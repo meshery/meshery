@@ -17,7 +17,9 @@ import {
   AccordionDetails,
   CardContent,
   Card,
-  CardActions
+  CardActions,
+  AppBar,
+  Toolbar
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -42,6 +44,7 @@ import jsYaml from "js-yaml";
 import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import PascalCaseToKebab from "../utils/PascalCaseToKebab";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const styles = (theme) => ({
   grid: {
@@ -58,12 +61,18 @@ const styles = (theme) => ({
   }
 });
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   codeMirror: {
     '& .CodeMirror': {
       minHeight: "300px",
-      height: '70vh',
+      height: '60vh',
     }
+  },
+  backButton: {
+    marginRight: theme.spacing(2),
+  },
+  appBar: {
+    marginBottom: "16px"
   }
 }))
 
@@ -538,6 +547,7 @@ function PatternForm({ pattern, onSubmit, show }) {
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
   const [yaml, setYaml] = useState("");
   const [expanded, setExpanded] = useState([]);
+  const classes = useStyles();
 
   function getPatternJson() {
     const patternString = pattern.pattern_file;
@@ -672,6 +682,16 @@ function PatternForm({ pattern, onSubmit, show }) {
 
   return (
     <>
+      <AppBar position="static" className={classes.appBar} elevation={0}>
+        <Toolbar>
+          <IconButton edge="start" className={classes.backButton} color="inherit"  onClick={() => show(false)}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6" className={classes.title}>
+            Edit Pattern Configuration
+          </Typography>
+        </Toolbar>
+      </AppBar>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           {schemaSet
