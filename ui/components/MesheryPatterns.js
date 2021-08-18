@@ -578,11 +578,6 @@ function PatternForm({ pattern, onSubmit, show }) {
     return sets;
   }
 
-  /**
-  }
-
-  /**
-   */
   async function getJSONSchemaSets() {
     const wtSets = await fetchWorkloadAndTraitsSchema();
 
@@ -622,7 +617,7 @@ function PatternForm({ pattern, onSubmit, show }) {
   const handleSubmit = (cfg, patternName) => {
     console.log("submitted", { cfg, patternName })
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] }, "PREVIEW");
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
     handleExpansion(patternName)
@@ -631,7 +626,7 @@ function PatternForm({ pattern, onSubmit, show }) {
   const handleChangeData = (cfg, patternName) => {
     console.log("Ran Changed", { cfg, patternName })
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] }, "PREVIEW");
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
   }
@@ -642,17 +637,12 @@ function PatternForm({ pattern, onSubmit, show }) {
     setSchemaSet(newCfg);
   }
 
-  const handleDeploy = (cfg, action) => {
+  const handleDeploy = (cfg) => {
     const deployConfig = {};
     deployConfig.name = "Deployed Config";
     deployConfig.services = cfg;
     const deployConfigYaml = jsYaml.dump(deployConfig);
-    if (action === "PREVIEW") {
-      setYaml(deployConfigYaml);
-    } else {
-      onSubmit(deployConfigYaml, "", deployConfig.name, "upload");
-      show(false);
-    }
+    setYaml(deployConfigYaml);
   }
 
   const handleExpansion = (item) => {
@@ -663,6 +653,11 @@ function PatternForm({ pattern, onSubmit, show }) {
       expandedItems.push(item);
     }
     setExpanded(expandedItems);
+  }
+
+  function handleSubmitFinalPattern(yaml, id, name, action) {
+    onSubmit(yaml, id, name, action);
+    show(false);
   }
 
   const ns = "default";
@@ -771,13 +766,13 @@ function PatternForm({ pattern, onSubmit, show }) {
               }}
               onChange={(_, data, val) => setYaml(val)}
             />
-            <CustomButton title="Save Pattern" onClick={() => handleDeploy("SAVE")} />
+            <CustomButton title="Save Pattern" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, "upload")} />
             <CardActions style={{ justifyContent: "flex-end" }}>
               <Tooltip title="Update Pattern">
                 <IconButton
                   aria-label="Update"
                   color="primary"
-                  onClick={() => onSubmit(yaml, pattern.id, pattern.name, "update")}
+                  onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "update")}
                 >
                   <SaveIcon />
                 </IconButton>
@@ -786,7 +781,7 @@ function PatternForm({ pattern, onSubmit, show }) {
                 <IconButton
                   aria-label="Delete"
                   color="primary"
-                  onClick={() => onSubmit(yaml, pattern.id, pattern.name, "delete")}
+                  onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
                 >
                   <DeleteIcon />
                 </IconButton>
