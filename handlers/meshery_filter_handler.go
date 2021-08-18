@@ -18,7 +18,7 @@ type MesheryFilterRequestBody struct {
 	FilterData *models.MesheryFilter `json:"filter_data,omitempty"`
 }
 
-// swagger:route GET /api/experimental/filter/file/{id} FiltersAPI idGetFilterFiles
+// swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFiles
 // Handle GET request for filter file with given id
 //
 // Returns the Meshery Filter file saved by the current user with the given id
@@ -44,7 +44,7 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route GET /api/experimental/filter FiltersAPI idGetFilterFile
+// swagger:route GET /api/filter FiltersAPI idGetFilterFile
 // Handle GET request for all filters
 //
 // Returns all the Meshery Filters saved by the current user
@@ -52,7 +52,7 @@ func (h *Handler) GetMesheryFilterFileHandler(
 // 	200: mesheryFiltersResponseWrapper
 //
 // FilterFileRequestHandler will handle requests of both type GET and POST
-// on the route /api/experimental/filter
+// on the route /api/filter
 func (h *Handler) FilterFileRequestHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -71,7 +71,7 @@ func (h *Handler) FilterFileRequestHandler(
 	}
 }
 
-// swagger:route POST /api/experimental/filter FiltersAPI idPostFilterFile
+// swagger:route POST /api/filter FiltersAPI idPostFilterFile
 // Handle POST requests for Meshery Filters
 //
 // Used to save/update a Meshery Filter
@@ -177,7 +177,7 @@ func (h *Handler) GetMesheryFiltersHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route DELETE /api/experimental/filter/{id} FiltersAPI idDeleteMesheryFilter
+// swagger:route DELETE /api/filter/{id} FiltersAPI idDeleteMesheryFilter
 // Handle Delete for a Meshery Filter
 //
 // Deletes a meshery filter with ID: id
@@ -204,7 +204,7 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route GET /api/experimental/filter/{id} FiltersAPI idGetMesheryFilter
+// swagger:route GET /api/filter/{id} FiltersAPI idGetMesheryFilter
 // Handle GET request for a Meshery Filter
 //
 // Fetches the Meshery Filter with the given id
