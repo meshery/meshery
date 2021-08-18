@@ -194,7 +194,7 @@ class MeshConfigComponent extends React.Component {
       operatorVersion: "N/A",
       meshSyncInstalled: false,
       meshSyncVersion: "N/A",
-      NATSInstalled: false,
+      NATSState: "UNKNOWN",
       NATSVersion: "N/A",
 
       operatorSwitch: false,
@@ -258,7 +258,6 @@ class MeshConfigComponent extends React.Component {
   }
 
   setOperatorState = (res) => {
-    console.log("incoming change")
     const self = this;
     if (res.operator?.error) {
       self.handleError("Operator could not be reached")(res.operator?.error?.description);
@@ -269,9 +268,9 @@ class MeshConfigComponent extends React.Component {
     if (res.operator?.status === "ENABLED") {
       self.setState({operatorProcessing: false})
       res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status == "CONNECTED") {
+        if (controller.name === "broker") {
           self.setState({
-            NATSInstalled: true,
+            NATSState: controller.status,
             NATSVersion: controller.version,
           });
         } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
@@ -299,7 +298,7 @@ class MeshConfigComponent extends React.Component {
 
     self.setState({
       operatorInstalled: false,
-      NATSInstalled: false,
+      NATSState: "UNKNOWN",
       meshSyncInstalled: false,
       operatorSwitch: false,
       operatorVersion: "N/A",
@@ -723,7 +722,7 @@ handleNATSClick = () => {
       operatorVersion,
       meshSyncInstalled,
       meshSyncVersion,
-      NATSInstalled,
+      NATSState,
       NATSVersion,
       operatorSwitch,
     } = this.state;
@@ -831,7 +830,7 @@ handleNATSClick = () => {
                 <List>
                   <ListItem>
                     <Tooltip
-                      title={NATSInstalled ? `Reconnect NATS` : "Not Available"}
+                      title={NATSState === "CONNECTED" ? `Reconnect NATS` : "Not Available"}
                       aria-label="nats"
                     >
                       <Chip
@@ -872,7 +871,7 @@ handleNATSClick = () => {
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="NATS State" secondary={NATSInstalled ? "Active" : "Disabled"} />
+                  <ListItemText primary="NATS State" secondary={NATSState} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="NATS Version" secondary={NATSVersion} />
