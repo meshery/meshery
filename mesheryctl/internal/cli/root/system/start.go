@@ -317,26 +317,13 @@ func start() error {
 			return err
 		}
 
-		err = utils.CreateManifestsFolder()
+		channel, version, err := utils.GetChannelAndVersion(currCtx)
 		if err != nil {
 			return err
 		}
 
-		version := currCtx.GetVersion()
-		channel := currCtx.GetChannel()
-		if version == "latest" {
-			if channel == "edge" {
-				version = "master"
-			} else {
-				version, err = utils.GetLatestStableReleaseTag()
-				if err != nil {
-					return err
-				}
-			}
-		}
-
 		// fetch the manifest files corresponding to the version specified
-		manifests, err := utils.FetchManifests(version)
+		manifests, err := utils.FetchManifests(currCtx)
 
 		if err != nil {
 			return err
@@ -516,8 +503,7 @@ func start() error {
 
 	err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 	if err != nil {
-		log.Info("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
-		return err
+		log.Warn("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 	}
 
 	return nil

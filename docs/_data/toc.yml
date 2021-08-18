@@ -69,7 +69,7 @@
       url: functionality/pattern-management
     - title: Performance Management
       url: functionality/performance-management
-    - title: Service Mesh Interface (SMI)
+    - title: Service Mesh Interface (SMI) Conformance
       url: functionality/service-mesh-interface
 - title: 🦾 Service Meshes
   url: service-meshes
@@ -103,6 +103,8 @@
   links:
     - title: Deploying Sample Applications
       url: guides/sample-apps
+    - title: Running SMI Conformance Tests
+      url: guides/smi-conformance
     - title: Integrating Prometheus and Grafana
       url: guides/meshery-metrics
     - title: Troubleshooting Guide

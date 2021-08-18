@@ -138,4 +138,4 @@ Deployed. Endpoint(s) available at: http://localhost:8000/catalog
 
 ## Related Reading
 
-- [`mesheryctl pattern`](/reference/mesheryctl/#service-mesh-pattern-configuration-and-management)
+- [`mesheryctl pattern`]({{ site.baseurl }}/reference/mesheryctl/pattern)

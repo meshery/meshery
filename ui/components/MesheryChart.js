@@ -5,15 +5,11 @@ import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
 } from '../lib/chartjs-formatter';
 
-import bb, {areaStep, line} from 'billboard.js'
+import bb, { areaStep, line } from 'billboard.js'
 
-const styles = (theme) => ({
-  title: {
-    textAlign: 'center',
-    fontSize: theme.spacing(1.75),
-    marginBottom: theme.spacing(1)
-  },
-});
+const styles = (theme) => ({ title : { textAlign : 'center',
+  fontSize : theme.spacing(1.75),
+  marginBottom : theme.spacing(1) }, });
 
 class MesheryChart extends React.Component {
   constructor(props) {
@@ -48,8 +44,12 @@ class MesheryChart extends React.Component {
             const yAxis = [ds.label];
             const xAxis = [`x${ind + 1}`];
             xAxisTracker[ds.label] = `x${ind + 1}`;
-            yAxisTracker[ds.yAxisID] = `y${ind > 0 ? ind + 1 : ''}`;
-            axes[ds.label] = `y${ind > 0 ? ind + 1 : ''}`;
+            yAxisTracker[ds.yAxisID] = `y${ind > 0
+              ? ind + 1
+              : ''}`;
+            axes[ds.label] = `y${ind > 0
+              ? ind + 1
+              : ''}`;
 
             ds.data.forEach((d) => {
               // if(ind === 0){
@@ -70,24 +70,16 @@ class MesheryChart extends React.Component {
 
         if (chartData.options.scales.xAxes) {
           chartData.options.scales.xAxes.forEach((ya) => {
-            axis.x = {
-              show: true,
-              label: {
-                text: ya.scaleLabel.labelString,
-                position: 'outer-middle',
-              },
-            };
+            axis.x = { show : true,
+              label : { text : ya.scaleLabel.labelString,
+                position : 'outer-middle', }, };
           });
         }
         if (chartData.options.scales.yAxes) {
           chartData.options.scales.yAxes.forEach((ya) => {
-            axis[yAxisTracker[ya.id]] = {
-              show: true,
-              label: {
-                text: ya.scaleLabel.labelString,
-                position: 'outer-middle',
-              },
-            };
+            axis[yAxisTracker[ya.id]] = { show : true,
+              label : { text : ya.scaleLabel.labelString,
+                position : 'outer-middle', }, };
           });
         }
 
@@ -98,10 +90,8 @@ class MesheryChart extends React.Component {
           // position: "start"
           let reTrack = 0;
           const percentiles = chartData.percentiles.map(({ Percentile, Value }) => {
-            const re = {
-              value: (Value * 1000).toFixed(2),
-              text: `p${Percentile}`,
-            };
+            const re = { value : (Value * 1000).toFixed(2),
+              text : `p${Percentile}`, };
             switch (reTrack % 3) {
               case 0:
               // re.position
@@ -119,9 +109,7 @@ class MesheryChart extends React.Component {
             return re;
           });
 
-          grid.x = {
-            lines: percentiles,
-          };
+          grid.x = { lines : percentiles, };
         }
 
         const chartConfig = {
@@ -131,13 +119,13 @@ class MesheryChart extends React.Component {
           // title: {
           //   text: chartData.options.title.text.join('\n'),
           // },
-          bindto: self.chartRef,
-          type: line(),
-          data: {
+          bindto : self.chartRef,
+          type : line(),
+          data : {
             // x: 'x',
-            xs: xAxisTracker,
+            xs : xAxisTracker,
             // xFormat: self.bbTimeFormat,
-            columns: [...xAxes, ...yAxes],
+            columns : [...xAxes, ...yAxes],
             colors,
             axes,
             types,
@@ -147,34 +135,20 @@ class MesheryChart extends React.Component {
           axis,
 
           grid,
-          legend: {
-            show: true,
-          },
-          point: {
-            r: 0,
-            focus: {
-              expand: {
-                r: 5,
-              },
-            },
-          },
-          tooltip: {
-            show: true,
-          },
+          legend : { show : true, },
+          point : { r : 0,
+            focus : { expand : { r : 5, }, }, },
+          tooltip : { show : true, },
         };
         if (!self.props.hideTitle) {
           self.titleRef.innerText = chartData.options.title.text.join('\n');
         }
         self.chart = bb.generate(chartConfig);
       } else {
-        self.chart = bb.generate({
-          type: line(),
-          data: {
-            columns: [
-            ],
-          },
-          bindto: self.chartRef,
-        });
+        self.chart = bb.generate({ type : line(),
+          data : { columns : [
+          ], },
+          bindto : self.chartRef, });
       }
     }
   }
@@ -220,12 +194,12 @@ class MesheryChart extends React.Component {
       // if(chartData.options.scales.xAxes){
       // chartData.options.scales.xAxes.forEach((ya) => {
       axis.x = {
-        show: true,
-        label: {
+        show : true,
+        label : {
           // text: ya.scaleLabel.labelString,
           // position: 'outer-middle',
         },
-        type: 'category',
+        type : 'category',
         categories,
       };
 
@@ -237,14 +211,10 @@ class MesheryChart extends React.Component {
           } else {
             lab = 'y';
           }
-          axis[lab] = {
-            show: true,
-            min: 0,
-            label: {
-              text: ya.scaleLabel.labelString,
-              position: 'outer-middle',
-            },
-          };
+          axis[lab] = { show : true,
+            min : 0,
+            label : { text : ya.scaleLabel.labelString,
+              position : 'outer-middle', }, };
         });
       }
 
@@ -263,12 +233,12 @@ class MesheryChart extends React.Component {
           // title: {
           //   text: chartData.options.title.text.join('\n'),
           // },
-          bindto: self.chartRef,
-          data: {
+          bindto : self.chartRef,
+          data : {
             // x: 'x',
             // xs: xAxisTracker,
             // xFormat: self.bbTimeFormat,
-            columns: [...xAxes, ...yAxes],
+            columns : [...xAxes, ...yAxes],
             colors,
             axes,
             // types,
@@ -283,8 +253,7 @@ class MesheryChart extends React.Component {
           //   onzoomend: self.updateDateRange(),
           // },
           // grid: grid,
-          legend: {
-            show: true,
+          legend : { show : true,
             // position: 'inset',
             // inset: {
             //   // anchor: 'bottom-left',
@@ -295,21 +264,13 @@ class MesheryChart extends React.Component {
             //   y: -5,
             //   step: 1,
             // },
-            position: 'right',
-          },
+            position : 'right', },
           // point: {
           //   show: false
           // },
-          point: {
-            r: 0,
-            focus: {
-              expand: {
-                r: 5,
-              },
-            },
-          },
-          tooltip: {
-            show: true,
+          point : { r : 0,
+            focus : { expand : { r : 5, }, }, },
+          tooltip : { show : true,
             // linked: !inDialog,
             // format: {
             //   title: function(x) {
@@ -378,7 +339,11 @@ class MesheryChart extends React.Component {
     }
     const self = this;
     if (typeof chartData === 'undefined') {
-      const tmpData = (typeof this.props.data !== 'undefined') ? (this.props.data.length == 1 ? this.props.data[0] : {}) : {};
+      const tmpData = (typeof this.props.data !== 'undefined')
+        ? (this.props.data.length == 1
+          ? this.props.data[0]
+          : {})
+        : {};
       chartData = this.singleChart(tmpData);
     }
     const { classes } = this.props;

@@ -12,40 +12,20 @@ import dataFetch from '../lib/data-fetch';
 
 
 const promStyles = (theme) => ({
-  root: {
-    padding: theme.spacing(5),
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  button: {
-    marginTop: theme.spacing(3),
-  },
-  margin: {
-    margin: theme.spacing(1),
-  },
-  chartTitle: {
-    textAlign: 'center',
-  },
-  icon: {
-    width: theme.spacing(2.5),
-  },
-  alignRight: {
-    textAlign: 'right',
-    marginBottom: theme.spacing(2),
-  },
-  formControl: {
-    marginTop: theme.spacing(2),
-    minWidth: window.innerWidth * 0.25,
-  },
-  panelChips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  panelChip: {
-    margin: theme.spacing(0.25),
-  },
+  root : { padding : theme.spacing(5), },
+  buttons : { display : 'flex',
+    justifyContent : 'flex-end', },
+  button : { marginTop : theme.spacing(3), },
+  margin : { margin : theme.spacing(1), },
+  chartTitle : { textAlign : 'center', },
+  icon : { width : theme.spacing(2.5), },
+  alignRight : { textAlign : 'right',
+    marginBottom : theme.spacing(2), },
+  formControl : { marginTop : theme.spacing(2),
+    minWidth : window.innerWidth * 0.25, },
+  panelChips : { display : 'flex',
+    flexWrap : 'wrap', },
+  panelChip : { margin : theme.spacing(0.25), },
 });
 
 const dummyBoard = `
@@ -85,15 +65,15 @@ class PrometheusSelectionComponent extends Component {
     super(props);
 
     this.state = {
-      grafanaBoard: dummyBoard,
-      grafanaBoardError: false,
-      grafanaBoardObject: {},
-      templateVars: [],
-      templateVarOptions: [], // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
+      grafanaBoard : dummyBoard,
+      grafanaBoardError : false,
+      grafanaBoardObject : {},
+      templateVars : [],
+      templateVarOptions : [], // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
 
-      panels: [],
-      selectedPanels: [],
-      selectedTemplateVars: [], // will contain the selected val at the respective index: [v1, v3]
+      panels : [],
+      selectedPanels : [],
+      selectedTemplateVars : [], // will contain the selected val at the respective index: [v1, v3]
     };
   }
 
@@ -113,13 +93,15 @@ class PrometheusSelectionComponent extends Component {
         } else if (name.startsWith('template_var_')) {
           this.setSelectedTemplateVar(parseInt(name.replace('template_var_', '')), event.target.value);
         } else {
-          this.setState({ [name]: event.target.value });
+          this.setState({ [name] : event.target.value });
         }
       };
 
       getSelectedTemplateVar = (ind) => {
         const { selectedTemplateVars } = this.state;
-        const retVal = typeof selectedTemplateVars[ind] !== 'undefined' ? selectedTemplateVars[ind] : undefined;
+        const retVal = typeof selectedTemplateVars[ind] !== 'undefined'
+          ? selectedTemplateVars[ind]
+          : undefined;
         return retVal;
       }
 
@@ -137,26 +119,26 @@ class PrometheusSelectionComponent extends Component {
 
 
       boardChange = (newVal) => {
-        this.props.updateProgress({ showProgress: true });
+        this.props.updateProgress({ showProgress : true });
         const self = this;
         dataFetch('/api/telemetry/metrics/board_import', {
-          credentials: 'same-origin',
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: newVal,
+          credentials : 'same-origin',
+          method : 'POST',
+          credentials : 'include',
+          headers : { 'Content-Type' : 'application/json', },
+          body : newVal,
         }, (result) => {
-          this.props.updateProgress({ showProgress: false });
+          this.props.updateProgress({ showProgress : false });
           if (typeof result !== 'undefined') {
             this.setState({
-              grafanaBoardObject: result,
-              panels: result.panels,
-              selectedPanels: result.panels.map((panel) => panel.id), // selecting all panels by default
-              templateVars: result.template_vars && result.template_vars.length > 0 ? result.template_vars : [],
-              templateVarOptions: [],
-              selectedTemplateVars: [],
+              grafanaBoardObject : result,
+              panels : result.panels,
+              selectedPanels : result.panels.map((panel) => panel.id), // selecting all panels by default
+              templateVars : result.template_vars && result.template_vars.length > 0
+                ? result.template_vars
+                : [],
+              templateVarOptions : [],
+              selectedTemplateVars : [],
             });
             if (result.template_vars && result.template_vars.length > 0) {
               this.queryTemplateVars(0, result.template_vars, [], []);
@@ -197,13 +179,11 @@ class PrometheusSelectionComponent extends Component {
             sd.setDate(sd.getDate() - 1);
             queryURL += `&start=${Math.floor(sd.getTime() / 1000)}&end=${Math.floor(ed.getTime() / 1000)}`; // accounts for the last 24hrs
           }
-          this.props.updateProgress({ showProgress: true });
+          this.props.updateProgress({ showProgress : true });
           const self = this;
-          dataFetch(queryURL, {
-            credentials: 'same-origin',
-            credentials: 'include',
-          }, (result) => {
-            this.props.updateProgress({ showProgress: false });
+          dataFetch(queryURL, { credentials : 'same-origin',
+            credentials : 'include', }, (result) => {
+            this.props.updateProgress({ showProgress : false });
             if (typeof result !== 'undefined') {
               let tmpVarOpts = [];
               // result.data check if it is an array or object
@@ -262,7 +242,8 @@ class PrometheusSelectionComponent extends Component {
       boardConfig.board = grafanaBoardObject;
       boardConfig.panels = panels.filter(({ id }) => selectedPanels.indexOf(id) > -1);
       boardConfig.templateVars = templateVars.map(({ name }, index) => (typeof selectedTemplateVars[index] !== 'undefined'
-        ? `${name}=${selectedTemplateVars[index]}` : ''));
+        ? `${name}=${selectedTemplateVars[index]}`
+        : ''));
       this.props.addSelectedBoardPanelConfig(boardConfig);
     }
 
@@ -301,22 +282,22 @@ class PrometheusSelectionComponent extends Component {
                     }}
                     value={grafanaBoard}
                     options={{
-                      theme: 'material',
-                      lineNumbers: true,
-                      lineWrapping: true,
-                      gutters: ['CodeMirror-lint-markers'],
-                      lint: true,
-                      mode: 'application/json',
+                      theme : 'material',
+                      lineNumbers : true,
+                      lineWrapping : true,
+                      gutters : ['CodeMirror-lint-markers'],
+                      lint : true,
+                      mode : 'application/json',
                     }}
                     onBeforeChange={(editor, data, value) => {
                       self.setState({
-                        grafanaBoard: value,
-                        grafanaBoardObject: {},
-                        panels: [],
-                        selectedPanels: [],
-                        templateVars: [],
-                        templateVarOptions: [],
-                        selectedTemplateVars: [],
+                        grafanaBoard : value,
+                        grafanaBoardObject : {},
+                        panels : [],
+                        selectedPanels : [],
+                        templateVars : [],
+                        templateVarOptions : [],
+                        selectedTemplateVars : [],
                       });
                       if (typeof self.boardTimeout !== 'undefined') {
                         clearTimeout(self.boardTimeout);
@@ -324,9 +305,9 @@ class PrometheusSelectionComponent extends Component {
                       self.boardTimeout = setTimeout(() => {
                         console.log(`lint error count: ${self.cmEditor.state.lint.marked.length}`);
                         if (value !== '' && self.cmEditor.state.lint.marked.length === 0) {
-                          self.setState({ grafanaBoardError: false });
+                          self.setState({ grafanaBoardError : false });
                         } else {
-                          self.setState({ grafanaBoardError: true });
+                          self.setState({ grafanaBoardError : true });
                           return;
                         }
                         self.boardChange(value);
@@ -365,7 +346,7 @@ class PrometheusSelectionComponent extends Component {
                   })}
 
                 {panels.length === 0 && (
-                  <Grid item xs={12} style={{ textAlign: 'center' }}>
+                  <Grid item xs={12} style={{ textAlign : 'center' }}>
                   Please load a valid Grafana board json to be able to view the panels.
                   </Grid>
                 )}
@@ -382,9 +363,8 @@ class PrometheusSelectionComponent extends Component {
                       margin="normal"
                       variant="outlined"
                       onChange={this.handleChange('selectedPanels')}
-                      SelectProps={{
-                        multiple: true,
-                        renderValue: (selected) => (
+                      SelectProps={{ multiple : true,
+                        renderValue : (selected) => (
                           <div className={classes.panelChips}>
                             {selected.map((value) => {
                               let selVal = '';
@@ -400,8 +380,7 @@ class PrometheusSelectionComponent extends Component {
                               );
                             })}
                           </div>
-                        ),
-                      }}
+                        ), }}
                     >
                       {panels.map((panel) => (
                         <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>{panel.title}</MenuItem>
@@ -432,17 +411,15 @@ class PrometheusSelectionComponent extends Component {
 }
 
 PrometheusSelectionComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-  prometheusURL: PropTypes.string.isRequired,
-  handlePrometheusClick: PropTypes.func.isRequired,
-  handlePrometheusChipDelete: PropTypes.func.isRequired,
-  addSelectedBoardPanelConfig: PropTypes.func.isRequired,
-  handleError: PropTypes.func.isRequired,
+  classes : PropTypes.object.isRequired,
+  prometheusURL : PropTypes.string.isRequired,
+  handlePrometheusClick : PropTypes.func.isRequired,
+  handlePrometheusChipDelete : PropTypes.func.isRequired,
+  addSelectedBoardPanelConfig : PropTypes.func.isRequired,
+  handleError : PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 const mapStateToProps = () => ({});
 
 export default withStyles(promStyles)(connect(

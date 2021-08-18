@@ -10,15 +10,15 @@ import { NoSsr } from "@material-ui/core";
 const ConnectionWizard = (props) => {
 
   useEffect(() => {
-    props.updatepagepath({ path: getPath() });
-    props.updatepagetitle({ title: "Connection Wizard" });
-  },[]) 
-    
+    props.updatepagepath({ path : getPath() });
+    props.updatepagetitle({ title : "Connection Wizard" });
+  },[])
+
   return (
     <NoSsr>
       <Head>
 
-        {/** 
+        {/**
         * CDN's for slick-carousel
         */}
 
@@ -41,10 +41,8 @@ const ConnectionWizard = (props) => {
   )
 }
 
-const mapDispatchToProps = dispatch => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-  updatepagetitle: bindActionCreators(updatepagetitle, dispatch)
-})
+const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch),
+  updatepagetitle : bindActionCreators(updatepagetitle, dispatch) })
 
 export default connect(
   null,
