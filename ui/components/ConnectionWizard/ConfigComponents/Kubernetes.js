@@ -9,19 +9,21 @@ import {
 import BackupIcon from "@material-ui/icons/Backup";
 import { withSnackbar } from "notistack";
 import { useState } from "react";
-import { fetchContexts, submitConfig} from "../helpers/kubernetesHelpers";
+import { fetchContexts, submitConfig } from "../helpers/kubernetesHelpers";
 
-const KubernetesConfig = ({enqueueSnackbar, closeSnackbar, updateK8SConfig, updateProgress}) => {
+const KubernetesConfig = ({
+  enqueueSnackbar, closeSnackbar, updateK8SConfig, updateProgress
+}) => {
 
   const [state, setState] = useState({
-    contextNameForForm: "",
-    contextsFromFile: [],
-    k8sfile: "",
-    k8sfileError: false,
-    k8sfileElement: null,
-    k8sfileElementVal: "",
-    inClusterConfigForm: false,
-    contextNameForForm: ""
+    contextNameForForm : "",
+    contextsFromFile : [],
+    k8sfile : "",
+    k8sfileError : false,
+    k8sfileElement : null,
+    k8sfileElementVal : "",
+    inClusterConfigForm : false,
+    contextNameForForm : ""
   })
 
 
@@ -29,29 +31,31 @@ const KubernetesConfig = ({enqueueSnackbar, closeSnackbar, updateK8SConfig, upda
     return (event) => {
       if (name === "k8sfile") {
         if (event.target.value !== "") {
-          setState({...state, k8sfileError: false});
+          setState({ ...state, k8sfileError : false });
         }
 
         let fileInput = document.querySelector("#k8sfile");
-        let k8sfile = fileInput.files[0] 
+        let k8sfile = fileInput.files[0]
 
         fetchContexts(updateProgress, k8sfile )
           .then(res => {
-            setState({...state, contextsFromFile: res.result, k8sfile, contextNameForForm: res.currentContextName})
-            if(res.result.length === 1)
+            setState({
+              ...state, contextsFromFile : res.result, k8sfile, contextNameForForm : res.currentContextName
+            })
+            if (res.result.length === 1)
               submitConfig(enqueueSnackbar, updateProgress, updateK8SConfig, () => null, res.currentContextName, k8sfile);
           })
           .catch(err => alert(err))
       }
-      if( name === "contextNameChange"){
+      if ( name === "contextNameChange"){
         submitConfig(enqueueSnackbar, updateProgress, updateK8SConfig, action, event.target.value, k8sfile);
       }
     };
   };
 
-  return(
+  return (
     <>
-      <Grid item xs={12} style={{marginBottom: "0.6rem"}}>
+      <Grid item xs={12} style={{ marginBottom : "0.6rem" }}>
         {/*<TextField
           id="k8sfileLabelText"
           name="k8sfileLabelText"
@@ -89,7 +93,7 @@ const KubernetesConfig = ({enqueueSnackbar, closeSnackbar, updateK8SConfig, upda
                     </MenuItem>
                   ))}
         </TextField> */}
-        
+
         <FormGroup>
           <input
             id="k8sfile"
@@ -109,14 +113,12 @@ const KubernetesConfig = ({enqueueSnackbar, closeSnackbar, updateK8SConfig, upda
             value={""}
             onClick={() => document.querySelector("#k8sfile").click()}
             margin="normal"
-            InputProps={{
-              readOnly: true,
-              endAdornment: (
+            InputProps={{ readOnly : true,
+              endAdornment : (
                 <InputAdornment position="end">
                   <BackupIcon />
                 </InputAdornment>
-              ),
-            }}
+              ), }}
           />
         </FormGroup>
         <TextField
@@ -135,7 +137,9 @@ const KubernetesConfig = ({enqueueSnackbar, closeSnackbar, updateK8SConfig, upda
                       state.contextsFromFile.map((ct) => (
                         <MenuItem key={`ct_---_${ct.contextName}`} value={ct.contextName}>
                           {ct.contextName}
-                          {ct.currentContext ? " (default)" : ""}
+                          {ct.currentContext
+                            ? " (default)"
+                            : ""}
                         </MenuItem>
                       ))}
         </TextField>

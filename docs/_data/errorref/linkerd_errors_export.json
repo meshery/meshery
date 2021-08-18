@@ -119,6 +119,60 @@
         "short_description": "Invalid operation",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1014": {
+        "name": "ErrInvalidOAMComponentTypeCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid OAM component name: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrLinkerdCoreComponentFailCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error in linkerd core component",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1016": {
+        "name": "ErrProcessOAMCode",
+        "code": "1016",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error performing OAM operations",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1017": {
+        "name": "ErrParseLinkerdCoreComponentCode",
+        "code": "1017",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "linkerd core component manifest parsing failing",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1018": {
+        "name": "ErrParseOAMComponentCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "Error occured while prasing application component in the OAM request made",
+        "short_description": "error parsing the component",
+        "probable_cause": "Invalid OAM component passed in OAM request",
+        "suggested_remediation": "Check if your request has vaild OAM components"
+      },
+      "1019": {
+        "name": "ErrParseOAMConfigCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "Error occured while prasing component config in the OAM request made",
+        "short_description": "error parsing the configuration",
+        "probable_cause": "Invalid OAM config passed in OAM request",
+        "suggested_remediation": "Check if your request has vaild OAM config"
       }
     }
   }

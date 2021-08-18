@@ -10,22 +10,24 @@ import { useEffect, useState } from "react";
 import { isKubernetesConnected, pingKubernetes } from "../helpers/kubernetesHelpers";
 import KubernetesDataPanel from "../DataPanels/Kubernetes";
 
-const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress, setStepStatus }) => {
+const KubernetesScreen = ({
+  k8sconfig, updateK8SConfig, updateProgress, setStepStatus
+}) => {
   const [clusterInformation, setClusterInformation] = useState({
-    isClusterConfigured: k8sconfig.clusterConfigured,
-    inClusterConfig: k8sconfig.inClusterConfig,
-    configuredServer: k8sconfig.configuredServer,
-    kubernetesPingStatus: false,
-    contextName: k8sconfig.contextName,
-    serverVersion: k8sconfig.server_version,
-    k8sfile: k8sconfig.k8sfile,
+    isClusterConfigured : k8sconfig.clusterConfigured,
+    inClusterConfig : k8sconfig.inClusterConfig,
+    configuredServer : k8sconfig.configuredServer,
+    kubernetesPingStatus : false,
+    contextName : k8sconfig.contextName,
+    serverVersion : k8sconfig.server_version,
+    k8sfile : k8sconfig.k8sfile,
   });
 
   const [isConnected, setIsConnected] = useState(false);
 
 
   useEffect(() => {
-    setStepStatus(prev => ({...prev, kubernetes: isConnected}))
+    setStepStatus(prev => ({ ...prev, kubernetes : isConnected }))
   },[isConnected])
 
   useEffect(() => {
@@ -33,12 +35,14 @@ const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress, setStepS
       (res) => {
         setClusterInformation({
           ...clusterInformation,
-          isClusterConfigured: k8sconfig.clusterConfigured,
-          inClusterConfig: k8sconfig.inClusterConfig,
-          kubernetesPingStatus: res !== undefined ? true : false,
-          contextName: k8sconfig.contextName,
-          serverVersion: k8sconfig.server_version,
-          configuredServer: k8sconfig.configuredServer,
+          isClusterConfigured : k8sconfig.clusterConfigured,
+          inClusterConfig : k8sconfig.inClusterConfig,
+          kubernetesPingStatus : res !== undefined
+            ? true
+            : false,
+          contextName : k8sconfig.contextName,
+          serverVersion : k8sconfig.server_version,
+          configuredServer : k8sconfig.configuredServer,
         });
       },
       (err) => console.log(err)
@@ -52,21 +56,21 @@ const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress, setStepS
   }, [clusterInformation]);
 
   const kubeserviceInfo = {
-    name: "Kubernetes",
-    logoComponent: KubernetesIcon,
-    configComp: <KubernetesConfig updateProgress={updateProgress} updateK8SConfig={updateK8SConfig} />,
+    name : "Kubernetes",
+    logoComponent : KubernetesIcon,
+    configComp : <KubernetesConfig updateProgress={updateProgress} updateK8SConfig={updateK8SConfig} />,
     clusterInformation,
   };
 
-  const showDataPanel = () => 
+  const showDataPanel = () =>
     isKubernetesConnected(clusterInformation.isClusterConfigured, clusterInformation.kubernetesPingStatus);
 
   return (
     <Grid item xs={12} container justify="center" alignItems="flex-start">
-      <Grid item lg={6} sm={12} md={12} container justify="center" alignItems="flex-start" style={{paddingLeft: "1rem"}}>
+      <Grid item lg={6} sm={12} md={12} container justify="center" alignItems="flex-start" style={{ paddingLeft : "1rem" }}>
         <ServiceCard serviceInfo={kubeserviceInfo} isConnected={isConnected} />
       </Grid>
-      <Grid item lg={6} sm={12} md={12} container justify="center" style={{paddingRight: "1rem"}}>
+      <Grid item lg={6} sm={12} md={12} container justify="center" style={{ paddingRight : "1rem" }}>
         {showDataPanel() && (
           <KubernetesDataPanel
             clusterInformation={kubeserviceInfo.clusterInformation}
@@ -81,14 +85,10 @@ const KubernetesScreen = ({ k8sconfig, updateK8SConfig, updateProgress, setStepS
 
 const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig").toJS();
-  return {
-    k8sconfig,
-  };
+  return { k8sconfig, };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-  updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+  updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch), });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSnackbar(KubernetesScreen));

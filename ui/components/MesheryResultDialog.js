@@ -8,30 +8,22 @@ import MesheryChartDialog from './MesheryChartDialog';
 
 
 const defaultToolbarSelectStyles = {
-  iconButton: {
-    marginRight: '24px',
-    top: '50%',
-    display: 'inline-block',
-    position: 'relative',
+  iconButton : {
+    marginRight : '24px',
+    top : '50%',
+    display : 'inline-block',
+    position : 'relative',
   },
-  icon: {
-    color: '#000',
-  },
-  inverseIcon: {
-    transform: 'rotate(90deg)',
-  },
-  row: {
-    borderBottom: 'none',
-  },
+  icon : { color : '#000', },
+  inverseIcon : { transform : 'rotate(90deg)', },
+  row : { borderBottom : 'none', },
 };
 
 class MesheryResultDialog extends React.Component {
-    state = {
-      dialogOpen: true,
-    }
+    state = { dialogOpen : true, }
 
     handleDialogClose = () => {
-      this.setState({ dialogOpen: false });
+      this.setState({ dialogOpen : false });
       this.props.close();
     }
 
@@ -95,7 +87,9 @@ class MesheryResultDialog extends React.Component {
         <NoSsr>
           <Typography className={classes.title} variant="h6" id="tableTitle">
             Service Mesh
-            {meshes.length > 1 ? 'es' : ''}
+            {meshes.length > 1
+              ? 'es'
+              : ''}
           </Typography>
           <Table className={classes.table} size="small" aria-label="Service Mesh">
             <TableBody>
@@ -111,7 +105,8 @@ class MesheryResultDialog extends React.Component {
                           </strong>
                         </TableCell>
                       </TableRow>
-                    ) : ''}
+                    )
+                    : ''}
                   {this.createTableRow('Name', mesh)}
                   {this.createTableRow('Version', version)}
                 </NoSsr>
@@ -179,7 +174,9 @@ class MesheryResultDialog extends React.Component {
       return (
         <NoSsr>
           <MesheryChartDialog
-            title={`Details${rowData ? ` - ${rowData.name}` : ''}`}
+            title={`Details${rowData
+              ? ` - ${rowData.name}`
+              : ''}`}
             handleClose={this.handleDialogClose}
             open={this.state.dialogOpen}
             content={(
@@ -215,8 +212,7 @@ class MesheryResultDialog extends React.Component {
 
 MesheryResultDialog.propTypes = {
   // classes: PropTypes.object.isRequired,
-  rowData: PropTypes.object.isRequired,
-  close: PropTypes.func.isRequired,
-};
+  rowData : PropTypes.object.isRequired,
+  close : PropTypes.func.isRequired, };
 
-export default withStyles(defaultToolbarSelectStyles, { name: 'MesheryResultDialog' })(MesheryResultDialog);
+export default withStyles(defaultToolbarSelectStyles, { name : 'MesheryResultDialog' })(MesheryResultDialog);

@@ -25,6 +25,7 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
 import UploadIcon from "@material-ui/icons/Publish";
+import PromptComponent from "./PromptComponent";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
@@ -45,32 +46,32 @@ import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const styles = (theme) => ({
-  grid: {
-    padding: theme.spacing(2),
+  grid : {
+    padding : theme.spacing(2),
   },
-  tableHeader: {
-    fontWeight: "bolder",
-    fontSize: 18,
+  tableHeader : {
+    fontWeight : "bolder",
+    fontSize : 18,
   },
-  muiRow: {
-    '& .MuiTableRow-root': {
-      cursor: 'pointer'
+  muiRow : {
+    '& .MuiTableRow-root' : {
+      cursor : 'pointer'
     }
   }
 });
 
 const useStyles = makeStyles((theme) => ({
-  codeMirror: {
-    '& .CodeMirror': {
-      minHeight: "300px",
-      height: '60vh',
+  codeMirror : {
+    '& .CodeMirror' : {
+      minHeight : "300px",
+      height : '60vh',
     }
   },
-  backButton: {
-    marginRight: theme.spacing(2),
+  backButton : {
+    marginRight : theme.spacing(2),
   },
-  appBar: {
-    marginBottom: "16px"
+  appBar : {
+    marginBottom : "16px"
   }
 }))
 
@@ -102,12 +103,12 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
         <CodeMirror
           value={pattern.pattern_file}
           options={{
-            theme: "material",
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ["CodeMirror-lint-markers"],
-            lint: true,
-            mode: "text/x-yaml",
+            theme : "material",
+            lineNumbers : true,
+            lineWrapping : true,
+            gutters : ["CodeMirror-lint-markers"],
+            lint : true,
+            mode : "text/x-yaml",
           }}
           onChange={(_, data, val) => setYaml(val)}
         />
@@ -137,39 +138,41 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
   );
 }
 
-function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes }) {
+function MesheryPatterns({
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
+}) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const modalRef = useRef(null);
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const useStyle = useStyles();
 
   const DEPLOY_URL = '/api/pattern/deploy';
 
   const ACTION_TYPES = {
-    FETCH_PATTERNS: {
-      name: "FETCH_PATTERNS",
-      error_msg: "Failed to fetch patterns"
+    FETCH_PATTERNS : {
+      name : "FETCH_PATTERNS",
+      error_msg : "Failed to fetch patterns"
     },
-    UPDATE_PATTERN: {
-      name: "UPDATE_PATTERN",
-      error_msg: "Failed to update pattern file"
+    UPDATE_PATTERN : {
+      name : "UPDATE_PATTERN",
+      error_msg : "Failed to update pattern file"
     },
-    DELETE_PATTERN: {
-      name: "DELETE_PATTERN",
-      error_msg: "Failed to delete pattern file"
+    DELETE_PATTERN : {
+      name : "DELETE_PATTERN",
+      error_msg : "Failed to delete pattern file"
     },
-    DEPLOY_PATTERN: {
-      name: "DEPLOY_PATTERN",
-      error_msg: "Failed to deploy pattern file"
+    DEPLOY_PATTERN : {
+      name : "DEPLOY_PATTERN",
+      error_msg : "Failed to deploy pattern file"
     },
-    UPLOAD_PATTERN: {
-      name: "UPLOAD_PATTERN",
-      error_msg: "Failed to upload pattern file"
+    UPLOAD_PATTERN : {
+      name : "UPLOAD_PATTERN",
+      error_msg : "Failed to upload pattern file"
     },
   }
 
@@ -191,26 +194,26 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
    */
 
   const handleDeploy = (pattern_file) => {
-    updateProgress({ showProgress: true })
+    updateProgress({ showProgress : true })
     dataFetch(
       DEPLOY_URL,
       {
-        credentials: "include",
-        method: "POST",
-        body: pattern_file,
+        credentials : "include",
+        method : "POST",
+        body : pattern_file,
       }, () => {
         console.log("PatternFile Deploy API", `/api/pattern/deploy`);
-        updateProgress({ showProgress: false });
+        updateProgress({ showProgress : false });
         enqueueSnackbar("Pattern Successfully Deployed!", {
-          variant: "success",
-          action: function Action(key) {
+          variant : "success",
+          action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             );
           },
-          autoHideDuration: 2000,
+          autoHideDuration : 2000,
         });
       },
       handleError(ACTION_TYPES.DEPLOY_PATTERN),
@@ -225,16 +228,14 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
       sortOrder
     )}`;
 
-    updateProgress({ showProgress: true });
+    updateProgress({ showProgress : true });
 
     dataFetch(
       `/api/pattern${query}`,
-      {
-        credentials: "include",
-      },
+      { credentials : "include", },
       (result) => {
         console.log("PatternFile API", `/api/pattern${query}`);
-        updateProgress({ showProgress: false });
+        updateProgress({ showProgress : false });
         if (result) {
           setPatterns(result.patterns || []);
           setPage(result.page || 0);
@@ -247,18 +248,18 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   }
 
   const handleError = (action) => (error) => {
-    updateProgress({ showProgress: false });
+    updateProgress({ showProgress : false });
 
     enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant: "error",
-      action: function Action(key) {
+      variant : "error",
+      action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
         );
       },
-      autoHideDuration: 8000,
+      autoHideDuration : 8000,
     });
   }
 
@@ -269,17 +270,17 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({ showProgress: true })
+    updateProgress({ showProgress : true })
     if (type === "delete") {
       dataFetch(
         `/api/pattern/${id}`,
         {
-          credentials: "include",
-          method: "DELETE",
+          credentials : "include",
+          method : "DELETE",
         },
         () => {
           console.log("PatternFile API", `/api/pattern/${id}`);
-          updateProgress({ showProgress: false });
+          updateProgress({ showProgress : false });
           fetchPatterns(page, pageSize, search, sortOrder);
           resetSelectedRowData()()
         },
@@ -291,13 +292,13 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
       dataFetch(
         `/api/pattern`,
         {
-          credentials: "include",
-          method: "POST",
-          body: JSON.stringify({ pattern_data: { id, pattern_file: data }, save: true }),
+          credentials : "include",
+          method : "POST",
+          body : JSON.stringify({ pattern_data : { id, pattern_file : data }, save : true }),
         },
         () => {
           console.log("PatternFile API", `/api/pattern`);
-          updateProgress({ showProgress: false });
+          updateProgress({ showProgress : false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPDATE_PATTERN)
@@ -308,13 +309,13 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
       dataFetch(
         `/api/pattern`,
         {
-          credentials: "include",
-          method: "POST",
-          body: JSON.stringify({ pattern_data: { pattern_file: data }, save: true }),
+          credentials : "include",
+          method : "POST",
+          body : JSON.stringify({ pattern_data : { pattern_file : data }, save : true }),
         },
         () => {
           console.log("PatternFile API", `/api/pattern`);
-          updateProgress({ showProgress: false });
+          updateProgress({ showProgress : false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPLOAD_PATTERN)
@@ -342,13 +343,13 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
   const columns = [
     {
-      name: "name",
-      label: "Pattern Name",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+      name : "name",
+      label : "Pattern Name",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -360,13 +361,13 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
       },
     },
     {
-      name: "created_at",
-      label: "Upload Timestamp",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+      name : "created_at",
+      label : "Upload Timestamp",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -375,19 +376,19 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(value) {
+        customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
       },
     },
     {
-      name: "updated_at",
-      label: "Update Timestamp",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+      name : "updated_at",
+      label : "Update Timestamp",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -396,29 +397,29 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(value) {
+        customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
       },
     },
     {
-      name: "Actions",
-      options: {
-        filter: false,
-        sort: false,
-        searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
+      name : "Actions",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(_, tableMeta) {
+        customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
-              <IconButton onClick={() => setShowForm({ pattern: patterns[tableMeta.rowIndex], show: true })}>
+              <IconButton onClick={() => setShowForm({ pattern : patterns[tableMeta.rowIndex], show : true })}>
                 <ListAltIcon />
               </IconButton>
               <IconButton>
@@ -442,27 +443,71 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     }
   });
 
-  const options = {
-    filter: false,
-    sort: !(user && user.user_id === "meshery"),
-    search: !(user && user.user_id === "meshery"),
-    filterType: "textField",
-    responsive: "scrollFullHeight",
-    resizableColumns: true,
-    serverSide: true,
-    selection: true,
-    count,
-    rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 25],
-    fixedHeader: true,
-    page,
-    print: false,
-    download: false,
-    customToolbar: CustomToolbar(uploadHandler),
-    onCellClick: (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
+  async function deletePattern(id) {
+    let response = await modalRef.current.show({
+      title : "Delete Pattern?",
 
-    onTableChange: (action, tableState) => {
-      const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
+      subtitle : "Are you sure you want to delete this pattern?",
+
+      options : ["yes", "no"],
+
+    })
+    if (response === "NO") return
+    dataFetch(
+      `/api/pattern/${id}`,
+      {
+        method : "DELETE",
+        credentials : "include",
+      },
+      () => {
+        updateProgress({ showProgress : false });
+
+        enqueueSnackbar("Pattern deleted.", {
+          variant : "success",
+          autoHideDuration : 2000,
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+        });
+        fetchPatterns(page, pageSize, search, sortOrder);
+      },
+      handleError("Failed to delete pattern")
+    );
+  }
+
+  const options = {
+    filter : false,
+    sort : !(user && user.user_id === "meshery"),
+    search : !(user && user.user_id === "meshery"),
+    filterType : "textField",
+    responsive : "scrollFullHeight",
+    resizableColumns : true,
+    serverSide : true,
+    selectableRows : true,
+    // selection : true,
+    count,
+    rowsPerPage : pageSize,
+    rowsPerPageOptions : [10, 20, 25],
+    fixedHeader : true,
+    page,
+    print : false,
+    download : false,
+    customToolbar : CustomToolbar(uploadHandler),
+    onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
+
+    onRowsDelete : function handleDelete(row) {
+      const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
+      fid.forEach(fid => deletePattern(fid))
+    },
+
+    onTableChange : (action, tableState) => {
+      const sortInfo = tableState.announceText
+        ? tableState.announceText.split(" : ")
+        : [];
       let order = "";
       if (tableState.activeColumn) {
         order = `${columns[tableState.activeColumn].name} desc`;
@@ -481,7 +526,9 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchPatterns(page, pageSize, tableState.searchText !== null ? tableState.searchText : "", sortOrder);
+              fetchPatterns(page, pageSize, tableState.searchText !== null
+                ? tableState.searchText
+                : "", sortOrder);
             }
           }, 500);
           break;
@@ -519,18 +566,15 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           className={classes.muiRow}
         />
       }
+      <PromptComponent ref={modalRef} />
     </NoSsr>
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return {
-    user: state.get("user").toObject(),
-  };
+  return { user : state.get("user").toObject(), };
 };
 
 // @ts-ignore
@@ -571,7 +615,7 @@ function PatternForm({ pattern, onSubmit, show }) {
   function createWorkloadTraitSets(workloads, traits) {
     const sets = [];
     workloads?.forEach((w) => {
-      const item = { workload: w, traits: [] };
+      const item = { workload : w, traits : [] };
 
       item.traits = traits?.filter((t) => {
         if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
@@ -591,23 +635,23 @@ function PatternForm({ pattern, onSubmit, show }) {
 
     return wtSets?.map((s) => {
       const item = {
-        workload: JSON.parse(s.workload?.oam_ref_schema),
-        traits: s.traits?.map((t) => {
+        workload : JSON.parse(s.workload?.oam_ref_schema),
+        traits : s.traits?.map((t) => {
           const trait = JSON.parse(t?.oam_ref_schema);
 
           // Attaching internal metadata to the json schema
           trait._internal = {
-            patternAttributeName: t?.oam_definition.metadata.name,
+            patternAttributeName : t?.oam_definition.metadata.name,
           };
 
           return trait;
         }),
-        type: s.workload?.metadata?.["ui.meshery.io/category"],
+        type : s.workload?.metadata?.["ui.meshery.io/category"],
       };
 
       // Attaching internal metadata to the json schema
       item.workload._internal = {
-        patternAttributeName: s.workload?.oam_definition.metadata.name,
+        patternAttributeName : s.workload?.oam_definition.metadata.name,
       };
 
       return item;
@@ -625,18 +669,18 @@ function PatternForm({ pattern, onSubmit, show }) {
   const handleSubmit = (cfg, patternName) => {
     console.log("submitted", { cfg, patternName })
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
     if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
     handleExpansion(patternName)
   }
 
   const handleChangeData = (cfg, patternName) => {
     console.log("Ran Changed", { cfg, patternName })
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
     if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
   }
 
   const handleDelete = (cfg, patternName) => {
@@ -701,7 +745,7 @@ function PatternForm({ pattern, onSubmit, show }) {
           <Accordion
             expanded={expanded.includes('addon')}
             onChange={() => handleExpansion('addon')}
-            style={{ width: '100%' }}
+            style={{ width : '100%' }}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="h6">
@@ -734,8 +778,8 @@ function PatternForm({ pattern, onSubmit, show }) {
       variant="contained"
       onClick={onClick}
       style={{
-        marginTop: "16px",
-        padding: "10px"
+        marginTop : "16px",
+        padding : "10px"
       }}
     >
       {title}
@@ -748,7 +792,7 @@ function PatternForm({ pattern, onSubmit, show }) {
     return <Accordion
       expanded={expanded.includes(patternName)}
       onChange={() => handleExpansion(patternName)}
-      style={{ width: '100%' }}
+      style={{ width : '100%' }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography variant="h6">
@@ -762,8 +806,8 @@ function PatternForm({ pattern, onSubmit, show }) {
   }
 
   function CodeEditor() {
-    const cardStyle = { marginBottom: "16px", position: "sticky", float: "right", minWidth: "100%" };
-    const cardcontentStyle = { margin: "16px" };
+    const cardStyle = { marginBottom : "16px", position : "sticky", float : "right", minWidth : "100%" };
+    const cardcontentStyle = { margin : "16px" };
 
     const classes = useStyles();
 
@@ -775,17 +819,17 @@ function PatternForm({ pattern, onSubmit, show }) {
               value={yaml}
               className={classes.codeMirror}
               options={{
-                theme: "material",
-                lineNumbers: true,
-                lineWrapping: true,
-                gutters: ["CodeMirror-lint-markers"],
-                lint: true,
-                mode: "text/x-yaml",
+                theme : "material",
+                lineNumbers : true,
+                lineWrapping : true,
+                gutters : ["CodeMirror-lint-markers"],
+                lint : true,
+                mode : "text/x-yaml",
               }}
               onChange={(_, data, val) => setYaml(val)}
             />
             <CustomButton title="Save Pattern" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, "upload")} />
-            <CardActions style={{ justifyContent: "flex-end" }}>
+            <CardActions style={{ justifyContent : "flex-end" }}>
               <Tooltip title="Update Pattern">
                 <IconButton
                   aria-label="Update"

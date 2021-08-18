@@ -18,6 +18,13 @@ type MesheryFilterRequestBody struct {
 	FilterData *models.MesheryFilter `json:"filter_data,omitempty"`
 }
 
+// swagger:route GET /api/experimental/filter/file/{id} FiltersAPI idGetFilterFiles
+// Handle GET request for filter file with given id
+//
+// Returns the Meshery Filter file saved by the current user with the given id
+// responses:
+// 	200: mesheryFilterResponseWrapper
+//
 func (h *Handler) GetMesheryFilterFileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -37,6 +44,13 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route GET /api/experimental/filter FiltersAPI idGetFilterFile
+// Handle GET request for all filters
+//
+// Returns all the Meshery Filters saved by the current user
+// responses:
+// 	200: mesheryFiltersResponseWrapper
+//
 // FilterFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/experimental/filter
 func (h *Handler) FilterFileRequestHandler(
@@ -57,6 +71,13 @@ func (h *Handler) FilterFileRequestHandler(
 	}
 }
 
+// swagger:route POST /api/experimental/filter FiltersAPI idPostFilterFile
+// Handle POST requests for Meshery Filters
+//
+// Used to save/update a Meshery Filter
+// responses:
+// 	200: mesheryFilterResponseWrapper
+//
 func (h *Handler) handleFilterPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -156,6 +177,13 @@ func (h *Handler) GetMesheryFiltersHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route DELETE /api/experimental/filter/{id} FiltersAPI idDeleteMesheryFilter
+// Handle Delete for a Meshery Filter
+//
+// Deletes a meshery filter with ID: id
+// responses:
+// 	200: noContentWrapper
+//
 // DeleteMesheryFilterHandler deletes a filter with the given id
 func (h *Handler) DeleteMesheryFilterHandler(
 	rw http.ResponseWriter,
@@ -175,6 +203,13 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
+
+// swagger:route GET /api/experimental/filter/{id} FiltersAPI idGetMesheryFilter
+// Handle GET request for a Meshery Filter
+//
+// Fetches the Meshery Filter with the given id
+// responses:
+// 	200: mesheryFilterResponseWrapper
 
 // GetMesheryFilterHandler fetched the filter with the given id
 func (h *Handler) GetMesheryFilterHandler(
