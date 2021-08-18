@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-## Architectural Components and Their Languages
+## Components, their Purpose, and Languages
 
 Meshery and its components are written using the following languages and technologies.
 
