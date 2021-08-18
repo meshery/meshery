@@ -45,11 +45,11 @@ func (h *Handler) GetMesheryFilterFileHandler(
 }
 
 // swagger:route GET /api/experimental/filter FiltersAPI idGetFilterFile
-// Handle GET request for filters
+// Handle GET request for all filters
 //
-// Returns the Meshery Filter saved by the current user
+// Returns all the Meshery Filters saved by the current user
 // responses:
-// 	200: mesheryFilterResponseWrapper
+// 	200: mesheryFiltersResponseWrapper
 //
 // FilterFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/experimental/filter
