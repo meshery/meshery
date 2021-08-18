@@ -154,24 +154,24 @@ class GrafanaComponent extends Component {
   componentDidMount() {
     const self = this;
 
-    if(self.props.isMeshConfigured)
+    if (self.props.isMeshConfigured)
       dataFetch(
         "/api/telemetry/metrics/grafana/config",
         {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+          method : "GET",
+          credentials : "include",
+          headers : {
+            "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8",
           },
         },
         (result) => {
-          self.props.updateProgress({ showProgress: false });
+          self.props.updateProgress({ showProgress : false });
           if (!(typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="")) {
             let selector = {
-              serviceMesh: "ALL_MESH",
+              serviceMesh : "ALL_MESH",
             };
             fetchAvailableAddons(selector).subscribe({
-              next: (res) => {
+              next : (res) => {
               res?.addonsState?.forEach((addon) => {
                 if (addon.name === "grafana" && self.state.grafanaURL === "") {
                   self.setState({ grafanaURL : "http://" + addon.endpoint })
@@ -181,7 +181,7 @@ class GrafanaComponent extends Component {
                 }
               });
               },
-              error: (err) => console.log("error registering Grafana: " + err),
+              error : (err) => console.log("error registering Grafana: " + err),
             });
           }
         },

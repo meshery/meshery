@@ -9,13 +9,13 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { IconButton } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "100%",
-    marginBottom: "1rem"
+  root : {
+    width : "100%",
+    marginBottom : "1rem"
   },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular
+  heading : {
+    fontSize : theme.typography.pxToRem(15),
+    fontWeight : theme.typography.fontWeightRegular
   }
 }));
 
