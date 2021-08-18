@@ -68,13 +68,14 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		endpoint, err := model.SubscribeToBroker(provider, r.Config.KubeClient, r.brokerChannel, r.BrokerConn)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
-			r.operatorChannel <- &model.OperatorStatus{
-				Status: model.StatusDisabled,
-				Error: &model.Error{
-					Code:        "",
-					Description: err.Error(),
-				},
-			}
+			// r.operatorChannel <- &model.OperatorStatus{
+			// 	Status: model.StatusDisabled,
+			// 	Error: &model.Error{
+			// 		Code:        "",
+			// 		Description: err.Error(),
+			// 	},
+			// }
+			r.operatorSyncChannel <- false
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
