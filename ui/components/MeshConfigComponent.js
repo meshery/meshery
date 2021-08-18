@@ -194,7 +194,7 @@ class MeshConfigComponent extends React.Component {
       operatorVersion: "N/A",
       meshSyncInstalled: false,
       meshSyncVersion: "N/A",
-      NATSInstalled: false,
+      NATSState: "UNKNOWN",
       NATSVersion: "N/A",
 
       operatorSwitch: false,
@@ -271,7 +271,7 @@ class MeshConfigComponent extends React.Component {
       res.operator?.controllers?.forEach((controller) => {
         if (controller.name === "broker" && controller.status == "CONNECTED") {
           self.setState({
-            NATSInstalled: true,
+            NATSState: controller.status,
             NATSVersion: controller.version,
           });
         } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
@@ -299,7 +299,7 @@ class MeshConfigComponent extends React.Component {
 
     self.setState({
       operatorInstalled: false,
-      NATSInstalled: false,
+      NATSState: "UNKNOWN",
       meshSyncInstalled: false,
       operatorSwitch: false,
       operatorVersion: "N/A",
@@ -560,9 +560,9 @@ handleNATSClick = () => {
         this.props.enqueueSnackbar(`Reconnecting to NATS...`, {
           variant: "info",
           action: (key) => (
-            <iconbutton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-              <closeicon />
-            </iconbutton>
+            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
           ),
           autohideduration: 7000,
         })
@@ -572,9 +572,9 @@ handleNATSClick = () => {
         this.props.enqueueSnackbar(`Successfully connected to NATS`, {
           variant: "success",
           action: (key) => (
-            <iconbutton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-              <closeicon />
-            </iconbutton>
+            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
           ),
           autohideduration: 7000,
         })
@@ -597,9 +597,9 @@ handleNATSClick = () => {
           this.props.enqueueSnackbar(`Meshsync deployment in progress`, {
             variant: "info",
             action: (key) => (
-              <iconbutton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-                <closeicon />
-              </iconbutton>
+              <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
             ),
             autohideduration: 7000,
           })
@@ -723,7 +723,7 @@ handleNATSClick = () => {
       operatorVersion,
       meshSyncInstalled,
       meshSyncVersion,
-      NATSInstalled,
+      NATSState,
       NATSVersion,
       operatorSwitch,
     } = this.state;
@@ -807,42 +807,46 @@ handleNATSClick = () => {
                 </ListItem>
               </List>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <List>
-                <ListItem>
-                  <Tooltip
-                    title={meshSyncInstalled ? `Redeploy MeshSync` : "Not Available"}
-                    aria-label="meshSync"
-                  >
-                    <Chip
-                      label={"MeshSync"}
-                      onClick={self.handleMeshSyncClick}
-                      icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
-                      variant="outlined"
-                      data-cy="chipMeshSync"
-                    />
-                  </Tooltip>
-                </ListItem>
-              </List>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <List>
-                <ListItem>
-                  <Tooltip
-                    title={meshSyncInstalled ? `Reconnect NATS` : "Not Available"}
-                    aria-label="nats"
-                  >
-                    <Chip
-                      label={"NATS"}
-                      onClick={self.handleNATSClick}
-                      icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
-                      variant="outlined"
-                      data-cy="chipNATS"
-                    />
-                  </Tooltip>
-                </ListItem>
-              </List>
-            </Grid>
+            {operatorInstalled && 
+            <>
+              <Grid item xs={12} md={4}>
+                <List>
+                  <ListItem>
+                    <Tooltip
+                      title={meshSyncInstalled ? `Redeploy MeshSync` : "Not Available"}
+                      aria-label="meshSync"
+                    >
+                      <Chip
+                        label={"MeshSync"}
+                        onClick={self.handleMeshSyncClick}
+                        icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+                        variant="outlined"
+                        data-cy="chipMeshSync"
+                      />
+                    </Tooltip>
+                  </ListItem>
+                </List>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <List>
+                  <ListItem>
+                    <Tooltip
+                      title={NATSState === "CONNECTED" ? `Reconnect NATS` : "Not Available"}
+                      aria-label="nats"
+                    >
+                      <Chip
+                        label={"NATS"}
+                        onClick={self.handleNATSClick}
+                        icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+                        variant="outlined"
+                        data-cy="chipNATS"
+                      />
+                    </Tooltip>
+                  </ListItem>
+                </List>
+              </Grid>
+            </>
+            }
           </Grid>
           <Grid container spacing={1}>
             <Grid item xs={12} md={4}>
@@ -868,7 +872,7 @@ handleNATSClick = () => {
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="NATS State" secondary={NATSInstalled ? "Active" : "Disabled"} />
+                  <ListItemText primary="NATS State" secondary={NATSState} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="NATS Version" secondary={NATSVersion} />
