@@ -157,13 +157,13 @@ const styles = {
     verticalAlign : 'top', },
   icon : { fontSize : 20, },
   notifSuccess : { backgroundColor : "rgba(248, 252, 248) !important",
-    color : `${notificationColors.success} !important` },
+    color : `${notificationColors.success} !important`, pointerEvents : "auto !important" },
   notifInfo : { backgroundColor : "rgba(250, 254, 255) !important",
-    color : `${notificationColors.info} !important` },
+    color : `${notificationColors.info} !important`, pointerEvents : "auto !important" },
   notifWarn : { backgroundColor : "rgba(240, 163, 3, 0.04) !important",
-    color : `${notificationColors.warning} !important` },
+    color : `${notificationColors.warning} !important`, pointerEvents : "auto !important" },
   notifError : { backgroundColor : "rgba(255, 250, 250) !important",
-    color : `${notificationColors.error} !important` },
+    color : `${notificationColors.error} !important`, pointerEvents : "auto !important" },
 };
 
 
