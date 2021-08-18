@@ -265,7 +265,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
           ref: "master"
       - name: Check if swagger was modified
         uses: dorny/paths-filter@v2
