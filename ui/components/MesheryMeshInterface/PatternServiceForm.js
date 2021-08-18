@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useEffect } from "react";
+import React from "react";
 import { Tab, Tabs, AppBar, Typography, Box, Card } from "@material-ui/core";
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
@@ -101,15 +101,14 @@ function createPatternFromConfig(config, namespace, partialClean = false) {
  *  onDelete: Function;
  *  namespace: string;
  *  onChange?: Function
+ *  formData?: Record<String, unknown>
  * }} props
  * @returns
  */
-function PatternServiceForm({ schemaSet, onChange, onSubmit, onDelete, namespace }) {
+function PatternServiceForm({ formData, schemaSet, onChange, onSubmit, onDelete, namespace }) {
   const [tab, setTab] = React.useState(0);
-  const [settings, setSettings, getSettingsRefValue] = useStateCB({});
-  const [traits, setTraits, getTraitsRefValue] = useStateCB({});
-
-  console.log(getTraitsRefValue());
+  const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {});
+  const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {});
 
   console.log({ settings, traits })
 
@@ -157,7 +156,6 @@ function PatternServiceForm({ schemaSet, onChange, onSubmit, onDelete, namespace
           formData={settings}
           jsonSchema={schemaSet.workload}
           onChange={(val) => {
-            console.log("rana", val)
             onChange(
               createPatternFromConfig(
                 { [getPatternAttributeName(schemaSet.workload)]: { settings: val, traits } }, namespace, true), "");

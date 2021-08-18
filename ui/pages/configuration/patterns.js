@@ -1,4 +1,4 @@
-import { NoSsr, Paper, withStyles } from "@material-ui/core";
+import { NoSsr, withStyles } from "@material-ui/core";
 import MesheryPatterns from "../../components/MesheryPatterns";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";

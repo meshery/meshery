@@ -19,13 +19,11 @@ function RJSFButton({ handler, text, ...restParams }) {
 }
 
 function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, ...restparams }) {
-  const [data, setData] = React.useState({...formData});
+  const [data, setData] = React.useState({ ...formData });
 
   React.useEffect(() => {
     onChange?.(data);
   }, [data]);
-
-  console.log("form DTata", data)
 
   return (
     <Form

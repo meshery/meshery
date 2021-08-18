@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
 import {
   NoSsr,
   TableCell,
@@ -12,11 +12,9 @@ import {
   Tooltip,
   Grid,
   Typography,
-  Paper,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Collapse,
   CardContent,
   Card,
   CardActions
@@ -43,6 +41,7 @@ import { Button } from "@material-ui/core";
 import jsYaml from "js-yaml";
 import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 import ListAltIcon from '@material-ui/icons/ListAlt';
+import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 
 const styles = (theme) => ({
   grid: {
@@ -52,7 +51,21 @@ const styles = (theme) => ({
     fontWeight: "bolder",
     fontSize: 18,
   },
+  muiRow: {
+    '& .MuiTableRow-root': {
+      cursor: 'pointer'
+    }
+  }
 });
+
+const useStyles = makeStyles(() => ({
+  codeMirror: {
+    '& .CodeMirror': {
+      minHeight: "300px",
+      height: '70vh',
+    }
+  }
+}))
 
 function CustomToolbar(onClick) {
   return function Toolbar() {
@@ -126,6 +139,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const useStyle = useStyles();
 
   const DEPLOY_URL = '/api/pattern/deploy';
 
@@ -397,14 +411,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
-              <IconButton>
-                <EditIcon
-                  title="Config"
-                  aria-label="config"
-                  color="inherit"
-                  onClick={() => setSelectedRowData(patterns[tableMeta.rowIndex])} />
-              </IconButton>
-              <IconButton onClick={() => setShowForm(true)}>
+              <IconButton onClick={() => setShowForm({ pattern: patterns[tableMeta.rowIndex], show: true })}>
                 <ListAltIcon />
               </IconButton>
               <IconButton>
@@ -445,6 +452,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     print: false,
     download: false,
     customToolbar: CustomToolbar(uploadHandler),
+    onCellClick: (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
@@ -488,9 +496,8 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
   return (
     <NoSsr>
-      <PatternForm onSave={handleSubmit} show={setShowForm} />
-      {/* {showForm &&
-        <PatternForm onSave={handleSubmit} show={setShowForm} />}
+      {showForm &&
+        <PatternForm onSubmit={handleSubmit} show={setShowForm} pattern={showForm.pattern} />}
 
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
@@ -502,8 +509,9 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           columns={columns}
           // @ts-ignore
           options={options}
+          className={classes.muiRow}
         />
-      } */}
+      }
     </NoSsr>
   );
 }
@@ -525,14 +533,16 @@ export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(w
 // -------------------------------------------- PATTERNS FORM ---------------------------------------
 // --------------------------------------------------------------------------------------------------
 
-export const SettingContext = React.createContext({});
-export const TraitsContext = React.createContext({});
-
-function PatternForm({ onSave, show }) {
+function PatternForm({ pattern, onSubmit, show }) {
   const [schemaSet, setSchemaSet] = useState();
-  const [deployServiceConfig, setDeployServiceConfig] = useState({});
+  const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
   const [yaml, setYaml] = useState("");
   const [expanded, setExpanded] = useState([]);
+
+  function getPatternJson() {
+    const patternString = pattern.pattern_file;
+    return jsYaml.load(patternString).services;
+  }
 
   async function fetchWorkloadAndTraitsSchema() {
     try {
@@ -569,8 +579,9 @@ function PatternForm({ onSave, show }) {
   }
 
   /**
-   * getJSONSchemaSets
-   * @returns Schema Sets
+  }
+
+  /**
    */
   async function getJSONSchemaSets() {
     const wtSets = await fetchWorkloadAndTraitsSchema();
@@ -600,6 +611,10 @@ function PatternForm({ onSave, show }) {
     });
   }
 
+  function getPatternAttributeName(jsonSchema) {
+    return PascalCaseToKebab(jsonSchema?._internal?.patternAttributeName || "NA");
+  }
+
   function getPatternKey(cfg) {
     return Object.keys(cfg?.services)?.[0] || undefined;
   }
@@ -610,7 +625,7 @@ function PatternForm({ onSave, show }) {
     handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] }, "PREVIEW");
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
-    // handleExpansion(patternName)
+    handleExpansion(patternName)
   }
 
   const handleChangeData = (cfg, patternName) => {
@@ -619,11 +634,12 @@ function PatternForm({ onSave, show }) {
     handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] }, "PREVIEW");
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
-    // handleExpansion(patternName)
   }
 
-  const handleDelete = (cfg) => {
+  const handleDelete = (cfg, patternName) => {
     console.log("deleted", cfg);
+    const newCfg = schemaSet.filter(schema => schema.workload.title !== patternName)
+    setSchemaSet(newCfg);
   }
 
   const handleDeploy = (cfg, action) => {
@@ -632,14 +648,11 @@ function PatternForm({ onSave, show }) {
     deployConfig.services = cfg;
     const deployConfigYaml = jsYaml.dump(deployConfig);
     if (action === "PREVIEW") {
-      console.log("Ran", deployConfigYaml)
       setYaml(deployConfigYaml);
     } else {
-      onSave(deployConfigYaml, "", deployConfig.name, "upload");
+      onSubmit(deployConfigYaml, "", deployConfig.name, "upload");
       show(false);
     }
-
-    console.log(deployConfigYaml);
   }
 
   const handleExpansion = (item) => {
@@ -664,9 +677,6 @@ function PatternForm({ onSave, show }) {
 
   return (
     <>
-      {
-        console.log("schemaSet:::", deployServiceConfig)
-      }
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           {schemaSet
@@ -691,7 +701,7 @@ function PatternForm({ onSave, show }) {
                 .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
                 .map((s) => (
                   <Grid item>
-                    <PatternServiceForm onChange={handleChangeData}  schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
+                    <PatternServiceForm formData={deployServiceConfig[s.workload?.title]} onChange={handleChangeData} schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
                   </Grid>
                 ))}
             </AccordionDetails>
@@ -701,14 +711,6 @@ function PatternForm({ onSave, show }) {
           <CodeEditor />
         </Grid>
       </Grid>
-      {/* 
-      <Collapse in={!!yaml} >
-        <CodeEditor />
-      </Collapse>
-      {!yaml && <CustomButton title="Preview Pattern" onClick={() => handleDeploy("PREVIEW")} />}
-      <Typography variant="caption" style={{ color: "#666666" }}>
-        Forms are converted to deployable yaml and configuration is generated
-      </Typography> */}
     </>
   );
 
@@ -741,7 +743,7 @@ function PatternForm({ onSave, show }) {
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <PatternServiceForm onChange={handleChangeData} schemaSet={schema} onSubmit={(val) => handleSubmit(val, patternName)} onDelete={handleDelete} namespace={ns} />
+        <PatternServiceForm formData={deployServiceConfig[getPatternAttributeName(schema.workload)]} onChange={handleChangeData} schemaSet={schema} onSubmit={(val) => handleSubmit(val, patternName)} onDelete={(val) => handleDelete(val, patternName)} namespace={ns} />
       </AccordionDetails>
     </Accordion>;
   }
@@ -750,15 +752,15 @@ function PatternForm({ onSave, show }) {
     const cardStyle = { marginBottom: "16px", position: "sticky", float: "right", minWidth: "100%" };
     const cardcontentStyle = { margin: "16px" };
 
+    const classes = useStyles();
+
     return (
       <div>
         <Card style={cardStyle}>
           <CardContent style={cardcontentStyle}>
             <CodeMirror
               value={yaml}
-              style={{
-                minHeight: "800px"
-              }}
+              className={classes.codeMirror}
               options={{
                 theme: "material",
                 lineNumbers: true,
@@ -767,7 +769,7 @@ function PatternForm({ onSave, show }) {
                 lint: true,
                 mode: "text/x-yaml",
               }}
-            // onChange={(_, data, val) => setYaml(val)}
+              onChange={(_, data, val) => setYaml(val)}
             />
             <CustomButton title="Save Pattern" onClick={() => handleDeploy("SAVE")} />
             <CardActions style={{ justifyContent: "flex-end" }}>
@@ -775,23 +777,20 @@ function PatternForm({ onSave, show }) {
                 <IconButton
                   aria-label="Update"
                   color="primary"
-                // onClick={() => onSubmit(yaml, pattern.id, pattern.name, "update")}
+                  onClick={() => onSubmit(yaml, pattern.id, pattern.name, "update")}
                 >
                   <SaveIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete PatternsubmitHandler({ settings: getSettingsRefValue(), traits })">
+              <Tooltip title="Delete Pattern">
                 <IconButton
                   aria-label="Delete"
                   color="primary"
-                // onClick={() => onSubmit(yaml, pattern.id, pattern.name, "delete")}
+                  onClick={() => onSubmit(yaml, pattern.id, pattern.name, "delete")}
                 >
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
-              <IconButton style={{ transform: "rotate(180deg)" }} onClick={() => { setYaml("") }}>
-                <ArrowDropDownCircleIcon color="primary" />
-              </IconButton>
             </CardActions>
           </CardContent>
         </Card>
