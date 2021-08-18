@@ -22,7 +22,6 @@ type MesheryFilterRequestBody struct {
 // Handle GET request for filter file with given id
 //
 // Returns the Meshery Filter file saved by the current user with the given id
-// This will return the Meshery Filter file with their details of the given id
 // responses:
 // 	200: mesheryFilterResponseWrapper
 //
@@ -49,7 +48,6 @@ func (h *Handler) GetMesheryFilterFileHandler(
 // Handle GET request for filters
 //
 // Returns the Meshery Filter saved by the current user
-// This will return the Meshery Filter with the details
 // responses:
 // 	200: mesheryFilterResponseWrapper
 //
