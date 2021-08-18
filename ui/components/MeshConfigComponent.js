@@ -18,6 +18,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  CircularProgress,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -197,6 +198,7 @@ class MeshConfigComponent extends React.Component {
       NATSVersion: "N/A",
 
       operatorSwitch: false,
+      operatorProcessing: false,
 
 
       meshSyncStatusEventsSubscription: null,
@@ -256,15 +258,18 @@ class MeshConfigComponent extends React.Component {
   }
 
   setOperatorState = (res) => {
+    console.log("incoming change")
     const self = this;
     if (res.operator?.error) {
       self.handleError("Operator could not be reached")(res.operator?.error?.description);
+      self.setState({operatorProcessing: false})
       return false;
     }
 
     if (res.operator?.status === "ENABLED") {
+      self.setState({operatorProcessing: false})
       res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status == "ENABLED") {
+        if (controller.name === "broker" && controller.status == "CONNECTED") {
           self.setState({
             NATSInstalled: true,
             NATSVersion: controller.version,
@@ -283,6 +288,14 @@ class MeshConfigComponent extends React.Component {
       });
       return true;
     }
+
+    if (res.operator?.status === "DISABLED") self.setState({operatorProcessing: false})
+
+    if(res.operator?.status === "PROCESSING") {
+      console.log("setting to processing")
+      self.setState({operatorProcessing: true})
+    }
+
 
     self.setState({
       operatorInstalled: false,
@@ -547,21 +560,21 @@ handleNATSClick = () => {
         this.props.enqueueSnackbar(`Reconnecting to NATS...`, {
           variant: "info",
           action: (key) => (
-            <iconbutton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-              <closeicon />
-            </iconbutton>
+            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
           ),
           autohideduration: 7000,
         })
       }
       if(res.connectToNats === "CONNECTED") {
         this.props.updateProgress({ showProgress: false });
-        this.props.enqueueSnackbar(`Already connected to NATS`, {
+        this.props.enqueueSnackbar(`Successfully connected to NATS`, {
           variant: "success",
           action: (key) => (
-            <iconbutton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-              <closeicon />
-            </iconbutton>
+            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
           ),
           autohideduration: 7000,
         })
@@ -584,9 +597,9 @@ handleNATSClick = () => {
           this.props.enqueueSnackbar(`Meshsync deployment in progress`, {
             variant: "info",
             action: (key) => (
-              <iconbutton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-                <closeicon />
-              </iconbutton>
+              <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
             ),
             autohideduration: 7000,
           })
@@ -871,12 +884,14 @@ handleNATSClick = () => {
                 <Switch
                   checked={operatorSwitch}
                   onClick={self.handleOperatorSwitch}
+                  disabled={self.state.operatorProcessing}
                   name="OperatorSwitch"
                   color="primary"
                 />
               }
               label="Meshery Operator"
             />
+            {self.state.operatorProcessing && <CircularProgress />}
           </FormGroup>
         </div>
       </React.Fragment>
