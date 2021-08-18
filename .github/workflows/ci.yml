@@ -1,23 +1,23 @@
 name: Meshery
 on:
-  #   push:
-  #     branches:
-  #       - 'master'
-  #     paths-ignore:
-  #       - 'docs/**'
-  #       - 'mesheryctl/**'
+#   push:
+#     branches:
+#       - 'master'
+#     paths-ignore:
+#       - 'docs/**'
+#       - 'mesheryctl/**'
   pull_request:
     branches:
-      - "master"
+      - 'master'
     paths-ignore:
-      - "docs/**"
-      - "mesheryctl/**"
+      - 'docs/**'
+      - 'mesheryctl/**'
   workflow_dispatch:
     inputs:
       logLevel:
-        description: "Log level"
+        description: 'Log level'
         required: true
-        default: "warning"
+        default: 'warning'
 
 jobs:
   golangci:
@@ -45,105 +45,105 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@master
-        with:
-          fetch-depth: 1
-      - name: Setup Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ secrets.GO_VERSION }}
-      - name: Setup Cache
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - run: |
-          GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: meshery
-          path: ./main
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    - run: |
+        GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: meshery
+        path: ./main
   build-ui:
     name: UI build
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@master
-        with:
-          fetch-depth: 1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: ${{ secrets.NODE_VERSION }}
-      - name: Cache node modules
-        id: node-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/cache
-            ~/.cache
-            !~/cache/exclude
-            **/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Install dependencies
-        run: |
-          cd ui
-          npm i
-          cd ..
-          cd provider-ui
-          npm i
-      - name: build meshery-ui
-        run: |
-          make build-meshery-ui
-      - name: build provider-ui
-        run: |
-          make build-provider-ui
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - name: Cache node modules
+      id: node-cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/cache
+          ~/.cache
+          !~/cache/exclude
+          **/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: Install dependencies
+      run: |
+        cd ui
+        npm i
+        cd ..
+        cd provider-ui
+        npm i
+    - name: build meshery-ui
+      run: |
+        make build-meshery-ui
+    - name: build provider-ui
+      run: |
+        make build-provider-ui
   tests-ui:
     needs: [build-ui]
     name: UI integration tests
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v1
-        with:
-          node-version: ${{ secrets.NODE_VERSION }}
-      - name: Cache node modules
-        id: node-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/cache
-            ~/.cache
-            !~/cache/exclude
-            **/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
-      - name: Run tests
-        run: |
-          cd ui
-          npm i
-          npm run ci-test-integration
-          cd ..
-          cd provider-ui
-          npm i
-          npm test
-          cd ..
-      - name: Upload coverage to Codecov (ui)
-        uses: codecov/codecov-action@v1
-        with:
-          files: ./provider-ui/coverage/coverage-summary.json
-          directory: ./provider-ui/coverage/lcov-report
-          flags: integrationtests
-          fail_ci_if_error: true
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - name: Cache node modules
+      id: node-cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/cache
+          ~/.cache
+          !~/cache/exclude
+          **/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+    - name: Run tests
+      run: |
+        cd ui
+        npm i
+        npm run ci-test-integration
+        cd ..
+        cd provider-ui
+        npm i
+        npm test
+        cd ..
+    - name: Upload coverage to Codecov (ui)
+      uses: codecov/codecov-action@v1
+      with:
+        files: ./provider-ui/coverage/coverage-summary.json
+        directory: ./provider-ui/coverage/lcov-report
+        flags: integrationtests
+        fail_ci_if_error: true
   tests-ui-e2e:
     needs: [build-backend, build-ui]
     name: UI end-to-end tests
@@ -233,80 +233,82 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@master
-        with:
-          fetch-depth: 1
-      - name: Docker edge build & tag
-        if: startsWith(github.ref, 'refs/tags/') != true && success()
-        env:
-          RELEASE_CHANNEL: "edge"
-        run: |
-          DOCKER_BUILDKIT=1 docker build --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-          docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
-      - name: Docker edge push
-        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
-        run: |
-          docker push ${{ secrets.IMAGE_NAME }}:edge-latest
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_REF/refs\/tags\//}
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
-      - name: Docker Hub Description
-        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
-        uses: peter-evans/dockerhub-description@v2.0.0
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Docker edge build & tag
+      if: startsWith(github.ref, 'refs/tags/') != true && success()
+      env: 
+        RELEASE_CHANNEL: "edge"
+      run: |
+        DOCKER_BUILDKIT=1 docker build --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+        docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
+    - name: Docker edge push
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      run: |
+        docker push ${{ secrets.IMAGE_NAME }}:edge-latest
+        docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_REF/refs\/tags\//}
+        docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+    - name: Docker Hub Description
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      uses: peter-evans/dockerhub-description@v2.0.0
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
+
   # validate the swagger docs
   swaggerci:
     if: github.repository == 'meshery/meshery'
     name: swagger-docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: "master"
-      - name: Check if swagger was modified
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            modified:
-              - added|modified: 'handlers'
-      - name: Setup go-swagger
-        uses: minchao/setup-go-swagger@v1
-        with:
-          version: v0.26.1
-      - name: swagger-spec
-        run: swagger generate spec -o ./helpers/swagger.yaml --scan-models
-      - name: swagger-docs
-        run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+    - uses: actions/checkout@v2
+      with:
+        ref: "master"
+    - name: Check if swagger was modified
+      uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          modified:
+            - added|modified: 'handlers'
+    - name: Setup go-swagger
+      uses: minchao/setup-go-swagger@v1
+      with:
+        version: v0.26.1
+    - name: swagger-spec
+      run: swagger generate spec -o ./helpers/swagger.yaml --scan-models
+    - name: swagger-docs
+      run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+
   # validate graphQL schema
   garphql_validate:
     name: Validate GraphQL schema
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@master
-        with:
-          fetch-depth: 1
-      - name: Check if schema was modified
-        uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            modified:
-              - added|modified: 'internal/graphql/schema/schema.graphql'
-      - name: Set up Ruby
-        if: steps.filter.outputs.modified == 'true'
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7.1
-          bundler-cache: true
-      - name: graphql-docs
-        if: steps.filter.outputs.modified == 'true'
-        run: |
-          cd docs
-          bundle install
-          bundle exec rake graphql:compile_docs
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Check if schema was modified
+      uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          modified:
+            - added|modified: 'internal/graphql/schema/schema.graphql'
+    - name: Set up Ruby
+      if: steps.filter.outputs.modified == 'true'
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7.1
+        bundler-cache: true
+    - name: graphql-docs
+      if: steps.filter.outputs.modified == 'true'
+      run: |
+        cd docs
+        bundle install
+        bundle exec rake graphql:compile_docs
