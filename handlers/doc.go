@@ -59,7 +59,7 @@ type mesheryPatternResponseWrapper struct {
 type noContentWrapper struct {
 }
 
-// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule idDeleteMesheryApplicationFile idGetMesheryApplication
+// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule idDeleteMesheryApplicationFile idGetMesheryApplication idDeleteMesheryFilter idGetMesheryFilter
 type IDParameterWrapper struct {
 	// id for a specific
 	// in: path
@@ -329,4 +329,18 @@ type mesheryApplicationResponseWrapper struct {
 type mesheryApplicationsResponseWrapper struct {
 	// in: body
 	Body models.ApplicationsAPIResponse
+}
+
+// Returns a single meshery filter
+// swagger:response mesheryFilterResponseWrapper
+type mesheryFilterResponseWrapper struct {
+	// in: body
+	Body models.MesheryFilter
+}
+
+// Returns all meshery filters
+// swagger:response mesheryFiltersResponseWrapper
+type mesheryFiltersResponseWrapper struct {
+	// in: body
+	Body models.FiltersAPIResponse
 }
