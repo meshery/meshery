@@ -170,8 +170,7 @@ swagger-run:swagger-spec
 	swagger serve ./helpers/swagger.yaml
 
 swagger-docs:
-	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
-	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
 
 graphql-docs:
 	cd docs; build-docs; bundle exec rake graphql:compile_docs
