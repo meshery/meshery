@@ -15,58 +15,28 @@ import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 
 const styles = (theme) => ({
-  root: {
-    padding: theme.spacing(5),
-  },
-  buttons: {
-    display: "flex",
-    justifyContent: "flex-end",
-  },
-  button: {
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-  },
-  margin: {
-    margin: theme.spacing(1),
-  },
-  alreadyConfigured: {
-    textAlign: "center",
-    padding: theme.spacing(20),
-  },
-  colorSwitchBase: {
-    color: blue[300],
-    "&$colorChecked": {
-      color: blue[500],
-      "& + $colorBar": {
-        backgroundColor: blue[500],
-      },
-    },
-  },
-  colorBar: {},
-  colorChecked: {},
-  fileLabel: {
-    width: "100%",
-  },
-  fileLabelText: {},
-  inClusterLabel: {
-    paddingRight: theme.spacing(2),
-  },
-  alignCenter: {
-    textAlign: "center",
-  },
-  alignRight: {
-    textAlign: "right",
-    marginBottom: theme.spacing(2),
-  },
-  fileInputStyle: {
-    opacity: "0.01",
-  },
-  icon: {
-    width: theme.spacing(2.5),
-  },
-  istioIcon: {
-    width: theme.spacing(1.5),
-  },
+  root : { padding : theme.spacing(5), },
+  buttons : { display : "flex",
+    justifyContent : "flex-end", },
+  button : { marginTop : theme.spacing(3),
+    marginLeft : theme.spacing(1), },
+  margin : { margin : theme.spacing(1), },
+  alreadyConfigured : { textAlign : "center",
+    padding : theme.spacing(20), },
+  colorSwitchBase : { color : blue[300],
+    "&$colorChecked" : { color : blue[500],
+      "& + $colorBar" : { backgroundColor : blue[500], }, }, },
+  colorBar : {},
+  colorChecked : {},
+  fileLabel : { width : "100%", },
+  fileLabelText : {},
+  inClusterLabel : { paddingRight : theme.spacing(2), },
+  alignCenter : { textAlign : "center", },
+  alignRight : { textAlign : "right",
+    marginBottom : theme.spacing(2), },
+  fileInputStyle : { opacity : "0.01", },
+  icon : { width : theme.spacing(2.5), },
+  istioIcon : { width : theme.spacing(1.5), },
 });
 
 class MeshAdapterConfigComponent extends React.Component {
@@ -75,9 +45,9 @@ class MeshAdapterConfigComponent extends React.Component {
     const { meshAdapters } = props;
     this.state = {
       meshAdapters,
-      availableAdapters: [],
-      ts: new Date(),
-      meshLocationURLError: false,
+      availableAdapters : [],
+      ts : new Date(),
+      meshLocationURLError : false,
     };
   }
 
@@ -85,10 +55,8 @@ class MeshAdapterConfigComponent extends React.Component {
     const { meshAdapters, meshAdaptersts } = props;
     // if(meshAdapters.sort().join(',') !== state.meshAdapters.sort().join(',')){
     if (meshAdaptersts > state.ts) {
-      return {
-        meshAdapters,
-        ts: meshAdaptersts,
-      };
+      return { meshAdapters,
+        ts : meshAdaptersts, };
     }
     return {};
   }
@@ -99,22 +67,18 @@ class MeshAdapterConfigComponent extends React.Component {
 
   fetchAvailableAdapters = () => {
     const self = this;
-    this.props.updateProgress({ showProgress: true });
+    this.props.updateProgress({ showProgress : true });
     dataFetch(
       "/api/system/adapters",
-      {
-        credentials: "same-origin",
-        method: "GET",
-        credentials: "include",
-      },
+      { credentials : "same-origin",
+        method : "GET",
+        credentials : "include", },
       (result) => {
-        this.props.updateProgress({ showProgress: false });
+        this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          const options = result.map((res) => ({
-            value: res.adapter_location,
-            label: res.adapter_location,
-          }));
-          this.setState({ availableAdapters: options });
+          const options = result.map((res) => ({ value : res.adapter_location,
+            label : res.adapter_location, }));
+          this.setState({ availableAdapters : options });
         }
       },
       self.handleError("Unable to fetch available adapters")
@@ -123,9 +87,9 @@ class MeshAdapterConfigComponent extends React.Component {
 
   handleChange = (name) => (event) => {
     if (name === "meshLocationURL" && event.target.value !== "") {
-      this.setState({ meshLocationURLError: false });
+      this.setState({ meshLocationURLError : false });
     }
-    this.setState({ [name]: event.target.value });
+    this.setState({ [name] : event.target.value });
   };
 
   handleMeshLocURLChange = (newValue) => {
@@ -133,7 +97,7 @@ class MeshAdapterConfigComponent extends React.Component {
     // console.log(`action: ${actionMeta.action}`);
     // console.groupEnd();
     if (typeof newValue !== "undefined") {
-      this.setState({ meshLocationURL: newValue, meshLocationURLError: false });
+      this.setState({ meshLocationURL : newValue, meshLocationURLError : false });
     }
   };
 
@@ -141,7 +105,7 @@ class MeshAdapterConfigComponent extends React.Component {
     const { meshLocationURL } = this.state;
 
     if (!meshLocationURL || !meshLocationURL.value || meshLocationURL.value === "") {
-      this.setState({ meshLocationURLError: true });
+      this.setState({ meshLocationURLError : true });
       return;
     }
 
@@ -151,40 +115,38 @@ class MeshAdapterConfigComponent extends React.Component {
   submitConfig = () => {
     const { meshLocationURL } = this.state;
 
-    const data = { meshLocationURL: meshLocationURL.value };
+    const data = { meshLocationURL : meshLocationURL.value };
 
     const params = Object.keys(data)
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join("&");
 
-    this.props.updateProgress({ showProgress: true });
+    this.props.updateProgress({ showProgress : true });
     const self = this;
     dataFetch(
       "/api/system/adapter/manage",
       {
-        credentials: "same-origin",
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        },
-        body: params,
+        credentials : "same-origin",
+        method : "POST",
+        credentials : "include",
+        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
+        body : params,
       },
       (result) => {
-        self.props.updateProgress({ showProgress: false });
+        self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          self.setState({ meshAdapters: result, meshLocationURL: "" });
+          self.setState({ meshAdapters : result, meshLocationURL : "" });
           self.props.enqueueSnackbar("Adapter was successfully configured!", {
-            variant: "success",
-            "data-cy": "adapterSuccessSnackbar",
-            autoHideDuration: 2000,
-            action: (key) => (
+            variant : "success",
+            "data-cy" : "adapterSuccessSnackbar",
+            autoHideDuration : 2000,
+            action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             ),
           });
-          self.props.updateAdaptersInfo({ meshAdapters: result });
+          self.props.updateAdaptersInfo({ meshAdapters : result });
           self.fetchAvailableAdapters();
         }
       },
@@ -194,7 +156,7 @@ class MeshAdapterConfigComponent extends React.Component {
 
   handleDelete = (adapterLoc) => () => {
     // const { meshAdapters } = this.state;
-    this.props.updateProgress({ showProgress: true });
+    this.props.updateProgress({ showProgress : true });
     const self = this;
     dataFetch(
       `/api/system/adapter/manage?adapter=${encodeURIComponent(adapterLoc)}`,
@@ -204,19 +166,17 @@ class MeshAdapterConfigComponent extends React.Component {
         credentials: "include",
       },
       (result) => {
-        this.props.updateProgress({ showProgress: false });
+        this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.setState({ meshAdapters: result });
-          this.props.enqueueSnackbar("Adapter was successfully removed!", {
-            variant: "success",
-            autoHideDuration: 2000,
-            action: (key) => (
+          this.setState({ meshAdapters : result });
+          this.props.enqueueSnackbar("Adapter was successfully removed!", { variant : "success",
+            autoHideDuration : 2000,
+            action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ),
-          });
-          this.props.updateAdaptersInfo({ meshAdapters: result });
+            ), });
+          this.props.updateAdaptersInfo({ meshAdapters : result });
         }
       },
       self.handleError("Adapter was not removed due to an error")
@@ -225,26 +185,22 @@ class MeshAdapterConfigComponent extends React.Component {
 
   handleClick = (adapterLoc) => () => {
     // const { meshAdapters } = this.state;
-    this.props.updateProgress({ showProgress: true });
+    this.props.updateProgress({ showProgress : true });
     const self = this;
     dataFetch(
       `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
-        credentials: "same-origin",
-        credentials: "include",
-      },
+      { credentials : "same-origin",
+        credentials : "include", },
       (result) => {
-        this.props.updateProgress({ showProgress: false });
+        this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Adapter was successfully pinged!", {
-            variant: "success",
-            autoHideDuration: 2000,
-            action: (key) => (
+          this.props.enqueueSnackbar("Adapter was successfully pinged!", { variant : "success",
+            autoHideDuration : 2000,
+            action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ),
-          });
+            ), });
         }
       },
       self.handleError("error")
@@ -252,22 +208,22 @@ class MeshAdapterConfigComponent extends React.Component {
   };
 
   handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress: false });
+    this.props.updateProgress({ showProgress : false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, {
-      variant: "error",
-      action: (key) => (
+    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+      action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration: 8000,
-    });
+      autoHideDuration : 8000, });
   };
 
   configureTemplate = () => {
     const { classes } = this.props;
-    const { availableAdapters, meshAdapters, meshLocationURL, meshLocationURLError } = this.state;
+    const {
+      availableAdapters, meshAdapters, meshLocationURL, meshLocationURLError
+    } = this.state;
 
     let showAdapters = "";
     const self = this;
@@ -339,14 +295,10 @@ class MeshAdapterConfigComponent extends React.Component {
   }
 }
 
-MeshAdapterConfigComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+MeshAdapterConfigComponent.propTypes = { classes : PropTypes.object.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateAdaptersInfo: bindActionCreators(updateAdaptersInfo, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateAdaptersInfo : bindActionCreators(updateAdaptersInfo, dispatch),
+  updateProgress : bindActionCreators(updateProgress, dispatch), });
 const mapStateToProps = (state) => {
   const meshAdapters = state.get("meshAdapters").toJS();
   const meshAdaptersts = state.get("meshAdaptersts");

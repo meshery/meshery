@@ -165,42 +165,6 @@
         "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
         "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
-      "11032": {
-        "name": "ErrExposeResourceCode",
-        "code": "11032",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11033": {
-        "name": "ErrGettingResourceCode",
-        "code": "11033",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11034": {
-        "name": "ErrTraverserCode",
-        "code": "11034",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11035": {
-        "name": "ErrResourceCannotBeExposedCode",
-        "code": "11035",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "resource type %s cannot be exposed: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
       "11036": {
         "name": "ErrSelectorBasedMapCode",
         "code": "11036",

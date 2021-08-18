@@ -58,8 +58,12 @@ class MesheryDocument extends Document {
             .hide-scrollbar::-webkit-scrollbar {\
               width: 0 !important;\
             }\
+          .reduce-scrollbar-width::-webkit-scrollbar {\
+              width: 0.3em !important;\
+            }\
           "}
         </style>
+
         
         </Head>
         <body>

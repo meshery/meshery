@@ -2,10 +2,12 @@
 import React from "react";
 import SvgIcon from "@material-ui/core/SvgIcon";
 
-const GrafanaIcon = ({isActive}) => {
+const GrafanaIcon = ({ isActive }) => {
   return (
     <SvgIcon
-      style={{ width: "3rem", height: "auto", filter: isActive ? null : "grayscale(1)"}}
+      style={{ width : "3rem", height : "auto", filter : isActive
+        ? null
+        : "grayscale(1)" }}
       viewBox="0 0 50 52"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

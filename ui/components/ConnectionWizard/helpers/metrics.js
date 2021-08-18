@@ -3,7 +3,7 @@ import dataFetch from "../../../lib/data-fetch";
 
 export const verifyGrafanaConnection = (grafanaUrl) => {
   return new Promise((res, rej) => {
-    if(grafanaUrl){
+    if (grafanaUrl){
       pingGrafana(
         result => res("Grafana connected !"),
         error => rej("Grafana not connected ! " + error)
@@ -11,44 +11,38 @@ export const verifyGrafanaConnection = (grafanaUrl) => {
       return
     }
     rej("Grafana not connected! "+ "Url not found")
-  })    
-} 
+  })
+}
 
 
 export const pingGrafanaWithNotification = (updateProgress, action, enqueueSnackbar) => {
 
-  updateProgress({showProgress: true})
+  updateProgress({ showProgress : true })
 
   const successCb = (result) => {
-    updateProgress({ showProgress: false });
+    updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Grafana successfully pinged!", {
-        variant: "success",
-        autoHideDuration: 2000,
-        action
-      });
+      enqueueSnackbar("Grafana successfully pinged!", { variant : "success",
+        autoHideDuration : 2000,
+        action });
     }
   }
-    
+
   const errorCb = (error) => {
-    updateProgress({ showProgress: false });
-    enqueueSnackbar("Grafana could not be pinged! : "+error, {
-      variant: "error",
-      autoHideDuration: 2000,
-      action
-    });
+    updateProgress({ showProgress : false });
+    enqueueSnackbar("Grafana could not be pinged! : "+error, { variant : "error",
+      autoHideDuration : 2000,
+      action });
   }
 
   pingGrafana(successCb, errorCb)
-} 
+}
 
 export const pingGrafana = (successCb, errorCb) =>
   dataFetch(
     "/api/telemetry/metrics/grafana/ping",
-    {
-      credentials: "same-origin",
-      credentials: "include",
-    },
+    { credentials : "same-origin",
+      credentials : "include", },
     successCb,
     errorCb
   );
@@ -56,7 +50,7 @@ export const pingGrafana = (successCb, errorCb) =>
 export const verifyPrometheusConnection =  (prometheusUrl) => {
   console.log(prometheusUrl)
   return new Promise((res, rej) => {
-    if(prometheusUrl !== ""){
+    if (prometheusUrl !== ""){
       pingPrometheus(
         result => res("Prometheus connected !"),
         error => rej("Prometheus not connected ! " + error)
@@ -64,44 +58,38 @@ export const verifyPrometheusConnection =  (prometheusUrl) => {
       return
     } else
       rej("Prometheus not connected! "+ "Url not found")
-  })    
-} 
+  })
+}
 
 
 export const pingPrometheusWithNotification = (updateProgress, action, enqueueSnackbar) => {
 
-  updateProgress({showProgress: true})
+  updateProgress({ showProgress : true })
 
   const successCb = (result) => {
-    updateProgress({ showProgress: false });
+    updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Prometheus successfully pinged!", {
-        variant: "success",
-        autoHideDuration: 2000,
-        action
-      });
+      enqueueSnackbar("Prometheus successfully pinged!", { variant : "success",
+        autoHideDuration : 2000,
+        action });
     }
   }
-    
+
   const errorCb = (error) => {
-    updateProgress({ showProgress: false });
-    enqueueSnackbar("Prometheus could not be pinged! : "+error, {
-      variant: "error",
-      autoHideDuration: 2000,
-      action
-    });
+    updateProgress({ showProgress : false });
+    enqueueSnackbar("Prometheus could not be pinged! : "+error, { variant : "error",
+      autoHideDuration : 2000,
+      action });
   }
 
   pingPrometheus(successCb, errorCb)
-} 
+}
 
 export const pingPrometheus = (successCb, errorCb) =>
   dataFetch(
     "/api/telemetry/metrics/ping",
-    {
-      credentials: "same-origin",
-      credentials: "include",
-    },
+    { credentials : "same-origin",
+      credentials : "include", },
     successCb,
     errorCb
   );
@@ -117,7 +105,7 @@ export const fetchPromGrafanaScanData = () => {
         credentials: "include",
       },
       (result) => {
-        let metricsUrls = {grafana: [], prometheus: []}
+        let metricsUrls = { grafana : [], prometheus : [] }
         if (!result) res(metricsUrls);
         console.log()
 
@@ -133,15 +121,15 @@ export const fetchPromGrafanaScanData = () => {
         res(metricsUrls)
       },
       (err) => rej("Unable to fetch grafana and prometheus scan data:"+err)
-    ) 
+    )
   }
-  ) 
-} 
+  )
+}
 
 /**
    * extractURLFromScanData scans the ingress urls from the
    * mesh scan data and returns an array of the response
-   * @param {object[]} scannedData 
+   * @param {object[]} scannedData
    * @returns {string[]}
    */
 const extractURLFromScanData = (scannedData) => {
@@ -187,128 +175,104 @@ const extractURLFromScanData = (scannedData) => {
 
 
 export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress, enqueueSnackbar, action, updateGrafanaConfig) => {
-  
+
   if (
     grafanaURL === "" ||
       !(grafanaURL.toLowerCase().startsWith("http://") || grafanaURL.toLowerCase().startsWith("https://"))
   ) {
     return;
   }
-  const data = {
-    grafanaURL,
-    grafanaAPIKey,
-  };
+  const data = { grafanaURL,
+    grafanaAPIKey, };
   const params = Object.keys(data)
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
     .join("&");
 
-  updateProgress({ showProgress: true });
+  updateProgress({ showProgress : true });
   dataFetch(
     "/api/telemetry/metrics/grafana/config",
     {
-      credentials: "same-origin",
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-      },
-      body: params,
+      credentials : "same-origin",
+      method : "POST",
+      credentials : "include",
+      headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
+      body : params,
     },
     (result) => {
-      updateProgress({ showProgress: false });
+      updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Grafana was successfully configured!", {
-          variant: "success",
-          autoHideDuration: 2000,
-          action
-        });
-        updateGrafanaConfig({
-          grafana: {
-            grafanaURL,
-            grafanaAPIKey,
-          },
-        });
+        enqueueSnackbar("Grafana was successfully configured!", { variant : "success",
+          autoHideDuration : 2000,
+          action });
+        updateGrafanaConfig({ grafana : { grafanaURL,
+          grafanaAPIKey, }, });
       }
     },
     (err) => {
-      updateProgress({ showProgress: false });
+      updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Grafana was not successfully configured! :" + err, {
-          variant: "error",
-          autoHideDuration: 2000,
-          action
-        });
+        enqueueSnackbar("Grafana was not successfully configured! :" + err, { variant : "error",
+          autoHideDuration : 2000,
+          action });
       }
     }
-    
+
   )
 }
 
 export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueueSnackbar, action, updatePrometheusConfig) => {
-  
+
   if (
     prometheusURL === "" ||
       !(prometheusURL.toLowerCase().startsWith("http://") || prometheusURL.toLowerCase().startsWith("https://"))
   ) {
     return;
   }
-  const data = {
-    prometheusURL,
-  };
+  const data = { prometheusURL, };
   const params = Object.keys(data)
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
     .join("&");
 
-  updateProgress({ showProgress: true });
+  updateProgress({ showProgress : true });
   dataFetch(
     "/api/telemetry/metrics/config",
     {
-      credentials: "same-origin",
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-      },
-      body: params,
+      credentials : "same-origin",
+      method : "POST",
+      credentials : "include",
+      headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
+      body : params,
     },
     (result) => {
-      updateProgress({ showProgress: false });
+      updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Prometheus was successfully configured!", {
-          variant: "success",
-          autoHideDuration: 2000,
-          action
-        });
-        updatePrometheusConfig({
-          prometheus: {
-            prometheusURL,
-            selectedPrometheusBoardsConfigs: [],
-          },
-        });
+        enqueueSnackbar("Prometheus was successfully configured!", { variant : "success",
+          autoHideDuration : 2000,
+          action });
+        updatePrometheusConfig({ prometheus : { prometheusURL,
+          selectedPrometheusBoardsConfigs : [], }, });
       }
     },
     (err) => {
-      updateProgress({ showProgress: false });
+      updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Prometheus was not successfully configured! :" + err, {
-          variant: "error",
-          autoHideDuration: 2000,
-          action
-        });
+        enqueueSnackbar("Prometheus was not successfully configured! :" + err, { variant : "error",
+          autoHideDuration : 2000,
+          action });
       }
     }
-    
+
   )
 }
 
 export const deleteMetricsComponentConfig = (componentName) => (successCb, errorCb) => dataFetch(
-    `/api/telemetry/metrics${componentName === 'Grafana' ? "/grafana" : ""}/config`,
-    {
-      credentials: "same-origin",
-      method: "DELETE",
-      credentials: "include",
-    },
-    successCb, 
+    `/api/telemetry/metrics${componentName === 'Grafana'
+      ? "/grafana"
+      : ""}/config`,
+    { credentials : "same-origin",
+      method : "DELETE",
+      credentials : "include", },
+    successCb,
     errorCb
 )
 
