@@ -807,42 +807,46 @@ handleNATSClick = () => {
                 </ListItem>
               </List>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <List>
-                <ListItem>
-                  <Tooltip
-                    title={meshSyncInstalled ? `Redeploy MeshSync` : "Not Available"}
-                    aria-label="meshSync"
-                  >
-                    <Chip
-                      label={"MeshSync"}
-                      onClick={self.handleMeshSyncClick}
-                      icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
-                      variant="outlined"
-                      data-cy="chipMeshSync"
-                    />
-                  </Tooltip>
-                </ListItem>
-              </List>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <List>
-                <ListItem>
-                  <Tooltip
-                    title={meshSyncInstalled ? `Reconnect NATS` : "Not Available"}
-                    aria-label="nats"
-                  >
-                    <Chip
-                      label={"NATS"}
-                      onClick={self.handleNATSClick}
-                      icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
-                      variant="outlined"
-                      data-cy="chipNATS"
-                    />
-                  </Tooltip>
-                </ListItem>
-              </List>
-            </Grid>
+            {operatorInstalled && 
+            <>
+              <Grid item xs={12} md={4}>
+                <List>
+                  <ListItem>
+                    <Tooltip
+                      title={meshSyncInstalled ? `Redeploy MeshSync` : "Not Available"}
+                      aria-label="meshSync"
+                    >
+                      <Chip
+                        label={"MeshSync"}
+                        onClick={self.handleMeshSyncClick}
+                        icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+                        variant="outlined"
+                        data-cy="chipMeshSync"
+                      />
+                    </Tooltip>
+                  </ListItem>
+                </List>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <List>
+                  <ListItem>
+                    <Tooltip
+                      title={NATSInstalled ? `Reconnect NATS` : "Not Available"}
+                      aria-label="nats"
+                    >
+                      <Chip
+                        label={"NATS"}
+                        onClick={self.handleNATSClick}
+                        icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+                        variant="outlined"
+                        data-cy="chipNATS"
+                      />
+                    </Tooltip>
+                  </ListItem>
+                </List>
+              </Grid>
+            </>
+            }
           </Grid>
           <Grid container spacing={1}>
             <Grid item xs={12} md={4}>
