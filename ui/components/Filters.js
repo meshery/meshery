@@ -14,6 +14,7 @@ import {
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import UploadIcon from "@material-ui/icons/Publish";
+import PromptComponent from "./PromptComponent";
 // import Checkbox from '@material-ui/core/Checkbox';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -88,9 +89,11 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
 function MesheryFilters({
   updateProgress, enqueueSnackbar, closeSnackbar, user, classes
 }) {
+  
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
+  const modalRef = useRef(null);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
@@ -340,29 +343,73 @@ function MesheryFilters({
       columns[idx].options.sortDirection = sortOrder.split(" ")[1];
     }
   });
+  
+  async function deleteFilter(id) {
+    let response = await modalRef.current.show({
+      title: "Delete Filters?",
+
+      subtitle: "Are you sure you want to delete this filter?",
+
+      options: ["YES", "NO"],
+
+    })
+    if(response === "NO") return
+    dataFetch(
+      `/api/experimental/filter/${id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      },
+      () => {
+        updateProgress({ showProgress: false });
+
+        enqueueSnackbar("Filter Successfully Deleted!", {
+          variant: "success",
+          autoHideDuration: 2000,
+          action: function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+        });
+
+        fetchFilters(page, pageSize, search, sortOrder);
+      },
+      handleError("Failed To Delete Filter")
+    );
+  }
 
   const options = {
-    filter : false,
-    sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
-    filterType : "textField",
-    responsive : "scrollFullHeight",
-    resizableColumns : true,
-    serverSide : true,
-    selection : true,
+    filter: false,
+    sort: !(user && user.user_id === "meshery"),
+    search: !(user && user.user_id === "meshery"),
+    filterType: "textField",
+    responsive: "scrollFullHeight",
+    resizableColumns: true,
+    selectableRows: true,
+    serverSide: true,
+    // selection: true,
     count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
     fixedHeader : true,
     page,
-    print : false,
-    download : false,
-    customToolbar : CustomToolbar(uploadHandler),
+    print: false,
+    download: false,
+    // handleDelete,
 
-    onTableChange : (action, tableState) => {
-      const sortInfo = tableState.announceText
-        ? tableState.announceText.split(" : ")
-        : [];
+    customToolbar: CustomToolbar(uploadHandler),
+
+    onRowsDelete: function handleDelete(row) {
+      const fid = Object.keys(row.lookup).map(idx => filters[idx]?.id)
+      fid.forEach(fid => deleteFilter(fid))
+    },
+    // selection:'mulitple',
+
+    onTableChange: (action, tableState) => {
+      const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
       let order = "";
       if (tableState.activeColumn) {
         order = `${columns[tableState.activeColumn].name} desc`;
@@ -415,6 +462,8 @@ function MesheryFilters({
         // @ts-ignore
         options={options}
       />
+      <PromptComponent ref={modalRef} />
+
     </NoSsr>
   );
 }
