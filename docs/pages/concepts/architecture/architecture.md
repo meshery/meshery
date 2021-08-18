@@ -17,7 +17,7 @@ Meshery and its components are written using the following languages and technol
 | :------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | Meshery Server                                                       | Golang, gRPC, GraphQL, [SMP](https://smp-spec.io)                                 |
 | [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/), [SMI](https://smi-spec.io), [OAM](https://oam.dev)  |
-| Meshery WASM Filters                                                 | Rust and C++                                                                      |
+| [Meshery WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
 | Meshery UI                                                           | ReactJS, NextJS, BillboardJS                                                      |
 | Meshery Provider UI                                                  | ReactJS, NextJS                                                                   |
 | [Meshery Remote Providers](/extensibility/providers)                 | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility) |
