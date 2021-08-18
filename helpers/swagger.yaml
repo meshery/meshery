@@ -1,6 +1,7 @@
 basePath: /
 consumes:
 - application/json
+- multipart/form-data
 definitions:
   Adapter:
     description: Adapter represents an adapter in Meshery
@@ -156,6 +157,29 @@ definitions:
         x-go-name: Type
     type: object
     x-go-package: github.com/grafana-tools/sdk
+  ApplicationsAPIResponse:
+    description: ApplicationsAPIResponse response retruned by patternfile endpoint
+      on meshery server
+    properties:
+      applications:
+        items:
+          $ref: '#/definitions/MesheryApplication'
+        type: array
+        x-go-name: Applications
+      page:
+        format: uint64
+        type: integer
+        x-go-name: Page
+      page_size:
+        format: uint64
+        type: integer
+        x-go-name: PageSize
+      total_count:
+        format: uint64
+        type: integer
+        x-go-name: TotalCount
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   AuthenticateOKBody:
     description: AuthenticateOKBody authenticate o k body
     properties:
@@ -205,6 +229,23 @@ definitions:
         type: string
     type: object
     x-go-package: github.com/grafana-tools/sdk
+  Capabilities:
+    description: Capabilities is the collection of capability
+    items:
+      $ref: '#/definitions/Capability'
+    type: array
+    x-go-package: github.com/layer5io/meshery/models
+  Capability:
+    description: Capability is a capability of Provider indicating whether a feature
+      is present
+    properties:
+      endpoint:
+        type: string
+        x-go-name: Endpoint
+      feature:
+        $ref: '#/definitions/Feature'
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   ClientIPConfig:
     properties:
       timeoutSeconds:
@@ -388,6 +429,21 @@ definitions:
     title: ErrorResponse Represents an error.
     type: object
     x-go-package: github.com/docker/docker/api/types
+  Extensions:
+    description: Extensions defines the UI extension points
+    properties:
+      graphql:
+        $ref: '#/definitions/GraphQLExtensions'
+      navigator:
+        $ref: '#/definitions/NavigatorExtensions'
+      user_prefs:
+        $ref: '#/definitions/UserPrefsExtensions'
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  Feature:
+    description: Feature is a type to store the features of the provider
+    type: string
+    x-go-package: github.com/layer5io/meshery/models
   FieldConfig:
     properties:
       defaults:
@@ -433,6 +489,29 @@ definitions:
       format.
     type: object
     x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
+  FiltersAPIResponse:
+    description: FiltersAPIResponse response retruned by filterfile endpoint on meshery
+      server
+    properties:
+      filters:
+        items:
+          $ref: '#/definitions/MesheryFilter'
+        type: array
+        x-go-name: Filters
+      page:
+        format: uint64
+        type: integer
+        x-go-name: Page
+      page_size:
+        format: uint64
+        type: integer
+        x-go-name: PageSize
+      total_count:
+        format: uint64
+        type: integer
+        x-go-name: TotalCount
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   FloatString:
     properties:
       Valid:
@@ -573,6 +652,24 @@ definitions:
     title: GraphDriverData Information about a container's graph driver.
     type: object
     x-go-package: github.com/docker/docker/api/types
+  GraphQLExtension:
+    description: GraphQLExtension describes the graphql server extension point in
+      the backend
+    properties:
+      component:
+        type: string
+        x-go-name: Component
+      path:
+        type: string
+        x-go-name: Path
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  GraphQLExtensions:
+    description: GraphQLExtensions is a collection of GraphQLExtension endpoints
+    items:
+      $ref: '#/definitions/GraphQLExtension'
+    type: array
+    x-go-package: github.com/layer5io/meshery/models
   HistoryResponseItem:
     description: HistoryResponseItem individual image layer information in response
       to ImageHistory operation
@@ -609,6 +706,17 @@ definitions:
     - Tags
     type: object
     x-go-package: github.com/docker/docker/api/types/image
+  Href:
+    description: Href describes a link along with its type
+    properties:
+      external:
+        type: boolean
+        x-go-name: External
+      uri:
+        type: string
+        x-go-name: URI
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   IPFamily:
     description: |-
       IPFamily represents the IP Family (IPv4 or IPv6). This type is used
@@ -763,6 +871,21 @@ definitions:
         x-go-name: ServerVersion
     type: object
     x-go-package: github.com/layer5io/meshery/models
+  K8SContext:
+    description: K8SContext is just used to send contexts to the UI
+    properties:
+      clusterName:
+        type: string
+        x-go-name: ClusterName
+      contextName:
+        type: string
+        x-go-name: ContextName
+      currentContext:
+        description: ContextDisplayName string `json:"context-display-name"`
+        type: boolean
+        x-go-name: IsCurrentContext
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   K8SNode:
     description: K8SNode - represents a kubernetes node
     properties:
@@ -802,6 +925,29 @@ definitions:
       os_image:
         type: string
         x-go-name: OSImage
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  LatenciesMs:
+    description: LatenciesMs - represents a collection of important latencies
+    properties:
+      Average:
+        format: double
+        type: number
+      Max:
+        format: double
+        type: number
+      Min:
+        format: double
+        type: number
+      P50:
+        format: double
+        type: number
+      P90:
+        format: double
+        type: number
+      P99:
+        format: double
+        type: number
     type: object
     x-go-package: github.com/layer5io/meshery/models
   Legend:
@@ -1001,6 +1147,64 @@ definitions:
         x-go-name: Value
     type: object
     x-go-package: github.com/grafana-tools/sdk
+  MesheryApplication:
+    description: MesheryApplication represents the applications that needs to be saved
+    properties:
+      application_file:
+        type: string
+        x-go-name: ApplicationFile
+      created_at:
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      id:
+        $ref: '#/definitions/UUID'
+      location:
+        $ref: '#/definitions/Map'
+      name:
+        type: string
+        x-go-name: Name
+      updated_at:
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+      user_id:
+        description: |-
+          Meshery doesn't have the user id fields
+          but the remote provider is allowed to provide one
+        type: string
+        x-go-name: UserID
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  MesheryFilter:
+    description: MesheryFilter represents the filters that needs to be saved
+    properties:
+      created_at:
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      filter_file:
+        type: string
+        x-go-name: FilterFile
+      id:
+        $ref: '#/definitions/UUID'
+      location:
+        $ref: '#/definitions/Map'
+      name:
+        type: string
+        x-go-name: Name
+      updated_at:
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+      user_id:
+        description: |-
+          Meshery doesn't have the user id fields
+          but the remote provider is allowed to provide one
+        type: string
+        x-go-name: UserID
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   MesheryPattern:
     description: MesheryPattern represents the patterns that needs to be saved
     properties:
@@ -1029,6 +1233,37 @@ definitions:
         type: string
         x-go-name: UserID
     type: object
+    x-go-package: github.com/layer5io/meshery/models
+  NavigatorExtension:
+    description: NavigatorExtension describes the Navigator extension point in the
+      UI
+    properties:
+      children:
+        $ref: '#/definitions/NavigatorExtensions'
+      component:
+        type: string
+        x-go-name: Component
+      href:
+        $ref: '#/definitions/Href'
+      icon:
+        type: string
+        x-go-name: Icon
+      link:
+        type: boolean
+        x-go-name: Link
+      show:
+        type: boolean
+        x-go-name: Show
+      title:
+        type: string
+        x-go-name: Title
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  NavigatorExtensions:
+    description: NavigatorExtensions is a collection of NavigatorExtension
+    items:
+      $ref: '#/definitions/NavigatorExtension'
+    type: array
     x-go-package: github.com/layer5io/meshery/models
   OpCategory:
     format: int32
@@ -1618,7 +1853,7 @@ definitions:
           $ref: '#/definitions/MesheryPattern'
         type: array
         x-go-name: Patterns
-      total_size:
+      total_count:
         format: uint64
         type: integer
         x-go-name: TotalCount
@@ -1791,6 +2026,32 @@ definitions:
         format: uint64
         type: integer
         x-go-name: TotalCount
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  PerformanceSpec:
+    description: PerformanceSpec - represents SMP, see here https://github.com/layer5io/service-mesh-performance-specification
+    properties:
+      ActualQPS:
+        format: double
+        type: number
+      DetailsURI:
+        type: string
+      EndTime:
+        format: date-time
+        type: string
+      EnvID:
+        type: string
+      Latencies:
+        $ref: '#/definitions/LatenciesMs'
+      MeshConfigID:
+        type: string
+      SMPVersion:
+        type: string
+      StartTime:
+        format: date-time
+        type: string
+      TestID:
+        type: string
     type: object
     x-go-package: github.com/layer5io/meshery/models
   PerformanceTestConfig:
@@ -2326,6 +2587,39 @@ definitions:
       ports.
     type: string
     x-go-package: k8s.io/api/core/v1
+  ProviderProperties:
+    description: ProviderProperties represents the structure of properties that a
+      provider has
+    properties:
+      capabilities:
+        $ref: '#/definitions/Capabilities'
+      extensions:
+        $ref: '#/definitions/Extensions'
+      package_url:
+        type: string
+        x-go-name: PackageURL
+      package_version:
+        type: string
+        x-go-name: PackageVersion
+      provider_description:
+        items:
+          type: string
+        type: array
+        x-go-name: ProviderDescription
+      provider_name:
+        type: string
+        x-go-name: ProviderName
+      provider_type:
+        $ref: '#/definitions/ProviderType'
+      provider_url:
+        type: string
+        x-go-name: ProviderURL
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  ProviderType:
+    description: ProviderType - for representing provider types
+    type: string
+    x-go-package: github.com/layer5io/meshery/models
   RangeMap:
     properties:
       from:
@@ -3333,6 +3627,21 @@ definitions:
     title: UUID is an array type to represent the value of a UUID, as defined in RFC-4122.
     type: array
     x-go-package: github.com/gofrs/uuid
+  UserPrefsExtension:
+    description: UserPrefsExtension describes the user preference extension point
+      in the UI
+    properties:
+      component:
+        type: string
+        x-go-name: Component
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  UserPrefsExtensions:
+    description: UserPrefsExtensions is a collection of UserPrefsExtension
+    items:
+      $ref: '#/definitions/UserPrefsExtension'
+    type: array
+    x-go-package: github.com/layer5io/meshery/models
   ValueMap:
     description: for a stat
     properties:
@@ -3347,6 +3656,26 @@ definitions:
         x-go-name: Value
     type: object
     x-go-package: github.com/grafana-tools/sdk
+  Version:
+    properties:
+      build:
+        type: string
+        x-go-name: Build
+      commitsha:
+        type: string
+        x-go-name: CommitSHA
+      latest:
+        type: string
+        x-go-name: Latest
+      outdated:
+        type: boolean
+        x-go-name: Outdated
+      release_channel:
+        type: string
+        x-go-name: ReleaseChannel
+    title: Version defines the Json payload structure for version api\
+    type: object
+    x-go-package: github.com/layer5io/meshery/handlers
   Volume:
     description: Volume volume
     properties:
@@ -3480,6 +3809,184 @@ info:
   title: Meshery API.
   version: 0.4.27
 paths:
+  /api/application/:
+    get:
+      description: Returns requests for all Meshery Applications
+      operationId: idGetApplicationFileRequest
+      responses:
+        "200":
+          $ref: '#/responses/mesheryApplicationsResponseWrapper'
+      summary: Handle GET request for Application Files
+      tags:
+      - ApplicationsAPI
+    post:
+      description: Save attached Meshery Application File
+      operationId: idPostApplicationFileRequest
+      responses:
+        "200":
+          $ref: '#/responses/mesheryApplicationResponseWrapper'
+      summary: Handle POST request for Application Files
+      tags:
+      - ApplicationsAPI
+  /api/application/{id}:
+    delete:
+      description: 'Deletes a meshery application file with ID: id'
+      operationId: idDeleteMesheryApplicationFile
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/noContentWrapper'
+      summary: Handle Delete for a Meshery Application File
+      tags:
+      - ApplicationsAPI
+    get:
+      description: Fetches the list of all applications saved by the current user
+      operationId: idGetMesheryApplication
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/mesheryApplicationResponseWrapper'
+      summary: Handle GET request for Meshery Application with the given id
+      tags:
+      - ApplicationsAPI
+  /api/application/deploy:
+    delete:
+      description: Delete a deployed application file with the request
+      operationId: idDeleteApplicationFile
+      responses:
+        "200":
+          description: ""
+      summary: Handle DELETE request for Application File Deploy
+      tags:
+      - ApplicationsAPI
+    post:
+      description: Deploy an attached application file with the request
+      operationId: idPostDeployApplicationFile
+      parameters:
+      - in: formData
+        name: Upload Yaml/Yml File
+        type: file
+        x-go-name: FormFile
+      responses:
+        "200":
+          $ref: '#/responses/applicationFilesResponseWrapper'
+      summary: Handle POST request for Application File Deploy
+      tags:
+      - ApplicationsAPI
+  /api/experimental/filter:
+    get:
+      description: Returns all the Meshery Filters saved by the current user
+      operationId: idGetFilterFile
+      responses:
+        "200":
+          $ref: '#/responses/mesheryFiltersResponseWrapper'
+      summary: Handle GET request for all filters
+      tags:
+      - FiltersAPI
+    post:
+      description: Used to save/update a Meshery Filter
+      operationId: idPostFilterFile
+      responses:
+        "200":
+          $ref: '#/responses/mesheryFilterResponseWrapper'
+      summary: Handle POST requests for Meshery Filters
+      tags:
+      - FiltersAPI
+  /api/experimental/filter/{id}:
+    delete:
+      description: 'Deletes a meshery filter with ID: id'
+      operationId: idDeleteMesheryFilter
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/noContentWrapper'
+      summary: Handle Delete for a Meshery Filter
+      tags:
+      - FiltersAPI
+    get:
+      description: Fetches the Meshery Filter with the given id
+      operationId: idGetMesheryFilter
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/mesheryFilterResponseWrapper'
+      summary: Handle GET request for a Meshery Filter
+      tags:
+      - FiltersAPI
+  /api/experimental/filter/file/{id}:
+    get:
+      description: Returns the Meshery Filter file saved by the current user with
+        the given id
+      operationId: idGetFilterFiles
+      responses:
+        "200":
+          $ref: '#/responses/mesheryFilterResponseWrapper'
+      summary: Handle GET request for filter file with given id
+      tags:
+      - FiltersAPI
+  /api/mesh/ops:
+    post:
+      description: Used to send operations to the adapters
+      operationId: idPostAdapterOperation
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST requests for Adapter Operations
+      tags:
+      - SystemAPI
+  /api/oam/{type}:
+    get:
+      description: |-
+        Getting list of workloads/traits/scopes
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      operationId: idGETOAMMesheryPattern
+      responses:
+        "200":
+          description: ""
+      summary: Handles the get requests for the OAM objects
+      tags:
+      - PatternsAPI
+    post:
+      description: |-
+        Adding a workload/trait/scope
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      operationId: idPOSTOAMMesheryPattern
+      responses:
+        "200":
+          description: ""
+      summary: Handles registering OMA objects
+      tags:
+      - PatternsAPI
   /api/pattern:
     get:
       description: |-
@@ -3536,31 +4043,183 @@ paths:
       summary: Handle GET for a Meshery Pattern
       tags:
       - PatternsAPI
-  /api/oam/{type}:
-    get:
-      description: |-
-        Getting list of workloads/traits/scopes
-
-        {type} being of either trait, scope, workload; registration of adapter capabilities.
-      operationId: idGETOAMMesheryPattern
+  /api/pattern/deploy:
+    delete:
+      description: Delete a deployed pattern with the request
+      operationId: idDeleteDeployPattern
       responses:
         "200":
           description: ""
-      summary: Handles the get requests for the OAM objects
+      summary: Handle DELETE request for Pattern Deploy
       tags:
       - PatternsAPI
     post:
-      description: |-
-        Adding a workload/trait/scope
-
-        {type} being of either trait, scope, workload; registration of adapter capabilities.
-      operationId: idPOSTOAMMesheryPattern
+      description: Deploy an attached pattern with the request
+      operationId: idPostDeployPattern
+      parameters:
+      - in: formData
+        name: Upload Yaml/Yml File
+        type: file
+        x-go-name: FormFile
       responses:
         "200":
           description: ""
-      summary: Handles registering OMA objects
+      summary: Handle POST request for Pattern Deploy
       tags:
       - PatternsAPI
+  /api/perf/profile:
+    get:
+      description: Runs the load test with the given parameters
+      operationId: idRunPerfTest
+      parameters:
+      - $ref: '#/definitions/PerformanceTestParameters'
+        in: query
+        name: Query
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/PerformanceTestConfig'
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request to run a test
+      tags:
+      - PerfAPI
+  /api/perf/profile/result:
+    get:
+      description: Returns pages of all the perf results from Remote Provider
+      operationId: idGetAllPerfResults
+      responses:
+        "200":
+          $ref: '#/responses/performanceResultsResponseWrapper'
+      summary: Handles GET requests for perf results
+      tags:
+      - PerfAPI
+  /api/perf/profile/result/{id}:
+    get:
+      description: Returns an individual result from provider
+      operationId: idGetSinglePerfResult
+      responses:
+        "200":
+          $ref: '#/responses/perfSingleResultRespWrapper'
+      summary: Handles GET requests for perf result
+      tags:
+      - PerfAPI
+  /api/provider:
+    get:
+      description: Update the choice of provider in system
+      operationId: idChoiceProvider
+      parameters:
+      - in: query
+        name: provider
+        type: string
+        x-go-name: Provider
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request for the choice of provider
+      tags:
+      - ProvidersAPI
+  /api/provider/capabilities:
+    get:
+      description: Returns the capabilities.json for the provider
+      operationId: idGetProviderCapabilities
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET requests for Provider
+      tags:
+      - ProvidersAPI
+  /api/provider/extension:
+    get:
+      description: handles the requests to serve react components from the provider
+        package
+      operationId: idReactComponents
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request for React Components
+      tags:
+      - ProvidersAPI
+  /api/providers:
+    get:
+      description: Returns the available list of providers
+      operationId: idGetProvidersList
+      responses:
+        "200":
+          $ref: '#/responses/listProvidersRespWrapper'
+      summary: Handle GET request for list of providers
+      tags:
+      - ProvidersAPI
+  /api/system/adapters:
+    get:
+      description: Fetches and returns all the adapters and ping adapters
+      operationId: idGetSystemAdapters
+      responses:
+        "200":
+          $ref: '#/responses/systemAdaptersRespWrapper'
+      summary: Handle GET request for adapters
+      tags:
+      - SystemAPI
+  /api/system/kubernetes:
+    delete:
+      description: Used to delete kubernetes config to System
+      operationId: idDeleteK8SConfig
+      responses:
+        "200":
+          description: ""
+      summary: Handle DELETE request for Kubernetes Config
+      tags:
+      - SystemAPI
+    post:
+      description: Used to add kubernetes config to System
+      operationId: idPostK8SConfig
+      responses:
+        "200":
+          $ref: '#/responses/k8sConfigRespWrapper'
+      summary: Handle POST request for Kubernetes Config
+      tags:
+      - SystemAPI
+  /api/system/kubernetes/contexts:
+    post:
+      description: Returns the context list for a given k8s config
+      operationId: idPostK8SContexts
+      responses:
+        "200":
+          $ref: '#/responses/k8sContextsRespWrapper'
+      summary: Handle POST requests for Kubernetes Context list
+      tags:
+      - SystemAPI
+  /api/system/kubernetes/ping:
+    get:
+      description: Fetches server version to simulate ping
+      operationId: idGetKubernetesPing
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request for Kubernetes ping
+      tags:
+      - SystemAPI
+  /api/system/sync:
+    get:
+      description: Used to send session data to the UI for initial sync
+      operationId: idSystemSync
+      responses:
+        "200":
+          $ref: '#/responses/userLoadTestPrefsRespWrapper'
+      summary: Handle GET request for config sync
+      tags:
+      - SystemAPI
+  /api/system/version:
+    get:
+      description: Returns the running Meshery version
+      operationId: idGetSystemVersion
+      responses:
+        "200":
+          $ref: '#/responses/mesheryVersionRespWrapper'
+      summary: Handle GET request for system/server version
+      tags:
+      - SystemAPI
   /api/telemetry/metrics/board_import:
     post:
       description: Used for importing Grafana board for Prometheus
@@ -3804,7 +4463,7 @@ paths:
           $ref: '#/responses/noContentWrapper'
       summary: Handle Delete requests for performance profiles
       tags:
-      - PerformanceProfile
+      - PerformanceAPI
     get:
       description: Returns single performance profile with the given id
       operationId: idGetSinglePerformanceProfile
@@ -3866,26 +4525,21 @@ paths:
       - PerformanceAPI
   /api/user/prefs:
     get:
-      description: Returns anonymous stats for user
-      operationId: idGetAnonymousStats
+      description: Returns User Load Test Preferences
+      operationId: idGetUserTestPrefs
       responses:
         "200":
-          $ref: '#/responses/anonymousStatsResponseWrapper'
-      summary: Handle GET for anonymous stats
+          $ref: '#/responses/userLoadTestPrefsRespWrapper'
+      summary: Handle GET for User Load Test Preferences
       tags:
       - UserAPI
     post:
-      description: Updates anonymous stats for user
-      operationId: idPostAnonymousStats
-      parameters:
-      - in: body
-        name: Body
-        schema:
-          $ref: '#/definitions/PreferenceParams'
+      description: Updates User Load Test Preferences
+      operationId: idPostUserTestPrefs
       responses:
         "200":
-          $ref: '#/responses/anonymousStatsResponseWrapper'
-      summary: Handle GET for anonymous stats
+          $ref: '#/responses/userLoadTestPrefsRespWrapper'
+      summary: Handle GET for User Load Test Preferences
       tags:
       - UserAPI
   /api/user/prefs/perf:
@@ -4006,13 +4660,29 @@ paths:
       summary: Handle POST request for tokens
       tags:
       - UserAPI
+  /provider:
+    get:
+      description: Servers providers UI
+      operationId: idProvider
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request to provider UI
+      tags:
+      - ProvidersAPI
 produces:
 - application/json
 responses:
-  anonymousStatsResponseWrapper:
-    description: Returns Anonymous stats
+  adapterPingParams:
+    description: ""
+    headers:
+      adapter:
+        description: 'in: query'
+        type: string
+  applicationFilesResponseWrapper:
+    description: Returns the response of the application files
     schema:
-      $ref: '#/definitions/Preference'
+      $ref: '#/definitions/MesheryApplication'
   grafanaBoardsResponseWrapper:
     description: Returns Grafana boards and panels
     schema:
@@ -4023,10 +4693,42 @@ responses:
     description: Returns Grafana configs
     schema:
       $ref: '#/definitions/Grafana'
+  k8sConfigRespWrapper:
+    description: Returns saved kubernetes config
+    schema:
+      $ref: '#/definitions/K8SConfig'
+  k8sContextsRespWrapper:
+    description: Returns kubernetes context list
+    schema:
+      items:
+        $ref: '#/definitions/K8SContext'
+      type: array
+  listProvidersRespWrapper:
+    description: Returns a list of available providers
+    schema:
+      additionalProperties:
+        $ref: '#/definitions/ProviderProperties'
+      type: object
   loadTestPreferencesWrapper:
     description: Returns load test preferences
     schema:
       $ref: '#/definitions/PerformanceTestConfig'
+  mesheryApplicationResponseWrapper:
+    description: Fetches a single Meshery Application
+    schema:
+      $ref: '#/definitions/MesheryApplication'
+  mesheryApplicationsResponseWrapper:
+    description: Returns all meshery applications
+    schema:
+      $ref: '#/definitions/ApplicationsAPIResponse'
+  mesheryFilterResponseWrapper:
+    description: Returns a single meshery filter
+    schema:
+      $ref: '#/definitions/MesheryFilter'
+  mesheryFiltersResponseWrapper:
+    description: Returns all meshery filters
+    schema:
+      $ref: '#/definitions/FiltersAPIResponse'
   mesheryPatternResponseWrapper:
     description: Returns a single meshery pattern
     schema:
@@ -4035,8 +4737,20 @@ responses:
     description: Returns all meshery patterns
     schema:
       $ref: '#/definitions/PatternsAPIResponse'
+  mesheryVersionRespWrapper:
+    description: Returns Meshery version
+    schema:
+      $ref: '#/definitions/Version'
   noContentWrapper:
     description: ""
+  perfSingleResultRespWrapper:
+    description: Returns Single test result
+    schema:
+      $ref: '#/definitions/PerformanceSpec'
+  perfTestPrefsRespWrapper:
+    description: Returns Perf test preference
+    schema:
+      $ref: '#/definitions/Preference'
   performanceProfileResponseWrapper:
     description: Returns a single performance profile
     schema:
@@ -4071,6 +4785,16 @@ responses:
     description: Returns a single schedules
     schema:
       $ref: '#/definitions/Schedule'
+  systemAdaptersRespWrapper:
+    description: Return all the adapters
+    schema:
+      items:
+        $ref: '#/definitions/Adapter'
+      type: array
+  userLoadTestPrefsRespWrapper:
+    description: Returns User Load Test Preferencee
+    schema:
+      $ref: '#/definitions/Preference'
   v1ServicesMapResponseWrapper:
     description: Returns a map for v1 services
     schema:
