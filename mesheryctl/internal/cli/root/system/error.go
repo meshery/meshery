@@ -81,5 +81,5 @@ func ErrProcessingMctlConfig(err error) error {
 }
 
 func ErrRestartMeshery(err error) error {
-	return errors.New(ErrRestartMesheryCode, errors.Alert, []string{"Error restarting meshery"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrRestartMesheryCode, errors.Alert, []string{"Error restarting Meshery"}, []string{err.Error()}, []string{}, []string{})
 }
