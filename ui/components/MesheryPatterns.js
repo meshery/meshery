@@ -31,7 +31,6 @@ import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
-import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
@@ -41,7 +40,6 @@ import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import { Button } from "@material-ui/core";
 import jsYaml from "js-yaml";
-import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -684,7 +682,7 @@ function PatternForm({ pattern, onSubmit, show }) {
     <>
       <AppBar position="static" className={classes.appBar} elevation={0}>
         <Toolbar>
-          <IconButton edge="start" className={classes.backButton} color="inherit"  onClick={() => show(false)}>
+          <IconButton edge="start" className={classes.backButton} color="inherit" onClick={() => show(false)}>
             <ArrowBackIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
