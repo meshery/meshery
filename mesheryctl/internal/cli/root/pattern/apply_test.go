@@ -61,7 +61,7 @@ func TestApplyCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Onboard Application with --skip-save",
+			Name:             "Apply Pattern with --skip-save",
 			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "samplePattern.golden"), "--skip-save"},
 			ExpectedResponse: "apply.output.golden",
 			URLs: []utils.MockURL{
