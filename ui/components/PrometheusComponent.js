@@ -130,7 +130,7 @@ class PrometheusComponent extends Component {
             });
           }
         },
-        self.handleError("There was an error communicating with Grafana")
+        self.handleError
       )
   }
 
