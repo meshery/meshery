@@ -65,7 +65,7 @@ var applyCmd = &cobra.Command{
 
 			err = utils.AddAuthDetails(req, tokenPath)
 			if err != nil {
-				return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
+				return ErrInvalidAuthToken()
 			}
 
 			resp, err := client.Do(req)
@@ -76,16 +76,16 @@ var applyCmd = &cobra.Command{
 			var response *models.FiltersAPIResponse
 			// failsafe (bad api call)
 			if resp.StatusCode != 200 {
-				return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+				return ErrInvalidAPICall(resp.StatusCode)
 			}
 			defer resp.Body.Close()
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				return errors.Wrap(err, utils.PerfError("failed to read response body"))
+				return ErrReadAPIResponse(err)
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
+				return ErrUnmarshal(err)
 			}
 
 			index := 0
@@ -134,17 +134,17 @@ var applyCmd = &cobra.Command{
 					var response []*models.MesheryApplication
 					// failsafe (bad api call)
 					if resp.StatusCode != 200 {
-						return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+						return ErrInvalidAPICall(resp.StatusCode)
 					}
 					defer resp.Body.Close()
 
 					body, err := ioutil.ReadAll(resp.Body)
 					if err != nil {
-						return errors.Wrap(err, utils.PerfError("failed to read response body"))
+						return ErrReadAPIResponse(err)
 					}
 					err = json.Unmarshal(body, &response)
 					if err != nil {
-						return errors.Wrap(err, "failed to unmarshal response body")
+						return ErrUnmarshal(err)
 					}
 				}
 
@@ -204,17 +204,17 @@ var applyCmd = &cobra.Command{
 				var response []*models.MesheryFilter
 				// failsafe (bad api call)
 				if resp.StatusCode != 200 {
-					return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+					return ErrInvalidAPICall(resp.StatusCode)
 				}
 				defer resp.Body.Close()
 
 				body, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
-					return errors.Wrap(err, utils.PerfError("failed to read response body"))
+					return ErrReadAPIResponse(err)
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					return errors.Wrap(err, "failed to unmarshal response body")
+					return ErrUnmarshal(err)
 				}
 
 				// setup filter file here
