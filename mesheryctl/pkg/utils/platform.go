@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -258,18 +257,15 @@ func GetDeploymentVersion(filePath string) (string, error) {
 
 // CanUseCachedOperatorManifests returns an error if it is not possible to use cached operator manifests
 func CanUseCachedOperatorManifests(currCtx *(config.Context)) error {
-	_, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator))
-	if errors.Is(err, fs.ErrNotExist) {
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)); os.IsNotExist(err) {
 		return errors.New("operator manifest file does not exist")
 	}
 
-	_, err = os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker))
-	if errors.Is(err, fs.ErrNotExist) {
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)); os.IsNotExist(err) {
 		return errors.New("broker manifest file does not exist")
 	}
 
-	_, err = os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync))
-	if errors.Is(err, fs.ErrNotExist) {
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)); os.IsNotExist(err) {
 		return errors.New("meshsync manifest file does not exist")
 	}
 
@@ -279,15 +275,13 @@ func CanUseCachedOperatorManifests(currCtx *(config.Context)) error {
 // CanUseCachedManifests returns an error if it is not possible to use cached manifests
 func CanUseCachedManifests(currCtx *(config.Context)) error {
 	// checks if meshery folder are present
-	_, err := os.Stat(MesheryFolder)
-	if errors.Is(err, fs.ErrNotExist) {
+	if _, err := os.Stat(MesheryFolder); os.IsNotExist(err) {
 		return errors.New("Manifests folder does not exist")
 	}
 
 	// check if meshery deployment file is present
 	deploymentsPath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryDeployment)
-	_, err = os.Stat(deploymentsPath)
-	if errors.Is(err, fs.ErrNotExist) {
+	if _, err := os.Stat(deploymentsPath); os.IsNotExist(err) {
 		return errors.New("Deployments file does not exist")
 	}
 
@@ -309,14 +303,12 @@ func CanUseCachedManifests(currCtx *(config.Context)) error {
 		// check if adapter manifests are present
 		for _, adapter := range currCtx.GetAdapters() {
 			serviceFile := filepath.Join(MesheryFolder, ManifestsFolder, adapter+"-service.yaml")
-			_, err = os.Stat(serviceFile)
-			if errors.Is(err, fs.ErrNotExist) {
+			if _, err := os.Stat(serviceFile); os.IsNotExist(err) {
 				return errors.New("service file does not exist")
 			}
 
 			adapterDeploymentFile := filepath.Join(MesheryFolder, ManifestsFolder, adapter+"-deployment.yaml")
-			_, err = os.Stat(adapterDeploymentFile)
-			if errors.Is(err, fs.ErrNotExist) {
+			if _, err := os.Stat(adapterDeploymentFile); os.IsNotExist(err) {
 				return errors.New("adapter deployment file does not exist")
 			}
 		}
