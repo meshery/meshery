@@ -9,15 +9,15 @@ import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
 const Form = withTheme(MaterialUITheme);
 
 const muiTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#00b39f',
+  palette : {
+    primary : {
+      main : '#00b39f',
     },
   },
-  props: {
-    MuiTextField: {
-      variant: 'outlined',
-      margin: 'dense',
+  props : {
+    MuiTextField : {
+      variant : 'outlined',
+      margin : 'dense',
     },
   },
 });
@@ -36,7 +36,7 @@ function RJSFButton({ handler, text }) {
 
 
 const uiSchema = {
-  replicas: {
+  replicas : {
     "ui:widget" : "range"
   }
 };
@@ -77,7 +77,7 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete,
             uiSchema={uiSchema}
             // noHtml5Validate
           >
-            <button style={{opacity: '0'}} />
+            <button style={{ opacity : '0' }} />
           </Form>
         </MuiThemeProvider>
       )}

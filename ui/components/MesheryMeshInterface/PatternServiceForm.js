@@ -117,8 +117,8 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAs
         type="workload"
         jsonSchema={schemaSet.workload}
         onChange={setSettings}
-        onSubmit={() => submitHandler({ settings: getSettingsRefValue() })}
-        onDelete={() => deleteHandler({ settings: getSettingsRefValue() })}
+        onSubmit={() => submitHandler({ settings : getSettingsRefValue() })}
+        onDelete={() => deleteHandler({ settings : getSettingsRefValue() })}
         renderAsTooltip={renderAsTooltip}
       />
     );
@@ -128,13 +128,13 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAs
     <div>
       {!renderAsTooltip ? (<Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
-      </Typography>) : ( 
-        <div style={{ background: "#00b39f", margin: "-10px -10px 0 -10px", padding: "5px", display: "flex"}}>
-          <p style={{ margin: "auto auto auto 10px", fontSize: "18px" }}>{schemaSet.workload.title}</p>
-          <IconButton onClick={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}>
+      </Typography>) : (
+        <div style={{ background : "#00b39f", margin : "-10px -10px 0 -10px", padding : "5px", display : "flex" }}>
+          <p style={{ margin : "auto auto auto 10px", fontSize : "18px" }}>{schemaSet.workload.title}</p>
+          <IconButton onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
             <Delete />
           </IconButton>
-          <IconButton onClick={() => submitHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}>
+          <IconButton onClick={() => submitHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
             <Close />
           </IconButton>
         </div>
@@ -146,12 +146,12 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAs
             ? <Tab label="Traits" {...a11yProps(1)} />
             : null}
         </Tabs>
-      </AppBar>)}  
+      </AppBar>)}
       {renderAsTooltip && renderTraits() && (
-        <AppBar style={{background: 'inherit', boxShadow: 'none', color: 'black'}} position="static">
-          <Tabs TabIndicatorProps={{style: {background:'#00b39f'}}} style={{ margin: 0 }} value={tab} onChange={handleTabChange} aria-label="Pattern Service">
-            <Tab label="Settings" style={{ minWidth: "50%", margin: 0 }} {...a11yProps(0)} />
-            <Tab label="Traits" style={{ minWidth: "50%", margin: 0 }} {...a11yProps(1)} />
+        <AppBar style={{ background : 'inherit', boxShadow : 'none', color : 'black' }} position="static">
+          <Tabs TabIndicatorProps={{ style : { background : '#00b39f' } }} style={{ margin : 0 }} value={tab} onChange={handleTabChange} aria-label="Pattern Service">
+            <Tab label="Settings" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(0)} />
+            <Tab label="Traits" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(1)} />
           </Tabs>
         </AppBar>)}
       <TabPanel value={tab} index={0}>
@@ -159,8 +159,8 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAs
           type="workload"
           jsonSchema={schemaSet.workload}
           onChange={setSettings}
-          onSubmit={() => submitHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
-          onDelete={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}
+          onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}
+          onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}
           renderAsTooltip={renderAsTooltip}
         />
       </TabPanel>
@@ -170,7 +170,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAs
             <PatternService
               type="trait"
               jsonSchema={trait}
-              onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)]: val }))}
+              onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)] : val }))}
               renderAsTooltip={renderAsTooltip}
             />
           ))}

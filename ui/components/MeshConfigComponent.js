@@ -93,21 +93,21 @@ const styles = (theme) => ({
     textAlign : "center",
     [theme.breakpoints.down(945)] : { display : "none", },
   },
-  operationButton:{
-    [theme.breakpoints.down(1180)]: {
-      marginRight:"25px",
+  operationButton : {
+    [theme.breakpoints.down(1180)] : {
+      marginRight : "25px",
     },
   },
-  contentContainer:{
-    [theme.breakpoints.down(1050)]: {
-      flexDirection:"column",
+  contentContainer : {
+    [theme.breakpoints.down(1050)] : {
+      flexDirection : "column",
     },
   },
-  configBoxContainer:{
-    [theme.breakpoints.down(1050)]: {
-      flexGrow: 0,
-      maxWidth: '100%',
-      flexBasis: '100%',
+  configBoxContainer : {
+    [theme.breakpoints.down(1050)] : {
+      flexGrow : 0,
+      maxWidth : '100%',
+      flexBasis : '100%',
     },
   },
   changeConfigHeadingOne : { display : "none",
