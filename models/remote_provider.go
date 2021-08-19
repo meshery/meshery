@@ -2064,6 +2064,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 	ck := &http.Cookie{
 		Name:     tokenName,
 		Value:    string(tokenString),
+		Expires:  time.Now().Add(365 * 30 * 24 * time.Hour),
 		Path:     "/",
 		HttpOnly: true,
 	}
@@ -2093,6 +2094,7 @@ func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) str
 		http.SetCookie(w, &http.Cookie{
 			Name:     tokenName,
 			Value:    newts,
+			Expires:  time.Now().Add(365 * 30 * 24 * time.Hour),
 			Path:     "/",
 			HttpOnly: true,
 		})
