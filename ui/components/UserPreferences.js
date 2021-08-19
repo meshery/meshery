@@ -35,14 +35,15 @@ const styles = (theme) => ({
   },
   paperRoot : {
     flexGrow : 1,
-    maxWidth : "30%",
+    maxWidth : "90%",
     marginLeft : 0,
     borderTopLeftRadius : 3,
     borderTopRightRadius : 3,
   },
   tabs : { marginLeft : 0 },
   tab : {
-    minWidth : "33%",
+    maxWidth : 'min(33%, 200px)',
+    minWidth : '50px',
     margin : 0
   },
   icon : {
@@ -75,6 +76,14 @@ const styles = (theme) => ({
   },
   track : { backgroundColor : 'rgba(100,120,129,0.5)', },
   checked : {},
+  tabLabel : {
+    [theme.breakpoints.up("sm")] : {
+      fontSize : '1em'
+    },
+    [theme.breakpoints.between("xs", 'sm')] : {
+      fontSize : '0.8em'
+    }
+  }
 });
 
 class UserPreference extends React.Component {
@@ -219,7 +228,7 @@ class UserPreference extends React.Component {
                 icon={
                   <SettingsCellIcon />
                 }
-                label="General"
+                label={<span className={classes.tabLabel}>General</span>}
               />
             </Tooltip>
             {userPrefs && providerType != 'local' &&
@@ -229,7 +238,7 @@ class UserPreference extends React.Component {
                   icon={
                     <SettingsRemoteIcon />
                   }
-                  label="Remote Provider"
+                  label={<span className={classes.tabLabel}>Remote Provider</span>}
                 />
               </Tooltip>
             }
@@ -239,7 +248,7 @@ class UserPreference extends React.Component {
                 icon={
                   <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
                 }
-                label="Performance"
+                label={<span className={classes.tabLabel}>Performance</span>}
               />
             </Tooltip>
           </Tabs>
