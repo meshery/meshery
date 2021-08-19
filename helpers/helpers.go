@@ -64,29 +64,6 @@ func FlattenMinifyKubeConfig(config []byte) ([]byte, error) {
 	return yaml.Marshal(cfg)
 }
 
-func ChangeK8sContext(config []byte, context string) ([]byte, error) {
-	cfg := map[interface{}]interface{}{}
-
-	if err := yaml.Unmarshal(config, &cfg); err != nil {
-		return config, err
-	}
-
-	NestedMapExplorer(cfg, func(key, value interface{}) (interface{}, interface{}) {
-		str, ok := key.(string)
-		if !ok {
-			return key, value
-		}
-
-		if str != "current-context" {
-			return key, value
-		}
-
-		return key, context
-	})
-
-	return yaml.Marshal(cfg)
-}
-
 func NestedMapExplorer(
 	mp map[interface{}]interface{},
 	fn func(key interface{}, value interface{}) (interface{}, interface{}),
