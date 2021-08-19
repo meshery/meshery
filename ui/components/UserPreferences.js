@@ -85,7 +85,8 @@ class UserPreference extends React.Component {
       perfResultStats : props.perfResultStats,
       startOnZoom : props.startOnZoom,
       tabVal : 0,
-      userPrefs : ExtensionPointSchemaValidator("user_prefs")()
+      userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
+      providerType : ''
     };
   }
 
@@ -182,7 +183,10 @@ class UserPreference extends React.Component {
         credentials : "include", },
       (result) => {
         if (result) {
-          this.setState({ userPrefs : ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs) })
+          this.setState({
+            userPrefs : ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs),
+            providerType : result?.provider_type
+          })
         }
       },
       err => console.error(err)
@@ -191,7 +195,7 @@ class UserPreference extends React.Component {
 
   render() {
     const {
-      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs
+      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs, providerType
     } = this.state;
     const { classes } = this.props;
 
@@ -218,7 +222,7 @@ class UserPreference extends React.Component {
                 label="General"
               />
             </Tooltip>
-            {userPrefs &&
+            {userPrefs && providerType != 'local' &&
               <Tooltip title="Remote Provider preferences" placement="top">
                 <Tab
                   className={classes.tab}
@@ -282,7 +286,7 @@ class UserPreference extends React.Component {
               </FormControl>
             </div>
           }
-          {tabVal == 1 && userPrefs &&
+          {tabVal == 1 && userPrefs && providerType != 'local' &&
             <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
           }
           {tabVal === 2 &&
