@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl onboard --file
+title: mesheryctl app onboard --file
 permalink: reference/mesheryctl/apps/onboard
 type: reference
 display-title: "false"
@@ -11,7 +11,7 @@ language: en
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl onboard --file
+# mesheryctl app onboard --file
 
 <!-- Description of the command. Preferably a paragraph -->
 ## Description
@@ -23,7 +23,7 @@ language: en
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl onboard --file [path to app file] 
+  mesheryctl app onboard --file [path to app file] 
   </div>
 </pre>
 
