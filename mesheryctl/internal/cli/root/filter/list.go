@@ -38,7 +38,7 @@ var listCmd = &cobra.Command{
 
 		var response models.FiltersAPIResponse
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/filter", nil)
+		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
 		if err != nil {
 			return err
 		}
