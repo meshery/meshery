@@ -354,6 +354,7 @@ type adapterOpsParamsWrapper struct {
 	Namespace  string `json:"namespace"`
 	Delete     string `json:"deleteOp"`
 }
+
 // Returns a single meshery filter
 // swagger:response mesheryFilterResponseWrapper
 type mesheryFilterResponseWrapper struct {
