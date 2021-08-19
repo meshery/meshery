@@ -3887,7 +3887,7 @@ paths:
       summary: Handle POST request for Application File Deploy
       tags:
       - ApplicationsAPI
-  /api/experimental/filter:
+  /api/filter:
     get:
       description: Returns all the Meshery Filters saved by the current user
       operationId: idGetFilterFile
@@ -3906,7 +3906,7 @@ paths:
       summary: Handle POST requests for Meshery Filters
       tags:
       - FiltersAPI
-  /api/experimental/filter/{id}:
+  /api/filter/{id}:
     delete:
       description: 'Deletes a meshery filter with ID: id'
       operationId: idDeleteMesheryFilter
@@ -3941,7 +3941,7 @@ paths:
       summary: Handle GET request for a Meshery Filter
       tags:
       - FiltersAPI
-  /api/experimental/filter/file/{id}:
+  /api/filter/file/{id}:
     get:
       description: Returns the Meshery Filter file saved by the current user with
         the given id
