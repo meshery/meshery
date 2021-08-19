@@ -14,11 +14,7 @@ language: en
 # mesheryctl app list
 
 <!-- Description of the command. Preferably a paragraph -->
-## Description
-
-{% for subcommand_hash in site.data.mesheryctlcommands.apps.list %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
-{% endfor %}
+## Description and Example
 
 <!-- Basic usage of the command -->
 {% for subcommand_hash in site.data.mesheryctlcommands.apps.list %}{% assign subcommand = subcommand_hash[1] %}
