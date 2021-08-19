@@ -1,6 +1,8 @@
 package filter
 
 import (
+	"strconv"
+
 	"github.com/layer5io/meshkit/errors"
 )
 
@@ -16,7 +18,7 @@ func ErrInvalidAuthToken() error {
 }
 
 func ErrInvalidAPICall(statusCode int) error {
-	return errors.New(ErrInvalidAPICallCode, errors.Alert, []string{"Response Status Code ", string(statusCode), " possible Server Error"}, []string{}, []string{}, []string{})
+	return errors.New(ErrInvalidAPICallCode, errors.Alert, []string{"Response Status Code ", strconv.Itoa(statusCode), " possible Server Error"}, []string{}, []string{}, []string{})
 }
 
 func ErrReadAPIResponse(err error) error {
