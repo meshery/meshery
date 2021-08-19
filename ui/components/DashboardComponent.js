@@ -126,20 +126,20 @@ class DashboardComponent extends React.Component {
         release_channel : "NA",
       },
 
-      urlError: false,
-      grafanaConfigSuccess: props.grafana.grafanaURL !== "",
-      grafanaBoardSearch: "",
-      grafanaURL: props.grafana.grafanaURL,
-      grafanaAPIKey: props.grafana.grafanaAPIKey,
-      grafanaBoards: props.grafana.grafanaBoards,
-      selectedBoardsConfigs: props.grafana.selectedBoardsConfigs,
-      ts: props.grafana.ts,
+      urlError : false,
+      grafanaConfigSuccess : props.grafana.grafanaURL !== "",
+      grafanaBoardSearch : "",
+      grafanaURL : props.grafana.grafanaURL,
+      grafanaAPIKey : props.grafana.grafanaAPIKey,
+      grafanaBoards : props.grafana.grafanaBoards,
+      selectedBoardsConfigs : props.grafana.selectedBoardsConfigs,
+      ts : props.grafana.ts,
 
-      meshScan: [],
-      activeMeshScanNamespace: {},
-      meshScanNamespaces: {},
+      meshScan : [],
+      activeMeshScanNamespace : {},
+      meshScanNamespaces : {},
 
-      isMetricsConfigured: grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured
+      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured
     };
   }
 
@@ -194,7 +194,7 @@ class DashboardComponent extends React.Component {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
 
-    if(this.state.isMetricsConfigured){
+    if (this.state.isMetricsConfigured){
       this.fetchMetricComponents();
     }
     this.initMeshSyncControlPlaneSubscription();
@@ -787,8 +787,7 @@ class DashboardComponent extends React.Component {
               {self.state.meshScan.map((mesh) => {
                 let tag = "";
                 mesh.name
-                  .replace("_", " ")
-                  .split(" ")
+                  .split("_")
                   .forEach((element) => {
                     tag = tag + " " + element[0].toUpperCase() + element.slice(1, element.length);
                   });

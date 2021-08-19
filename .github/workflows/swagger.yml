@@ -2,12 +2,9 @@ name: Open API Specification and Documentation
 on:
   push:
     branches:
-      - "master"
+      - 'master'
     paths:
-      - "handlers/**"
-  pull_request:
-    paths:
-      - "handlers/**"
+      - 'handlers/**'
 jobs:
   swaggerci:
     if: github.repository == 'meshery/meshery'
@@ -33,5 +30,5 @@ jobs:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
+          commit_options: '--signoff'
           commit_message: "[Docs] Updated swagger docs for REST API"
