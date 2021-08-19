@@ -401,12 +401,12 @@ class MesherySettings extends React.Component {
               </AppBar>
               {subTabVal === 0 && (
                 <TabContainer>
-                  <GrafanaComponent scannedGrafana={this.state.scannedGrafana} isMeshConfigured= {this.isMeshConfigured}  />
+                  <GrafanaComponent scannedGrafana={this.state.scannedGrafana} isMeshConfigured= {this.state.isMeshConfigured}  />
                 </TabContainer>
               )}
               {subTabVal === 1 && (
                 <TabContainer>
-                  <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} isMeshConfigured={this.isMeshConfigured} />
+                  <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} isMeshConfigured={this.state.isMeshConfigured} />
                 </TabContainer>
               )}
             </TabContainer>
