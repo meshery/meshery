@@ -110,8 +110,8 @@ var applyCmd = &cobra.Command{
 				// if --skip-save is not passed we save the filters first
 				if !skipSave {
 					jsonValues, err := json.Marshal(map[string]interface{}{
-						"application_data": map[string]interface{}{
-							"application_file": text,
+						"filter_data": map[string]interface{}{
+							"filter_file": text,
 						},
 						"save": true,
 					})
