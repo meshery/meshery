@@ -98,6 +98,23 @@ layout: default
                         {% endfor %}
                     </tbody>
                 </table>
+                <div>
+                {% highlight json %}
+{
+    {% for parameter in response[1].schema.properties %}
+    {% if parameter[1].type != "array" %}"{{ parameter[0] }}": {{ parameter[1].example }},{% else %}
+    "{{ parameter[0] }}": [
+        {
+        {% for item in parameter[1].items.properties %}
+            "{{ item[0] }}": "{{ item[1].example }}",
+        {% endfor %}
+        }
+    ],
+    {% endif %}
+    {% endfor %}
+}
+                {% endhighlight %}
+                </div>
                 {% endif %}
                 {% for content_type in swagger.produces %}
                     {% if response[1].examples[content_type] %}
