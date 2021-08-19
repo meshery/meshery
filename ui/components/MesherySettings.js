@@ -132,7 +132,7 @@ class MesherySettings extends React.Component {
 
   componentDidMount() {
     if (this.state.isMeshConfigured)
-      this.fetchPromGrafanaScanData()
+      this.fetchPromGrafanaScanData();
   }
 
   fetchPromGrafanaScanData = () => {
@@ -401,12 +401,12 @@ class MesherySettings extends React.Component {
               </AppBar>
               {subTabVal === 0 && (
                 <TabContainer>
-                  <GrafanaComponent scannedGrafana={this.state.scannedGrafana} isMeshConfigured={isMeshConfigured} />
+                  <GrafanaComponent scannedGrafana={this.state.scannedGrafana} isMeshConfigured= {this.isMeshConfigured}  />
                 </TabContainer>
               )}
               {subTabVal === 1 && (
                 <TabContainer>
-                  <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} isMeshConfigured={isMeshConfigured} />
+                  <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} isMeshConfigured={this.isMeshConfigured} />
                 </TabContainer>
               )}
             </TabContainer>
