@@ -42,8 +42,6 @@ const mapStateToProps = (st) => {
   return { grafana };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreators(updateLoadTestData, dispatch), });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Extension);

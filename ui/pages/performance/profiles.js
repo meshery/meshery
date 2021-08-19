@@ -9,7 +9,7 @@ import { getPath } from "../../lib/path";
 class Results extends React.Component {
   componentDidMount() {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path: getPath() });
+    this.props.updatepagepath({ path : getPath() });
   }
 
   render() {
@@ -24,8 +24,6 @@ class Results extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch), });
 
 export default connect(null, mapDispatchToProps)(Results);

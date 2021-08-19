@@ -1,7 +1,7 @@
 describe('Settings', () => {
   describe('Environment', () => {
     beforeEach(() => {
-      // cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
+      // cy.intercept('GET', '/api/system/meshsync/grafana').as('getScan')
 
       cy.selectProviderNone()
 
@@ -34,7 +34,7 @@ describe('Settings', () => {
 
   describe('Service Meshes', () => {
     beforeEach(() => {
-      // cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
+      // cy.intercept('GET', '/api/system/meshsync/grafana').as('getScan')
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters')
 
       cy.selectProviderNone()
@@ -46,7 +46,7 @@ describe('Settings', () => {
     })
     it('ping and submit Consul', () => {
       cy.intercept('GET', '/api/system/adapters*').as('getAdapterPing')
-      cy.intercept('POST', '/api/mesh/manage').as('postMeshManage')
+      cy.intercept('POST', '/api/system/adapter/manage').as('postMeshManage')
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters')
 
       cy.get('[data-cy=chipAdapterLocation]')

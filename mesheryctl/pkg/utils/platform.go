@@ -204,8 +204,34 @@ func DownloadOperatorManifest() error {
 	return nil
 }
 
+// returns the Channel and Version given a context
+func GetChannelAndVersion(currCtx *(config.Context)) (string, string, error) {
+	var version, channel string
+	var err error
+
+	version = currCtx.GetVersion()
+	channel = currCtx.GetChannel()
+	if version == "latest" {
+		if channel == "edge" {
+			version = "master"
+		} else {
+			version, err = GetLatestStableReleaseTag()
+			if err != nil {
+				return "", "", err
+			}
+		}
+	}
+
+	return channel, version, nil
+}
+
 // FetchManifests is a wrapper function that identifies the required manifest files as downloads them
-func FetchManifests(version string) ([]Manifest, error) {
+func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
+	_, version, err := GetChannelAndVersion(currCtx)
+	if err != nil {
+		return []Manifest{}, err
+	}
+
 	log.Debug("fetching required Kubernetes manifest files...")
 	// get correct minfestsURL based on version
 	manifestsURL, err := GetManifestTreeURL(version)
@@ -502,12 +528,12 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 
 // CreateManifestsFolder creates a new folder (.meshery/manifests)
 func CreateManifestsFolder() error {
-	log.Debug("deleting ~/.meshery/manifests folder...")
+	log.Debug("deleting " + ManifestsFolder + " folder...")
 	// delete manifests folder if it already exists
 	if err := os.RemoveAll(ManifestsFolder); err != nil {
 		return err
 	}
-	log.Debug("creating ~/.meshery/manifests folder...")
+	log.Debug("creating " + ManifestsFolder + "folder...")
 	// create a manifests folder under ~/.meshery to store the manifest files
 	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))

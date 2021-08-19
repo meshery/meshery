@@ -18,6 +18,13 @@ func init() {
 	gob.Register(&models.PrometheusClient{})
 }
 
+// swagger:route GET /api/system/meshsync/grafana SystemAPI idMeshSyncGrafana
+// Handle GET request for mesh-sync grafana
+//
+// Fetches Prometheus and Grafana
+// responses:
+// 	200: v1ServicesMapResponseWrapper
+
 // ScanPromGrafanaHandler - fetches  Prometheus and Grafana
 func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
@@ -40,6 +47,13 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 }
+
+// swagger:route GET /api/system/meshsync/prometheus SystemAPI idMeshSyncPrometheus
+// Handle GET request for fetching prometheus
+//
+// Fetches Prometheus
+// responses:
+// 	200: v1ServicesMapResponseWrapper
 
 // ScanPrometheusHandler - fetches  Prometheus
 func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

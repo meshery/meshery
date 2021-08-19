@@ -38,7 +38,7 @@ var listCmd = &cobra.Command{
 
 		var response models.FiltersAPIResponse
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/filter", nil)
+		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
 		if err != nil {
 			return err
 		}
@@ -54,6 +54,9 @@ var listCmd = &cobra.Command{
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			return err
+		}
+		if res.StatusCode != http.StatusOK {
+			return errors.New("Server returned with status code: " + fmt.Sprint(res.StatusCode) + "\n" + "Response: " + string(body))
 		}
 		err = json.Unmarshal(body, &response)
 
