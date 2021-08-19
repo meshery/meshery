@@ -3952,16 +3952,6 @@ paths:
       summary: Handle GET request for filter file with given id
       tags:
       - FiltersAPI
-  /api/mesh/ops:
-    post:
-      description: Used to send operations to the adapters
-      operationId: idPostAdapterOperation
-      responses:
-        "200":
-          description: ""
-      summary: Handle POST requests for Adapter Operations
-      tags:
-      - SystemAPI
   /api/oam/{type}:
     get:
       description: |-
@@ -4151,10 +4141,76 @@ paths:
       summary: Handle GET request for list of providers
       tags:
       - ProvidersAPI
+  /api/system/adapter/manage:
+    delete:
+      description: Used to delete adapter configuration
+      operationId: idDeleteAdapterConfig
+      parameters:
+      - in: query
+        name: adapter
+        type: string
+        x-go-name: Adapter
+      responses:
+        "200":
+          description: ""
+      summary: Handle DELETE requests to delete adapter config
+      tags:
+      - SystemAPI
+    post:
+      description: Used to persist adapter config
+      operationId: idPostAdapterConfig
+      parameters:
+      - in: body
+        name: meshLocationURL
+        schema:
+          type: string
+        x-go-name: MeshLocationURL
+      responses:
+        "200":
+          $ref: '#/responses/mesheryAdaptersRespWrapper'
+      summary: Handle POST requests to persist adapter config
+      tags:
+      - SystemAPI
+  /api/system/adapter/operation:
+    post:
+      description: Used to send operations to the adapters
+      operationId: idPostAdapterOperation
+      parameters:
+      - in: query
+        name: adapter
+        type: string
+        x-go-name: Adapter
+      - in: query
+        name: query
+        type: string
+        x-go-name: Query
+      - in: query
+        name: customBody
+        type: string
+        x-go-name: CustomBody
+      - in: query
+        name: namespace
+        type: string
+        x-go-name: Namespace
+      - in: query
+        name: deleteOp
+        type: string
+        x-go-name: Delete
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST requests for Adapter Operations
+      tags:
+      - SystemAPI
   /api/system/adapters:
     get:
       description: Fetches and returns all the adapters and ping adapters
       operationId: idGetSystemAdapters
+      parameters:
+      - in: query
+        name: adapter
+        type: string
+        x-go-name: Adapter
       responses:
         "200":
           $ref: '#/responses/systemAdaptersRespWrapper'
@@ -4198,6 +4254,26 @@ paths:
         "200":
           description: ""
       summary: Handle GET request for Kubernetes ping
+      tags:
+      - SystemAPI
+  /api/system/meshsync/grafana:
+    get:
+      description: Fetches Prometheus and Grafana
+      operationId: idMeshSyncGrafana
+      responses:
+        "200":
+          $ref: '#/responses/v1ServicesMapResponseWrapper'
+      summary: Handle GET request for mesh-sync grafana
+      tags:
+      - SystemAPI
+  /api/system/meshsync/prometheus:
+    get:
+      description: Fetches Prometheus
+      operationId: idMeshSyncPrometheus
+      responses:
+        "200":
+          $ref: '#/responses/v1ServicesMapResponseWrapper'
+      summary: Handle GET request for fetching prometheus
       tags:
       - SystemAPI
   /api/system/sync:
@@ -4673,12 +4749,6 @@ paths:
 produces:
 - application/json
 responses:
-  adapterPingParams:
-    description: ""
-    headers:
-      adapter:
-        description: 'in: query'
-        type: string
   applicationFilesResponseWrapper:
     description: Returns the response of the application files
     schema:
@@ -4713,6 +4783,12 @@ responses:
     description: Returns load test preferences
     schema:
       $ref: '#/definitions/PerformanceTestConfig'
+  mesheryAdaptersRespWrapper:
+    description: Returns all the meshery adapters
+    schema:
+      items:
+        $ref: '#/definitions/Adapter'
+      type: array
   mesheryApplicationResponseWrapper:
     description: Fetches a single Meshery Application
     schema:
