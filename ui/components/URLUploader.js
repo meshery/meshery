@@ -1,21 +1,23 @@
 import React from 'react'
 import LinkIcon from '@material-ui/icons/Link';
-import { Tooltip, IconButton, TextField,Button, Grid} from '@material-ui/core';
+import { Tooltip, IconButton, TextField,Button, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { URLValidator } from '../utils/URLValidator';
+
 const styles = makeStyles((theme) => ({
-  paper: {
-    position: 'absolute',
-    width: 600,
-    backgroundColor: theme.palette.background.paper,
-    border: '0px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-    top: '50%',
-    left: '50%',
-    transform: `translate(-50%, -50%)`,
-    borderRadius: 10,
+  paper : {
+    position : 'absolute',
+    width : 600,
+    backgroundColor : theme.palette.background.paper,
+    border : '0px solid #000',
+    boxShadow : theme.shadows[5],
+    padding : theme.spacing(2, 4, 3),
+    top : '50%',
+    left : '50%',
+    transform : `translate(-50%, -50%)`,
+    borderRadius : 10,
   },
-  grid: {
+  grid : {
     width : '100%'
   }
 }));
@@ -33,13 +35,7 @@ const URLUploader = ({ onSubmit }) => {
     setOpen(false);
   };
   const validURL = (str) =>  {
-    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-    return !!pattern.test(str);
+    URLValidator(str);
   }
   const handleError = (input) => {
     console.log(input + ' is not valid url')

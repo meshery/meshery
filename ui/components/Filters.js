@@ -479,7 +479,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       <MUIDataTable
-        title={<div className={classes.tableHeader}>Filters?</div>}
+        title={<div className={classes.tableHeader}>Filters</div>}
         data={filters}
         columns={columns}
         // @ts-ignore
