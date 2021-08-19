@@ -56,12 +56,15 @@ const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
     // var x=window.scrollX;
     // var y=window.scrollY;
     // window.onscroll=function(){window.scrollTo(x, y);};
-    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.overflowY = 'scroll';
+    document.body.style.width = '100%';
   }
 
   function enableScrolling(){
     // window.onscroll=function(){};
-    document.body.style.overflow = 'scroll';
+    document.body.style.position = 'static';
+    document.body.style.overflowY = 'scroll';
   }
 
   useEffect(() => {
