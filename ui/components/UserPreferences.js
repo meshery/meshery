@@ -35,7 +35,7 @@ const styles = (theme) => ({
   },
   paperRoot : {
     flexGrow : 1,
-    maxWidth : "90%",
+    maxWidth : "100%",
     marginLeft : 0,
     borderTopLeftRadius : 3,
     borderTopRightRadius : 3,
@@ -231,6 +231,16 @@ class UserPreference extends React.Component {
                 label={<span className={classes.tabLabel}>General</span>}
               />
             </Tooltip>
+            <Tooltip title="Choose Performance Test Defaults" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
+                }
+                label={<span className={classes.tabLabel}>Performance</span>}
+              />
+            </Tooltip>
+            {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
             {userPrefs && providerType != 'local' &&
               <Tooltip title="Remote Provider preferences" placement="top">
                 <Tab
@@ -242,15 +252,6 @@ class UserPreference extends React.Component {
                 />
               </Tooltip>
             }
-            <Tooltip title="Choose Performance Test Defaults" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
-                }
-                label={<span className={classes.tabLabel}>Performance</span>}
-              />
-            </Tooltip>
           </Tabs>
         </Paper>
         <Paper className={classes.root}>
@@ -295,11 +296,11 @@ class UserPreference extends React.Component {
               </FormControl>
             </div>
           }
-          {tabVal == 1 && userPrefs && providerType != 'local' &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
-          }
-          {tabVal === 2 &&
+          {tabVal === 1 &&
             <MesherySettingsPerformanceComponent />
+          }
+          {tabVal == 2 && userPrefs && providerType != 'local' &&
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
           }
         </Paper>
       </NoSsr>
