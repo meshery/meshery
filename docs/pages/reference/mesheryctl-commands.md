@@ -405,10 +405,16 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% for command_hash in site.data.mesheryctlcommands.meshes.deploy.command %}{% assign command = command_hash[1] %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/mesh/deploy">{{ command.name }}</a></td>
+        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/mesh/deploy">{{ command.name }}</a></td>
         <td></td>
         <td>{{ command.description }}</td>
       </tr>
+      {% for flag_hash in site.data.mesheryctlcommands.meshes.deploy.flag %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
     {% endfor %}
   {% endfor %}
 </thead>

@@ -2,4 +2,8 @@ name: deploy
 description: Deploy a service mesh into the cluster
 usage: |
 
-    mesheryctl mesh deploy
+    mesheryctl mesh deploy [flags]
+flags:
+  - name: --adapter
+  - name: --tokenpath
+  - name: --namespace
