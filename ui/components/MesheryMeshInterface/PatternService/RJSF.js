@@ -11,7 +11,7 @@ const Form = withTheme(MaterialUITheme);
 const muiTheme = createTheme({
   palette : {
     primary : {
-      main : '#00b39f',
+      main : '#607d8b',
     },
   },
   props : {
