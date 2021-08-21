@@ -11,40 +11,24 @@ import GrafanaCustomChart from './GrafanaCustomChart';
 import Divider from '@material-ui/core/Divider';
 
 const grafanaStyles = (theme) => ({
-  root: {
-    width: '100%',
+  root : { width : '100%', },
+  column : { flex : '1', },
+  heading : { fontSize : theme.typography.pxToRem(15), },
+  secondaryHeading : { fontSize : theme.typography.pxToRem(15),
+    color : theme.palette.text.secondary, },
+  dateRangePicker : { display : 'flex',
+    justifyContent : 'flex-end', },
+  chartsHeaderOptions : {
+    display : "flex",
+    justifyContent : "space-between",
+    alignItems : "center",
+    marginBottom : "1rem",
+    marginTop : "1rem",
   },
-  column: {
-    flex: '1',
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-  },
-  secondaryHeading: {
-    fontSize: theme.typography.pxToRem(15),
-    color: theme.palette.text.secondary,
-  },
-  dateRangePicker: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  chartsHeaderOptions:{
-    display: "flex", 
-    justifyContent: "space-between", 
-    alignItems: "center", 
-    marginBottom: "1rem", 
-    marginTop: "1rem", 
-  },
-  icon: {
-    width: theme.spacing(2.5),
-  },
-  dialogTitle: {
-    '&>*':{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    }
-  },
+  icon : { width : theme.spacing(2.5), },
+  dialogTitle : { '&>*' : { display : 'flex',
+    alignItems : 'center',
+    justifyContent : 'space-between', } },
 });
 
 
@@ -58,17 +42,29 @@ class GrafanaCustomCharts extends Component {
       startDate, from, endDate, to, liveTail, sparkline
     } = props;
     this.state = {
-      startDate: startDate && startDate !== null ? startDate : newStartDate,
-      from: from && from !== null ? from : 'now-5m',
-      endDate: endDate && endDate !== null ? endDate : new Date(),
-      to: to && to !== null ? to : 'now',
-      liveTail: liveTail && liveTail !== null ? liveTail : true,
-      refresh: '10s',
-      sparkline:sparkline && sparkline !== null ? true : false,
-      chartDialogOpen: false,
-      chartDialogPanelData: {},
-      chartDialogPanel: {},
-      chartDialogBoard: {},
+      startDate : startDate && startDate !== null
+        ? startDate
+        : newStartDate,
+      from : from && from !== null
+        ? from
+        : 'now-5m',
+      endDate : endDate && endDate !== null
+        ? endDate
+        : new Date(),
+      to : to && to !== null
+        ? to
+        : 'now',
+      liveTail : liveTail && liveTail !== null
+        ? liveTail
+        : true,
+      refresh : '10s',
+      sparkline : sparkline && sparkline !== null
+        ? true
+        : false,
+      chartDialogOpen : false,
+      chartDialogPanelData : {},
+      chartDialogPanel : {},
+      chartDialogBoard : {},
     };
   }
 
@@ -81,16 +77,16 @@ class GrafanaCustomCharts extends Component {
     chartDialogClose() {
       const self = this;
       return () => {
-        self.setState({ chartDialogOpen: false });
+        self.setState({ chartDialogOpen : false });
       };
     }
 
     handleChartDialogOpen = (board, panel, data) => {
       this.setState({
-        chartDialogOpen: true,
-        chartDialogBoard: board,
-        chartDialogPanel: panel,
-        chartDialogPanelData: data,
+        chartDialogOpen : true,
+        chartDialogBoard : board,
+        chartDialogPanel : panel,
+        chartDialogPanelData : data,
       });
     }
 
@@ -151,7 +147,7 @@ class GrafanaCustomCharts extends Component {
                 onClose={this.chartDialogClose()}
                 aria-labelledby="max-width-dialog-title"
               >
-                <DialogTitle classes={{root:classes.dialogTitle}} id="max-width-dialog-title">
+                <DialogTitle classes={{ root : classes.dialogTitle }} id="max-width-dialog-title">
                   <div>
                     {chartDialogPanel.title}
                   </div>
@@ -168,7 +164,8 @@ class GrafanaCustomCharts extends Component {
                           updateDateRange={this.updateDateRange}
                         />
                       </div>
-                    ):(<div></div>)}
+                    )
+                    :(<div></div>)}
                 </DialogTitle>
                 <DialogContent>
                   <GrafanaCustomChart
@@ -188,7 +185,9 @@ class GrafanaCustomCharts extends Component {
                     updateDateRange={this.updateDateRange}
                     inDialog
                     // testUUID={testUUID} // this is just a dialog, we dont want this series too to be persisted
-                    panelData={chartDialogPanelData && chartDialogPanelData !== null ? chartDialogPanelData : {}}
+                    panelData={chartDialogPanelData && chartDialogPanelData !== null
+                      ? chartDialogPanelData
+                      : {}}
                   />
                 </DialogContent>
                 <DialogActions>
@@ -204,10 +203,16 @@ class GrafanaCustomCharts extends Component {
                 <ExpansionPanel square defaultExpanded={ind === 0}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <div className={classes.column}>
-                      <Typography variant="subtitle1" gutterBottom>{config.board && config.board.title ? config.board.title : (config.title ? config.title : '')}</Typography>
+                      <Typography variant="subtitle1" gutterBottom>{config.board && config.board.title
+                        ? config.board.title
+                        : (config.title
+                          ? config.title
+                          : '')}</Typography>
                     </div>
                     <div className={classes.column}>
-                      <Typography variant="subtitle2">{config.templateVars && config.templateVars.length > 0 ? `Template variables: ${config.templateVars.join(' ')}` : ''}</Typography>
+                      <Typography variant="subtitle2">{config.templateVars && config.templateVars.length > 0
+                        ? `Template variables: ${config.templateVars.join(' ')}`
+                        : ''}</Typography>
                     </div>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
@@ -215,7 +220,9 @@ class GrafanaCustomCharts extends Component {
                       {config.panels.map((panel, i) =>
                         // if(panel.type === 'graph'){
                         (
-                          <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline?12:6}>
+                          <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline
+                            ?12
+                            :6}>
                             <GrafanaCustomChart
                               board={config}
                               sparkline={sparkline}
@@ -233,11 +240,16 @@ class GrafanaCustomCharts extends Component {
                               templateVars={config.templateVars}
                               updateDateRange={this.updateDateRange}
                               inDialog={false}
-                              testUUID={config.testUUID ? config.testUUID : ''}
+                              testUUID={config.testUUID
+                                ? config.testUUID
+                                : ''}
                               panelData={boardPanelData && boardPanelData !== null && boardPanelData[ind] && boardPanelData[ind] !== null
-                                ? boardPanelData[ind] : {}}
+                                ? boardPanelData[ind]
+                                : {}}
                             />
-                            <Divider style={{display:sparkline?null:('none')}}/>
+                            <Divider style={{ display : sparkline
+                              ?null
+                              :('none') }}/>
                           </Grid>
                         ),
                         // } else return '';
@@ -253,11 +265,10 @@ class GrafanaCustomCharts extends Component {
     }
 }
 
-GrafanaCustomCharts.propTypes = {
-  classes: PropTypes.object.isRequired,
+GrafanaCustomCharts.propTypes = { classes : PropTypes.object.isRequired,
   // grafanaURL: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
-  boardPanelConfigs: PropTypes.array.isRequired,
+  boardPanelConfigs : PropTypes.array.isRequired,
   // boardPanelData:
 };
 

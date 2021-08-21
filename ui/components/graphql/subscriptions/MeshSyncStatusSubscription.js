@@ -23,4 +23,3 @@ export default function subscribeMeshSyncStatusEvents(dataCB) {
     onError: (error) => console.log(`An error occured:`, error),
   });
 }
-  

@@ -2,7 +2,6 @@ package filter
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -30,12 +29,8 @@ var FilterCmd = &cobra.Command{
 }
 
 func init() {
-	FilterCmd.PersistentFlags().StringVarP(&file, "file", "f", "", "Path to filter file")
-	FilterCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file")
-	_ = FilterCmd.MarkFlagRequired("file")
+	FilterCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file default from current context")
 
-	tokenPath = os.Getenv("MESHERY_AUTH_TOKEN")
-
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, viewCmd, deleteCmd, listCmd}
 	FilterCmd.AddCommand(availableSubcommands...)
 }

@@ -67,10 +67,10 @@ Linkerd Books is a sample Ruby based application. It is designed to demonstrate 
 
 <a href="{{ site.baseurl }}/assets/img/adapters/sample-apps/linkerd-books.png"><img alt="Linkerd Books" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/sample-apps/linkerd-books.png" /></a>
 
-### [Hipster](https://github.com/GoogleCloudPlatform/microservices-demo)
+### [Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo)
 
-Hipster is a sample cloud-native application, originally built by Google. It comprises of 10 microservices and can be used to showcase and work with Kubernetes, Istio, gRPC and OpenCensus. On deployment, it runs a web-based e-commerce demo application, an example of which can be seen below:
+Online Boutique is a sample cloud-native application, originally built by Google. It comprises of 10 microservices and can be used to showcase and work with Kubernetes, Istio, gRPC and OpenCensus. On deployment, it runs a web-based e-commerce demo application, an example of which can be seen below:
 
-<a href="{{ site.baseurl }}/assets/img/adapters/sample-apps/hipster-shop.png"><img alt="Hipster" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/sample-apps/hipster-shop.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/adapters/sample-apps/online-boutique.png"><img alt="Online Boutique" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/sample-apps/online-boutique.png" /></a>
 
 <!--Sample apps specific to NSM can be found on {{ site.baseurl }}/service-meshesadapters/nsm/nsm-->

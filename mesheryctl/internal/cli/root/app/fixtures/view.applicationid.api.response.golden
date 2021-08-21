@@ -1,0 +1,14 @@
+{
+  "id": "e39df138-bd73-47f1-8db4-edfc4027f178",
+  "name": "OApplicationPatternTwo",
+  "application_file": "name: OApplicationPatternTwo # display name in Meshery UI\nservices:\n  myapp:\n    type: Application\n    namespace: test\n    settings:\n      replicas: 1\n      containers:\n        - name: meshy\n          image: utkarsh23/meshy:v5\n          ports:\n            - name: http\n              containerPort: 8080\n",
+  "user_id": null,
+  "location": {
+    "branch": "",
+    "host": "",
+    "path": "",
+    "type": "local"
+  },
+  "updated_at": "2021-07-30T23:13:56.319697422Z",
+  "created_at": "2021-07-30T23:13:56.326739547Z"
+}

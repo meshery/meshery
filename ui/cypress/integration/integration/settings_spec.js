@@ -7,7 +7,7 @@ describe("Settings", () => {
 
     it("select, submit, and confirm", () => {
       cy.intercept("GET", "/api/system/adapters", { fixture: "getMeshAdapters.json" }).as("getMeshAdapters");
-      cy.intercept("POST", "/api/mesh/manage", { fixture: "postMeshManage.json" }).as("postMeshManage");
+      cy.intercept("POST", "/api/system/adapter/manage", { fixture: "postMeshManage.json" }).as("postMeshManage");
 
       cy.get(".MuiInputBase-input").type("mesherylocal.layer5.io:10000{enter}");
 

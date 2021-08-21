@@ -1,6 +1,8 @@
 //@ts-check
 import React, { useEffect, useState, useRef } from "react";
-import { NoSsr, TableCell, IconButton, Typography, Paper } from "@material-ui/core";
+import {
+  NoSsr, TableCell, IconButton, Typography, Paper
+} from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
@@ -21,12 +23,12 @@ function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
     return results.map((record) => {
       const data = {
-        name: record.name,
-        mesh: record.mesh,
-        test_start_time: record.runner_results.StartTime,
-        qps: record.runner_results.ActualQPS.toFixed(1),
-        duration: (record.runner_results.ActualDuration / 1000000000).toFixed(1),
-        threads: record.runner_results.NumThreads,
+        name : record.name,
+        mesh : record.mesh,
+        test_start_time : record.runner_results.StartTime,
+        qps : record.runner_results.ActualQPS.toFixed(1),
+        duration : (record.runner_results.ActualDuration / 1000000000).toFixed(1),
+        threads : record.runner_results.NumThreads,
       };
 
       if (record.runner_results?.DurationHistogram?.Percentiles) {
@@ -50,14 +52,13 @@ function generateResultsForDisplay(results) {
 
 function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
   const columns = [
-    {
-      name: "name",
-      label: "Name",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+    { name : "name",
+      label : "Name",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -66,16 +67,14 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
             </TableCell>
           );
         },
-      },
-    },
-    {
-      name: "mesh",
-      label: "Mesh",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+      }, },
+    { name : "mesh",
+      label : "Mesh",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -84,16 +83,14 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
             </TableCell>
           );
         },
-      },
-    },
-    {
-      name: "test_start_time",
-      label: "Start Time",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+      }, },
+    { name : "test_start_time",
+      label : "Start Time",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -102,99 +99,88 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(value) {
+        customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      },
-    },
-    {
-      name: "qps",
-      label: "QPS",
-      options: {
-        filter: false,
-        sort: false,
-        searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
+      }, },
+    { name : "qps",
+      label : "QPS",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-      },
-    },
-    {
-      name: "duration",
-      label: "Duration",
-      options: {
-        filter: false,
-        sort: false,
-        searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
+      }, },
+    { name : "duration",
+      label : "Duration",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-      },
-    },
+      }, },
 
-    {
-      name: "p50",
-      label: "P50",
-      options: {
-        filter: false,
-        sort: false,
-        searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
+    { name : "p50",
+      label : "P50",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-      },
-    },
+      }, },
 
-    {
-      name: "p99_9",
-      label: "P99.9",
-      options: {
-        filter: false,
-        sort: false,
-        searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
+    { name : "p99_9",
+      label : "P99.9",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-      },
-    },
-    {
-      name: "Details",
-      options: {
-        filter: false,
-        sort: false,
-        searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
+      }, },
+    { name : "Details",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(value, tableMeta) {
+        customBodyRender : function CustomBody(value, tableMeta) {
           return (
             <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdx(tableMeta.rowIndex)}>
               <BarChartIcon />
             </IconButton>
           );
         },
-      },
-    },
+      }, },
   ];
 
   return columns.map((column) => {
@@ -235,15 +221,15 @@ function ResultChart({ result }) {
   const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
   return (
     <Paper
-      style={{
-        width: "100%",
-        maxWidth: "90vw",
-        padding: "0.5rem"
-      }}
+      style={{ width : "100%",
+        maxWidth : "90vw",
+        padding : "0.5rem" }}
     >
       <div>
         <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
-        <MesheryChart data={[result && result.runner_results ? result.runner_results : {}]} />
+        <MesheryChart data={[result && result.runner_results
+          ? result.runner_results
+          : {}]} />
       </div>
       {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
         <div>
@@ -307,74 +293,68 @@ function MesheryResults({
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
 
-    updateProgress({ showProgress: true });
+    updateProgress({ showProgress : true });
 
-    fetchPerformanceResults({
-      selector: {
-        pageSize: `${pageSize}`,
-        page: `${page}`,
-        search: `${encodeURIComponent(search)}`,
-        order: `${encodeURIComponent(sortOrder)}`
-      },
-      profileID: endpoint.split("/")[endpoint.split("/").length - 2]
-    }).subscribe({
-      next: (res) => {
-        // @ts-ignore
-        let result = res?.fetchResults
-        if (typeof result !== "undefined") {
-          updateProgress({ showProgress: false })
+    fetchPerformanceResults({ selector : {
+      pageSize : `${pageSize}`,
+      page : `${page}`,
+      search : `${encodeURIComponent(search)}`,
+      order : `${encodeURIComponent(sortOrder)}`
+    },
+    profileID : endpoint.split("/")[endpoint.split("/").length - 2] }).subscribe({ next : (res) => {
+      // @ts-ignore
+      let result = res?.fetchResults
+      if (typeof result !== "undefined") {
+        updateProgress({ showProgress : false })
 
-          if (result) {
-            setCount(result.total_count);
-            setPageSize(result.page_size);
-            setSortOrder(sortOrder);
-            setSearch(search);
-            setResults(result.results);
-            setPageSize(result.page_size);
-          }
+        if (result) {
+          setCount(result.total_count);
+          setPageSize(result.page_size);
+          setSortOrder(sortOrder);
+          setSearch(search);
+          setResults(result.results);
+          setPageSize(result.page_size);
         }
-      },
-      error: handleError,
-    });
+      }
+    },
+    error : handleError, });
   }
 
   function handleError(error) {
-    updateProgress({ showProgress: false });
+    updateProgress({ showProgress : false });
 
-    enqueueSnackbar(`There was an error fetching results: ${error}`, {
-      variant: "error",
-      action: function Action(key) {
+    enqueueSnackbar(`There was an error fetching results: ${error}`, { variant : "error",
+      action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
         );
       },
-      autoHideDuration: 8000,
-    });
+      autoHideDuration : 8000, });
   }
 
   const columns = generateColumnsForDisplay(sortOrder, (idx) => setSelectedRowData(results[idx]));
 
   const options = {
-    elevation: elevation,
-    filter: false,
-    sort: !(user?.user_id === "meshery"),
-    search: !(user?.user_id === "meshery"),
-    filterType: "textField",
-    responsive: "scrollFullHeight",
-    resizableColumns: true,
-    selectableRows: true,
-    serverSide: true,
+    elevation : elevation,
+    filter : false,
+    sort : !(user?.user_id === "meshery"),
+    search : !(user?.user_id === "meshery"),
+    filterType : "textField",
+    responsive : "scrollFullHeight",
+    resizableColumns : true,
+    selectableRows : true,
+    serverSide : true,
     count,
-    rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 25],
-    fixedHeader: true,
+    rowsPerPage : pageSize,
+    rowsPerPageOptions : [10, 20, 25],
+    fixedHeader : true,
     page,
-    rowsSelected: generateSelectedRows(results_selection, page, pageSize),
-    print: false,
-    download: false,
-    onRowsSelect: (_, allRowsSelected) => {
+    rowsSelected : generateSelectedRows(results_selection, page, pageSize),
+    print : false,
+    download : false,
+    onRowsSelect : (_, allRowsSelected) => {
       // const rs = self.props.results_selection;
       const res = {};
       allRowsSelected.forEach(({ dataIndex }) => {
@@ -384,11 +364,13 @@ function MesheryResults({
         }
       });
 
-      updateResultsSelection({ page, results: res });
+      updateResultsSelection({ page, results : res });
     },
 
-    onTableChange: (action, tableState) => {
-      const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
+    onTableChange : (action, tableState) => {
+      const sortInfo = tableState.announceText
+        ? tableState.announceText.split(" : ")
+        : [];
       let order = "";
       if (tableState.activeColumn) {
         order = `${columns[tableState.activeColumn].name} desc`;
@@ -422,7 +404,7 @@ function MesheryResults({
           break;
       }
     },
-    customToolbarSelect: function CustomToolbarSelectComponent(selectedRows, displayData, setSelectedRows) {
+    customToolbarSelect : function CustomToolbarSelectComponent(selectedRows, displayData, setSelectedRows) {
       return (
         <CustomToolbarSelect
           selectedRows={selectedRows}
@@ -454,11 +436,9 @@ function MesheryResults({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
-  clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateResultsSelection : bindActionCreators(updateResultsSelection, dispatch),
+  clearResultsSelection : bindActionCreators(clearResultsSelection, dispatch),
+  updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
   const startKey = state.get("results").get("startKey");
