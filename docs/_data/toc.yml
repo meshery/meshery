@@ -31,9 +31,6 @@
       url: project/security-vulnerabilities
     - title: FAQ
       url: project/faq
-      children:
-        - title: Installing mesheryctl
-          url: installation/mesheryctl
     - title: Supported Platforms
       url: installation/platforms
       children:
