@@ -16,24 +16,24 @@ In order to pull in these environment metrics, you can also manually configure M
 
 ### Prometheus Charts
 
-User needs to set the prometheus URL and API key to create and query boards.
+User needs to set the Prometheus URL and API key to create and query boards.
 
 [![Prometheus Charts]({{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg)]({{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg)
 
 
 ### Grafana Charts
 
-User needs to set the grafana URL and API key to create and query boards.
+User needs to set the Grafana URL and API key to create and query boards.
 
 [![Grafana Charts]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)
 
 ### Dynamic Boards
 
-Dynamic Boards can be generated from prometheus or grafana. These borads are defined by user. Grafana SDK is used for these boards.
+Dynamic Boards can be generated from Prometheus or Grafana. These boards are defined by the user. Grafana SDK is used for these boards.
 
 ### Static Boards
 
-Static Borads capture the Service Mesh Performance. Certain protos are defined and tracked as a part of performace tests. Static Boards Queries prometheus SDK directly.
+Static Boards capture the Service Mesh Performance. Certain protos are defined and tracked as a part of performance tests. Static Boards Queries Prometheus SDK directly.
 
 
 
