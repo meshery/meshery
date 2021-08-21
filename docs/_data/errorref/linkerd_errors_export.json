@@ -1,6 +1,6 @@
 {
   "errors_export": {
-    "component_name": "linkerd",
+    "component_name": "meshery-linkerd",
     "component_type": "adapter",
     "errors": {
       "1000": {

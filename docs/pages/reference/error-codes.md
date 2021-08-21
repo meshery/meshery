@@ -93,7 +93,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
           <td >{{ err_code[1]["severity"] }}</td>
           <td style="max-width:125px;">{{ err_code[1]["short_description"] }}</td>
           <td style="min-width:200px;">{{ err_code[1]["long_description"] }}</td>
-          <td style="min-width:200px;">{{ err_code[1]["probable_cause"] }}</td>
+          <td style="min-width:200px;">{{ err_code[1]["probable_cause"] | xml_escape }}</td>
           <td style="min-width:200px;">{{ err_code[1]["suggested_remediation"] }}</td>
         </tr>
     {% endfor %}
