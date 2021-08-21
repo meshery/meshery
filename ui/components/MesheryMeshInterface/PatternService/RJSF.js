@@ -14,6 +14,9 @@ const muiTheme = createTheme({
       main : '#607d8b',
     },
   },
+  typography : {
+    fontSize : 13,
+  },
   props : {
     MuiTextField : {
       variant : 'outlined',
