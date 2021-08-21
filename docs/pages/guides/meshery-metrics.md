@@ -14,6 +14,29 @@ Meshery provides performance reports, including performance test results, node r
 
 In order to pull in these environment metrics, you can also manually configure Meshery to connect with your existing Grafana and/or Prometheus instances through the Meshery dashboard. Once they have been loaded and are displayed on the screen, you may also perform an *ad-hoc* test to check Meshery's connection status.
 
+### Prometheus Charts
+
+User needs to set the prometheus URL and API key to create and query boards.
+
+[![Prometheus Charts]({{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg)]({{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg)
+
+
+### Grafana Charts
+
+User needs to set the grafana URL and API key to create and query boards.
+
+[![Grafana Charts]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)
+
+### Dynamic Boards
+
+Dynamic Boards can be generated from prometheus or grafana. These borads are defined by user. Grafana SDK is used for these boards.
+
+### Static Boards
+
+Static Borads capture the Service Mesh Performance. Certain protos are defined and tracked as a part of performace tests. Static Boards Queries prometheus SDK directly.
+
+
+
 <!-- ## Tutorial Guide
 
 Connect Meshery to your Grafana and Prometheus instances to enable enhanced service mesh performance management. Deploy a service mesh and any available sample application
