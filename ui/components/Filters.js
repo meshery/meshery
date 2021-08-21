@@ -101,7 +101,9 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
   );
 }
 
-function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes }) {
+function MesheryFilters({
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
+}) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");

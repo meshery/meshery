@@ -35,14 +35,15 @@ const styles = (theme) => ({
   },
   paperRoot : {
     flexGrow : 1,
-    maxWidth : "30%",
+    maxWidth : "100%",
     marginLeft : 0,
     borderTopLeftRadius : 3,
     borderTopRightRadius : 3,
   },
   tabs : { marginLeft : 0 },
   tab : {
-    minWidth : "33%",
+    maxWidth : 'min(33%, 200px)',
+    minWidth : '50px',
     margin : 0
   },
   icon : {
@@ -75,6 +76,14 @@ const styles = (theme) => ({
   },
   track : { backgroundColor : 'rgba(100,120,129,0.5)', },
   checked : {},
+  tabLabel : {
+    [theme.breakpoints.up("sm")] : {
+      fontSize : '1em'
+    },
+    [theme.breakpoints.between("xs", 'sm')] : {
+      fontSize : '0.8em'
+    }
+  }
 });
 
 class UserPreference extends React.Component {
@@ -85,7 +94,8 @@ class UserPreference extends React.Component {
       perfResultStats : props.perfResultStats,
       startOnZoom : props.startOnZoom,
       tabVal : 0,
-      userPrefs : ExtensionPointSchemaValidator("user_prefs")()
+      userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
+      providerType : ''
     };
   }
 
@@ -182,7 +192,10 @@ class UserPreference extends React.Component {
         credentials : "include", },
       (result) => {
         if (result) {
-          this.setState({ userPrefs : ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs) })
+          this.setState({
+            userPrefs : ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs),
+            providerType : result?.provider_type
+          })
         }
       },
       err => console.error(err)
@@ -191,7 +204,7 @@ class UserPreference extends React.Component {
 
   render() {
     const {
-      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs
+      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs, providerType
     } = this.state;
     const { classes } = this.props;
 
@@ -215,29 +228,30 @@ class UserPreference extends React.Component {
                 icon={
                   <SettingsCellIcon />
                 }
-                label="General"
+                label={<span className={classes.tabLabel}>General</span>}
               />
             </Tooltip>
-            {userPrefs &&
-              <Tooltip title="Remote Provider preferences" placement="top">
-                <Tab
-                  className={classes.tab}
-                  icon={
-                    <SettingsRemoteIcon />
-                  }
-                  label="Remote Provider"
-                />
-              </Tooltip>
-            }
             <Tooltip title="Choose Performance Test Defaults" placement="top">
               <Tab
                 className={classes.tab}
                 icon={
                   <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
                 }
-                label="Performance"
+                label={<span className={classes.tabLabel}>Performance</span>}
               />
             </Tooltip>
+            {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
+            {userPrefs && providerType != 'local' &&
+              <Tooltip title="Remote Provider preferences" placement="top">
+                <Tab
+                  className={classes.tab}
+                  icon={
+                    <SettingsRemoteIcon />
+                  }
+                  label={<span className={classes.tabLabel}>Remote Provider</span>}
+                />
+              </Tooltip>
+            }
           </Tabs>
         </Paper>
         <Paper className={classes.root}>
@@ -282,11 +296,11 @@ class UserPreference extends React.Component {
               </FormControl>
             </div>
           }
-          {tabVal == 1 && userPrefs &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
-          }
-          {tabVal === 2 &&
+          {tabVal === 1 &&
             <MesherySettingsPerformanceComponent />
+          }
+          {tabVal == 2 && userPrefs && providerType != 'local' &&
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
           }
         </Paper>
       </NoSsr>

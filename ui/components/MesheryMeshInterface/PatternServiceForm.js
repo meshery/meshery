@@ -27,8 +27,10 @@ function TabPanel(props) {
 }
 
 function a11yProps(index) {
-  return { id : `simple-tab-${index}`,
-    "aria-controls" : `simple-tabpanel-${index}`, };
+  return {
+    id : `simple-tab-${index}`,
+    "aria-controls" : `simple-tabpanel-${index}`,
+  };
 }
 
 function getPatternAttributeName(jsonSchema) {
@@ -45,6 +47,17 @@ function recursiveCleanObject(obj) {
   }
 }
 
+function recursiveCleanObjectExceptEmptyArray(obj) {
+
+  for (const k in obj) {
+    if (!obj[k] || typeof obj[k] !== "object" || Array.isArray(obj[k])) continue;
+
+    recursiveCleanObjectExceptEmptyArray(obj[k]);
+
+    if (Object.keys(obj[k]).length === 0) delete obj[k];
+  }
+}
+
 /**
  * createPatternFromConfig will take in the form data
  * and will create a valid pattern from it
@@ -53,11 +66,13 @@ function recursiveCleanObject(obj) {
  * given inputs
  * @param {*} config
  */
-function createPatternFromConfig(config, namespace) {
-  const pattern = { name : `pattern-${Math.random().toString(36).substr(2, 5)}`,
-    services : {}, };
+function createPatternFromConfig(config, namespace, partialClean = false) {
+  const pattern = {
+    name : `pattern-${Math.random().toString(36).substr(2, 5)}`,
+    services : {},
+  };
 
-  recursiveCleanObject(config);
+  partialClean ? recursiveCleanObjectExceptEmptyArray(config) : recursiveCleanObject(config);
 
   Object.keys(config).forEach((key) => {
     // Add it only if the settings are non empty or "true"
@@ -86,14 +101,16 @@ function createPatternFromConfig(config, namespace) {
  *  onSubmit: Function;
  *  onDelete: Function;
  *  namespace: string;
+ *  onChange?: Function
+ *  formData?: Record<String, unknown>
  *  renderAsTooltip: boolean;
  * }} props
  * @returns
  */
-function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAsTooltip }) {
+function PatternServiceForm({ formData, schemaSet,onChange, onSubmit, onDelete, namespace, renderAsTooltip }) {
   const [tab, setTab] = React.useState(0);
-  const [settings, setSettings, getSettingsRefValue] = useStateCB({});
-  const [traits, setTraits, getTraitsRefValue] = useStateCB({});
+  const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {});
+  const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {});
 
   console.log({ settings, traits })
 
@@ -114,6 +131,7 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAs
   if (schemaSet.type === "addon") {
     return (
       <PatternService
+        formData={settings}
         type="workload"
         jsonSchema={schemaSet.workload}
         onChange={setSettings}
@@ -157,10 +175,16 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAs
       <TabPanel value={tab} index={0}>
         <PatternService
           type="workload"
+          formData={settings}
           jsonSchema={schemaSet.workload}
-          onChange={setSettings}
-          onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}
-          onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}
+          onChange={(val) => {
+            onChange(
+              createPatternFromConfig(
+                { [getPatternAttributeName(schemaSet.workload)] : { settings : val, traits } }, namespace, true), "");
+            setSettings(val);
+          }}
+          onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits })}
+          onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits })}
           renderAsTooltip={renderAsTooltip}
         />
       </TabPanel>
@@ -168,9 +192,10 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace, renderAs
         <TabPanel value={tab} index={1}>
           {schemaSet.traits?.map((trait) => (
             <PatternService
+              formData={traits[getPatternAttributeName(trait)]}
               type="trait"
               jsonSchema={trait}
-              onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)] : val }))}
+              onChange={(val) => setTraits({ ...traits, [getPatternAttributeName(trait)] : val })}
               renderAsTooltip={renderAsTooltip}
             />
           ))}
