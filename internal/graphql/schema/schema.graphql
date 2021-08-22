@@ -104,10 +104,56 @@ type AddonList {
 }
 
 
+# ============== DATA PLANE =======================
+
+# Data Plane for a particular Mesh
+type DataPlane {
+
+	# Service Mesh Name
+	name: String!
+
+	# Members of the Mesh
+	proxies: [Container!]!
+}
+
+type Container {
+	controlPlaneMemberName: String!
+	containerName: String!
+	image: String!
+	status: Container_Status
+	# args: NOT IMPLEMENTED 
+	ports: [Container_Port]
+	# env: NOT IMPLEMENTED,
+	resources: Any
+}
+
+type Container_Status {
+	containerStatusName: String!
+	image: String!
+	state: Any
+	lastState: Any
+	ready: Boolean!
+	restartCount: Any
+	# image: String!
+	# imageID: String!
+	# containerID: String!
+	started: Boolean!
+	imageID: Any
+	containerID: Any
+
+}
+
+type Container_Port {
+	name: String
+	containerPort: Int!
+	protocol: String!
+
+}
+
 # ============== CONTROL PLANE =======================
 
 # Filter Control Plane Query
-input ControlPlaneFilter {
+input ServiceMeshFilter {
 
 	# Filter by Service Mesh
     type: MeshType
@@ -140,70 +186,6 @@ type ControlPlaneMember {
 
 	# DataPlanes
 	data_planes: [Container!]
-}
-
-type Container {
-	name: String!
-	image: String!
-	status: Container_Status
-	# args: NOT IMPLEMENTED 
-	ports: [Container_Port]
-	# env: NOT IMPLEMENTED,
-	resources: Container_Resource
-}
-
-type Container_Status {
-	name: String!
-	state: Any
-	# lastState: Container_Status_State!
-	ready: Boolean!
-	# restartCount: Int
-	# image: String!
-	# imageID: String!
-	# containerID: String!
-	started: Boolean!
-}
-
-type Container_Status_State {
-	waiting: Container_Status_State_Waiting
-	running: Container_Status_State_Running
-	terminated: Container_Status_State_Terminated
-}
-
-type Container_Status_State_Waiting {
-	reason: String
-	message: String
-}
-
-type Container_Status_State_Running {
-	startedAt: Time
-}
-
-type Container_Status_State_Terminated {
-	# exitCode: Int
-	# signal: Int
-	reason: String
-	message: String
-	startedAt: Time
-	finishedAt: Time
-	containerID: String
-}
-
-type Container_Port {
-	name: String
-	containerPort: Int!
-	protocol: String!
-
-}
-
-type Container_Resource {
-	limits: Resource
-	requests: Resource
-}
-
-type Resource {
-	cpu: String
-	memory: String
 }
 
 # ============== OPERATOR =============================
@@ -344,8 +326,14 @@ type Query {
 	# Query Control Plane data for a Service Mesh (or all) in your cluster
     getControlPlanes(
 		# Filter Control Plane Query 
-		filter: ControlPlaneFilter
+		filter: ServiceMeshFilter
 	): [ControlPlane!]!
+
+	# Query Data Plane information for a Service Mesh (or all) in your cluster
+    getDataPlanes(
+		# Filter Control Plane Query 
+		filter: ServiceMeshFilter
+	): [DataPlane!]!
     
 	# Query status of Meshery Operator in your cluster
 	getOperatorStatus: OperatorStatus
@@ -388,8 +376,14 @@ type Subscription {
 	# Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
     listenToControlPlaneState(
 		# Filter Control Plane Query
-		filter: ControlPlaneFilter
+		filter: ServiceMeshFilter
 	): [ControlPlane!]!
+
+	# Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster
+    listenToDataPlaneState(
+		# Filter Control Plane Query
+		filter: ServiceMeshFilter
+	): [DataPlane!]!
 
 	# Listen to changes in status of Meshery Operator in your cluster
     listenToOperatorState: OperatorStatus!
