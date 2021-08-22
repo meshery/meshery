@@ -7,7 +7,7 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
-func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error) {
+func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
 	selectors := make([]model.MeshType, 0)
 	if filter.Type == nil {
 		for _, mesh := range model.AllMeshType {
@@ -17,18 +17,18 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 		selectors = append(selectors, *filter.Type)
 	}
 
-	controlplanelist, err := model.GetControlPlaneState(selectors, provider)
+	dataPlaneList, err := model.GetDataPlaneState(selectors, provider)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err
 	}
 
-	return controlplanelist, nil
+	return dataPlaneList, nil
 }
 
-func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
-	if r.controlPlaneChannel == nil {
-		r.controlPlaneChannel = make(chan []*model.ControlPlane)
+func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
+	if r.dataPlaneChannel == nil {
+		r.dataPlaneChannel = make(chan []*model.DataPlane)
 	}
 
 	go func() {
@@ -42,17 +42,17 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 		for {
 			select {
 			case <-r.MeshSyncChannel:
-				status, err := r.getControlPlanes(ctx, provider, filter)
+				containers, err := r.getDataPlanes(ctx, provider, filter)
 				if err != nil {
-					r.Log.Error(ErrControlPlaneSubscription(err))
+					r.Log.Error(ErrDataPlaneSubscription(err))
 					break
 				}
-				r.controlPlaneChannel <- status
+				r.dataPlaneChannel <- containers
 			case <-ctx.Done():
 				r.Log.Info("ControlPlane subscription stopped")
 				return
 			}
 		}
 	}()
-	return r.controlPlaneChannel, nil
+	return r.dataPlaneChannel, nil
 }

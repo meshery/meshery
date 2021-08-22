@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"strconv"
-	"time"
 )
 
 type AddonList struct {
@@ -21,11 +20,12 @@ type AddonStatusInput struct {
 }
 
 type Container struct {
-	Name      string             `json:"name"`
-	Image     string             `json:"image"`
-	Status    *ContainerStatus   `json:"status"`
-	Ports     []*ContainerPort   `json:"ports"`
-	Resources *ContainerResource `json:"resources"`
+	ControlPlaneMemberName string           `json:"controlPlaneMemberName"`
+	ContainerName          string           `json:"containerName"`
+	Image                  string           `json:"image"`
+	Status                 *ContainerStatus `json:"status"`
+	Ports                  []*ContainerPort `json:"ports"`
+	Resources              interface{}      `json:"resources"`
 }
 
 type ContainerPort struct {
@@ -34,48 +34,21 @@ type ContainerPort struct {
 	Protocol      string  `json:"protocol"`
 }
 
-type ContainerResource struct {
-	Limits   *Resource `json:"limits"`
-	Requests *Resource `json:"requests"`
-}
-
 type ContainerStatus struct {
-	Name    string      `json:"name"`
-	State   interface{} `json:"state"`
-	Ready   bool        `json:"ready"`
-	Started bool        `json:"started"`
-}
-
-type ContainerStatusState struct {
-	Waiting    *ContainerStatusStateWaiting    `json:"waiting"`
-	Running    *ContainerStatusStateRunning    `json:"running"`
-	Terminated *ContainerStatusStateTerminated `json:"terminated"`
-}
-
-type ContainerStatusStateRunning struct {
-	StartedAt *time.Time `json:"startedAt"`
-}
-
-type ContainerStatusStateTerminated struct {
-	Reason      *string    `json:"reason"`
-	Message     *string    `json:"message"`
-	StartedAt   *time.Time `json:"startedAt"`
-	FinishedAt  *time.Time `json:"finishedAt"`
-	ContainerID *string    `json:"containerID"`
-}
-
-type ContainerStatusStateWaiting struct {
-	Reason  *string `json:"reason"`
-	Message *string `json:"message"`
+	ContainerStatusName string      `json:"containerStatusName"`
+	Image               string      `json:"image"`
+	State               interface{} `json:"state"`
+	LastState           interface{} `json:"lastState"`
+	Ready               bool        `json:"ready"`
+	RestartCount        interface{} `json:"restartCount"`
+	Started             bool        `json:"started"`
+	ImageID             interface{} `json:"imageID"`
+	ContainerID         interface{} `json:"containerID"`
 }
 
 type ControlPlane struct {
 	Name    string                `json:"name"`
 	Members []*ControlPlaneMember `json:"members"`
-}
-
-type ControlPlaneFilter struct {
-	Type *MeshType `json:"type"`
 }
 
 type ControlPlaneMember struct {
@@ -84,6 +57,11 @@ type ControlPlaneMember struct {
 	Version    string       `json:"version"`
 	Namespace  string       `json:"namespace"`
 	DataPlanes []*Container `json:"data_planes"`
+}
+
+type DataPlane struct {
+	Name    string       `json:"name"`
+	Proxies []*Container `json:"proxies"`
 }
 
 type Error struct {
@@ -149,9 +127,8 @@ type ReSyncActions struct {
 	ReSync  string `json:"ReSync"`
 }
 
-type Resource struct {
-	CPU    *string `json:"cpu"`
-	Memory *string `json:"memory"`
+type ServiceMeshFilter struct {
+	Type *MeshType `json:"type"`
 }
 
 type MeshType string
