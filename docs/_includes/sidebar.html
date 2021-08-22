@@ -19,7 +19,7 @@
             <ul class="td-sidebar-nav__section pr-md-3">
               {% for entry in section.links %}
               <li class="td-sidebar-nav__section-title">
-                <a href="{% if entry.url %}{{ site.baseurl }}/{{ entry.url }}{% else %}{{ entry.external_url }}{% endif %}" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">{{ entry.title }}</a>
+                <a href="{% if entry.url %}{{ site.baseurl }}/{{ entry.url }}{% else %}{{ entry.external_url }}{% endif %}" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">{{ entry.title }} {% if entry.children %}{% if page.url contains entry.url or pageUrl == sectionUrl %}⏷{% else %}⏵{% endif %}{% endif %}</a>
               </li>
               {% if page.url contains entry.url or pageUrl == sectionUrl %}
               <ul>
