@@ -18,14 +18,14 @@ In order to pull in these environment metrics, you can also manually configure M
 
 User needs to set the Prometheus URL and API key to create and query boards.
 
-[![Prometheus Charts]({{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg)]({{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg)
+![Prometheus Charts](/assets/img/architecture/PrometheusCharts.png)
 
 
 ### Grafana Charts
 
 User needs to set the Grafana URL and API key to create and query boards.
 
-[![Grafana Charts]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)
+![Grafana Charts](/assets/img/architecture/GrafanaCharts.png)
 
 ### Dynamic Boards
 
