@@ -225,6 +225,98 @@ func GetChannelAndVersion(currCtx *(config.Context)) (string, string, error) {
 	return channel, version, nil
 }
 
+func GetDeploymentVersion(filePath string) (string, error) {
+	// setting up config type to yaml files
+	ViperCompose.SetConfigType("yaml")
+
+	// setting up config file
+	ViperCompose.SetConfigFile(filePath)
+	err := ViperCompose.ReadInConfig()
+	if err != nil {
+		return "", fmt.Errorf("unable to read config %s | %s", MesheryDeployment, err)
+	}
+
+	compose := K8sCompose{}
+	yamlFile, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return "", err
+	}
+
+	// unmarshal the file into structs
+	err = yaml.Unmarshal(yamlFile, &compose)
+	if err != nil {
+		return "", fmt.Errorf("unable to unmarshal config %s | %s", MesheryDeployment, err)
+	}
+
+	image := compose.Spec.Template.Spec.Containers[0].Image
+	spliter := strings.Split(image, ":")
+	version := strings.Split(spliter[1], "-")[1]
+
+	return version, nil
+}
+
+// CanUseCachedOperatorManifests returns an error if it is not possible to use cached operator manifests
+func CanUseCachedOperatorManifests(currCtx *(config.Context)) error {
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)); os.IsNotExist(err) {
+		return errors.New("operator manifest file does not exist")
+	}
+
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)); os.IsNotExist(err) {
+		return errors.New("broker manifest file does not exist")
+	}
+
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)); os.IsNotExist(err) {
+		return errors.New("meshsync manifest file does not exist")
+	}
+
+	return nil
+}
+
+// CanUseCachedManifests returns an error if it is not possible to use cached manifests
+func CanUseCachedManifests(currCtx *(config.Context)) error {
+	// checks if meshery folder are present
+	if _, err := os.Stat(MesheryFolder); os.IsNotExist(err) {
+		return errors.New("Manifests folder does not exist")
+	}
+
+	// check if meshery deployment file is present
+	deploymentsPath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryDeployment)
+	if _, err := os.Stat(deploymentsPath); os.IsNotExist(err) {
+		return errors.New("Deployments file does not exist")
+	}
+
+	// compare versions in currCtx and meshery-deployment.yaml
+	deploymentVersion, err := GetDeploymentVersion(deploymentsPath)
+	if err != nil {
+		return errors.Wrap(err, "could not get deployment file version")
+	}
+	var currVersion string
+	if currCtx.GetVersion() != "latest" {
+		currVersion = currCtx.GetVersion()
+		if currVersion != deploymentVersion {
+			return errors.New("deployment version mismatch")
+		}
+	}
+
+	switch currCtx.GetPlatform() {
+	case "kubernetes":
+		// check if adapter manifests are present
+		for _, adapter := range currCtx.GetAdapters() {
+			serviceFile := filepath.Join(MesheryFolder, ManifestsFolder, adapter+"-service.yaml")
+			if _, err := os.Stat(serviceFile); os.IsNotExist(err) {
+				return errors.New("service file does not exist")
+			}
+
+			adapterDeploymentFile := filepath.Join(MesheryFolder, ManifestsFolder, adapter+"-deployment.yaml")
+			if _, err := os.Stat(adapterDeploymentFile); os.IsNotExist(err) {
+				return errors.New("adapter deployment file does not exist")
+			}
+		}
+	}
+
+	return nil
+}
+
 // FetchManifests is a wrapper function that identifies the required manifest files as downloads them
 func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
 	_, version, err := GetChannelAndVersion(currCtx)
