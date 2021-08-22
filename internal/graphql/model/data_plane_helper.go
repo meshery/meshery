@@ -41,7 +41,7 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 					return nil, err
 				}
 
-				// unmarshal resouce_statuses
+				// unmarshal resource_statuses
 				err = utils.Unmarshal(obj.Status.Attribute, &objstatus)
 				if err != nil {
 					return nil, err
