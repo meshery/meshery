@@ -1,8 +1,6 @@
 package model
 
 import (
-	"encoding/json"
-	"fmt"
 	"reflect"
 	"strings"
 
@@ -49,17 +47,17 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 					return nil, err
 				}
 
-				s, _ := json.MarshalIndent(objspec, "", "\t")
-				fmt.Println(string(s))
-				fmt.Println("OBJ_SPEC!")
-				fmt.Println("--")
-				fmt.Println("--")
+				// s, _ := json.MarshalIndent(objspec, "", "\t")
+				// fmt.Println(string(s))
+				// fmt.Println("OBJ_SPEC!")
+				// fmt.Println("--")
+				// fmt.Println("--")
 
-				s, _ = json.MarshalIndent(objstatus, "", "\t")
-				fmt.Println("OBJ_STATUS!")
-				fmt.Println(string(s))
-				fmt.Println("--")
-				fmt.Println("--")
+				// s, _ = json.MarshalIndent(objstatus, "", "\t")
+				// fmt.Println("OBJ_STATUS!")
+				// fmt.Println(string(s))
+				// fmt.Println("--")
+				// fmt.Println("--")
 
 				// make initial list of proxy containers
 				containers := objspec.Containers
