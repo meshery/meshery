@@ -2,7 +2,7 @@ import { graphql, requestSubscription } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
 const controlPlaneSubscription = graphql`
-  subscription ControlPlaneSubscription($filter: ControlPlaneFilter) {
+  subscription ControlPlaneSubscription($filter: ServiceMeshFilter) {
     controlPlanesState: listenToControlPlaneState(filter: $filter) {
       name
       members {
@@ -10,46 +10,6 @@ const controlPlaneSubscription = graphql`
         version
         component
         namespace
-        data_planes {
-          name
-          image
-          status {
-            ready
-            started
-            state
-            # state {
-            #   waiting {
-            #     reason
-            #     message
-            #   }
-            #   running {
-            #     startedAt
-            #   }
-            #   terminated {
-            #     reason
-            #     message
-            #     startedAt
-            #     finishedAt
-            #     containerID
-            #   }
-            # }
-          }
-          ports {
-            name
-            containerPort
-            protocol
-          }
-          resources {
-            limits {
-              cpu
-              memory
-            }
-            requests {
-              cpu
-              memory
-            }
-          }
-        }
       }
     }
   }

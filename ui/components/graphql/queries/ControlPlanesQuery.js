@@ -9,7 +9,7 @@ export default function fetchControlPlanes(variables) {
   };
 
   const query = graphql`
-    query ControlPlanesQuery($filter: ControlPlaneFilter) {
+    query ControlPlanesQuery($filter: ServiceMeshFilter) {
       controlPlanesState: getControlPlanes(filter: $filter) {
         name
         members {
@@ -17,46 +17,6 @@ export default function fetchControlPlanes(variables) {
           version
           component
           namespace
-          data_planes {
-            name
-            image
-            status {
-              ready
-              started
-              state
-              # state {
-              #   waiting {
-              #     reason
-              #     message
-              #   }
-              #   running {
-              #     startedAt
-              #   }
-              #   terminated {
-              #     reason
-              #     message
-              #     startedAt
-              #     finishedAt
-              #     containerID
-              #   }
-              # }
-            }
-            ports {
-              name
-              containerPort
-              protocol
-            }
-            resources {
-              limits {
-                cpu
-                memory
-              }
-              requests {
-                cpu
-                memory
-              }
-            }
-          }
         }
       }
     }
