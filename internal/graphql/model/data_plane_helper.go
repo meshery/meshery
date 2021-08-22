@@ -110,15 +110,12 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 						})
 					}
 				}
-
 			}
 		}
-
 		dataPlaneList = append(dataPlaneList, &DataPlane{
 			Name:    strings.ToLower(selector.String()),
 			Proxies: proxies,
 		})
-
 	}
 	return dataPlaneList, nil
 }
