@@ -41,6 +41,7 @@ import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
+import { podNameMapper, versionMapper } from "../utils/nameMapper";
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
@@ -558,9 +559,9 @@ class DashboardComponent extends React.Component {
                           </div>
                         </Tooltip>
                       </TableCell> */}
-                      <TableCell align="center">{component.name}</TableCell>
+                      <TableCell align="center">{podNameMapper(component.component, component.name)}</TableCell>
                       <TableCell align="center">{component.component}</TableCell>
-                      <TableCell align="center">{component.version}</TableCell>
+                      <TableCell align="center">{versionMapper(component.version)}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
