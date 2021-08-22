@@ -5,16 +5,10 @@ import { withStyles } from '@material-ui/core/styles';
 import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import { eventTypes } from '../lib/event-types';
 
-const styles = (theme) => ({
-  event: {
-    margin: theme.spacing(0.5, 1),
-  },
-});
+const styles = (theme) => ({ event : { margin : theme.spacing(0.5, 1), }, });
 
-function MesheryEventViewer(props) {
-  state = {
-    dialogShow: false,
-  }
+class MesheryEventViewer extends React.Component {
+  state = { dialogShow : false, }
 
   handleSnackbarClose = (_, reason) => {
     if (reason === 'clickaway') return;
@@ -22,33 +16,36 @@ function MesheryEventViewer(props) {
     props.deleteEvent();
   };
 
+  render() {
+    const {
+      classes, eventVariant, eventSummary, eventDetails,
+    } = this.props;
 
-  const {
-    classes, eventVariant, eventSummary, eventDetails,
-  } = props;
-
-  return (
-    <NoSsr>
-      <>
-        <MesherySnackbarWrapper
-          key={`event_-_${eventVariant}`}
-          variant={eventTypes[eventVariant] ? eventTypes[eventVariant].type : eventTypes[0].type}
-          message={eventSummary}
-          details={eventDetails}
-          onClose={this.handleSnackbarClose}
-          className={classes.event}
-        />
-      </>
-    </NoSsr>
-  );
+    return (
+      <NoSsr>
+        <React.Fragment>
+          <MesherySnackbarWrapper
+            key={`event_-_${eventVariant}`}
+            variant={eventTypes[eventVariant]
+              ? eventTypes[eventVariant].type
+              : eventTypes[0].type}
+            message={eventSummary}
+            details={eventDetails}
+            onClose={this.handleSnackbarClose}
+            className={classes.event}
+          />
+        </React.Fragment>
+      </NoSsr>
+    );
+  }
 }
 
 MesheryEventViewer.propTypes = {
-  classes: PropTypes.object.isRequired,
-  eventVariant: PropTypes.oneOf([0, 1, 2]).isRequired,
-  eventSummary: PropTypes.string.isRequired,
-  eventDetails: PropTypes.string.isRequired,
-  deleteEvent: PropTypes.func.isRequired,
+  classes : PropTypes.object.isRequired,
+  eventVariant : PropTypes.oneOf([0, 1, 2]).isRequired,
+  eventSummary : PropTypes.string.isRequired,
+  eventDetails : PropTypes.string.isRequired,
+  deleteEvent : PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(MesheryEventViewer);

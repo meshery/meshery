@@ -6,9 +6,9 @@ import { NoSsr } from "@material-ui/core";
 import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
-import { bindActionCreators} from "redux";
+import { bindActionCreators } from "redux";
 
- 
+
 /**
  * getPath returns the current pathname
  * @returns {string}
@@ -45,18 +45,16 @@ function capitalize(string) {
 
 
 class Settings extends React.Component {
-  
-  state = {
-    componentTitle : ""
-  }  
+
+  state = { componentTitle : "" }
 
   componentDidMount() {
     getCapabilities("navigator", extensions => {
-      this.setState({componentTitle: getComponentTitleFromPathForNavigator(extensions, getPath())})
-      this.props.updatepagetitle({ title: getComponentTitleFromPathForNavigator(extensions, getPath()) });
+      this.setState({ componentTitle : getComponentTitleFromPathForNavigator(extensions, getPath()) })
+      this.props.updatepagetitle({ title : getComponentTitleFromPathForNavigator(extensions, getPath()) });
     })
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path: getPath() });
+    this.props.updatepagepath({ path : getPath() });
 
   }
 
@@ -64,7 +62,9 @@ class Settings extends React.Component {
     return (
       <NoSsr>
         <Head>
-          <title>{this.state.componentTitle ? this.state.componentTitle : ""}</title>
+          <title>{this.state.componentTitle
+            ? this.state.componentTitle
+            : ""}</title>
         </Head>
         <NoSsr>
           <ExtensionSandbox type="navigator" Extension={Extension} />
@@ -74,9 +74,7 @@ class Settings extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-  updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch),
+  updatepagetitle : bindActionCreators(updatepagetitle, dispatch), });
 
 export default connect(null, mapDispatchToProps)(Settings);

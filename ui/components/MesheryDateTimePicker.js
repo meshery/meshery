@@ -8,13 +8,11 @@ class MesheryDateTimePicker extends Component {
   constructor(props) {
     super(props);
     this.dateFormat = 'YYYY-MM-DD, hh:mm:ss a';
-    this.state = {
-      hasError: false,
-    };
+    this.state = { hasError : false, };
   }
 
   static getDerivedStateFromError() {
-    return { hasError: true };
+    return { hasError : true };
   }
 
   componentDidCatch(error, info) {
@@ -48,9 +46,7 @@ class MesheryDateTimePicker extends Component {
             variant="outlined"
             fullWidth
             // className={classes.textField}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink : true, }}
           />
         </div>
       );
@@ -72,10 +68,10 @@ class MesheryDateTimePicker extends Component {
 }
 
 MesheryDateTimePicker.propTypes = {
-  label: PropTypes.string.isRequired,
-  selectedDate: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired,
-  className: PropTypes.object.isRequired,
+  label : PropTypes.string.isRequired,
+  selectedDate : PropTypes.object.isRequired,
+  onChange : PropTypes.func.isRequired,
+  className : PropTypes.object.isRequired,
 };
 
 export default MesheryDateTimePicker;

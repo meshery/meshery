@@ -317,40 +317,46 @@ func start() error {
 			return err
 		}
 
-		err = utils.CreateManifestsFolder()
+		channel, version, err := utils.GetChannelAndVersion(currCtx)
 		if err != nil {
 			return err
 		}
 
-		version := currCtx.GetVersion()
-		channel := currCtx.GetChannel()
-		if version == "latest" {
-			if channel == "edge" {
-				version = "master"
-			} else {
-				version, err = utils.GetLatestStableReleaseTag()
+		var manifests []utils.Manifest
+		// check if skipUpdate flag is used
+		// if it is, check if cached manifests can be used
+		if skipUpdateFlag {
+			err = utils.CanUseCachedManifests(currCtx)
+			if err != nil {
+				return errors.Wrap(err, "cannot start Meshery")
+			}
+			for _, adapter := range currCtx.GetAdapters() {
+				var temp utils.Manifest
+				temp.Path = adapter + "-deployment.yaml"
+				manifests = append(manifests, temp)
+			}
+		} else {
+			// fetch the manifest files corresponding to the version specified
+			manifests, err = utils.FetchManifests(currCtx)
+			// here, if there is some error fetching manifests, check if cached manifests can be used
+			// if there is an error using cached manifests too(err from CanUseCachedManifests), return error
+			if err != nil {
+				err = utils.CanUseCachedManifests(currCtx)
+				if err != nil {
+					return errors.Wrap(err, "cannot fetch manifests or use cached manifests")
+				}
+			} else { // case when fetch manifests works as expected
+				// path to the manifest files ~/.meshery/manifests
+				manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
+
+				// change version in meshery-deployment manifest
+				err = utils.ChangeManifestVersion(utils.MesheryDeployment, channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
 				if err != nil {
 					return err
 				}
 			}
 		}
 
-		// fetch the manifest files corresponding to the version specified
-		manifests, err := utils.FetchManifests(version)
-
-		if err != nil {
-			return err
-		}
-		// path to the manifest files ~/.meshery/manifests
-		manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
-
-		// change version in meshery-deployment manifest
-		err = utils.ChangeManifestVersion(utils.MesheryDeployment, channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
-		if err != nil {
-			return err
-		}
-
-		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
 
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
@@ -462,24 +468,30 @@ func start() error {
 		if err != nil {
 			return err
 		}
-		// Download operator manifest
-		err = utils.DownloadOperatorManifest()
-		if err != nil {
-			return ErrDownloadFile(err, "operator manifest")
-		}
 
-		if !skipUpdateFlag {
-			err = utils.ApplyOperatorManifest(kubeClient, true, false)
-
+		if skipUpdateFlag {
+			err = utils.CanUseCachedOperatorManifests(currCtx)
 			if err != nil {
-				return ErrApplyOperatorManifest(err, true, false)
+				return errors.Wrap(err, "no cached operator manifests")
 			}
-		} else {
+			log.Println("using cached operator manifests...")
 			// skip applying update on operators when the flag is used
 			err = utils.ApplyOperatorManifest(kubeClient, false, false)
 
 			if err != nil {
 				return ErrApplyOperatorManifest(err, false, false)
+			}
+		} else {
+			// Download operator manifest
+			err = utils.DownloadOperatorManifest()
+			if err != nil {
+				return ErrDownloadFile(err, "operator manifest")
+			}
+
+			err = utils.ApplyOperatorManifest(kubeClient, true, false)
+
+			if err != nil {
+				return ErrApplyOperatorManifest(err, true, false)
 			}
 		}
 	}
@@ -516,8 +528,7 @@ func start() error {
 
 	err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 	if err != nil {
-		log.Info("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
-		return err
+		log.Warn("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 	}
 
 	return nil

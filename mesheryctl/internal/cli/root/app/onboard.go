@@ -51,8 +51,8 @@ var onboardCmd = &cobra.Command{
 			return errors.Wrap(err, "error processing config")
 		}
 
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/experimental/application/deploy"
-		appURL := mctlCfg.GetBaseMesheryURL() + "/api/experimental/application"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
+		appURL := mctlCfg.GetBaseMesheryURL() + "/api/application"
 
 		// app name has been passed
 		if len(args) > 0 {
@@ -268,7 +268,7 @@ func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int 
 	}
 
 	for {
-		fmt.Printf("Enter the index of profile: ")
+		fmt.Printf("Enter the index of app: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
 			log.Fatal(err)

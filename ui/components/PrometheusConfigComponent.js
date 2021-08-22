@@ -1,24 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import {
-  NoSsr, Grid, Button,
-} from '@material-ui/core';
+import { NoSsr, Grid, Button, } from '@material-ui/core';
 import ReactSelectWrapper from "./ReactSelectWrapper";
 
-const promStyles = (theme) => ({
-  root: {
-    padding: theme.spacing(5),
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  button: {
-    marginTop: theme.spacing(3),
+const promStyles = (theme) => ({ root : { padding : theme.spacing(5), },
+  buttons : { display : 'flex',
+    justifyContent : 'flex-end', },
+  button : { marginTop : theme.spacing(3),
     //   marginLeft: theme.spacing(1),
-  },
-});
+  }, });
 
 class PrometheusConfigComponent extends Component {
     render = () => {
@@ -32,7 +23,9 @@ class PrometheusConfigComponent extends Component {
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <ReactSelectWrapper
-                    onChange={(select) => handleChange('prometheusURL')(select ? select.value : '')}
+                    onChange={(select) => handleChange('prometheusURL')(select
+                      ? select.value
+                      : '')}
                     options={options}
                     value={prometheusURL}
                     label="Prometheus Base URL"
@@ -62,11 +55,11 @@ class PrometheusConfigComponent extends Component {
 }
 
 PrometheusConfigComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-  prometheusURL: PropTypes.object.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handlePrometheusConfigure: PropTypes.func.isRequired,
-  options: PropTypes.array.isRequired
+  classes : PropTypes.object.isRequired,
+  prometheusURL : PropTypes.object.isRequired,
+  handleChange : PropTypes.func.isRequired,
+  handlePrometheusConfigure : PropTypes.func.isRequired,
+  options : PropTypes.array.isRequired
 };
 
 export default withStyles(promStyles)(PrometheusConfigComponent);
