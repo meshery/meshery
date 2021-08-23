@@ -15,7 +15,6 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
 import UploadIcon from "@material-ui/icons/Publish";
-import PromptComponent from "./PromptComponent";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
@@ -103,7 +102,6 @@ function MesheryApplications({
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const modalRef = useRef(null);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const DEPLOY_URL = '/api/application/deploy';
@@ -374,15 +372,6 @@ function MesheryApplications({
   });
 
   async function deleteApplication(id) {
-    let response = await modalRef.current.show({
-      title : "Delete Application?",
-
-      subtitle : "Are you sure you want to delete this application?",
-
-      options : ["yes", "no"],
-
-    })
-    if (response === "NO") return
     dataFetch(
       `/api/application/${id}`,
       {
@@ -417,7 +406,6 @@ function MesheryApplications({
     responsive : "scrollFullHeight",
     resizableColumns : true,
     serverSide : true,
-    selection : true,
     count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
@@ -488,7 +476,6 @@ function MesheryApplications({
         // @ts-ignore
         options={options}
       />
-      <PromptComponent ref={modalRef} />
     </NoSsr>
   );
 }
