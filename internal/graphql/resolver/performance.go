@@ -8,13 +8,12 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/internal/graphql/model"
-	graphqlModels "github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 )
 
-// func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Provider, filter *graphqlModels.PageFilter) (<-chan *graphqlModels.PerfPageResult, error) {
+// func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Provider, filter *model.PageFilter) (<-chan *model.PerfPageResult, error) {
 // 	if r.performanceChannel == nil {
-// 		r.performanceChannel = make(chan *graphqlModels.PerfPageResult)
+// 		r.performanceChannel = make(chan *model.PerfPageResult)
 // 		r.operatorSyncChannel = make(chan struct{})
 // 	}
 
@@ -44,7 +43,7 @@ import (
 // 	return r.performanceChannel, nil
 // }
 
-func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, id string) (*graphqlModels.MesheryResult, error) {
+func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, id string) (*model.MesheryResult, error) {
 	if id == "" {
 		return nil, handlers.ErrQueryGet("*id")
 	}
@@ -71,7 +70,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 	mesheryID := fmt.Sprintf("%v", bdr.ID)
 	performanceProfile := fmt.Sprintf("%v", bdr.PerformanceProfileInfo.ID)
 
-	return &graphqlModels.MesheryResult{
+	return &model.MesheryResult{
 		MesheryID:          &mesheryID,
 		Name:               &bdr.Name,
 		Mesh:               &bdr.Mesh,
@@ -87,7 +86,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 	}, nil
 }
 
-func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, selector graphqlModels.PageFilter, profileID string) (*graphqlModels.PerfPageResult, error) {
+func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, selector model.PageFilter, profileID string) (*model.PerfPageResult, error) {
 	if profileID == "" {
 		return nil, handlers.ErrQueryGet("*profileID")
 	}
@@ -101,7 +100,7 @@ func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, s
 		return nil, err
 	}
 
-	result := &graphqlModels.PerfPageResult{}
+	result := &model.PerfPageResult{}
 
 	if err := json.Unmarshal(bdr, result); err != nil {
 		obj := "result data"

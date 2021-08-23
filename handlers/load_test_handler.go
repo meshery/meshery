@@ -412,9 +412,9 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		Result: resultsMap,
 	}
 
-	performanceProfileId := mux.Vars(req)["id"]
+	performanceProfileID := mux.Vars(req)["id"]
 
-	resultID, err := provider.PublishResults(req, result, performanceProfileId)
+	resultID, err := provider.PublishResults(req, result, performanceProfileID)
 	if err != nil {
 		h.log.Error(ErrLoadTest(err, "unable to persist"))
 		respChan <- &models.LoadTestResponse{
@@ -466,7 +466,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	serverMetrics := fmt.Sprintf("%v", result.ServerMetrics)
 	performanceProfile := fmt.Sprintf("%v", result.PerformanceProfileInfo.ID)
 
-	h.config.PerformanceChannels[performanceProfileId] <- &graphqlModel.MesheryResult{
+	h.config.PerformanceChannels[performanceProfileID] <- &graphqlModel.MesheryResult{
 		MesheryID:          &resultID,
 		Name:               &result.Name,
 		Mesh:               &result.Mesh,
