@@ -354,6 +354,14 @@ func start() error {
 				if err != nil {
 					return err
 				}
+
+				for _, adapter := range currCtx.Adapters {
+					adapterManifest := adapter + "-deployment.yaml"
+					err = utils.ChangeManifestVersion(adapterManifest, channel, version, filepath.Join(manifestFiles, adapterManifest))
+					if err != nil {
+						return err
+					}
+				}
 			}
 		}
 
