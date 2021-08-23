@@ -350,14 +350,14 @@ func start() error {
 				manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
 
 				// change version in meshery-deployment manifest
-				err = utils.ChangeManifestVersion(utils.MesheryDeployment, channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
+				err = utils.ChangeManifestVersion(channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
 				if err != nil {
 					return err
 				}
 
 				for _, adapter := range currCtx.Adapters {
 					adapterManifest := adapter + "-deployment.yaml"
-					err = utils.ChangeManifestVersion(adapterManifest, channel, version, filepath.Join(manifestFiles, adapterManifest))
+					err = utils.ChangeManifestVersion(channel, version, filepath.Join(manifestFiles, adapterManifest))
 					if err != nil {
 						return err
 					}
