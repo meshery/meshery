@@ -376,7 +376,6 @@ func start() error {
 							return err
 						}
 					}
-
 				}
 			}
 		}
