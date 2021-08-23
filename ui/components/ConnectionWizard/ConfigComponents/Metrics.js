@@ -23,7 +23,7 @@ const styles = () => ({})
 
 const configurationNotificationAction = (closeSnackbar) => (key) => (
   <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-    <CloseIcon/>
+    <CloseIcon />
   </IconButton>
 )
 
@@ -51,7 +51,6 @@ const MetricsConfig = ({
   return (
     <>
       {componentName === "Prometheus" &&
-
       <Grid item xs={12} style={{ height : "12.2rem" }}>
         <Grid item xs={12} style={{ marginTop : "2rem", cursor : "pointer" }}>
           <ReactSelectWrapper
@@ -66,16 +65,12 @@ const MetricsConfig = ({
             noOptionsMessage={`No ${componentName} servers discovered`}
           />
         </Grid>
-
-
-
         <Grid item xs={12} style={{ textAlign : "center", marginTop : "2rem" }}>
           <Button
             type="submit"
             variant="contained"
             color="primary"
             size="large"
-
             onClick={handleConfigurationSubmit}
           >
           Connect
@@ -83,8 +78,6 @@ const MetricsConfig = ({
         </Grid>
       </Grid>
       }
-
-
       {componentName === "Grafana" &&
       <Grid item xs={12} style={{ height : "13rem" }}>
         <Grid item xs={12} style={{ marginTop : "1.2rem" }}>
@@ -110,13 +103,12 @@ const MetricsConfig = ({
             variant="outlined"
             // disabled={inClusterConfigForm === true}
           />
-          <Grid item xs={12} style={{ marginTop : "0.8rem", marginBottom : "0.8rem", textAlign : "center"  }}>
+          <Grid item xs={12} style={{ marginTop : "0.8rem", marginBottom : "0.8rem", textAlign : "center" }}>
             <Button
               type="submit"
               variant="contained"
               color="primary"
               size="large"
-
               onClick={handleConfigurationSubmit}
             >
             Connect
@@ -125,9 +117,6 @@ const MetricsConfig = ({
         </Grid>
       </Grid>
       }
-
-
-
     </>
   )
 }
