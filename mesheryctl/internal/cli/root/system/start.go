@@ -350,17 +350,33 @@ func start() error {
 				manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
 
 				// change version in meshery-deployment manifest
-				err = utils.ChangeManifestVersion(channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
-				if err != nil {
-					return err
-				}
-
-				for _, adapter := range currCtx.Adapters {
-					adapterManifest := adapter + "-deployment.yaml"
-					err = utils.ChangeManifestVersion(channel, version, filepath.Join(manifestFiles, adapterManifest))
+				if currCtx.GetVersion() == "latest" && currCtx.GetChannel() == "stable" {
+					err = utils.ChangeManifestVersion("stable", "latest", filepath.Join(manifestFiles, utils.MesheryDeployment))
 					if err != nil {
 						return err
 					}
+
+					for _, adapter := range currCtx.Adapters {
+						adapterManifest := adapter + "-deployment.yaml"
+						err = utils.ChangeManifestVersion("stable", "latest", filepath.Join(manifestFiles, adapterManifest))
+						if err != nil {
+							return err
+						}
+					}
+				} else {
+					err = utils.ChangeManifestVersion(channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
+					if err != nil {
+						return err
+					}
+
+					for _, adapter := range currCtx.Adapters {
+						adapterManifest := adapter + "-deployment.yaml"
+						err = utils.ChangeManifestVersion(channel, version, filepath.Join(manifestFiles, adapterManifest))
+						if err != nil {
+							return err
+						}
+					}
+
 				}
 			}
 		}
