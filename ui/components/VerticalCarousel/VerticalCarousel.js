@@ -52,32 +52,11 @@ const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
     [sliderRef]
   );
 
-  function disableScrolling(){
-    // var x=window.scrollX;
-    // var y=window.scrollY;
-    // window.onscroll=function(){window.scrollTo(x, y);};
-    document.body.style.position = 'fixed';
-    document.body.style.overflowY = 'scroll';
-    document.body.style.width = '100%';
-  }
-
-  function enableScrolling(){
-    // window.onscroll=function(){};
-    document.body.style.position = 'static';
-    document.body.style.overflowY = 'scroll';
-  }
-
   useEffect(() => {
     document.getElementById("carousel-div").addEventListener("wheel", e => {
+      e.preventDefault()
       scroll(e.deltaY);
     });
-    document.getElementById("carousel-div").addEventListener("mouseenter", e => {
-      disableScrolling()
-    });
-    document.getElementById("carousel-div").addEventListener("mouseleave", e => {
-      enableScrolling()
-    });
-
   }, [scroll]);
 
   const settings = {
