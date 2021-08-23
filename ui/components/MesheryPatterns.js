@@ -25,7 +25,6 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
 import UploadIcon from "@material-ui/icons/Publish";
-import PromptComponent from "./PromptComponent";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
@@ -146,7 +145,7 @@ function MesheryPatterns({
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const modalRef = useRef(null);
+  // const modalRef = useRef(null);
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -444,15 +443,6 @@ function MesheryPatterns({
   });
 
   async function deletePattern(id) {
-    let response = await modalRef.current.show({
-      title : "Delete Pattern?",
-
-      subtitle : "Are you sure you want to delete this pattern?",
-
-      options : ["yes", "no"],
-
-    })
-    if (response === "NO") return
     dataFetch(
       `/api/pattern/${id}`,
       {
@@ -487,8 +477,6 @@ function MesheryPatterns({
     responsive : "scrollFullHeight",
     resizableColumns : true,
     serverSide : true,
-    selectableRows : true,
-    // selection : true,
     count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
@@ -497,6 +485,7 @@ function MesheryPatterns({
     print : false,
     download : false,
     customToolbar : CustomToolbar(uploadHandler),
+
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onRowsDelete : function handleDelete(row) {
@@ -566,7 +555,6 @@ function MesheryPatterns({
           className={classes.muiRow}
         />
       }
-      <PromptComponent ref={modalRef} />
     </NoSsr>
   );
 }
