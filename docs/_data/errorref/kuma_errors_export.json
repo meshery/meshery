@@ -155,6 +155,69 @@
         "short_description": "Error with custom operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Reupload the kubconfig in the Meshery Server and reconnect the adapter"
+      },
+      "1017": {
+        "name": "ErrInvalidOAMComponentTypeCode",
+        "code": "1017",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid OAM component name: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1018": {
+        "name": "ErrKumaCoreComponentFailCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error in kuma core component",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1019": {
+        "name": "ErrProcessOAMCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error performing OAM operations",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1020": {
+        "name": "ErrParseKumaCoreComponentCode",
+        "code": "1020",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "kuma core component manifest parsing failing",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1021": {
+        "name": "ErrParseOAMComponentCode",
+        "code": "1021",
+        "severity": "Alert",
+        "long_description": "Error occured while prasing application component in the OAM request made",
+        "short_description": "error parsing the component",
+        "probable_cause": "Invalid OAM component passed in OAM request",
+        "suggested_remediation": "Check if your request has vaild OAM components"
+      },
+      "1022": {
+        "name": "ErrParseOAMConfigCode",
+        "code": "1022",
+        "severity": "Alert",
+        "long_description": "Error occured while prasing component config in the OAM request made",
+        "short_description": "error parsing the configuration",
+        "probable_cause": "Invalid OAM config passed in OAM request",
+        "suggested_remediation": "Check if your request has vaild OAM config"
+      },
+      "1023": {
+        "name": "ErrNilClientCode",
+        "code": "1023",
+        "severity": "Alert",
+        "long_description": "Kubernetes client is nil",
+        "short_description": "kubernetes client not initialized",
+        "probable_cause": "kubernetes client not initialized",
+        "suggested_remediation": "Reconnect the adaptor to Meshery server"
       }
     }
   }
