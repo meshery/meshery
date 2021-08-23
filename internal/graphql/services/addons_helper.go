@@ -1,10 +1,11 @@
-package model
+package services
 
 import (
 	"context"
 	"fmt"
 	"net/url"
 
+	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 
 	"github.com/layer5io/meshkit/utils"
@@ -13,8 +14,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func GetAddonsState(selectors []MeshType, kubeClient *mesherykube.Client, provider models.Provider) ([]*AddonList, error) {
-	addonlist := make([]*AddonList, 0)
+func GetAddonsState(selectors []model.MeshType, kubeClient *mesherykube.Client, provider models.Provider) ([]*model.AddonList, error) {
+	addonlist := make([]*model.AddonList, 0)
 	objects := make([]meshsyncmodel.Object, 0)
 
 	for _, selector := range selectors {
@@ -28,7 +29,7 @@ func GetAddonsState(selectors []MeshType, kubeClient *mesherykube.Client, provid
 			Preload("Status").
 			Find(&objects, "kind = ?", "Service")
 		if result.Error != nil {
-			return nil, ErrQuery(result.Error)
+			return nil, model.ErrQuery(result.Error)
 		}
 
 		for _, obj := range objects {
@@ -83,7 +84,7 @@ func GetAddonsState(selectors []MeshType, kubeClient *mesherykube.Client, provid
 					}
 				}
 
-				addonlist = append(addonlist, &AddonList{
+				addonlist = append(addonlist, &model.AddonList{
 					Name:     obj.ObjectMeta.Name,
 					Owner:    selector.String(),
 					Endpoint: fmt.Sprintf("%s:%d", endpoint.External.Address, endpoint.External.Port),

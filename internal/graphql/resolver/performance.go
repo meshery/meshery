@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/handlers"
+	"github.com/layer5io/meshery/internal/graphql/model"
 	graphqlModels "github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 )
@@ -108,4 +109,30 @@ func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, s
 	}
 
 	return result, nil
+}
+
+func (r *Resolver) listenToPerformanceResult(ctx context.Context, provider models.Provider, profileID string) (<-chan *model.MesheryResult, error) {
+	// fmt.Println("SUBSCRIPTION STARTED!")
+	// fmt.Println(r.Config.PerformanceChannels)
+	if r.Config.PerformanceChannels == nil {
+		r.Config.PerformanceChannels = make(map[string](chan *model.MesheryResult))
+	}
+	if r.Config.PerformanceChannels[profileID] == nil {
+		r.Config.PerformanceChannels[profileID] = make(chan *model.MesheryResult)
+	}
+	// fmt.Println(r.Config.PerformanceChannels)
+	go func() {
+		r.Log.Info("Performance subscription started")
+
+		for {
+			select {
+			case <-ctx.Done():
+				r.Log.Info("Performance subscription stopped")
+				// delete channel from channels
+				delete(r.Config.PerformanceChannels, profileID)
+				return
+			}
+		}
+	}()
+	return r.Config.PerformanceChannels[profileID], nil
 }

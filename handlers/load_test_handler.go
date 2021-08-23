@@ -17,6 +17,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/helpers"
+	graphqlModel "github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
@@ -411,7 +412,9 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		Result: resultsMap,
 	}
 
-	resultID, err := provider.PublishResults(req, result, mux.Vars(req)["id"])
+	performanceProfileId := mux.Vars(req)["id"]
+
+	resultID, err := provider.PublishResults(req, result, performanceProfileId)
 	if err != nil {
 		h.log.Error(ErrLoadTest(err, "unable to persist"))
 		respChan <- &models.LoadTestResponse{
@@ -455,6 +458,27 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	respChan <- &models.LoadTestResponse{
 		Status: models.LoadTestSuccess,
 		Result: result,
+	}
+
+	// publish result to graphql subscription
+	startTime := fmt.Sprintf("%v", result.TestStartTime)
+	serverBoardConfig := fmt.Sprintf("%v", result.ServerBoardConfig)
+	serverMetrics := fmt.Sprintf("%v", result.ServerMetrics)
+	performanceProfile := fmt.Sprintf("%v", result.PerformanceProfileInfo.ID)
+
+	h.config.PerformanceChannels[performanceProfileId] <- &graphqlModel.MesheryResult{
+		MesheryID:          &resultID,
+		Name:               &result.Name,
+		Mesh:               &result.Mesh,
+		PerformanceProfile: &performanceProfile,
+		TestID:             &result.TestID,
+		RunnerResults:      result.Result,
+		ServerMetrics:      &serverMetrics,
+		ServerBoardConfig:  &serverBoardConfig,
+		TestStartTime:      &startTime,
+		UserID:             &result.UserID,
+		UpdatedAt:          &result.UpdatedAt,
+		CreatedAt:          &result.CreatedAt,
 	}
 }
 

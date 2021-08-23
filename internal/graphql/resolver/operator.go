@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
+	"github.com/layer5io/meshery/internal/graphql/services"
 	"github.com/layer5io/meshery/models"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
@@ -21,7 +22,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	}
 
 	go func(del bool, kubeclient *mesherykube.Client) {
-		err := model.Initialize(kubeclient, del)
+		err := services.Initialize(kubeclient, del)
 		if err != nil {
 			r.Log.Error(err)
 			r.operatorChannel <- &model.OperatorStatus{
@@ -52,7 +53,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 				return
 			}
 
-			endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn)
+			endpoint, err := services.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn)
 			r.Log.Debug("Endpoint: ", endpoint)
 			if err != nil {
 				r.Log.Error(err)
@@ -69,7 +70,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		}
 
 		// installMeshsync
-		err = model.RunMeshSync(kubeclient, del)
+		err = services.RunMeshSync(kubeclient, del)
 		if err != nil {
 			r.Log.Error(err)
 			r.operatorChannel <- &model.OperatorStatus{
@@ -102,7 +103,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 		return nil, ErrMesheryClient(nil)
 	}
 
-	name, version, err := model.GetOperator(r.Config.KubeClient)
+	name, version, err := services.GetOperator(r.Config.KubeClient)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -119,7 +120,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 		status = model.StatusEnabled
 	}
 
-	controllers, err := model.GetControllersInfo(r.Config.KubeClient, r.BrokerConn, r.meshsyncLivenessChannel)
+	controllers, err := services.GetControllersInfo(r.Config.KubeClient, r.BrokerConn, r.meshsyncLivenessChannel)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{

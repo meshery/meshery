@@ -1,8 +1,9 @@
-package model
+package services
 
 import (
 	"sync"
 
+	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -12,17 +13,17 @@ import (
 )
 
 var (
-	controlPlaneNamespace = map[MeshType]string{
-		MeshTypeIstio:              "istio-system",
-		MeshTypeLinkerd:            "linkerd-system",
-		MeshTypeConsul:             "consul-system",
-		MeshTypeOctarine:           "octarine-system",
-		MeshTypeTraefikMesh:        "traefik-system",
-		MeshTypeOpenServiceMesh:    "osm-system",
-		MeshTypeKuma:               "kuma-system",
-		MeshTypeNginxServiceMesh:   "nginx-system",
-		MeshTypeNetworkServiceMesh: "nsm-system",
-		MeshTypeCitrixServiceMesh:  "ctrix-system",
+	controlPlaneNamespace = map[model.MeshType]string{
+		model.MeshTypeIstio:              "istio-system",
+		model.MeshTypeLinkerd:            "linkerd-system",
+		model.MeshTypeConsul:             "consul-system",
+		model.MeshTypeOctarine:           "octarine-system",
+		model.MeshTypeTraefikMesh:        "traefik-system",
+		model.MeshTypeOpenServiceMesh:    "osm-system",
+		model.MeshTypeKuma:               "kuma-system",
+		model.MeshTypeNginxServiceMesh:   "nginx-system",
+		model.MeshTypeNetworkServiceMesh: "nsm-system",
+		model.MeshTypeCitrixServiceMesh:  "ctrix-system",
 	}
 
 	addonPortSelector = map[string]string{

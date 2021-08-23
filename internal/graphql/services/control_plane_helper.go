@@ -1,8 +1,9 @@
-package model
+package services
 
 import (
 	"strings"
 
+	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -10,22 +11,22 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*ControlPlane, error) {
+func GetControlPlaneState(selectors []model.MeshType, provider models.Provider) ([]*model.ControlPlane, error) {
 	object := []meshsyncmodel.Object{}
-	controlplanelist := make([]*ControlPlane, 0)
+	controlplanelist := make([]*model.ControlPlane, 0)
 
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
+			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[model.MeshType(selector)]).
 			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
 			Preload("Spec").
 			Preload("Status").
 			Find(&object, "kind = ?", "Pod")
 		if result.Error != nil {
-			return nil, ErrQuery(result.Error)
+			return nil, model.ErrQuery(result.Error)
 		}
-		members := make([]*ControlPlaneMember, 0)
+		members := make([]*model.ControlPlaneMember, 0)
 		for _, obj := range object {
 			if meshsyncmodel.IsObject(obj) {
 				objspec := corev1.PodSpec{}
@@ -38,7 +39,7 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*Co
 				if len(strings.Split(objspec.Containers[0].Image, ":")) > 0 {
 					version = strings.Split(objspec.Containers[0].Image, ":")[1]
 				}
-				members = append(members, &ControlPlaneMember{
+				members = append(members, &model.ControlPlaneMember{
 					Name:      obj.ObjectMeta.Name,
 					Component: strings.Split(obj.ObjectMeta.GenerateName, "-")[0],
 					Version:   version,
@@ -46,7 +47,7 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*Co
 				})
 			}
 		}
-		controlplanelist = append(controlplanelist, &ControlPlane{
+		controlplanelist = append(controlplanelist, &model.ControlPlane{
 			Name:    strings.ToLower(selector.String()),
 			Members: members,
 		})
