@@ -67,7 +67,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=18><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command.name }}</a></td>
+      <td rowspan=20><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -171,6 +171,32 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       </tr>
     {% endfor %}
   {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.login.command %}{% assign subcommand = subcommand_hash[1] %}
+    <tr>
+      <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/login">{{ subcommand.name }}</a></td>
+      <td></td>
+      <td>{{ subcommand.description }}</td>
+    </tr>
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.login.flag %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.flag }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}  
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.logout.command %}{% assign subcommand = subcommand_hash[1] %}
+    <tr>
+      <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/logout">{{ subcommand.name }}</a></td>
+      <td></td>
+      <td>{{ subcommand.description }}</td>
+    </tr>
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.logout.flag %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.flag }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}  
+  {% endfor %}
   {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.restart.command %}{% assign subcommand = subcommand_hash[1] %}
     <tr>
       <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/system/restart">{{ subcommand.name }}</a></td>
@@ -196,7 +222,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td>{{ flag.description }}</td>
       </tr>
     {% endfor %}  
-  {% endfor %}
+    {% endfor %}
   
   {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
     <tr>
