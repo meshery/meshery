@@ -25,21 +25,27 @@ function componentType(jsonSchema) {
  *  onSubmit?: Function;
  *  onDelete?: Function;
  *  type: "trait" | "workload"
+ *  formData: Record<string, any>;
+ *  renderAsTooltip: boolean;
  * }} props
+ *
  * @returns
  */
-function PatternService({ jsonSchema, onChange, type, onSubmit, onDelete }) {
+function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, renderAsTooltip, ...rest }) {
   const ctype = componentType(jsonSchema);
 
   if (ctype === "rjsf")
     return (
       <RJSF
+        formData={formData}
         hideSubmit={type === "trait"}
         hideTitle={type === "workload"}
         jsonSchema={jsonSchema}
         onChange={onChange}
         onSubmit={onSubmit}
         onDelete={onDelete}
+        renderAsTooltip={renderAsTooltip}
+        {...rest}
       />
     );
   if (ctype === "switch")

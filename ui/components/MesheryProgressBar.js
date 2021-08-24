@@ -18,10 +18,8 @@ class MesheryProgressBar extends Component {
     componentDidUpdate() {
       const { showProgress } = this.props;
       if (showProgress) {
-        this.key = this.props.enqueueSnackbar(<div style={{ width: 250 }}><LinearProgress /></div>, {
-          variant: 'default',
-          persist: true,
-        });
+        this.key = this.props.enqueueSnackbar(<div style={{ width : 250 }}><LinearProgress /></div>, { variant : 'default',
+          persist : true, });
       } else {
         this.props.closeSnackbar(this.key);
       }
@@ -32,7 +30,7 @@ class MesheryProgressBar extends Component {
     }
 }
 
-const mapStateToProps = (state) => ({ showProgress: state.get('showProgress') });
+const mapStateToProps = (state) => ({ showProgress : state.get('showProgress') });
 
 export default connect(
   mapStateToProps,

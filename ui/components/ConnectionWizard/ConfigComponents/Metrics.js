@@ -16,10 +16,10 @@ import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../
 import ReactSelectWrapper from "../../ReactSelectWrapper"
 import { handleGrafanaConfigure, handlePrometheusConfigure } from "../helpers/metrics";
 import CloseIcon from "@material-ui/icons/Close";
+import { composeWithDevTools } from "redux-devtools-extension";
 
 
-const styles = () => ({
-}) 
+const styles = () => ({})
 
 const configurationNotificationAction = (closeSnackbar) => (key) => (
   <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -27,18 +27,20 @@ const configurationNotificationAction = (closeSnackbar) => (key) => (
   </IconButton>
 )
 
-const MetricsConfig = ({classes, componentName, prometheusScannedUrls, grafanaScannedUrls,updatePrometheusConfig, updateGrafanaConfig, closeSnackbar, enqueueSnackbar, updateProgress }) => {
-  
+const MetricsConfig = ({
+  classes, componentName, prometheusScannedUrls, grafanaScannedUrls,updatePrometheusConfig, updateGrafanaConfig, closeSnackbar, enqueueSnackbar, updateProgress
+}) => {
+
   const  handleConfigurationSubmit = () => {
 
-    if(componentName === "Grafana") handleGrafanaConfigure(url,apiKey, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updateGrafanaConfig  )
-    if(componentName === "Prometheus") handlePrometheusConfigure(url, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updatePrometheusConfig  )
+    if (componentName === "Grafana") handleGrafanaConfigure(url,apiKey, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updateGrafanaConfig  )
+    if (componentName === "Prometheus") handlePrometheusConfigure(url, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updatePrometheusConfig  )
   }
   const getOptions = () => {
-    if(componentName === "Grafana") 
-      return grafanaScannedUrls?.map((graf) => ({ label: graf, value: graf })) 
-    if(componentName === "Prometheus") 
-      return prometheusScannedUrls?.map((prom) => ({ label: prom, value: prom })) 
+    if (componentName === "Grafana")
+      return grafanaScannedUrls?.map((graf) => ({ label : graf, value : graf }))
+    if (componentName === "Prometheus")
+      return prometheusScannedUrls?.map((prom) => ({ label : prom, value : prom }))
   }
 
   const [url, setUrl] = useState()
@@ -46,20 +48,51 @@ const MetricsConfig = ({classes, componentName, prometheusScannedUrls, grafanaSc
 
 
 
-  return(
+  return (
     <>
-      <Grid item xs={12} style={{marginTop: "1.2rem"}}>
-        <ReactSelectWrapper
-          onChange={(select) => setUrl(select ? select.value : "")}
-          options={getOptions()}
-          value={{label:url, value:url}}
-          label={`${componentName} Base URL`}
-          error={false}
-          placeholder={`Address of ${componentName} Server`}
-          noOptionsMessage={`No ${componentName} servers discovered`}
-        />
+      {componentName === "Prometheus" &&
+      <Grid item xs={12} style={{ height : "12.2rem" }}>
+        <Grid item xs={12} style={{ marginTop : "2rem", cursor : "pointer" }}>
+          <ReactSelectWrapper
+            onChange={(select) => setUrl(select
+              ? select.value
+              : "")}
+            options={getOptions()}
+            value={{ label : url, value : url }}
+            label={`${componentName} Base URL`}
+            error={false}
+            placeholder={`Address of ${componentName} Server`}
+            noOptionsMessage={`No ${componentName} servers discovered`}
+          />
+        </Grid>
+        <Grid item xs={12} style={{ textAlign : "center", marginTop : "2rem" }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleConfigurationSubmit}
+          >
+          Connect
+          </Button>
+        </Grid>
       </Grid>
-      {componentName === "Grafana" && 
+      }
+      {componentName === "Grafana" &&
+      <Grid item xs={12} style={{ height : "13rem" }}>
+        <Grid item xs={12} style={{ marginTop : "1.2rem" }}>
+          <ReactSelectWrapper
+            onChange={(select) => setUrl(select
+              ? select.value
+              : "")}
+            options={getOptions()}
+            value={{ label : url, value : url }}
+            label={`${componentName} Base URL`}
+            error={false}
+            placeholder={`Address of ${componentName} Server`}
+            noOptionsMessage={`No ${componentName} servers discovered`}
+          />
+        </Grid>
         <Grid item xs={12} >
           <TextField
             id="external-config-api-key-input"
@@ -70,27 +103,26 @@ const MetricsConfig = ({classes, componentName, prometheusScannedUrls, grafanaSc
             variant="outlined"
             // disabled={inClusterConfigForm === true}
           />
-        </Grid>
-      }
-      <Grid item style={{marginTop: "0.8rem", marginBottom: "0.8rem", textAlign:"center"}}>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={handleConfigurationSubmit}
-        >
+          <Grid item xs={12} style={{ marginTop : "0.8rem", marginBottom : "0.8rem", textAlign : "center" }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={handleConfigurationSubmit}
+            >
             Connect
-        </Button>
+            </Button>
+          </Grid>
+        </Grid>
       </Grid>
+      }
     </>
   )
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
+  updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(MetricsConfig)))

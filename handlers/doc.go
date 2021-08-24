@@ -14,7 +14,7 @@
 //
 //     Consumes:
 //     - application/json
-//	   - multipart/form-data
+//     - multipart/form-data
 //
 //     Produces:
 //     - application/json
@@ -59,7 +59,7 @@ type mesheryPatternResponseWrapper struct {
 type noContentWrapper struct {
 }
 
-// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule idDeleteMesheryApplicationFile
+// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule idDeleteMesheryApplicationFile idGetMesheryApplication idDeleteMesheryFilter idGetMesheryFilter
 type IDParameterWrapper struct {
 	// id for a specific
 	// in: path
@@ -253,8 +253,8 @@ type systemAdaptersRespWrapper struct {
 	Body []models.Adapter
 }
 
-// swagger:response adapterPingParams
-type adapterPingParamsWrapper struct {
+// swagger:parameters idDeleteAdapterConfig idGetSystemAdapters
+type adapterParamsWrapper struct {
 	// in: query
 	Adapter string `json:"adapter"`
 }
@@ -315,4 +315,56 @@ type applicationFileParamsWrapper struct {
 	//
 	// swagger:file
 	FormFile *bytes.Buffer `json:"Upload Yaml/Yml File"`
+}
+
+// Fetches a single Meshery Application
+// swagger:response mesheryApplicationResponseWrapper
+type mesheryApplicationResponseWrapper struct {
+	// in: body
+	Body models.MesheryApplication
+}
+
+// Returns all meshery applications
+// swagger:response mesheryApplicationsResponseWrapper
+type mesheryApplicationsResponseWrapper struct {
+	// in: body
+	Body models.ApplicationsAPIResponse
+}
+
+// Returns all the meshery adapters
+// swagger:response mesheryAdaptersRespWrapper
+type mesheryAdaptersRespWrapper struct {
+	// in: body
+	Body []*models.Adapter
+}
+
+// Parameter for meshery adapter location-url
+// swagger:parameters idPostAdapterConfig
+type mesheryAdapterParamsWrapper struct {
+	// in: body
+	MeshLocationURL string `json:"meshLocationURL"`
+}
+
+// Parameters for meshery operations
+// swagger:parameters idPostAdapterOperation
+type adapterOpsParamsWrapper struct {
+	Adapter    string `json:"adapter"`
+	Query      string `json:"query"`
+	CustomBody string `json:"customBody"`
+	Namespace  string `json:"namespace"`
+	Delete     string `json:"deleteOp"`
+}
+
+// Returns a single meshery filter
+// swagger:response mesheryFilterResponseWrapper
+type mesheryFilterResponseWrapper struct {
+	// in: body
+	Body models.MesheryFilter
+}
+
+// Returns all meshery filters
+// swagger:response mesheryFiltersResponseWrapper
+type mesheryFiltersResponseWrapper struct {
+	// in: body
+	Body models.FiltersAPIResponse
 }
