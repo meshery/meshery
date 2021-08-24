@@ -36,7 +36,6 @@ language: en
   mesheryctl app view --all # show all appliaction file content
   </div>
 </pre>
-{% endfor %}
 <br/>
 
 <!-- Options/Flags available in this command -->
