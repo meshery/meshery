@@ -68,7 +68,11 @@ func (r *queryResolver) GetPerfResult(ctx context.Context, id string) (*model.Me
 func (r *queryResolver) FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.fetchResults(ctx, provider, selector, profileID)
-	// panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) GetPerformanceProfiles(ctx context.Context, selector model.PageFilter) (*model.PerfPageProfiles, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getPerformanceProfiles(ctx, provider, selector)
 }
 
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {

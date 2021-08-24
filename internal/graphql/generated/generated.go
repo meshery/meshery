@@ -106,11 +106,33 @@ type ComplexityRoot struct {
 		Version     func(childComplexity int) int
 	}
 
+	PerfPageProfiles struct {
+		Page       func(childComplexity int) int
+		PageSize   func(childComplexity int) int
+		Profiles   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
 	PerfPageResult struct {
 		Page       func(childComplexity int) int
 		PageSize   func(childComplexity int) int
 		Results    func(childComplexity int) int
 		TotalCount func(childComplexity int) int
+	}
+
+	PerfProfile struct {
+		ConcurrentRequest func(childComplexity int) int
+		CreatedAt         func(childComplexity int) int
+		Duration          func(childComplexity int) int
+		Endpoints         func(childComplexity int) int
+		ID                func(childComplexity int) int
+		LastRun           func(childComplexity int) int
+		LoadGenerators    func(childComplexity int) int
+		Name              func(childComplexity int) int
+		QPS               func(childComplexity int) int
+		TotalResults      func(childComplexity int) int
+		UpStringdAt       func(childComplexity int) int
+		UserID            func(childComplexity int) int
 	}
 
 	Query struct {
@@ -120,6 +142,7 @@ type ComplexityRoot struct {
 		GetControlPlanes       func(childComplexity int, filter *model.ControlPlaneFilter) int
 		GetOperatorStatus      func(childComplexity int) int
 		GetPerfResult          func(childComplexity int, id string) int
+		GetPerformanceProfiles func(childComplexity int, selector model.PageFilter) int
 		ResyncCluster          func(childComplexity int, selector *model.ReSyncActions) int
 	}
 
@@ -144,6 +167,7 @@ type QueryResolver interface {
 	GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error)
 	GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error)
 	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error)
+	GetPerformanceProfiles(ctx context.Context, selector model.PageFilter) (*model.PerfPageProfiles, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
@@ -416,6 +440,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OperatorStatus.Version(childComplexity), true
 
+	case "PerfPageProfiles.page":
+		if e.complexity.PerfPageProfiles.Page == nil {
+			break
+		}
+
+		return e.complexity.PerfPageProfiles.Page(childComplexity), true
+
+	case "PerfPageProfiles.page_size":
+		if e.complexity.PerfPageProfiles.PageSize == nil {
+			break
+		}
+
+		return e.complexity.PerfPageProfiles.PageSize(childComplexity), true
+
+	case "PerfPageProfiles.profiles":
+		if e.complexity.PerfPageProfiles.Profiles == nil {
+			break
+		}
+
+		return e.complexity.PerfPageProfiles.Profiles(childComplexity), true
+
+	case "PerfPageProfiles.total_count":
+		if e.complexity.PerfPageProfiles.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PerfPageProfiles.TotalCount(childComplexity), true
+
 	case "PerfPageResult.page":
 		if e.complexity.PerfPageResult.Page == nil {
 			break
@@ -443,6 +495,90 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PerfPageResult.TotalCount(childComplexity), true
+
+	case "PerfProfile.concurrent_request":
+		if e.complexity.PerfProfile.ConcurrentRequest == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.ConcurrentRequest(childComplexity), true
+
+	case "PerfProfile.created_at":
+		if e.complexity.PerfProfile.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.CreatedAt(childComplexity), true
+
+	case "PerfProfile.duration":
+		if e.complexity.PerfProfile.Duration == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.Duration(childComplexity), true
+
+	case "PerfProfile.endpoints":
+		if e.complexity.PerfProfile.Endpoints == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.Endpoints(childComplexity), true
+
+	case "PerfProfile.id":
+		if e.complexity.PerfProfile.ID == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.ID(childComplexity), true
+
+	case "PerfProfile.last_run":
+		if e.complexity.PerfProfile.LastRun == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.LastRun(childComplexity), true
+
+	case "PerfProfile.load_generators":
+		if e.complexity.PerfProfile.LoadGenerators == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.LoadGenerators(childComplexity), true
+
+	case "PerfProfile.name":
+		if e.complexity.PerfProfile.Name == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.Name(childComplexity), true
+
+	case "PerfProfile.qps":
+		if e.complexity.PerfProfile.QPS == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.QPS(childComplexity), true
+
+	case "PerfProfile.total_results":
+		if e.complexity.PerfProfile.TotalResults == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.TotalResults(childComplexity), true
+
+	case "PerfProfile.upStringd_at":
+		if e.complexity.PerfProfile.UpStringdAt == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.UpStringdAt(childComplexity), true
+
+	case "PerfProfile.user_id":
+		if e.complexity.PerfProfile.UserID == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.UserID(childComplexity), true
 
 	case "Query.fetchResults":
 		if e.complexity.Query.FetchResults == nil {
@@ -505,6 +641,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetPerfResult(childComplexity, args["id"].(string)), true
+
+	case "Query.getPerformanceProfiles":
+		if e.complexity.Query.GetPerformanceProfiles == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPerformanceProfiles_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPerformanceProfiles(childComplexity, args["selector"].(model.PageFilter)), true
 
 	case "Query.resyncCluster":
 		if e.complexity.Query.ResyncCluster == nil {
@@ -850,39 +998,28 @@ type PerfPageResult {
 	results: [MesheryResult]
 }
 
-# type PerfResult {
-# 	smp_version: String
-# 	id: String
-# 	labels: [String]
-# 	start_time: Int
-# 	end_time: Int
-# 	latencies_ms: LatenciesMs
-# 	actual_qps: Float
-# 	details_uri: String
-# 	test_id: String
-# 	mesh_config_id: String
-# 	env_id: String
-# }
+type PerfPageProfiles {
+	page: Int!
+	page_size: Int!
+	total_count: Int!
 
-# type PerformanceProfile {
-# 	id: String
-# 	name: String
-# 	last_run: Time
-# 	schedule: String
-# 	load_generators: [String]
-# 	endpoints: [String]
-# 	service_mesh: String
-# 	concurrent_request: String
-# 	qps: Int
-# 	duration: String
-# 	total_results: Int
-# 	request_headers: String
-# 	request_cookies: String
-# 	request_body: String
-# 	content_type: String
-# 	updated_at: Time
-# 	created_at: Time
-# }
+	profiles: [PerfProfile]
+}
+
+type PerfProfile {
+	concurrent_request: Int!
+	created_at: String
+	duration: String!
+	endpoints: [String]
+	id: String!
+	last_run: String
+	load_generators: [String]
+	name: String
+	qps: Int
+	total_results: Int
+	upStringd_at: String
+	user_id: String!
+}
 
 type MesheryResult {
 	meshery_id: String
@@ -948,6 +1085,9 @@ type Query {
 
 	# Query for fetching all results for profile ID
 	fetchResults(selector: PageFilter!, profileID: String!): PerfPageResult!
+
+	# Query for fetching all results for profile ID
+	getPerformanceProfiles(selector: PageFilter!): PerfPageProfiles!
 }
 
 # 
@@ -1104,6 +1244,21 @@ func (ec *executionContext) field_Query_getPerfResult_args(ctx context.Context, 
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getPerformanceProfiles_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.PageFilter
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
 	return args, nil
 }
 
@@ -2367,6 +2522,143 @@ func (ec *executionContext) _OperatorStatus_error(ctx context.Context, field gra
 	return ec.marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐError(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PerfPageProfiles_page(ctx context.Context, field graphql.CollectedField, obj *model.PerfPageProfiles) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfPageProfiles",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Page, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfPageProfiles_page_size(ctx context.Context, field graphql.CollectedField, obj *model.PerfPageProfiles) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfPageProfiles",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageSize, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfPageProfiles_total_count(ctx context.Context, field graphql.CollectedField, obj *model.PerfPageProfiles) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfPageProfiles",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfPageProfiles_profiles(ctx context.Context, field graphql.CollectedField, obj *model.PerfPageProfiles) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfPageProfiles",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Profiles, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.PerfProfile)
+	fc.Result = res
+	return ec.marshalOPerfProfile2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _PerfPageResult_page(ctx context.Context, field graphql.CollectedField, obj *model.PerfPageResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2502,6 +2794,402 @@ func (ec *executionContext) _PerfPageResult_results(ctx context.Context, field g
 	res := resTmp.([]*model.MesheryResult)
 	fc.Result = res
 	return ec.marshalOMesheryResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_concurrent_request(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ConcurrentRequest, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_created_at(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_duration(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Duration, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_endpoints(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Endpoints, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_id(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_last_run(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastRun, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_load_generators(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LoadGenerators, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_name(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_qps(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.QPS, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_total_results(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalResults, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_upStringd_at(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpStringdAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getAvailableAddons(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2776,6 +3464,48 @@ func (ec *executionContext) _Query_fetchResults(ctx context.Context, field graph
 	res := resTmp.(*model.PerfPageResult)
 	fc.Result = res
 	return ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getPerformanceProfiles(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getPerformanceProfiles_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPerformanceProfiles(rctx, args["selector"].(model.PageFilter))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.PerfPageProfiles)
+	fc.Result = res
+	return ec.marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -4676,6 +5406,45 @@ func (ec *executionContext) _OperatorStatus(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var perfPageProfilesImplementors = []string{"PerfPageProfiles"}
+
+func (ec *executionContext) _PerfPageProfiles(ctx context.Context, sel ast.SelectionSet, obj *model.PerfPageProfiles) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, perfPageProfilesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PerfPageProfiles")
+		case "page":
+			out.Values[i] = ec._PerfPageProfiles_page(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "page_size":
+			out.Values[i] = ec._PerfPageProfiles_page_size(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "total_count":
+			out.Values[i] = ec._PerfPageProfiles_total_count(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "profiles":
+			out.Values[i] = ec._PerfPageProfiles_profiles(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var perfPageResultImplementors = []string{"PerfPageResult"}
 
 func (ec *executionContext) _PerfPageResult(ctx context.Context, sel ast.SelectionSet, obj *model.PerfPageResult) graphql.Marshaler {
@@ -4704,6 +5473,64 @@ func (ec *executionContext) _PerfPageResult(ctx context.Context, sel ast.Selecti
 			}
 		case "results":
 			out.Values[i] = ec._PerfPageResult_results(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var perfProfileImplementors = []string{"PerfProfile"}
+
+func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionSet, obj *model.PerfProfile) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, perfProfileImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PerfProfile")
+		case "concurrent_request":
+			out.Values[i] = ec._PerfProfile_concurrent_request(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "created_at":
+			out.Values[i] = ec._PerfProfile_created_at(ctx, field, obj)
+		case "duration":
+			out.Values[i] = ec._PerfProfile_duration(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "endpoints":
+			out.Values[i] = ec._PerfProfile_endpoints(ctx, field, obj)
+		case "id":
+			out.Values[i] = ec._PerfProfile_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "last_run":
+			out.Values[i] = ec._PerfProfile_last_run(ctx, field, obj)
+		case "load_generators":
+			out.Values[i] = ec._PerfProfile_load_generators(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._PerfProfile_name(ctx, field, obj)
+		case "qps":
+			out.Values[i] = ec._PerfProfile_qps(ctx, field, obj)
+		case "total_results":
+			out.Values[i] = ec._PerfProfile_total_results(ctx, field, obj)
+		case "upStringd_at":
+			out.Values[i] = ec._PerfProfile_upStringd_at(ctx, field, obj)
+		case "user_id":
+			out.Values[i] = ec._PerfProfile_user_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4817,6 +5644,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_fetchResults(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getPerformanceProfiles":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getPerformanceProfiles(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -5427,6 +6268,20 @@ func (ec *executionContext) unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmeshe
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNPerfPageProfiles2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx context.Context, sel ast.SelectionSet, v model.PerfPageProfiles) graphql.Marshaler {
+	return ec._PerfPageProfiles(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx context.Context, sel ast.SelectionSet, v *model.PerfPageProfiles) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PerfPageProfiles(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNPerfPageResult2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx context.Context, sel ast.SelectionSet, v model.PerfPageResult) graphql.Marshaler {
 	return ec._PerfPageResult(ctx, sel, &v)
 }
@@ -5742,6 +6597,21 @@ func (ec *executionContext) marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmeshery�
 	return ec._Error(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalInt(*v)
+}
+
 func (ec *executionContext) unmarshalOMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {
 	if v == nil {
 		return nil, nil
@@ -5835,6 +6705,53 @@ func (ec *executionContext) unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlaye
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalOPerfProfile2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx context.Context, sel ast.SelectionSet, v []*model.PerfProfile) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOPerfProfile2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOPerfProfile2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx context.Context, sel ast.SelectionSet, v *model.PerfProfile) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PerfProfile(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOReSyncActions2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐReSyncActions(ctx context.Context, v interface{}) (*model.ReSyncActions, error) {
 	if v == nil {
 		return nil, nil
@@ -5850,6 +6767,42 @@ func (ec *executionContext) unmarshalOString2string(ctx context.Context, v inter
 
 func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	return graphql.MarshalString(v)
+}
+
+func (ec *executionContext) unmarshalOString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
