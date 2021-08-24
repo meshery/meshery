@@ -29,24 +29,22 @@ function deleteTitleFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, title : "" };
 }
 
-function RJSFButton({ handler, text }) {
+function RJSFButton({ handler, text, ...restParams }) {
   return (
-    <Button variant="contained" color="primary" style={{ marginRight : "0.5rem" }} onClick={handler}>
+    <Button variant="contained" color="primary" style={{ marginRight : "0.5rem" }} onClick={handler} {...restParams}>
       {text}
     </Button>
   );
 }
 
+function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, renderAsTooltip, ...restparams }) {
+  const uiSchema = {
+    replicas : {
+      "ui:widget" : "range"
+    }
+  };
 
-const uiSchema = {
-  replicas : {
-    "ui:widget" : "range"
-  }
-};
-
-function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, renderAsTooltip }) {
-
-  const [data, setData] = React.useState();
+  const [data, setData] = React.useState({ ...formData });
 
   React.useEffect(() => {
     onChange?.(data);
@@ -62,9 +60,9 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete,
           formData={data}
           liveValidate
           additionalMetaSchemas={[JS4]}
-          // noHtml5Validate
+        // noHtml5Validate
         >
-          {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" />}
+          {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
           {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />}
         </Form>) : (
         <MuiThemeProvider theme={muiTheme}>
@@ -78,7 +76,7 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete,
             ArrayFieldTemplate={ArrayFieldTemplate}
             additionalMetaSchemas={[JS4]}
             uiSchema={uiSchema}
-            // noHtml5Validate
+          // noHtml5Validate
           >
             <button style={{ opacity : '0' }} />
           </Form>

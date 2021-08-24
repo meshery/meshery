@@ -89,7 +89,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
 function MesheryFilters({
   updateProgress, enqueueSnackbar, closeSnackbar, user, classes
 }) {
-  
+
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -343,30 +343,30 @@ function MesheryFilters({
       columns[idx].options.sortDirection = sortOrder.split(" ")[1];
     }
   });
-  
+
   async function deleteFilter(id) {
     let response = await modalRef.current.show({
-      title: "Delete Filters?",
+      title : "Delete Filters?",
 
-      subtitle: "Are you sure you want to delete this filter?",
+      subtitle : "Are you sure you want to delete this filter?",
 
-      options: ["YES", "NO"],
+      options : ["YES", "NO"],
 
     })
-    if(response === "NO") return
+    if (response === "NO") return
     dataFetch(
       `/api/experimental/filter/${id}`,
       {
-        method: "DELETE",
-        credentials: "include",
+        method : "DELETE",
+        credentials : "include",
       },
       () => {
-        updateProgress({ showProgress: false });
+        updateProgress({ showProgress : false });
 
         enqueueSnackbar("Filter Successfully Deleted!", {
-          variant: "success",
-          autoHideDuration: 2000,
-          action: function Action(key) {
+          variant : "success",
+          autoHideDuration : 2000,
+          action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon />
@@ -382,33 +382,33 @@ function MesheryFilters({
   }
 
   const options = {
-    filter: false,
-    sort: !(user && user.user_id === "meshery"),
-    search: !(user && user.user_id === "meshery"),
-    filterType: "textField",
-    responsive: "scrollFullHeight",
-    resizableColumns: true,
-    selectableRows: true,
-    serverSide: true,
+    filter : false,
+    sort : !(user && user.user_id === "meshery"),
+    search : !(user && user.user_id === "meshery"),
+    filterType : "textField",
+    responsive : "scrollFullHeight",
+    resizableColumns : true,
+    selectableRows : true,
+    serverSide : true,
     // selection: true,
     count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
     fixedHeader : true,
     page,
-    print: false,
-    download: false,
+    print : false,
+    download : false,
     // handleDelete,
 
-    customToolbar: CustomToolbar(uploadHandler),
+    customToolbar : CustomToolbar(uploadHandler),
 
-    onRowsDelete: function handleDelete(row) {
+    onRowsDelete : function handleDelete(row) {
       const fid = Object.keys(row.lookup).map(idx => filters[idx]?.id)
       fid.forEach(fid => deleteFilter(fid))
     },
     // selection:'mulitple',
 
-    onTableChange: (action, tableState) => {
+    onTableChange : (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
       let order = "";
       if (tableState.activeColumn) {
