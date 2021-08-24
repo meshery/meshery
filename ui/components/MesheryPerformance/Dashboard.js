@@ -16,8 +16,9 @@ import { withStyles } from "@material-ui/core/styles";
 import PerformanceCalendar from "./PerformanceCalendar";
 import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
+import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 
-const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
+// const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
 const styles = () => ({ paper : { padding : "1rem", }, });
@@ -43,18 +44,28 @@ function Dashboard({
   function fetchTestProfiles() {
     updateProgress({ showProgress : true });
 
-    dataFetch(
-      `${MESHERY_PERFORMANCE_URL}`,
-      { credentials : "include", },
-      (result) => {
-        updateProgress({ showProgress : false });
-        if (result) {
-          setProfiles({ count : result.total_count || 0,
-            profiles : result.profiles || [], });
+    fetchPerformanceProfiles({
+      selector : {
+        // default
+        pageSize : `10`,
+        page : `0`,
+        search : ``,
+        order : ``,
+      },
+    }).subscribe({
+      next : (res) => {
+        // @ts-ignore
+        let result = res?.getPerformanceProfiles;
+        if (typeof result !== "undefined") {
+          updateProgress({ showProgress : false });
+          if (result) {
+            setProfiles({ count : result.total_count || 0,
+              profiles : result.profiles || [], });
+          }
         }
       },
-      handleError("Failed to Fetch Profiles")
-    );
+      error : handleError("Failed to Fetch Profiles"),
+    });
   }
 
   function fetchTests() {
