@@ -11,38 +11,6 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
-// func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Provider, filter *model.PageFilter) (<-chan *model.PerfPageResult, error) {
-// 	if r.performanceChannel == nil {
-// 		r.performanceChannel = make(chan *model.PerfPageResult)
-// 		r.operatorSyncChannel = make(chan struct{})
-// 	}
-
-// 	go func() {
-// 		r.Log.Info("Performance subscription started")
-
-// 		tokenString := ctx.Value("token").(string)
-
-// 		provider.FetchAllResults()
-
-// 		for {
-// 			select {
-// 			case <-r.operatorSyncChannel:
-// 				status, err := r.getOperatorStatus(ctx, provider)
-// 				if err != nil {
-// 					r.Log.Error(ErrOperatorSubscription(err))
-// 					return
-// 				}
-// 				r.performanceChannel <- status
-// 			case <-ctx.Done():
-// 				r.Log.Info("Operator subscription flushed")
-// 				return
-// 			}
-// 		}
-// 	}()
-
-// 	return r.performanceChannel, nil
-// }
-
 func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, id string) (*model.MesheryResult, error) {
 	if id == "" {
 		return nil, handlers.ErrQueryGet("*id")
