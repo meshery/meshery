@@ -199,39 +199,28 @@ type PerfPageResult {
 	results: [MesheryResult]
 }
 
-# type PerfResult {
-# 	smp_version: String
-# 	id: String
-# 	labels: [String]
-# 	start_time: Int
-# 	end_time: Int
-# 	latencies_ms: LatenciesMs
-# 	actual_qps: Float
-# 	details_uri: String
-# 	test_id: String
-# 	mesh_config_id: String
-# 	env_id: String
-# }
+type PerfPageProfiles {
+	page: Int!
+	page_size: Int!
+	total_count: Int!
 
-# type PerformanceProfile {
-# 	id: String
-# 	name: String
-# 	last_run: Time
-# 	schedule: String
-# 	load_generators: [String]
-# 	endpoints: [String]
-# 	service_mesh: String
-# 	concurrent_request: String
-# 	qps: Int
-# 	duration: String
-# 	total_results: Int
-# 	request_headers: String
-# 	request_cookies: String
-# 	request_body: String
-# 	content_type: String
-# 	updated_at: Time
-# 	created_at: Time
-# }
+	profiles: [PerfProfile]
+}
+
+type PerfProfile {
+	concurrent_request: Int!
+	created_at: String
+	duration: String!
+	endpoints: [String]
+	id: String!
+	last_run: String
+	load_generators: [String]
+	name: String
+	qps: Int
+	total_results: Int
+	upStringd_at: String
+	user_id: String!
+}
 
 type MesheryResult {
 	meshery_id: String
@@ -297,6 +286,9 @@ type Query {
 
 	# Query for fetching all results for profile ID
 	fetchResults(selector: PageFilter!, profileID: String!): PerfPageResult!
+
+	# Query for fetching all results for profile ID
+	getPerformanceProfiles(selector: PageFilter!): PerfPageProfiles!
 }
 
 # 
