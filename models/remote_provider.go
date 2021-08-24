@@ -1737,7 +1737,7 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
-func (l *RemoteProvider) GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistPerformanceProfiles", l.ProviderName)
@@ -1764,11 +1764,6 @@ func (l *RemoteProvider) GetPerformanceProfiles(req *http.Request, page, pageSiz
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed performance profiles url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {

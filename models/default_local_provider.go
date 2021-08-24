@@ -723,7 +723,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, perfor
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
-func (l *DefaultLocalProvider) GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}

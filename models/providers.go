@@ -249,7 +249,7 @@ type Provider interface {
 	RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
-	GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
 	DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
 
