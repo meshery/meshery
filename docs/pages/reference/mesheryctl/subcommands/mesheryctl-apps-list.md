@@ -32,7 +32,7 @@ language: en
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl app list -h
+  mesheryctl app list -h # Shows help for the command
   </div>
 </pre>
 <br/>

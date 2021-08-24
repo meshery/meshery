@@ -30,14 +30,22 @@ lang: en
 
 ## Examples
 
-{% for flag_hash in site.data.mesheryctlcommands.apps.view.flags %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in site.data.mesheryctlcommands.apps.onboard.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ flag.usage }}
+  mesheryctl app onboard --file [path to app file] 
   </div>
 </pre>
 {% endfor %}
+<div>
+  show all appliaction file content
+</div>
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  mesheryctl app view --all
+  </div>
+</pre>
 <br/>
 
 <!-- Options/Flags available in this command -->

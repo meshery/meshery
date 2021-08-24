@@ -29,14 +29,6 @@ language: en
 
 ## Examples
 
-{% for subcommand_hash in site.data.mesheryctlcommands.apps.onboard.commands %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ subcommand.usage }}
-  </div>
-</pre>
-{% endfor %}
 {% for flag_hash in site.data.mesheryctlcommands.apps.onboard.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
