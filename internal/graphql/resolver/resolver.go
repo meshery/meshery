@@ -18,7 +18,7 @@ type Resolver struct {
 	Config          *models.HandlerConfig
 
 	controlPlaneSyncChannel chan struct{}
-	operatorSyncChannel     chan bool
+	operatorSyncChannel     chan bool // true for processing, false for no processing
 	meshsyncLivenessChannel chan struct{}
 	// operatorChannel         chan *model.OperatorStatus
 	performanceChannel  chan *model.PerfPageResult

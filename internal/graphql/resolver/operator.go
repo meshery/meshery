@@ -26,13 +26,6 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		err := model.Initialize(kubeclient, del)
 		if err != nil {
 			r.Log.Error(err)
-			// r.operatorChannel <- &model.OperatorStatus{
-			// 	Status: status,
-			// 	Error: &model.Error{
-			// 		Code:        "",
-			// 		Description: err.Error(),
-			// 	},
-			// }
 			r.operatorSyncChannel <- false
 			return
 		}
@@ -45,13 +38,6 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			})
 			if err != nil {
 				r.Log.Error(err)
-				// r.operatorChannel <- &model.OperatorStatus{
-				// 	Status: status,
-				// 	Error: &model.Error{
-				// 		Code:        "",
-				// 		Description: err.Error(),
-				// 	},
-				// }
 				r.operatorSyncChannel <- false
 				return
 			}
@@ -60,13 +46,6 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			r.Log.Debug("Endpoint: ", endpoint)
 			if err != nil {
 				r.Log.Error(err)
-				// r.operatorChannel <- &model.OperatorStatus{
-				// 	Status: status,
-				// 	Error: &model.Error{
-				// 		Code:        "",
-				// 		Description: err.Error(),
-				// 	},
-				// }
 				r.operatorSyncChannel <- false
 				return
 			}
@@ -77,13 +56,6 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		err = model.RunMeshSync(kubeclient, del)
 		if err != nil {
 			r.Log.Error(err)
-			// r.operatorChannel <- &model.OperatorStatus{
-			// 	Status: status,
-			// 	Error: &model.Error{
-			// 		Code:        "",
-			// 		Description: err.Error(),
-			// 	},
-			// }
 			r.operatorSyncChannel <- false
 			return
 		}
@@ -159,7 +131,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 		err := r.connectToBroker(context.TODO(), provider)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
-			// The subscription should remain live to read for future events
+			// The subscription should remain live to send future messages and only die when context is done
 			// return
 		}
 

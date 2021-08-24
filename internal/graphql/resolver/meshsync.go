@@ -68,13 +68,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		endpoint, err := model.SubscribeToBroker(provider, r.Config.KubeClient, r.brokerChannel, r.BrokerConn)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
-			// r.operatorChannel <- &model.OperatorStatus{
-			// 	Status: model.StatusDisabled,
-			// 	Error: &model.Error{
-			// 		Code:        "",
-			// 		Description: err.Error(),
-			// 	},
-			// }
+
 			r.operatorSyncChannel <- false
 			return err
 		}
@@ -92,16 +86,6 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 }
 
 func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider) (model.Status, error) {
-	// status, err := r.getOperatorStatus(ctx, provider)
-	// if err != nil {
-	// 	return model.StatusUnknown, err
-	// }
-	// for _, controller := range status.Controllers {
-	// 	if controller.Name == "meshsync" && controller.Status == model.StatusEnabled {
-	// 		return model.StatusEnabled, nil
-	// 	}
-	// }
-
 	err := model.RunMeshSync(r.Config.KubeClient, false)
 	r.Log.Info("Installing Meshsync")
 	r.operatorSyncChannel <- true
