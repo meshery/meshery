@@ -28,6 +28,7 @@ import UploadIcon from "@material-ui/icons/Publish";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
+import PromptComponent from "./PromptComponent";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -145,7 +146,7 @@ function MesheryPatterns({
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  // const modalRef = useRef(null);
+  const modalRef = useRef(null);
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -442,7 +443,16 @@ function MesheryPatterns({
     }
   });
 
-  async function deletePattern(id) {
+  async function showModal() {
+    let response = await modalRef.current.show({ title : "Delete Pattern?",
+
+      subtitle : "Are you sure you want to delete this pattern?",
+
+      options : ["YES", "NO"], })
+    return response;
+  }
+
+  function deletePattern(id) {
     dataFetch(
       `/api/pattern/${id}`,
       {
@@ -488,9 +498,15 @@ function MesheryPatterns({
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
-    onRowsDelete : function handleDelete(row) {
-      const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
-      fid.forEach(fid => deletePattern(fid))
+    onRowsDelete : async function handleDelete(row) {
+      let response = await showModal()
+      console.log(response)
+      if (response === "YES") {
+        const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
+        fid.forEach(fid => deletePattern(fid))
+      }
+      if (response === "NO")
+        fetchPatterns(page, pageSize, search, sortOrder);
     },
 
     onTableChange : (action, tableState) => {
@@ -555,6 +571,7 @@ function MesheryPatterns({
           className={classes.muiRow}
         />
       }
+      <PromptComponent ref={modalRef} />
     </NoSsr>
   );
 }
