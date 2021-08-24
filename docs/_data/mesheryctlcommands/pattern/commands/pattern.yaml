@@ -1,4 +1,4 @@
 name : pattern
-description : 
+description : Pattern configuartion and management of service meshes
 usage: |
     `mesheryctl pattern`

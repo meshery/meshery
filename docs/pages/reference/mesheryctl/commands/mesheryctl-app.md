@@ -38,12 +38,9 @@ lang: en
   </div>
 </pre>
 {% endfor %}
-<div>
-  show all appliaction file content
-</div>
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl app view --all
+  mesheryctl app view --all # show all appliaction file content
   </div>
 </pre>
 <br/>
