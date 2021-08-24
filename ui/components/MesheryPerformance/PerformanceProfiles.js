@@ -109,7 +109,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
           }
         }
       },
-      error : handleError,
+      error : handleError("Failed to Fetch Profiles"),
     });
   }
 
