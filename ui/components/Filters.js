@@ -378,7 +378,7 @@ function MesheryFilters({
 
       subtitle : "Are you sure you want to delete this filter?",
 
-      options : ["YES", "NO"], })
+      options : ["yes", "no"], })
     return response;
   }
 
@@ -430,11 +430,11 @@ function MesheryFilters({
     onRowsDelete : async function handleDelete(row) {
       let response  = await showmodal()
       console.log(response)
-      if (response === "YES") {
+      if (response === "yes") {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
       }
-      if (response === "NO")
+      if (response === "no")
         fetchFilters(page, pageSize, search, sortOrder);
     },
 

@@ -378,7 +378,7 @@ function MesheryApplications({
 
       subtitle : "Are you sure you want to delete this application?",
 
-      options : ["YES", "NO"], })
+      options : ["yes", "no"], })
     return response;
   }
 
@@ -429,11 +429,11 @@ function MesheryApplications({
     onRowsDelete : async function handleDelete(row) {
       let response = await showModal()
       console.log(response)
-      if (response === "YES") {
+      if (response === "yes") {
         const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id)
         fid.forEach(fid => deleteApplication(fid))
       }
-      if (response === "NO")
+      if (response === "no")
         fetchApplications(page, pageSize, search, sortOrder);
     },
 
