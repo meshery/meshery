@@ -17,6 +17,7 @@ import { withSnackbar } from "notistack";
 import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button } from "@material-ui/core";
+import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 
@@ -86,26 +87,30 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
 
-    const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-      sortOrder
-    )}`;
-
     updateProgress({ showProgress : true });
-
-    dataFetch(
-      `${MESHERY_PERFORMANCE_URL}${query}`,
-      { credentials : "include", },
-      (result) => {
-        updateProgress({ showProgress : false });
-        if (result) {
-          setTestProfiles(result.profiles || []);
-          setPage(result.page || 0);
-          setPageSize(result.page_size || 0);
-          setCount(result.total_count || 0);
+    fetchPerformanceProfiles({
+      selector : {
+        pageSize : `${pageSize}`,
+        page : `${page}`,
+        search : `${encodeURIComponent(search)}`,
+        order : `${encodeURIComponent(sortOrder)}`,
+      },
+    }).subscribe({
+      next : (res) => {
+        // @ts-ignore
+        let result = res?.getPerformanceProfiles;
+        if (typeof result !== "undefined") {
+          updateProgress({ showProgress : false });
+          if (result) {
+            setCount(result.total_count || 0);
+            setPageSize(result.page_size || 0);
+            setTestProfiles(result.profiles || []);
+            setPage(result.page || 0);
+          }
         }
       },
-      handleError("Failed to Fetch Profiles")
-    );
+      error : handleError,
+    });
   }
 
   async function deleteProfile(id) {
