@@ -111,7 +111,7 @@ type PerfProfile struct {
 	Name              *string   `json:"name"`
 	QPS               *int      `json:"qps"`
 	TotalResults      *int      `json:"total_results"`
-	UpStringdAt       *string   `json:"upStringd_at"`
+	UpdatedAt         *string   `json:"updated_at"`
 	UserID            string    `json:"user_id"`
 }
 

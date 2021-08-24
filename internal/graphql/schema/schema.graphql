@@ -218,7 +218,7 @@ type PerfProfile {
 	name: String
 	qps: Int
 	total_results: Int
-	upStringd_at: String
+	updated_at: String
 	user_id: String!
 }
 

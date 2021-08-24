@@ -131,7 +131,7 @@ type ComplexityRoot struct {
 		Name              func(childComplexity int) int
 		QPS               func(childComplexity int) int
 		TotalResults      func(childComplexity int) int
-		UpStringdAt       func(childComplexity int) int
+		UpdatedAt         func(childComplexity int) int
 		UserID            func(childComplexity int) int
 	}
 
@@ -566,12 +566,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PerfProfile.TotalResults(childComplexity), true
 
-	case "PerfProfile.upStringd_at":
-		if e.complexity.PerfProfile.UpStringdAt == nil {
+	case "PerfProfile.updated_at":
+		if e.complexity.PerfProfile.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.PerfProfile.UpStringdAt(childComplexity), true
+		return e.complexity.PerfProfile.UpdatedAt(childComplexity), true
 
 	case "PerfProfile.user_id":
 		if e.complexity.PerfProfile.UserID == nil {
@@ -1017,7 +1017,7 @@ type PerfProfile {
 	name: String
 	qps: Int
 	total_results: Int
-	upStringd_at: String
+	updated_at: String
 	user_id: String!
 }
 
@@ -3125,7 +3125,7 @@ func (ec *executionContext) _PerfProfile_total_results(ctx context.Context, fiel
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PerfProfile_upStringd_at(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+func (ec *executionContext) _PerfProfile_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3143,7 +3143,7 @@ func (ec *executionContext) _PerfProfile_upStringd_at(ctx context.Context, field
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.UpStringdAt, nil
+		return obj.UpdatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5524,8 +5524,8 @@ func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._PerfProfile_qps(ctx, field, obj)
 		case "total_results":
 			out.Values[i] = ec._PerfProfile_total_results(ctx, field, obj)
-		case "upStringd_at":
-			out.Values[i] = ec._PerfProfile_upStringd_at(ctx, field, obj)
+		case "updated_at":
+			out.Values[i] = ec._PerfProfile_updated_at(ctx, field, obj)
 		case "user_id":
 			out.Values[i] = ec._PerfProfile_user_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
