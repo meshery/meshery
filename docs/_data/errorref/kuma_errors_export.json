@@ -174,54 +174,63 @@
         "probable_cause": "",
         "suggested_remediation": "Invalid helm chart configuration"
       },
-      "1024": {
+      "1030": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1030",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1031": {
         "name": "ErrInvalidOAMComponentTypeCode",
-        "code": "1024",
+        "code": "1031",
         "severity": "Alert",
         "long_description": "",
         "short_description": "invalid OAM component name: ",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1025": {
+      "1032": {
         "name": "ErrKumaCoreComponentFailCode",
-        "code": "1025",
+        "code": "1032",
         "severity": "Alert",
         "long_description": "",
         "short_description": "error in kuma core component",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1026": {
+      "1033": {
         "name": "ErrProcessOAMCode",
-        "code": "1026",
+        "code": "1033",
         "severity": "Alert",
         "long_description": "",
         "short_description": "error performing OAM operations",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1027": {
+      "1034": {
         "name": "ErrParseKumaCoreComponentCode",
-        "code": "1027",
+        "code": "1034",
         "severity": "Alert",
         "long_description": "",
         "short_description": "kuma core component manifest parsing failing",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1028": {
+      "1035": {
         "name": "ErrParseOAMComponentCode",
-        "code": "1028",
+        "code": "1035",
         "severity": "Alert",
         "long_description": "Error occured while prasing application component in the OAM request made",
         "short_description": "error parsing the component",
         "probable_cause": "Invalid OAM component passed in OAM request",
         "suggested_remediation": "Check if your request has vaild OAM components"
       },
-      "1029": {
+      "1036": {
         "name": "ErrParseOAMConfigCode",
-        "code": "1029",
+        "code": "1036",
         "severity": "Alert",
         "long_description": "Error occured while prasing component config in the OAM request made",
         "short_description": "error parsing the configuration",
