@@ -116,6 +116,10 @@ func start() error {
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
+		mesheryImageVersion := currCtx.GetVersion()
+		if currCtx.GetChannel() == "stable" && currCtx.GetVersion() == "latest" {
+			mesheryImageVersion = "latest"
+		}
 
 		// download the docker-compose.yaml file corresponding to the current version
 		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
@@ -181,7 +185,7 @@ func start() error {
 					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
 				}
 
-				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), currCtx.GetVersion())
+				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
 			}
 			services[v] = temp
 			AllowedServices[v] = services[v]
@@ -192,11 +196,6 @@ func start() error {
 		if err != nil {
 			return err
 		}
-
-		//fmt.Println("Services", services);
-		//fmt.Println("RequiredAdapters", RequestedAdapters);
-		//fmt.Println("AllowedServices", AllowedServices);
-		//fmt.Println("version", utils.ViperCompose.GetString("version")) // Works here
 
 		//////// FLAGS
 		// Control whether to pull for new Meshery container images
