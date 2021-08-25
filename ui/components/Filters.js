@@ -14,11 +14,10 @@ import {
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import UploadIcon from "@material-ui/icons/Publish";
-import PromptComponent from "./PromptComponent";
-// import Checkbox from '@material-ui/core/Checkbox';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
+import PromptComponent from "./PromptComponent";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -107,8 +106,8 @@ function MesheryFilters({
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
-  const modalRef = useRef(null);
   const [count, setCount] = useState(0);
+  const modalRef = useRef(null);
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -374,17 +373,18 @@ function MesheryFilters({
     }
   });
 
-  async function deleteFilter(id) {
-    let response = await modalRef.current.show({
-      title : "Delete Filters?",
+  async function showmodal() {
+    let response = await modalRef.current.show({ title : "Delete Filter?",
 
       subtitle : "Are you sure you want to delete this filter?",
 
-      options : ["YES", "NO"],
-    });
-    if (response === "NO") return;
+      options : ["yes", "no"], })
+    return response;
+  }
+
+  function deleteFilter(id) {
     dataFetch(
-      `/api/experimental/filter/${id}`,
+      `/api/filter/${id}`,
       {
         method : "DELETE",
         credentials : "include",
@@ -417,9 +417,7 @@ function MesheryFilters({
     filterType : "textField",
     responsive : "scrollFullHeight",
     resizableColumns : true,
-    selectableRows : true,
     serverSide : true,
-    // selection: true,
     count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
@@ -429,11 +427,16 @@ function MesheryFilters({
     download : false,
     customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
-    onRowsDelete : function handleDelete(row) {
-      const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
-      fid.forEach((fid) => deleteFilter(fid));
+    onRowsDelete : async function handleDelete(row) {
+      let response  = await showmodal()
+      console.log(response)
+      if (response === "yes") {
+        const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
+        fid.forEach((fid) => deleteFilter(fid));
+      }
+      if (response === "no")
+        fetchFilters(page, pageSize, search, sortOrder);
     },
-    // selection:'mulitple',
 
     onTableChange : (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
