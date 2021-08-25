@@ -111,7 +111,7 @@ function Dashboard({
                       Run Test
                     </Button>
                   </div>
-                </d>
+                </div>
               </Grid>
               <Grid item xs>
                 <div className={classes.paper}>
