@@ -104,6 +104,7 @@ func start() error {
 	if err != nil {
 		return err
 	}
+	mesheryImageVersion := currCtx.GetVersion()
 
 	if utils.PlatformFlag != "" {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
@@ -116,7 +117,6 @@ func start() error {
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
-		mesheryImageVersion := currCtx.GetVersion()
 		if currCtx.GetChannel() == "stable" && currCtx.GetVersion() == "latest" {
 			mesheryImageVersion = "latest"
 		}
@@ -316,7 +316,7 @@ func start() error {
 			return err
 		}
 
-		channel, version, err := utils.GetChannelAndVersion(currCtx)
+		channel, _, err := utils.GetChannelAndVersion(currCtx)
 		if err != nil {
 			return err
 		}
@@ -350,30 +350,19 @@ func start() error {
 
 				// change version in meshery-deployment manifest
 				if currCtx.GetVersion() == "latest" && currCtx.GetChannel() == "stable" {
-					err = utils.ChangeManifestVersion("stable", "latest", filepath.Join(manifestFiles, utils.MesheryDeployment))
+					mesheryImageVersion = "latest"
+				}
+
+				err = utils.ChangeManifestVersion(channel, mesheryImageVersion, filepath.Join(manifestFiles, utils.MesheryDeployment))
+				if err != nil {
+					return err
+				}
+
+				for _, adapter := range currCtx.Adapters {
+					adapterManifest := adapter + "-deployment.yaml"
+					err = utils.ChangeManifestVersion(channel, "latest", filepath.Join(manifestFiles, adapterManifest))
 					if err != nil {
 						return err
-					}
-
-					for _, adapter := range currCtx.Adapters {
-						adapterManifest := adapter + "-deployment.yaml"
-						err = utils.ChangeManifestVersion("stable", "latest", filepath.Join(manifestFiles, adapterManifest))
-						if err != nil {
-							return err
-						}
-					}
-				} else {
-					err = utils.ChangeManifestVersion(channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
-					if err != nil {
-						return err
-					}
-
-					for _, adapter := range currCtx.Adapters {
-						adapterManifest := adapter + "-deployment.yaml"
-						err = utils.ChangeManifestVersion(channel, version, filepath.Join(manifestFiles, adapterManifest))
-						if err != nil {
-							return err
-						}
 					}
 				}
 			}
