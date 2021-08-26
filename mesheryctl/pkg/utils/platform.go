@@ -565,7 +565,7 @@ func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool)
 }
 
 // ChangeManifestVersion changes the tag of the images in the manifest according to the pinned version
-func ChangeManifestVersion(fileName string, channel string, version string, filePath string) error {
+func ChangeManifestVersion(channel, version, filePath string) error {
 	// setting up config type to yaml files
 	ViperCompose.SetConfigType("yaml")
 
@@ -573,7 +573,7 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 	ViperCompose.SetConfigFile(filePath)
 	err := ViperCompose.ReadInConfig()
 	if err != nil {
-		return fmt.Errorf("unable to read config %s | %s", fileName, err)
+		return fmt.Errorf("unable to read config %s | %s", filePath, err)
 	}
 
 	compose := K8sCompose{}
@@ -585,7 +585,7 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 	// unmarshal the file into structs
 	err = yaml.Unmarshal(yamlFile, &compose)
 	if err != nil {
-		return fmt.Errorf("unable to unmarshal config %s | %s", fileName, err)
+		return fmt.Errorf("unable to unmarshal config %s | %s", filePath, err)
 	}
 
 	// for edge channel only the latest tag exist in Docker Hub
@@ -608,11 +608,11 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 	// Marshal the structs
 	newConfig, err := yaml.Marshal(compose)
 	if err != nil {
-		return fmt.Errorf("unable to marshal config %s | %s", fileName, err)
+		return fmt.Errorf("unable to marshal config %s | %s", filePath, err)
 	}
 	err = ioutil.WriteFile(filePath, newConfig, 0644)
 	if err != nil {
-		return fmt.Errorf("unable to update config %s | %s", fileName, err)
+		return fmt.Errorf("unable to update config %s | %s", filePath, err)
 	}
 
 	return nil
