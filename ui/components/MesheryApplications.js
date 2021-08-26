@@ -27,12 +27,13 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
+import URLUploader from "./URLUploader";
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
   tableHeader : { fontWeight : "bolder",
     fontSize : 18, }, });
 
-function CustomToolbar(onClick) {
+function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
     return (
       <>
@@ -43,6 +44,9 @@ function CustomToolbar(onClick) {
               <UploadIcon />
             </IconButton>
           </Tooltip>
+        </label>
+        <label htmlFor="url-upload-button">
+          <URLUploader onSubmit={urlOnClick} />
         </label>
       </>
     );
@@ -275,6 +279,11 @@ function MesheryApplications({
     reader.readAsText(file);
   }
 
+  function urlUploadHandler(link) {
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    // console.log(link, "valid");
+  }
+
   const columns = [
     { name : "name",
       label : "Application Name",
@@ -424,7 +433,7 @@ function MesheryApplications({
     page,
     print : false,
     download : false,
-    customToolbar : CustomToolbar(uploadHandler),
+    customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
 
     onRowsDelete : async function handleDelete(row) {
       let response = await showModal()

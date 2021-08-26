@@ -35,7 +35,7 @@ const URLUploader = ({ onSubmit }) => {
     setOpen(false);
   };
   const validURL = (str) =>  {
-    URLValidator(str);
+    return URLValidator(str);
   }
   const handleError = (input) => {
     console.log(input + ' is not valid url')
