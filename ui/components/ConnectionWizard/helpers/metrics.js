@@ -100,9 +100,9 @@ export const fetchPromGrafanaScanData = () => {
     dataFetch(
       '/api/system/meshsync/grafana',
       {
-        credentials: "same-origin",
-        method: "GET",
-        credentials: "include",
+        credentials : "same-origin",
+        method : "GET",
+        credentials : "include",
       },
       (result) => {
         let metricsUrls = { grafana : [], prometheus : [] }

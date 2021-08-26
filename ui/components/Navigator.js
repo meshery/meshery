@@ -276,15 +276,14 @@ const categories = [
         link : false,
         show : true,
       },
-      // Disable support for NGINX SM
-      // {
-      //   id: "NGINX_Service_Mesh",
-      //   // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-      //   href: "/management/nginx",
-      //   title: "NGINX Service Mesh",
-      //   link: false,
-      //   show: true,
-      // },
+      {
+        id : "NGINX_Service_Mesh",
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href : "/management/nginx",
+        title : "NGINX Service Mesh",
+        link : false,
+        show : true,
+      },
       {
         id : "Octarine",
         href : "/management/octarine",
