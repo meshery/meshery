@@ -13,7 +13,6 @@ import { updateProgress } from "../../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import PerformanceResults from "./PerformanceResults";
 import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
@@ -166,16 +165,6 @@ function MesheryTestProfiles({
                 color="rgba(0, 0, 0, 0.54)"
               >
                 <EditIcon />
-              </IconButton>
-              <IconButton
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  handleDelete(testProfiles[tableMeta.rowIndex].id)
-                }}
-                aria-label="delete"
-                color="rgba(0, 0, 0, 0.54)"
-              >
-                <DeleteIcon />
               </IconButton>
               <IconButton
                 onClick={(ev) => {
