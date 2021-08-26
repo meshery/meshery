@@ -162,6 +162,7 @@ function MesheryTestProfiles({
                   setSelectedProfile(testProfiles[tableMeta.rowIndex]);
                 }}
                 aria-label="edit"
+                // @ts-ignore
                 color="rgba(0, 0, 0, 0.54)"
               >
                 <EditIcon />
@@ -172,6 +173,7 @@ function MesheryTestProfiles({
                   setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest : true });
                 }}
                 aria-label="run"
+                // @ts-ignore
                 color="rgba(0, 0, 0, 0.54)"
               >
                 <PlayArrowIcon />
