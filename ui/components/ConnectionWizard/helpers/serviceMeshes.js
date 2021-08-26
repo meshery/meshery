@@ -119,9 +119,9 @@ export const handleDeleteAdapter =  (successCb, errorCb) => (adapterLoc) => {
   return  dataFetch(
       `/api/system/adapter/manage?adapter=${encodeURIComponent(adapterLoc)}`,
       {
-        credentials: "same-origin",
-        method: "DELETE",
-        credentials: "include",
+        credentials : "same-origin",
+        method : "DELETE",
+        credentials : "include",
       },
       successCb,
       errorCb
