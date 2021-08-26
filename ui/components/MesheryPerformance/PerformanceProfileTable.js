@@ -42,6 +42,8 @@ function MesheryTestProfiles({
   testProfiles = [],
   setProfileForModal,
   handleDelete,
+  showModal,
+  fetchTestProfiles
 }) {
   const [selectedProfile, setSelectedProfile] = useState();
 
@@ -213,6 +215,19 @@ function MesheryTestProfiles({
     page,
     print : false,
     download : false,
+
+    onRowsDelete : async function handleDeleteRow(row) {
+      let response = await showModal()
+      console.log(response)
+      if (response === "yes") {
+        const pids = Object.keys(row.lookup).map(idx => testProfiles[idx]?.id)
+        pids.forEach(pid => handleDelete(pid))
+      }
+      if (response === "no") {
+        fetchTestProfiles(page, pageSize, search, sortOrder);
+      }
+    },
+
     onTableChange : (action, tableState) => {
       const sortInfo = tableState.announceText
         ? tableState.announceText.split(" : ")
@@ -265,10 +280,6 @@ function MesheryTestProfiles({
           </TableCell>
         </TableRow>
       );
-    },
-    onRowsDelete : function handleDeleteRow(row) {
-      const pids = Object.keys(row.lookup).map(idx => testProfiles[idx]?.id)
-      pids.forEach(pid => handleDelete(pid))
     },
   };
 
