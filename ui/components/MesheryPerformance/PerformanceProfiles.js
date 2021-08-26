@@ -108,13 +108,16 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     );
   }
 
-  async function deleteProfile(id) {
+  async function showModal() {
     let response = await modalRef.current.show({ title : "Delete Performance Profile?",
 
       subtitle : "Are you sure you want to delete this performance profile?",
 
-      options : ["YES", "NO"], })
-    if (response === "NO") return
+      options : ["yes", "no"], })
+    return response;
+  }
+
+  function deleteProfile(id) {
     dataFetch(
       `${MESHERY_PERFORMANCE_URL}/${id}`,
       { method : "DELETE",
@@ -185,6 +188,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               testProfiles={testProfiles}
               setProfileForModal={setProfileForModal}
               handleDelete={deleteProfile}
+              showModal={showModal}
+              fetchTestProfiles={fetchTestProfiles}
             />
           )}
         {!testProfiles.length ? (
