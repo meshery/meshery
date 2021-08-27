@@ -14,6 +14,7 @@ import (
 
 	"os"
 
+	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -134,10 +135,6 @@ func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference,
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request) {
-	// if req.Method != http.MethodPost {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
 	_ = req.ParseMultipartForm(1 << 20)
 	var k8sConfigBytes []byte
 
@@ -190,22 +187,28 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 	// try to load k8s config from local disk
 	configFile := path.Join(h.config.KubeConfigFolder, "config") // is it ok to hardcode the name 'config'?
 	if _, err := os.Stat(configFile); err != nil {
-		logrus.Error(ErrOpenFile(configFile))
+		h.log.Error(ErrOpenFile(configFile))
 		return nil, ErrOpenFile(configFile)
 	}
-	k8sConfigBytes, err := utils.ReadFileSource(fmt.Sprintf("file://%s", configFile))
+	k8sConfig, err := utils.ReadFileSource(fmt.Sprintf("file://%s", configFile))
 	if err != nil {
-		logrus.Error(err)
+		h.log.Error(err)
 		return nil, err
 	}
 
-	ccfg, err := clientcmd.Load([]byte(k8sConfigBytes))
+	ncfg, err := helpers.FlattenMinifyKubeConfig([]byte(k8sConfig))
 	if err != nil {
-		logrus.Error(ErrLoadConfig(err))
+		h.log.Error(ErrLoadConfig(err))
 		return nil, ErrLoadConfig(err)
 	}
 
-	return h.setupK8sConfig(false, []byte(k8sConfigBytes), ccfg.CurrentContext)
+	ccfg, err := clientcmd.Load(ncfg)
+	if err != nil {
+		h.log.Error(ErrLoadConfig(err))
+		return nil, ErrLoadConfig(err)
+	}
+
+	return h.setupK8sConfig(false, ncfg, ccfg.CurrentContext)
 }
 
 // ATM used only in the SessionSyncHandler
@@ -286,6 +289,21 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 		return nil, ErrKubeVersion(err)
 	}
 	kc.ServerVersion = version.String()
+
+	ccfg, err := clientcmd.Load(k8sConfigBytes)
+	if err != nil {
+		h.log.Error(ErrLoadConfig(err))
+		return nil, ErrLoadConfig(err)
+	}
+
+	kc.Contexts = []models.K8SContext{}
+	for name, ctx := range ccfg.Contexts {
+		kc.Contexts = append(kc.Contexts, models.K8SContext{
+			ContextName:      name,
+			ClusterName:      ctx.Cluster,
+			IsCurrentContext: name == contextName,
+		})
+	}
 
 	//kc.Nodes, err = helpers.FetchKubernetesNodes(kc.Config, kc.ContextName)
 	//if err != nil {

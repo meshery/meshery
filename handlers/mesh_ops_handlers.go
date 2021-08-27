@@ -105,6 +105,20 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	_, _ = w.Write([]byte("{}"))
 }
 
+// swagger:route POST /api/system/adapter/manage SystemAPI idPostAdapterConfig
+// Handle POST requests to persist adapter config
+//
+// Used to persist adapter config
+// responses:
+// 	200: mesheryAdaptersRespWrapper
+
+// swagger:route DELETE /api/system/adapter/manage SystemAPI idDeleteAdapterConfig
+// Handle DELETE requests to delete adapter config
+//
+// Used to delete adapter configuration
+// responses:
+// 	200:
+
 // MeshAdapterConfigHandler is used to persist adapter config
 func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	meshAdapters := prefObj.MeshAdapters
@@ -263,7 +277,7 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	return newMeshAdapters, nil
 }
 
-// swagger:route POST /api/mesh/ops SystemAPI idPostAdapterOperation
+// swagger:route POST /api/system/adapter/operation SystemAPI idPostAdapterOperation
 // Handle POST requests for Adapter Operations
 //
 // Used to send operations to the adapters

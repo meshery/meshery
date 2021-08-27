@@ -8,17 +8,13 @@ import {
 } from "@material-ui/core/";
 import { withSnackbar } from "notistack";
 
-const chipStyles = (theme) => ({
-  chipIcon: {
-    width: theme.spacing(2.5)
-  },
-  chip: {
-    marginRight: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-})
+const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
+  chip : { marginRight : theme.spacing(1),
+    marginBottom : theme.spacing(1), }, })
 
-const AdapterChip = withStyles(chipStyles)(({classes, handleClick, handleDelete, label, image, isActive}) => (
+const AdapterChip = withStyles(chipStyles)(({
+  classes, handleClick, handleDelete, label, image, isActive
+}) => (
 
   <Chip
     label={label}
@@ -27,7 +23,9 @@ const AdapterChip = withStyles(chipStyles)(({classes, handleClick, handleDelete,
     icon={<img src={image} className={classes.chipIcon} />}
     className={classes.chip}
     key={label+"-key"}
-    variant={isActive ? "outlined" : 'default'}
+    variant={isActive
+      ? "outlined"
+      : 'default'}
   />
 ))
 

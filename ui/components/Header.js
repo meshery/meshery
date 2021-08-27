@@ -20,95 +20,63 @@ import User from './User';
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
 const styles = (theme) => ({
-  secondaryBar: {
-    zIndex: 0,
+  secondaryBar : { zIndex : 0, },
+  menuButton : { marginLeft : -theme.spacing(1), },
+  iconButtonAvatar : { padding : 4, },
+  link : { textDecoration : 'none',
+    color : lightColor,
+    '&:hover' : { color : theme.palette.common.white, }, },
+  button : { borderColor : lightColor, },
+  notifications : { paddingLeft : theme.spacing(4),
+    paddingRight : theme.spacing(0),
+    marginLeft : theme.spacing(4), },
+  userContainer : { paddingLeft : 1,
+    display : 'flex', },
+  userSpan : { marginLeft : theme.spacing(1), },
+  pageTitleWrapper : { flexGrow : 1,
+    marginRight : 'auto', },
+  pageTitle : { paddingLeft : theme.spacing(2),
+    fontSize : '22px',
+    [theme.breakpoints.up('sm')] : { fontSize : '26px', }, },
+  appBarOnDrawerOpen : {
+    padding : theme.spacing(1.4),
+    zIndex : theme.zIndex.drawer+1,
+    [theme.breakpoints.between(635,732)] : { padding : theme.spacing(0.75,1.4), },
+    [theme.breakpoints.between(600,635)] : { padding : theme.spacing(0.4,1.4), },
   },
-  menuButton: {
-    marginLeft: -theme.spacing(1),
+  appBarOnDrawerClosed : { padding : theme.spacing(1.4),
+    zIndex : theme.zIndex.drawer+1, },
+  toolbarOnDrawerClosed : { minHeight : 59,
+    paddingLeft : 24,
+    paddingRight : 24, },
+  toolbarOnDrawerOpen : {
+    minHeight : 58,
+    paddingLeft : 20,
+    paddingRight : 20,
+    [theme.breakpoints.between(620,732)] : { minHeight : 68,
+      paddingLeft : 20,
+      paddingRight : 20, },
   },
-  iconButtonAvatar: {
-    padding: 4,
-  },
-  link: {
-    textDecoration: 'none',
-    color: lightColor,
-    '&:hover': {
-      color: theme.palette.common.white,
-    },
-  },
-  button: {
-    borderColor: lightColor,
-  },
-  notifications: {
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(0),
-    marginLeft: theme.spacing(4),
-  },
-  userContainer: {
-    paddingLeft: 1,
-    display: 'flex',
-  },
-  userSpan: {
-    marginLeft: theme.spacing(1),
-  },
-  pageTitleWrapper: {
-    flexGrow: 1,
-    marginRight: 'auto',
-  },
-  pageTitle: {
-    paddingLeft: theme.spacing(2),
-    fontSize: '22px',
-    [theme.breakpoints.up('sm')]: {
-      fontSize: '26px',
-    },
-  },
-  appBarOnDrawerOpen: {
-    padding: theme.spacing(1.4),
-    zIndex: theme.zIndex.drawer+1,
-    [theme.breakpoints.between(635,732)]: {
-      padding: theme.spacing(0.75,1.4),
-    },
-    [theme.breakpoints.between(600,635)]: {
-      padding: theme.spacing(0.4,1.4),
-    },
-  },
-  appBarOnDrawerClosed: {
-    padding: theme.spacing(1.4),
-    zIndex: theme.zIndex.drawer+1,
-  },
-  toolbarOnDrawerClosed: {
-    minHeight: 59,
-    paddingLeft:24,
-    paddingRight:24,
-  },
-  toolbarOnDrawerOpen: {
-    minHeight: 58,
-    paddingLeft:20,
-    paddingRight:20,
-    [theme.breakpoints.between(620,732)]: {
-      minHeight: 68,
-      paddingLeft:20,
-      paddingRight:20,
-    },
-  },
-  itemActiveItem: {
-    color: '#00B39F',
-  },
-  headerIcons:{
-    fontSize: '1.5rem',
-    height: '1.5rem',
-    width: '1.5rem',
-  }
+  itemActiveItem : { color : '#00B39F', },
+  headerIcons : { fontSize : '1.5rem',
+    height : '1.5rem',
+    width : '1.5rem', }
 });
 
 class Header extends React.Component {
   render() {
-    const { classes, title, onDrawerToggle ,onDrawerCollapse} = this.props;
+    const {
+      classes, title, onDrawerToggle ,onDrawerCollapse
+    } = this.props;
     return (
       <NoSsr>
         <React.Fragment>
-          <AppBar color="primary" position="sticky" elevation={0} className={onDrawerCollapse ? classes.appBarOnDrawerClosed : classes.appBarOnDrawerOpen}>
-            <Toolbar className={onDrawerCollapse ? classes.toolbarOnDrawerClosed : classes.toolbarOnDrawerOpen}>
+          <AppBar color="primary" position="sticky" elevation={0} className={onDrawerCollapse
+            ? classes.appBarOnDrawerClosed
+            : classes.appBarOnDrawerOpen}>
+            <Toolbar className={onDrawerCollapse
+              ? classes.toolbarOnDrawerClosed
+              : classes.toolbarOnDrawerOpen}>
               <Grid container alignItems="center">
                 <Hidden smUp>
                   <Grid item>
@@ -134,7 +102,7 @@ class Header extends React.Component {
                 <Grid item className={classes.userContainer}>
                   {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
-                </IconButton> 
+                </IconButton>
                   <div data-test="index-button">
                     <IconButton color="inherit">
                       <Link href="/">
@@ -146,7 +114,11 @@ class Header extends React.Component {
                   <div data-test="connection-wizard-button">
                     <IconButton color="inherit">
                       <Link href="/system/connections">
-                        <img src={title === 'Connection Wizard' ? "/static/img/connection_wizard/connection-wizard-green.svg" : "/static/img/connection_wizard/connection-wizard-white.svg"} className={ classes.headerIcons +" "+(title === 'Connection Wizard' ? classes.itemActiveItem : '')} />
+                        <img src={title === 'Connection Wizard'
+                          ? "/static/img/connection_wizard/connection-wizard-green.svg"
+                          : "/static/img/connection_wizard/connection-wizard-white.svg"} className={ classes.headerIcons +" "+(title === 'Connection Wizard'
+                          ? classes.itemActiveItem
+                          : '')} />
                         {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
                       </Link>
                     </IconButton>
@@ -155,7 +127,9 @@ class Header extends React.Component {
                   <div data-test="settings-button">
                     <IconButton color="inherit">
                       <Link href="/settings">
-                        <SettingsIcon className={classes.headerIcons +" "+(title === 'Settings' ? classes.itemActiveItem : '')} />
+                        <SettingsIcon className={classes.headerIcons +" "+(title === 'Settings'
+                          ? classes.itemActiveItem
+                          : '')} />
                       </Link>
                     </IconButton>
                   </div>
@@ -166,7 +140,7 @@ class Header extends React.Component {
                   <span className={classes.userSpan}>
                     <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
                   </span>
-                  
+
                 </Grid>
               </Grid>
             </Toolbar>
@@ -218,15 +192,13 @@ class Header extends React.Component {
   }
 }
 
-Header.propTypes = {
-  classes: PropTypes.object.isRequired,
-  onDrawerToggle: PropTypes.func.isRequired,
-};
+Header.propTypes = { classes : PropTypes.object.isRequired,
+  onDrawerToggle : PropTypes.func.isRequired, };
 
 const mapStateToProps = (state) =>
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
   // console.log("state: " + JSON.stringify(state));
-  ({ title: state.get('page').get('title') })
+  ({ title : state.get('page').get('title') })
 ;
 
 // const mapDispatchToProps = dispatch => {

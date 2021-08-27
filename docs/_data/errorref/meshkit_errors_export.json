@@ -3,6 +3,51 @@
     "component_name": "meshkit",
     "component_type": "library",
     "errors": {
+      "1001": {
+        "name": "ErrGetCrdNamesCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting crd names",
+        "probable_cause": "Could not execute kubeopenapi-jsonschema correctly",
+        "suggested_remediation": "Make sure the binary is valid and correct\nMake sure the filter passed is correct"
+      },
+      "1002": {
+        "name": "ErrGetSchemasCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting schemas",
+        "probable_cause": "Schemas Json could not be produced from given crd.",
+        "suggested_remediation": "Make sure the filter passed is correct"
+      },
+      "1003": {
+        "name": "ErrGetAPIVersionCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting api version",
+        "probable_cause": "Api version could not be parsed",
+        "suggested_remediation": "Make sure the filter passed is correct"
+      },
+      "1004": {
+        "name": "ErrGetAPIGroupCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting api group",
+        "probable_cause": "Api group could not be parsed",
+        "suggested_remediation": "Make sure the filter passed is correct"
+      },
+      "1005": {
+        "name": "ErrPopulatingYamlCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error populating yaml",
+        "probable_cause": "Yaml could not be populated with the returned manifests",
+        "suggested_remediation": ""
+      },
       "11010": {
         "name": "ErrNoneDatabaseCode",
         "code": "11010",
@@ -164,42 +209,6 @@
         "short_description": "Validation failed in the kubernetes config",
         "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
         "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
-      },
-      "11032": {
-        "name": "ErrExposeResourceCode",
-        "code": "11032",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11033": {
-        "name": "ErrGettingResourceCode",
-        "code": "11033",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11034": {
-        "name": "ErrTraverserCode",
-        "code": "11034",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11035": {
-        "name": "ErrResourceCannotBeExposedCode",
-        "code": "11035",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "resource type %s cannot be exposed: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
       },
       "11036": {
         "name": "ErrSelectorBasedMapCode",

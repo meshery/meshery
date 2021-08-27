@@ -37,12 +37,12 @@ function NavigatorExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
     return content.map((item) => {
       return {
-        title: item.title || "",
-        href: prepareHref(item.href),
-        component: item.component || "",
-        icon: (item.icon && "/api/provider/extension/" + item.icon) || "",
-        show: !!item.show,
-        children: NavigatorExtensionSchemaDecoder(item.children),
+        title : item.title || "",
+        href : prepareHref(item.href),
+        component : item.component || "",
+        icon : (item.icon && "/api/provider/extension/" + item.icon) || "",
+        show : !!item.show,
+        children : NavigatorExtensionSchemaDecoder(item.children),
       };
     });
   }
@@ -58,9 +58,7 @@ function NavigatorExtensionSchemaDecoder(content) {
 function UserPrefsExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
     return content.map((item) => {
-      return {
-        component: item.component || "",
-      };
+      return { component : item.component || "", };
     });
   }
 
