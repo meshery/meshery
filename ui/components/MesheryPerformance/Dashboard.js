@@ -113,6 +113,7 @@ function Dashboard({
                   </div>
                 </div>
               </Grid>
+              <div style={{height: "12rem",width: "1px",background: "black",top: "10rem",bottom: "0",position: "absolute",left: "36%",}}></div>
               <Grid item xs>
                 <div className={classes.paper}>
                   <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
