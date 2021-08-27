@@ -346,6 +346,12 @@ class DashboardComponent extends React.Component {
         if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies
       }
       const processedMember = mesh?.members?.map((member) => {
+        if (namespaces[mesh.name]) {
+          namespaces[mesh.name].add(member.namespace);
+        } else {
+          namespaces[mesh.name] = new Set([member.namespace]);
+        }
+
         // retrieve data planes according to mesh name
         if (proxies.length > 0){
           const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name)
@@ -356,13 +362,6 @@ class DashboardComponent extends React.Component {
               data_planes : controlPlaneMemberProxies
             }
           }
-        }
-
-
-        if (namespaces[mesh.name]) {
-          namespaces[mesh.name].add(member.namespace);
-        } else {
-          namespaces[mesh.name] = new Set([member.namespace]);
         }
 
         return member

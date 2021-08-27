@@ -33,11 +33,11 @@ export const dataPlaneSubscription = graphql`
 
 export default function subscribeDataPlaneEvents(dataCB, variables) {
   requestSubscription(environment, {
-    subscription: dataPlaneSubscription,
-    variables: {
-      filter: variables,
+    subscription : dataPlaneSubscription,
+    variables : {
+      filter : variables,
     },
-    onNext: dataCB,
-    onError: (error) => console.log(`An error occured:`, error),
+    onNext : dataCB,
+    onError : (error) => console.log(`An error occured:`, error),
   });
 }

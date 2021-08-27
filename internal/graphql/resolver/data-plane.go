@@ -32,7 +32,7 @@ func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.P
 	}
 
 	go func() {
-		r.Log.Info("Initializing ControlPlane subscription")
+		r.Log.Info("Initializing DataPlane subscription")
 		err := r.connectToBroker(context.TODO(), provider)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
@@ -49,7 +49,7 @@ func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.P
 				}
 				r.dataPlaneChannel <- containers
 			case <-ctx.Done():
-				r.Log.Info("ControlPlane subscription stopped")
+				r.Log.Info("DataPlane subscription stopped")
 				return
 			}
 		}

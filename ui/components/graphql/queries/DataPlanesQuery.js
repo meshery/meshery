@@ -3,8 +3,8 @@ import environment from "../../../lib/relayEnvironment";
 
 export default function fetchControlPlanes(variables) {
   const vars = {
-    filter: {
-      type: variables.type,
+    filter : {
+      type : variables.type,
     },
   };
 
