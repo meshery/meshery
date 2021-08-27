@@ -44,6 +44,7 @@ import jsYaml from "js-yaml";
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import URLUploader from "./URLUploader";
 
 const styles = (theme) => ({
   grid : {
@@ -75,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-function CustomToolbar(onClick) {
+function CustomToolbar(onClick,urlOnClick) {
   return function Toolbar() {
     return (
       <>
@@ -86,6 +87,9 @@ function CustomToolbar(onClick) {
               <UploadIcon />
             </IconButton>
           </Tooltip>
+        </label>
+        <label htmlFor="url-upload-button">
+          <URLUploader onSubmit={urlOnClick} />
         </label>
       </>
     );
@@ -341,6 +345,10 @@ function MesheryPatterns({
     reader.readAsText(file);
   }
 
+  function urlUploadHandler(link) {
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    // console.log(link, "valid");
+  }
   const columns = [
     {
       name : "name",
@@ -494,7 +502,7 @@ function MesheryPatterns({
     page,
     print : false,
     download : false,
-    customToolbar : CustomToolbar(uploadHandler),
+    customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
