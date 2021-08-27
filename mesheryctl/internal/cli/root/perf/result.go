@@ -6,8 +6,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/ghodss/yaml"
+	"github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -20,16 +22,29 @@ import (
 	"github.com/spf13/viper"
 )
 
+type resultStruct struct {
+	Name          string
+	StartTime     *time.Time
+	LatenciesMs   *models.LatenciesMs
+	QPS           int
+	URL           string
+	UserID        *uuid.UUID
+	Duration      string
+	MesheryID     *uuid.UUID
+	LoadGenerator string
+}
+
 var resultCmd = &cobra.Command{
-	Use:   "profile profile-id [result-name]",
-	Short: "List Performance profiles",
-	Long:  `List all the available performance profiles`,
+	Use:   "result profile-id [result-name]",
+	Short: "List Test Results",
+	Long:  `List all the available test results of a performance profile`,
 	Args:  cobra.MinimumNArgs(1),
 	Example: `
-// List performance profiles (maximum 25 profiles)	
-mesheryctl perf profile 
-// List performance profiles with search (maximum 25 profiles)
-mesheryctl perf profile test profile 2 
+// List Test results (maximum 25 results)	
+mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 
+
+// List Test results with search (maximum 25 profiles)
+mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 test I ran on sunday 
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Get viper instance used for context
@@ -45,12 +60,12 @@ mesheryctl perf profile test profile 2
 			tokenPath = constants.GetCurrentAuthToken()
 		}
 
-		if len(args) > 0 {
+		if len(args) > 1 {
 			// Merge args to get result-name
-			searchString = strings.Join(args, "%20")
+			searchString = strings.Join(args[1:], "%20")
 		}
 
-		data, body, err := fetchPerformanceProfileResults(resultURL, args[0], searchString)
+		data, expendedData, body, err := fetchPerformanceProfileResults(resultURL, args[0], searchString)
 		if err != nil {
 			return err
 		}
@@ -67,52 +82,67 @@ mesheryctl perf profile test profile 2
 			return nil
 		}
 
-		if len(data) > 0 {
-			utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
+		if len(data) == 0 {
+			log.Info("No Test Results to display")
+		} else if !expand {
+			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data)
 		} else {
-			log.Info("No Performance Profiles to display")
+			for _, a := range expendedData {
+				fmt.Printf("Name: %v\n", a.Name)
+				fmt.Printf("UserID: %s\n", a.UserID.String())
+				fmt.Printf("Endpoint: %v\n", a.URL)
+				fmt.Printf("QPS: %v\n", a.QPS)
+				fmt.Printf("Test run duration: %v\n", a.Duration)
+				fmt.Printf("Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
+				fmt.Printf("Start Time: %v\n", fmt.Sprintf("%d-%d-%d %d:%d:%d", int(a.StartTime.Month()), a.StartTime.Day(), a.StartTime.Year(), a.StartTime.Hour(), a.StartTime.Minute(), a.StartTime.Second()))
+				fmt.Printf("Meshery ID: %v\n", a.MesheryID.String())
+				fmt.Printf("Load Generator: %v\n", a.LoadGenerator)
+				fmt.Println("#####################")
+			}
 		}
 		return nil
 	},
 }
 
 // Fetch results for a specific profile
-func fetchPerformanceProfileResults(url, profileID, searchString string) ([][]string, []byte, error) {
+func fetchPerformanceProfileResults(url, profileID, searchString string) ([][]string, []resultStruct, []byte, error) {
 	client := &http.Client{}
 	var response *models.PerformanceResultsAPIResponse
 	tempURL := fmt.Sprintf("%s?pageSize=%d", url, pageSize)
 	if searchString != "" {
 		tempURL = tempURL + "&search=" + searchString
 	}
+
 	req, _ := http.NewRequest("GET", tempURL, nil)
 
 	err := utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return nil, nil, errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
+		return nil, nil, nil, errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
+		return nil, nil, nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
 	}
 	// failsafe for no authentication
 	if utils.ContentTypeIsHTML(resp) {
-		return nil, nil, errors.New("invalid authentication token")
+		return nil, nil, nil, errors.New("invalid authentication token")
 	}
 	// failsafe for bad api call
 	if resp.StatusCode != 200 {
-		return nil, nil, errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", profileID)
+		return nil, nil, nil, errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf profile` to see a list of performance profiles.", profileID)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return nil, nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to unmarshal response body")
+		return nil, nil, nil, errors.Wrap(err, "failed to unmarshal response body")
 	}
 
 	var data [][]string
+	var expendedData []resultStruct
 
 	// append data for single profile
 	for _, result := range response.Results {
@@ -120,14 +150,39 @@ func fetchPerformanceProfileResults(url, profileID, searchString string) ([][]st
 		if result.Mesh != "" {
 			serviceMesh = result.Mesh
 		}
-		url := result.RunnerResults.URL
-		qps := fmt.Sprintf("%.8f", result.RunnerResults.QPS)
-		duration := fmt.Sprintf("%d", uint64(result.RunnerResults.Duration))
+		qps := fmt.Sprintf("%d", int(result.RunnerResults.QPS))
+		duration := result.RunnerResults.RequestedDuration
 		p50 := fmt.Sprintf("%.8f", result.RunnerResults.DurationHistogram.Percentiles[0].Value)
 		p99_9 := fmt.Sprintf("%.8f", result.RunnerResults.DurationHistogram.Percentiles[len(result.RunnerResults.DurationHistogram.Percentiles)-1].Value)
 		startTime := result.TestStartTime.Format("2006-01-02 15:04:05")
-		data = append(data, []string{result.Name, serviceMesh, url, qps, duration, p50, p99_9, startTime})
+		data = append(data, []string{result.Name, serviceMesh, qps, duration, p50, p99_9, startTime})
+
+		// append data for extended output
+		a := resultStruct{
+			Name:     result.Name,
+			UserID:   result.UserID,
+			URL:      result.RunnerResults.URL,
+			QPS:      int(result.RunnerResults.QPS),
+			Duration: result.RunnerResults.RequestedDuration,
+			LatenciesMs: &models.LatenciesMs{
+				Average: result.RunnerResults.DurationHistogram.Average,
+				Max:     result.RunnerResults.DurationHistogram.Max,
+				Min:     result.RunnerResults.DurationHistogram.Min,
+				P50:     result.RunnerResults.DurationHistogram.Percentiles[0].Value,
+				P90:     result.RunnerResults.DurationHistogram.Percentiles[2].Value,
+				P99:     result.RunnerResults.DurationHistogram.Percentiles[3].Value,
+			},
+			StartTime:     result.TestStartTime,
+			MesheryID:     result.MesheryID,
+			LoadGenerator: result.RunnerResults.LoadGenerator,
+		}
+
+		expendedData = append(expendedData, a)
 	}
 
-	return data, body, nil
+	return data, expendedData, body, nil
+}
+
+func init() {
+	resultCmd.Flags().BoolVarP(&expand, "expand", "e", false, "(optional) Expand the output")
 }
