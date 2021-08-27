@@ -34,10 +34,11 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
-import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
+import subscribeServiceMeshEvents from "./graphql/subscriptions/ServiceMeshSubscription";
 import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
 import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
+import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
@@ -220,14 +221,23 @@ class DashboardComponent extends React.Component {
       }
     });
     subscribeOperatorStatusEvents(self.setOperatorState);
-    subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH);
+    subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH);
+
 
     fetchControlPlanes(ALL_MESH).subscribe({
-      next: (res) => {
-        self.setMeshScanData(res);
+      next: (controlPlaneRes) => {
+        self.setMeshScanData(controlPlaneRes, null);
+
+        fetchDataPlanes(ALL_MESH).subscribe({
+          next: (dataPlaneRes) => {
+            if (controlPlaneRes) self.setMeshScanData(controlPlaneRes, dataPlaneRes);
+          },
+          error: (err) => console.error(err),
+        });
       },
       error: (err) => console.error(err),
     });
+
   };
 
   componentDidMount = () => {
@@ -384,26 +394,53 @@ class DashboardComponent extends React.Component {
     );
   };
 
-  setMeshScanData = (data) => {
+  setMeshScanData = (controlPlanesData, dataPlanesData) => {
     const self = this;
     const namespaces = {};
     const activeNamespaces = {};
-    data?.controlPlanesState?.map((mesh) => {
+    const processedControlPlanesData = controlPlanesData?.controlPlanesState?.map((mesh) => {
       if (!mesh?.members?.length) {
         return;
       }
-      mesh?.members?.map((member) => {
+      let proxies = []
+
+      if (Array.isArray(dataPlanesData?.dataPlanesState)){
+        const dataplane = dataPlanesData.dataPlanesState.find(mesh_ => mesh_.name === mesh.name)
+
+        if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies
+      }
+      const processedMember = mesh?.members?.map((member) => {
+        // retrieve data planes according to mesh name
+        if (proxies.length > 0){
+          const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name)
+
+          if (controlPlaneMemberProxies.length > 0){
+            member = {
+              ...member,
+              data_planes: controlPlaneMemberProxies
+            }
+          }
+        }
+
+
         if (namespaces[mesh.name]) {
           namespaces[mesh.name].add(member.namespace);
         } else {
           namespaces[mesh.name] = new Set([member.namespace]);
         }
+
+        return member
       });
       namespaces[mesh.name] = [...namespaces[mesh.name]];
       activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
+
+      return {
+        ...mesh,
+        members: processedMember
+      }
     });
 
-    self.setState({ meshScan: data?.controlPlanesState?.filter((data) => data.members?.length > 0) });
+    self.setState({ meshScan: processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0) });
     self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
   };
 
@@ -627,9 +664,10 @@ class DashboardComponent extends React.Component {
             <Table aria-label="mesh details table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Control Plane Pods</TableCell>
+                  <TableCell align="center">Service Mesh Pods</TableCell>
                   <TableCell align="center">Component</TableCell>
                   <TableCell align="center">Version</TableCell>
+                  <TableCell align="center">Data Planes</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -637,41 +675,69 @@ class DashboardComponent extends React.Component {
                   .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
                   .map((component) => {
                     return (
-                      <Tooltip
-                        key={`component-${component.name}`}
-                        title={
-                          Array.isArray(component?.data_planes) && component.data_planes.length > 0 ? (
-                            component.data_planes.map((cont) => {
-                              return (
-                                <div key={cont.name} style={{color: '#ffff', paddingBottom: '10px'}}>
-                                  <p>Name: {cont?.name ? cont.name : 'Unspecified'}</p>
-                                  <p>Status: {cont?.status?.ready ? 'Ready' : 'Not ready'}</p>
-                                  {/* {Object.keys(cont?.status?.state).length > 0 && (
-                                    <p>State: {Object.keys(cont?.status?.state)[0]}</p>
-                                  )} */}
-                                  {/* {cont?.status?.restartCount && (
-                                    <p>Restart Count: {cont?.status.restartCount}</p>
-                                  )} */}
-                                  <p>Image: {cont.image}</p>
-                                  <p>Ports: {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
-                                </div>
-                              )
-                            })
-                          ) : "No data plane is running"}
-                      >
-                        <TableRow key={component.name.full}>
-                          {/* <TableCell scope="row" align="center">
-                            <Tooltip title={component.name.full}>
-                              <div style={{ textAlign: "center" }}>
-                                {component.name.trimmed}
-                              </div>
-                            </Tooltip>
-                          </TableCell> */}
-                          <TableCell align="center">{component.name}</TableCell>
-                          <TableCell align="center">{component.component}</TableCell>
-                          <TableCell align="center">{component.version}</TableCell>
-                        </TableRow>
-                      </Tooltip>
+                      <TableRow key={component.name.full}>
+                        {/* <TableCell scope="row" align="center">
+                          <Tooltip title={component.name.full}>
+                            <div style={{ textAlign: "center" }}>
+                              {component.name.trimmed}
+                            </div>
+                          </Tooltip>
+                        </TableCell> */}
+                        <TableCell align="center">{component.name}</TableCell>
+                        <TableCell align="center">{component.component}</TableCell>
+                        <TableCell align="center">{component.version}</TableCell>
+                        <Tooltip
+                          key={`component-${component.name}`}
+                          title={
+                            Array.isArray(component?.data_planes) && component.data_planes.length > 0 ? (
+                              component.data_planes.map((cont) => {
+                                return (
+                                  <div key={cont.name} style={{color: '#ffff', paddingBottom: '10px', padding: '2vh'}}>
+                                    <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
+                                    <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
+                                    {!cont?.status?.ready && (
+                                      Object.keys(cont?.status?.lastState).length > 0 && (
+                                        <div>
+                                          <p>Last state: {Object.keys(cont?.status?.lastState)[0]} <br/> Error: {Object.values(cont?.status?.lastState)[0]?.exitCode} <br/> Finished at: {Object.values(cont?.status?.lastState)[0]?.finishedAt}</p>
+                                        </div>
+                                      ) 
+                                    )}
+                                    {Object.keys(cont?.status?.state).length > 0 && (
+                                      <p>State: {Object.keys(cont?.status?.state)[0]}</p>
+                                    )}
+                                    {cont?.status?.restartCount && (
+                                      <p>Restart count: {cont?.status.restartCount}</p>
+                                    )}
+                                    <p>Image: {cont.image}</p>
+                                    <p>Ports: <br/> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
+                                    {cont?.resources && (
+                                      <div>
+                                        Resources used: <br/>
+
+                                        <div style={{paddingLeft: '2vh'}}>
+                                          {cont?.resources?.limits && (
+                                            <div>
+                                              <p>Limits: <br/>
+                                              CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
+                                            </div>
+                                          )}
+                                          {cont?.resources?.requests && (
+                                            <div>
+                                              <p>Requests: <br/>
+                                              CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                              })
+                            ) : "No data plane is running"}
+                        >
+                          <TableCell align="center">{component?.data_planes?.length || 0}</TableCell>
+                        </Tooltip>
+                      </TableRow>
                     )
                   })}
               </TableBody>
