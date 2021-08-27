@@ -28,7 +28,6 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 		if result.Error != nil {
 			return nil, ErrQuery(result.Error)
 		}
-
 		proxies := make([]*Container, 0)
 		for _, obj := range object {
 			if meshsyncmodel.IsObject(obj) {
@@ -47,28 +46,14 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 					return nil, err
 				}
 
-				// s, _ := json.MarshalIndent(objspec, "", "\t")
-				// fmt.Println(string(s))
-				// fmt.Println("OBJ_SPEC!")
-				// fmt.Println("--")
-				// fmt.Println("--")
-
-				// s, _ = json.MarshalIndent(objstatus, "", "\t")
-				// fmt.Println("OBJ_STATUS!")
-				// fmt.Println(string(s))
-				// fmt.Println("--")
-				// fmt.Println("--")
-
 				// make initial list of proxy containers
 				containers := objspec.Containers
 				statuses := objstatus.ContainerStatuses
-
 				// check if the length of containers and its statuses is the same
 				if len(containers) == len(statuses) {
 					for i := range statuses {
 						var container corev1.Container
 						status := statuses[i]
-
 						// filter based on Name
 						// since apparently the GORM query gets all the child images on the pods
 						// and not all child images are proxies
@@ -82,7 +67,6 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 									break
 								}
 							}
-
 							proxyStatus := &ContainerStatus{
 								ContainerStatusName: status.Name,
 								State:               status.State,
@@ -94,7 +78,6 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 								Image:               status.Image,
 								ContainerID:         status.ContainerID,
 							}
-
 							proxyPorts := make([]*ContainerPort, 0)
 							for _, port := range container.Ports {
 								proxyPorts = append(proxyPorts, &ContainerPort{
@@ -103,7 +86,6 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 									Protocol:      reflect.ValueOf(port.Protocol).String(),
 								})
 							}
-
 							proxies = append(proxies, &Container{
 								ContainerName:          container.Name,
 								Image:                  container.Image,
@@ -113,7 +95,6 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 								Resources:              container.Resources,
 							})
 						}
-
 					}
 				}
 			}
