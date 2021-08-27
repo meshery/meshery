@@ -42,6 +42,7 @@ import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
+import { podNameMapper, versionMapper } from "../utils/nameMapper";
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
@@ -559,9 +560,9 @@ class DashboardComponent extends React.Component {
                           </div>
                         </Tooltip>
                       </TableCell> */}
-                      <TableCell align="center">{component.name}</TableCell>
+                      <TableCell align="center">{podNameMapper(component.component, component.name)}</TableCell>
                       <TableCell align="center">{component.component}</TableCell>
-                      <TableCell align="center">{component.version}</TableCell>
+                      <TableCell align="center">{versionMapper(component.version)}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
@@ -882,13 +883,13 @@ class DashboardComponent extends React.Component {
       if (release_channel === "edge")
         return (
           <Link href="https://docs.meshery.io/project/releases" target="_blank">
-            <OpenInNewIcon style={{ height: "1rem", width: "1rem" }} />
+            <OpenInNewIcon style={{ height : "1rem", width : "1rem" }} />
           </Link>
         );
 
       return (
         <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
-          <OpenInNewIcon style={{ height: "1rem", width: "1rem" }} />
+          <OpenInNewIcon style={{ height : "1rem", width : "1rem" }} />
         </Link>
       );
     };
@@ -902,9 +903,9 @@ class DashboardComponent extends React.Component {
               {capitalize(this.state.versionDetail.release_channel)}
             </Typography>
           </Grid>
-          <Grid item xs={12} md={6} style={{ padding: "0" }}>
-            <Typography style={{ fontWeight: "bold", paddingBottom: "4px" }}>Version</Typography>
-            <Typography style={{ paddingTop: "2px", paddingBottom: "8px" }}>
+          <Grid item xs={12} md={6} style={{ padding : "0" }}>
+            <Typography style={{ fontWeight : "bold", paddingBottom : "4px" }}>Version</Typography>
+            <Typography style={{ paddingTop : "2px", paddingBottom : "8px" }}>
               {getMesheryVersionText()}
               {openReleaseNotesInNew()}
             </Typography>

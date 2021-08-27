@@ -52,29 +52,11 @@ const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
     [sliderRef]
   );
 
-  function disableScrolling(){
-    // var x=window.scrollX;
-    // var y=window.scrollY;
-    // window.onscroll=function(){window.scrollTo(x, y);};
-    document.body.style.overflow = 'hidden';
-  }
-
-  function enableScrolling(){
-    // window.onscroll=function(){};
-    document.body.style.overflow = 'scroll';
-  }
-
   useEffect(() => {
     document.getElementById("carousel-div").addEventListener("wheel", e => {
+      e.preventDefault()
       scroll(e.deltaY);
     });
-    document.getElementById("carousel-div").addEventListener("mouseenter", e => {
-      disableScrolling()
-    });
-    document.getElementById("carousel-div").addEventListener("mouseleave", e => {
-      enableScrolling()
-    });
-
   }, [scroll]);
 
   const settings = {

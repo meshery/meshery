@@ -276,15 +276,14 @@ const categories = [
         link : false,
         show : true,
       },
-      // Disable support for NGINX SM
-      // {
-      //   id: "NGINX_Service_Mesh",
-      //   // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-      //   href: "/management/nginx",
-      //   title: "NGINX Service Mesh",
-      //   link: false,
-      //   show: true,
-      // },
+      {
+        id : "NGINX_Service_Mesh",
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href : "/management/nginx",
+        title : "NGINX Service Mesh",
+        link : false,
+        show : true,
+      },
       {
         id : "Octarine",
         href : "/management/octarine",
@@ -311,10 +310,11 @@ const categories = [
   {
     id : "Configuration",
     icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
-    href : "/configuration",
+    disabled : true,
+    href : "#",
     title : "Configuration",
     show : false,
-    link : false,
+    link : true,
     children : [
       {
         id : "Applications",
@@ -375,7 +375,7 @@ const categories = [
     href : "/smi_results", //Temp
     title : "Conformance",
     show : true,
-    link : false,
+    link : true,
     children : [
       {
         id : "Service Mesh Interface",
