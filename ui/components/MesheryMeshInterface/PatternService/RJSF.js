@@ -20,6 +20,26 @@ const muiTheme = createTheme({
       margin : 'dense',
     },
   },
+  overrides : {
+    MuiTypography : {
+      h5 : {
+        fontSize : '1.1rem',
+      }
+    },
+    MuiGrid : {
+      root : {
+        marginTop : '0.2rem !important',
+      },
+      'spacing-xs-2' : {
+        padding : 0,
+        '& > *' : {
+          paddingTop : '0 !important',
+          paddingBottom : '0 !important'
+        }
+
+      }
+    }
+  }
 });
 
 function deleteTitleFromJSONSchema(jsonSchema) {
