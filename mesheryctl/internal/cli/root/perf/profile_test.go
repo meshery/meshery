@@ -150,15 +150,13 @@ func TestProfileCmd(t *testing.T) {
 	// Run tests in list format
 	for _, tt := range testsWithOutputFormat {
 		t.Run(tt.Name, func(t *testing.T) {
-			// Fetch api response from golden files
-			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
-
-			// set token
 			tokenPath = tt.Token
 
-			// mock response
-			httpmock.RegisterResponder("GET", tt.URL,
-				httpmock.NewStringResponder(200, apiResponse))
+			for _, mock := range tt.URLs {
+				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
+				httpmock.RegisterResponder(mock.Method, mock.URL,
+					httpmock.NewStringResponder(mock.ResponseCode, apiResponse))
+			}
 
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
@@ -182,6 +180,37 @@ func TestProfileCmd(t *testing.T) {
 		})
 	}
 
+	// Run tests in list format
+	for _, tt := range testsForErrors {
+		t.Run(tt.Name, func(t *testing.T) {
+			tokenPath = tt.Token
+
+			for _, mock := range tt.URLs {
+				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
+				httpmock.RegisterResponder(mock.Method, mock.URL,
+					httpmock.NewStringResponder(mock.ResponseCode, apiResponse))
+			}
+			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+
+			b := utils.SetupLogrusGrabTesting(t)
+
+			PerfCmd.SetArgs(tt.Args)
+			PerfCmd.SetOutput(b)
+			err := PerfCmd.Execute()
+			if err != nil {
+				t.Error(err)
+			}
+
+			// response being printed in console
+			actualResponse := b.String()
+			// write it in file
+			if *update {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
+			utils.Equals(t, expectedResponse, actualResponse)
+		})
+	}
 	// stop mock server
 	utils.StopMockery(t)
 }
