@@ -9,11 +9,12 @@ services:
       - "SAAS_BASE_URL=https://meshery.layer5.io"
       - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-octarine:10003 meshery-nsm:10004 meshery-kuma:10007 meshery-cpx:10008 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010"
       - "EVENT=mesheryLocal"
+      - "PORT=9081"
     volumes:
       - $HOME/.kube:/home/appuser/.kube:ro
       - $HOME/.minikube:$HOME/.minikube:ro
     ports:
-      - "9081:8080"
+      - "9081:9081"
   meshery-istio:
     image: layer5/meshery-istio:stable-latest
     labels:
