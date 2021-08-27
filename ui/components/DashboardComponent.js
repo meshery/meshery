@@ -44,6 +44,7 @@ import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import { podNameMapper, versionMapper } from "../utils/nameMapper";
+import { subscriptionClient } from "../lib/relayEnvironment";
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
@@ -101,6 +102,7 @@ class DashboardComponent extends React.Component {
     const {
       meshAdapters, k8sconfig, grafana, prometheus
     } = props;
+    this._isMounted = false;
     this.state = {
       meshAdapters,
       availableAdapters : [],
@@ -178,40 +180,49 @@ class DashboardComponent extends React.Component {
     const ALL_MESH = {};
 
     const self = this;
-    subscribeMeshSyncStatusEvents((res) => {
-      if (res.meshsync?.error) {
-        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
-        return;
-      }
-    });
-    subscribeOperatorStatusEvents(self.setOperatorState);
-    subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH);
 
-
-    fetchControlPlanes(ALL_MESH).subscribe({
-      next : (controlPlaneRes) => {
-        self.setMeshScanData(controlPlaneRes, null);
-
-        fetchDataPlanes(ALL_MESH).subscribe({
-          next : (dataPlaneRes) => {
-            if (controlPlaneRes) self.setMeshScanData(controlPlaneRes, dataPlaneRes);
-          },
-          error : (err) => console.error(err),
-        });
-      },
-      error : (err) => console.error(err),
-    });
+    if (self._isMounted){
+      subscribeMeshSyncStatusEvents((res) => {
+        if (res.meshsync?.error) {
+          self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
+          return;
+        }
+      });
+      subscribeOperatorStatusEvents(self.setOperatorState);
+      subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH);
+      fetchControlPlanes(ALL_MESH).subscribe({
+        next : (controlPlaneRes) => {
+          self.setMeshScanData(controlPlaneRes, null);
+          fetchDataPlanes(ALL_MESH).subscribe({
+            next : (dataPlaneRes) => {
+              if (controlPlaneRes) self.setMeshScanData(controlPlaneRes, dataPlaneRes);
+            },
+            error : (err) => console.error(err),
+          });
+        },
+        error : (err) => console.error(err),
+      });
+    }
 
   };
 
+  componentWillUnmount = () => {
+    this._isMounted = false
+    subscriptionClient.close()
+  }
+
   componentDidMount = () => {
+    this._isMounted = true
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
 
     if (this.state.isMetricsConfigured){
       this.fetchMetricComponents();
     }
-    this.initMeshSyncControlPlaneSubscription();
+
+    if (this._isMounted){
+      this.initMeshSyncControlPlaneSubscription();
+    }
   };
 
   fetchMetricComponents = () => {
@@ -328,6 +339,42 @@ class DashboardComponent extends React.Component {
       },
       self.handleError("Unable to fetch Meshery version.")
     );
+  };
+
+  setOperatorState = (res) => {
+    const self = this;
+    if (res.operator?.error) {
+      self.handleError("Operator could not be reached")(res.operator?.error?.description);
+      return false;
+    }
+
+    if (res.operator?.status === "ENABLED") {
+      res.operator?.controllers?.forEach((controller) => {
+        if (controller.name === "broker" && controller.status == "ENABLED") {
+          self.setState({ NATSInstalled : true,
+            NATSVersion : controller.version, });
+        } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
+          self.setState({ meshSyncInstalled : true,
+            meshSyncVersion : controller.version, });
+        }
+      });
+      self.setState({ operatorInstalled : true,
+        operatorSwitch : true,
+        operatorVersion : res.operator?.version, });
+      return true;
+    }
+
+    self.setState({
+      operatorInstalled : false,
+      NATSInstalled : false,
+      meshSyncInstalled : false,
+      operatorSwitch : false,
+      operatorVersion : "N/A",
+      meshSyncVersion : "N/A",
+      NATSVersion : "N/A",
+    });
+
+    return false;
   };
 
   setMeshScanData = (controlPlanesData, dataPlanesData) => {
