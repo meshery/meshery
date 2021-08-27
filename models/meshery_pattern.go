@@ -20,7 +20,7 @@ type MesheryPattern struct {
 	// but the remote provider is allowed to provide one
 	// example: string
 	UserID *string `json:"user_id" gorm:"-"`
-	// example: {"additionalProp1":{},"additionalProp2":{},"additionalProp3":{}}
+	// example: { "host": "github.com", "path": "service-mesh-patterns/service-mesh-patterns", "type": "remote" }
 	Location sql.Map `json:"location"`
 	// example: 2021-08-02T18:30:22.995Z
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
