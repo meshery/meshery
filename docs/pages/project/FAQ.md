@@ -43,7 +43,7 @@ _Popular Installers:_
   **Answer:** _Yes, both of them do run Meshery on your local machine. `make run local` builds Meshery from source and runs it on your local OS, while `mesheryctl system start` runs Meshery as a set of containers in Docker or in Kubernetes on your local machine._ 
 
  <br />
-<div class="center" style="color:gray;position:relative;top:-10px;font-size:1.25em;">Don't find an answer to your question here? Ask in the <a href="https://layer5io.slack.com/archives/C01AFD2D547">#support</a> channel in the <a href="http://slack.layer5.io/">Layer5 Slack</a>.</div>
+<div class="center" style="color:gray;position:relative;top:-10px;font-size:1.25em;">Don't find an answer to your question here? Ask on the <a href="https://discuss.layer5.io">service mesh discussion forum</a>.</div>
 
 <!--Add other questions-->
 
