@@ -24,9 +24,8 @@ import (
 )
 
 var (
-	searchString string
-	pageSize     = 25
-	expand       bool
+	pageSize = 25
+	expand   bool
 )
 
 type profileStruct struct {
@@ -53,7 +52,9 @@ mesheryctl perf profile
 mesheryctl perf profile test profile 2 
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// Get viper instance used for context
+		// used for searching performance profile
+		var searchString string
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -75,20 +76,19 @@ mesheryctl perf profile test profile 2
 		if err != nil {
 			return err
 		}
+
+		if len(data) == 0 {
+			log.Info("No Performance Profiles to display")
+		}
+
 		if outputFormatFlag != "" {
 			if outputFormatFlag == "yaml" {
-				if body, err = yaml.JSONToYAML(body); err != nil {
-					return errors.Wrap(err, "failed to convert json to yaml")
-				}
+				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
 				return errors.New("output-format choice invalid, use [json|yaml]")
 			}
 			log.Info(string(body))
 			return nil
-		}
-
-		if len(data) == 0 {
-			log.Info("No Performance Profiles to display")
 		} else if !expand {
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
 		} else {

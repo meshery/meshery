@@ -47,7 +47,9 @@ mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2
 mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 test I ran on sunday 
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// Get viper instance used for context
+		// used for searching performance profile
+		var searchString string
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
