@@ -69,6 +69,6 @@ func init() {
 	PerfCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "(required) Path to meshery auth config")
 	PerfCmd.PersistentFlags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 
-	availableSubcommands = []*cobra.Command{listCmd, viewCmd, applyCmd}
+	availableSubcommands = []*cobra.Command{profileCmd, resultCmd, applyCmd}
 	PerfCmd.AddCommand(availableSubcommands...)
 }
