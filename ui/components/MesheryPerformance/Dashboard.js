@@ -124,7 +124,7 @@ function Dashboard({
                       Profiles
                     </Typography>
                   </div>
-                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
+                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}> 
                     <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
                       Manage Profiles
                     </Button>
