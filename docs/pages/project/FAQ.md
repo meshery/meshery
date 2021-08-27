@@ -14,7 +14,7 @@ type: project
 
 #### Question: Why was Meshery created?
 
- **Answer:** _As an open source, vendor neutral project, Meshery was created out the necessity to enable service mesh adopters to overcome the challenge of complex virtual networking; to come to expect more from their infrastructure; to enable the world to understand and operate any service mesh with confidence._
+ **Answer:** _As an open source, vendor neutral project, Meshery was created out of the necessity to enable service mesh adopters to overcome the challenge of complex virtual networking; to come to expect more from their infrastructure; to enable the world to understand and operate any service mesh with confidence._
 
 #### Question: What does Meshery do?
 **Answer:** 
