@@ -21,9 +21,9 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 			Preload("Status").
 			Preload("Spec").
 			// get only resources specs that has proxy string inside its attributes
-			Where("EXISTS(SELECT id FROM resource_specs rsp WHERE rsp.attribute LIKE ? AND rsp.id = objects.id)", `%proxy%`).
+			Where("EXISTS(SELECT 1 FROM resource_specs rsp WHERE rsp.attribute LIKE ? AND rsp.id = objects.id)", `%proxy%`).
 			// get only resources statuses that has proxy string inside its attributes
-			Where("EXISTS(SELECT id FROM resource_statuses rst WHERE rst.attribute LIKE ? AND rst.id = objects.id)", `%proxy%`).
+			Where("EXISTS(SELECT 1 FROM resource_statuses rst WHERE rst.attribute LIKE ? AND rst.id = objects.id)", `%proxy%`).
 			Find(&object, "kind = ?", "Pod")
 		if result.Error != nil {
 			return nil, ErrQuery(result.Error)
@@ -69,45 +69,51 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 						var container corev1.Container
 						status := statuses[i]
 
-						// Name of the container specified as a DNS_LABEL.
-						// Each container in a pod must have a unique name (DNS_LABEL).
-						for i := range containers {
-							if containers[i].Name == status.Name {
-								// Found!
-								container = containers[i]
-								break
+						// filter based on Name
+						// since apparently the GORM query gets all the child images on the pods
+						// and not all child images are proxies
+						if strings.Contains(status.Name, "proxy") || strings.Contains(status.Image, "proxy") {
+							// Name of the container specified as a DNS_LABEL.
+							// Each container in a pod must have a unique name (DNS_LABEL).
+							for i := range containers {
+								if containers[i].Name == status.Name {
+									// Found!
+									container = containers[i]
+									break
+								}
 							}
-						}
 
-						proxyStatus := &ContainerStatus{
-							ContainerStatusName: status.Name,
-							State:               status.State,
-							LastState:           status.LastTerminationState,
-							Started:             *status.Started,
-							Ready:               status.Ready,
-							RestartCount:        status.RestartCount,
-							ImageID:             status.ImageID,
-							Image:               status.Image,
-							ContainerID:         status.ContainerID,
-						}
+							proxyStatus := &ContainerStatus{
+								ContainerStatusName: status.Name,
+								State:               status.State,
+								LastState:           status.LastTerminationState,
+								Started:             *status.Started,
+								Ready:               status.Ready,
+								RestartCount:        status.RestartCount,
+								ImageID:             status.ImageID,
+								Image:               status.Image,
+								ContainerID:         status.ContainerID,
+							}
 
-						proxyPorts := make([]*ContainerPort, 0)
-						for _, port := range container.Ports {
-							proxyPorts = append(proxyPorts, &ContainerPort{
-								Name:          &port.Name,
-								ContainerPort: int(port.ContainerPort),
-								Protocol:      reflect.ValueOf(port.Protocol).String(),
+							proxyPorts := make([]*ContainerPort, 0)
+							for _, port := range container.Ports {
+								proxyPorts = append(proxyPorts, &ContainerPort{
+									Name:          &port.Name,
+									ContainerPort: int(port.ContainerPort),
+									Protocol:      reflect.ValueOf(port.Protocol).String(),
+								})
+							}
+
+							proxies = append(proxies, &Container{
+								ContainerName:          container.Name,
+								Image:                  container.Image,
+								Ports:                  proxyPorts,
+								Status:                 proxyStatus,
+								ControlPlaneMemberName: obj.ObjectMeta.Name,
+								Resources:              container.Resources,
 							})
 						}
 
-						proxies = append(proxies, &Container{
-							ContainerName:          container.Name,
-							Image:                  container.Image,
-							Ports:                  proxyPorts,
-							Status:                 proxyStatus,
-							ControlPlaneMemberName: obj.ObjectMeta.Name,
-							Resources:              container.Resources,
-						})
 					}
 				}
 			}
