@@ -1,13 +1,21 @@
 /* eslint-disable no-unused-vars */
 const { createServer } = require('http')
+const detect = require('detect-port');
 const { parse } = require('url')
 const next = require('next')
 
-const port = parseInt(process.env.PORT, 10) || 3000
-const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
-const handle = app.getRequestHandler()
+var port = parseInt(process.env.PORT, 10) || 4000
+detect(port, (err, _port) => {
+  while (port !== _port) {
+    port = port + 1;
+  }
+})
+
+var dev = process.env.NODE_ENV !== 'production'
+var app = next({ dev })
+var handle = app.getRequestHandler()
 var httpProxy = require('http-proxy');
+
 
 var proxy = httpProxy.createProxyServer({ target : { host : "localhost",
   port : 9081 } });
@@ -44,5 +52,6 @@ app.prepare().then(() => {
   server.listen(port, err => {
     if (err) throw err
     console.log(`> Ready on http://localhost:${port}`)
+    Linking.openURL(`"http://localhost:${port}`)
   })
 })
