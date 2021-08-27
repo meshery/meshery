@@ -41,6 +41,8 @@ import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
+import OpenInNewIcon from "@material-ui/icons/OpenInNew";
+import { podNameMapper, versionMapper } from "../utils/nameMapper";
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
@@ -224,7 +226,7 @@ class DashboardComponent extends React.Component {
         }
       },
       self.handleError("There was an error getting prometheus config")
-    )
+    );
 
     dataFetch(
       "/api/telemetry/metrics/grafana/config",
@@ -240,8 +242,8 @@ class DashboardComponent extends React.Component {
                 if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
                   self.setState({ grafanaURL : "http://" + addon.endpoint })
                   submitGrafanaConfigure(self, () => {
-                    self.state.selectedBoardsConfigs.push(self.state.boardConfigs)
-                    console.log("Grafana added")
+                    self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
+                    console.log("Grafana added");
                   });
                 }
               });
@@ -250,7 +252,7 @@ class DashboardComponent extends React.Component {
         }
       },
       self.handleError("There was an error communicating with grafana config")
-    )
+    );
 
     let selector = { serviceMesh : "ALL_MESH", };
 
@@ -262,8 +264,8 @@ class DashboardComponent extends React.Component {
           } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
             self.setState({ grafanaURL : "http://" + addon.endpoint })
             submitGrafanaConfigure(self, () => {
-              self.state.selectedBoardsConfigs.push(self.state.boardConfigs)
-              console.log("Grafana added")
+              self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
+              console.log("Grafana added");
             });
           }
         });
@@ -558,9 +560,9 @@ class DashboardComponent extends React.Component {
                           </div>
                         </Tooltip>
                       </TableCell> */}
-                      <TableCell align="center">{component.name}</TableCell>
+                      <TableCell align="center">{podNameMapper(component.component, component.name)}</TableCell>
                       <TableCell align="center">{component.component}</TableCell>
-                      <TableCell align="center">{component.version}</TableCell>
+                      <TableCell align="center">{versionMapper(component.version)}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
@@ -869,6 +871,29 @@ class DashboardComponent extends React.Component {
       return <>Running latest Meshery version.</>;
     };
 
+    /**
+     * openReleaseNotesInNew returns the appropriate link to the release note
+     * based on the meshery's current running channel and version.
+     *
+     * @returns {React.ReactNode} react component to display
+     */
+    const openReleaseNotesInNew = () => {
+      const { release_channel, build } = this.state.versionDetail;
+
+      if (release_channel === "edge")
+        return (
+          <Link href="https://docs.meshery.io/project/releases" target="_blank">
+            <OpenInNewIcon style={{ height : "1rem", width : "1rem" }} />
+          </Link>
+        );
+
+      return (
+        <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
+          <OpenInNewIcon style={{ height : "1rem", width : "1rem" }} />
+        </Link>
+      );
+    };
+
     const showRelease = (
       <>
         <Grid container justify="space-between" spacing={1}>
@@ -880,7 +905,10 @@ class DashboardComponent extends React.Component {
           </Grid>
           <Grid item xs={12} md={6} style={{ padding : "0" }}>
             <Typography style={{ fontWeight : "bold", paddingBottom : "4px" }}>Version</Typography>
-            <Typography style={{ paddingTop : "2px", paddingBottom : "8px" }}>{getMesheryVersionText()}</Typography>
+            <Typography style={{ paddingTop : "2px", paddingBottom : "8px" }}>
+              {getMesheryVersionText()}
+              {openReleaseNotesInNew()}
+            </Typography>
           </Grid>
         </Grid>
         <Typography component="div" style={{ marginTop : "1.5rem" }}>

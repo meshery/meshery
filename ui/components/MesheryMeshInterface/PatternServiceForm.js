@@ -112,8 +112,6 @@ function PatternServiceForm({ formData, schemaSet,onChange, onSubmit, onDelete, 
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {});
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {});
 
-  console.log({ settings, traits })
-
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
   };

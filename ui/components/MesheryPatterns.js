@@ -25,10 +25,10 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
 import UploadIcon from "@material-ui/icons/Publish";
-import PromptComponent from "./PromptComponent";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
+import PromptComponent from "./PromptComponent";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -44,6 +44,7 @@ import jsYaml from "js-yaml";
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import URLUploader from "./URLUploader";
 
 const styles = (theme) => ({
   grid : {
@@ -75,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-function CustomToolbar(onClick) {
+function CustomToolbar(onClick,urlOnClick) {
   return function Toolbar() {
     return (
       <>
@@ -86,6 +87,9 @@ function CustomToolbar(onClick) {
               <UploadIcon />
             </IconButton>
           </Tooltip>
+        </label>
+        <label htmlFor="url-upload-button">
+          <URLUploader onSubmit={urlOnClick} />
         </label>
       </>
     );
@@ -341,6 +345,10 @@ function MesheryPatterns({
     reader.readAsText(file);
   }
 
+  function urlUploadHandler(link) {
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    // console.log(link, "valid");
+  }
   const columns = [
     {
       name : "name",
@@ -443,16 +451,16 @@ function MesheryPatterns({
     }
   });
 
-  async function deletePattern(id) {
-    let response = await modalRef.current.show({
-      title : "Delete Pattern?",
+  async function showModal() {
+    let response = await modalRef.current.show({ title : "Delete Pattern?",
 
       subtitle : "Are you sure you want to delete this pattern?",
 
-      options : ["yes", "no"],
+      options : ["yes", "no"], })
+    return response;
+  }
 
-    })
-    if (response === "NO") return
+  function deletePattern(id) {
     dataFetch(
       `/api/pattern/${id}`,
       {
@@ -487,8 +495,6 @@ function MesheryPatterns({
     responsive : "scrollFullHeight",
     resizableColumns : true,
     serverSide : true,
-    selectableRows : true,
-    // selection : true,
     count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
@@ -496,12 +502,19 @@ function MesheryPatterns({
     page,
     print : false,
     download : false,
-    customToolbar : CustomToolbar(uploadHandler),
+    customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
+
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
-    onRowsDelete : function handleDelete(row) {
-      const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
-      fid.forEach(fid => deletePattern(fid))
+    onRowsDelete : async function handleDelete(row) {
+      let response = await showModal()
+      console.log(response)
+      if (response === "yes") {
+        const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
+        fid.forEach(fid => deletePattern(fid))
+      }
+      if (response === "no")
+        fetchPatterns(page, pageSize, search, sortOrder);
     },
 
     onTableChange : (action, tableState) => {
