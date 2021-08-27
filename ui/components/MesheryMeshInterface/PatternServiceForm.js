@@ -179,7 +179,7 @@ function PatternServiceForm({ formData, schemaSet,onChange, onSubmit, onDelete, 
             formData={settings}
             jsonSchema={schemaSet.workload}
             onChange={(val) => {
-              onChange(
+              onChange?.(
                 createPatternFromConfig(
                   { [getPatternAttributeName(schemaSet.workload)] : { settings : val, traits } }, namespace, true), "");
               setSettings(val);
