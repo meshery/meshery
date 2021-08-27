@@ -238,12 +238,12 @@ class DashboardComponent extends React.Component {
         if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL != "") {
           let selector = { serviceMesh : "ALL_MESH", };
           fetchAvailableAddons(selector).subscribe({ next : (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-                  self.setState({ prometheusURL : "http://" + addon.endpoint })
-                  submitPrometheusConfigure(self, () => console.log("Prometheus added"));
-                }
-              });
+            res?.addonsState?.forEach((addon) => {
+              if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
+                self.setState({ prometheusURL : "http://" + addon.endpoint })
+                submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+              }
+            });
           },
           error : (err) => console.log("error registering prometheus: " + err), });
         }
@@ -261,15 +261,15 @@ class DashboardComponent extends React.Component {
         if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="") {
           let selector = { serviceMesh : "ALL_MESH", };
           fetchAvailableAddons(selector).subscribe({ next : (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-                  self.setState({ grafanaURL : "http://" + addon.endpoint })
-                  submitGrafanaConfigure(self, () => {
-                    self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-                    console.log("Grafana added");
-                  });
-                }
-              });
+            res?.addonsState?.forEach((addon) => {
+              if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
+                self.setState({ grafanaURL : "http://" + addon.endpoint })
+                submitGrafanaConfigure(self, () => {
+                  self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
+                  console.log("Grafana added");
+                });
+              }
+            });
           },
           error : (err) => console.log("error registering grafana: " + err), });
         }
@@ -280,18 +280,18 @@ class DashboardComponent extends React.Component {
     let selector = { serviceMesh : "ALL_MESH", };
 
     fetchAvailableAddons(selector).subscribe({ next : (res) => {
-        res?.addonsState?.forEach((addon) => {
-          if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-            self.setState({ prometheusURL : "http://" + addon.endpoint })
-            submitPrometheusConfigure(self, () => console.log("Prometheus added"));
-          } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-            self.setState({ grafanaURL : "http://" + addon.endpoint })
-            submitGrafanaConfigure(self, () => {
-              self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-              console.log("Grafana added");
-            });
-          }
-        });
+      res?.addonsState?.forEach((addon) => {
+        if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
+          self.setState({ prometheusURL : "http://" + addon.endpoint })
+          submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+        } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
+          self.setState({ grafanaURL : "http://" + addon.endpoint })
+          submitGrafanaConfigure(self, () => {
+            self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
+            console.log("Grafana added");
+          });
+        }
+      });
     },
     error : (err) => console.log("error registering addons: " + err), });
   };
@@ -660,14 +660,14 @@ class DashboardComponent extends React.Component {
                                     <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
                                     <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
                                     {!cont?.status?.ready && (
-                                      Object.keys(cont?.status?.lastState).length > 0 && (
+                                      typeof cont?.status?.lastState === 'object' && cont?.status?.lastState !== null && Object.keys(cont.status.lastState).length > 0 && (
                                         <div>
                                           <p>Last state: {Object.keys(cont?.status?.lastState)[0]} <br/> Error: {Object.values(cont?.status?.lastState)[0]?.exitCode} <br/> Finished at: {Object.values(cont?.status?.lastState)[0]?.finishedAt}</p>
                                         </div>
                                       )
                                     )}
-                                    {Object.keys(cont?.status?.state).length > 0 && (
-                                      <p>State: {Object.keys(cont?.status?.state)[0]}</p>
+                                    {typeof cont?.status?.state === 'object' && cont?.status?.state !== null && Object.keys(cont.status.state).length > 0 && (
+                                      <p>State: {Object.keys(cont.status.state)[0]}</p>
                                     )}
                                     {cont?.status?.restartCount && (
                                       <p>Restart count: {cont?.status.restartCount}</p>
