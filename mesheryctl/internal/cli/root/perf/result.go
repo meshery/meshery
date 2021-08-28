@@ -49,10 +49,12 @@ mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 test I ran on sunday
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
 		var searchString string
+		// setting up for error formatting
+		cmdUsed = "result"
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			return ErrMesheryConfig(err)
 		}
 
 		resultURL := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles/" + args[0] + "/results"
@@ -81,7 +83,7 @@ mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 test I ran on sunday
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
-				return errors.New("output-format choice invalid, use [json|yaml]")
+				return ErrInvalidOutputChoice()
 			}
 			log.Info(string(body))
 		} else if !expand {
@@ -117,19 +119,19 @@ func fetchPerformanceProfileResults(url, profileID, searchString string) ([][]st
 
 	err := utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return nil, nil, nil, errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
+		return nil, nil, nil, ErrAttachAuthToken(err)
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, nil, nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
+		return nil, nil, nil, ErrFailRequest(err)
 	}
 	// failsafe for no authentication
 	if utils.ContentTypeIsHTML(resp) {
-		return nil, nil, nil, errors.New("invalid authentication token")
+		return nil, nil, nil, ErrUnauthenticated()
 	}
 	// failsafe for bad api call
 	if resp.StatusCode != 200 {
-		return nil, nil, nil, errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf profile` to see a list of performance profiles.", profileID)
+		return nil, nil, nil, ErrFailReqStatus(resp.StatusCode)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
@@ -138,7 +140,7 @@ func fetchPerformanceProfileResults(url, profileID, searchString string) ([][]st
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, nil, nil, errors.Wrap(err, "failed to unmarshal response body")
+		return nil, nil, nil, ErrFailUnmarshal(err)
 	}
 
 	var data [][]string

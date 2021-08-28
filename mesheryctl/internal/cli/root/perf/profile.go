@@ -54,10 +54,12 @@ mesheryctl perf profile test profile 2
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
 		var searchString string
+		// setting up for error formatting
+		cmdUsed = "profile"
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			return ErrMesheryConfig(err)
 		}
 
 		profileURL := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles"
@@ -86,7 +88,7 @@ mesheryctl perf profile test profile 2
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
-				return errors.New("output-format choice invalid, use [json|yaml]")
+				return ErrInvalidOutputChoice()
 			}
 			log.Info(string(body))
 		} else if !expand {
@@ -129,20 +131,21 @@ func fetchPerformanceProfiles(url, searchString string) ([][]string, []profileSt
 
 	err := utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return nil, nil, nil, errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
+		return nil, nil, nil, ErrAttachAuthToken(err)
 	}
+
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, nil, nil, errors.New("failed to make a request")
+		return nil, nil, nil, ErrFailRequest(err)
 	}
 
 	// failsafe for not being authenticated
 	if utils.ContentTypeIsHTML(resp) {
-		return nil, nil, nil, errors.New("invalid authentication token")
+		return nil, nil, nil, ErrUnauthenticated()
 	}
 	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
 	if resp.StatusCode != 200 {
-		return nil, nil, nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+		return nil, nil, nil, ErrFailReqStatus(resp.StatusCode)
 	}
 
 	defer resp.Body.Close()
@@ -153,7 +156,7 @@ func fetchPerformanceProfiles(url, searchString string) ([][]string, []profileSt
 
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, nil, nil, errors.Wrap(err, "failed to unmarshal response body")
+		return nil, nil, nil, ErrFailUnmarshal(err)
 	}
 	var data [][]string
 	var expendedData []profileStruct

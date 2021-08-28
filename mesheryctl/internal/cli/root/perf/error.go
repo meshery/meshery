@@ -1,6 +1,7 @@
 package perf
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/layer5io/meshkit/errors"
@@ -20,57 +21,88 @@ const (
 	ErrNoProfileFoundCode      = "replace me"
 	ErrFailTestRunCode         = "replace me"
 	ErrInvalidOutputChoiceCode = "replace me"
-	ErrNoResultFoundCode       = "replace me"
+	ErrUnauthenticatedCode     = "replace me"
 )
 
 func ErrMesheryConfig(err error) error {
-	return errors.New(ErrMesheryConfigCode, errors.Alert, []string{}, []string{"error processing config", err.Error()}, []string{}, []string{})
+	return errors.New(ErrMesheryConfigCode, errors.Alert, []string{},
+		[]string{"error processing config", err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrReadFilepath(err error) error {
-	return errors.New(ErrReadFilepathCode, errors.Alert, []string{}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrReadFilepathCode, errors.Alert, []string{},
+		[]string{err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrNoProfileName() error {
-	return errors.New(ErrNoProfileNameCode, errors.Alert, []string{"please enter a profile-name"}, []string{}, []string{}, []string{})
+	return errors.New(ErrNoProfileNameCode, errors.Alert, []string{},
+		[]string{"please enter a profile-name", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrNoTestURL() error {
-	return errors.New(ErrNoTestURLCode, errors.Alert, []string{"please enter a test URL"}, []string{}, []string{}, []string{})
+	return errors.New(ErrNoTestURLCode, errors.Alert, []string{},
+		[]string{"please enter a test URL", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrNotValidURL() error {
-	return errors.New(ErrNotValidURLCode, errors.Alert, []string{"please enter a valid test URL"}, []string{}, []string{}, []string{})
+	return errors.New(ErrNotValidURLCode, errors.Alert, []string{},
+		[]string{"please enter a valid test URL", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailMarshal(err error) error {
-	return errors.New(ErrFailMarshalCode, errors.Alert, []string{"failed to marshal values"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrFailMarshalCode, errors.Alert, []string{},
+		[]string{"failed to marshal values", err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrAttachAuthToken(err error) error {
-	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{"authentication token not found. please supply a valid user token with the --token (or -t) flag"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
+		[]string{"authentication token not found. please supply a valid user token with the --token (or -t) flag. or login with `mesheryctl system login`", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailRequest(err error) error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{"failed to make a request"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
+		[]string{"failed to make a request", err.Error(), formatErrorWithReference()}, []string{}, []string{})
+}
+
+func ErrUnauthenticated() error {
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
+		[]string{"Invalid/expired authetication token", formatErrorWithReference()}, []string{}, []string{})
+
 }
 
 func ErrFailReqStatus(statusCode int) error {
-	return errors.New(ErrFailReqStatusCode, errors.Alert, []string{"Response Status Code ", strconv.Itoa(statusCode), ", possible Server Error"}, []string{}, []string{}, []string{})
+	return errors.New(ErrFailReqStatusCode, errors.Alert, []string{},
+		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ", possible Server Error", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailUnmarshal(err error) error {
-	return errors.New(ErrFailUnmarshalCode, errors.Alert, []string{"failed to unmarshal response body"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrFailUnmarshalCode, errors.Alert, []string{},
+		[]string{"failed to unmarshal response body", err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrNoProfileFound() error {
-	return errors.New(ErrNoProfileFoundCode, errors.Alert, []string{"no profiles found with given name."}, []string{}, []string{}, []string{})
-}
-
-func ErrNoResultFound() error {
-	return errors.New(ErrNoResultFoundCode, errors.Alert, []string{"results does not exit. Please run a profile test and try again. Use `mesheryctl perf list` to see a list of performance profiles"}, []string{}, []string{}, []string{})
+	return errors.New(ErrNoProfileFoundCode, errors.Alert, []string{},
+		[]string{"no profiles found with given name", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailTestRun() error {
-	return errors.New(ErrFailTestRunCode, errors.Alert, []string{"failed to run test"}, []string{}, []string{}, []string{})
+	return errors.New(ErrFailTestRunCode, errors.Alert, []string{},
+		[]string{"failed to run test", formatErrorWithReference()}, []string{}, []string{})
+}
+
+func ErrInvalidOutputChoice() error {
+	return errors.New(ErrInvalidOutputChoiceCode, errors.Alert, []string{}, []string{"output-format choice invalid, use [json|yaml]", formatErrorWithReference()}, []string{}, []string{})
+}
+
+func formatErrorWithReference() string {
+	baseURL := "https://docs.meshery.io/reference/mesheryctl/perf"
+	switch cmdUsed {
+	case "apply":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/apply")
+	case "profile":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/profile")
+	case "result":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/result")
+	}
+	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
 }

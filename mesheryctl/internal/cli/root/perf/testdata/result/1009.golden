@@ -1,1 +1,2 @@
-Performance profile `18358dfc-a009-4c76-9ab9-dfef33224b3b` not found. Please verify profile name and try again. Use `mesheryctl perf profile` to see a list of performance profiles.
+Response Status Code 500, possible Server Error.
+See https://docs.meshery.io/reference/mesheryctl/perf/result for usage details

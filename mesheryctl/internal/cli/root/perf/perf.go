@@ -29,6 +29,8 @@ var (
 	availableSubcommands []*cobra.Command
 	outputFormatFlag     string
 	tokenPath            string
+	// setting up for error formatting
+	cmdUsed string
 )
 
 // PerfCmd represents the Performance Management CLI command
@@ -47,7 +49,7 @@ var PerfCmd = &cobra.Command{
 	mesheryctl perf view
 	`,
 	Args: cobra.MinimumNArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
