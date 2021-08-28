@@ -1,6 +1,6 @@
 {
   "errors_export": {
-    "component_name": "meshery-linkerd",
+    "component_name": "linkerd",
     "component_type": "adapter",
     "errors": {
       "1000": {
@@ -173,6 +173,69 @@
         "short_description": "error parsing the configuration",
         "probable_cause": "Invalid OAM config passed in OAM request",
         "suggested_remediation": "Check if your request has vaild OAM config"
+      },
+      "1020": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "1020",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error applying helm chart",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1101": {
+        "name": "ErrCertEncodeCode",
+        "code": "1101",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to encode: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1102": {
+        "name": "ErrEncodeCertificatesPEMCode",
+        "code": "1102",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to encode certificate PEM: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1103": {
+        "name": "ErrEncodePrivateKeyPEMCode",
+        "code": "1103",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to encode private key PEM: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1104": {
+        "name": "ErrCreateRootCACode",
+        "code": "1104",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to create Root CA: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1105": {
+        "name": "ErrGeneratePKCode",
+        "code": "1105",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to create Private Key: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1106": {
+        "name": "ErrGenerateDefaultRootCACode",
+        "code": "1106",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to create default Root CA: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
