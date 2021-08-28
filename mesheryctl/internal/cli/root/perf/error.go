@@ -67,7 +67,6 @@ func ErrFailRequest(err error) error {
 func ErrUnauthenticated() error {
 	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
 		[]string{"Invalid/expired authetication token", formatErrorWithReference()}, []string{}, []string{})
-
 }
 
 func ErrFailReqStatus(statusCode int) error {
