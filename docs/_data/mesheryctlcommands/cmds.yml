@@ -384,6 +384,28 @@ mesh:
           usage:
               mesheryctl mesh validate --tokenPath [path to token for authentication]
 
+    deploy:
+      name: deploy
+      description: Deploy a service mesh into the cluster
+      usage:
+          mesheryctl mesh deploy [flags]
+      flags:
+        adapter:
+          name: --adapter, -a
+          description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
+          usage:
+              mesheryctl mesh deploy --adapter [name of the adapter]
+        namespace:
+          name: --namespace, -n
+          description: Kubernetes namespace to be used for deploying the validation tests and sample workload
+          usage:
+              mesheryctl mesh deploy --namespace [namespace to be used]
+        token:
+          name: --tokenpath, -t
+          description: (required) path to token for authenticating to Meshery API
+          usage:
+              mesheryctl mesh deploy --tokenPath [path to token for authentication]
+
 pattern:
   description : 
   usage:
