@@ -13,6 +13,7 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	log "github.com/sirupsen/logrus"
@@ -57,6 +58,11 @@ var applyCmd = &cobra.Command{
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
+		}
+
+		// set default tokenpath for command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
 		}
 
 		// Importing SMP Configuration from the file
@@ -220,10 +226,7 @@ var applyCmd = &cobra.Command{
 				return errors.New(utils.PerfError("please enter a valid test URL"))
 			}
 
-			req, err = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
-			if err != nil {
-				return err
-			}
+			req, _ = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
 
 			q := req.URL.Query()
 
