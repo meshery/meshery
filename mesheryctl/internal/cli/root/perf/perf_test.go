@@ -22,7 +22,6 @@ func TestPerfCmd(t *testing.T) {
 	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-
 			PerfCmd.SetArgs(tt.Args)
 			err := PerfCmd.Execute()
 			if err != nil {
