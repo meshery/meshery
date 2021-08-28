@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable react/display-name */
 import LinkerdIcon from "../icons/LinkerdIcon.js"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -26,15 +27,6 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
 
   const handleAfterSlideChange = (curSlide) => setActiveIndex(curSlide)
 
-  const serviceMeshComponents = availableAdapters.map(adapter => ({
-    name : adapter.name
-      ? adapter.name
-      : adapter.label.split(":")[0],
-    logoComponent : LinkerdIcon,
-    configComp : <ServiceMeshConfig adapterLoc={adapter.value}/>,
-    adapterInfo : adapter
-  }))
-
   const isAdapterActive = (adapterLoc) => {
     let isActive = false
     activeAdapters.forEach(adapter => {
@@ -42,6 +34,22 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
     })
     return isActive
   }
+
+  const AdapterIcon = (name) => ({ isActive }) => {
+
+    let image = "/static/img/" + name?.toLowerCase() + ".svg";
+    return  <img style={{ height : "4rem", width : "4rem" }} src={isActive ? image :"/static/img/meshery-logo/meshery-white.png"} />
+  }
+
+  const serviceMeshComponents = availableAdapters.map(adapter => ({
+    name : adapter.name
+      ? adapter.name
+      : adapter.label.split(":")[0],
+    logoComponent : AdapterIcon(adapter.name),
+    configComp : <ServiceMeshConfig adapterLoc={adapter.value}/>,
+    adapterInfo : adapter
+  }))
+
 
 
   const scrollItems = serviceMeshComponents.map(smesh => ({ activeIcon : "/static/img/meshery-logo.png", inactiveIcon : "/static/img/meshery-logo/meshery-white.png" }))
@@ -58,8 +66,8 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
     fetchAvailableAdapters()
       .then(res => {
         setAvailableAdapters(res.sort((fe,se) => isAdapterActive(se.value)
-          ? -1
-          : 1))
+          ? 1
+          : -1))
       })
       .catch( err => alert(err))
   },[meshAdapters])
