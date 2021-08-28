@@ -1,0 +1,3 @@
+Failed to fetch performance results
+See https://docs.meshery.io/reference/mesheryctl/perf for usage details
+: Get "http://localhost:9081/api/user/performance/profiles/invalid/results?pageSize=25": EOF

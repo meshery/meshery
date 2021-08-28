@@ -14,8 +14,6 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-var tempProfileID = "ecddef09-7411-4b9e-b06c-fd55ff5debbc"
-
 // golden file responses
 var (
 	// standard api response of 25 performance profile
@@ -58,7 +56,7 @@ var (
 	profile1011output = "1011.golden"
 )
 
-type profileTestStruct struct {
+type tempTestStruct struct {
 	Name             string
 	Args             []string
 	URLs             []utils.MockURL
@@ -83,8 +81,7 @@ func TestProfileCmd(t *testing.T) {
 	testdataDir := filepath.Join(currDir, "testdata", "profile")
 	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
 
-	// test scenrios for fetching data
-	tests := []profileTestStruct{
+	tests := []tempTestStruct{
 		{"standard profiles output", []string{"profile"}, []utils.MockURL{{"GET", profileURL, profile1001, 200}}, profile1001output, testToken, false},
 		{"profiles searching istio", []string{"profile", "istio"}, []utils.MockURL{{"GET", profileURL, profile1002, 200}}, profile1002output, testToken, false},
 		{"profiles searching test 3", []string{"profile", "test", "3"}, []utils.MockURL{{"GET", profileURL, profile1003, 200}}, profile1003output, testToken, false},
@@ -94,7 +91,7 @@ func TestProfileCmd(t *testing.T) {
 		{"Server Error 500", []string{"profile"}, []utils.MockURL{{"GET", profileURL, profile1006, 500}}, profile1009output, testToken, true},
 	}
 
-	testsforLogrusOutputs := []profileTestStruct{
+	testsforLogrusOutputs := []tempTestStruct{
 		{"No profiles found", []string{"profile", "--expand"}, []utils.MockURL{{"GET", profileURL, profile1004, 200}}, profile1005output, testToken, false},
 		{"standard profiles in json output", []string{"profile", "-o", "json"}, []utils.MockURL{{"GET", profileURL, profile1001, 200}}, profile1006output, testToken, false},
 		{"standard profiles in yaml output", []string{"profile", "-o", "yaml"}, []utils.MockURL{{"GET", profileURL, profile1001, 200}}, profile1007output, testToken, false},
