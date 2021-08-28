@@ -7,7 +7,8 @@ display-title: "false"
 language: en
 lang: en
 categories: en
-list: exclude
+command: perf
+subcommand: list
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -18,9 +19,9 @@ list: exclude
 
 ## Description
 
-{% for command_hash in site.data.mesheryctlcommands.performance.list.command %}{% assign command = command_hash[1] %}
-{{ command.description }}
-{% endfor %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
+{{ name.description }}
+
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
@@ -31,16 +32,14 @@ list: exclude
 
 ## Examples
 
-{% for subcommand_hash in site.data.mesheryctlcommands.performance.list.command %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
+{{ name.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ subcommand.usage }}
+  {{ name.usage }}
   </div>
 </pre>
-{% endfor %}
 
-{% for flag_hash in site.data.mesheryctlcommands.performance.list.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">

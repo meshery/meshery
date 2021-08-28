@@ -5,6 +5,8 @@ permalink: reference/mesheryctl/mesh/validate
 type: reference
 display-title: "false"
 language: en
+command: mesh
+subcommand: validate
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -16,9 +18,9 @@ language: en
 <!-- Description of the command. Preferably a paragraph -->
 ## Description
 
-{% for subcommand_hash in site.data.mesheryctlcommands.meshes.validate.subcommand %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
-{% endfor %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
+{{ name.description }}
+
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
@@ -29,7 +31,7 @@ language: en
 
 ## Examples
 
-{% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -42,7 +44,7 @@ language: en
 
 ## Options & Flags
 
-{% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">

@@ -26,7 +26,7 @@ global:
     version:
       name: version
       description: Displays the version of the Meshery Client (mesheryctl) and the SHA of the release binary.
-      usage: |
+      usage:
           mesheryctl version
 
 system:
@@ -102,6 +102,12 @@ system:
       description: Configures Meshery to use a Kubernetes cluster.
       usage:
           mesheryctl system config [minikube | gke | aks | eks] [flags]
+      flags:
+        token:
+          name: --token
+          description: Path to token for authenticating to Meshery API.
+          usage:
+            mesheryctl system config --token [path-to-file]
       examples:
         aks:
           name: aks
@@ -181,7 +187,7 @@ system-channel:
         all:
           name: --all, -a
           description: view release channel and version
-          usage: |
+          usage:
               mesheryctl system channel view --all
 
 system-context:
@@ -333,7 +339,9 @@ perf:
       name: list
       description: Lists all the available performance profiles and results of a performance profile.
       usage: |
+      
           mesheryctl perf list 
+
           mesheryctl perf list [profile-id]  
     
     view:

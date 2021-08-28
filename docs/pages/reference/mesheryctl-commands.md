@@ -5,6 +5,14 @@ abstract: "A guide to Meshery's CLI: mesheryctl"
 permalink: reference/mesheryctl
 redirect_from: reference/mesheryctl/commands/
 type: Reference
+variables:
+  - global
+  - system
+  - system-channel
+  - system-context
+  - perf
+  - mesh
+  - pattern
 ---
 ## Categories and Command Structure
 
