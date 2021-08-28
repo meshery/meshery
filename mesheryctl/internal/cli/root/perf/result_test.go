@@ -74,21 +74,41 @@ func TestResultCmd(t *testing.T) {
 	resultURL := testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results"
 
 	tests := []tempTestStruct{
-		{"standard results output", []string{"result", tempProfileID}, []utils.MockURL{{"GET", resultURL, result1001, 200}}, result1001output, testToken, false},
-		{"results searching kuma", []string{"result", tempProfileID, "kuma"}, []utils.MockURL{{"GET", resultURL, result1002, 200}}, result1002output, testToken, false},
-		{"results searching no mesh", []string{"result", tempProfileID, "no", "mesh"}, []utils.MockURL{{"GET", resultURL, result1003, 200}}, result1003output, testToken, false},
-		{"standard results in expand output", []string{"result", tempProfileID, "--expand"}, []utils.MockURL{{"GET", resultURL, result1001, 200}}, result1004output, testToken, false},
-		{"Unmarshal error", []string{"result", tempProfileID}, []utils.MockURL{{"GET", resultURL, result1005, 200}}, result1010output, testToken, true},
+		{"standard results output", []string{"result", tempProfileID}, []utils.MockURL{
+			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
+		}, result1001output, testToken, false},
+		{"results searching kuma", []string{"result", tempProfileID, "kuma"}, []utils.MockURL{
+			{Method: "GET", URL: resultURL, Response: result1002, ResponseCode: 200},
+		}, result1002output, testToken, false},
+		{"results searching no mesh", []string{"result", tempProfileID, "no", "mesh"}, []utils.MockURL{
+			{Method: "GET", URL: resultURL, Response: result1003, ResponseCode: 200},
+		}, result1003output, testToken, false},
+		{"standard results in expand output", []string{"result", tempProfileID, "--expand"}, []utils.MockURL{
+			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
+		}, result1004output, testToken, false},
+		{"Unmarshal error", []string{"result", tempProfileID}, []utils.MockURL{
+			{Method: "GET", URL: resultURL, Response: result1005, ResponseCode: 200},
+		}, result1010output, testToken, true},
 		{"failing add authentication test", []string{"result", tempProfileID}, []utils.MockURL{}, result1011output, testToken + "invalid-path", true},
-		{"Server Error 500", []string{"result", tempProfileID}, []utils.MockURL{{"GET", resultURL, result1006, 500}}, result1009output, testToken, true},
+		{"Server Error 500", []string{"result", tempProfileID}, []utils.MockURL{
+			{Method: "GET", URL: resultURL, Response: result1006, ResponseCode: 500},
+		}, result1009output, testToken, true},
 		{"No profile passed", []string{"result"}, []utils.MockURL{}, result1012output, testToken, true},
 	}
 
 	testsforLogrusOutputs := []tempTestStruct{
-		{"No results found", []string{"result", tempProfileID, "--expand"}, []utils.MockURL{{"GET", resultURL, result1004, 200}}, result1005output, testToken, false},
-		{"standard results in json output", []string{"result", tempProfileID, "-o", "json"}, []utils.MockURL{{"GET", resultURL, result1001, 200}}, result1006output, testToken, false},
-		{"standard results in yaml output", []string{"result", tempProfileID, "-o", "yaml"}, []utils.MockURL{{"GET", resultURL, result1001, 200}}, result1007output, testToken, false},
-		{"invalid output format", []string{"result", tempProfileID, "-o", "invalid"}, []utils.MockURL{{"GET", resultURL, result1001, 200}}, result1008output, testToken, true},
+		{"No results found", []string{"result", tempProfileID, "--expand"}, []utils.MockURL{
+			{Method: "GET", URL: resultURL, Response: result1004, ResponseCode: 200},
+		}, result1005output, testToken, false},
+		{"standard results in json output", []string{"result", tempProfileID, "-o", "json"}, []utils.MockURL{
+			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
+		}, result1006output, testToken, false},
+		{"standard results in yaml output", []string{"result", tempProfileID, "-o", "yaml"}, []utils.MockURL{
+			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
+		}, result1007output, testToken, false},
+		{"invalid output format", []string{"result", tempProfileID, "-o", "invalid"}, []utils.MockURL{
+			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
+		}, result1008output, testToken, true},
 	}
 
 	// Run tests in list format

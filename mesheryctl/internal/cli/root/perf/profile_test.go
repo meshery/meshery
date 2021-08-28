@@ -82,20 +82,38 @@ func TestProfileCmd(t *testing.T) {
 	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
 
 	tests := []tempTestStruct{
-		{"standard profiles output", []string{"profile"}, []utils.MockURL{{"GET", profileURL, profile1001, 200}}, profile1001output, testToken, false},
-		{"profiles searching istio", []string{"profile", "istio"}, []utils.MockURL{{"GET", profileURL, profile1002, 200}}, profile1002output, testToken, false},
-		{"profiles searching test 3", []string{"profile", "test", "3"}, []utils.MockURL{{"GET", profileURL, profile1003, 200}}, profile1003output, testToken, false},
-		{"standard profiles in expand output", []string{"profile", "--expand"}, []utils.MockURL{{"GET", profileURL, profile1001, 200}}, profile1004output, testToken, false},
-		{"Unmarshal error", []string{"profile"}, []utils.MockURL{{"GET", profileURL, profile1005, 200}}, profile1010output, testToken, true},
+		{"standard profiles output", []string{"profile"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+		}, profile1001output, testToken, false},
+		{"profiles searching istio", []string{"profile", "istio"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1002, ResponseCode: 200},
+		}, profile1002output, testToken, false},
+		{"profiles searching test 3", []string{"profile", "test", "3"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1003, ResponseCode: 200},
+		}, profile1003output, testToken, false},
+		{"standard profiles in expand output", []string{"profile", "--expand"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+		}, profile1004output, testToken, false},
+		{"Unmarshal error", []string{"profile"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1005, ResponseCode: 200},
+		}, profile1010output, testToken, true},
 		{"failing add authentication test", []string{"profile"}, []utils.MockURL{}, profile1011output, testToken + "invalid-path", true},
-		{"Server Error 500", []string{"profile"}, []utils.MockURL{{"GET", profileURL, profile1006, 500}}, profile1009output, testToken, true},
+		{"Server Error 500", []string{"profile"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1006, ResponseCode: 500},
+		}, profile1009output, testToken, true},
 	}
 
 	testsforLogrusOutputs := []tempTestStruct{
-		{"No profiles found", []string{"profile", "--expand"}, []utils.MockURL{{"GET", profileURL, profile1004, 200}}, profile1005output, testToken, false},
-		{"standard profiles in json output", []string{"profile", "-o", "json"}, []utils.MockURL{{"GET", profileURL, profile1001, 200}}, profile1006output, testToken, false},
-		{"standard profiles in yaml output", []string{"profile", "-o", "yaml"}, []utils.MockURL{{"GET", profileURL, profile1001, 200}}, profile1007output, testToken, false},
-		{"invalid output format", []string{"profile", "-o", "invalid"}, []utils.MockURL{{"GET", profileURL, profile1001, 200}}, profile1008output, testToken, true},
+		{"No profiles found", []string{"profile", "--expand"}, []utils.MockURL{{Method: "GET", URL: profileURL, Response: profile1004, ResponseCode: 200}}, profile1005output, testToken, false},
+		{"standard profiles in json output", []string{"profile", "-o", "json"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+		}, profile1006output, testToken, false},
+		{"standard profiles in yaml output", []string{"profile", "-o", "yaml"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+		}, profile1007output, testToken, false},
+		{"invalid output format", []string{"profile", "-o", "invalid"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
+		}, profile1008output, testToken, true},
 	}
 
 	// Run tests in list format
