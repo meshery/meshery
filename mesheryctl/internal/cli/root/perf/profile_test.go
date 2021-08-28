@@ -125,8 +125,8 @@ func TestProfileCmd(t *testing.T) {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
-
 					utils.Equals(t, expectedResponse, err.Error())
+					resetVariables()
 					return
 				}
 				t.Error(err)
@@ -144,6 +144,7 @@ func TestProfileCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 			utils.Equals(t, expectedResponse, actualResponse)
+			resetVariables()
 		})
 	}
 
@@ -171,8 +172,8 @@ func TestProfileCmd(t *testing.T) {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
-
 					utils.Equals(t, expectedResponse, err.Error())
+					resetVariables()
 					return
 				}
 				t.Error(err)
@@ -186,6 +187,7 @@ func TestProfileCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 			utils.Equals(t, expectedResponse, actualResponse)
+			resetVariables()
 		})
 	}
 

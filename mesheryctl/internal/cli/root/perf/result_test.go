@@ -118,8 +118,8 @@ func TestResultCmd(t *testing.T) {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
-
 					utils.Equals(t, expectedResponse, err.Error())
+					resetVariables()
 					return
 				}
 				t.Error(err)
@@ -137,6 +137,7 @@ func TestResultCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 			utils.Equals(t, expectedResponse, actualResponse)
+			resetVariables()
 		})
 	}
 
@@ -164,8 +165,8 @@ func TestResultCmd(t *testing.T) {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
-
 					utils.Equals(t, expectedResponse, err.Error())
+					resetVariables()
 					return
 				}
 				t.Error(err)
@@ -179,6 +180,7 @@ func TestResultCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 			utils.Equals(t, expectedResponse, actualResponse)
+			resetVariables()
 		})
 	}
 

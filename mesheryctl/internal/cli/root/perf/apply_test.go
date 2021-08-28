@@ -185,4 +185,5 @@ func resetVariables() {
 	testDuration = "30s"
 	loadGenerator = "fortio"
 	filePath = ""
+	outputFormatFlag = ""
 }
