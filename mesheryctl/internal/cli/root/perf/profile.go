@@ -79,6 +79,7 @@ mesheryctl perf profile test profile 2
 
 		if len(data) == 0 {
 			log.Info("No Performance Profiles to display")
+			return nil
 		}
 
 		if outputFormatFlag != "" {
@@ -88,7 +89,6 @@ mesheryctl perf profile test profile 2
 				return errors.New("output-format choice invalid, use [json|yaml]")
 			}
 			log.Info(string(body))
-			return nil
 		} else if !expand {
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
 		} else {

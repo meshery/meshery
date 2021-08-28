@@ -72,20 +72,18 @@ mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 test I ran on sunday
 			return err
 		}
 
+		if len(data) == 0 {
+			log.Info("No Test Results to display")
+			return nil
+		}
+
 		if outputFormatFlag != "" {
 			if outputFormatFlag == "yaml" {
-				if body, err = yaml.JSONToYAML(body); err != nil {
-					return errors.Wrap(err, "failed to convert json to yaml")
-				}
+				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
 				return errors.New("output-format choice invalid, use [json|yaml]")
 			}
 			log.Info(string(body))
-			return nil
-		}
-
-		if len(data) == 0 {
-			log.Info("No Test Results to display")
 		} else if !expand {
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data)
 		} else {

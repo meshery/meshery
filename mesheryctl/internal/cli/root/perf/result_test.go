@@ -59,7 +59,7 @@ var (
 
 func TestResultCmd(t *testing.T) {
 	utils.SetupContextEnv(t)
-	// utils.StartMockery(t)
+	utils.StartMockery(t)
 	testContext := utils.NewTestHelper(t)
 
 	// get current directory
@@ -71,7 +71,7 @@ func TestResultCmd(t *testing.T) {
 	fixturesDir := filepath.Join(currDir, "fixtures", "result")
 	testToken := filepath.Join(currDir, "fixtures", "auth.json")
 	testdataDir := filepath.Join(currDir, "testdata", "result")
-	resultURL := testContext.BaseURL + "/api/user/performance/profile/" + tempProfileID + "/results"
+	resultURL := testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results"
 
 	tests := []tempTestStruct{
 		{"standard results output", []string{"result", tempProfileID}, []utils.MockURL{{"GET", resultURL, result1001, 200}}, result1001output, testToken, false},
@@ -88,13 +88,13 @@ func TestResultCmd(t *testing.T) {
 		{"No results found", []string{"result", tempProfileID, "--expand"}, []utils.MockURL{{"GET", resultURL, result1004, 200}}, result1005output, testToken, false},
 		{"standard results in json output", []string{"result", tempProfileID, "-o", "json"}, []utils.MockURL{{"GET", resultURL, result1001, 200}}, result1006output, testToken, false},
 		{"standard results in yaml output", []string{"result", tempProfileID, "-o", "yaml"}, []utils.MockURL{{"GET", resultURL, result1001, 200}}, result1007output, testToken, false},
-		{"invalid output format", []string{"result", "-o", tempProfileID, "invalid"}, []utils.MockURL{{"GET", resultURL, result1001, 200}}, result1008output, testToken, true},
+		{"invalid output format", []string{"result", tempProfileID, "-o", "invalid"}, []utils.MockURL{{"GET", resultURL, result1001, 200}}, result1008output, testToken, true},
 	}
 
 	// Run tests in list format
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			tokenPath = testToken
+			tokenPath = tt.Token
 
 			for _, mock := range tt.URLs {
 				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
