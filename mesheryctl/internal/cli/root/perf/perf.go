@@ -50,9 +50,6 @@ var PerfCmd = &cobra.Command{
 	`,
 	Args: cobra.MinimumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
-		}
 		//Check prerequisite
 		hcOptions := &system.HealthCheckOptions{
 			IsPreRunE:  true,
@@ -64,6 +61,12 @@ var PerfCmd = &cobra.Command{
 			return errors.Wrapf(err, "failed to initialize healthchecker")
 		}
 		return hc.RunPreflightHealthChecks()
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+		}
+		return nil
 	},
 }
 
