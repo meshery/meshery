@@ -325,15 +325,44 @@ func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
 	}
 
 	log.Debug("fetching required Kubernetes manifest files...")
-	// get correct minfestsURL based on version
+	// get correct manifestsURL based on version
 	manifestsURL, err := GetManifestTreeURL(version)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to make GET request")
 	}
-	// pick all the manifest files stored in minfestsURL
-	manifests, err := ListManifests(manifestsURL)
+	// pick all the manifest files stored in manifestsURL
+	allManifests, err := ListManifests(manifestsURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to make GET request")
+	}
+	var manifests []Manifest // this is for the mandatory manifests and adapter manifests based on the current context
+
+	for _, manifest := range allManifests {
+		if manifest.Path == "k8s-1-16-deployments" {
+			manifests = append(manifests, manifest)
+			continue
+		}
+
+		if manifest.Path == "service-account.yaml" {
+			manifests = append(manifests, manifest)
+			continue
+		}
+
+		if manifest.Path == "meshery-deployment.yaml" {
+			manifests = append(manifests, manifest)
+			continue
+		}
+
+		if manifest.Path == "meshery-service.yaml" {
+			manifests = append(manifests, manifest)
+			continue
+		}
+
+		for _, adapter := range currCtx.GetAdapters() {
+			if strings.HasPrefix(manifest.Path, adapter) {
+				manifests = append(manifests, manifest)
+			}
+		}
 	}
 
 	err = CreateManifestsFolder()
