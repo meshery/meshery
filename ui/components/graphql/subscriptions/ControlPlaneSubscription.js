@@ -1,8 +1,8 @@
 import { graphql, requestSubscription } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
-const controlPlaneSubscription = graphql`
-  subscription ControlPlaneSubscription($filter: ControlPlaneFilter) {
+export const controlPlaneSubscription = graphql`
+  subscription ControlPlaneSubscription($filter: ServiceMeshFilter) {
     controlPlanesState: listenToControlPlaneState(filter: $filter) {
       name
       members {
