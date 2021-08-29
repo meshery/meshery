@@ -36,7 +36,7 @@ type resultStruct struct {
 
 var resultCmd = &cobra.Command{
 	Use:   "result profile-id [result-name]",
-	Short: "List Test Results",
+	Short: "List performance test results",
 	Long:  `List all the available test results of a performance profile`,
 	Args:  cobra.MinimumNArgs(1),
 	Example: `
@@ -45,6 +45,9 @@ mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2
 
 // List Test results with search (maximum 25 profiles)
 mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 test I ran on sunday 
+
+// View performance results with more information
+mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 --expand
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
@@ -186,5 +189,5 @@ func fetchPerformanceProfileResults(url, profileID, searchString string) ([][]st
 }
 
 func init() {
-	resultCmd.Flags().BoolVarP(&expand, "expand", "e", false, "(optional) Expand the output")
+	resultCmd.Flags().BoolVarP(&expand, "expand", "e", false, "(optional) Expand the performance results for more info")
 }

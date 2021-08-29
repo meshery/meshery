@@ -36,19 +36,19 @@ var (
 )
 
 var applyCmd = &cobra.Command{
-	Use:   "apply",
+	Use:   "apply [profile-name | --profile | --file] --flags",
 	Short: "Run a Performance test",
 	Long:  `Run Performance test using existing profiles or using flags`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-	Execute a Performance test with the specified performance profile
-	mesheryctl perf apply <profile name> --flags
+// Execute a Performance test with the specified performance profile
+mesheryctl perf apply meshery-profile --flags
 
-	Execute a Performance test without a specified performance profile
-	mesheryctl perf apply --profile <profile-name> --url <url>
+// Execute a Performance test with creating a new performance profile
+mesheryctl perf apply --profile meshery-profile-new --url <url>
 
-	Run Performance test using SMP compatible test configuration
-	mesheryctl perf apply -f <filepath>
+// Run Performance test using SMP compatible test configuration
+mesheryctl perf apply -f <filepath>
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
@@ -305,9 +305,9 @@ func multipleProfileConfirmation(profiles []models.PerformanceProfile) int {
 }
 
 func init() {
-	applyCmd.Flags().StringVar(&testURL, "url", "", "(required/optional) Endpoint URL to test")
+	applyCmd.Flags().StringVar(&testURL, "url", "", "(optional) Endpoint URL to test (required with --profile)")
 	applyCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
-	applyCmd.Flags().StringVar(&profileName, "profile", "", "(required/optional) Name for the new Performance Profile")
+	applyCmd.Flags().StringVar(&profileName, "profile", "", "(optional) Name for the new Performance Profile (required to create a new profile)")
 	applyCmd.Flags().StringVar(&testMesh, "mesh", "None", "(optional) Name of the Service Mesh")
 	applyCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
 	applyCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(optional) Number of Parallel Requests")

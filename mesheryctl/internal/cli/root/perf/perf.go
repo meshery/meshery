@@ -37,16 +37,16 @@ var (
 var PerfCmd = &cobra.Command{
 	Use:   "perf",
 	Short: "Performance Management",
-	Long:  `Performance Management & Benchmarking using Meshery CLI.`,
+	Long:  `Performance Management & Benchmarking`,
 	Example: `
-	// Run performance test
-	mesheryctl perf apply --profile test --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"
+// Run performance test
+mesheryctl perf apply --profile test --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"
 	
-	// List performance profiles
-	mesheryctl perf list
+// List performance profiles
+mesheryctl perf profile
 
-	// View performance profiles or results
-	mesheryctl perf view
+// List performance results
+mesheryctl perf result
 	`,
 	Args: cobra.MinimumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {

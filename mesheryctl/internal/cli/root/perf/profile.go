@@ -42,14 +42,18 @@ type profileStruct struct {
 
 var profileCmd = &cobra.Command{
 	Use:   "profile [profile-name]",
-	Short: "List Performance profiles",
+	Short: "List performance profiles",
 	Long:  `List all the available performance profiles`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // List performance profiles (maximum 25 profiles)	
 mesheryctl perf profile 
+
 // List performance profiles with search (maximum 25 profiles)
 mesheryctl perf profile test profile 2 
+
+// View performance profiles with more information
+mesheryctl perf profile --expand
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
@@ -187,5 +191,5 @@ func fetchPerformanceProfiles(url, searchString string) ([][]string, []profileSt
 }
 
 func init() {
-	profileCmd.Flags().BoolVarP(&expand, "expand", "e", false, "(optional) Expand the output")
+	profileCmd.Flags().BoolVarP(&expand, "expand", "e", false, "(optional) Expand performance profile for more info")
 }
