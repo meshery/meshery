@@ -33,6 +33,8 @@ import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
@@ -73,10 +75,24 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar : {
     marginBottom : "16px"
-  }
+  },
+  yamlDialogTitle : {
+    display : "flex",
+    alignItems: "center"
+  },
+  yamlDialogTitleText : {
+    flexGrow : 1
+  },
+  fullScreenCodeMirror : {
+    height : '100%',
+    '& .CodeMirror' : {
+      minHeight : "300px",
+      height : '100%',
+    }
+  },
 }))
 
-function CustomToolbar(onClick,urlOnClick) {
+function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
     return (
       <>
@@ -96,16 +112,45 @@ function CustomToolbar(onClick,urlOnClick) {
   };
 }
 
+function TooltipIcon({ children, onClick, title }) {
+  return (
+    <Tooltip title={title} placement="top" arrow interactive >
+      <IconButton onClick={onClick}>
+        {children}
+      </IconButton>
+    </Tooltip>
+  )
+}
+
 function YAMLEditor({ pattern, onClose, onSubmit }) {
+  const classes = useStyles();
   const [yaml, setYaml] = useState("");
+  const [fullScreen, setFullScreen] = useState(false);
+
+  const toggleFullScreen = () => {
+    setFullScreen(!fullScreen);
+  }
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="pattern-dialog-title" open fullWidth maxWidth="md">
-      <DialogTitle id="pattern-dialog-title">{pattern.name}</DialogTitle>
+    <Dialog onClose={onClose} aria-labelledby="pattern-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
+      <DialogTitle disableTypography id="pattern-dialog-title" className={classes.yamlDialogTitle}>
+        <Typography variant="h6" className={classes.yamlDialogTitleText}>
+          {pattern.name}
+        </Typography>
+        <TooltipIcon
+          title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          onClick={toggleFullScreen}>
+          {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+        </TooltipIcon>
+        <TooltipIcon title="Exit" onClick={onClose}>
+          <CloseIcon />
+        </TooltipIcon>
+      </DialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
         <CodeMirror
           value={pattern.pattern_file}
+          className={fullScreen ? classes.fullScreenCodeMirror : ""}
           options={{
             theme : "material",
             lineNumbers : true,
@@ -452,11 +497,13 @@ function MesheryPatterns({
   });
 
   async function showModal() {
-    let response = await modalRef.current.show({ title : "Delete Pattern?",
+    let response = await modalRef.current.show({
+      title : "Delete Pattern?",
 
       subtitle : "Are you sure you want to delete this pattern?",
 
-      options : ["yes", "no"], })
+      options : ["yes", "no"],
+    })
     return response;
   }
 
@@ -502,7 +549,7 @@ function MesheryPatterns({
     page,
     print : false,
     download : false,
-    customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
+    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
