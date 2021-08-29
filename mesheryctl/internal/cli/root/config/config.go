@@ -72,31 +72,17 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (*Context, error) {
 		return &Context{}, errors.New("current context not set")
 	}
 
-	if ctx, exists := mc.Contexts[mc.CurrentContext]; exists {
-		err := ctx.ValidateVersion()
-
-		if err != nil {
-			return &Context{}, err
-		}
-
-		if err == nil {
-			return &ctx, nil
-		}
+	ctx, exists := mc.Contexts[mc.CurrentContext]
+	if exists {
+		return &ctx, nil
 	}
 
 	return &Context{}, errors.New("current context " + mc.CurrentContext + " does not exist")
 }
 func (mc *MesheryCtlConfig) CheckIfGivenContextIsValid(name string) (*Context, error) {
-	if ctx, exists := mc.Contexts[name]; exists {
-		err := ctx.ValidateVersion()
-
-		if err != nil {
-			return &Context{}, err
-		}
-
-		if err == nil {
-			return &ctx, nil
-		}
+	ctx, exists := mc.Contexts[name]
+	if exists {
+		return &ctx, nil
 	}
 
 	return &Context{}, errors.New("context " + name + " does not exist")

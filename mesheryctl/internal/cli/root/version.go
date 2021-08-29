@@ -77,9 +77,24 @@ var versionCmd = &cobra.Command{
 				if err != nil {
 					logrus.Errorf("error unmarshaling config file")
 				}
+				currCtx, err := mctlCfg.GetCurrentContext()
+				if err != nil {
+					return err
+				}
+				if err = currCtx.ValidateVersion(); err != nil {
+					return err
+				}
 				return nil
 			}
 			return handlers.ErrUnmarshal(errors.New("invalid config file"), "meshconfig")
+		}
+		currCtx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = currCtx.ValidateVersion()
+		if err != nil {
+			return err
 		}
 		return nil
 	},

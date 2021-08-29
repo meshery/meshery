@@ -68,7 +68,14 @@ var startCmd = &cobra.Command{
 		if err != nil {
 			cmd.SilenceUsage = true
 		}
-
+		ctx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
