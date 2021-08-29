@@ -119,10 +119,6 @@ var setCmd = &cobra.Command{
 				if channelNameSeperated[1] != "latest" {
 					currCtx := mctlCfg.Contexts[focusedContext]
 					currCtx.Version = channelNameSeperated[1]
-					err := (&currCtx).ValidateVersion()
-					if err != nil {
-						return fmt.Errorf("%v is not a valid version tag", channelNameSeperated[1])
-					}
 				}
 			}
 			version = channelNameSeperated[1]
