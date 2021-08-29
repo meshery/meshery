@@ -227,8 +227,7 @@ function MesheryPatterns({
 
   const searchTimeout = useRef(null);
   /**
-   * fetch patterns when the page loadsOh that's okay @warunicorn19
-Can I give it a try?
+   * fetch patterns when the page loads
    */
   useEffect(() => {
     fetchPatterns(page, pageSize, search, sortOrder);
