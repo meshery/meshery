@@ -24,7 +24,8 @@ export const podNameMapper = (serviceMeshName, podName) => {
     default:
       break;
   }
-  return podName;
+  const podNameArr = podName.split('-').slice(0,-2).map(word => word[0].toUpperCase() + word.substr(1))
+  return podNameArr.join(' ');
 };
 
 export const versionMapper = (versionName) => (versionName.charAt(0) === "v" ? versionName : `v${versionName}`);
