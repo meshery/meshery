@@ -24,6 +24,16 @@ export const podNameMapper = (serviceMeshName, podName) => {
     default:
       break;
   }
+  const podNameArr = podName.split("-");
+
+  if (Array.isArray(podNameArr)) {
+    const prettifiedPodName = podNameArr
+      .slice(0, -2)
+      .map((word) => word[0].toUpperCase() + word.substr(1))
+      .join(" ");
+
+    return prettifiedPodName;
+  }
   return podName;
 };
 
