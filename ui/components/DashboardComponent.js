@@ -922,7 +922,7 @@ class DashboardComponent extends React.Component {
 
     const showServiceMesh = (
       <>
-        {typeof self?.state?.meshScan === 'object' && self?.state?.meshScan && Object.keys(self.state.meshScan).length
+        {self?.state?.meshScan && Object.keys(self.state.meshScan).length
           ? (
             <>
               {self.state.meshScan.map((mesh) => {
