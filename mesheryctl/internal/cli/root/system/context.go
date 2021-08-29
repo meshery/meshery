@@ -35,7 +35,7 @@ var (
 	set               = false
 	adapters          = []string{}
 	platform          = ""
-	serverUrl         = ""
+	serverURL         = ""
 	newContext        = ""
 	currContext       string
 	allContext        bool
@@ -61,15 +61,15 @@ var createContextCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tempCntxt := utils.TemplateContext
 
-		if serverUrl != "" {
-			err := utils.ValidateURL(serverUrl)
+		if serverURL != "" {
+			err := utils.ValidateURL(serverURL)
 			if err != nil {
 				return err
 			}
-			tempCntxt.Endpoint = serverUrl
+			tempCntxt.Endpoint = serverURL
 		}
 
-		log.Debug("serverUrl: `" + tempCntxt.Endpoint + "`")
+		log.Debug("serverURL: `" + tempCntxt.Endpoint + "`")
 
 		if platform != "" {
 			tempCntxt.Platform = platform
@@ -350,7 +350,7 @@ func init() {
 		viewContextCmd,
 		listContextCmd,
 	}
-	createContextCmd.Flags().StringVarP(&serverUrl, "url", "u", "", "Meshery Server URL with Port")
+	createContextCmd.Flags().StringVarP(&serverURL, "url", "u", "", "Meshery Server URL with Port")
 	createContextCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current context")
 	createContextCmd.Flags().StringArrayVarP(&adapters, "adapters", "a", []string{}, "List of adapters")
 	createContextCmd.Flags().StringVarP(&platform, "platform", "p", "", "Platform to deploy Meshery")
