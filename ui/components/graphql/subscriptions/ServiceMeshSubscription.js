@@ -12,7 +12,9 @@ export default function subscribeServiceMeshEvents(dataCB, variables) {
       filter : variables,
     },
     onNext : (res) => {
-      dataCB(res, null)
+      // decrease state change in dashboard
+
+      // dataCB(res, null)
       controlRes = res
     },
     onError : (error) => console.log(`An error occured:`, error),
@@ -26,7 +28,10 @@ export default function subscribeServiceMeshEvents(dataCB, variables) {
     onNext : (dataRes) => {
       if (controlRes) dataCB(controlRes, dataRes)
     },
-    onError : (error) => console.log(`An error occured:`, error),
+    onError : (error) => {
+      if (controlRes) dataCB(controlRes, null)
+      console.log(`An error occured:`, error)
+    },
   });
 
 }
