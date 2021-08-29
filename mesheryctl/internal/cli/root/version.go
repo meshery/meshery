@@ -81,7 +81,8 @@ var versionCmd = &cobra.Command{
 				if err != nil {
 					return err
 				}
-				if err = currCtx.ValidateVersion(); err != nil {
+				err = currCtx.ValidateVersion()
+				if err != nil {
 					return err
 				}
 				return nil
