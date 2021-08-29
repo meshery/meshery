@@ -64,7 +64,7 @@ Query Control Plane data for a Service Mesh (or all) in your cluster.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querygetcontrolplanesfilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) | Filter Control Plane Query. |
+| <a id="querygetcontrolplanesfilter"></a>`filter` | [`ServiceMeshFilter`](#controlplanefilter) | Filter Control Plane Query. |
 
 ### `Query.getOperatorStatus`
 
@@ -157,7 +157,7 @@ Listen to changes in Control Plane data for a Service Mesh (or all) in your clus
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) | Filter Control Plane Query. |
+| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ServiceMeshFilter`](#controlplanefilter) | Filter Control Plane Query. |
 
 ### `Subscription.listenToMeshSyncEvents`
 
@@ -401,7 +401,7 @@ see the associated mutation type above.
 
 For more information, read about [Scalar Types](https://graphql.org/learn/schema/#input-types) on `graphql.org`.
 
-### `ControlPlaneFilter`
+### `ServiceMeshFilter`
 
 Filter Control Plane Query.
 

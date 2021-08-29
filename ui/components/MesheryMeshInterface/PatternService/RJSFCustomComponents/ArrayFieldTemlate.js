@@ -139,7 +139,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   return (
     <Paper elevation={0}>
-      <Box p={2}>
+      <Box p={1}>
         <Grid item container alignItems="center" xs={12} justify="space-between" style={{ marginBottom : "0.3rem" }}>
           <Grid item xs={4}>
             <ArrayFieldTitle

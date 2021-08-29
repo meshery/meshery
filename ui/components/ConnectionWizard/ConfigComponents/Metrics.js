@@ -16,6 +16,7 @@ import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../
 import ReactSelectWrapper from "../../ReactSelectWrapper"
 import { handleGrafanaConfigure, handlePrometheusConfigure } from "../helpers/metrics";
 import CloseIcon from "@material-ui/icons/Close";
+import { composeWithDevTools } from "redux-devtools-extension";
 
 
 const styles = () => ({})
@@ -49,20 +50,49 @@ const MetricsConfig = ({
 
   return (
     <>
-      <Grid item xs={12} style={{ marginTop : "1.2rem" }}>
-        <ReactSelectWrapper
-          onChange={(select) => setUrl(select
-            ? select.value
-            : "")}
-          options={getOptions()}
-          value={{ label : url, value : url }}
-          label={`${componentName} Base URL`}
-          error={false}
-          placeholder={`Address of ${componentName} Server`}
-          noOptionsMessage={`No ${componentName} servers discovered`}
-        />
+      {componentName === "Prometheus" &&
+      <Grid item xs={12} style={{ height : "12.2rem" }}>
+        <Grid item xs={12} style={{ marginTop : "2rem", cursor : "pointer" }}>
+          <ReactSelectWrapper
+            onChange={(select) => setUrl(select
+              ? select.value
+              : "")}
+            options={getOptions()}
+            value={{ label : url, value : url }}
+            label={`${componentName} Base URL`}
+            error={false}
+            placeholder={`Address of ${componentName} Server`}
+            noOptionsMessage={`No ${componentName} servers discovered`}
+          />
+        </Grid>
+        <Grid item xs={12} style={{ textAlign : "center", marginTop : "2rem" }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleConfigurationSubmit}
+          >
+          Connect
+          </Button>
+        </Grid>
       </Grid>
+      }
       {componentName === "Grafana" &&
+      <Grid item xs={12} style={{ height : "13rem" }}>
+        <Grid item xs={12} style={{ marginTop : "1.2rem" }}>
+          <ReactSelectWrapper
+            onChange={(select) => setUrl(select
+              ? select.value
+              : "")}
+            options={getOptions()}
+            value={{ label : url, value : url }}
+            label={`${componentName} Base URL`}
+            error={false}
+            placeholder={`Address of ${componentName} Server`}
+            noOptionsMessage={`No ${componentName} servers discovered`}
+          />
+        </Grid>
         <Grid item xs={12} >
           <TextField
             id="external-config-api-key-input"
@@ -73,19 +103,20 @@ const MetricsConfig = ({
             variant="outlined"
             // disabled={inClusterConfigForm === true}
           />
-        </Grid>
-      }
-      <Grid item style={{ marginTop : "0.8rem", marginBottom : "0.8rem", textAlign : "center" }}>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={handleConfigurationSubmit}
-        >
+          <Grid item xs={12} style={{ marginTop : "0.8rem", marginBottom : "0.8rem", textAlign : "center" }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={handleConfigurationSubmit}
+            >
             Connect
-        </Button>
+            </Button>
+          </Grid>
+        </Grid>
       </Grid>
+      }
     </>
   )
 }

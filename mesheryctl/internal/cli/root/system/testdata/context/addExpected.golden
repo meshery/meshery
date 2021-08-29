@@ -28,6 +28,7 @@ contexts:
     - meshery-cpx
     - meshery-osm
     - meshery-traefik-mesh
+    - meshery-nginx-sm
     channel: stable
     version: latest
 current-context: local

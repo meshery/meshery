@@ -97,7 +97,7 @@ function Dashboard({
           <Paper className={classes.paper}>
             <Grid container spacing={1}>
               <Grid item xs>
-                <Paper className={classes.paper}>
+                <div className={classes.paper}>
                   <div style={{ display : "flex", alignItems : "center" , height : "6.8rem" }}>
                     <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {(tests.count).toLocaleString('en')}
@@ -111,10 +111,11 @@ function Dashboard({
                       Run Test
                     </Button>
                   </div>
-                </Paper>
+                </div>
               </Grid>
+              <div style={{ height: "10.4rem", width: "1px", background: "black", top: "11.2rem", bottom: "0", position: "absolute", left: "36%", backgroundColor: "#36454f", opacity:"0.7" }}></div>
               <Grid item xs>
-                <Paper className={classes.paper}>
+                <div className={classes.paper}>
                   <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
                     <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {profiles.count}
@@ -123,12 +124,12 @@ function Dashboard({
                       Profiles
                     </Typography>
                   </div>
-                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
+                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}> 
                     <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
                       Manage Profiles
                     </Button>
                   </div>
-                </Paper>
+                </div>
               </Grid>
             </Grid>
           </Paper>

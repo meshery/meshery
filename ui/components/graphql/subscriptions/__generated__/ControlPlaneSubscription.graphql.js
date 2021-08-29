@@ -9,11 +9,11 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type MeshType = "ALL_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "INVALID_MESH" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORK_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "OCTARINE" | "OPEN_SERVICE_MESH" | "TANZU" | "TRAEFIK_MESH" | "%future added value";
-export type ControlPlaneFilter = {|
+export type ServiceMeshFilter = {|
   type?: ?MeshType
 |};
 export type ControlPlaneSubscriptionVariables = {|
-  filter?: ?ControlPlaneFilter
+  filter?: ?ServiceMeshFilter
 |};
 export type ControlPlaneSubscriptionResponse = {|
   +controlPlanesState: $ReadOnlyArray<{|
@@ -35,7 +35,7 @@ export type ControlPlaneSubscription = {|
 
 /*
 subscription ControlPlaneSubscription(
-  $filter: ControlPlaneFilter
+  $filter: ServiceMeshFilter
 ) {
   controlPlanesState: listenToControlPlaneState(filter: $filter) {
     name
@@ -135,16 +135,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "9594693970a688ad58d2d0f0743439f8",
+    "cacheID": "e552aaa57cd93a93a1bd7bf1a9a27e57",
     "id": null,
     "metadata": {},
     "name": "ControlPlaneSubscription",
     "operationKind": "subscription",
-    "text": "subscription ControlPlaneSubscription(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: listenToControlPlaneState(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n    }\n  }\n}\n"
+    "text": "subscription ControlPlaneSubscription(\n  $filter: ServiceMeshFilter\n) {\n  controlPlanesState: listenToControlPlaneState(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '99ef876152bb6036ee3741e1ccce209c';
+(node/*: any*/).hash = '615008f1bb16f855507fa1c841187200';
 
 module.exports = node;
