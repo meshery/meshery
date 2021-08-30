@@ -175,36 +175,6 @@ func SafeClose(co io.Closer) {
 	}
 }
 
-// TODO: Use the same DownloadFile function from MeshKit instead of the function below
-// and change all it's occurrences
-
-// DownloadFile from url and save to configured file location
-func DownloadFile(filepath string, url string) error {
-	// Get the data
-	resp, err := http.Get(url)
-	if err != nil {
-		return errors.Wrapf(err, "failed to make GET request to %s", url)
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
-		return errors.Wrapf(err, "failed to create file %s", filepath)
-	}
-	defer func() {
-		_ = out.Close()
-	}()
-	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		return errors.Wrap(err, "failed to copy response body")
-	}
-
-	return nil
-}
-
 func prereq() ([]byte, []byte, error) {
 	ostype, err := exec.Command("uname", "-s").Output()
 	if err != nil {

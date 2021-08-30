@@ -15,6 +15,8 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	"github.com/layer5io/meshkit/utils"
+
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -173,7 +175,7 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
 			// download the manifest files to ~/.meshery/manifests folder
 			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
-			if err := DownloadFile(filepath, manifestFile); err != nil {
+			if err := utils.DownloadFile(filepath, manifestFile); err != nil {
 				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
 			}
 		}
@@ -184,19 +186,19 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 // DownloadOperatorManifest downloads the operator manifest files
 func DownloadOperatorManifest() error {
 	operatorFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)
-	err := DownloadFile(operatorFilepath, OperatorURL)
+	err := utils.DownloadFile(operatorFilepath, OperatorURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)))
 	}
 
 	brokerFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)
-	err = DownloadFile(brokerFilepath, BrokerURL)
+	err = utils.DownloadFile(brokerFilepath, BrokerURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", brokerFilepath, MesheryOperatorBroker)))
 	}
 
 	meshsyncFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)
-	err = DownloadFile(meshsyncFilepath, MeshsyncURL)
+	err = utils.DownloadFile(meshsyncFilepath, MeshsyncURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", meshsyncFilepath, MesheryOperatorMeshsync)))
 	}
@@ -415,7 +417,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
 
-		if err := DownloadFile(DockerComposeFile, fileURL); err != nil {
+		if err := utils.DownloadFile(DockerComposeFile, fileURL); err != nil {
 			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
 		}
 	}
@@ -758,7 +760,7 @@ func InstallprereqDocker() error {
 		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
 	}
 	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
-	if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
+	if err := utils.DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
 		return errors.Wrapf(err, "failed to download %s from %s", dockerComposeBinary, dockerComposeBinaryURL)
 	}
 	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
