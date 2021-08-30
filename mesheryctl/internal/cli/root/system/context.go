@@ -313,7 +313,7 @@ var switchContextCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+		isRunning, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
 		//if meshery running stop meshery before context switch
 		if isRunning {
 			if err := stop(); err != nil {
