@@ -67,8 +67,13 @@ var startCmd = &cobra.Command{
 		err = hc.RunPreflightHealthChecks()
 		if err != nil {
 			cmd.SilenceUsage = true
+			return err
 		}
-		ctx, err := mctlCfg.GetCurrentContext()
+		cfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
 			return err
 		}
@@ -76,7 +81,7 @@ var startCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		return err
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
