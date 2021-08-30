@@ -11,6 +11,7 @@ import (
 )
 
 func TestViewContextCmd(t *testing.T) {
+	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -71,6 +72,7 @@ func TestViewContextCmd(t *testing.T) {
 	}
 }
 func TestListContextCmd(t *testing.T) {
+	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -111,6 +113,7 @@ func TestListContextCmd(t *testing.T) {
 }
 
 func TestDeleteContextCmd(t *testing.T) {
+	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -175,6 +178,7 @@ func TestDeleteContextCmd(t *testing.T) {
 	}
 }
 func TestAddContextCmd(t *testing.T) {
+	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 
@@ -241,6 +245,7 @@ func TestAddContextCmd(t *testing.T) {
 }
 
 func TestSwitchContextCmd(t *testing.T) {
+	resetVariables()
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 
@@ -301,4 +306,11 @@ func TestSwitchContextCmd(t *testing.T) {
 			}
 		})
 	}
+}
+
+func resetVariables() {
+	//reset context before tests
+	newContext = ""
+	currContext = ""
+	tempCntxt = ""
 }
