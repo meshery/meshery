@@ -33,7 +33,7 @@ func ErrInvalidAdapter(err error, obj string) error {
 }
 
 func ErrDownloadFile(err error, obj string) error {
-	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"failed downloading current docker-compose file"}, []string{"Make sure docker-compose file is downloaded successfully"})
+	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded successfully"})
 }
 
 func ErrStopMeshery(err error) error {
