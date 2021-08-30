@@ -6,11 +6,12 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/models/pattern/patterns/application"
+	"github.com/layer5io/meshery/models/pattern/patterns/k8s/service"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-func ProcessOAM(kClient *meshkube.Client, oamComps []string, oamConfig string, isDel bool) (string, error) {
+func ProcessOAM(kubeClient *meshkube.Client, oamComps []string, oamConfig string, isDel bool) (string, error) {
 	var comps []v1alpha1.Component
 	var config v1alpha1.Configuration
 
@@ -32,7 +33,7 @@ func ProcessOAM(kClient *meshkube.Client, oamComps []string, oamConfig string, i
 
 	for _, comp := range comps {
 		if comp.Spec.Type == "Application" {
-			if err := application.Deploy(kClient, comp, config, isDel); err != nil {
+			if err := application.Deploy(kubeClient, comp, config, isDel); err != nil {
 				errs = append(errs, err)
 			}
 
@@ -40,6 +41,18 @@ func ProcessOAM(kClient *meshkube.Client, oamComps []string, oamConfig string, i
 				msgs = append(msgs, "successfully deployed application "+comp.Name)
 			} else {
 				msgs = append(msgs, "successfully deleted application "+comp.Name)
+			}
+		}
+
+		if comp.Spec.Type == "Service.K8s" {
+			if err := service.Deploy(kubeClient, comp, config, isDel); err != nil {
+				errs = append(errs, err)
+			}
+
+			if !isDel {
+				msgs = append(msgs, "successfully deployed service "+comp.Name)
+			} else {
+				msgs = append(msgs, "successfully deleted service "+comp.Name)
 			}
 		}
 	}

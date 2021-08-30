@@ -15,6 +15,7 @@ type RolloutEngineGenericOptions struct {
 	Replicas    int
 	Containers  []RolloutEngineContainer
 	Delete      bool
+	Advanced    PatternSettingAdvanced
 }
 
 type RolloutEngineGenericOptionsMetadata struct {
@@ -27,6 +28,7 @@ type RolloutEngineContainer struct {
 	Image     string
 	Ports     []RolloutEngineContainerPort
 	Resources []RolloutEngineContainerResource
+	Envs      []v1.EnvVar
 }
 
 type RolloutEngineContainerPort struct {

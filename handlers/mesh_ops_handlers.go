@@ -12,6 +12,7 @@ import (
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -19,10 +20,25 @@ func init() {
 	gob.Register([]*models.Adapter{})
 }
 
-// GetAllAdaptersHandler is used to fetch all the adapters
-func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request, provider models.Provider) {
+// swagger:route GET /api/system/adapters SystemAPI idGetSystemAdapters
+// Handle GET request for adapters
+//
+// Fetches and returns all the adapters and ping adapters
+// Responses:
+//  200: systemAdaptersRespWrapper
+
+// AdaptersHandler is used to fetch all the adapters
+func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	// if adapter found in query user is trying to ping an adapter
+	adapterLoc := req.URL.Query().Get("adapter")
+	if adapterLoc != "" {
+		logrus.Debug("adapter pinging")
+		h.AdapterPingHandler(w, req, prefObj, user, provider)
 		return
 	}
 
@@ -34,6 +50,74 @@ func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 }
+
+// AdapterPingHandler is used to ping a given adapter
+func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
+
+	meshAdapters := prefObj.MeshAdapters
+	if meshAdapters == nil {
+		meshAdapters = []*models.Adapter{}
+	}
+
+	// adapterLoc := req.PostFormValue("adapter")
+	adapterLoc := req.URL.Query().Get("adapter")
+	h.log.Debug("Adapter url to ping: ", adapterLoc)
+	logrus.Debug("Adapter url to ping: ", adapterLoc)
+
+	aID := -1
+	for i, ad := range meshAdapters {
+		if adapterLoc == ad.Location {
+			aID = i
+		}
+	}
+	if aID < 0 {
+		h.log.Error(ErrValidAdapter)
+		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+		return
+	}
+
+	mClient, err := meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshAdapters[aID].Location)
+	if err != nil {
+		h.log.Error(ErrMeshClient)
+		http.Error(w, ErrMeshClient.Error(), http.StatusBadRequest)
+		return
+	}
+	defer func() {
+		_ = mClient.Close()
+	}()
+
+	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
+	if err != nil {
+		h.log.Error(ErrMeshClient)
+		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
+		return
+	}
+	_, _ = w.Write([]byte("{}"))
+}
+
+// swagger:route POST /api/system/adapter/manage SystemAPI idPostAdapterConfig
+// Handle POST requests to persist adapter config
+//
+// Used to persist adapter config
+// responses:
+// 	200: mesheryAdaptersRespWrapper
+
+// swagger:route DELETE /api/system/adapter/manage SystemAPI idDeleteAdapterConfig
+// Handle DELETE requests to delete adapter config
+//
+// Used to delete adapter configuration
+// responses:
+// 	200:
 
 // MeshAdapterConfigHandler is used to persist adapter config
 func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -119,8 +203,8 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		h.log.Error(ErrNilClient)
 		return nil, ErrNilClient
 	}
-	*h.kubeclient = *kubeclient
-	provider.SetKubeClient(h.kubeclient)
+	*h.config.KubeClient = *kubeclient
+	provider.SetKubeClient(h.config.KubeClient)
 
 	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshLocationURL)
 	if err != nil || prefObj.K8SConfig == nil {
@@ -192,6 +276,13 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	h.log.Debug("New adapters: ", b)
 	return newMeshAdapters, nil
 }
+
+// swagger:route POST /api/system/adapter/operation SystemAPI idPostAdapterOperation
+// Handle POST requests for Adapter Operations
+//
+// Used to send operations to the adapters
+// responses:
+// 	200:
 
 // MeshOpsHandler is used to send operations to the adapters
 func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -271,59 +362,6 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	if err != nil {
 		h.log.Error(ErrApplyChange(err))
 		http.Error(w, ErrApplyChange(err).Error(), http.StatusInternalServerError)
-		return
-	}
-	_, _ = w.Write([]byte("{}"))
-}
-
-// AdapterPingHandler is used to ping a given adapter
-func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	// if req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-
-	meshAdapters := prefObj.MeshAdapters
-	if meshAdapters == nil {
-		meshAdapters = []*models.Adapter{}
-	}
-
-	// adapterLoc := req.PostFormValue("adapter")
-	adapterLoc := req.URL.Query().Get("adapter")
-	h.log.Debug("Adapter url to ping: ", adapterLoc)
-
-	aID := -1
-	for i, ad := range meshAdapters {
-		if adapterLoc == ad.Location {
-			aID = i
-		}
-	}
-	if aID < 0 {
-		h.log.Error(ErrValidAdapter)
-		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	mClient, err := meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshAdapters[aID].Location)
-	if err != nil {
-		h.log.Error(ErrMeshClient)
-		http.Error(w, ErrMeshClient.Error(), http.StatusBadRequest)
-		return
-	}
-	defer func() {
-		_ = mClient.Close()
-	}()
-
-	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
-	if err != nil {
-		h.log.Error(ErrMeshClient)
-		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write([]byte("{}"))

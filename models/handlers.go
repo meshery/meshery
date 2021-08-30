@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/vmihailenco/taskq/v3"
 )
 
@@ -15,6 +16,7 @@ type HandlerInterface interface {
 	ProviderMiddleware(http.Handler) http.Handler
 	AuthMiddleware(http.Handler) http.Handler
 	SessionInjectorMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) http.Handler
+	GraphqlMiddleware(http.Handler) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 
 	ProviderHandler(w http.ResponseWriter, r *http.Request)
 	ProvidersHandler(w http.ResponseWriter, r *http.Request)
@@ -43,7 +45,7 @@ type HandlerInterface interface {
 
 	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request, provider Provider)
+	AdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -65,8 +67,7 @@ type HandlerInterface interface {
 	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	UserTestPreferenceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -96,10 +97,6 @@ type HandlerInterface interface {
 	GetMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	//GraphqlSystemHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetGraphQLHandler() http.Handler
-	GetGraphQLPlaygroundHandler() http.Handler
-
 	ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider Provider) error
 
@@ -122,6 +119,7 @@ type HandlerConfig struct {
 	Queue taskq.Queue
 
 	KubeConfigFolder string
+	KubeClient       *mesherykube.Client
 
 	GrafanaClient         *GrafanaClient
 	GrafanaClientForQuery *GrafanaClient
@@ -129,8 +127,8 @@ type HandlerConfig struct {
 	PrometheusClient         *PrometheusClient
 	PrometheusClientForQuery *PrometheusClient
 
-	GraphQLHandler           http.Handler
-	GraphQLPlaygroundHandler http.Handler
+	// GraphQLHandler           http.Handler
+	// GraphQLPlaygroundHandler http.Handler
 
 	Providers              map[string]Provider
 	ProviderCookieName     string

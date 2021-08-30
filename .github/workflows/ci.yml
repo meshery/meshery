@@ -22,6 +22,7 @@ on:
 jobs:
   golangci:
     name: golangci-lint
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,7 +30,7 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: v1.32
+          version: v1.41
 
           # Optional: working directory, useful for monorepos
           # working-directory: somedir
@@ -41,6 +42,7 @@ jobs:
           # only-new-issues: true
   build-backend:
     name: Backend build
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -48,18 +50,17 @@ jobs:
       with:
         fetch-depth: 1
     - name: Setup Go
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v2
       with:
         go-version: ${{ secrets.GO_VERSION }}
     - name: Setup Cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
     - run: |
-        go mod tidy
         GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
@@ -68,6 +69,7 @@ jobs:
         path: ./main
   build-ui:
     name: UI build
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -96,12 +98,16 @@ jobs:
         cd ..
         cd provider-ui
         npm i
-    - name: build app
+    - name: build meshery-ui
       run: |
-        make build-ui
+        make build-meshery-ui
+    - name: build provider-ui
+      run: |
+        make build-provider-ui
   tests-ui:
     needs: [build-ui]
     name: UI integration tests
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -141,6 +147,7 @@ jobs:
   tests-ui-e2e:
     needs: [build-backend, build-ui]
     name: UI end-to-end tests
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -157,7 +164,7 @@ jobs:
         with:
           name: meshery
       - name: Setup go
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v2
         with:
           go-version: ${{ secrets.GO_VERSION }}
       - name: Setup node
@@ -223,6 +230,7 @@ jobs:
           fail_ci_if_error: true
   docker-build-test:
     name: Docker build
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -249,3 +257,59 @@ jobs:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
+
+  # validate the swagger docs
+  swaggerci:
+    if: github.repository == 'meshery/meshery'
+    name: swagger-docs
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check if handlers were modified
+      uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          modified:
+            - added|modified: "handlers/**"
+    - name: Setup go-swagger
+      if: steps.changes.outputs.modified == 'true'
+      uses: minchao/setup-go-swagger@v1
+      with:
+        version: v0.26.1
+    - name: swagger-spec
+      if: steps.changes.outputs.modified == 'true'
+      run: swagger generate spec -o ./helpers/swagger.yaml --scan-models
+    - name: swagger-docs
+      if: steps.changes.outputs.modified == 'true'
+      run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+
+  # validate graphQL schema
+  garphql_validate:
+    name: Validate GraphQL schema
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Check if schema was modified
+      uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          modified:
+            - added|modified: 'internal/graphql/schema/schema.graphql'
+    - name: Set up Ruby
+      if: steps.filter.outputs.modified == 'true'
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7.1
+        bundler-cache: true
+    - name: graphql-docs
+      if: steps.filter.outputs.modified == 'true'
+      run: |
+        cd docs
+        bundle install
+        bundle exec rake graphql:compile_docs

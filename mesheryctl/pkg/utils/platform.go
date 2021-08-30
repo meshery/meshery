@@ -15,9 +15,9 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-
 	"github.com/spf13/viper"
 
 	"gopkg.in/yaml.v2"
@@ -60,7 +60,7 @@ func ChangePlatform(currCtx string, ctx config.Context) error {
 }
 
 // ChangeConfigEndpoint changes the endpoint of the current context in meshconfig, based on the platform
-func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
+func ChangeConfigEndpoint(currCtx string, ctx *config.Context) error {
 	if ctx.Platform == "kubernetes" {
 		ViperK8s.SetConfigFile(DefaultConfigPath)
 		err := ViperK8s.ReadInConfig()
@@ -74,7 +74,7 @@ func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
 			return err
 		}
 
-		kubeCompose.Contexts[currCtx] = ctx
+		kubeCompose.Contexts[currCtx] = *ctx
 		ViperK8s.Set("contexts."+currCtx, ctx)
 
 		err = ViperK8s.WriteConfig()
@@ -94,39 +94,13 @@ func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
 			return err
 		}
 
-		dockerConfig.Contexts[currCtx] = ctx
+		dockerConfig.Contexts[currCtx] = *ctx
 		ViperDocker.Set("contexts."+currCtx, ctx)
 
 		err = ViperDocker.WriteConfig()
 		if err != nil {
 			return err
 		}
-	}
-
-	return nil
-}
-
-// ChangeContextVersion changes the version of the specified context to the specified version
-func ChangeContextVersion(contextName, version string) error {
-	viperConfig := viper.New()
-
-	viperConfig.SetConfigFile(DefaultConfigPath)
-	err := viperConfig.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	meshConfig := &config.MesheryCtlConfig{}
-	err = viperConfig.Unmarshal(&meshConfig)
-	if err != nil {
-		return err
-	}
-
-	viperConfig.Set("contexts."+contextName+".version", version)
-
-	err = viperConfig.WriteConfig()
-	if err != nil {
-		return err
 	}
 
 	return nil
@@ -200,7 +174,7 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
 			// download the manifest files to ~/.meshery/manifests folder
 			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
-			if err := DownloadFile(filepath, manifestFile); err != nil {
+			if err := meshkitutils.DownloadFile(filepath, manifestFile); err != nil {
 				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
 			}
 		}
@@ -211,19 +185,19 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 // DownloadOperatorManifest downloads the operator manifest files
 func DownloadOperatorManifest() error {
 	operatorFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)
-	err := DownloadFile(operatorFilepath, OperatorURL)
+	err := meshkitutils.DownloadFile(operatorFilepath, OperatorURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)))
 	}
 
 	brokerFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)
-	err = DownloadFile(brokerFilepath, BrokerURL)
+	err = meshkitutils.DownloadFile(brokerFilepath, BrokerURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", brokerFilepath, MesheryOperatorBroker)))
 	}
 
 	meshsyncFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)
-	err = DownloadFile(meshsyncFilepath, MeshsyncURL)
+	err = meshkitutils.DownloadFile(meshsyncFilepath, MeshsyncURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", meshsyncFilepath, MesheryOperatorMeshsync)))
 	}
@@ -231,8 +205,126 @@ func DownloadOperatorManifest() error {
 	return nil
 }
 
+// returns the Channel and Version given a context
+func GetChannelAndVersion(currCtx *(config.Context)) (string, string, error) {
+	var version, channel string
+	var err error
+
+	version = currCtx.GetVersion()
+	channel = currCtx.GetChannel()
+	if version == "latest" {
+		if channel == "edge" {
+			version = "master"
+		} else {
+			version, err = GetLatestStableReleaseTag()
+			if err != nil {
+				return "", "", err
+			}
+		}
+	}
+
+	return channel, version, nil
+}
+
+func GetDeploymentVersion(filePath string) (string, error) {
+	// setting up config type to yaml files
+	ViperCompose.SetConfigType("yaml")
+
+	// setting up config file
+	ViperCompose.SetConfigFile(filePath)
+	err := ViperCompose.ReadInConfig()
+	if err != nil {
+		return "", fmt.Errorf("unable to read config %s | %s", MesheryDeployment, err)
+	}
+
+	compose := K8sCompose{}
+	yamlFile, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return "", err
+	}
+
+	// unmarshal the file into structs
+	err = yaml.Unmarshal(yamlFile, &compose)
+	if err != nil {
+		return "", fmt.Errorf("unable to unmarshal config %s | %s", MesheryDeployment, err)
+	}
+
+	image := compose.Spec.Template.Spec.Containers[0].Image
+	spliter := strings.Split(image, ":")
+	version := strings.Split(spliter[1], "-")[1]
+
+	return version, nil
+}
+
+// CanUseCachedOperatorManifests returns an error if it is not possible to use cached operator manifests
+func CanUseCachedOperatorManifests(currCtx *(config.Context)) error {
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)); os.IsNotExist(err) {
+		return errors.New("operator manifest file does not exist")
+	}
+
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)); os.IsNotExist(err) {
+		return errors.New("broker manifest file does not exist")
+	}
+
+	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)); os.IsNotExist(err) {
+		return errors.New("meshsync manifest file does not exist")
+	}
+
+	return nil
+}
+
+// CanUseCachedManifests returns an error if it is not possible to use cached manifests
+func CanUseCachedManifests(currCtx *(config.Context)) error {
+	// checks if meshery folder are present
+	if _, err := os.Stat(MesheryFolder); os.IsNotExist(err) {
+		return errors.New("Manifests folder does not exist")
+	}
+
+	// check if meshery deployment file is present
+	deploymentsPath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryDeployment)
+	if _, err := os.Stat(deploymentsPath); os.IsNotExist(err) {
+		return errors.New("Deployments file does not exist")
+	}
+
+	// compare versions in currCtx and meshery-deployment.yaml
+	deploymentVersion, err := GetDeploymentVersion(deploymentsPath)
+	if err != nil {
+		return errors.Wrap(err, "could not get deployment file version")
+	}
+	var currVersion string
+	if currCtx.GetVersion() != "latest" {
+		currVersion = currCtx.GetVersion()
+		if currVersion != deploymentVersion {
+			return errors.New("deployment version mismatch")
+		}
+	}
+
+	switch currCtx.GetPlatform() {
+	case "kubernetes":
+		// check if adapter manifests are present
+		for _, adapter := range currCtx.GetAdapters() {
+			serviceFile := filepath.Join(MesheryFolder, ManifestsFolder, adapter+"-service.yaml")
+			if _, err := os.Stat(serviceFile); os.IsNotExist(err) {
+				return errors.New("service file does not exist")
+			}
+
+			adapterDeploymentFile := filepath.Join(MesheryFolder, ManifestsFolder, adapter+"-deployment.yaml")
+			if _, err := os.Stat(adapterDeploymentFile); os.IsNotExist(err) {
+				return errors.New("adapter deployment file does not exist")
+			}
+		}
+	}
+
+	return nil
+}
+
 // FetchManifests is a wrapper function that identifies the required manifest files as downloads them
-func FetchManifests(version string) ([]Manifest, error) {
+func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
+	_, version, err := GetChannelAndVersion(currCtx)
+	if err != nil {
+		return []Manifest{}, err
+	}
+
 	log.Debug("fetching required Kubernetes manifest files...")
 	// get correct minfestsURL based on version
 	manifestsURL, err := GetManifestTreeURL(version)
@@ -306,7 +398,7 @@ func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
 
 // DownloadDockerComposeFile fetches docker-compose.yaml based on passed context if it does not exists.
 // Use force to override download anyway
-func DownloadDockerComposeFile(ctx config.Context, force bool) error {
+func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) || force {
 		fileURL := ""
 
@@ -316,7 +408,7 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 			if ctx.Version == "latest" {
 				ctx.Version, err = GetLatestStableReleaseTag()
 				if err != nil {
-					return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
+					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
 			}
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ctx.Version + "/docker-compose.yaml"
@@ -324,7 +416,7 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
 
-		if err := DownloadFile(DockerComposeFile, fileURL); err != nil {
+		if err := meshkitutils.DownloadFile(DockerComposeFile, fileURL); err != nil {
 			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
 		}
 	}
@@ -366,8 +458,25 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		return errors.Wrap(err, "failed to read manifest files")
 	}
 
+	// Transform Manifests for custom configurations
+	MesheryDeploymentManifestByt, err := TransformYAML([]byte(MesheryDeploymentManifest), func(i interface{}) (interface{}, error) {
+		envVarI, ok := i.([]interface{})
+		if !ok {
+			return i, fmt.Errorf("unexpected data type")
+		}
+
+		return append(envVarI, map[string]interface{}{
+			"name":  "MESHERY_SERVER_CALLBACK_URL",
+			"value": viper.GetString("MESHERY_SERVER_CALLBACK_URL"),
+		}), nil
+	}, "spec", "template", "spec", "containers", "0", "env")
+	if err != nil {
+		log.Error(err)
+		return errors.Wrap(err, "failed to transform manifest")
+	}
+
 	// apply/update/delete the manifest files
-	if err = ApplyManifest([]byte(MesheryDeploymentManifest), client, update, delete); err != nil {
+	if err = ApplyManifest(MesheryDeploymentManifestByt, client, update, delete); err != nil {
 		return err
 	}
 	if err = ApplyManifest([]byte(mesheryServiceManifest), client, update, delete); err != nil {
@@ -457,7 +566,7 @@ func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool)
 }
 
 // ChangeManifestVersion changes the tag of the images in the manifest according to the pinned version
-func ChangeManifestVersion(fileName string, channel string, version string, filePath string) error {
+func ChangeManifestVersion(channel, version, filePath string) error {
 	// setting up config type to yaml files
 	ViperCompose.SetConfigType("yaml")
 
@@ -465,7 +574,7 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 	ViperCompose.SetConfigFile(filePath)
 	err := ViperCompose.ReadInConfig()
 	if err != nil {
-		return fmt.Errorf("unable to read config %s | %s", fileName, err)
+		return fmt.Errorf("unable to read config %s | %s", filePath, err)
 	}
 
 	compose := K8sCompose{}
@@ -477,7 +586,7 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 	// unmarshal the file into structs
 	err = yaml.Unmarshal(yamlFile, &compose)
 	if err != nil {
-		return fmt.Errorf("unable to unmarshal config %s | %s", fileName, err)
+		return fmt.Errorf("unable to unmarshal config %s | %s", filePath, err)
 	}
 
 	// for edge channel only the latest tag exist in Docker Hub
@@ -500,11 +609,11 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 	// Marshal the structs
 	newConfig, err := yaml.Marshal(compose)
 	if err != nil {
-		return fmt.Errorf("unable to marshal config %s | %s", fileName, err)
+		return fmt.Errorf("unable to marshal config %s | %s", filePath, err)
 	}
 	err = ioutil.WriteFile(filePath, newConfig, 0644)
 	if err != nil {
-		return fmt.Errorf("unable to update config %s | %s", fileName, err)
+		return fmt.Errorf("unable to update config %s | %s", filePath, err)
 	}
 
 	return nil
@@ -512,12 +621,12 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 
 // CreateManifestsFolder creates a new folder (.meshery/manifests)
 func CreateManifestsFolder() error {
-	log.Debug("deleting ~/.meshery/manifests folder...")
+	log.Debug("deleting " + ManifestsFolder + " folder...")
 	// delete manifests folder if it already exists
 	if err := os.RemoveAll(ManifestsFolder); err != nil {
 		return err
 	}
-	log.Debug("creating ~/.meshery/manifests folder...")
+	log.Debug("creating " + ManifestsFolder + "folder...")
 	// create a manifests folder under ~/.meshery to store the manifest files
 	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))
@@ -562,7 +671,7 @@ func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]stri
 		if index := StringContainedInSlice(sp, availablePodsName); index != -1 {
 			requiredPods = append(requiredPods, availablePodsName[index])
 		} else {
-			return nil, errors.New(fmt.Sprintf("Invalid pod \"%s\" specified. Run mesheryctl `system status` to view the available pods.", sp))
+			return nil, fmt.Errorf("invalid pod \"%s\" specified. Run mesheryctl `system status` to view the available pods", sp)
 		}
 	}
 	return requiredPods, nil
@@ -592,7 +701,7 @@ func Startdockerdaemon(subcommand string) error {
 	} else {
 		userResponse = AskForConfirmation("Start Docker now")
 	}
-	if userResponse != true {
+	if !userResponse {
 		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
 	}
 
@@ -650,7 +759,7 @@ func InstallprereqDocker() error {
 		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
 	}
 	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
-	if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
+	if err := meshkitutils.DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
 		return errors.Wrapf(err, "failed to download %s from %s", dockerComposeBinary, dockerComposeBinaryURL)
 	}
 	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {

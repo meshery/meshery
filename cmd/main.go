@@ -15,7 +15,7 @@ import (
 	"github.com/layer5io/meshery/internal/graphql"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshery/models/pattern"
+	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/router"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
@@ -75,10 +75,10 @@ func main() {
 	store.Initialize()
 
 	// Register local OAM traits and workloads
-	if err := pattern.RegisterMesheryOAMTraits(); err != nil {
+	if err := core.RegisterMesheryOAMTraits(); err != nil {
 		logrus.Error(err)
 	}
-	if err := pattern.RegisterMesheryOAMWorkloads(); err != nil {
+	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
 		logrus.Error(err)
 	}
 	logrus.Info("Registered Meshery local Capabilities")
@@ -218,7 +218,7 @@ func main() {
 		provs[cp.Name()] = cp
 	}
 
-	h := handlers.NewHandlerInstance(&models.HandlerConfig{
+	hc := &models.HandlerConfig{
 		Providers:              provs,
 		ProviderCookieName:     "meshery-provider",
 		ProviderCookieDuration: 30 * 24 * time.Hour,
@@ -229,28 +229,30 @@ func main() {
 		Queue: mainQueue,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
+		KubeClient:       &kubeclient,
 
 		GrafanaClient:         models.NewGrafanaClient(),
 		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+	}
 
-		GraphQLHandler: graphql.New(graphql.Options{
-			Logger:          log,
-			DBHandler:       &dbHandler,
-			KubeClient:      &kubeclient,
-			MeshSyncChannel: meshsyncCh,
-			BrokerConn:      brokerConn,
-		}),
-		GraphQLPlaygroundHandler: graphql.NewPlayground(graphql.Options{
-			URL: "/api/system/graphql/query",
-		}),
-	}, &kubeclient, meshsyncCh, log, brokerConn)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn)
+
+	g := graphql.New(graphql.Options{
+		Config:          hc,
+		Logger:          log,
+		MeshSyncChannel: meshsyncCh,
+		BrokerConn:      brokerConn,
+	})
+
+	gp := graphql.NewPlayground(graphql.Options{
+		URL: "/api/system/graphql/query",
+	})
 
 	port := viper.GetInt("PORT")
-	r := router.NewRouter(ctx, h, port)
-
+	r := router.NewRouter(ctx, h, port, g, gp)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 

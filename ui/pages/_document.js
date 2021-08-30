@@ -39,6 +39,8 @@ class MesheryDocument extends Document {
           <meta charSet="utf-8" />
           <link rel="icon" href="/static/favicon.png" />
 
+          
+
           <script async src={`https://www.googletagmanager.com/gtag/js?id=G-8Q51RLT8TZ`} />
 
           <script
@@ -46,6 +48,23 @@ class MesheryDocument extends Document {
               __html: `${"" + setupGA}; setupGA();`,
             }}
           />
+
+        {/** 
+          * For hiding the scrollbar without losing the scroll functionality
+          * add the class "hide-scrollbar" to hide scrollbar for that element
+          * Only applicable for Chrome, safari and newest version of Opera
+          */}
+        <style type="text/css">{"\
+            .hide-scrollbar::-webkit-scrollbar {\
+              width: 0 !important;\
+            }\
+          .reduce-scrollbar-width::-webkit-scrollbar {\
+              width: 0.3em !important;\
+            }\
+          "}
+        </style>
+
+        
         </Head>
         <body>
           <Main />

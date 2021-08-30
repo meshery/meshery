@@ -10,6 +10,7 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -53,6 +54,11 @@ var viewCmd = &cobra.Command{
 	`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// set default tokenpath for command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+		}
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -106,7 +112,7 @@ var viewCmd = &cobra.Command{
 				Duration:       profile.Duration,
 				Loadgenerators: profile.LoadGenerators,
 			}
-			data, err = json.MarshalIndent(&a, "", "  ")
+			data, err = json.MarshalIndent(&profile, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -192,7 +198,7 @@ func viewResults(args []string, mctlCfg *config.MesheryCtlConfig) error {
 			MesheryID:     result.MesheryID,
 			LoadGenerator: result.RunnerResults.LoadGenerator,
 		}
-		data, err = json.MarshalIndent(&a, "", "  ")
+		data, err = json.MarshalIndent(&result, "", "  ")
 		if err != nil {
 			return err
 		}
@@ -219,8 +225,4 @@ func viewResults(args []string, mctlCfg *config.MesheryCtlConfig) error {
 		log.Info(string(data))
 	}
 	return nil
-}
-
-func init() {
-	_ = viewCmd.MarkFlagRequired("token")
 }

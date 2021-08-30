@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
+import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import { withStyles } from '@material-ui/core/styles';
 import { Autocomplete } from '@material-ui/lab'
 import Grid from '@material-ui/core/Grid';
@@ -111,7 +112,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
     this.setState({ blockRunTest: true }); // to block the button
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    dataFetch('/api/perf/load-test-prefs', {
+    dataFetch('/api/user/prefs', {
       credentials: 'same-origin',
       method: 'POST',
       credentials: 'include',
@@ -155,7 +156,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     const self = this;
-    dataFetch('/api/perf/load-test-prefs', {
+    dataFetch('/api/user/prefs', {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
@@ -223,6 +224,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleChange('c')}
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} lg={4}>
@@ -238,6 +240,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleChange('qps')}
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} lg={4}>
@@ -283,7 +286,10 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   className={classes.button}
                   disabled={blockRunTest}
                 >
-                  {blockRunTest ? <CircularProgress size={30} /> : 'Submit Preferences'}
+                  <SaveOutlinedIcon
+                    style={{ marginRight: '3px' }}
+                  />
+                  {blockRunTest ? <CircularProgress size={30} /> : 'Save'}
                 </Button>
               </div>
           </div>

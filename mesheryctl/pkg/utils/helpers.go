@@ -3,8 +3,6 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	crand "crypto/rand"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -16,16 +14,20 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
+	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -115,7 +117,7 @@ var (
 var CfgFile string
 
 // ListOfAdapters returns the list of adapters available
-var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh"}
+var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
@@ -149,23 +151,6 @@ func BackupConfigFile(cfgFile string) {
 	log.Println(errors.New("outdated config file found. Please re-run the command"))
 }
 
-type cryptoSource struct{}
-
-func (s cryptoSource) Seed(seed int64) {}
-
-// Int63 to generate high security rand through crypto
-func (s cryptoSource) Int63() int64 {
-	return int64(s.Uint64() & ^uint64(1<<63))
-}
-
-func (s cryptoSource) Uint64() (v uint64) {
-	err := binary.Read(crand.Reader, binary.BigEndian, &v)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return v
-}
-
 const tokenName = "token"
 const providerName = "meshery-provider"
 
@@ -188,36 +173,6 @@ func SafeClose(co io.Closer) {
 	if cerr := co.Close(); cerr != nil {
 		log.Error(cerr)
 	}
-}
-
-// TODO: Use the same DownloadFile function from MeshKit instead of the function below
-// and change all it's occurrences
-
-// DownloadFile from url and save to configured file location
-func DownloadFile(filepath string, url string) error {
-	// Get the data
-	resp, err := http.Get(url)
-	if err != nil {
-		return errors.Wrapf(err, "failed to make GET request to %s", url)
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
-		return errors.Wrapf(err, "failed to create file %s", filepath)
-	}
-	defer func() {
-		_ = out.Close()
-	}()
-	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		return errors.Wrap(err, "failed to copy response body")
-	}
-
-	return nil
 }
 
 func prereq() ([]byte, []byte, error) {
@@ -248,35 +203,10 @@ func SetFileLocation() error {
 	return nil
 }
 
-// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer, based on the host operating system.
+// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer.
 func NavigateToBrowser(endpoint string) error {
-	//check for os of host machine
-	if runtime.GOOS == "windows" {
-		// Meshery running on Windows host
-		err := exec.Command("rundll32", "url.dll,FileProtocolHandler", endpoint).Start()
-		if err != nil {
-			return errors.Wrap(err, SystemError("failed to exec command"))
-		}
-	} else if runtime.GOOS == "linux" {
-		// Meshery running on Linux host
-		_, err := exec.LookPath("xdg-open")
-		if err != nil {
-			return errors.Wrap(err, SystemError("failed to exec command"))
-			//find out what to do here!
-		}
-		err = exec.Command("xdg-open", endpoint).Start()
-		if err != nil {
-			return errors.Wrap(err, SystemError("failed to exec command"))
-		}
-	} else {
-		// Assume Meshery running on MacOS host
-		err := exec.Command("open", endpoint).Start()
-		if err != nil {
-			return errors.Wrap(err, SystemError("failed to exec command"))
-		}
-	}
-
-	return nil
+	err := browser.OpenURL(endpoint)
+	return err
 }
 
 // UploadFileWithParams returns a request configured to upload files with other values
@@ -513,7 +443,7 @@ func ParseURLGithub(URL string) (string, string, error) {
 	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
-		return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+		return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
 	}
 	host := parsedURL.Host
 	path := parsedURL.Path
@@ -521,13 +451,13 @@ func ParseURLGithub(URL string) (string, string, error) {
 	paths := strings.Split(path, "/")
 	if host == "github.com" {
 		if len(paths) < 5 {
-			return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+			return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
 		}
 		resURL := "https://" + host + strings.Join(paths[:4], "/")
 		return resURL, strings.Join(paths[4:], "/"), nil
 	} else if host == "raw.githubusercontent.com" {
 		if len(paths) < 5 {
-			return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+			return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
 		}
 		resURL := "https://" + "raw.githubusercontent.com" + path
 		return resURL, "", nil
@@ -563,4 +493,270 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s.Suffix = " " + suffix
 	s.FinalMSG = finalMsg + "\n"
 	return s
+}
+
+func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models.Preference, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
+	method := "GET"
+	client := &http.Client{}
+	req, err := http.NewRequest(method, path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	err = AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	prefs := &models.Preference{}
+	err = utils.Unmarshal(string(body), prefs)
+	if err != nil {
+		return nil, err
+	}
+
+	return prefs, nil
+}
+
+// ContainsStringPrefix takes a string slice and a string and returns true if it is present
+func ContainsStringPrefix(arr []string, str string) bool {
+	for _, el := range arr {
+		if strings.HasPrefix(el, str) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// TransformYAML takes in:
+// 	yamlByt - YAML Byte slice that needs to be modified
+//	transform - function that will be executed on that value, the returned value will replace the current value
+// 	keys - takes in a series of keys which are supposed to be nested, numbers can also be passed to access an array
+func TransformYAML(yamlByt []byte, transform func(interface{}) (interface{}, error), keys ...string) ([]byte, error) {
+	var data map[string]interface{}
+
+	err := yaml.Unmarshal(yamlByt, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	data = RecursiveCastMapStringInterfaceToMapStringInterface(data)
+
+	val, ok := MapGet(data, keys...)
+	if !ok {
+		return nil, fmt.Errorf("invalid path")
+	}
+
+	transformed, err := transform(val)
+	if err != nil {
+		return nil, err
+	}
+
+	MapSet(data, transformed, keys...)
+
+	return yaml.Marshal(data)
+}
+
+// MapGet takes in the map keys - each key goes one level deeper in the map
+func MapGet(mp map[string]interface{}, key ...string) (interface{}, bool) {
+	if mp == nil {
+		return nil, false
+	}
+
+	if len(key) == 0 {
+		return mp, true
+	}
+
+	if len(key) == 1 {
+		val, ok := mp[key[0]]
+		return val, ok
+	}
+
+	val, ok := mp[key[0]]
+	if !ok {
+		return mp, false
+	}
+
+	switch v := val.(type) {
+	case map[string]interface{}:
+		return MapGet(v, key[1:]...)
+	case []interface{}:
+		// Check if we can find key in the nested structure
+		if len(key) < 2 {
+			return mp, false
+		}
+
+		// Check if the key[1] is of type uint, if it is then
+		keyNum, err := strconv.Atoi(key[1])
+		if err != nil {
+			return mp, false
+		}
+
+		if keyNum >= len(v) {
+			return mp, false
+		}
+
+		valMapM, ok := v[keyNum].(map[string]interface{})
+		if !ok {
+			return mp, false
+		}
+
+		return MapGet(valMapM, key[2:]...)
+	case []map[string]interface{}:
+		// Check if we can find key in the nested structure
+		if len(key) < 2 {
+			return mp, false
+		}
+
+		// Check if the key[1] is of type uint, if it is then
+		keyNum, err := strconv.Atoi(key[1])
+		if err != nil {
+			return mp, false
+		}
+
+		if keyNum >= len(v) {
+			return mp, false
+		}
+
+		return MapGet(v[keyNum], key[2:]...)
+	}
+
+	return mp, true
+}
+
+// MapSet takes in the map that needs to be manipulated, the value that needs to
+// be assgined to be assigned and the key - each key goes one level deeper in the map
+func MapSet(mp map[string]interface{}, value interface{}, key ...string) {
+	var _mapSet func(map[string]interface{}, interface{}, ...string) map[string]interface{}
+
+	_mapSet = func(mp map[string]interface{}, value interface{}, key ...string) map[string]interface{} {
+		if mp == nil {
+			return nil
+		}
+
+		if len(key) == 0 {
+			return mp
+		}
+
+		if len(key) == 1 {
+			mp[key[0]] = value
+			return mp
+		}
+
+		val, ok := mp[key[0]]
+		if !ok {
+			return mp
+		}
+
+		switch v := val.(type) {
+		case map[string]interface{}:
+			mp[key[0]] = _mapSet(v, value, key[1:]...)
+			return mp
+		case []interface{}:
+			// Check if we can find key in the nested structure
+			if len(key) < 2 {
+				return mp
+			}
+
+			// Check if the key[1] is of type uint, if it is then
+			keyNum, err := strconv.Atoi(key[1])
+			if err != nil {
+				return mp
+			}
+
+			if keyNum >= len(v) {
+				return mp
+			}
+
+			valMapM, ok := v[keyNum].(map[string]interface{})
+			if !ok {
+				return mp
+			}
+
+			v[keyNum] = _mapSet(valMapM, value, key[2:]...)
+
+			mp[key[0]] = v
+
+			return mp
+		case []map[string]interface{}:
+			// Check if we can find key in the nested structure
+			if len(key) < 2 {
+				return mp
+			}
+
+			// Check if the key[1] is of type uint, if it is then
+			keyNum, err := strconv.Atoi(key[1])
+			if err != nil {
+				return mp
+			}
+
+			if keyNum >= len(v) {
+				return mp
+			}
+
+			v[keyNum] = _mapSet(v[keyNum], value, key[2:]...)
+
+			mp[key[0]] = v
+
+			return mp
+		}
+
+		return mp
+	}
+
+	_mapSet(mp, value, key...)
+}
+
+// RecursiveCastMapStringInterfaceToMapStringInterface will convert a
+// map[string]interface{} recursively => map[string]interface{}
+func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface{}) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(in)
+	out, ok := res.(map[string]interface{})
+	if !ok {
+		fmt.Println("failed to cast")
+	}
+
+	return out
+}
+
+// ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
+//
+// It will also convert []interface{} => []string
+func ConvertMapInterfaceMapString(v interface{}) interface{} {
+	switch x := v.(type) {
+	case map[interface{}]interface{}:
+		m := map[string]interface{}{}
+		for k, v2 := range x {
+			switch k2 := k.(type) {
+			case string:
+				m[k2] = ConvertMapInterfaceMapString(v2)
+			default:
+				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2)
+			}
+		}
+		v = m
+
+	case []interface{}:
+		for i, v2 := range x {
+			x[i] = ConvertMapInterfaceMapString(v2)
+		}
+
+	case map[string]interface{}:
+		for k, v2 := range x {
+			x[k] = ConvertMapInterfaceMapString(v2)
+		}
+	}
+
+	return v
 }

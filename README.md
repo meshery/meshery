@@ -1,10 +1,10 @@
-<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><img align="center" style="margin-bottom:20px;" src="https://raw.githubusercontent.com/layer5io/meshery/master/.github/assets/images/meshery/meshery-logo-tag-light-text-side.png"  width="70%" /></a><br /><br /></p>
+<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><img align="center" style="margin-bottom:20px;" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-tag-light-text-side.png"  width="70%" /></a><br /><br /></p>
 
 <p align="center">
 <a href="https://hub.docker.com/r/layer5/meshery" alt="Docker pulls">
 <img src="https://img.shields.io/docker/pulls/layer5/meshery.svg" /></a>
-<a href="https://goreportcard.com/report/github.com/layer5io/meshery" alt="Go Report Card">
-<img src="https://goreportcard.com/badge/github.com/layer5io/meshery" /></a>
+<a href="https://goreportcard.com/report/github.com/meshery/meshery" alt="Go Report Card">
+<img src="https://goreportcard.com/badge/github.com/meshery/meshery" /></a>
 <a href="https://github.com/layer5io/meshery/actions" alt="Build Status">
 <img src="https://github.com/layer5io/meshery/workflows/Meshery/badge.svg" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
@@ -125,7 +125,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
           </td>
         </tr>
            <tr>
-          <td><a href="https://github.com/layer5io/meshery-nginx-sm">
+          <td><a href="https://github.com/meshery/meshery-nginx-sm">
             <img src='https://docs.meshery.io/assets/img/service-meshes/nginx-sm.svg' alt='NGINX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for NGINX Service Mesh</a>
           </td>
         </tr>
@@ -134,12 +134,12 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
           <td rowspan="3" class="alpha-adapters">alpha</td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-tanzu-sm">
+          <td><a href="https://github.com/meshery/meshery-tanzu-sm">
             <img src='https://docs.meshery.io/assets/img/service-meshes/tanzu.svg' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Tanzu SM</a>
           </td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-app-mesh">
+          <td><a href="https://github.com/meshery/meshery-app-mesh">
             <img src='https://docs.meshery.io/assets/img/service-meshes/app-mesh.svg' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
           </td>
         </tr>
@@ -160,7 +160,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 ## <a name="functionality">Functionality</a>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="https://docs.meshery.io/assets/img/readme/meshery_multi_mesh.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/assets/img/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="https://docs.meshery.io/assets/img/readme/meshery_multi_mesh.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
 <h3>Service Mesh Lifecycle Management</h3>
 Meshery manages the provisioning, configuration and operation your service mesh. While supporting different types of service meshes, Meshery also offers a simple way to explore each service mesh and compare them using bundled sample applications.
 
@@ -186,7 +186,7 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through the standardization of APIs.
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/.github/assets/images/smp/service mesh performance example.gif"><img alt="Layer5 Service Mesh Performance Management" src="https://raw.githubusercontent.com/layer5io/meshery/master/.github/assets/images/smp/service mesh performance example.gif" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service mesh performance example.gif"><img alt="Layer5 Service Mesh Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service mesh performance example.gif" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
 <!-- <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="https://docs.meshery.io/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
 <h4>Standardized Service Performance Management</h4>
 
@@ -228,7 +228,7 @@ See <a href="https://github.com/layer5io/image-hub">Image Hub</a>.
 
 You may deploy Meshery internal to your cluster or external to your cluster.
 
-<p align="center"><a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/Meshery-client-architecture.svg"><img src="https://docs.meshery.io/assets/img/readme/Meshery-client-architecture.svg" width="90%" align="center" /></a></p>
+<p align="center"><a href="https://raw.githubusercontent.com/meshery/meshery/master/assets/img/readme/Meshery-client-architecture.svg"><img src="https://docs.meshery.io/assets/img/readme/Meshery-client-architecture.svg" width="90%" align="center" /></a></p>
 Learn more about <a href="https://docs.meshery.io/architecture">Meshery's architecture</a>.
 
 <div>&nbsp;</div>
@@ -239,7 +239,7 @@ Learn more about <a href="https://docs.meshery.io/architecture">Meshery's archit
 Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Layer5 Community Welcome Guide</a> for a tour of resources available to you and see the <a href="https://docs.google.com/document/d/1brtiJhdzal_O6NBZU_JQXiBff2InNtmgL_G1JgAiZtk/edit?usp=sharing">Layer5 Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="http://slack.layer5.io">Slack</a> to engage!
 
 <p style="clear:both;">
-<a href ="https://layer5.io/community"><img alt="MeshMates" src="https://docs.meshery.io/assets/img/readme/Layer5-MeshMentors.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="left" /></a>
+<a href ="https://layer5.io/community"><img alt="MeshMates" src="https://docs.meshery.io/assets/img/readme/layer5-community-sign.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="left" /></a>
 <h3>Find your MeshMate</h3>
 
 <p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network.
@@ -293,7 +293,7 @@ See all [Contributor Guides](https://docs.meshery.io/project/contributing) in Me
 
 <p align="center">
   <i>If you’re using Meshery or if you like the project, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
-<a href="../../stargazers"><img align="right" src="https://starchart.cc/layer5io/meshery.svg" /></a></p>
+<a href="../../stargazers"><img align="right" src="https://starchart.cc/meshery/meshery.svg" /></a></p>
 
 ### License
 

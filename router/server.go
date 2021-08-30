@@ -20,13 +20,13 @@ type Router struct {
 }
 
 // NewRouter returns a new ServeMux with app routes.
-func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router {
+func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler) *Router {
 	gMux := mux.NewRouter()
 
-	gMux.Handle("/api/system/graphql/query", h.GetGraphQLHandler()).Methods("GET", "POST")
-	gMux.Handle("/api/system/graphql/playground", h.GetGraphQLPlaygroundHandler()).Methods("GET", "POST")
+	gMux.Handle("/api/system/graphql/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(g))))).Methods("GET", "POST")
+	gMux.Handle("/api/system/graphql/playground", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(gp))))).Methods("GET", "POST")
 
-	gMux.HandleFunc("/api/server/version", h.ServerVersionHandler).
+	gMux.HandleFunc("/api/system/version", h.ServerVersionHandler).
 		Methods("GET")
 
 	gMux.HandleFunc("/api/provider", h.ProviderHandler)
@@ -44,32 +44,28 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	// 	Handler(http.StripPrefix("/provider/", http.FileServer(http.Dir("../provider-ui/out/")))).
 	// 	Methods("GET")
 
-	gMux.Handle("/api/config/sync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SessionSyncHandler)))).
+	gMux.Handle("/api/system/sync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SessionSyncHandler)))).
 		Methods("GET")
 
 	gMux.Handle("/api/user", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserHandler)))).
 		Methods("GET")
-	gMux.Handle("/api/user/prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AnonymousStatsHandler)))).
+	gMux.Handle("/api/user/prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserPrefsHandler)))).
 		Methods("GET", "POST")
 
 	gMux.Handle("/api/user/prefs/perf", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserTestPreferenceHandler)))).
 		Methods("GET", "POST", "DELETE")
 
-	gMux.Handle("/api/k8sconfig", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.K8SConfigHandler)))).
+	gMux.Handle("/api/system/kubernetes", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.K8SConfigHandler)))).
 		Methods("POST", "DELETE")
-	gMux.Handle("/api/k8sconfig/contexts", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetContextsFromK8SConfig)))).
+	gMux.Handle("/api/system/kubernetes/contexts", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetContextsFromK8SConfig)))).
 		Methods("POST")
-	gMux.Handle("/api/k8sconfig/ping", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesPingHandler))))
+	gMux.Handle("/api/system/kubernetes/ping", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesPingHandler))))
 
-	gMux.Handle("/api/perf/load-test", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestHandler)))).
+	gMux.Handle("/api/perf/profile", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestHandler)))).
 		Methods("GET", "POST")
-	gMux.Handle("/api/perf/load-test-smps", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestUsingSMPHandler)))).
-		Methods("GET", "POST")
-	gMux.Handle("/api/perf/load-test-prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestPrefencesHandler)))).
-		Methods("GET", "POST")
-	gMux.Handle("/api/perf/results", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchAllResultsHandler)))).
+	gMux.Handle("/api/perf/profile/result", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchAllResultsHandler)))).
 		Methods("GET")
-	gMux.Handle("/api/perf/result", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetResultHandler)))).
+	gMux.Handle("/api/perf/profile/result/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetResultHandler)))).
 		Methods("GET")
 	gMux.Handle("/api/mesh", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetSMPServiceMeshes)))).
 		Methods("GET")
@@ -77,20 +73,10 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.Handle("/api/smi/results", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchSmiResultsHandler)))).
 		Methods("GET")
 
-	gMux.Handle("/api/mesh/manage", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshAdapterConfigHandler))))
-	gMux.Handle("/api/mesh/ops", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshOpsHandler)))).
+	gMux.Handle("/api/system/adapter/manage", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshAdapterConfigHandler))))
+	gMux.Handle("/api/system/adapter/operation", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshOpsHandler)))).
 		Methods("POST")
-	gMux.Handle("/api/mesh/adapters", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		providerI := req.Context().Value(models.ProviderCtxKey)
-		provider, ok := providerI.(models.Provider)
-		if !ok {
-			http.Redirect(w, req, "/provider", http.StatusFound)
-			return
-		}
-		h.GetAllAdaptersHandler(w, req, provider)
-	})))
-	gMux.Handle("/api/mesh/adapter/ping", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AdapterPingHandler)))).
-		Methods("GET")
+	gMux.Handle("/api/system/adapters", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AdaptersHandler))))
 	gMux.Handle("/api/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler)))).
 		Methods("GET")
 
@@ -120,36 +106,37 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("GET")
 	gMux.Handle("/api/telemetry/metrics/boards", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveSelectedPrometheusBoardsHandler)))).
 		Methods("POST")
-	gMux.Handle("/api/prometheus/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPrometheusHandler))))
+	gMux.Handle("/api/system/meshsync/prometheus", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPrometheusHandler))))
 
-	gMux.Handle("/api/promGrafana/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPromGrafanaHandler))))
+	gMux.Handle("/api/system/meshsync/grafana", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPromGrafanaHandler))))
 
-	gMux.Handle("/api/experimental/pattern/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileHandler)))).
+	gMux.Handle("/api/pattern/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileHandler)))).
 		Methods("POST", "DELETE")
-	gMux.Handle("/api/experimental/pattern", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileRequestHandler)))).
+	gMux.Handle("/api/pattern", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileRequestHandler)))).
 		Methods("POST", "GET")
-	gMux.Handle("/api/experimental/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryPatternHandler)))).
+	gMux.Handle("/api/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryPatternHandler)))).
 		Methods("GET")
-	gMux.Handle("/api/experimental/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler)))).
+	gMux.Handle("/api/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler)))).
 		Methods("DELETE")
+	gMux.HandleFunc("/api/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
 	gMux.HandleFunc("/api/experimental/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
 
-	gMux.Handle("/api/experimental/filter", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FilterFileRequestHandler)))).
+	gMux.Handle("/api/filter", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FilterFileRequestHandler)))).
 		Methods("POST", "GET")
-	gMux.Handle("/api/experimental/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterHandler)))).
+	gMux.Handle("/api/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterHandler)))).
 		Methods("GET")
-	gMux.Handle("/api/experimental/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryFilterHandler)))).
+	gMux.Handle("/api/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryFilterHandler)))).
 		Methods("DELETE")
-	gMux.Handle("/api/experimental/filter/file/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterFileHandler)))).
+	gMux.Handle("/api/filter/file/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterFileHandler)))).
 		Methods("GET")
 
-	gMux.Handle("/api/experimental/application/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileHandler)))).
+	gMux.Handle("/api/application/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileHandler)))).
 		Methods("POST", "DELETE")
-	gMux.Handle("/api/experimental/application", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileRequestHandler)))).
+	gMux.Handle("/api/application", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileRequestHandler)))).
 		Methods("POST", "GET")
-	gMux.Handle("/api/experimental/application/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationHandler)))).
+	gMux.Handle("/api/application/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationHandler)))).
 		Methods("GET")
-	gMux.Handle("/api/experimental/application/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryApplicationHandler)))).
+	gMux.Handle("/api/application/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryApplicationHandler)))).
 		Methods("DELETE")
 
 	gMux.Handle("/api/user/performance/profiles", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetPerformanceProfilesHandler)))).

@@ -19,25 +19,69 @@ type AddonStatusInput struct {
 	TargetStatus Status    `json:"targetStatus"`
 }
 
+type Container struct {
+	ControlPlaneMemberName string           `json:"controlPlaneMemberName"`
+	ContainerName          string           `json:"containerName"`
+	Image                  string           `json:"image"`
+	Status                 *ContainerStatus `json:"status"`
+	Ports                  []*ContainerPort `json:"ports"`
+	Resources              interface{}      `json:"resources"`
+}
+
+type ContainerPort struct {
+	Name          *string `json:"name"`
+	ContainerPort int     `json:"containerPort"`
+	Protocol      string  `json:"protocol"`
+}
+
+type ContainerStatus struct {
+	ContainerStatusName string      `json:"containerStatusName"`
+	Image               string      `json:"image"`
+	State               interface{} `json:"state"`
+	LastState           interface{} `json:"lastState"`
+	Ready               bool        `json:"ready"`
+	RestartCount        interface{} `json:"restartCount"`
+	Started             bool        `json:"started"`
+	ImageID             interface{} `json:"imageID"`
+	ContainerID         interface{} `json:"containerID"`
+}
+
 type ControlPlane struct {
 	Name    string                `json:"name"`
 	Members []*ControlPlaneMember `json:"members"`
 }
 
-type ControlPlaneFilter struct {
-	Type *MeshType `json:"type"`
+type ControlPlaneMember struct {
+	Name       string       `json:"name"`
+	Component  string       `json:"component"`
+	Version    string       `json:"version"`
+	Namespace  string       `json:"namespace"`
+	DataPlanes []*Container `json:"data_planes"`
 }
 
-type ControlPlaneMember struct {
-	Name      string `json:"name"`
-	Component string `json:"component"`
-	Version   string `json:"version"`
-	Namespace string `json:"namespace"`
+type DataPlane struct {
+	Name    string       `json:"name"`
+	Proxies []*Container `json:"proxies"`
 }
 
 type Error struct {
 	Code        string `json:"code"`
 	Description string `json:"description"`
+}
+
+type MesheryResult struct {
+	MesheryID          *string                `json:"meshery_id"`
+	Name               *string                `json:"name"`
+	Mesh               *string                `json:"mesh"`
+	PerformanceProfile *string                `json:"performance_profile"`
+	TestID             *string                `json:"test_id"`
+	RunnerResults      map[string]interface{} `json:"runner_results"`
+	ServerMetrics      *string                `json:"server_metrics"`
+	ServerBoardConfig  *string                `json:"server_board_config"`
+	TestStartTime      *string                `json:"test_start_time"`
+	UserID             *string                `json:"user_id"`
+	UpdatedAt          *string                `json:"updated_at"`
+	CreatedAt          *string                `json:"created_at"`
 }
 
 type NameSpace struct {
@@ -60,6 +104,31 @@ type OperatorStatus struct {
 
 type OperatorStatusInput struct {
 	TargetStatus Status `json:"targetStatus"`
+}
+
+type PageFilter struct {
+	Page     string  `json:"page"`
+	PageSize string  `json:"pageSize"`
+	Order    *string `json:"order"`
+	Search   *string `json:"search"`
+	From     *string `json:"from"`
+	To       *string `json:"to"`
+}
+
+type PerfPageResult struct {
+	Page       int              `json:"page"`
+	PageSize   int              `json:"page_size"`
+	TotalCount int              `json:"total_count"`
+	Results    []*MesheryResult `json:"results"`
+}
+
+type ReSyncActions struct {
+	ClearDb string `json:"clearDB"`
+	ReSync  string `json:"ReSync"`
+}
+
+type ServiceMeshFilter struct {
+	Type *MeshType `json:"type"`
 }
 
 type MeshType string

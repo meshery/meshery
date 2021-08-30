@@ -6,8 +6,11 @@ import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import Grow from '@material-ui/core/Grow';
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import NoSsr from "@material-ui/core/NoSsr";
+import Avatar from "@material-ui/core/Avatar";
 import RemoveIcon from "@material-ui/icons/Remove";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
@@ -15,397 +18,372 @@ import MailIcon from "@material-ui/icons/Mail";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import NoSsr from "@material-ui/core/NoSsr";
-import Avatar from "@material-ui/core/Avatar";
 import { withRouter } from "next/router";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import HelpIcon from '@material-ui/icons/Help';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
+import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
+import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
+import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
 
-import {
-  faTasks,
-  faTerminal,
-  faTachometerAlt,
-  faChevronCircleLeft,
-  faPollH,
+import { faChevronCircleLeft,
   faExternalLinkAlt,
-} from "@fortawesome/free-solid-svg-icons";
+  faDigitalTachograph, } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
 import { updatepagetitle } from "../lib/store";
-import { Tooltip } from "@material-ui/core";
+import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
+import { Collapse } from "@material-ui/core";
 
 const styles = (theme) => ({
-  categoryHeader: {
-    paddingTop: 16,
-    paddingBottom: 16,
+  categoryHeader : { paddingTop : 16,
+    paddingBottom : 16, },
+  categoryHeaderPrimary : { color : theme.palette.common.white, },
+  item : {
+    paddingTop : 4,
+    paddingBottom : 4,
+    color : "rgba(255, 255, 255, 0.7)",
+    fill : "#fff",
+    '&:hover' : { '& $expandMoreIcon' : { opacity : 1,
+      transition : "opacity 200ms ease-in", } }
   },
-  categoryHeaderPrimary: {
-    color: theme.palette.common.white,
+  itemCategory : {
+    backgroundColor : "#263238",
+    boxShadow : "0 -1px 0 #404854 inset",
+    paddingTop : 16,
+    paddingBottom : 16,
   },
-  item: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    color: "rgba(255, 255, 255, 0.7)",
+  firebase : { top : 0,
+    position : "sticky",
+    zIndex : 5 },
+  link : {
+    display : "inline-flex",
+    width : "100%",
+    height : "30px",
+    alignItems : "self-end"
   },
-  itemCategory: {
-    backgroundColor: "#263238",
-    boxShadow: "0 -1px 0 #404854 inset",
-    paddingTop: 16,
-    paddingBottom: 16,
+  itemActionable : { "&:hover" : { backgroundColor : "rgba(255, 255, 255, 0.08)", }, },
+  itemActiveItem : { color : "#4fc3f7",
+    fill : "#4fc3f7" },
+  itemPrimary : { color : "inherit",
+    fontSize : theme.typography.fontSize,
+    "&$textDense" : { fontSize : theme.typography.fontSize, }, },
+  textDense : {},
+  divider : { marginTop : theme.spacing(1),
+    marginBottom : theme.spacing(1), },
+  mainLogo : {
+    marginRight : theme.spacing(1),
+    marginTop : theme.spacing(1),
+    marginLeft : theme.spacing(-1),
+    width : 40,
+    height : 40,
+    borderRadius : "unset",
   },
-  firebase: {
-    top: 0,
-    position: "sticky",
-    zIndex: 5
+  mainLogoText : {
+    marginLeft : theme.spacing(0.5),
+    marginTop : theme.spacing(1),
+    width : 170,
+    height : "100%",
+    borderRadius : "unset",
   },
-  link: {
-    display: "inline-flex",
-    width: "100%",
-    height: "30px",
+  mainLogoCollapsed : {
+    marginRight : theme.spacing(1),
+    marginTop : theme.spacing(1),
+    marginLeft : theme.spacing(-0.5),
+    width : 40,
+    height : 40,
+    borderRadius : "unset",
   },
-  itemActionable: {
-    "&:hover": {
-      backgroundColor: "rgba(255, 255, 255, 0.08)",
-    },
+  mainLogoTextCollapsed : {
+    marginLeft : theme.spacing(1),
+    marginTop : theme.spacing(1),
+    width : 170,
+    height : "100%",
+    borderRadius : "unset",
   },
-  itemActiveItem: {
-    color: "#4fc3f7",
+  settingsIcon : { marginLeft : theme.spacing(2), },
+  cursorPointer : { cursor : "pointer", },
+  listIcon : {
+    minWidth : theme.spacing(3.5),
+    paddingTop : theme.spacing(0.5),
+    textAlign : "center",
+    display : "inline-table",
+    paddingRight : theme.spacing(0.5),
+    marginLeft : theme.spacing(0.3),
   },
-  itemPrimary: {
-    color: "inherit",
-    fontSize: theme.typography.fontSize,
-    "&$textDense": {
-      fontSize: theme.typography.fontSize,
-    },
+  listIcon1 : {
+    minWidth : theme.spacing(3.5),
+    paddingTop : theme.spacing(0.5),
+    textAlign : "center",
+    display : "inline-table",
+    paddingRight : theme.spacing(0.5),
+    opacity : 0.5,
   },
-  textDense: {},
-  divider: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+  listIconSlack : {
+    minWidth : theme.spacing(3.5),
+    paddingTop : theme.spacing(0.5),
+    textAlign : "center",
+    display : "inline-table",
+    marginLeft : theme.spacing(-0.1),
+    paddingRight : theme.spacing(0.5),
+    opacity : 0.5,
   },
-  mainLogo: {
-    marginRight: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(-1),
-    width: 40,
-    height: 40,
-    borderRadius: "unset",
+  nested1 : { paddingLeft : theme.spacing(3), },
+  nested2 : { paddingLeft : theme.spacing(5), },
+  icon : { width : theme.spacing(2.5), },
+  istioIcon : { width : theme.spacing(1.8), },
+  isHidden : { opacity : 0,
+    transition : "opacity 200ms ease-in-out", },
+  isDisplayed : { opacity : 1,
+    transition : "opacity 200ms ease-in-out", },
+  sidebarCollapsed : { transition : theme.transitions.create("width", { easing : theme.transitions.easing.sharp,
+    duration : theme.transitions.duration.leavingScreen, }),
+  overflowX : "hidden",
+  width : theme.spacing(8) + 4, },
+  sidebarExpanded : { width : "256px",
+    overflowX : "hidden",
+    transition : theme.transitions.create("width", { easing : theme.transitions.easing.sharp,
+      duration : theme.transitions.duration.enteringScreen, }), },
+  fixedSidebarFooter : { display : "flex",
+    flexDirection : "column",
+    marginTop : "auto",
+    marginBottom : "0.5rem",
   },
-  mainLogoText: {
-    marginLeft: theme.spacing(0.5),
-    marginTop: theme.spacing(1),
-    width: 170,
-    height: "100%",
-    borderRadius: "unset",
+  collapseButtonWrapper : {
+    width : "auto",
+    marginLeft : "auto",
+    opacity : "0.7",
+    transition : "opacity 200ms linear",
+    "&:hover" : { opacity : 1,
+      background : "transparent", },
+    "&:focus" : { opacity : 1,
+      background : "transparent", },
   },
-  mainLogoCollapsed: {
-    marginRight: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(-0.5),
-    width: 40,
-    height: 40,
-    borderRadius: "unset",
+  collapseButtonWrapperRotated : {
+    width : "auto",
+    marginLeft : "auto",
+    marginRight : theme.spacing(1),
+    opacity : "0.7",
+    transition : "opacity 200ms linear",
+    transform : "rotate(180deg)",
+    justifyContent : "center",
+    alignSelf : "baseline",
+    marginLeft : "3px",
+    "&:hover" : { opacity : 1,
+      background : "transparent", },
+    "&:focus" : { opacity : 1,
+      background : "transparent", },
   },
-  mainLogoTextCollapsed: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    width: 170,
-    height: "100%",
-    borderRadius: "unset",
+  noPadding : { paddingLeft : "16px",
+    paddingRight : "16px", },
+  drawerIcons : { height : "1.21rem",
+    width : "1.21rem",
+    fontSize : "1.21rem" },
+  avatarGroup : { '& .MuiAvatarGroup-avatar' : { border : 'none', } },
+  marginLeft : { marginLeft : 8,
+    "& .MuiListItem-gutters" : { paddingLeft : 8,
+      paddingRight : 8 } },
+  rightMargin : { marginRight : 8 },
+  btnGrpMarginRight : { marginRight : 4,
+    alignItems : 'center' },
+  helpIcon : {
+    color : '#fff',
+    opacity : "0.7",
+    transition : "opacity 200ms linear",
+    "&:hover" : { opacity : 1,
+      background : "transparent", },
+    "&:focus" : { opacity : 1,
+      background : "transparent", },
   },
-  settingsIcon: {
-    marginLeft: theme.spacing(2),
+  extraPadding : { paddingTop : 4,
+    paddingBottom : 4 },
+  restrictPointer : { pointerEvents : 'none' },
+  expandMoreIcon : {
+    opacity : 0,
+    cursor : 'pointer',
+    transform : 'translateX(3px)',
+    '&:hover' : { color : "#4fc3f7", }
   },
-  cursorPointer: {
-    cursor: "pointer",
-  },
-  listIcon: {
-    minWidth: theme.spacing(3.5),
-    paddingTop: theme.spacing(0.5),
-    textAlign: "center",
-    display: "inline-table",
-    paddingRight: theme.spacing(0.5),
-    marginLeft: theme.spacing(0.3),
-  },
-  listIcon1: {
-    minWidth: theme.spacing(3.5),
-    paddingTop: theme.spacing(0.5),
-    textAlign: "center",
-    display: "inline-table",
-    paddingRight: theme.spacing(0.5),
-    opacity: 0.5,
-  },
-  listIconSlack: {
-    minWidth: theme.spacing(3.5),
-    paddingTop: theme.spacing(0.5),
-    textAlign: "center",
-    display: "inline-table",
-    marginLeft: theme.spacing(-0.1),
-    paddingRight: theme.spacing(0.5),
-    opacity: 0.5,
-  },
-  nested1: {
-    paddingLeft: theme.spacing(3),
-  },
-  nested2: {
-    paddingLeft: theme.spacing(5),
-  },
-  icon: {
-    width: theme.spacing(2.5),
-  },
-  istioIcon: {
-    width: theme.spacing(1.8),
-  },
-  isHidden: {
-    opacity: 0,
-    transition: "opacity 200ms ease-in-out",
-  },
-  isDisplayed: {
-    opacity: 1,
-    transition: "opacity 200ms ease-in-out",
-  },
-  sidebarCollapsed: {
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: "hidden",
-    width: theme.spacing(8) + 4,
-  },
-  sidebarExpanded: {
-    width: "256px",
-    overflowX: "hidden",
-    transition: theme.transitions.create("width", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  fixedSidebarFooter: {
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "flex",
-      "margin-top": "auto",
-      "margin-bottom": "0.5rem",
-    },
-  },
-  collapseButtonWrapper: {
-    width: "auto",
-    "margin-left": "auto",
-    opacity: "0.7",
-    transition: "opacity 200ms linear",
-    "&:hover": {
-      opacity: 1,
-      background: "transparent",
-    },
-    "&:focus": {
-      opacity: 1,
-      background: "transparent",
-    },
-  },
-  collapseButtonWrapperRotated: {
-    width: "auto",
-    "margin-left": "auto",
-    marginRight: theme.spacing(1),
-    opacity: "0.7",
-    transition: "opacity 200ms linear",
-    transform: "rotate(180deg)",
-    "&:hover": {
-      opacity: 1,
-      background: "transparent",
-    },
-    "&:focus": {
-      opacity: 1,
-      background: "transparent",
-    },
-  },
-  noPadding: {
-    paddingLeft: "16px",
-    paddingRight: "16px",
-  },
-  drawerIcons: { 
-    height: "1.21rem", 
-    width: "1.21rem", 
-    fontSize: "1.21rem" 
-  }
+  collapsed : { transform : 'rotate(180deg) translateX(-3px)', },
+  collapsedHelpButton : { height : '30px',
+    marginTop : '-4px',
+    transform : 'translateX(-1px)' },
+  rightTranslate : { transform : 'translateX(0.5px)' }
 });
 
-const drawerIconsStyle={ height: "1.21rem", width: "1.21rem", fontSize: "1.21rem" };
-const externalLinkIconStyle={height: "1.11rem", width: "1.11rem", fontSize: "1.11rem" };
+const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.21rem" };
+const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
 const categories = [
   {
-    id: "Dashboard",
-    href: "/",
-    title: "System Dashboard",
-    show: false,
-    link: true,
+    id : "Dashboard",
+    icon : <DashboardIcon style={drawerIconsStyle} />,
+    href : "/",
+    title : "Dashboard",
+    show : true,
+    link : true,
   },
   {
-    id: "Performance",
-    icon:
-      <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" style={drawerIconsStyle} />,
-    href: "/performance",
-    title: "Performance Profile Management",
-    show: true,
-    link: true,
-    children: [
+    id : "Lifecycle",
+    icon : <LifecycleIcon style={drawerIconsStyle} />,
+    href : "/management",
+    title : "Lifecycle",
+    show : true,
+    link : true,
+    children : [
       {
-        id: "Profiles",
-        icon: <FontAwesomeIcon icon={faPollH} style={drawerIconsStyle} />,
-        href: "/performance/profiles",
-        title: "Performance Profiles",
-        show: true,
-        link: true,
+        id : "Citrix_Service_Mesh",
+        href : "/management/citrix",
+        title : "Citrix Service Mesh",
+        link : true,
+        show : true,
+      },
+      {
+        id : "Consul",
+        href : "/management/consul",
+        title : "Consul",
+        link : true,
+        show : true,
+      },
+      {
+        id : "Istio",
+        href : "/management/istio",
+        title : "Istio",
+        link : true,
+        show : true,
+      },
+      {
+        id : "Kuma",
+        href : "/management/kuma",
+        title : "Kuma",
+        link : true,
+        show : true,
+      },
+      {
+        id : "Linkerd",
+        href : "/management/linkerd",
+        title : "Linkerd",
+        link : true,
+        show : true,
+      },
+      {
+        id : "Network_Service_Mesh",
+        href : "/management/nsm",
+        title : "Network Service Mesh",
+        link : true,
+        show : true,
+      },
+      {
+        id : "NGINX_Service_Mesh",
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href : "/management/nginx",
+        title : "NGINX Service Mesh",
+        link : true,
+        show : true,
+      },
+      {
+        id : "Octarine",
+        href : "/management/octarine",
+        title : "Octarine",
+        link : true,
+        show : true,
+      },
+      {
+        id : "Open_Service_Mesh",
+        href : "/management/osm",
+        title : "Open Service Mesh",
+        link : true,
+        show : true,
+      },
+      {
+        id : "Traefik_Mesh",
+        href : "/management/traefik-mesh",
+        title : "Traefik Mesh",
+        link : true,
+        show : true,
       },
     ],
   },
   {
-    id: "Settings",
-    href: "/settings",
-    title: "Settings",
-    show: false,
-    link: true,
+    id : "Configuration",
+    icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
+    disabled : true,
+    href : "#",
+    title : "Configuration",
+    show : false,
+    link : true,
+    children : [
+      {
+        id : "Applications",
+        icon : <img src="/static/img/web-applications.svg" style={{ width : "1.21rem" }} />,
+        href : "/configuration/applications",
+        title : "Applications",
+        show : true,
+        link : true,
+      },
+      {
+        id : "Filters",
+        icon : <img src="/static/img/web-filters.svg" style={{ width : "1.21rem" }} />,
+        href : "/configuration/filters",
+        title : "Filters",
+        show : true,
+        link : true,
+      },
+      {
+        id : "Patterns",
+        icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
+        href : "/configuration/patterns",
+        title : "Patterns",
+        show : false,
+        link : true,
+      },
+    ],
+  },
+  {
+    id : "Performance",
+    icon :
+      <PerformanceIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
+    href : "/performance",
+    title : "Performance",
+    show : true,
+    link : true,
+    children : [
+      {
+        id : "Profiles",
+        icon :
+          <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ verticalAlign : "top" }} />,
+        href : "/performance/profiles",
+        title : "Profiles",
+        show : true,
+        link : true,
+      },
+    ],
+  },
+  {
+    id : "Settings",
+    href : "/settings",
+    title : "Settings",
+    show : false,
+    link : true,
   }, // title is used for comparison in the Header.js file as well
   {
-    id: "Conformance",
-    icon: <FontAwesomeIcon icon={faTasks} transform="shrink-2" style={drawerIconsStyle} />,
-    href: "/smi_results", //Temp
-    title: "Conformance",
-    show: true,
-    link: true,
-    children: [
+    id : "Conformance",
+    icon : <ConformanceIcon style={drawerIconsStyle} />,
+    href : "/smi_results", //Temp
+    title : "Conformance",
+    show : true,
+    link : true,
+    children : [
       {
-        id: "SMI Results",
-        icon: <FontAwesomeIcon icon={faPollH} style={drawerIconsStyle} />,
-        href: "/smi_results",
-        title: "Service Mesh Interface Results",
-        show: true,
-        link: true,
-      },
-    ],
-  },
-  {
-    id: "Configuration",
-    icon: <img src="/static/img/configuration_trans.svg" style={{ width: "1.21rem" }} />,
-    href: "/configuration",
-    title: "Meshery Configurations",
-    show: false,
-    link: false,
-    children: [
-      {
-        id: "Patterns",
-        icon: <img src="/static/img/pattern_trans.svg" style={{ width: "1.21rem" }} />,
-        href: "/configuration/patterns",
-        title: "Patterns",
-        show: false,
-        link: true,
-      },
-      {
-        id: "Filters",
-        icon: <img src="/static/img/web-filters.svg" style={{ width: "1.21rem" }} />,
-        href: "/configuration/filters",
-        title: "Filters",
-        show: true,
-        link: true,
-      },
-      {
-        id: "Applications",
-        icon: <img src="/static/img/web-applications.svg" style={{ width: "1.21rem" }} />, 
-        href: "/configuration/applications",
-        title: "Applications",
-        show: true,
-        link: true,
-      },
-    ],
-  },
-  {
-    id: "Management",
-    icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" style={drawerIconsStyle} />,
-    href: "/management",
-    title: "Management",
-    show: true,
-    link: true,
-    children: [
-      {
-        id: "Citrix_Service_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/citrix",
-        title: "Citrix Service Mesh",
-        link: true,
-        show: true,
-      },
-      {
-        id: "Consul",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/consul",
-        title: "Consul",
-        link: true,
-        show: true,
-      },
-      {
-        id: "Istio",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/istio",
-        title: "Istio",
-        link: true,
-        show: true,
-      },
-      {
-        id: "Kuma",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/kuma",
-        title: "Kuma",
-        link: true,
-        show: true,
-      },
-      {
-        id: "Linkerd",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/linkerd",
-        title: "Linkerd",
-        link: true,
-        show: true,
-      },
-      {
-        id: "Network_Service_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/nsm",
-        title: "Network Service Mesh",
-        link: true,
-        show: true,
-      },
-      // Disable support for NGINX SM
-      // {
-      //   id: "NGINX_Service_Mesh",
-      //   // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-      //   href: "/management/nginx",
-      //   title: "NGINX Service Mesh",
-      //   link: false,
-      //   show: true,
-      // },
-      {
-        id: "Octarine",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/octarine",
-        title: "Octarine",
-        link: true,
-        show: true,
-      },
-      {
-        id: "Open_Service_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/osm",
-        title: "Open Service Mesh",
-        link: true,
-        show: true,
-      },
-      {
-        id: "Traefik_Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/traefik-mesh",
-        title: "Traefik Mesh",
-        link: true,
-        show: true,
+        id : "Service Mesh Interface",
+        icon : <SmiIcon style={drawerIconsStyle} />,
+        href : "/smi_results",
+        title : "Service Mesh Interface",
+        show : true,
+        link : true,
       },
     ],
   },
@@ -415,32 +393,32 @@ const ExternalLinkIcon = <FontAwesomeIcon style={externalLinkIconStyle} icon={fa
 
 const externlinks = [
   {
-    id: "doc",
-    href: "http://docs.meshery.io",
-    title: "Documentation",
-    icon: <DescriptionOutlinedIcon style={drawerIconsStyle} />,
-    external_icon: ExternalLinkIcon,
+    id : "doc",
+    href : "https://docs.meshery.io",
+    title : "Documentation",
+    icon : <DescriptionOutlinedIcon style={drawerIconsStyle} />,
+    external_icon : ExternalLinkIcon,
   },
   {
-    id: "community",
-    href: "http://slack.layer5.io",
-    title: "Community",
-    icon: <FontAwesomeIcon style={drawerIconsStyle} icon={faSlack} transform="shrink-2" />,
-    external_icon: ExternalLinkIcon,
+    id : "community",
+    href : "http://slack.layer5.io",
+    title : "Community",
+    icon : <FontAwesomeIcon style={{ marginBottom : 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
+    external_icon : ExternalLinkIcon,
   },
   {
-    id: "mailinglist",
-    href: "https://meshery.io/subscribe",
-    title: "Mailing List",
-    icon: <MailIcon style={drawerIconsStyle} />,
-    external_icon: ExternalLinkIcon,
+    id : "mailinglist",
+    href : "https://meshery.io/subscribe",
+    title : "Mailing List",
+    icon : <MailIcon style={drawerIconsStyle} />,
+    external_icon : ExternalLinkIcon,
   },
   {
-    id: "issues",
-    href: "https://github.com/meshery/meshery/issues/new/choose",
-    title: "Issues",
-    icon: <GitHubIcon style={drawerIconsStyle} />,
-    external_icon: ExternalLinkIcon,
+    id : "issues",
+    href : "https://github.com/meshery/meshery/issues/new/choose",
+    title : "Issues",
+    icon : <GitHubIcon style={drawerIconsStyle} />,
+    external_icon : ExternalLinkIcon,
   },
 ];
 
@@ -449,33 +427,30 @@ class Navigator extends React.Component {
     super(props);
     const { meshAdapters } = props;
     this.state = {
-      path: "",
+      path : "",
       meshAdapters,
-      mts: new Date(),
+      mts : new Date(),
 
       // ExtensionPointSchemaValidator will return a navigator schema
       // decoder which in turn will return an empty array when there is no content
       // passed into it
-      navigator: ExtensionPointSchemaValidator("navigator")(),
-
-      capabilities: [],
+      navigator : ExtensionPointSchemaValidator("navigator")(),
+      showHelperButton : false,
+      capabilities : [],
+      openItems : [],
     };
   }
 
   componentDidMount() {
     dataFetch(
       "/api/provider/capabilities",
-      {
-        credentials: "same-origin",
-        method: "GET",
-        credentials: "include",
-      },
+      { credentials : "same-origin",
+        method : "GET",
+        credentials : "include", },
       (result) => {
         if (result) {
-          this.setState({
-            navigator: ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
-            capabilities: result?.capabilities || [],
-          });
+          this.setState({ navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
+            capabilities : result?.capabilities || [], });
         }
       },
       (err) => console.error(err)
@@ -493,7 +468,9 @@ class Navigator extends React.Component {
     if (children && children.length > 0) {
       return (
         <List disablePadding>
-          {children.map(({ id, icon, href, title, children }) => {
+          {children.map(({
+            id, icon, href, title, children
+          }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
             }
@@ -503,7 +480,9 @@ class Navigator extends React.Component {
                   button
                   key={id}
                   className={classNames(
-                    depth === 1 ? classes.nested1 : classes.nested2,
+                    depth === 1
+                      ? classes.nested1
+                      : classes.nested2,
                     classes.item,
                     classes.itemActionable,
                     path === href && classes.itemActiveItem,
@@ -538,10 +517,10 @@ class Navigator extends React.Component {
           </ListItemIcon>
         </Tooltip>
         <ListItemText
-          className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
-          classes={{
-            primary: classes.itemPrimary,
-          }}
+          className={drawerCollapsed
+            ? classes.isHidden
+            : classes.isDisplayed}
+          classes={{ primary : classes.itemPrimary, }}
         >
           {name}
         </ListItemText>
@@ -556,7 +535,7 @@ class Navigator extends React.Component {
   updateCategoriesMenus() {
     const self = this;
     categories.forEach((cat, ind) => {
-      if (cat.id === "Management") {
+      if (cat.id === "Lifecycle") {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
           const icon = self.pickIcon(catc.id);
@@ -584,7 +563,7 @@ class Navigator extends React.Component {
 
   updateAdaptersLink() {
     categories.forEach((cat, ind) => {
-      if (cat.id === "Management") {
+      if (cat.id === "Lifecycle") {
         cat.children.forEach((catc, ind1) => {
           if (
             typeof categories[ind].children[ind1].children[0] !== "undefined" &&
@@ -640,13 +619,12 @@ class Navigator extends React.Component {
         return;
       }
       children.push({
-        id: adapter.adapter_location,
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        icon: <RemoveIcon />,
-        href: `/management?adapter=${adapter.adapter_location}`,
-        title: `Management - ${adapter.adapter_location}`,
-        link: true,
-        show: true,
+        id : adapter.adapter_location,
+        icon : <RemoveIcon />,
+        href : `/management?adapter=${adapter.adapter_location}`,
+        title : `Management - ${adapter.adapter_location}`,
+        link : true,
+        show : true,
       });
     });
     return children;
@@ -679,14 +657,32 @@ class Navigator extends React.Component {
     onCollapseDrawer();
   };
 
+  toggleSpacing = () => {
+    const { showHelperButton } = this.state;
+    this.setState({ showHelperButton : !showHelperButton });
+
+  }
+
+  toggleItemCollapse = (id) => {
+    const activeItems = [...this.state.openItems];
+    if (this.state.openItems.includes(id)) {
+      this.setState({ openItems : activeItems.filter(item => item !== id) })
+    } else {
+      activeItems.push(id);
+      this.setState({ openItems : activeItems })
+    }
+  }
+
   renderChildren(idname, children, depth) {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
 
-    if (idname != "Management" && children && children.length > 0) {
+    if (idname != "Lifecycle" && children && children.length > 0) {
       return (
         <List disablePadding>
-          {children.map(({ id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
+          {children.map(({
+            id : idc, title : titlec, icon : iconc, href : hrefc, show : showc, link : linkc, children : childrenc
+          }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
             }
@@ -696,14 +692,16 @@ class Navigator extends React.Component {
                   button
                   key={idc}
                   className={classNames(
-                    depth === 1 ? classes.nested1 : classes.nested2,
+                    depth === 1
+                      ? classes.nested1
+                      : classes.nested2,
                     classes.item,
                     classes.itemActionable,
                     path === hrefc && classes.itemActiveItem,
                     isDrawerCollapsed && classes.noPadding
                   )}
                 >
-                  {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
+                  {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                 </ListItem>
                 {this.renderChildren(idname, childrenc, depth + 1)}
               </React.Fragment>
@@ -712,11 +710,13 @@ class Navigator extends React.Component {
         </List>
       );
     }
-    if (idname == "Management") {
+    if (idname == "Lifecycle") {
       if (children && children.length > 1) {
         return (
           <List disablePadding>
-            {children.map(({ id: idc, title: titlec, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
+            {children.map(({
+              id : idc, title : titlec, icon : iconc, href : hrefc, show : showc, link : linkc, children : childrenc
+            }) => {
               if (typeof showc !== "undefined" && !showc) {
                 return "";
               }
@@ -726,7 +726,9 @@ class Navigator extends React.Component {
                     button
                     key={idc}
                     className={classNames(
-                      depth === 1 ? classes.nested1 : classes.nested2,
+                      depth === 1
+                        ? classes.nested1
+                        : classes.nested2,
                       classes.item,
                       classes.itemActionable,
                       path === hrefc && classes.itemActiveItem,
@@ -765,10 +767,10 @@ class Navigator extends React.Component {
           <ListItemIcon className={classes.listIcon}>{iconc}</ListItemIcon>
         </Tooltip>
         <ListItemText
-          className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
-          classes={{
-            primary: classes.itemPrimary,
-          }}
+          className={drawerCollapsed
+            ? classes.isHidden
+            : classes.isDisplayed}
+          classes={{ primary : classes.itemPrimary, }}
         >
           {titlec}
         </ListItemText>
@@ -782,7 +784,7 @@ class Navigator extends React.Component {
 
   render() {
     const { classes, isDrawerCollapsed, ...other } = this.props;
-    const { path } = this.state;
+    const { path, showHelperButton } = this.state;
     this.updateCategoriesMenus();
     let classname;
     if (isDrawerCollapsed) {
@@ -795,11 +797,13 @@ class Navigator extends React.Component {
         <Drawer
           variant="permanent"
           {...other}
-          className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
-          classes={{
-            paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded,
-          }}
-          style={{ width: "inherit" }}
+          className={isDrawerCollapsed
+            ? classes.sidebarCollapsed
+            : classes.sidebarExpanded}
+          classes={{ paper : isDrawerCollapsed
+            ? classes.sidebarCollapsed
+            : classes.sidebarExpanded, }}
+          style={{ width : "inherit" }}
         >
           <List disablePadding>
             <ListItem
@@ -808,35 +812,46 @@ class Navigator extends React.Component {
               className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
             >
               <Avatar
-                className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo}
+                className={isDrawerCollapsed
+                  ? classes.mainLogoCollapsed
+                  : classes.mainLogo}
                 src="/static/img/meshery-logo.png"
                 onClick={this.handleTitleClick}
               />
               <Avatar
-                className={isDrawerCollapsed ? classes.mainLogoTextCollapsed : classes.mainLogoText}
+                className={isDrawerCollapsed
+                  ? classes.mainLogoTextCollapsed
+                  : classes.mainLogoText}
                 src="/static/img/meshery-logo-text.png"
                 onClick={this.handleTitleClick}
               />
 
               {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
             </ListItem>
-            {categories.map(({ id: childId, icon, href, show, link, children }) => {
+            {categories.map(({
+              id : childId, title, icon, href, show, link, children
+            }) => {
               if (typeof show !== "undefined" && !show) {
                 return "";
               }
               return (
                 <React.Fragment key={childId}>
                   <ListItem
-                    button
+                    button={!!link}
                     dense
                     key={childId}
                     className={classNames(
                       classes.item,
-                      classes.itemActionable,
+                      link
+                        ? classes.itemActionable
+                        : '',
                       path === href && classes.itemActiveItem
                     )}
+                    onClick={() => this.toggleItemCollapse(childId)}
                   >
-                    <Link href={link ? href : ""}>
+                    <Link href={link
+                      ? href
+                      : ""}>
                       <div className={classNames(classes.link)}>
                         <Tooltip
                           title={childId}
@@ -848,72 +863,110 @@ class Navigator extends React.Component {
                           <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
                         </Tooltip>
                         <ListItemText
-                          className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                          classes={{
-                            primary: classes.itemPrimary,
-                          }}
+                          className={isDrawerCollapsed
+                            ? classes.isHidden
+                            : classes.isDisplayed}
+                          classes={{ primary : classes.itemPrimary, }}
                         >
-                          {childId}
+                          {title}
                         </ListItemText>
                       </div>
                     </Link>
+                    <ExpandMoreIcon
+                      onClick={() => this.toggleItemCollapse(childId)}
+                      className={classNames(classes.expandMoreIcon, { [classes.collapsed] : this.state.openItems.includes(childId) })}
+                      style={isDrawerCollapsed || !children
+                        ? { opacity : 0 }
+                        : {}}
+                    />
                   </ListItem>
-                  {this.renderChildren(childId, children, 1)}
+                  <Collapse in={isDrawerCollapsed || this.state.openItems.includes(childId)}>
+                    {this.renderChildren(childId, children, 1)}
+                  </Collapse>
                 </React.Fragment>
               );
             })}
-            {this.state.navigator && this.state.navigator.length ? (
-              <React.Fragment>
-                <Divider className={classes.divider} />
-                {this.renderNavigatorExtensions(this.state.navigator, 1)}
-              </React.Fragment>
-            ) : null}
+            {this.state.navigator && this.state.navigator.length
+              ? (
+                <React.Fragment>
+                  <Divider className={classes.divider} />
+                  {this.renderNavigatorExtensions(this.state.navigator, 1)}
+                </React.Fragment>
+              )
+              : null}
             <Divider className={classes.divider} />
-            {externlinks.map(({ id, icon, title, href, external_icon }) => {
-              return (
-                <ListItem
-                  component="a"
-                  href={href}
-                  target="_blank"
-                  key={id}
-                  className={classNames(classes.item, classes.itemActionable)}
-                >
-                  <div className={classNames(classes.link)}>
-                    <Tooltip
-                      title={title}
-                      placement="right"
-                      disableFocusListener={!isDrawerCollapsed}
-                      disableHoverListener={!isDrawerCollapsed}
-                      disableTouchListener={!isDrawerCollapsed}
-                    >
-                      <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
-                    </Tooltip>
-                    <ListItemText
-                      className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                      classes={{
-                        primary: classes.itemPrimary,
-                      }}
-                    >
-                      {title}
-                    </ListItemText>
-                    <Tooltip
-                      title={title}
-                      placement="left"
-                      disableFocusListener={!isDrawerCollapsed}
-                      disableHoverListener={!isDrawerCollapsed}
-                      disableTouchListener={!isDrawerCollapsed}
-                    >
-                      <ListItemIcon className={id === "community" ? classes.listIconSlack : classes.listIcon1}>
-                        {external_icon}
-                      </ListItemIcon>
-                    </Tooltip>
-                  </div>
-                </ListItem>
-              );
-            })}
+
           </List>
           <div className={classes.fixedSidebarFooter}>
-            <ListItem button onClick={() => this.toggleMiniDrawer()} className={classname}>
+
+            <ButtonGroup
+              size="large"
+              className={!isDrawerCollapsed
+                ? classes.marginLeft
+                : classes.btnGrpMarginRight}
+              orientation={isDrawerCollapsed
+                ? "vertical"
+                : "horizontal"}
+            >
+              {externlinks.map(({
+                id, icon, title, href
+              }, index) => {
+                return (
+                  <ListItem
+                    key={id}
+                    className={classes.item}
+                    style={isDrawerCollapsed && !showHelperButton
+                      ? { display : 'none' }
+                      : {}}
+                  >
+                    <Grow
+                      in={showHelperButton}
+                      timeout={{ enter : (600 - index * 200), exit : 100 * index }}
+                    >
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={classNames(classes.link, isDrawerCollapsed
+                          ? classes.extraPadding
+                          : "")}>
+                        <Tooltip
+                          title={title}
+                          placement={isDrawerCollapsed
+                            ? "right"
+                            : "top"}
+                        >
+                          <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>{icon}</ListItemIcon>
+                        </Tooltip>
+                      </a>
+                    </Grow>
+                  </ListItem>
+                );
+              })}
+              <ListItem
+                className={classes.rightMargin}
+              >
+                <Tooltip
+                  title="Help"
+                  placement={isDrawerCollapsed
+                    ? "right"
+                    : "top"}
+                >
+                  <IconButton className={isDrawerCollapsed
+                    ? classes.collapsedHelpButton
+                    : classes.rightTranslate} onClick={() => this.toggleSpacing()}>
+                    <HelpIcon
+                      className={classes.helpIcon}
+                      style={{ fontSize : '1.45rem', }}
+                    />
+                  </IconButton>
+                </Tooltip>
+              </ListItem>
+            </ButtonGroup>
+
+            <ListItem button className={classname} onClick={() => this.toggleMiniDrawer()}  style={{
+              position : "sticky", zIndex : "1", bottom : "0", right : "0"
+            }}>
               <FontAwesomeIcon
                 icon={faChevronCircleLeft}
                 fixedWidth
@@ -929,14 +982,10 @@ class Navigator extends React.Component {
   }
 }
 
-Navigator.propTypes = {
-  classes: PropTypes.object.isRequired,
-  onCollapseDrawer: PropTypes.func.isRequired,
-};
+Navigator.propTypes = { classes : PropTypes.object.isRequired,
+  onCollapseDrawer : PropTypes.func.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updatepagetitle : bindActionCreators(updatepagetitle, dispatch), });
 
 const mapStateToProps = (state) => {
   const meshAdapters = state.get("meshAdapters").toJS();

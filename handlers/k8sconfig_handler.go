@@ -14,6 +14,7 @@ import (
 
 	"os"
 
+	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -42,6 +43,13 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 		return
 	}
 }
+
+// swagger:route POST /api/system/kubernetes SystemAPI idPostK8SConfig
+// Handle POST request for Kubernetes Config
+//
+// Used to add kubernetes config to System
+// responses:
+// 	200: k8sConfigRespWrapper
 
 func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	_ = req.ParseMultipartForm(1 << 20)
@@ -100,6 +108,13 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 	}
 }
 
+// swagger:route DELETE /api/system/kubernetes SystemAPI idDeleteK8SConfig
+// Handle DELETE request for Kubernetes Config
+//
+// Used to delete kubernetes config to System
+// responses:
+// 	200:
+
 func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	prefObj.K8SConfig = nil
 	err := provider.RecordPreferences(req, user.UserID, prefObj)
@@ -111,12 +126,15 @@ func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference,
 	_, _ = w.Write([]byte("{}"))
 }
 
+// swagger:route POST /api/system/kubernetes/contexts SystemAPI idPostK8SContexts
+// Handle POST requests for Kubernetes Context list
+//
+// Returns the context list for a given k8s config
+// responses:
+// 	200: k8sContextsRespWrapper
+
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request) {
-	// if req.Method != http.MethodPost {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
 	_ = req.ParseMultipartForm(1 << 20)
 	var k8sConfigBytes []byte
 
@@ -169,22 +187,28 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 	// try to load k8s config from local disk
 	configFile := path.Join(h.config.KubeConfigFolder, "config") // is it ok to hardcode the name 'config'?
 	if _, err := os.Stat(configFile); err != nil {
-		logrus.Error(ErrOpenFile(configFile))
+		h.log.Error(ErrOpenFile(configFile))
 		return nil, ErrOpenFile(configFile)
 	}
-	k8sConfigBytes, err := utils.ReadFileSource(fmt.Sprintf("file://%s", configFile))
+	k8sConfig, err := utils.ReadFileSource(fmt.Sprintf("file://%s", configFile))
 	if err != nil {
-		logrus.Error(err)
+		h.log.Error(err)
 		return nil, err
 	}
 
-	ccfg, err := clientcmd.Load([]byte(k8sConfigBytes))
+	ncfg, err := helpers.FlattenMinifyKubeConfig([]byte(k8sConfig))
 	if err != nil {
-		logrus.Error(ErrLoadConfig(err))
+		h.log.Error(ErrLoadConfig(err))
 		return nil, ErrLoadConfig(err)
 	}
 
-	return h.setupK8sConfig(false, []byte(k8sConfigBytes), ccfg.CurrentContext)
+	ccfg, err := clientcmd.Load(ncfg)
+	if err != nil {
+		h.log.Error(ErrLoadConfig(err))
+		return nil, ErrLoadConfig(err)
+	}
+
+	return h.setupK8sConfig(false, ncfg, ccfg.CurrentContext)
 }
 
 // ATM used only in the SessionSyncHandler
@@ -195,7 +219,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 			AnonymousPerfResults: true,
 		}
 	}
-	if prefObj.K8SConfig == nil || h.kubeclient == nil {
+	if prefObj.K8SConfig == nil || h.config.KubeClient == nil {
 		kc, err := h.loadK8SConfigFromDisk()
 		if err != nil {
 			kc, err = h.loadInClusterK8SConfig()
@@ -213,6 +237,13 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 	return nil
 }
 
+// swagger:route GET /api/system/kubernetes/ping SystemAPI idGetKubernetesPing
+// Handle GET request for Kubernetes ping
+//
+// Fetches server version to simulate ping
+// responses:
+// 	200:
+
 // KubernetesPingHandler - fetches server version to simulate ping
 func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if prefObj.K8SConfig == nil {
@@ -220,7 +251,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	version, err := h.kubeclient.KubeClient.ServerVersion()
+	version, err := h.config.KubeClient.KubeClient.ServerVersion()
 	if err != nil {
 		logrus.Error(ErrKubeVersion(err))
 		http.Error(w, ErrKubeVersion(err).Error(), http.StatusInternalServerError)
@@ -259,11 +290,26 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 	}
 	kc.ServerVersion = version.String()
 
+	ccfg, err := clientcmd.Load(k8sConfigBytes)
+	if err != nil {
+		h.log.Error(ErrLoadConfig(err))
+		return nil, ErrLoadConfig(err)
+	}
+
+	kc.Contexts = []models.K8SContext{}
+	for name, ctx := range ccfg.Contexts {
+		kc.Contexts = append(kc.Contexts, models.K8SContext{
+			ContextName:      name,
+			ClusterName:      ctx.Cluster,
+			IsCurrentContext: name == contextName,
+		})
+	}
+
 	//kc.Nodes, err = helpers.FetchKubernetesNodes(kc.Config, kc.ContextName)
 	//if err != nil {
 	//	return nil, fmt.Errorf("unable to fetch nodes metadata from the Kubernetes server")
 	//}
-	*h.kubeclient = *mclient
+	*h.config.KubeClient = *mclient
 	kc.ClusterConfigured = true
 	return kc, nil
 }

@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/tcnksm/go-latest"
 )
@@ -19,6 +17,13 @@ type Version struct {
 	CommitSHA      string `json:"commitsha,omitempty"`
 	ReleaseChannel string `json:"release_channel,omitempty"`
 }
+
+// swagger:route GET /api/system/version SystemAPI idGetSystemVersion
+// Handle GET request for system/server version
+//
+// Returns the running Meshery version
+// responses:
+// 	200: mesheryVersionRespWrapper
 
 // ServerVersionHandler handles the version api request for the server
 func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +42,7 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 	// compare the server build with the target build
 	res, err := CheckLatestVersion(version.Build)
 	if err != nil {
-		logrus.Errorln(err)
+		h.log.Error(err)
 	} else {
 		// Add "Latest" and "Outdated" fields to the response
 		version.Latest = res.Current
@@ -48,7 +53,8 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(version)
 	if err != nil {
-		logrus.Errorf("unable to send data: %v", err)
+		h.log.Error(ErrEncoding(err, "server-version"))
+		http.Error(w, ErrEncoding(err, "server-version").Error(), http.StatusNotFound)
 	}
 }
 
@@ -63,7 +69,7 @@ func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
 	res, err := latest.Check(githubTag, serverVersion)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to compare latest and current version")
+		return nil, ErrVersionCompare(err)
 	}
 
 	// Add "v" to the "Current" property of the CheckResponse

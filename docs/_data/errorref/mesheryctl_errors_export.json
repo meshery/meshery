@@ -3,23 +3,158 @@
     "component_name": "mesheryctl",
     "component_type": "client",
     "errors": {
-      "1000": {
-        "severity": "",
-        "name": "ctlK8sClient",
-        "code": "1000",
-        "long_description": "Check whether `mesheryctl` can initialize a Kubernetes client.",
-        "short_description": "Failure to create Kubernetes client.",
-        "probable_cause": "Missing certificate data in user's kubeconfig for one or more contexts.",
-        "suggested_remediation": "Run `mesheryctl system config` to export your Kubernetes' cluster certificate data."
+      "1004": {
+        "name": "ErrResetMeshconfigCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error resetting meshconfig",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
-      "1001": {
-        "name": "ctlK8sConnect",
-        "code": "1001",
+      "1005": {
+        "name": "ErrApplyManifestCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying manifest with update: \n and delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1006": {
+        "name": "ErrApplyOperatorManifestCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying operator manifests with update: \n and delete: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1007": {
+        "name": "ErrCreateDirCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating directory ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1008": {
+        "name": "ErrUnmarshalCode",
+        "code": "1008",
         "severity": "",
-        "short_description": "Failure to connect to Kubernetes.",
-        "long_description": "`mesheryctl` fails to query for pods in the default namespace of the user's current Kubernetes context.",
-        "probable_cause": "Kuberentes cluster not running or not network unreachable.",
-        "suggested_remediation": "Verify network connectivity between `mesheryctl` network and Kubernetes cluster defined as current-context in your kubeconfig."
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1010": {
+        "name": "ErrNoAdaptersCode",
+        "code": "1010",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Adapter for required mesh not found",
+        "probable_cause": "",
+        "suggested_remediation": "Deploy the proper Meshery Adapter for your service mesh"
+      },
+      "1011": {
+        "name": "ErrPromptCode",
+        "code": "1011",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error while reading selected option",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1012": {
+        "name": "ErrCreatingDeployRequestCode",
+        "code": "1012",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error sending deploy request",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1013": {
+        "name": "ErrCreatingDeployResponseRequestCode",
+        "code": "1013",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error creating request for deploy response",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1014": {
+        "name": "ErrAddingAuthDetailsCode",
+        "code": "1014",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error adding auth details",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrCreatingDeployResponseStreamCode",
+        "code": "1015",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1016": {
+        "name": "ErrTimeoutWaitingForDeployResponseCode",
+        "code": "1016",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Timed out waiting for deploy event",
+        "probable_cause": "",
+        "suggested_remediation": "Check your environment and try again"
+      },
+      "1017": {
+        "name": "ErrFailedDeployingMeshCode",
+        "code": "1017",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Failed to deploy the service mesh",
+        "probable_cause": "",
+        "suggested_remediation": "Check your environment and try again"
+      },
+      "1018": {
+        "name": "ErrCreatingValidateRequestCode",
+        "code": "1018",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error sending Validate request",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1019": {
+        "name": "ErrCreatingValidateResponseRequestCode",
+        "code": "1019",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Error creating request for validate response",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1020": {
+        "name": "ErrTimeoutWaitingForValidateResponseCode",
+        "code": "1020",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Timed out waiting for validate response",
+        "probable_cause": "",
+        "suggested_remediation": "Check your environment and try again"
+      },
+      "1021": {
+        "name": "ErrSMIConformanceTestsFailedCode",
+        "code": "1021",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "SMI conformance tests failed",
+        "probable_cause": "",
+        "suggested_remediation": "Join https://layer5io.slack.com/archives/C010H0HE2E6"
       }
     }
   }

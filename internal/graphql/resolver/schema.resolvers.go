@@ -5,69 +5,124 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/layer5io/meshery/internal/graphql/generated"
 	"github.com/layer5io/meshery/internal/graphql/model"
+	"github.com/layer5io/meshery/models"
 )
 
 func (r *mutationResolver) ChangeAddonStatus(ctx context.Context, input *model.AddonStatusInput) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if input.Selector != nil {
-		return r.changeAddonStatus(ctx)
+		return r.changeAddonStatus(ctx, provider)
 	}
 
 	return model.StatusUnknown, ErrInvalidRequest
 }
 
 func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error) {
-	return r.changeOperatorStatus(ctx, input.TargetStatus)
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.changeOperatorStatus(ctx, provider, input.TargetStatus)
 }
 
 func (r *queryResolver) GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if selector != nil {
-		return r.getAvailableAddons(ctx, selector)
+		return r.getAvailableAddons(ctx, provider, selector)
 	}
 
 	return nil, ErrInvalidRequest
 }
 
-func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error) {
+func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if filter != nil {
-		return r.getControlPlanes(ctx, filter)
+		return r.getControlPlanes(ctx, provider, filter)
+	}
+
+	return nil, ErrInvalidRequest
+}
+
+func (r *queryResolver) GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if filter != nil {
+		return r.getDataPlanes(ctx, provider, filter)
 	}
 
 	return nil, ErrInvalidRequest
 }
 
 func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.OperatorStatus, error) {
-	return r.getOperatorStatus(ctx)
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getOperatorStatus(ctx, provider)
+}
+
+func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.resyncCluster(ctx, provider, selector)
 }
 
 func (r *queryResolver) GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error) {
-	return r.getAvailableNamespaces(ctx)
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getAvailableNamespaces(ctx, provider)
+}
+
+func (r *queryResolver) GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getPerfResult(ctx, provider, id)
+	// panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.fetchResults(ctx, provider, selector, profileID)
+	// panic(fmt.Errorf("not implemented"))
 }
 
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if selector != nil {
-		return r.listenToAddonState(ctx, selector)
+		return r.listenToAddonState(ctx, provider, selector)
 	}
 
 	return nil, ErrInvalidRequest
 }
 
-func (r *subscriptionResolver) ListenToControlPlaneState(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error) {
+func (r *subscriptionResolver) ListenToControlPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if filter != nil {
-		return r.listenToControlPlaneState(ctx, filter)
+		return r.listenToControlPlaneState(ctx, provider, filter)
+	}
+
+	return nil, ErrInvalidRequest
+}
+
+func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if filter != nil {
+		return r.listenToDataPlaneState(ctx, provider, filter)
 	}
 
 	return nil, ErrInvalidRequest
 }
 
 func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error) {
-	return r.listenToOperatorState(ctx)
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.listenToOperatorState(ctx, provider)
 }
 
 func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
-	return r.listenToMeshSyncEvents(ctx)
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.listenToMeshSyncEvents(ctx, provider)
+}
+
+func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector *model.PageFilter) (<-chan *model.PerfPageResult, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *subscriptionResolver) SubscribePerfProfile(ctx context.Context, selector *model.PageFilter) (<-chan *model.PerfPageResult, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 // Mutation returns generated.MutationResolver implementation.

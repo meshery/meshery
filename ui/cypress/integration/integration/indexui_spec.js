@@ -4,10 +4,7 @@ describe('Test if UI components are displayed on Index Page', () => {
       cy.get('[data-test=navigation]').should('be.visible')
     })  
 
-    it('Index button', () => {
-      cy.visit('/')
-      cy.get('[data-test=index-button]').should('be.visible')
-    })  
+      
 
     it('Settings button', () => {
       cy.visit('/')

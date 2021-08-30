@@ -169,6 +169,13 @@ Follow the [installation steps]({{ site.baseurl }}/installation#windows) to inst
   </div></div>
   </pre>
 
+  Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+  <pre class="codeblock-pre">
+  <div class="codeblock"><div class="clipboardjs">
+  MESHERY_SERVER_CALLBACK_URL=https://custom-host ./mesheryctl system start
+  </div></div>
+  </pre>
+
 Type **yes** when prompted to choose to configure a file. To get started, choose Docker as your platform to deploy Meshery.
 
 ### 6. <a name="step6"> <b>Aftermath errors</b></a>

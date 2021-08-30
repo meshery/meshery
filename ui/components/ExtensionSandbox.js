@@ -13,19 +13,17 @@ function getPath() {
 
 /**
  * getCapabilities queries the meshery server for the current providers
- * capabilities and returns the decoded capability that mathes the 
+ * capabilities and returns the decoded capability that mathes the
  * given type
- * @param {string} type 
- * @param {Function} cb 
+ * @param {string} type
+ * @param {Function} cb
  */
-function getCapabilities(type, cb) {
+export function getCapabilities(type, cb) {
   dataFetch(
     "/api/provider/capabilities",
-    {
-      credentials: "same-origin",
-      method: "GET",
-      credentials: "include",
-    },
+    { credentials : "same-origin",
+      method : "GET",
+      credentials : "include", },
     (result) => {
       if (result) {
         cb(ExtensionPointSchemaValidator(type)(result?.extensions[type]));
@@ -42,7 +40,7 @@ function getCapabilities(type, cb) {
 /**
  * getComponentURIFromPathForNavigator takes in teh navigator extensions and the current
  * path and searches recursively for the matching component
- * 
+ *
  * If there are duplicate uris then the component for first match will be returned
  * @param {import("../utils/ExtensionPointSchemaValidator").NavigatorSchema[]} extensions
  * @param {string} path
@@ -59,6 +57,32 @@ function getComponentURIFromPathForNavigator(extensions, path) {
     for (const ext of extensions) {
       const comp = getComponentURIFromPathForNavigator(ext.children, path);
       if (comp) return comp;
+    }
+  }
+
+  return "";
+}
+
+/**
+ * getComponentTitleFromPathForNavigator takes in the navigator extensions and the current
+ * path and searches recursively for the matching component and returns title
+ *
+ * If there are duplicate uris then the component for first match will be returned
+ * @param {import("../utils/ExtensionPointSchemaValidator").NavigatorSchema[]} extensions
+ * @param {string} path
+ * @returns {string}
+ */
+export function getComponentTitleFromPathForNavigator(extensions, path) {
+  path = normalizeURI(path);
+
+  if (Array.isArray(extensions)) {
+    const fext = extensions.find((item) => item?.href === path);
+    if (fext) return fext.title || "";
+
+    // If not found then start searching in the child of each extension
+    for (const ext of extensions) {
+      const title = getComponentURIFromPathForNavigator(ext.children, path);
+      if (title) return title;
     }
   }
 
@@ -96,11 +120,11 @@ function createPathForRemoteComponent(componentName) {
 /**
  * ExtensionSandbox takes in an extension and it's type and will handle the internal mapping
  * for the uris and components by querying the meshery server for providers capabilities
- * 
+ *
  * Only two "types" are supported by the sandbox:
  *  1. navigator - for navigator extensions
  *  2. user_prefs - for user preference extension
- * @param {{ type: "navigator" | "user_prefs", Extension: JSX.Element }} props 
+ * @param {{ type: "navigator" | "user_prefs", Extension: JSX.Element }} props
  */
 function ExtensionSandbox({ type, Extension }) {
   const [extensions, setExtensions] = useState([]);
@@ -114,17 +138,21 @@ function ExtensionSandbox({ type, Extension }) {
   }, []);
 
   if (type === "navigator") {
-    return isLoading ? null : (
-      <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extensions, getPath()))} />
-    );
+    return isLoading
+      ? null
+      : (
+        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extensions, getPath()))} />
+      );
   }
 
   if (type === "user_prefs") {
-    return isLoading ? null : (
-      getComponentURIFromPathForUserPrefs(extensions).map(uri => {
-        return <Extension url={createPathForRemoteComponent(uri)} />
-      })
-    );
+    return isLoading
+      ? null
+      : (
+        getComponentURIFromPathForUserPrefs(extensions).map(uri => {
+          return <Extension url={createPathForRemoteComponent(uri)} />
+        })
+      );
   }
 
   return null

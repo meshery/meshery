@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  TableRow, TableCell, IconButton, Table, TableBody, TableHead, Tooltip 
+  TableRow, TableCell, IconButton, Table, TableBody, TableHead, Tooltip
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,36 +10,26 @@ import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
-import {
-  updateProgress,
-} from '../lib/store';
+import { updateProgress, } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 
 
-const styles = (theme) => ({
-  grid: {
-    padding: theme.spacing(2),
-  },
-  secondaryTable: {
-    borderRadius: 10,
-    backgroundColor: "#f7f7f7",
-  },
-  tableHeader: {
-    fontWeight: 'bolder',
-    fontSize: 18,
-  },
-});
+const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
+  secondaryTable : { borderRadius : 10,
+    backgroundColor : "#f7f7f7", },
+  tableHeader : { fontWeight : 'bolder',
+    fontSize : 18, }, });
 
 class MesherySMIResults extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    
-      smi_page: 0,
-      smi_pageSize: 10,
-      smi_search: '',
-      smi_sortOrder: '',
-      smi_results: [],
+
+      smi_page : 0,
+      smi_pageSize : 10,
+      smi_search : '',
+      smi_sortOrder : '',
+      smi_results : [],
     };
   }
 
@@ -61,24 +51,21 @@ class MesherySMIResults extends Component {
       }
 
       query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
-      dataFetch(`/api/smi/results${query}`, {
-        credentials: 'same-origin',
-        method: 'GET',
-        credentials: 'include',
-      }, (result) => {
+      dataFetch(`/api/smi/results${query}`, { credentials : 'same-origin',
+        method : 'GET',
+        credentials : 'include', }, (result) => {
         if (typeof result !== 'undefined' && result.results) {
-          self.setState({smi_results: result});
+          self.setState({ smi_results : result });
         }
       }, console.log('Could not fetch SMI results.'));
     }
 
     handleError = (error) => {
-      this.props.updateProgress({ showProgress: false });
+      this.props.updateProgress({ showProgress : false });
       // console.log(`error fetching results: ${error}`);
       const self = this;
-      this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, {
-        variant: 'error',
-        action: (key) => (
+      this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, { variant : 'error',
+        action : (key) => (
           <IconButton
             key="close"
             aria-label="Close"
@@ -88,14 +75,13 @@ class MesherySMIResults extends Component {
             <CloseIcon />
           </IconButton>
         ),
-        autoHideDuration: 8000,
-      });
+        autoHideDuration : 8000, });
     }
 
     resetSelectedRowData() {
       const self = this;
       return () => {
-        self.setState({ selectedRowData: null });
+        self.setState({ selectedRowData : null });
       };
     }
 
@@ -105,141 +91,129 @@ class MesherySMIResults extends Component {
       const { smi_pageSize, smi_results } = this.state;
 
       const smi_resultsForDisplay = [];
-      if(smi_results&&smi_results.results) {
+      if (smi_results&&smi_results.results) {
         smi_results.results.map((val) => {
           smi_resultsForDisplay.push([val.id ,val.date,val.mesh_name,val.mesh_version,val.passing_percentage,val.status])
-        }) 
+        })
       }
 
       const smi_columns = [
-        {
-          name: 'ID',
-          label: 'ID',
-          options: {
-            filter: false,
-            sort: true,
-            searchable: true,
-            customHeadRender: ({index, ...column}) => {
+        { name : 'ID',
+          label : 'ID',
+          options : {
+            filter : false,
+            sort : true,
+            searchable : true,
+            customHeadRender : ({ index, ...column }) => {
               return (
                 <TableCell key={index}>
                   <b>{column.label}</b>
                 </TableCell>
-                
+
               )
             },
-            customBodyRender: (value) => (
+            customBodyRender : (value) => (
               <Tooltip title={value} placement="top">
                 <div>{value.slice(0,5)+ "..."}</div>
               </Tooltip>
             )
-          },
-        },
-        {
-          name: 'Date',
-          label: 'Date',
-          options: {
-            filter: true,
-            sort: true,
-            searchable: true,
-            customHeadRender: ({index, ...column}) => {
+          }, },
+        { name : 'Date',
+          label : 'Date',
+          options : {
+            filter : true,
+            sort : true,
+            searchable : true,
+            customHeadRender : ({ index, ...column }) => {
               return (
                 <TableCell key={index}>
                   <b>{column.label}</b>
                 </TableCell>
-                  
+
               )
             },
-            customBodyRender: (value) => (
+            customBodyRender : (value) => (
               <Moment format="LLLL">{value}</Moment>
             ),
-          },
-        },
-        {
-          name: 'Service Mesh',
-          label: 'Service Mesh',
-          options: {
-            filter: true,
-            sort: true,
-            searchable: true,
-            customHeadRender: ({index, ...column}) => {
+          }, },
+        { name : 'Service Mesh',
+          label : 'Service Mesh',
+          options : {
+            filter : true,
+            sort : true,
+            searchable : true,
+            customHeadRender : ({ index, ...column }) => {
               return (
                 <TableCell key={index}>
                   <b>{column.label}</b>
                 </TableCell>
-                  
+
               )
             },
-          },
-        },
-        {
-          name: 'Service Mesh Version',
-          label: 'Service Mesh Version',
-          options: {
-            filter: true,
-            sort: true,
-            searchable: true,
-            customHeadRender: ({index, ...column}) => {
+          }, },
+        { name : 'Service Mesh Version',
+          label : 'Service Mesh Version',
+          options : {
+            filter : true,
+            sort : true,
+            searchable : true,
+            customHeadRender : ({ index, ...column }) => {
               return (
                 <TableCell key={index}>
                   <b>{column.label}</b>
                 </TableCell>
-                  
+
               )
             },
-          },
-        },
-        {
-          name: '% Passed',
-          label: '% Passed',
-          options: {
-            filter: true,
-            sort: true,
-            searchable: true,
-            customHeadRender: ({index, ...column}) => {
+          }, },
+        { name : '% Passed',
+          label : '% Passed',
+          options : {
+            filter : true,
+            sort : true,
+            searchable : true,
+            customHeadRender : ({ index, ...column }) => {
               return (
                 <TableCell key={index}>
                   <b>{column.label}</b>
                 </TableCell>
-                  
+
               )
             },
-          },
-        },
-        {
-          name: 'status',
-          label: 'Status',
-          options: {
-            filter: true,
-            sort: true,
-            searchable: true,
-            customHeadRender: ({index, ...column}) => {
+          }, },
+        { name : 'status',
+          label : 'Status',
+          options : {
+            filter : true,
+            sort : true,
+            searchable : true,
+            customHeadRender : ({ index, ...column }) => {
               return (
                 <TableCell key={index}>
                   <b>{column.label}</b>
                 </TableCell>
-                  
+
               )
             },
-          },
-        }
+          }, }
 
       ]
 
       const smi_options = {
-        sort: !(user && user.user_id === 'meshery'),
-        search: !(user && user.user_id === 'meshery'),
-        filterType: 'textField',
-        expandableRows: true,
-        selectableRows: false,
-        rowsPerPage: smi_pageSize,
-        rowsPerPageOptions: [10, 20, 25],
-        fixedHeader: true,
-        print: false,
-        download: false,
-        renderExpandableRow: (rowData, rowMeta) => {
+        sort : !(user && user.user_id === 'meshery'),
+        search : !(user && user.user_id === 'meshery'),
+        filterType : 'textField',
+        expandableRows : true,
+        selectableRows : false,
+        rowsPerPage : smi_pageSize,
+        rowsPerPageOptions : [10, 20, 25],
+        fixedHeader : true,
+        print : false,
+        download : false,
+        renderExpandableRow : (rowData, rowMeta) => {
           const column = ["Specification","Assertions", "Time","Version", "Capability", "Result", "Reason"]
           const data = smi_results.results[rowMeta.dataIndex].more_details.map((val) => {
-            return [val.smi_specification,val.assertions,val.time,"alpha1/v1",val.capability,val.status,val.reason] 
+            return [val.smi_specification,val.assertions,val.time,val.smi_version,val.capability,val.status,val.reason]
           })
           const colSpan = rowData.length + 1
           return (
@@ -256,7 +230,7 @@ class MesherySMIResults extends Component {
                       {data.map((row) => (
                         <TableRow >
                           {row.map(val => {
-                            if(val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i)!=null) {
+                            if (val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i)!=null) {
                               const time = val.split(/m|s/)
                               return <TableCell colSpan={colSpan}>{time[0]+"m " + parseFloat(time[1]).toFixed(1) + "s"}</TableCell>
                             } else {
@@ -273,10 +247,12 @@ class MesherySMIResults extends Component {
             </TableRow>
           );
         },
-        onTableChange: (action, tableState) => {
-          const sortInfo = tableState.announceText? tableState.announceText.split(' : '):[];
+        onTableChange : (action, tableState) => {
+          const sortInfo = tableState.announceText
+            ? tableState.announceText.split(' : ')
+            :[];
           let order='';
-          if(tableState.activeColumn){
+          if (tableState.activeColumn){
             order = `${columns[tableState.activeColumn].name} desc`;
           }
 
@@ -293,7 +269,9 @@ class MesherySMIResults extends Component {
               }
               self.searchTimeout = setTimeout(() => {
                 if (self.state.search !== tableState.searchText) {
-                  self.fetchSMIResults(self.state.smi_page, self.state.smi_pageSize, tableState.searchText !== null ? tableState.searchText : '', self.state.smi_sortOrder);
+                  self.fetchSMIResults(self.state.smi_page, self.state.smi_pageSize, tableState.searchText !== null
+                    ? tableState.searchText
+                    : '', self.state.smi_sortOrder);
                 }
               }, 500);
               break;
@@ -318,13 +296,9 @@ class MesherySMIResults extends Component {
       );
     }
 }
-MesherySMIResults.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+MesherySMIResults.propTypes = { classes : PropTypes.object.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 const mapStateToProps = (state) => {
   const user = state.get('user').toObject();
   return { user };

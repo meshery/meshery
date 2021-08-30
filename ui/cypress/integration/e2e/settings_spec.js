@@ -1,17 +1,18 @@
 describe('Settings', () => {
   describe('Environment', () => {
     beforeEach(() => {
-      cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
+      // cy.intercept('GET', '/api/system/meshsync/grafana').as('getScan')
 
       cy.selectProviderNone()
 
       cy.visit('/settings')
-      cy.wait('@getScan')
+      // cy.wait('@getScan')
     })
 
     it('click on Discover Cluster and send a ping to the cluster', () => {
-      cy.intercept('GET', '/api/config/sync').as('getConfigSync')
-      cy.intercept('GET', '/api/k8sconfig/ping').as('getK8sConfigPing')
+
+      cy.intercept('GET', '/api/system/sync').as('getConfigSync')
+      cy.intercept('GET', '/api/system/kubernetes/ping').as('getK8sConfigPing')
 
       cy.get('[data-cy="tabInClusterDeployment"]').click()
       cy.get('[data-cy="btnDiscoverCluster"]').click()
@@ -33,20 +34,20 @@ describe('Settings', () => {
 
   describe('Service Meshes', () => {
     beforeEach(() => {
-      cy.intercept('GET', '/api/promGrafana/scan').as('getScan')
-      cy.intercept('GET', '/api/mesh/adapters').as('getMeshAdapters')
+      // cy.intercept('GET', '/api/system/meshsync/grafana').as('getScan')
+      cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters')
 
       cy.selectProviderNone()
       cy.visit('/settings')
-      cy.wait('@getScan')
+      // cy.wait('@getScan')
 
       cy.get('[data-cy="tabServiceMeshes"]').click()
       cy.wait('@getMeshAdapters')
     })
     it('ping and submit Consul', () => {
-      cy.intercept('GET', '/api/mesh/adapter/ping*').as('getAdapterPing')
-      cy.intercept('POST', '/api/mesh/manage').as('postMeshManage')
-      cy.intercept('GET', '/api/mesh/adapters').as('getMeshAdapters')
+      cy.intercept('GET', '/api/system/adapters*').as('getAdapterPing')
+      cy.intercept('POST', '/api/system/adapter/manage').as('postMeshManage')
+      cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters')
 
       cy.get('[data-cy=chipAdapterLocation]')
         .contains('.MuiChip-label', 'mesherylocal.layer5.io:10002')

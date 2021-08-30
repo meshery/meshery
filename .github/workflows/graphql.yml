@@ -1,0 +1,39 @@
+name: GraphQL API Documentation
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'internal/graphql/schema/schema.graphql'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: github.repository == 'meshery/meshery'
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7.1
+        bundler-cache: true
+
+    - name: graphql-docs
+      run: |
+        cd docs
+        bundle install
+        bundle exec rake graphql:compile_docs
+
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        file_pattern: docs/
+        commit_user_name: l5io
+        commit_user_email: ci@layer5.io
+        commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+        commit_options: '--signoff'
+        commit_message: "[Docs] Generated documentation for GraphQL API"
+        branch: master

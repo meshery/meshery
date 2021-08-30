@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -12,6 +14,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -39,9 +42,11 @@ func NewTestHelper(t *testing.T) *TestHelper {
 }
 
 type CmdTestInput struct {
-	Name             string
-	Args             []string
-	ExpectedResponse string
+	Name                 string
+	Args                 []string
+	ExpectedResponse     string
+	ExpectedResponseYaml string
+	ExpectError          bool
 }
 
 type GoldenFile struct {
@@ -101,7 +106,20 @@ func (tf *GoldenFile) LoadByte() []byte {
 func (tf *GoldenFile) Write(content string) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	err := ioutil.WriteFile(path, []byte(content), 0644)
+
+	_, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			err := ioutil.WriteFile(path, []byte(content), 0755)
+			if err != nil {
+				fmt.Printf("Unable to write file: %v", err)
+			}
+			return
+		}
+		tf.t.Fatal(err)
+	}
+
+	err = ioutil.WriteFile(path, []byte(content), 0644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -125,6 +143,7 @@ func SetupContextEnv(t *testing.T) {
 	}
 	viper.Reset()
 	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
+	DefaultConfigPath = path + "/../../../../pkg/utils/TestConfig.yaml"
 	//fmt.Println(viper.ConfigFileUsed())
 	err = viper.ReadInConfig()
 	if err != nil {
@@ -137,10 +156,19 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
+// setup logrus formatter and return the buffer in which commands output is to be set.
+func SetupLogrusGrabTesting(t *testing.T) *bytes.Buffer {
+	b := bytes.NewBufferString("")
+	logrus.SetOutput(b)
+	SetupLogrusFormatter()
+	return b
+}
+
 // setup custom context with SetupCustomContextEnv
 func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	viper.Reset()
 	viper.SetConfigFile(pathToContext)
+	DefaultConfigPath = pathToContext
 	//fmt.Println(viper.ConfigFileUsed())
 	err := viper.ReadInConfig()
 	if err != nil {
@@ -184,5 +212,28 @@ func SetFileLocationTesting(t *testing.T, dir string) {
 	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
 	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
 	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
-	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
+}
+func Populate(src, dst string) error {
+	sourceFileStat, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+
+	if !sourceFileStat.Mode().IsRegular() {
+		return fmt.Errorf("%s is not a regular file", src)
+	}
+
+	source, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+
+	destination, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destination.Close()
+	_, err = io.Copy(destination, source)
+	return err
 }

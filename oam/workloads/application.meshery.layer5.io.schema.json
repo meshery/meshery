@@ -7,40 +7,74 @@
     "replicas": {
       "type": "integer"
     },
+    "advanced": {
+      "type": "object",
+      "properties": {
+        "skip_service": {
+          "type": "boolean"
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "format": "string",
+            "type": "string"
+          }    
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "format": "string",
+            "type": "string"
+          }
+        }
+      }
+    },
     "containers": {
       "type": "array",
       "items": {
-        "container": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "image": {
-              "type": "string"
-            },
-            "ports": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "default": "http"
-                  },
-                  "containerPort": {
-                    "type": "integer"
-                  }
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "default": "http"
                 },
-                "minItems": 1,
-                "required": ["containerPort"]
-              }
+                "containerPort": {
+                  "type": "integer"
+                }
+              },
+              "minItems": 1,
+              "required": ["containerPort"]
             }
           },
-          "required": ["name", "image", "ports"]
-        }
-      },
-      "minItems": 1
+          "envs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": ["name", "image", "ports"],
+        "minItems": 1
+      }
     }
   },
   "required": ["replicas", "containers"]

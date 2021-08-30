@@ -15,44 +15,24 @@ import PrometheusConfigComponent from "./PrometheusConfigComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 
 const promStyles = (theme) => ({
-  root: {
-    padding: theme.spacing(5),
-  },
-  buttons: {
-    display: "flex",
+  root : { padding : theme.spacing(5), },
+  buttons : { display : "flex",
     //   justifyContent: 'flex-end',
   },
-  button: {
-    marginTop: theme.spacing(3),
+  button : { marginTop : theme.spacing(3),
     //   marginLeft: theme.spacing(1),
   },
-  margin: {
-    margin: theme.spacing(1),
-  },
-  chartTitle: {
-    textAlign: "center",
-  },
-  icon: {
-    width: theme.spacing(2.5),
-  },
-  alignRight: {
-    textAlign: "right",
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 180,
-  },
-  panelChips: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  panelChip: {
-    margin: theme.spacing(0.25),
-  },
-  chartTitle: {
-    marginLeft: theme.spacing(3),
-    marginTop: theme.spacing(2),
-  },
+  margin : { margin : theme.spacing(1), },
+  chartTitle : { textAlign : "center", },
+  icon : { width : theme.spacing(2.5), },
+  alignRight : { textAlign : "right", },
+  formControl : { margin : theme.spacing(1),
+    minWidth : 180, },
+  panelChips : { display : "flex",
+    flexWrap : "wrap", },
+  panelChip : { margin : theme.spacing(0.25), },
+  chartTitle : { marginLeft : theme.spacing(3),
+    marginTop : theme.spacing(2), },
 });
 
 export const submitPrometheusConfigure = (self, cb = () => {}) => {
@@ -60,45 +40,35 @@ export const submitPrometheusConfigure = (self, cb = () => {}) => {
   if (prometheusURL === "") {
     return;
   }
-  const data = {
-    prometheusURL,
-  };
+  const data = { prometheusURL, };
   const params = Object.keys(data)
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
     .join("&");
-  self.props.updateProgress({ showProgress: true });
+  self.props.updateProgress({ showProgress : true });
   dataFetch(
-    "/telemetry/metrics/config",
+    "/api/telemetry/metrics/config",
     {
-      credentials: "same-origin",
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-      },
-      body: params,
+      credentials : "same-origin",
+      method : "POST",
+      credentials : "include",
+      headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
+      body : params,
     },
     (result) => {
-      self.props.updateProgress({ showProgress: false });
+      self.props.updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        self.props.enqueueSnackbar("Prometheus was successfully configured!", {
-          variant: "success",
-          autoHideDuration: 2000,
-          action: function Loader(key) {
+        self.props.enqueueSnackbar("Prometheus was successfully configured!", { variant : "success",
+          autoHideDuration : 2000,
+          action : function Loader(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             );
-          },
-        });
-        self.setState({ prometheusConfigSuccess: true });
-        self.props.updatePrometheusConfig({
-          prometheus: {
-            prometheusURL,
-            selectedPrometheusBoardsConfigs,
-          },
-        });
+          }, });
+        self.setState({ prometheusConfigSuccess : true });
+        self.props.updatePrometheusConfig({ prometheus : { prometheusURL,
+          selectedPrometheusBoardsConfigs, }, });
         cb()
       }
     },
@@ -117,48 +87,51 @@ class PrometheusComponent extends Component {
     }
 
     this.state = {
-      urlError: false,
+      urlError : false,
 
       prometheusConfigSuccess,
-      selectedPrometheusBoardsConfigs: selectedPrometheusBoardsConfigs?selectedPrometheusBoardsConfigs:[],
+      selectedPrometheusBoardsConfigs : selectedPrometheusBoardsConfigs
+        ?selectedPrometheusBoardsConfigs
+        :[],
       prometheusURL,
-      ts: new Date(),
+      ts : new Date(),
     };
   }
 
   componentDidMount() {
     const self = this;
 
-    dataFetch(
-      "/api/telemetry/metrics/config",
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+    if (self.props.isMeshConfigured)
+      dataFetch(
+        "/api/telemetry/metrics/config",
+        {
+          method : "GET",
+          credentials : "include",
+          headers : {
+            "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8",
+          },
         },
-      },
-      (result) => {
-        self.props.updateProgress({ showProgress: false });
-        if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL !="") {
-          let selector = {
-            serviceMesh: "ALL_MESH",
-          };
-          fetchAvailableAddons(selector).subscribe({
-            next: (res) => {
+        (result) => {
+          self.props.updateProgress({ showProgress : false });
+          if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL !="") {
+            let selector = {
+              serviceMesh : "ALL_MESH",
+            };
+            fetchAvailableAddons(selector).subscribe({
+              next : (res) => {
               res?.addonsState?.forEach((addon) => {
                 if (addon.name === "prometheus" && self.state.prometheusURL === "") {
-                  self.setState({ prometheusURL: "http://" + addon.endpoint })
+                  self.setState({ prometheusURL : "http://" + addon.endpoint })
                   submitPrometheusConfigure(self);
                 }
               });
-            },
-            error: (err) => console.log("error registering prometheus: " + err),
-          });
-        }
-      },
-      self.handleError("There was an error communicating with grafana config")
-    )
+              },
+              error : (err) => console.log("error registering Prometheus: " + err),
+            });
+          }
+        },
+        self.handleError
+      )
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -168,8 +141,8 @@ class PrometheusComponent extends Component {
       return {
         prometheusURL,
         selectedPrometheusBoardsConfigs,
-        prometheusConfigSuccess: prometheusURL !== "",
-        ts: props.ts,
+        prometheusConfigSuccess : prometheusURL !== "",
+        ts : props.ts,
       };
     }
     return {};
@@ -177,9 +150,9 @@ class PrometheusComponent extends Component {
 
   handleChange = (name) => (value) => {
     if (name === "prometheusURL" && value !== "") {
-      this.setState({ urlError: false });
+      this.setState({ urlError : false });
     }
-    this.setState({ [name]: value });
+    this.setState({ [name] : value });
   };
 
   handlePrometheusConfigure = () => {
@@ -188,7 +161,7 @@ class PrometheusComponent extends Component {
       prometheusURL === "" ||
       !(prometheusURL.toLowerCase().startsWith("http://") || prometheusURL.toLowerCase().startsWith("https://"))
     ) {
-      this.setState({ urlError: true });
+      this.setState({ urlError : true });
       return;
     }
     submitPrometheusConfigure(this);
@@ -196,42 +169,32 @@ class PrometheusComponent extends Component {
 
   handleError = () => {
     const self = this;
-    this.props.updateProgress({ showProgress: false });
-    this.props.enqueueSnackbar("There was an error communicating with Prometheus", {
-      variant: "error",
-      action: (key) => (
+    this.props.updateProgress({ showProgress : false });
+    this.props.enqueueSnackbar("There was an error communicating with Prometheus", { variant : "error",
+      action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration: 8000,
-    });
+      autoHideDuration : 8000, });
   };
 
   handlePrometheusChipDelete = () => {
     const self = this;
-    self.props.updateProgress({ showProgress: true });
+    self.props.updateProgress({ showProgress : true });
     dataFetch(
-      "/telemetry/metrics/config",
-      {
-        credentials: "same-origin",
-        method: "DELETE",
-        credentials: "include",
-      },
+      "/api/telemetry/metrics/config",
+      { credentials : "same-origin",
+        method : "DELETE",
+        credentials : "include", },
       (result) => {
-        self.props.updateProgress({ showProgress: false });
+        self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          self.setState({
-            prometheusConfigSuccess: false,
-            prometheusURL: "",
-            selectedPrometheusBoardsConfigs: [],
-          });
-          self.props.updatePrometheusConfig({
-            prometheus: {
-              prometheusURL: "",
-              selectedPrometheusBoardsConfigs: [],
-            },
-          });
+          self.setState({ prometheusConfigSuccess : false,
+            prometheusURL : "",
+            selectedPrometheusBoardsConfigs : [], });
+          self.props.updatePrometheusConfig({ prometheus : { prometheusURL : "",
+            selectedPrometheusBoardsConfigs : [], }, });
         }
       },
       self.handleError
@@ -239,26 +202,22 @@ class PrometheusComponent extends Component {
   };
 
   handlePrometheusClick = () => {
-    this.props.updateProgress({ showProgress: true });
+    this.props.updateProgress({ showProgress : true });
     const self = this;
     dataFetch(
       "/api/telemetry/metrics/ping",
-      {
-        credentials: "same-origin",
-        credentials: "include",
-      },
+      { credentials : "same-origin",
+        credentials : "include", },
       (result) => {
-        self.props.updateProgress({ showProgress: false });
+        self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          self.props.enqueueSnackbar("Prometheus successfully pinged!", {
-            variant: "success",
-            autoHideDuration: 2000,
-            action: (key) => (
+          self.props.enqueueSnackbar("Prometheus successfully pinged!", { variant : "success",
+            autoHideDuration : 2000,
+            action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ),
-          });
+            ), });
         }
       },
       self.handleError
@@ -270,12 +229,8 @@ class PrometheusComponent extends Component {
     if (boardsSelection && boardsSelection.panels && boardsSelection.panels.length) {
       selectedPrometheusBoardsConfigs.push(boardsSelection);
       this.setState({ selectedPrometheusBoardsConfigs });
-      this.props.updatePrometheusConfig({
-        prometheus: {
-          prometheusURL,
-          selectedPrometheusBoardsConfigs,
-        },
-      });
+      this.props.updatePrometheusConfig({ prometheus : { prometheusURL,
+        selectedPrometheusBoardsConfigs, }, });
     }
   };
 
@@ -286,17 +241,15 @@ class PrometheusComponent extends Component {
       selectedPrometheusBoardsConfigs.splice(indexes[i], 1);
     }
     this.setState({ selectedPrometheusBoardsConfigs });
-    this.props.updatePrometheusConfig({
-      prometheus: {
-        prometheusURL,
-        selectedPrometheusBoardsConfigs,
-      },
-    });
+    this.props.updatePrometheusConfig({ prometheus : { prometheusURL,
+      selectedPrometheusBoardsConfigs, }, });
   };
 
   render() {
     const { classes } = this.props;
-    const { urlError, prometheusURL, prometheusConfigSuccess, selectedPrometheusBoardsConfigs } = this.state;
+    const {
+      urlError, prometheusURL, prometheusConfigSuccess, selectedPrometheusBoardsConfigs
+    } = this.state;
     if (prometheusConfigSuccess) {
       let displaySelec = "";
       if (selectedPrometheusBoardsConfigs.length > 0) {
@@ -336,8 +289,8 @@ class PrometheusComponent extends Component {
     return (
       <NoSsr>
         <PrometheusConfigComponent
-          prometheusURL={prometheusURL && { label: prometheusURL, value: prometheusURL }}
-          options={this.props.scannedPrometheus.map((url) => ({ label: url, value: url }))}
+          prometheusURL={prometheusURL && { label : prometheusURL, value : prometheusURL }}
+          options={this.props.scannedPrometheus.map((url) => ({ label : url, value : url }))}
           urlError={urlError}
           handleChange={this.handleChange}
           handlePrometheusConfigure={this.handlePrometheusConfigure}
@@ -347,16 +300,12 @@ class PrometheusComponent extends Component {
   }
 }
 
-PrometheusComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-  scannedPrometheus: PropTypes.array.isRequired,
-};
+PrometheusComponent.propTypes = { classes : PropTypes.object.isRequired,
+  scannedPrometheus : PropTypes.array.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
+  updateProgress : bindActionCreators(updateProgress, dispatch), });
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
   const prometheus = st.get("prometheus").toJS();

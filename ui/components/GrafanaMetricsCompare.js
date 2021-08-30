@@ -4,11 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { MenuItem, NoSsr, TextField } from '@material-ui/core';
 import { connect } from 'react-redux';
 
-const grafanaStyles = () => ({
-  root: {
-    width: '100%',
-  },
-});
+const grafanaStyles = () => ({ root : { width : '100%', }, });
 
 class GrafanaMetricsCompare extends Component {
   constructor(props) {
@@ -18,9 +14,9 @@ class GrafanaMetricsCompare extends Component {
     this.state = {
       chartCompare,
       panels,
-      panel: '',
-      selectedSeries: '',
-      series: [],
+      panel : '',
+      selectedSeries : '',
+      series : [],
     };
   }
 
@@ -43,16 +39,18 @@ class GrafanaMetricsCompare extends Component {
 
   componentDidMount() {
     const { panels } = this.state;
-    const panel = Object.keys(panels).length > 0 ? Object.keys(panels)[0] : '';
+    const panel = Object.keys(panels).length > 0
+      ? Object.keys(panels)[0]
+      : '';
     let series = [];
     if (panels[panel] && panels[panel].targets) {
       series = panels[panel].targets.map((target) => target.expr);
     }
-    this.setState({
-      panel,
+    this.setState({ panel,
       series,
-      selectedSeries: series.length > 0 ? series[0] : '',
-    });
+      selectedSeries : series.length > 0
+        ? series[0]
+        : '', });
   }
 
   handleChange(name) {
@@ -65,13 +63,13 @@ class GrafanaMetricsCompare extends Component {
         if (panels[panel] && panels[panel].targets) {
           series = panels[panel].targets.map((target) => target.expr);
         }
-        self.setState({
-          panel,
+        self.setState({ panel,
           series,
-          selectedSeries: series.length > 0 ? series[0] : '',
-        });
+          selectedSeries : series.length > 0
+            ? series[0]
+            : '', });
       } else if (name === 'series') {
-        self.setState({ selectedSeries: event.target.value });
+        self.setState({ selectedSeries : event.target.value });
       }
     };
   }
@@ -114,10 +112,8 @@ class GrafanaMetricsCompare extends Component {
   }
 }
 
-GrafanaMetricsCompare.propTypes = {
-  classes: PropTypes.object.isRequired,
-  chartCompare: PropTypes.array.isRequired,
-};
+GrafanaMetricsCompare.propTypes = { classes : PropTypes.object.isRequired,
+  chartCompare : PropTypes.array.isRequired, };
 
 const mapDispatchToProps = () => ({});
 

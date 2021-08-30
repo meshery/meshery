@@ -93,7 +93,7 @@ Para actualizar `mesheryctl`, ejecuta el siguiente comando:
 scoop update mesheryctl
 ```
 
-# Instalación Advanzada
+# Instalación Avanzada
 
 Los Usuarios pueden controlar la imagen de contenedor específico y etiqueta(versión) de Meshery que quieran ejecutar mediante la edición de su archivo local `~/.meshery/meshery.yaml` (un archivo de docker compose).
 Alineado con la imagen de contenedor Meshery, en lugar de dejar la etiqueta implícita `:stable-latest` detrás de la imagen: layer5/meshery, los usuarios, en vez de esto, identificarán una etiqueta de imagen específica así:

@@ -12,21 +12,14 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
-	OAM "github.com/layer5io/meshery/models/pattern"
+	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/models/pattern/patterns"
-	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshery/models/pattern/stages"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 )
-
-type compConfigPair struct {
-	Component     v1alpha1.Component
-	Configuration v1alpha1.Configuration
-	Hosts         map[string]bool
-}
 
 // patternCallType is custom type for pattern
 // based calls on the adapter
@@ -38,10 +31,19 @@ const (
 	oamAdapter patternCallType = ""
 )
 
-// policies are hardcoded here BUT they should be
-// fetched from a "service registry" as soon as we have
-// one
-var policies = [][2]string{}
+// swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
+// Handle POST request for Pattern Deploy
+//
+// Deploy an attached pattern with the request
+// responses:
+// 	200:
+
+// swagger:route DELETE /api/pattern/deploy PatternsAPI idDeleteDeployPattern
+// Handle DELETE request for Pattern Deploy
+//
+// Delete a deployed pattern with the request
+// responses:
+// 	200:
 
 // PatternFileHandler handles the requested related to pattern files
 func (h *Handler) PatternFileHandler(
@@ -54,6 +56,9 @@ func (h *Handler) PatternFileHandler(
 	// Read the PatternFile
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+
 		rw.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
@@ -62,8 +67,8 @@ func (h *Handler) PatternFileHandler(
 	if r.Header.Get("Content-Type") == "application/json" {
 		body, err = yaml.JSONToYAML(body)
 		if err != nil {
-			rw.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
+			h.log.Error(ErrPatternFile(err))
+			http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -79,56 +84,38 @@ func (h *Handler) PatternFileHandler(
 	isDel := r.Method == http.MethodDelete
 
 	// Generate the pattern file object
-	patternFile, err := OAM.NewPatternFile(body)
+	patternFile, err := core.NewPatternFile(body)
 	if err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
-		return
-	}
-
-	// Get execution plan
-	plan, err := OAM.CreatePlan(patternFile, policies)
-	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to create an execution plan: %s", err)
-		return
-	}
-
-	// Check for feasibility
-	if feasible := plan.IsFeasible(); !feasible {
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(rw, "invalid Pattern, execution is infeasible")
+		h.log.Error(ErrPatternFile(err))
+		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// If DynamicKubeClient hasn't been created yet then create one
-	if h.kubeclient.DynamicKubeClient == nil {
+	if h.config.KubeClient.DynamicKubeClient == nil {
 		kc, err := meshkube.New(prefObj.K8SConfig.Config)
 		if err != nil {
-			logrus.Error("failed to create kube client: ", err)
-			rw.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(rw, "Error:%s", err)
+			h.log.Error(ErrInvalidPattern(err))
+			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
-		h.kubeclient = kc
+		h.config.KubeClient = kc
 	}
 
-	msg, err := createCompConfigPairsAndExecuteAction(
-		r.Context(),
-		h,
-		prefObj,
-		user,
-		provider,
+	msg, err := _processPattern(
 		token,
-		plan,
+		provider,
 		patternFile,
+		prefObj,
+		h.config.KubeClient,
+		user.UserID,
 		isDel,
 	)
 
 	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "Messages:\n%s\nErrors:%s", msg, err)
+		h.log.Error(ErrCompConfigPairs(err))
+		http.Error(rw, ErrCompConfigPairs(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -150,15 +137,15 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 
 	method := r.Method
 	if method == "POST" {
-		if err := POSTOAMRegisterHandler(typ, r); err != nil {
+		if err := h.POSTOAMRegisterHandler(typ, r); err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
-			logrus.Debug(err)
+			h.log.Debug(err)
 			_, _ = rw.Write([]byte(err.Error()))
 			return
 		}
 	}
 	if method == "GET" {
-		GETOAMRegisterHandler(typ, rw)
+		h.GETOAMRegisterHandler(typ, rw)
 	}
 }
 
@@ -173,7 +160,7 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 // 	200:
 
 // POSTOAMRegisterHandler handles registering OMA objects
-func POSTOAMRegisterHandler(typ string, r *http.Request) error {
+func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	// Get the body
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -181,13 +168,13 @@ func POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	}
 
 	if typ == "workload" {
-		return OAM.RegisterWorkload(body)
+		return core.RegisterWorkload(body)
 	}
 	if typ == "trait" {
-		return OAM.RegisterTrait(body)
+		return core.RegisterTrait(body)
 	}
 	if typ == "scope" {
-		return OAM.RegisterScope(body)
+		return core.RegisterScope(body)
 	}
 
 	return nil
@@ -204,412 +191,38 @@ func POSTOAMRegisterHandler(typ string, r *http.Request) error {
 // 	200:
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
-func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
+func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
 	if typ == "workload" {
-		res := OAM.GetWorkloads()
+		res := core.GetWorkloads()
 
 		if err := enc.Encode(res); err != nil {
-			logrus.Error("failed to encode workload definitions")
+			h.log.Error(ErrWorkloadDefinition(err))
+			http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 
 	if typ == "trait" {
-		res := OAM.GetTraits()
+		res := core.GetTraits()
 
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
-			logrus.Error("failed to encode trait definitions")
+			h.log.Error(ErrTraitDefinition(err))
+			http.Error(rw, ErrScopeDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
 
 	if typ == "scope" {
-		res := OAM.GetScopes()
+		res := core.GetScopes()
 
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
-			logrus.Error("failed to encode scope definitions")
+			h.log.Error(ErrScopeDefinition(err))
+			http.Error(rw, ErrScopeDefinition(err).Error(), http.StatusInternalServerError)
 		}
 	}
-}
-
-func createCompConfigPairsAndExecuteAction(
-	ctx context.Context,
-	h *Handler,
-	prefObj *models.Preference,
-	user *models.User,
-	provider models.Provider,
-	token string,
-	plan *OAM.Plan,
-	patternFile OAM.Pattern,
-	isDel bool,
-) (string, error) {
-	var internalErrs []error
-	var msgs []string
-
-	aConfig, err := patternFile.GenerateApplicationConfiguration()
-	if err != nil {
-		return "", err
-	}
-
-	_ = plan.Execute(func(svcName string, _ OAM.Service) bool {
-		compcon := compConfigPair{
-			Hosts: make(map[string]bool),
-		}
-
-		// Create an ID for the resource
-		_id, err := uuid.NewV4()
-		if err != nil {
-			internalErrs = append(internalErrs, err)
-			return false
-		}
-		id := _id.String()
-
-		// Convert the current service into application component
-		comp, err := patternFile.GetApplicationComponent(svcName)
-		if err != nil {
-			internalErrs = append(internalErrs, err)
-			return false
-		}
-
-		// Check if a similar resource has been previously provisioned
-		exists := patternResourceExists(
-			h,
-			prefObj,
-			user,
-			provider,
-			token,
-			comp.Name,
-			comp.Namespace,
-			comp.Spec.Type,
-			"workload",
-		)
-
-		if exists {
-			resourcePage, err := provider.GetMesheryPatternResources(
-				token,
-				"0",
-				"1",
-				"",
-				"",
-				comp.Name,
-				comp.Namespace,
-				comp.Spec.Type,
-				"workload",
-			)
-			if err != nil {
-				internalErrs = append(internalErrs, err)
-				return false
-			}
-
-			if len(resourcePage.Resources) < 1 {
-				err := fmt.Errorf(
-					"resource with name: %s, namespace: %s, type: %s, oam_type: %s not found",
-					comp.Name,
-					comp.Namespace,
-					comp.Spec.Type,
-					"workload",
-				)
-
-				internalErrs = append(internalErrs, err)
-				return false
-			}
-
-			resource := resourcePage.Resources[0]
-			id = resource.ID.String()
-
-			logrus.Debug("resource exists with id: ", id)
-		}
-
-		// Assign ID to the component
-		comp.SetLabels(map[string]string{
-			"resource.pattern.meshery.io/id": id,
-		})
-
-		// Get workload definition corresponding to the type of the workload
-		workload, err := getWorkloadDefinition(comp.Spec.Type)
-		if err != nil {
-			internalErrs = append(internalErrs, err)
-			return false
-		}
-
-		// Validate the configuration against the workloadDefinition schema
-		workloadCap, err := OAM.ValidateWorkload(workload, comp)
-		if err != nil {
-			internalErrs = append(internalErrs, fmt.Errorf("invalid Pattern: %s", err))
-			return false
-		}
-
-		compcon.Component = comp
-		compcon.Hosts[workloadCap.Host] = true
-
-		// Get component from the configuration file
-		configComp, ok := getComponentFromConfiguration(aConfig, comp.Name)
-		if !ok { // If no configuration exists corresponding to the component then proceed
-			msg, err := handleCompConfigPairAction(
-				ctx,
-				h,
-				compcon,
-				prefObj,
-				user,
-				provider,
-				token,
-				isDel,
-				exists && !isDel,
-			)
-			msgs = append(msgs, msg)
-			if err != nil {
-				internalErrs = append(internalErrs, err)
-				return false
-			}
-
-			return true
-		}
-
-		// Configuration exists for the component
-		// Processing the traits applied to the component
-		for _, tr := range configComp.Traits {
-			traitDef, err := getTraitDefinition(tr.Name)
-			if err != nil {
-				internalErrs = append(internalErrs, err)
-				return false
-			}
-
-			traitCap, err := OAM.ValidateTrait(traitDef, configComp, patternFile)
-			if err != nil {
-				internalErrs = append(internalErrs, err)
-				return false
-			}
-
-			compcon.Hosts[traitCap.Host] = true
-		}
-
-		compcon.Configuration = aConfig
-
-		msg, err := handleCompConfigPairAction(
-			ctx,
-			h,
-			compcon,
-			prefObj,
-			user,
-			provider,
-			token,
-			isDel,
-			exists && !isDel,
-		)
-		msgs = append(msgs, msg)
-		if err != nil {
-			internalErrs = append(internalErrs, err)
-			return false
-		}
-
-		return true
-	})
-
-	return mergeMsgs(msgs), mergeErrors(internalErrs)
-}
-
-func handleCompConfigPairAction(
-	ctx context.Context,
-	h *Handler,
-	ccp compConfigPair,
-	prefObj *models.Preference,
-	user *models.User,
-	provider models.Provider,
-	token string,
-	isDel bool,
-	isUpdate bool,
-) (string, error) {
-	var msgs []string
-	var errs []error
-
-	// Marshal the component
-	jsonComp, err := json.Marshal(ccp.Component)
-	if err != nil {
-		return "", fmt.Errorf("failed to serialize the data: %s", err)
-	}
-
-	// Marshal the configuration
-	jsonConfig, err := json.Marshal(ccp.Configuration)
-	if err != nil {
-		return "", fmt.Errorf("failed to serialize the data: %s", err)
-	}
-
-	// Execute command on the adapters
-	for host := range ccp.Hosts {
-		// Hack until adapters fix the concurrent client
-		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
-		time.Sleep(10 * time.Microsecond)
-
-		callType := oamAdapter
-		if strings.HasPrefix(host, string(rawAdapter)) {
-			callType = rawAdapter
-		}
-		if strings.HasPrefix(host, string(noneLocal)) {
-			callType = noneLocal
-		}
-
-		msg, err := executeAction(
-			ctx,
-			prefObj,
-			host,
-			user.UserID,
-			isDel,
-			callType,
-			[]string{string(jsonComp)},
-			string(jsonConfig),
-			h.kubeclient,
-		)
-		if err != nil {
-			errs = append(errs, err)
-			continue
-		}
-
-		msgs = append(msgs, msg)
-	}
-
-	// If no errors occurred add the resource and it's NOT and update operation then
-	// create an entry corresponding to this resource in the database
-	if len(errs) == 0 && !isUpdate {
-		id := uuid.FromStringOrNil(ccp.Component.GetLabels()["resource.pattern.meshery.io/id"])
-		if isDel {
-			if err := provider.DeleteMesheryResource(token, id.String()); err != nil {
-				logrus.Error("failed to delete the pattern resource:", err)
-			}
-		} else {
-			if _, err := provider.SaveMesheryPatternResource(token, &models.PatternResource{
-				ID:        &id,
-				Name:      ccp.Component.Name,
-				Namespace: ccp.Component.Namespace,
-				Type:      ccp.Component.Spec.Type,
-				OAMType:   "workload",
-			}); err != nil {
-				logrus.Error("failed to save the pattern resource:", err)
-			}
-		}
-	}
-
-	return mergeMsgs(msgs), mergeErrors(errs)
-}
-
-func getWorkloadDefinition(key string) (interface{}, error) {
-	// Get the schema for the component
-	key2 := fmt.Sprintf(
-		"/meshery/registry/definition/%s/%s/%s",
-		"core.oam.dev/v1alpha1",
-		"WorkloadDefinition",
-		key,
-	)
-
-	workload, ok := store.Get(key2)
-	if !ok {
-		return workload, fmt.Errorf("invalid Pattern, service type %s does not exist", key)
-	}
-
-	return workload, nil
-}
-
-func getTraitDefinition(key string) (interface{}, error) {
-	// Get the schema for the component
-	key2 := fmt.Sprintf(
-		"/meshery/registry/definition/%s/%s/%s",
-		"core.oam.dev/v1alpha1",
-		"TraitDefinition",
-		key,
-	)
-
-	trait, ok := store.Get(key2)
-	if !ok {
-		return trait, fmt.Errorf("invalid Pattern, trait %s does not exist", key)
-	}
-
-	return trait, nil
-}
-
-func getComponentFromConfiguration(
-	aConfig v1alpha1.Configuration,
-	compName string,
-) (v1alpha1.ConfigurationSpecComponent, bool) {
-	for _, comps := range aConfig.Spec.Components {
-		if comps.ComponentName == compName {
-			return comps, true
-		}
-	}
-
-	return v1alpha1.ConfigurationSpecComponent{}, false
-}
-
-func executeAction(
-	ctx context.Context,
-	prefObj *models.Preference,
-	adapter,
-	userID string,
-	delete bool,
-	callType patternCallType,
-	oamComps []string,
-	oamConfig string,
-	kClient *meshkube.Client,
-) (string, error) {
-	logrus.Debugf("Adapter to execute operations on: %s", adapter)
-
-	if prefObj.K8SConfig == nil ||
-		!prefObj.K8SConfig.InClusterConfig &&
-			(prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		return "", fmt.Errorf("no valid kubernetes config found")
-	}
-
-	if callType == noneLocal {
-		resp, err := patterns.ProcessOAM(kClient, oamComps, oamConfig, delete)
-
-		return resp, err
-	}
-
-	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, adapter)
-	if err != nil {
-		return "", fmt.Errorf("error creating a mesh client: %v", err)
-	}
-	defer func() {
-		_ = mClient.Close()
-	}()
-
-	if callType == rawAdapter {
-		resp, err := mClient.MClient.ApplyOperation(ctx, &meshes.ApplyRuleRequest{
-			Username:  userID,
-			DeleteOp:  delete,
-			OpName:    "custom",
-			Namespace: "",
-		})
-
-		return resp.String(), err
-	}
-
-	if callType == oamAdapter {
-		resp, err := mClient.MClient.ProcessOAM(ctx, &meshes.ProcessOAMRequest{
-			Username:  userID,
-			DeleteOp:  delete,
-			OamComps:  oamComps,
-			OamConfig: oamConfig,
-		})
-
-		return resp.GetMessage(), err
-	}
-
-	return "", fmt.Errorf("invalid")
-}
-
-func mergeErrors(errs []error) error {
-	if len(errs) == 0 {
-		return nil
-	}
-
-	var errMsg []string
-	for _, err := range errs {
-		errMsg = append(errMsg, err.Error())
-	}
-
-	return fmt.Errorf(strings.Join(errMsg, "\n"))
 }
 
 func mergeMsgs(msgs []string) string {
@@ -624,23 +237,212 @@ func mergeMsgs(msgs []string) string {
 	return strings.Join(finalMsgs, "\n")
 }
 
-func patternResourceExists(
-	h *Handler,
-	prefObj *models.Preference,
-	user *models.User,
+func _processPattern(
+	token string,
 	provider models.Provider,
-	token,
-	name,
-	namespace,
-	typ,
-	oamType string,
-) bool {
-	res, err := provider.GetMesheryPatternResources(token, "0", "1", "", "", name, namespace, typ, oamType)
-	if err != nil {
-		return false
+	pattern core.Pattern,
+	prefObj *models.Preference,
+	kubeClient *meshkube.Client,
+	userID string,
+	isDelete bool,
+) (string, error) {
+	sip := &serviceInfoProvider{
+		token:      token,
+		provider:   provider,
+		opIsDelete: isDelete,
+	}
+	sap := &serviceActionProvider{
+		token:      token,
+		provider:   provider,
+		prefObj:    prefObj,
+		kubeClient: kubeClient,
+		opIsDelete: isDelete,
+		userID:     userID,
+
+		accumulatedMsgs: []string{},
+		err:             nil,
 	}
 
-	logrus.Debugf("&&&&&%+v\n", res)
+	chain := stages.CreateChain()
+	chain.
+		Add(stages.ServiceIdentifier(sip, sap)).
+		Add(stages.Filler).
+		Add(stages.Validator(sip, sap)).
+		Add(stages.Provision(sip, sap)).
+		Add(stages.Persist(sip, sap)).
+		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
+			data.Lock.Lock()
+			for k, v := range data.Other {
+				if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
+					msg, ok := v.(string)
+					if ok {
+						sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
+					}
+				}
+			}
+			data.Lock.Unlock()
 
-	return len(res.Resources) > 0
+			sap.err = err
+		}).
+		Process(&stages.Data{
+			Pattern: &pattern,
+			Other:   map[string]interface{}{},
+		})
+
+	return mergeMsgs(sap.accumulatedMsgs), sap.err
+}
+
+type serviceInfoProvider struct {
+	provider   models.Provider
+	token      string
+	opIsDelete bool
+}
+
+func (sip *serviceInfoProvider) GetMesheryPatternResource(name, namespace, typ, oamType string) (*uuid.UUID, error) {
+	const page = "0"
+	const pageSize = "1"
+	res, err := sip.provider.GetMesheryPatternResources(sip.token, pageSize, page, "", "", name, namespace, typ, oamType)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(res.Resources) > 0 {
+		return res.Resources[0].ID, nil
+	}
+
+	return nil, fmt.Errorf("resource not found")
+}
+
+func (sip *serviceInfoProvider) GetServiceMesh() (string, string) {
+	return "", ""
+}
+
+func (sip *serviceInfoProvider) GetAPIVersionForKind(string) string {
+	return ""
+}
+
+func (sip *serviceInfoProvider) IsDelete() bool {
+	return sip.opIsDelete
+}
+
+type serviceActionProvider struct {
+	token      string
+	provider   models.Provider
+	prefObj    *models.Preference
+	kubeClient *meshkube.Client
+	opIsDelete bool
+	userID     string
+
+	accumulatedMsgs []string
+	err             error
+}
+
+func (sap *serviceActionProvider) Terminate(err error) {
+	logrus.Error(err)
+	sap.err = err
+}
+
+func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) {
+	// Marshal the component
+	jsonComp, err := json.Marshal(ccp.Component)
+	if err != nil {
+		return "", fmt.Errorf("failed to serialize the data: %s", err)
+	}
+
+	// Marshal the configuration
+	jsonConfig, err := json.Marshal(ccp.Configuration)
+	if err != nil {
+		return "", fmt.Errorf("failed to serialize the data: %s", err)
+	}
+
+	for adapter := range ccp.Hosts {
+		// Hack until adapters fix the concurrent client
+		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
+		time.Sleep(50 * time.Microsecond)
+
+		logrus.Debugf("Adapter to execute operations on: %s", adapter)
+
+		if sap.prefObj.K8SConfig == nil ||
+			!sap.prefObj.K8SConfig.InClusterConfig &&
+				(sap.prefObj.K8SConfig.Config == nil || len(sap.prefObj.K8SConfig.Config) == 0) {
+			return "", fmt.Errorf("no valid kubernetes config found")
+		}
+
+		// Local call
+		if strings.HasPrefix(adapter, string(noneLocal)) {
+			resp, err := patterns.ProcessOAM(
+				sap.kubeClient,
+				[]string{string(jsonComp)},
+				string(jsonConfig),
+				sap.opIsDelete,
+			)
+
+			return resp, err
+		}
+
+		// Create mesh client
+		mClient, err := meshes.CreateClient(
+			context.TODO(),
+			sap.prefObj.K8SConfig.Config,
+			sap.prefObj.K8SConfig.ContextName,
+			adapter,
+		)
+		if err != nil {
+			return "", fmt.Errorf("error creating a mesh client: %v", err)
+		}
+		defer func() {
+			_ = mClient.Close()
+		}()
+
+		// Execute operation on the adapter with raw data
+		if strings.HasPrefix(adapter, string(rawAdapter)) {
+			resp, err := mClient.MClient.ApplyOperation(context.TODO(), &meshes.ApplyRuleRequest{
+				Username:  sap.userID,
+				DeleteOp:  sap.opIsDelete,
+				OpName:    "custom",
+				Namespace: "",
+			})
+
+			return resp.String(), err
+		}
+
+		// Else it is an OAM adapter call
+		resp, err := mClient.MClient.ProcessOAM(context.TODO(), &meshes.ProcessOAMRequest{
+			Username:  sap.userID,
+			DeleteOp:  sap.opIsDelete,
+			OamComps:  []string{string(jsonComp)},
+			OamConfig: string(jsonConfig),
+		})
+
+		return resp.GetMessage(), err
+	}
+
+	return "", nil
+}
+
+func (sap *serviceActionProvider) Persist(name string, svc core.Service, isUpdate bool) error {
+	if !sap.opIsDelete {
+		if isUpdate {
+			// Do nothing
+			return nil
+		}
+
+		_, err := sap.provider.SaveMesheryPatternResource(
+			sap.token,
+			&models.PatternResource{
+				ID:        svc.ID,
+				Name:      name,
+				Namespace: svc.Namespace,
+				Type:      svc.Type,
+				OAMType:   "workload",
+			},
+		)
+
+		return err
+	}
+
+	return sap.provider.DeleteMesheryPatternResource(
+		sap.token,
+		svc.ID.String(),
+	)
 }

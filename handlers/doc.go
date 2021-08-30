@@ -14,6 +14,7 @@
 //
 //     Consumes:
 //     - application/json
+//     - multipart/form-data
 //
 //     Produces:
 //     - application/json
@@ -32,6 +33,8 @@
 package handlers
 
 import (
+	"bytes"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
@@ -56,7 +59,7 @@ type mesheryPatternResponseWrapper struct {
 type noContentWrapper struct {
 }
 
-// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule
+// swagger:parameters idGetMesheryPattern idDeleteMesheryPattern idGetSinglePerformanceProfile idDeletePerformanceProfile idGETProfileResults idDeleteSchedules idGetSingleSchedule idDeleteMesheryApplicationFile idGetMesheryApplication idDeleteMesheryFilter idGetMesheryFilter
 type IDParameterWrapper struct {
 	// id for a specific
 	// in: path
@@ -170,9 +173,9 @@ type prometheusBoardParamsWrapper struct {
 	Body []*models.SelectedGrafanaConfig
 }
 
-// Returns Anonymous stats
-// swagger:response anonymousStatsResponseWrapper
-type anonymousStatsResponseWrapper struct {
+// Returns User Load Test Preferencee
+// swagger:response userLoadTestPrefsRespWrapper
+type userLoadTestPrefsRespWrapper struct {
 	// in: body
 	Body *models.Preference
 }
@@ -181,7 +184,8 @@ type anonymousStatsResponseWrapper struct {
 // swagger:parameters idPostAnonymousStats
 type anonymousStatsParamsWrapper struct {
 	// in: body
-	Body *models.PreferenceParams
+	Body                *models.PreferenceParams
+	LoadTestPreferences *models.LoadTestPreferences
 }
 
 // Returns load test preferences
@@ -205,6 +209,29 @@ type UUIDParamsWrapper struct {
 	UUID strfmt.UUID `json:"uuid"`
 }
 
+// Parameters to run performance tests
+// swagger:parameters idRunPerfTest
+type perfTestParamsWrapper struct {
+	// in: query
+	Query *models.PerformanceTestParameters
+	// in: body
+	Body *SMP.PerformanceTestConfig
+}
+
+// Returns Single test result
+// swagger:response perfSingleResultRespWrapper
+type perfSingleResultRespWrapper struct {
+	// in: body
+	Body *models.PerformanceSpec
+}
+
+// Returns Perf test preference
+// swagger:response perfTestPrefsRespWrapper
+type perfTestPrefsRespWrapper struct {
+	// in: body
+	Body *models.Preference
+}
+
 // Returns List of saved schedules
 // swagger:response schedulesResponseWrapper
 type schedulesResponseWrapper struct {
@@ -217,4 +244,127 @@ type schedulesResponseWrapper struct {
 type singleScheduleResponseWrapper struct {
 	// in: body
 	Body models.Schedule
+}
+
+// Return all the adapters
+// swagger:response systemAdaptersRespWrapper
+type systemAdaptersRespWrapper struct {
+	// in: body
+	Body []models.Adapter
+}
+
+// swagger:parameters idDeleteAdapterConfig idGetSystemAdapters
+type adapterParamsWrapper struct {
+	// in: query
+	Adapter string `json:"adapter"`
+}
+
+// Returns saved kubernetes config
+// swagger:response k8sConfigRespWrapper
+type k8sConfigRespWrapper struct {
+	// in: body
+	Body *models.K8SConfig
+}
+
+// Returns kubernetes context list
+// swagger:response k8sContextsRespWrapper
+type k8sContextsRespWrapper struct {
+	// in: body
+	Body []*models.K8SContext
+}
+
+// Parameters for updating provider choice
+// swagger:parameters idChoiceProvider
+type mesheryProviderParamsWrapper struct {
+	// in: query
+	Provider string `json:"provider"`
+}
+
+// Returns a list of available providers
+// swagger:response listProvidersRespWrapper
+type listProvidersRespWrapper struct {
+	// in: body
+	Body map[string]models.ProviderProperties
+}
+
+// Returns provider capabilities
+// swaggere:response providerPropertiesRespWrapper
+type providerPropertiesRespWrapper struct {
+	// in: body
+	Body models.ProviderProperties
+}
+
+// Returns Meshery version
+// swagger:response mesheryVersionRespWrapper
+type mesheryVersionRespWrapper struct {
+	// in: body
+	Body Version
+}
+
+// Returns the response of the application files
+// swagger:response applicationFilesResponseWrapper
+type applicationFilesResponseWrapper struct {
+	// in: body
+	Body *models.MesheryApplication
+}
+
+// Parameters for uploading a yaml file
+// swagger:parameters idPostDeployApplicationFile idPostDeployPattern
+type applicationFileParamsWrapper struct {
+	// in: formData
+	//
+	// swagger:file
+	FormFile *bytes.Buffer `json:"Upload Yaml/Yml File"`
+}
+
+// Fetches a single Meshery Application
+// swagger:response mesheryApplicationResponseWrapper
+type mesheryApplicationResponseWrapper struct {
+	// in: body
+	Body models.MesheryApplication
+}
+
+// Returns all meshery applications
+// swagger:response mesheryApplicationsResponseWrapper
+type mesheryApplicationsResponseWrapper struct {
+	// in: body
+	Body models.ApplicationsAPIResponse
+}
+
+// Returns all the meshery adapters
+// swagger:response mesheryAdaptersRespWrapper
+type mesheryAdaptersRespWrapper struct {
+	// in: body
+	Body []*models.Adapter
+}
+
+// Parameter for meshery adapter location-url
+// swagger:parameters idPostAdapterConfig
+type mesheryAdapterParamsWrapper struct {
+	// in: body
+	MeshLocationURL string `json:"meshLocationURL"`
+}
+
+// Parameters for meshery operations
+// swagger:parameters idPostAdapterOperation
+type adapterOpsParamsWrapper struct {
+	Adapter    string `json:"adapter"`
+	Query      string `json:"query"`
+	CustomBody string `json:"customBody"`
+	Namespace  string `json:"namespace"`
+	Delete     string `json:"deleteOp"`
+}
+
+// Returns a single meshery filter
+// swagger:response mesheryFilterResponseWrapper
+type mesheryFilterResponseWrapper struct {
+	// in: body
+	Body models.MesheryFilter
+}
+
+// Returns all meshery filters
+// swagger:response mesheryFiltersResponseWrapper
+type mesheryFiltersResponseWrapper struct {
+	// in: body
+	Body models.FiltersAPIResponse
 }

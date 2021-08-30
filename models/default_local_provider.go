@@ -140,7 +140,7 @@ func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) 
 }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, search, order, profileID string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, order, profileID string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -173,7 +173,7 @@ func (l *DefaultLocalProvider) FetchAllResults(req *http.Request, page, pageSize
 }
 
 // GetResult - fetches result from provider backend for the given result id
-func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
+func (l *DefaultLocalProvider) GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error) {
 	// key := uuid.FromStringOrNil(resultID)
 	if resultID == uuid.Nil {
 		return nil, ErrResultID
@@ -326,7 +326,9 @@ func (l *DefaultLocalProvider) RecordPreferences(req *http.Request, userID strin
 }
 
 // UpdateToken - specific to remote auth
-func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) {}
+func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) string {
+	return ""
+}
 
 // TokenHandler - specific to remote auth
 func (l *DefaultLocalProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
@@ -432,7 +434,7 @@ func (l *DefaultLocalProvider) GetMesheryPatternResources(
 	)
 }
 
-func (l *DefaultLocalProvider) DeleteMesheryResource(token, resourceID string) error {
+func (l *DefaultLocalProvider) DeleteMesheryPatternResource(token, resourceID string) error {
 	id := uuid.FromStringOrNil(resourceID)
 	return l.MesheryPatternResourcePersister.DeletePatternResource(id)
 }

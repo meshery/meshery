@@ -44,7 +44,7 @@ var applyCmd = &cobra.Command{
 		var err error
 		client := &http.Client{}
 
-		// set default tokenpath for perf apply command.
+		// set default tokenpath for command.
 		if tokenPath == "" {
 			tokenPath = constants.GetCurrentAuthToken()
 		}
@@ -54,8 +54,8 @@ var applyCmd = &cobra.Command{
 			return errors.Wrap(err, "error processing config")
 		}
 
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/experimental/pattern/deploy"
-		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/experimental/pattern"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// pattern name has been passed
 		if len(args) > 0 {

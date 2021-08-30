@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
@@ -34,9 +35,8 @@ import (
 )
 
 var (
-	cfgFile     string
-	mctlCfgFile string
-	verbose     = false
+	cfgFile string
+	verbose = false
 )
 
 var (
@@ -87,7 +87,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
@@ -101,6 +101,7 @@ func init() {
 		pattern.PatternCmd,
 		perf.PerfCmd,
 		mesh.MeshCmd,
+		app.AppCmd,
 		experimental.ExpCmd,
 	}
 

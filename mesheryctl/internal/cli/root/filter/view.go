@@ -8,6 +8,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -30,6 +31,11 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+		// set default tokenpath for perf apply command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+		}
+
 		filter := ""
 		isID := false
 		// if filter name/id available
@@ -47,16 +53,16 @@ var viewCmd = &cobra.Command{
 		url := mctlCfg.GetBaseMesheryURL()
 		if len(filter) == 0 {
 			if viewAllFlag {
-				url += "/api/experimental/filter?page_size=10000"
+				url += "/api/filter?page_size=10000"
 			} else {
 				return errors.New("[filter-name|filter-id] not specified, use -a to view all filters")
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
-			url += "/api/experimental/filter/" + filter
+			url += "/api/filter/" + filter
 		} else {
 			// else search filter by name
-			url += "/api/experimental/filter?search=" + filter
+			url += "/api/filter?search=" + filter
 		}
 
 		client := &http.Client{}
