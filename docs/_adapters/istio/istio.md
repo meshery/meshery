@@ -51,13 +51,13 @@ Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service m
 
 The ({{page.name}}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Bookinfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
-  - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
-- [Httpbin](https://httpbin.org/)
+- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo)
+  - Follow this [tutorial workshop]to set up and deploy the BookInfo sample app on Istio using Meshery.
+- [Httpbin](https://httpbin.org/)({{ site.baseurl }}/guides/sample-apps#httpbin)
   - Httpbin is a simple HTTP request and response service.
-- [Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo)
+- [Online Boutique]({{ site.baseurl }}/guides/sample-apps#onlinebouique)
   - Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.
-- [Image Hub](https://layer5.io/projects/image-hub)
+- [Image Hub]({{ site.baseurl }}/guides/sample-apps#imagehub)
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 ## Using Service Mesh Standards
