@@ -46,13 +46,13 @@ Note: Linkerd's control plane will be deployed to the `linkerd` namespace. Linke
 
 The {{ page.name }} includes the ability to deploy a variety of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Emojivoto]({{ site.baseurl }}/guides/sample-apps#emoji.voto)
+- [Emojivoto]({{ site.baseurl }}/guides/sample-apps#emojivoto)
     - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
 - [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo)
     - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 
-- [Linkerd Books]({{ site.baseurl }}/guides/sample-apps#linkerdbooks)
+- [Linkerd Books]({{ site.baseurl }}/guides/sample-apps#linkerd-books)
     - A sample application built for demonstrating  manage your bookshelf.
 
 - [HTTPbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
