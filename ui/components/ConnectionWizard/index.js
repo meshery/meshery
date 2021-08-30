@@ -90,8 +90,8 @@ const ConfigurationWizard = () => {
   };
 
   const isNextDisabled = () => {
-    if (activeStep === 0 && !stepStatus.kubernetes) return true
-    if (activeStep === 1 && !stepStatus.operator) return true
+    // if (activeStep === 0 && !stepStatus.kubernetes) return true
+    // if (activeStep === 1 && !stepStatus.operator) return true
     return false
   }
 
