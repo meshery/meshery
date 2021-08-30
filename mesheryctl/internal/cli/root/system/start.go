@@ -70,6 +70,9 @@ var startCmd = &cobra.Command{
 			return err
 		}
 		cfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
 			return err
