@@ -14,7 +14,6 @@ const styles = (theme) => ({
     marginBottom : theme.spacing(1)
   },
   percentiles : {
-    width : "150px",
     height : "100%",
     justifyContent : "center",
     display : "flex",
@@ -162,7 +161,7 @@ class MesheryChart extends React.Component {
         };
         if (!self.props.hideTitle) {
           self.titleRef.innerText = chartData.options.title.text.slice(0,2).join('\n') +"\n"+ chartData.options.title.text[2].split('\n')[0];
-          self.percentileRef.innerText=chartData.options.title.text[2].split('\n')[1].split('|').join('\n')
+          if (chartData.options.title.text[2])self.percentileRef.innerText=chartData.options.title.text[2].split('\n')[1].split('|').join('\n')
         }
         self.chart = bb.generate(chartConfig);
       } else {
@@ -252,8 +251,7 @@ class MesheryChart extends React.Component {
           },
         };
         if (!self.props.hideTitle) {
-          self.titleRef.innerText = chartData.options.title.text.slice(0,2).join('\n') +"\n"+ chartData.options.title.text[2].split('\n')[0];
-          self.percentileRef.innerText=chartData.options.title.text[2].split('\n')[1].split('|').join('\n')
+          self.titleRef.innerText = chartData.options.title.text.join('\n');
         }
         self.chart = bb.generate(chartConfig);
       }
