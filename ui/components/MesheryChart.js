@@ -350,7 +350,7 @@ class MesheryChart extends React.Component {
       <NoSsr>
         <div>
           <pre >
-            <GridList cols={2} cellHeight="auto">
+            <GridList cols={3} cellHeight={'auto'} spacing={2}>
               {this.titleRef?.map(item => (
                 <div className={classes.title}>{item}</div>
               ))}

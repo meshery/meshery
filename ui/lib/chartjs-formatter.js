@@ -57,7 +57,9 @@ export function makeTitle (res) {
     if (res.URL) { // http results
       // title.push(res.Labels + ' - ' + res.URL + ' - ' + formatDate(res.StartTime))
       // title.push(res.URL + ' - ' + formatDate(res.StartTime))
-      title.push(`Labels: ${res.Labels}`)
+      console.log(res.Labels)
+      var labels = res.Labels.split(' -_- ')
+      title.push(`Labels: ${labels.map(item => item + '\n')}`)
       title.push(`Start Time: ${formatDate(res.StartTime)}`)
     } else { // grpc results
       title.push(`Destination: ${res.Destination}`)
@@ -87,9 +89,9 @@ export function makeTitle (res) {
       errStr = '100% errors!'
     }
   }
-  title.push(`Target QPS: ${res.RequestedQPS} ( Actual QPS: ${myRound(res.ActualQPS, 1)})`)
+  title.push(`Target QPS: ${res.RequestedQPS} ( Actual QPS: ${myRound(res.ActualQPS, 1)} )`)
   title.push(`No of Connections: ${res.NumThreads}`)
-  title.push(`Requested Duration: ${res.RequestedDuration} ( Actual Duration: ${myRound(res.ActualDuration / 1e9, 1)}`)
+  title.push(`Requested Duration: ${res.RequestedDuration} ( Actual Duration: ${myRound(res.ActualDuration / 1e9, 1)} )`)
   title.push(`Errors: ${ errStr }`)
   title.push(percStr_1)
   title.push(percStr_2)
