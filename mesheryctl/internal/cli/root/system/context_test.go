@@ -252,7 +252,7 @@ func TestSwitchContextCmd(t *testing.T) {
 	tests := []utils.CmdTestInput{
 		{
 			Name:             "switch to a different context",
-			Args:             []string{"context", "switch", "local2"},
+			Args:             []string{"context", "switch", "local2", "-y"},
 			ExpectedResponse: "switch.context.golden",
 		},
 	}

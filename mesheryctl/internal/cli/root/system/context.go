@@ -304,15 +304,30 @@ var switchContextCmd = &cobra.Command{
 		if viper.GetString("current-context") == args[0] {
 			return errors.New("already using context '" + args[0] + "'")
 		}
-		if err := stop(); err != nil {
-			return errors.Wrap(err, utils.SystemError("Failed to stop Meshery before switching context"))
+		//check if meshery is running
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
+		currCtx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+		//if meshery running stop meshery before context switch
+		if isRunning {
+			if err := stop(); err != nil {
+				return errors.Wrap(err, utils.SystemError("Failed to stop Meshery before switching context"))
+			}
 		}
 		configuration.CurrentContext = args[0]
 		viper.Set("current-context", configuration.CurrentContext)
 		log.Printf("switched to context '%s'", args[0])
 		err = viper.WriteConfig()
-		if Starterr := start(); Starterr != nil {
-			return errors.Wrap(Starterr, utils.SystemError("Failed to start Meshery while switching context"))
+		if isRunning {
+			if Starterr := start(); Starterr != nil {
+				return errors.Wrap(Starterr, utils.SystemError("Failed to start Meshery while switching context"))
+			}
 		}
 		return err
 	},
