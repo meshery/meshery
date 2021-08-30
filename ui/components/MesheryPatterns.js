@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
   },
   yamlDialogTitle : {
     display : "flex",
-    alignItems: "center"
+    alignItems : "center"
   },
   yamlDialogTitleText : {
     flexGrow : 1
