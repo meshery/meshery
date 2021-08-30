@@ -530,7 +530,7 @@ handleNATSClick = () => {
       next: (res) => {
         if(res.deployMeshsync === "PROCESSING") {
           this.props.updateProgress({ showProgress: false });
-          this.props.enqueueSnackbar(`Meshsync deployment in progress`, {
+          this.props.enqueueSnackbar(`MeshSync deployment in progress`, {
             variant: "info",
             action: (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
