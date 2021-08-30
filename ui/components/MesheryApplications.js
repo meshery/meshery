@@ -18,6 +18,7 @@ import UploadIcon from "@material-ui/icons/Publish";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
+import PromptComponent from "./PromptComponent";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -26,12 +27,13 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
+import URLUploader from "./URLUploader";
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
   tableHeader : { fontWeight : "bolder",
     fontSize : 18, }, });
 
-function CustomToolbar(onClick) {
+function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
     return (
       <>
@@ -42,6 +44,9 @@ function CustomToolbar(onClick) {
               <UploadIcon />
             </IconButton>
           </Tooltip>
+        </label>
+        <label htmlFor="url-upload-button">
+          <URLUploader onSubmit={urlOnClick} />
         </label>
       </>
     );
@@ -101,6 +106,7 @@ function MesheryApplications({
   const [search] = useState("");
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
+  const modalRef = useRef(null);
   const [pageSize, setPageSize] = useState(10);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -273,6 +279,11 @@ function MesheryApplications({
     reader.readAsText(file);
   }
 
+  function urlUploadHandler(link) {
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    // console.log(link, "valid");
+  }
+
   const columns = [
     { name : "name",
       label : "Application Name",
@@ -371,6 +382,42 @@ function MesheryApplications({
     }
   });
 
+  async function showModal() {
+    let response = await modalRef.current.show({ title : "Delete Aplication?",
+
+      subtitle : "Are you sure you want to delete this application?",
+
+      options : ["yes", "no"], })
+    return response;
+  }
+
+  async function deleteApplication(id) {
+    dataFetch(
+      `/api/application/${id}`,
+      {
+        method : "DELETE",
+        credentials : "include",
+      },
+      () => {
+        updateProgress({ showProgress : false });
+
+        enqueueSnackbar("Application deleted.", {
+          variant : "success",
+          autoHideDuration : 2000,
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+        });
+        fetchApplications(page, pageSize, search, sortOrder);
+      },
+      handleError("Failed to delete application")
+    );
+  }
+
   const options = {
     filter : false,
     sort : !(user && user.user_id === "meshery"),
@@ -379,7 +426,6 @@ function MesheryApplications({
     responsive : "scrollFullHeight",
     resizableColumns : true,
     serverSide : true,
-    selection : true,
     count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
@@ -387,7 +433,18 @@ function MesheryApplications({
     page,
     print : false,
     download : false,
-    customToolbar : CustomToolbar(uploadHandler),
+    customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
+
+    onRowsDelete : async function handleDelete(row) {
+      let response = await showModal()
+      console.log(response)
+      if (response === "yes") {
+        const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id)
+        fid.forEach(fid => deleteApplication(fid))
+      }
+      if (response === "no")
+        fetchApplications(page, pageSize, search, sortOrder);
+    },
 
     onTableChange : (action, tableState) => {
       const sortInfo = tableState.announceText
@@ -445,6 +502,7 @@ function MesheryApplications({
         // @ts-ignore
         options={options}
       />
+      <PromptComponent ref={modalRef} />
     </NoSsr>
   );
 }

@@ -47,7 +47,7 @@ func TestPatternList(t *testing.T) {
 			Args:             []string{"list"},
 			ExpectedResponse: "list.filter.output.golden",
 			Fixture:          "list.filter.api.response.golden",
-			URL:              testContext.BaseURL + "/api/experimental/filter",
+			URL:              testContext.BaseURL + "/api/filter",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},

@@ -9,12 +9,13 @@ import (
 
 // K8SConfig represents all the k8s session config
 type K8SConfig struct {
-	InClusterConfig   bool   `json:"inClusterConfig,omitempty"`
-	K8Sfile           string `json:"k8sfile,omitempty"`
-	Config            []byte `json:"config,omitempty"`
-	Server            string `json:"configuredServer,omitempty"`
-	ContextName       string `json:"contextName,omitempty"`
-	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
+	InClusterConfig   bool         `json:"inClusterConfig,omitempty"`
+	K8Sfile           string       `json:"k8sfile,omitempty"`
+	Config            []byte       `json:"config,omitempty"`
+	Server            string       `json:"configuredServer,omitempty"`
+	ContextName       string       `json:"contextName,omitempty"`
+	ClusterConfigured bool         `json:"clusterConfigured,omitempty"`
+	Contexts          []K8SContext `json:"contexts,omitempty"`
 	// ConfiguredServer  string `json:"configuredServer,omitempty"`
 
 	ServerVersion string     `json:"server_version,omitempty"`

@@ -132,17 +132,19 @@ class MesherySettings extends React.Component {
 
   componentDidMount() {
     if (this.state.isMeshConfigured)
-      this.fetchPromGrafanaScanData()
+      this.fetchPromGrafanaScanData();
   }
 
   fetchPromGrafanaScanData = () => {
     const self = this;
     self.props.updateProgress({ showProgress : true });
     dataFetch(
-      '/api/promGrafana/scan',
-      { credentials : "same-origin",
+      '/api/system/meshsync/grafana',
+      {
+        credentials : "same-origin",
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         self.props.updateProgress({ showProgress : false });
         if (!result) return;
@@ -401,12 +403,12 @@ class MesherySettings extends React.Component {
               </AppBar>
               {subTabVal === 0 && (
                 <TabContainer>
-                  <GrafanaComponent scannedGrafana={this.state.scannedGrafana} />
+                  <GrafanaComponent scannedGrafana={this.state.scannedGrafana} isMeshConfigured= {this.state.isMeshConfigured}  />
                 </TabContainer>
               )}
               {subTabVal === 1 && (
                 <TabContainer>
-                  <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} />
+                  <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} isMeshConfigured={this.state.isMeshConfigured} />
                 </TabContainer>
               )}
             </TabContainer>

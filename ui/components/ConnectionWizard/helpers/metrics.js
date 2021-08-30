@@ -98,10 +98,12 @@ export const pingPrometheus = (successCb, errorCb) =>
 export const fetchPromGrafanaScanData = () => {
   return new Promise((res, rej) => {
     dataFetch(
-      '/api/promGrafana/scan',
-      { credentials : "same-origin",
+      '/api/system/meshsync/grafana',
+      {
+        credentials : "same-origin",
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         let metricsUrls = { grafana : [], prometheus : [] }
         if (!result) res(metricsUrls);

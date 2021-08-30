@@ -33,17 +33,18 @@ const styles = (theme) => ({
     borderBottomLeftRadius : 3,
     borderBottomRightRadius : 3,
   },
-  paperRoot: {
-    flexGrow: 1,
-    maxWidth: "30%",
-    marginLeft: 0,
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
+  paperRoot : {
+    flexGrow : 1,
+    maxWidth : "100%",
+    marginLeft : 0,
+    borderTopLeftRadius : 3,
+    borderTopRightRadius : 3,
   },
   tabs : { marginLeft : 0 },
-  tab : { 
-    minWidth : "33%",
-    margin : 0 
+  tab : {
+    maxWidth : 'min(33%, 200px)',
+    minWidth : '50px',
+    margin : 0
   },
   icon : {
     display : 'inline',
@@ -51,9 +52,9 @@ const styles = (theme) => ({
     width : theme.spacing(1.75),
     marginLeft : theme.spacing(0.5),
   },
-  iconText : { 
+  iconText : {
     display : 'inline',
-    verticalAlign : 'middle', 
+    verticalAlign : 'middle',
   },
   backToPlay : { margin : theme.spacing(2), },
   link : { cursor : 'pointer', },
@@ -63,18 +64,26 @@ const styles = (theme) => ({
     'justify-content' : 'space-evenly',
     padding : 50
   },
-  formGrp : { 
+  formGrp : {
     padding : 20,
-    border : '1.5px solid #969696', 
+    border : '1.5px solid #969696',
   },
   formLegend : { fontSize : 20, },
-  switchBase : { 
+  switchBase : {
     color : '#647881',
     "&$checked" : { color : '#00b39f' },
-    "&$checked + $track" : { backgroundColor : 'rgba(0,179,159,0.5)' }, 
+    "&$checked + $track" : { backgroundColor : 'rgba(0,179,159,0.5)' },
   },
   track : { backgroundColor : 'rgba(100,120,129,0.5)', },
   checked : {},
+  tabLabel : {
+    [theme.breakpoints.up("sm")] : {
+      fontSize : '1em'
+    },
+    [theme.breakpoints.between("xs", 'sm')] : {
+      fontSize : '0.8em'
+    }
+  }
 });
 
 class UserPreference extends React.Component {
@@ -85,7 +94,8 @@ class UserPreference extends React.Component {
       perfResultStats : props.perfResultStats,
       startOnZoom : props.startOnZoom,
       tabVal : 0,
-      userPrefs : ExtensionPointSchemaValidator("user_prefs")()
+      userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
+      providerType : ''
     };
   }
 
@@ -182,7 +192,10 @@ class UserPreference extends React.Component {
         credentials : "include", },
       (result) => {
         if (result) {
-          this.setState({ userPrefs : ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs) })
+          this.setState({
+            userPrefs : ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs),
+            providerType : result?.provider_type
+          })
         }
       },
       err => console.error(err)
@@ -191,7 +204,7 @@ class UserPreference extends React.Component {
 
   render() {
     const {
-      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs
+      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs, providerType
     } = this.state;
     const { classes } = this.props;
 
@@ -215,29 +228,30 @@ class UserPreference extends React.Component {
                 icon={
                   <SettingsCellIcon />
                 }
-                label="General"
+                label={<span className={classes.tabLabel}>General</span>}
               />
             </Tooltip>
-            {userPrefs &&
-              <Tooltip title="Remote Provider preferences" placement="top">
-                <Tab
-                  className={classes.tab}
-                  icon={
-                    <SettingsRemoteIcon />
-                  }
-                  label="Remote Provider"
-                />
-              </Tooltip>
-            }
             <Tooltip title="Choose Performance Test Defaults" placement="top">
               <Tab
                 className={classes.tab}
                 icon={
                   <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
                 }
-                label="Performance"
+                label={<span className={classes.tabLabel}>Performance</span>}
               />
             </Tooltip>
+            {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
+            {userPrefs && providerType != 'local' &&
+              <Tooltip title="Remote Provider preferences" placement="top">
+                <Tab
+                  className={classes.tab}
+                  icon={
+                    <SettingsRemoteIcon />
+                  }
+                  label={<span className={classes.tabLabel}>Remote Provider</span>}
+                />
+              </Tooltip>
+            }
           </Tabs>
         </Paper>
         <Paper className={classes.root}>
@@ -282,11 +296,11 @@ class UserPreference extends React.Component {
               </FormControl>
             </div>
           }
-          {tabVal == 1 && userPrefs &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
-          }
-          {tabVal === 2 && 
+          {tabVal === 1 &&
             <MesherySettingsPerformanceComponent />
+          }
+          {tabVal == 2 && userPrefs && providerType != 'local' &&
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
           }
         </Paper>
       </NoSsr>

@@ -44,6 +44,14 @@ func TestSystemCmdIntegration(t *testing.T) {
 			ExpectError:     false,
 			TimeoutRequired: 1,
 		},
+		//update
+		{
+			Name:            "Update Meshery",
+			Action:          "update",
+			Args:            []string{"update"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
+		},
 		//restart
 		{
 			Name:            "Restart Meshery",
@@ -75,6 +83,14 @@ func TestSystemCmdIntegration(t *testing.T) {
 			Name:            "Start Meshery with Kubernetes platform",
 			Action:          "start",
 			Args:            []string{"start", "-p", "kubernetes", "-y"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
+		},
+		//update
+		{
+			Name:            "Update Meshery",
+			Action:          "update",
+			Args:            []string{"update"},
 			ExpectError:     false,
 			TimeoutRequired: 1,
 		},

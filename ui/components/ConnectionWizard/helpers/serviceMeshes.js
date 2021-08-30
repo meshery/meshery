@@ -100,7 +100,7 @@ export const configureAdapter = (successCb, errorCb, adapterLocation) => {
     .join("&");
 
   return dataFetch(
-    "/api/mesh/manage",
+    "/api/system/adapter/manage",
     {
       credentials : "same-origin",
       method : "POST",
@@ -117,10 +117,12 @@ export const configureAdapter = (successCb, errorCb, adapterLocation) => {
 export const handleDeleteAdapter =  (successCb, errorCb) => (adapterLoc) => {
 
   return  dataFetch(
-      `/api/mesh/manage?adapter=${encodeURIComponent(adapterLoc)}`,
-      { credentials : "same-origin",
+      `/api/system/adapter/manage?adapter=${encodeURIComponent(adapterLoc)}`,
+      {
+        credentials : "same-origin",
         method : "DELETE",
-        credentials : "include", },
+        credentials : "include",
+      },
       successCb,
       errorCb
   );

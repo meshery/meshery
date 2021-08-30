@@ -27,6 +27,8 @@ func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, o
 	}
 
 	handler.Lock()
+	defer handler.Unlock()
+
 	switch eventtype {
 	case broker.Add, broker.Update:
 		result := handler.Create(object)
@@ -44,6 +46,6 @@ func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, o
 	case broker.ErrorEvent:
 		return nil
 	}
-	handler.Unlock()
+
 	return nil
 }

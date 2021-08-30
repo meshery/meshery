@@ -52,7 +52,7 @@ const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
 const MeshAdapterChip = ({
   handleAdapterClick, isActive, adapter, handleAdapterDelete
 }) => {
-  let image = "/static/img/meshery-logo.png";
+  let image = isActive ? "/static/img/" + adapter.name?.toLowerCase() + ".svg" : "/static/img/meshery-logo.png";
   return (
     <AdapterChip
       label={adapter?.label.split(":")[0]}

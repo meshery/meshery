@@ -352,7 +352,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.props.updateProgress({ showProgress : true });
     const self = this;
     dataFetch(
-      "/api/mesh/ops",
+      "/api/system/adapter/operation",
       {
         credentials : "same-origin",
         method : "POST",

@@ -1,4 +1,4 @@
-import { NoSsr, Paper, withStyles } from "@material-ui/core";
+import { NoSsr, withStyles } from "@material-ui/core";
 import MesheryPatterns from "../../components/MesheryPatterns";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
@@ -11,20 +11,18 @@ const styles = { paper : { maxWidth : '90%',
   overflow : 'hidden', } }
 
 class Patterns extends React.Component {
-  componentDidMount () {
+  componentDidMount() {
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path : getPath() });
   }
 
-  render () {
+  render() {
     return (
       <NoSsr>
         <Head>
           <title>Patterns | Meshery</title>
         </Head>
-        <Paper className={this.props.classes.paper}>
-          <MesheryPatterns />
-        </Paper>
+        <MesheryPatterns />
       </NoSsr>
     );
   }

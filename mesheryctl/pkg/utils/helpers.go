@@ -117,7 +117,7 @@ var (
 var CfgFile string
 
 // ListOfAdapters returns the list of adapters available
-var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh"}
+var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{

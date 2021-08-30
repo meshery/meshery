@@ -31,3 +31,6 @@ autolabeler:
   - label: 'area/docs'
     branch:
       - '/docs/'
+  - label: 'area/ci'
+    branch:
+      - '/.github/'

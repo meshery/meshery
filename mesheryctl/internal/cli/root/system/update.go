@@ -63,6 +63,10 @@ var updateCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		err = currCtx.ValidateVersion()
+		if err != nil {
+			return err
+		}
 		if currCtx.GetVersion() != "latest" {
 			// ask confirmation if user has pinned the version in config
 			log.Infof("You have pinned version: %s in your current context", currCtx.GetVersion())

@@ -11,7 +11,7 @@ language: en
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl system mesh validate
+# mesheryctl mesh validate
 
 <!-- Description of the command. Preferably a paragraph -->
 ## Description

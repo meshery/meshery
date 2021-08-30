@@ -61,7 +61,7 @@ func ErrUnmarshal(err error, obj string) error {
 }
 
 func ErrUnsupportedPlatform(platform string, config string) error {
-	return errors.New(ErrUnsupportedPlatformCode, errors.Alert, []string{"the platform ", platform, " is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrUnsupportedPlatformCode, errors.Alert, []string{"the platform ", platform, " is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"}, []string{}, []string{}, []string{})
 }
 
 func ErrRetrievingCurrentContext(err error) error {

@@ -9,45 +9,60 @@ import {
   DialogContent,
   DialogActions,
   Divider,
-  Tooltip
+  Tooltip,
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import UploadIcon from "@material-ui/icons/Publish";
-// import Checkbox from '@material-ui/core/Checkbox';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
+import PromptComponent from "./PromptComponent";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
-import EditIcon from '@material-ui/icons/Edit';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import EditIcon from "@material-ui/icons/Edit";
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
+import URLUploader from "./URLUploader";
 
-const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
-  tableHeader : { fontWeight : "bolder",
-    fontSize : 18, }, });
+const styles = (theme) => ({
+  grid : {
+    padding : theme.spacing(2),
+  },
+  tableHeader : {
+    fontWeight : "bolder",
+    fontSize : 18,
+  },
+});
 
-function CustomToolbar(onClick) {
+function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
     return (
       <>
         <label htmlFor="upload-button">
-          <input type="file" accept=".yaml, .yml, .json" hidden onChange={onClick} id="upload-button" name="upload-button" />
+          <input
+            type="file"
+            accept=".yaml, .yml, .json"
+            hidden
+            onChange={onClick}
+            id="upload-button"
+            name="upload-button"
+          />
           <Tooltip title="Upload Filter">
             <IconButton aria-label="Upload" component="span">
               <UploadIcon />
             </IconButton>
           </Tooltip>
         </label>
+
+        <URLUploader onSubmit={urlOnClick} />
       </>
     );
   };
 }
-
 function YAMLEditor({ filter, onClose, onSubmit }) {
   const [yaml, setYaml] = useState("");
 
@@ -92,22 +107,31 @@ function MesheryFilters({
   const [search] = useState("");
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
+  const modalRef = useRef(null);
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const DEPLOY_URL = '/api/experimental/filter/deploy';
+  const DEPLOY_URL = '/api/filter/deploy';
 
 
   const ACTION_TYPES = {
-    FETCH_FILTERS : { name : "FETCH_FILTERS" ,
-      error_msg : "Failed to fetch filter" },
-    DELETE_FILTERS : { name : "DELETE_FILTERS",
-      error_msg : "Failed to delete filter file" },
-    DEPLOY_FILTERS : { name : "DEPLOY_FILTERS",
-      error_msg : "Failed to deploy filter file" },
-    UPLOADFILTERS : { name : "UPLOAD_FILTERS",
-      error_msg : "Failed to upload filter file" },
-  }
+    FETCH_FILTERS : {
+      name : "FETCH_FILTERS",
+      error_msg : "Failed to fetch filter",
+    },
+    DELETE_FILTERS : {
+      name : "DELETE_FILTERS",
+      error_msg : "Failed to delete filter file",
+    },
+    DEPLOY_FILTERS : {
+      name : "DEPLOY_FILTERS",
+      error_msg : "Failed to deploy filter file",
+    },
+    UPLOADFILTERS : {
+      name : "UPLOAD_FILTERS",
+      error_msg : "Failed to upload filter file",
+    },
+  };
 
   const searchTimeout = useRef(null);
 
@@ -133,13 +157,12 @@ function MesheryFilters({
       { credentials : "include",
         method : "POST",
         body : filter_file, },() => {
-        console.log("FilterFile Deploy API", `/api/experimental/filter/deploy`);
+        console.log("FilterFile Deploy API", `/api/filter/deploy`);
         updateProgress({ showProgress : false })
       },
       handleError(ACTION_TYPES.DEPLOY_FILTERS)
-    )
-  }
-
+    );
+  };
 
   function fetchFilters(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -152,10 +175,10 @@ function MesheryFilters({
     updateProgress({ showProgress : true });
 
     dataFetch(
-      `/api/experimental/filter${query}`,
+      `/api/filter${query}`,
       { credentials : "include", },
       (result) => {
-        console.log("FilterFile API", `/api/experimental/filter${query}`);
+        console.log("FilterFile API", `/api/filter${query}`);
         updateProgress({ showProgress : false });
         if (result) {
           setFilters(result.filters || []);
@@ -170,10 +193,11 @@ function MesheryFilters({
   }
 
   // function handleError(error) {
-  const handleError = (action) => (error) =>  {
+  const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
 
-    enqueueSnackbar(`${action.error_msg}: ${error}`, { variant : "error",
+    enqueueSnackbar(`${action.error_msg}: ${error}`, {
+      variant : "error",
       action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -181,8 +205,9 @@ function MesheryFilters({
           </IconButton>
         );
       },
-      autoHideDuration : 8000, });
-  }
+      autoHideDuration : 8000,
+    });
+  };
 
   function resetSelectedRowData() {
     return () => {
@@ -191,17 +216,17 @@ function MesheryFilters({
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({ showProgress : true })
+    updateProgress({ showProgress : true });
     if (type === "delete") {
       dataFetch(
-        `/api/experimental/filter/${id}`,
+        `/api/filter/${id}`,
         { credentials : "include",
           method : "DELETE", },
         () => {
-          console.log("FilterFile API", `/api/experimental/filter/${id}`);
+          console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
           fetchFilters(page, pageSize, search, sortOrder);
-          resetSelectedRowData()()
+          resetSelectedRowData()();
         },
         // handleError
         handleError(ACTION_TYPES.DELETE_FILTERS)
@@ -210,12 +235,12 @@ function MesheryFilters({
 
     if (type === "upload") {
       dataFetch(
-        `/api/experimental/filter`,
+        `/api/filter`,
         { credentials : "include",
           method : "POST",
           body : JSON.stringify({ filter_data : { filter_file : data }, save : true }), },
         () => {
-          console.log("FilterFile API", `/api/experimental/filter`);
+          console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
           fetchFilters(page, pageSize, search, sortOrder);
         },
@@ -233,18 +258,17 @@ function MesheryFilters({
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      handleSubmit(
-        event.target.result,
-        "",
-        file?.name || "meshery_" + Math.floor(Math.random() * 100),
-        "upload",
-      );
+      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(Math.random() * 100), "upload");
     });
     reader.readAsText(file);
   }
-
+  function urlUploadHandler(link) {
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    console.log(link, "valid");
+  }
   const columns = [
-    { name : "name",
+    {
+      name : "name",
       label : "Filter Name",
       options : {
         filter : false,
@@ -259,8 +283,10 @@ function MesheryFilters({
             </TableCell>
           );
         },
-      }, },
-    { name : "created_at",
+      },
+    },
+    {
+      name : "created_at",
       label : "Upload Timestamp",
       options : {
         filter : false,
@@ -278,8 +304,10 @@ function MesheryFilters({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
-    { name : "updated_at",
+      },
+    },
+    {
+      name : "updated_at",
       label : "Update Timestamp",
       options : {
         filter : false,
@@ -297,8 +325,10 @@ function MesheryFilters({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
-    { name : "Actions",
+      },
+    },
+    {
+      name : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -311,7 +341,7 @@ function MesheryFilters({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const rowData = filters[tableMeta.rowIndex]
+          const rowData = filters[tableMeta.rowIndex];
           return (
             <>
               <IconButton>
@@ -319,7 +349,8 @@ function MesheryFilters({
                   title="Config"
                   aria-label="config"
                   color="inherit"
-                  onClick={() => setSelectedRowData(filters[tableMeta.rowIndex])}/>
+                  onClick={() => setSelectedRowData(filters[tableMeta.rowIndex])}
+                />
               </IconButton>
               <IconButton>
                 <PlayArrowIcon
@@ -332,7 +363,8 @@ function MesheryFilters({
             </>
           );
         },
-      }, },
+      },
+    },
   ];
 
   columns.forEach((column, idx) => {
@@ -340,6 +372,43 @@ function MesheryFilters({
       columns[idx].options.sortDirection = sortOrder.split(" ")[1];
     }
   });
+
+  async function showmodal() {
+    let response = await modalRef.current.show({ title : "Delete Filter?",
+
+      subtitle : "Are you sure you want to delete this filter?",
+
+      options : ["yes", "no"], })
+    return response;
+  }
+
+  function deleteFilter(id) {
+    dataFetch(
+      `/api/filter/${id}`,
+      {
+        method : "DELETE",
+        credentials : "include",
+      },
+      () => {
+        updateProgress({ showProgress : false });
+
+        enqueueSnackbar("Filter Successfully Deleted!", {
+          variant : "success",
+          autoHideDuration : 2000,
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+        });
+
+        fetchFilters(page, pageSize, search, sortOrder);
+      },
+      handleError("Failed To Delete Filter")
+    );
+  }
 
   const options = {
     filter : false,
@@ -349,7 +418,6 @@ function MesheryFilters({
     responsive : "scrollFullHeight",
     resizableColumns : true,
     serverSide : true,
-    selection : true,
     count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
@@ -357,12 +425,21 @@ function MesheryFilters({
     page,
     print : false,
     download : false,
-    customToolbar : CustomToolbar(uploadHandler),
+    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
+
+    onRowsDelete : async function handleDelete(row) {
+      let response  = await showmodal()
+      console.log(response)
+      if (response === "yes") {
+        const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
+        fid.forEach((fid) => deleteFilter(fid));
+      }
+      if (response === "no")
+        fetchFilters(page, pageSize, search, sortOrder);
+    },
 
     onTableChange : (action, tableState) => {
-      const sortInfo = tableState.announceText
-        ? tableState.announceText.split(" : ")
-        : [];
+      const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
       let order = "";
       if (tableState.activeColumn) {
         order = `${columns[tableState.activeColumn].name} desc`;
@@ -381,9 +458,7 @@ function MesheryFilters({
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchFilters(page, pageSize, tableState.searchText !== null
-                ? tableState.searchText
-                : "", sortOrder);
+              fetchFilters(page, pageSize, tableState.searchText !== null ? tableState.searchText : "", sortOrder);
             }
           }, 500);
           break;
@@ -415,14 +490,15 @@ function MesheryFilters({
         // @ts-ignore
         options={options}
       />
+      <PromptComponent ref={modalRef} />
     </NoSsr>
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch) });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user").toObject(), };
+  return { user : state.get("user").toObject() };
 };
 
 // @ts-ignore

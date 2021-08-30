@@ -18,6 +18,7 @@ const (
 	ErrPublishBrokerCode            = "1010"
 	ErrNoMeshSyncCode               = "1011"
 	ErrNoExternalEndpointCode       = "1012"
+	ErrDataPlaneSubscriptionCode    = "1013"
 )
 
 var (
@@ -49,6 +50,10 @@ func ErrAddonSubscription(err error) error {
 
 func ErrControlPlaneSubscription(err error) error {
 	return errors.New(ErrControlPlaneSubscriptionCode, errors.Alert, []string{"Control Plane Subscription failed", err.Error()}, []string{"GraphQL subscription for Control Plane stopped"}, []string{"Could be a network issue"}, []string{"Check if meshery server is reachable from the browser"})
+}
+
+func ErrDataPlaneSubscription(err error) error {
+	return errors.New(ErrDataPlaneSubscriptionCode, errors.Alert, []string{"Data Plane Subscription failed", err.Error()}, []string{"GraphQL subscription for Data Plane stopped"}, []string{"Could be a network issue"}, []string{"Check if meshery server is reachable from the browser"})
 }
 
 func ErrPublishBroker(err error) error {
