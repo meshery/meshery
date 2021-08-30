@@ -6,6 +6,7 @@ coverage:
   round: down
   range: "0...30"
   status:
+    patch: true #GitHub Checks and annotations for the patch status are enabled by default for all GitHub users.
     project:
       # These flags should match with those in the Github Action ci.yml
       front-end-integration-tests:
