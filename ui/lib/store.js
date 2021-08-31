@@ -7,6 +7,7 @@ const initialState = fromJS({
   page: {
     path: '',
     title: '',
+    isBeta: false,
   },
   user: {},
   k8sConfig: {
@@ -95,6 +96,7 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({
         page: {
           title: action.title,
+          isBeta: action.isBeta,
         }
       });
     case actionTypes.UPDATE_USER:
@@ -176,9 +178,9 @@ export const updatepagepath = ({path}) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_PAGE, path });
 }
 
-export const updatepagetitle = ({path, title}) => dispatch => {
+export const updatepagetitle = ({path, title, isBeta}) => dispatch => {
   // console.log("invoking the updatepagepathandtitle action creator. . .");
-  return dispatch({ type: actionTypes.UPDATE_TITLE, title });
+  return dispatch({ type: actionTypes.UPDATE_TITLE, title, isBeta });
 }
 
 export const updateProgress = ({showProgress}) => dispatch => {

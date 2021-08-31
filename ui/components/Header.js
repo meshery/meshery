@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
+import { Badge } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -32,6 +33,8 @@ const styles = (theme) => ({
     marginLeft : theme.spacing(4), },
   userContainer : { paddingLeft : 1,
     display : 'flex', },
+  badge : { color : '#6200EE',background : '#979797', margin : '8px',padding : '8px',border : '2px solid primary',borderRadius : '15px',width : 'auto',height : '2rem'
+  },
   userSpan : { marginLeft : theme.spacing(1), },
   pageTitleWrapper : { flexGrow : 1,
     marginRight : 'auto', },
@@ -66,7 +69,7 @@ const styles = (theme) => ({
 class Header extends React.Component {
   render() {
     const {
-      classes, title, onDrawerToggle ,onDrawerCollapse
+      classes, title, onDrawerToggle ,onDrawerCollapse ,isBeta
     } = this.props;
     return (
       <NoSsr>
@@ -94,6 +97,10 @@ class Header extends React.Component {
                   <Typography color="inherit" variant="h5" className={classes.pageTitle}>
                     {title}
                   </Typography>
+                  {isBeta ?
+                    <Badge className={classes.badge}>
+                  Beta
+                    </Badge> :" "}
                 </Grid>
 
                 {/* <Grid item className={classes.notifications}>
@@ -198,7 +205,7 @@ Header.propTypes = { classes : PropTypes.object.isRequired,
 const mapStateToProps = (state) =>
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
   // console.log("state: " + JSON.stringify(state));
-  ({ title : state.get('page').get('title') })
+  ({ title : state.get('page').get('title'), isBeta : state.get('page').get('isBeta') })
 ;
 
 // const mapDispatchToProps = dispatch => {
