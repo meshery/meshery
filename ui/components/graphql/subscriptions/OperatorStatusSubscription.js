@@ -21,9 +21,9 @@ const operatorStatusSubscription = graphql`
 
 export default function subscribeOperatorStatusEvents(dataCB) {
   return  requestSubscription(environment, {
-    subscription: operatorStatusSubscription,
-    variables: {},
-    onNext: dataCB,
-    onError: (error) => console.log(`An error occured:`, error),
+    subscription : operatorStatusSubscription,
+    variables : {},
+    onNext : dataCB,
+    onError : (error) => console.log(`An error occured:`, error),
   });
 }
