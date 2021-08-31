@@ -25,7 +25,7 @@ const (
 )
 
 func ErrHealthCheckFailed(err error) error {
-	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{"health checks execution failed"}, []string{"health checks execution should passed to start Meshery server successfully"})
+	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{"Health checks execution failed"}, []string{"Health checks execution should passed to start Meshery server successfully"})
 }
 
 func ErrInvalidAdapter(err error, obj string) error {
@@ -33,11 +33,11 @@ func ErrInvalidAdapter(err error, obj string) error {
 }
 
 func ErrDownloadFile(err error, obj string) error {
-	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded successfully"})
+	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"Failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded successfully"})
 }
 
 func ErrStopMeshery(err error) error {
-	return errors.New(ErrStopMesheryCode, errors.Alert, []string{"Error stopping meshery"}, []string{err.Error()}, []string{"meshery server is not stopped, some of the docker containers are still running"}, []string{"Verify all docker containers of meshery server are stopped"})
+	return errors.New(ErrStopMesheryCode, errors.Alert, []string{"Error stopping Meshery"}, []string{err.Error()}, []string{"Meshery server is not stopped, some of the docker containers are still running"}, []string{"Verify all docker containers of Meshery server are stopped"})
 }
 
 func ErrResetMeshconfig(err error) error {
