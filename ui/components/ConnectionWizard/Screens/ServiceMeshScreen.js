@@ -78,8 +78,8 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
 
   const handleIndicatorClick = (index) => (e) => {
     e.preventDefault()
-     sliderRef?.current?.slickGoTo(index,false)
-     setActiveIndex(index)
+    sliderRef?.current?.slickGoTo(index,false)
+    setActiveIndex(index)
   }
 
 

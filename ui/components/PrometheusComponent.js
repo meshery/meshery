@@ -119,12 +119,12 @@ class PrometheusComponent extends Component {
             };
             fetchAvailableAddons(selector).subscribe({
               next : (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === "prometheus" && self.state.prometheusURL === "") {
-                  self.setState({ prometheusURL : "http://" + addon.endpoint })
-                  submitPrometheusConfigure(self);
-                }
-              });
+                res?.addonsState?.forEach((addon) => {
+                  if (addon.name === "prometheus" && self.state.prometheusURL === "") {
+                    self.setState({ prometheusURL : "http://" + addon.endpoint })
+                    submitPrometheusConfigure(self);
+                  }
+                });
               },
               error : (err) => console.log("error registering Prometheus: " + err),
             });
