@@ -315,7 +315,6 @@ const categories = [
     title : "Configuration",
     show : false,
     link : true,
-    isBeta : true,
     children : [
       {
         id : "Applications",
