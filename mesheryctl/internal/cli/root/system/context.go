@@ -54,10 +54,17 @@ type contextWithLocation struct {
 
 // createContextCmd represents the create command
 var createContextCmd = &cobra.Command{
-	Use:   "create <context-name>",
+	Use:   "create context-name",
 	Short: "Create a new context (a named Meshery deployment)",
 	Long:  `Add a new context to Meshery config.yaml file`,
-	Args:  cobra.ExactArgs(1),
+	Example: `
+	Create new context
+	mesheryctl system context create context-name
+
+	Create new context and provide list of adapters, platform & URL
+	mesheryctl system context create context-name --adapters meshery-osm --platform docker --url http://localhost:9081 --set --yes
+	`,
+	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tempCntxt := utils.TemplateContext
 
@@ -91,7 +98,7 @@ var createContextCmd = &cobra.Command{
 
 // deleteContextCmd represents the delete command
 var deleteContextCmd = &cobra.Command{
-	Use:   "delete <context-name>",
+	Use:   "delete context-name",
 	Short: "delete context",
 	Long:  `Delete an existing context (a named Meshery deployment) from Meshery config file`,
 	Args:  cobra.ExactArgs(1),
@@ -213,9 +220,22 @@ var listContextCmd = &cobra.Command{
 
 // viewContextCmd represents the view command
 var viewContextCmd = &cobra.Command{
-	Use:          "view",
-	Short:        "view current context",
-	Long:         `Display active Meshery context`,
+	Use:   "view [context-name | --context context-name| --all] --flags",
+	Short: "view current context",
+	Long:  `Display active Meshery context`,
+	Example: `
+	View default context
+	mesheryctl system context view
+
+	View specified context
+	mesheryctl system context view context-name
+
+	View specified context with context flag
+	mesheryctl system context view --context context-name
+
+	View config of all contexts
+	mesheryctl system context view --all
+	`,
 	Args:         cobra.MaximumNArgs(1),
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -287,7 +307,7 @@ var viewContextCmd = &cobra.Command{
 
 // switchContextCmd represents the switch command
 var switchContextCmd = &cobra.Command{
-	Use:          "switch <context-name>",
+	Use:          "switch context-name",
 	Short:        "switch context",
 	Long:         `Configure mesheryctl to actively use one one context vs. the another context`,
 	Args:         cobra.ExactArgs(1),
