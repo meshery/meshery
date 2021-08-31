@@ -368,13 +368,15 @@ const icons = (completed, active) => {
       </SvgIcon>
     ),
     4 : (
-      <>
+      <div style={{ height : "3rem", width : "3rem", display : "flex", alignItems : "center", position : "relative" }}>
         <SvgIcon
           viewBox="-1.5 0 50 52"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           style={{
-            padding : "0.2rem", paddingRight : 0, paddingTop : 0, position : "absolute", marginRight : "-0.4rem"
+            padding : "0.1rem",
+            position : "absolute",
+            marginLeft : "0.3rem"
           }}
         >
           <g clipPath="url(#clip3)">
@@ -400,7 +402,9 @@ const icons = (completed, active) => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           style={{
-            padding : "0.2rem", paddingLeft : 0, paddingTop : 0, marginRight : "0.3rem", position : "absolute"
+            padding : "0.1rem",
+            position : "absolute",
+            marginLeft : '1.2rem'
           }}
         >
           <g clipPath="url(#clip4)">
@@ -432,7 +436,7 @@ const icons = (completed, active) => {
             </clipPath>
           </defs>
         </SvgIcon>
-      </>
+      </div>
     ),
   };
 };

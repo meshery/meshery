@@ -57,19 +57,19 @@ export function makeTitle (res) {
     if (res.URL) { // http results
       // title.push(res.Labels + ' - ' + res.URL + ' - ' + formatDate(res.StartTime))
       // title.push(res.URL + ' - ' + formatDate(res.StartTime))
-      title.push(res.Labels + ' - ' + formatDate(res.StartTime))
+      title.push(`Labels : ${res.Labels} | Start Time : ${formatDate(res.StartTime)}`)
     } else { // grpc results
-      title.push(res.Destination + ' - ' + formatDate(res.StartTime))
+      title.push(`Destination : ${res.Destination} | Start Time : ${formatDate(res.StartTime)}`)
     }
   }
-  var percStr = 'min ' + myRound(1000.0 * res.DurationHistogram.Min, 3) + ' ms, average ' + myRound(1000.0 * res.DurationHistogram.Avg, 3) + ' ms'
+  var percStr = 'min : ' + myRound(1000.0 * res.DurationHistogram.Min, 3) + 'ms | average : ' + myRound(1000.0 * res.DurationHistogram.Avg, 3) + 'ms | max: '+ myRound(1000.0 * res.DurationHistogram.Max, 3) + 'ms\n'
   if (res.DurationHistogram.Percentiles) {
     for (var i = 0; i < res.DurationHistogram.Percentiles.length; i++) {
       var p = res.DurationHistogram.Percentiles[i]
-      percStr += ', p' + p.Percentile + ' ' + myRound(1000 * p.Value, 2) + ' ms'
+      percStr += 'p' + p.Percentile + ' : ' + myRound(1000 * p.Value, 2) + 'ms | '
     }
+    percStr=percStr.slice(0,-2)
   }
-  percStr += ', max ' + myRound(1000.0 * res.DurationHistogram.Max, 3) + ' ms'
   var statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes[200]:0;
   if (!statusOk) { // grpc results
     statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes["SERVING"]:0;
@@ -83,12 +83,8 @@ export function makeTitle (res) {
       errStr = '100% errors!'
     }
   }
-  title.push('Response time histogram at ' + res.RequestedQPS + ' target qps (' +
-          myRound(res.ActualQPS, 1) + ' actual) ' + res.NumThreads + ' connections for ' +
-          res.RequestedDuration + ' (actual time ' + myRound(res.ActualDuration / 1e9, 1) + 's), ' +
-          errStr)
+  title.push(`Target QPS : ${res.RequestedQPS} ( Actual QPS : ${myRound(res.ActualQPS, 1)} ) | No of Connections : ${res.NumThreads} | Requested Duration : ${res.RequestedDuration} ( Actual Duration: ${myRound(res.ActualDuration / 1e9, 1)} ) | Errors : ${errStr}`)
   title.push(percStr)
-
   if(res.kubernetes){
     title.push(`\nKubernetes server version: ${res.kubernetes.server_version}`);
     title.push("\nNodes:");

@@ -113,7 +113,7 @@ function Dashboard({
                   </div>
                 </div>
               </Grid>
-              <div style={{ height: "10.4rem", width: "1px", background: "black", top: "11.2rem", bottom: "0", position: "absolute", left: "36%", backgroundColor: "#36454f", opacity:"0.7" }}></div>
+              <div style={{ height : "10.4rem", width : "1px", background : "black", top : "11.2rem", bottom : "0", position : "absolute", left : "36%", backgroundColor : "#36454f", opacity : "0.7" }}></div>
               <Grid item xs>
                 <div className={classes.paper}>
                   <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
@@ -124,7 +124,7 @@ function Dashboard({
                       Profiles
                     </Typography>
                   </div>
-                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}> 
+                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
                     <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
                       Manage Profiles
                     </Button>

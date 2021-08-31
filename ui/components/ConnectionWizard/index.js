@@ -10,6 +10,7 @@ import KubernetesScreen from "./Screens/KubernetesScreen";
 import MesheryOperatorScreen from "./Screens/MesheryOperatorScreen";
 import ServiceMeshScreen from "./Screens/ServiceMeshScreen";
 import MetricsScreen from "./Screens/MetricsScreen";
+import CompletionScreen from "./Screens/CompletionScreen";
 
 const useStyles = makeStyles((theme) => ({
   container : {
@@ -70,8 +71,7 @@ const ConfigurationWizard = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
   const handleUserClick = (navStep) => {
-    // setActiveStep(navStep);
-    return null
+    setActiveStep(navStep);
   };
 
   const handleStep = (step) => {
@@ -90,8 +90,8 @@ const ConfigurationWizard = () => {
   };
 
   const isNextDisabled = () => {
-    if (activeStep === 0 && !stepStatus.kubernetes) return true
-    if (activeStep === 1 && !stepStatus.operator) return true
+    // if (activeStep === 0 && !stepStatus.kubernetes) return true
+    // if (activeStep === 1 && !stepStatus.operator) return true
     return false
   }
 
@@ -120,7 +120,7 @@ const ConfigurationWizard = () => {
           {activeStep === steps.length
             ? (
               <Fade timeout={{ enter : "500ms" }} in="true">
-                {null}
+                <CompletionScreen handleUserClick={handleUserClick} />
               </Fade>
             )
             : (
@@ -128,38 +128,36 @@ const ConfigurationWizard = () => {
             )}
         </div>
       </Fade>
-      <div className={classes.buttonContainer}>
-        {activeStep === 2 || activeStep === 3
-          ? (
-            <Button onClick={handleAdvancedSettingsClick} className={classes.skipButton}>
+      {activeStep === steps.length ? null :
+        <div className={classes.buttonContainer} >
+          {activeStep === 2 || activeStep === 3
+            ? (
+              <Button onClick={handleAdvancedSettingsClick} className={classes.skipButton}>
                     Advanced Settings
-            </Button>
-          )
-          : null}
-        {activeStep === 0
-          ? null
-          : (
-            <Button
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              className={(classes.button, classes.backButton)}
-            >
+              </Button>
+            )
+            : null}
+          {activeStep === 0
+            ? null
+            : (
+              <Button
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                className={(classes.button, classes.backButton)}
+              >
                     Back
-            </Button>
-          )}
-        <Button
+              </Button>
+            )}
+          <Button
           // disabled={activeStep === 0 && !iskubernetesConnected}
-          variant="contained"
-          onClick={handleNext}
-          disabled={isNextDisabled()}
-          className={classes.button}
-          style={activeStep === steps.length -1
-            ? { opacity : 0 }
-            : null }
-        >
+            variant="contained"
+            onClick={handleNext}
+            disabled={isNextDisabled()}
+            className={classes.button}
+          >
                 Next
-        </Button>
-      </div>
+          </Button>
+        </div>}
 
     </Container>
   );
