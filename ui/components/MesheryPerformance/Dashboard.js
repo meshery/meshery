@@ -113,7 +113,11 @@ function Dashboard({
                   </div>
                 </div>
               </Grid>
-              <div style={{ height : "10.4rem", width : "1px", background : "black", top : "11.2rem", bottom : "0", position : "absolute", left : "36%", backgroundColor : "#36454f", opacity : "0.7" }}></div>
+              <Grid item xs>
+                <div className={classes.paper}>
+                  <div style={{ height : "10.4rem", width : "1px", background : "black", bottom : "0", position : "relative", left : "36%", backgroundColor : "#36454f", opacity : "0.7" }}>
+                  </div></div>
+              </Grid>
               <Grid item xs>
                 <div className={classes.paper}>
                   <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
