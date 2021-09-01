@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React from "react";
 import PropTypes from "prop-types";
 import Document, { Head, Main, NextScript, Html } from "next/document";
@@ -5,20 +6,20 @@ import flush from "styled-jsx/server";
 
 /**
  * setupGA setups up the google analtyics in meshery UI
- * 
+ *
  * This function may not be invoked here (server side) as "window" object does
  * not exist on the server side. Hence this function is stringified and
  * forced to execute on the client side only.
- * 
+ *
  */
 function setupGA() {
   window.dataLayer = window.dataLayer || [];
 
-  function gtag() { 
+  function gtag() {
     dataLayer.push(arguments);
   }
 
-  fetch("/api/user/prefs", { credentials: 'include' })
+  fetch("/api/user/prefs", { credentials: "include" })
     .then((res) => res.json())
     .then((res) => {
       if (res?.anonymousUsageStats) {
@@ -39,9 +40,10 @@ class MesheryDocument extends Document {
           <meta charSet="utf-8" />
           <link rel="icon" href="/static/favicon.png" />
 
-          
-
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=G-8Q51RLT8TZ`} />
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=G-8Q51RLT8TZ`}
+          />
 
           <script
             dangerouslySetInnerHTML={{
@@ -49,22 +51,23 @@ class MesheryDocument extends Document {
             }}
           />
 
-        {/** 
-          * For hiding the scrollbar without losing the scroll functionality
-          * add the class "hide-scrollbar" to hide scrollbar for that element
-          * Only applicable for Chrome, safari and newest version of Opera
-          */}
-        <style type="text/css">{"\
+          {/**
+           * For hiding the scrollbar without losing the scroll functionality
+           * add the class "hide-scrollbar" to hide scrollbar for that element
+           * Only applicable for Chrome, safari and newest version of Opera
+           */}
+          <style type="text/css">
+            {
+              "\
             .hide-scrollbar::-webkit-scrollbar {\
               width: 0 !important;\
             }\
           .reduce-scrollbar-width::-webkit-scrollbar {\
               width: 0.3em !important;\
             }\
-          "}
-        </style>
-
-        
+          "
+            }
+          </style>
         </Head>
         <body>
           <Main />

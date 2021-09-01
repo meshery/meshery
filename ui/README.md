@@ -1,36 +1,34 @@
-# Contributor Guide for UI component
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-This guide is specific to the Meshery UI component and involves steps/methods one need to follow while working on issues related to Meshery UI.
+## Getting Started
 
-## How to run Meshery UI?
-Meshery UI can be built and run in different ways. You will choose one of the two ways to build and run Meshery UI depending upon whether you are actively developing it (whether you are creating a new feature or fixing a bug in Meshery UI) or whether you simply need to use it as a user. Let's refer to these two methods as a _Development Build_ and _User Build._
+First, run the development server:
 
-#### 1. User Build:
-For general usage, one can run Meshery UI using Meshery's command client `mesheryctl`, by simply running the `mesheryctl system start` command.
-If you don't have the `mesheryctl` tool installed already, you can follow the [mesheryctl installation docs](https://docs.meshery.io/installation/mesheryctl) to install `mesheryctl` using various `package management` tools supported.
+```bash
+npm run dev
+# or
+yarn dev
+```
 
-#### 2. Development Build:
-For purposes of actively developing Meshery UI, you first need to install the dependencies using `make setup-ui-libs` and then you can use either of the following approaches to build Meshery UI:
-1. Follow the procedure mentioned in Step 1 (User build) above, and start Meshery UI sever on the 9081 port, and login to Meshery UI using either of the providers mentioned on the login page. Then, to run a development server of Meshery UI, install the dependencies using the command mentioned above, then build the UI package and export it using the command `make build-ui`, and finally execute `make run-ui-dev` to run the livereload-nodemon server on port 3000.
-    > **NOTE:** Please run the steps in order to avoid issues, as Meshery server should be running and logged-in before accessing the development server
-    > on 3000 port.
-    
-1. **`make run-local`** - Alternatively, build all of Meshery UI's components upfront before serving the UI. Do this in two steps:
- - Execute `make build-ui` to build and export all Meshery UI components.
- - Execute `make run-local` to serve the prebuilt components. 
-This method doesn't provide a live reload server. You will have to build Meshery UI after making changes to the code and rerun these steps again in order to see those subsequent code changes reflected in the UI.
-    > **NOTE:** If you are using this method, make sure you don't have Meshery already running on 9081 port, using `mesheryctl`.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Tech stack used in Meshery-UI
-- Meshery UI uses NextJs to do server side rendering of ReactJS components. The folder `ui/components` contains all the ReactJS components involved in
-  building Meshery UI.
-- MaterialUI is being used extensively for the visual components of Meshery UI.
-- Billboard.js library is being used to display various charts, and comparison graphs in Meshery UI.
+You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
 
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
-## Component naming convention
-For reference and easy code search, the components are named accordingly following the rule 'Meshery<Part of UI it involves>', for example: components
-involved in rendering the Results page of Meshery UI are named as 'MesheryResults.js', 'MesheryResultDialog.js', 'MesherySMIResults.js'. Please follow this convention if you are creating a new component.
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
+## Learn More
 
-<p style="text-align: center"><em>If you'll like to go to the main Meshery Contributor guide <a href="../CONTRIBUTING.md">click here</a></em></p>
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 const { createServer } = require("http");
 const { parse } = require("url");
@@ -9,10 +10,12 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 var httpProxy = require("http-proxy");
 
-var proxy = httpProxy.createProxyServer({ target : { host : "localhost", port : 9081 } });
+var proxy = httpProxy.createProxyServer({
+  target: { host: "localhost", port: 9081 },
+});
 
 proxy.on("error", function (err, req, res) {
-  res.writeHead(500, { "Content-Type" : "text/plain" });
+  res.writeHead(500, { "Content-Type": "text/plain" });
   res.end("Unexpected issue.");
 });
 
