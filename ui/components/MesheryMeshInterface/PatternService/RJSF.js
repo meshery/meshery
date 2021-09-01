@@ -43,7 +43,7 @@ const muiTheme = createTheme({
     MuiFormLabel : {
       root : {
         color : "#333",
-        fontSize : '1.2rem',
+        fontSize : '0.8rem',
         textTransform : 'capitalize',
       }
     },
