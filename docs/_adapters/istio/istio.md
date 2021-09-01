@@ -55,7 +55,7 @@ The ({{page.name}}) includes a handful of sample applications. Use Meshery to de
   - Follow this [tutorial workshop]to set up and deploy the BookInfo sample app on Istio using Meshery.
 - [Httpbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
   - Httpbin is a simple HTTP request and response service.
-- [Online Boutique]({{ site.baseurl }}/guides/sample-apps#onlinebouique)
+- [Online Boutique]({{ site.baseurl }}/guides/sample-apps#online-bouique)
   - Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.
 - [Image Hub]({{ site.baseurl }}/guides/sample-apps#imagehub)
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.

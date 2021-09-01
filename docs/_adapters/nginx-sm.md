@@ -26,7 +26,7 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 The {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 
-- [Emojivoto]({{ site.baseurl }}/guides/sample-apps#emoji.voto)
+- [Emojivoto]({{ site.baseurl }}/guides/sample-apps#emojivoto)
     - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
 - [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo)

@@ -42,7 +42,7 @@ The {{ page.name }} includes a handful of sample applications. Some of these app
     - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery. 
 - [Httpbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
     - Httpbin is a simple HTTP request and response service.
-- [Online Boutique]({{ site.baseurl }}/guides/sample-apps#onlinebouique)
+- [Online Boutique]({{ site.baseurl }}/guides/sample-apps#online-boutique)
     - Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.
 
 ### Suggested Topics
