@@ -59,22 +59,27 @@ export function makeTitle (res) {
       // title.push(res.URL + ' - ' + formatDate(res.StartTime))
       console.log(res.Labels)
       var labels = res.Labels.split(' -_- ')
-      title.push(`Labels: ${labels.map(item => item + '\n')}`)
+      // title.push(`Labels: ${labels.map(item => item + '\n')}`)
+      title.push(`Title: ${labels[0]}`)
+      title.push(`URL: ${labels[1]}`)
       title.push(`Start Time: ${formatDate(res.StartTime)}`)
     } else { // grpc results
       title.push(`Destination: ${res.Destination}`)
       title.push(`Start Time: ${formatDate(res.StartTime)}`)
     }
   }
-  var percStr_1 = `min: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms \naverage: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms \nmax: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms\n`
-  var percStr_2 = ''
+  title.push(`Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms`)
+  title.push(`Average: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms`)
+  title.push(`Maximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms`)
+  var percStr = `Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms \nAverage: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms \nMaximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms\n`
+  var percStr_2 = 'Percentiles: \n'
   if (res.DurationHistogram.Percentiles) {
     for (var i = 0; i < res.DurationHistogram.Percentiles.length; i++) {
       var p = res.DurationHistogram.Percentiles[i]
       percStr_2 += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms\n`
+      percStr += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms\n`
     }
-    percStr_1 = percStr_1.slice(0, -2)
-    percStr_2=percStr_2.slice(0,-2)
+    percStr=percStr.slice(0,-2)
   }
   var statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes[200]:0;
   if (!statusOk) { // grpc results
@@ -93,7 +98,7 @@ export function makeTitle (res) {
   title.push(`No of Connections: ${res.NumThreads}`)
   title.push(`Requested Duration: ${res.RequestedDuration} ( Actual Duration: ${myRound(res.ActualDuration / 1e9, 1)} )`)
   title.push(`Errors: ${ errStr }`)
-  title.push(percStr_1)
+  // title.push(percStr_1)
   title.push(percStr_2)
   if(res.kubernetes){
     title.push(`Kubernetes server version: ${res.kubernetes.server_version}`);

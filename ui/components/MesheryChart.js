@@ -352,7 +352,10 @@ class MesheryChart extends React.Component {
           <pre >
             <GridList cols={3} cellHeight={'auto'} spacing={2}>
               {this.titleRef?.map(item => (
-                <div className={classes.title}>{item}</div>
+                <div className={classes.title}>
+                  <b>{item.substr(0, item.indexOf(':'))}:</b>
+                  {item.substr(item.indexOf(':')+1)}
+                </div>
               ))}
             </GridList>
           </pre>
