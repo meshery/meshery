@@ -7,11 +7,10 @@ language: en
 list: include
 ---
 
-## Configuration Management
 
 Meshery provides the ability for you as a service mesh manager to customize your service mesh deployment.
 
-## Notifications
+#### Notifications
 
 Meshery tracks operations that you perform on service meshes and their workloads. Meshery provides notification of environment issues, application conflicts with service mesh configuration.
 
