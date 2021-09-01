@@ -374,9 +374,9 @@ function MesheryFilters({
   });
 
   async function showmodal() {
-    let response = await modalRef.current.show({ title : "Delete Filter?",
+    let response = await modalRef.current.show({ title : "Delete Filters?",
 
-      subtitle : "Are you sure you want to delete this filter?",
+      subtitle : "Are you sure you want to delete these filters?",
 
       options : ["yes", "no"], })
     return response;
