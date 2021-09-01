@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "relay": "relay-compiler --src ./features --schema ./app/schema.graphql",
+    "relay": "relay-compiler --src ./features --schema ../internal/graphql/schema/schema.graphql",
     "test": "jest",
     "test:watch": "jest --watch",
     "dev:proxy": "node ui_dev_server.js"
