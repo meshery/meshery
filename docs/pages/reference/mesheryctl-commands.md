@@ -5,7 +5,7 @@ abstract: "A guide to Meshery's CLI: mesheryctl"
 permalink: reference/mesheryctl
 redirect_from: reference/mesheryctl/commands/
 type: Reference
-variables:
+commands:
   - global
   - system
   - system-channel

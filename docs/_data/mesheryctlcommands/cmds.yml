@@ -1,4 +1,5 @@
 global:
+  name: mesheryctl
   description : Displays help about any command.
   usage:
     mesheryctl
@@ -30,6 +31,7 @@ global:
           mesheryctl version
 
 system:
+  name: system
   description: Lifecycle management of Meshery deployments
   usage:
     mesheryctl system [flags]
@@ -161,6 +163,7 @@ system:
           mesheryctl system status
 
 system-channel:
+  name: system-channel
   description: Switch between release channels.
   usage:
     mesheryctl system channel
@@ -191,6 +194,7 @@ system-channel:
               mesheryctl system channel view --all
 
 system-context:
+  name: system-context
   description: Display the current context.
   usage:
       mesheryctl system context
@@ -249,6 +253,7 @@ system-context:
               mesheryctl system context view --all
 
 perf:
+  name: perf
   description: Performance Management and Benchmarking using Meshery CLI
   usage: 
     mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
@@ -356,6 +361,7 @@ perf:
           mesheryctl perf view [profile-id] [test-name]
 
 mesh:
+  name: mesh
   description: Lifecycle management of service meshes
 
   subcommands:
@@ -407,6 +413,7 @@ mesh:
               mesheryctl mesh deploy --tokenPath [path to token for authentication]
 
 pattern:
+  name: pattern
   description : 
   usage:
     mesheryctl pattern
