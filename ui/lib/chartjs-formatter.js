@@ -72,12 +72,12 @@ export function makeTitle (res) {
   title.push(`Average: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms`)
   title.push(`Maximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms`)
   var percStr = `Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms \nAverage: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms \nMaximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms\n`
-  var percStr_2 = 'Percentiles: \n'
+  var percStr_2 = 'Percentiles: '
   if (res.DurationHistogram.Percentiles) {
     for (var i = 0; i < res.DurationHistogram.Percentiles.length; i++) {
       var p = res.DurationHistogram.Percentiles[i]
-      percStr_2 += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms\n`
-      percStr += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms\n`
+      percStr_2 += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms; `
+      percStr += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms; `
     }
     percStr=percStr.slice(0,-2)
   }
@@ -98,7 +98,6 @@ export function makeTitle (res) {
   title.push(`No of Connections: ${res.NumThreads}`)
   title.push(`Requested Duration: ${res.RequestedDuration} ( Actual Duration: ${myRound(res.ActualDuration / 1e9, 1)} )`)
   title.push(`Errors: ${ errStr }`)
-  // title.push(percStr_1)
   title.push(percStr_2)
   if(res.kubernetes){
     title.push(`Kubernetes server version: ${res.kubernetes.server_version}`);
