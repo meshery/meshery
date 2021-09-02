@@ -1,0 +1,6 @@
+.error-autocomplete-value .MuiOutlinedInput-notchedOutline {
+  border: 1px solid red;
+}
+.error-autocomplete-value .MuiInputLabel-outlined {
+  color: red;
+}

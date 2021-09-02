@@ -1,5 +1,7 @@
 export { AdaptersListContainer, ComponentsStatusContainer } from "./containers";
 
+export { AdapterChip, AdaptersChipList } from "./components";
+
 export {
   updateConnectionStatus,
   fetchOperatorStatus,

@@ -1,5 +1,4 @@
-import { AdaptersListContainer, ComponentsStatusContainer } from "@/features/mesheryComponents";
-import { nanoid } from "@reduxjs/toolkit";
+import { AdaptersChipList, AdaptersListContainer, ComponentsStatusContainer } from "@/features/mesheryComponents";
 import React from "react";
 
 export default function Home() {
@@ -7,13 +6,7 @@ export default function Home() {
     <div>
       <ComponentsStatusContainer render={({ components }) => <div>{components.meshsync.connectionStatus}</div>} />
       <AdaptersListContainer
-        render={({ adapters }) => (
-          <ul>
-            {adapters.map((ad) => (
-              <li key={nanoid()}>{ad.adapter_location}</li>
-            ))}
-          </ul>
-        )}
+        render={({ adapters, loading }) => <AdaptersChipList adapters={adapters} loading={loading} />}
       />
     </div>
   );
