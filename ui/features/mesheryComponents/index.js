@@ -1,4 +1,4 @@
-export { AdaptersList, ComponentsStatus } from "./components";
+export { AdaptersListContainer, ComponentsStatusContainer } from "./containers";
 
 export {
   updateConnectionStatus,
@@ -11,4 +11,5 @@ export {
   operatorSelector,
   adaptersSelector,
   loadingSelector,
+  mesheryComponentsSelector,
 } from "./mesheryComponentsSlice";

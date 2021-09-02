@@ -16,42 +16,75 @@ import {
     - Meshery Adapters
   */
 
+/**
+ * @typedef {"UNKNOWN" | "DISABLED" | "ENABLED" | "CONNECTED"} ConnectionStatus
+ */
+
+/**
+ * @typedef {Object} MesheryComponent
+ * @property {ConnectionStatus} connectionStatus
+ * @property {number | "UNKNOWN"} version
+ */
+
+/**
+ * @typedef {Object} AdapterType
+ * @property {string} adapter_location
+ * @property {string} name
+ * @property {string} version
+ * @property {string} git_commit_sha
+ * @property {Array | null} ops
+ */
+
+/**
+ * @typedef {Array.<AdapterType>} AdaptersListType
+ */
+
 const initialState = {
+  /** @type {MesheryComponent}  */
   operator: {
-    connectionStatus: "UNKOWN",
+    connectionStatus: "UNKNOWN",
     version: "UNKNOWN",
   },
+
+  /** @type {MesheryComponent}  */
   meshsync: {
     connectionStatus: "UNKOWN",
     version: "UNKNOWN",
   },
+
+  /** @type {MesheryComponent}  */
   broker: {
     connectionStatus: "UNKOWN",
     version: "UNKNOWN",
   },
+
+  /** @type {MesheryComponent}  */
   server: {
     connectionStatus: "UNKOWN",
     version: "UNKNOWN",
   },
+  /**
+   * @type {AdaptersListType}
+   */
   adapters: [],
   loading: false,
+
+  /** @type {{code: number | null, description: string | null}} */
   operatorError: {
     code: null,
-    desciption: null,
+    description: null,
   },
+
   subscription: {
     initialised: false,
     disposer: null,
   }, // subscription object
 };
 
-export const fetchComponentsStatusThunk = createAsyncThunk(
-  "mesheryComponents/fetchComponentsStatus",
-  async () => {
-    const response = await fetchMesheryComponentsStatus();
-    return response;
-  }
-);
+export const fetchComponentsStatusThunk = createAsyncThunk("mesheryComponents/fetchComponentsStatus", async () => {
+  const response = await fetchMesheryComponentsStatus();
+  return response;
+});
 
 export const initialiseOperatorStatusSubscriptionThunk = createAsyncThunk(
   "mesheryComponents/initialiseOperatorStatusEventsSubscription",
@@ -61,13 +94,10 @@ export const initialiseOperatorStatusSubscriptionThunk = createAsyncThunk(
   }
 );
 
-export const fetchAvailableAdaptersThunk = createAsyncThunk(
-  "mesheryComponents/fetchAvailableAdapters",
-  async () => {
-    const response = await fetchAvailableAdapters();
-    return response;
-  }
-);
+export const fetchAvailableAdaptersThunk = createAsyncThunk("mesheryComponents/fetchAvailableAdapters", async () => {
+  const response = await fetchAvailableAdapters();
+  return response;
+});
 
 export const changeOperatorStateThunk = createAsyncThunk(
   "mesheryComponents/changeOperatorState",
@@ -79,22 +109,37 @@ export const changeOperatorStateThunk = createAsyncThunk(
 );
 
 const updateConnectionStatusReducer = (state, action) => {
-  state.operator.connectionStatus =
-    action.payload?.operator?.status || "UNKNOWN";
+  state.operator.connectionStatus = action.payload?.operator?.status || "UNKNOWN";
 
   state.broker.connectionStatus = action.payload?.broker?.status || "UNKNOWN";
   state.broker.version = action.payload?.broker?.version || "UNKNOWN";
 
-  state.meshsync.connectionStatus =
-    action.payload?.meshsync?.status || "UNKNOWN";
+  state.meshsync.connectionStatus = action.payload?.meshsync?.status || "UNKNOWN";
   state.meshsync.version = action.payload?.meshsync?.version || "UNKNOWN";
 
   if (
     action.payload.operator.error &&
-    (action.payload.operator.error.code ||
-      action.payload.operator.error.description)
+    (action.payload.operator.error.code || action.payload.operator.error.description)
   )
     state.operatorError = action.payload.operator.error;
+  return state;
+};
+
+/**
+ * @typedef {Object} updateMesheryServerDetailsReducerAction
+ * @property {{status: "UNKNOWN | CONNECTED | DISCONNECTED", version: "UNKNOWN" | number}} payload
+ */
+
+/**
+ *
+ * @param {Object} state
+ * @param {updateMesheryServerDetailsReducerAction} action
+ * @return {Object} state
+ */
+
+const updateMesheryServerDetailsReducer = (state, action) => {
+  state.server.connectionStatus = action.payload?.status || "UNKNOWN";
+  state.server.version = action.payload?.version || "UNKNOWN";
   return state;
 };
 
@@ -107,6 +152,7 @@ const mesheryComponentsSlice = createSlice({
 
     // redux-toolkit uses IMMER under the hood which allows us to mutate the state without actually mutating it
     updateConnectionStatus: updateConnectionStatusReducer,
+    updateMesheryServerDetails: updateMesheryServerDetailsReducer,
   },
   extraReducers: (builder) => {
     builder.addCase(fetchComponentsStatusThunk.pending, (state) => {
@@ -136,21 +182,15 @@ const mesheryComponentsSlice = createSlice({
       return state;
     });
 
-    builder.addCase(
-      initialiseOperatorStatusSubscriptionThunk.fulfilled,
-      (state) => {
-        state.subscription.initialised = true;
-        // state.subscription.disposer = action.payload;
-        return state;
-      }
-    );
-    builder.addCase(
-      initialiseOperatorStatusSubscriptionThunk.rejected,
-      (state) => {
-        state.subscription.initialised = false;
-        return state;
-      }
-    );
+    builder.addCase(initialiseOperatorStatusSubscriptionThunk.fulfilled, (state) => {
+      state.subscription.initialised = true;
+      // state.subscription.disposer = action.payload;
+      return state;
+    });
+    builder.addCase(initialiseOperatorStatusSubscriptionThunk.rejected, (state) => {
+      state.subscription.initialised = false;
+      return state;
+    });
 
     builder.addCase(changeOperatorStateThunk.pending, (state) => {
       state.loading = true;
@@ -174,3 +214,12 @@ export const { updateConnectionStatus } = mesheryComponentsSlice.actions;
 export const operatorSelector = (state) => state.mesheryComponents.operator;
 export const adaptersSelector = (state) => state.mesheryComponents.adapters;
 export const loadingSelector = (state) => state.mesheryComponents.loading;
+
+export const mesheryComponentsSelector = (state) => {
+  return {
+    operator: state.mesheryComponents.operator,
+    meshsync: state.mesheryComponents.meshsync,
+    broker: state.mesheryComponents.broker,
+    server: state.mesheryComponents.server,
+  };
+};
