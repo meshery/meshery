@@ -438,6 +438,7 @@ class Navigator extends React.Component {
       showHelperButton : false,
       capabilities : [],
       openItems : [],
+      hoveredId : null,
     };
   }
 
@@ -848,6 +849,8 @@ class Navigator extends React.Component {
                       path === href && classes.itemActiveItem
                     )}
                     onClick={() => this.toggleItemCollapse(childId)}
+                    onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
+                    onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }): null}
                   >
                     <Link href={link
                       ? href
@@ -860,7 +863,15 @@ class Navigator extends React.Component {
                           disableHoverListener={!isDrawerCollapsed}
                           disableTouchListener={!isDrawerCollapsed}
                         >
-                          <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
+                            <ExpandMoreIcon
+                              onClick={() => this.toggleItemCollapse(childId)}
+                              className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })}
+                            /> :
+                            <ListItemIcon className={classes.listIcon}>
+                              {icon}
+                            </ListItemIcon>
+                          }
                         </Tooltip>
                         <ListItemText
                           className={isDrawerCollapsed
@@ -880,7 +891,7 @@ class Navigator extends React.Component {
                         : {}}
                     />
                   </ListItem>
-                  <Collapse in={this.state.openItems.includes(childId)}>
+                  <Collapse in={this.state.openItems.includes(childId)} style={{backgroundColor: "rgba(0,0,0,0.3)"}}>
                     {this.renderChildren(childId, children, 1)}
                   </Collapse>
                 </React.Fragment>
