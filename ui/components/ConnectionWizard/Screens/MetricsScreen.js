@@ -24,8 +24,8 @@ const MetricsScreen = ({ grafana, prometheus }) => {
   const sliderRef = createRef()
 
   const handleIndicatorClick = (index) => () => {
-     sliderRef?.current?.slickGoTo(index,false)
-     setActiveIndex(index)
+    sliderRef?.current?.slickGoTo(index,false)
+    setActiveIndex(index)
   }
 
   const metricsComponents = [

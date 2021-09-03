@@ -1,4 +1,4 @@
-/* eslint block-scoped-var: 0 */ 
+/* eslint block-scoped-var: 0 */
 export const linearXAxe = {
   type: 'linear',
   scaleLabel: {
@@ -50,23 +50,34 @@ export const logYAxe = {
     labelString: 'Count (log scale)'
   }
 }
-  
+
 export function makeTitle (res) {
   var title = []
   if (res.Labels !== '') {
     if (res.URL) { // http results
       // title.push(res.Labels + ' - ' + res.URL + ' - ' + formatDate(res.StartTime))
       // title.push(res.URL + ' - ' + formatDate(res.StartTime))
-      title.push(`Labels : ${res.Labels} | Start Time : ${formatDate(res.StartTime)}`)
+      console.log(res.Labels)
+      var labels = res.Labels.split(' -_- ')
+      // title.push(`Labels: ${labels.map(item => item + '\n')}`)
+      title.push(`Title: ${labels[0]}`)
+      title.push(`URL: ${labels[1]}`)
+      title.push(`Start Time: ${formatDate(res.StartTime)}`)
     } else { // grpc results
-      title.push(`Destination : ${res.Destination} | Start Time : ${formatDate(res.StartTime)}`)
+      title.push(`Destination: ${res.Destination}`)
+      title.push(`Start Time: ${formatDate(res.StartTime)}`)
     }
   }
-  var percStr = 'min : ' + myRound(1000.0 * res.DurationHistogram.Min, 3) + 'ms | average : ' + myRound(1000.0 * res.DurationHistogram.Avg, 3) + 'ms | max: '+ myRound(1000.0 * res.DurationHistogram.Max, 3) + 'ms\n'
+  title.push(`Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms`)
+  title.push(`Average: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms`)
+  title.push(`Maximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms`)
+  var percStr = `Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms \nAverage: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms \nMaximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms\n`
+  var percStr_2 = 'Percentiles: '
   if (res.DurationHistogram.Percentiles) {
     for (var i = 0; i < res.DurationHistogram.Percentiles.length; i++) {
       var p = res.DurationHistogram.Percentiles[i]
-      percStr += 'p' + p.Percentile + ' : ' + myRound(1000 * p.Value, 2) + 'ms | '
+      percStr_2 += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms; `
+      percStr += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms; `
     }
     percStr=percStr.slice(0,-2)
   }
@@ -75,7 +86,7 @@ export function makeTitle (res) {
     statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes["SERVING"]:0;
   }
   var total = res.DurationHistogram.Count
-  var errStr = 'no error'
+  var errStr = 'No Error'
   if (statusOk !== total) {
     if (statusOk) {
       errStr = myRound(100.0 * (total - statusOk) / total, 2) + '% errors'
@@ -83,21 +94,23 @@ export function makeTitle (res) {
       errStr = '100% errors!'
     }
   }
-  title.push(`Target QPS : ${res.RequestedQPS} ( Actual QPS : ${myRound(res.ActualQPS, 1)} ) | No of Connections : ${res.NumThreads} | Requested Duration : ${res.RequestedDuration} ( Actual Duration: ${myRound(res.ActualDuration / 1e9, 1)} ) | Errors : ${errStr}`)
-  title.push(percStr)
+  title.push(`Target QPS: ${res.RequestedQPS} ( Actual QPS: ${myRound(res.ActualQPS, 1)} )`)
+  title.push(`No of Connections: ${res.NumThreads}`)
+  title.push(`Requested Duration: ${res.RequestedDuration} ( Actual Duration: ${myRound(res.ActualDuration / 1e9, 1)} )`)
+  title.push(`Errors: ${ errStr }`)
+  title.push(percStr_2)
   if(res.kubernetes){
-    title.push(`\nKubernetes server version: ${res.kubernetes.server_version}`);
-    title.push("\nNodes:");
+    title.push(`Kubernetes server version: ${res.kubernetes.server_version}`);
+    title.push("Nodes:");
     res.kubernetes.nodes.forEach((node, ind) => {
-      title.push(`\nNode ${ind+1} - Hostname: ${node.hostname}, CPU: ${node.allocatable_cpu}, Memory: ${node.allocatable_memory}, ` +
-                    `Arch: ${node.architecture} OS: ${node.os_image}, \n` +
-                    `Kubelet version: ${node.kubelet_version}, Container runtime: ${node.container_runtime_version}`);
+      title.push(`Node ${ind+1} - \nHostname: ${node.hostname} \nCPU: ${node.allocatable_cpu} \nMemory: ${node.allocatable_memory} \nArch: ${node.architecture} \nOS: ${node.os_image}
+                    \nKubelet version: ${node.kubelet_version} \nContainer runtime: ${node.container_runtime_version}`);
     });
   }
 
   return title
 }
-  
+
 export function fortioResultToJsChartData (res) {
   var dataP = [{
     x: 0.0,
@@ -165,23 +178,23 @@ export function fortioResultToJsChartData (res) {
     percentiles: res.DurationHistogram.Percentiles,
   }
 }
-  
+
 // export function myRound (v, digits = 6) {
 export function myRound (v, digits = 2) {
   var p = Math.pow(10, digits)
   return Math.round(v * p) / p
 }
-  
+
 export function pad (n) {
   return (n < 10) ? ('0' + n) : n
 }
-  
+
 export function formatDate (dStr) {
   var d = new Date(dStr)
   return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' +
           pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds())
 }
-  
+
 export function makeChart (data) {
   return {
     percentiles: data.percentiles,
@@ -237,7 +250,7 @@ export function makeChart (data) {
       }
     }
   }
-  
+
   //     // TODO may need updateChart() if we persist settings even the first time
   // } else {
   //   chart.data.datasets[0].data = data.dataP
@@ -255,7 +268,7 @@ export function makeOverlayChartTitle (titleA, titleB) {
     'B: ' + titleB[0], titleB[1], // Skip 3rd line.
   ]
 }
-  
+
 export function makeOverlayChart (dataA, dataB) {
   // var chartEl = document.getElementById('chart1')
   // chartEl.style.visibility = 'visible'
@@ -338,7 +351,7 @@ export function makeOverlayChart (dataA, dataB) {
   }
   // updateChart(overlayChart)
 }
-  
+
 export function makeMultiChart (results) {
   // document.getElementById('running').style.display = 'none'
   // document.getElementById('update').style.visibility = 'hidden'
@@ -473,7 +486,7 @@ export function makeMultiChart (results) {
     var l = formatDate(res.StartTime)
     if (res.Labels !== '') {
       if (res.Labels.indexOf(' -_- ') > -1) {
-        const ls = res.Labels.split(' -_- '); // trying to match this with server side in fortio.go
+        const ls = res.Labels.split('-_-'); // trying to match this with server side in fortio.go
         if (ls.length > 0){
           l += ' - ' + ls[0];
         } else {
@@ -493,7 +506,7 @@ export function makeMultiChart (results) {
       return str;
     }
   };
-  
+
   const findData = (slot, idx, res, p) => {
     // Not very efficient but there are only a handful of percentiles
     var pA = res.DurationHistogram.Percentiles

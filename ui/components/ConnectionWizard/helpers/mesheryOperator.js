@@ -41,23 +41,23 @@ export const getOperatorStatusFromQueryResult = (res) => {
   }
 
   if (res.operator?.status === "ENABLED") {
-      res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status == "ENABLED") {
-          operatorInformation = { ...operatorInformation,
-            NATSInstalled : true,
-            NATSVersion : controller.version }
-        } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
-          operatorInformation = { ...operatorInformation,
-            meshSyncInstalled : true,
-            meshSyncVersion : controller.version, }
-        }
-      });
+    res.operator?.controllers?.forEach((controller) => {
+      if (controller.name === "broker" && controller.status == "ENABLED") {
+        operatorInformation = { ...operatorInformation,
+          NATSInstalled : true,
+          NATSVersion : controller.version }
+      } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
+        operatorInformation = { ...operatorInformation,
+          meshSyncInstalled : true,
+          meshSyncVersion : controller.version, }
+      }
+    });
 
-      operatorInformation = { ...operatorInformation,
-        operatorInstalled : true,
-        operatorVersion : res.operator?.version, }
+    operatorInformation = { ...operatorInformation,
+      operatorInstalled : true,
+      operatorVersion : res.operator?.version, }
 
-      return [true,operatorInformation]
+    return [true,operatorInformation]
   }
 
   return [false, operatorInformation]

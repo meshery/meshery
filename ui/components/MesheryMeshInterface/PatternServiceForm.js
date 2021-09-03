@@ -2,6 +2,8 @@
 import React from "react";
 import { Tab, Tabs, AppBar, Typography, IconButton, Toolbar } from "@material-ui/core";
 import { Close, Delete } from "@material-ui/icons";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import Tooltip from '@material-ui/core/Tooltip';
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
 import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
@@ -148,6 +150,15 @@ function PatternServiceForm({ formData, schemaSet,onChange, onSubmit, onDelete, 
         <AppBar>
           <Toolbar variant="dense" style={{ padding : "0 10px" }}>
             <p style={{ margin : "auto auto auto 10px", fontSize : "18px" }}>{schemaSet.workload.title}</p>
+            {schemaSet?.workload?.description && (
+              <label htmlFor="help-button">
+                <Tooltip title={schemaSet?.workload?.description}>
+                  <IconButton component="span">
+                    <HelpOutlineIcon style={{ color : '#fff' }} />
+                  </IconButton>
+                </Tooltip>
+              </label>
+            )}
             <IconButton  onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
               <Delete style={{ color : "#ffffff" }} />
             </IconButton>
