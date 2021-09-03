@@ -72,9 +72,10 @@ func TestGetChannel(t *testing.T) {
 }
 
 func TestGetAdapters(t *testing.T) {
-	context := Context{"", "", "", nil, "", ""}
+	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
+	context := Context{"", "", "", dummy, "", ""}
 	got := context.GetAdapters()
-	want := []string(nil)
+	want := dummy
 	for i, j := range got {
 		if j != want[i] {
 			t.Errorf("got %q want %q", got, want)
