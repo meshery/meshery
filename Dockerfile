@@ -42,6 +42,17 @@ COPY --from=ui /out /app/ui/out
 COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
+
+RUN curl -L -s `curl -s https://api.github.com/repos/DelusionalOptimist/wasm-filters/releases/latest | grep "browser_download_url" | cut -d : -f 2,3 | tr -d '"'` -o wasm-filters.tar.gz \
+    && mkdir -p /home/appuser/.meshery/seed_content/filters/binaries \
+    && tar xzf wasm-filters.tar.gz --directory=/home/appuser/.meshery/seed_content/filters/binaries
+
+RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
+    && mkdir service-mesh-patterns \
+    && mkdir -p /home/appuser/.meshery/seed_content/patterns \
+    && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
+    && mv service-mesh-patterns/*/samples /home/appuser/.meshery/seed_content/patterns
+
 #COPY --from=nighthawk /nighthawk-go/apinighthawk/bin /usr/local/bin
 RUN curl -Lo nighthawk_service-ubuntu-amd64-v1.0.1.tar.gz https://github.com/layer5io/getnighthawk/releases/download/v1.0.1/nighthawk_service-ubuntu-amd64-v1.0.1.tar.gz \
     && tar -xzvf nighthawk_service-ubuntu-amd64-v1.0.1.tar.gz \
