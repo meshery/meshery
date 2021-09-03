@@ -193,22 +193,22 @@ class MesheryAdapterPlayComponent extends React.Component {
     fetchAvailableNamespaces()
       .subscribe({ next : res => {
         let namespaces = []
-          res?.namespaces?.map(ns => {
-            namespaces.push(
-              { value : ns?.namespace,
-                label : ns?.namespace }
-            )
-          })
-          if (namespaces.length === 0) {
-            namespaces.push({ value : "default",
-              label : "default" })
-          }
-          namespaces.sort((a, b) => (
-            a.value > b.value
-              ? 1
-              : -1
-          ))
-          self.setState({ namespaceList : namespaces })
+        res?.namespaces?.map(ns => {
+          namespaces.push(
+            { value : ns?.namespace,
+              label : ns?.namespace }
+          )
+        })
+        if (namespaces.length === 0) {
+          namespaces.push({ value : "default",
+            label : "default" })
+        }
+        namespaces.sort((a, b) => (
+          a.value > b.value
+            ? 1
+            : -1
+        ))
+        self.setState({ namespaceList : namespaces })
       },
       error : (err) => console.log("error at namespace fetch: " + err), })
   }
