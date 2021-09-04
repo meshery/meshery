@@ -41,61 +41,43 @@ import { Grid } from '@material-ui/core';
 
 const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
 
-  const scroll = useCallback(
-    y => {
-      if (y > 0) {
-        return sliderRef?.current?.slickNext();
-      } else {
-        return sliderRef?.current?.slickPrev();
-      }
-    },
-    [sliderRef]
-  );
+  // const scroll = useCallback(
+  //   y => {
+  //     if (y > 0) {
+  //       return sliderRef?.current?.slickNext();
+  //     } else {
+  //       return sliderRef?.current?.slickPrev();
+  //     }
+  //   },
+  //   [sliderRef]
+  // );
 
-  function disableScrolling(){
-    // var x=window.scrollX;
-    // var y=window.scrollY;
-    // window.onscroll=function(){window.scrollTo(x, y);};
-    document.body.style.overflow = 'hidden';
-  }
-
-  function enableScrolling(){
-    // window.onscroll=function(){};
-    document.body.style.overflow = 'scroll';
-  }
-
-  useEffect(() => {
-    document.getElementById("carousel-div").addEventListener("wheel", e => {
-      scroll(e.deltaY);
-    });
-    document.getElementById("carousel-div").addEventListener("mouseenter", e => {
-      disableScrolling()
-    });
-    document.getElementById("carousel-div").addEventListener("mouseleave", e => {
-      enableScrolling()
-    });
-
-  }, [scroll]);
+  // useEffect(() => {
+  //   document.getElementById("carousel-div").addEventListener("wheel", e => {
+  //     e.preventDefault()
+  //     scroll(e.deltaY);
+  //   });
+  // }, [scroll]);
 
   const settings = {
-    dots : false,
+    // dots : true,
     infinite : false,
     slidesToShow : 1,
     arrows : true,
-    slidesToScroll : 1,
-    adaptiveHeight : true,
-    centerMode : true,
-    centerPadding : "0px",
+    // slidesToScroll : 1,
+    // adaptiveHeight : true,
+    // centerMode : true,
+    // centerPadding : "0px",
     vertical : true,
-    verticalSwiping : true,
-    swipeToSlide : true,
+    // verticalSwiping : true,
+    // swipeToSlide : true,
     afterChange : handleAfterSlideChange
   };
 
   return (
     <>
-      <Grid item id="carousel-div" xs={8} >
-        <Slider {...settings} ref={sliderRef} >{slides} </Slider>
+      <Grid item id="carousel-div"  xs={8} >
+        <Slider {...settings} ref={sliderRef}>{slides} </Slider>
       </Grid>
     </>
   )

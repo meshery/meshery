@@ -5,7 +5,7 @@ Milestones on Meshery's high-level roadmap:
 Milestone | Features
 --- | ---
 [v0.5.0](../../milestone/1) | <p><li>Adapters for NGINX Service Mesh and Traefik Mesh</li><li>Meshery Operator</li><li>Extensible GraphQL</li><li>Remote Provider dynamic injection</li><li>MeshKit and Meshery Adapter Library</li><li>performance profiles, patterns (crud)</li><li>MeshKit - Error Codes Utility</li></p>
-[v0.6.0](../../milestone/3) | <p><li>Remote Provider: MeshMap (alpha)</li><li>Meshery UI - Dynamic Management UIs</li><li>MeshSync - Resync</li><li>wasm filters, appliation/workloads (crud)</li><li>GitHub Actions for Meshery (performance and conformance)</li></p>
+[v0.6.0](../../milestone/3) | <p><li>Remote Provider: MeshMap (alpha)</li><li>Meshery UI - Dynamic Management UIs</li><li>MeshSync - Resync</li><li>wasm filters, application/workloads (crud)</li><li>GitHub Actions for Meshery (performance and conformance)</li></p>
 [v0.7.0](../../milestone/4) | <p><li>workflow engine, policy (crud)</li><li>environments and multi-cluster</li><li>messaging framework and notification center</li><li>Meshery UI - Notification Center</li></p>
 [v0.8.0](../../milestone/5) | <p><li>extensible authorization, filter hub,</li><li>Meshery UI - Operations Center</li></p>
 [v0.9.0](../../milestone/6) | <p><li>policy engine, configuration analysisv2</li></p><p><li>Remote provider: gitops</li></p>

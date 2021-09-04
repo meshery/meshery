@@ -25,4 +25,5 @@ type Resolver struct {
 	brokerChannel       chan *broker.Message
 	addonChannel        chan []*model.AddonList
 	controlPlaneChannel chan []*model.ControlPlane
+	dataPlaneChannel    chan []*model.DataPlane
 }

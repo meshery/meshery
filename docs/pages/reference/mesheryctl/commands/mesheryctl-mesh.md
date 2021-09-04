@@ -36,7 +36,7 @@ lang: en
   <div class="codeblock">
     mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
 
-    mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test]
+    mesheryctl mesh deploy --adapter [name of the adapter] --namespace [Kubernetes namespace to be used for deploying the validation tests and sample workload] --tokenPath [path to token for authentication]
   </div>
  </pre>
 <br/>

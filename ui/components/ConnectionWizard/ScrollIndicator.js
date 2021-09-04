@@ -26,9 +26,7 @@ export const ScrollIndicator = ({ items, handleClick, activeIndex }) => {
             <TimelineDot variant={activeIndex === index
               ?"outlined"
               : "default"} style={{ cursor : "pointer" }} onClick={handleClick(index)}>
-              <img src={item.activeIcon} style={activeIndex === index
-                ? null
-                : { filter : "brightness(100)" }} className={classes.chipIcon} />
+              <img src={ activeIndex === index ? item.activeIcon : item.inactiveIcon}  className={classes.chipIcon} />
             </TimelineDot>
             {index === items.length-1
               ? null

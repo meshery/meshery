@@ -19,20 +19,49 @@ type AddonStatusInput struct {
 	TargetStatus Status    `json:"targetStatus"`
 }
 
+type Container struct {
+	ControlPlaneMemberName string           `json:"controlPlaneMemberName"`
+	ContainerName          string           `json:"containerName"`
+	Image                  string           `json:"image"`
+	Status                 *ContainerStatus `json:"status"`
+	Ports                  []*ContainerPort `json:"ports"`
+	Resources              interface{}      `json:"resources"`
+}
+
+type ContainerPort struct {
+	Name          *string `json:"name"`
+	ContainerPort int     `json:"containerPort"`
+	Protocol      string  `json:"protocol"`
+}
+
+type ContainerStatus struct {
+	ContainerStatusName string      `json:"containerStatusName"`
+	Image               string      `json:"image"`
+	State               interface{} `json:"state"`
+	LastState           interface{} `json:"lastState"`
+	Ready               bool        `json:"ready"`
+	RestartCount        interface{} `json:"restartCount"`
+	Started             bool        `json:"started"`
+	ImageID             interface{} `json:"imageID"`
+	ContainerID         interface{} `json:"containerID"`
+}
+
 type ControlPlane struct {
 	Name    string                `json:"name"`
 	Members []*ControlPlaneMember `json:"members"`
 }
 
-type ControlPlaneFilter struct {
-	Type *MeshType `json:"type"`
+type ControlPlaneMember struct {
+	Name       string       `json:"name"`
+	Component  string       `json:"component"`
+	Version    string       `json:"version"`
+	Namespace  string       `json:"namespace"`
+	DataPlanes []*Container `json:"data_planes"`
 }
 
-type ControlPlaneMember struct {
-	Name      string `json:"name"`
-	Component string `json:"component"`
-	Version   string `json:"version"`
-	Namespace string `json:"namespace"`
+type DataPlane struct {
+	Name    string       `json:"name"`
+	Proxies []*Container `json:"proxies"`
 }
 
 type Error struct {
@@ -96,6 +125,10 @@ type PerfPageResult struct {
 type ReSyncActions struct {
 	ClearDb string `json:"clearDB"`
 	ReSync  string `json:"ReSync"`
+}
+
+type ServiceMeshFilter struct {
+	Type *MeshType `json:"type"`
 }
 
 type MeshType string

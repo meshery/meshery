@@ -172,14 +172,14 @@ class GrafanaComponent extends Component {
             };
             fetchAvailableAddons(selector).subscribe({
               next : (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === "grafana" && self.state.grafanaURL === "") {
-                  self.setState({ grafanaURL : "http://" + addon.endpoint })
-                  submitGrafanaConfigure(self, () => self.setState({ selectedBoardsConfigs : self.state.grafanaBoards?.[2]
-                    ? [self.state.grafanaBoards[2]]
-                    : [] }));
-                }
-              });
+                res?.addonsState?.forEach((addon) => {
+                  if (addon.name === "grafana" && self.state.grafanaURL === "") {
+                    self.setState({ grafanaURL : "http://" + addon.endpoint })
+                    submitGrafanaConfigure(self, () => self.setState({ selectedBoardsConfigs : self.state.grafanaBoards?.[2]
+                      ? [self.state.grafanaBoards[2]]
+                      : [] }));
+                  }
+                });
               },
               error : (err) => console.log("error registering Grafana: " + err),
             });
