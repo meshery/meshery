@@ -44,7 +44,6 @@ COPY --from=wrk2 /wrk2 /app/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 
 RUN curl -L -s `curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url" | cut -d : -f 2,3 | tr -d '"'` -o wasm-filters.tar.gz \
-
     && mkdir -p /home/appuser/.meshery/seed_content/filters/binaries \
     && tar xzf wasm-filters.tar.gz --directory=/home/appuser/.meshery/seed_content/filters/binaries
 
