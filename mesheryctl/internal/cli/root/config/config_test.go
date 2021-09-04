@@ -5,69 +5,83 @@ import (
 	"testing"
 )
 
-func TestGetCommitSHA(t *testing.T) {
-	version := Version{"", "abcd1234", ""}
-	got := version.GetCommitSHA()
-	want := "abcd1234"
+var tests = []string{"ab2q3^$serhj", "klg434%$^", "m234@#$n", "op$#%G", "q$@#$r", "st4@#$23", "uv$@#$", "$@#TGGB#wx", "y@#$FG@$z", "1234"}
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
+func TestGetCommitSHA(t *testing.T) {
+	for _, test := range tests {
+		version := Version{"", test, ""}
+		got := version.GetCommitSHA()
+		want := test
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 func TestGetBuild(t *testing.T) {
-	version := Version{"build", "", ""}
-	got := version.GetBuild()
-	want := "build"
+	for _, test := range tests {
+		version := Version{test, "", ""}
+		got := version.GetBuild()
+		want := test
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 
 func TestGetLocation(t *testing.T) {
 	token := Token{}
-	token.SetLocation("")
-	got := token.GetLocation()
-	want, err := os.UserHomeDir()
-	want += "/.meshery"
-	if err != nil {
-		t.Errorf("Fail")
-	}
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
+	for _, test := range tests {
+		token.SetLocation(test)
+		got := token.GetLocation()
+		want, err := os.UserHomeDir()
+		want = want + "/.meshery/" + test
+		if err != nil {
+			t.Errorf("Fail")
+		}
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 
 func TestGetVersion(t *testing.T) {
-	context := Context{"", "", "", nil, "", ""}
-	context.SetVersion("abcd1234")
-	got := context.GetVersion()
-	want := "abcd1234"
+	context := Context{}
+	for _, test := range tests {
+		context.SetVersion(test)
+		got := context.GetVersion()
+		want := test
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 
 func TestGetName(t *testing.T) {
 	token := Token{}
-	token.SetName("Name")
-	got := token.Name
-	want := "Name"
+	for _, test := range tests {
+		token.SetName(test)
+		got := token.Name
+		want := test
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 
 func TestGetChannel(t *testing.T) {
-	context := Context{"", "", "", nil, "", ""}
-	context.SetChannel("1234")
-	got := context.GetChannel()
-	want := "1234"
+	context := Context{}
+	for _, test := range tests {
+		context.SetChannel(test)
+		got := context.GetChannel()
+		want := test
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 
@@ -84,34 +98,135 @@ func TestGetAdapters(t *testing.T) {
 }
 
 func TestGetPlatform(t *testing.T) {
-	context := Context{"", "", "", nil, "", ""}
-	context.SetPlatform("windowslinuxmacos")
-	got := context.GetPlatform()
-	want := "windowslinuxmacos"
+	context := Context{}
+	for _, test := range tests {
+		context.SetPlatform(test)
+		got := context.GetPlatform()
+		want := test
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 
 func TestGetToken(t *testing.T) {
 	context := Context{}
-	context.SetToken("1234")
-	got := context.GetToken()
-	want := "1234"
+	for _, test := range tests {
+		context.SetToken(test)
+		got := context.GetToken()
+		want := test
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 
 func TestGetEndpoint(t *testing.T) {
 	context := Context{}
-	context.SetEndpoint("12asgherdh34")
-	got := context.GetEndpoint()
-	want := "12asgherdh34"
+	for _, test := range tests {
+		context.SetEndpoint(test)
+		got := context.GetEndpoint()
+		want := test
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	}
+}
+func TestGetCurrentContextName(t *testing.T) {
+	mesherycltconfig := MesheryCtlConfig{nil, "one", nil}
+	got := mesherycltconfig.GetCurrentContextName()
+	want := "one"
 
 	if got != want {
 		t.Errorf("got %q want %q", got, want)
+	}
+}
+func TestSetContext(t *testing.T) {
+	mesherycltconfig := MesheryCtlConfig{nil, "one", nil}
+	name := "one"
+	SetContext(nil, nil, name)
+	got := mesherycltconfig.GetCurrentContextName()
+	want := name
+
+	if got != want {
+		t.Errorf("got %q want %q", got, want)
+	}
+}
+func TestSetEndpoint(t *testing.T) {
+	context := Context{}
+	for _, test := range tests {
+		context.SetEndpoint(test)
+		got := context.GetEndpoint()
+		want := test
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	}
+}
+
+func TestSetToken(t *testing.T) {
+	context := Context{}
+	for _, test := range tests {
+		context.SetToken(test)
+		got := context.GetToken()
+		want := test
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	}
+}
+
+func TestSetPlatform(t *testing.T) {
+	context := Context{}
+	for _, test := range tests {
+		context.SetPlatform(test)
+		got := context.GetPlatform()
+		want := test
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	}
+}
+
+func TestSetChannel(t *testing.T) {
+	context := Context{}
+	for _, test := range tests {
+		context.SetChannel(test)
+		got := context.GetChannel()
+		want := test
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	}
+}
+func TestSetVersion(t *testing.T) {
+	context := Context{}
+	for _, test := range tests {
+		context.SetVersion(test)
+		got := context.GetVersion()
+		want := test
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	}
+}
+
+func TestSetAdapters(t *testing.T) {
+	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
+	context := Context{"", "", "", dummy, "", ""}
+	got := context.GetAdapters()
+	want := dummy
+	for i, j := range got {
+		if j != want[i] {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
