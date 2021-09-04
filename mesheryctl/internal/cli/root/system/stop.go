@@ -145,12 +145,12 @@ func stop() error {
 		if _, err := os.Stat(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder, utils.MesheryDeployment)); os.IsNotExist(err) {
 			_, err = utils.FetchManifests(currCtx)
 			if err != nil {
-				return errors.Wrap(err, "Unable to fetch deployment")
+				return errors.Wrap(err, "Unable to fetch Meshery deployment manifests")
 			}
 			// Download operator manifest
 			err = utils.DownloadOperatorManifest()
 			if err != nil {
-				return ErrDownloadFile(err, "operator manifest")
+				return ErrDownloadFile(err, "Meshery Operator manifest")
 			}
 		}
 
