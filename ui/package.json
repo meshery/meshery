@@ -46,7 +46,7 @@
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@material-ui/pickers": "^3.3.10",
     "@paciolan/remote-component": "^2.11.0",
-    "@rjsf/core": "^3.0.0",
+    "@rjsf/core": "^3.1.0",
     "@rjsf/material-ui": "^3.0.0",
     "@zeit/next-css": "^1.0.1",
     "babel-plugin-istanbul": "^6.0.0",
