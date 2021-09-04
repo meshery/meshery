@@ -145,14 +145,17 @@ func TestGetCurrentContextName(t *testing.T) {
 	}
 }
 func TestSetContext(t *testing.T) {
-	mesherycltconfig := MesheryCtlConfig{nil, "one", nil}
-	name := "one"
-	SetContext(nil, nil, name)
-	got := mesherycltconfig.GetCurrentContextName()
-	want := name
+	for _, test := range tests {
+		mesherycltconfig := MesheryCtlConfig{nil, test, nil}
+		err := SetContext(nil, nil, test)
+		if err != nil {
+		}
+		got := mesherycltconfig.GetCurrentContextName()
+		want := test
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 func TestSetEndpoint(t *testing.T) {
