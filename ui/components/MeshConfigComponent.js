@@ -765,7 +765,7 @@ handleNATSClick = () => {
                       <Chip
                         label={"NATS"}
                         onClick={self.handleNATSClick}
-                        icon={<img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/nats/icon/color/nats-icon-color.svg" className={classes.icon} />}
+                        icon={<img src="/static/img/nats-icon-color.svg" className={classes.icon} />}
                         variant="outlined"
                         data-cy="chipNATS"
                       />
