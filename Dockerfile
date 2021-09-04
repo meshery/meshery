@@ -51,7 +51,7 @@ RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/ta
     && mkdir service-mesh-patterns \
     && mkdir -p /home/appuser/.meshery/seed_content/patterns \
     && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
-    && mv service-mesh-patterns/*/samples /home/appuser/.meshery/seed_content/patterns
+    && mv service-mesh-patterns/*/samples/* /home/appuser/.meshery/seed_content/patterns/
 
 #COPY --from=nighthawk /nighthawk-go/apinighthawk/bin /usr/local/bin
 RUN curl -Lo nighthawk_service-ubuntu-amd64-v1.0.1.tar.gz https://github.com/layer5io/getnighthawk/releases/download/v1.0.1/nighthawk_service-ubuntu-amd64-v1.0.1.tar.gz \
