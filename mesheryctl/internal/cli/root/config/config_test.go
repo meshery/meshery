@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"testing"
 )
@@ -136,12 +137,14 @@ func TestGetEndpoint(t *testing.T) {
 	}
 }
 func TestGetCurrentContextName(t *testing.T) {
-	mesherycltconfig := MesheryCtlConfig{nil, "one", nil}
-	got := mesherycltconfig.GetCurrentContextName()
-	want := "one"
+	for _, test := range tests {
+		mesherycltconfig := MesheryCtlConfig{nil, test, nil}
+		got := mesherycltconfig.GetCurrentContextName()
+		want := test
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 func TestSetContext(t *testing.T) {
@@ -149,6 +152,7 @@ func TestSetContext(t *testing.T) {
 		mesherycltconfig := MesheryCtlConfig{nil, test, nil}
 		err := SetContext(nil, nil, test)
 		if err != nil {
+			fmt.Print("Fail") //Internal:need to be fixed
 		}
 		got := mesherycltconfig.GetCurrentContextName()
 		want := test
