@@ -141,6 +141,19 @@ func stop() error {
 			return err
 		}
 
+		// check if deployments exists in manifest folder
+		if _, err := os.Stat(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder, utils.MesheryDeployment)); os.IsNotExist(err) {
+			_, err = utils.FetchManifests(currCtx)
+			if err != nil {
+				return errors.Wrap(err, "Unable to fetch deployment")
+			}
+			// Download operator manifest
+			err = utils.DownloadOperatorManifest()
+			if err != nil {
+				return ErrDownloadFile(err, "operator manifest")
+			}
+		}
+
 		version := currCtx.GetVersion()
 		if version == "latest" {
 			if currCtx.GetChannel() == "edge" {
