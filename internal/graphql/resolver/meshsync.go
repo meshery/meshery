@@ -6,6 +6,7 @@ import (
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/utils/broadcast"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
@@ -21,7 +22,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("Initializing MeshSync subscription")
-		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.controlPlaneSyncChannel, r.meshsyncLivenessChannel)
+		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.controlPlaneSyncChannel, r.meshsyncLivenessChannel, r.Broadcast)
 
 		// signal to install operator when initialized
 		r.MeshSyncChannel <- struct{}{}
@@ -69,12 +70,20 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
 
-			r.operatorSyncChannel <- false
+			// r.operatorSyncChannel <- false
+			r.Broadcast.Submit(broadcast.BroadcastMessage{
+				Type:    broadcast.OperatorSyncChannel,
+				Message: false,
+			})
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
 
-		r.operatorSyncChannel <- false
+		// r.operatorSyncChannel <- false
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Type:    broadcast.OperatorSyncChannel,
+			Message: false,
+		})
 		return nil
 	}
 
@@ -88,27 +97,51 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider) (model.Status, error) {
 	err := model.RunMeshSync(r.Config.KubeClient, false)
 	r.Log.Info("Installing Meshsync")
-	r.operatorSyncChannel <- true
+	// r.operatorSyncChannel <- true
+	r.Broadcast.Submit(broadcast.BroadcastMessage{
+		Type:    broadcast.OperatorSyncChannel,
+		Message: true,
+	})
 
 	if err != nil {
 		r.Log.Error(err)
-		r.operatorSyncChannel <- false
+		// r.operatorSyncChannel <- false
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Type:    broadcast.OperatorSyncChannel,
+			Message: false,
+		})
 		return model.StatusDisabled, err
 	}
 
-	r.operatorSyncChannel <- false
+	// r.operatorSyncChannel <- false
+	r.Broadcast.Submit(broadcast.BroadcastMessage{
+		Type:    broadcast.OperatorSyncChannel,
+		Message: false,
+	})
 	return model.StatusProcessing, nil
 }
 
 func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider) (model.Status, error) {
-	r.operatorSyncChannel <- true
+	// r.operatorSyncChannel <- true
+	r.Broadcast.Submit(broadcast.BroadcastMessage{
+		Type:    broadcast.OperatorSyncChannel,
+		Message: true,
+	})
 	err := r.connectToBroker(ctx, provider)
 	if err != nil {
 		r.Log.Error(err)
-		r.operatorSyncChannel <- false
+		// r.operatorSyncChannel <- false
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Type:    broadcast.OperatorSyncChannel,
+			Message: false,
+		})
 		return model.StatusDisabled, err
 	}
 
-	r.operatorSyncChannel <- false
+	// r.operatorSyncChannel <- false
+	r.Broadcast.Submit(broadcast.BroadcastMessage{
+		Type:    broadcast.OperatorSyncChannel,
+		Message: false,
+	})
 	return model.StatusConnected, nil
 }
