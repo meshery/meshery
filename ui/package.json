@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "eslint . --fix && node ui_dev_server.js",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "next": "next",
     "build": "next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
