@@ -189,12 +189,7 @@ function PatternServiceForm({ formData, schemaSet,onChange, onSubmit, onDelete, 
             type="workload"
             formData={settings}
             jsonSchema={schemaSet.workload}
-            onChange={(val) => {
-              onChange?.(
-                createPatternFromConfig(
-                  { [getPatternAttributeName(schemaSet.workload)] : { settings : val, traits } }, namespace, true), "");
-              setSettings(val);
-            }}
+            onChange={setSettings}
             onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits })}
             onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits })}
             renderAsTooltip={renderAsTooltip}
