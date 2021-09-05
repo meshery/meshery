@@ -19,7 +19,7 @@ const (
 	ErrNoMeshSyncCode               = "1011"
 	ErrNoExternalEndpointCode       = "1012"
 	ErrDataPlaneSubscriptionCode    = "1013"
-	ErrBrokerNotConnectedCode       = "replace_me"
+	ErrBrokerNotConnectedCode       = "2151"
 )
 
 var (
