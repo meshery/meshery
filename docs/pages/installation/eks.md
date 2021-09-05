@@ -36,16 +36,17 @@ The following set of instructions expects you to have created a EKS cluster in y
 Alternatively, you may execute the following steps to manually configure Meshery to connect to your AKS cluster.
 
 - Install [AWS CLI(aws)](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), and login
-  to your AWS account. Install [EKS CLI (ekscli)](https://eksctl.io/introduction/#installation) too to access eks cluster
+  to your AWS account. Install [EKS CLI (eksctl)](https://eksctl.io/introduction/#installation) too to access eks cluster easily.
 
 - After successfull login, you have to select the subscription with which your AKS is associated with by configuring your AWS CLI to your AWS account. Refer [this link](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) for more
 
-- Get the kubeconfig from your EKS cluster by connecting with AWS CLI
+- Get/Update the kubeconfig from your EKS cluster by connecting with AWS CLI
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
 aws eks --region region update-kubeconfig --name cluster_name
 </div></div>
 </pre>
+
 - Set your cluster context and check your cluster-info
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
