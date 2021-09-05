@@ -39,19 +39,19 @@ Alternatively, you may execute the following steps to manually configure Meshery
 - After successfull login, you have to select the subscription with which your AKS is associated with
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-az account set --subscription {{SUBSCRIPTION_ID}}
+az account set --subscription [SUBSCRIPTION_ID]
 </div></div>
 </pre>
 - Get the kubeconfig from your AKS cluster
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-az aks get-credentials --resource-group {{RESOURCE_GROUP}} --name {{AKS_SERVICE_NAME}}
+az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]
 </div></div>
 </pre>
 - Set your cluster context and check your cluster-info
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-kubectl set-context {{AKS_SERVICE_NAME}}
+kubectl set-context AKS_SERVICE_NAME
 kubectl cluster-info
 </div></div>
 </pre>
