@@ -174,63 +174,72 @@
         "probable_cause": "",
         "suggested_remediation": "Invalid helm chart configuration"
       },
-      "1030": {
+      "1019": {
+        "name": "ErrGetLatestReleaseCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get latest version",
+        "probable_cause": "Latest version could not be found at the specified url",
+        "suggested_remediation": ""
+      },
+      "1037": {
         "name": "ErrEmptyConfigCode",
-        "code": "1030",
+        "code": "1037",
         "severity": "Alert",
         "long_description": "",
         "short_description": "Config is empty",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1031": {
+      "1038": {
         "name": "ErrInvalidOAMComponentTypeCode",
-        "code": "1031",
+        "code": "1038",
         "severity": "Alert",
         "long_description": "",
         "short_description": "invalid OAM component name: ",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1032": {
+      "1039": {
         "name": "ErrKumaCoreComponentFailCode",
-        "code": "1032",
+        "code": "1039",
         "severity": "Alert",
         "long_description": "",
         "short_description": "error in kuma core component",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1033": {
+      "1040": {
         "name": "ErrProcessOAMCode",
-        "code": "1033",
+        "code": "1040",
         "severity": "Alert",
         "long_description": "",
         "short_description": "error performing OAM operations",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1034": {
+      "1041": {
         "name": "ErrParseKumaCoreComponentCode",
-        "code": "1034",
+        "code": "1041",
         "severity": "Alert",
         "long_description": "",
         "short_description": "kuma core component manifest parsing failing",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1035": {
+      "1042": {
         "name": "ErrParseOAMComponentCode",
-        "code": "1035",
+        "code": "1042",
         "severity": "Alert",
         "long_description": "Error occured while prasing application component in the OAM request made",
         "short_description": "error parsing the component",
         "probable_cause": "Invalid OAM component passed in OAM request",
         "suggested_remediation": "Check if your request has vaild OAM components"
       },
-      "1036": {
+      "1043": {
         "name": "ErrParseOAMConfigCode",
-        "code": "1036",
+        "code": "1043",
         "severity": "Alert",
         "long_description": "Error occured while prasing component config in the OAM request made",
         "short_description": "error parsing the configuration",
