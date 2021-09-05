@@ -200,6 +200,7 @@ type Status string
 
 const (
 	StatusEnabled    Status = "ENABLED"
+	StatusConnected  Status = "CONNECTED"
 	StatusDisabled   Status = "DISABLED"
 	StatusProcessing Status = "PROCESSING"
 	StatusUnknown    Status = "UNKNOWN"
@@ -207,6 +208,7 @@ const (
 
 var AllStatus = []Status{
 	StatusEnabled,
+	StatusConnected,
 	StatusDisabled,
 	StatusProcessing,
 	StatusUnknown,
@@ -214,7 +216,7 @@ var AllStatus = []Status{
 
 func (e Status) IsValid() bool {
 	switch e {
-	case StatusEnabled, StatusDisabled, StatusProcessing, StatusUnknown:
+	case StatusEnabled, StatusConnected, StatusDisabled, StatusProcessing, StatusUnknown:
 		return true
 	}
 	return false
