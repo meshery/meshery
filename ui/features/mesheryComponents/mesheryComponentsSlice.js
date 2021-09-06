@@ -33,6 +33,7 @@ import {
  * @property {string} version
  * @property {string} git_commit_sha
  * @property {Array | null} ops
+ * @property {boolean} isActive
  */
 
 /**
@@ -108,41 +109,6 @@ export const changeOperatorStateThunk = createAsyncThunk(
   }
 );
 
-const updateConnectionStatusReducer = (state, action) => {
-  state.operator.connectionStatus = action.payload?.operator?.status || "UNKNOWN";
-
-  state.broker.connectionStatus = action.payload?.broker?.status || "UNKNOWN";
-  state.broker.version = action.payload?.broker?.version || "UNKNOWN";
-
-  state.meshsync.connectionStatus = action.payload?.meshsync?.status || "UNKNOWN";
-  state.meshsync.version = action.payload?.meshsync?.version || "UNKNOWN";
-
-  if (
-    action.payload.operator.error &&
-    (action.payload.operator.error.code || action.payload.operator.error.description)
-  )
-    state.operatorError = action.payload.operator.error;
-  return state;
-};
-
-/**
- * @typedef {Object} updateMesheryServerDetailsReducerAction
- * @property {{status: "UNKNOWN | CONNECTED | DISCONNECTED", version: "UNKNOWN" | number}} payload
- */
-
-/**
- *
- * @param {Object} state
- * @param {updateMesheryServerDetailsReducerAction} action
- * @return {Object} state
- */
-
-const updateMesheryServerDetailsReducer = (state, action) => {
-  state.server.connectionStatus = action.payload?.status || "UNKNOWN";
-  state.server.version = action.payload?.version || "UNKNOWN";
-  return state;
-};
-
 const mesheryComponentsSlice = createSlice({
   name: "mesheryComponents",
   initialState,
@@ -151,8 +117,27 @@ const mesheryComponentsSlice = createSlice({
     // (Refer: https://github.com/reduxjs/redux-toolkit/issues/259#issuecomment-604496169)
 
     // redux-toolkit uses IMMER under the hood which allows us to mutate the state without actually mutating it
-    updateConnectionStatus: updateConnectionStatusReducer,
-    updateMesheryServerDetails: updateMesheryServerDetailsReducer,
+    updateConnectionStatus: (state, action) => {
+      state.operator.connectionStatus = action.payload?.operator?.status || "UNKNOWN";
+
+      state.broker.connectionStatus = action.payload?.broker?.status || "UNKNOWN";
+      state.broker.version = action.payload?.broker?.version || "UNKNOWN";
+
+      state.meshsync.connectionStatus = action.payload?.meshsync?.status || "UNKNOWN";
+      state.meshsync.version = action.payload?.meshsync?.version || "UNKNOWN";
+
+      if (
+        action.payload.operator.error &&
+        (action.payload.operator.error.code || action.payload.operator.error.description)
+      )
+        state.operatorError = action.payload.operator.error;
+      return state;
+    },
+    updateMesheryServerDetails: (state, action) => {
+      state.server.connectionStatus = action.payload?.status || "UNKNOWN";
+      state.server.version = action.payload?.version || "UNKNOWN";
+      return state;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchComponentsStatusThunk.pending, (state) => {
@@ -161,7 +146,7 @@ const mesheryComponentsSlice = createSlice({
     });
     builder.addCase(fetchComponentsStatusThunk.fulfilled, (state, action) => {
       state.loading = false;
-      return updateConnectionStatusReducer(state, action);
+      return mesheryComponentsSlice.caseReducers.updateConnectionStatus(state, action);
     });
     builder.addCase(fetchComponentsStatusThunk.rejected, (state) => {
       state.loading = false;

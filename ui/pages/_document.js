@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import React from "react";
 import PropTypes from "prop-types";
 import Document, { Head, Main, NextScript, Html } from "next/document";
@@ -39,11 +38,9 @@ class MesheryDocument extends Document {
         <Head>
           <meta charSet="utf-8" />
           <link rel="icon" href="/static/favicon.png" />
-
-          <script
-            async
-            src={`https://www.googletagmanager.com/gtag/js?id=G-8Q51RLT8TZ`}
-          />
+          <link rel="shortcut icon" href="/ui/public/static/img/meshery-logo/meshery-logo.svg" />
+          <title>Meshery</title>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=G-8Q51RLT8TZ`} />
 
           <script
             dangerouslySetInnerHTML={{
@@ -61,9 +58,6 @@ class MesheryDocument extends Document {
               "\
             .hide-scrollbar::-webkit-scrollbar {\
               width: 0 !important;\
-            }\
-          .reduce-scrollbar-width::-webkit-scrollbar {\
-              width: 0.3em !important;\
             }\
           "
             }

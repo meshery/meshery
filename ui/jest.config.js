@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 module.exports = {
   collectCoverageFrom: [
     "**/*.{js,jsx,ts,tsx}",
@@ -18,6 +19,9 @@ module.exports = {
 
     // Handle module aliases
     "^@/components/(.*)$": "<rootDir>/components/$1",
+    "^@/features/(.*)$": "<rootDir>/features/$1",
+    "^@/lib/(.*)$": "<rootDir>/lib/$1",
+    "^@/utils/(.*)$": "<rootDir>/utils/$1",
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/.next/"],

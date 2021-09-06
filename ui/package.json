@@ -12,10 +12,12 @@
     "dev:proxy": "node ui_dev_server.js"
   },
   "dependencies": {
+    "@date-io/moment": "^2.11.0",
     "@material-ui/core": "^4.12.3",
     "@reduxjs/toolkit": "^1.6.1",
     "isomorphic-unfetch": "^3.1.0",
     "next": "11.1.0",
+    "notistack": "^1.0.10",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.4",

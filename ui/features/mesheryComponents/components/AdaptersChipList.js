@@ -13,7 +13,7 @@ export const AdaptersChipList = ({ adapters, loading }) => (
   <Grid>
     {loading && <CircularProgress />}
     {adapters.map((adapter) => (
-      <AdapterChip key={`adapter-${adapter.adapter_location}`} adapter={adapter} isDisabled={false} />
+      <AdapterChip key={`${adapter?.adapter_location}`} adapter={adapter} isDisabled={false} />
     ))}
   </Grid>
 );

@@ -1,13 +1,8 @@
 import { AdaptersChipList, AdaptersListContainer, ComponentsStatusContainer } from "@/features/mesheryComponents";
+import { useTheme } from "@material-ui/core";
 import React from "react";
 
 export default function Home() {
-  return (
-    <div>
-      <ComponentsStatusContainer render={({ components }) => <div>{components.meshsync.connectionStatus}</div>} />
-      <AdaptersListContainer
-        render={({ adapters, loading }) => <AdaptersChipList adapters={adapters} loading={loading} />}
-      />
-    </div>
-  );
+  const theme = useTheme();
+  return <div style={{ color: theme.palette.newcolor }}>Hello</div>;
 }

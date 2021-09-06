@@ -2,6 +2,7 @@
 import React from "react";
 import { Chip } from "@material-ui/core";
 import { Tooltip } from "@material-ui/core";
+import Image from "next/image";
 
 /**
  * React component that takes in adapter information among other things
@@ -11,7 +12,7 @@ import { Tooltip } from "@material-ui/core";
  */
 export const AdapterChip = ({ adapter, handleClick, isDisabled }) => {
   const image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
-  const logoIcon = <img src={image} style={{ width: "1rem" }} />;
+  const logoIcon = <Image src={image} style={{ width: "1rem" }} alt={adapter.name.toLowerCase()} />;
   return (
     <Tooltip title={isDisabled ? "This adapter is inactive" : `Active`}>
       <Chip
