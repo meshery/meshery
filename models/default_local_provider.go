@@ -36,6 +36,7 @@ type DefaultLocalProvider struct {
 	MesheryPatternResourcePersister *PatternResourcePersister
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
+	MesheryK8sContextPersister      *MesheryK8sContextPersister
 	GenericPersister                database.Handler
 	KubeClient                      *mesherykube.Client
 }
@@ -137,6 +138,51 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 // Logout - logout from provider backend
 func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/user/login", http.StatusFound)
+}
+
+func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+}
+
+func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return MesheryK8sContextPage{}, ErrPageNumber(err)
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		return MesheryK8sContextPage{}, ErrPageSize(err)
+	}
+
+	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+}
+
+func (l *DefaultLocalProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) GetK8sContext(token, id string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) SetCurrentContext(token, id string) (K8sContext, error) {
+	if err := l.MesheryK8sContextPersister.SetMesheryK8sCurrentContext(id); err != nil {
+		return K8sContext{}, err
+	}
+
+	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) GetCurrentContext(token string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.GetMesheryK8sCurrentContext()
 }
 
 // FetchResults - fetches results from provider backend

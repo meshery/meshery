@@ -367,6 +367,30 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
+func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+	return K8sContext{}, nil
+}
+
+func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error) {
+	return MesheryK8sContextPage{}, nil
+}
+
+func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
+	return K8sContext{}, nil
+}
+
+func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
+	return K8sContext{}, nil
+}
+
+func (l *RemoteProvider) SetCurrentContext(token, id string) (K8sContext, error) {
+	return K8sContext{}, nil
+}
+
+func (l *RemoteProvider) GetCurrentContext(token string) (K8sContext, error) {
+	return K8sContext{}, nil
+}
+
 // FetchResults - fetches results for profile id from provider backend
 func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
