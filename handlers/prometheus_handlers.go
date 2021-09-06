@@ -27,14 +27,23 @@ func init() {
 
 // ScanPromGrafanaHandler - fetches  Prometheus and Grafana
 func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		err := ErrInvalidK8SConfig
-		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	// Get the kubernetes context
+	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
-	availablePromGrafana, err := helpers.ScanPromGrafana(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
+	// Get the k8sconfig
+	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
+	if !ok || k8sconfig == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+		return
+	}
+
+	availablePromGrafana, err := helpers.ScanPromGrafana(k8sconfig, mk8scontext.Name)
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, "unable to scan Kubernetes", http.StatusInternalServerError)
@@ -57,14 +66,23 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 
 // ScanPrometheusHandler - fetches  Prometheus
 func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		err := ErrInvalidK8SConfig
-		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	// Get the kubernetes context
+	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
-	availablePrometheus, err := helpers.ScanPrometheus(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
+	// Get the k8sconfig
+	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
+	if !ok || k8sconfig == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+		return
+	}
+
+	availablePrometheus, err := helpers.ScanPrometheus(k8sconfig, mk8scontext.Name)
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -87,14 +105,23 @@ func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request
 
 // ScanGrafanaHandler - fetches  Grafana
 func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		err := ErrInvalidK8SConfig
-		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	// Get the kubernetes context
+	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
-	availableGrafana, err := helpers.ScanGrafana(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
+	// Get the k8sconfig
+	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
+	if !ok || k8sconfig == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+		return
+	}
+
+	availableGrafana, err := helpers.ScanGrafana(k8sconfig, mk8scontext.Name)
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -201,10 +228,19 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		err := ErrInvalidK8SConfig
-		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	// Get the kubernetes context
+	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Get the k8sconfig
+	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
+	if !ok || k8sconfig == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 

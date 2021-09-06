@@ -8,6 +8,18 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
+type SessionSyncData struct {
+	*models.Preference `json:",inline"`
+	K8sConfig          SessionSyncDataK8sConfig `json:"k8sConfig,omitempty"`
+}
+
+type SessionSyncDataK8sConfig struct {
+	K8sFile           string `json:"k8sfile,omitempty"`
+	ContextName       string `json:"contextName,omitempty"`
+	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
+	ConfiguredServer  string `json:"configuredServer,omitempty"`
+}
+
 // swagger:route GET /api/system/sync SystemAPI idSystemSync
 // Handle GET request for config sync
 //
@@ -38,33 +50,32 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 		h.log.Error(ErrSaveSession(err))
 	}
 
-	if prefObj.K8SConfig != nil && h.config.KubeClient != nil {
-		if prefObj.K8SConfig.ServerVersion == "" {
-			// fetching server version, if it has not already been
-			version, err := h.config.KubeClient.KubeClient.ServerVersion()
-			if err != nil {
-				h.log.Error(ErrFetchKubernetes(err))
-			}
-			prefObj.K8SConfig.ServerVersion = version.String()
-		}
-
-		//if len(prefObj.K8SConfig.Nodes) == 0 {
-		//	// fetching nodes, if it has not already been
-		//	prefObj.K8SConfig.Nodes, _ = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
-		//}
-
-		// clearing out the config just for displaying purposes
-		if len(prefObj.K8SConfig.Config) > 0 {
-			prefObj.K8SConfig.Config = nil
-		}
-	} else {
-		err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
-		if err != nil {
-			h.log.Error(ErrFetchKubernetes(err))
-		}
+	// Get the kubernetes context
+	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+		return
 	}
 
-	err = json.NewEncoder(w).Encode(prefObj)
+	// Get the k8sconfig
+	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
+	if !ok || k8sconfig == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+		return
+	}
+
+	data := SessionSyncData{
+		Preference: prefObj,
+		K8sConfig: SessionSyncDataK8sConfig{
+			ContextName:       mk8scontext.Name,
+			ClusterConfigured: true,
+			ConfiguredServer:  mk8scontext.Server,
+		},
+	}
+
+	err = json.NewEncoder(w).Encode(data)
 	if err != nil {
 		obj := "user config data"
 		h.log.Error(ErrMarshal(err, obj))

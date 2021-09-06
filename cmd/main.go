@@ -10,6 +10,7 @@ import (
 	"path"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/internal/graphql"
@@ -20,7 +21,6 @@ import (
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
@@ -47,6 +47,12 @@ func main() {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
 	}
 
+	instanceID, err := uuid.NewV4()
+	if err != nil {
+		logrus.Error(err)
+		os.Exit(1)
+	}
+
 	// Initialize Logger instance
 	log, err := logger.New("meshery", logger.Options{
 		Format: logger.SyslogLogFormat,
@@ -71,6 +77,7 @@ func main() {
 	viper.SetDefault("OS", "meshery")
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
+	viper.SetDefault("INSTANCE_ID", &instanceID)
 
 	store.Initialize()
 
@@ -146,13 +153,12 @@ func main() {
 	dbHandler, err := database.New(database.Options{
 		Filename: fmt.Sprintf("%s/mesherydb.sql", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
-		Logger:   log,
+		// Logger:   log,
 	})
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
-	kubeclient := mesherykube.Client{}
 	meshsyncCh := make(chan struct{})
 	brokerConn := nats.NewEmptyConnection
 
@@ -165,6 +171,7 @@ func main() {
 		models.MesheryFilter{},
 		models.PatternResource{},
 		models.MesheryApplication{},
+		models.K8sContext{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -181,6 +188,7 @@ func main() {
 		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: &dbHandler},
 		MesheryApplicationPersister:     &models.MesheryApplicationPersister{DB: &dbHandler},
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: &dbHandler},
+		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: &dbHandler},
 		GenericPersister:                dbHandler,
 	}
 	lProv.Initialize()
@@ -229,7 +237,6 @@ func main() {
 		Queue: mainQueue,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
-		KubeClient:       &kubeclient,
 
 		GrafanaClient:         models.NewGrafanaClient(),
 		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),

@@ -15,7 +15,13 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		delete = false
 	}
 
-	if r.Config.KubeClient.KubeClient == nil {
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok {
+		r.Log.Error(ErrNilClient)
+		return model.StatusUnknown, ErrNilClient
+	}
+
+	if kubeclient.KubeClient == nil {
 		r.Log.Error(ErrNilClient)
 		return model.StatusUnknown, ErrNilClient
 	}
@@ -86,7 +92,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		r.operatorChannel <- &model.OperatorStatus{
 			Status: status,
 		}
-	}(delete, r.Config.KubeClient)
+	}(delete, kubeclient)
 
 	r.operatorChannel <- &model.OperatorStatus{
 		Status: model.StatusProcessing,
@@ -98,11 +104,12 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provider) (*model.OperatorStatus, error) {
 	status := model.StatusUnknown
 	version := string(model.StatusUnknown)
-	if r.Config.KubeClient == nil {
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok {
 		return nil, ErrMesheryClient(nil)
 	}
 
-	name, version, err := model.GetOperator(r.Config.KubeClient)
+	name, version, err := model.GetOperator(kubeclient)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -119,7 +126,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 		status = model.StatusEnabled
 	}
 
-	controllers, err := model.GetControllersInfo(r.Config.KubeClient, r.BrokerConn, r.meshsyncLivenessChannel)
+	controllers, err := model.GetControllersInfo(kubeclient, r.BrokerConn, r.meshsyncLivenessChannel)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -151,7 +158,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 
 	go func() {
 		r.Log.Info("Operator subscription started")
-		err := r.connectToBroker(context.TODO(), provider)
+		err := r.connectToBroker(ctx, provider)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
 			return

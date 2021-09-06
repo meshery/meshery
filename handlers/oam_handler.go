@@ -73,14 +73,6 @@ func (h *Handler) PatternFileHandler(
 		}
 	}
 
-	// Get the user token
-	token, err := provider.GetProviderToken(r)
-	if err != nil {
-		rw.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
-		return
-	}
-
 	isDel := r.Method == http.MethodDelete
 
 	// Generate the pattern file object
@@ -91,24 +83,11 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
-	// If DynamicKubeClient hasn't been created yet then create one
-	if h.config.KubeClient.DynamicKubeClient == nil {
-		kc, err := meshkube.New(prefObj.K8SConfig.Config)
-		if err != nil {
-			h.log.Error(ErrInvalidPattern(err))
-			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
-			return
-		}
-
-		h.config.KubeClient = kc
-	}
-
 	msg, err := _processPattern(
-		token,
+		r.Context(),
 		provider,
 		patternFile,
 		prefObj,
-		h.config.KubeClient,
 		user.UserID,
 		isDel,
 	)
@@ -238,26 +217,51 @@ func mergeMsgs(msgs []string) string {
 }
 
 func _processPattern(
-	token string,
+	ctx context.Context,
 	provider models.Provider,
 	pattern core.Pattern,
 	prefObj *models.Preference,
-	kubeClient *meshkube.Client,
 	userID string,
 	isDelete bool,
 ) (string, error) {
+	// Get the token from the context
+	token, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok {
+		return "", fmt.Errorf("invalid token") // TODO: Replace with meshkit error
+	}
+
+	// Get the kubehandler from the context
+	kubeClient, ok := ctx.Value(models.KubeHanderKey).(*meshkube.Client)
+	if !ok || kubeClient == nil {
+		return "", fmt.Errorf("invalid kube handler") // TODO: Replace with meshkit error
+	}
+
+	// Get the kubernetes config from the context
+	kubecfg, ok := ctx.Value(models.KubeConfigKey).([]byte)
+	if !ok || kubecfg == nil {
+		return "", fmt.Errorf("invalid kube config") // TODO: Replace with meshkit error
+	}
+
+	// Get the kubernetes context from the context
+	mk8scontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
+		return "", fmt.Errorf("invalid kube context") // TODO: Replace with meshkit error
+	}
+
 	sip := &serviceInfoProvider{
 		token:      token,
 		provider:   provider,
 		opIsDelete: isDelete,
 	}
 	sap := &serviceActionProvider{
-		token:      token,
-		provider:   provider,
-		prefObj:    prefObj,
-		kubeClient: kubeClient,
-		opIsDelete: isDelete,
-		userID:     userID,
+		token:       token,
+		provider:    provider,
+		prefObj:     prefObj,
+		kubeClient:  kubeClient,
+		opIsDelete:  isDelete,
+		userID:      userID,
+		kubeconfig:  kubecfg,
+		kubecontext: mk8scontext,
 
 		accumulatedMsgs: []string{},
 		err:             nil,
@@ -326,12 +330,14 @@ func (sip *serviceInfoProvider) IsDelete() bool {
 }
 
 type serviceActionProvider struct {
-	token      string
-	provider   models.Provider
-	prefObj    *models.Preference
-	kubeClient *meshkube.Client
-	opIsDelete bool
-	userID     string
+	token       string
+	provider    models.Provider
+	prefObj     *models.Preference
+	kubeClient  *meshkube.Client
+	opIsDelete  bool
+	userID      string
+	kubeconfig  []byte
+	kubecontext *models.K8sContext
 
 	accumulatedMsgs []string
 	err             error
@@ -362,12 +368,6 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 
 		logrus.Debugf("Adapter to execute operations on: %s", adapter)
 
-		if sap.prefObj.K8SConfig == nil ||
-			!sap.prefObj.K8SConfig.InClusterConfig &&
-				(sap.prefObj.K8SConfig.Config == nil || len(sap.prefObj.K8SConfig.Config) == 0) {
-			return "", fmt.Errorf("no valid kubernetes config found")
-		}
-
 		// Local call
 		if strings.HasPrefix(adapter, string(noneLocal)) {
 			resp, err := patterns.ProcessOAM(
@@ -383,8 +383,8 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		// Create mesh client
 		mClient, err := meshes.CreateClient(
 			context.TODO(),
-			sap.prefObj.K8SConfig.Config,
-			sap.prefObj.K8SConfig.ContextName,
+			sap.kubeconfig,
+			sap.kubecontext.Name,
 			adapter,
 		)
 		if err != nil {

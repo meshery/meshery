@@ -33,7 +33,7 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 
 	go func() {
 		r.Log.Info("Initializing ControlPlane subscription")
-		err := r.connectToBroker(context.TODO(), provider)
+		err := r.connectToBroker(ctx, provider)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
 			return
