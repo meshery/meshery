@@ -472,9 +472,11 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
-              <IconButton onClick={() => setShowForm({ pattern : patterns[tableMeta.rowIndex], show : true })}>
-                <ListAltIcon />
-              </IconButton>
+              <Tooltip title = "Configure">
+                <IconButton onClick={() => setShowForm({ pattern : patterns[tableMeta.rowIndex], show : true })}>
+                  <ListAltIcon />
+                </IconButton>
+              </Tooltip>
               <IconButton>
                 <PlayArrowIcon
                   title="Deploy"
@@ -483,6 +485,7 @@ function MesheryPatterns({
                   onClick={() => handleDeploy(rowData.pattern_file)} //deploy endpoint to be called here
                 />
               </IconButton>
+
             </>
           );
         },
