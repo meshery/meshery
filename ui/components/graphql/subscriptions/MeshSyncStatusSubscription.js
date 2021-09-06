@@ -16,7 +16,7 @@ subscription MeshSyncStatusSubscription {
 `;
 
 export default function subscribeMeshSyncStatusEvents(dataCB) {
-  requestSubscription(environment, {
+  return requestSubscription(environment, {
     subscription : meshSyncStatusSubscription,
     variables : {},
     onNext : dataCB,

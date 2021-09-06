@@ -34,14 +34,17 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
-import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
+import subscribeServiceMeshEvents from "./graphql/subscriptions/ServiceMeshSubscription";
 import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
 import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
+import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
+import { podNameMapper, versionMapper } from "../utils/nameMapper";
+import { subscriptionClient } from "../lib/relayEnvironment";
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
@@ -99,6 +102,7 @@ class DashboardComponent extends React.Component {
     const {
       meshAdapters, k8sconfig, grafana, prometheus
     } = props;
+    this._isMounted = false;
     this.state = {
       meshAdapters,
       availableAdapters : [],
@@ -176,29 +180,49 @@ class DashboardComponent extends React.Component {
     const ALL_MESH = {};
 
     const self = this;
-    subscribeMeshSyncStatusEvents((res) => {
-      if (res.meshsync?.error) {
-        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
-        return;
-      }
-    });
-    subscribeOperatorStatusEvents(self.setOperatorState);
-    subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH);
 
-    fetchControlPlanes(ALL_MESH).subscribe({ next : (res) => {
-      self.setMeshScanData(res);
-    },
-    error : (err) => console.error(err), });
+    if (self._isMounted){
+      subscribeMeshSyncStatusEvents((res) => {
+        if (res.meshsync?.error) {
+          self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
+          return;
+        }
+      });
+      subscribeOperatorStatusEvents(self.setOperatorState);
+      subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH);
+      fetchControlPlanes(ALL_MESH).subscribe({
+        next : (controlPlaneRes) => {
+          self.setMeshScanData(controlPlaneRes, null);
+          fetchDataPlanes(ALL_MESH).subscribe({
+            next : (dataPlaneRes) => {
+              if (controlPlaneRes) self.setMeshScanData(controlPlaneRes, dataPlaneRes);
+            },
+            error : (err) => console.error(err),
+          });
+        },
+        error : (err) => console.error(err),
+      });
+    }
+
   };
 
+  componentWillUnmount = () => {
+    this._isMounted = false
+    subscriptionClient.close()
+  }
+
   componentDidMount = () => {
+    this._isMounted = true
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
 
     if (this.state.isMetricsConfigured){
       this.fetchMetricComponents();
     }
-    this.initMeshSyncControlPlaneSubscription();
+
+    if (this._isMounted){
+      this.initMeshSyncControlPlaneSubscription();
+    }
   };
 
   fetchMetricComponents = () => {
@@ -214,12 +238,12 @@ class DashboardComponent extends React.Component {
         if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL != "") {
           let selector = { serviceMesh : "ALL_MESH", };
           fetchAvailableAddons(selector).subscribe({ next : (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-                  self.setState({ prometheusURL : "http://" + addon.endpoint })
-                  submitPrometheusConfigure(self, () => console.log("Prometheus added"));
-                }
-              });
+            res?.addonsState?.forEach((addon) => {
+              if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
+                self.setState({ prometheusURL : "http://" + addon.endpoint })
+                submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+              }
+            });
           },
           error : (err) => console.log("error registering prometheus: " + err), });
         }
@@ -237,15 +261,15 @@ class DashboardComponent extends React.Component {
         if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="") {
           let selector = { serviceMesh : "ALL_MESH", };
           fetchAvailableAddons(selector).subscribe({ next : (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-                  self.setState({ grafanaURL : "http://" + addon.endpoint })
-                  submitGrafanaConfigure(self, () => {
-                    self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-                    console.log("Grafana added");
-                  });
-                }
-              });
+            res?.addonsState?.forEach((addon) => {
+              if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
+                self.setState({ grafanaURL : "http://" + addon.endpoint })
+                submitGrafanaConfigure(self, () => {
+                  self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
+                  console.log("Grafana added");
+                });
+              }
+            });
           },
           error : (err) => console.log("error registering grafana: " + err), });
         }
@@ -256,18 +280,18 @@ class DashboardComponent extends React.Component {
     let selector = { serviceMesh : "ALL_MESH", };
 
     fetchAvailableAddons(selector).subscribe({ next : (res) => {
-        res?.addonsState?.forEach((addon) => {
-          if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-            self.setState({ prometheusURL : "http://" + addon.endpoint })
-            submitPrometheusConfigure(self, () => console.log("Prometheus added"));
-          } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-            self.setState({ grafanaURL : "http://" + addon.endpoint })
-            submitGrafanaConfigure(self, () => {
-              self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-              console.log("Grafana added");
-            });
-          }
-        });
+      res?.addonsState?.forEach((addon) => {
+        if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
+          self.setState({ prometheusURL : "http://" + addon.endpoint })
+          submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+        } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
+          self.setState({ grafanaURL : "http://" + addon.endpoint })
+          submitGrafanaConfigure(self, () => {
+            self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
+            console.log("Grafana added");
+          });
+        }
+      });
     },
     error : (err) => console.log("error registering addons: " + err), });
   };
@@ -317,26 +341,88 @@ class DashboardComponent extends React.Component {
     );
   };
 
-  setMeshScanData = (data) => {
+  setOperatorState = (res) => {
+    const self = this;
+    if (res.operator?.error) {
+      self.handleError("Operator could not be reached")(res.operator?.error?.description);
+      return false;
+    }
+
+    if (res.operator?.status === "ENABLED") {
+      res.operator?.controllers?.forEach((controller) => {
+        if (controller.name === "broker" && controller.status == "ENABLED") {
+          self.setState({ NATSInstalled : true,
+            NATSVersion : controller.version, });
+        } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
+          self.setState({ meshSyncInstalled : true,
+            meshSyncVersion : controller.version, });
+        }
+      });
+      self.setState({ operatorInstalled : true,
+        operatorSwitch : true,
+        operatorVersion : res.operator?.version, });
+      return true;
+    }
+
+    self.setState({
+      operatorInstalled : false,
+      NATSInstalled : false,
+      meshSyncInstalled : false,
+      operatorSwitch : false,
+      operatorVersion : "N/A",
+      meshSyncVersion : "N/A",
+      NATSVersion : "N/A",
+    });
+
+    return false;
+  };
+
+  setMeshScanData = (controlPlanesData, dataPlanesData) => {
     const self = this;
     const namespaces = {};
     const activeNamespaces = {};
-    data?.controlPlanesState?.map((mesh) => {
+    const processedControlPlanesData = controlPlanesData?.controlPlanesState?.map((mesh) => {
       if (!mesh?.members?.length) {
         return;
       }
-      mesh?.members?.map((member) => {
+      let proxies = []
+
+      if (Array.isArray(dataPlanesData?.dataPlanesState)){
+        const dataplane = dataPlanesData.dataPlanesState.find(mesh_ => mesh_.name === mesh.name)
+
+        if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies
+      }
+      const processedMember = mesh?.members?.map((member) => {
         if (namespaces[mesh.name]) {
           namespaces[mesh.name].add(member.namespace);
         } else {
           namespaces[mesh.name] = new Set([member.namespace]);
         }
+
+        // retrieve data planes according to mesh name
+        if (proxies.length > 0){
+          const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name)
+
+          if (controlPlaneMemberProxies.length > 0){
+            member = {
+              ...member,
+              data_planes : controlPlaneMemberProxies
+            }
+          }
+        }
+
+        return member
       });
       namespaces[mesh.name] = [...namespaces[mesh.name]];
       activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
+
+      return {
+        ...mesh,
+        members : processedMember
+      }
     });
 
-    self.setState({ meshScan : data?.controlPlanesState?.filter((data) => data.members?.length > 0) });
+    self.setState({ meshScan : processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0) });
     self.setState({ meshScanNamespaces : namespaces, activeMeshScanNamespace : activeNamespaces });
   };
 
@@ -542,28 +628,82 @@ class DashboardComponent extends React.Component {
             <Table aria-label="mesh details table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Control Plane Pods</TableCell>
+                  <TableCell align="center">Control Plane</TableCell>
                   <TableCell align="center">Component</TableCell>
                   <TableCell align="center">Version</TableCell>
+                  <TableCell align="center">Proxy</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {components
                   .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
-                  .map((component) => (
-                    <TableRow key={component.name.full}>
-                      {/* <TableCell scope="row" align="center">
-                        <Tooltip title={component.name.full}>
-                          <div style={{ textAlign: "center" }}>
-                            {component.name.trimmed}
-                          </div>
+                  .map((component) => {
+                    return (
+                      <TableRow key={component.name.full}>
+                        {/* <TableCell scope="row" align="center">
+                          <Tooltip title={component.name.full}>
+                            <div style={{ textAlign: "center" }}>
+                              {component.name.trimmed}
+                            </div>
+                          </Tooltip>
+                        </TableCell> */}
+                        <TableCell align="center">{podNameMapper(component.component, component.name)}</TableCell>
+                        <TableCell align="center">{component.component}</TableCell>
+                        <TableCell align="center">{versionMapper(component.version)}</TableCell>
+                        <Tooltip
+                          key={`component-${component.name}`}
+                          title={
+                            Array.isArray(component?.data_planes) && component.data_planes.length > 0 ? (
+                              component.data_planes.map((cont) => {
+                                return (
+                                  <div key={cont.name} style={{ color : '#ffff', paddingBottom : '10px', padding : '2vh' } }>
+                                    <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
+                                    <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
+                                    {!cont?.status?.ready && (
+                                      typeof cont?.status?.lastState === 'object' && cont?.status?.lastState !== null && Object.keys(cont.status.lastState).length > 0 && (
+                                        <div>
+                                          <p>Last state: {Object.keys(cont?.status?.lastState)[0]} <br/> Error: {Object.values(cont?.status?.lastState)[0]?.exitCode} <br/> Finished at: {Object.values(cont?.status?.lastState)[0]?.finishedAt}</p>
+                                        </div>
+                                      )
+                                    )}
+                                    {typeof cont?.status?.state === 'object' && cont?.status?.state !== null && Object.keys(cont.status.state).length > 0 && (
+                                      <p>State: {Object.keys(cont.status.state)[0]}</p>
+                                    )}
+                                    {cont?.status?.restartCount && (
+                                      <p>Restart count: {cont?.status.restartCount}</p>
+                                    )}
+                                    <p>Image: {cont.image}</p>
+                                    <p>Ports: <br/> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
+                                    {cont?.resources && (
+                                      <div>
+                                        Resources used: <br/>
+
+                                        <div style={{ paddingLeft : '2vh' }}>
+                                          {cont?.resources?.limits && (
+                                            <div>
+                                              <p>Limits: <br/>
+                                              CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
+                                            </div>
+                                          )}
+                                          {cont?.resources?.requests && (
+                                            <div>
+                                              <p>Requests: <br/>
+                                              CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                              })
+                            ) : "No data plane is running"}
+                        >
+                          <TableCell align="center">{component?.data_planes?.length || 0}</TableCell>
                         </Tooltip>
-                      </TableCell> */}
-                      <TableCell align="center">{component.name}</TableCell>
-                      <TableCell align="center">{component.component}</TableCell>
-                      <TableCell align="center">{component.version}</TableCell>
-                    </TableRow>
-                  ))}
+                      </TableRow>
+                    )
+                  })}
               </TableBody>
             </Table>
           </TableContainer>
@@ -782,7 +922,7 @@ class DashboardComponent extends React.Component {
 
     const showServiceMesh = (
       <>
-        {Object.keys(self.state.meshScan).length
+        {self?.state?.meshScan && Object.keys(self.state.meshScan).length
           ? (
             <>
               {self.state.meshScan.map((mesh) => {
@@ -882,13 +1022,13 @@ class DashboardComponent extends React.Component {
       if (release_channel === "edge")
         return (
           <Link href="https://docs.meshery.io/project/releases" target="_blank">
-            <OpenInNewIcon style={{ height: "1rem", width: "1rem" }} />
+            <OpenInNewIcon style={{ height : "1rem", width : "1rem" }} />
           </Link>
         );
 
       return (
         <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
-          <OpenInNewIcon style={{ height: "1rem", width: "1rem" }} />
+          <OpenInNewIcon style={{ height : "1rem", width : "1rem" }} />
         </Link>
       );
     };
@@ -902,9 +1042,9 @@ class DashboardComponent extends React.Component {
               {capitalize(this.state.versionDetail.release_channel)}
             </Typography>
           </Grid>
-          <Grid item xs={12} md={6} style={{ padding: "0" }}>
-            <Typography style={{ fontWeight: "bold", paddingBottom: "4px" }}>Version</Typography>
-            <Typography style={{ paddingTop: "2px", paddingBottom: "8px" }}>
+          <Grid item xs={12} md={6} style={{ padding : "0" }}>
+            <Typography style={{ fontWeight : "bold", paddingBottom : "4px" }}>Version</Typography>
+            <Typography style={{ paddingTop : "2px", paddingBottom : "8px" }}>
               {getMesheryVersionText()}
               {openReleaseNotesInNew()}
             </Typography>

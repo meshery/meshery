@@ -34,3 +34,13 @@ autolabeler:
   - label: 'area/ci'
     branch:
       - '/.github/'
+  - label: 'component/ui'
+    branch:
+      - '/ui/'
+      - '/provider-ui/'
+  - label: 'component/mesheryctl'
+    branch:
+      - '/mesheryctl/'
+  - label: 'area/lifecycle'
+    branch:
+      - '/install/'

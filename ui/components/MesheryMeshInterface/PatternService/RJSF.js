@@ -11,8 +11,11 @@ const Form = withTheme(MaterialUITheme);
 const muiTheme = createTheme({
   palette : {
     primary : {
-      main : '#00b39f',
+      main : '#607d8b',
     },
+  },
+  typography : {
+    fontSize : 13,
   },
   props : {
     MuiTextField : {
@@ -20,6 +23,56 @@ const muiTheme = createTheme({
       margin : 'dense',
     },
   },
+  overrides : {
+    MuiButton : {
+      textSecondary : {
+        color : '#00b39f',
+        "&:hover" : "00b39f"
+      }
+    },
+    MuiBox : {
+      root : {
+        marginTop : 0
+      }
+    },
+    MuiDivider : {
+      root : {
+        height : '0.5px'
+      }
+    },
+    MuiFormLabel : {
+      root : {
+        color : "#333",
+        fontSize : '0.8rem',
+        textTransform : 'capitalize',
+      }
+    },
+    MuiTypography : {
+      body1 : {
+        fontSize : '0.8rem'
+      },
+      h5 : {
+        textTransform : 'capitalize',
+        fontSize : '1.2rem',
+      }
+    },
+    MuiGrid : {
+      root : {
+        "& > *" : {
+          border : 'none !important'
+        },
+        marginTop : '0.2rem !important',
+      },
+      'spacing-xs-2' : {
+        padding : 0,
+        '& > *' : {
+          paddingTop : '0 !important',
+          paddingBottom : '0 !important'
+        }
+
+      }
+    }
+  }
 });
 
 function deleteTitleFromJSONSchema(jsonSchema) {
@@ -68,7 +121,6 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
             idPrefix={jsonSchema?.title}
             onChange={(e) => setData(e.formData)}
             formData={data}
-            liveValidate
             showErrorList={false}
             ArrayFieldTemplate={ArrayFieldTemplate}
             additionalMetaSchemas={[JS4]}

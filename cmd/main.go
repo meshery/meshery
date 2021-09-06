@@ -20,6 +20,7 @@ import (
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
@@ -240,11 +241,15 @@ func main() {
 
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn)
 
+	b := broadcast.NewBroadcaster(100)
+	defer b.Close()
+
 	g := graphql.New(graphql.Options{
 		Config:          hc,
 		Logger:          log,
 		MeshSyncChannel: meshsyncCh,
 		BrokerConn:      brokerConn,
+		Broadcaster:     b,
 	})
 
 	gp := graphql.NewPlayground(graphql.Options{

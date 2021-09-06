@@ -161,9 +161,9 @@ class MeshAdapterConfigComponent extends React.Component {
     dataFetch(
       `/api/system/adapter/manage?adapter=${encodeURIComponent(adapterLoc)}`,
       {
-        credentials: "same-origin",
-        method: "DELETE",
-        credentials: "include",
+        credentials : "same-origin",
+        method : "DELETE",
+        credentials : "include",
       },
       (result) => {
         this.props.updateProgress({ showProgress : false });

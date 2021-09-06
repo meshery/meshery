@@ -15,6 +15,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -173,7 +174,7 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
 			// download the manifest files to ~/.meshery/manifests folder
 			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
-			if err := DownloadFile(filepath, manifestFile); err != nil {
+			if err := meshkitutils.DownloadFile(filepath, manifestFile); err != nil {
 				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
 			}
 		}
@@ -184,19 +185,19 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 // DownloadOperatorManifest downloads the operator manifest files
 func DownloadOperatorManifest() error {
 	operatorFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)
-	err := DownloadFile(operatorFilepath, OperatorURL)
+	err := meshkitutils.DownloadFile(operatorFilepath, OperatorURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)))
 	}
 
 	brokerFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)
-	err = DownloadFile(brokerFilepath, BrokerURL)
+	err = meshkitutils.DownloadFile(brokerFilepath, BrokerURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", brokerFilepath, MesheryOperatorBroker)))
 	}
 
 	meshsyncFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)
-	err = DownloadFile(meshsyncFilepath, MeshsyncURL)
+	err = meshkitutils.DownloadFile(meshsyncFilepath, MeshsyncURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", meshsyncFilepath, MesheryOperatorMeshsync)))
 	}
@@ -415,7 +416,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
 
-		if err := DownloadFile(DockerComposeFile, fileURL); err != nil {
+		if err := meshkitutils.DownloadFile(DockerComposeFile, fileURL); err != nil {
 			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
 		}
 	}
@@ -565,7 +566,7 @@ func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool)
 }
 
 // ChangeManifestVersion changes the tag of the images in the manifest according to the pinned version
-func ChangeManifestVersion(fileName string, channel string, version string, filePath string) error {
+func ChangeManifestVersion(channel, version, filePath string) error {
 	// setting up config type to yaml files
 	ViperCompose.SetConfigType("yaml")
 
@@ -573,7 +574,7 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 	ViperCompose.SetConfigFile(filePath)
 	err := ViperCompose.ReadInConfig()
 	if err != nil {
-		return fmt.Errorf("unable to read config %s | %s", fileName, err)
+		return fmt.Errorf("unable to read config %s | %s", filePath, err)
 	}
 
 	compose := K8sCompose{}
@@ -585,7 +586,7 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 	// unmarshal the file into structs
 	err = yaml.Unmarshal(yamlFile, &compose)
 	if err != nil {
-		return fmt.Errorf("unable to unmarshal config %s | %s", fileName, err)
+		return fmt.Errorf("unable to unmarshal config %s | %s", filePath, err)
 	}
 
 	// for edge channel only the latest tag exist in Docker Hub
@@ -608,11 +609,11 @@ func ChangeManifestVersion(fileName string, channel string, version string, file
 	// Marshal the structs
 	newConfig, err := yaml.Marshal(compose)
 	if err != nil {
-		return fmt.Errorf("unable to marshal config %s | %s", fileName, err)
+		return fmt.Errorf("unable to marshal config %s | %s", filePath, err)
 	}
 	err = ioutil.WriteFile(filePath, newConfig, 0644)
 	if err != nil {
-		return fmt.Errorf("unable to update config %s | %s", fileName, err)
+		return fmt.Errorf("unable to update config %s | %s", filePath, err)
 	}
 
 	return nil
@@ -758,7 +759,7 @@ func InstallprereqDocker() error {
 		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
 	}
 	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
-	if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
+	if err := meshkitutils.DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
 		return errors.Wrapf(err, "failed to download %s from %s", dockerComposeBinary, dockerComposeBinaryURL)
 	}
 	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
