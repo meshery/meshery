@@ -183,15 +183,6 @@
         "probable_cause": "Latest version could not be found at the specified url",
         "suggested_remediation": ""
       },
-      "1020": {
-        "name": "ErrEmptyConfigCode",
-        "code": "1020",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Config is empty",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
       "1021": {
         "name": "ErrInvalidOAMComponentTypeCode",
         "code": "1021",
@@ -245,6 +236,15 @@
         "short_description": "error parsing the configuration",
         "probable_cause": "Invalid OAM config passed in OAM request",
         "suggested_remediation": "Check if your request has vaild OAM config"
+      },
+      "1027": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1027",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
