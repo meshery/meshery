@@ -5,7 +5,6 @@ import (
 
 	"time"
 
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/vmihailenco/taskq/v3"
 )
 
@@ -119,7 +118,6 @@ type HandlerConfig struct {
 	Queue taskq.Queue
 
 	KubeConfigFolder string
-	KubeClient       *mesherykube.Client
 
 	GrafanaClient         *GrafanaClient
 	GrafanaClientForQuery *GrafanaClient
