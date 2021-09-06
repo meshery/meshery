@@ -81,10 +81,13 @@ const mesheryEnvironmentSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(
-      fetchKubernetesClustersThunk.fulfilled,
-      mesheryEnvironmentSlice.caseReducers.updateKubernetesClusterData
-    );
+    builder.addCase(fetchKubernetesClustersThunk.fulfilled, (state, action) => {
+      const cluster = state.kubernetesClusters.find((k8) => k8.id === action.payload.id);
+      cluster.clusterConfigured = action.payload.clusterConfigured;
+      cluster.configuredServer = action.payload.configuredServer;
+      cluster.contextName = action.payload.contextName;
+      cluster.contexts = action.payload.contexts;
+    });
   },
 });
 
