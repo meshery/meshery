@@ -427,7 +427,7 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
-              <Tooltip title = "configuration">
+              <Tooltip title = "Configure">
                 <IconButton onClick={() => setShowForm({ pattern : patterns[tableMeta.rowIndex], show : true })}>
                   <ListAltIcon />
                 </IconButton>
