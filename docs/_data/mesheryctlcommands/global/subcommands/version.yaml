@@ -1,4 +1,0 @@
-name: version
-description: Displays the version of the Meshery Client (mesheryctl) and the SHA of the release binary.
-usage: |
-    mesheryctl version
