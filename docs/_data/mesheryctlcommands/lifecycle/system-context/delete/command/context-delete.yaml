@@ -1,4 +1,0 @@
-name: delete
-description: delete an existing context from Meshery config file
-usage: |
-    mesheryctl system context delete [context name]
