@@ -891,7 +891,7 @@ class Navigator extends React.Component {
                         : {}}
                     />
                   </ListItem>
-                  <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679" }}>
+                  <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679", opacity : "100%" }}>
                     {this.renderChildren(childId, children, 1)}
                   </Collapse>
                 </React.Fragment>
