@@ -6,15 +6,13 @@
 | Lee Calcote       | leecalcote        | Layer5      |
 | Navendu Pottekkat | navendu-pottekkat | Layer5      |
 
-
 ### UI Maintainers
 
 | Name         | GitHub       | Affiliation |
 | ------------ | ------------ | ----------- |
-| Dhruv Patel  | dhruv0000    | Layer5      | 
+| Dhruv Patel  | dhruv0000    | Layer5      |
 | Lee Calcote  | leecalcote   | Layer5      |
 | Nikhil Ladha | Nikhil-Ladha | Red Hat     |
-
 
 ### Adapter Maintainers
 
@@ -29,14 +27,13 @@
 | Michael Gfeller    | mgfeller    | Computas AS |
 | Utkarsh Srivastava | utkarsh-pro | Layer5      |
 
-
 ### CI / Build & Release Maintainers
 
-| Name                  | GitHub     | Affiliation |
-| --------------------- | ---------- | ----------- |
-| Lee Calcote           | leecalcote | Layer5      |
-| Rodolfo Martínez Vega | ramrodo    | Rackspace   |
-
+| Name                  | GitHub             | Affiliation |
+| --------------------- | ------------------ | ----------- |
+| Lee Calcote           | leecalcote         | Layer5      |
+| Rodolfo Martínez Vega | ramrodo            | Rackspace   |
+| Rudraksh Pareek       | DelusionalOptimist | Layer5      |
 
 ### Docs Maintainers
 
@@ -45,7 +42,6 @@
 | Adithya Krishna | adithyaakrishna | Red Hat     |
 | Lee Calcote     | leecalcote      | Layer5      |
 
-
 ### Core Maintainers
 
 | Name               | GitHub      | Affiliation |
@@ -53,4 +49,3 @@
 | Abishek Kumar      | kumarabd    | Layer5      |
 | Lee Calcote        | leecalcote  | Layer5      |
 | Utkarsh Srivastava | utkarsh-pro | Layer5      |
-
