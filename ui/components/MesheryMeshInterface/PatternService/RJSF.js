@@ -79,6 +79,10 @@ function deleteTitleFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, title : "" };
 }
 
+function deleteDescriptionFromJSONSchema(jsonSchema) {
+  return { ...jsonSchema, description : "" };
+}
+
 function RJSFButton({ handler, text, ...restParams }) {
   return (
     <Button variant="contained" color="primary" style={{ marginRight : "0.5rem" }} onClick={handler} {...restParams}>
@@ -104,7 +108,7 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
     <>
       {!renderAsTooltip ? (
         <Form
-          schema={hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema}
+          schema={hideTitle ? deleteTitleFromJSONSchema(deleteDescriptionFromJSONSchema(jsonSchema)) : deleteDescriptionFromJSONSchema(jsonSchema)}
           idPrefix={jsonSchema?.title}
           onChange={(e) => setData(e.formData)}
           formData={data}
@@ -117,7 +121,7 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
         </Form>) : (
         <MuiThemeProvider theme={muiTheme}>
           <Form
-            schema={hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema}
+            schema={hideTitle ? deleteTitleFromJSONSchema(deleteDescriptionFromJSONSchema(jsonSchema)) : deleteDescriptionFromJSONSchema(jsonSchema)}
             idPrefix={jsonSchema?.title}
             onChange={(e) => setData(e.formData)}
             formData={data}
