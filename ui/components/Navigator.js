@@ -208,9 +208,9 @@ const styles = (theme) => ({
     '&:hover' : { color : "#4fc3f7", }
   },
   collapsed : { transform : 'rotate(180deg) translateX(-3px)', },
-  collapsedHelpButton : { height : '30px',
+  collapsedHelpButton : { height : '1.45rem',
     marginTop : '-4px',
-    transform : 'translateX(-1px)' },
+    transform : 'translateX(0px)' },
   rightTranslate : { transform : 'translateX(0.5px)' }
 });
 
@@ -891,7 +891,7 @@ class Navigator extends React.Component {
                         : {}}
                     />
                   </ListItem>
-                  <Collapse in={this.state.openItems.includes(childId)} style={{backgroundColor: "rgba(0,0,0,0.3)"}}>
+                  <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679" }}>
                     {this.renderChildren(childId, children, 1)}
                   </Collapse>
                 </React.Fragment>
@@ -981,7 +981,7 @@ class Navigator extends React.Component {
               <FontAwesomeIcon
                 icon={faChevronCircleLeft}
                 fixedWidth
-                color="#FFFFFF"
+                color="#eeeeee"
                 size="lg"
                 alt="Sidebar collapse toggle icon"
               />
