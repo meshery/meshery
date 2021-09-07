@@ -7,7 +7,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   drawer: {
     [theme.breakpoints.up("sm")]: {
-      width: drawerWidth,
+      // width: drawerWidth,
       flexShrink: 0,
     },
     transition: theme.transitions.create("width", {
@@ -178,9 +178,6 @@ export const useStyles = makeStyles((theme) => ({
   nested2: {
     paddingLeft: theme.spacing(5),
   },
-  icon: {
-    width: theme.spacing(2.5),
-  },
   istioIcon: {
     width: theme.spacing(1.8),
   },
@@ -318,3 +315,7 @@ export const useStyles = makeStyles((theme) => ({
     transform: "translateX(0.5px)",
   },
 }));
+
+export const drawerIconsStyle = { height: "1.21rem", width: "1.21rem", fontSize: "1.21rem" };
+
+export const externalLinkIconStyle = { width: "1.11rem", fontSize: "1.11rem" };

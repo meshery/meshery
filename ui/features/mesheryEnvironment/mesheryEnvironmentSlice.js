@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchKuberernetesClusters, updateKubernetesCluster } from "./kubernetesCluster";
+import { fetchKuberernetesClusters, submitKubernetesClusterConfig } from "./kubernetesCluster";
 
 /**
     this feature/module is responsible for all the data and functionalities regarding operations and
@@ -19,7 +19,7 @@ import { fetchKuberernetesClusters, updateKubernetesCluster } from "./kubernetes
  */
 
 /**
- * @typedef {{config: any}} grafana
+ * @typedef {{url :string, APIKey :string, boardSearch: string, boards: [], selectedBoardsConfigs: []}} grafana
  */
 
 /**
@@ -39,10 +39,10 @@ const initialState = {
   kubernetesClusters: [],
 
   /** @type {connectedGrafanas} */
-  connectedGrafanas: {},
+  connectedGrafanas: [],
 
   /** @type {connectedPrometheus} */
-  connectedPrometheus: {},
+  connectedPrometheus: [],
   // and other relavant data
 };
 
@@ -51,12 +51,19 @@ export const fetchKubernetesClustersThunk = createAsyncThunk("mesheryEnvironment
   return response;
 });
 
-export const updateKubernetesClusterThunk = createAsyncThunk(
+export const submitKubernetesClusterConfigThunk = createAsyncThunk(
   "mesheryEnvironment/updateKubernetesCluster",
   async (payload) => {
-    const response = await updateKubernetesCluster(payload);
+    const response = await submitKubernetesClusterConfig(payload);
     return response;
   }
+);
+
+export const submitGrafanaConfigThunk = createAsyncThunk("mesheryEnvironment/submitGrafanaConfig", async () => {});
+
+export const submitPrometheusConfigThunk = createAsyncThunk(
+  "mesheryEnvironment/submitPrometheusConfig",
+  async () => {}
 );
 
 const mesheryEnvironmentSlice = createSlice({
@@ -66,10 +73,10 @@ const mesheryEnvironmentSlice = createSlice({
     // reducers to update the state in this slice
     updateKubernetesClusterData: (state, action) => {
       const cluster = state.kubernetesClusters.find((k8) => k8.id === action.payload.id);
-      cluster.clusterConfigured = action.payload.clusterConfigured;
-      cluster.configuredServer = action.payload.configuredServer;
-      cluster.contextName = action.payload.contextName;
-      cluster.contexts = action.payload.contexts;
+      cluster.clusterConfigured = action.payload?.clusterConfigured;
+      cluster.configuredServer = action.payload?.configuredServer;
+      cluster.contextName = action.payload?.contextName;
+      cluster.contexts = action.payload?.contexts;
     },
     addKubernetesCluster: (state, action) => {
       state.kubernetesClusters.push(action.payload.kubernetesCluster);
@@ -77,6 +84,14 @@ const mesheryEnvironmentSlice = createSlice({
     removeKubernetesCluster: (state, action) => {
       const index = state.kubernetesClusters.findIndex((cluster) => cluster.id === action.payload.id);
       state.kubernetesClusters.splice(index, 1);
+      return state;
+    },
+    addGrafana: (state, action) => {
+      state.connectedGrafanas.push(action.payload);
+      return state;
+    },
+    addPrometheus: (state, action) => {
+      state.connectedPrometheus.push(action.payload);
       return state;
     },
   },
@@ -92,6 +107,7 @@ const mesheryEnvironmentSlice = createSlice({
 });
 
 export default mesheryEnvironmentSlice.reducer;
-// export const {} = mesheryEnvironmentSlice.actions;
+export const { updateKubernetesClusterData, addKubernetesCluster, removeKubernetesCluster, addGrafana, addPrometheus } =
+  mesheryEnvironmentSlice.actions;
 
 // selectors should be written and exported

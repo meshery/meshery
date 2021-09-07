@@ -3,4 +3,4 @@ export const fetchKuberernetesClusters = () =>
     res("Dummy");
   });
 
-export const updateKubernetesCluster = () => new Promise((res) => res("Dummy"));
+export const submitKubernetesClusterConfig = () => new Promise((res) => res("Dummy"));

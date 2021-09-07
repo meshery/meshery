@@ -1,1 +1,1 @@
-export { fetchKuberernetesClusters, updateKubernetesCluster } from "./helpers";
+export { fetchKuberernetesClusters, submitKubernetesClusterConfig } from "./helpers";

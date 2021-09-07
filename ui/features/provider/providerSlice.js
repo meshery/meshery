@@ -3,7 +3,7 @@ import { fetchProviderDetails } from "./helpers";
 
 /**
  * This feature/module is responsible for all the data and operations
- * regarding nacigation between multiple components or pages
+ * regarding provider component
  */
 
 /**
