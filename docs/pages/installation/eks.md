@@ -15,13 +15,13 @@ image: /assets/img/platforms/eks.png
 ## To set up and run Meshery on EKS:
 
 - Connect Meshery to your EKS cluster
-  - [Meshery CLI (mesheryctl)](#connect-meshery-to-azure-kubernetes-cluster)
+  - [Meshery CLI (mesheryctl)](#connect-meshery-to-elastic-kubernetes-service-cluster)
   - [eks CLI (eksctl)](https://eksctl.io/introduction/#installation)
   - [AWS CLI (aws)](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 - [Install Meshery on your EKS cluster](#install-meshery-into-your-eks-cluster)
 - [Access Meshery's UI](#port-forward-to-the-meshery-ui)
 
-### Connect Meshery to Elastic Kubernetes Cluster
+### Connect Meshery to Elastic Kubernetes Service Cluster
 
 The following set of instructions expects you to have created a EKS cluster in your resource group Configure Meshery to connect to your EKS cluster by executing:
 
@@ -33,12 +33,10 @@ The following set of instructions expects you to have created a EKS cluster in y
 
 #### Manual Steps
 
-Alternatively, you may execute the following steps to manually configure Meshery to connect to your AKS cluster.
+Alternatively, you may execute the following steps to manually configure Meshery to connect to your EKS cluster.
 
-- Install [AWS CLI(aws)](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), and login
-  to your AWS account. Install [EKS CLI (eksctl)](https://eksctl.io/introduction/#installation) too to access eks cluster easily.
-
-- After successfull login, you have to select the subscription with which your AKS is associated with by configuring your AWS CLI to your AWS account. Refer [this link](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) for more
+- Install [AWS CLI(aws)](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), and login to your AWS account.
+- After successfull login, you have to select the subscription with which your EKS is associated with by configuring your AWS CLI to your AWS account. Refer [this link](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) for more
 
 - Get/Update the kubeconfig from your EKS cluster by connecting with AWS CLI
 <pre class="codeblock-pre"><div class="codeblock">
@@ -55,7 +53,7 @@ kubectl cluster-info
 </div></div>
 </pre>
 
-### Install Meshery into your AKS cluster
+### Install Meshery into your EKS cluster
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -76,7 +74,7 @@ kubectl cluster-info
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  export POD_NAME=$(kubectl get pods --namespace meshery -l "app.kubernetes.io/name=meshery,app.kubernetes.io/instance=meshery" -o jsonpath="{.items[0].metadata.name}")
- kubectl --namespace meshery port-forward $POD_NAME 9081:8080
+ kubectl --namespace meshery port-forward $POD_NAME 9081:9081
  </div></div>
  </pre>
 
