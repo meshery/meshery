@@ -1,7 +1,7 @@
 import React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
-import { MuiThemeProvider, createMuiTheme, withStyles } from '@material-ui/core/styles';
+import { MuiThemeProvider, createTheme, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import getPageContext from '../components/PageContext';
 import Navigator from '../components/Navigator';
@@ -54,7 +54,7 @@ if (typeof window !== 'undefined') {
   }
 }
 
-let theme = createMuiTheme({
+let theme = createTheme({
   typography : { useNextVariants : true,
     h5 : { fontWeight : 'bolder',
       fontSize : 26,
