@@ -17,6 +17,7 @@ rules:
   - update
   - patch
   - delete
+  - approve
 - nonResourceURLs: ["/metrics", "/health", "/ping"]
   verbs:
   - get
