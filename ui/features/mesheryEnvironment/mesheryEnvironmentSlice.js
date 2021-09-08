@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { mesherySystemSync } from "./helpers";
 import { fetchKuberernetesClusters, submitKubernetesClusterConfig } from "./kubernetesCluster";
 
 /**
@@ -19,19 +20,23 @@ import { fetchKuberernetesClusters, submitKubernetesClusterConfig } from "./kube
  */
 
 /**
- * @typedef {{url :string, APIKey :string, boardSearch: string, boards: [], selectedBoardsConfigs: []}} grafana
+ * @typedef {{grafanaBoard: {}, grafanaPanels: {}, selectedTemplateVars: string[]}} SelectedGrafanaConfigType
  */
 
 /**
- * @typedef {Array.<grafana>} connectedGrafanas
+ * @typedef {{grafanaUrl :string, grafanaAPIKey :string, grafanaBoards: Array.<SelectedGrafanaConfigType>,}} GrafanaType
  */
 
 /**
- * @typedef {{config: any}} prometheus
+ * @typedef {Array.<GrafanaType>} connectedGrafanas
  */
 
 /**
- * @typedef {Array.<prometheus>} connectedPrometheus
+ * @typedef {{prometheusURL: string, selectedPromtheusBoardsConfig: Array.<SelectedGrafanaConfigType>}} PrometheusType
+ */
+
+/**
+ * @typedef {Array.<PrometheusType>} connectedPrometheus
  */
 
 const initialState = {
@@ -45,6 +50,18 @@ const initialState = {
   connectedPrometheus: [],
   // and other relavant data
 };
+
+export const mesherySystemSyncThunk = createAsyncThunk("mesheryEnvironment/mesherySystemSync", async () => {
+  const response = await mesherySystemSync();
+  console.log(response);
+  return {
+    // in the future, we might want to change it based on how meshery server sends
+    // multiple clusters and metrics components to the frontend
+    kubernetesClusters: [response?.k8sConfig],
+    connectedGrafanas: [response?.grafana],
+    connectedPrometheus: [response?.promethues],
+  };
+});
 
 export const fetchKubernetesClustersThunk = createAsyncThunk("mesheryEnvironment/fetchKubernetesClusters", async () => {
   const response = await fetchKuberernetesClusters();
@@ -102,6 +119,22 @@ const mesheryEnvironmentSlice = createSlice({
       cluster.configuredServer = action.payload.configuredServer;
       cluster.contextName = action.payload.contextName;
       cluster.contexts = action.payload.contexts;
+    });
+
+    builder.addCase(mesherySystemSyncThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      state.connectedGrafanas = action.payload.connectedGrafanas;
+      state.connectedPrometheus = action.payload.connectedPrometheus;
+      state.kubernetesClusters = action.payload.kubernetesClusters;
+      return state;
+    });
+    builder.addCase(mesherySystemSyncThunk.pending, (state) => {
+      state.loading = false;
+      return state;
+    });
+    builder.addCase(mesherySystemSyncThunk.rejected, (state) => {
+      state.loading = false;
+      return state;
     });
   },
 });

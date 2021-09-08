@@ -7,5 +7,6 @@
       "@/lib/*": ["lib/*"],
       "@/utils/*": ["utils/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "out", ".next"]
 }

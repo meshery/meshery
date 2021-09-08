@@ -159,7 +159,16 @@ const mesheryComponentsSlice = createSlice({
     });
     builder.addCase(fetchAvailableAdaptersThunk.fulfilled, (state, action) => {
       state.loading = false;
-      state.adapters = action.payload;
+      action.payload.forEach((adapter) => {
+        state.adapters.push({
+          name: adapter.name,
+          version: adapter.version,
+          git_commit_sha: adapter.git_commit_sha,
+          ops: adapter.ops,
+          adapter_location: adapter.adapter_location,
+          isActive: adapter.git_commit_sha !== "" && adapter.ops.length !== 0 ? true : false,
+        });
+      });
       return state;
     });
     builder.addCase(fetchAvailableAdaptersThunk.rejected, (state) => {
