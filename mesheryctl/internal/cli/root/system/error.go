@@ -17,11 +17,11 @@ const (
 	ErrCreateDirCode                = "1007"
 	ErrUnmarshalCode                = "1008"
 	ErrUnsupportedPlatformCode      = "1009"
-	ErrRetrievingCurrentContextCode = "replace me"
-	ErrSettingTemporaryContextCode  = "replace me"
-	ErrCreateManifestsFolderCode    = "replace me"
-	ErrProcessingMctlConfigCode     = "replace me"
-	ErrRestartMesheryCode           = "replace me"
+	ErrRetrievingCurrentContextCode = "1022"
+	ErrSettingTemporaryContextCode  = "1023"
+	ErrCreateManifestsFolderCode    = "1024"
+	ErrProcessingMctlConfigCode     = "1025"
+	ErrRestartMesheryCode           = "1026"
 )
 
 func ErrHealthCheckFailed(err error) error {
