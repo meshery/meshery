@@ -19,3 +19,4 @@ rules:
   - update
   - patch
   - delete
+  - approve
