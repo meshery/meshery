@@ -5,11 +5,13 @@ categories:
     labels:
       - 'kind/feature'
       - 'kind/enhancement'
-  - title: '⌨️ Meshery CLI`
+  - title: '⌨️ Meshery CLI'
+    labels:
       - 'component/mesheryctl'
-  - title: '🖥 Meshery UI`
+  - title: '🖥 Meshery UI'
+    labels:
       - 'component/ui'      
-- title: '🐛 Bug Fixes'
+  - title: '🐛 Bug Fixes'
     labels:
       - 'kind/fix'
       - 'kind/bugfix'
