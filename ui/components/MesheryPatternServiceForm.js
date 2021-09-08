@@ -87,7 +87,7 @@ function createPatternFromConfig(config, namespace, partialClean = false) {
 
   Object.keys(pattern.services).forEach((key) => {
     // Delete the settings attribute/field if it is set to "true"
-    if (pattern.services[key].settings === true) delete pattern.services[key].settings;
+    if (pattern.services[key].settings) delete pattern.services[key].settings;
   });
 
   return pattern;

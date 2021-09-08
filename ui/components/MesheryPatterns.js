@@ -785,9 +785,10 @@ function PatternForm({ pattern, onSubmit, show }) {
   function insertPattern(workload) {
     const attrName = getPatternAttributeName(workload);
     var returnValue = {}
-    Object.keys(deployServiceConfig).forEach(key => {
+    Object.keys(deployServiceConfig).find(key => {
       if (deployServiceConfig[key]['type'] === attrName) {
         returnValue = deployServiceConfig[key]
+        return true
       }
     })
 
