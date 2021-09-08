@@ -2098,7 +2098,8 @@ func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) str
 		})
 		return newts
 	}
-	return newts
+
+	return tokenString
 }
 
 // ExtractToken - Returns the auth token and the provider type
