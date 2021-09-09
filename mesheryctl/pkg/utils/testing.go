@@ -197,7 +197,7 @@ func StartMockery(t *testing.T) {
 	apiResponse := NewGoldenFile(t, "validate.version.github.golden", fixturesDir).Load()
 
 	// For validate version requests
-	url1 := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + "v0.5.10" + "?recursive=1"
+	url1 := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + "v0.5.54" + "?recursive=1"
 	httpmock.RegisterResponder("GET", url1,
 		httpmock.NewStringResponder(200, apiResponse))
 }

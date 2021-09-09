@@ -94,13 +94,13 @@ func TestChangePlatform(t *testing.T) {
 			currCtx.SetPlatform(tt.args.platform)
 
 			if err := ChangePlatform(tt.args.contextName, *currCtx); (err != nil) != tt.wantErr {
-				t.Fatalf("ChangePlatform() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ChangePlatform() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			// Actual file contents
 			actualContent, err := ioutil.ReadFile(fixture)
 			if err != nil {
-				t.Fatal("Error reading actual file contents: ", err)
+				t.Error("Error reading actual file contents: ", err)
 			}
 
 			actualFileContent := string(actualContent)
@@ -120,7 +120,7 @@ func TestChangePlatform(t *testing.T) {
 
 			// Repopulating Expected yaml
 			if err := Populate(currDir+"/fixtures/platform/original/TestConfig.yaml", fixture); err != nil {
-				t.Error(err, "Could not complete test. Unable to repopulate fixture")
+				t.Fatal(err, "Could not complete test. Unable to repopulate fixture")
 			}
 		})
 	}
@@ -129,11 +129,7 @@ func TestChangePlatform(t *testing.T) {
 func TestChangeConfigEndpoint(t *testing.T) {
 
 	// Setup path to test config file
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
+	currDir := GetBasePath(t)
 	testConfigPath := currDir + "/fixtures/platform/TestConfig.yaml"
 
 	SetupCustomContextEnv(t, testConfigPath)
@@ -172,13 +168,13 @@ func TestChangeConfigEndpoint(t *testing.T) {
 			currCtx.SetEndpoint(tt.endpointAddress)
 
 			if err := ChangeConfigEndpoint(tt.ctxName, currCtx); (err != nil) != tt.wantErr {
-				t.Fatalf("ChangeConfigEndpoint() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ChangeConfigEndpoint() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			// Actual file contents
 			actualContent, err := ioutil.ReadFile(testConfigPath)
 			if err != nil {
-				t.Fatal("Error reading actual file contents: ", err)
+				t.Error("Error reading actual file contents: ", err)
 			}
 
 			actualFileContent := string(actualContent)
@@ -198,7 +194,7 @@ func TestChangeConfigEndpoint(t *testing.T) {
 
 			// Repopulating Expected yaml
 			if err := Populate(currDir+"/fixtures/platform/original/TestConfig.yaml", testConfigPath); err != nil {
-				t.Error(err, "Could not complete test. Unable to repopulate fixture")
+				t.Fatal(err, "Could not complete test. Unable to repopulate fixture")
 			}
 
 		})
@@ -258,7 +254,7 @@ func TestGetManifestURL(t *testing.T) {
 			want := golden.Load()
 
 			if got != want {
-				t.Errorf("GetManifestURL() = %v, want %v", got, want)
+				t.Fatalf("GetManifestURL() = %v, want %v", got, want)
 			}
 
 		})
@@ -340,7 +336,7 @@ func TestIsPodRequired(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := IsPodRequired(tt.args.requiredPods, tt.args.pod); got != tt.want {
-				t.Errorf("IsPodRequired() = %v, want %v", got, tt.want)
+				t.Fatalf("IsPodRequired() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -351,11 +347,7 @@ func TestDownloadManifests(t *testing.T) {
 	// initialize mock server for handling requests
 	StartMockery(t)
 
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatalf("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
+	currDir := GetBasePath(t)
 
 	rawManifestsURL := "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/latest/install/deployment_yamls/k8s/"
 	apiResponse := "Test Content"
@@ -417,7 +409,7 @@ func TestDownloadManifests(t *testing.T) {
 
 			err = os.Remove(filepath.Join(MesheryFolder, ManifestsFolder, tt.manifest.Path))
 			if err != nil {
-				t.Errorf("Could not delete manifest from test folder")
+				t.Fatalf("Could not delete manifest from test folder")
 			}
 
 		})
@@ -432,11 +424,7 @@ func TestDownloadOperatorManifest(t *testing.T) {
 	// initialize mock server for handling requests
 	StartMockery(t)
 
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatalf("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
+	currDir := GetBasePath(t)
 
 	apiResponse := "Test Content"
 
@@ -479,9 +467,9 @@ func TestDownloadOperatorManifest(t *testing.T) {
 				t.Errorf("DownloadOperatorManifest() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			actualFileContents := []string{}
+			actualFileContents := make([]string, len(tt.filenames))
 
-			for _, filename := range tt.filenames {
+			for i, filename := range tt.filenames {
 
 				// Actual file contents
 				actualContent, err := ioutil.ReadFile(filepath.Join(MesheryFolder, ManifestsFolder, filename))
@@ -490,7 +478,7 @@ func TestDownloadOperatorManifest(t *testing.T) {
 				}
 
 				actualFileContent := string(actualContent)
-				actualFileContents = append(actualFileContents, actualFileContent)
+				actualFileContents[i] = actualFileContent
 
 			}
 
@@ -528,11 +516,8 @@ func TestGetManifestTreeURL(t *testing.T) {
 	StartMockery(t)
 
 	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
+	currDir := GetBasePath(t)
+
 	fixturesDir := filepath.Join(currDir, "fixtures/platform")
 	tests := []struct {
 		name         string
@@ -611,11 +596,8 @@ func TestListManifests(t *testing.T) {
 	StartMockery(t)
 
 	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
+	currDir := GetBasePath(t)
+
 	fixturesDir := filepath.Join(currDir, "fixtures/platform")
 	tests := []struct {
 		name         string
