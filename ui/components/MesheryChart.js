@@ -160,8 +160,12 @@ class MesheryChart extends React.Component {
           tooltip : { show : true, },
         };
         if (!self.props.hideTitle) {
-          self.titleRef.innerText = chartData.options.title.text.slice(0,2).join('\n') +"\n"+ chartData.options.title.text[2].split('\n')[0];
-          if (chartData.options.title.text[2])self.percentileRef.innerText=chartData.options.title.text[2].split('\n')[1].split('|').join('\n')
+          if (this.props.data.length == 1) {
+            self.titleRef.innerText = chartData.options.title.text.slice(0,2).join('\n') +"\n"+ chartData.options.title.text[2].split('\n')[0];
+            if (chartData.options.title.text[2])self.percentileRef.innerText=chartData.options.title.text[2].split('\n')[1].split('|').join('\n')
+          } else {
+            self.titleRef.innerText=chartData.options.title.text.join('\n')
+          }
         }
         self.chart = bb.generate(chartConfig);
       } else {
