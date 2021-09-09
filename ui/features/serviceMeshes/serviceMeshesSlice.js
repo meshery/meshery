@@ -26,7 +26,7 @@ import { initServiceMeshEvents } from "./helpers";
  */
 
 /**
- * @typedef {"ALL_MESH" | "INVALID_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "TRAEFIK_MESH" | "OCTARINE" | "NETWORK_SERVICE_MESH" | "TANZU" | "OPEN_SERVICE_MESH" | "NGINX_SERVICE_MESH"} MeshNameType
+ * @typedef {"all_mesh" | "invalid_mesh" | "app_mesh" | "citrix_service_mesh" | "consul" | "istio" | "kuma" | "linkerd" | "traefik_mesh" | "octarine" | "network_service_mesh" | "tanzu" | "open_service_mesh" | "nginx_service_mesh"} MeshNameType
  */
 
 const initialState = {
