@@ -43,8 +43,8 @@ export const initServiceMeshEventsThunk = createAsyncThunk(
    * @param {ServiceMeshType} filter
    * @param {(dataPlaneData: {dataPlanesState: import("./serviceMeshesSlice").DataPlaneDataType}, controlPlaneData: {controlPlanesState: import("./serviceMeshesSlice").ControlPlaneDataType}) => void} dataCB
    */
-  async (filter, dataCB) => {
-    const response = await initServiceMeshEvents(filter, dataCB);
+  async (dataCB) => {
+    const response = await initServiceMeshEvents("istio", dataCB);
 
     return response;
   }
