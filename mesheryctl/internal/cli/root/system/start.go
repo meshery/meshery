@@ -67,9 +67,21 @@ var startCmd = &cobra.Command{
 		err = hc.RunPreflightHealthChecks()
 		if err != nil {
 			cmd.SilenceUsage = true
+			return err
 		}
-
-		return err
+		cfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		ctx, err := cfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
@@ -104,6 +116,7 @@ func start() error {
 	if err != nil {
 		return err
 	}
+	mesheryImageVersion := currCtx.GetVersion()
 
 	if utils.PlatformFlag != "" {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
@@ -116,6 +129,9 @@ func start() error {
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
+		if currCtx.GetChannel() == "stable" && currCtx.GetVersion() == "latest" {
+			mesheryImageVersion = "latest"
+		}
 
 		// download the docker-compose.yaml file corresponding to the current version
 		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
@@ -181,7 +197,7 @@ func start() error {
 					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
 				}
 
-				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), currCtx.GetVersion())
+				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
 			}
 			services[v] = temp
 			AllowedServices[v] = services[v]
@@ -192,11 +208,6 @@ func start() error {
 		if err != nil {
 			return err
 		}
-
-		//fmt.Println("Services", services);
-		//fmt.Println("RequiredAdapters", RequestedAdapters);
-		//fmt.Println("AllowedServices", AllowedServices);
-		//fmt.Println("version", utils.ViperCompose.GetString("version")) // Works here
 
 		//////// FLAGS
 		// Control whether to pull for new Meshery container images
@@ -317,7 +328,7 @@ func start() error {
 			return err
 		}
 
-		channel, version, err := utils.GetChannelAndVersion(currCtx)
+		channel, _, err := utils.GetChannelAndVersion(currCtx)
 		if err != nil {
 			return err
 		}
@@ -350,9 +361,21 @@ func start() error {
 				manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
 
 				// change version in meshery-deployment manifest
-				err = utils.ChangeManifestVersion(utils.MesheryDeployment, channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
+				if currCtx.GetVersion() == "latest" && currCtx.GetChannel() == "stable" {
+					mesheryImageVersion = "latest"
+				}
+
+				err = utils.ChangeManifestVersion(channel, mesheryImageVersion, filepath.Join(manifestFiles, utils.MesheryDeployment))
 				if err != nil {
 					return err
+				}
+
+				for _, adapter := range currCtx.Adapters {
+					adapterManifest := adapter + "-deployment.yaml"
+					err = utils.ChangeManifestVersion(channel, "latest", filepath.Join(manifestFiles, adapterManifest))
+					if err != nil {
+						return err
+					}
 				}
 			}
 		}

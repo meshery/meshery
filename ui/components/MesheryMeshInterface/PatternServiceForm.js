@@ -1,7 +1,9 @@
 // @ts-check
 import React from "react";
-import { Tab, Tabs, AppBar, Typography, IconButton } from "@material-ui/core";
+import { Tab, Tabs, AppBar, Typography, IconButton, Toolbar } from "@material-ui/core";
 import { Close, Delete } from "@material-ui/icons";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import Tooltip from '@material-ui/core/Tooltip';
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
 import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
@@ -107,12 +109,10 @@ function createPatternFromConfig(config, namespace, partialClean = false) {
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet,onChange, onSubmit, onDelete, namespace, renderAsTooltip }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, namespace, renderAsTooltip }) {
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {});
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {});
-
-  console.log({ settings, traits })
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
@@ -147,60 +147,68 @@ function PatternServiceForm({ formData, schemaSet,onChange, onSubmit, onDelete, 
       {!renderAsTooltip ? (<Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
       </Typography>) : (
-        <div style={{ background : "#00b39f", margin : "-10px -10px 0 -10px", padding : "5px", display : "flex" }}>
-          <p style={{ margin : "auto auto auto 10px", fontSize : "18px" }}>{schemaSet.workload.title}</p>
-          <IconButton onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
-            <Delete />
-          </IconButton>
-          <IconButton onClick={() => submitHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
-            <Close />
-          </IconButton>
-        </div>
+        <AppBar>
+          <Toolbar variant="dense" style={{ padding : "0 10px" }}>
+            <p style={{ margin : "auto auto auto 10px", fontSize : "18px" }}>{schemaSet.workload.title}</p>
+            {schemaSet?.workload?.description && (
+              <label htmlFor="help-button">
+                <Tooltip title={schemaSet?.workload?.description}>
+                  <IconButton component="span">
+                    <HelpOutlineIcon style={{ color : '#fff' }} />
+                  </IconButton>
+                </Tooltip>
+              </label>
+            )}
+            <IconButton  onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
+              <Delete style={{ color : "#ffffff" }} />
+            </IconButton>
+            <IconButton onClick={() => submitHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
+              <Close style={{ color : "#ffffff" }} />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
       )}
-      {!renderAsTooltip && (<AppBar position="static">
-        <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service">
-          <Tab label="Settings" {...a11yProps(0)} />
-          {renderTraits()
-            ? <Tab label="Traits" {...a11yProps(1)} />
-            : null}
-        </Tabs>
-      </AppBar>)}
-      {renderAsTooltip && renderTraits() && (
-        <AppBar style={{ background : 'inherit', boxShadow : 'none', color : 'black' }} position="static">
-          <Tabs TabIndicatorProps={{ style : { background : '#00b39f' } }} style={{ margin : 0 }} value={tab} onChange={handleTabChange} aria-label="Pattern Service">
-            <Tab label="Settings" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(0)} />
-            <Tab label="Traits" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(1)} />
+      <div style={{ maxHeight : '300px', marginTop : '48px', scrollbarWidth : 'thin', overflow : 'auto' }}>
+        {!renderAsTooltip && (<AppBar position="static">
+          <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service">
+            <Tab label="Settings" {...a11yProps(0)} />
+            {renderTraits()
+              ? <Tab label="Traits" {...a11yProps(1)} />
+              : null}
           </Tabs>
         </AppBar>)}
-      <TabPanel value={tab} index={0}>
-        <PatternService
-          type="workload"
-          formData={settings}
-          jsonSchema={schemaSet.workload}
-          onChange={(val) => {
-            onChange(
-              createPatternFromConfig(
-                { [getPatternAttributeName(schemaSet.workload)] : { settings : val, traits } }, namespace, true), "");
-            setSettings(val);
-          }}
-          onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits })}
-          onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits })}
-          renderAsTooltip={renderAsTooltip}
-        />
-      </TabPanel>
-      {renderTraits() ? (
-        <TabPanel value={tab} index={1}>
-          {schemaSet.traits?.map((trait) => (
-            <PatternService
-              formData={traits[getPatternAttributeName(trait)]}
-              type="trait"
-              jsonSchema={trait}
-              onChange={(val) => setTraits({ ...traits, [getPatternAttributeName(trait)] : val })}
-              renderAsTooltip={renderAsTooltip}
-            />
-          ))}
+        {renderAsTooltip && renderTraits() && (
+          <AppBar style={{ background : 'inherit', boxShadow : 'none', color : 'black' }} position="static">
+            <Tabs TabIndicatorProps={{ style : { background : '#00b39f' } }} style={{ margin : 0 }} value={tab} onChange={handleTabChange} aria-label="Pattern Service">
+              <Tab label="Settings" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(0)} />
+              <Tab label="Traits" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(1)} />
+            </Tabs>
+          </AppBar>)}
+        <TabPanel value={tab} index={0}>
+          <PatternService
+            type="workload"
+            formData={settings}
+            jsonSchema={schemaSet.workload}
+            onChange={setSettings}
+            onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits })}
+            onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits })}
+            renderAsTooltip={renderAsTooltip}
+          />
         </TabPanel>
-      ) : null}
+        {renderTraits() ? (
+          <TabPanel value={tab} index={1}>
+            {schemaSet.traits?.map((trait) => (
+              <PatternService
+                formData={traits[getPatternAttributeName(trait)]}
+                type="trait"
+                jsonSchema={trait}
+                onChange={(val) => setTraits({ ...traits, [getPatternAttributeName(trait)] : val })}
+                renderAsTooltip={renderAsTooltip}
+              />
+            ))}
+          </TabPanel>
+        ) : null}
+      </div>
     </div>
   );
 }

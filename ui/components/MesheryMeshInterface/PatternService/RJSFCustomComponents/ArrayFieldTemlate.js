@@ -30,7 +30,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
   }
 
   const id = `${idSchema.$id}__title`;
-  return <h3>{title}</h3>;
+  return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
   // return <TitleField id={id} title={title} required={required} />;
 };
 
@@ -139,7 +139,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   return (
     <Paper elevation={0}>
-      <Box p={2}>
+      <Box p={1}>
         <Grid item container alignItems="center" xs={12} justify="space-between" style={{ marginBottom : "0.3rem" }}>
           <Grid item xs={4}>
             <ArrayFieldTitle

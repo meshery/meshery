@@ -5,7 +5,7 @@ export default function fetchControlPlanes(variables) {
   const vars = { filter : { "type" : variables.type } };
 
   const query = graphql`
-    query ControlPlanesQuery($filter: ControlPlaneFilter) {
+    query ControlPlanesQuery($filter: ServiceMeshFilter) {
       controlPlanesState: getControlPlanes(filter: $filter) {
         name
         members {

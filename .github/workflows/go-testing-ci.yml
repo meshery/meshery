@@ -35,6 +35,7 @@ jobs:
       - name: Run coverage
         run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
+        if: github.repository == 'meshery/meshery'
         uses: codecov/codecov-action@v1
         with:
           files: ./coverage.txt
@@ -60,6 +61,7 @@ jobs:
       - name: Run coverage
         run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
+        if: github.repository == 'meshery/meshery'
         uses: codecov/codecov-action@v1
         with:
           files: ./coverage.txt

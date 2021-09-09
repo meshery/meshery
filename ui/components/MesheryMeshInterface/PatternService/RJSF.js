@@ -11,8 +11,11 @@ const Form = withTheme(MaterialUITheme);
 const muiTheme = createTheme({
   palette : {
     primary : {
-      main : '#00b39f',
+      main : '#607d8b',
     },
+  },
+  typography : {
+    fontSize : 13,
   },
   props : {
     MuiTextField : {
@@ -20,10 +23,112 @@ const muiTheme = createTheme({
       margin : 'dense',
     },
   },
+  overrides : {
+    MuiButton : {
+      textSecondary : {
+        color : '#00b39f',
+        "&:hover" : "00b39f"
+      }
+    },
+    MuiBox : {
+      root : {
+        marginTop : 0
+      }
+    },
+    MuiDivider : {
+      root : {
+        height : '0.5px'
+      }
+    },
+    MuiFormLabel : {
+      root : {
+        color : "#333",
+        fontSize : '0.8rem',
+        textTransform : 'capitalize',
+      }
+    },
+    MuiTypography : {
+      body1 : {
+        fontSize : '0.8rem'
+      },
+      h5 : {
+        textTransform : 'capitalize',
+        fontSize : '1.2rem',
+      }
+    },
+    MuiGrid : {
+      root : {
+        "& > *" : {
+          border : 'none !important'
+        },
+        marginTop : '0.2rem !important',
+      },
+      'spacing-xs-2' : {
+        padding : 0,
+        '& > *' : {
+          paddingTop : '0 !important',
+          paddingBottom : '0 !important'
+        }
+
+      }
+    }
+  }
 });
 
 function deleteTitleFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, title : "" };
+}
+
+function deleteDescriptionFromJSONSchema(jsonSchema) {
+  return { ...jsonSchema, description : "" };
+}
+
+function camelCaseToCapitalize(text){
+  const result = text.replace(/([A-Z])/g, " $1");
+
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
+function addTitleToPropertiesJSONSchema(jsonSchema) {
+  const newProperties = jsonSchema?.properties
+
+  if (newProperties && typeof newProperties === 'object'){
+    Object.keys(newProperties).map(key => {
+      if (Object.prototype.hasOwnProperty.call(newProperties, key)){
+        let defaultValue;
+        let types = []
+        if (!Array.isArray(newProperties[key].type) && Object.prototype.hasOwnProperty.call(newProperties[key], 'type')){
+          types.push(newProperties[key].type)
+        } else {
+          types.push(...newProperties[key].type)
+        }
+        if (types.includes('null')){
+          defaultValue = null
+        } else if (types.includes('integer')){
+          defaultValue = 0
+        } else if (types.includes('string')){
+          defaultValue = ''
+        } else if (types.includes('array')){
+          defaultValue = []
+        }
+        newProperties[key] = {
+          ...newProperties[key],
+          title : camelCaseToCapitalize(key),
+          default : defaultValue
+        }
+        // if (typeof newProperties[key] === 'object' && Object.prototype.hasOwnProperty.call(newProperties[key], 'properties')){
+        //   newProperties[key] = {
+        //     ...newProperties[key],
+        //     properties : addTitleToPropertiesJSONSchema(newProperties[key])
+        //   }
+        // }
+      }
+
+    })
+
+    return { ...jsonSchema, properties : newProperties };
+  }
+  return undefined
 }
 
 function RJSFButton({ handler, text, ...restParams }) {
@@ -51,7 +156,7 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
     <>
       {!renderAsTooltip ? (
         <Form
-          schema={hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema}
+          schema={hideTitle ? deleteTitleFromJSONSchema(deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))) : deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))}
           idPrefix={jsonSchema?.title}
           onChange={(e) => setData(e.formData)}
           formData={data}
@@ -64,11 +169,10 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
         </Form>) : (
         <MuiThemeProvider theme={muiTheme}>
           <Form
-            schema={hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema}
+            schema={hideTitle ? deleteTitleFromJSONSchema(deleteDescriptionFromJSONSchema(jsonSchema)) : deleteDescriptionFromJSONSchema(jsonSchema)}
             idPrefix={jsonSchema?.title}
             onChange={(e) => setData(e.formData)}
             formData={data}
-            liveValidate
             showErrorList={false}
             ArrayFieldTemplate={ArrayFieldTemplate}
             additionalMetaSchemas={[JS4]}
