@@ -46,15 +46,12 @@ func ListernToEvents(log logger.Handler,
 	broadcast broadcast.Broadcaster,
 ) {
 	var wg sync.WaitGroup
-	wg.Wait()
-	for {
-		select {
-		case msg := <-datach:
-			wg.Add(1)
-			meshsyncLivenessChannel <- struct{}{}
-			go persistData(*msg, log, handler, meshsyncCh, operatorSyncChannel, controlPlaneSyncChannel, broadcast, &wg)
-		}
+	for msg := range datach {
+		wg.Add(1)
+		go persistData(*msg, log, handler, meshsyncCh, operatorSyncChannel, controlPlaneSyncChannel, broadcast, &wg)
 	}
+
+	wg.Wait()
 }
 
 // persistData - scale this function with the number of events to persist
