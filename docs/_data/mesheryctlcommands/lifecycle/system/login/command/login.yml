@@ -1,4 +1,0 @@
-name: login
-description:  Authenticate to a Meshery Server
-usage: |
-    mesheryctl system login

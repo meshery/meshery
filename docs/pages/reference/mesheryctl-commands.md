@@ -68,7 +68,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   {% assign command2 = site.data.mesheryctlcommands.cmds.system %}
     <tr>
 
-      <td rowspan=18><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command2.name }}</a></td>
+      <td rowspan=20><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command2.name }}</a></td>
 
       <td></td>
       <td></td>
@@ -186,6 +186,30 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       <td>{{ subcommand9.description }}</td>
     </tr>
     {% for flag_hash in subcommand9.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}  
+    {% assign subcommand10 = command2.subcommands.login %}
+    <tr>
+      <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/status">{{ subcommand10.name }}</a></td>
+      <td></td>
+      <td>{{ subcommand10.description }}</td>
+    </tr>
+    {% for flag_hash in subcommand10.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}  
+    {% assign subcommand11 = command2.subcommands.logout %}
+    <tr>
+      <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/status">{{ subcommand11.name }}</a></td>
+      <td></td>
+      <td>{{ subcommand11.description }}</td>
+    </tr>
+    {% for flag_hash in subcommand11.flags %}{% assign flag = flag_hash[1] %}
       <tr>
         <td>{{ flag.name }}</td>
         <td>{{ flag.description }}</td>

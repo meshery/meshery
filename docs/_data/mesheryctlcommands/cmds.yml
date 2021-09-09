@@ -162,6 +162,19 @@ system:
       usage:
           mesheryctl system status
 
+    login:
+      name: login
+      description: Authenticate to a Meshery Server
+      usage:
+        mesheryctl system login
+    
+    logout:
+      name: logout
+      description: Remove authentication for Meshery Server
+      usage:
+        mesheryctl system logout
+    
+
 system-channel:
   name: system-channel
   description: Switch between release channels.

@@ -1,4 +1,0 @@
-name: logout
-description: Remove authentication for Meshery Server 
-usage: |
-    mesheryctl system logout
