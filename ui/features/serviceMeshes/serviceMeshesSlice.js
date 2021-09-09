@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { initServiceMeshEvents } from "./helpers";
 
 /**
    this feature/module handles all things related to service meshes like, getting the control plane data, proxy data of service mesh, 
@@ -7,30 +8,95 @@ import { createSlice } from "@reduxjs/toolkit";
   */
 
 // eslint-disable-next-line
-const mesh = "istio" | "kuma" | "linkerd"; //  get this data from meshery adapter, basically which adapters are active
+
+/**
+ * @typedef {{meshName: string, members: Array.<{name: string, version: string, component: string, namespace: string}>}} ControlPlaneDataType
+ */
+
+/**
+ * @typedef {{controlPlaneMemberName : string, containerName: string, image: string, status : {containerStatusName: string, image: string, state: string, lastState: string, restartCount: string | number, ready: boolean | string, started: Date | string | boolean, imageID: string, containerID: string}, ports: Array.<{name:string, containerPort: string, protocol: string}>, resources: Array.<{}>}} ProxyType
+ */
+
+/**
+ * @typedef {{meshName: string, proxies: Array.<ProxyType>}} DataPlaneDataType
+ */
+
+/**
+ * @typedef {{name: MeshNameType, controlPlaneData: ControlPlaneDataType , dataPlaneData: DataPlaneDataType , adapterId: string }} ServiceMeshType
+ */
+
+/**
+ * @typedef {"ALL_MESH" | "INVALID_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "TRAEFIK_MESH" | "OCTARINE" | "NETWORK_SERVICE_MESH" | "TANZU" | "OPEN_SERVICE_MESH" | "NGINX_SERVICE_MESH"} MeshNameType
+ */
 
 const initialState = {
-  istio: {
-    controlPlaneData: {},
-    dataPlaneData: {},
-    addons: {},
-
-    // and other relavant data
-  },
+  /** @type {Array<ServiceMeshType>} */
+  meshes: [],
+  loading: false,
+  /** @type {import("../provider/providerSlice").Error} */
+  error: {},
 };
+
+export const initServiceMeshEventsThunk = createAsyncThunk(
+  "serviceMeshes/initServiceMeshEvents",
+  /**
+   * @param {ServiceMeshType} filter
+   * @param {(dataPlaneData: {dataPlanesState: import("./serviceMeshesSlice").DataPlaneDataType}, controlPlaneData: {controlPlanesState: import("./serviceMeshesSlice").ControlPlaneDataType}) => void} dataCB
+   */
+  async (filter, dataCB) => {
+    const response = await initServiceMeshEvents(filter, dataCB);
+
+    return response;
+  }
+);
 
 const serviceMeshesSlice = createSlice({
   name: "serviceMeshes",
   initialState,
   reducers: {
-    // reducers to update the state in this slice
+    updateServiceMeshesData: (state, action) => {
+      /** @type {Array.<ControlPlaneDataType>} */
+      const controlPlanesData = action.payload.controlPlanesData?.controlPlanesState;
+
+      /** @type {Array.<DataPlaneDataType>} */
+      const dataPlanesData = action.payload.dataPlanesData?.dataPlanesState;
+
+      controlPlanesData?.map((mesh) => {
+        const currentMesh = state.meshes.find((_mesh) => _mesh.name === mesh.meshName);
+        const dataPlaneDataForCurrentMesh = dataPlanesData.find((_mesh) => _mesh.meshName === mesh.meshName);
+        // TODO: write the logic for finding adapter ID
+        if (!currentMesh)
+          state.meshes.push({
+            name: mesh.meshName,
+            controlPlaneData: mesh,
+            dataPlaneData: dataPlaneDataForCurrentMesh,
+            adapterId: "",
+          });
+        else {
+          currentMesh.controlPlaneData = mesh;
+          if (dataPlaneDataForCurrentMesh) currentMesh.dataPlaneData = dataPlaneDataForCurrentMesh;
+        }
+      });
+
+      return state;
+    },
   },
-  extraReducers: {
-    // for dealing with thunk and observable
+  extraReducers: (builder) => {
+    builder.addCase(initServiceMeshEventsThunk.fulfilled, (state) => {
+      state.loading = false;
+      return state;
+    });
+
+    //proper error handling has to be done for  `initServiceMeshEventsThunk` handler
+    builder.addCase(initServiceMeshEventsThunk.rejected, (state, action) => {
+      state.loading = false;
+      state.error.description = action.error;
+      return state;
+    });
   },
 });
 
 export default serviceMeshesSlice.reducer;
-// export const {} = serviceMeshesSlice.actions;
+export const { updateServiceMeshesData } = serviceMeshesSlice.actions;
 
 // selectors should be written and exported
