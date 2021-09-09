@@ -1,20 +1,40 @@
 import React from 'react';
-import { NoSsr,GridList  } from '@material-ui/core';
+import { NoSsr } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
 } from '../lib/chartjs-formatter';
 import bb, { areaStep, line } from 'billboard.js'
 
-const styles = (theme) => ({ title : { textAlign : 'left',
-  fontSize : theme.spacing(1.75),
-  marginBottom : theme.spacing(1) }, });
+
+const styles = (theme) => ({
+  title : {
+    textAlign : 'center',
+    fontSize : theme.spacing(1.75),
+    marginBottom : theme.spacing(1)
+  },
+  percentiles : {
+    height : "100%",
+    justifyContent : "center",
+    display : "flex",
+    position : "relative",
+    alignItems : "center",
+    transform : "translateY(-30%)"
+  },
+  chart : {
+    width : "calc( 100% - 150px )"
+  },
+  chartWrapper : {
+    display : "flex", flexWrap : "no-wrap", justifyContent : "center", alignItems : "center"
+  }
+});
 
 class MesheryChart extends React.Component {
   constructor(props) {
     super(props);
     this.chartRef = null;
     this.chart = null;
+    this.percentileRef=null;
   }
 
   singleChart = (data) => {
@@ -140,7 +160,12 @@ class MesheryChart extends React.Component {
           tooltip : { show : true, },
         };
         if (!self.props.hideTitle) {
-          self.titleRef = chartData.options.title.text;
+          if (this.props.data.length == 1) {
+            self.titleRef.innerText = chartData.options.title.text.slice(0,2).join('\n') +"\n"+ chartData.options.title.text[2].split('\n')[0];
+            if (chartData.options.title.text[2])self.percentileRef.innerText=chartData.options.title.text[2].split('\n')[1].split('|').join('\n')
+          } else {
+            self.titleRef.innerText=chartData.options.title.text.join('\n')
+          }
         }
         self.chart = bb.generate(chartConfig);
       } else {
@@ -190,13 +215,9 @@ class MesheryChart extends React.Component {
         });
       }
 
-      // if(chartData.options.scales.xAxes){
-      // chartData.options.scales.xAxes.forEach((ya) => {
       axis.x = {
         show : true,
         label : {
-          // text: ya.scaleLabel.labelString,
-          // position: 'outer-middle',
         },
         type : 'category',
         categories,
@@ -217,107 +238,22 @@ class MesheryChart extends React.Component {
         });
       }
 
-      // chartConfig.data.colors[chartConfig.data.columns[1][0]] = panel.sparkline.lineColor;
-      // chartConfig.color = {
-      //     pattern: [
-      //       panel.sparkline.fillColor,
-      //     ]
-      //   };
-
       if (self.chartRef && self.chartRef !== null) {
         const chartConfig = {
-          // oninit: function(args){
-          //   console.log(JSON.stringify(args));
-          // },
-          // title: {
-          //   text: chartData.options.title.text.join('\n'),
-          // },
           bindto : self.chartRef,
           data : {
-            // x: 'x',
-            // xs: xAxisTracker,
-            // xFormat: self.bbTimeFormat,
             columns : [...xAxes, ...yAxes],
             colors,
             axes,
-            // types,
-            // groups,
-            // type: 'area',
           },
           axis,
-          // zoom: {
-          //   enabled: {
-          //     type: "drag"
-          //   },
-          //   onzoomend: self.updateDateRange(),
-          // },
-          // grid: grid,
           legend : { show : true,
-            // position: 'inset',
-            // inset: {
-            //   // anchor: 'bottom-left',
-            //   // x: 125,
-            //   // y: -200,
-            //   anchor: 'top-right',
-            //   // x: 125,
-            //   y: -5,
-            //   step: 1,
-            // },
             position : 'right', },
-          // point: {
-          //   show: false
-          // },
           point : { r : 0,
             focus : { expand : { r : 5, }, }, },
           tooltip : { show : true,
-            // linked: !inDialog,
-            // format: {
-            //   title: function(x) {
-            //     // return d3.timeFormat(self.bbTimeFormat)(x);
-            //     return moment(x).format(self.timeFormat);
-            //   }
-            // }
           },
-          // area: {
-          //   linearGradient: true
-          // },
         };
-
-        // if(self.panelType === 'sparkline' && panel.sparkline && panel.sparkline.lineColor && panel.sparkline.fillColor){
-        //   // cd.datasets[datasetInd].borderColor = panel.sparkline.lineColor;
-        //   // cd.datasets[datasetInd].backgroundColor = panel.sparkline.fillColor;
-
-        //   const dataLength = chartConfig.data.columns && chartConfig.data.columns.length > 1? chartConfig.data.columns[1].length:0; // 0 is for x axis
-        //   if(dataLength > 0){
-        //     if(typeof chartConfig.data.colors === 'undefined'){
-        //       chartConfig.data.colors = {};
-        //     }
-        //     chartConfig.data.colors[chartConfig.data.columns[1][0]] = panel.sparkline.lineColor;
-
-        //     if(dataLength > 1){
-        //       let content = '';
-        //       if(panel.format.toLowerCase().startsWith('percent')){
-        //         const mulFactor = panel.format.toLowerCase() === 'percentunit'?100:1;
-        //         if(!isNaN(chartConfig.data.columns[1][dataLength-1])){
-        //           const tk = (chartConfig.data.columns[1][dataLength-1] * mulFactor).toFixed(2);
-        //           content = `${tk}%`;
-        //         }
-        //       } else {
-        //         content = `${chartConfig.data.columns[1][dataLength-1]} ${panel.format}`;
-        //       }
-        //       chartConfig.title = {
-        //         text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" + content, // for sparkline, we want to print the value as title
-        //       };
-        //     }
-        //   }
-
-        //   chartConfig.color = {
-        //     pattern: [
-        //       panel.sparkline.fillColor,
-        //     ]
-        //   };
-
-        // }
         if (!self.props.hideTitle) {
           self.titleRef = chartData.options.title.text;
         }
@@ -349,31 +285,21 @@ class MesheryChart extends React.Component {
     return (
       <NoSsr>
         <div>
-          <pre >
-            <GridList cols={3} cellHeight={'auto'} spacing={2}>
-              {this.titleRef?.map(item => (
-                <div className={classes.title}>
-                  <b>{item.substr(0, item.indexOf(':'))}:</b>
-                  {item.substr(item.indexOf(':')+1)}
-                </div>
-              ))}
-            </GridList>
-          </pre>
-          <div ref={(ch) => {
-            this.chartRef = ch;
-            if (this.props.data.length > 2) {
-              self.processMultiChartData(chartData);
-            } else {
-              self.processChartData(chartData);
-            }
-          }}
-          />
-
-          {/* <div style={{
-            minHeight: '300px',
-          }}>
-          <Line data={chartData.data} options={chartData.options} />
-          </div> */}
+          <div ref={(ch) => this.titleRef = ch} className={classes.title} />
+          <div className={classes.chartWrapper} >
+            <div className={classes.chart} ref={(ch) => {
+              this.chartRef = ch;
+            }}
+            ></div>
+            <div className={classes.percentiles} ref={(ch) => {
+              this.percentileRef=ch;
+              if (this.props.data.length > 2) {
+                self.processMultiChartData(chartData);
+              } else {
+                self.processChartData(chartData);
+              }
+            } } ></div>
+          </div>
         </div>
       </NoSsr>
     );
