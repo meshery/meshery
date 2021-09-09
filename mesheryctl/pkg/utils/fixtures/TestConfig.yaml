@@ -8,7 +8,7 @@ contexts:
     token: Default
     version: v0.4.2
   local:
-    endpoint: http://localhost:9081
+    endpoint: http://localhost:55555
     token: Default
     platform: docker
     adapters:

@@ -21,7 +21,7 @@ func SetupContextEnv(t *testing.T) {
 		t.Error("unable to locate meshery directory")
 	}
 	viper.Reset()
-	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
+	viper.SetConfigFile(path + "/../../../../pkg/utils/fixtures/TestConfig.yaml")
 	//fmt.Println(viper.ConfigFileUsed())
 	err = viper.ReadInConfig()
 	if err != nil {

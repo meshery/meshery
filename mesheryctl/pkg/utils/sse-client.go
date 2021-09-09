@@ -92,19 +92,6 @@ func loop(reader *bufio.Reader, events chan Event) {
 	}
 }
 
-func get(rawurl string) (*http.Response, error) {
-	resp, err := http.Get(rawurl)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("got response status code %d", resp.StatusCode)
-	}
-
-	return resp, nil
-}
-
 func hasPrefix(s []byte, prefix string) bool {
 	return bytes.HasPrefix(s, []byte(prefix))
 }

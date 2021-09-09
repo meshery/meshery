@@ -135,15 +135,15 @@ func (tf *GoldenFile) WriteInByte(content []byte) {
 	}
 }
 
-// use default context /pkg/utils/TestConfig.yaml
+// use default context /pkg/utils/fixtures/TestConfig.yaml
 func SetupContextEnv(t *testing.T) {
 	path, err := os.Getwd()
 	if err != nil {
 		t.Error("unable to locate meshery directory")
 	}
 	viper.Reset()
-	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
-	DefaultConfigPath = path + "/../../../../pkg/utils/TestConfig.yaml"
+	viper.SetConfigFile(path + "/../../../../pkg/utils/fixtures/TestConfig.yaml")
+	DefaultConfigPath = path + "/../../../../pkg/utils/fixtures/TestConfig.yaml"
 	//fmt.Println(viper.ConfigFileUsed())
 	err = viper.ReadInConfig()
 	if err != nil {
