@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: getnighthawk
+spec:
+  ports:
+    - protocol: TCP
+      port: 8443
+      targetPort: 8443
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: getnighthawk
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: getnighthawk
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/name: getnighthawk
+    spec:
+      containers:
+      - image: layer5/getnighthawk:latest
+        imagePullPolicy: Always
+        name: getnighthawk
+        command: ["nighthawk_service"]
+        ports:
+        - containerPort: 8443
+      restartPolicy: Always
+status: {}
