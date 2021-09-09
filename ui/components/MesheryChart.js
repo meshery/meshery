@@ -1,5 +1,5 @@
 import React from 'react';
-import { NoSsr,GridList  } from '@material-ui/core';
+import { NoSsr } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
