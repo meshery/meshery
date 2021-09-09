@@ -19,7 +19,7 @@ import (
 
 func init() {
 
-	// get current directory
+	// Get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		log.Fatal("Not able to get current working directory")
@@ -28,9 +28,10 @@ func init() {
 	basePath := filepath.Dir(filename)
 	SetFileLocationTesting(basePath)
 
+	// Create required directories for testing, if not already existing
 	manifestsFolder := filepath.Join(MesheryFolder, "manifests")
 
-	err := os.MkdirAll(manifestsFolder, 0755)
+	err := os.MkdirAll(manifestsFolder, os.ModePerm)
 	if err != nil {
 		log.Fatal("Failed to create test directory")
 	}
@@ -44,7 +45,7 @@ func TestChangePlatform(t *testing.T) {
 	}
 
 	currDir := GetBasePath(t)
-	fixtureDir := currDir + "/fixtures"
+	fixtureDir := currDir + "/fixtures/platform"
 	fixture := fixtureDir + "/TestConfig.yaml"
 
 	// Read and write to the test config file
@@ -105,7 +106,7 @@ func TestChangePlatform(t *testing.T) {
 			actualFileContent := string(actualContent)
 
 			// Expected file contents
-			testdataDir := currDir + "/testdata"
+			testdataDir := currDir + "/testdata/platform"
 
 			golden := NewGoldenFile(t, tt.golden, testdataDir)
 			if *update {
@@ -118,9 +119,88 @@ func TestChangePlatform(t *testing.T) {
 			}
 
 			// Repopulating Expected yaml
-			if err := Populate(currDir+"/fixtures/original/TestConfig.yaml", fixture); err != nil {
+			if err := Populate(currDir+"/fixtures/platform/original/TestConfig.yaml", fixture); err != nil {
 				t.Error(err, "Could not complete test. Unable to repopulate fixture")
 			}
+		})
+	}
+}
+
+func TestChangeConfigEndpoint(t *testing.T) {
+
+	// Setup path to test config file
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	testConfigPath := currDir + "/fixtures/platform/TestConfig.yaml"
+
+	SetupCustomContextEnv(t, testConfigPath)
+
+	mctlCfg, _ := config.GetMesheryCtl(viper.GetViper())
+
+	tests := []struct {
+		name            string
+		ctxName         string
+		endpointAddress string
+		golden          string
+		wantErr         bool
+	}{
+		{
+			name:            "ChangeConfigEndpoint1",
+			ctxName:         "local",
+			endpointAddress: "http://localhost:55555",
+			golden:          "changeconfigendpoint.expect.golden",
+			wantErr:         false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			err := mctlCfg.SetCurrentContext(tt.ctxName)
+			if err != nil {
+				t.Fatal("error setting context", err)
+			}
+
+			currCtx, err := mctlCfg.GetCurrentContext()
+			if err != nil {
+				t.Fatal("error processing context from config", err)
+			}
+
+			currCtx.SetEndpoint(tt.endpointAddress)
+
+			if err := ChangeConfigEndpoint(tt.ctxName, currCtx); (err != nil) != tt.wantErr {
+				t.Fatalf("ChangeConfigEndpoint() error = %v, wantErr %v", err, tt.wantErr)
+			}
+
+			// Actual file contents
+			actualContent, err := ioutil.ReadFile(testConfigPath)
+			if err != nil {
+				t.Fatal("Error reading actual file contents: ", err)
+			}
+
+			actualFileContent := string(actualContent)
+
+			// Expected file contents
+			testdataDir := currDir + "/testdata/platform"
+
+			golden := NewGoldenFile(t, tt.golden, testdataDir)
+			if *update {
+				golden.Write(actualFileContent)
+			}
+			expectedFileContent := golden.Load()
+
+			if expectedFileContent != actualFileContent {
+				t.Errorf("Expected file content \n[%v]\n and actual file content \n[%v]\n don't match", expectedFileContent, actualFileContent)
+			}
+
+			// Repopulating Expected yaml
+			if err := Populate(currDir+"/fixtures/platform/original/TestConfig.yaml", testConfigPath); err != nil {
+				t.Error(err, "Could not complete test. Unable to repopulate fixture")
+			}
+
 		})
 	}
 }
@@ -161,7 +241,7 @@ func TestGetManifestURL(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			// Read fixture
-			file, _ := ioutil.ReadFile("fixtures/" + tt.fixture)
+			file, _ := ioutil.ReadFile("fixtures/platform/" + tt.fixture)
 			manifest := Manifest{}
 			_ = json.Unmarshal([]byte(file), &manifest)
 
@@ -170,12 +250,17 @@ func TestGetManifestURL(t *testing.T) {
 			got := GetManifestURL(tt.args.manifest, tt.args.rawManifestsURL)
 
 			// Read golden file
-			file, _ = ioutil.ReadFile("testdata/" + tt.golden)
-			want := string(file)
+			golden := NewGoldenFile(t, tt.golden, "testdata/platform/")
+			if *update {
+				golden.Write(got)
+			}
+
+			want := golden.Load()
 
 			if got != want {
 				t.Errorf("GetManifestURL() = %v, want %v", got, want)
 			}
+
 		})
 	}
 }
@@ -201,16 +286,14 @@ func TestGetPods(t *testing.T) {
 			client, err := meshkitkube.New([]byte(""))
 
 			if err != nil {
-				t.Errorf("Error in creating kubernetes client in GetPods() test")
-				return
+				t.Fatalf("Error in creating kubernetes client in GetPods() test")
 			}
 
 			// List the pods in the MesheryNamespace
 			got, err := GetPods(client, tt.namespace)
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("GetPods() error = %v, wantErr %v", err, tt.wantErr)
-				return
+				t.Fatalf("GetPods() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			// check return type
@@ -220,7 +303,7 @@ func TestGetPods(t *testing.T) {
 
 			// check non nil
 			if got == nil {
-				t.Errorf("GetPods() error: got nil PodList")
+				t.Fatalf("GetPods() error: got nil PodList")
 			}
 
 		})
@@ -258,63 +341,6 @@ func TestIsPodRequired(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := IsPodRequired(tt.args.requiredPods, tt.args.pod); got != tt.want {
 				t.Errorf("IsPodRequired() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestChangeConfigEndpoint(t *testing.T) {
-	type args struct {
-		currCtx string
-		ctx     *config.Context
-	}
-
-	// Setup path to test config file
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
-	testConfigPath := currDir + "/fixtures/TestConfig.yaml"
-
-	SetupCustomContextEnv(t, testConfigPath)
-
-	mctlCfg, _ := config.GetMesheryCtl(viper.GetViper())
-
-	err := mctlCfg.SetCurrentContext("local")
-	if err != nil {
-		t.Error("error setting context", err)
-	}
-
-	currCtx, err := mctlCfg.GetCurrentContext()
-	if err != nil {
-		t.Error("error processing context from config", err)
-	}
-
-	endpoint_address := "http://localhost:55555"
-	currCtx.SetEndpoint(endpoint_address)
-
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		{
-			name: "ChangeConfigEndpoint1",
-			args: args{
-				currCtx: mctlCfg.CurrentContext,
-				ctx:     currCtx,
-			},
-			wantErr: false,
-		},
-		// Can also test with context gke, should give no change since platform isnt docker or kubernetes
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-
-			if err := ChangeConfigEndpoint(tt.args.currCtx, tt.args.ctx); (err != nil) != tt.wantErr {
-				t.Errorf("ChangeConfigEndpoint() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
@@ -377,7 +403,7 @@ func TestDownloadManifests(t *testing.T) {
 			actualFileContent := string(actualContent)
 
 			// Expected file contents
-			testdataDir := currDir + "/testdata"
+			testdataDir := currDir + "/testdata/platform"
 
 			golden := NewGoldenFile(t, tt.golden, testdataDir)
 			if *update {
@@ -469,7 +495,7 @@ func TestDownloadOperatorManifest(t *testing.T) {
 			}
 
 			// Expected file contents
-			testdataDir := currDir + "/testdata/downloadoperatormanifest"
+			testdataDir := currDir + "/testdata/platform/downloadoperatormanifest"
 
 			for i, golden := range tt.goldens {
 
