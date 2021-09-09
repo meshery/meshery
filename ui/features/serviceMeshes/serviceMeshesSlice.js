@@ -10,7 +10,7 @@ import { initServiceMeshEvents } from "./helpers";
 // eslint-disable-next-line
 
 /**
- * @typedef {{meshName: string, members: Array.<{name: string, version: string, component: string, namespace: string}>}} ControlPlaneDataType
+ * @typedef {{name: string, members: Array.<{name: string, version: string, component: string, namespace: string}>}} ControlPlaneDataType
  */
 
 /**
@@ -18,7 +18,7 @@ import { initServiceMeshEvents } from "./helpers";
  */
 
 /**
- * @typedef {{meshName: string, proxies: Array.<ProxyType>}} DataPlaneDataType
+ * @typedef {{name: string, proxies: Array.<ProxyType>}} DataPlaneDataType
  */
 
 /**
@@ -62,12 +62,12 @@ const serviceMeshesSlice = createSlice({
       const dataPlanesData = action.payload.dataPlanesData?.dataPlanesState;
 
       controlPlanesData?.map((mesh) => {
-        const currentMesh = state.meshes.find((_mesh) => _mesh.name === mesh.meshName);
-        const dataPlaneDataForCurrentMesh = dataPlanesData.find((_mesh) => _mesh.meshName === mesh.meshName);
+        const currentMesh = state.meshes.find((_mesh) => _mesh.name === mesh.name);
+        const dataPlaneDataForCurrentMesh = dataPlanesData.find((_mesh) => _mesh.name === mesh.name);
         // TODO: write the logic for finding adapter ID
         if (!currentMesh)
           state.meshes.push({
-            name: mesh.meshName,
+            name: mesh.name,
             controlPlaneData: mesh,
             dataPlaneData: dataPlaneDataForCurrentMesh,
             adapterId: "",
