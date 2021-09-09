@@ -1,11 +1,11 @@
 import React from 'react';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr,GridList  } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
 } from '../lib/chartjs-formatter';
-
 import bb, { areaStep, line } from 'billboard.js'
+
 
 const styles = (theme) => ({
   title : {
@@ -255,7 +255,7 @@ class MesheryChart extends React.Component {
           },
         };
         if (!self.props.hideTitle) {
-          self.titleRef.innerText = chartData.options.title.text.join('\n');
+          self.titleRef = chartData.options.title.text;
         }
         self.chart = bb.generate(chartConfig);
       }

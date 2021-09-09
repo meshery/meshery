@@ -208,9 +208,9 @@ const styles = (theme) => ({
     '&:hover' : { color : "#4fc3f7", }
   },
   collapsed : { transform : 'rotate(180deg) translateX(-3px)', },
-  collapsedHelpButton : { height : '30px',
+  collapsedHelpButton : { height : '1.45rem',
     marginTop : '-4px',
-    transform : 'translateX(-1px)' },
+    transform : 'translateX(0px)' },
   rightTranslate : { transform : 'translateX(0.5px)' }
 });
 
@@ -438,6 +438,7 @@ class Navigator extends React.Component {
       showHelperButton : false,
       capabilities : [],
       openItems : [],
+      hoveredId : null,
     };
   }
 
@@ -848,6 +849,8 @@ class Navigator extends React.Component {
                       path === href && classes.itemActiveItem
                     )}
                     onClick={() => this.toggleItemCollapse(childId)}
+                    onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
+                    onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }): null}
                   >
                     <Link href={link
                       ? href
@@ -860,7 +863,15 @@ class Navigator extends React.Component {
                           disableHoverListener={!isDrawerCollapsed}
                           disableTouchListener={!isDrawerCollapsed}
                         >
-                          <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
+                            <ExpandMoreIcon
+                              onClick={() => this.toggleItemCollapse(childId)}
+                              className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })}
+                            /> :
+                            <ListItemIcon className={classes.listIcon}>
+                              {icon}
+                            </ListItemIcon>
+                          }
                         </Tooltip>
                         <ListItemText
                           className={isDrawerCollapsed
@@ -880,7 +891,7 @@ class Navigator extends React.Component {
                         : {}}
                     />
                   </ListItem>
-                  <Collapse in={isDrawerCollapsed || this.state.openItems.includes(childId)}>
+                  <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679", opacity : "100%" }}>
                     {this.renderChildren(childId, children, 1)}
                   </Collapse>
                 </React.Fragment>
@@ -970,7 +981,7 @@ class Navigator extends React.Component {
               <FontAwesomeIcon
                 icon={faChevronCircleLeft}
                 fixedWidth
-                color="#FFFFFF"
+                color="#eeeeee"
                 size="lg"
                 alt="Sidebar collapse toggle icon"
               />

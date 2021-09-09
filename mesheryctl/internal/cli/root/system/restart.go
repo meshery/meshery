@@ -19,7 +19,6 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
@@ -44,7 +43,7 @@ var restartCmd = &cobra.Command{
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.Wrapf(err, "failed to initialize healthchecker")
+			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -65,20 +64,20 @@ func restart() error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		return ErrProcessingMctlConfig(err)
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
 	if tempContext != "" {
 		err = mctlCfg.SetCurrentContext(tempContext)
 		if err != nil {
-			return errors.Wrap(err, "failed to set temporary context")
+			return ErrSettingTemporaryContext(err)
 		}
 	}
 
 	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
-		return err
+		return ErrRetrievingCurrentContext(err)
 	}
 
 	currPlatform := currCtx.GetPlatform()
@@ -86,11 +85,11 @@ func restart() error {
 	switch currPlatform {
 	case "docker":
 		if err := stop(); err != nil {
-			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
+			return ErrRestartMeshery(err)
 		}
 
 		if err := start(); err != nil {
-			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
+			return ErrRestartMeshery(err)
 		}
 
 	case "kubernetes":
@@ -100,7 +99,7 @@ func restart() error {
 		}
 		if !running { // Meshery is not running
 			if err := start(); err != nil {
-				return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
+				return ErrRestartMeshery(err)
 			}
 		} else {
 			// create a kubernetes client

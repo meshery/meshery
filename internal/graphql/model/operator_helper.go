@@ -84,9 +84,9 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 		return controllers, ErrMesheryClient(err)
 	}
 	if err == nil {
-		status := StatusEnabled
+		status := StatusConnected
 		if brokerConn.Info() == brokerpkg.NotConnected {
-			status = StatusDisabled
+			status = StatusEnabled
 		}
 		controllers = append(controllers, &OperatorControllerStatus{
 			Name:    "broker",
@@ -99,27 +99,37 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return controllers, ErrMesheryClient(err)
 	}
-	if err == nil {
-		status := StatusDisabled
-		flag := false
-		for start := time.Now(); time.Since(start) < 5*time.Second; {
-			select {
-			case <-ch:
-				flag = true
-				break
-			default:
-				continue
-			}
-		}
-		if flag {
-			status = StatusEnabled
-		}
-		controllers = append(controllers, &OperatorControllerStatus{
-			Name:    "meshsync",
-			Version: meshsync.Labels["version"],
-			Status:  status,
-		})
-	}
+
+	// Synthetic Check for MeshSync data is too time consuming. Commented for now.
+
+	// if err == nil {
+	// 	status := StatusDisabled
+	// 	flag := false
+	// 	for start := time.Now(); time.Since(start) < 5*time.Second; {
+	// 		select {
+	// 		case <-ch:
+	// 			flag = true
+	// 			break
+	// 		default:
+	// 			continue
+	// 		}
+	// 	}
+	// 	if flag {
+	// 		status = StatusEnabled
+	// 	}
+	// 	controllers = append(controllers, &OperatorControllerStatus{
+	// 		Name:    "meshsync",
+	// 		Version: meshsync.Labels["version"],
+	// 		Status:  status,
+	// 	})
+	// }
+
+	controllers = append(controllers, &OperatorControllerStatus{
+		Name:    "meshsync",
+		Version: meshsync.Labels["version"],
+		Status:  StatusEnabled,
+	})
+
 	return controllers, nil
 }
 

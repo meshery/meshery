@@ -1,4 +1,0 @@
-name: gke
-description: To configure Meshery to use Google Kubernetes Engine
-example: |
-    mesheryctl system config gke --token [path-to-token]
