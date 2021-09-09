@@ -6,6 +6,8 @@ type: reference
 display-title: "false"
 language: en
 lang: en
+command: system
+subcommand: login
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -16,15 +18,14 @@ lang: en
 
 ## Description 
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.login.command %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
-{% endfor %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
+{{ name.description }}
 
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl system login 
+    {{ name.usage }} 
   </div>
 </pre> 
 
