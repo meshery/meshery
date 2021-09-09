@@ -122,6 +122,7 @@ func TestChangePlatform(t *testing.T) {
 			if err := Populate(currDir+"/fixtures/platform/original/TestConfig.yaml", fixture); err != nil {
 				t.Fatal(err, "Could not complete test. Unable to repopulate fixture")
 			}
+
 		})
 	}
 }
@@ -130,7 +131,7 @@ func TestChangeConfigEndpoint(t *testing.T) {
 
 	// Setup path to test config file
 	currDir := GetBasePath(t)
-	testConfigPath := currDir + "/fixtures/platform/TestConfig.yaml"
+	testConfigPath := currDir + "/fixtures/platform/TestChangeEndpointConfig.yaml"
 
 	SetupCustomContextEnv(t, testConfigPath)
 
@@ -144,10 +145,17 @@ func TestChangeConfigEndpoint(t *testing.T) {
 		wantErr         bool
 	}{
 		{
-			name:            "ChangeConfigEndpoint1",
+			name:            "ChangeConfigEndpoint with platform docker",
 			ctxName:         "local",
 			endpointAddress: "http://localhost:55555",
-			golden:          "changeconfigendpoint.expect.golden",
+			golden:          "changeconfigendpoint.expect.docker.golden",
+			wantErr:         false,
+		},
+		{
+			name:            "ChangeConfigEndpoint with platform kubernetes",
+			ctxName:         "local2",
+			endpointAddress: "http://localhost:44444",
+			golden:          "changeconfigendpoint.expect.kubernetes.golden",
 			wantErr:         false,
 		},
 	}
@@ -193,7 +201,7 @@ func TestChangeConfigEndpoint(t *testing.T) {
 			}
 
 			// Repopulating Expected yaml
-			if err := Populate(currDir+"/fixtures/platform/original/TestConfig.yaml", testConfigPath); err != nil {
+			if err := Populate(currDir+"/fixtures/platform/original/TestChangeEndpointConfig.yaml", testConfigPath); err != nil {
 				t.Fatal(err, "Could not complete test. Unable to repopulate fixture")
 			}
 

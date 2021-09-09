@@ -167,6 +167,10 @@ func SetupLogrusGrabTesting(t *testing.T) *bytes.Buffer {
 // setup custom context with SetupCustomContextEnv
 func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	viper.Reset()
+	ViperCompose = viper.New()
+	ViperDocker = viper.New()
+	ViperK8s = viper.New()
+
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext
 	//fmt.Println(viper.ConfigFileUsed())
