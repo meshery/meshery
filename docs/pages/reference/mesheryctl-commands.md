@@ -193,7 +193,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}  
     {% assign subcommand10 = command2.subcommands.login %}
     <tr>
-      <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/status">{{ subcommand10.name }}</a></td>
+      <td><a href="{{ site.baseurl }}/reference/mesheryctl/login/status">{{ subcommand10.name }}</a></td>
       <td></td>
       <td>{{ subcommand10.description }}</td>
     </tr>
@@ -205,7 +205,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}  
     {% assign subcommand11 = command2.subcommands.logout %}
     <tr>
-      <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/status">{{ subcommand11.name }}</a></td>
+      <td><a href="{{ site.baseurl }}/reference/mesheryctl/logout/status">{{ subcommand11.name }}</a></td>
       <td></td>
       <td>{{ subcommand11.description }}</td>
     </tr>
