@@ -208,11 +208,12 @@ func StopMockery(t *testing.T) {
 }
 
 // Set file location for testing stuff
-func SetFileLocationTesting(t *testing.T, dir string) {
+func SetFileLocationTesting(dir string) {
 	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
 	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
 	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
 }
+
 func Populate(src, dst string) error {
 	sourceFileStat, err := os.Stat(src)
 	if err != nil {

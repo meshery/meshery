@@ -13,30 +13,28 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-// Set absolute path during testing (similar to SetFileLocation in helpers.go)
-func SetFileLocationDuringTest(baseDirectory string) error {
+func init() {
 
-	// Get absolute path to current directory
+	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		return errors.New("Not able to get current working directory")
+		log.Fatal("Not able to get current working directory")
 	}
-	currDir := filepath.Dir(filename)
-	baseDirectory = filepath.Join(currDir, baseDirectory)
 
-	MesheryFolder = filepath.Join(baseDirectory, MesheryFolder)
+	basePath := filepath.Dir(filename)
+	SetFileLocationTesting(basePath)
+
 	manifestsFolder := filepath.Join(MesheryFolder, "manifests")
 
 	err := os.MkdirAll(manifestsFolder, 0755)
 	if err != nil {
-		return errors.Wrap(err, "Failed to create test directory")
+		log.Fatal("Failed to create test directory")
 	}
 
-	return nil
 }
 
 func TestChangePlatform(t *testing.T) {
@@ -45,13 +43,7 @@ func TestChangePlatform(t *testing.T) {
 		platform    string
 	}
 
-	// Setup path to test config file
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-
-	currDir := filepath.Dir(filename)
+	currDir := GetBasePath(t)
 	fixtureDir := currDir + "/fixtures"
 	fixture := fixtureDir + "/TestConfig.yaml"
 
@@ -85,33 +77,29 @@ func TestChangePlatform(t *testing.T) {
 
 			err := mctlCfg.SetCurrentContext(tt.args.contextName)
 			if err != nil {
-
 				if (err != nil) != tt.wantErr {
 					t.Fatal("Error setting context", err)
 				} else {
+					// handles the case when an invalid context was intentionally supplied
 					return
 				}
 			}
 
 			currCtx, err := mctlCfg.GetCurrentContext()
 			if err != nil {
-				if (err != nil) != tt.wantErr {
-					t.Fatal("Error processing context from config", err)
-				} else {
-					return
-				}
+				t.Fatal("Error processing context from config: ", err)
 			}
 
 			currCtx.SetPlatform(tt.args.platform)
 
 			if err := ChangePlatform(tt.args.contextName, *currCtx); (err != nil) != tt.wantErr {
-				t.Errorf("ChangePlatform() error = %v, wantErr %v", err, tt.wantErr)
+				t.Fatalf("ChangePlatform() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			// Actual file contents
 			actualContent, err := ioutil.ReadFile(fixture)
 			if err != nil {
-				t.Error(err)
+				t.Fatal("Error reading actual file contents: ", err)
 			}
 
 			actualFileContent := string(actualContent)
@@ -126,7 +114,7 @@ func TestChangePlatform(t *testing.T) {
 			expectedFileContent := golden.Load()
 
 			if expectedFileContent != actualFileContent {
-				t.Errorf("expected file content [%v] and actual file content [%v] don't match", expectedFileContent, actualFileContent)
+				t.Errorf("Expected file content \n[%v]\n and actual file content \n[%v]\n don't match", expectedFileContent, actualFileContent)
 			}
 
 			// Repopulating Expected yaml
@@ -337,14 +325,25 @@ func TestDownloadManifests(t *testing.T) {
 	// initialize mock server for handling requests
 	StartMockery(t)
 
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatalf("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	rawManifestsURL := "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/latest/install/deployment_yamls/k8s/"
+	apiResponse := "Test Content"
+
 	tests := []struct {
 		name     string
+		url      string
 		manifest Manifest
 		golden   string
 		wantErr  bool
 	}{
 		{
 			name: "Download test manifest file and check content",
+			url:  "https://raw.githubusercontent.com/meshery/meshery/latest/install/deployment_yamls/k8s/download-test.yaml",
 			manifest: Manifest{
 				Path: "download-test.yaml",
 				Mode: "100644",
@@ -358,24 +357,10 @@ func TestDownloadManifests(t *testing.T) {
 		},
 	}
 
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatalf("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
-
-	rawManifestsURL := "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/latest/install/deployment_yamls/k8s/"
-	apiResponse := "Test Content"
-
-	err := SetFileLocationDuringTest("temp")
-	if err != nil {
-		t.Fatalf("Could not set file location")
-	}
-
-	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/meshery/meshery/latest/install/deployment_yamls/k8s/download-test.yaml", httpmock.NewStringResponder(200, apiResponse))
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+
+			httpmock.RegisterResponder("GET", tt.url, httpmock.NewStringResponder(200, apiResponse))
 
 			manifests := []Manifest{tt.manifest}
 
@@ -401,7 +386,7 @@ func TestDownloadManifests(t *testing.T) {
 			expectedFileContent := golden.Load()
 
 			if expectedFileContent != actualFileContent {
-				t.Errorf("expected file content [%v] and actual file content [%v] don't match", expectedFileContent, actualFileContent)
+				t.Errorf("Expected file content [%v] and actual file content [%v] don't match", expectedFileContent, actualFileContent)
 			}
 
 			err = os.Remove(filepath.Join(MesheryFolder, ManifestsFolder, tt.manifest.Path))
@@ -427,13 +412,7 @@ func TestDownloadOperatorManifest(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
-	rawManifestsURL := "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/latest/install/deployment_yamls/k8s/"
 	apiResponse := "Test Content"
-
-	err := SetFileLocationDuringTest("temp")
-	if err != nil {
-		t.Fatalf("Could not set file location")
-	}
 
 	tests := []struct {
 		name      string
@@ -445,9 +424,9 @@ func TestDownloadOperatorManifest(t *testing.T) {
 		{
 			name: "Download operator manifests with correct URLs",
 			urls: []string{
-				"https://github.com/layer5io/meshery-operator/blob/master/config/manifests/default.yaml",
-				"https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml",
-				"https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml",
+				"https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml",
+				"https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml",
+				"https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml",
 			},
 			filenames: []string{
 				"default.yaml",
@@ -501,19 +480,170 @@ func TestDownloadOperatorManifest(t *testing.T) {
 				expectedFileContent := golden.Load()
 
 				if expectedFileContent != actualFileContents[i] {
-					t.Errorf("For file [%v], Expected file content [%v] and actual file content [%v] don't match", tt.filenames[i], expectedFileContent, actualFileContent)
+					t.Errorf("For file [%v], Expected file content [%v] and actual file content [%v] don't match", tt.filenames[i], expectedFileContent, actualFileContents[i])
 				}
 
-			}
+				err := os.Remove(filepath.Join(MesheryFolder, ManifestsFolder, tt.filenames[i]))
+				if err != nil {
+					t.Errorf("Could not delete operator manifest [%v] from test folder", tt.filenames[i])
+				}
 
-			err = os.Remove(filepath.Join(MesheryFolder, ManifestsFolder, tt.manifest.Path))
-			if err != nil {
-				t.Errorf("Could not delete manifest from test folder")
 			}
 
 		})
 	}
 
+	// stop mock server
+	StopMockery(t)
+}
+
+func TestGetManifestTreeURL(t *testing.T) {
+	// initialize mock server for handling requests
+	StartMockery(t)
+
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	fixturesDir := filepath.Join(currDir, "fixtures/platform")
+	tests := []struct {
+		name         string
+		version      string
+		url          string
+		expectOutput string
+		fixture      string
+		expectErr    bool
+	}{
+		{
+			name:         "Test getting manifest tree url",
+			expectErr:    false,
+			expectOutput: "manifesturl.expect.golden",
+			fixture:      "manifesturl.api.response.golden",
+			url:          "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/v0.5.45?recursive=1",
+			version:      "v0.5.45",
+		},
+		{
+			name:         "Test getting manifest tree url with wrong version",
+			expectErr:    true,
+			expectOutput: "manifesturl.out.err.golden",
+			fixture:      "manifesturl.err.api.response.golden",
+			url:          "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/v0000000?recursive=1",
+			version:      "v0000000",
+		},
+		{
+			name:         "Test getting manifest tree url with empty version",
+			expectErr:    true,
+			expectOutput: "manifesturlempty.out.err.golden",
+			fixture:      "manifesturl.empty.api.response.golden",
+			url:          "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/?recursive=1",
+			version:      "",
+		},
+		{
+			name:         "Test getting manifest tree url with wrong version",
+			expectErr:    false,
+			expectOutput: "manifesturl.out.latest.golden",
+			fixture:      "manifesturl.latest.api.response.golden",
+			url:          "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + "master" + "?recursive=1",
+			version:      "master",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata/platform")
+			golden := NewGoldenFile(t, tt.expectOutput, testdataDir)
+			// mock response
+			apiResponse := NewGoldenFile(t, tt.fixture, fixturesDir).Load()
+			httpmock.RegisterResponder("GET", tt.url,
+				httpmock.NewStringResponder(200, apiResponse))
+			actualurl, err := GetManifestTreeURL(tt.version)
+			if err != nil {
+				if tt.expectErr {
+					if *update {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
+					Equals(t, expectedResponse, err.Error())
+					return
+				}
+			}
+			if *update {
+				golden.Write(actualurl)
+			}
+			expectedResponse := golden.Load()
+			Equals(t, expectedResponse, actualurl)
+		})
+	}
+	// stop mock server
+	StopMockery(t)
+}
+
+func TestListManifests(t *testing.T) {
+	// initialize mock server for handling requests
+	StartMockery(t)
+
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	fixturesDir := filepath.Join(currDir, "fixtures/platform")
+	tests := []struct {
+		name         string
+		url          string
+		expectOutput string
+		fixture      string
+		expectErr    bool
+	}{
+		{
+			name:         "Test listing manifests",
+			expectErr:    false,
+			expectOutput: "listmanifest.expect.golden",
+			fixture:      "listmanifest.api.response.golden",
+			url:          "https://api.github.com/repos/meshery/meshery/git/trees/47c634a49e6d143a54d734437a26ad233146ddf5",
+		},
+		{
+			name:         "Test listing manifests with wrong url",
+			expectErr:    true,
+			expectOutput: "listmanifest.expect.err.golden",
+			fixture:      "listmanifest.api.err.response.golden",
+			url:          "https://api.github.com/repos/meshery/meshery/git/trees/gibberish",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Expected response
+			testdataDir := filepath.Join(currDir, "testdata/platform")
+			golden := NewGoldenFile(t, tt.expectOutput, testdataDir)
+			// mock response
+			apiResponse := NewGoldenFile(t, tt.fixture, fixturesDir).Load()
+			httpmock.RegisterResponder("GET", tt.url,
+				httpmock.NewStringResponder(200, apiResponse))
+			manifests, err := ListManifests(tt.url)
+			if err != nil {
+				if tt.expectErr {
+					if *update {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
+					Equals(t, expectedResponse, err.Error())
+					return
+				}
+			}
+			manifestsactual, err := json.Marshal(&manifests)
+			if err != nil {
+				t.Error("Could not unmarshall manifests from response")
+			}
+			if *update {
+				golden.Write(string(manifestsactual))
+			}
+			expectedResponse := golden.Load()
+			Equals(t, expectedResponse, string(manifestsactual))
+		})
+	}
 	// stop mock server
 	StopMockery(t)
 }
