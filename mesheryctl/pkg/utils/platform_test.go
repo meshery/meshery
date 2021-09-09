@@ -18,7 +18,6 @@ import (
 )
 
 func init() {
-
 	// Get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -35,7 +34,6 @@ func init() {
 	if err != nil {
 		log.Fatal("Failed to create test directory")
 	}
-
 }
 
 func TestChangePlatform(t *testing.T) {
@@ -75,7 +73,6 @@ func TestChangePlatform(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			err := mctlCfg.SetCurrentContext(tt.args.contextName)
 			if err != nil {
 				if (err != nil) != tt.wantErr {
@@ -122,13 +119,11 @@ func TestChangePlatform(t *testing.T) {
 			if err := Populate(currDir+"/fixtures/platform/original/TestConfig.yaml", fixture); err != nil {
 				t.Fatal(err, "Could not complete test. Unable to repopulate fixture")
 			}
-
 		})
 	}
 }
 
 func TestChangeConfigEndpoint(t *testing.T) {
-
 	// Setup path to test config file
 	currDir := GetBasePath(t)
 	testConfigPath := currDir + "/fixtures/platform/TestChangeEndpointConfig.yaml"
@@ -162,7 +157,6 @@ func TestChangeConfigEndpoint(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			err := mctlCfg.SetCurrentContext(tt.ctxName)
 			if err != nil {
 				t.Fatal("error setting context", err)
@@ -204,7 +198,6 @@ func TestChangeConfigEndpoint(t *testing.T) {
 			if err := Populate(currDir+"/fixtures/platform/original/TestChangeEndpointConfig.yaml", testConfigPath); err != nil {
 				t.Fatal(err, "Could not complete test. Unable to repopulate fixture")
 			}
-
 		})
 	}
 }
@@ -243,7 +236,6 @@ func TestGetManifestURL(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			// Read fixture
 			file, _ := ioutil.ReadFile("fixtures/platform/" + tt.fixture)
 			manifest := Manifest{}
@@ -264,13 +256,11 @@ func TestGetManifestURL(t *testing.T) {
 			if got != want {
 				t.Fatalf("GetManifestURL() = %v, want %v", got, want)
 			}
-
 		})
 	}
 }
 
 func TestGetPods(t *testing.T) {
-
 	tests := []struct {
 		name      string
 		namespace string
@@ -285,7 +275,6 @@ func TestGetPods(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
 
@@ -309,7 +298,6 @@ func TestGetPods(t *testing.T) {
 			if got == nil {
 				t.Fatalf("GetPods() error: got nil PodList")
 			}
-
 		})
 	}
 }
@@ -351,7 +339,6 @@ func TestIsPodRequired(t *testing.T) {
 }
 
 func TestDownloadManifests(t *testing.T) {
-
 	// initialize mock server for handling requests
 	StartMockery(t)
 
@@ -385,7 +372,6 @@ func TestDownloadManifests(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			httpmock.RegisterResponder("GET", tt.url, httpmock.NewStringResponder(200, apiResponse))
 
 			manifests := []Manifest{tt.manifest}
@@ -419,7 +405,6 @@ func TestDownloadManifests(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Could not delete manifest from test folder")
 			}
-
 		})
 	}
 
@@ -428,7 +413,6 @@ func TestDownloadManifests(t *testing.T) {
 }
 
 func TestDownloadOperatorManifest(t *testing.T) {
-
 	// initialize mock server for handling requests
 	StartMockery(t)
 
@@ -466,7 +450,6 @@ func TestDownloadOperatorManifest(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			for _, url := range tt.urls {
 				httpmock.RegisterResponder("GET", url, httpmock.NewStringResponder(200, apiResponse))
 			}
@@ -478,7 +461,6 @@ func TestDownloadOperatorManifest(t *testing.T) {
 			actualFileContents := make([]string, len(tt.filenames))
 
 			for i, filename := range tt.filenames {
-
 				// Actual file contents
 				actualContent, err := ioutil.ReadFile(filepath.Join(MesheryFolder, ManifestsFolder, filename))
 				if err != nil {
@@ -487,14 +469,12 @@ func TestDownloadOperatorManifest(t *testing.T) {
 
 				actualFileContent := string(actualContent)
 				actualFileContents[i] = actualFileContent
-
 			}
 
 			// Expected file contents
 			testdataDir := currDir + "/testdata/platform/downloadoperatormanifest"
 
 			for i, golden := range tt.goldens {
-
 				golden := NewGoldenFile(t, golden, testdataDir)
 				if *update {
 					golden.Write(actualFileContents[i])
@@ -509,9 +489,7 @@ func TestDownloadOperatorManifest(t *testing.T) {
 				if err != nil {
 					t.Errorf("Could not delete operator manifest [%v] from test folder", tt.filenames[i])
 				}
-
 			}
-
 		})
 	}
 
