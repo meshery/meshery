@@ -22,9 +22,9 @@ Milestone | Features
 --- | ---
 [v0.5.0](../../milestone/1) | <p><li>Release channel subscriptions with system channel, Deployment management with system context</li></p>
 [v0.6.0](../../milestone/3) | <p><li>pervasive kubernetes support </li><li>Create `patterns`</li><li>Refactoring `perf` to support SMP better</li><li>Confirm support for Linux, Windows, and MacOS across all current commands</li><li>Refactoring `system config` for GKE</li> <Li>OAuth</Li><Li>`system check` - pre and post flight prereq check</li></p>
-[v0.7.0](../../milestone/4) | <p><li>Create `mesh` (adapter operations)</li><li>Confirm support for environment and multi-cluster</li><li>Refactoring `system config` for AKS</li><li>Refactoring `system config` for EKS</li></p>
-[v0.8.0](../../milestone/5) | <p><li>gRPC (streaming of status and events)</li><p><p><li>Colorizing output</li><li>Refactoring `system` commands for docker-compose</li></p>
-[v0.9.0](../../milestone/6) | <Li>`system report` - diagnostics reporting</li>
+[v0.7.0](../../milestone/4) | <p><li>Create `mesh` (adapter operations)</li><li>Confirm support for environment and multi-cluster</li><li>Refactoring `system config` for AKS</li><li>Refactoring `system config` for EKS</li><li>Mesheryctl Code coverage goal: 40%</li></p>
+[v0.8.0](../../milestone/5) | <p><li>gRPC (streaming of status and events)</li><p><p><li>Colorizing output</li><li>Refactoring `system` commands for docker-compose</li><li>Mesheryctl Code coverage goal: 50%</li></p>
+[v0.9.0](../../milestone/6) | <p><Li>`system report` - diagnostics reporting</li><li>Mesheryctl Code coverage goal: 60%</li></p>
 [v1.0.0](../../milestone/7) | 
 [v1.1.0](../../milestone/8) | 
 

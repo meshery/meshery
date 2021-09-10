@@ -109,7 +109,7 @@ function createPatternFromConfig(config, namespace, partialClean = false) {
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet,onChange, onSubmit, onDelete, namespace, renderAsTooltip }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, namespace, renderAsTooltip }) {
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {});
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {});
@@ -189,12 +189,7 @@ function PatternServiceForm({ formData, schemaSet,onChange, onSubmit, onDelete, 
             type="workload"
             formData={settings}
             jsonSchema={schemaSet.workload}
-            onChange={(val) => {
-              onChange?.(
-                createPatternFromConfig(
-                  { [getPatternAttributeName(schemaSet.workload)] : { settings : val, traits } }, namespace, true), "");
-              setSettings(val);
-            }}
+            onChange={setSettings}
             onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits })}
             onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits })}
             renderAsTooltip={renderAsTooltip}
