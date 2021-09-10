@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/logout
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system
 subcommand: logout
 # image: /assets/img/platforms/brew.png

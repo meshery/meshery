@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/reset
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system
 subcommand: reset
 # image: /assets/img/platforms/brew.png

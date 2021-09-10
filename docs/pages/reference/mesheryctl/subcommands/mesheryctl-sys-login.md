@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/login
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system
 subcommand: login
 # image: /assets/img/platforms/brew.png

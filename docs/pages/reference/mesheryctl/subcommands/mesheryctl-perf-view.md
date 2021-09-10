@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/perf/view
 type: reference
 display-title: "false"
 language: en
-lang: en
 categories: en
 command: perf
 subcommand: view
