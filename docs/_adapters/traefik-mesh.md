@@ -7,12 +7,15 @@ version: v1.0
 port: 10006/tcp
 project_status: stable
 adapter_version: v0.5.2
+lab: traefik-meshery-adapter
 github_link: https://github.com/meshery/meshery-traefik-mesh
 image: /assets/img/service-meshes/traefik-mesh.svg
 permalink: service-meshes/adapters/traefik-mesh
 ---
 
 {% include adapter-status.html %}
+
+{% include adapter-labs.html %}
 
 ## Lifecycle management
 
