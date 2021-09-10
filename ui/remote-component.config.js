@@ -5,6 +5,7 @@ module.exports = { resolve : {
   "@material-ui/core/Button" : require("@material-ui/core/Button"),
   "@material-ui/core/Grid" : require("@material-ui/core/Grid"),
   "@material-ui/lab/ToggleButton" : require("@material-ui/lab/ToggleButton"),
+  "@material-ui/lab" : require("@material-ui/lab"),
   "@material-ui/core/ListItem" : require("@material-ui/core/ListItem"),
   "@material-ui/core/ListItemIcon" : require("@material-ui/core/ListItemIcon"),
   "@material-ui/core/Tab" : require("@material-ui/core/Tab"),
