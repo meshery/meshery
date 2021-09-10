@@ -15,7 +15,6 @@ import (
 )
 
 func init() {
-
 	home, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal("Failed to get users home directory")
