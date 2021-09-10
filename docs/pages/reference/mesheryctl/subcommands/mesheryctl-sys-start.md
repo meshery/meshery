@@ -36,6 +36,13 @@ subcommand: start
   {{ name.usage }}
   </div>
 </pre>
+{% assign note = name.notes %}
+{{ note.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ note.usage }}
+  </div>
+</pre>
 {% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
