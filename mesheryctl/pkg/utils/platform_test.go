@@ -2,35 +2,31 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 func init() {
-	// Get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		log.Fatal("Not able to get current working directory")
+
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal("Failed to get users home directory")
 	}
 
-	basePath := filepath.Dir(filename)
-	SetFileLocationTesting(basePath)
+	SetFileLocationTesting(home)
 
 	// Create required directories for testing, if not already existing
 	manifestsFolder := filepath.Join(MesheryFolder, "manifests")
 
-	err := os.MkdirAll(manifestsFolder, os.ModePerm)
+	err = os.MkdirAll(manifestsFolder, os.ModePerm)
 	if err != nil {
 		log.Fatal("Failed to create test directory")
 	}
@@ -255,48 +251,6 @@ func TestGetManifestURL(t *testing.T) {
 
 			if got != want {
 				t.Fatalf("GetManifestURL() = %v, want %v", got, want)
-			}
-		})
-	}
-}
-
-func TestGetPods(t *testing.T) {
-	tests := []struct {
-		name      string
-		namespace string
-		wantErr   bool
-	}{
-		{
-			name:      "GetPods() with MesheryNamespace",
-			namespace: MesheryNamespace,
-			wantErr:   false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// create an kubernetes client
-			client, err := meshkitkube.New([]byte(""))
-
-			if err != nil {
-				t.Fatalf("Error in creating kubernetes client in GetPods() test")
-			}
-
-			// List the pods in the MesheryNamespace
-			got, err := GetPods(client, tt.namespace)
-
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("GetPods() error = %v, wantErr %v", err, tt.wantErr)
-			}
-
-			// check return type
-			if fmt.Sprintf("%T", got) != "*v1.PodList" {
-				t.Errorf("GetPods() error: want type = *v1.PodList, got type %T", got)
-			}
-
-			// check non nil
-			if got == nil {
-				t.Fatalf("GetPods() error: got nil PodList")
 			}
 		})
 	}
