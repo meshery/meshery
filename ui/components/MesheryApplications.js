@@ -510,7 +510,7 @@ function MesheryApplications({
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user").toObject(), };
+  return { user : state.get("user")?.toObject(), };
 };
 
 // @ts-ignore
