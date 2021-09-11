@@ -75,6 +75,15 @@
         "probable_cause": "Invalid OAM config passed in OAM request",
         "suggested_remediation": "Check if your request has vaild OAM config"
       },
+      "1020": {
+        "name": "ErrGetLatestReleaseCode",
+        "code": "1020",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get latest version",
+        "probable_cause": "Latest version could not be found at the specified url",
+        "suggested_remediation": ""
+      },
       "1029": {
         "name": "ErrEmptyConfigCode",
         "code": "1029",
