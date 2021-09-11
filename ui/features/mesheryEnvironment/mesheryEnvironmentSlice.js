@@ -12,7 +12,7 @@ import { fetchKuberernetesClusters, submitKubernetesClusterConfig } from "./kube
  */
 
 /**
- * @typedef {{id:string, configuredServer: string, contextName: string, clusterConfigured: boolean, contexts: Array.<Context>}} KubernetesCluster
+ * @typedef {{id:string, configuredServer: string, contextName: string, clusterConfigured: boolean, contexts: Array.<Context>, inClusterConfig: boolean}} KubernetesCluster
  */
 
 /**
@@ -72,6 +72,9 @@ export const submitKubernetesClusterConfigThunk = createAsyncThunk(
   "mesheryEnvironment/updateKubernetesCluster",
   async (payload) => {
     const response = await submitKubernetesClusterConfig(payload);
+    // handle the response,
+    // ask whether the operator has to be restarted or stopped or those kind of things
+    // send a notification toast regarding the success or failure of the action performed
     return response;
   }
 );

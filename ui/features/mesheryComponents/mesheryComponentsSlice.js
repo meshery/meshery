@@ -193,6 +193,8 @@ const mesheryComponentsSlice = createSlice({
       builder.addCase(changeOperatorStateThunk.fulfilled, (state) => {
         state.loading = false;
         // handle other state updates
+        // no need to handle the state change since it will be handled by subscription
+
         return state;
       });
     builder.addCase(changeOperatorStateThunk.rejected, (state) => {
