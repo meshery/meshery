@@ -70,7 +70,7 @@ func TestChangePlatform(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := mctlCfg.SetCurrentContext(tt.args.contextName)
 			if err != nil {
-				if (err != nil) != tt.wantErr {
+				if !tt.wantErr {
 					t.Fatal("Error setting context", err)
 				} else {
 					// handles the case when an invalid context was intentionally supplied
@@ -85,7 +85,7 @@ func TestChangePlatform(t *testing.T) {
 
 			currCtx.SetPlatform(tt.args.platform)
 
-			if err := ChangePlatform(tt.args.contextName, *currCtx); (err != nil) != tt.wantErr {
+			if err := ChangePlatform(tt.args.contextName, *currCtx); err != nil && !tt.wantErr {
 				t.Errorf("ChangePlatform() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
