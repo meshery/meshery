@@ -12,6 +12,8 @@ module.exports = { resolve : {
   "@material-ui/core/SvgIcon" : require("@material-ui/core/SvgIcon"),
   "@material-ui/core/Typography" : require("@material-ui/core/Typography"),
   "@material-ui/core/Drawer" : require("@material-ui/core/Drawer"),
+  "@material-ui/icons/PlayArrow" : require('@material-ui/icons/PlayArrow'),
+  "@material-ui/icons/Pause" : require('@material-ui/icons/Pause'),
   "@material-ui/icons/Cached" : require("@material-ui/icons/Cached"),
   "@material-ui/icons/ChevronLeft" : require("@material-ui/icons/ChevronLeft"),
   "@material-ui/icons/Assessment" : require("@material-ui/icons/Assessment"),
