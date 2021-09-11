@@ -30,6 +30,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/docker/docker/api/types"
@@ -88,6 +89,15 @@ var startCmd = &cobra.Command{
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
 		}
 		return nil
+	},
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		latest, err := utils.GetLatestStableReleaseTag()
+		version := constants.GetMesheryctlVersion()
+		if err == nil && latest != version {
+			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+		}
 	},
 }
 

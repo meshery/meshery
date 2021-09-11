@@ -36,16 +36,16 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}.
 
 ### Sample Applications
 
-The {{ page.name }} includes a handful of sample applications. Some of these applications are from other service meshes and some of these sample applications are general-purpose examples. Use Meshery to deploy any of these sample applications.
+The {{page.name}} includes a handful of sample applications. Some of these applications are from other service meshes and some of these sample applications are general-purpose examples. Use Meshery to deploy any of these sample applications.
 
-- [Bookinfo]({{ site.baseurl }}/guides/deploying-sample-apps#bookinfo)
+- [Bookinfo]({{site.baseurl}}/guides/sample-apps#bookinfo)
     - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery. 
-- [Httpbin]({{ site.baseurl }}/guides/deploying-sample-apps#httpbin)
+- [Httpbin]({{site.baseurl}}/guides/sample-apps#httpbin)
     - Httpbin is a simple HTTP request and response service.
-- [Hipster]({{ site.baseurl }}/guides/deploying-sample-apps#hipster)
-    - Hipster Shop Application is a web-based, e-commerce demo application from the Google Cloud Platform.
+- [Online Boutique]({{site.baseurl}}/guides/sample-apps#online-boutique)
+    - Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.
 
 ### Suggested Topics
 
-- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
+- Examine [Meshery's architecture]({{site.baseurl}}/architecture) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{site.baseurl}}/architecture/adapters).
