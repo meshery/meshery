@@ -27,8 +27,7 @@
                     "from": {
                         "type": "string"
                     }
-                },
-                "required": ["posX", "posY"]
+                }
             }
         }
     },
