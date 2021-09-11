@@ -172,9 +172,9 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
           </Toolbar>
         </AppBar>
       )}
-      <div style={{ maxHeight : '300px', marginTop : '48px', scrollbarWidth : 'thin', overflow : 'auto' }}>
+      <div style={{ maxHeight : '300px', marginTop : "3rem", scrollbarWidth : 'thin', overflow : 'auto' }}>
         {!renderAsTooltip && (<AppBar position="static">
-          <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service">
+          <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service" >
             <Tab label="Settings" {...a11yProps(0)} />
             {renderTraits()
               ? <Tab label="Traits" {...a11yProps(1)} />
@@ -188,7 +188,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               <Tab label="Traits" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(1)} />
             </Tabs>
           </AppBar>)}
-        <TabPanel value={tab} index={0}>
+        <TabPanel value={tab} index={0} style={{ marginTop: "1.1rem"}}>
           <PatternService
             type="workload"
             formData={settings}
@@ -200,7 +200,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
           />
         </TabPanel>
         {renderTraits() ? (
-          <TabPanel value={tab} index={1}>
+          <TabPanel value={tab} index={1} style={{ marginTop: "1.1rem"}}>
             {schemaSet.traits?.map((trait) => (
               <PatternService
                 formData={traits[getPatternAttributeName(trait)]}
