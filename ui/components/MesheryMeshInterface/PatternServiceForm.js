@@ -1,7 +1,7 @@
 // @ts-check
 import React from "react";
 import { Tab, Tabs, AppBar, Typography, IconButton, Toolbar } from "@material-ui/core";
-import { Close, Delete } from "@material-ui/icons";
+import { Delete } from "@material-ui/icons";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import Tooltip from '@material-ui/core/Tooltip';
 import PatternService from "./PatternService";
@@ -109,15 +109,13 @@ function createPatternFromConfig(config, namespace, partialClean = false) {
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, namespace, renderAsTooltip }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip }) {
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {});
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {});
-
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
   };
-
   const renderTraits = () => !!schemaSet.traits?.length;
 
   const submitHandler = (val) => {
@@ -127,6 +125,15 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, namespace
   const deleteHandler = (val) => {
     onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace), true)
   };
+
+  if (reference){
+    if (reference.current == null) {
+      reference.current = {}
+    }
+    reference.current.submit = (cb) => {
+      submitHandler(cb(getSettingsRefValue(), getTraitsRefValue()))
+    }
+  }
 
   if (schemaSet.type === "addon") {
     return (
@@ -161,9 +168,6 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, namespace
             )}
             <IconButton  onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
               <Delete style={{ color : "#ffffff" }} />
-            </IconButton>
-            <IconButton onClick={() => submitHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
-              <Close style={{ color : "#ffffff" }} />
             </IconButton>
           </Toolbar>
         </AppBar>
