@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"fortio.org/fortio/periodic"
-	yamlj "github.com/ghodss/yaml"
+	yaml "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/helpers"
@@ -31,23 +31,31 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
 	// }
-	defer func() {
-		_ = req.Body.Close()
-	}()
+
+	// Read the SMP File
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "failed to read request body: %s", err)
 		return
 	}
-	jsonBody, err := yamlj.YAMLToJSON(body)
-	if err != nil {
-		h.log.Error(ErrConversion(err))
-		http.Error(w, ErrConversion(err).Error(), http.StatusInternalServerError)
-		return
+
+	if req.Header.Get("Content-Type") == "application/json" {
+		body, err = yaml.JSONToYAML(body)
+		if err != nil {
+			h.log.Error(ErrPatternFile(err))
+			http.Error(w, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+			return
+		}
 	}
+
+	jsonBytes, _ := yaml.YAMLToJSON(body)
+
 	perfTest := &SMP.PerformanceTestConfig{}
-	if err := protojson.Unmarshal(jsonBody, perfTest); err != nil {
+	if err := protojson.Unmarshal(jsonBytes, perfTest); err != nil {
 		h.log.Error(ErrParseBool(err, "provided input"))
 		http.Error(w, ErrParseBool(err, "provided input").Error(), http.StatusBadRequest)
 		return
@@ -61,7 +69,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		return
 	}
 	// meshName := q.Get("mesh")
-	testUUID := perfTest.Id
+	profileID := perfTest.Id
 
 	loadTestOptions := &models.LoadTestOptions{}
 
@@ -118,7 +126,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}
 	loadTestOptions.AllowInitialErrors = true
 
-	h.loadTestHelperHandler(w, req, testName, "istio", testUUID, prefObj, loadTestOptions, provider)
+	h.loadTestHelperHandler(w, req, profileID, testName, "istio", "", prefObj, loadTestOptions, provider)
 }
 
 func (h *Handler) jsonToMap(headersString string) *map[string]string {
@@ -157,6 +165,8 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	// if values have been passed as body we run test using SMP Handler
 	if string(body) != "" {
+		logrus.Info("Running test with SMP config")
+		req.Body = ioutil.NopCloser(strings.NewReader(string(body)))
 		h.LoadTestUsingSMPHandler(w, req, prefObj, user, provider)
 		return
 	}
@@ -178,6 +188,8 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 	meshName := q.Get("mesh")
 	testUUID := q.Get("uuid")
+	// getting profile id from URL
+	profileID := mux.Vars(req)["id"]
 
 	headersString := q.Get("headers")
 	cookiesString := q.Get("cookies")
@@ -252,10 +264,10 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
 	h.log.Info("perf test with config: ", loadTestOptions)
-	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
+	h.loadTestHelperHandler(w, req, profileID, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
 
-func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request, testName, meshName, testUUID string,
+func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request, profileID, testName, meshName, testUUID string,
 	prefObj *models.Preference, loadTestOptions *models.LoadTestOptions, provider models.Provider) {
 	log := logrus.WithField("file", "load_test_handler")
 
@@ -302,7 +314,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	}()
 	go func() {
 		ctx := context.Background()
-		h.executeLoadTest(ctx, req, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
+		h.executeLoadTest(ctx, req, profileID, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
 		close(respChan)
 	}()
 	select {
@@ -315,7 +327,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	}
 }
 
-func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
+func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profileID, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
 	respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
@@ -411,7 +423,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		Result: resultsMap,
 	}
 
-	resultID, err := provider.PublishResults(req, result, mux.Vars(req)["id"])
+	resultID, err := provider.PublishResults(req, result, profileID)
 	if err != nil {
 		h.log.Error(ErrLoadTest(err, "unable to persist"))
 		respChan <- &models.LoadTestResponse{
