@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, NoSsr } from '@material-ui/core';
+import { Grid, NoSsr, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
@@ -58,13 +58,12 @@ class MesheryChart extends React.Component {
   }
 
   processChartData(chartData) {
-    console.log(chartData);
     const self = this;
     if (self.chartRef && self.chartRef !== null) {
       if (chartData && chartData.data && chartData.options) {
         const xAxes = [];
         const yAxes = [];
-        const colors = [];
+        const colors = {};
         const types = {};
         const axes = {};
         const axis = {};
@@ -159,7 +158,7 @@ class MesheryChart extends React.Component {
             xs : xAxisTracker,
             // xFormat: self.bbTimeFormat,
             columns : [...xAxes, ...yAxes],
-            colors,
+            colors : { ...colors, "Cumulative %" : "rgb(71,126,150)" },
             axes,
             types,
             // groups,
@@ -181,12 +180,14 @@ class MesheryChart extends React.Component {
             self.titleRef.innerText=chartData.options.title.text.join('\n')
           }
         }
+
         self.chart = bb.generate(chartConfig);
       } else {
-        self.chart = bb.generate({ type : line(),
-          data : { columns : [
-          ], },
-          bindto : self.chartRef, });
+        self.chart = bb.generate({
+          type : line(),
+          data : { columns : [] },
+          bindto : self.chartRef,
+        });
       }
     }
   }
@@ -301,11 +302,9 @@ class MesheryChart extends React.Component {
       <NoSsr>
         <div>
           <div ref={(ch) => this.titleRef = ch} className={classes.title} style={{ display : "none" }}/>
-          <Grid container spacing={1} style={{ marginBottom : "1rem" }} justifyContent="center">
-            {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map(el => {
-              return (
-                <Grid item xs={4}>{el}</Grid>
-              )
+          <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
+            {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => {
+              return <Grid item xs={4} key={`nri-${i}`}>{el}</Grid>
             })}
           </Grid>
           <div className={classes.chartWrapper} >
@@ -318,9 +317,27 @@ class MesheryChart extends React.Component {
               if (this.props.data.length > 2) {
                 self.processMultiChartData(chartData);
               } else {
+                console.log(this.props.data.length)
                 self.processChartData(chartData);
               }
-            }} />
+            }}>
+              {
+                this.props.data.length == 1
+                  ?
+                  <div style={{ margin : "1rem" }}>
+                    <Typography style={{ whiteSpace : "nowrap" }} gutterBottom>Percentile Summary</Typography>
+                    <div>
+                      {
+                        NonRecursiveConstructDisplayCells(chartData?.options?.metadata?.percentiles?.display?.value || {}).map((el, i) => {
+                          return <div key={`percentile-${i}`}>{el}</div>
+                        })
+                      }
+                    </div>
+                  </div>
+                  :
+                  null
+              }
+            </div>
           </div>
         </div>
       </NoSsr>
