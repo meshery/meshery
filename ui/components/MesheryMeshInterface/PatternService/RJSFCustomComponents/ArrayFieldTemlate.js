@@ -31,7 +31,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
 
   const id = `${idSchema.$id}__title`;
   // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
-return <Typography variant="body1" style={{fontWeight: "bold"}}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>
+  return <Typography variant="body1" style={{ fontWeight : "bold" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>
   // return <TitleField id={id} title={title} required={required} />;
 };
 

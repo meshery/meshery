@@ -148,12 +148,12 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
     replicas : {
       "ui:widget" : "range"
     },
-  "ui:order": [
-    "name",
-    "namespace",
-    "*",
-  ],
-  
+    "ui:order" : [
+      "name",
+      "namespace",
+      "*",
+    ],
+
   };
 
   <Grid container xs={12}>

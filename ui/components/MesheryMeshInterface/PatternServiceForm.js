@@ -6,9 +6,9 @@ import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import Tooltip from '@material-ui/core/Tooltip';
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
-import {pSBCr} from "../../utils/lightenOrDarkenColor"
+import { pSBCr } from "../../utils/lightenOrDarkenColor"
 import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
-import {CamelCaseToSentanceCase} from "../../utils/camelCaseToSentanceCase.js";
+import { CamelCaseToSentanceCase } from "../../utils/camelCaseToSentanceCase.js";
 
 function TabPanel(props) {
   const {
@@ -157,19 +157,19 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       {!renderAsTooltip ? (<Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
       </Typography>) : (
-        <AppBar>
-          <Toolbar variant="dense" style={{ padding : "0 0px", background: `linear-gradient(115deg, ${pSBCr( appBarColor, -20)} 0%, ${appBarColor} 100%)`, height: "0.7rem !important"}}>
+        <AppBar style={{ boxShadow : `0px 2px 4px -1px ${pSBCr(appBarColor, -30)}` }}>
+          <Toolbar variant="dense" style={{ padding : "0 0px", background : `linear-gradient(115deg, ${pSBCr( appBarColor, -20)} 0%, ${appBarColor} 100%)`, height : "0.7rem !important" }}>
             <p style={{ margin : "auto auto auto 10px", fontSize : "16px" }}>{schemaSet.workload.title || CamelCaseToSentanceCase(schemaSet.workload["object-type"])}</p>
             {schemaSet?.workload?.description && (
               <label htmlFor="help-button" >
                 <Tooltip title={schemaSet?.workload?.description} >
-                  <IconButton component="span" style={{paddingRight: 0}} >
+                  <IconButton component="span" style={{ paddingRight : "0.1rem" }} >
                     <HelpOutlineIcon style={{ color : '#fff' }} fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </label>
             )}
-            <IconButton onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
+            <IconButton style={{ paddingLeft : '0.1rem' }} onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
               <Delete style={{ color : "#ffffff" }} fontSize="small"/>
             </IconButton>
           </Toolbar>
@@ -191,7 +191,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               <Tab label="Traits" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(1)} />
             </Tabs>
           </AppBar>)}
-        <TabPanel value={tab} index={0} style={{ marginTop: "1.1rem"}}>
+        <TabPanel value={tab} index={0} style={{ marginTop : "1.1rem" }}>
           <PatternService
             type="workload"
             formData={settings}
@@ -203,7 +203,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
           />
         </TabPanel>
         {renderTraits() ? (
-          <TabPanel value={tab} index={1} style={{ marginTop: "1.1rem"}}>
+          <TabPanel value={tab} index={1} style={{ marginTop : "1.1rem" }}>
             {schemaSet.traits?.map((trait) => (
               <PatternService
                 formData={traits[getPatternAttributeName(trait)]}
