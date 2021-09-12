@@ -244,12 +244,13 @@ function MesheryApplications({
       );
     }
 
-    if (type === "upload") {
+    if (type === "upload" || type === "urlupload") {
+      const body = type==="upload" ? JSON.stringify({ application_data : { application_file : data }, save : true }) : JSON.stringify({ url : data, save : true });
       dataFetch(
         `/api/application`,
         { credentials : "include",
           method : "POST",
-          body : JSON.stringify({ application_data : { application_file : data }, save : true }), },
+          body : body, },
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
@@ -280,7 +281,7 @@ function MesheryApplications({
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
     // console.log(link, "valid");
   }
 

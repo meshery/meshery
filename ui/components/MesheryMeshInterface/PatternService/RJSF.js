@@ -1,13 +1,19 @@
 import React from "react";
+// import { utils } from "@rjsf/core";
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import { Button } from "@material-ui/core";
+import {
+  // Grid,
+  // TextField
+  Button,
+} from "@material-ui/core";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
 // import Input from '@material-ui/core/Input';
 // import { Tooltip, IconButton } from "@material-ui/core";
 // import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import CustomObjectFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate"
 
 const Form = withTheme(MaterialUITheme);
 
@@ -173,6 +179,8 @@ function RJSFButton({ handler, text, ...restParams }) {
   );
 }
 
+
+
 function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, renderAsTooltip, ...restparams }) {
   let uiJsonSchema = {}
   // TODO: needs to do recursively for deep fields
@@ -189,15 +197,14 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
     ...uiJsonSchema,
     replicas : {
       "ui:widget" : "range"
-    }
-  };
+    },
+    "ui:order" : [
+      "name",
+      "namespace",
+      "*",
+    ],
 
-  // define new string field
-  const fields =  {
-    // eslint-disable-next-line
-    // TODO: implement custom fields for help tooltip
-    // StringField : (props) => <CustomInputField {...props} />
-  }
+  };
 
   const [data, setData] = React.useState({ ...formData });
 
@@ -229,6 +236,7 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
             formData={data}
             fields={fields}
             showErrorList={false}
+            ObjectFieldTemplate={CustomObjectFieldTemplate}
             ArrayFieldTemplate={ArrayFieldTemplate}
             additionalMetaSchemas={[JS4]}
             uiSchema={uiSchema}
