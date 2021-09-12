@@ -5,6 +5,9 @@ import { Button } from "@material-ui/core";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
+import Input from '@material-ui/core/Input';
+import { Tooltip, IconButton } from "@material-ui/core";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 
 const Form = withTheme(MaterialUITheme);
 
@@ -83,7 +86,18 @@ function deleteDescriptionFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, description : "" };
 }
 
+function formatString(text){
+  if (!text) return null
+
+  // format string for prettified camelCase
+  const result = text.replaceAll("IP", "Ip");
+
+  return result;
+}
+
 function camelCaseToCapitalize(text){
+  if (!text) return null
+
   const result = text.replace(/([A-Z])/g, " $1");
 
   return result.charAt(0).toUpperCase() + result.slice(1);
@@ -131,6 +145,28 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
   return undefined
 }
 
+const CustomInputField = (props) => {
+  const name = props?.name || props?.idSchema['$id']?.split('_')[1]
+  const prettifiedName = camelCaseToCapitalize(formatString(name)) || 'Input'
+  return (
+    <div>
+      <strong>{prettifiedName}</strong>
+      {props.schema?.description && (
+        <Tooltip title={props.schema?.description}>
+          <IconButton component="span">
+            <HelpOutlineIcon
+              onClick={() => this.setOpenPopup(true)}
+            />
+          </IconButton>
+        </Tooltip>
+      )}
+      <br/>
+      <Input {...props} placeholder={`${prettifiedName}`}/>
+    </div>
+  )
+}
+
+
 function RJSFButton({ handler, text, ...restParams }) {
   return (
     <Button variant="contained" color="primary" style={{ marginRight : "0.5rem" }} onClick={handler} {...restParams}>
@@ -140,11 +176,29 @@ function RJSFButton({ handler, text, ...restParams }) {
 }
 
 function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, renderAsTooltip, ...restparams }) {
+  let uiJsonSchema = {}
+  // needs to do recursively for deep fields
+  Object.keys(jsonSchema.properties).map(key => {
+    uiJsonSchema = {
+      ...uiJsonSchema,
+      [key] : {
+        'ui:description' : ' '
+      },
+    }
+  })
   const uiSchema = {
+    // hide all descriptions from fields
+    ...uiJsonSchema,
     replicas : {
       "ui:widget" : "range"
     }
   };
+
+  // define new string field
+  const fields =  {
+    // eslint-disable-next-line
+    StringField : (props) => <CustomInputField {...props} />
+  }
 
   const [data, setData] = React.useState({ ...formData });
 
@@ -160,6 +214,7 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
           idPrefix={jsonSchema?.title}
           onChange={(e) => setData(e.formData)}
           formData={data}
+          fields={fields}
           liveValidate
           additionalMetaSchemas={[JS4]}
         // noHtml5Validate
@@ -173,6 +228,7 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
             idPrefix={jsonSchema?.title}
             onChange={(e) => setData(e.formData)}
             formData={data}
+            fields={fields}
             showErrorList={false}
             ArrayFieldTemplate={ArrayFieldTemplate}
             additionalMetaSchemas={[JS4]}
