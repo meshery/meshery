@@ -189,16 +189,9 @@ var switchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		//Refresh meshery to reflect channel update
-
-		//stop meshery
-		if err := stop(); err != nil {
-			return errors.Wrap(err, utils.SystemError("Failed to stop Meshery"))
-		}
-
-		// Start meshery
-		if err := start(); err != nil {
-			return errors.Wrap(err, utils.SystemError("Failed to start Meshery"))
+		err = restartCmd.RunE(cmd, args)
+		if err != nil {
+			return err
 		}
 		return nil
 	},
