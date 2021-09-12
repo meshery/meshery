@@ -51,6 +51,169 @@ export const logYAxe = {
   }
 }
 
+/**
+ * getMetadata takes in the test data and returns an object
+ * with partially computed data and a "display" field
+ */
+export function getMetadata(res) {
+  return {
+    title : {
+      display : {
+        key : 'Title',
+        value : res.Labels.split(' -_- ')?.[0] || "No Title"
+      }
+    },
+    url : {
+      display : {
+        key : 'URL',
+        value : res.Labels.split(' -_- ')?.[1] || "No URL"
+      }
+    },
+    startTime : {
+      display : {
+        key : 'Start Time',
+        value : formatDate(res.StartTime)
+      }
+    },
+    minimum : {
+      display : {
+        key : 'Minimum',
+        value : `${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms`
+      }
+    },
+    average : {
+      display : {
+        key : 'Average',
+        value : `${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms`
+      }
+    },
+    maximum : {
+      display : {
+        key : 'Maximum',
+        value : `${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms`
+      }
+    },
+    qps : {
+      display : {
+        key : "QPS",
+        value : `Achieved ${myRound(res.ActualQPS, 1)} (Requested ${res?.RequestedQPS})`,
+      }
+    },
+    numberOfConnections : {
+      display : {
+        key : 'Number Of Connections',
+        value : res.NumThreads,
+      }
+    },
+    duration : {
+      display : {
+        key : 'Duration',
+        value : `Achieved ${myRound(res.ActualDuration / 1e9, 1)} (Requested ${res.RequestedDuration})`,
+      }
+    },
+    errors : {
+      display : {
+        key : 'Errors',
+        value : (() => {
+          const status = res.RetCodes?.[200] || res.RetCodes?.["SERVING"] || 0;
+          const total = res.DurationHistogram.Count;
+
+          if (status !== total) {
+            if (status) return myRound(100.0 * (total - status) / total, 2) + '% errors';
+
+            return "100% errors!";
+          }
+
+          return "No Errors";
+        })(),
+      }
+    },
+    percentiles : {
+      display : {
+        key : 'Percentiles',
+        value : res.DurationHistogram?.Percentiles?.map(p => {
+          return {
+            display : {
+              key : `p${p.Percentile}`,
+              value : `${myRound(1000 * p.Value, 2)} ms`
+            }
+          }
+        }),
+      }
+    },
+    kubernetes : {
+      display : {
+        hide : !res.kubernetes,
+        key : "Kuberenetes",
+        value : [
+          {
+            display : {
+              key : "Server Version",
+              value : res.kubernetes?.server_version
+            }
+          },
+          {
+            display : {
+              key : "Nodes",
+              value : res.kubernetes?.nodes?.map((node, i) => {
+                return {
+                  display : {
+                    key : `Node ${i + 1}`,
+                    value : [
+                      {
+                        display : {
+                          key : "Hostname",
+                          value : node?.hostname,
+                        }
+                      },
+                      {
+                        display : {
+                          key : "CPU",
+                          value : node?.allocatable_cpu,
+                        }
+                      },
+                      {
+                        display : {
+                          key : "Memory",
+                          value : node?.allocatable_memory,
+                        }
+                      },
+                      {
+                        display : {
+                          key : "Arch",
+                          value : node?.architecture,
+                        }
+                      },
+                      {
+                        display : {
+                          key : "OS",
+                          value : node?.os_image,
+                        }
+                      },
+                      {
+                        display : {
+                          key : "Kubelet Version",
+                          value : node?.kubelet_version,
+                        }
+                      },
+                      {
+                        display : {
+                          key : "Container runtime",
+                          value : node?.container_runtime_version,
+                        }
+                      },
+                    ]
+                  }
+                }
+              })
+            }
+          },
+        ],
+      }
+    }
+  }
+}
+
 export function makeTitle (res) {
   var title = []
   if (res.Labels !== '') {
@@ -173,6 +336,7 @@ export function fortioResultToJsChartData (res) {
   }
   return {
     title: makeTitle(res),
+    metadata: getMetadata(res),
     dataP: dataP,
     dataH: dataH,
     percentiles: res.DurationHistogram.Percentiles,
@@ -224,6 +388,7 @@ export function makeChart (data) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      metadata : data?.metadata,
       title: {
         display: true,
         fontStyle: 'normal',
@@ -323,6 +488,10 @@ export function makeOverlayChart (dataA, dataB) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      metadata: [
+        dataA?.metadata,
+        dataB?.metadata,
+      ],
       title: {
         display: true,
         fontStyle: 'normal',
@@ -447,6 +616,7 @@ export function makeMultiChart (results) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      metadata : results?.metadata,
       title: {
         display: true,
         fontStyle: 'normal',

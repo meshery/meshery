@@ -1,5 +1,5 @@
 import React from 'react';
-import { NoSsr } from '@material-ui/core';
+import { Grid, NoSsr } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
@@ -29,6 +29,19 @@ const styles = (theme) => ({
   }
 });
 
+function NonRecursiveConstructDisplayCells(data) {
+  console.log(data)
+  return Object.keys(data).map(el => {
+    if (typeof data[el].display?.value === "string" && !data[el].display?.hide) {
+      return (
+        <>
+          <b>{data[el].display?.key}</b>: {data[el].display?.value}
+        </>
+      )
+    }
+  })
+}
+
 class MesheryChart extends React.Component {
   constructor(props) {
     super(props);
@@ -45,6 +58,7 @@ class MesheryChart extends React.Component {
   }
 
   processChartData(chartData) {
+    console.log(chartData);
     const self = this;
     if (self.chartRef && self.chartRef !== null) {
       if (chartData && chartData.data && chartData.options) {
@@ -202,9 +216,7 @@ class MesheryChart extends React.Component {
           }
           // axes[ds.label] = `y${ind>0?ind+1:''}`;
 
-          ds.data.forEach((d) => {
-            yAxis.push(d);
-          });
+          ds.data.forEach((d) => yAxis.push(d));
           yAxes.push(yAxis);
           colors[ds.label] = ds.borderColor; // not sure which is better border or background
         });
@@ -217,8 +229,7 @@ class MesheryChart extends React.Component {
 
       axis.x = {
         show : true,
-        label : {
-        },
+        label : {},
         type : 'category',
         categories,
       };
@@ -226,15 +237,17 @@ class MesheryChart extends React.Component {
       if (chartData.options.scales.yAxes) {
         chartData.options.scales.yAxes.forEach((ya) => {
           let lab;
-          if (typeof yAxisTracker[ya.id] !== 'undefined') {
-            lab = yAxisTracker[ya.id];
-          } else {
-            lab = 'y';
-          }
-          axis[lab] = { show : true,
+          if (typeof yAxisTracker[ya.id] !== 'undefined') lab = yAxisTracker[ya.id];
+          else lab = 'y';
+
+          axis[lab] = {
+            show : true,
             min : 0,
-            label : { text : ya.scaleLabel.labelString,
-              position : 'outer-middle', }, };
+            label : {
+              text : ya.scaleLabel.labelString,
+              position : 'outer-middle',
+            },
+          };
         });
       }
 
@@ -281,24 +294,33 @@ class MesheryChart extends React.Component {
         : {};
       chartData = this.singleChart(tmpData);
     }
+
     const { classes } = this.props;
+
     return (
       <NoSsr>
         <div>
-          <div ref={(ch) => this.titleRef = ch} className={classes.title} />
+          <div ref={(ch) => this.titleRef = ch} className={classes.title} style={{ display : "none" }}/>
+          <Grid container spacing={1} style={{ marginBottom : "1rem" }} justifyContent="center">
+            {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map(el => {
+              return (
+                <Grid item xs={4}>{el}</Grid>
+              )
+            })}
+          </Grid>
           <div className={classes.chartWrapper} >
             <div className={classes.chart} ref={(ch) => {
               this.chartRef = ch;
             }}
             ></div>
             <div className={classes.percentiles} ref={(ch) => {
-              this.percentileRef=ch;
+              this.percentileRef = ch;
               if (this.props.data.length > 2) {
                 self.processMultiChartData(chartData);
               } else {
                 self.processChartData(chartData);
               }
-            } } ></div>
+            }} />
           </div>
         </div>
       </NoSsr>
