@@ -206,6 +206,13 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
 
   };
 
+  // define new string field
+  const fields =  {
+    // eslint-disable-next-line
+    // TODO: implement custom fields for help tooltip
+    // StringField : (props) => <CustomInputField {...props} />
+  }
+
   const [data, setData] = React.useState({ ...formData });
 
   React.useEffect(() => {
