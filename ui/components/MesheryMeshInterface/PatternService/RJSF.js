@@ -5,6 +5,7 @@ import { Button } from "@material-ui/core";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
+import CustomObjectFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate"
 
 const Form = withTheme(MaterialUITheme);
 
@@ -174,6 +175,7 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
             onChange={(e) => setData(e.formData)}
             formData={data}
             showErrorList={false}
+            ObjectFieldTemplate={CustomObjectFieldTemplate}
             ArrayFieldTemplate={ArrayFieldTemplate}
             additionalMetaSchemas={[JS4]}
             uiSchema={uiSchema}

@@ -172,7 +172,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
           </Toolbar>
         </AppBar>
       )}
-      <div style={{ maxHeight : '300px', marginTop : "3rem", scrollbarWidth : 'thin', overflow : 'auto' }}>
+      <div style={{ maxHeight : '300px', marginTop : "3rem", scrollbarWidth : 'thin' }}>
         {!renderAsTooltip && (<AppBar position="static">
           <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service" >
             <Tab label="Settings" {...a11yProps(0)} />

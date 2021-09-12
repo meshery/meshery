@@ -7,7 +7,7 @@ import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 
-import { Button, IconButton } from "@material-ui/core";
+import { Button, IconButton, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add"
 import SimpleAccordion from "./Accordion";
 
@@ -30,7 +30,8 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
   }
 
   const id = `${idSchema.$id}__title`;
-  return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
+  // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
+return <Typography variant="h6">{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>
   // return <TitleField id={id} title={title} required={required} />;
 };
 
@@ -55,7 +56,7 @@ const DefaultArrayItem = (props) => {
   return (
     <SimpleAccordion childProps={props}>
       <Grid container={true} key={props.key} alignItems="center">
-        <Grid item={true} xs style={{ overflow : "auto" }}>
+        <Grid item={true} xs >
           <Box mb={2} style={{ border : "0.5px solid black" }}>
             <Paper elevation={0}>
               <Box p={2}>{props.children}</Box>
