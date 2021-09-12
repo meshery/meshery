@@ -110,4 +110,5 @@ module.exports = { resolve : {
   "react-dom/server" : require("react-dom/server"),
   "relay-runtime" : require("relay-runtime"),
   "@material-ui/icons/LibraryAdd" : require("@material-ui/icons/LibraryAdd"),
+  "@material-ui/icons/MdDoneAll" : require("@material-ui/icons/MdDoneAll"),
 }, };
