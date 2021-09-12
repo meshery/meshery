@@ -1,10 +1,12 @@
 import React from "react";
+import { utils } from "@rjsf/core";
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import { Button } from "@material-ui/core";
+import { Button, Grid, TextField } from "@material-ui/core";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
+import CustomObjectFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate"
 
 const Form = withTheme(MaterialUITheme);
 
@@ -139,12 +141,27 @@ function RJSFButton({ handler, text, ...restParams }) {
   );
 }
 
+
+
 function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, renderAsTooltip, ...restparams }) {
   const uiSchema = {
     replicas : {
       "ui:widget" : "range"
-    }
+    },
+    "ui:order" : [
+      "name",
+      "namespace",
+      "*",
+    ],
+
   };
+
+  <Grid container xs={12}>
+    <Grid item xs={6}>
+    </Grid>
+    <Grid item xs={6}>
+    </Grid>
+  </Grid>
 
   const [data, setData] = React.useState({ ...formData });
 
@@ -174,6 +191,7 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
             onChange={(e) => setData(e.formData)}
             formData={data}
             showErrorList={false}
+            ObjectFieldTemplate={CustomObjectFieldTemplate}
             ArrayFieldTemplate={ArrayFieldTemplate}
             additionalMetaSchemas={[JS4]}
             uiSchema={uiSchema}
