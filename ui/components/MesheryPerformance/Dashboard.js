@@ -92,50 +92,57 @@ function Dashboard({
 
   return (
     <>
-      <Grid container spacing={2} style={{ padding : "0.5rem" }} alignItems="flex-start" alignContent="space-around">
-        <Grid item lg={6} xs={12}>
-          <Paper className={classes.paper}>
-            <Grid container spacing={1}>
-              <Grid item xs>
-                <div className={classes.paper}>
-                  <div style={{ display : "flex", alignItems : "center" , height : "6.8rem" }}>
-                    <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
-                      {(tests.count).toLocaleString('en')}
-                    </Typography>
-                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
-                      Results
-                    </Typography>
+      <Grid container spacing={2} style={{ padding : "0.5rem" }} alignContent="space-around">
+        <Grid container item spacing={1} direction="column" lg xs={12}>
+          <Grid item>
+            <Paper className={classes.paper}>
+              <Grid container spacing={1}>
+                <Grid item xs>
+                  <div className={classes.paper}>
+                    <div style={{ display : "flex", alignItems : "center" , height : "6.8rem" }}>
+                      <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
+                        {(tests.count).toLocaleString('en')}
+                      </Typography>
+                      <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                        Results
+                      </Typography>
+                    </div>
+                    <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
+                      <Button variant="contained" color="primary" onClick={() => setRunTest(true)}>
+                        Run Test
+                      </Button>
+                    </div>
                   </div>
-                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
-                    <Button variant="contained" color="primary" onClick={() => setRunTest(true)}>
-                      Run Test
-                    </Button>
+                </Grid>
+                <div style={{ height : "10.4rem", width : "1px", background : "black", marginTop : "1.1rem", bottom : "0" , left : "36%", backgroundColor : "#36454f", opacity : "0.7" }}></div>
+                <Grid item xs>
+                  <div className={classes.paper}>
+                    <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
+                      <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
+                        {profiles.count}
+                      </Typography>
+                      <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                        Profiles
+                      </Typography>
+                    </div>
+                    <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
+                      <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
+                        Manage Profiles
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                </Grid>
               </Grid>
-              <div style={{ height : "10.4rem", width : "1px", background : "black", marginTop : "1.1rem", bottom : "0" , left : "36%", backgroundColor : "#36454f", opacity : "0.7" }}></div>
-              <Grid item xs>
-                <div className={classes.paper}>
-                  <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
-                    <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
-                      {profiles.count}
-                    </Typography>
-                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
-                      Profiles
-                    </Typography>
-                  </div>
-                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
-                    <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
-                      Manage Profiles
-                    </Button>
-                  </div>
-                </div>
-              </Grid>
-            </Grid>
-          </Paper>
+            </Paper>
+          </Grid>
+          <Grid item>
+            <Paper className={classes.paper}>
+              <PerformanceCalendar style={{ height : "40rem", margin : "2rem 0 0" }} />
+            </Paper>
+          </Grid>
         </Grid>
-        <Grid item lg={6} xs={12}>
-          <Paper className={classes.paper}>
+        <Grid item lg xs={12}>
+          <Paper className={classes.paper} style={{ height : "100%" }}>
             <MesheryMetrics
               boardConfigs={grafana.selectedBoardsConfigs}
               grafanaURL={grafana.grafanaURL}
@@ -145,12 +152,6 @@ function Dashboard({
           </Paper>
         </Grid>
       </Grid>
-      <Grid>
-        <Paper className={classes.paper}>
-          <PerformanceCalendar style={{ height : "40rem", margin : "2rem 0 0" }} />
-        </Paper>
-      </Grid>
-
 
       <GenericModal
         open={!!runTest}
