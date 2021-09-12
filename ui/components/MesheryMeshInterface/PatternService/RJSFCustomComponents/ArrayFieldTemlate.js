@@ -10,7 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import { Button, IconButton, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add"
 import SimpleAccordion from "./Accordion";
-
+import CustomDescriptionField from "./DescriptionField"
 const { isMultiSelect, getDefaultRegistry } = utils;
 
 const ArrayFieldTemplate = (props) => {
@@ -31,7 +31,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
 
   const id = `${idSchema.$id}__title`;
   // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
-return <Typography variant="h6">{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>
+return <Typography variant="body1" style={{fontWeight: "bold"}}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>
   // return <TitleField id={id} title={title} required={required} />;
 };
 
@@ -173,7 +173,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
         {(props.uiSchema["ui:description"] || props.schema.description) && (
           <ArrayFieldDescription
             key={`array-field-description-${props.idSchema.$id}`}
-            DescriptionField={props.DescriptionField}
+            DescriptionField={CustomDescriptionField}
             idSchema={props.idSchema}
             description={
               props.uiSchema["ui:description"] || props.schema.description
