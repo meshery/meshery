@@ -177,7 +177,7 @@ function RJSFButton({ handler, text, ...restParams }) {
 
 function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, renderAsTooltip, ...restparams }) {
   let uiJsonSchema = {}
-  // needs to do recursively for deep fields
+  // TODO: needs to do recursively for deep fields
   Object.keys(jsonSchema.properties).map(key => {
     uiJsonSchema = {
       ...uiJsonSchema,
