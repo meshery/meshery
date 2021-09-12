@@ -8,11 +8,12 @@ import {
   Button, Grid, Paper, Typography
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CloseIcon from "@material-ui/icons/Close";
 import { withRouter } from "next/router";
 import dataFetch from "../../lib/data-fetch";
 import MesheryMetrics from "../MesheryMetrics";
-import { withStyles } from "@material-ui/core/styles";
 import PerformanceCalendar from "./PerformanceCalendar";
 import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
@@ -20,17 +21,57 @@ import MesheryPerformanceComponent from "./index";
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
-const styles = () => ({ paper : { padding : "1rem", }, });
+const useStyles = makeStyles(() => ({
+  paper : { padding : "1rem", },
+  resultContainer : {
+    display : "flex",
+    flexDirection : "row",
+    justifyContent : "space-between",
+    ["@media (max-width: 830px)"] : {
+      flexDirection : "column"
+    },
+  },
+  vSep : {
+    height : "10.4rem",
+    width : "1px",
+    background : "black",
+    marginTop : "1.1rem",
+    bottom : "0" ,
+    left : "36%",
+    backgroundColor : "#36454f",
+    opacity : "0.7",
+    ["@media (max-width: 830px)"] : {
+      display : "none",
+    }
+  },
+  hSep : {
+    display : "none",
+    ["@media (max-width: 830px)"] : {
+      display : "block",
+      width : "100%",
+      height : "1px",
+      background : "black",
+      marginTop : "1.1rem",
+      bottom : "0" ,
+      left : "36%",
+      backgroundColor : "#36454f",
+      opacity : "0.7",
+    }
+  }
+}));
 
-function Dashboard({
-  updateProgress, enqueueSnackbar, closeSnackbar, grafana, router, classes
-}) {
-  const [profiles, setProfiles] = useState({ count : 0,
-    profiles : [], });
-  const [tests, setTests] = useState({ count : 0,
-    tests : [], });
-
+function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router }) {
+  const [profiles, setProfiles] = useState({ count : 0, profiles : [] });
+  const [tests, setTests] = useState({ count : 0, tests : [] });
   const [runTest, setRunTest] = useState(false);
+  const classes = useStyles();
+
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("xs"))
+
+  if (matches) {
+    console.log("HIT")
+  }
 
   /**
    * fetch performance profiles when the page loads
@@ -96,42 +137,40 @@ function Dashboard({
         <Grid container item spacing={1} direction="column" lg xs={12}>
           <Grid item>
             <Paper className={classes.paper}>
-              <Grid container spacing={1}>
-                <Grid item xs>
-                  <div className={classes.paper}>
-                    <div style={{ display : "flex", alignItems : "center" , height : "6.8rem" }}>
-                      <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
-                        {(tests.count).toLocaleString('en')}
-                      </Typography>
-                      <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
-                        Results
-                      </Typography>
-                    </div>
-                    <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
-                      <Button variant="contained" color="primary" onClick={() => setRunTest(true)}>
-                        Run Test
-                      </Button>
-                    </div>
+              <div className={classes.resultContainer}>
+                <div className={classes.paper}>
+                  <div style={{ display : "flex", alignItems : "center" , height : "6.8rem" }}>
+                    <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
+                      {(tests.count).toLocaleString('en')}
+                    </Typography>
+                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                      Results
+                    </Typography>
                   </div>
-                </Grid>
-                <Grid item xs>
-                  <div className={classes.paper}>
-                    <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
-                      <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
-                        {profiles.count}
-                      </Typography>
-                      <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
-                        Profiles
-                      </Typography>
-                    </div>
-                    <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
-                      <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
-                        Manage Profiles
-                      </Button>
-                    </div>
+                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
+                    <Button variant="contained" color="primary" onClick={() => setRunTest(true)}>
+                      Run Test
+                    </Button>
                   </div>
-                </Grid>
-              </Grid>
+                </div>
+                <div className={classes.vSep} />
+                <div className={classes.hSep} />
+                <div className={classes.paper}>
+                  <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
+                    <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
+                      {profiles.count}
+                    </Typography>
+                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                      Profiles
+                    </Typography>
+                  </div>
+                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
+                    <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
+                      Manage Profiles
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </Paper>
           </Grid>
           <Grid item>
@@ -172,4 +211,4 @@ const mapStateToProps = (st) => {
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard))));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard)));
