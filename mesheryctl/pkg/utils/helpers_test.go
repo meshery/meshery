@@ -22,7 +22,7 @@ func getFixturesDirectory() string {
 	return fixturesDir
 }
 
-var fixturesDir string = getFixturesDirectory()
+var fixturesDir = getFixturesDirectory()
 
 func TestBackupConfigFile(t *testing.T) {
 	name := "config.yaml"
