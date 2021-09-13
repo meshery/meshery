@@ -86,7 +86,7 @@ export const submitPrometheusConfigThunk = createAsyncThunk(
   async () => {}
 );
 
-export const promGrafMeshScanThunk = createAsyncThunk("mesheryEnvironment/scanForPromGrafInCluster", async () => {
+export const promGrafMeshScanThunk = createAsyncThunk("mesheryEnvironment/promGrafMeshScan", async () => {
   const response = await promGrafMeshScan();
   return response;
 });
