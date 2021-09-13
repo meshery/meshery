@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { initServiceMeshEvents } from "./helpers";
+import { initAddonStatusSubscription, initServiceMeshEvents } from "./helpers";
 
 /**
    this feature/module handles all things related to service meshes like, getting the control plane data, proxy data of service mesh, 
@@ -22,11 +22,15 @@ import { initServiceMeshEvents } from "./helpers";
  */
 
 /**
- * @typedef {{name: MeshNameType, controlPlaneData: ControlPlaneDataType , dataPlaneData: DataPlaneDataType , adapterId: string }} ServiceMeshType
+ * @typedef {{name: MeshNameType, controlPlaneData: ControlPlaneDataType , dataPlaneData: DataPlaneDataType , adapterId: string, addons: AddonType[] }} ServiceMeshType
  */
 
 /**
  * @typedef {"all_mesh" | "invalid_mesh" | "app_mesh" | "citrix_service_mesh" | "consul" | "istio" | "kuma" | "linkerd" | "traefik_mesh" | "octarine" | "network_service_mesh" | "tanzu" | "open_service_mesh" | "nginx_service_mesh"} MeshNameType
+ */
+
+/**
+ * @typedef {{name: string, endpoint:string, owner: MeshNameType}} AddonType
  */
 
 const initialState = {
@@ -46,6 +50,15 @@ export const initServiceMeshEventsThunk = createAsyncThunk(
   async (dataCB) => {
     const response = await initServiceMeshEvents("istio", dataCB);
 
+    return response;
+  }
+);
+
+export const initAddonStatusSubscriptionThunk = createAsyncThunk(
+  "serviceMeshes/initAddonStatusSubscriptions",
+  async (dataCB) => {
+    const ALL_MESH = {};
+    const response = await initAddonStatusSubscription(ALL_MESH, dataCB);
     return response;
   }
 );
@@ -80,6 +93,13 @@ const serviceMeshesSlice = createSlice({
 
       return state;
     },
+    updateServiceMeshesAddonsStatus: (state, action) => {
+      /** @type {AddonType[]} */
+      const scannedAddons = action.payload;
+      scannedAddons.forEach((addon) => {
+        state.meshes.find((mesh) => mesh.name === addon.owner).addons.push(addon);
+      });
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(initServiceMeshEventsThunk.fulfilled, (state) => {
@@ -89,6 +109,17 @@ const serviceMeshesSlice = createSlice({
 
     //proper error handling has to be done for  `initServiceMeshEventsThunk` handler
     builder.addCase(initServiceMeshEventsThunk.rejected, (state, action) => {
+      state.loading = false;
+      state.error.description = action.error;
+      return state;
+    });
+    builder.addCase(initAddonStatusSubscriptionThunk.fulfilled, (state) => {
+      state.loading = false;
+      return state;
+    });
+
+    //proper error handling has to be done for  `initServiceMeshEventsThunk` handler
+    builder.addCase(initAddonStatusSubscriptionThunk.rejected, (state, action) => {
       state.loading = false;
       state.error.description = action.error;
       return state;

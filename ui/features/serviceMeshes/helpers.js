@@ -1,3 +1,4 @@
+import subscribeAddonStatusEvents from "./graphql/subscriptions/AddonStatusSubscription";
 import subscribeServiceMeshEvents from "./graphql/subscriptions/ServiceMeshSubscription";
 
 /**
@@ -7,10 +8,17 @@ import subscribeServiceMeshEvents from "./graphql/subscriptions/ServiceMeshSubsc
  * @returns
  */
 // eslint-disable-next-line no-unused-vars
-export const initServiceMeshEvents = (meshFilter = "ALL_MESH", dataCB) =>
+export const initServiceMeshEvents = (meshFilter = {}, dataCB) =>
   new Promise((res) => {
     const ALL_MESH = {};
     subscribeServiceMeshEvents(dataCB, ALL_MESH);
+    // handle errors
+    res("Subscription initialised succesfully");
+  });
+
+export const initAddonStatusSubscription = (meshFilter = {}, dataCB) =>
+  new Promise((res) => {
+    subscribeAddonStatusEvents(dataCB, meshFilter);
     // handle errors
     res("Subscription initialised succesfully");
   });

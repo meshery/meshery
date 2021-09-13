@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { mesherySystemSync } from "./helpers";
+import { mesherySystemSync, promGrafMeshScan } from "./helpers";
 import { fetchKuberernetesClusters, submitKubernetesClusterConfig } from "./kubernetesCluster";
 
 /**
@@ -85,6 +85,11 @@ export const submitPrometheusConfigThunk = createAsyncThunk(
   "mesheryEnvironment/submitPrometheusConfig",
   async () => {}
 );
+
+export const promGrafMeshScanThunk = createAsyncThunk("mesheryEnvironment/scanForPromGrafInCluster", async () => {
+  const response = await promGrafMeshScan();
+  return response;
+});
 
 const mesheryEnvironmentSlice = createSlice({
   name: "mesheryEnvironment",
