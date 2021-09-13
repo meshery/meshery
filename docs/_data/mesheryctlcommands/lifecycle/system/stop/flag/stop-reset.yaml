@@ -1,5 +1,0 @@
-flag: --reset
-arg: stop
-description: Reset Meshery’s configuration file to default settings.
-usage: |
-    mesheryctl system stop --reset

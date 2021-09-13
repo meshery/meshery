@@ -300,7 +300,7 @@ MesherySMIResults.propTypes = { classes : PropTypes.object.isRequired, };
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 const mapStateToProps = (state) => {
-  const user = state.get('user').toObject();
+  const user = state.get('user')?.toObject();
   return { user };
 };
 

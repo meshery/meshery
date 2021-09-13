@@ -6,6 +6,8 @@ type: reference
 display-title: "false"
 language: en
 lang: en
+command: system
+subcommand: start
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -16,9 +18,8 @@ lang: en
 
 ## Description
 
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.system.start.command %}{% assign command = command_hash[1] %}
-{{ command.description }}
-{% endfor %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
+{{ name.description }}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
@@ -29,15 +30,13 @@ lang: en
 
 ## Examples
 
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.system.start.command %}{% assign command = command_hash[1] %}
-{{ command.description }}
+{{ name.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ command.usage }}
+  {{ name.usage }}
   </div>
 </pre>
-{% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -51,11 +50,11 @@ lang: en
 <!-- Options/Flags available in this command -->
 ## Options
 
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {{ flag.flag }}
+    {{ flag.name }}
   </div>
 </pre>
 {% endfor %}

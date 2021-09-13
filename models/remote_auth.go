@@ -32,6 +32,10 @@ func SafeClose(co io.Closer) {
 //DoRequest - executes a request and does refreshing automatically
 func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
+	if err != nil {
+		return nil, ErrTokenRefresh(err)
+	}
+
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
 		logrus.Warn("trying after refresh")
 		newToken, err := l.refreshToken(tokenString)
@@ -63,6 +67,10 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if r.StatusCode == http.StatusInternalServerError {
+		return "", ErrTokenRefresh(fmt.Errorf("failed to refresh token: status code 500"))
+	}
+
 	defer SafeClose(r.Body)
 	var target map[string]string
 	err = json.NewDecoder(r.Body).Decode(&target)

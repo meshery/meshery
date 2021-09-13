@@ -628,10 +628,10 @@ class DashboardComponent extends React.Component {
             <Table aria-label="mesh details table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Service Mesh Pods</TableCell>
+                  <TableCell align="center">Control Plane</TableCell>
                   <TableCell align="center">Component</TableCell>
                   <TableCell align="center">Version</TableCell>
-                  <TableCell align="center">Data Planes</TableCell>
+                  <TableCell align="center">Proxy</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -922,7 +922,7 @@ class DashboardComponent extends React.Component {
 
     const showServiceMesh = (
       <>
-        {Object.keys(self.state.meshScan).length
+        {self?.state?.meshScan && Object.keys(self.state.meshScan).length
           ? (
             <>
               {self.state.meshScan.map((mesh) => {

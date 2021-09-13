@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { CircularProgress, Typography } from "@material-ui/core";
 import normalizeURI from "../utils/normalizeURI";
 import dataFetch from "../lib/data-fetch";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
@@ -139,7 +140,9 @@ function ExtensionSandbox({ type, Extension }) {
 
   if (type === "navigator") {
     return isLoading
-      ? null
+      ? <Typography align="center">
+        <CircularProgress/>
+      </Typography>
       : (
         <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extensions, getPath()))} />
       );
@@ -147,7 +150,9 @@ function ExtensionSandbox({ type, Extension }) {
 
   if (type === "user_prefs") {
     return isLoading
-      ? null
+      ? <Typography align="center">
+        <CircularProgress/>
+      </Typography>
       : (
         getComponentURIFromPathForUserPrefs(extensions).map(uri => {
           return <Extension url={createPathForRemoteComponent(uri)} />

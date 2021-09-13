@@ -83,10 +83,12 @@ const styles = () => ({
     fontSize : "0.85rem",
     textAlign : "center",
     "&:first-letter" : { textTransform : "capitalize", },
+    marginTop : "0.8rem"
   },
   cardIconTextConnected : {
     color : "black",
     fontSize : "0.85rem",
+    marginTop : "0.8rem",
     textAlign : "center",
     "&:first-letter" : { textTransform : "capitalize", },
   },

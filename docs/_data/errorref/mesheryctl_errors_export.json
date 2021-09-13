@@ -9,8 +9,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error resetting meshconfig",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Meshery server config file is not reset to default settings",
+        "suggested_remediation": "Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`"
       },
       "1005": {
         "name": "ErrApplyManifestCode",
@@ -155,6 +155,51 @@
         "short_description": "SMI conformance tests failed",
         "probable_cause": "",
         "suggested_remediation": "Join https://layer5io.slack.com/archives/C010H0HE2E6"
+      },
+      "1022": {
+        "name": "ErrRetrievingCurrentContextCode",
+        "code": "1022",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error retrieving current context",
+        "probable_cause": "current context is not retrieved successfully",
+        "suggested_remediation": "Verify current context is retrieved successfully and valid"
+      },
+      "1023": {
+        "name": "ErrSettingTemporaryContextCode",
+        "code": "1023",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error setting temporary context",
+        "probable_cause": "temporary context is not set properly",
+        "suggested_remediation": "Verify the temporary context is set properly using the -c flag provided"
+      },
+      "1024": {
+        "name": "ErrCreateManifestsFolderCode",
+        "code": "1024",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating manifest folder",
+        "probable_cause": "system error in creating manifest folder",
+        "suggested_remediation": "Make sure manifest folder (.meshery/manifests) is created properly"
+      },
+      "1025": {
+        "name": "ErrProcessingMctlConfigCode",
+        "code": "1025",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error processing config",
+        "probable_cause": "Error due to invalid format of Mesheryctl config",
+        "suggested_remediation": "Make sure Mesheryctl config is in correct format and valid"
+      },
+      "1026": {
+        "name": "ErrRestartMesheryCode",
+        "code": "1026",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error restarting Meshery",
+        "probable_cause": "Meshery is not running",
+        "suggested_remediation": "Restart Meshery instance"
       }
     }
   }
