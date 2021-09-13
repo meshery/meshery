@@ -190,12 +190,12 @@ func TestAskForConfirmation(t *testing.T) {
 	}
 }
 
-func TestCreateConfigFile(t *testing.T) {
-	err := CreateConfigFile()
-	if err != nil {
-		t.Errorf("CreateConfigFile error = %v", err)
-	}
-}
+// func TestCreateConfigFile(t *testing.T) {
+// 	err := CreateConfigFile()
+// 	if err != nil {
+// 		t.Errorf("CreateConfigFile error = %v", err)
+// 	}
+// }
 
 func TestValidateURL(t *testing.T) {
 	tests := []struct {
