@@ -10,7 +10,6 @@ import (
 )
 
 func TestConvertRespToSSE(t *testing.T) {
-
 	tests := []struct {
 		name string
 		body string
@@ -23,7 +22,6 @@ func TestConvertRespToSSE(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			resp := http.Response{
 				Body: ioutil.NopCloser(bytes.NewBufferString(tt.body)),
 			}
@@ -69,9 +67,7 @@ func Test_loop(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-
 		t.Run(tt.name, func(t *testing.T) {
-
 			resp := http.Response{
 				Body: ioutil.NopCloser(bytes.NewBufferString(tt.body)),
 			}
@@ -83,7 +79,6 @@ func Test_loop(t *testing.T) {
 
 			i := 0
 			for event := range events {
-
 				if i == len(tt.want) {
 					t.Fatalf("Error: Got more events than expected")
 				}
@@ -93,9 +88,7 @@ func Test_loop(t *testing.T) {
 				}
 
 				i++
-
 			}
-
 		})
 	}
 }
@@ -122,11 +115,9 @@ func Test_hasPrefix(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			if got := hasPrefix([]byte(tt.s), tt.prefix); got != tt.want {
 				t.Errorf("hasPrefix() = %v, want %v", got, tt.want)
 			}
-
 		})
 	}
 }
