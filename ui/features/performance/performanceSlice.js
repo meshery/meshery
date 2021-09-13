@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, nanoid } from "@reduxjs/toolkit";
-import { fetchTestProfiles, fetchTestResults } from "./helpers";
+import { fetchTestProfileResults, fetchTestProfiles } from "./helpers";
 /**
  * this feature/module is reponsible for all the actions related to performance such as,
  * performance tests, profiles and running tests
@@ -23,15 +23,20 @@ const initialState = {
   errors: [],
 };
 
-const fetchPerformanceProfilesThunk = createAsyncThunk("performance/fetchPerformanceProfiles", async () => {
+export const fetchPerformanceProfilesThunk = createAsyncThunk("performance/fetchPerformanceProfiles", async () => {
   const response = await fetchTestProfiles();
   return response;
 });
 
-const fetchPerformanceResultsThunk = createAsyncThunk("performance/fetchPerformanceResults", async () => {
-  const response = await fetchTestResults();
-  return response;
-});
+export const fetchPerformanceResultsThunk = createAsyncThunk(
+  "performance/fetchPerformanceResults",
+  async (page = "0", pageSize = "", sortOrder = "", endpoint, search = "") => {
+    const response = await fetchTestProfileResults(page, pageSize, search, sortOrder, endpoint);
+    return response;
+  }
+);
+
+// run test thunk includes the implementation of SSE, so waiting for that.
 
 const performanceSlice = createSlice({
   name: "performance",
