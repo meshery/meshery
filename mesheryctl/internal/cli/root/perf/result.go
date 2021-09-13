@@ -152,15 +152,27 @@ func fetchPerformanceProfileResults(url, profileID, searchString string) ([][]st
 	// append data for single profile
 	for _, result := range response.Results {
 		serviceMesh := "No Mesh"
+		p50 := ""
+		p99_9 := ""
+		var P50, P90, P99 float64
+
 		if result.Mesh != "" {
 			serviceMesh = result.Mesh
 		}
 		qps := fmt.Sprintf("%d", int(result.RunnerResults.QPS))
 		duration := result.RunnerResults.RequestedDuration
-		p50 := fmt.Sprintf("%.8f", result.RunnerResults.DurationHistogram.Percentiles[0].Value)
-		p99_9 := fmt.Sprintf("%.8f", result.RunnerResults.DurationHistogram.Percentiles[len(result.RunnerResults.DurationHistogram.Percentiles)-1].Value)
+		if len(result.RunnerResults.DurationHistogram.Percentiles) > 0 {
+			p50 = fmt.Sprintf("%.8f", result.RunnerResults.DurationHistogram.Percentiles[0].Value)
+			p99_9 = fmt.Sprintf("%.8f", result.RunnerResults.DurationHistogram.Percentiles[len(result.RunnerResults.DurationHistogram.Percentiles)-1].Value)
+		}
 		startTime := result.TestStartTime.Format("2006-01-02 15:04:05")
 		data = append(data, []string{result.Name, serviceMesh, qps, duration, p50, p99_9, startTime})
+
+		if len(result.RunnerResults.DurationHistogram.Percentiles) > 3 {
+			P50 = result.RunnerResults.DurationHistogram.Percentiles[0].Value
+			P90 = result.RunnerResults.DurationHistogram.Percentiles[2].Value
+			P99 = result.RunnerResults.DurationHistogram.Percentiles[3].Value
+		}
 
 		// append data for extended output
 		a := resultStruct{
@@ -173,9 +185,9 @@ func fetchPerformanceProfileResults(url, profileID, searchString string) ([][]st
 				Average: result.RunnerResults.DurationHistogram.Average,
 				Max:     result.RunnerResults.DurationHistogram.Max,
 				Min:     result.RunnerResults.DurationHistogram.Min,
-				P50:     result.RunnerResults.DurationHistogram.Percentiles[0].Value,
-				P90:     result.RunnerResults.DurationHistogram.Percentiles[2].Value,
-				P99:     result.RunnerResults.DurationHistogram.Percentiles[3].Value,
+				P50:     P50,
+				P90:     P90,
+				P99:     P99,
 			},
 			StartTime:     result.TestStartTime,
 			MesheryID:     result.MesheryID,
