@@ -35,7 +35,7 @@ func SeedContent(l *models.DefaultLocalProvider) {
 
 	for _, p := range components {
 		id, _ := uuid.NewV4()
-		var pattern *models.MesheryPattern = &models.MesheryPattern{
+		var pattern = &models.MesheryPattern{
 			PatternFile: p.content,
 			Name:        p.name,
 			ID:          &id,
@@ -55,7 +55,7 @@ func SeedContent(l *models.DefaultLocalProvider) {
 
 	for _, f := range components {
 		id, _ := uuid.NewV4()
-		var filter *models.MesheryFilter = &models.MesheryFilter{
+		var filter = &models.MesheryFilter{
 			FilterFile: f.content,
 			Name:       f.name,
 			ID:         &id,
@@ -67,7 +67,6 @@ func SeedContent(l *models.DefaultLocalProvider) {
 		}
 		seededUUIDs = append(seededUUIDs, id)
 	}
-
 }
 
 func getSeededComponents(comp Component) ([]contentandName, error) {
@@ -89,7 +88,7 @@ func getSeededComponents(comp Component) ([]contentandName, error) {
 	}
 	for _, f := range files {
 		fPath := filepath.Join(wd, f.Name())
-		file, err := os.OpenFile(fPath, os.O_RDONLY, 444)
+		file, err := os.OpenFile(fPath, os.O_RDONLY, 0444)
 		if err != nil {
 			return nil, err
 		}
@@ -109,7 +108,7 @@ func getSeededComponents(comp Component) ([]contentandName, error) {
 // DeleteSeededContent deletes the seeded components, so that copy of same components can be avoided at restarts.
 func DeleteSeededContent() {
 	for _, u := range seededUUIDs {
-		localProvider.MesheryFilterPersister.DeleteMesheryFilter(u)
-		localProvider.MesheryPatternPersister.DeleteMesheryPattern(u)
+		_, _ = localProvider.MesheryFilterPersister.DeleteMesheryFilter(u)
+		_, _ = localProvider.MesheryPatternPersister.DeleteMesheryPattern(u)
 	}
 }
