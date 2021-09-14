@@ -91,7 +91,6 @@ func restart() error {
 			return ErrRestartMeshery(err)
 		}
 
-		skipUpdateFlag = true
 		if err := start(); err != nil {
 			return ErrRestartMeshery(err)
 		}
