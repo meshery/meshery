@@ -255,42 +255,6 @@ func TestGetManifestURL(t *testing.T) {
 	}
 }
 
-func TestIsPodRequired(t *testing.T) {
-	type args struct {
-		requiredPods []string
-		pod          string
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		{
-			name: "Pod '" + "test'" + " is required",
-			args: args{
-				requiredPods: []string{"test", "test1", "test2"},
-				pod:          "test",
-			},
-			want: true,
-		},
-		{
-			name: "Pod '" + "test'" + " is not required",
-			args: args{
-				requiredPods: []string{"test1", "test2"},
-				pod:          "test",
-			},
-			want: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := IsPodRequired(tt.args.requiredPods, tt.args.pod); got != tt.want {
-				t.Fatalf("IsPodRequired() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestDownloadManifests(t *testing.T) {
 	// initialize mock server for handling requests
 	StartMockery(t)
