@@ -78,33 +78,22 @@ func restart() error {
 
 	currPlatform := currCtx.GetPlatform()
 
-	switch currPlatform {
-	case "docker":
+	running, err := utils.IsMesheryRunning(currPlatform)
+	if err != nil {
+		return err
+	}
+	if !running { // Meshery is not running
+		if err := start(); err != nil {
+			return ErrRestartMeshery(err)
+		}
+	} else {
 		if err := stop(); err != nil {
 			return ErrRestartMeshery(err)
 		}
 
+		skipUpdateFlag = true
 		if err := start(); err != nil {
 			return ErrRestartMeshery(err)
-		}
-
-	case "kubernetes":
-		running, err := utils.IsMesheryRunning(currPlatform)
-		if err != nil {
-			return err
-		}
-		if !running { // Meshery is not running
-			if err := start(); err != nil {
-				return ErrRestartMeshery(err)
-			}
-		} else {
-			if err := stop(); err != nil {
-				return ErrRestartMeshery(err)
-			}
-
-			if err := start(); err != nil {
-				return ErrRestartMeshery(err)
-			}
 		}
 	}
 	return nil
