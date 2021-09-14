@@ -48,10 +48,9 @@ func TestStringWithCharset(t *testing.T) {
 	strLength := 10
 
 	gotString := StringWithCharset(strLength)
-	actualStringLength := len(gotString)
 
-	if actualStringLength != strLength {
-		t.Errorf("StringWithCharset got = %v want = %v", actualStringLength, strLength)
+	if len(gotString) != strLength {
+		t.Errorf("StringWithCharset got = %v want = %v", len(gotString), strLength)
 	}
 }
 
@@ -59,6 +58,12 @@ func TestPrereq(t *testing.T) {
 	_, _, err := prereq()
 	if err != nil {
 		t.Errorf("prereq error = %v", err)
+	}
+}
+func TestCreateConfigFile(t *testing.T) {
+	err := CreateConfigFile()
+	if err != nil {
+		t.Errorf("CreateConfigFile error = %v", err)
 	}
 }
 
@@ -103,9 +108,9 @@ func TestUploadFileWithParams(t *testing.T) {
 
 func TestContentTypeIsHTML(t *testing.T) {
 	tests := []struct {
-		name     string
-		response *http.Response
-		want     bool
+		name           string
+		response       *http.Response
+		expectedOutput bool
 	}{
 		{
 			name: "correct content-type",
@@ -114,7 +119,7 @@ func TestContentTypeIsHTML(t *testing.T) {
 					"Content-Type": []string{"text/html"},
 				},
 			},
-			want: true,
+			expectedOutput: true,
 		},
 		{
 			name: "empty content-type",
@@ -123,7 +128,7 @@ func TestContentTypeIsHTML(t *testing.T) {
 					"Content-Type": []string{},
 				},
 			},
-			want: false,
+			expectedOutput: false,
 		},
 		{
 			name: "incorrect content-type",
@@ -132,14 +137,14 @@ func TestContentTypeIsHTML(t *testing.T) {
 					"Content-Type": []string{"multipart/form-data"},
 				},
 			},
-			want: false,
+			expectedOutput: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := ContentTypeIsHTML(tt.response)
-			if got != tt.want {
-				t.Errorf("ContentTypeIsHTML error = %v want = %v", got, tt.want)
+			if got != tt.expectedOutput {
+				t.Errorf("ContentTypeIsHTML error = %v want = %v", got, tt.expectedOutput)
 			}
 		})
 	}
@@ -189,13 +194,6 @@ func TestAskForConfirmation(t *testing.T) {
 		})
 	}
 }
-
-// func TestCreateConfigFile(t *testing.T) {
-// 	err := CreateConfigFile()
-// 	if err != nil {
-// 		t.Errorf("CreateConfigFile error = %v", err)
-// 	}
-// }
 
 func TestValidateURL(t *testing.T) {
 	tests := []struct {
