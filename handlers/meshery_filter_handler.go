@@ -253,7 +253,7 @@ func formatFilterOutput(rw http.ResponseWriter, content []byte, format string) {
 	fmt.Fprint(rw, string(data))
 }
 
-// swagger:route POST /api/filter/deploy ApplicationsAPI idPostDeployFilterFile
+// swagger:route POST /api/filter/deploy FilterAPI idPostDeployFilterFile
 // Handle POST request for Filter File Deploy
 //
 // Deploy an attached filter file with the request
