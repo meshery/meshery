@@ -253,21 +253,21 @@ func formatFilterOutput(rw http.ResponseWriter, content []byte, format string) {
 	fmt.Fprint(rw, string(data))
 }
 
-// swagger:route POST /api/filter/deploy ApplicationsAPI idPostDeployApplicationFile
-// Handle POST request for Application File Deploy
+// swagger:route POST /api/filter/deploy ApplicationsAPI idPostDeployFilterFile
+// Handle POST request for Filter File Deploy
 //
 // Deploy an attached filter file with the request
 // responses:
 //  200: FilterFilesResponseWrapper
 
-// swagger:route DELETE /api/filter/deploy ApplicationsAPI idDeleteApplicationFile
+// swagger:route DELETE /api/filter/deploy FilterAPI idDeleteFilterFile
 // Handle DELETE request for Filter File Deploy
 //
 // Delete a deployed filter file with the request
 // responses:
 //  200:
 
-// FilterFileHandler handles the requested related to application files
+// FilterFileHandler handles the requested related to filter files
 func (h *Handler) FilterFileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -275,6 +275,6 @@ func (h *Handler) FilterFileHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	// Filter files are just pattern files
+	// Filter files are just pattern files?
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
 }
