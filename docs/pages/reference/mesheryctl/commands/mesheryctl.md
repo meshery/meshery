@@ -6,6 +6,7 @@ type: reference
 display-title: "false"
 language: en
 lang: en
+command: global
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -27,7 +28,8 @@ Global command
 
 ## Examples
 
-{% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -41,7 +43,7 @@ Global command
 <!-- Options/Flags available in this command -->
 ## Options
 
-{% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">

@@ -1,4 +1,0 @@
-name: --token
-description: (required) Path to Meshery user's access token.
-usage: |
-    mesheryctl perf --token [path to access token]

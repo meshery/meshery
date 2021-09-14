@@ -7,6 +7,7 @@ import (
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
@@ -39,20 +40,18 @@ func ListernToEvents(log logger.Handler,
 	handler *database.Handler,
 	datach chan *broker.Message,
 	meshsyncCh chan struct{},
-	operatorSyncChannel chan struct{},
+	operatorSyncChannel chan bool,
 	controlPlaneSyncChannel chan struct{},
 	meshsyncLivenessChannel chan struct{},
+	broadcast broadcast.Broadcaster,
 ) {
 	var wg sync.WaitGroup
-	wg.Wait()
-	for {
-		select {
-		case msg := <-datach:
-			wg.Add(1)
-			meshsyncLivenessChannel <- struct{}{}
-			go persistData(*msg, log, handler, meshsyncCh, operatorSyncChannel, controlPlaneSyncChannel, &wg)
-		}
+	for msg := range datach {
+		wg.Add(1)
+		go persistData(*msg, log, handler, meshsyncCh, operatorSyncChannel, controlPlaneSyncChannel, broadcast, &wg)
 	}
+
+	wg.Wait()
 }
 
 // persistData - scale this function with the number of events to persist
@@ -60,8 +59,9 @@ func persistData(msg broker.Message,
 	log logger.Handler,
 	handler *database.Handler,
 	meshsyncCh chan struct{},
-	operatorSyncChannel chan struct{},
+	operatorSyncChannel chan bool,
 	controlPlaneSyncChannel chan struct{},
+	broadcaster broadcast.Broadcaster,
 	wg *sync.WaitGroup,
 ) {
 	defer wg.Done()
@@ -78,7 +78,11 @@ func persistData(msg broker.Message,
 		// persist the object
 		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
 		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
-			operatorSyncChannel <- struct{}{}
+			// operatorSyncChannel <- false
+			broadcaster.Submit(broadcast.BroadcastMessage{
+				Type:    broadcast.OperatorSyncChannel,
+				Message: false,
+			})
 		}
 		err = recordMeshSyncData(msg.EventType, handler, &object)
 		if err != nil {
