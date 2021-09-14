@@ -14,7 +14,7 @@ image: /assets/img/platforms/eks.png
 
 ## To set up and run Meshery on EKS:
 
-- Connect Meshery to your EKS cluster
+- Install Meshery in Docker and connect to your EKS cluster
   - [Meshery CLI (mesheryctl)](#connect-meshery-to-elastic-kubernetes-service-cluster)
   - [eks CLI (eksctl)](https://eksctl.io/introduction/#installation)
   - [AWS CLI (aws)](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
@@ -23,7 +23,9 @@ image: /assets/img/platforms/eks.png
 
 ### Connect Meshery to Elastic Kubernetes Service Cluster
 
-The following set of instructions expects you to have created a EKS cluster in your resource group Configure Meshery to connect to your EKS cluster by executing:
+**The following set of instructions are for deploying Meshery in Docker and connecting it to the EKS cluster in your resource group.**
+
+You can configure Meshery to connect to your EKS cluster by executing:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
