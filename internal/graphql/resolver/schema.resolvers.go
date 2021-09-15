@@ -74,7 +74,8 @@ func (r *queryResolver) DeployMeshsync(ctx context.Context) (model.Status, error
 }
 
 func (r *queryResolver) GetNatsStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
-	panic(fmt.Errorf("not implemented"))
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getNatsStatus(ctx, provider)
 }
 
 func (r *queryResolver) ConnectToNats(ctx context.Context) (model.Status, error) {
