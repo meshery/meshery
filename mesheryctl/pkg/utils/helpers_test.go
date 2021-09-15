@@ -60,12 +60,6 @@ func TestPrereq(t *testing.T) {
 		t.Errorf("prereq error = %v", err)
 	}
 }
-func TestCreateConfigFile(t *testing.T) {
-	err := CreateConfigFile()
-	if err != nil {
-		t.Errorf("CreateConfigFile error = %v", err)
-	}
-}
 
 func TestSetFileLocation(t *testing.T) {
 	err := SetFileLocation()
@@ -192,6 +186,16 @@ func TestAskForConfirmation(t *testing.T) {
 				t.Errorf("AskForConfirmation got = %v want = %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestCreateConfigFile(t *testing.T) {
+	originalDefaultConfigPath := DefaultConfigPath
+	defer func() { DefaultConfigPath = originalDefaultConfigPath }()
+	DefaultConfigPath = "config.yaml"
+	err := CreateConfigFile()
+	if err != nil {
+		t.Errorf("CreateConfigFile error = %v", err)
 	}
 }
 
