@@ -1,34 +1,91 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Contributor Guide for Meshery UI
 
-## Getting Started
+This guide is specific to the Meshery UI component and involves steps/methods one need to follow while working on issues related to Meshery UI.
 
-First, run the development server:
+## How to run Meshery UI?
+Meshery UI can be built and run in different ways. You will choose one of the two ways to build and run Meshery UI depending upon whether you are actively developing it (whether you are creating a new feature or fixing a bug in Meshery UI) or whether you simply need to use it as a user. Let's refer to these two methods as a _Development Build_ and _User Build._
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+#### 1. User Build:
+For general usage, one can run Meshery UI using Meshery's command client `mesheryctl`, by simply running the `mesheryctl system start` command.
+If you don't have the `mesheryctl` tool installed already, you can follow the [mesheryctl installation docs](https://docs.meshery.io/installation/mesheryctl) to install `mesheryctl` using various `package management` tools supported.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### 2. Development Build:
+For purposes of actively developing Meshery UI, you first need to install the dependencies using `make setup-ui-libs` and then you can use either of the following approaches to build Meshery UI:
+1. Follow the procedure mentioned in Step 1 (User build) above, and start Meshery UI sever on the 9081 port, and login to Meshery UI using either of the providers mentioned on the login page. Then, to run a development server of Meshery UI, install the dependencies using the command mentioned above, and execute `make run-ui-dev` to run the livereload-nodemon server on port 3000.
+    > **NOTE:** Please run the steps in order to avoid issues, as Meshery server should be running and logged-in before accessing the development server
+    > on 3000 port.
+    
+1. **`make run-local`** - Alternatively, build all of Meshery UI's components upfront before serving the UI. Do this in two steps:
+ - Execute `make build-ui` to build and export all Meshery UI components.
+ - Execute `make run-local` to serve the prebuilt components. 
+This method doesn't provide a live reload server. You will have to build Meshery UI after making changes to the code and rerun these steps again in order to see those subsequent code changes reflected in the UI.
+    > **NOTE:** If you are using this method, make sure you don't have Meshery already running on 9081 port, using `mesheryctl`.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Development workflow
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+- Make sure you have a running instance of Meshery UI by following either one of the options provided above
+- Go to `/ui`
+- Make sure all the tests pass by running `npm run test`
+- Create a new branch
+- Make the changes
+- Write tests if necessary
+- Make sure all the tests pass by runing `npm run test`
+- Use `eslint` and `prettier` to lint and format the code respectively
+- Create a PR
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Tech stack used in Meshery UI
+- Meshery UI uses NextJs to do server side rendering of ReactJS components. 
+- Redux is being used for state management along with Redux-Thunk and Redux-Observable.
+- MaterialUI is being used as the styling framework.
+- Billboard.js library is being used to display various charts, and comparison graphs in Meshery UI.
+- Relay is used as the GraphQL client
 
-## Learn More
+## Folder structure in Meshery UI
+**App**
 
-To learn more about Next.js, take a look at the following resources:
+- Application configurations are put inside this directory
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Components**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- All the globally reusable react components are put inside this directory
 
-## Deploy on Vercel
+**Features**
+- This folder contains all the features of Meshery UI separated by concern
+- If we think of Meshery UI as maintaining a huge tree of state, then we are slicing out the parts of state that are more connected into its own file so that it is easy to manage. 
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Lib**
+- This folder contains the custom libraries that are used in this project
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+**Utils**
+- Contains global utility functions
+
+**Styles**
+- Contains global theme declarations and global style declarations
+
+> **NOTE:**  *Pages* and *Public* default NextJS directories
+
+
+## Writing Tests
+
+- We use Jest with Testing library/React for writing unit tests and integration tests
+- Some things that we have to keep in mind while writing tests are, 
+	- *Do not write tests for implementation details*
+	- Write tests keeping in mind the perspective of a user and not a developer
+	- Reading these blogs/articles before writing tests is highly recommended since it will help us in setting up some common principles amongst us contributors. - [Testing classifications](https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications) , [React docs about testing](https://reactjs.org/docs/testing.html), [JEST Docs](https://jestjs.io/docs/tutorial-react) , [RTL Docs](https://testing-library.com/docs/react-testing-library/intro/)
+
+## Conventions
+
+**Modular strucuture**
+
+- Keeping the code modular is very important for it to be scalable and manageable
+- One of the factors that affect the modularity of code is transparency in exports and imports
+- By looking at just the exports and imports of a file, we can draw a dependency graph for the code
+- So, it is important to make the imports and exports more transparent
+- which is why, we have an `index.js` file for every module where all the exports will be written so that we have a single place to find what things are all exported by a module.
+
+## JSDocs
+
+- We use JSDocs to get type information about the data sets
+- [JsDoc docs](https://jsdoc.app/)
+
+<p style="text-align: center"><em>If you'll like to go to the main Meshery Contributor guide <a href="../CONTRIBUTING.md">click here</a></em></p>
