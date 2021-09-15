@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -19,6 +20,10 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
+	"github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/archive"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
@@ -759,4 +764,61 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 	}
 
 	return v
+}
+
+func DockerCp(containerName, srcPath, destPath string) error {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		panic(err)
+	}
+
+	dstInfo := archive.CopyInfo{Path: destPath} //"/home/appuser/.aws"}
+
+	filterArgs := filters.NewArgs(filters.KeyValuePair{
+		Key:   "name",
+		Value: containerName,
+	})
+
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
+		Filters: filterArgs,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	srcInfo, err := archive.CopyInfoSourcePath(srcPath, false)
+	if err != nil {
+		panic(err)
+	}
+
+	srcArchive, err := archive.TarResource(srcInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer srcArchive.Close()
+
+	dstDir, preparedArchive, err := archive.PrepareArchiveCopy(srcArchive, srcInfo, dstInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer preparedArchive.Close()
+
+	content := preparedArchive
+
+	options := types.CopyToContainerOptions{
+		AllowOverwriteDirWithFile: false,
+	}
+
+	for _, container := range containers {
+		if container.Names[0] == containerName {
+			fmt.Println(container.Names)
+			err = cli.CopyToContainer(ctx, container.ID, dstDir, content, options)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

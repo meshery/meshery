@@ -24,9 +24,12 @@ import (
 	"os/user"
 	"path/filepath"
 
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
@@ -39,8 +42,20 @@ import (
 
 // TODO: https://github.com/layer5io/me shery/issues/1022
 
-const paramName = "k8sfile"
-const kubeConfigYaml = "kubeconfig.yaml"
+var (
+	home       = meshkitutils.GetHome()
+	awsDir     = filepath.Join(home, ".aws")
+	credPath   = filepath.Join(awsDir, "credentials")
+	mesheryAWS = filepath.Join(home, ".meshery", "aws")
+)
+
+const (
+	staticProvider       = "StaticProvider"
+	envConfigProvider    = "EnvConfigCredentials"
+	sharedConfigProvider = "SharedConfigCredentials"
+	paramName            = "k8sfile"
+	kubeConfigYaml       = "kubeconfig.yaml"
+)
 
 func getContexts(configFile, tokenPath string) ([]string, error) {
 	client := &http.Client{}
@@ -83,6 +98,95 @@ func getContexts(configFile, tokenPath string) ([]string, error) {
 		contexts = append(contexts, item["contextName"].(string))
 	}
 	return contexts, nil
+}
+
+// Tries to get AWS user credentials required for out of cluster deployments
+// to work.
+// Firstly looks for them in environment variables AWS_ACCESS_KEY_ID
+// and AWS_SECRET_ACCESS_KEY
+// Secondly in the shared directory at $HOME/.aws/
+// Lastly tries to take user input and generates a file in ~/.meshery/aws
+// TODO: Support EC2 instance role credentials
+// https://pkg.go.dev/github.com/aws/aws-sdk-go@v1.40.43#readme-configuring-credentials
+func awsCredentialHelper() error {
+	log.Info("Looking for aws user credentials in $AWS_ACCESS_KEY_ID and $AWS_SECRET_ACCESS_KEY OR ~/.aws/credentials...")
+	sess := session.Must(session.NewSession())
+	creds := sess.Config.Credentials
+	credValue, err := creds.Get()
+
+	if err != nil {
+		log.Info("Credentials not found. Generating static credentials now...")
+
+		var accessKeyID, secretAccessKey string
+		log.Println("Enter `aws_access_key_id`: ")
+		_, err := fmt.Scanf("%s", &accessKeyID)
+		if err != nil {
+			// err reading entered cred
+			return err
+		}
+		log.Println("Enter `aws_secret_access_key`: ")
+		_, err = fmt.Scanf("%s", &secretAccessKey)
+		if err != nil {
+			// err reading entered cred
+			return err
+		}
+
+		creds = credentials.NewStaticCredentials(accessKeyID, secretAccessKey, "")
+		credValue, err = creds.Get()
+		if err != nil {
+			// entered creds invalide
+			return err
+		}
+	}
+
+	// since there is no way yet to check expired creds for StaticProvider
+	// we only check creds obtained from shared directories or environment
+	// variables
+	if credValue.ProviderName == envConfigProvider || credValue.ProviderName == sharedConfigProvider {
+		if creds.IsExpired() {
+			// credentials have expired. generate new
+			return err
+		}
+	}
+
+	// write the tokens to ~/.aws/credentials in case of static and env credentials
+	// providers so that it can be copied into the docker container
+	if credValue.ProviderName == envConfigProvider || credValue.ProviderName == staticProvider {
+		err = createSharedProviderFile(credValue)
+		if err != nil {
+			return err
+		}
+		err = utils.DockerCp("/meshery_meshery_1", mesheryAWS, "/home/appuser/.aws")
+		if err != nil {
+			return err
+		}
+	}
+
+	err = utils.DockerCp("/meshery_meshery_1", awsDir, "/home/appuser/.aws")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// creates the credentials file at ~/.meshery/aws keeping in consideration
+// if the user doesn't want to use shared credentials
+func createSharedProviderFile(credValue credentials.Value) error {
+	fileString := fmt.Sprintf("[default]\naws_access_key_id = %s\naws_access_key_id = %s\n", credValue.AccessKeyID, credValue.SecretAccessKey)
+
+	err := os.MkdirAll(mesheryAWS, 0755)
+
+	err = os.WriteFile(filepath.Join(mesheryAWS, "credentials"), []byte(fileString), 0644)
+	if err != nil {
+		return err
+	}
+
+	_, err = os.Stat(filepath.Join(mesheryAWS, "credentials"))
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func setContext(configFile, cname, tokenPath string) error {
@@ -234,10 +338,17 @@ var configCmd = &cobra.Command{
 			}
 			log.Debugf("AKS configuration is written to: %s", configPath)
 		case "eks":
+
+			// get user's aws credentials and copy them to meshery container
+			err := awsCredentialHelper()
+			if err != nil {
+				log.Fatalln("Failed to get aws user credentials")
+			}
+
 			eksCheck := exec.Command("aws", "--version")
 			eksCheck.Stdout = os.Stdout
 			eksCheck.Stderr = os.Stderr
-			err := eksCheck.Run()
+			err = eksCheck.Run()
 			if err != nil {
 				log.Fatalf("AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/ ")
 			}
