@@ -5,6 +5,7 @@ import (
 
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils/broadcast"
 )
 
 func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
@@ -27,9 +28,10 @@ func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, 
 }
 
 func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
-	if r.dataPlaneChannel == nil {
-		r.dataPlaneChannel = make(chan []*model.DataPlane)
-	}
+	dataPlaneChannel := make(chan []*model.DataPlane)
+
+	dataPlaneSyncChannel := make(chan broadcast.BroadcastMessage)
+	r.Broadcast.Register(dataPlaneSyncChannel)
 
 	go func() {
 		r.Log.Info("Initializing DataPlane subscription")
@@ -41,18 +43,23 @@ func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.P
 
 		for {
 			select {
-			case <-r.MeshSyncChannel:
+			case <-dataPlaneSyncChannel:
+				r.Log.Info("Dataplane sync channel called")
 				containers, err := r.getDataPlanes(ctx, provider, filter)
 				if err != nil {
 					r.Log.Error(ErrDataPlaneSubscription(err))
 					break
 				}
-				r.dataPlaneChannel <- containers
+
+				dataPlaneChannel <- containers
 			case <-ctx.Done():
 				r.Log.Info("DataPlane subscription stopped")
+				close(dataPlaneChannel)
+				r.Broadcast.Unregister((dataPlaneSyncChannel))
+				close(dataPlaneSyncChannel)
 				return
 			}
 		}
 	}()
-	return r.dataPlaneChannel, nil
+	return dataPlaneChannel, nil
 }
