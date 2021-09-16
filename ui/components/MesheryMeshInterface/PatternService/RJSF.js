@@ -5,7 +5,7 @@ import { Button } from "@material-ui/core";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
-import Input from '@material-ui/core/Input';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 import { Tooltip, IconButton } from "@material-ui/core";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import CustomObjectFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate"
@@ -161,7 +161,7 @@ const CustomInputField = (props) => {
         </Tooltip>
       )}
       <br/>
-      <Input style={{ margin : '10px 0 ' }} autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`}/>
+      <OutlinedInput style={{ margin : '10px 0 ' }} autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`}/>
     </div>
   )
 }
