@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/models/walker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
@@ -1158,10 +1159,7 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 	return []MesheryApplication{af}, nil
 }
 func getSeededComponents(comp string, log logger.Handler) ([]string, []string, error) {
-	wd, err := os.UserHomeDir()
-	if err != nil {
-		return nil, nil, err
-	}
+	wd := utils.GetHome()
 	switch comp {
 	case "Pattern":
 		wd = filepath.Join(wd, ".meshery", "seed_content", "patterns")
