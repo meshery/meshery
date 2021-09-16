@@ -21,8 +21,6 @@ const useStyles = makeStyles({
 });
 
 const ObjectFieldTemplate = ({
-  // DescriptionField,
-  // TitleField,
   description,
   title,
   properties,

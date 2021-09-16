@@ -15,14 +15,10 @@
 package system
 
 import (
-	"context"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -82,53 +78,21 @@ func restart() error {
 
 	currPlatform := currCtx.GetPlatform()
 
-	switch currPlatform {
-	case "docker":
+	running, err := utils.IsMesheryRunning(currPlatform)
+	if err != nil {
+		return err
+	}
+	if !running { // Meshery is not running
+		if err := start(); err != nil {
+			return ErrRestartMeshery(err)
+		}
+	} else {
 		if err := stop(); err != nil {
 			return ErrRestartMeshery(err)
 		}
 
 		if err := start(); err != nil {
 			return ErrRestartMeshery(err)
-		}
-
-	case "kubernetes":
-		running, err := utils.IsMesheryRunning(currPlatform)
-		if err != nil {
-			return err
-		}
-		if !running { // Meshery is not running
-			if err := start(); err != nil {
-				return ErrRestartMeshery(err)
-			}
-		} else {
-			// create a kubernetes client
-			client, err := meshkitkube.New([]byte(""))
-
-			if err != nil {
-				return err
-			}
-
-			// Create a pod interface for the MesheryNamespace
-			podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
-			// List the pods in the MesheryNamespace
-			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-			if err != nil {
-				return err
-			}
-
-			// List all the pods similar to kubectl get pods -n MesheryNamespace
-			for _, pod := range podList.Items {
-				// Get the values from the pod status
-				name := pod.GetName()
-				log.Info("Deleting pod ", name)
-				err := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).Delete(context.TODO(), name, v1.DeleteOptions{})
-				if err != nil {
-					log.Fatal(err)
-				}
-				log.Info("Restarting pod ", name)
-			}
 		}
 	}
 	return nil
