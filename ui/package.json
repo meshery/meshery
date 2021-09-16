@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev:next": "next dev",
+    "dev": "npm run dev:proxy",
     "build": "next build",
     "start": "next start",
     "relay": "relay-compiler --src ./features --schema ../internal/graphql/schema/schema.graphql",

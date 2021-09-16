@@ -103,7 +103,7 @@ export const fetchAvailableAdaptersThunk = createAsyncThunk("mesheryComponents/f
 export const changeOperatorStateThunk = createAsyncThunk(
   "mesheryComponents/changeOperatorState",
   async (desiredState) => {
-    // error handling should be done as errors will be passed in resolved object
+    // TODO: Error handling should be done as errors will be passed in resolved object
     const response = await changeOperatorStatus(desiredState);
     return response;
   }
