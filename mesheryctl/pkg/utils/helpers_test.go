@@ -190,10 +190,14 @@ func TestAskForConfirmation(t *testing.T) {
 }
 
 func TestCreateConfigFile(t *testing.T) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		t.Error(err, "failed to get users home directory")
+	}
 	originalDefaultConfigPath := DefaultConfigPath
 	defer func() { DefaultConfigPath = originalDefaultConfigPath }()
-	DefaultConfigPath = "config.yaml"
-	err := CreateConfigFile()
+	DefaultConfigPath = filepath.Join(home, "config.yaml")
+	err = CreateConfigFile()
 	if err != nil {
 		t.Errorf("CreateConfigFile error = %v", err)
 	}
