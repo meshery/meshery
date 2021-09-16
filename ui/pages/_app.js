@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import "../styles/globals.css";
 import { Provider } from "react-redux";
 import store from "../app/store";
 import { Layout } from "@/components/Layout/Layout";
