@@ -4,6 +4,7 @@ title: Performance Management with Meshery
 description: This guide is to help users get a better overview of running and managing performance tests in Meshery
 permalink: guides/performance-management
 type: Guides
+command: perf
 ---
 
 This guide is useful to learn how to manage performance tests with Meshery through the [UI](#performance-management-through-meshery-ui), [CLI](#performance-management-through-meshery-cli-(mesheryctl)) and a [GitHub Action](#performance-management-through-meshery-using-github-action) for your test results. To learn more about Meshery and Service Mesh Performance Management commands, see [Service Mesh Performance Management]({{ site.baseurl }}/reference/mesheryctl/commands/mesheryctl-perf)
