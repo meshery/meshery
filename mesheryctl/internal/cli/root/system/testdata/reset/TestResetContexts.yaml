@@ -6,7 +6,7 @@ contexts:
     adapters:
       - meshery-istio
     channel: stable
-    version: v0.5.40
+    version: v0.5.56
   local2:
     adapters:
       - meshery-istio
