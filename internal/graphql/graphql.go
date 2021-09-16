@@ -13,6 +13,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils/broadcast"
 )
 
 type Options struct {
@@ -21,6 +22,7 @@ type Options struct {
 	BrokerConn      broker.Handler
 	Config          *models.HandlerConfig
 	URL             string
+	Broadcaster     broadcast.Broadcaster
 }
 
 // New returns a graphql handler instance
@@ -30,6 +32,8 @@ func New(opts Options) http.Handler {
 		MeshSyncChannel: opts.MeshSyncChannel,
 		BrokerConn:      opts.BrokerConn,
 		Config:          opts.Config,
+
+		Broadcast: opts.Broadcaster,
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(generated.Config{

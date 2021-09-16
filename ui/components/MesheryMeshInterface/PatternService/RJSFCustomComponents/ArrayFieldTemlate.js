@@ -7,10 +7,10 @@ import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 
-import { Button, IconButton } from "@material-ui/core";
+import { Button, IconButton, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add"
 import SimpleAccordion from "./Accordion";
-
+import CustomDescriptionField from "./DescriptionField"
 const { isMultiSelect, getDefaultRegistry } = utils;
 
 const ArrayFieldTemplate = (props) => {
@@ -30,7 +30,8 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
   }
 
   const id = `${idSchema.$id}__title`;
-  return <h3>{title}</h3>;
+  // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
+  return <Typography variant="body1" style={{ fontWeight : "bold" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>
   // return <TitleField id={id} title={title} required={required} />;
 };
 
@@ -55,7 +56,7 @@ const DefaultArrayItem = (props) => {
   return (
     <SimpleAccordion childProps={props}>
       <Grid container={true} key={props.key} alignItems="center">
-        <Grid item={true} xs style={{ overflow : "auto" }}>
+        <Grid item={true} xs >
           <Box mb={2} style={{ border : "0.5px solid black" }}>
             <Paper elevation={0}>
               <Box p={2}>{props.children}</Box>
@@ -139,7 +140,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   return (
     <Paper elevation={0}>
-      <Box p={2}>
+      <Box p={1}>
         <Grid item container alignItems="center" xs={12} justify="space-between" style={{ marginBottom : "0.3rem" }}>
           <Grid item xs={4}>
             <ArrayFieldTitle
@@ -172,7 +173,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
         {(props.uiSchema["ui:description"] || props.schema.description) && (
           <ArrayFieldDescription
             key={`array-field-description-${props.idSchema.$id}`}
-            DescriptionField={props.DescriptionField}
+            DescriptionField={CustomDescriptionField}
             idSchema={props.idSchema}
             description={
               props.uiSchema["ui:description"] || props.schema.description

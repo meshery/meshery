@@ -30,6 +30,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/docker/docker/api/types"
@@ -67,15 +68,36 @@ var startCmd = &cobra.Command{
 		err = hc.RunPreflightHealthChecks()
 		if err != nil {
 			cmd.SilenceUsage = true
+			return err
 		}
-
-		return err
+		cfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		ctx, err := cfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
 		}
 		return nil
+	},
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		latest, err := utils.GetLatestStableReleaseTag()
+		version := constants.GetMesheryctlVersion()
+		if err == nil && latest != version {
+			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+		}
 	},
 }
 
@@ -104,6 +126,7 @@ func start() error {
 	if err != nil {
 		return err
 	}
+	mesheryImageVersion := currCtx.GetVersion()
 
 	if utils.PlatformFlag != "" {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
@@ -113,9 +136,20 @@ func start() error {
 		}
 	}
 
+	// Reset Meshery config file to default settings
+	if utils.ResetFlag {
+		err := resetMesheryConfig()
+		if err != nil {
+			return ErrResetMeshconfig(err)
+		}
+	}
+
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
+		if currCtx.GetChannel() == "stable" && currCtx.GetVersion() == "latest" {
+			mesheryImageVersion = "latest"
+		}
 
 		// download the docker-compose.yaml file corresponding to the current version
 		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
@@ -181,7 +215,7 @@ func start() error {
 					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
 				}
 
-				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), currCtx.GetVersion())
+				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
 			}
 			services[v] = temp
 			AllowedServices[v] = services[v]
@@ -193,11 +227,6 @@ func start() error {
 			return err
 		}
 
-		//fmt.Println("Services", services);
-		//fmt.Println("RequiredAdapters", RequestedAdapters);
-		//fmt.Println("AllowedServices", AllowedServices);
-		//fmt.Println("version", utils.ViperCompose.GetString("version")) // Works here
-
 		//////// FLAGS
 		// Control whether to pull for new Meshery container images
 		if skipUpdateFlag {
@@ -206,14 +235,6 @@ func start() error {
 			err := utils.UpdateMesheryContainers()
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
-			}
-		}
-
-		// Reset Meshery config file to default settings
-		if utils.ResetFlag {
-			err := resetMesheryConfig()
-			if err != nil {
-				return ErrResetMeshconfig(err)
 			}
 		}
 
@@ -317,7 +338,7 @@ func start() error {
 			return err
 		}
 
-		channel, version, err := utils.GetChannelAndVersion(currCtx)
+		channel, _, err := utils.GetChannelAndVersion(currCtx)
 		if err != nil {
 			return err
 		}
@@ -350,9 +371,21 @@ func start() error {
 				manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
 
 				// change version in meshery-deployment manifest
-				err = utils.ChangeManifestVersion(utils.MesheryDeployment, channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
+				if currCtx.GetVersion() == "latest" && currCtx.GetChannel() == "stable" {
+					mesheryImageVersion = "latest"
+				}
+
+				err = utils.ChangeManifestVersion(channel, mesheryImageVersion, filepath.Join(manifestFiles, utils.MesheryDeployment))
 				if err != nil {
 					return err
+				}
+
+				for _, adapter := range currCtx.Adapters {
+					adapterManifest := adapter + "-deployment.yaml"
+					err = utils.ChangeManifestVersion(channel, "latest", filepath.Join(manifestFiles, adapterManifest))
+					if err != nil {
+						return err
+					}
 				}
 			}
 		}

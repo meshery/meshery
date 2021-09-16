@@ -21,7 +21,6 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
@@ -59,15 +58,6 @@ var RootCmd = &cobra.Command{
 
 		return nil
 	},
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		latest, err := utils.GetLatestStableReleaseTag()
-		version := constants.GetMesheryctlVersion()
-		if err == nil && latest != version {
-			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
-			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
-		}
-	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -87,7 +77,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")

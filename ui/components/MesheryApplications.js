@@ -15,10 +15,10 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
 import UploadIcon from "@material-ui/icons/Publish";
-import PromptComponent from "./PromptComponent";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
+import PromptComponent from "./PromptComponent";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -27,12 +27,13 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
+import URLUploader from "./URLUploader";
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
   tableHeader : { fontWeight : "bolder",
     fontSize : 18, }, });
 
-function CustomToolbar(onClick) {
+function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
     return (
       <>
@@ -43,6 +44,9 @@ function CustomToolbar(onClick) {
               <UploadIcon />
             </IconButton>
           </Tooltip>
+        </label>
+        <label htmlFor="url-upload-button">
+          <URLUploader onSubmit={urlOnClick} />
         </label>
       </>
     );
@@ -102,8 +106,8 @@ function MesheryApplications({
   const [search] = useState("");
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
   const modalRef = useRef(null);
+  const [pageSize, setPageSize] = useState(10);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const DEPLOY_URL = '/api/application/deploy';
@@ -240,12 +244,13 @@ function MesheryApplications({
       );
     }
 
-    if (type === "upload") {
+    if (type === "upload" || type === "urlupload") {
+      const body = type==="upload" ? JSON.stringify({ application_data : { application_file : data }, save : true }) : JSON.stringify({ url : data, save : true });
       dataFetch(
         `/api/application`,
         { credentials : "include",
           method : "POST",
-          body : JSON.stringify({ application_data : { application_file : data }, save : true }), },
+          body : body, },
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
@@ -273,6 +278,11 @@ function MesheryApplications({
       );
     });
     reader.readAsText(file);
+  }
+
+  function urlUploadHandler(link) {
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
+    // console.log(link, "valid");
   }
 
   const columns = [
@@ -373,16 +383,16 @@ function MesheryApplications({
     }
   });
 
-  async function deleteApplication(id) {
-    let response = await modalRef.current.show({
-      title : "Delete Application?",
+  async function showModal() {
+    let response = await modalRef.current.show({ title : "Delete Aplication?",
 
       subtitle : "Are you sure you want to delete this application?",
 
-      options : ["yes", "no"],
+      options : ["yes", "no"], })
+    return response;
+  }
 
-    })
-    if (response === "NO") return
+  async function deleteApplication(id) {
     dataFetch(
       `/api/application/${id}`,
       {
@@ -417,7 +427,6 @@ function MesheryApplications({
     responsive : "scrollFullHeight",
     resizableColumns : true,
     serverSide : true,
-    selection : true,
     count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
@@ -425,11 +434,17 @@ function MesheryApplications({
     page,
     print : false,
     download : false,
-    customToolbar : CustomToolbar(uploadHandler),
+    customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
 
-    onRowsDelete : function handleDelete(row) {
-      const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id)
-      fid.forEach(fid => deleteApplication(fid))
+    onRowsDelete : async function handleDelete(row) {
+      let response = await showModal()
+      console.log(response)
+      if (response === "yes") {
+        const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id)
+        fid.forEach(fid => deleteApplication(fid))
+      }
+      if (response === "no")
+        fetchApplications(page, pageSize, search, sortOrder);
     },
 
     onTableChange : (action, tableState) => {
@@ -496,7 +511,7 @@ function MesheryApplications({
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user").toObject(), };
+  return { user : state.get("user")?.toObject(), };
 };
 
 // @ts-ignore

@@ -2,7 +2,7 @@
 import KubernetesIcon from "../icons/KubernetesIcon.js";
 import KubernetesConfig from "../ConfigComponents/Kubernetes.js";
 import ServiceCard from "../ServiceCard.js";
-import { Grid } from "@material-ui/core";
+import { CircularProgress, Grid } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux"; import { updateProgress, updateK8SConfig } from "../../../lib/store";
 import { withSnackbar } from "notistack";
@@ -24,6 +24,7 @@ const KubernetesScreen = ({
   });
 
   const [isConnected, setIsConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
 
   useEffect(() => {
@@ -31,8 +32,10 @@ const KubernetesScreen = ({
   },[isConnected])
 
   useEffect(() => {
+    setIsLoading(true)
     pingKubernetes(
       (res) => {
+        setIsLoading(false)
         setClusterInformation({
           ...clusterInformation,
           isClusterConfigured : k8sconfig.clusterConfigured,
@@ -45,7 +48,7 @@ const KubernetesScreen = ({
           configuredServer : k8sconfig.configuredServer,
         });
       },
-      (err) => console.log(err)
+      (err) => setIsLoading(false)
     );
   }, [k8sconfig.clusterConfigured, k8sconfig.inClusterConfig, k8sconfig.contextName]);
 
@@ -70,14 +73,16 @@ const KubernetesScreen = ({
       <Grid item lg={6} sm={12} md={12} container justify="center" alignItems="flex-start" style={{ paddingLeft : "1rem" }}>
         <ServiceCard serviceInfo={kubeserviceInfo} isConnected={isConnected} />
       </Grid>
-      <Grid item lg={6} sm={12} md={12} container justify="center" style={{ paddingRight : "1rem" }}>
-        {showDataPanel() && (
-          <KubernetesDataPanel
-            clusterInformation={kubeserviceInfo.clusterInformation}
-            setIsConnected={setIsConnected}
-            setClusterInformation={setClusterInformation}
-          />
-        )}
+      <Grid item lg={6} sm={12} md={12} container justify="center" alignItems="center" style={{ paddingRight : "1rem" }}>
+        {
+          isLoading ? <CircularProgress /> :
+            showDataPanel() && (
+              <KubernetesDataPanel
+                clusterInformation={kubeserviceInfo.clusterInformation}
+                setIsConnected={setIsConnected}
+                setClusterInformation={setClusterInformation}
+              />
+            )}
       </Grid>
     </Grid>
   );

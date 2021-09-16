@@ -178,6 +178,7 @@ function PerformanceCalendar({
       <Calendar
         events={generateCalendarEventsFromResults(results)}
         views={["month", "week", "day"]}
+        defaultView="day"
         step={60}
         showMultiDayTimes
         defaultDate={new Date()}

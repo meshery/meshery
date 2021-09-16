@@ -3,6 +3,15 @@
     "component_name": "meshery-server",
     "component_type": "component",
     "errors": {
+      "1013": {
+        "name": "ErrDataPlaneSubscriptionCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Data Plane stopped",
+        "short_description": "Data Plane Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Check if meshery server is reachable from the browser"
+      },
       "2000": {
         "name": "ErrInvalidK8SConfigCode",
         "code": "2000",
@@ -1293,15 +1302,6 @@
       "2150": {
         "name": "ErrCreateDirCode",
         "code": "2150",
-        "severity": "",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2151": {
-        "name": "ErrInvalidRequestObjectCode",
-        "code": "2151",
         "severity": "",
         "long_description": "",
         "short_description": "",

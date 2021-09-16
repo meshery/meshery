@@ -108,7 +108,7 @@ class MesherySettings extends React.Component {
       tabVal,
       subTabVal,
 
-      isMeshConfigured : k8sconfig.clusterConfigured && grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
+      isMeshConfigured : k8sconfig.clusterConfigured,
 
       // Array of scanned prometheus urls
       scannedPrometheus : [],
@@ -131,8 +131,7 @@ class MesherySettings extends React.Component {
   }
 
   componentDidMount() {
-    if (this.state.isMeshConfigured)
-      this.fetchPromGrafanaScanData();
+    if (this.state.isMeshConfigured) this.fetchPromGrafanaScanData();
   }
 
   fetchPromGrafanaScanData = () => {
@@ -141,9 +140,9 @@ class MesherySettings extends React.Component {
     dataFetch(
       '/api/system/meshsync/grafana',
       {
-        credentials: "same-origin",
-        method: "GET",
-        credentials: "include",
+        credentials : "same-origin",
+        method : "GET",
+        credentials : "include",
       },
       (result) => {
         self.props.updateProgress({ showProgress : false });
