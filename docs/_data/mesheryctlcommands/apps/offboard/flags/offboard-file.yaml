@@ -1,4 +1,4 @@
 name: --file, -f
-description: offboard application file
+description: Offboard application by providing file path
 usage: |
-    mesheryctl app offboard -f
+    mesheryctl app offboard -f <filepath>

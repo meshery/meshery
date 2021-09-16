@@ -23,17 +23,27 @@ language: en
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl app view [app-name|app-id]
-  mesheryctl app view [app-name|app-id] -o json
+  mesheryctl app view BookInfo
+  mesheryctl app view BookInfo -o json
   mesheryctl app view --all [View all applications] 
   </div>
 </pre>
 
 ## Examples
 
+{% for subcommand_hash in site.data.mesheryctlcommands.apps.view.commands %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl app view --all # show all appliaction file content
+  {{ subcommand.usage }}
+  </div>
+</pre>
+{% endfor %}
+{% for flag_hash in site.data.mesheryctlcommands.apps.view.flags %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ flag.usage }}
   </div>
 </pre>
 <br/>
