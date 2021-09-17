@@ -19,9 +19,9 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/models"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
@@ -40,7 +40,7 @@ const (
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
 	// Meshery Kubernetes Deployment URLs
-	baseConfigURL = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
+	baseConfigURL = "https://raw.githubusercontent.com/meshery/meshery-operator/master/config/"
 	OperatorURL   = baseConfigURL + "manifests/default.yaml"
 	BrokerURL     = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
@@ -85,22 +85,22 @@ var (
 	// MesheryNamespace is the namespace to which Meshery is deployed in the Kubernetes cluster
 	MesheryNamespace = "meshery"
 	// MesheryDeployment is the name of a Kubernetes manifest file required to setup Meshery
-	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryDeployment = "meshery-deployment.yaml"
 	// MesheryService is the name of a Kubernetes manifest file required to setup Meshery
-	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryService = "meshery-service.yaml"
 	//MesheryOperator is the file for default Meshery operator
-	//check https://github.com/layer5io/meshery-operator/blob/master/config/manifests/default.yaml
+	//check https://github.com/meshery/meshery-operator/blob/master/config/manifests/default.yaml
 	MesheryOperator = "default.yaml"
 	//MesheryOperatorBroker is the file for the Meshery broker
-	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml
+	//check https://github.com/meshery/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml
 	MesheryOperatorBroker = "meshery_v1alpha1_broker.yaml"
 	//MesheryOperatorMeshsync is the file for the Meshery Meshsync Operator
-	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
+	//check https://github.com/meshery/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
 	MesheryOperatorMeshsync = "meshery_v1alpha1_meshsync.yaml"
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
-	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	ServiceAccount = "service-account.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
@@ -439,8 +439,8 @@ func AskForInput(prompt string, allowed []string) string {
 // ParseURLGithub checks URL and returns raw repo, path, error
 func ParseURLGithub(URL string) (string, string, error) {
 	// GitHub URL:
-	// - https://github.com/layer5io/meshery/blob/master/.goreleaser.yml
-	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
+	// - https://github.com/meshery/meshery/blob/master/.goreleaser.yml
+	// - https://raw.githubusercontent.com/meshery/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
 		return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)

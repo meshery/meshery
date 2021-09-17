@@ -2,9 +2,9 @@
 package handlers
 
 import (
-	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshery/models"
 	"github.com/vmihailenco/taskq/v3"
 )
 

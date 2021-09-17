@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	patternUtils "github.com/layer5io/meshery/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+	patternUtils "github.com/meshery/meshery/models/pattern/utils"
 	v1 "k8s.io/api/core/v1"
 )
 

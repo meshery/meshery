@@ -3,7 +3,7 @@ package models
 import (
 	"context"
 
-	"github.com/layer5io/meshery/meshes"
+	"github.com/meshery/meshery/meshes"
 )
 
 // Adapter represents an adapter in Meshery

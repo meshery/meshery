@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshery/models/pattern/patterns/application"
-	"github.com/layer5io/meshery/models/pattern/patterns/k8s/service"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/models/pattern/patterns/application"
+	"github.com/meshery/meshery/models/pattern/patterns/k8s/service"
 )
 
 func ProcessOAM(kubeClient *meshkube.Client, oamComps []string, oamConfig string, isDel bool) (string, error) {

@@ -5,7 +5,7 @@ import (
 	"path"
 	"plugin"
 
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/models"
 )
 
 var (

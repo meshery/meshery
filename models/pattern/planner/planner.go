@@ -1,6 +1,6 @@
 package planner
 
-import "github.com/layer5io/meshery/models/pattern/core"
+import "github.com/meshery/meshery/models/pattern/core"
 
 // Plan struct represents a node of an execution plan
 type Plan struct {

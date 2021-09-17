@@ -2,7 +2,7 @@ apiVersion: v2
 name: meshery-istio
 description: Meshery Adapter for Istio chart.
 source: 
-  - https://github.com/layer5io/meshery-istio
+  - https://github.com/meshery/meshery-istio
 
 deprecated: false
 

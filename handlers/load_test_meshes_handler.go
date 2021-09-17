@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/models"
 )
 
 // SMPMeshes defines the JSON payload structure for available meshes api

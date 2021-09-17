@@ -12,8 +12,8 @@ import (
 
 	"encoding/json"
 
-	"github.com/layer5io/meshery/meshes"
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/meshes"
+	"github.com/meshery/meshery/models"
 	"github.com/sirupsen/logrus"
 )
 

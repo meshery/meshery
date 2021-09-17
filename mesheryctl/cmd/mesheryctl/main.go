@@ -15,7 +15,7 @@
 package main
 
 import (
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root"
 )
 
 func main() {

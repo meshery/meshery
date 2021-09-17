@@ -2,7 +2,7 @@ apiVersion: v2
 name: meshery-cpx
 description: Meshery Adapter for Citrix chart.
 source: 
-  - https://github.com/layer5io/meshery-cpx
+  - https://github.com/meshery/meshery-cpx
 
 deprecated: false
 

@@ -17,10 +17,10 @@ package system
 import (
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -188,7 +188,7 @@ var updateCmd = &cobra.Command{
 		version := constants.GetMesheryctlVersion()
 		if err == nil && latest != version {
 			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+			log.Printf("https://github.com/meshery/meshery/releases/tag/%s", latest)
 			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
 		}
 	},

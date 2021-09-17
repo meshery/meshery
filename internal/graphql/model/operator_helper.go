@@ -8,13 +8,13 @@ import (
 	"strings"
 	"time"
 
-	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
-	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
-	"github.com/layer5io/meshery/models"
 	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	operatorv1alpha1 "github.com/meshery/meshery-operator/api/v1alpha1"
+	operatorClient "github.com/meshery/meshery-operator/pkg/client"
+	"github.com/meshery/meshery/models"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -25,8 +25,8 @@ const (
 	MeshsyncSubject = "meshery.meshsync.core"
 	BrokerQueue     = "meshery"
 
-	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
-	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
+	operatorYaml = "https://raw.githubusercontent.com/meshery/meshery-operator/master/config/manifests/default.yaml"
+	brokerYaml   = "https://raw.githubusercontent.com/meshery/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
 )
 
 func Initialize(client *mesherykube.Client, delete bool) error {

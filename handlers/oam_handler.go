@@ -12,12 +12,12 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/meshes"
-	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshery/models/pattern/core"
-	"github.com/layer5io/meshery/models/pattern/patterns"
-	"github.com/layer5io/meshery/models/pattern/stages"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/meshes"
+	"github.com/meshery/meshery/models"
+	"github.com/meshery/meshery/models/pattern/core"
+	"github.com/meshery/meshery/models/pattern/patterns"
+	"github.com/meshery/meshery/models/pattern/stages"
 	"github.com/sirupsen/logrus"
 )
 
@@ -357,7 +357,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 
 	for adapter := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
-		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
+		// creation issue: https://github.com/meshery/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 
 		logrus.Debugf("Adapter to execute operations on: %s", adapter)

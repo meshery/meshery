@@ -3,7 +3,7 @@ package stages
 import (
 	"testing"
 
-	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/meshery/meshery/models/pattern/core"
 )
 
 func TestFiller(t *testing.T) {

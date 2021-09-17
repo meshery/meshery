@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 )
 
 var update = flag.Bool("update", false, "update golden files")

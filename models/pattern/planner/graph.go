@@ -4,7 +4,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/meshery/meshery/models/pattern/core"
 )
 
 // Graph represents the graph data structure

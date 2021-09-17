@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"

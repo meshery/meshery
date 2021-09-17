@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/models"
 )
 
 // UserHandler returns info about the logged in user

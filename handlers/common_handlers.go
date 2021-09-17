@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/models"
 )
 
 // swagger:route GET /api/user/login UserAPI idGetUserLogin

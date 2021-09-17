@@ -3,11 +3,11 @@ package application
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/helpers"
-	"github.com/layer5io/meshery/models/pattern/patterns/application/argo/v1alpha1"
-	patternUtils "github.com/layer5io/meshery/models/pattern/utils"
 	"github.com/layer5io/meshkit/utils"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/helpers"
+	"github.com/meshery/meshery/models/pattern/patterns/application/argo/v1alpha1"
+	patternUtils "github.com/meshery/meshery/models/pattern/utils"
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

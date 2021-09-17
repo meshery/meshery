@@ -10,8 +10,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/layer5io/meshery/helpers"
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/helpers"
+	"github.com/meshery/meshery/models"
 )
 
 func init() {

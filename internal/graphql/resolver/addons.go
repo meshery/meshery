@@ -3,8 +3,8 @@ package resolver
 import (
 	"context"
 
-	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/internal/graphql/model"
+	"github.com/meshery/meshery/models"
 )
 
 func (r *Resolver) changeAddonStatus(ctx context.Context, provider models.Provider) (model.Status, error) {

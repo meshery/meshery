@@ -1,8 +1,8 @@
 package selector
 
 import (
-	"github.com/layer5io/meshery/internal/store"
-	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/meshery/meshery/internal/store"
+	"github.com/meshery/meshery/models/pattern/core"
 )
 
 func (s *Selector) Workload(name string) (core.WorkloadCapability, bool) {

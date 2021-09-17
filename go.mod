@@ -1,4 +1,4 @@
-module github.com/layer5io/meshery
+module github.com/meshery/meshery
 
 go 1.16
 
@@ -36,11 +36,11 @@ require (
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.2.20
+	github.com/meshery/meshery-operator v0.2.20
 	github.com/layer5io/meshkit v0.2.25
-	github.com/layer5io/meshsync v0.1.24
+	github.com/meshery/meshsync v0.1.24
 	github.com/layer5io/nighthawk-go v1.0.3
-	github.com/layer5io/service-mesh-performance v0.3.3
+	github.com/service-mesh-performance/service-mesh-performance v0.3.3
 	github.com/lib/pq v1.10.2
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/manifoldco/promptui v0.8.0

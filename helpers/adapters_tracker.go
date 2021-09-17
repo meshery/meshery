@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/models"
 )
 
 // AdaptersTracker is used to hold the list of known adapters

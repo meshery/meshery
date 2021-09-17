@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/models"
 )
 
 // ServeReactComponentFromPackage serves static assets from the package

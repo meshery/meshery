@@ -9,8 +9,8 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/handlers"
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/handlers"
+	"github.com/meshery/meshery/models"
 )
 
 // Router represents Meshery router

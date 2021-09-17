@@ -36,8 +36,8 @@ import (
 	"bytes"
 
 	"github.com/go-openapi/strfmt"
-	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/models"
 	v1 "k8s.io/api/core/v1"
 )
 

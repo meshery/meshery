@@ -16,10 +16,10 @@ import (
 	"fortio.org/fortio/periodic"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/layer5io/gowrk2/api"
-	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	nighthawk_client "github.com/layer5io/nighthawk-go/pkg/client"
 	nighthawk_proto "github.com/layer5io/nighthawk-go/pkg/proto"
+	"github.com/meshery/meshery/models"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/durationpb"
 

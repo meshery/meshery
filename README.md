@@ -5,23 +5,23 @@
 <img src="https://img.shields.io/docker/pulls/layer5/meshery.svg" /></a>
 <a href="https://goreportcard.com/report/github.com/meshery/meshery" alt="Go Report Card">
 <img src="https://goreportcard.com/badge/github.com/meshery/meshery" /></a>
-<a href="https://github.com/layer5io/meshery/actions" alt="Build Status">
-<img src="https://github.com/layer5io/meshery/workflows/Meshery/badge.svg" /></a>
+<a href="https://github.com/meshery/meshery/actions" alt="Build Status">
+<img src="https://github.com/meshery/meshery/workflows/Meshery/badge.svg" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
 <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
-<a href="https://github.com/layer5io/meshery" alt="Website">
+<a href="https://github.com/meshery/meshery" alt="Website">
 <img src="https://img.shields.io/website/https/layer5.io/meshery.svg" /></a>
-<a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+" alt="GitHub issues by-label">
-<img src="https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg" /></a>
+<a href="https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+org%3Ameshery+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22+" alt="GitHub issues by-label">
+<img src="https://img.shields.io/github/issues/meshery/meshery/help%20wanted.svg" /></a>
 <a href="http://slack.layer5.io" alt="Join Slack">
 <img src="https://img.shields.io/badge/Slack-@layer5.svg?logo=slack"></a>
 <a href="https://twitter.com/intent/follow?screen_name=mesheryio" alt="Twitter Follow">
 <img src="https://img.shields.io/twitter/follow/layer5.svg?label=Follow+Layer5&style=social" /></a>
-<a href="https://github.com/layer5io/meshery" alt="LICENSE">
-<img src="https://img.shields.io/github/license/layer5io/meshery.svg" /></a>
+<a href="https://github.com/meshery/meshery" alt="LICENSE">
+<img src="https://img.shields.io/github/license/meshery/meshery.svg" /></a>
 </p>
 
-<h5><p align="center"><i>If you’re using Meshery or if you like the project, please <a href="https://github.com/layer5io/meshery/stargazers">★</a> this repository to show your support! 🤩</i></p></h5>
+<h5><p align="center"><i>If you’re using Meshery or if you like the project, please <a href="https://github.com/meshery/meshery/stargazers">★</a> this repository to show your support! 🤩</i></p></h5>
 
 [Meshery](https://meshery.io) is the multi-service mesh management plane offering lifecycle, configuration, and performance management of service meshes and their workloads.
 
@@ -76,37 +76,37 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
           <td rowspan="9" class="stable-adapters">stable</td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-istio">
+          <td><a href="https://github.com/meshery/meshery-istio">
             <img src='https://docs.meshery.io/assets/img/service-meshes/istio.svg' alt='Meshery Adapter for Istio Service Mesh' align="middle" hspace="10px" vspace="5px" height="30px" > Meshery adapter for Istio</a>
           </td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-linkerd">
+          <td><a href="https://github.com/meshery/meshery-linkerd">
             <img src='https://docs.meshery.io/assets/img/service-meshes/linkerd.svg' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Linkerd</a>
           </td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-consul">
+          <td><a href="https://github.com/meshery/meshery-consul">
             <img src='https://docs.meshery.io/assets/img/service-meshes/consul.svg' alt='Consul Connect' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Consul</a>
           </td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-octarine">
+          <td><a href="https://github.com/meshery/meshery-octarine">
             <img src='https://docs.meshery.io/assets/img/service-meshes/octarine.svg' alt='Octarine Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Octarine</a>
           </td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-nsm">
+          <td><a href="https://github.com/meshery/meshery-nsm">
             <img src='https://docs.meshery.io/assets/img/service-meshes/nsm.svg' alt='Network Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Network Service Mesh</a>
           </td>
         </tr>
          <tr>
-           <td><a href="https://github.com/layer5io/meshery-kuma">
+           <td><a href="https://github.com/meshery/meshery-kuma">
              <img src='https://docs.meshery.io/assets/img/service-meshes/kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
            </td>
         </tr>
           <tr>
-          <td><a href="https://github.com/layer5io/meshery-osm">
+          <td><a href="https://github.com/meshery/meshery-osm">
             <img src='https://docs.meshery.io/assets/img/service-meshes/osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
           </td>
         </tr>
@@ -115,12 +115,12 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
           <td rowspan="5" class="beta-adapters">beta</td>
         </tr>
          <tr>
-          <td><a href="https://github.com/layer5io/meshery-cpx">
+          <td><a href="https://github.com/meshery/meshery-cpx">
             <img src='https://docs.meshery.io/assets/img/service-meshes/citrix.svg' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
           </td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-traefik-mesh">
+          <td><a href="https://github.com/meshery/meshery-traefik-mesh">
             <img src='https://docs.meshery.io/assets/img/service-meshes/traefik-mesh.svg' alt='Traefik Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Traefik Mesh</a>
           </td>
         </tr>
@@ -187,7 +187,7 @@ In an effort to produce service mesh agnostic tooling, Meshery uses the [service
 
 <p style="clear:both;">
 <a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service mesh performance example.gif"><img alt="Layer5 Service Mesh Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service mesh performance example.gif" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
-<!-- <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="https://docs.meshery.io/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
+<!-- <a href="https://raw.githubusercontent.com/meshery/meshery/master/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="https://docs.meshery.io/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
 <h4>Standardized Service Performance Management</h4>
 
 Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in the context of the overhead incurred.

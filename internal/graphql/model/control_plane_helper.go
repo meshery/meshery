@@ -3,9 +3,9 @@ package model
 import (
 	"strings"
 
-	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshery/models"
 
 	corev1 "k8s.io/api/core/v1"
 )

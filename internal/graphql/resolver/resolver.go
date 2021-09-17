@@ -1,11 +1,11 @@
 package resolver
 
 import (
-	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils/broadcast"
+	"github.com/meshery/meshery/internal/graphql/model"
+	"github.com/meshery/meshery/models"
 )
 
 // This file will not be regenerated automatically.

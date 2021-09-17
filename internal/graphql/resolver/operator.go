@@ -3,12 +3,12 @@ package resolver
 import (
 	"context"
 
-	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
-	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	operatorClient "github.com/meshery/meshery-operator/pkg/client"
+	"github.com/meshery/meshery/internal/graphql/model"
+	"github.com/meshery/meshery/models"
 )
 
 func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status) (model.Status, error) {

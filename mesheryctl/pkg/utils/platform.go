@@ -13,8 +13,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -489,7 +489,7 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 	// loop through the required adapters as specified in the config.yaml file and apply/update/delete each
 	for _, adapter := range requestedAdapters {
 		// for each adapter, there is a meshery-adapterName-deployment.yaml and meshery-adapterName-service.yaml
-		// manifest file. See- https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+		// manifest file. See- https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 		adapterFile := filepath.Join(manifestFiles, adapter)
 		adapterDeployment := adapterFile + "-deployment.yaml"
 		adapterService := adapterFile + "-service.yaml"

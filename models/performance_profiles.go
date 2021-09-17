@@ -2,8 +2,8 @@ package models
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/internal/sql"
 	"github.com/lib/pq"
+	"github.com/meshery/meshery/internal/sql"
 )
 
 // PerformanceProfile represents the performance profile that needs

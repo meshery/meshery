@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/models"
-	pCore "github.com/layer5io/meshery/models/pattern/core"
+	"github.com/meshery/meshery/models"
+	pCore "github.com/meshery/meshery/models/pattern/core"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that

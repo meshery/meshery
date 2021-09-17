@@ -2,7 +2,7 @@ apiVersion: v2
 name: meshery-traefik-mesh
 description: Meshery Adapter for Traefik Mesh chart.
 source: 
-  - https://github.com/layer5io/meshery-traefik-mesh
+  - https://github.com/meshery/meshery-traefik-mesh
 
 deprecated: false
 

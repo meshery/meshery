@@ -6,7 +6,7 @@ import "layer5/service-mesh-performance/protos/service_mesh.proto";
 import "layer5/meshery/meshes/metadata.proto";
 
 package meshes;
-option go_package = "github.com/layer5io/meshery/meshes;meshes";
+option go_package = "github.com/meshery/meshery/meshes;meshes";
 
 message RegisterRequest {
     bytes kubeconfig = 1;

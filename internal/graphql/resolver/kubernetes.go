@@ -3,9 +3,9 @@ package resolver
 import (
 	"context"
 
-	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/models"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshery/internal/graphql/model"
+	"github.com/meshery/meshery/models"
 )
 
 func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider) ([]*model.NameSpace, error) {

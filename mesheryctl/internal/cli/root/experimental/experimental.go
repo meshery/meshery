@@ -3,9 +3,9 @@ package experimental
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/filter"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/mesh"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

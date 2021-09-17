@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/models"
 )
 
 // MesheryApplicationRequestBody refers to the type of request body that

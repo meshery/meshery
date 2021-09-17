@@ -157,7 +157,7 @@ jobs:
       - name: Check out meshery-consul code
         uses: actions/checkout@v2
         with:
-          repository: layer5io/meshery-consul
+          repository: meshery/meshery-consul
           path: ./meshery-consul
       - name: Download artifacts
         uses: actions/download-artifact@v2

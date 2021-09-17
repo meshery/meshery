@@ -3,15 +3,15 @@ package resolver
 import (
 	"context"
 
-	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshery/internal/graphql/model"
+	"github.com/meshery/meshery/models"
 )
 
 var (
-	meshsyncYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
+	meshsyncYaml = "https://raw.githubusercontent.com/meshery/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
 )
 
 func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.Provider) (<-chan *model.OperatorControllerStatus, error) {

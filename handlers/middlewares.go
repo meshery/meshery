@@ -5,7 +5,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/models"
 	"github.com/sirupsen/logrus"
 )
 

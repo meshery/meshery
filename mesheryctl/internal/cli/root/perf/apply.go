@@ -12,9 +12,9 @@ import (
 	"strings"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/models"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"

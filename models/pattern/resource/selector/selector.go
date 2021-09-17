@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/meshery/meshery/models/pattern/core"
 )
 
 const (

@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/meshery/meshery/internal/store"
 )
 
 type genericCapability struct {

@@ -2,7 +2,7 @@ apiVersion: v2
 name: meshery-kuma
 description: Meshery Adapter for Kuma.
 source: 
-  - https://github.com/layer5io/meshery-kuma
+  - https://github.com/meshery/meshery-kuma
 
 deprecated: false
 # A chart can be either an 'application' or a 'library' chart.

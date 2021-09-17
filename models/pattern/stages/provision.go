@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshery/helpers"
-	"github.com/layer5io/meshery/models/pattern/core"
-	"github.com/layer5io/meshery/models/pattern/planner"
-	"github.com/layer5io/meshery/models/pattern/resource/selector"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/meshery/meshery/helpers"
+	"github.com/meshery/meshery/models/pattern/core"
+	"github.com/meshery/meshery/models/pattern/planner"
+	"github.com/meshery/meshery/models/pattern/resource/selector"
 )
 
 type CompConfigPair struct {

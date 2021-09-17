@@ -15,7 +15,7 @@ keywords:
   - meshery-cpx
   - meshery-operator
 source: 
-  - https://github.com/layer5io/meshery
+  - https://github.com/meshery/meshery
 
 engine: gotpl
 

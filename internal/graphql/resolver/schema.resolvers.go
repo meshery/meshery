@@ -7,9 +7,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/layer5io/meshery/internal/graphql/generated"
-	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/internal/graphql/generated"
+	"github.com/meshery/meshery/internal/graphql/model"
+	"github.com/meshery/meshery/models"
 )
 
 func (r *mutationResolver) ChangeAddonStatus(ctx context.Context, input *model.AddonStatusInput) (model.Status, error) {

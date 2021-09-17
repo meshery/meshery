@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	meshsyncYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
+	meshsyncYaml = "https://raw.githubusercontent.com/meshery/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
 )
 
 func RunMeshSync(client *mesherykube.Client, delete bool) error {

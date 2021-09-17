@@ -2,7 +2,7 @@ apiVersion: v2
 name: meshery-operator
 description: Meshery Operator chart.
 source: 
-  - https://github.com/layer5io/meshery-operator
+  - https://github.com/meshery/meshery-operator
 
 deprecated: false
 

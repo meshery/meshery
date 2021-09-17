@@ -2,7 +2,7 @@ package stages
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/meshery/meshery/models/pattern/core"
 )
 
 type ServiceInfoProvider interface {

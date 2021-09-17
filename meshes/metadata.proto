@@ -1,7 +1,7 @@
 syntax="proto3";
 
 package metadata;
-option go_package = "github.com/layer5io/meshery/metadata;metadata";
+option go_package = "github.com/meshery/meshery/metadata;metadata";
 
 enum RequestStatus {
     SUCCESSFUL = 1;

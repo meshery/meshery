@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/layer5io/meshery/models/pattern/core"
-	"github.com/layer5io/meshery/models/pattern/resource/selector"
+	"github.com/meshery/meshery/models/pattern/core"
+	"github.com/meshery/meshery/models/pattern/resource/selector"
 	"github.com/qri-io/jsonschema"
 )
 

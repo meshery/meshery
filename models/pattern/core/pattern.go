@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/meshery/meshery/models/pattern/utils"
 	"github.com/sirupsen/logrus"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
 	"gopkg.in/yaml.v2"

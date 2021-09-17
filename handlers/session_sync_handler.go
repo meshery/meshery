@@ -5,7 +5,7 @@ import (
 
 	"encoding/json"
 
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/models"
 )
 
 // swagger:route GET /api/system/sync SystemAPI idSystemSync

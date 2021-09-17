@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	models "github.com/layer5io/meshery/models"
+	models "github.com/meshery/meshery/models"
 )
 
 // swagger:route GET /api/provider ProvidersAPI idChoiceProvider

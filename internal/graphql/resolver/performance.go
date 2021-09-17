@@ -6,9 +6,9 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/handlers"
-	graphqlModels "github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/models"
+	"github.com/meshery/meshery/handlers"
+	graphqlModels "github.com/meshery/meshery/internal/graphql/model"
+	"github.com/meshery/meshery/models"
 )
 
 // func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Provider, filter *graphqlModels.PageFilter) (<-chan *graphqlModels.PerfPageResult, error) {

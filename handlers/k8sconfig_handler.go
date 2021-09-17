@@ -14,10 +14,10 @@ import (
 
 	"os"
 
-	"github.com/layer5io/meshery/helpers"
-	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/helpers"
+	"github.com/meshery/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
