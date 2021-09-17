@@ -185,7 +185,10 @@ func main() {
 		GenericPersister:                dbHandler,
 	}
 	lProv.Initialize()
-	seededUUIDs := lProv.SeedContent(log)
+	seededUUIDs, err := lProv.SeedContent(log)
+	if err != nil {
+		logrus.Error(err)
+	}
 	provs[lProv.Name()] = lProv
 
 	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))

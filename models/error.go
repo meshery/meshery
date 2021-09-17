@@ -75,6 +75,9 @@ const (
 	ErrFetchDataCode              = "2147"
 	ErrIndexOutOfRangeCode        = "2148"
 	ErrSessionCopyCode            = "2149"
+	ErrSeedingPatternsCode  = "replace"
+	ErrGettingSeededPatternsCode  = "replace"
+	ErrSeedingFiltersCode  = "replace"
 )
 
 var (
@@ -279,4 +282,16 @@ func ErrFetchData(err error) error {
 
 func ErrSessionCopy(err error) error {
 	return errors.New(ErrSessionCopyCode, errors.Alert, []string{"Error: session copy error"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrSeedingPatterns(err error) error {
+	return errors.New(ErrSeedingPatternsCode, errors.Alert, []string{"Error while seeding patterns from seed content"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGettingSeededPatterns(err error) error {
+	return errors.New(ErrGettingSeededPatternsCode, errors.Alert, []string{"Error while reading seeded patterns."}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrSeedingFilters(err error) error {
+	return errors.New(ErrSeedingFiltersCode, errors.Alert, []string{"Error seeding filters."}, []string{err.Error()}, []string{}, []string{})
 }
