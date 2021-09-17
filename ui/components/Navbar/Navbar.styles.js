@@ -1,5 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 
+const DRAWER_WIDTH = "256px";
+
 export const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -7,8 +9,9 @@ export const useStyles = makeStyles((theme) => ({
   },
   drawer: {
     [theme.breakpoints.up("sm")]: {
-      // width: drawerWidth,
+      width: DRAWER_WIDTH,
       flexShrink: 0,
+      backgroundColor: "red",
     },
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,

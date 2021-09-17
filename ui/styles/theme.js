@@ -1,7 +1,7 @@
-import { createTheme } from "@material-ui/core";
+import { createTheme } from "@material-ui/core/styles";
 import { blueGrey } from "@material-ui/core/colors";
 
-let theme = createTheme({
+const theme = createTheme({
   typography: { useNextVariants: true, h5: { fontWeight: "bolder", fontSize: 26, letterSpacing: 0.5 } },
   palette: {
     // primary: {
@@ -22,10 +22,6 @@ let theme = createTheme({
       xl: 1920,
     },
   },
-});
-
-theme = {
-  ...theme,
   overrides: {
     MuiDrawer: { paper: { backgroundColor: "#263238" } },
     MuiButton: {
@@ -34,7 +30,7 @@ theme = {
     },
     MuiToggleButton: { label: { textTransform: "initial", color: "#607d8b" } },
     MuiTabs: {
-      root: { marginLeft: theme.spacing(1) },
+      // root: { marginLeft: theme.spacing(1) },
       indicator: { height: 3, borderTopLeftRadius: 3, borderTopRightRadius: 3 },
     },
     MuiTab: {
@@ -53,10 +49,10 @@ theme = {
         // },
       },
     },
-    MuiIconButton: { root: { padding: theme.spacing(1) } },
+    // MuiIconButton: { root: { padding: theme.spacing(1) } },
     MuiTooltip: { tooltip: { borderRadius: 4 } },
     MuiDivider: { root: { backgroundColor: "#404854" } },
-    MuiListItemText: { primary: { fontWeight: theme.typography.fontWeightMedium } },
+    // MuiListItemText: { primary: { fontWeight: theme.typography.fontWeightMedium } },
     MuiListItemIcon: {
       root: {
         color: "inherit",
@@ -69,7 +65,7 @@ theme = {
     MuiAvatar: { root: { width: 32, height: 32 } },
   },
   props: { MuiTab: { disableRipple: true } },
-  mixins: { ...theme.mixins },
-};
+  // mixins: { ...theme.mixins },
+});
 
 export default theme;

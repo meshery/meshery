@@ -1,13 +1,13 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DashboardIcon from "@material-ui/icons/Dashboard";
-import LifecycleIcon from "../public/static/img/drawer-icons/lifecycle_mgmt_svg";
-import PerformanceIcon from "../public/static/img/drawer-icons/performance_svg";
+import LifecycleIcon from "./drawer-icons/lifecycle_mgmt_svg";
+import PerformanceIcon from "./drawer-icons/performance_svg";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
 import MailIcon from "@material-ui/icons/Mail";
-import ConformanceIcon from "../public/static/img/drawer-icons/conformance_svg";
-import SmiIcon from "../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg";
+import ConformanceIcon from "./drawer-icons/conformance_svg";
+import SmiIcon from "./drawer-icons/servicemeshinterface-icon-white_svg";
 import { drawerIconsStyle, externalLinkIconStyle } from "./Navbar.styles";
 import { faDigitalTachograph } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
@@ -69,72 +69,71 @@ export const navigatorItemsTree = [
         id: "Citrix_Service_Mesh",
         href: "/management/citrix",
         title: "Citrix Service Mesh",
-        link: false,
+        link: true,
         show: true,
       },
       {
         id: "Consul",
         href: "/management/consul",
         title: "Consul",
-        link: false,
+        link: true,
         show: true,
       },
       {
         id: "Istio",
         href: "/management/istio",
         title: "Istio",
-        link: false,
+        link: true,
         show: true,
       },
       {
         id: "Kuma",
         href: "/management/kuma",
         title: "Kuma",
-        link: false,
+        link: true,
         show: true,
       },
       {
         id: "Linkerd",
         href: "/management/linkerd",
         title: "Linkerd",
-        link: false,
+        link: true,
         show: true,
       },
       {
         id: "Network_Service_Mesh",
         href: "/management/nsm",
         title: "Network Service Mesh",
-        link: false,
+        link: true,
         show: true,
       },
-      // Disable support for NGINX SM
-      // {
-      //   id: "NGINX_Service_Mesh",
-      //   // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-      //   href: "/management/nginx",
-      //   title: "NGINX Service Mesh",
-      //   link: false,
-      //   show: true,
-      // },
+      {
+        id: "NGINX_Service_Mesh",
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/nginx",
+        title: "NGINX Service Mesh",
+        link: true,
+        show: true,
+      },
       {
         id: "Octarine",
         href: "/management/octarine",
         title: "Octarine",
-        link: false,
+        link: true,
         show: true,
       },
       {
         id: "Open_Service_Mesh",
         href: "/management/osm",
         title: "Open Service Mesh",
-        link: false,
+        link: true,
         show: true,
       },
       {
         id: "Traefik_Mesh",
         href: "/management/traefik-mesh",
         title: "Traefik Mesh",
-        link: false,
+        link: true,
         show: true,
       },
     ],
@@ -142,10 +141,11 @@ export const navigatorItemsTree = [
   {
     id: "Configuration",
     icon: <img src="/static/img/configuration_trans.svg" style={{ width: "1.21rem" }} />,
-    href: "/configuration",
+    // disabled: true,
+    href: "#",
     title: "Configuration",
-    show: false,
-    link: false,
+    show: true,
+    link: true,
     children: [
       {
         id: "Applications",
@@ -204,7 +204,7 @@ export const navigatorItemsTree = [
     href: "/smi_results", //Temp
     title: "Conformance",
     show: true,
-    link: false,
+    link: true,
     children: [
       {
         id: "Service Mesh Interface",

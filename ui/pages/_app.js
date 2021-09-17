@@ -4,18 +4,15 @@ import { Provider } from "react-redux";
 import store from "../app/store";
 import { Layout } from "@/components/Layout/Layout";
 import { NoSsr } from "@material-ui/core";
-import { StylesProvider } from "@material-ui/styles";
 
 function MyApp({ Component, pageProps }) {
   return (
     <NoSsr>
-      <StylesProvider injectFirst>
-        <Provider store={store}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </Provider>
-      </StylesProvider>
+      <Provider store={store}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </Provider>
     </NoSsr>
   );
 }
