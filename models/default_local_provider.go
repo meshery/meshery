@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -16,6 +17,8 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/models/walker"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
@@ -838,6 +841,57 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
 }
 
+func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
+	var seededUUIDs []uuid.UUID
+	log.Info("Starting to seed patterns")
+	names, content, err := getSeededComponents("Pattern", log)
+	if err != nil {
+		log.Error(err)
+	}
+
+	for i, name := range names {
+		id, _ := uuid.NewV4()
+		var pattern = &MesheryPattern{
+			PatternFile: content[i],
+			Name:        name,
+			ID:          &id,
+		}
+		log.Info("[SEEDING] ", "Saving pattern- ", name)
+		_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
+		if err != nil {
+			log.Error(err)
+		}
+		seededUUIDs = append(seededUUIDs, id)
+	}
+	log.Info("Starting to seed filters")
+	names, content, err = getSeededComponents("Filter", log)
+	if err != nil {
+		log.Error(err)
+	}
+
+	for i, name := range names {
+		id, _ := uuid.NewV4()
+		var filter = &MesheryFilter{
+			FilterFile: content[i],
+			Name:       name,
+			ID:         &id,
+		}
+		log.Info("[SEEDING] ", "Saving filter- ", name)
+		_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
+		if err != nil {
+			log.Error(err)
+		}
+		seededUUIDs = append(seededUUIDs, id)
+	}
+	return seededUUIDs
+}
+func (l *DefaultLocalProvider) CleanupSeeded(seededUUIDs []uuid.UUID) {
+	for _, id := range seededUUIDs {
+		_, _ = l.MesheryPatternPersister.DeleteMesheryPattern(id)
+		_, _ = l.MesheryFilterPersister.DeleteMesheryFilter(id)
+	}
+}
+
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
 // to be imported
 //
@@ -1103,4 +1157,35 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 	}
 
 	return []MesheryApplication{af}, nil
+}
+func getSeededComponents(comp string, log logger.Handler) ([]string, []string, error) {
+	wd := utils.GetHome()
+	switch comp {
+	case "Pattern":
+		wd = filepath.Join(wd, ".meshery", "seed_content", "patterns")
+	case "Filter":
+		wd = filepath.Join(wd, ".meshery", "seed_content", "filters", "binaries")
+	}
+	log.Info("[SEEDING] ", "Extracting "+comp+"s from ", wd)
+	var names []string
+	var contents []string
+	files, err := ioutil.ReadDir(wd)
+	if err != nil {
+		return nil, nil, err
+	}
+	for _, f := range files {
+		fPath := filepath.Join(wd, f.Name())
+		file, err := os.OpenFile(fPath, os.O_RDONLY, 0444)
+		if err != nil {
+			return nil, nil, err
+		}
+		content, err := ioutil.ReadAll(file)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		names = append(names, f.Name())
+		contents = append(contents, string(content))
+	}
+	return names, contents, nil
 }
