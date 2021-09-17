@@ -75,8 +75,8 @@ const (
 	ErrFetchDataCode               = "2147"
 	ErrIndexOutOfRangeCode         = "2148"
 	ErrSessionCopyCode             = "2149"
-	ErrSavingSeededComponentsCode  = "replace"
-	ErrGettingSeededComponentsCode = "replace"
+	ErrSavingSeededComponentsCode  = "2152"
+	ErrGettingSeededComponentsCode = "2153"
 )
 
 var (
