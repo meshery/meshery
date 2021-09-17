@@ -841,12 +841,12 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
 }
 
-func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
+func (l *DefaultLocalProvider) SeedContent(log logger.Handler) ([]uuid.UUID, error) {
 	var seededUUIDs []uuid.UUID
 	log.Info("Starting to seed patterns")
 	names, content, err := getSeededComponents("Pattern", log)
 	if err != nil {
-		log.Error(err)
+		return nil, ErrGettingSeededComponents(err, "Patterns")
 	}
 
 	for i, name := range names {
@@ -859,14 +859,14 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 		log.Info("[SEEDING] ", "Saving pattern- ", name)
 		_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
 		if err != nil {
-			log.Error(err)
+			return nil, ErrSavingSeededComponents(err, "Patterns")
 		}
 		seededUUIDs = append(seededUUIDs, id)
 	}
 	log.Info("Starting to seed filters")
 	names, content, err = getSeededComponents("Filter", log)
 	if err != nil {
-		log.Error(err)
+		return nil, ErrGettingSeededComponents(err, "Filters")
 	}
 
 	for i, name := range names {
@@ -879,11 +879,11 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 		log.Info("[SEEDING] ", "Saving filter- ", name)
 		_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
 		if err != nil {
-			log.Error(err)
+			return nil, ErrSavingSeededComponents(err, "Filters")
 		}
 		seededUUIDs = append(seededUUIDs, id)
 	}
-	return seededUUIDs
+	return seededUUIDs, nil
 }
 func (l *DefaultLocalProvider) CleanupSeeded(seededUUIDs []uuid.UUID) {
 	for _, id := range seededUUIDs {
@@ -1158,6 +1158,8 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 
 	return []MesheryApplication{af}, nil
 }
+
+// getSeededComponents reads the directory recursively looking for seed content
 func getSeededComponents(comp string, log logger.Handler) ([]string, []string, error) {
 	wd := utils.GetHome()
 	switch comp {
@@ -1169,23 +1171,27 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 	log.Info("[SEEDING] ", "Extracting "+comp+"s from ", wd)
 	var names []string
 	var contents []string
-	files, err := ioutil.ReadDir(wd)
+	err := filepath.WalkDir(wd,
+		func(path string, d os.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if !d.IsDir() {
+				file, err := os.OpenFile(path, os.O_RDONLY, 0444)
+				if err != nil {
+					return err
+				}
+				content, err := ioutil.ReadAll(file)
+				if err != nil {
+					return err
+				}
+				names = append(names, d.Name())
+				contents = append(contents, string(content))
+			}
+			return nil
+		})
 	if err != nil {
 		return nil, nil, err
-	}
-	for _, f := range files {
-		fPath := filepath.Join(wd, f.Name())
-		file, err := os.OpenFile(fPath, os.O_RDONLY, 0444)
-		if err != nil {
-			return nil, nil, err
-		}
-		content, err := ioutil.ReadAll(file)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		names = append(names, f.Name())
-		contents = append(contents, string(content))
 	}
 	return names, contents, nil
 }
