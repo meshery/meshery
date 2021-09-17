@@ -68,13 +68,13 @@ func TestSetFileLocation(t *testing.T) {
 	}
 }
 
-// func TestNavigateToBrowser(t *testing.T) {
-// 	// opens up a browser window whenever this test runs
-// 	err := NavigateToBrowser("https://www.layer5.io")
-// 	if err != nil {
-// 		t.Errorf("NavigateToBrowser error: %v", err)
-// 	}
-// }
+func TestNavigateToBrowser(t *testing.T) {
+	// opens up a browser window whenever this test runs
+	err := NavigateToBrowser("https://www.layer5.io")
+	if err != nil {
+		t.Errorf("NavigateToBrowser error: %v", err)
+	}
+}
 
 func TestUploadFileWithParams(t *testing.T) {
 	fixtureFileName := "listmanifest.api.response.golden" // any arbitrary fixture file
