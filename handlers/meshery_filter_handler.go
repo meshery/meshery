@@ -275,6 +275,6 @@ func (h *Handler) FilterFileHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	// Filter files are just pattern files?
+	// Filter files are just pattern files
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
 }

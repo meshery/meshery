@@ -368,3 +368,10 @@ type mesheryFiltersResponseWrapper struct {
 	// in: body
 	Body models.FiltersAPIResponse
 }
+
+// Returns the response of the Filter files
+// swagger:response FIlterFilesResponseWrapper
+type FilterFilesResponseWrapper struct {
+	// in: body
+	Body *models.MesheryFilter
+}
