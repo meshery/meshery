@@ -75,9 +75,8 @@ const (
 	ErrFetchDataCode              = "2147"
 	ErrIndexOutOfRangeCode        = "2148"
 	ErrSessionCopyCode            = "2149"
-	ErrSeedingPatternsCode  = "replace"
-	ErrGettingSeededPatternsCode  = "replace"
-	ErrSeedingFiltersCode  = "replace"
+	ErrSavingSeededComponentsCode = "replace"
+	ErrGettingSeededComponentsCode = "replace"
 )
 
 var (
@@ -284,14 +283,10 @@ func ErrSessionCopy(err error) error {
 	return errors.New(ErrSessionCopyCode, errors.Alert, []string{"Error: session copy error"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrSeedingPatterns(err error) error {
-	return errors.New(ErrSeedingPatternsCode, errors.Alert, []string{"Error while seeding patterns from seed content"}, []string{err.Error()}, []string{}, []string{})
+func ErrGettingSeededComponents(err error, content string) error {
+	return errors.New(ErrGettingSeededComponentsCode, errors.Alert, []string{"Error while getting ", content, " from sample content"}, []string{err.Error()}, []string{"Sample content does not exist.\nContent file format not supported.\nUser doesn't have permission to read sample content.\nContent file corrupt."}, []string{"Try restarting Meshery.\nTry fetching content again."})
 }
 
-func ErrGettingSeededPatterns(err error) error {
-	return errors.New(ErrGettingSeededPatternsCode, errors.Alert, []string{"Error while reading seeded patterns."}, []string{err.Error()}, []string{}, []string{})
-}
-
-func ErrSeedingFilters(err error) error {
-	return errors.New(ErrSeedingFiltersCode, errors.Alert, []string{"Error seeding filters."}, []string{err.Error()}, []string{}, []string{})
+func ErrSavingSeededComponents(err error, content string) error {
+	return errors.New(ErrSavingSeededComponentsCode, errors.Alert, []string{"Error while saving sample ", content}, []string{err.Error()}, []string{"User doesn't have permission to save content.\nDatabase unreachable.\nDatabase locked or corrupt.\nContent unsupported."}, []string{"Retry fetching content\nRetry sigining in\nLogin with correct user account\nRetry after deleting '~/.meshery/config'."})
 }

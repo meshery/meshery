@@ -846,7 +846,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) ([]uuid.UUID, err
 	log.Info("Starting to seed patterns")
 	names, content, err := getSeededComponents("Pattern", log)
 	if err != nil {
-		return nil, ErrGettingSeededPatterns(err)
+		return nil, ErrGettingSeededComponents(err, "Patterns")
 	}
 
 	for i, name := range names {
@@ -859,14 +859,14 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) ([]uuid.UUID, err
 		log.Info("[SEEDING] ", "Saving pattern- ", name)
 		_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
 		if err != nil {
-			return nil, ErrGettingSeededPatterns(err)
+			return nil, ErrSavingSeededComponents(err, "Patterns")
 		}
 		seededUUIDs = append(seededUUIDs, id)
 	}
 	log.Info("Starting to seed filters")
 	names, content, err = getSeededComponents("Filter", log)
 	if err != nil {
-		return nil, ErrSeedingFilters(err)
+		return nil, ErrGettingSeededComponents(err, "Filters")
 	}
 
 	for i, name := range names {
@@ -879,7 +879,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) ([]uuid.UUID, err
 		log.Info("[SEEDING] ", "Saving filter- ", name)
 		_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
 		if err != nil {
-			return nil, err
+			return nil, ErrSavingSeededComponents(err, "Filters")
 		}
 		seededUUIDs = append(seededUUIDs, id)
 	}
