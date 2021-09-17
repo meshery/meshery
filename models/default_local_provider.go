@@ -1189,7 +1189,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 				contents = append(contents, string(content))
 			}
 			return nil
-	})
+		})
 	if err != nil {
 		return nil, nil, err
 	}
