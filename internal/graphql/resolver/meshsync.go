@@ -3,6 +3,7 @@ package resolver
 import (
 	"context"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
@@ -60,6 +61,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 }
 
 func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider) error {
+	key, _ := uuid.NewV4()
 	status, err := r.getOperatorStatus(ctx, provider)
 	if err != nil {
 		return err
@@ -71,16 +73,21 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 			r.Log.Error(ErrAddonSubscription(err))
 
 			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Type:    broadcast.OperatorSyncChannel,
-				Message: err,
+				Id:     key,
+				Source: broadcast.OperatorSyncChannel,
+				Type:   "error",
+				Data:   err,
 			})
+
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
 
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Type:    broadcast.OperatorSyncChannel,
-			Message: false,
+			Id:     key,
+			Source: broadcast.OperatorSyncChannel,
+			Data:   false,
+			Type:   "health",
 		})
 		return nil
 	}
@@ -93,47 +100,61 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 }
 
 func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider) (model.Status, error) {
+	key, _ := uuid.NewV4()
 	err := model.RunMeshSync(r.Config.KubeClient, false)
 	r.Log.Info("Installing Meshsync")
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Type:    broadcast.OperatorSyncChannel,
-		Message: true,
+		Id:     key,
+		Source: broadcast.OperatorSyncChannel,
+		Data:   true,
+		Type:   "health",
 	})
 
 	if err != nil {
 		r.Log.Error(err)
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Type:    broadcast.OperatorSyncChannel,
-			Message: err,
+			Id:     key,
+			Source: broadcast.OperatorSyncChannel,
+			Data:   err,
+			Type:   "error",
 		})
 		return model.StatusDisabled, err
 	}
 
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Type:    broadcast.OperatorSyncChannel,
-		Message: false,
+		Id:     key,
+		Source: broadcast.OperatorSyncChannel,
+		Data:   false,
+		Type:   "health",
 	})
 	return model.StatusProcessing, nil
 }
 
 func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider) (model.Status, error) {
+	key, _ := uuid.NewV4()
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Type:    broadcast.OperatorSyncChannel,
-		Message: true,
+		Id:     key,
+		Source: broadcast.OperatorSyncChannel,
+		Data:   true,
+		Type:   "health",
 	})
 	err := r.connectToBroker(ctx, provider)
 	if err != nil {
 		r.Log.Error(err)
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Type:    broadcast.OperatorSyncChannel,
-			Message: err,
+			Id:     key,
+			Source: broadcast.OperatorSyncChannel,
+			Data:   err,
+			Type:   "error",
 		})
 		return model.StatusDisabled, err
 	}
 
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Type:    broadcast.OperatorSyncChannel,
-		Message: false,
+		Id:     key,
+		Source: broadcast.OperatorSyncChannel,
+		Data:   false,
+		Type:   "health",
 	})
 	return model.StatusConnected, nil
 }
