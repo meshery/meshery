@@ -117,7 +117,7 @@ mesheryctl perf result saturday profile --page 2
 			var tempStruct *models.PerformanceResultsAPIResponse
 			err = json.Unmarshal(body, &tempStruct)
 			if err != nil {
-				ErrFailUnmarshal(err)
+				return ErrFailUnmarshal(err)
 			}
 			body, _ = json.Marshal(tempStruct.Results)
 			if outputFormatFlag == "yaml" {
