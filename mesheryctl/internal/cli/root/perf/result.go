@@ -34,24 +34,29 @@ type resultStruct struct {
 	LoadGenerator string
 }
 
+var (
+	resultPage int
+)
+
 var resultCmd = &cobra.Command{
-	Use:   "result profile-id [result-name]",
+	Use:   "result profile-name",
 	Short: "List performance test results",
 	Long:  `List all the available test results of a performance profile`,
 	Args:  cobra.MinimumNArgs(1),
 	Example: `
 // List Test results (maximum 25 results)	
-mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 
+mesheryctl perf result saturday profile 
 
-// List Test results with search (maximum 25 profiles)
-mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 test I ran on sunday 
+// View performance results with more information (maximum 25 results)
+mesheryctl perf result saturday profile --expand
 
-// View performance results with more information
-mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 --expand
+// View other set of performance results with --page (maximum 25 results)
+mesheryctl perf result saturday profile --page 2
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
-		var searchString string
+		var searchString, profileID string
+		var profileResp *models.PerformanceProfilesAPIResponse
 		// setting up for error formatting
 		cmdUsed = "result"
 
@@ -60,19 +65,45 @@ mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 --expand
 			return ErrMesheryConfig(err)
 		}
 
-		resultURL := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles/" + args[0] + "/results"
+		profileURL := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles"
 
 		// set default tokenpath for command.
 		if tokenPath == "" {
 			tokenPath = constants.GetCurrentAuthToken()
 		}
 
-		if len(args) > 1 {
-			// Merge args to get result-name
-			searchString = strings.Join(args[1:], "%20")
+		// Merge args to get result-name
+		searchString = strings.Join(args, "%20")
+
+		_, _, body, err := fetchPerformanceProfiles(profileURL, searchString)
+		if err != nil {
+			return err
+		}
+		err = json.Unmarshal(body, &profileResp)
+		if err != nil {
+			return err
 		}
 
-		data, expendedData, body, err := fetchPerformanceProfileResults(resultURL, args[0], searchString)
+		if len(profileResp.Profiles) == 0 {
+			log.Info("No Performance Profiles found with the given name")
+			return nil
+		}
+
+		if len(profileResp.Profiles) == 1 {
+			// found only one profile with matching name
+			profileID = profileResp.Profiles[0].ID.String()
+		} else {
+			fmt.Printf("Found multiple profiles with given name\n")
+			fmt.Printf("Select a performance profile\n")
+			fmt.Printf("-----------------------------\n")
+			selectedProfileIndex := multipleProfileConfirmation(profileResp.Profiles)
+			profileID = profileResp.Profiles[selectedProfileIndex].ID.String()
+			fmt.Printf("\n")
+		}
+
+		resultURL := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles/" + profileID + "/results"
+
+		data, expandedData, body, err := fetchPerformanceProfileResults(resultURL)
 		if err != nil {
 			return err
 		}
@@ -92,7 +123,7 @@ mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 --expand
 		} else if !expand {
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data)
 		} else {
-			for _, a := range expendedData {
+			for _, a := range expandedData {
 				fmt.Printf("Name: %v\n", a.Name)
 				fmt.Printf("UserID: %s\n", a.UserID.String())
 				fmt.Printf("Endpoint: %v\n", a.URL)
@@ -110,13 +141,10 @@ mesheryctl perf result c0458578-2e96-43f8-89b7-1ede797021f2 --expand
 }
 
 // Fetch results for a specific profile
-func fetchPerformanceProfileResults(url, profileID, searchString string) ([][]string, []resultStruct, []byte, error) {
+func fetchPerformanceProfileResults(url string) ([][]string, []resultStruct, []byte, error) {
 	client := &http.Client{}
 	var response *models.PerformanceResultsAPIResponse
-	tempURL := fmt.Sprintf("%s?pageSize=%d", url, pageSize)
-	if searchString != "" {
-		tempURL = tempURL + "&search=" + searchString
-	}
+	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, pageSize, resultPage-1)
 
 	req, _ := http.NewRequest("GET", tempURL, nil)
 
@@ -202,4 +230,5 @@ func fetchPerformanceProfileResults(url, profileID, searchString string) ([][]st
 
 func init() {
 	resultCmd.Flags().BoolVarP(&expand, "expand", "e", false, "(optional) Expand the performance results for more info")
+	resultCmd.Flags().IntVarP(&resultPage, "page", "", 1, "(optional) List next set of performance results with --page")
 }

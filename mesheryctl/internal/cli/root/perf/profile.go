@@ -89,6 +89,16 @@ mesheryctl perf profile --expand
 		}
 
 		if outputFormatFlag != "" {
+			var tempStruct *models.PerformanceProfilesAPIResponse
+			err := json.Unmarshal(body, &tempStruct)
+			if err != nil {
+				return err
+			}
+			body, err = json.Marshal(tempStruct.Profiles)
+			if err != nil {
+				return err
+			}
+
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {

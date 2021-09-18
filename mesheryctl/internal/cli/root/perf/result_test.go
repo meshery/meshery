@@ -11,16 +11,14 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-var tempProfileID = "18358dfc-a009-4c76-9ab9-dfef33224b3b"
+var tempProfileID = "a2a555cf-ae16-479c-b5d2-a35656ba741e"
 
 // golden file responses
 var (
+	// standard api response for abhishek profile
+	result1000 = "1000.golden"
 	// standard api response of 25 performance result
 	result1001 = "1001.golden"
-	// api response of performance result with searched term "kuma"
-	result1002 = "1002.golden"
-	// api response of performance result with searched term "no mesh"
-	result1003 = "1003.golden"
 	// api response of zero performance result
 	result1004 = "1004.golden"
 	// unable marshal response
@@ -33,10 +31,6 @@ var (
 var (
 	// mesheryctl response of 25 performance result
 	result1001output = "1001.golden"
-	// mesheryctl response of performance result with searched term "kuma"
-	result1002output = "1002.golden"
-	// mesheryctl response of performance result with searched term "test 3"
-	result1003output = "1003.golden"
 	// mesheryctl response of 25 performance result in expanded output
 	result1004output = "1004.golden"
 	// mesheryctl response when no results found
@@ -71,42 +65,46 @@ func TestResultCmd(t *testing.T) {
 	fixturesDir := filepath.Join(currDir, "fixtures", "result")
 	testToken := filepath.Join(currDir, "fixtures", "auth.json")
 	testdataDir := filepath.Join(currDir, "testdata", "result")
+
+	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
 	resultURL := testContext.BaseURL + "/api/user/performance/profiles/" + tempProfileID + "/results"
 
 	tests := []tempTestStruct{
-		{"standard results output", []string{"result", tempProfileID}, []utils.MockURL{
+		{"standard results output", []string{"result", "abhishek"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
 		}, result1001output, testToken, false},
-		{"results searching kuma", []string{"result", tempProfileID, "kuma"}, []utils.MockURL{
-			{Method: "GET", URL: resultURL, Response: result1002, ResponseCode: 200},
-		}, result1002output, testToken, false},
-		{"results searching no mesh", []string{"result", tempProfileID, "no", "mesh"}, []utils.MockURL{
-			{Method: "GET", URL: resultURL, Response: result1003, ResponseCode: 200},
-		}, result1003output, testToken, false},
-		{"standard results in expand output", []string{"result", tempProfileID, "--expand"}, []utils.MockURL{
+		{"standard results in expand output", []string{"result", "abhishek", "--expand"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
 		}, result1004output, testToken, false},
-		{"Unmarshal error", []string{"result", tempProfileID}, []utils.MockURL{
+		{"Unmarshal error", []string{"result", "abhishek"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1005, ResponseCode: 200},
 		}, result1010output, testToken, true},
-		{"failing add authentication test", []string{"result", tempProfileID}, []utils.MockURL{}, result1011output, testToken + "invalid-path", true},
-		{"Server Error 500", []string{"result", tempProfileID}, []utils.MockURL{
+		{"failing add authentication test", []string{"result", "abhishek"}, []utils.MockURL{}, result1011output, testToken + "invalid-path", true},
+		{"Server Error 500", []string{"result", "abhishek"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1006, ResponseCode: 500},
 		}, result1009output, testToken, true},
 		{"No profile passed", []string{"result"}, []utils.MockURL{}, result1012output, testToken, true},
 	}
 
 	testsforLogrusOutputs := []tempTestStruct{
-		{"No results found", []string{"result", tempProfileID, "--expand"}, []utils.MockURL{
+		{"No results found", []string{"result", "abhishek", "--expand"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1004, ResponseCode: 200},
 		}, result1005output, testToken, false},
-		{"standard results in json output", []string{"result", tempProfileID, "-o", "json"}, []utils.MockURL{
+		{"standard results in json output", []string{"result", "abhishek", "-o", "json"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
 		}, result1006output, testToken, false},
-		{"standard results in yaml output", []string{"result", tempProfileID, "-o", "yaml"}, []utils.MockURL{
+		{"standard results in yaml output", []string{"result", "abhishek", "-o", "yaml"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
 		}, result1007output, testToken, false},
-		{"invalid output format", []string{"result", tempProfileID, "-o", "invalid"}, []utils.MockURL{
+		{"invalid output format", []string{"result", "abhishek", "-o", "invalid"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
 		}, result1008output, testToken, true},
 	}
