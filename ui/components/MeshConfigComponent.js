@@ -33,8 +33,8 @@ import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatu
 import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
 import changeOperatorState from "./graphql/mutations/OperatorStatusMutation";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
-import deployMeshSync from "./graphql/queries/DeployMeshSyncQuery";
-import connectToNats from "./graphql/queries/DeployNatsQuery";
+import NatsStatusQuery from "./graphql/queries/NatsStatusQuery";
+import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
 import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
@@ -489,36 +489,46 @@ handleNATSClick = () => {
   this.props.updateProgress({ showProgress : true });
   const self = this;
 
-  connectToNats().subscribe({
+  NatsStatusQuery().subscribe({
     next : (res) => {
-      if (res.connectToNats === "PROCESSING") {
-        this.props.updateProgress({ showProgress : false });
-        this.props.enqueueSnackbar(`Reconnecting to NATS...`, {
-          variant : "info",
-          action : (key) => (
-            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ),
-          autohideduration : 7000,
-        })
-      }
-      if (res.connectToNats === "CONNECTED") {
-        this.props.updateProgress({ showProgress : false });
-        this.props.enqueueSnackbar(`Successfully connected to NATS`, {
-          variant : "success",
-          action : (key) => (
-            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ),
-          autohideduration : 7000,
-        })
-      }
-
+      self.props.updateProgress({ showProgress : false });
+      self.setState({
+        NATSState : res.controller.status,
+        NATSVersion : res.controller.version,
+      });
     },
-    error : self.handleError("Failed to request reconnection with NATS"),
-  });
+    error : self.handleError("NATS status could not be retrieved"), });
+
+  // connectToNats().subscribe({
+  //   next : (res) => {
+  //     if (res.connectToNats === "PROCESSING") {
+  //       this.props.updateProgress({ showProgress : false });
+  //       this.props.enqueueSnackbar(`Reconnecting to NATS...`, {
+  //         variant : "info",
+  //         action : (key) => (
+  //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+  //             <CloseIcon />
+  //           </IconButton>
+  //         ),
+  //         autohideduration : 7000,
+  //       })
+  //     }
+  //     if (res.connectToNats === "CONNECTED") {
+  //       this.props.updateProgress({ showProgress : false });
+  //       this.props.enqueueSnackbar(`Successfully connected to NATS`, {
+  //         variant : "success",
+  //         action : (key) => (
+  //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+  //             <CloseIcon />
+  //           </IconButton>
+  //         ),
+  //         autohideduration : 7000,
+  //       })
+  //     }
+
+  //   },
+  //   error : self.handleError("Failed to request reconnection with NATS"),
+  // });
 
 };
 
@@ -526,24 +536,40 @@ handleNATSClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
 
-    deployMeshSync().subscribe({
-      next : (res) => {
-        if (res.deployMeshsync === "PROCESSING") {
-          this.props.updateProgress({ showProgress : false });
-          this.props.enqueueSnackbar(`MeshSync deployment in progress`, {
-            variant : "info",
-            action : (key) => (
-              <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ),
-            autohideduration : 7000,
-          })
-        }
+    MeshsyncStatusQuery().subscribe({ next : (res) => {
+      self.props.updateProgress({ showProgress : false });
+      if (res.controller.name === "meshsync" && res.controller.status == "ENABLED") {
+        self.setState({
+          meshSyncInstalled : true,
+          meshSyncVersion : res.controller.version,
+        });
+      } else {
+        self.setState({
+          meshSyncInstalled : false,
+          meshSyncVersion : "",
+        });
+      }
+    },
+    error : self.handleError("MeshSync status could not be retrieved"), });
 
-      },
-      error : self.handleError("Failed to request Meshsync redeployment"),
-    });
+    // deployMeshSync().subscribe({
+    //   next : (res) => {
+    //     if (res.deployMeshsync === "PROCESSING") {
+    //       this.props.updateProgress({ showProgress : false });
+    //       this.props.enqueueSnackbar(`MeshSync deployment in progress`, {
+    //         variant : "info",
+    //         action : (key) => (
+    //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+    //             <CloseIcon />
+    //           </IconButton>
+    //         ),
+    //         autohideduration : 7000,
+    //       })
+    //     }
+
+    //   },
+    //   error : self.handleError("Failed to request Meshsync redeployment"),
+    // });
   };
 
   handleError = (msg) => (error) => {

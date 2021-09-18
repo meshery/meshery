@@ -185,6 +185,10 @@ func main() {
 		GenericPersister:                dbHandler,
 	}
 	lProv.Initialize()
+	seededUUIDs, err := lProv.SeedContent(log)
+	if err != nil {
+		logrus.Error(err)
+	}
 	provs[lProv.Name()] = lProv
 
 	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
@@ -268,5 +272,7 @@ func main() {
 		}
 	}()
 	<-c
+	logrus.Info("Doing seeded content cleanup...")
+	lProv.CleanupSeeded(seededUUIDs)
 	logrus.Info("Shutting down Meshery")
 }
