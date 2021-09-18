@@ -1,6 +1,3 @@
-page: 0
-page_size: 25
-profiles:
 - created_at: "2021-08-26T20:57:31.049514Z"
   duration: 30s
   endpoints:
@@ -14,7 +11,6 @@ profiles:
   service_mesh: istio
   total_results: 1
   updated_at: "2021-08-26T20:57:39.021917Z"
-  user_id: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
 - created_at: "2021-08-26T20:09:55.820585Z"
   duration: 30s
   endpoints:
@@ -27,7 +23,6 @@ profiles:
   service_mesh: istio
   total_results: 1
   updated_at: "2021-08-26T20:09:55.820595Z"
-  user_id: 107368cd-85cc-499f-a8bc-3a7ad1bc0f8b
 - created_at: "2021-08-25T14:59:31.958158Z"
   duration: 30s
   endpoints:
@@ -40,7 +35,6 @@ profiles:
   service_mesh: istio
   total_results: 1
   updated_at: "2021-08-25T15:00:07.046381Z"
-  user_id: 145496f6-f5d2-40b9-841e-1b5471b60411
 - concurrent_request: 20
   created_at: "2021-07-11T08:16:09.397918Z"
   duration: 30s
@@ -55,7 +49,6 @@ profiles:
   service_mesh: istio
   total_results: 5
   updated_at: "2021-07-11T08:16:09.397929Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 5
   created_at: "2021-07-11T03:47:59.367802Z"
   duration: 30s
@@ -70,7 +63,6 @@ profiles:
   service_mesh: istio
   total_results: 5
   updated_at: "2021-07-11T03:47:59.367811Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 2
   created_at: "2021-07-09T00:41:46.222118Z"
   duration: 30s
@@ -85,7 +77,6 @@ profiles:
   service_mesh: None
   total_results: 2
   updated_at: "2021-07-09T00:41:46.222128Z"
-  user_id: d209860b-2e68-4185-a303-f749a5323eb0
 - concurrent_request: 1
   content_type: "1"
   created_at: "2021-07-01T10:07:16.705456Z"
@@ -104,7 +95,6 @@ profiles:
   service_mesh: istio
   total_results: 10
   updated_at: "2021-07-03T14:35:28.458941Z"
-  user_id: 440a8d01-b92e-43ad-a73d-01d9847d64c0
 - concurrent_request: 1
   created_at: "2021-07-01T08:30:30.755697Z"
   duration: 30s
@@ -119,7 +109,6 @@ profiles:
   service_mesh: istio
   total_results: 17
   updated_at: "2021-07-01T08:30:30.755706Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 10
   created_at: "2021-07-01T06:30:23.044774Z"
   duration: 30s
@@ -134,7 +123,6 @@ profiles:
   service_mesh: istio
   total_results: 10
   updated_at: "2021-07-01T06:30:23.044784Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 1
   created_at: "2021-07-01T06:30:01.825352Z"
   duration: 15s
@@ -149,7 +137,6 @@ profiles:
   service_mesh: istio
   total_results: 10
   updated_at: "2021-07-01T06:30:01.825362Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 1
   created_at: "2021-07-01T06:29:40.336336Z"
   duration: 1m
@@ -164,7 +151,6 @@ profiles:
   service_mesh: istio
   total_results: 10
   updated_at: "2021-07-01T06:29:40.336346Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 1
   created_at: "2021-07-01T06:29:07.303602Z"
   duration: 30s
@@ -179,7 +165,6 @@ profiles:
   service_mesh: istio
   total_results: 10
   updated_at: "2021-07-01T06:29:07.303612Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 1
   created_at: "2021-07-01T05:18:20.08212Z"
   duration: 15s
@@ -194,7 +179,6 @@ profiles:
   service_mesh: istio
   total_results: 16
   updated_at: "2021-07-01T06:06:07.662827Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 10
   created_at: "2021-07-01T05:18:54.771597Z"
   duration: 30s
@@ -209,7 +193,6 @@ profiles:
   service_mesh: istio
   total_results: 12
   updated_at: "2021-07-01T05:18:54.771607Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 1
   created_at: "2021-07-01T05:18:35.086808Z"
   duration: 1m
@@ -224,7 +207,6 @@ profiles:
   service_mesh: istio
   total_results: 10
   updated_at: "2021-07-01T05:18:35.086817Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 1
   created_at: "2021-07-01T05:17:56.663179Z"
   duration: 30s
@@ -239,7 +221,6 @@ profiles:
   service_mesh: istio
   total_results: 19
   updated_at: "2021-07-01T05:17:56.663188Z"
-  user_id: af67050d-4bd1-4d06-a3b9-d3dd61424b9d
 - concurrent_request: 1
   created_at: "2021-06-26T06:24:09.790947Z"
   duration: 30s
@@ -253,7 +234,6 @@ profiles:
   service_mesh: None
   total_results: 1
   updated_at: "2021-06-26T06:24:09.790957Z"
-  user_id: 32f95323-fa09-4398-a563-353bf22ed1c2
 - concurrent_request: 1
   created_at: "2021-06-26T06:23:18.698283Z"
   duration: 30s
@@ -267,7 +247,6 @@ profiles:
   service_mesh: None
   total_results: 1
   updated_at: "2021-06-26T06:23:18.698292Z"
-  user_id: 32f95323-fa09-4398-a563-353bf22ed1c2
 - content_type: application/json, text/plain, */*
   created_at: "2021-06-19T13:40:37.79544Z"
   duration: 3s
@@ -283,7 +262,6 @@ profiles:
   service_mesh: istio
   total_results: 2
   updated_at: "2021-06-23T13:07:52.404825Z"
-  user_id: a6b17b32-9355-4eb9-9edb-f05aac9ac9e5
 - concurrent_request: 2
   created_at: "2021-06-22T19:30:16.632636Z"
   duration: 30s
@@ -298,7 +276,6 @@ profiles:
   service_mesh: consul
   total_results: 11
   updated_at: "2021-06-22T19:30:16.632645Z"
-  user_id: 090e7114-509a-4046-81f1-9c5fb8daf724
 - created_at: "2021-06-22T19:27:29.630775Z"
   duration: 15s
   endpoints:
@@ -310,7 +287,6 @@ profiles:
   name: No mesh_1624390049426
   total_results: 1
   updated_at: "2021-06-22T19:27:29.630783Z"
-  user_id: 090e7114-509a-4046-81f1-9c5fb8daf724
 - created_at: "2021-06-22T19:27:09.332379Z"
   duration: 30s
   endpoints:
@@ -322,7 +298,6 @@ profiles:
   name: No mesh_1624390029119
   total_results: 1
   updated_at: "2021-06-22T19:27:09.332389Z"
-  user_id: 090e7114-509a-4046-81f1-9c5fb8daf724
 - concurrent_request: 10
   content_type: application/json
   created_at: "2021-06-15T19:39:58.365243Z"
@@ -337,7 +312,6 @@ profiles:
   service_mesh: app mesh
   total_results: 45
   updated_at: "2021-06-22T19:25:08.812145Z"
-  user_id: 090e7114-509a-4046-81f1-9c5fb8daf724
 - created_at: "2021-06-14T15:51:43.495889Z"
   duration: 15s
   endpoints:
@@ -350,7 +324,6 @@ profiles:
   service_mesh: istio
   total_results: 2
   updated_at: "2021-06-14T15:51:43.495899Z"
-  user_id: 32f95323-fa09-4398-a563-353bf22ed1c2
 - concurrent_request: 1
   created_at: "2021-06-09T13:11:21.875879Z"
   duration: 15s
@@ -365,6 +338,4 @@ profiles:
   service_mesh: None
   total_results: 4
   updated_at: "2021-06-09T13:11:21.875889Z"
-  user_id: 4cc198b0-c07c-4d81-84a4-f38881d7ad82
-total_count: 57
 

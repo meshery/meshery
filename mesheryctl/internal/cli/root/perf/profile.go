@@ -92,13 +92,9 @@ mesheryctl perf profile --expand
 			var tempStruct *models.PerformanceProfilesAPIResponse
 			err := json.Unmarshal(body, &tempStruct)
 			if err != nil {
-				return err
+				return ErrFailUnmarshal(err)
 			}
-			body, err = json.Marshal(tempStruct.Profiles)
-			if err != nil {
-				return err
-			}
-
+			body, _ = json.Marshal(tempStruct.Profiles)
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {

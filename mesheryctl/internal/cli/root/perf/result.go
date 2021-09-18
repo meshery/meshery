@@ -114,6 +114,12 @@ mesheryctl perf result saturday profile --page 2
 		}
 
 		if outputFormatFlag != "" {
+			var tempStruct *models.PerformanceResultsAPIResponse
+			err = json.Unmarshal(body, &tempStruct)
+			if err != nil {
+				ErrFailUnmarshal(err)
+			}
+			body, _ = json.Marshal(tempStruct.Results)
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
