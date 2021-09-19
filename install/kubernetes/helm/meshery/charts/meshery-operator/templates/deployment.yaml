@@ -29,8 +29,8 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           # TODO: Need to confirm the meshery-operator image version
-          image: "{{ .Values.image.repository }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.mesheryOperator.image.repository }}"
+          imagePullPolicy: {{ .Values.mesheryOperator.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 10000
@@ -56,6 +56,12 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        - name: {{ .Values.kubeRbac.name }}
+          image: {{ .Values.kubeRbac.image.repository }}
+          imagePullPolicy: {{ .Values.kubeRbac.image.pullPolicy }}
+          ports:
+          - name: https
+            containerPort: 8443
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
