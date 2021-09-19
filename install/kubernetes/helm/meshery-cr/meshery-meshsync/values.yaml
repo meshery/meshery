@@ -1,0 +1,5 @@
+name: meshery-meshsync
+replica: 1
+broker:
+  name: meshery-broker
+  namespace: meshery
