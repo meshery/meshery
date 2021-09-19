@@ -40,12 +40,11 @@ import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-import PermDataSettingOutlinedIcon from '@material-ui/icons/PermDataSettingOutlined';
 import { Button } from "@material-ui/core";
 import jsYaml from "js-yaml";
-// import ListAltIcon from '@material-ui/icons/ListAlt';
 import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import AppsIcon from "./ConnectionWizard/icons/apps";
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
   tableHeader : { fontWeight : "bolder",
@@ -398,9 +397,9 @@ function MesheryApplications({
           return (
             <>
               <Tooltip
-                title = "configuration">
+                title = "configure">
                 <IconButton onClick={() => setShowForm({ application : applications[tableMeta.rowIndex], show : true })}>
-                  <PermDataSettingOutlinedIcon />
+                  <AppsIcon />
                 </IconButton>
               </Tooltip>
               <IconButton>
