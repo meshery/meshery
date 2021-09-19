@@ -32,7 +32,7 @@ import { faChevronCircleLeft,
   faExternalLinkAlt,
   faDigitalTachograph, } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { updatepagetitle } from "../lib/store";
+import { updatepagetitle, updatebetabadge } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
@@ -594,7 +594,8 @@ class Navigator extends React.Component {
 
     const fetchNestedPathAndTitle = (path, title, href, children, isBeta) => {
       if (href === path) {
-        props.updatepagetitle({ title, isBeta });
+        props.updatepagetitle({ title });
+        props.updatebetabadge({ isBeta });
         return;
       }
       if (children && children.length > 0) {
@@ -999,7 +1000,8 @@ class Navigator extends React.Component {
 Navigator.propTypes = { classes : PropTypes.object.isRequired,
   onCollapseDrawer : PropTypes.func.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({ updatepagetitle : bindActionCreators(updatepagetitle, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updatepagetitle : bindActionCreators(updatepagetitle, dispatch), updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
+});
 
 const mapStateToProps = (state) => {
   const meshAdapters = state.get("meshAdapters").toJS();

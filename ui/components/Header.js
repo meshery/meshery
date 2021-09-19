@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
-import { Badge } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -36,6 +35,7 @@ const styles = (theme) => ({
   userSpan : { marginLeft : theme.spacing(1), },
   pageTitleWrapper : { flexGrow : 1,
     marginRight : 'auto', },
+  betaBadge : { color : '#DE1306', fontWeight : '300', fontSize : '13px' },
   pageTitle : { paddingLeft : theme.spacing(2),
     fontSize : '1.25rem',
     [theme.breakpoints.up('sm')] : { fontSize : '1.65rem', }, },
@@ -91,12 +91,8 @@ class Header extends React.Component {
                 </Hidden>
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
                   <Typography color="inherit" variant="h5" className={classes.pageTitle}>
-                    {title}
+                    {title}{isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ""}
                   </Typography>
-                  {isBeta ?
-                    <Badge className={classes.badge}>
-                  BETA
-                    </Badge> :" "}
                 </Grid>
 
                 {/* <Grid item className={classes.notifications}>
