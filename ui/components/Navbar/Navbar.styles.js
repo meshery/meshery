@@ -17,7 +17,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   drawerCollapsed: {
     [theme.breakpoints.up("sm")]: {
-      width: theme.spacing(8.4) + 1,
+      width: theme.spacing(8),
     },
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
@@ -195,7 +195,7 @@ export const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: "hidden",
-    width: theme.spacing(8) + 4,
+    width: theme.spacing(8),
   },
   sidebarExpanded: {
     width: "256px",
