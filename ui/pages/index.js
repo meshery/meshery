@@ -1,42 +1,98 @@
 import React from "react";
-import { Grid, Stack } from "@mui/material";
+import { Button, Grid, Stack } from "@mui/material";
 import { Paper } from "@/components/index";
-import { AdaptersChipList, AdaptersListContainer } from "@/features/mesheryComponents";
-import { KuberenetesClusterContainer } from "@/features/mesheryComponents/components/KubernetesCluster/KubernetesClusterContainer";
-import { KuberenetesClusterChip } from "@/features/mesheryComponents/components/KubernetesCluster/KubernetesClusterChip";
+import { AdaptersChipList, AdaptersListContainer, MesheryServerVersionContainer } from "@/features/mesheryComponents";
 import { PaperWithTitle } from "@/components/Paper";
 import { nanoid } from "@reduxjs/toolkit";
 import { useTheme } from "@mui/system";
+import { KuberenetesClusterChip, KuberenetesClusterContainer } from "@/features/mesheryEnvironment";
+import { GrafanaChip, MetricsContainer, PrometheusChip } from "@/features/mesheryEnvironment/components";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 export default function Dashboard() {
   const theme = useTheme();
+
+  const ConnectionStatus = () => (
+    <PaperWithTitle title="Connection Status" titleVariant="h6">
+      <Stack spacing={2}>
+        <KuberenetesClusterContainer
+          render={({ clusters }) => {
+            if (clusters.length > 0)
+              return (
+                <PaperWithTitle title="Kuberetnes">
+                  {clusters.map((cluster) => (
+                    <Grid item xs={6} key={`cluster+${nanoid()}`} sx={{ mb: theme.spacing(1) }}>
+                      <KuberenetesClusterChip cluster={cluster} />
+                    </Grid>
+                  ))}
+                </PaperWithTitle>
+              );
+            return <PaperWithTitle title="Kubernetes">Not connected to kubernetes</PaperWithTitle>;
+          }}
+        />
+
+        <AdaptersListContainer render={(props) => <AdaptersChipList {...props} />} />
+        <MetricsContainer
+          render={({ grafanas, prometheus, onGrafanaClick, onPrometheusClick }) => {
+            return (
+              <PaperWithTitle title="Metrics" containerProps={{ spacing: 2 }}>
+                <Grid item xs={12} justifyContent="center" container>
+                  {grafanas !== null && grafanas?.length > 0 && grafanas[0] ? (
+                    <GrafanaChip grafana={grafanas[0]} />
+                  ) : (
+                    <Button
+                      variant="contained"
+                      startIcon={<SettingsIcon />}
+                      color="primary"
+                      size="large"
+                      onClick={onGrafanaClick}
+                    >
+                      Configure Grafana
+                    </Button>
+                  )}
+                </Grid>
+
+                <Grid item xs={12} justifyContent="center" container>
+                  {prometheus !== null && prometheus?.length > 0 && prometheus[0] ? (
+                    <PrometheusChip prometheus={prometheus[0]} />
+                  ) : (
+                    <Button
+                      variant="contained"
+                      startIcon={<SettingsIcon />}
+                      color="primary"
+                      size="large"
+                      onClick={onPrometheusClick}
+                    >
+                      Configure Prometheus
+                    </Button>
+                  )}
+                </Grid>
+              </PaperWithTitle>
+            );
+          }}
+        />
+
+        <MesheryServerVersionContainer
+          render={({ serverVersion }) => (
+            <PaperWithTitle title="Release">
+              <Grid item xs={6}>
+                {serverVersion.build}
+              </Grid>
+              <Grid item xs={6}></Grid>
+            </PaperWithTitle>
+          )}
+        />
+      </Stack>
+    </PaperWithTitle>
+  );
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={6}>
         <Paper>asdf</Paper>
       </Grid>
       <Grid item xs={6}>
-        <Paper>
-          <Stack spacing={2}>
-            <KuberenetesClusterContainer
-              render={({ clusters }) => {
-                if (clusters.length > 0)
-                  return (
-                    <PaperWithTitle title="Kuberetnes">
-                      {clusters.map((cluster) => (
-                        <Grid item xs={6} key={`cluster+${nanoid()}`} sx={{ mb: theme.spacing(1) }}>
-                          <KuberenetesClusterChip cluster={cluster} />
-                        </Grid>
-                      ))}
-                    </PaperWithTitle>
-                  );
-                return <PaperWithTitle title="Kubernetes">Not connected to kubernetes</PaperWithTitle>;
-              }}
-            />
-
-            <AdaptersListContainer render={(props) => <AdaptersChipList {...props} />} />
-          </Stack>
-        </Paper>
+        <ConnectionStatus />
       </Grid>
     </Grid>
   );

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchAvailableAdapters } from "./adapters";
+import { fetchMesheryServerDetails } from "./helpers";
 import {
   changeOperatorStatus,
   fetchMesheryComponentsStatus,
@@ -23,7 +24,11 @@ import {
 /**
  * @typedef {Object} MesheryComponent
  * @property {ConnectionStatus} connectionStatus
- * @property {number | "UNKNOWN"} version
+ * @property {string | Object} version
+ */
+
+/**
+ * @typedef {{build: string, latest: string, outdated: boolean, commitsha: string, release_channel: string}} MesheryServerVersionType
  */
 
 /**
@@ -62,6 +67,7 @@ const initialState = {
   /** @type {MesheryComponent}  */
   server: {
     connectionStatus: "UNKOWN",
+    /** @type {MesheryServerVersionType} */
     version: "UNKNOWN",
   },
   /**
@@ -105,6 +111,14 @@ export const changeOperatorStateThunk = createAsyncThunk(
   async (desiredState) => {
     // TODO: Error handling should be done as errors will be passed in resolved object
     const response = await changeOperatorStatus(desiredState);
+    return response;
+  }
+);
+
+export const fetchMesheryServerDetailsThunk = createAsyncThunk(
+  "mesheryComponents/fetchMesheryServerDetails",
+  async () => {
+    const response = await fetchMesheryServerDetails();
     return response;
   }
 );
@@ -199,6 +213,20 @@ const mesheryComponentsSlice = createSlice({
         return state;
       });
     builder.addCase(changeOperatorStateThunk.rejected, (state) => {
+      state.loading = false;
+      return state;
+    });
+
+    builder.addCase(fetchMesheryServerDetailsThunk.pending, (state) => {
+      state.loading = true;
+      return state;
+    });
+    builder.addCase(fetchMesheryServerDetailsThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      state.server.version = action.payload;
+      return state;
+    });
+    builder.addCase(fetchMesheryServerDetailsThunk.rejected, (state) => {
       state.loading = false;
       return state;
     });

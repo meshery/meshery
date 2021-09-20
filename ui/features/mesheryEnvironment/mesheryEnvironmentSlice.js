@@ -24,7 +24,7 @@ import { fetchKuberernetesClusters, submitKubernetesClusterConfig } from "./kube
  */
 
 /**
- * @typedef {{grafanaUrl :string, grafanaAPIKey :string, grafanaBoards: Array.<SelectedGrafanaConfigType>,}} GrafanaType
+ * @typedef {{grafanaURL :string, grafanaAPIKey :string, grafanaBoards: Array.<SelectedGrafanaConfigType>,}} GrafanaType
  */
 
 /**

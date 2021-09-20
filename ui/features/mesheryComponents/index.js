@@ -1,4 +1,4 @@
-export { AdapterChip, AdaptersChipList, AdaptersListContainer } from "./components";
+export { AdapterChip, AdaptersChipList, AdaptersListContainer, MesheryServerVersionContainer } from "./components";
 
 export {
   updateConnectionStatus,

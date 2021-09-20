@@ -26,7 +26,7 @@ const theme = createTheme(
     overrides: {
       MuiDrawer: { paper: { backgroundColor: "#263238" } },
       MuiButton: {
-        label: { textTransform: "initial" },
+        root: { textTransform: "none" },
         contained: { boxShadow: "none", "&:active": { boxShadow: "none" } },
       },
       MuiToggleButton: { label: { textTransform: "initial", color: "#607d8b" } },
