@@ -1,11 +1,11 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import DashboardIcon from "@material-ui/icons/Dashboard";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import LifecycleIcon from "./drawer-icons/lifecycle_mgmt_svg";
 import PerformanceIcon from "./drawer-icons/performance_svg";
-import GitHubIcon from "@material-ui/icons/GitHub";
-import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
-import MailIcon from "@material-ui/icons/Mail";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import MailIcon from "@mui/icons-material/Mail";
 import ConformanceIcon from "./drawer-icons/conformance_svg";
 import SmiIcon from "./drawer-icons/servicemeshinterface-icon-white_svg";
 import { drawerIconsStyle, externalLinkIconStyle } from "./Navbar.styles";

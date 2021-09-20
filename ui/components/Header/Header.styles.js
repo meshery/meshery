@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core";
+import makeStyles from "@mui/styles/makeStyles";
 import { lightColor } from "styles/colors";
 
 export const getStyles = (theme) => ({
@@ -20,8 +20,8 @@ export const getStyles = (theme) => ({
     padding: theme.spacing(1.4),
     backgroundColor: "#396679",
     zIndex: theme.zIndex.drawer + 1,
-    [theme.breakpoints.between(635, 732)]: { padding: theme.spacing(0.75, 1.4) },
-    [theme.breakpoints.between(600, 635)]: { padding: theme.spacing(0.4, 1.4) },
+    [theme.breakpoints.between(635, undefined)]: { padding: theme.spacing(0.75, 1.4) },
+    [theme.breakpoints.between(600, undefined)]: { padding: theme.spacing(0.4, 1.4) },
   },
   appBarOnDrawerClosed: { padding: theme.spacing(1.4), backgroundColor: "#396679", zIndex: theme.zIndex.drawer + 1 },
   toolbarOnDrawerClosed: { minHeight: 59, paddingLeft: 24, paddingRight: 24 },
@@ -29,7 +29,7 @@ export const getStyles = (theme) => ({
     minHeight: 58,
     paddingLeft: 20,
     paddingRight: 20,
-    [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
+    [theme.breakpoints.between(620, undefined)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
   },
   itemActiveItem: { color: "#00B39F" },
   headerIcons: { fontSize: "1.5rem", height: "1.5rem", width: "1.5rem" },

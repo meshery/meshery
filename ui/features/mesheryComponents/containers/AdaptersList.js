@@ -2,7 +2,6 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { adaptersSelector, fetchAvailableAdaptersThunk, loadingSelector } from "../mesheryComponentsSlice";
 import { useEffect } from "react";
-import { initServiceMeshEventsThunk, updateServiceMeshesData } from "@/features/serviceMeshes/serviceMeshesSlice";
 
 /**
  * React component that fetches the available adapters and calls `render` method
@@ -24,12 +23,7 @@ const AdaptersList = (props) => {
   const adapters = useSelector(adaptersSelector);
 
   useEffect(() => {
-    // dispatch(fetchAvailableAdaptersThunk());
-    dispatch(
-      initServiceMeshEventsThunk((controlPlane, dataPlane) =>
-        dispatch(updateServiceMeshesData({ controlPlanesData: controlPlane, dataPlanesData: dataPlane }))
-      )
-    );
+    dispatch(fetchAvailableAdaptersThunk());
   }, []);
 
   // eslint-disable-next-line react/prop-types

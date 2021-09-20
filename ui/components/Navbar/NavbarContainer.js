@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import RemoveIcon from "@material-ui/icons/Remove";
+import RemoveIcon from "@mui/icons-material/Remove";
 import React from "react";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";

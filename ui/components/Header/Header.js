@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import SettingsIcon from "@material-ui/icons/Settings";
-import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography } from "@material-ui/core";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography } from "@mui/material";
 import Link from "next/link";
-import MenuIcon from "@material-ui/icons/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
 import { useStyles } from "./Header.styles";
 
 const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
@@ -25,6 +25,7 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
                 aria-label="Open drawer"
                 onClick={onDrawerToggle}
                 className={classes.menuButton}
+                size="large"
               >
                 <MenuIcon className={classes.headerIcons} />
               </IconButton>
@@ -40,7 +41,7 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
                 <MesheryNotification />
               </Grid> */}
           <Grid item className={classes.userContainer}>
-            <IconButton color="inherit">
+            <IconButton color="inherit" size="large">
               <Link href="/system/connections">
                 <img
                   src={
@@ -55,7 +56,7 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
               </Link>
             </IconButton>
 
-            <IconButton color="inherit">
+            <IconButton color="inherit" size="large">
               <Link href="/settings">
                 <SettingsIcon
                   className={classes.headerIcons + " " + (pageTitle === "Settings" ? classes.itemActiveItem : "")}

@@ -12,11 +12,11 @@ import {
   ListItemIcon,
   ListItemText,
   Tooltip,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { useState } from "react";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import classNames from "classnames";
-import HelpIcon from "@material-ui/icons/Help";
+import HelpIcon from "@mui/icons-material/Help";
 import { useStyles } from "./Navbar.styles";
 import { getPath } from "@/utils/path";
 import Link from "next/link";
@@ -330,6 +330,7 @@ const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCo
               <IconButton
                 className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate}
                 onClick={toggleSpacing}
+                size="large"
               >
                 <HelpIcon className={classes.helpIcon} style={{ fontSize: "1.45rem" }} />
               </IconButton>
