@@ -21,11 +21,7 @@ import (
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
-<<<<<<< HEAD
-=======
 	"github.com/layer5io/meshkit/utils/broadcast"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
->>>>>>> upstream/master
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
