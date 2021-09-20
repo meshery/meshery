@@ -8,3 +8,4 @@ nodemon.json
 lib/
 cypress/
 pages/_document.js
+components/Navbar/drawer-icons
