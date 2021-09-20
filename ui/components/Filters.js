@@ -178,7 +178,7 @@ function MesheryFilters({
       name : "DEPLOY_FILTERS",
       error_msg : "Failed to deploy filter file",
     },
-    UPLOADFILTERS : {
+    UPLOAD_FILTERS : {
       name : "UPLOAD_FILTERS",
       error_msg : "Failed to upload filter file",
     },
@@ -284,12 +284,13 @@ function MesheryFilters({
       );
     }
 
-    if (type === "upload") {
+    if (type === "upload" || type === 'urlupload') {
+      const body = type==="upload" ? JSON.stringify({ filter_data : { filter_data : data }, save : true }) : JSON.stringify({ url : data, save : true });
       dataFetch(
         `/api/filter`,
         { credentials : "include",
           method : "POST",
-          body : JSON.stringify({ filter_data : { filter_file : data }, save : true }), },
+          body : body, },
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
@@ -314,7 +315,7 @@ function MesheryFilters({
     reader.readAsText(file);
   }
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), 'urlupload');
     console.log(link, "valid");
   }
   const columns = [

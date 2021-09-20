@@ -353,13 +353,14 @@ function MesheryPatterns({
       );
     }
 
-    if (type === "upload") {
+    if (type === "upload" || type=== "urlupload") {
+      const body = type==="upload" ? JSON.stringify({ pattern_data : { pattern_data : data }, save : true }) : JSON.stringify({ url : data, save : true });
       dataFetch(
         `/api/pattern`,
         {
           credentials : "include",
           method : "POST",
-          body : JSON.stringify({ pattern_data : { pattern_file : data }, save : true }),
+          body : body,
         },
         () => {
           console.log("PatternFile API", `/api/pattern`);
@@ -383,14 +384,14 @@ function MesheryPatterns({
         event.target.result,
         "",
         file?.name || "meshery_" + Math.floor(Math.random() * 100),
-        "upload",
+        "urlupload",
       );
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
     // console.log(link, "valid");
   }
   const columns = [
