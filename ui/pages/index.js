@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Grid, Stack } from "@mui/material";
+import { Button, Grid, Link, Stack, Typography } from "@mui/material";
 import { Paper } from "@/components/index";
 import { AdaptersChipList, AdaptersListContainer, MesheryServerVersionContainer } from "@/features/mesheryComponents";
 import { PaperWithTitle } from "@/components/Paper";
@@ -8,6 +8,8 @@ import { useTheme } from "@mui/system";
 import { KuberenetesClusterChip, KuberenetesClusterContainer } from "@/features/mesheryEnvironment";
 import { GrafanaChip, MetricsContainer, PrometheusChip } from "@/features/mesheryEnvironment/components";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 export default function Dashboard() {
   const theme = useTheme();
@@ -76,9 +78,46 @@ export default function Dashboard() {
           render={({ serverVersion }) => (
             <PaperWithTitle title="Release">
               <Grid item xs={6}>
-                {serverVersion.build}
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  Channel Subscription
+                </Typography>
+                {serverVersion.release_channel}
               </Grid>
-              <Grid item xs={6}></Grid>
+              <Grid item xs={6}>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  Version
+                </Typography>
+                {getMesheryVersionText(serverVersion)}
+                <Link
+                  href={`https://docs.meshery.io/project/releases${
+                    serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
+                  }`}
+                  target="_blank"
+                >
+                  <OpenInNewIcon fontSize="small" />
+                </Link>
+              </Grid>
+              <Grid item xs={12} sx={{ mt: theme.spacing(4) }}>
+                {serverVersion.outdated ? (
+                  <>
+                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                      Newer version of Meshery available:
+                    </Typography>
+                    <Link
+                      href={`https://docs.meshery.io/project/releases${
+                        serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
+                      }`}
+                      target="_blank"
+                    >
+                      {serverVersion.latest}
+                    </Link>
+                  </>
+                ) : (
+                  <Typography variant="body1" sx={{ fontStyle: "italic" }}>
+                    Running latest version of Meshery
+                  </Typography>
+                )}
+              </Grid>
             </PaperWithTitle>
           )}
         />
