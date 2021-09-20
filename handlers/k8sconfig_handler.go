@@ -280,8 +280,6 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 
 			ctxs := models.K8sContextsFromKubeconfig(cfg, mid)
 
-			fmt.Printf("GOT IN THE MIDDLEWARE: %+v\n", ctxs)
-
 			// Persist the generated contexts
 			for _, ctx := range ctxs {
 				_, err := prov.SaveK8sContext(token, ctx)

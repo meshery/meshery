@@ -119,11 +119,8 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		} else {
 			cfg, err := k8scontext.GenerateKubeConfig()
 			if err != nil {
-				logrus.Error(err)
-				logrus.Warn("failed to load kube config for the user")
+				logrus.Warn("failed to load kube config for the user: ", err)
 			}
-
-			fmt.Printf("GENERATED CONFIG: %s", cfg)
 
 			// Create mesherykube handler
 			client, err := kubernetes.New(cfg)
