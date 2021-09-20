@@ -159,6 +159,7 @@ const mesheryComponentsSlice = createSlice({
     });
     builder.addCase(fetchAvailableAdaptersThunk.fulfilled, (state, action) => {
       state.loading = false;
+      state.adapters = [];
       action.payload.forEach((adapter) => {
         state.adapters.push({
           name: adapter.name,

@@ -1,2 +1,3 @@
-export { AdapterChip } from "./AdapterChip";
-export { AdaptersChipList } from "./AdaptersChipList";
+export { AdaptersListContainer } from "./Adapters/AdaptersListContainer";
+export { AdaptersChipList } from "./Adapters/AdaptersChipList";
+export { AdapterChip } from "./Adapters/AdapterChip";

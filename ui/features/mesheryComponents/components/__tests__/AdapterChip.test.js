@@ -1,4 +1,0 @@
-/**
- * @jest-environment jsdom
- */
-

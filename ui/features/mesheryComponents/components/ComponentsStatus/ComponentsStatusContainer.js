@@ -6,7 +6,7 @@ import {
   loadingSelector,
   mesheryComponentsSelector,
   updateConnectionStatus,
-} from "../mesheryComponentsSlice";
+} from "../../mesheryComponentsSlice";
 import { useEffect } from "react";
 
 /**
@@ -23,10 +23,10 @@ const ComponentsStatus = (props) => {
 
   /**
    * @type
-   * {{operator: import("../mesheryComponentsSlice").MesheryComponent,
-   * meshsync: import("../mesheryComponentsSlice").MesheryComponent,
-   *  broker: import("../mesheryComponentsSlice").MesheryComponent,
-   *  server: import("../mesheryComponentsSlice").MesheryComponent}>}
+   * {{operator: import("../../mesheryComponentsSlice").MesheryComponent,
+   * meshsync: import("../../mesheryComponentsSlice").MesheryComponent,
+   *  broker: import("../../mesheryComponentsSlice").MesheryComponent,
+   *  server: import("../../mesheryComponentsSlice").MesheryComponent}>}
    *  */
   const components = useSelector(mesheryComponentsSelector);
   const operatorError = useSelector((state) => state.mesheryComponents.operatorError);

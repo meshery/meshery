@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { adaptersSelector, fetchAvailableAdaptersThunk, loadingSelector } from "../mesheryComponentsSlice";
+import { adaptersSelector, fetchAvailableAdaptersThunk, loadingSelector } from "../../mesheryComponentsSlice";
 import { useEffect } from "react";
 
 /**
@@ -10,7 +10,7 @@ import { useEffect } from "react";
  * @returns {import("react").ReactElement}
  */
 
-const AdaptersList = (props) => {
+export const AdaptersListContainer = (props) => {
   const dispatch = useDispatch();
 
   /**
@@ -18,7 +18,7 @@ const AdaptersList = (props) => {
    */
   const loading = useSelector(loadingSelector);
   /**
-   * @type {import("../mesheryComponentsSlice.js").AdaptersListType}
+   * @type {import("../../mesheryComponentsSlice.js").AdaptersListType}
    */
   const adapters = useSelector(adaptersSelector);
 
@@ -29,5 +29,3 @@ const AdaptersList = (props) => {
   // eslint-disable-next-line react/prop-types
   return <div>{props.render({ loading, adapters })}</div>;
 };
-
-export default AdaptersList;

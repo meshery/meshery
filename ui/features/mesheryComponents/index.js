@@ -1,6 +1,4 @@
-export { AdaptersListContainer, ComponentsStatusContainer } from "./containers";
-
-export { AdapterChip, AdaptersChipList } from "./components";
+export { AdapterChip, AdaptersChipList, AdaptersListContainer } from "./components";
 
 export {
   updateConnectionStatus,
