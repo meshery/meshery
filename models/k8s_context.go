@@ -7,26 +7,85 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/helpers/utils"
 	"github.com/layer5io/meshery/internal/sql"
-	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/client-go/tools/clientcmd/api"
-
+	"github.com/layer5io/meshkit/utils/kubernetes"
 	"gopkg.in/yaml.v2"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 type K8sContext struct {
-	ID                string     `json:"id,omitempty"`
-	Name              string     `json:"name,omitempty"`
-	Auth              sql.Map    `json:"auth,omitempty"`
-	Cluster           sql.Map    `json:"cluster,omitempty"`
-	Server            string     `json:"server,omitempty"`
-	Owner             *uuid.UUID `json:"owner,omitempty" gorm:"-"`
-	CreatedBy         *uuid.UUID `json:"created_by,omitempty" gorm:"-"`
-	IsCurrentContext  bool       `json:"is_current_context,omitempty"`
-	MesheryInstanceID *uuid.UUID `json:"meshery_instance_id,omitempty"`
+	ID                string     `json:"id,omitempty" yaml:"id,omitempty"`
+	Name              string     `json:"name,omitempty" yaml:"name,omitempty"`
+	Auth              sql.Map    `json:"auth,omitempty" yaml:"auth,omitempty"`
+	Cluster           sql.Map    `json:"cluster,omitempty" yaml:"cluster,omitempty"`
+	Server            string     `json:"server,omitempty" yaml:"server,omitempty"`
+	Owner             *uuid.UUID `json:"owner,omitempty" gorm:"-" yaml:"owner,omitempty"`
+	CreatedBy         *uuid.UUID `json:"created_by,omitempty" gorm:"-" yaml:"created_by,omitempty"`
+	IsCurrentContext  bool       `json:"is_current_context,omitempty" yaml:"is_current_context,omitempty"`
+	MesheryInstanceID *uuid.UUID `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
 
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
+}
+
+type InternalKubeConfig struct {
+	ApiVersion     string                   `json:"apiVersion,omitempty" yaml:"apiVersion,omitempty"`
+	Kind           string                   `json:"kind,omitempty" yaml:"kind,omitempty"`
+	Clusters       []map[string]interface{} `json:"clusters,omitempty" yaml:"clusters,omitempty"`
+	Contexts       []map[string]interface{} `json:"contexts,omitempty" yaml:"contexts,omitempty"`
+	CurrentContext string                   `json:"current-context,omitempty" yaml:"current-context,omitempty"`
+	Preferences    map[string]interface{}   `json:"preferences,omitempty" yaml:"preferences,omitempty"`
+	Users          []map[string]interface{} `json:"users,omitempty" yaml:"users,omitempty"`
+}
+
+func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *uuid.UUID) K8sContext {
+	cluster := map[string]interface{}{}
+	user := map[string]interface{}{}
+	context := map[string]interface{}{}
+
+	// Find context data
+	for _, ctx := range kcfg.Contexts {
+		ctx = utils.RecursiveCastMapStringInterfaceToMapStringInterface(ctx)
+		if ctx["name"] == name {
+			context = ctx
+			break
+		}
+	}
+
+	ctxInfo, _ := context["context"].(map[string]interface{})
+
+	// Find cluster data associated with the context
+	clusterName := ctxInfo["cluster"]
+	for _, cl := range kcfg.Clusters {
+		cl = utils.RecursiveCastMapStringInterfaceToMapStringInterface(cl)
+		if cl["name"] == clusterName {
+			cluster = cl
+			break
+		}
+	}
+
+	clusterInfo, _ := cluster["cluster"].(map[string]interface{})
+	server, _ := clusterInfo["server"].(string)
+
+	// Find Auth data associated with the context
+	userName := ctxInfo["user"]
+	for _, u := range kcfg.Users {
+		u = utils.RecursiveCastMapStringInterfaceToMapStringInterface(u)
+		if u["name"] == userName {
+			user = u
+			break
+		}
+	}
+
+	return NewK8sContext(
+		name,
+		cluster,
+		user,
+		server,
+		kcfg.CurrentContext == name,
+		instanceID,
+	)
 }
 
 func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) []K8sContext {
@@ -37,14 +96,13 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) []K8sCo
 		return kcs
 	}
 
+	kcfg := InternalKubeConfig{}
+	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
+		return kcs
+	}
+
 	for name := range parsed.Contexts {
-		kcs = append(kcs, NewK8sContext(
-			name,
-			parsed.Clusters,
-			parsed.AuthInfos,
-			parsed.CurrentContext == name,
-			instanceID,
-		))
+		kcs = append(kcs, kcfg.K8sContext(name, instanceID))
 	}
 
 	return kcs
@@ -52,22 +110,17 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) []K8sCo
 
 func NewK8sContext(
 	contextName string,
-	clusters map[string]*api.Cluster,
-	users map[string]*api.AuthInfo,
+	clusters map[string]interface{},
+	users map[string]interface{},
+	server string,
 	isCurrentContext bool,
 	instanceID *uuid.UUID,
 ) K8sContext {
 	ctx := K8sContext{
-		Name: contextName,
-		Cluster: map[string]interface{}{
-			"cluster": clusters[contextName],
-			"name":    contextName,
-		},
-		Auth: map[string]interface{}{
-			"user": users[contextName],
-			"name": contextName,
-		},
-		Server:            clusters[contextName].Server,
+		Name:              contextName,
+		Cluster:           clusters,
+		Auth:              users,
+		Server:            server,
 		MesheryInstanceID: instanceID,
 		IsCurrentContext:  isCurrentContext,
 	}
@@ -103,7 +156,7 @@ func K8sContextGenerateID(kc K8sContext) (string, error) {
 // GenerateKubeConfig will generate a kubeconfig from the context object
 // and will set the "current-context" to the current context's name
 func (kc K8sContext) GenerateKubeConfig() ([]byte, error) {
-	config := map[string]interface{}{
+	cfg := map[string]interface{}{
 		"apiVersion": "v1",
 		"clusters": []map[string]interface{}{
 			kc.Cluster,
@@ -111,8 +164,8 @@ func (kc K8sContext) GenerateKubeConfig() ([]byte, error) {
 		"contexts": []map[string]interface{}{
 			{
 				"context": map[string]interface{}{
-					"cluster": kc.Name,
-					"user":    kc.Name,
+					"cluster": kc.Cluster["name"],
+					"user":    kc.Auth["name"],
 				},
 				"name": kc.Name,
 			},
@@ -124,20 +177,14 @@ func (kc K8sContext) GenerateKubeConfig() ([]byte, error) {
 		},
 	}
 
-	return yaml.Marshal(config)
+	return yaml.Marshal(cfg)
 }
 
-// ToMapStringInterface takes in any data and converts it into map[string]interface{}
-// if the data's underlying type has `MarshalJSON` and `UnmarshalJSON` implemented
-func ToMapStringInterface(data interface{}) map[string]interface{} {
-	mp := map[string]interface{}{}
-
-	byt, err := json.Marshal(data)
+func (kc K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
+	cfg, err := kc.GenerateKubeConfig()
 	if err != nil {
-		return mp
+		return nil, err
 	}
 
-	_ = json.Unmarshal(byt, &mp)
-
-	return mp
+	return kubernetes.New(cfg)
 }
