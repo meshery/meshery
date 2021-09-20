@@ -11,9 +11,9 @@ import (
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd/api"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -179,11 +179,37 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 // KubernetesPingHandler - fetches server version to simulate ping
 func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	token, ok := req.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "failed to get the token for the user")
+		return
+	}
+
 	kubeclient, ok := req.Context().Value(models.KubeHanderKey).(*mesherykube.Client)
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "failed to get kube client for the user")
 		return
+	}
+
+	ctx := req.URL.Query().Get("context")
+	if ctx != "" {
+		// Get the context associated with this ID
+		k8sContext, err := provider.GetK8sContext(token, ctx)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")
+			return
+		}
+
+		// Create handler for the context
+		kubeclient, err = k8sContext.GenerateKubeHandler()
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, "failed to get kubernetes config for the user")
+			return
+		}
 	}
 
 	version, err := kubeclient.KubeClient.ServerVersion()
@@ -228,23 +254,33 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 
 			cc = models.NewK8sContext(
 				ctxName,
-				map[string]*api.Cluster{
-					ctxName: {
-						CertificateAuthorityData: cfg.CAData,
-						Server:                   cfg.Host,
+				map[string]interface{}{
+					"cluster": map[string]interface{}{
+						"certificate-authority-data": cfg.CAData,
+						"server":                     cfg.Host,
 					},
+					"name": ctxName,
 				},
-				map[string]*api.AuthInfo{
-					ctxName: {
-						ClientCertificateData: cfg.CertData,
-						ClientKeyData:         cfg.KeyData,
+				map[string]interface{}{
+					"user": map[string]interface{}{
+						"client-certificate-data": cfg.CertData,
+						"client-key-data":         cfg.KeyData,
 					},
+					"name": ctxName,
 				},
+				cfg.Host,
 				true,
 				mid,
 			)
 		} else {
-			ctxs := models.K8sContextsFromKubeconfig([]byte(data), mid)
+			cfg, err := helpers.FlattenMinifyKubeConfig([]byte(data))
+			if err != nil {
+				return nil, err
+			}
+
+			ctxs := models.K8sContextsFromKubeconfig(cfg, mid)
+
+			fmt.Printf("GOT IN THE MIDDLEWARE: %+v\n", ctxs)
 
 			// Persist the generated contexts
 			for _, ctx := range ctxs {
