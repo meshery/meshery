@@ -25,6 +25,10 @@
 
 [Meshery](https://meshery.io) is the multi-service mesh management plane offering lifecycle, configuration, and performance management of service meshes and their workloads.
 
+MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
+
+<img src="docs/assets/img/readme/cncf-horizontal-color.svg" width="30%" />
+
 <h2><a name="running"></a>Run Meshery</h2>
 <p>Meshery runs as a set of containers inside or outside of your Kubernetes cluster.</p>
 
