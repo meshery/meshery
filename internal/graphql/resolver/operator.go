@@ -3,13 +3,23 @@ package resolver
 import (
 	"context"
 
+	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/errors"
+	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status) (model.Status, error) {
 	delete := true
+
+	// Tell operator status subscription that operation is starting
+	r.Broadcast.Submit(broadcast.BroadcastMessage{
+		Type:    broadcast.OperatorSyncChannel,
+		Message: true,
+	})
+
 	if status == model.StatusEnabled {
 		r.Log.Info("Installing Operator")
 		delete = false
@@ -23,6 +33,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 
 	if kubeclient.KubeClient == nil {
 		r.Log.Error(ErrNilClient)
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Type:    broadcast.OperatorSyncChannel,
+			Message: ErrNilClient,
+		})
 		return model.StatusUnknown, ErrNilClient
 	}
 
@@ -30,31 +44,25 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		err := model.Initialize(kubeclient, del)
 		if err != nil {
 			r.Log.Error(err)
-			r.operatorChannel <- &model.OperatorStatus{
-				Status: status,
-				Error: &model.Error{
-					Code:        "",
-					Description: err.Error(),
-				},
-			}
+			r.Broadcast.Submit(broadcast.BroadcastMessage{
+				Type:    broadcast.OperatorSyncChannel,
+				Message: err,
+			})
 			return
 		}
 		r.Log.Info("Operator operation executed")
 
 		if !del {
-			status, err := r.resyncCluster(context.TODO(), provider, &model.ReSyncActions{
+			_, err := r.resyncCluster(context.TODO(), provider, &model.ReSyncActions{
 				ReSync:  "false",
 				ClearDb: "true",
 			})
 			if err != nil {
 				r.Log.Error(err)
-				r.operatorChannel <- &model.OperatorStatus{
-					Status: status,
-					Error: &model.Error{
-						Code:        "",
-						Description: err.Error(),
-					},
-				}
+				r.Broadcast.Submit(broadcast.BroadcastMessage{
+					Type:    broadcast.OperatorSyncChannel,
+					Message: false,
+				})
 				return
 			}
 
@@ -62,13 +70,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			r.Log.Debug("Endpoint: ", endpoint)
 			if err != nil {
 				r.Log.Error(err)
-				r.operatorChannel <- &model.OperatorStatus{
-					Status: status,
-					Error: &model.Error{
-						Code:        "",
-						Description: err.Error(),
-					},
-				}
+				r.Broadcast.Submit(broadcast.BroadcastMessage{
+					Type:    broadcast.OperatorSyncChannel,
+					Message: false,
+				})
 				return
 			}
 			r.Log.Info("Connected to broker at:", endpoint)
@@ -78,25 +83,23 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		err = model.RunMeshSync(kubeclient, del)
 		if err != nil {
 			r.Log.Error(err)
-			r.operatorChannel <- &model.OperatorStatus{
-				Status: status,
-				Error: &model.Error{
-					Code:        "",
-					Description: err.Error(),
-				},
-			}
+			r.Broadcast.Submit(broadcast.BroadcastMessage{
+				Type:    broadcast.OperatorSyncChannel,
+				Message: err,
+			})
 			return
 		}
 		r.Log.Info("Meshsync operation executed")
 
-		r.operatorChannel <- &model.OperatorStatus{
-			Status: status,
-		}
-	}(delete, kubeclient)
+		// r.operatorChannel <- &model.OperatorStatus{
+		// 	Status: status,
+		// }
 
-	r.operatorChannel <- &model.OperatorStatus{
-		Status: model.StatusProcessing,
-	}
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Type:    broadcast.OperatorSyncChannel,
+			Message: false,
+		})
+	}(delete, kubeclient)
 
 	return model.StatusProcessing, nil
 }
@@ -145,54 +148,116 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 	}, nil
 }
 
-func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider) (<-chan *model.OperatorStatus, error) {
-	if r.operatorChannel == nil {
-		r.operatorChannel = make(chan *model.OperatorStatus)
+func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider) (*model.OperatorControllerStatus, error) {
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok {
+		return nil, ErrMesheryClient(nil)
 	}
+	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := model.GetMeshSyncInfo(mesheryclient, r.meshsyncLivenessChannel)
+	if err != nil {
+		return &status, err
+	}
+	return &status, nil
+}
+
+func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) (*model.OperatorControllerStatus, error) {
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok {
+		return nil, ErrMesheryClient(nil)
+	}
+	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := model.GetBrokerInfo(mesheryclient, r.BrokerConn)
+	if err != nil {
+		return &status, err
+	}
+	return &status, nil
+}
+
+func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider) (<-chan *model.OperatorStatus, error) {
+	operatorChannel := make(chan *model.OperatorStatus)
+
 	if r.operatorSyncChannel == nil {
-		r.operatorSyncChannel = make(chan struct{})
+		r.operatorSyncChannel = make(chan bool)
 	}
 	if r.meshsyncLivenessChannel == nil {
 		r.meshsyncLivenessChannel = make(chan struct{})
 	}
+
+	operatorSyncChannel := make(chan broadcast.BroadcastMessage)
+	r.Broadcast.Register(operatorSyncChannel)
 
 	go func() {
 		r.Log.Info("Operator subscription started")
 		err := r.connectToBroker(ctx, provider)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
-			return
+			// The subscription should remain live to send future messages and only die when context is done
+			// return
 		}
 
 		// Enforce enable operator
 		status, err := r.getOperatorStatus(ctx, provider)
 		if err != nil {
 			r.Log.Error(ErrOperatorSubscription(err))
-			return
+			// return
 		}
 		if status.Status != model.StatusEnabled {
 			_, err = r.changeOperatorStatus(ctx, provider, model.StatusEnabled)
 			if err != nil {
 				r.Log.Error(ErrOperatorSubscription(err))
-				return
+				// return
 			}
 		}
-
 		for {
 			select {
-			case <-r.operatorSyncChannel:
+			case processing := <-operatorSyncChannel:
+				r.Log.Info("Operator sync channel called")
 				status, err := r.getOperatorStatus(ctx, provider)
 				if err != nil {
 					r.Log.Error(ErrOperatorSubscription(err))
-					return
+					r.Log.Info("Operator subscription flushed")
+					close(operatorChannel)
+					// return
+					continue
 				}
-				r.operatorChannel <- status
+
+				if processing.Type == broadcast.OperatorSyncChannel {
+					switch processing.Message.(type) {
+					case bool:
+						if processing.Message.(bool) {
+							status.Status = model.StatusProcessing
+						}
+					case *errors.Error:
+						status.Error = &model.Error{
+							Code:        processing.Message.(*errors.Error).Code,
+							Description: processing.Message.(*errors.Error).Error(),
+						}
+					case error:
+						status.Error = &model.Error{
+							Code:        "",
+							Description: processing.Message.(error).Error(),
+						}
+					}
+				}
+				operatorChannel <- status
 			case <-ctx.Done():
 				r.Log.Info("Operator subscription flushed")
+				close(operatorChannel)
+				r.Broadcast.Unregister(operatorSyncChannel)
+				close(operatorSyncChannel)
 				return
 			}
 		}
 	}()
 
-	return r.operatorChannel, nil
+	return operatorChannel, nil
 }

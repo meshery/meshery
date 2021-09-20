@@ -6,6 +6,7 @@ import (
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
@@ -22,7 +23,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("Initializing MeshSync subscription")
-		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.controlPlaneSyncChannel, r.meshsyncLivenessChannel)
+		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.controlPlaneSyncChannel, r.meshsyncLivenessChannel, r.Broadcast)
 
 		// signal to install operator when initialized
 		r.MeshSyncChannel <- struct{}{}
@@ -70,21 +71,82 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 	if err != nil {
 		return err
 	}
+
 	if r.BrokerConn.IsEmpty() && status != nil && status.Status == model.StatusEnabled {
 		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
-			r.operatorChannel <- &model.OperatorStatus{
-				Status: model.StatusDisabled,
-				Error: &model.Error{
-					Code:        "",
-					Description: err.Error(),
-				},
-			}
+
+			r.Broadcast.Submit(broadcast.BroadcastMessage{
+				Type:    broadcast.OperatorSyncChannel,
+				Message: err,
+			})
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
+
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Type:    broadcast.OperatorSyncChannel,
+			Message: false,
+		})
 		return nil
 	}
-	return ErrNoMeshSync
+
+	if r.BrokerConn.Info() == broker.NotConnected {
+		return ErrBrokerNotConnected
+	}
+
+	return nil
+}
+
+func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider) (model.Status, error) {
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok {
+		return model.StatusProcessing, ErrMesheryClient(nil)
+	}
+
+	err := model.RunMeshSync(kubeclient, false)
+	r.Log.Info("Installing Meshsync")
+	r.Broadcast.Submit(broadcast.BroadcastMessage{
+		Type:    broadcast.OperatorSyncChannel,
+		Message: true,
+	})
+
+	if err != nil {
+		r.Log.Error(err)
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Type:    broadcast.OperatorSyncChannel,
+			Message: err,
+		})
+		return model.StatusDisabled, err
+	}
+
+	r.Broadcast.Submit(broadcast.BroadcastMessage{
+		Type:    broadcast.OperatorSyncChannel,
+		Message: false,
+	})
+
+	return model.StatusProcessing, nil
+}
+
+func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider) (model.Status, error) {
+	r.Broadcast.Submit(broadcast.BroadcastMessage{
+		Type:    broadcast.OperatorSyncChannel,
+		Message: true,
+	})
+	err := r.connectToBroker(ctx, provider)
+	if err != nil {
+		r.Log.Error(err)
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Type:    broadcast.OperatorSyncChannel,
+			Message: err,
+		})
+		return model.StatusDisabled, err
+	}
+
+	r.Broadcast.Submit(broadcast.BroadcastMessage{
+		Type:    broadcast.OperatorSyncChannel,
+		Message: false,
+	})
+	return model.StatusConnected, nil
 }

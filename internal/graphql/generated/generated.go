@@ -147,11 +147,15 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		ConnectToNats          func(childComplexity int) int
+		DeployMeshsync         func(childComplexity int) int
 		FetchResults           func(childComplexity int, selector model.PageFilter, profileID string) int
 		GetAvailableAddons     func(childComplexity int, selector *model.MeshType) int
 		GetAvailableNamespaces func(childComplexity int) int
 		GetControlPlanes       func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes          func(childComplexity int, filter *model.ServiceMeshFilter) int
+		GetMeshsyncStatus      func(childComplexity int) int
+		GetNatsStatus          func(childComplexity int) int
 		GetOperatorStatus      func(childComplexity int) int
 		GetPerfResult          func(childComplexity int, id string) int
 		ResyncCluster          func(childComplexity int, selector *model.ReSyncActions) int
@@ -178,6 +182,10 @@ type QueryResolver interface {
 	GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error)
 	GetOperatorStatus(ctx context.Context) (*model.OperatorStatus, error)
 	ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error)
+	GetMeshsyncStatus(ctx context.Context) (*model.OperatorControllerStatus, error)
+	DeployMeshsync(ctx context.Context) (model.Status, error)
+	GetNatsStatus(ctx context.Context) (*model.OperatorControllerStatus, error)
+	ConnectToNats(ctx context.Context) (model.Status, error)
 	GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error)
 	GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error)
 	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error)
@@ -630,6 +638,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PerfPageResult.TotalCount(childComplexity), true
 
+	case "Query.connectToNats":
+		if e.complexity.Query.ConnectToNats == nil {
+			break
+		}
+
+		return e.complexity.Query.ConnectToNats(childComplexity), true
+
+	case "Query.deployMeshsync":
+		if e.complexity.Query.DeployMeshsync == nil {
+			break
+		}
+
+		return e.complexity.Query.DeployMeshsync(childComplexity), true
+
 	case "Query.fetchResults":
 		if e.complexity.Query.FetchResults == nil {
 			break
@@ -684,6 +706,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetDataPlanes(childComplexity, args["filter"].(*model.ServiceMeshFilter)), true
+
+	case "Query.getMeshsyncStatus":
+		if e.complexity.Query.GetMeshsyncStatus == nil {
+			break
+		}
+
+		return e.complexity.Query.GetMeshsyncStatus(childComplexity), true
+
+	case "Query.getNatsStatus":
+		if e.complexity.Query.GetNatsStatus == nil {
+			break
+		}
+
+		return e.complexity.Query.GetNatsStatus(childComplexity), true
 
 	case "Query.getOperatorStatus":
 		if e.complexity.Query.GetOperatorStatus == nil {
@@ -931,6 +967,9 @@ enum Status {
 
 	# Enabled
 	ENABLED
+
+	# Connected (Applicable only for NATS status for now)
+	CONNECTED
 
 	# Disabled
 	DISABLED
@@ -1217,6 +1256,18 @@ type Query {
         selector: ReSyncActions
     ): Status!
 
+	# Check the Meshsync Status
+	getMeshsyncStatus: OperatorControllerStatus!
+
+	# Check the Meshsync Status and deploy if not enabled
+	deployMeshsync: Status!
+
+	# Check is Meshey Server is connected to NATS
+	getNatsStatus: OperatorControllerStatus!
+
+	# Check is Meshey Server is connected to NATS, if not connect to the NATS Server
+	connectToNats: Status!
+
 	# Query available Namesapces in your cluster
 	getAvailableNamespaces: [NameSpace!]!
 
@@ -1236,6 +1287,7 @@ type Mutation {
 
 	# Change the Operator Status
 	changeOperatorStatus(input: OperatorStatusInput): Status!
+
 }
 
 type Subscription {
@@ -3740,6 +3792,146 @@ func (ec *executionContext) _Query_resyncCluster(ctx context.Context, field grap
 	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getMeshsyncStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetMeshsyncStatus(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.OperatorControllerStatus)
+	fc.Result = res
+	return ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_deployMeshsync(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().DeployMeshsync(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Status)
+	fc.Result = res
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getNatsStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetNatsStatus(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.OperatorControllerStatus)
+	fc.Result = res
+	return ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_connectToNats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ConnectToNats(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Status)
+	fc.Result = res
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_getAvailableNamespaces(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6137,6 +6329,62 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_resyncCluster(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getMeshsyncStatus":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getMeshsyncStatus(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "deployMeshsync":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_deployMeshsync(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getNatsStatus":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getNatsStatus(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "connectToNats":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_connectToNats(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

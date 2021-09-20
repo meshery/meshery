@@ -2324,6 +2324,7 @@ func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) str
 		})
 		return newts
 	}
+
 	return tokenString
 }
 

@@ -63,6 +63,26 @@ func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyn
 	return r.resyncCluster(ctx, provider, selector)
 }
 
+func (r *queryResolver) GetMeshsyncStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getMeshsyncStatus(ctx, provider)
+}
+
+func (r *queryResolver) DeployMeshsync(ctx context.Context) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.deployMeshsync(ctx, provider)
+}
+
+func (r *queryResolver) GetNatsStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getNatsStatus(ctx, provider)
+}
+
+func (r *queryResolver) ConnectToNats(ctx context.Context) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.connectToNats(ctx, provider)
+}
+
 func (r *queryResolver) GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getAvailableNamespaces(ctx, provider)

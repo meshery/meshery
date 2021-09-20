@@ -1308,23 +1308,14 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "2151": {
-        "name": "ErrInvalidRequestObjectCode",
-        "code": "2151",
-        "severity": "",
+      "2153": {
+        "name": "ErrGettingSeededComponentsCode",
+        "code": "2153",
+        "severity": "Alert",
         "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2152": {
-        "name": "ErrChangeK8sContextCode",
-        "code": "2152",
-        "severity": "",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "Error while getting \n from sample content",
+        "probable_cause": "Sample content does not exist.\\nContent file format not supported.\\nUser doesn't have permission to read sample content.\\nContent file corrupt.",
+        "suggested_remediation": "Try restarting Meshery.\\nTry fetching content again."
       }
     }
   }

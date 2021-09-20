@@ -84,6 +84,21 @@ Meshery Server's database is responsible for collecting and centralizing the sta
 
 _See the [**Database**]({{ site.baseurl }}/concepts/architecture/database) section for more information on the function of the database._
 
+
+### **Statefulness in Meshery components**
+
+Some components within Meshery's architecture are concerned with persisting data while others are only
+concerned with a long-lived configuration, while others have no state at all.
+
+| Components        | Persistence  | Description                                                           |
+| :---------------- | :----------- | :-------------------------------------------------------------------- |
+| mesheryctl        | stateless    | command line interface that has a configuration file                  |
+| Meshery Adapters  | stateless    | interface with service meshes on a transactional basis                |
+| Meshery Server    | caches state | application cache is stored in user's `$HOME/.meshery/` folder        |
+| Meshery Providers | stateful     | location of persistent user preferences, environment, tests and so on |
+| Meshery Operator  | stateless    | operator of Meshery custom controllers, notably MeshSync              |
+| MeshSync          | stateless    | Kubernetes custom controller, continuously running discovery          |
+
 ### **Network Ports**
 
 Meshery uses the following list of network ports to interface with its various components:
@@ -108,17 +123,3 @@ Meshery uses the following list of network ports to interface with its various c
 {% endfor %}
 
 See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) section for more information on the function of an adapter.
-
-### **Statefulness in Meshery components**
-
-Some components within Meshery's architecture are concerned with persisting data while others are only
-concerned with a long-lived configuration, while others have no state at all.
-
-| Components        | Persistence  | Description                                                           |
-| :---------------- | :----------- | :-------------------------------------------------------------------- |
-| mesheryctl        | stateless    | command line interface that has a configuration file                  |
-| Meshery Adapters  | stateless    | interface with service meshes on a transactional basis                |
-| Meshery Server    | caches state | application cache is stored in user's `$HOME/.meshery/` folder        |
-| Meshery Providers | stateful     | location of persistent user preferences, environment, tests and so on |
-| Meshery Operator  | stateless    | operator of Meshery custom controllers, notably MeshSync              |
-| MeshSync          | stateless    | Kubernetes custom controller, continuously running discovery          |
