@@ -17,7 +17,7 @@ _Meshery dashboard_
 
 <a href="{{ site.baseurl }}/assets/img/smi/dashboard.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/smi/dashboard.png" /></a>
 
-Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/functionality/performance-management) to learn more about performance profiles, load generators, Kubernetes Cluster, and Service Mesh Metrics.
+Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/functionality/performance-management) to learn more about performance profiles, load generators, Kubernetes cluster, and service mesh metrics.
 
 _Performance dashboard_
 
