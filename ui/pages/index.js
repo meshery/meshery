@@ -94,7 +94,7 @@ export default function Dashboard() {
                   }`}
                   target="_blank"
                 >
-                  <OpenInNewIcon fontSize="small" />
+                  <OpenInNewIcon sx={{ fontSize: theme.spacing(2) }} />
                 </Link>
               </Grid>
               <Grid item xs={12} sx={{ mt: theme.spacing(4) }}>
