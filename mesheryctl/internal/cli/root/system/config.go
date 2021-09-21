@@ -25,6 +25,7 @@ import (
 	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -36,8 +37,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
-
-// TODO: https://github.com/layer5io/me shery/issues/1022
 
 const paramName = "k8sfile"
 const kubeConfigYaml = "kubeconfig.yaml"
@@ -118,201 +117,317 @@ func setContext(configFile, cname, tokenPath string) error {
 	return nil
 }
 
-// configCmd represents the config command
+var (
+	configPath string
+	kubeConfig string
+	configDir  string
+)
+
+var aksConfigCmd = &cobra.Command{
+	Use:   "aks",
+	Short: "Configure Meshery to use AKS cluster",
+	Long:  `Configure Meshery to connect to AKS cluster`,
+	Example: `
+	Configure Meshery to connect to AKS cluster using auth token
+	mesheryctl system config aks --token auth.json
+	`,
+	Args: cobra.ExactArgs(0),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// set default tokenpath for system config command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+			if tokenPath == "" {
+				log.Fatal("Token path invalid")
+			}
+		}
+		aksCheck := exec.Command("az", "version")
+		aksCheck.Stdout = os.Stdout
+		aksCheck.Stderr = os.Stderr
+		err := aksCheck.Run()
+		if err != nil {
+			log.Fatalf("Azure CLI not found. Please install Azure CLI and try again. \nSee https://docs.microsoft.com/en-us/cli/azure/install-azure-cli ")
+		}
+		log.Info("Configuring Meshery to access AKS...")
+		var resourceGroup, aksName string
+
+		// Prompt user for Azure resource name
+		log.Info("Please enter the Azure resource group name:")
+		_, err = fmt.Scanf("%s", &resourceGroup)
+		if err != nil {
+			log.Warnf("Error reading Azure resource group name: %s", err.Error())
+			log.Info("Let's try again. Please enter the Azure resource group name:")
+			_, err = fmt.Scanf("%s", &resourceGroup)
+			if err != nil {
+				log.Fatalf("Error reading Azure resource group name: %s", err.Error())
+			}
+		}
+
+		// Prompt user for AKS cluster name
+		log.Info("Please enter the AKS cluster name:")
+		_, err = fmt.Scanf("%s", &aksName)
+		if err != nil {
+			log.Warnf("Error reading AKS cluster name: %s", err.Error())
+			log.Info("Let's try again. Please enter the AKS cluster name:")
+			_, err = fmt.Scanf("%s", &aksName)
+			if err != nil {
+				log.Fatalf("Error reading AKS cluster name: %s", err.Error())
+			}
+		}
+
+		// Build the Azure CLI syntax to fetch cluster config in kubeconfig.yaml file
+		aksCmd := exec.Command("az", "aks", "get-credentials", "--resource-group", resourceGroup, "--name", aksName, "--file", configPath)
+		aksCmd.Stdout = os.Stdout
+		aksCmd.Stderr = os.Stderr
+		// Write AKS compatible config to the filesystem
+		err = aksCmd.Run()
+		if err != nil {
+			log.Fatalf("Error generating kubeconfig: %s", err.Error())
+			return err
+		}
+		log.Debugf("AKS configuration is written to: %s", configPath)
+
+		// set the token in the chosen context
+		setToken()
+		return nil
+	},
+}
+
+var eksConfigCmd = &cobra.Command{
+	Use:   "eks",
+	Short: "Configure Meshery to use EKS cluster",
+	Long:  `Configure Meshery to connect to EKS cluster`,
+	Example: `
+	Configure Meshery to connect to EKS cluster using auth token
+	mesheryctl system config eks --token auth.json
+	`,
+	Args: cobra.ExactArgs(0),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// set default tokenpath for system config command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+			if tokenPath == "" {
+				log.Fatal("Token path invalid")
+			}
+		}
+		eksCheck := exec.Command("aws", "--version")
+		eksCheck.Stdout = os.Stdout
+		eksCheck.Stderr = os.Stderr
+		err := eksCheck.Run()
+		if err != nil {
+			log.Fatalf("AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/ ")
+		}
+		log.Info("Configuring Meshery to access EKS...")
+		var regionName, clusterName string
+
+		// Prompt user for AWS region name
+		log.Info("Please enter the AWS region name:")
+		_, err = fmt.Scanf("%s", &regionName)
+		if err != nil {
+			log.Warnf("Error reading AWS region name: %s", err.Error())
+			log.Info("Let's try again. Please enter the AWS region name:")
+			_, err = fmt.Scanf("%s", &regionName)
+			if err != nil {
+				log.Fatalf("Error reading AWS region name: %s", err.Error())
+			}
+		}
+
+		// Prompt user for AWS cluster name
+		log.Info("Please enter the AWS cluster name:")
+		_, err = fmt.Scanf("%s", &clusterName)
+		if err != nil {
+			log.Warnf("Error reading AWS cluster name: %s", err.Error())
+			log.Info("Let's try again. Please enter the AWS cluster name:")
+			_, err = fmt.Scanf("%s", &clusterName)
+			if err != nil {
+				log.Fatalf("Error reading AWS cluster name: %s", err.Error())
+			}
+		}
+
+		// Build the aws CLI syntax to fetch cluster config in kubeconfig.yaml file
+		eksCmd := exec.Command("aws", "eks", "--region", regionName, "update-kubeconfig", "--name", clusterName, "--kubeconfig", configPath)
+		eksCmd.Stdout = os.Stdout
+		eksCmd.Stderr = os.Stderr
+		// Write EKS compatible config to the filesystem
+		err = eksCmd.Run()
+		if err != nil {
+			log.Fatalf("Error generating kubeconfig: %s", err.Error())
+			return err
+		}
+		log.Debugf("EKS configuration is written to: %s", configPath)
+
+		// set the token in the chosen context
+		setToken()
+		return nil
+	},
+}
+
+var gkeConfigCmd = &cobra.Command{
+	Use:   "gke",
+	Short: "Configure Meshery to use GKE cluster",
+	Long:  `Configure Meshery to connect to GKE cluster`,
+	Example: `
+	Configure Meshery to connect to GKE cluster using auth token
+	mesheryctl system config gke --token auth.json
+	`,
+	Args: cobra.ExactArgs(0),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// set default tokenpath for system config command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+			if tokenPath == "" {
+				log.Fatal("Token path invalid")
+			}
+		}
+		// TODO: move the GenerateConfigGKE logic to meshkit/client-go
+		log.Info("Configuring Meshery to access GKE...")
+		SAName := "sa-meshery-" + utils.StringWithCharset(8)
+		if err := utils.GenerateConfigGKE(configPath, SAName, "default"); err != nil {
+			log.Fatal("Error generating config:", err)
+			return err
+		}
+		log.Debugf("GKE configuration is written to: %s", configPath)
+
+		// set the token in the chosen context
+		setToken()
+		return nil
+	},
+}
+
+var minikubeConfigCmd = &cobra.Command{
+	Use:   "minikube",
+	Short: "Configure Meshery to use minikube cluster",
+	Long:  `Configure Meshery to connect to minikube cluster`,
+	Example: `
+	Configure Meshery to connect to minikube cluster using auth token
+	mesheryctl system config minikube --token auth.json
+	`,
+	Args: cobra.ExactArgs(0),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// log.Infof("default kube config file: %s", kubeConfig)
+		// log.Infof("default config path: %s", configPath)
+		// log.Infof("default config dir: %s", configDir)
+		// set default tokenpath for system config command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+			if tokenPath == "" {
+				log.Fatal("Token path invalid")
+			}
+		}
+
+		log.Info("Configuring Meshery to access Minikube...")
+		// Get the config from the default config path
+		if _, err = os.Stat(kubeConfig); err != nil {
+			log.Fatal("Could not find the default kube config:", err)
+			return err
+		}
+		config, _ := clientcmd.LoadFromFile(kubeConfig)
+		if config == nil {
+			log.Fatal("Error reading the default kube config:", err)
+			return err
+		}
+		// Flatten the config file
+		err = clientcmdapi.FlattenConfig(config)
+		if err != nil {
+			log.Fatal("Error flattening config:", err)
+			return err
+		}
+		// write the flattened config to kubeconfig.yaml file
+		err = clientcmd.WriteToFile(*config, configPath)
+		if err != nil {
+			log.Fatal("Error writing config to file:", err)
+			return err
+		}
+		log.Debugf("Minikube configuration is written to: %s", configPath)
+
+		// set the token in the chosen context
+		setToken()
+		return nil
+	},
+}
+
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure Meshery",
 	Long:  `Configure the Kubernetes cluster used by Meshery.`,
 	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 
-		if tokenPath == "" {
-			log.Fatal("Token path invalid")
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
-		// Define the path where the kubeconfig.yaml will be written to
-		configPath := ""
-		kubeConfig := ""
-		usr, err := user.Current()
-		if err != nil {
-			configPath = filepath.Join(".meshery", kubeConfigYaml)
-			kubeConfig = filepath.Join(".kube", "config")
-		} else {
-			configPath = filepath.Join(usr.HomeDir, ".meshery", kubeConfigYaml)
-			kubeConfig = filepath.Join(usr.HomeDir, ".kube", "config")
-		}
-
-		// create the .meshery folder where the kubeconfig.yaml will be written to
-		configDir := filepath.Dir(configPath)
-		if _, err = os.Stat(configDir); err != nil {
-			err = os.Mkdir(configDir, os.ModeDir)
-			if err != nil {
-				log.Fatal("Error while creating .meshery folder for config:", err)
-				return
-			}
-		}
-
-		switch args[0] {
-		case "minikube":
-			log.Info("Configuring Meshery to access Minikube...")
-			// Get the config from the default config path
-			if _, err = os.Stat(kubeConfig); err != nil {
-				log.Fatal("Could not find the default kube config:", err)
-				return
-			}
-			config, _ := clientcmd.LoadFromFile(kubeConfig)
-			if config == nil {
-				log.Fatal("Error reading the default kube config:", err)
-				return
-			}
-			// Flatten the config file
-			err = clientcmdapi.FlattenConfig(config)
-			if err != nil {
-				log.Fatal("Error flattening config:", err)
-				return
-			}
-			// write the flattened config to kubeconfig.yaml file
-			err = clientcmd.WriteToFile(*config, configPath)
-			if err != nil {
-				log.Fatal("Error writing config to file:", err)
-				return
-			}
-			log.Debugf("Minikube configuration is written to: %s", configPath)
-
-		case "gke":
-			// TODO: move the GenerateConfigGKE logic to meshkit/client-go
-			log.Info("Configuring Meshery to access GKE...")
-			SAName := "sa-meshery-" + utils.StringWithCharset(8)
-			if err := utils.GenerateConfigGKE(configPath, SAName, "default"); err != nil {
-				log.Fatal("Error generating config:", err)
-				return
-			}
-			log.Debugf("GKE configuration is written to: %s", configPath)
-		case "aks":
-			aksCheck := exec.Command("az", "version")
-			aksCheck.Stdout = os.Stdout
-			aksCheck.Stderr = os.Stderr
-			err := aksCheck.Run()
-			if err != nil {
-				log.Fatalf("Azure CLI not found. Please install Azure CLI and try again. \nSee https://docs.microsoft.com/en-us/cli/azure/install-azure-cli ")
-			}
-			log.Info("Configuring Meshery to access AKS...")
-			var resourceGroup, aksName string
-
-			// Prompt user for Azure resource name
-			log.Info("Please enter the Azure resource group name:")
-			_, err = fmt.Scanf("%s", &resourceGroup)
-			if err != nil {
-				log.Warnf("Error reading Azure resource group name: %s", err.Error())
-				log.Info("Let's try again. Please enter the Azure resource group name:")
-				_, err = fmt.Scanf("%s", &resourceGroup)
-				if err != nil {
-					log.Fatalf("Error reading Azure resource group name: %s", err.Error())
-				}
-			}
-
-			// Prompt user for AKS cluster name
-			log.Info("Please enter the AKS cluster name:")
-			_, err = fmt.Scanf("%s", &aksName)
-			if err != nil {
-				log.Warnf("Error reading AKS cluster name: %s", err.Error())
-				log.Info("Let's try again. Please enter the AKS cluster name:")
-				_, err = fmt.Scanf("%s", &aksName)
-				if err != nil {
-					log.Fatalf("Error reading AKS cluster name: %s", err.Error())
-				}
-			}
-
-			// Build the Azure CLI syntax to fetch cluster config in kubeconfig.yaml file
-			aksCmd := exec.Command("az", "aks", "get-credentials", "--resource-group", resourceGroup, "--name", aksName, "--file", configPath)
-			aksCmd.Stdout = os.Stdout
-			aksCmd.Stderr = os.Stderr
-			// Write AKS compatible config to the filesystem
-			err = aksCmd.Run()
-			if err != nil {
-				log.Fatalf("Error generating kubeconfig: %s", err.Error())
-				return
-			}
-			log.Debugf("AKS configuration is written to: %s", configPath)
-		case "eks":
-			eksCheck := exec.Command("aws", "--version")
-			eksCheck.Stdout = os.Stdout
-			eksCheck.Stderr = os.Stderr
-			err := eksCheck.Run()
-			if err != nil {
-				log.Fatalf("AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/ ")
-			}
-			log.Info("Configuring Meshery to access EKS...")
-			var regionName, clusterName string
-
-			// Prompt user for AWS region name
-			log.Info("Please enter the AWS region name:")
-			_, err = fmt.Scanf("%s", &regionName)
-			if err != nil {
-				log.Warnf("Error reading AWS region name: %s", err.Error())
-				log.Info("Let's try again. Please enter the AWS region name:")
-				_, err = fmt.Scanf("%s", &regionName)
-				if err != nil {
-					log.Fatalf("Error reading AWS region name: %s", err.Error())
-				}
-			}
-
-			// Prompt user for AWS cluster name
-			log.Info("Please enter the AWS cluster name:")
-			_, err = fmt.Scanf("%s", &clusterName)
-			if err != nil {
-				log.Warnf("Error reading AWS cluster name: %s", err.Error())
-				log.Info("Let's try again. Please enter the AWS cluster name:")
-				_, err = fmt.Scanf("%s", &clusterName)
-				if err != nil {
-					log.Fatalf("Error reading AWS cluster name: %s", err.Error())
-				}
-			}
-
-			// Build the aws CLI syntax to fetch cluster config in kubeconfig.yaml file
-			eksCmd := exec.Command("aws", "eks", "--region", regionName, "update-kubeconfig", "--name", clusterName, "--kubeconfig", configPath)
-			eksCmd.Stdout = os.Stdout
-			eksCmd.Stderr = os.Stderr
-			// Write EKS compatible config to the filesystem
-			err = eksCmd.Run()
-			if err != nil {
-				log.Fatalf("Error generating kubeconfig: %s", err.Error())
-				return
-			}
-			log.Debugf("EKS configuration is written to: %s", configPath)
-		default:
-			log.Fatal("The argument has to be one of gke | minikube | aks | eks")
-		}
-
-		log.Debugf("Token path: %s", tokenPath)
-		contexts, err := getContexts(configPath, tokenPath)
-		if err != nil || contexts == nil || len(contexts) < 1 {
-			log.Fatalf("Error getting context: %s", err.Error())
-		}
-
-		choosenCtx := contexts[0]
-		if len(contexts) > 1 {
-			fmt.Println("List of available contexts: ")
-			for i, ctx := range contexts {
-				fmt.Printf("(%d) %s \n", i+1, ctx)
-			}
-			var choice int
-			fmt.Print("Enter choice (number): ")
-			_, err = fmt.Scanf("%d", &choice)
-			if err != nil {
-				log.Fatalf("Error reading input:  %s", err.Error())
-			}
-			choosenCtx = contexts[choice-1]
-		}
-
-		log.Debugf("Chosen context : %s", choosenCtx)
-		err = setContext(configPath, choosenCtx, tokenPath)
-		if err != nil {
-			log.Fatalf("Error setting context: %s", err.Error())
-		}
+		return nil
 	},
 }
 
 func init() {
-	configCmd.Flags().StringVarP(&tokenPath, "token", "t", utils.AuthConfigFile, "Path to token for authenticating to Meshery API")
-	_ = configCmd.MarkFlagRequired("tokenPath")
+	cobra.OnInitialize(initConfig)
+	availableSubcommands = []*cobra.Command{
+		aksConfigCmd,
+		eksConfigCmd,
+		gkeConfigCmd,
+		minikubeConfigCmd,
+	}
+
+	aksConfigCmd.Flags().StringVarP(&tokenPath, "token", "t", utils.AuthConfigFile, "Path to token for authenticating to Meshery API")
+	eksConfigCmd.Flags().StringVarP(&tokenPath, "token", "t", utils.AuthConfigFile, "Path to token for authenticating to Meshery API")
+	gkeConfigCmd.Flags().StringVarP(&tokenPath, "token", "t", utils.AuthConfigFile, "Path to token for authenticating to Meshery API")
+	minikubeConfigCmd.Flags().StringVarP(&tokenPath, "token", "t", utils.AuthConfigFile, "Path to token for authenticating to Meshery API")
+
+	configCmd.AddCommand(availableSubcommands...)
+}
+
+// Initialize config path, kube config path
+func initConfig() {
+	// Define the path where the kubeconfig.yaml will be written to
+	usr, err := user.Current()
+	if err != nil {
+		configPath = filepath.Join(".meshery", kubeConfigYaml)
+		kubeConfig = filepath.Join(".kube", "config")
+	} else {
+		configPath = filepath.Join(usr.HomeDir, ".meshery", kubeConfigYaml)
+		kubeConfig = filepath.Join(usr.HomeDir, ".kube", "config")
+	}
+
+	// create the .meshery folder where the kubeconfig.yaml will be written to
+	configDir = filepath.Dir(configPath)
+	if _, err = os.Stat(configDir); err != nil {
+		err = os.Mkdir(configDir, os.ModeDir)
+		if err != nil {
+			log.Fatal("Error while creating .meshery folder for config:", err)
+			return
+		}
+	}
+	log.Debugf("Default Meshery config path: %s", configPath)
+	log.Debugf("Default kube config file locaton: %s", kubeConfig)
+	log.Debugf("Default Meshery config directory: %s", configDir)
+}
+
+// Given the token path, get the context and set the token in the chosen context
+func setToken() {
+	log.Debugf("Token path: %s", tokenPath)
+	contexts, err := getContexts(configPath, tokenPath)
+	if err != nil || contexts == nil || len(contexts) < 1 {
+		log.Fatalf("Error getting context: %s", err.Error())
+	}
+
+	choosenCtx := contexts[0]
+	if len(contexts) > 1 {
+		fmt.Println("List of available contexts: ")
+		for i, ctx := range contexts {
+			fmt.Printf("(%d) %s \n", i+1, ctx)
+		}
+		var choice int
+		fmt.Print("Enter choice (number): ")
+		_, err = fmt.Scanf("%d", &choice)
+		if err != nil {
+			log.Fatalf("Error reading input:  %s", err.Error())
+		}
+		choosenCtx = contexts[choice-1]
+	}
+
+	log.Debugf("Chosen context : %s", choosenCtx)
+	err = setContext(configPath, choosenCtx, tokenPath)
+	if err != nil {
+		log.Fatalf("Error setting context: %s", err.Error())
+	}
 }
