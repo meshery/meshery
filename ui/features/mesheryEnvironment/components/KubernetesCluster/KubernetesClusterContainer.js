@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { mesherySystemSyncThunk } from "@/features/mesheryEnvironment/mesheryEnvironmentSlice";
@@ -20,5 +19,6 @@ export const KuberenetesClusterContainer = (props) => {
   }, []);
 
   // eslint-disable-next-line react/prop-types
-  return <div>{props.render({ clusters })}</div>;
+  // return <div>{props.render({ clusters })}</div>;
+  return props.children({ clusters });
 };

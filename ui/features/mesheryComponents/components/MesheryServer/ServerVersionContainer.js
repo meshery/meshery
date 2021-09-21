@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchMesheryServerDetailsThunk } from "@/features/mesheryComponents/mesheryComponentsSlice";
@@ -20,5 +19,5 @@ export const MesheryServerVersionContainer = (props) => {
   }, []);
 
   // eslint-disable-next-line react/prop-types
-  return <div>{props.render({ serverVersion })}</div>;
+  return props.children({ serverVersion });
 };

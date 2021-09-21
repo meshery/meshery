@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector } from "react-redux";
 
 /**
@@ -15,5 +14,5 @@ export const MetricsContainer = (props) => {
   const prometheus = useSelector((state) => state.mesheryEnvironment.connectedPrometheus);
 
   // eslint-disable-next-line react/prop-types
-  return <div>{props.render({ grafanas, prometheus })}</div>;
+  return props.children({ grafanas, prometheus });
 };

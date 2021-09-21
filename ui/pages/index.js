@@ -16,8 +16,8 @@ export default function Dashboard() {
   const ConnectionStatus = () => (
     <PaperWithTitle title="Connection Status" titleVariant="h6">
       <Stack spacing={2}>
-        <KuberenetesClusterContainer
-          render={({ clusters }) => {
+        <KuberenetesClusterContainer>
+          {({ clusters }) => {
             if (clusters.length > 0)
               return (
                 <PaperWithTitle title="Kuberetnes">
@@ -30,11 +30,11 @@ export default function Dashboard() {
               );
             return <PaperWithTitle title="Kubernetes">Not connected to kubernetes</PaperWithTitle>;
           }}
-        />
+        </KuberenetesClusterContainer>
 
-        <AdaptersListContainer render={(props) => <AdaptersChipList {...props} />} />
-        <MetricsContainer
-          render={({ grafanas, prometheus, onGrafanaClick, onPrometheusClick }) => {
+        <AdaptersListContainer>{(props) => <AdaptersChipList {...props} />}</AdaptersListContainer>
+        <MetricsContainer>
+          {({ grafanas, prometheus, onGrafanaClick, onPrometheusClick }) => {
             return (
               <PaperWithTitle title="Metrics" containerProps={{ spacing: 2 }}>
                 <Grid item xs={12} justifyContent="center" container>
@@ -71,10 +71,10 @@ export default function Dashboard() {
               </PaperWithTitle>
             );
           }}
-        />
+        </MetricsContainer>
 
-        <MesheryServerVersionContainer
-          render={({ serverVersion }) => (
+        <MesheryServerVersionContainer>
+          {({ serverVersion }) => (
             <PaperWithTitle title="Release">
               <Grid item xs={6}>
                 <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
@@ -119,7 +119,7 @@ export default function Dashboard() {
               </Grid>
             </PaperWithTitle>
           )}
-        />
+        </MesheryServerVersionContainer>
       </Stack>
     </PaperWithTitle>
   );

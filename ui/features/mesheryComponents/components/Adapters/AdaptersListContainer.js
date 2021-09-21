@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { adaptersSelector, fetchAvailableAdaptersThunk, loadingSelector } from "../../mesheryComponentsSlice";
 import { useEffect } from "react";
@@ -27,5 +26,5 @@ export const AdaptersListContainer = (props) => {
   }, []);
 
   // eslint-disable-next-line react/prop-types
-  return <div>{props.render({ loading, adapters })}</div>;
+  return props.children({ loading, adapters });
 };
