@@ -23,7 +23,7 @@ _Performance dashboard_
 
 <a href="{{ site.baseurl }}/assets/img/performance-management/performance-dashboard.PNG"><img alt="Performance Dashboard" src="{{ site.baseurl }}/assets/img/performance-management/performance-dashboard.PNG" /></a>
 
-The dashboard allows us to run our Performance Tests , it also shows the different tests run over the lifetime of the profile sorted by time and day. 
+The dashboard allows you to run your performance tests. The performance dashboard also shows the different tests run over the lifetime of your account, sorted by time and day. 
 
 ## Performance Management Through Meshery UI
 
