@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/context/delete
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system-context
 subcommand: delete
 # image: /assets/img/platforms/brew.png

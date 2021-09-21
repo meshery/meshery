@@ -1,20 +1,22 @@
 ---
 layout: default
-title: mesheryctl pattern
-permalink: reference/mesheryctl/pattern
+title: mesheryctl app
+permalink: reference/mesheryctl/apps
 type: reference
 display-title: "false"
 language: en
-command: pattern
+command: app
 # image: /assets/img/platforms/brew.png
 ---
 
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl pattern
+
+# mesheryctl app
 
 <!-- Description of the command. Preferably a paragraph -->
+
 ## Description
 
 {% assign name = site.data.mesheryctlcommands.cmds[page.command] %}
@@ -23,7 +25,7 @@ command: pattern
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ name.usage }}
+  mesheryctl app [flags] 
   </div>
 </pre>
 
@@ -37,9 +39,17 @@ command: pattern
   </div>
 </pre>
 {% endfor %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ flag.usage }}
+  </div>
+</pre>
+{% endfor %}
 <br/>
 
-<!-- Options/Flags available in this command -->
+<!-- Options/Flags available in this command --> 
 ## Options & Flags
 
 {% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
@@ -53,6 +63,7 @@ command: pattern
 <br/>
 
 ## Options inherited from parent commands
+
 <pre class="codeblock-pre">
   <div class="codeblock">
   --help, -h # Shows help for the command

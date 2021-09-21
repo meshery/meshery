@@ -1,47 +1,40 @@
 ---
 layout: default
-title: mesheryctl perf view
-permalink: reference/mesheryctl/perf/view
+title: mesheryctl app list
+permalink: reference/mesheryctl/apps/list
 type: reference
 display-title: "false"
 language: en
-command: perf
-subcommand: view
+command: app
+subcommand: list
 # image: /assets/img/platforms/brew.png
 ---
 
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl perf view
+# mesheryctl app list
 
-## Description
+<!-- Description of the command. Preferably a paragraph -->
+## Description and Example
 
+<!-- Basic usage of the command -->
 {% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
 {{ name.description }}
 
-
-<!-- Basic usage of the command -->
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    mesheryctl perf view [flags]
-  </div>
-</pre>
-
-## Examples
-
-{{ name.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
   {{ name.usage }}
   </div>
 </pre>
-{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
-{{ flag.description }}
+<br/>
+
+<!-- Options/Flags available in this command -->
+## Options & Flags
+
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ flag.usage }}
+  mesheryctl app list -h # Shows help for the command
   </div>
 </pre>
-{% endfor %}
 <br/>

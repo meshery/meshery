@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/completion
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system
 subcommand: completion
 # image: /assets/img/platforms/brew.png

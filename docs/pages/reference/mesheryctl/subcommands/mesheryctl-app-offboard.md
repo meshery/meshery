@@ -1,30 +1,30 @@
 ---
 layout: default
-title: mesheryctl perf view
-permalink: reference/mesheryctl/perf/view
+title: mesheryctl app offboard --file
+permalink: reference/mesheryctl/apps/offboard
 type: reference
 display-title: "false"
 language: en
-command: perf
-subcommand: view
+command: app
+subcommand: offboard
 # image: /assets/img/platforms/brew.png
 ---
 
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl perf view
+# mesheryctl app offboard --file
 
+<!-- Description of the command. Preferably a paragraph -->
 ## Description
 
 {% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
 {{ name.description }}
 
-
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl perf view [flags]
+  mesheryctl app offboard --file [path to app file] 
   </div>
 </pre>
 
@@ -41,6 +41,19 @@ subcommand: view
 <pre class="codeblock-pre">
   <div class="codeblock">
   {{ flag.usage }}
+  </div>
+</pre>
+{% endfor %}
+<br/>
+
+<!-- Options/Flags available in this command -->
+## Options & Flags
+
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ flag.name }}
   </div>
 </pre>
 {% endfor %}

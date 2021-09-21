@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/pattern/list
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: pattern
 subcommand: list
 # image: /assets/img/platforms/brew.png
