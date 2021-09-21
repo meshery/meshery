@@ -1,6 +1,5 @@
 import React from "react";
 import { Button, Grid, Link, Stack, Typography } from "@mui/material";
-import { Paper } from "@/components/index";
 import { AdaptersChipList, AdaptersListContainer, MesheryServerVersionContainer } from "@/features/mesheryComponents";
 import { PaperWithTitle } from "@/components/Paper";
 import { nanoid } from "@reduxjs/toolkit";
@@ -128,7 +127,7 @@ export default function Dashboard() {
   return (
     <Grid container spacing={2}>
       <Grid item xs={6}>
-        <Paper>asdf</Paper>
+        <PaperWithTitle title="Service Mesh" titleVariant="h6"></PaperWithTitle>
       </Grid>
       <Grid item xs={6}>
         <ConnectionStatus />

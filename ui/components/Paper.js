@@ -14,7 +14,11 @@ export const PaperWithTitle = ({ title, children, titleVariant, containerProps }
     <CustomPaper>
       <Grid container spacing={1}>
         <Grid item xs={12} sx={{ mb: theme.spacing(2) }}>
-          <Typography variant={titleVariant ? titleVariant : "subtitle1"}>{title}</Typography>
+          {typeof title === "string" ? (
+            <Typography variant={titleVariant ? titleVariant : "subtitle1"}>{title}</Typography>
+          ) : (
+            title
+          )}
         </Grid>
         <Grid item xs={12} container {...containerProps}>
           {children}

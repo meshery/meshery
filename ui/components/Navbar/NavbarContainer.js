@@ -51,7 +51,7 @@ const pickIconForServiceMeshes = (adapterName) => {
   let logoIcon = <img src={image} style={{ fontSize: 20 }} />;
   if (adapterName) {
     image = "/static/img/" + adapterName + "-light.svg";
-    logoIcon = <img src={image} style={{ fontSize: 20 }} />;
+    logoIcon = <img src={image} width="20rem" height="20rem" />;
   }
   return logoIcon;
 };
