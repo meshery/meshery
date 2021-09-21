@@ -7,7 +7,11 @@ type: Guides
 command: perf
 ---
 
+<<<<<<< HEAD
 This guide is useful to learn how to manage performance tests with Meshery through the [UI](#performance-management-through-meshery-ui), [CLI](#performance-management-through-meshery-cli-(mesheryctl)) and a [GitHub Action](#performance-management-through-meshery-using-github-action). To learn more about Meshery and Service Mesh Performance Management commands, see [Service Mesh Performance Management]({{ site.baseurl }}/reference/mesheryctl/perf)
+=======
+This guide is useful for learning manage your service mesh's performance with Meshery both through its web-based user interface, [Meshery UI](#performance-management-through-meshery-ui), or through its [CLI](#performance-management-through-meshery-cli-(mesheryctl)), or its [GitHub Action](#performance-management-through-meshery-using-github-action). To learn more about `mesheryctl` and Service Mesh Performance Management commands, see [Service Mesh Performance Management]({{ site.baseurl }}/reference/mesheryctl/perf)
+>>>>>>> 240a29b6ac346d66628d79064491d590ceb81d37
 
 ## Setup Meshery and run a Performance Test on your Service Mesh
 
@@ -17,13 +21,21 @@ _Meshery dashboard_
 
 <a href="{{ site.baseurl }}/assets/img/smi/dashboard.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/smi/dashboard.png" /></a>
 
+<<<<<<< HEAD
 Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/functionality/performance-management) to learn more about performance profiles, load generators, Kubernetes Cluster, and Service Mesh Metrics.
+=======
+Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/functionality/performance-management) to learn more about performance profiles, load generators, Kubernetes cluster, and service mesh metrics.
+>>>>>>> 240a29b6ac346d66628d79064491d590ceb81d37
 
 _Performance dashboard_
 
 <a href="{{ site.baseurl }}/assets/img/performance-management/performance-dashboard.PNG"><img alt="Performance Dashboard" src="{{ site.baseurl }}/assets/img/performance-management/performance-dashboard.PNG" /></a>
 
+<<<<<<< HEAD
 The dashboard allows us to run our Performance Tests , it also shows the different tests run over the lifetime of the profile sorted by time and day. 
+=======
+The dashboard allows you to run your performance tests. The performance dashboard also shows the different tests run over the lifetime of your account, sorted by time and day. 
+>>>>>>> 240a29b6ac346d66628d79064491d590ceb81d37
 
 ## Performance Management Through Meshery UI
 
@@ -45,7 +57,11 @@ _Performance Test Results_
 
 <a href="{{ site.baseurl }}/assets/img/performance-management/performance-test-comparison.PNG"><img alt="Performance Test Results" src="{{ site.baseurl }}/assets/img/performance-management/performance-test-comparison.PNG" /></a>
 
+<<<<<<< HEAD
 The results are depicted in the form of Histograms showing the count and Line Graphs showing the cumulative percentage.
+=======
+The results are depicted in the form of histograms showing the count and line graphs showing the cumulative percentage.
+>>>>>>> 240a29b6ac346d66628d79064491d590ceb81d37
 
 Latency and throughput are the two most significantly examined signals.
 
