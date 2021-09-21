@@ -112,7 +112,7 @@ const styles = (theme) => ({
     textAlign : "center",
     display : "inline-table",
     paddingRight : theme.spacing(0.5),
-    marginLeft : theme.spacing(0.3),
+    marginLeft : theme.spacing(0.8),
   },
   listIcon1 : {
     minWidth : theme.spacing(3.5),
@@ -207,7 +207,7 @@ const styles = (theme) => ({
     transform : 'translateX(3px)',
     '&:hover' : { color : "#4fc3f7", }
   },
-  collapsed : { transform : 'rotate(180deg) translateX(-3px)', },
+  collapsed : { transform : 'rotate(180deg) translateX(-0.8px)', },
   collapsedHelpButton : { height : '1.45rem',
     marginTop : '-4px',
     transform : 'translateX(0px)' },
@@ -866,7 +866,7 @@ class Navigator extends React.Component {
                           { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
                             <ExpandMoreIcon
                               onClick={() => this.toggleItemCollapse(childId)}
-                              className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })}
+                              className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft: "0.4rem"}}
                             /> :
                             <ListItemIcon className={classes.listIcon}>
                               {icon}
