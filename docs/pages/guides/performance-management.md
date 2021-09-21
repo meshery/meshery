@@ -45,7 +45,7 @@ _Performance Test Results_
 
 <a href="{{ site.baseurl }}/assets/img/performance-management/performance-test-comparison.PNG"><img alt="Performance Test Results" src="{{ site.baseurl }}/assets/img/performance-management/performance-test-comparison.PNG" /></a>
 
-The results are depicted in the form of Histograms showing the count and Line Graphs showing the cumulative percentage.
+The results are depicted in the form of histograms showing the count and line graphs showing the cumulative percentage.
 
 Latency and throughput are the two most significantly examined signals.
 
