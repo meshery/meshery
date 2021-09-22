@@ -188,9 +188,9 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
             </div>
 
           ) : (
-            console.log("nothing")
+            ''
           )}
-          <div style={{ justifySelf : "flex-end", marginLeft : "auto" }}>
+          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingLeft : "1rem" }}>
             <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
         </div>
@@ -250,7 +250,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
             </div>
           </Paper>
         ) : (
-          console.log("yay")
+          ''
         )}
 
         <GenericModal
