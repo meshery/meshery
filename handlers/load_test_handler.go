@@ -342,7 +342,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 	if loadTestOptions.LoadGenerator == models.Wrk2LG {
 		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
 	} else if loadTestOptions.LoadGenerator == models.NighthawkLG {
-		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions, ctx, h.config.KubeClient)
+		resultsMap, resultInst, err = helpers.NighthawkLoadTest(ctx, loadTestOptions, h.config.KubeClient)
 	} else {
 		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
 	}

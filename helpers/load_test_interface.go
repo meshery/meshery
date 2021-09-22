@@ -4,10 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 	"os"
-	"path"
 	"strings"
 	"sync"
 	"time"
@@ -23,6 +21,7 @@ import (
 	nighthawk_client "github.com/layer5io/nighthawk-go/pkg/client"
 	nighthawk_proto "github.com/layer5io/nighthawk-go/pkg/proto"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"google.golang.org/protobuf/types/known/durationpb"
 
 	v3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
@@ -210,28 +209,16 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 //	_, err = os.Stat(transformCommand)
 //}
 
-// OUTDATED
-// Deploy Nighthawk in-cluster
-// TODO: Deploy nighthawk in docker
-func deployNighthawk(client *mesherykube.Client, isDel bool) error {
-	// read nighthawk manifest from ~/.meshery/manifests
-	manifestFile := path.Join(utils.GetHome(), ".meshery", "manifests", "getnighthawk-deployment.yaml")
-	content, err := ioutil.ReadFile(manifestFile)
-	if err != nil {
-		return err
-	}
-
-	if err := client.ApplyManifest([]byte(content), mesherykube.ApplyOptions{
-		Namespace: "meshery",
-		Update: true,
-		Delete: isDel,
-	}); err != nil {
-		return err
-	}
-	time.Sleep(time.Second * 20)
-
-	return nil
-}
+//// OUTDATED
+//// Deploy Nighthawk in-cluster
+//// TODO: Deploy nighthawk in docker
+//func deployNighthawk(client *mesherykube.Client, isDel bool) error {
+//	// read nighthawk manifest from ~/.meshery/manifests
+//	manifestFile := path.Join(utils.GetHome(), ".meshery", "manifests", "getnighthawk-deployment.yaml")
+//	content, err := ioutil.ReadFile(manifestFile)
+//	if err != nil {
+//		return err
+//	}
 
 // NighthawkLoadTest is the actual code which invokes nighthawk to run the load test
 func NighthawkLoadTest(opts *models.LoadTestOptions, ctx context.Context, kubeClient *mesherykube.Client) (map[string]interface{}, *periodic.RunnerResults, error) {
@@ -374,15 +361,22 @@ func NighthawkLoadTest(opts *models.LoadTestOptions, ctx context.Context, kubeCl
 		return nil, nil, ErrGrpcSupport(err, "Nighthawk")
 	}
 
-	nighthawkServiceEndpoint, err := mesherykube.GetServiceEndpoint(ctx, kubeClient.KubeClient, &mesherykube.ServiceOptions{
-		Name:         "meshery-perf",
-		Namespace:    "meshery",
-		PortSelector: "grpc",
-		APIServerURL: kubeClient.RestConfig.Host,
-	})
-	if err != nil {
-		return nil, nil, ErrRunningTest(err)
+	// check if running in cluster or docker
+	var nighthawkServiceEndpoint *utils.Endpoint
+	if isInCluster := viper.GetString("KUBERNETES_SERVICE_HOST"); isInCluster != "" {
+		nighthawkServiceEndpoint, err = mesherykube.GetServiceEndpoint(ctx, kubeClient.KubeClient, &mesherykube.ServiceOptions{
+			Name:         "meshery-perf",
+			Namespace:    "meshery",
+			PortSelector: "grpc",
+			APIServerURL: kubeClient.RestConfig.Host,
+		})
+		if err != nil {
+			return nil, nil, ErrRunningTest(err)
+		}
+	} else {
+		nighthawkServiceEndpoint.Internal.Address = "localhost"
 	}
+
 
 	fmt.Println(string(nighthawkServiceEndpoint.Internal.Address))
 
