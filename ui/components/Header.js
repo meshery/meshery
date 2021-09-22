@@ -35,7 +35,7 @@ const styles = (theme) => ({
   userSpan : { marginLeft : theme.spacing(1), },
   pageTitleWrapper : { flexGrow : 1,
     marginRight : 'auto', },
-  betaBadge : { color : '#DE1306', fontWeight : '300', fontSize : '13px' },
+  betaBadge : { color : '#EEEEEE', fontWeight : '300', fontSize : '13px' },
   pageTitle : { paddingLeft : theme.spacing(2),
     fontSize : '1.25rem',
     [theme.breakpoints.up('sm')] : { fontSize : '1.65rem', }, },
