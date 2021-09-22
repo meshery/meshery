@@ -25,7 +25,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Values.mesheryOperator.name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           # TODO: Need to confirm the meshery-operator image version
@@ -54,14 +54,19 @@ spec:
             value: {{ $val }}
           {{- end }}
           {{- end }}
+          args: {{- toYaml .Values.mesheryOperator.args | nindent 12}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          command: {{- toYaml .Values.mesheryOperator.command | nindent 12 }}
         - name: {{ .Values.kubeRbac.name }}
           image: {{ .Values.kubeRbac.image.repository }}
           imagePullPolicy: {{ .Values.kubeRbac.image.pullPolicy }}
           ports:
           - name: https
             containerPort: 8443
+          args: {{- toYaml .Values.kubeRbac.args | nindent 12}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
