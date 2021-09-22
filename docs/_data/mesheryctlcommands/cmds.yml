@@ -164,7 +164,7 @@ system:
 
     login:
       name: login
-      description: Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
+      description: "Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider."
       usage:
         mesheryctl system login
     
