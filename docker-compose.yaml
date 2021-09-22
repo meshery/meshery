@@ -13,6 +13,7 @@ services:
     volumes:
       - $HOME/.kube:/home/appuser/.kube:ro
       - $HOME/.minikube:$HOME/.minikube:ro
+      - $HOME/.aws:/home/appuser/.aws:ro
     ports:
       - "9081:9081"
   meshery-istio:
@@ -75,6 +76,12 @@ services:
      - "com.centurylinklabs.watchtower.enable=true"
    ports:
      - "10010:10010"
+  meshery-osm:
+    image: layer5/getnighthawk:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "8443:8443"
   # nighthawk-lg:
   #   image: envoyproxy/nighthawk-dev:latest
   watchtower:
