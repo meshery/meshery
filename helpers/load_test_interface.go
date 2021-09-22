@@ -235,11 +235,6 @@ func deployNighthawk(client *mesherykube.Client, isDel bool) error {
 
 // NighthawkLoadTest is the actual code which invokes nighthawk to run the load test
 func NighthawkLoadTest(opts *models.LoadTestOptions, ctx context.Context, kubeClient *mesherykube.Client) (map[string]interface{}, *periodic.RunnerResults, error) {
-	//err := startNighthawkServer(int64(opts.Duration))
-	err := deployNighthawk(kubeClient, false)
-	if err != nil {
-		return nil, nil, ErrRunningNighthawkServer(err)
-	}
 
 	u, err := url.Parse(opts.URL)
 	if err != nil {
@@ -380,7 +375,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions, ctx context.Context, kubeCl
 	}
 
 	nighthawkServiceEndpoint, err := mesherykube.GetServiceEndpoint(ctx, kubeClient.KubeClient, &mesherykube.ServiceOptions{
-		Name:         "getnighthawk",
+		Name:         "meshery-perf",
 		Namespace:    "meshery",
 		PortSelector: "grpc",
 		APIServerURL: kubeClient.RestConfig.Host,

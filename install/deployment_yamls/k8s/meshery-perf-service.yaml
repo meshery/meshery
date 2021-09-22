@@ -10,7 +10,7 @@ metadata:
   name: meshery-perf
 spec:
   ports:
-    - name: "8443"
+    - name: "grpc"
       port: 8443
       targetPort: 8443
   selector:
