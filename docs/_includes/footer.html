@@ -23,7 +23,7 @@
 meshery-custom-end -->
 
 <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
-  <small class="text-white">© 2021 {{ site.author }} All Rights Reserved</small>
+  <div class="text">&copy; {{ site.time | date: '%Y' }} The Meshery Authors</div>
   {% if site.privacy %}<small class="ml-1"><a href="{{ site.privacy }}" rel="noopener" target="_blank">Privacy Policy</a></small>{% endif %}
 
   <!-- meshery-custom-begin -->
