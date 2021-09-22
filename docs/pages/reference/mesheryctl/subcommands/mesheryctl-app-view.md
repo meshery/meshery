@@ -24,7 +24,7 @@ subcommand: view
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl app view BookInfo
+  mesheryctl app view [application-name| application-id] | [flag]
   mesheryctl app view BookInfo -o json
   mesheryctl app view --all [View all applications] 
   </div>
