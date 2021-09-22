@@ -16,7 +16,7 @@ Meshery CLI commands are categorized by function, which are:
 - `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management: provisioning and configuration best practices
 - `mesheryctl perf` -  Service Mesh Performance Management: Workload and service mesh performance characterization
 - `mesheryctl pattern` - Service Mesh Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
-- `mesheryctl app` - Service Mesh Apps Management
+- `mesheryctl app` - Service Mesh Application Management
 - `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy (Coming soon!)
 
 
@@ -437,7 +437,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 
-## Service Mesh Apps Management
+## Service Mesh Application Management
 
 <table>
 <thead>
