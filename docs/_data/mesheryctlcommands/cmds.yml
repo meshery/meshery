@@ -482,7 +482,7 @@ pattern:
 
 app:
   name: app
-  description: Apps management of service meshes
+  description: Service Mesh application management
   usage:
     mesheryctl app 
   flags:
@@ -499,9 +499,9 @@ app:
           mesheryctl app list
     offboard:
       name: offboard
-      description: offboard application file
+      description: offboard application
       usage:
-          mesheryctl app offboard [flags]
+          mesheryctl app offboard [app name] [flags]
       flags:
         file:
           name: --file, -f
@@ -510,9 +510,9 @@ app:
               mesheryctl app offboard -f [filepath] 
     onboard:
       name: onboard
-      description: onboard application file
+      description: onboard application
       usage: 
-          mesheryctl app onboard [flags]
+          mesheryctl app onboard [app name] [flags]
       flags:
         file:
           name: --file, -f
