@@ -377,7 +377,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions, ctx context.Context, kubeCl
 		nighthawkServiceEndpoint.Internal.Address = "localhost"
 	}
 
-
 	fmt.Println(string(nighthawkServiceEndpoint.Internal.Address))
 
 	c, err := nighthawk_client.New(nighthawk_client.Options{
