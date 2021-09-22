@@ -170,7 +170,7 @@ system:
     
     logout:
       name: logout
-      description: Logout from the authenticated provider
+      description: Invalidate current session with your Meshery Provider.
       usage:
         mesheryctl system logout
     
