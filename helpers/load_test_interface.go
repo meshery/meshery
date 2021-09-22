@@ -380,6 +380,9 @@ func NighthawkLoadTest(opts *models.LoadTestOptions, ctx context.Context, kubeCl
 		PortSelector: "grpc",
 		APIServerURL: kubeClient.RestConfig.Host,
 	})
+	if err != nil {
+		return nil, nil, ErrRunningTest(err)
+	}
 
 	fmt.Println(string(nighthawkServiceEndpoint.Internal.Address))
 
