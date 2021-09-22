@@ -22,6 +22,8 @@ const mockAdapter2 = {
   name: "istio",
 };
 
+// TODO: Test for click event
+
 describe("Adapter chip", () => {
   it("renders an inactive adapter chip properly with the correct label", () => {
     render(<AdapterChip adapter={mockAdapter1} />);
