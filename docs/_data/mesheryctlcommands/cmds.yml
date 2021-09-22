@@ -534,7 +534,7 @@ app:
               mesheryctl app onboard --file [filepath]
     view:
       name: view
-      description: displays the contents of a specific pattern file
+      description: displays the contents of a application
       usage: | 
           mesheryctl app view (application-name|application-id)
       flags:
