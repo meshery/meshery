@@ -523,9 +523,7 @@ app:
       name: view
       description: displays the contents of a specific pattern file
       usage: | 
-          mesheryctl app view BookInfo (application-name|application-id)
-          OR
-          mesheryctl app view BookInfo
+          mesheryctl app view (application-name|application-id)
       flags:
         view-all:
           name: --all, -a
@@ -536,6 +534,4 @@ app:
           name: -o json
           description: display the content of a application in json format
           usage: | 
-              mesheryctl app view BookInfo[application-name|application-id] -o json 
-              OR 
-              mesheryctl app view BookInfo -o json 
+              mesheryctl app view [application-name|application-id] -o json  
