@@ -164,13 +164,13 @@ system:
 
     login:
       name: login
-      description: Authenticate to a Meshery Server
+      description: Authenticate to local or a remote provider in Meshery Server.
       usage:
         mesheryctl system login
     
     logout:
       name: logout
-      description: Remove authentication for Meshery Server
+      description: Logout from the authenticated provider
       usage:
         mesheryctl system logout
     
