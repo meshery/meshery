@@ -505,7 +505,7 @@ app:
       flags:
         file:
           name: --file, -f
-          description: Offboard application by providing file path
+          description: Offboard application with an application file
           usage:
               mesheryctl app offboard -f [filepath] 
     onboard:
