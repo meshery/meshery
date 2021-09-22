@@ -14,12 +14,11 @@ import Chip from "@/components/Chip";
 export const AdapterChip = ({ adapter, handleClick }) => {
   const theme = useTheme();
   let image = "/static/img/meshery-logo/meshery-logo.svg";
-  if (adapter.name) image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
+  if (adapter?.name) image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
   const logoIcon = (
     <Image
       src={image}
-      style={{ width: "1rem" }}
-      alt={adapter.name.toLowerCase()}
+      alt={adapter?.name?.toLowerCase() || "adapter"}
       width={theme.spacing(2.5)}
       height={theme.spacing(2.5)}
     />
@@ -31,6 +30,7 @@ export const AdapterChip = ({ adapter, handleClick }) => {
         onClick={handleClick}
         icon={logoIcon}
         variant={!adapter.isActive ? "default" : "outlined"}
+        data-testid="adapter-chip"
       />
     </Tooltip>
   );

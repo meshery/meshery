@@ -1,4 +1,4 @@
-import environment from "app/relayEnvironment";
+import environment from "@/app/relayEnvironment";
 import { graphql, commitMutation } from "react-relay";
 
 const operatorStatusMutation = graphql`

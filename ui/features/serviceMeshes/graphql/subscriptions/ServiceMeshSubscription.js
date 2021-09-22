@@ -1,5 +1,5 @@
 import { requestSubscription } from "react-relay";
-import environment from "app/relayEnvironment";
+import environment from "@/app/relayEnvironment";
 import { dataPlaneSubscription } from "./DataPlanesSubscription";
 import { controlPlaneSubscription } from "./ControlPlaneSubscription";
 

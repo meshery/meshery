@@ -1,4 +1,4 @@
-import environment from "app/relayEnvironment";
+import environment from "@/app/relayEnvironment";
 import { graphql, requestSubscription } from "react-relay";
 
 export const controlPlaneSubscription = graphql`

@@ -1,10 +1,6 @@
 // eslint-disable-next-line no-undef
 module.exports = {
-  collectCoverageFrom: [
-    "**/*.{js,jsx,ts,tsx}",
-    "!**/*.d.ts",
-    "!**/node_modules/**",
-  ],
+  collectCoverageFrom: ["**/*.{js,jsx,ts,tsx}", "!**/*.d.ts", "!**/node_modules/**"],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
     // https://jestjs.io/docs/webpack#mocking-css-modules
@@ -18,7 +14,10 @@ module.exports = {
     "^.+\\.(jpg|jpeg|png|gif|webp|svg)$": `<rootDir>/__mocks__/fileMock.js`,
 
     // Handle module aliases
+
+    "@/app/(.*)$": "<rootDir>/app/$1",
     "^@/components/(.*)$": "<rootDir>/components/$1",
+
     "^@/features/(.*)$": "<rootDir>/features/$1",
     "^@/lib/(.*)$": "<rootDir>/lib/$1",
     "^@/utils/(.*)$": "<rootDir>/utils/$1",
@@ -30,8 +29,5 @@ module.exports = {
     // https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object
     "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }],
   },
-  transformIgnorePatterns: [
-    "/node_modules/",
-    "^.+\\.module\\.(css|sass|scss)$",
-  ],
+  transformIgnorePatterns: ["/node_modules/", "^.+\\.module\\.(css|sass|scss)$"],
 };

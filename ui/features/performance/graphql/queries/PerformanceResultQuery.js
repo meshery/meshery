@@ -1,4 +1,4 @@
-import environment from "app/relayEnvironment";
+import environment from "@/app/relayEnvironment";
 import { graphql, fetchQuery } from "react-relay";
 
 export default function fetchPerformanceResults(variables) {
