@@ -23,6 +23,18 @@ Fields that are deprecated are marked with **{warning-solid}**.
 
 The `Query` type contains the API's top-level entry points for all executable queries.
 
+### `Query.connectToNats`
+
+Check is Meshey Server is connected to NATS, if not connect to the NATS Server.
+
+###### **Returns** [`Status!`](#status).
+
+### `Query.deployMeshsync`
+
+Check the Meshsync Status and deploy if not enabled.
+
+###### **Returns** [`Status!`](#status).
+
 ### `Query.fetchResults`
 
 Query for fetching all results for profile ID.
@@ -64,7 +76,31 @@ Query Control Plane data for a Service Mesh (or all) in your cluster.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querygetcontrolplanesfilter"></a>`filter` | [`ServiceMeshFilter`](#controlplanefilter) | Filter Control Plane Query. |
+| <a id="querygetcontrolplanesfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
+
+### `Query.getDataPlanes`
+
+Query Data Plane information for a Service Mesh (or all) in your cluster.
+
+###### **Returns** [`[DataPlane!]!`](#dataplane).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetdataplanesfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
+
+### `Query.getMeshsyncStatus`
+
+Check the Meshsync Status.
+
+###### **Returns** [`OperatorControllerStatus!`](#operatorcontrollerstatus).
+
+### `Query.getNatsStatus`
+
+Check is Meshey Server is connected to NATS.
+
+###### **Returns** [`OperatorControllerStatus!`](#operatorcontrollerstatus).
 
 ### `Query.getOperatorStatus`
 
@@ -157,7 +193,19 @@ Listen to changes in Control Plane data for a Service Mesh (or all) in your clus
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ServiceMeshFilter`](#controlplanefilter) | Filter Control Plane Query. |
+| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
+
+### `Subscription.listenToDataPlaneState`
+
+Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster.
+
+###### **Returns** [`[DataPlane!]!`](#dataplane).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionlistentodataplanestatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
 
 ### `Subscription.listenToMeshSyncEvents`
 
@@ -220,6 +268,45 @@ Deatils about the Addon Component.
 | <a id="addonlistname"></a>`name` | [`String!`](#string) | Name. |
 | <a id="addonlistowner"></a>`owner` | [`String!`](#string) | Owner. |
 
+### `Container`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="containercontainername"></a>`containerName` | [`String!`](#string) |  |
+| <a id="containercontrolplanemembername"></a>`controlPlaneMemberName` | [`String!`](#string) |  |
+| <a id="containerimage"></a>`image` | [`String!`](#string) |  |
+| <a id="containerports"></a>`ports` | [`[Container_Port]`](#container_port) | args: NOT IMPLEMENTED. |
+| <a id="containerresources"></a>`resources` | [`Any`](#any) | env: NOT IMPLEMENTED,. |
+| <a id="containerstatus"></a>`status` | [`Container_Status`](#container_status) |  |
+
+### `Container_Port`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="container_portcontainerport"></a>`containerPort` | [`Int!`](#int) |  |
+| <a id="container_portname"></a>`name` | [`String`](#string) |  |
+| <a id="container_portprotocol"></a>`protocol` | [`String!`](#string) |  |
+
+### `Container_Status`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="container_statuscontainerid"></a>`containerID` | [`Any`](#any) |  |
+| <a id="container_statuscontainerstatusname"></a>`containerStatusName` | [`String!`](#string) |  |
+| <a id="container_statusimage"></a>`image` | [`String!`](#string) |  |
+| <a id="container_statusimageid"></a>`imageID` | [`Any`](#any) |  |
+| <a id="container_statuslaststate"></a>`lastState` | [`Any`](#any) |  |
+| <a id="container_statusready"></a>`ready` | [`Boolean!`](#boolean) |  |
+| <a id="container_statusrestartcount"></a>`restartCount` | [`Any`](#any) |  |
+| <a id="container_statusstarted"></a>`started` | [`Boolean!`](#boolean) | image: String! imageID: String! containerID: String!. |
+| <a id="container_statusstate"></a>`state` | [`Any`](#any) |  |
+
 ### `ControlPlane`
 
 Control Plane data for a particular Mesh.
@@ -240,9 +327,21 @@ Member Details.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="controlplanemembercomponent"></a>`component` | [`String!`](#string) | Component. |
+| <a id="controlplanememberdata_planes"></a>`data_planes` | [`[Container!]`](#container) | DataPlanes. |
 | <a id="controlplanemembername"></a>`name` | [`String!`](#string) | Name. |
 | <a id="controlplanemembernamespace"></a>`namespace` | [`String!`](#string) | Namespace. |
 | <a id="controlplanememberversion"></a>`version` | [`String!`](#string) | Version. |
+
+### `DataPlane`
+
+Data Plane for a particular Mesh.
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="dataplanename"></a>`name` | [`String!`](#string) | Service Mesh Name. |
+| <a id="dataplaneproxies"></a>`proxies` | [`[Container!]!`](#container) | Members of the Mesh. |
 
 ### `Error`
 
@@ -353,6 +452,7 @@ Service Mesh Types.
 
 | Value | Description |
 | ----- | ----------- |
+| <a id="statusconnected"></a>`CONNECTED` | Connected (Applicable only for NATS status for now). |
 | <a id="statusdisabled"></a>`DISABLED` | Disabled. |
 | <a id="statusenabled"></a>`ENABLED` | Enabled. |
 | <a id="statusprocessing"></a>`PROCESSING` | Processing. |
@@ -401,16 +501,6 @@ see the associated mutation type above.
 
 For more information, read about [Scalar Types](https://graphql.org/learn/schema/#input-types) on `graphql.org`.
 
-### `ServiceMeshFilter`
-
-Filter Control Plane Query.
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="controlplanefiltertype"></a>`type` | [`MeshType`](#meshtype) | Filter by Service Mesh. |
-
 ### `PageFilter`
 
 #### **Arguments**
@@ -434,3 +524,13 @@ Type ReSyncActions define the actions involved during resync.
 | ---- | ---- | ----------- |
 | <a id="resyncactionsresync"></a>`ReSync` | [`String!`](#string) |  |
 | <a id="resyncactionscleardb"></a>`clearDB` | [`String!`](#string) |  |
+
+### `ServiceMeshFilter`
+
+Filter Control Plane Query.
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="servicemeshfiltertype"></a>`type` | [`MeshType`](#meshtype) | Filter by Service Mesh. |

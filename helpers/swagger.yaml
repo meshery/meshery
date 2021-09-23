@@ -855,6 +855,11 @@ definitions:
       contextName:
         type: string
         x-go-name: ContextName
+      contexts:
+        items:
+          $ref: '#/definitions/K8SContext'
+        type: array
+        x-go-name: Contexts
       inClusterConfig:
         type: boolean
         x-go-name: InClusterConfig
@@ -3941,6 +3946,25 @@ paths:
       summary: Handle GET request for a Meshery Filter
       tags:
       - FiltersAPI
+  /api/filter/deploy:
+    delete:
+      description: Delete a deployed filter file with the request
+      operationId: idDeleteFilterFile
+      responses:
+        "200":
+          description: ""
+      summary: Handle DELETE request for Filter File Deploy
+      tags:
+      - FilterAPI
+    post:
+      description: Deploy an attached filter file with the request
+      operationId: idPostDeployFilterFile
+      responses:
+        "200":
+          $ref: '#/responses/FilterFilesResponseWrapper'
+      summary: Handle POST request for Filter File Deploy
+      tags:
+      - FilterAPI
   /api/filter/file/{id}:
     get:
       description: Returns the Meshery Filter file saved by the current user with
@@ -4749,6 +4773,10 @@ paths:
 produces:
 - application/json
 responses:
+  FilterFilesResponseWrapper:
+    description: Returns the response of the Filter files
+    schema:
+      $ref: '#/definitions/MesheryFilter'
   applicationFilesResponseWrapper:
     description: Returns the response of the application files
     schema:

@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/perf
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: perf
 # image: /assets/img/platforms/brew.png
 ---

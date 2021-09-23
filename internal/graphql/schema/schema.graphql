@@ -347,8 +347,14 @@ type Query {
         selector: ReSyncActions
     ): Status!
 
+	# Check the Meshsync Status
+	getMeshsyncStatus: OperatorControllerStatus!
+
 	# Check the Meshsync Status and deploy if not enabled
 	deployMeshsync: Status!
+
+	# Check is Meshey Server is connected to NATS
+	getNatsStatus: OperatorControllerStatus!
 
 	# Check is Meshey Server is connected to NATS, if not connect to the NATS Server
 	connectToNats: Status!

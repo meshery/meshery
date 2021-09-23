@@ -1,8 +1,8 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import MuiAccordion from "@material-ui/core/Accordion";
+import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
+import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
 import DeleteIcon from "@material-ui/icons/Delete"
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -19,17 +19,61 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+
+const Accordion = withStyles({
+  root : {
+    border : '1px solid rgba(0, 0, 0, .125)',
+    boxShadow : 'none',
+    '&:not(:last-child)' : {
+      borderBottom : 0,
+    },
+    '&:before' : {
+      display : 'none',
+    },
+    '&$expanded' : {
+      margin : 'auto',
+    },
+  },
+  expanded : {},
+})(MuiAccordion);
+
+const AccordionSummary = withStyles({
+  root : {
+    backgroundColor : 'rgba(0, 0, 0, .03)',
+    borderBottom : '1px solid rgba(0, 0, 0, .125)',
+    marginBottom : -1,
+    maxHeight : "1.5rem",
+    '&$expanded' : {
+      minHeight : 56,
+    },
+  },
+  content : {
+    '&$expanded' : {
+      margin : '12px 0',
+    },
+  },
+  expanded : {},
+})(MuiAccordionSummary);
+
+const AccordionDetails = withStyles((theme) => ({
+  root : {
+    padding : theme.spacing(2),
+  },
+}))(MuiAccordionDetails);
+
 export default function SimpleAccordion(props) {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Accordion>
+      <Accordion defaultExpanded elevation={0}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
+          style={{ backgroundColor : "F7F7F7" }}
         >
+
           <Typography className={classes.heading}>{props.heading}</Typography>
 
           {props.childProps.hasRemove && (
@@ -45,7 +89,8 @@ export default function SimpleAccordion(props) {
             </IconButton>
           )}
         </AccordionSummary>
-        <AccordionDetails>{props.children}</AccordionDetails>
+        <AccordionDetails >{props.children}</AccordionDetails>
+
       </Accordion>
     </div>
   );
