@@ -164,13 +164,13 @@ system:
 
     login:
       name: login
-      description: Authenticate to a Meshery Server
+      description: "Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider."
       usage:
         mesheryctl system login
     
     logout:
       name: logout
-      description: Remove authentication for Meshery Server
+      description: Invalidate current session with your Meshery Provider.
       usage:
         mesheryctl system logout
     
