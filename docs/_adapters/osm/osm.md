@@ -6,12 +6,15 @@ mesh_name: Open Service Mesh
 version: v0.5.0
 port: 10009/tcp
 project_status: stable
+lab: osm-meshery-adapter
 github_link: https://github.com/meshery/meshery-osm
 image: /assets/img/service-meshes/osm.svg
 permalink: service-meshes/adapters/osm
 ---
 
 {% include adapter-status.html %}
+
+{% include adapter-labs.html %}
 
 ## Lifecycle management
 

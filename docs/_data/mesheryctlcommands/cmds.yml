@@ -162,6 +162,19 @@ system:
       usage:
           mesheryctl system status
 
+    login:
+      name: login
+      description: "Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider."
+      usage:
+        mesheryctl system login
+    
+    logout:
+      name: logout
+      description: Invalidate current session with your Meshery Provider.
+      usage:
+        mesheryctl system logout
+    
+
 system-channel:
   name: system-channel
   description: Switch between release channels.

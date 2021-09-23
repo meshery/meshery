@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/update
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system 
 subcommand: update
 # image: /assets/img/platforms/brew.png
