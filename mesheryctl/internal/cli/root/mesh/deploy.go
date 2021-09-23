@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	smp "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/manifoldco/promptui"
@@ -20,14 +21,28 @@ var (
 	meshName  string
 	deployCmd = &cobra.Command{
 		Use:   "deploy",
-		Short: "deploy a service mesh in the kubernetes cluster",
+		Short: "Deploy a service mesh to the Kubernetes cluster",
 		Args:  cobra.MinimumNArgs(0),
-		Long:  `deploy service mesh in the connected kubernetes cluster`,
+		Long:  `Deploy a service mesh to the connected Kubernetes cluster`,
+		Example: `
+// Deploy a service mesh from an interactive on the default namespace
+mesheryctl mesh deploy
+
+// Deploy Linkerd mesh on a specific namespace
+mesheryctl mesh deploy --adapter linkerd --namespace linkerd-ns
+
+// Deploy Linkerd mesh and wait for it to be deployed
+mesheryctl mesh deploy --adapter linkerd --watch`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			log.Infof("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				log.Fatalln(err)
+			}
+
+			// set default tokenpath for command.
+			if tokenPath == "" {
+				tokenPath = constants.GetCurrentAuthToken()
 			}
 
 			if len(args) < 1 {
@@ -73,7 +88,6 @@ func init() {
 	deployCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-istio:10000", "Adapter to use for installation")
 	deployCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
 	deployCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
-	_ = deployCmd.MarkFlagRequired("tokenPath")
 	deployCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 
