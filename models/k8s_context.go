@@ -188,3 +188,15 @@ func (kc K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 
 	return kubernetes.New(cfg)
 }
+
+// PingTest uses the k8scontext to to "ping" the kubernetes cluster
+// if the return value is nil then the succeeds or else it has failed
+func (kc K8sContext) PingTest() error {
+	h, err := kc.GenerateKubeHandler()
+	if err != nil {
+		return err
+	}
+
+	_, err = h.KubeClient.ServerVersion()
+	return err
+}

@@ -3,7 +3,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/layer5io/meshery/models"
@@ -29,7 +28,6 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
-		//lint:ignore SA1029 we want to make sure that no two results of errors
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
@@ -125,7 +123,6 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			// Create mesherykube handler
 			client, err := kubernetes.New(cfg)
 			if err != nil {
-				fmt.Printf("%s\n", err)
 				http.Error(w, "failed to create kubeconfig handler for the user", http.StatusInternalServerError)
 				return
 			}
