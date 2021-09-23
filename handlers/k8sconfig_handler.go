@@ -253,7 +253,7 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 
 			ctxName := "in-cluster"
 
-			cc := models.NewK8sContext(
+			cc, err := models.NewK8sContextWithServerID(
 				ctxName,
 				map[string]interface{}{
 					"cluster": map[string]interface{}{
@@ -273,16 +273,16 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 				true,
 				mid,
 			)
-
-			// Check if the server is reachable
-			if err := cc.PingTest(); err != nil {
-				return nil, err // TODO: replace with meshkit error
+			if err != nil {
+				logrus.Warn("failed to generate in cluster context: ", err)
+				return nil, err
 			}
 
-			_, _ = prov.SaveK8sContext(token, cc)       // Ignore the error
-			_, _ = prov.SetCurrentContext(token, cc.ID) // Ignore the error
+			if _, err := prov.SaveK8sContext(token, *cc); err == nil {
+				_, _ = prov.SetCurrentContext(token, cc.ID) // Ignore the error
+			}
 
-			return &cc, nil
+			return cc, nil
 		}
 
 		cfg, err := helpers.FlattenMinifyKubeConfig([]byte(data))
@@ -294,13 +294,6 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 
 		// Persist the generated contexts
 		for _, ctx := range ctxs {
-			// Perform a "ping" test to ensure that meshery can actually
-			// use a context for communicating with the cluster
-			if err := ctx.PingTest(); err != nil {
-				logrus.Warn("failed to ping the kubernetes cluster: ", err)
-				continue // Skip any further steps if the "ping" fails
-			}
-
 			_, err := prov.SaveK8sContext(token, ctx)
 			if err != nil {
 				// TODO: log the error here

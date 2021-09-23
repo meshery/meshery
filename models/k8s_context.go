@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
@@ -10,20 +11,23 @@ import (
 	"github.com/layer5io/meshery/helpers/utils"
 	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
 type K8sContext struct {
-	ID                string     `json:"id,omitempty" yaml:"id,omitempty"`
-	Name              string     `json:"name,omitempty" yaml:"name,omitempty"`
-	Auth              sql.Map    `json:"auth,omitempty" yaml:"auth,omitempty"`
-	Cluster           sql.Map    `json:"cluster,omitempty" yaml:"cluster,omitempty"`
-	Server            string     `json:"server,omitempty" yaml:"server,omitempty"`
-	Owner             *uuid.UUID `json:"owner,omitempty" gorm:"-" yaml:"owner,omitempty"`
-	CreatedBy         *uuid.UUID `json:"created_by,omitempty" gorm:"-" yaml:"created_by,omitempty"`
-	IsCurrentContext  bool       `json:"is_current_context,omitempty" yaml:"is_current_context,omitempty"`
-	MesheryInstanceID *uuid.UUID `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
+	ID                 string     `json:"id,omitempty" yaml:"id,omitempty"`
+	Name               string     `json:"name,omitempty" yaml:"name,omitempty"`
+	Auth               sql.Map    `json:"auth,omitempty" yaml:"auth,omitempty"`
+	Cluster            sql.Map    `json:"cluster,omitempty" yaml:"cluster,omitempty"`
+	Server             string     `json:"server,omitempty" yaml:"server,omitempty"`
+	Owner              *uuid.UUID `json:"owner,omitempty" gorm:"-" yaml:"owner,omitempty"`
+	CreatedBy          *uuid.UUID `json:"created_by,omitempty" gorm:"-" yaml:"created_by,omitempty"`
+	IsCurrentContext   bool       `json:"is_current_context,omitempty" yaml:"is_current_context,omitempty"`
+	MesheryInstanceID  *uuid.UUID `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
+	KubernetesServerID *uuid.UUID `json:"kubernetes_server_id,omitempty" yaml:"kubernetes_server_id,omitempty"`
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
@@ -88,6 +92,42 @@ func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *uuid.UUID) K8
 	)
 }
 
+func NewK8sContextWithServerID(
+	contextName string,
+	clusters map[string]interface{},
+	users map[string]interface{},
+	server string,
+	isCurrentContext bool,
+	instanceID *uuid.UUID,
+) (*K8sContext, error) {
+	ctx := NewK8sContext(contextName, clusters, users, server, isCurrentContext, instanceID)
+
+	// Perform Ping test on the cluster
+	if err := ctx.PingTest(); err != nil {
+		return nil, err
+	}
+
+	// Get a kubernetes handler
+	handler, err := ctx.GenerateKubeHandler()
+	if err != nil {
+		return nil, err
+	}
+
+	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+	uid := ksns.ObjectMeta.GetUID()
+	ksUUID := uuid.FromStringOrNil(string(uid))
+
+	ctx.KubernetesServerID = &ksUUID
+
+	return &ctx, nil
+}
+
+// K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
+// kubernetes contexts from it
 func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) []K8sContext {
 	kcs := []K8sContext{}
 
@@ -102,24 +142,37 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) []K8sCo
 	}
 
 	for name := range parsed.Contexts {
-		kcs = append(kcs, kcfg.K8sContext(name, instanceID))
+		kc := kcfg.K8sContext(name, instanceID)
+		if err := kc.AssignServerID(); err != nil {
+			logrus.Warn("Skipping context: Reason => ", err)
+
+			continue
+		}
+
+		kcs = append(kcs, kc)
 	}
 
 	return kcs
 }
 
+// NewK8sContext takes in name of the context, cluster info of the contexts,
+// auth info, server address and meshery instance ID and will return a K8sContext from it
+//
+// This function does NOT assigns kubernetes server ID to the context, either the ID
+// can be assigned manually by invoking `AssignServerID` method or instead use
+// `NewK8sContextWithServerID` to create a context
 func NewK8sContext(
 	contextName string,
-	clusters map[string]interface{},
-	users map[string]interface{},
+	cluster map[string]interface{},
+	user map[string]interface{},
 	server string,
 	isCurrentContext bool,
 	instanceID *uuid.UUID,
 ) K8sContext {
 	ctx := K8sContext{
 		Name:              contextName,
-		Cluster:           clusters,
-		Auth:              users,
+		Cluster:           cluster,
+		Auth:              user,
 		Server:            server,
 		MesheryInstanceID: instanceID,
 		IsCurrentContext:  isCurrentContext,
@@ -135,6 +188,9 @@ func NewK8sContext(
 	return ctx
 }
 
+// K8sContextGenerateID takes in a kubernetes context and generates an ID for it
+//
+// If the context remains the same, it is guaranteed that the ID will be same
 func K8sContextGenerateID(kc K8sContext) (string, error) {
 	data := map[string]interface{}{
 		"cluster": kc.Cluster,
@@ -199,4 +255,31 @@ func (kc K8sContext) PingTest() error {
 
 	_, err = h.KubeClient.ServerVersion()
 	return err
+}
+
+// AssignServerID will attempt to assign kubernetes
+// server ID to the kubernetes context
+func (kc *K8sContext) AssignServerID() error {
+	// Perform Ping test on the cluster
+	if err := kc.PingTest(); err != nil {
+		return err
+	}
+
+	// Get a kubernetes handler
+	handler, err := kc.GenerateKubeHandler()
+	if err != nil {
+		return err
+	}
+
+	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	if err != nil {
+		return err
+	}
+	uid := ksns.ObjectMeta.GetUID()
+	ksUUID := uuid.FromStringOrNil(string(uid))
+
+	kc.KubernetesServerID = &ksUUID
+
+	return nil
 }
