@@ -536,7 +536,7 @@ app:
       name: view
       description: displays the contents of a application
       usage: | 
-          mesheryctl app view (application-name|application-id)
+          mesheryctl app view [application-name|application-id]
       flags:
         view-all:
           name: --all, -a
