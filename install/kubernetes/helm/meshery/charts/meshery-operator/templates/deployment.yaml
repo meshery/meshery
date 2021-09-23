@@ -32,9 +32,12 @@ spec:
           image: "{{ .Values.mesheryOperator.image.repository }}"
           imagePullPolicy: {{ .Values.mesheryOperator.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 10000
-              protocol: TCP
+            - containerPort: 9443
+              hostPort: 9443
+              name: server
+            - containerPort: 8080
+              hostPort: 8080
+              name: metrics
           {{- if .Values.probe.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
