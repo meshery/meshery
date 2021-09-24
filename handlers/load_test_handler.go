@@ -68,7 +68,16 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		http.Error(w, ErrBlankName(err).Error(), http.StatusForbidden)
 		return
 	}
-	// meshName := q.Get("mesh")
+
+	// get mesh name from the query
+	q := req.URL.Query()
+	meshName := q.Get("mesh")
+
+	// in-case of empty meshName run test with istio
+	if meshName == "" {
+		meshName = "istio"
+	}
+
 	profileID := perfTest.Id
 
 	loadTestOptions := &models.LoadTestOptions{}
@@ -126,7 +135,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}
 	loadTestOptions.AllowInitialErrors = true
 
-	h.loadTestHelperHandler(w, req, profileID, testName, "istio", "", prefObj, loadTestOptions, provider)
+	h.loadTestHelperHandler(w, req, profileID, testName, meshName, "", prefObj, loadTestOptions, provider)
 }
 
 func (h *Handler) jsonToMap(headersString string) *map[string]string {
