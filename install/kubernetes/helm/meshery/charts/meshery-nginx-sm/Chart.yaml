@@ -1,8 +1,8 @@
 apiVersion: v2
-name: meshery-nsm
-description: Meshery Adapter for Network Service Mesh.
+name: meshery-nginx-sm
+description: Meshery Adapter for NGINX Service Mesh.
 source:
-  - https://github.com/layer5io/meshery-nsm
+  - https://github.com/layer5io/meshery-nginx-sm
 
 deprecated: false
 # A chart can be either an 'application' or a 'library' chart.
@@ -27,7 +27,7 @@ appVersion: stable-latest
 maintainers:
   - name: Layer5 Authors
     email: community@layer5.io
-  - name: aisuko
-    email: urakiny@gmail.com
+  - name: darrenlau
+    email: panyuenlau@gmail.com
   - name: leecalcote
     email: lee.calcote@layer5.io

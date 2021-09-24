@@ -1,38 +1,23 @@
-# Default values for meshery-operator.
+# Default values for meshery-nginx-sm.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
-mesheryOperator:
-  name: manager
-  image:
-    repository: layer5/meshery-operator:stable-latest
-    pullPolicy: Always
-  args:
-    - --metrics-addr=127.0.0.1:8080
-    - --enable-leader-election
-  command:
-    - /manager
-  
-kubeRbac:
-  name: kube-rbac-proxy
-  image:
-    repository: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
-    pullPolicy: Always
-  args:
-  - --secure-listen-address=0.0.0.0:8443
-  - --upstream=http://127.0.0.1:8080/
-  - --logtostderr=true
-  - --v=10
+image:
+  repository: layer5/meshery-nginx-sm:stable-latest
+  pullPolicy: Always
+
+ports:
+  http: 10010
 
 env: {}
 
 probe:
-  #TODO: Need to confirm the health check path of meshery. 
+  #TODO: Need to confirm the health check path of meshery.
   livenessProbe:
     enabled: false
-  readinessProbe: 
+  readinessProbe:
     enabled: false
 
 imagePullSecrets: []
@@ -44,12 +29,14 @@ serviceAccount:
   create: true
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: meshery-operator
+  name: meshery-nginx-sm
 
 podSecurityContext: {}
   # fsGroup: 2000
 
-annotations: {}
+annotations:
+  kompose.cmd: kompose convert -f ../docker-compose.yaml
+  kompose.version: 1.17.0 ()
 
 securityContext: {}
   # capabilities:
@@ -61,15 +48,15 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 10000
+  port: 10010
+  targetPOrt: 10010
   annotations: {}
 
 ingress:
   enabled: false
-  annotations:
+  annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-
   hosts:
     - host: chart-example.local
       paths: []
@@ -98,3 +85,4 @@ affinity: {}
 
 testCase:
   enabled: false
+

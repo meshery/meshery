@@ -16,10 +16,10 @@ env:
   ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nsm:10004 meshery-traefik-mesh:10006 meshery-cpx:10008
 
 probe:
-  #TODO: Need to confirm the health check path of meshery. 
+  #TODO: Need to confirm the health check path of meshery.
   livenessProbe:
     enabled: false
-  readinessProbe: 
+  readinessProbe:
     enabled: false
 
 
@@ -27,7 +27,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-# For AKS AWS GCP to get the permissions to watch the nodes 
+# For AKS AWS GCP to get the permissions to watch the nodes
 rbac:
   nodes: false
 
@@ -93,10 +93,10 @@ affinity: {}
 meshery-istio:
   enabled: true
   fullnameOverride: meshery-istio
-  
+
 
 # Deploy meshery-linkerd
-# 
+#
 meshery-linkerd:
   enabled: true
   fullnameOverride: meshery-linkerd
@@ -134,7 +134,7 @@ meshery-operator:
 testCase:
   enabled: false
 
-# # TODO: There need to confirm that we should deploy the Gateway and VirtualService for Meshery or not. 
+# # TODO: There need to confirm that we should deploy the Gateway and VirtualService for Meshery or not.
 # There will be an issue when deploying Meshery before Istio and this could make the deploying fail.
 # meshery-gateway
 #
