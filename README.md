@@ -9,11 +9,11 @@
 <img src="https://github.com/layer5io/meshery/workflows/Meshery/badge.svg" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
 <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
-<a href="https://github.com/layer5io/meshery" alt="Website">
+<a href="https://meshery.io" alt="Website">
 <img src="https://img.shields.io/website/https/layer5.io/meshery.svg" /></a>
 <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+" alt="GitHub issues by-label">
 <img src="https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg" /></a>
-<a href="http://slack.layer5.io" alt="Join Slack">
+<a href="https://slack.layer5.io" alt="Join Slack">
 <img src="https://img.shields.io/badge/Slack-@layer5.svg?logo=slack"></a>
 <a href="https://twitter.com/intent/follow?screen_name=mesheryio" alt="Twitter Follow">
 <img src="https://img.shields.io/twitter/follow/layer5.svg?label=Follow+Layer5&style=social" /></a>
