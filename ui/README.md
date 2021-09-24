@@ -29,9 +29,24 @@ This method doesn't provide a live reload server. You will have to build Meshery
 - Create a new branch
 - Make the changes
 - Write tests if necessary
-- Make sure all the tests pass by runing `npm run test`
+- Make sure all the tests pass by running `npm run test`
 - Use `eslint` and `prettier` to lint and format the code respectively
+- Commit your changes
 - Create a PR
+
+### Contribution workflow for UI restructuring
+
+- Checkout to `meshery-ui-restructuring` branch
+- Checkout to a new branch locally by `git checkout -b ui/restructuring/--name--` where `--name--` should be meaningful to the work that you are about to do
+- Go to `/ui`
+- Make sure all the tests pass by running `npm run test`
+- Make the changes
+- Write tests if necessary
+- Make sure all the tests pass by running `npm run test`
+- Use `eslint` and `prettier` to lint and format the code respectively
+- Commit your changes
+- Create a PR that targets `meshery-ui-restructuring` branch
+
 
 ## Tech stack used in Meshery UI
 - Meshery UI uses NextJs to do server side rendering of ReactJS components. 
