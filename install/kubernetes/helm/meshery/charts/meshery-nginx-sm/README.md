@@ -2,7 +2,7 @@
 
 ![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
-Meshery Adapter for Nginx Service Mesh.
+Meshery Adapter for NGINX Service Mesh.
 
 ## Maintainers
 

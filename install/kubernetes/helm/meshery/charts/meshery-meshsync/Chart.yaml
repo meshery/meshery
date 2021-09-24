@@ -1,6 +1,6 @@
 apiVersion: v2
 name: meshery-meshsync
-description: Meshery Meshsync CR Chart
+description: Meshery MeshSync CR Chart
 type: application
 version: 0.1.0
 appVersion: stable-latest
