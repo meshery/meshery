@@ -105,8 +105,9 @@ This method doesn't provide a live reload server. You will have to build Meshery
 
 ## FAQ
 
-- How to change the target branch for a PR?
-	When opening a PR, at the top, we have to option to change the target branches as shown in the figure below. We can use it to create pull requests that can be merged into branches other than `master`
+1. How to change the target branch for a PR?
+
+When opening a PR, at the top, we have to option to change the target branches as shown in the figure below. We can use it to create pull requests that can be merged into branches other than `master`
 
 <img width="1431" alt="Screenshot 2021-09-25 at 12 26 31 AM" src="https://user-images.githubusercontent.com/75248557/134727998-5152a88d-0251-408c-97f3-c6ff0b8b389a.png">
 
