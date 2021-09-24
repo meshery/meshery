@@ -13,6 +13,7 @@ keywords:
   - meshery-nsm
   - meshery-traefik-mesh
   - meshery-cpx
+  - meshery-nginx-sm
   - meshery-operator
   - meshery-broker
   - meshery-meshsync
@@ -68,6 +69,9 @@ dependencies:
 - name: meshery-cpx
   version: 2.1.2
   condition: meshery-cpx.enabled
+- name: meshery-nginx-sm
+  version: 2.1.2
+  condition: meshery-nginx-sm.enabled
 - name: meshery-operator
   version: 2.1.2
   condition: meshery-operator.enabled
