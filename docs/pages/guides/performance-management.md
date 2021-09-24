@@ -7,167 +7,150 @@ type: Guides
 command: perf
 ---
 
-This guide is useful for learning manage your service mesh's performance with Meshery through its web-based user interface, [Meshery UI](#performance-management-through-meshery-ui), or through its [CLI](#performance-management-through-meshery-cli-(mesheryctl)) and a [GitHub Action](#performance-management-through-meshery-using-github-action). To learn more about `mesheryctl` and Service Mesh Performance Management commands, see [Service Mesh Performance Management]({{ site.baseurl }}/reference/mesheryctl/perf)
+This guide walks through running performance benchmarks using Meshery. Users can either use the Meshery UI, the CLI, mesheryctl or run performance tests in their CI/CD pipelines using the Meshery GitHub Action.
 
-## Setup Meshery and run a Performance Test on your Service Mesh
+## Installing Meshery
 
-Install and login to Meshery to start running SMI conformance tests. See [Installation]({{ site.baseurl }}/installation) documentation for detailed steps on how to install Meshery.
+Install and login to Meshery to start running performance benchmarks. See [Installation]({{ site.baseurl }}/installation) documentation for detailed steps on how to install Meshery.
 
 _Meshery dashboard_
 
 <a href="{{ site.baseurl }}/assets/img/smi/dashboard.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/smi/dashboard.png" /></a>
 
+If you are looking to run performance benchmarks on a service mesh, you can use Meshery's service mesh lifecycle management capabilities to deploy a service mesh and deploy your application on the mesh. 
+
+With Meshery's performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.
+
+To install a service mesh, see [this guide](https://docs.meshery.io/service-meshes).
+
+Meshery also comes with a set of [sample applications](https://docs.meshery.io/guides/sample-apps) that you can quickly deploy to test out the capabilities of your service mesh.
+
 Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/functionality/performance-management) to learn more about performance profiles, load generators, Kubernetes cluster, and service mesh metrics.
 
-_Performance dashboard_
+## Running Performance Benchmarks Through Meshery UI
 
-<a href="{{ site.baseurl }}/assets/img/performance-management/performance-dashboard.PNG"><img alt="Performance Dashboard" src="{{ site.baseurl }}/assets/img/performance-management/performance-dashboard.PNG" /></a>
+Meshery UI provides an easy-to-use interface in which users can create performance profiles to run repeated tests with similar configuration and can also even schedule performance tests to be run at particular times through the calendar.
 
-The dashboard allows you to run your performance tests. The performance dashboard also shows the different tests run over the lifetime of your account, sorted by time and day.
+On the navigation menu, click on performance.
 
-## Performance Management Through Meshery UI
+This will open the performance management dashboard as shown below. 
 
-<a href="{{ site.baseurl }}/assets/img/performance-management/performance-run-test.PNG"><img alt="Performance Test Options" src="{{ site.baseurl }}/assets/img/performance-management/performance-run-test.PNG" /></a>
+<a href="{{ site.baseurl }}/assets/img/performance-management/performance-management-dashboard.png"><img alt="Performance Management Dashboard" src="{{ site.baseurl }}/assets/img/performance-management/performance-management-dashboard.png" /></a>
 
-Now that we have our setup, we can run a performance test with our required constraints. We can modify multiple testing scenarios by altering the Service Mesh used, adjusting the Concurrent Requests taking place or the number of queries run or select a particular Load Generator. For the sake of simplicity, we can also personalize the name of the test for future reference. 
+_Performance Management Dashboard_
 
-Upon personalization, select **Run Test** to execute the current test or **Save Profile** to save the properties of the test and execute it at a convenient time. 
+To create a performance profile, click on "Manage Profiles" and then select "+ Add Performance Profile".
 
-_SMI Conformance Test Results_
+<a href="{{ site.baseurl }}/assets/img/performance-management/performance-profiles.png"><img alt="Performance Profiles" src="{{ site.baseurl }}/assets/img/performance-management/performance-profiles.png" /></a>
 
-<a href="{{ site.baseurl }}/assets/img/performance-management/perf-test-compare-option.PNG"><img alt="Performance Test Options" src="{{ site.baseurl }}/assets/img/performance-management/perf-test-compare-option.PNG" /></a>
+_Performance Profiles_
 
-Once we run the tests and get the desired results, we can compare these test results against one another by selecting tests. For the best experience, you should compare between two or more tests of similar configuration. Tests that are configured with a high degree of variance (e.g., one test ran for a duration of 5 minutes, while another test ran for a duration of 1 hour) will produce comparisons that are more difficult to extrapolate insights from.
+This will open up a popup window where you can fill out the test configuration for running your benchmarks.
 
-Clicking on the **Compare Selected** button takes you to the next step of visualizing the comparisons of the results.
+<a href="{{ site.baseurl }}/assets/img/performance-management/running-tests.png"><img alt="Performance Test Configuration" src="{{ site.baseurl }}/assets/img/performance-management/running-tests.png" /></a>
+
+_Configuring a Performance Test_
+
+You can now save the profile and run the test. The test will continue to run in the background even if you close the popup.
+
+<a href="{{ site.baseurl }}/assets/img/performance-management/running-tests-spinner.png"><img alt="Running a performance test" src="{{ site.baseurl }}/assets/img/performance-management/running-tests-spinner.png" /></a>
+
+Once the test is done, you would be able to see the results of the test below.
+
+<a href="{{ site.baseurl }}/assets/img/performance-management/result-chart.png"><img alt="Running a performance test" src="{{ site.baseurl }}/assets/img/performance-management/result-chart.png" /></a>
 
 _Performance Test Results_
 
-<a href="{{ site.baseurl }}/assets/img/performance-management/performance-test-comparison.PNG"><img alt="Performance Test Results" src="{{ site.baseurl }}/assets/img/performance-management/performance-test-comparison.PNG" /></a>
+You can then go back to your performance profile and get these results anytime.
 
-The results are depicted in the form of histograms showing the count and line graphs showing the cumulative percentage.
+You can also compare different test results in Meshery and draw insights. For example, you can run this test with your application running on different service meshes and check which performs better.
 
-Latency and throughput are the two most significantly examined signals.
+<a href="{{ site.baseurl }}/assets/img/performance-management/comparison-table.png"><img alt="Comparing Test Results" src="{{ site.baseurl }}/assets/img/performance-management/comparison-table.png" /></a>
 
-Meshery will use different algorithms to calculate results depending upon which load generator was used to run the test.
+_Selecting multiple test results_
 
-_Viewing the Results_
+<a href="{{ site.baseurl }}/assets/img/performance-management/comparison.png"><img alt="Comparing Test Results" src="{{ site.baseurl }}/assets/img/performance-management/comparison.png" /></a>
 
-<a href="{{ site.baseurl }}/assets/img/performance-management/chart.png"><img alt="Performance Test Results" src="{{ site.baseurl }}/assets/img/performance-management/chart.png" /></a>
+_Comparing multiple test results_
 
-## Performance Management Through Meshery CLI (mesheryctl)
+## Running Performance Benchmarks Through mesheryctl
 
-_Description_
+The `mesheryctl perf` subcommand provides the performance management features of Meshery in the CLI.
 
-<!-- Description of the command. Preferably a paragraph -->
-{% assign name = site.data.mesheryctlcommands.cmds[page.command] %}
-{{ name.description }}
+To run a performance test based on a performance profile, run:
 
-<!-- Basic usage of the command -->
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ name.usage }}
-  </div>
-</pre>
+```
+mesheryctl perf apply Istio Performance Test
+```
 
-_Examples_
+You can also use flags to configure your performance test. For example:
 
-{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
-{{ flag.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ flag.usage }}
-  </div>
-</pre>
-{% endfor %}
-<br/>
+```
+mesheryctl perf apply --profile istio-soak-test --concurrent-requests 1 --duration 15s --load-generator nighthawk --mesh istio --url http://localhost:2323
+```
 
-_Options & Flags_
+mesheryctl also supports test configurations written in SMP compatible format as shown below:
 
-{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
-{{ flag.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ flag.name }}
-  </div>
-</pre>
-{% endfor %}
-<br/>
+```
+smp_version: v0.0.1
+id:
+name: Istio Performance Test
+labels: {}
+clients:
+- internal: false
+  load_generator: fortio
+  protocol: 1
+  connections: 2
+  rps: 10
+  headers: {}
+  cookies: {}
+  body: ""
+  content_type: ""
+  endpoint_urls:
+  - http://localhost:2323/productpage
+duration: "30m"
+```
 
-_Options inherited from parent commands_
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  --help, -h # Shows help for the command
-  </div>
-</pre>
+And then you can pass this file to mesheryctl as:
 
-## Performance Management Through Meshery using GitHub Action 
+```
+mesheryctl perf apply -f perf-config.yaml
+```
 
-You can also use [Performance Management GitHub action](https://github.com/layer5io/meshery-smp-action) to run Performance Management tests in your CI/CD pipelines.
+## Running Performance Benchmarks in your Pipelines
 
-### Meshery SMP Action
+Meshery also has a [meshery-smp-action](https://github.com/layer5io/meshery-smp-action) which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.
 
-This repository is used for storing a GitHub action for performing SMP tests using Meshery
+The action can be configured as shown below:
 
-_Inputs_
+```
+name: Meshery SMP Action
+on:
+  push:
+    branches:
+      'perf'
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
-    # token to connect with the remote provider
-    provider_token:
-      description: "Provider token to use. NOTE: value of the 'token' key in auth.json"
-      required: true
+jobs:
+  job1:
+    name: Run Performance Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          ref: 'perf'
 
-    # platform to deploy meshery
-    platform:
-      description: "Platform to deploy meshery on. Possible values: docker, kubernetes"
-      default: docker
+      - name: Deploy k8s
+        uses: manusa/actions-setup-minikube@v2.4.1
+        with:
+          minikube version: 'v1.21.0'
+          kubernetes version: 'v1.20.7'
+          driver: docker
 
-    # SUPPLY EITHER "profile_filename" or profile_name
-
-    # name of the file storing the performance profile (keep in .github)
-    profile_filename:
-      description: "Name of the file containing SMP profile"
-
-    # name of the prformance profile to use
-    profile_name:
-      description: "Name of the performance profile" 
-  </div></div>
-  </pre>
-
-
-_Sample Configuration_
-
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
-    name: Testing SMP action
-    on:
-      push:
-        branches:
-          'perf'
-
-    jobs:
-      job1:
-        name: Run Performance Test
-        runs-on: ubuntu-latest
-        steps:
-          - name: checkout
-            uses: actions/checkout@v2
-            with:
-              ref: 'perf'
-
-          - name: Deploy k8s
-            uses: manusa/actions-setup-minikube@v2.4.1
-            with:
-              minikube version: 'v1.21.0'
-              kubernetes version: 'v1.20.7'
-              driver: docker
-
-          - name: Performance test
-            uses: layer5io/meshery-smp-action@master
-            with:
-              provider_token: ${{ secrets.PROVIDER_TOKEN }}
-              platform: docker
-              profile_name: demo
-  </div></div>
-  </pre>
+      - name: Meshery Performance Test
+        uses: layer5io/meshery-smp-action@master
+        with:
+          provider_token: ${{ secrets.MESHERY_TOKEN }}
+          platform: docker
+          profile_name: Istio performance test
+```
