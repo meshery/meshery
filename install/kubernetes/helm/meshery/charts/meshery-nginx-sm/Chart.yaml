@@ -1,6 +1,6 @@
 apiVersion: v2
 name: meshery-nginx-sm
-description: Meshery Adapter for Network Service Mesh.
+description: Meshery Adapter for Nginx Service Mesh.
 source:
   - https://github.com/layer5io/meshery-nginx-sm
 
@@ -27,7 +27,7 @@ appVersion: stable-latest
 maintainers:
   - name: Layer5 Authors
     email: community@layer5.io
-  - name: aisuko
-    email: urakiny@gmail.com
+  - name: darrenlau
+    email: panyuenlau@gmail.com
   - name: leecalcote
     email: lee.calcote@layer5.io
