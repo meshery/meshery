@@ -171,9 +171,6 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 <hr />
 <p style="clear:both;">&nbsp;</p>
 
-## <a name="Overview">Overview</a>
-
-<p style="clear:both;">
 <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img alt="Layer5 Service Mesh Management" src=".github/assets/images/meshery/meshery-logo-tag-dark-text-side.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="left"/></a>
 
 <h3 style="margin:auto;"><br /><br />
