@@ -19,7 +19,7 @@ All set to contribute? Grab an open issue with the [help-wanted label](../../lab
   - <a href="#contributing-ui">Meshery UI</a>
     Relevant coding style guidelines are the Go Code Review Comments and the Formatting and style section of Peter Bourgon's Go: Best Practices for Production Environments.
   - <a href="#contributing-mesheryctl">Mesheryctl Documentation</a>
-    - <a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Command Reference and Tracker</a> 
+    - <a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Command Reference and Tracker</a>
 
 # <a name="contributing">General Contribution Flow</a>
 
@@ -163,6 +163,7 @@ Meshery uses adapters to provision and interact with different service meshes. F
 _Tip:_ The [Meshery adapter for Istio](https://github.com/meshery/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
 
 #### <a name="meshery-istio">Running Meshery Adapter (Meshery-Istio)</a>
+
 **Meshery-Istio** is a pre-written example of Meshery Adapter written in Go. Follow these instuctions to run meshery-istio to avoid errors related to Meshery Adapters
 
 1. Fork [Meshery-Istio](https://github.com/meshery/meshery-istio)
@@ -172,7 +173,7 @@ _Tip:_ The [Meshery adapter for Istio](https://github.com/meshery/meshery-istio)
    make run
    ```
 4. Try connecting to port 10000 as Meshery Adapter URL
-   
+
 ## <a name="contributing-ui">UI Contribution Flow</a>
 
 Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React, Billboard.js and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
@@ -244,11 +245,12 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 ## <a name="contributing-mesheryctl">Mesheryctl Documentation</a>
 
 ### mesheryctl
+
 `mesheryctl` is the CLI client for Meshery.
 
 ### Contributing
 
-Please refer the [Meshery Contributing Guidelines](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md) for setting up your development environment.
+Please refer the [Meshery Contributing Guidelines](https://docs.meshery.io/project/contributing-cli) for setting up your development environment.
 
 Refer the [mesheryctl- Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
 
