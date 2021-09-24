@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/logs
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system
 subcommand: logs
 # image: /assets/img/platforms/brew.png
