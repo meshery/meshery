@@ -25,17 +25,29 @@
 
 [Meshery](https://meshery.io) is the multi-service mesh management plane offering lifecycle, configuration, and performance management of service meshes and their workloads.
 
+<p align="center">
 MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
+</p>
+<p align="center">
+<img src="docs/assets/img/readme/cncf-horizontal-color.svg" width="30%" align="center" />
+</p>
 
-<img src="docs/assets/img/readme/cncf-horizontal-color.svg" width="30%" />
 
-<h2><a name="running"></a>Run Meshery</h2>
+<h2><a name="running"></a>Get Started with Meshery</h2>
+<p style="clear:both;">
+<img alt="Layer5 Service Mesh Management" src="docs/assets/img/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/>
+<h3>Using `mesheryctl`</h3>
 <p>Meshery runs as a set of containers inside or outside of your Kubernetes cluster.</p>
+<code><pre>curl -L https://git.io/meshery | PLATFORM=kubernetes bash -</pre></code>
+<p>See the <a href="https://docs.meshery.io/installation/quick-start">quick start</a> guide.</p>
+<p style="clear:both;">&nbsp;</p>
 
+<h3>Supported Platforms</h3>
+<p>Meshery supports 10+ platforms.
 <details>
-  <summary><strong>See all Supported Platforms</strong></summary>
+  <summary><strong>See all supported platforms</strong></summary>
 
-See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
+  See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
 
 | Platform                                                                                                                                                                                                                        | Supported?  |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------: |
@@ -61,12 +73,14 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 [Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
 
  </details>
+
+<p style="clear:both;">&nbsp;</p>
  
-<h2><a name="service-meshes"></a>Supported Service Meshes</h2>
+<h3><a name="service-meshes"></a>Supported Service Meshes</h3>
 <p>Meshery supports 10 diffferent service meshes.</p>
 
 <details>
-  <summary><strong>See all Support Service Meshes</strong></summary>
+  <summary><strong>See all Supported Service Meshes</strong></summary>
 <div class="container flex">
   <div class="text editable">
     <p>Service mesh adapters provision, configure, and manage their respective service meshes.
@@ -153,13 +167,19 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
   </p>
 </div>
  </details>
+ <p style="clear:both;">&nbsp;</p>
+<hr />
+<p style="clear:both;">&nbsp;</p>
 
-## Overview
+## <a name="Overview">Overview</a>
 
-<a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img src=".github/assets/images/meshery/meshery-logo-tag-dark-text-side.png" width="50%" /></a>
-<p>
-  <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><i>Project Overview Presentation</i></a>
-</p>
+<p style="clear:both;">
+<a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img alt="Layer5 Service Mesh Management" src=".github/assets/images/meshery/meshery-logo-tag-dark-text-side.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="left"/></a>
+
+<h3 style="margin:auto;"><br /><br />
+  <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
+</h3>
+<p style="clear:both;">&nbsp;</p>
 
 ## <a name="functionality">Functionality</a>
 
