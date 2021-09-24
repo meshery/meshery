@@ -1,7 +1,7 @@
 import React from "react";
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import { Button } from "@material-ui/core";
+import { Button, TextField, Typography } from "@material-ui/core";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
@@ -152,7 +152,7 @@ const CustomInputField = (props) => {
   const prettifiedName = camelCaseToCapitalize(formatString(name)) || 'Input'
   return (
     <div key={props.id}>
-      <strong>{prettifiedName}</strong>
+      <Typography variant="body1" style={{fontWeight: "bold"}}>{prettifiedName}
       {props.schema?.description && (
         <Tooltip title={props.schema?.description}>
           <IconButton component="span" size="small">
@@ -160,8 +160,8 @@ const CustomInputField = (props) => {
           </IconButton>
         </Tooltip>
       )}
-      <br/>
-      <OutlinedInput style={{ margin : '10px 0 ' }} autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`}/>
+</Typography>
+      <TextField variant="outlined" size="small" style={{ margin : '10px 0 ' }} autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`}/>
     </div>
   )
 }
