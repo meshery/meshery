@@ -21,9 +21,10 @@ type Template struct {
 }
 
 type TemplateSpec struct {
-	ServiceAccount string       `yaml:"serviceAccountName,omitempty"`
-	Containers     []Containers `yaml:"containers,omitempty"`
-	RestartPolicy  string       `yaml:"restartPolicy,omitempty"`
+	ServiceAccount     string       `yaml:"serviceAccount,omitempty"`
+	ServiceAccountName string       `yaml:"serviceAccountName,omitempty"`
+	Containers         []Containers `yaml:"containers,omitempty"`
+	RestartPolicy      string       `yaml:"restartPolicy,omitempty"`
 }
 
 type Containers struct {
