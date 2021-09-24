@@ -2,7 +2,7 @@ apiVersion: v2
 name: meshery
 description: Meshery chart for deploying Meshery and Meshery's adapters.
 icon: https://meshery.io/images/logos/meshery-logo.png
-kubeVersion: 
+kubeVersion:
 keywords:
   - meshery
   - meshery-istio
@@ -14,13 +14,15 @@ keywords:
   - meshery-traefik-mesh
   - meshery-cpx
   - meshery-operator
-source: 
+  - meshery-broker
+  - meshery-meshsync
+source:
   - https://github.com/layer5io/meshery
 
 engine: gotpl
 
-deprecated: false 
- 
+deprecated: false
+
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -69,6 +71,12 @@ dependencies:
 - name: meshery-operator
   version: 2.1.2
   condition: meshery-operator.enabled
+- name: meshery-broker
+  version: 0.1.0
+  condition: meshery-broker.enabled
+- name: meshery-meshsync
+  version: 0.1.0
+  condition: meshery-meshsync.enabled
 
 maintainers:
   - name: Layer5 Authors
