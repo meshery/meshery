@@ -6,7 +6,7 @@ import React from "react";
 import theme from "../../styles/theme";
 import Header from "../Header/Header";
 import Navbar from "../Navbar/Navbar";
-import Footer from "../Footer/Footer.js";
+import Footer from "../Footer/Footer";
 import { NavbarContainer } from "../Navbar/NavbarContainer";
 
 export const Layout = ({ children }) => (

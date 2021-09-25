@@ -12,7 +12,6 @@ export const getStyles = (theme) => ({
     verticalAlign: "middle",
   },
   footerIcon: {
-    paddingTop: "2rem",
     display: "inline",
     verticalAlign: "top",
   },
