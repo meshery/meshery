@@ -36,6 +36,7 @@ var createTokenCmd = &cobra.Command{
 	Example: `
 	mesheryctl system token create <token-name> -f <token-path>
 	mesheryctl system token create <token-name> (default path is auth.json)
+	mesheryctl system token create <token-name> -f <token-path> --set
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
