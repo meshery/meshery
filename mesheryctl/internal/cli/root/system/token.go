@@ -52,6 +52,15 @@ var createTokenCmd = &cobra.Command{
 			return errors.Wrap(err, "Could not create specified token to config")
 		}
 		log.Printf("Token %s created.", tokenName)
+		if set {
+			if ctx == "" {
+				ctx = viper.GetString("current-context")
+			}
+			if err = config.SetTokenToConfig(tokenName, utils.DefaultConfigPath, ctx); err != nil {
+				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
+			}
+			log.Printf("Token: %s set on context %s.", tokenName, ctx)
+		}
 		return nil
 	},
 }
@@ -198,6 +207,7 @@ var viewTokenCmd = &cobra.Command{
 func init() {
 	tokenCmd.AddCommand(createTokenCmd, deleteTokenCmd, setTokenCmd, listTokenCmd, viewTokenCmd)
 	createTokenCmd.Flags().StringVarP(&tokenPath, "filepath", "f", "", "Add the token location")
+	createTokenCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current token")
 	setTokenCmd.Flags().StringVar(&ctx, "context", "", "Pass the context")
 	viewTokenCmd.Flags().BoolVar(&viewAllTokens, "all", false, "set the flag to view all the tokens.")
 }
