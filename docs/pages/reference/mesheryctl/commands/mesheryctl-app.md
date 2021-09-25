@@ -1,41 +1,44 @@
 ---
 layout: default
-title: mesheryctl perf apply
-permalink: reference/mesheryctl/perf/apply
+title: mesheryctl app
+permalink: reference/mesheryctl/apps
 type: reference
 display-title: "false"
 language: en
-command: perf
-subcommand: apply
+command: app
 # image: /assets/img/platforms/brew.png
 ---
 
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl perf apply
+
+# mesheryctl app
+
+<!-- Description of the command. Preferably a paragraph -->
 
 ## Description
 
-{% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command] %}
 {{ name.description }}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl perf apply [flags]
+  mesheryctl app [flags] 
   </div>
 </pre>
 
 ## Examples
 
-{{ name.description }}
+{% for subcommand_hash in name.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ name.usage }}
+  {{ subcommand.usage }}
   </div>
 </pre>
-
+{% endfor %}
 {% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
@@ -46,15 +49,23 @@ subcommand: apply
 {% endfor %}
 <br/>
 
-<!-- Options/Flags available in this command -->
-## Options
+<!-- Options/Flags available in this command --> 
+## Options & Flags
 
 {% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {{ flag.name }}
+  {{ flag.name }}
   </div>
 </pre>
 {% endfor %}
 <br/>
+
+## Options inherited from parent commands
+
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  --help, -h # Shows help for the command
+  </div>
+</pre>
