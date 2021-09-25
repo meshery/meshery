@@ -29,10 +29,10 @@ var (
 mesheryctl mesh deploy
 
 // Deploy Linkerd mesh on a specific namespace
-mesheryctl mesh deploy --adapter linkerd --namespace linkerd-ns
+mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
 
 // Deploy Linkerd mesh and wait for it to be deployed
-mesheryctl mesh deploy --adapter linkerd --watch`,
+mesheryctl mesh deploy --adapter meshery-linkerd --watch`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			log.Infof("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
