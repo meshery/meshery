@@ -354,7 +354,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 		}
 	} else { // if not error we check if we are supposed to print logs
 		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Info("✓ is running the minimum kubectl version")
+			log.Info("✓ running the minimum kubectl version")
 		}
 	}
 
