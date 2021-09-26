@@ -80,7 +80,6 @@ func persistData(msg broker.Message,
 		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
 			// operatorSyncChannel <- false
 			broadcaster.Submit(broadcast.BroadcastMessage{
-				Id:     key,
 				Source: broadcast.OperatorSyncChannel,
 				Data:   false,
 				Type:   "health",
