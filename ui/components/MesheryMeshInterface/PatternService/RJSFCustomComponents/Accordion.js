@@ -21,43 +21,43 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Accordion = withStyles({
-  root: {
-    border: '1px solid rgba(0, 0, 0, .125)',
-    boxShadow: 'none',
-    '&:not(:last-child)': {
-      borderBottom: 0,
+  root : {
+    border : '1px solid rgba(0, 0, 0, .125)',
+    boxShadow : 'none',
+    '&:not(:last-child)' : {
+      borderBottom : 0,
     },
-    '&:before': {
-      display: 'none',
+    '&:before' : {
+      display : 'none',
     },
-    '&$expanded': {
-      margin: 'auto',
+    '&$expanded' : {
+      margin : 'auto',
     },
   },
-  expanded: {},
+  expanded : {},
 })(MuiAccordion);
 
 const AccordionSummary = withStyles({
-  root: {
-    backgroundColor: 'rgba(0, 0, 0, .03)',
-    borderBottom: '1px solid rgba(0, 0, 0, .125)',
-    marginBottom: -1,
-    maxHeight: "1.5rem",
-    '&$expanded': {
-      minHeight: 56,
+  root : {
+    backgroundColor : 'rgba(0, 0, 0, .03)',
+    borderBottom : '1px solid rgba(0, 0, 0, .125)',
+    marginBottom : -1,
+    maxHeight : "1.5rem",
+    '&$expanded' : {
+      minHeight : 56,
     },
   },
-  content: {
-    '&$expanded': {
-      margin: '12px 0',
+  content : {
+    '&$expanded' : {
+      margin : '12px 0',
     },
   },
-  expanded: {},
+  expanded : {},
 })(MuiAccordionSummary);
 
 const AccordionDetails = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
+  root : {
+    padding : theme.spacing(2),
   },
 }))(MuiAccordionDetails);
 
@@ -71,7 +71,7 @@ export default function SimpleAccordion(props) {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
-          style={{backgroundColor: "F7F7F7"}}
+          style={{ backgroundColor : "F7F7F7" }}
         >
 
           <Typography className={classes.heading}>{props.heading}</Typography>
@@ -90,7 +90,7 @@ export default function SimpleAccordion(props) {
           )}
         </AccordionSummary>
         <AccordionDetails >{props.children}</AccordionDetails>
-          
+
       </Accordion>
     </div>
   );
