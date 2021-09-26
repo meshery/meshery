@@ -85,7 +85,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
   function fetchTestProfiles(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
-
+    console.log(pageSize)
     const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
@@ -152,7 +152,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     return function (error) {
       updateProgress({ showProgress : false });
 
-      enqueueSnackbar(`${msg}: ${error}`, {
+      enqueueSnackbar(`${msg} : ${error}`, {
         variant : "error",
         action : function Action(key) {
           return (
@@ -169,9 +169,15 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
   return (
     <>
       <div style={{ padding : "0.5rem" }}>
-        <div style={{ margin : "0 0 2rem auto", display : "flex", justifyContent : "space-between", paddingLeft : "1rem" }}>
-
-          {testProfiles.length ? (
+        <div
+          style={{
+            margin : "2rem auto",
+            display : "flex",
+            justifyContent : "space-between",
+            paddingLeft : "1rem"
+          }}
+        >
+          {testProfiles.length > 0 && (
             <div style={{ width : "fit-content", alignSelf : "flex-start" }}>
               <Button
                 aria-label="Add Performance Profile"
@@ -184,11 +190,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
                 <AddIcon />
                 Add Performance Profile
               </Button>
-
             </div>
-
-          ) : (
-            ''
           )}
           <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingLeft : "1rem" }}>
             <ViewSwitch view={viewType} changeView={setViewType} />
@@ -222,7 +224,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               fetchTestProfiles={fetchTestProfiles}
             />
           )}
-        {!testProfiles.length ? (
+        {testProfiles.length == 0 && (
           <Paper style={{ padding : "0.5rem" }}>
             <div
               style={{
@@ -249,10 +251,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               </Button>
             </div>
           </Paper>
-        ) : (
-          ''
         )}
-
         <GenericModal
           open={!!profileForModal}
           Content={
