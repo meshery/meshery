@@ -136,6 +136,14 @@ func start() error {
 		}
 	}
 
+	// Reset Meshery config file to default settings
+	if utils.ResetFlag {
+		err := resetMesheryConfig()
+		if err != nil {
+			return ErrResetMeshconfig(err)
+		}
+	}
+
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
@@ -227,14 +235,6 @@ func start() error {
 			err := utils.UpdateMesheryContainers()
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
-			}
-		}
-
-		// Reset Meshery config file to default settings
-		if utils.ResetFlag {
-			err := resetMesheryConfig()
-			if err != nil {
-				return ErrResetMeshconfig(err)
 			}
 		}
 

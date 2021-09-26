@@ -43,6 +43,7 @@ func loop(reader *bufio.Reader, events chan Event) {
 			fmt.Fprintf(os.Stderr, "error during resp.Body read:%s\n", err)
 
 			close(events)
+			return
 		}
 
 		switch {
@@ -88,6 +89,7 @@ func loop(reader *bufio.Reader, events chan Event) {
 
 		default:
 			close(events)
+			return
 		}
 	}
 }

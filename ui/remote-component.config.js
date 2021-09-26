@@ -12,6 +12,8 @@ module.exports = { resolve : {
   "@material-ui/core/SvgIcon" : require("@material-ui/core/SvgIcon"),
   "@material-ui/core/Typography" : require("@material-ui/core/Typography"),
   "@material-ui/core/Drawer" : require("@material-ui/core/Drawer"),
+  "@material-ui/icons/PlayArrow" : require('@material-ui/icons/PlayArrow'),
+  "@material-ui/icons/Pause" : require('@material-ui/icons/Pause'),
   "@material-ui/icons/Cached" : require("@material-ui/icons/Cached"),
   "@material-ui/icons/ChevronLeft" : require("@material-ui/icons/ChevronLeft"),
   "@material-ui/icons/Assessment" : require("@material-ui/icons/Assessment"),
@@ -99,6 +101,7 @@ module.exports = { resolve : {
   "@material-ui/core/Popover" : require("@material-ui/core/Popover"),
   "@material-ui/core/Grow" : require("@material-ui/core/Grow"),
   "@material-ui/icons/Clear" : require("@material-ui/icons/Clear"),
+  "@material-ui/icons/Create" : require("@material-ui/icons/Create"),
   "@material-ui/icons/CloudDownload" : require("@material-ui/icons/CloudDownload"),
   "@material-ui/icons/Print" : require("@material-ui/icons/Print"),
   "@material-ui/icons/ViewColumn" : require("@material-ui/icons/ViewColumn"),
@@ -108,4 +111,5 @@ module.exports = { resolve : {
   "react-dom/server" : require("react-dom/server"),
   "relay-runtime" : require("relay-runtime"),
   "@material-ui/icons/LibraryAdd" : require("@material-ui/icons/LibraryAdd"),
+  "@material-ui/icons/DoneAll" : require("@material-ui/icons/DoneAll"),
 }, };

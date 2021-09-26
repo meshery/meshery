@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/status
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system
 subcommand: status
 # image: /assets/img/platforms/brew.png

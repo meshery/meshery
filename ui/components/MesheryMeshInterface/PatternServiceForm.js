@@ -6,7 +6,9 @@ import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import Tooltip from '@material-ui/core/Tooltip';
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
+import { pSBCr } from "../../utils/lightenOrDarkenColor"
 import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
+import { CamelCaseToSentanceCase } from "../../utils/camelCaseToSentanceCase.js";
 
 function TabPanel(props) {
   const {
@@ -109,7 +111,7 @@ function createPatternFromConfig(config, namespace, partialClean = false) {
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip, appBarColor }) {
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {});
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {});
@@ -149,32 +151,33 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
     );
   }
 
+  console.log(schemaSet)
   return (
     <div>
       {!renderAsTooltip ? (<Typography variant="h6" gutterBottom>
         {schemaSet.workload.title}
       </Typography>) : (
-        <AppBar>
-          <Toolbar variant="dense" style={{ padding : "0 10px" }}>
-            <p style={{ margin : "auto auto auto 10px", fontSize : "18px" }}>{schemaSet.workload.title}</p>
+        <AppBar style={{ boxShadow : `0px 2px 4px -1px ${pSBCr(appBarColor, -30)}` }}>
+          <Toolbar variant="dense" style={{ padding : "0 0px", background : `linear-gradient(115deg, ${pSBCr( appBarColor, -20)} 0%, ${appBarColor} 100%)`, height : "0.7rem !important" }}>
+            <p style={{ margin : "auto auto auto 10px", fontSize : "16px" }}>{schemaSet.workload.title || CamelCaseToSentanceCase(schemaSet.workload["object-type"])}</p>
             {schemaSet?.workload?.description && (
-              <label htmlFor="help-button">
-                <Tooltip title={schemaSet?.workload?.description}>
-                  <IconButton component="span">
-                    <HelpOutlineIcon style={{ color : '#fff' }} />
+              <label htmlFor="help-button" >
+                <Tooltip title={schemaSet?.workload?.description} >
+                  <IconButton component="span" style={{ paddingRight : "0.1rem" }} >
+                    <HelpOutlineIcon style={{ color : '#fff' }} fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </label>
             )}
-            <IconButton  onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
-              <Delete style={{ color : "#ffffff" }} />
+            <IconButton style={{ paddingLeft : '0.1rem' }} onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
+              <Delete style={{ color : "#ffffff" }} fontSize="small"/>
             </IconButton>
           </Toolbar>
         </AppBar>
       )}
-      <div style={{ maxHeight : '300px', marginTop : '48px', scrollbarWidth : 'thin', overflow : 'auto' }}>
-        {!renderAsTooltip && (<AppBar position="static">
-          <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service">
+      <div style={{ maxHeight : '300px', marginTop : "3rem", scrollbarWidth : 'thin' }}>
+        {!renderAsTooltip && (<AppBar position="static" >
+          <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service" >
             <Tab label="Settings" {...a11yProps(0)} />
             {renderTraits()
               ? <Tab label="Traits" {...a11yProps(1)} />
@@ -188,7 +191,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               <Tab label="Traits" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(1)} />
             </Tabs>
           </AppBar>)}
-        <TabPanel value={tab} index={0}>
+        <TabPanel value={tab} index={0} style={{ marginTop : "1.1rem" }}>
           <PatternService
             type="workload"
             formData={settings}
@@ -200,7 +203,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
           />
         </TabPanel>
         {renderTraits() ? (
-          <TabPanel value={tab} index={1}>
+          <TabPanel value={tab} index={1} style={{ marginTop : "1.1rem" }}>
             {schemaSet.traits?.map((trait) => (
               <PatternService
                 formData={traits[getPatternAttributeName(trait)]}
