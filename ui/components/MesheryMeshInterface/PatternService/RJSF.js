@@ -5,7 +5,6 @@ import { Button, TextField, Typography } from "@material-ui/core";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
-import OutlinedInput from '@material-ui/core/OutlinedInput';
 import { Tooltip, IconButton } from "@material-ui/core";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import CustomObjectFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate"
