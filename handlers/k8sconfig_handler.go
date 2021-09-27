@@ -120,8 +120,8 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 
 func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	prefObj.K8SConfig = nil
-	ctxId := "0" //To be replaced with actual context ID after multi context support
-	go core.DeleteK8sWorkloads(ctxId)
+	ctxID := "0" //To be replaced with actual context ID after multi context support
+	go core.DeleteK8sWorkloads(ctxID)
 	err := provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
 		logrus.Error(ErrRecordPreferences(err))
@@ -233,8 +233,8 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 			}
 		}
 		prefObj.K8SConfig = kc
-		ctxId := "0" // To be replaced after multi-context support
-		go registerK8sComponents(h.log, prefObj.K8SConfig.Config, ctxId)
+		ctxID := "0" // To be replaced after multi-context support
+		go registerK8sComponents(h.log, prefObj.K8SConfig.Config, ctxID)
 		err = provider.RecordPreferences(req, user.UserID, prefObj)
 		if err != nil {
 			logrus.Error(ErrRecordPreferences(err))
@@ -338,7 +338,11 @@ func registerK8sComponents(l logger.Handler, config []byte, ctx string) {
 		ord.OAMRefSchema = man.Schemas[i]
 
 		var definition v1alpha1.WorkloadDefinition
-		json.Unmarshal([]byte(def), &definition)
+		err := json.Unmarshal([]byte(def), &definition)
+		if err != nil {
+			l.Error(err)
+			return
+		}
 		ord.OAMDefinition = definition
 		content, err := json.Marshal(ord)
 		if err != nil {

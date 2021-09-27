@@ -248,7 +248,7 @@ func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
 	if err != nil {
 		return nil, err
 	}
-	apiResources, err := getApiRes(cli)
+	apiResources, err := getAPIRes(cli)
 	if err != nil {
 		return nil, err
 	}
@@ -281,7 +281,7 @@ func DeleteK8sWorkloads(ctx string) {
 		if !ok {
 			continue
 		}
-		var workload WorkloadCapability = value
+		var workload = value
 		//delete only the ones with given context in metadata
 		if workload.OAMDefinition.Spec.Metadata["@type"] == "pattern.meshery.io/k8s" && workload.Metadata["io.meshery.ctxid"] == ctx {
 			key := fmt.Sprintf(
@@ -293,10 +293,9 @@ func DeleteK8sWorkloads(ctx string) {
 			store.Delete(key, value)
 		}
 	}
-
 }
 
-func getApiRes(cli *kubernetes.Client) ([]string, error) {
+func getAPIRes(cli *kubernetes.Client) ([]string, error) {
 	var apiRes []string
 	lists, err := cli.KubeClient.DiscoveryClient.ServerPreferredResources()
 	if err != nil {
