@@ -30,6 +30,7 @@ require (
 	github.com/google/go-github v17.0.0+incompatible // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/gorilla/mux v1.8.0
+	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.10.0
 	github.com/grafana-tools/sdk v0.0.0-20210630212345-db1192e93802
 	github.com/jarcoal/httpmock v1.0.8
