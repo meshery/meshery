@@ -12,72 +12,58 @@ image: /assets/img/platforms/eks.png
 
 {% include installation_prerequisites.html %}
 
-## To set up and run Meshery on EKS:
+## Set up and run Meshery on EKS:
 
-- Install Meshery in Docker and connect to your EKS cluster
-  - [Meshery CLI (mesheryctl)](#connect-meshery-to-elastic-kubernetes-service-cluster)
-  - [eks CLI (eksctl)](https://eksctl.io/introduction/#installation)
-  - [AWS CLI (aws)](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
-- [Install Meshery on your EKS cluster](#install-meshery-into-your-eks-cluster)
-- [Access Meshery's UI](#port-forward-to-the-meshery-ui)
+The following guide will help you in installing Meshery and making it work with EKS clusters.<br/>
+In order to install Meshery, `mesheryctl` needs to access your EKS cluster. For this, you must have:
+- Any one of the [aws CLIs](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html), for managing EKS, installed and configured to use your resources.
+- A [valid kubeconfig](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html) for your cluster.
 
-### Connect Meshery to Elastic Kubernetes Service Cluster
+Once you fulfil the above two requirements, you should be able to install Meshery:
+- [Install Meshery into your EKS cluster](#install-meshery-into-your-eks-cluster)
+- [Install Meshery in Docker and connect it to your EKS cluster](#install-meshery-in-docker-and-connect-it-to-your-eks-cluster)
 
-**The following set of instructions are for deploying Meshery in Docker and connecting it to the EKS cluster in your resource group.**
-
-You can configure Meshery to connect to your EKS cluster by executing:
-
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- mesheryctl system config eks
- </div></div>
- </pre>
-
-#### Manual Steps
-
-Alternatively, you may execute the following steps to manually configure Meshery to connect to your EKS cluster.
-
-- Install [AWS CLI(aws)](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), and login to your AWS account.
-- After successfull login, you have to select the subscription with which your EKS is associated with by configuring your AWS CLI to your AWS account. Refer [this link](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) for more
-
-- Get/Update the kubeconfig from your EKS cluster by connecting with AWS CLI
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
-aws eks --region region update-kubeconfig --name cluster_name
-</div></div>
-</pre>
-
-- Set your cluster context and check your cluster-info
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
-kubectl set-context EKS_SERVICE_NAME
-kubectl cluster-info
-</div></div>
-</pre>
+___Note: It is advisable to [Install Meshery into your EKS clusters](#install-meshery-into-your-eks-cluster)___
 
 ### Install Meshery into your EKS cluster
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- $ kubectl create ns meshery
- $ helm repo add meshery https://meshery.io/charts/
- $ helm install meshery --namespace meshery
- </div></div>
- </pre>
- - Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- $ helm install meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host meshery/meshery
- </div></div>
- </pre>
+Execute the following to install meshery
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+$ mesheryctl system start -p kubernetes
+</div></div>
+</pre>
+<br/>
 
-### Port forward to the Meshery UI
+Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
+</div></div>
+</pre>
+<br/>
+Meshery should now be running in your EKS cluster and Meshery UI should be accessible at the `EXTERNAL IP` of `meshery` service.
+<br/>
+<br/>
+Also see: [Install Meshery into Kubernetes](https://docs.meshery.io/installation/platforms/kubernetes)
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- export POD_NAME=$(kubectl get pods --namespace meshery -l "app.kubernetes.io/name=meshery,app.kubernetes.io/instance=meshery" -o jsonpath="{.items[0].metadata.name}")
- kubectl --namespace meshery port-forward $POD_NAME 9081:9081
- </div></div>
- </pre>
+### Install Meshery in Docker and connect it to your EKS cluster
 
-Meshery should now be running in your EKS cluster and the Meshery UI should be accessible at the specified endpoint you've exposed to. Navigate to the `meshery` service endpoint to log into Meshery.
+___Note: Out-of-cluster support for EKS is still beta and on [roadmap](https://github.com/meshery/meshery/blob/master/ROADMAP.md).___
+
+Install Meshery in Docker
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+$ mesheryctl system start -p docker
+</div></div>
+</pre>
+<br/>
+
+Configure Meshery to connect to your cluster by executing:
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+$ mesheryctl system config eks
+</div></div>
+</pre>
+<br/>
+Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081).
