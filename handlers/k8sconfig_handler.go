@@ -327,6 +327,10 @@ func registerK8sComponents(l logger.Handler, config []byte, ctx string) {
 		l.Error(err)
 		return
 	}
+	if man == nil {
+		l.Error(errors.New("Could not get k8s components"))
+		return
+	}
 	for i, def := range man.Definitions {
 		var ord core.WorkloadCapability
 		ord.Metadata = make(map[string]string)
