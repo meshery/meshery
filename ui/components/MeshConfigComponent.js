@@ -505,7 +505,7 @@ handleNATSClick = () => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
     this.props.enqueueSnackbar(msg, {
-      variant : "error",
+      variant : "success",
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
