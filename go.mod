@@ -30,14 +30,13 @@ require (
 	github.com/google/go-github v17.0.0+incompatible // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/gorilla/mux v1.8.0
-	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.10.0
 	github.com/grafana-tools/sdk v0.0.0-20210630212345-db1192e93802
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.2.20
-	github.com/layer5io/meshkit v0.2.25
+	github.com/layer5io/meshkit v0.2.28
 	github.com/layer5io/meshsync v0.1.24
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.3
