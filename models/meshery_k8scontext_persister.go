@@ -65,7 +65,7 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (K
 	if mkc.ID == "" {
 		id, err := K8sContextGenerateID(mkc)
 		if err != nil {
-
+			return mkc, ErrContextID
 		}
 
 		mkc.ID = id

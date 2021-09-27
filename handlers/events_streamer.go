@@ -89,7 +89,6 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 STOP:
 	for {
-
 		select {
 		case <-notify.Done():
 			log.Debugf("received signal to close connection and channels")
@@ -155,7 +154,6 @@ STOP:
 				}
 				localMeshAdaptersLock.Unlock()
 			}
-
 		}
 		time.Sleep(5 * time.Second)
 	}

@@ -39,7 +39,7 @@ type K8sContext struct {
 }
 
 type InternalKubeConfig struct {
-	ApiVersion     string                   `json:"apiVersion,omitempty" yaml:"apiVersion,omitempty"`
+	APIVersion     string                   `json:"apiVersion,omitempty" yaml:"apiVersion,omitempty"`
 	Kind           string                   `json:"kind,omitempty" yaml:"kind,omitempty"`
 	Clusters       []map[string]interface{} `json:"clusters,omitempty" yaml:"clusters,omitempty"`
 	Contexts       []map[string]interface{} `json:"contexts,omitempty" yaml:"contexts,omitempty"`
