@@ -10,7 +10,6 @@ import (
 
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"k8s.io/client-go/rest"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/helpers"
@@ -246,33 +245,9 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 		data, err := utils.ReadFileSource(fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config")))
 		if err != nil {
 			// Could be an in-cluster deployment
-			cfg, err := rest.InClusterConfig()
-			if err == rest.ErrNotInCluster {
-				return nil, err // TODO: Replace with meshkit error
-			}
-
 			ctxName := "in-cluster"
 
-			cc, err := models.NewK8sContextWithServerID(
-				ctxName,
-				map[string]interface{}{
-					"cluster": map[string]interface{}{
-						"certificate-authority-data": cfg.CAData,
-						"server":                     cfg.Host,
-					},
-					"name": ctxName,
-				},
-				map[string]interface{}{
-					"user": map[string]interface{}{
-						"client-certificate-data": cfg.CertData,
-						"client-key-data":         cfg.KeyData,
-					},
-					"name": ctxName,
-				},
-				cfg.Host,
-				true,
-				mid,
-			)
+			cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid)
 			if err != nil {
 				logrus.Warn("failed to generate in cluster context: ", err)
 				return nil, err

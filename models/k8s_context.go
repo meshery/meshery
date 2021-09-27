@@ -3,8 +3,13 @@ package models
 import (
 	"context"
 	"crypto/md5"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net"
+	"os"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -155,6 +160,49 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) []K8sCo
 	return kcs
 }
 
+func NewK8sContextFromInClusterConfig(contextName string, instanceID *uuid.UUID) (*K8sContext, error) {
+	const (
+		tokenFile  = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+		rootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+	)
+	host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT")
+	if len(host) == 0 || len(port) == 0 {
+		return nil, fmt.Errorf("not in cluster") // TODO: Replace with meshkit error
+	}
+
+	token, err := ioutil.ReadFile(tokenFile)
+	if err != nil {
+		return nil, err
+	}
+
+	server := "https://" + net.JoinHostPort(host, port)
+
+	caData, err := ioutil.ReadFile(rootCAFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewK8sContextWithServerID(
+		contextName,
+		map[string]interface{}{
+			"cluster": map[string]interface{}{
+				"certificate-authority-data": base64.StdEncoding.EncodeToString(caData),
+				"server":                     server,
+			},
+			"name": contextName,
+		},
+		map[string]interface{}{
+			"user": map[string]interface{}{
+				"token": string(token),
+			},
+			"name": contextName,
+		},
+		server,
+		true,
+		instanceID,
+	)
+}
+
 // NewK8sContext takes in name of the context, cluster info of the contexts,
 // auth info, server address and meshery instance ID and will return a K8sContext from it
 //
@@ -184,6 +232,8 @@ func NewK8sContext(
 	}
 
 	ctx.ID = ID
+
+	fmt.Printf("Generated context: %+#v\n", ctx)
 
 	return ctx
 }
