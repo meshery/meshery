@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/mesheryctl/version
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: global
 subcommand: version
 # image: /assets/img/platforms/brew.png
