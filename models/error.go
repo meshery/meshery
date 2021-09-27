@@ -77,6 +77,9 @@ const (
 	ErrSessionCopyCode             = "2149"
 	ErrSavingSeededComponentsCode  = "2152"
 	ErrGettingSeededComponentsCode = "2153"
+	ErrContextIDCode               = "2154"
+	ErrMesheryInstanceIDCode       = "2155"
+	ErrMesheryNotInClusterCode     = "2156"
 )
 
 var (
@@ -101,6 +104,9 @@ var (
 	ErrParsingTest          = errors.New(ErrParsingTestCode, errors.Alert, []string{"error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"}, []string{}, []string{}, []string{})
 	ErrField                = errors.New(ErrFieldCode, errors.Alert, []string{"Error: name field is blank"}, []string{}, []string{}, []string{})
 	ErrIndexOutOfRange      = errors.New(ErrIndexOutOfRangeCode, errors.Alert, []string{"Error: index out of range"}, []string{}, []string{}, []string{})
+	ErrContextID            = errors.New(ErrContextIDCode, errors.Alert, []string{"Error: Context ID is empty"}, []string{}, []string{}, []string{})
+	ErrMesheryInstanceID    = errors.New(ErrMesheryInstanceIDCode, errors.Alert, []string{"Error: Meshery Instance ID is empty or is invalid"}, []string{}, []string{}, []string{})
+	ErrMesheryNotInCluster  = errors.New(ErrMesheryNotInClusterCode, errors.Alert, []string{"Error: Meshery is not running inside a cluster"}, []string{}, []string{}, []string{})
 )
 
 func ErrGrafanaClient(err error) error {

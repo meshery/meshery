@@ -167,7 +167,7 @@ func NewK8sContextFromInClusterConfig(contextName string, instanceID *uuid.UUID)
 	)
 	host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT")
 	if len(host) == 0 || len(port) == 0 {
-		return nil, fmt.Errorf("not in cluster") // TODO: Replace with meshkit error
+		return nil, ErrMesheryNotInCluster
 	}
 
 	token, err := ioutil.ReadFile(tokenFile)

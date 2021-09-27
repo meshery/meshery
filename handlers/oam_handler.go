@@ -227,25 +227,25 @@ func _processPattern(
 	// Get the token from the context
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
 	if !ok {
-		return "", fmt.Errorf("invalid token") // TODO: Replace with meshkit error
+		return "", ErrRetrieveUserToken(fmt.Errorf("token not found in the context"))
 	}
 
 	// Get the kubehandler from the context
 	kubeClient, ok := ctx.Value(models.KubeHanderKey).(*meshkube.Client)
 	if !ok || kubeClient == nil {
-		return "", fmt.Errorf("invalid kube handler") // TODO: Replace with meshkit error
+		return "", ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
 	}
 
 	// Get the kubernetes config from the context
 	kubecfg, ok := ctx.Value(models.KubeConfigKey).([]byte)
 	if !ok || kubecfg == nil {
-		return "", fmt.Errorf("invalid kube config") // TODO: Replace with meshkit error
+		return "", ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
 	}
 
 	// Get the kubernetes context from the context
 	mk8scontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
 	if !ok || mk8scontext == nil {
-		return "", fmt.Errorf("invalid kube context") // TODO: Replace with meshkit error
+		return "", ErrInvalidKubeContext(fmt.Errorf("failed to find k8s context"), "_processPattern couldn't find a valid k8s context")
 	}
 
 	sip := &serviceInfoProvider{

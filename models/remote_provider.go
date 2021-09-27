@@ -412,7 +412,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		return MesheryK8sContextPage{}, fmt.Errorf("no instance ID found") // TODO: replace with meshkit error
+		return MesheryK8sContextPage{}, ErrMesheryInstanceID
 	}
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user/contexts/" + MesheryInstanceID.String())
@@ -522,7 +522,7 @@ func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
 
 func (l *RemoteProvider) SetCurrentContext(token, id string) (K8sContext, error) {
 	if id == "" {
-		return K8sContext{}, fmt.Errorf("id cannot be empty") // TODO: replace with meshkti error
+		return K8sContext{}, ErrContextID
 	}
 
 	mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)

@@ -21,11 +21,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	ErrInvalidKubeConfig     = fmt.Errorf("given file is not a valid Kubernetes config file, please try again")
-	ErrInvalidK8sContextName = fmt.Errorf("given context name is not valid, please try again with a valid value")
-)
-
 // K8SConfigHandler is used for persisting kubernetes config and context info
 func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
@@ -53,8 +48,9 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
-		logrus.Error(fmt.Errorf("failed to retrieve user token")) // TODO: Replace with meshkit errors
-		http.Error(w, fmt.Errorf("failed to retrieve user token").Error(), http.StatusInternalServerError)
+		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
+		logrus.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -83,8 +79,8 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		logrus.Error(fmt.Errorf("failed to read INSTANCE_ID")) // TODO: Replace with meshkit errors
-		http.Error(w, fmt.Errorf("failed to read INSTANCE_ID").Error(), http.StatusInternalServerError)
+		logrus.Error(ErrMesheryInstanceID)
+		http.Error(w, ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -154,8 +150,8 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		logrus.Error(fmt.Errorf("failed to read INSTANCE_ID")) // TODO: Replace with meshkit errors
-		http.Error(w, fmt.Errorf("failed to read INSTANCE_ID").Error(), http.StatusInternalServerError)
+		logrus.Error(ErrMesheryInstanceID)
+		http.Error(w, ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -238,7 +234,7 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 		// Get meshery instance ID
 		mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("not instance ID found") // TODO: Replace with meshkit error
+			return nil, ErrMesheryInstanceID
 		}
 
 		// Attempt to get kubeconfig from the filesystem
@@ -271,7 +267,7 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 		for _, ctx := range ctxs {
 			_, err := prov.SaveK8sContext(token, ctx)
 			if err != nil {
-				// TODO: log the error here
+				logrus.Warn("failed to save the context: ", err)
 				continue
 			}
 
