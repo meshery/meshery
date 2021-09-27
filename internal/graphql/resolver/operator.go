@@ -2,8 +2,6 @@ package resolver
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
