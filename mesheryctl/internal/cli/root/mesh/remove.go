@@ -81,6 +81,7 @@ func init() {
 	removeCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
 	removeCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = removeCmd.MarkFlagRequired("tokenPath")
+	removeCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 
 func waitForRemoveResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
