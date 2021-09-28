@@ -1,13 +1,13 @@
 ---
 layout: default
-title: Authenticating to `mesheryctl` 
-permalink: guides/mesheryctl/authenticate-to-mesheryctl
+title: Authenticating with Meshery via CLI 
+permalink: guides/mesheryctl/authenticate-with-meshery-via-cli
 language: en
 type: Guides
 category: mesheryctl
 ---
 
-To authenticate to mesheryctl you have to use the command `mesheryctl system login`. On execution of this command you get a an option to choose a provider, you would have to choose `Meshery` as your provider to authenticate yourself. After doing so, a new window opens up with ways to login. 
+To authenticate with Meshery via mesh you have to use the command `mesheryctl system login`. On execution of this command you get a an option to choose a provider, you would have to choose `Meshery` as your provider to authenticate yourself. After doing so, a new window opens up with ways to login. 
 
 ## Get your Token
 
@@ -30,16 +30,12 @@ To authenticate to mesheryctl you have to use the command `mesheryctl system log
         mesheryctl system config --token [path-to-file]
         </div>
     </pre>
+<br />
 
 
-## Need for Authentication
+**_The need for authentication to `Meshery` [provider](http://localhost:9081/provider) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
 
-The basic need for authentication to `Meshery` provider is:
-- Persistent Sessions
-- Save environment setup
-- Retrieve performance test results 
-
-
+<br/>
 # Suggested Reading
 
 For an exhaustive list of `mesheryctl` commands and syntax:
