@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -757,4 +758,17 @@ func InstallprereqDocker() error {
 	}
 	log.Info("Prerequisite Docker Compose is installed.")
 	return nil
+}
+
+// Sets the path to user's kubeconfig file into global variables
+func SetKubeConfig() {
+	// Define the path where the kubeconfig.yaml will be written to
+	usr, err := user.Current()
+	if err != nil {
+		ConfigPath = filepath.Join(".meshery", KubeConfigYaml)
+		KubeConfig = filepath.Join(".kube", "config")
+	} else {
+		ConfigPath = filepath.Join(usr.HomeDir, ".meshery", KubeConfigYaml)
+		KubeConfig = filepath.Join(usr.HomeDir, ".kube", "config")
+	}
 }
