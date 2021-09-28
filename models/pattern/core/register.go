@@ -259,7 +259,7 @@ func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
 		Filter: manifests.CrdFilter{
 			IsJson:        true,
 			OnlyRes:       apiResources, //When crd or api-resource names are directly given, we dont need NameFilter
-			RootFilter:    []string{"$.definitions"},
+			RootFilter:    []string{"$.definitions", "--resolve", "$"},
 			VersionFilter: []string{"$[0]"},
 			GroupFilter:   []string{"$[0]"},
 			ItrFilter:     "$..[\"x-kubernetes-group-version-kind\"][?(@.kind",
