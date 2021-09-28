@@ -234,7 +234,12 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 		}
 		prefObj.K8SConfig = kc
 		ctxID := "0" // To be replaced after multi-context support
-		go registerK8sComponents(h.log, prefObj.K8SConfig.Config, ctxID)
+		go func(l logger.Handler, config []byte, ctx string) {
+			err := registerK8sComponents(h.log, prefObj.K8SConfig.Config, ctxID)
+			if err != nil {
+				logrus.Error(err)
+			}
+		}(h.log, prefObj.K8SConfig.Config, ctxID)
 		err = provider.RecordPreferences(req, user.UserID, prefObj)
 		if err != nil {
 			logrus.Error(ErrRecordPreferences(err))
@@ -320,16 +325,15 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 	kc.ClusterConfigured = true
 	return kc, nil
 }
-func registerK8sComponents(l logger.Handler, config []byte, ctx string) {
+func registerK8sComponents(l logger.Handler, config []byte, ctx string) error {
 	l.Info("Starting to register k8s native components")
 	man, err := core.GetK8Components(config, ctx)
 	if err != nil {
-		l.Error(err)
-		return
+		return err
 	}
 	if man == nil {
 		l.Error(errors.New("Could not get k8s components"))
-		return
+		return err
 	}
 	for i, def := range man.Definitions {
 		var ord core.WorkloadCapability
@@ -340,20 +344,18 @@ func registerK8sComponents(l logger.Handler, config []byte, ctx string) {
 		var definition v1alpha1.WorkloadDefinition
 		err := json.Unmarshal([]byte(def), &definition)
 		if err != nil {
-			l.Error(err)
-			return
+			return err
 		}
 		ord.OAMDefinition = definition
 		content, err := json.Marshal(ord)
 		if err != nil {
-			l.Error(err)
-			return
+			return err
 		}
 		err = core.RegisterWorkload(content)
 		if err != nil {
-			l.Error(err)
-			return
+			return err
 		}
 	}
 	l.Info("Registration of k8s native components completed")
+	return nil
 }
