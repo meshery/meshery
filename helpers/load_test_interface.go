@@ -256,7 +256,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	}
 
 	ro := &nighthawk_proto.CommandLineOptions{
-		Connections:       &wrappers.UInt32Value{Value: uint32(2)},
+		Connections: &wrappers.UInt32Value{Value: uint32(2)},
 		OneofDurationOptions: &nighthawk_proto.CommandLineOptions_Duration{
 			Duration: durationpb.New(opts.Duration),
 		},
