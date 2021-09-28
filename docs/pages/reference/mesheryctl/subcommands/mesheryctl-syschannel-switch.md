@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/channel/switch
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system-channel
 subcommand: switch
 # image: /assets/img/platforms/brew.png

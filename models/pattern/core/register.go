@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,6 +10,8 @@ import (
 
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/layer5io/meshkit/utils/manifests"
 )
 
 type genericCapability struct {
@@ -232,4 +235,76 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 	}
 
 	return fmt.Errorf("%s", strings.Join(errs, "\n"))
+}
+
+func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
+	cli, err := kubernetes.New(config)
+	if err != nil {
+		return nil, err
+	}
+	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v2")
+	res := req.Do(context.Background())
+	content, err := res.Raw()
+	if err != nil {
+		return nil, err
+	}
+	apiResources, err := getAPIRes(cli)
+	if err != nil {
+		return nil, err
+	}
+	manifest := string(content)
+	man, err := manifests.GenerateComponents(manifest, manifests.K8s, manifests.Config{
+		Name: "Kubernetes",
+		Filter: manifests.CrdFilter{
+			IsJson:        true,
+			OnlyRes:       apiResources, //When crd or api-resource names are directly given, we dont need NameFilter
+			RootFilter:    []string{"$.definitions"},
+			VersionFilter: []string{"$[0]"},
+			GroupFilter:   []string{"$[0]"},
+			ItrFilter:     "$..[\"x-kubernetes-group-version-kind\"][?(@.kind",
+			ItrSpecFilter: "$[0][?(@[\"x-kubernetes-group-version-kind\"][0][\"kind\"]",
+			GField:        "group",
+			VField:        "version",
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return man, nil
+}
+
+func DeleteK8sWorkloads(ctx string) {
+	//Iterate through entire store
+	vals := store.PrefixMatch("")
+	for _, val := range vals {
+		value, ok := val.(WorkloadCapability)
+		if !ok {
+			continue
+		}
+		var workload = value
+		//delete only the ones with given context in metadata
+		if workload.OAMDefinition.Spec.Metadata["@type"] == "pattern.meshery.io/k8s" && workload.Metadata["io.meshery.ctxid"] == ctx {
+			key := fmt.Sprintf(
+				"/meshery/registry/definition/%s/%s/%s",
+				workload.OAMDefinition.APIVersion,
+				workload.OAMDefinition.Kind,
+				workload.OAMDefinition.Name,
+			)
+			store.Delete(key, value)
+		}
+	}
+}
+
+func getAPIRes(cli *kubernetes.Client) ([]string, error) {
+	var apiRes []string
+	lists, err := cli.KubeClient.DiscoveryClient.ServerPreferredResources()
+	if err != nil {
+		return nil, err
+	}
+	for _, list := range lists {
+		for _, name := range list.APIResources {
+			apiRes = append(apiRes, name.Kind)
+		}
+	}
+	return apiRes, nil
 }

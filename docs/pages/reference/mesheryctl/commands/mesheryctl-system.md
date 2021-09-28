@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system
 # image: /assets/img/platforms/brew.png
 ---
