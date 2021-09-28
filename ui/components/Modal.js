@@ -1,5 +1,12 @@
-import React from "react";
 import { Modal, Backdrop, Fade } from '@mui/core'
+import { styled } from "@mui/material/styles";
+import { useTheme } from "@mui/system";
+
+const CustomModalWrapper = styled(Modal)(({ theme }) => ({
+   display : "flex",
+   alignItems : "center",
+   justifyContent : "center", 
+}))
 
 /**
  *
@@ -9,17 +16,15 @@ import { Modal, Backdrop, Fade } from '@mui/core'
  *  handleClose?: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void,
  *  container?: React.ReactInstance | (() => React.ReactInstance)
  * }} props
- * @returns
+ * @returns 
  */
 
-export const GenericModal = ({
+export const CustomModal = ({
     open, Content, handleClose, container
   }) =>  { const theme = useTheme();
     return (
-      <Modal
-        style={{ display : "flex",
-        alignItems : "center",
-        justifyContent : "center", }}
+      <CustomModalWrapper
+        sx={{theme}}
         open={open}
         onClose={handleClose}
         closeAfterTransition
@@ -28,7 +33,7 @@ export const GenericModal = ({
         container={container}
       >
         <Fade in={open} style={{ maxHeight : "90vh", overflow : "auto" }} >{Content}</Fade>
-      </Modal>
+      </CustomModalWrapper>
     );
   }
 
