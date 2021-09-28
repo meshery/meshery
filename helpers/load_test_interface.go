@@ -238,17 +238,19 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	rURL := u.Host
 	if u.Hostname() == "localhost" {
 		if u.Port() != "" {
-			rURL = fmt.Sprintf("0.0.0.0:%s", u.Port())
+			rURL = fmt.Sprintf("0.0.0.0:%s%s", u.Port(), u.Path)
 		} else {
-			rURL = "0.0.0.0"
+			rURL = fmt.Sprintf("0.0.0.0%s", u.Path)
 		}
 	}
 
 	if u.Port() == "" {
 		if u.Scheme == "http" {
-			rURL = fmt.Sprintf("http://%s:80", u.Hostname())
+			rURL = fmt.Sprintf("http://%s:80%s", u.Hostname(), u.Path)
+			//rURL = fmt.Sprintf("http://%s:80/%s", u.Port(), u.Path)
 		} else {
-			rURL = fmt.Sprintf("https://%s:443", u.Hostname())
+			rURL = fmt.Sprintf("http://%s:443%s", u.Port(), u.Path)
+			//rURL = fmt.Sprintf("https://%s:443", u.Hostname())
 		}
 		// Add support for more protocols here
 	}
