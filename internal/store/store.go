@@ -46,6 +46,8 @@ func Set(key string, value interface{}) {
 
 	globalStore.store[key][hash] = value
 }
+
+// Delete will take the key and values which needs to be deleted from the global store and delete that entry
 func Delete(key string, value interface{}) {
 	globalStore.Lock()
 	defer globalStore.Unlock()

@@ -237,20 +237,21 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 	return fmt.Errorf("%s", strings.Join(errs, "\n"))
 }
 
+// GetK8Components returns all the generated definitions and schemas for available api resources
 func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
 	cli, err := kubernetes.New(config)
 	if err != nil {
-		return nil, err
+		return nil, ErrGetK8sComponents(err)
 	}
 	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v2")
 	res := req.Do(context.Background())
 	content, err := res.Raw()
 	if err != nil {
-		return nil, err
+		return nil, ErrGetK8sComponents(err)
 	}
 	apiResources, err := getAPIRes(cli)
 	if err != nil {
-		return nil, err
+		return nil, ErrGetK8sComponents(err)
 	}
 	manifest := string(content)
 	man, err := manifests.GenerateComponents(manifest, manifests.K8s, manifests.Config{
@@ -268,11 +269,12 @@ func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
 		},
 	})
 	if err != nil {
-		return nil, err
+		return nil, ErrGetK8sComponents(err)
 	}
 	return man, nil
 }
 
+// DeleteK8sWorkloads deletes the registered in memory k8s workloads for a given k8s contextID.
 func DeleteK8sWorkloads(ctx string) {
 	//Iterate through entire store
 	vals := store.PrefixMatch("")
@@ -295,6 +297,7 @@ func DeleteK8sWorkloads(ctx string) {
 	}
 }
 
+// getAPIRes gets all the available api resources from kube-api server. It is equivalent to the output of `kubectl api-resources`
 func getAPIRes(cli *kubernetes.Client) ([]string, error) {
 	var apiRes []string
 	lists, err := cli.KubeClient.DiscoveryClient.ServerPreferredResources()
