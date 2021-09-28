@@ -2,6 +2,9 @@ package mesh
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
+	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -52,6 +55,14 @@ var (
 			}
 			s.Stop()
 
+			if watch {
+				log.Infof("Verifying Operation")
+				_, err := waitForRemoveResponse(mctlCfg, "mesh is now removed")
+				if err != nil {
+					log.Fatalln(err)
+				}
+			}
+
 			//log.Infof("Verifying Installation")
 			//s.Start()
 			//_, err = waitForDeployResponse(mctlCfg, meshName)
@@ -70,4 +81,51 @@ func init() {
 	removeCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
 	removeCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = removeCmd.MarkFlagRequired("tokenPath")
+}
+
+func waitForRemoveResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_remove"
+	method := "GET"
+	client := &http.Client{}
+	req, err := http.NewRequest(method, path, nil)
+	if err != nil {
+		return "", ErrCreatingRemoveResponseRequest(err)
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return "", ErrCreatingRemoveResponseRequest(err)
+	}
+	defer res.Body.Close()
+
+	event, err := utils.ConvertRespToSSE(res)
+	if err != nil {
+		return "", ErrCreatingRemoveResponseStream(err)
+	}
+	timer := time.NewTimer(time.Duration(1200) * time.Second)
+	eventChan := make(chan string)
+
+	//Run a goroutine to wait for a response
+	go func() {
+		for i := range event {
+			if strings.Contains(i.Data.Details, query) {
+				eventChan <- "successful"
+				log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
+			} else if strings.Contains(i.Data.Details, "Error") {
+				eventChan <- "error"
+				log.Infof("%s\n", i.Data.Summary)
+			}
+		}
+	}()
+
+	select {
+	case <-timer.C:
+		return "", ErrTimeoutWaitingForRemoveResponse
+	case event := <-eventChan:
+		if event != "successful" {
+			return "", ErrFailedRemovingMesh
+		}
+	}
+
+	return "", nil
 }

@@ -16,6 +16,10 @@ const (
 	ErrCreatingValidateResponseRequestCode   = "1019"
 	ErrTimeoutWaitingForValidateResponseCode = "1020"
 	ErrSMIConformanceTestsFailedCode         = "1021"
+	ErrCreatingRemoveResponseRequestCode     = "1022"
+	ErrCreatingRemoveResponseStreamCode      = "1023"
+	ErrTimeoutWaitingForRemoveResponseCode   = "1024"
+	ErrFailedRemovingMeshCode                = "1025"
 )
 
 var (
@@ -24,7 +28,11 @@ var (
 
 	ErrFailedDeployingMesh = errors.New(ErrFailedDeployingMeshCode, errors.Fatal, []string{"Failed to deploy the service mesh"}, []string{""}, []string{}, []string{"Check your environment and try again"})
 
+	ErrFailedRemovingMesh = errors.New(ErrFailedRemovingMeshCode, errors.Fatal, []string{"Failed to remove the service mesh"}, []string{""}, []string{}, []string{"Check your environment and try again"})
+
 	ErrTimeoutWaitingForDeployResponse = errors.New(ErrTimeoutWaitingForDeployResponseCode, errors.Fatal, []string{"Timed out waiting for deploy event"}, []string{}, []string{}, []string{"Check your environment and try again"})
+
+	ErrTimeoutWaitingForRemoveResponse = errors.New(ErrTimeoutWaitingForRemoveResponseCode, errors.Fatal, []string{"Timed out waiting for remove event"}, []string{}, []string{}, []string{"Check your environment and try again"})
 
 	ErrTimeoutWaitingForValidateResponse = errors.New(ErrTimeoutWaitingForValidateResponseCode, errors.Fatal, []string{"Timed out waiting for validate response"}, []string{}, []string{}, []string{"Check your environment and try again"})
 
@@ -48,12 +56,20 @@ func ErrCreatingDeployResponseRequest(err error) error {
 	return errors.New(ErrCreatingDeployResponseRequestCode, errors.Fatal, []string{"Error creating request for deploy response"}, []string{err.Error()}, []string{}, []string{})
 }
 
+func ErrCreatingRemoveResponseRequest(err error) error {
+	return errors.New(ErrCreatingRemoveResponseRequestCode, errors.Fatal, []string{"Error creating request for remove response"}, []string{err.Error()}, []string{}, []string{})
+}
+
 func ErrAddingAuthDetails(err error) error {
 	return errors.New(ErrAddingAuthDetailsCode, errors.Fatal, []string{"Error adding auth details"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrCreatingDeployResponseStream(err error) error {
 	return errors.New(ErrCreatingDeployResponseStreamCode, errors.Fatal, []string{"Error creating deploy event response stream"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrCreatingRemoveResponseStream(err error) error {
+	return errors.New(ErrCreatingRemoveResponseStreamCode, errors.Fatal, []string{"Error creating deploy event response stream"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrCreatingValidateRequest(err error) error {
