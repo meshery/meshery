@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	ErrGetK8sComponentsCode = "replace_me"
+	ErrGetK8sComponentsCode = "2154"
 )
 
 func ErrGetK8sComponents(err error) error {
