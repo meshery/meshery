@@ -151,9 +151,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
   );
 }
 
-function MesheryFilters({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
-}) {
+function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -162,8 +160,7 @@ function MesheryFilters({
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const DEPLOY_URL = '/api/filter/deploy';
-
+  const DEPLOY_URL = "/api/filter/deploy";
 
   const ACTION_TYPES = {
     FETCH_FILTERS : {
@@ -205,11 +202,10 @@ function MesheryFilters({
   const handleDeploy = (filter_file) => {
     dataFetch(
       DEPLOY_URL,
-      { credentials : "include",
-        method : "POST",
-        body : filter_file, },() => {
+      { credentials : "include", method : "POST", body : filter_file },
+      () => {
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        updateProgress({ showProgress : false })
+        updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.DEPLOY_FILTERS)
     );
@@ -227,7 +223,7 @@ function MesheryFilters({
 
     dataFetch(
       `/api/filter${query}`,
-      { credentials : "include", },
+      { credentials : "include" },
       (result) => {
         console.log("FilterFile API", `/api/filter${query}`);
         updateProgress({ showProgress : false });
@@ -271,8 +267,7 @@ function MesheryFilters({
     if (type === "delete") {
       dataFetch(
         `/api/filter/${id}`,
-        { credentials : "include",
-          method : "DELETE", },
+        { credentials : "include", method : "DELETE" },
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
@@ -284,13 +279,17 @@ function MesheryFilters({
       );
     }
 
-    if (type === "upload" || type === 'urlupload') {
-      const body = type==="upload" ? JSON.stringify({ filter_data : { filter_data : data }, save : true }) : JSON.stringify({ url : data, save : true });
+    if (type === "upload" || type === "urlupload") {
+      let body = { save : true }
+      if (type === "upload") {
+        body = JSON.stringify({ ...body, filter_data : { filter_data : data } })
+      }
+      if (type === "urlupload") {
+        body = JSON.stringify({ ...body, url : data })
+      }
       dataFetch(
         `/api/filter`,
-        { credentials : "include",
-          method : "POST",
-          body : body, },
+        { credentials : "include", method : "POST", body },
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
@@ -315,7 +314,7 @@ function MesheryFilters({
     reader.readAsText(file);
   }
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), 'urlupload');
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
     console.log(link, "valid");
   }
   const columns = [
@@ -426,7 +425,8 @@ function MesheryFilters({
   });
 
   async function showmodal() {
-    let response = await modalRef.current.show({ title : "Delete Filter?",
+    let response = await modalRef.current.show({
+      title : "Delete Filter?",
 
       subtitle : "Are you sure you want to delete this filter?",
 

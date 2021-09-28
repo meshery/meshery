@@ -354,13 +354,19 @@ function MesheryPatterns({
     }
 
     if (type === "upload" || type=== "urlupload") {
-      const body = type==="upload" ? JSON.stringify({ pattern_data : { pattern_data : data }, save : true }) : JSON.stringify({ url : data, save : true });
+      let body = { save : true }
+      if (type === "upload") {
+        body = JSON.stringify({  pattern_data : { pattern_data : data }, ...body })
+      }
+      if (type === "urlupload") {
+        body = JSON.stringify({ url : data, ...body })
+      }
       dataFetch(
         `/api/pattern`,
         {
           credentials : "include",
           method : "POST",
-          body : body,
+          body,
         },
         () => {
           console.log("PatternFile API", `/api/pattern`);
