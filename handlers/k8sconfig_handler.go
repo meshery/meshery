@@ -16,6 +16,9 @@ import (
 
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
@@ -117,6 +120,8 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 
 func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	prefObj.K8SConfig = nil
+	ctxID := "0" //To be replaced with actual context ID after multi context support
+	go core.DeleteK8sWorkloads(ctxID)
 	err := provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
 		logrus.Error(ErrRecordPreferences(err))
@@ -228,6 +233,8 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 			}
 		}
 		prefObj.K8SConfig = kc
+		ctxID := "0" // To be replaced after multi-context support
+		go registerK8sComponents(h.log, prefObj.K8SConfig.Config, ctxID)
 		err = provider.RecordPreferences(req, user.UserID, prefObj)
 		if err != nil {
 			logrus.Error(ErrRecordPreferences(err))
@@ -312,4 +319,41 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 	*h.config.KubeClient = *mclient
 	kc.ClusterConfigured = true
 	return kc, nil
+}
+func registerK8sComponents(l logger.Handler, config []byte, ctx string) {
+	l.Info("Starting to register k8s native components")
+	man, err := core.GetK8Components(config, ctx)
+	if err != nil {
+		l.Error(err)
+		return
+	}
+	if man == nil {
+		l.Error(errors.New("Could not get k8s components"))
+		return
+	}
+	for i, def := range man.Definitions {
+		var ord core.WorkloadCapability
+		ord.Metadata = make(map[string]string)
+		ord.Metadata["io.meshery.ctxid"] = ctx
+		ord.OAMRefSchema = man.Schemas[i]
+
+		var definition v1alpha1.WorkloadDefinition
+		err := json.Unmarshal([]byte(def), &definition)
+		if err != nil {
+			l.Error(err)
+			return
+		}
+		ord.OAMDefinition = definition
+		content, err := json.Marshal(ord)
+		if err != nil {
+			l.Error(err)
+			return
+		}
+		err = core.RegisterWorkload(content)
+		if err != nil {
+			l.Error(err)
+			return
+		}
+	}
+	l.Info("Registration of k8s native components completed")
 }

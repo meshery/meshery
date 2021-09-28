@@ -490,5 +490,61 @@ pattern:
         json:
           name: -o json
           description: display the content of a pattern in json format
-          usage: |
+          usage:
               mesheryctl pattern view [pattern-name|pattern-id] -o json
+
+app:
+  name: app
+  description: Service Mesh application management
+  usage:
+    mesheryctl app 
+  flags:
+    file:
+      name: --file, -f
+      description: (required) path to pattern file
+      usage:
+        mesheryctl app --file [path to pattern file]
+  subcommands:
+    list:
+      name: list
+      description: displays a list of available applications
+      usage:
+          mesheryctl app list
+    offboard:
+      name: offboard
+      description: offboard application
+      usage:
+          mesheryctl app offboard [app name] [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Offboard application with an application file
+          usage:
+              mesheryctl app offboard -f [filepath] 
+    onboard:
+      name: onboard
+      description: onboard application
+      usage: 
+          mesheryctl app onboard [app name] [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: onboard application with application file
+          usage:
+              mesheryctl app onboard --file [filepath]
+    view:
+      name: view
+      description: displays the contents of a application
+      usage: | 
+          mesheryctl app view [application-name|application-id]
+      flags:
+        view-all:
+          name: --all, -a
+          description: show all application file content
+          usage:
+              mesheryctl app view --all
+        view-json:
+          name: -o json
+          description: display the content of an application in json format
+          usage: | 
+              mesheryctl app view [application-name|application-id] -o json  

@@ -46,6 +46,14 @@ func Set(key string, value interface{}) {
 
 	globalStore.store[key][hash] = value
 }
+func Delete(key string, value interface{}) {
+	globalStore.Lock()
+	defer globalStore.Unlock()
+
+	hash := md5Hash(value)
+
+	delete(globalStore.store[key], hash)
+}
 
 // GetAll returns all the values stored against the key
 func GetAll(key string) []interface{} {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
 import {
   NoSsr,
   TableCell,
@@ -9,7 +9,17 @@ import {
   DialogContent,
   DialogActions,
   Divider,
-  Tooltip
+  Tooltip,
+  Grid,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  CardContent,
+  Card,
+  CardActions,
+  AppBar,
+  Toolbar
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -22,16 +32,46 @@ import PromptComponent from "./PromptComponent";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
-import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import dataFetch from "../lib/data-fetch";
 import URLUploader from "./URLUploader";
+import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
+import { CircularProgress } from "@material-ui/core";
+import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+import { Button } from "@material-ui/core";
+import jsYaml from "js-yaml";
+import PascalCaseToKebab from "../utils/PascalCaseToKebab";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import AppsIcon from "./ConnectionWizard/icons/apps";
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
   tableHeader : { fontWeight : "bolder",
-    fontSize : 18, }, });
+    fontSize : 18, },
+  muiRow : {
+    '& .MuiTableRow-root' : {
+      cursor : 'pointer'
+    }
+  }
+});
+
+
+const useStyles = makeStyles((theme) => ({
+  codeMirror : {
+    '& .CodeMirror' : {
+      minHeight : "300px",
+      height : '60vh',
+    }
+  },
+  backButton : {
+    marginRight : theme.spacing(2),
+  },
+  appBar : {
+    marginBottom : "16px"
+  }
+}))
+
 
 function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
@@ -108,6 +148,7 @@ function MesheryApplications({
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
   const [pageSize, setPageSize] = useState(10);
+  const [showForm, setShowForm] = useState(false);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const DEPLOY_URL = '/api/application/deploy';
@@ -356,13 +397,12 @@ function MesheryApplications({
           const rowData = applications[tableMeta.rowIndex]
           return (
             <>
-              <IconButton>
-                <EditIcon
-                  title="Config"
-                  aria-label="config"
-                  color="inherit"
-                  onClick={() => setSelectedRowData(applications[tableMeta.rowIndex])}/>
-              </IconButton>
+              <Tooltip
+                title = "configure">
+                <IconButton onClick={() => setShowForm({ application : applications[tableMeta.rowIndex], show : true })}>
+                  <AppsIcon />
+                </IconButton>
+              </Tooltip>
               <IconButton>
                 <PlayArrowIcon
                   title="Deploy"
@@ -436,6 +476,8 @@ function MesheryApplications({
     download : false,
     customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
 
+    onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
+
     onRowsDelete : async function handleDelete(row) {
       let response = await showModal()
       console.log(response)
@@ -493,16 +535,21 @@ function MesheryApplications({
 
   return (
     <NoSsr>
+      {showForm &&
+        <PatternForm onSubmit={handleSubmit} show={setShowForm} application={showForm.application} />}
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
-      <MUIDataTable
-        title={<div className={classes.tableHeader}>Application</div>}
-        data={applications}
-        columns={columns}
-        // @ts-ignore
-        options={options}
-      />
+      {
+        !showForm && <MUIDataTable
+          title={<div className={classes.tableHeader}>Applications</div>}
+          data={applications}
+          columns={columns}
+          // @ts-ignore
+          options={options}
+          className={classes.muiRow}
+        />
+      }
       <PromptComponent ref={modalRef} />
     </NoSsr>
   );
@@ -516,3 +563,284 @@ const mapStateToProps = (state) => {
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryApplications)));
+
+// --------------------------------------------------------------------------------------------------
+// -------------------------------------------- Aplications Configuration---------------------------------------
+// --------------------------------------------------------------------------------------------------
+
+function PatternForm({ application, onSubmit, show }) {
+  const [schemaSet, setSchemaSet] = useState();
+  const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
+  const [yaml, setYaml] = useState("");
+  const [expanded, setExpanded] = useState([]);
+  // const [changedYaml, setChangedYaml] = useState("");
+  const classes = useStyles();
+
+  function getPatternJson() {
+    const patternString = application.application_file;
+    return jsYaml.load(patternString).services;
+  }
+
+  async function fetchWorkloadAndTraitsSchema() {
+    try {
+      const workloads = await promisifiedDataFetch("/api/oam/workload");
+      const traits = await promisifiedDataFetch("/api/oam/trait");
+
+      console.log({ workloads, traits });
+
+      const workloadTraitSets = createWorkloadTraitSets(workloads, traits);
+
+      return workloadTraitSets;
+    } catch (e) {
+      console.log("Error in Fetching Workload or traits", e);
+      return {};
+    }
+  }
+
+  function createWorkloadTraitSets(workloads, traits) {
+    const sets = [];
+    workloads?.forEach((w) => {
+      const item = { workload : w, traits : [] };
+
+      item.traits = traits?.filter((t) => {
+        if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
+          return t?.oam_definition?.spec?.appliesToWorkloads?.includes(w?.oam_definition?.metadata?.name);
+
+        return false;
+      });
+
+      sets.push(item);
+    });
+
+    return sets;
+  }
+
+  async function getJSONSchemaSets() {
+    const wtSets = await fetchWorkloadAndTraitsSchema();
+
+    return wtSets?.map((s) => {
+      const item = {
+        workload : JSON.parse(s.workload?.oam_ref_schema),
+        traits : s.traits?.map((t) => {
+          const trait = JSON.parse(t?.oam_ref_schema);
+
+          // Attaching internal metadata to the json schema
+          trait._internal = {
+            patternAttributeName : t?.oam_definition.metadata.name,
+          };
+
+          return trait;
+        }),
+        type : s.workload?.metadata?.["ui.meshery.io/category"],
+      };
+
+      // Attaching internal metadata to the json schema
+      item.workload._internal = {
+        patternAttributeName : s.workload?.oam_definition.metadata.name,
+      };
+
+      return item;
+    });
+  }
+
+  function getPatternAttributeName(jsonSchema) {
+    return PascalCaseToKebab(jsonSchema?._internal?.patternAttributeName || "NA");
+  }
+
+  function getPatternKey(cfg) {
+    return Object.keys(cfg?.services)?.[0] || undefined;
+  }
+
+  const handleSubmit = (cfg, patternName) => {
+    console.log("submitted", { cfg, patternName })
+    const key = getPatternKey(cfg);
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+    if (key)
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+    handleExpansion(patternName)
+  }
+
+  const handleChangeData = (cfg, patternName) => {
+    console.log("Ran Changed", { cfg, patternName })
+    const key = getPatternKey(cfg);
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+    if (key)
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+  }
+
+  const handleDelete = (cfg, patternName) => {
+    console.log("deleted", cfg);
+    const newCfg = schemaSet.filter(schema => schema.workload.title !== patternName)
+    setSchemaSet(newCfg);
+  }
+
+  const handleDeploy = (cfg) => {
+    const deployConfig = {};
+    deployConfig.name = application.name;
+    deployConfig.services = cfg;
+    const deployConfigYaml = jsYaml.dump(deployConfig);
+    setYaml(deployConfigYaml);
+  }
+
+  const handleExpansion = (item) => {
+    let expandedItems = [...expanded];
+    if (expandedItems.includes(item)) {
+      expandedItems = expandedItems.filter(el => el !== item);
+    } else {
+      expandedItems.push(item);
+    }
+    setExpanded(expandedItems);
+  }
+
+  function handleSubmitFinalPattern(yaml, id, name, action) {
+    onSubmit(yaml, id, name, action);
+    show(false);
+  }
+
+  const ns = "default";
+
+  function saveCodeEditorChanges(data) {
+    setYaml(data.valueOf().getValue())
+  }
+
+  useEffect(() => {
+    getJSONSchemaSets().then((res) => setSchemaSet(res));
+  }, []);
+
+  if (!schemaSet) {
+    return <CircularProgress />
+  }
+
+  return (
+    <>
+      <AppBar position="static" className={classes.appBar} elevation={0}>
+        <Toolbar>
+          <IconButton edge="start" className={classes.backButton} color="inherit" onClick={() => show(false)}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6" className={classes.title}>
+            Edit Application Configuration of <i>{`${application.name}`}</i>
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          {schemaSet
+            .filter((s) => s.type !== "addon")
+            .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
+            .map((s) => (
+              accordion(s)
+            ))}
+          <Accordion
+            expanded={expanded.includes('addon')}
+            onChange={() => handleExpansion('addon')}
+            style={{ width : '100%' }}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6">
+                Configure Addons
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {schemaSet
+                .filter((s) => s.type === "addon")
+                .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
+                .map((s) => (
+                  <Grid item>
+                    <PatternServiceForm formData={deployServiceConfig[s.workload?.title]} onChange={handleChangeData} schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
+                  </Grid>
+                ))}
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
+        <Grid item xs={12} md={6} >
+          <CodeEditor />
+        </Grid>
+      </Grid>
+    </>
+  );
+
+  function CustomButton({ title, onClick }) {
+    return <Button
+      fullWidth
+      color="primary"
+      variant="contained"
+      onClick={onClick}
+      style={{
+        marginTop : "16px",
+        padding : "10px"
+      }}
+    >
+      {title}
+    </Button>;
+  }
+
+  function accordion(schema) {
+    const patternName = schema?.workload?.title;
+
+    return <Accordion
+      expanded={expanded.includes(patternName)}
+      onChange={() => handleExpansion(patternName)}
+      style={{ width : '100%' }}
+    >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography variant="h6">
+          {patternName || "Expand More"}
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <PatternServiceForm formData={deployServiceConfig[getPatternAttributeName(schema.workload)]} onChange={handleChangeData} schemaSet={schema} onSubmit={(val) => handleSubmit(val, patternName)} onDelete={(val) => handleDelete(val, patternName)} namespace={ns} />
+      </AccordionDetails>
+    </Accordion>;
+  }
+
+  function CodeEditor() {
+    const cardStyle = { marginBottom : "16px", position : "sticky", float : "right", minWidth : "100%" };
+    const cardcontentStyle = { margin : "16px" };
+
+    const classes = useStyles();
+
+    return (
+      <div>
+        <Card style={cardStyle}>
+          <CardContent style={cardcontentStyle}>
+            <CodeMirror
+              value={yaml}
+              className={classes.codeMirror}
+              options={{
+                theme : "material",
+                lineNumbers : true,
+                lineWrapping : true,
+                gutters : ["CodeMirror-lint-markers"],
+                lint : true,
+                mode : "text/x-yaml",
+              }}
+              onBlur={(a) => saveCodeEditorChanges(a)}
+            />
+            <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, "upload")} />
+            <CardActions style={{ justifyContent : "flex-end" }}>
+              <Tooltip title="Update Application">
+                <IconButton
+                  aria-label="Update"
+                  color="primary"
+                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, "update")}
+                >
+                  <SaveIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete Application">
+                <IconButton
+                  aria-label="Delete"
+                  color="primary"
+                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, "delete")}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </CardActions>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+}
