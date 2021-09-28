@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -174,8 +175,19 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 func startNighthawkServer(timeout int64) error {
 	nighthawkStatus.Lock()
 	defer nighthawkStatus.Unlock()
-	command := "./nighthawk_service"
-	transformCommand := "./nighthawk_output_transform"
+
+	curDir, err := os.Getwd()
+	if err != nil {
+		return ErrStartingNighthawkServer(err)
+	}
+
+	command := filepath.Join(curDir, "nighthawk_service")
+	transformCommand := filepath.Join(curDir, "nighthawk_output_transform")
+
+	_, err = os.Stat(command)
+	if err != nil {
+		return ErrStartingNighthawkServer(err)
+	}
 	cmd := exec.Command(command)
 	if !nighthawkRunning {
 		err := cmd.Start()
@@ -193,7 +205,7 @@ func startNighthawkServer(timeout int64) error {
 		}
 	}()
 
-	_, err := os.Stat(transformCommand)
+	_, err = os.Stat(transformCommand)
 	if err != nil {
 		nighthawkStatus.Unlock()
 		return ErrStartingNighthawkServer(err)
