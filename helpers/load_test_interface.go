@@ -231,12 +231,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		return nil, nil, ErrRunningNighthawkServer(err)
 	}
 
-	qps := opts.HTTPQPS
-
-	if qps <= 0 {
-		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
-	}
-
 	u, err := url.Parse(opts.URL)
 	if err != nil {
 		return nil, nil, ErrRunningTest(err)
@@ -260,7 +254,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	}
 
 	ro := &nighthawk_proto.CommandLineOptions{
-		RequestsPerSecond: &wrappers.UInt32Value{Value: uint32(qps)},
 		Connections:       &wrappers.UInt32Value{Value: uint32(2)},
 		OneofDurationOptions: &nighthawk_proto.CommandLineOptions_Duration{
 			Duration: durationpb.New(opts.Duration),
@@ -314,6 +307,13 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		//	Nanos:   0,
 		//},
 		ExecutionId: &wrappers.StringValue{Value: "gg"},
+	}
+
+	qps := opts.HTTPQPS
+	// set QPS only if given QPS > 0
+	// user nighthawk's default QPS otherwise
+	if qps > 0 {
+		ro.RequestsPerSecond = &wrappers.UInt32Value{Value: uint32(qps)}
 	}
 
 	if opts.SupportedLoadTestMethods == 2 {
