@@ -483,6 +483,7 @@ class Navigator extends React.Component {
                 <ListItem
                   button
                   key={id}
+                  onClick={() => this.toggleMiniDrawer(true)}
                   className={classNames(
                     depth === 1
                       ? classes.nested1
@@ -657,9 +658,9 @@ class Navigator extends React.Component {
     }
   };
 
-  toggleMiniDrawer = () => {
+  toggleMiniDrawer = (open = null) => {
     const { onCollapseDrawer } = this.props;
-    onCollapseDrawer();
+    onCollapseDrawer(open);
   };
 
   toggleSpacing = () => {
@@ -870,7 +871,7 @@ class Navigator extends React.Component {
                           { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
                             <ExpandMoreIcon
                               onClick={() => this.toggleItemCollapse(childId)}
-                              className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft: "0.4rem"}}
+                              className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "0.4rem" }}
                             /> :
                             <ListItemIcon className={classes.listIcon}>
                               {icon}
