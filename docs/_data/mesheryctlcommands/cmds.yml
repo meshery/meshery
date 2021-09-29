@@ -191,7 +191,6 @@ system:
       usage:
         mesheryctl system logout
     
-
 system-channel:
   name: system-channel
   description: Switch between release channels.
@@ -308,11 +307,16 @@ perf:
       description: format to display in json or yaml.
       usage:
           mesheryctl perf --token [path to access token] --output-format [format]
+      example:
+          mesheryctl perf --token "~/Downloads/auth.json" --output-format json
+            mesheryctl perf --token "~/Downloads/auth.json" --output-format json
     token:
       name: --token
       description: (required) Path to Meshery user's access token.
       usage:
           mesheryctl perf --token [path to access token]
+      example:
+          mesheryctl perf --token "~/Downloads/auth.json"
 
   subcommands:
     apply:
@@ -328,6 +332,8 @@ perf:
 
           # Run Performance test using SMP compatible test configuration
           mesheryctl perf apply -f [filepath]
+      example:
+          mesheryctl perf apply test-sam --url https://192.168.1.15/productpage
       flags:
         concurrent-requests:
           name: --concurrent-requests  
@@ -335,12 +341,17 @@ perf:
           description: 'Number of Parallel Requests (default: 1).'
           usage:
               mesheryctl perf apply [profile-name] --url [URL] --concurrent-requests [number of requests]
+          example:
+              mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --concurrent-requests 3
         duration:
           name: --duration
           arg: apply
           description: Length of the test.
           usage:
               mesheryctl perf apply [profile-name] --url [URL] --duration [time]
+          example:
+              mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --duration 35s
+
         file:
           name: --file 
           arg: apply
@@ -353,45 +364,60 @@ perf:
           description: 'Choice of load generator - fortio (OR) wrk2 (default: fortio).'
           usage:
               mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio/wrk2]
+          example:
+              mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --load-generator wrk2
+
         mesh:
           name: --mesh
           arg: apply
           description: Name of the service mesh.
           usage:
               mesheryctl perf apply [profile-name] --url [URL] --mesh [name]
+          example:
+              mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
         name:
           name: --name 
           arg: apply
           description: 'A memorable name for the test (default: random string).'
           usage:
             mesheryctl perf apply [profile-name] --url [URL] --name "name"
+          example:
+            mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --name "local-test"
         profile:
           name: --profile 
           arg: apply
           description: '(required/optional) Name for the new Performance Profile.'
           usage:
             mesheryctl perf apply --profile [profile-name] --url [URL]
+          example:
+            mesheryctl perf apply --profile local-perf --url https://192.168.1.15/productpage
         qps:
           name: --qps 
           arg: apply
           description: 'Queries per second (default: 0) (0 - means to use the CPU unbounded to generate as many requests as possible).'
           usage:
               mesheryctl perf apply [profile-name] --url [URL] --qps [queries]
+          example:
+              mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
         url:
           name: --url 
           arg: apply
           description: (required/optional) URL of the endpoint send load to during testing.
           usage:
               mesheryctl perf apply [profile-name] --url [URL]
+          example:
+              mesheryctl perf apply local-perf --url https://192.168.1.15/productpage
+
 
     list:
       name: list
       description: Lists all the available performance profiles and results of a performance profile.
       usage: |
-      
           mesheryctl perf list 
-
-          mesheryctl perf list [profile-id]  
+            mesheryctl perf list [profile-id]  
+      example: |
+          mesheryctl perf list
+            mesheryctl perf list local-perf
     
     view:
       name: view
@@ -403,6 +429,9 @@ perf:
 
           # View performance results
           mesheryctl perf view [profile-id] [test-name]
+      example: |
+          mesheryctl perf view local-perf
+            mesheryctl perf view local-pref sample-1
 
 mesh:
   name: mesh
@@ -418,21 +447,29 @@ mesh:
           description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
           usage:
               mesheryctl mesh validate --adapter [name of the adapter]
+          example:
+              mesheryctl mesh validate --adapter meshery-istio:10000 -t "~/Download/auth.json"
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for deploying the validation tests and sample workload
           usage:
               mesheryctl mesh validate --namespace [namespace to be used]
+          example:
+              mesheryctl mesh validate --namespace test-x1 -t "~/Download/auth.json"
         spec:
           name: --spec, -s
           description: (required) specification to be used for conformance test. Defaults to "smi"
           usage:
               mesheryctl mesh validate --spec [specification to be used for conformance test]
+          example:
+              mesheryctl mesh validate --spec smi -t "~/Download/auth.json"
         tokenpath:
           name: --tokenpath, -t
           description: (required) path to token for authenticating to Meshery API
           usage:
               mesheryctl mesh validate --tokenPath [path to token for authentication]
+          example:
+              mesheryctl mesh validate --tokenPath "~/Downloads/auth.json"
 
     deploy:
       name: deploy
