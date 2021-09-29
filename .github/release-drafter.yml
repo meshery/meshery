@@ -10,7 +10,12 @@ categories:
       - 'component/mesheryctl'
   - title: '🖥 Meshery UI'
     labels:
-      - 'component/ui'      
+      - 'component/ui'
+  - title: '🔋 Patterns, Filters, Applications'
+    labels:
+      - 'component/patterns'
+      - 'component/applications'
+      - 'component/filters'      
   - title: '🐛 Bug Fixes'
     labels:
       - 'kind/fix'

@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/context/switch
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system-context
 subcommand: switch
 # image: /assets/img/platforms/brew.png

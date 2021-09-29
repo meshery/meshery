@@ -504,7 +504,7 @@ function MesheryPatterns({
 
       subtitle : "Are you sure you want to delete this pattern?",
 
-      options : ["yes", "no"],
+      options : ["Yes", "No"],
     })
     return response;
   }
@@ -558,11 +558,11 @@ function MesheryPatterns({
     onRowsDelete : async function handleDelete(row) {
       let response = await showModal()
       console.log(response)
-      if (response === "yes") {
+      if (response === "Yes") {
         const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
         fid.forEach(fid => deletePattern(fid))
       }
-      if (response === "no")
+      if (response === "No")
         fetchPatterns(page, pageSize, search, sortOrder);
     },
 
