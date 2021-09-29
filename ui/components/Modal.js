@@ -19,7 +19,7 @@ const CustomModalWrapper = styled(Modal)(({ theme }) => ({
  * @returns 
  */
 
-export const CustomModal = ({
+const CustomModal = ({
     open, Content, handleClose, container
   }) =>  { const theme = useTheme();
     return (
