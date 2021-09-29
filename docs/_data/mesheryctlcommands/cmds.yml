@@ -1,26 +1,35 @@
 global:
   name: mesheryctl
-  description : Displays help about any command.
+  description : Global command
   usage:
     mesheryctl
+  example: |
+    mesheryctl system start
+      mesheryctl --help
+      mesheryctl system stop
 
   flags:
     config:
       name: --config
       description: configures Meshery with the kubeconfig, generated with the help of user details, to provide cluster access for public clouds(GKE/EKS).
       usage:
-          mesheryctl system reset --config=[path to config file]
+          mesheryctl [command] --config=[path to config file]
+      example:
+          mesheryctl system reset --config="~/.meshery/config.yaml"
     help:
       name: --help, -h
       description: Displays helpful information about any command.
-      usage: |
+      usage:
           mesheryctl --help
-            mesheryctl system --help
+      example: |
+          mesheryctl system --help
             meshery system start --help
     verbose:
       name: --verbose, -v
       description: Sets the log level to debug for verbose output and displays verboose/debug logs.
       usage:
+          mesheryctl [commands] --verbose
+      example: |
           mesheryctl system update --verbose
 
   subcommands:
@@ -98,18 +107,27 @@ system:
       description: Output shell completion code.
       usage:
           mesheryctl system completion [bash|zsh|fish]
+      example: |
+          mesheryctl system completion bash
+            mesheryctl system completion zsh
+            mesheryctl system completion fish
 
     config:
       name: config
       description: Configures Meshery to use a Kubernetes cluster.
       usage:
           mesheryctl system config [minikube | gke | aks | eks] [flags]
+      example: |
+          mesheryctl system config minikube
+            mesheryctl system config eks
       flags:
         token:
           name: --token
           description: Path to token for authenticating to Meshery API.
           usage:
             mesheryctl system config --token [path-to-file]
+          example:
+            mesheryctl system config --token "~/Downloads/auth.json"
       examples:
         aks:
           name: aks
@@ -130,14 +148,11 @@ system:
     logs:
       name: logs
       description: Starts tailing Meshery server debug logs
-      usage: |
-
-          # View the logs for a specific component
+      usage:
           mesheryctl system logs [component-name]
-
-          # Example
-          mesheryctl system logs meshery-istio
-
+      example: |
+          mesheryctl system logs --verbose
+            mesheryctl system logs meshery-istio
     reset:
       name: reset
       description: Resets meshery.yaml file with a copy from Meshery repo
@@ -174,13 +189,19 @@ system-channel:
       description: set release channel and version.
       usage:
           mesheryctl system channel set [stable|stable-version|edge|edge-version]
-
+      example: |
+          mesheryctl system channel set stable
+            mesheryctl system channel set edge
+            mesheryctl system channel set v0.5.60
     switch:
       name: switch
       description: switch release channel and version
       usage:
           mesheryctl system channel switch [stable|stable-version|edge|edge-version]
-
+      example: |
+          mesheryctl system channel switch stable
+            mesheryctl system channel switch edge
+            mesheryctl system channel switch v0.5.60
     view:
       name: view
       description: view release channel and version
@@ -205,7 +226,9 @@ system-context:
       description: create a new context in config.yaml file
       usage:
           mesheryctl system context create [context name]
-
+      example: |
+          mesheryctl system context create k8s-sample
+            mesheryctl system context create docker-edge
       flags:
         adapters:
           name: --adapters
@@ -228,13 +251,17 @@ system-context:
       description: delete an existing context from Meshery config file
       usage:
           mesheryctl system context delete [context name]
-    
+      example: |
+          mesheryctl system context delete k8s-sample
+            mesheryctl system context delete docker-edge
     switch:
       name: switch
       description: configure mesheryctl to actively use one one context vs. the another context
       usage:
           mesheryctl system context switch [context name]
-    
+      example: |
+          mesheryctl system context switch k8s-sample
+            mesheryctl system context switch docker-edge
     view:
       name: view
       description: view the configurations of the current context
@@ -246,6 +273,8 @@ system-context:
           description: view the configurations of the specified context
           usage:
               mesheryctl system context view --context [context name]
+          example: 
+              mesheryctl system context view --context docker-edge
         all:
           name: --all
           description: if set, shows the configurations of all the contexts
@@ -395,22 +424,31 @@ mesh:
       description: Deploy a service mesh into the cluster
       usage:
           mesheryctl mesh deploy [flags]
+      example:
+          mesheryctl mesh deploy -t "~/Downloads/auth.json"
       flags:
         adapter:
           name: --adapter, -a
           description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
           usage:
               mesheryctl mesh deploy --adapter [name of the adapter]
+          example:
+              mesheryctl mesh deploy --adapter meshery-istio:10000
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for deploying the validation tests and sample workload
           usage:
               mesheryctl mesh deploy --namespace [namespace to be used]
+          example: |
+              mesheryctl mesh deploy --namespace docker-desktop
+                mesheryctl mesh deploy --namespace minikube
         token:
           name: --tokenpath, -t
           description: (required) path to token for authenticating to Meshery API
           usage:
               mesheryctl mesh deploy --tokenPath [path to token for authentication]
+          example:
+              mesheryctl mesh deploy --tokenPath "~/Downloads/auth.json"
 
 pattern:
   name: pattern
