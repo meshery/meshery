@@ -76,7 +76,7 @@ run-fast:
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
-	go1.16.4 run main.go;
+	go run main.go;
 
 run-fast-cloud: error
 	cd cmd; go mod tidy; \
@@ -84,7 +84,7 @@ run-fast-cloud: error
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
-	go1.16.4 run main.go;
+	go run main.go;
 
 
 golangci-run: error
