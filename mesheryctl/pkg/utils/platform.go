@@ -33,6 +33,7 @@ import (
 var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
+	ReleaseTag      string
 )
 
 // ChangePlatform changes the platform specified in the current context to the specified platform
@@ -407,12 +408,12 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/docker-compose.yaml"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "latest" {
-				ctx.Version, err = GetLatestStableReleaseTag()
+				ReleaseTag, err = GetLatestStableReleaseTag()
 				if err != nil {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
 			}
-			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ctx.Version + "/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/docker-compose.yaml"
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
