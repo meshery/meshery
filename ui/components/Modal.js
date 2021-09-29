@@ -24,7 +24,6 @@ export const CustomModal = ({
   }) =>  { const theme = useTheme();
     return (
       <CustomModalWrapper
-        sx={{theme}}
         open={open}
         onClose={handleClose}
         closeAfterTransition
@@ -32,7 +31,7 @@ export const CustomModal = ({
         BackdropProps={{ timeout : 200, }}
         container={container}
       >
-        <Fade in={open} style={{ maxHeight : "90vh", overflow : "auto" }} >{Content}</Fade>
+        <Fade in={open} sx={{ maxHeight : "90vh", overflow : "auto" }} >{Content}</Fade>
       </CustomModalWrapper>
     );
   }
