@@ -22,7 +22,7 @@ global:
       usage:
           mesheryctl --help
       example: |
-          mesheryctl system --help
+          mesheryctl perf --help
             meshery system start --help
     verbose:
       name: --verbose, -v
@@ -52,6 +52,8 @@ system:
       description: Temporarily change the current context.
       usage:
         mesheryctl system reset -c [temporary context name]
+      example:
+        mesheryctl system reset -c docker-edge
 
   subcommands:
     start:
