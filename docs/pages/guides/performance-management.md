@@ -121,18 +121,30 @@ mesheryctl perf apply -f perf-config.yaml
 
 Meshery also has a [meshery-smp-action](https://github.com/layer5io/meshery-smp-action) which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.
 
-The action can be configured as shown below:
+Download the token from the Meshery Dashboard by clicking on the profile icon on the top-right corner.
+
+_Downloading the token_
+
+<a href="{{ site.baseurl }}/assets/img/smi/download-token.png"><img alt="SMI Conformance Test Results" src="{{ site.baseurl }}/assets/img/smi/download-token.png" /></a>
+
+You can use this token to authenticate the instance of Meshery running in your CI/CD workflow.
+
+{% include alert.html type="info" title="Using the token in GitHub workflows" content="You can use the <a href='https://docs.github.com/en/actions/reference/encrypted-secrets'>secrets feature in GitHub</a> to store the token." %}
+
+The action can be used by defining your test configuration in a performance profile in Meshery or by writing your test configuration in [SMP compatible format](https://github.com/layer5io/meshery-smp-action#smp-compatible-test-configuration-file).
+
+The action can then be configured as shown below:
 
 ```
 name: Meshery SMP Action
 on:
   push:
     branches:
-      'perf'
+      'master'
 
 jobs:
-  job1:
-    name: Run Performance Test
+  performance-test:
+    name: Performance Test
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -140,17 +152,19 @@ jobs:
         with:
           ref: 'perf'
 
-      - name: Deploy k8s
+      - name: Deploy k8s-minikube
         uses: manusa/actions-setup-minikube@v2.4.1
         with:
           minikube version: 'v1.21.0'
           kubernetes version: 'v1.20.7'
           driver: docker
 
-      - name: Meshery Performance Test
+      - name: Run Performance Test
         uses: layer5io/meshery-smp-action@master
         with:
-          provider_token: ${{ secrets.MESHERY_TOKEN }}
+          provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker
-          profile_name: Istio performance test
+          profile_name: istio-soak-test
 ```
+
+More configuration details of the action can be found [here](https://github.com/layer5io/meshery-smp-action/blob/master/action.yml). 
