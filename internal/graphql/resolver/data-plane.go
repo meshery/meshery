@@ -43,7 +43,7 @@ func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.P
 
 		for {
 			select {
-			case <-dataPlaneSyncChannel:
+			case <-r.MeshSyncChannel:
 				r.Log.Info("Dataplane sync channel called")
 				containers, err := r.getDataPlanes(ctx, provider, filter)
 				if err != nil {
