@@ -5,6 +5,7 @@ import (
 
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils/broadcast"
 )
 
 func (r *Resolver) changeAddonStatus(ctx context.Context, provider models.Provider) (model.Status, error) {
@@ -31,9 +32,10 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provi
 }
 
 func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provider, selector *model.MeshType) (<-chan []*model.AddonList, error) {
-	if r.addonChannel == nil {
-		r.addonChannel = make(chan []*model.AddonList, 0)
-	}
+	addonChannel := make(chan []*model.AddonList)
+
+	addonSyncChannel := make(chan broadcast.BroadcastMessage)
+	r.Broadcast.Register(addonSyncChannel)
 
 	go func() {
 		r.Log.Info("Addons subscription started")
@@ -51,13 +53,16 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 					r.Log.Error(ErrAddonSubscription(err))
 					break
 				}
-				r.addonChannel <- status
+				addonChannel <- status
 			case <-ctx.Done():
 				r.Log.Info("Addons subscription stopped")
+				close(addonChannel)
+				r.Broadcast.Unregister((addonSyncChannel))
+				close(addonSyncChannel)
 				return
 			}
 		}
 	}()
 
-	return r.addonChannel, nil
+	return addonChannel, nil
 }
