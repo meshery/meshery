@@ -70,7 +70,7 @@ jobs:
 
 # auto-job is triggered with a cron scehdule
   in-cluster-scheduled:
-    name: Auto run tests
+    name: Scheduled in-cluster tests
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'schedule' }}
     strategy:
@@ -93,7 +93,7 @@ jobs:
           profile_name: SMP_CRON_ISTIO
 
   out-of-cluster-scheduled:
-    name: Auto run tests
+    name: Scheduled out-of-cluster tests
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'schedule' }}
     strategy:
