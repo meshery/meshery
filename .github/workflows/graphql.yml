@@ -26,7 +26,6 @@ jobs:
         cd docs
         bundle install
         bundle exec rake graphql:compile_docs
-
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
