@@ -48,7 +48,7 @@ func createSvcFromComp(oamComp v1alpha1.Component) (v1.Service, error) {
 		return svc, fmt.Errorf("failed to construct service from the settings")
 	}
 
-	if err := json.Unmarshal(byt, &svc.Spec); err != nil {
+	if err := json.Unmarshal(byt, &svc); err != nil {
 		return svc, fmt.Errorf("failed to construct service from the settings")
 	}
 

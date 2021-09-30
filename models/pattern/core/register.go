@@ -215,6 +215,9 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 			"oam_ref_schema": string(schemaFile),
 			"oam_definition": tempDef,
 			"host":           "<none-local>",
+			"metadata": map[string]string{
+				"adapter.meshery.io/name": "core",
+			},
 		}
 
 		// Serialize the data
@@ -244,6 +247,10 @@ func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
 		return nil, ErrGetK8sComponents(err)
 	}
 	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v2")
+	k8version, err := cli.KubeClient.ServerVersion()
+	if err != nil {
+		return nil, ErrGetK8sComponents(err)
+	}
 	res := req.Do(context.Background())
 	content, err := res.Raw()
 	if err != nil {
@@ -259,13 +266,38 @@ func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
 		Filter: manifests.CrdFilter{
 			IsJson:        true,
 			OnlyRes:       apiResources, //When crd or api-resource names are directly given, we dont need NameFilter
-			RootFilter:    []string{"$.definitions", "--resolve", "$"},
+			RootFilter:    []string{"$.definitions"},
 			VersionFilter: []string{"$[0]"},
 			GroupFilter:   []string{"$[0]"},
-			ItrFilter:     "$..[\"x-kubernetes-group-version-kind\"][?(@.kind",
-			ItrSpecFilter: "$[0][?(@[\"x-kubernetes-group-version-kind\"][0][\"kind\"]",
+			ItrFilter:     []string{"$..[\"x-kubernetes-group-version-kind\"][?(@.kind"},
+			ItrSpecFilter: []string{"$[0][?(@[\"x-kubernetes-group-version-kind\"][0][\"kind\"]"},
+			ResolveFilter: []string{"--resolve", "$"},
 			GField:        "group",
 			VField:        "version",
+		},
+		K8sVersion: k8version.String(),
+		ModifyDefSchema: func(s1, s2 *string) {
+			var schema map[string]interface{}
+			err := json.Unmarshal([]byte(*s2), &schema)
+			if err != nil {
+				return
+			}
+			prop, ok := schema["properties"].(map[string]interface{})
+			if !ok {
+				return
+			}
+			// The schema generated has few fields that are not required and can break things, so they are removed here
+			delete(prop, "apiVersion")
+			delete(prop, "metadata")
+			delete(prop, "kind")
+			delete(prop, "status")
+			schema["properties"] = prop
+			schema["$schema"] = "http://json-schema.org/draft-04/schema"
+			b, err := json.Marshal(schema)
+			if err != nil {
+				return
+			}
+			*s2 = string(b)
 		},
 	})
 	if err != nil {
