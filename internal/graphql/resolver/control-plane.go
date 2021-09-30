@@ -5,6 +5,7 @@ import (
 
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils/broadcast"
 )
 
 func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error) {
@@ -27,9 +28,10 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 }
 
 func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
-	if r.controlPlaneChannel == nil {
-		r.controlPlaneChannel = make(chan []*model.ControlPlane)
-	}
+	controlPlaneChannel := make(chan []*model.ControlPlane)
+
+	controlPlaneSyncChannel := make(chan broadcast.BroadcastMessage)
+	r.Broadcast.Register(controlPlaneSyncChannel)
 
 	go func() {
 		r.Log.Info("Initializing ControlPlane subscription")
@@ -47,12 +49,15 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 					r.Log.Error(ErrControlPlaneSubscription(err))
 					break
 				}
-				r.controlPlaneChannel <- status
+				controlPlaneChannel <- status
 			case <-ctx.Done():
 				r.Log.Info("ControlPlane subscription stopped")
+				close(controlPlaneChannel)
+				r.Broadcast.Unregister(controlPlaneSyncChannel)
+				close(controlPlaneSyncChannel)
 				return
 			}
 		}
 	}()
-	return r.controlPlaneChannel, nil
+	return controlPlaneChannel, nil
 }
