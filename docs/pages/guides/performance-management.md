@@ -164,7 +164,7 @@ jobs:
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker
-          profile_name: istio-soak-test
+          profile_name: soak-test
 ```
 
 More configuration details of the action can be found [here](https://github.com/layer5io/meshery-smp-action/blob/master/action.yml). 
