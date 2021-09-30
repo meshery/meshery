@@ -26,7 +26,7 @@ const styles = () => ({
   },
   actions : { display : 'flex',
     justifyContent : 'center', },
-  button : { margin : '8px 0px', }
+  button : { margin : '8px 0px', width : '100%' }
 });
 
 class PromptComponent extends React.Component {
@@ -88,21 +88,22 @@ class PromptComponent extends React.Component {
             </DialogContent>
           }
           <DialogActions className={classes.actions}>
-            {
-              options?.map((option, index) => {
-                return (
-                  <Button onClick={() => {
-                    this.hide();
-                    resolve(option);
-                  }} key={index} className={classes.button}
-                  type="submit"
-                  variant="contained"
-                  color="primary">
-                    {option}
-                  </Button>
-                )
-              })
-            }
+            <Button onClick={() => {
+              this.hide();
+              resolve(options[1]);
+            }} key={options[1]} className={classes.button}
+            >
+              {options[1]}
+            </Button>
+            <Button onClick={() => {
+              this.hide();
+              resolve(options[0]);
+            }} key={options[0]} className={classes.button}
+            type="submit"
+            variant="contained"
+            color="primary">
+              {options[0]}
+            </Button>
           </DialogActions>
         </Dialog>
       </div>

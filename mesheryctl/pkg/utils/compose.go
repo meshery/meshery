@@ -21,17 +21,19 @@ type Template struct {
 }
 
 type TemplateSpec struct {
-	ServiceAccount string       `yaml:"serviceAccountName,omitempty"`
-	Containers     []Containers `yaml:"containers,omitempty"`
-	RestartPolicy  string       `yaml:"restartPolicy,omitempty"`
+	ServiceAccount     string       `yaml:"serviceAccount,omitempty"`
+	ServiceAccountName string       `yaml:"serviceAccountName,omitempty"`
+	Containers         []Containers `yaml:"containers,omitempty"`
+	RestartPolicy      string       `yaml:"restartPolicy,omitempty"`
 }
 
 type Containers struct {
-	Env       interface{}      `yaml:"env,omitempty"`
-	Image     string           `yaml:"image,omitempty"`
-	Name      string           `yaml:"name,omitempty"`
-	Ports     []map[string]int `yaml:"ports,omitempty"`
-	Resources interface{}      `yaml:"resources,omitempty"`
+	Env             interface{}      `yaml:"env,omitempty"`
+	Image           string           `yaml:"image,omitempty"`
+	ImagePullPolicy string           `yaml:"imagePullPolicy"`
+	Name            string           `yaml:"name,omitempty"`
+	Ports           []map[string]int `yaml:"ports,omitempty"`
+	Resources       interface{}      `yaml:"resources,omitempty"`
 }
 
 type DockerCompose struct {

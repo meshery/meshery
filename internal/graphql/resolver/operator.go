@@ -3,8 +3,10 @@ package resolver
 import (
 	"context"
 
+	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
@@ -13,10 +15,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	delete := true
 
 	// Tell operator status subscription that operation is starting
-	// r.operatorSyncChannel <- true
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Type:    broadcast.OperatorSyncChannel,
-		Message: true,
+		Source: broadcast.OperatorSyncChannel,
+		Data:   true,
+		Type:   "health",
 	})
 
 	if status == model.StatusEnabled {
@@ -26,10 +28,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 
 	if r.Config.KubeClient.KubeClient == nil {
 		r.Log.Error(ErrNilClient)
-		// r.operatorSyncChannel <- false
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Type:    broadcast.OperatorSyncChannel,
-			Message: false,
+			Source: broadcast.OperatorSyncChannel,
+			Data:   ErrNilClient,
+			Type:   "error",
 		})
 		return model.StatusUnknown, ErrNilClient
 	}
@@ -38,10 +40,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		err := model.Initialize(kubeclient, del)
 		if err != nil {
 			r.Log.Error(err)
-			// r.operatorSyncChannel <- false
 			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Type:    broadcast.OperatorSyncChannel,
-				Message: false,
+				Source: broadcast.OperatorSyncChannel,
+				Data:   err,
+				Type:   "error",
 			})
 			return
 		}
@@ -54,10 +56,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			})
 			if err != nil {
 				r.Log.Error(err)
-				// r.operatorSyncChannel <- false
 				r.Broadcast.Submit(broadcast.BroadcastMessage{
-					Type:    broadcast.OperatorSyncChannel,
-					Message: false,
+					Source: broadcast.OperatorSyncChannel,
+					Data:   false,
+					Type:   "health",
 				})
 				return
 			}
@@ -66,10 +68,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			r.Log.Debug("Endpoint: ", endpoint)
 			if err != nil {
 				r.Log.Error(err)
-				// r.operatorSyncChannel <- false
 				r.Broadcast.Submit(broadcast.BroadcastMessage{
-					Type:    broadcast.OperatorSyncChannel,
-					Message: false,
+					Source: broadcast.OperatorSyncChannel,
+					Data:   false,
+					Type:   "health",
 				})
 				return
 			}
@@ -80,10 +82,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		err = model.RunMeshSync(kubeclient, del)
 		if err != nil {
 			r.Log.Error(err)
-			// r.operatorSyncChannel <- false
 			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Type:    broadcast.OperatorSyncChannel,
-				Message: false,
+				Source: broadcast.OperatorSyncChannel,
+				Data:   err,
+				Type:   "error",
 			})
 			return
 		}
@@ -93,10 +95,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		// 	Status: status,
 		// }
 
-		// r.operatorSyncChannel <- false
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Type:    broadcast.OperatorSyncChannel,
-			Message: false,
+			Source: broadcast.OperatorSyncChannel,
+			Data:   false,
+			Type:   "health",
 		})
 	}(delete, r.Config.KubeClient)
 
@@ -144,6 +146,32 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 		Version:     version,
 		Controllers: controllers,
 	}, nil
+}
+
+func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider) (*model.OperatorControllerStatus, error) {
+	mesheryclient, err := operatorClient.New(&r.Config.KubeClient.RestConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := model.GetMeshSyncInfo(mesheryclient, r.meshsyncLivenessChannel)
+	if err != nil {
+		return &status, err
+	}
+	return &status, nil
+}
+
+func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) (*model.OperatorControllerStatus, error) {
+	mesheryclient, err := operatorClient.New(&r.Config.KubeClient.RestConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := model.GetBrokerInfo(mesheryclient, r.BrokerConn)
+	if err != nil {
+		return &status, err
+	}
+	return &status, nil
 }
 
 func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider) (<-chan *model.OperatorStatus, error) {
@@ -194,10 +222,24 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 					continue
 				}
 
-				if processing.Message.(bool) {
-					status.Status = model.StatusProcessing
+				if processing.Source == broadcast.OperatorSyncChannel {
+					switch processing.Data.(type) {
+					case bool:
+						if processing.Data.(bool) {
+							status.Status = model.StatusProcessing
+						}
+					case *errors.Error:
+						status.Error = &model.Error{
+							Code:        processing.Data.(*errors.Error).Code,
+							Description: processing.Data.(*errors.Error).Error(),
+						}
+					case error:
+						status.Error = &model.Error{
+							Code:        "",
+							Description: processing.Data.(error).Error(),
+						}
+					}
 				}
-
 				operatorChannel <- status
 			case <-ctx.Done():
 				r.Log.Info("Operator subscription flushed")

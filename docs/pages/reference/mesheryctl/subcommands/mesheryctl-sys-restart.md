@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/restart
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system
 subcommand: restart
 # image: /assets/img/platforms/brew.png

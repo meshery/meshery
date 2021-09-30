@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
 import {
   NoSsr,
   TableCell,
@@ -10,6 +10,7 @@ import {
   DialogActions,
   Divider,
   Tooltip,
+  Typography
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -27,6 +28,8 @@ import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import URLUploader from "./URLUploader";
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 
 const styles = (theme) => ({
   grid : {
@@ -37,6 +40,24 @@ const styles = (theme) => ({
     fontSize : 18,
   },
 });
+
+const useStyles = makeStyles(() => ({
+  ymlDialogTitle : {
+    display : "flex",
+    alignItems : "center"
+  },
+  ymlDialogTitleText : {
+    flexGrow : 1
+  },
+  fullScreenCodeMirror : {
+    height : '100%',
+    '& .CodeMirror' : {
+      minHeight : "300px",
+      height : '100%',
+    }
+  },
+
+}))
 
 function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
@@ -63,16 +84,46 @@ function CustomToolbar(onClick, urlOnClick) {
     );
   };
 }
+
+function TooltipIcon({ children, onClick, title }) {
+  return (
+    <Tooltip title={title} placement="top" arrow interactive >
+      <IconButton onClick={onClick}>
+        {children}
+      </IconButton>
+    </Tooltip>
+  )
+}
+
 function YAMLEditor({ filter, onClose, onSubmit }) {
+  const classes = useStyles();
   const [yaml, setYaml] = useState("");
+  const [fullScreen, setFullScreen] = useState(false);
+
+  const toggleFullScreen = () => {
+    setFullScreen(!fullScreen);
+  }
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="filter-dialog-title" open fullWidth maxWidth="md">
-      <DialogTitle id="filter-dialog-title">{filter.name}</DialogTitle>
+    <Dialog onClose={onClose} aria-labelledby="filter-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
+      <DialogTitle disableTypography id="filter-dialog-title" className={classes.ymlDialogTitle}>
+        <Typography variant="h6" className={classes.ymlDialogTitleText}>
+          {filter.name}
+        </Typography>
+        <TooltipIcon
+          title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          onClick={toggleFullScreen}>
+          {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+        </TooltipIcon>
+        <TooltipIcon title="Exit" onClick={onClose}>
+          <CloseIcon />
+        </TooltipIcon>
+      </DialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
         <CodeMirror
           value={filter.filter_file}
+          className={fullScreen ? classes.fullScreenCodeMirror : ""}
           options={{
             theme : "material",
             lineNumbers : true,
@@ -378,7 +429,7 @@ function MesheryFilters({
 
       subtitle : "Are you sure you want to delete this filter?",
 
-      options : ["yes", "no"], })
+      options : ["Yes", "No"], })
     return response;
   }
 
@@ -430,11 +481,11 @@ function MesheryFilters({
     onRowsDelete : async function handleDelete(row) {
       let response  = await showmodal()
       console.log(response)
-      if (response === "yes") {
+      if (response === "Yes") {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
       }
-      if (response === "no")
+      if (response === "No")
         fetchFilters(page, pageSize, search, sortOrder);
     },
 

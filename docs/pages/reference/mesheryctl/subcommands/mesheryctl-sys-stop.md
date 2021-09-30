@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/system/stop
 type: reference
 display-title: "false"
 language: en
-lang: en
 command: system
 subcommand: stop
 # image: /assets/img/platforms/brew.png

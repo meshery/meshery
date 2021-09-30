@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -32,6 +33,7 @@ import (
 var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
+	ReleaseTag      string
 )
 
 // ChangePlatform changes the platform specified in the current context to the specified platform
@@ -406,12 +408,12 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/docker-compose.yaml"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "latest" {
-				ctx.Version, err = GetLatestStableReleaseTag()
+				ReleaseTag, err = GetLatestStableReleaseTag()
 				if err != nil {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
 			}
-			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ctx.Version + "/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/docker-compose.yaml"
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
@@ -767,4 +769,17 @@ func InstallprereqDocker() error {
 	}
 	log.Info("Prerequisite Docker Compose is installed.")
 	return nil
+}
+
+// Sets the path to user's kubeconfig file into global variables
+func SetKubeConfig() {
+	// Define the path where the kubeconfig.yaml will be written to
+	usr, err := user.Current()
+	if err != nil {
+		ConfigPath = filepath.Join(".meshery", KubeConfigYaml)
+		KubeConfig = filepath.Join(".kube", "config")
+	} else {
+		ConfigPath = filepath.Join(usr.HomeDir, ".meshery", KubeConfigYaml)
+		KubeConfig = filepath.Join(usr.HomeDir, ".kube", "config")
+	}
 }

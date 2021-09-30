@@ -101,6 +101,7 @@ module.exports = { resolve : {
   "@material-ui/core/Popover" : require("@material-ui/core/Popover"),
   "@material-ui/core/Grow" : require("@material-ui/core/Grow"),
   "@material-ui/icons/Clear" : require("@material-ui/icons/Clear"),
+  "@material-ui/icons/Create" : require("@material-ui/icons/Create"),
   "@material-ui/icons/CloudDownload" : require("@material-ui/icons/CloudDownload"),
   "@material-ui/icons/Print" : require("@material-ui/icons/Print"),
   "@material-ui/icons/ViewColumn" : require("@material-ui/icons/ViewColumn"),

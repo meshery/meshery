@@ -1,7 +1,7 @@
 apiVersion: v2
 name: meshery-nsm
 description: Meshery Adapter for Network Service Mesh.
-source: 
+source:
   - https://github.com/layer5io/meshery-nsm
 
 deprecated: false
