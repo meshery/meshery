@@ -7,7 +7,7 @@ type: Guides
 category: mesheryctl
 ---
 
-To authenticate with Meshery via mesh you have to use the command `mesheryctl system login`. On execution of this command you get a an option to choose a provider, you would have to choose `Meshery` as your provider to authenticate yourself. After doing so, a new window opens up with ways to login. 
+To authenticate with Meshery through `mesheryctl` you will use the command `mesheryctl system login`. Upon execution of this command, select your Provider of choice, then authenticate to your chosen Provider.
 
 ## Get your Token
 
