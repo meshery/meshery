@@ -758,7 +758,7 @@ class GrafanaCustomChart extends Component {
       } else {
         mainChart = (
           <div>
-            <div className={classes.error}>{error}</div>
+            <div className={classes.error}>{error && 'There was an error communicating with the server'}</div>
             <div ref={(ch) => self.chartRef = ch} className={classes.root} />
           </div>
         );
