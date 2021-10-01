@@ -5,6 +5,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/vmihailenco/taskq/v3"
 )
 
@@ -15,6 +16,7 @@ type Handler struct {
 	meshsyncChannel chan struct{}
 	log             logger.Handler
 	brokerConn      broker.Handler
+	broadcaster     broadcast.Broadcaster
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -23,12 +25,14 @@ func NewHandlerInstance(
 	meshSyncCh chan struct{},
 	logger logger.Handler,
 	brokerConn broker.Handler,
+	broadcaster broadcast.Broadcaster,
 ) models.HandlerInterface {
 	h := &Handler{
 		config:          handlerConfig,
 		meshsyncChannel: meshSyncCh,
 		log:             logger,
 		brokerConn:      brokerConn,
+		broadcaster:     broadcaster,
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{

@@ -44,6 +44,7 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 		MeshSyncChannel: h.meshsyncChannel,
 		BrokerConn:      h.brokerConn,
 		Logger:          h.log,
+		Broadcast:       h.broadcaster,
 	})
 	if err != nil {
 		return ErrPluginRun(err)

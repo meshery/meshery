@@ -243,10 +243,10 @@ func main() {
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 	}
 
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn)
-
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
+	
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, b)
 
 	g := graphql.New(graphql.Options{
 		Config:          hc,
