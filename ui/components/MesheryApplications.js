@@ -330,12 +330,19 @@ function MesheryApplications({
     }
 
     if (type === "upload" || type === "urlupload") {
-      const body = type==="upload" ? JSON.stringify({ application_data : { application_file : data }, save : true }) : JSON.stringify({ url : data, save : true });
+      let body = { save : true }
+      if (type === "upload") {
+        body = JSON.stringify({ ...body,   application_data : { application_file : data }
+        })
+      }
+      if (type === "urlupload") {
+        body = JSON.stringify({ ...body, url : data })
+      }
       dataFetch(
         `/api/application`,
         { credentials : "include",
           method : "POST",
-          body : body, },
+          body },
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
