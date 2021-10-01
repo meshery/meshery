@@ -76,15 +76,17 @@ Meshery provides performance test results alongside environment metrics, includi
 
 Connect Meshery to your existing Grafana instance. Meshery will auto-import the boards of your choosing:
 
-<a href="{{ site.baseurl }}/assets/img/performance-management/meshery-and-grafana.png">
-    <img src="{{ site.baseurl }}/assets/img/performance-management/meshery-and-grafana.png" style="width: 52%" />
+<a href="img/meshery-and-grafana.png">
+    <img src="img/meshery-and-grafana.png" style="width: 52%" />
 </a>
 
 ### [Connecting to Grafana]({{ site.baseurl }}/guides/meshery-metrics#expose-grafana-service)
 
 If you have an API key configured to restrict access to your Grafana boards, you will need to enter the API key when establishing Meshery's connection to Grafana. You may also set up a [Grafana board](https://grafana.com/docs/grafana/latest/http_api/dashboard/#create-update-dashboard) and then set up an API key:
 
-<a href="{{ site.baseurl }}/assets/img/performance-management/grafana-dashboard.png"><img style="width:450px;padding-top:5px;" src="{{ site.baseurl }}/assets/img/performance-management/grafana-dashboard.png" /></a>
+<a href="img/grafana-dashboard.png">
+  <img style="width:450px;padding-top:5px;" src="img/grafana-dashboard.png" />
+</a>
 
 - Import Grafana boards
   - Import existing Grafana boards via API
