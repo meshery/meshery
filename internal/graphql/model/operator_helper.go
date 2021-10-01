@@ -67,7 +67,7 @@ func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 	return dep.ObjectMeta.Name, version, nil
 }
 
-func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler, ch chan struct{}) ([]*OperatorControllerStatus, error) {
+func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler) ([]*OperatorControllerStatus, error) {
 	controllers := make([]*OperatorControllerStatus, 0)
 
 	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
@@ -84,7 +84,7 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 	}
 	controllers = append(controllers, &broker)
 
-	meshsync, err := GetMeshSyncInfo(mesheryclient, ch)
+	meshsync, err := GetMeshSyncInfo(mesheryclient)
 	if err != nil {
 		return controllers, err
 	}
@@ -112,7 +112,7 @@ func GetBrokerInfo(mesheryclient operatorClient.Interface, brokerConn brokerpkg.
 	return brokerStatus, nil
 }
 
-func GetMeshSyncInfo(mesheryclient operatorClient.Interface, ch chan struct{}) (OperatorControllerStatus, error) {
+func GetMeshSyncInfo(mesheryclient operatorClient.Interface) (OperatorControllerStatus, error) {
 	var meshsyncStatus OperatorControllerStatus
 
 	meshsync, err := mesheryclient.CoreV1Alpha1().MeshSyncs(Namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})

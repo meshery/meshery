@@ -129,7 +129,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 		status = model.StatusEnabled
 	}
 
-	controllers, err := model.GetControllersInfo(r.Config.KubeClient, r.BrokerConn, r.meshsyncLivenessChannel)
+	controllers, err := model.GetControllersInfo(r.Config.KubeClient, r.BrokerConn)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -154,7 +154,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 		return nil, err
 	}
 
-	status, err := model.GetMeshSyncInfo(mesheryclient, r.meshsyncLivenessChannel)
+	status, err := model.GetMeshSyncInfo(mesheryclient)
 	if err != nil {
 		return &status, err
 	}
@@ -176,10 +176,6 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) 
 
 func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider) (<-chan *model.OperatorStatus, error) {
 	operatorChannel := make(chan *model.OperatorStatus)
-
-	if r.meshsyncLivenessChannel == nil {
-		r.meshsyncLivenessChannel = make(chan struct{})
-	}
 
 	operatorSyncChannel := make(chan broadcast.BroadcastMessage)
 	r.Broadcast.Register(operatorSyncChannel)
