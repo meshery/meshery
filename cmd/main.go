@@ -245,7 +245,7 @@ func main() {
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
-	
+
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, b)
 
 	g := graphql.New(graphql.Options{
