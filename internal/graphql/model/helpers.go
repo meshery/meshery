@@ -40,7 +40,6 @@ func ListernToEvents(log logger.Handler,
 	handler *database.Handler,
 	datach chan *broker.Message,
 	meshsyncCh chan struct{},
-	operatorSyncChannel chan bool,
 	controlPlaneSyncChannel chan struct{},
 	meshsyncLivenessChannel chan struct{},
 	broadcast broadcast.Broadcaster,
@@ -48,7 +47,7 @@ func ListernToEvents(log logger.Handler,
 	var wg sync.WaitGroup
 	for msg := range datach {
 		wg.Add(1)
-		go persistData(*msg, log, handler, meshsyncCh, operatorSyncChannel, controlPlaneSyncChannel, broadcast, &wg)
+		go persistData(*msg, log, handler, meshsyncCh,  controlPlaneSyncChannel, broadcast, &wg)
 	}
 
 	wg.Wait()
@@ -59,7 +58,6 @@ func persistData(msg broker.Message,
 	log logger.Handler,
 	handler *database.Handler,
 	meshsyncCh chan struct{},
-	operatorSyncChannel chan bool,
 	controlPlaneSyncChannel chan struct{},
 	broadcaster broadcast.Broadcaster,
 	wg *sync.WaitGroup,
@@ -78,7 +76,6 @@ func persistData(msg broker.Message,
 		// persist the object
 		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
 		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
-			// operatorSyncChannel <- false
 			broadcaster.Submit(broadcast.BroadcastMessage{
 				Source: broadcast.OperatorSyncChannel,
 				Data:   false,

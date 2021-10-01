@@ -177,9 +177,6 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) 
 func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider) (<-chan *model.OperatorStatus, error) {
 	operatorChannel := make(chan *model.OperatorStatus)
 
-	if r.operatorSyncChannel == nil {
-		r.operatorSyncChannel = make(chan bool)
-	}
 	if r.meshsyncLivenessChannel == nil {
 		r.meshsyncLivenessChannel = make(chan struct{})
 	}
