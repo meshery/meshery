@@ -292,10 +292,10 @@ type MesheryResult {
 input PageFilter {
 	page: String!
 	pageSize: String!
-	order: String = ""
-	search: String = ""
-	from: String = ""
-	to: String = ""
+	order: String
+	search: String
+	from: String
+	to: String
 }
 # ============== RESYNC =============================
 
@@ -359,6 +359,9 @@ type Query {
 
 	# Query for fetching all results for profile ID
 	getPerformanceProfiles(selector: PageFilter!): PerfPageProfiles!
+
+	# Query for fetching all results for profile ID
+	fetchAllResults(selector: PageFilter!): PerfPageResult!
 }
 
 # 

@@ -123,3 +123,23 @@ func (r *Resolver) getPerformanceProfiles(ctx context.Context, provider models.P
 
 	return profiles, nil
 }
+
+func (r *Resolver) fetchAllResults(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PerfPageResult, error) {
+	tokenString := ctx.Value("token").(string)
+
+	bdr, err := provider.FetchAllResults(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, *selector.From, *selector.To)
+
+	if err != nil {
+		r.Log.Error(err)
+		return nil, err
+	}
+
+	performanceResults := &model.PerfPageResult{}
+
+	if err := json.Unmarshal(bdr, performanceResults); err != nil {
+		obj := "performance results data"
+		return nil, handlers.ErrUnmarshal(err, obj)
+	}
+
+	return performanceResults, nil
+}

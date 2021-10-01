@@ -422,7 +422,7 @@ func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, o
 }
 
 // FetchAllResults - fetches results from provider backend
-func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error) {
+func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, search, order, from, to string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistResults) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("Persist Results", l.ProviderName)
@@ -457,10 +457,6 @@ func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, sear
 	logrus.Debugf("constructed results url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		return nil, ErrFetch(err, "All Perf results", resp.StatusCode)

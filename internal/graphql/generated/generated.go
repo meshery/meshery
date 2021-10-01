@@ -171,6 +171,7 @@ type ComplexityRoot struct {
 	Query struct {
 		ConnectToNats          func(childComplexity int) int
 		DeployMeshsync         func(childComplexity int) int
+		FetchAllResults        func(childComplexity int, selector model.PageFilter) int
 		FetchResults           func(childComplexity int, selector model.PageFilter, profileID string) int
 		GetAvailableAddons     func(childComplexity int, selector *model.MeshType) int
 		GetAvailableNamespaces func(childComplexity int) int
@@ -212,6 +213,7 @@ type QueryResolver interface {
 	GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error)
 	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error)
 	GetPerformanceProfiles(ctx context.Context, selector model.PageFilter) (*model.PerfPageProfiles, error)
+	FetchAllResults(ctx context.Context, selector model.PageFilter) (*model.PerfPageResult, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
@@ -786,6 +788,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.DeployMeshsync(childComplexity), true
 
+	case "Query.fetchAllResults":
+		if e.complexity.Query.FetchAllResults == nil {
+			break
+		}
+
+		args, err := ec.field_Query_fetchAllResults_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FetchAllResults(childComplexity, args["selector"].(model.PageFilter)), true
+
 	case "Query.fetchResults":
 		if e.complexity.Query.FetchResults == nil {
 			break
@@ -1335,10 +1349,10 @@ type MesheryResult {
 input PageFilter {
 	page: String!
 	pageSize: String!
-	order: String = ""
-	search: String = ""
-	from: String = ""
-	to: String = ""
+	order: String = " "
+	search: String = " "
+	from: String = " "
+	to: String = " "
 }
 # ============== RESYNC =============================
 
@@ -1402,6 +1416,9 @@ type Query {
 
 	# Query for fetching all results for profile ID
 	getPerformanceProfiles(selector: PageFilter!): PerfPageProfiles!
+
+	# Query for fetching all results for profile ID
+	fetchAllResults(selector: PageFilter!): PerfPageResult!
 }
 
 # 
@@ -1496,6 +1513,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_fetchAllResults_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.PageFilter
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
 	return args, nil
 }
 
@@ -4746,6 +4778,48 @@ func (ec *executionContext) _Query_getPerformanceProfiles(ctx context.Context, f
 	return ec.marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_fetchAllResults(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_fetchAllResults_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FetchAllResults(rctx, args["selector"].(model.PageFilter))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.PerfPageResult)
+	fc.Result = res
+	return ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6254,6 +6328,19 @@ func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj in
 	var it model.PageFilter
 	var asMap = obj.(map[string]interface{})
 
+	if _, present := asMap["order"]; !present {
+		asMap["order"] = " "
+	}
+	if _, present := asMap["search"]; !present {
+		asMap["search"] = " "
+	}
+	if _, present := asMap["from"]; !present {
+		asMap["from"] = " "
+	}
+	if _, present := asMap["to"]; !present {
+		asMap["to"] = " "
+	}
+
 	for k, v := range asMap {
 		switch k {
 		case "page":
@@ -7181,6 +7268,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getPerformanceProfiles(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "fetchAllResults":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_fetchAllResults(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

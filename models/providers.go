@@ -205,7 +205,7 @@ type Provider interface {
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request)
 	FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error)
-	FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error)
+	FetchAllResults(tokenVal string, page, pageSize, search, order, from, to string) ([]byte, error)
 	PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error)
 	FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	PublishSmiResults(result *SmiResult) (string, error)

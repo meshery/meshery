@@ -156,7 +156,7 @@ func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, or
 }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchAllResults(tokenString string, page, pageSize, search, order, from, to string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}

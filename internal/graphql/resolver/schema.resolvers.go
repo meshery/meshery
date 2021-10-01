@@ -104,6 +104,11 @@ func (r *queryResolver) GetPerformanceProfiles(ctx context.Context, selector mod
 	return r.getPerformanceProfiles(ctx, provider, selector)
 }
 
+func (r *queryResolver) FetchAllResults(ctx context.Context, selector model.PageFilter) (*model.PerfPageResult, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.fetchAllResults(ctx, provider, selector)
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if selector != nil {
