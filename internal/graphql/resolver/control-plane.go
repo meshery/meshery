@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/internal/graphql/services"
 	"github.com/layer5io/meshery/models"
 )
 
@@ -18,7 +17,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 		selectors = append(selectors, *filter.Type)
 	}
 
-	controlplanelist, err := services.GetControlPlaneState(selectors, provider)
+	controlplanelist, err := model.GetControlPlaneState(selectors, provider)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err

@@ -1,7 +1,6 @@
-package services
+package model
 
 import (
-	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -24,7 +23,7 @@ func RunMeshSync(client *mesherykube.Client, delete bool) error {
 
 func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object *meshsyncmodel.Object) error {
 	if handler == nil {
-		return model.ErrEmptyHandler
+		return ErrEmptyHandler
 	}
 
 	handler.Lock()
@@ -36,13 +35,13 @@ func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, o
 		if result.Error != nil {
 			result = handler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
 			if result.Error != nil {
-				return model.ErrCreateData(result.Error)
+				return ErrCreateData(result.Error)
 			}
 		}
 	case broker.Delete:
 		result := handler.Delete(object)
 		if result.Error != nil {
-			return model.ErrDeleteData(result.Error)
+			return ErrDeleteData(result.Error)
 		}
 	case broker.ErrorEvent:
 		return nil

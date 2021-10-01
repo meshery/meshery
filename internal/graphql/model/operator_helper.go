@@ -1,4 +1,4 @@
-package services
+package model
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 
 	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
-	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
@@ -48,12 +47,12 @@ func Initialize(client *mesherykube.Client, delete bool) error {
 
 func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 	if kubeclient == nil || kubeclient.KubeClient == nil {
-		return "", "", model.ErrMesheryClient(nil)
+		return "", "", ErrMesheryClient(nil)
 	}
 
 	dep, err := kubeclient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-operator", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
-		return "", "", model.ErrMesheryClient(err)
+		return "", "", ErrMesheryClient(err)
 	}
 
 	version := ""
@@ -68,28 +67,28 @@ func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 	return dep.ObjectMeta.Name, version, nil
 }
 
-func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler, ch chan struct{}) ([]*model.OperatorControllerStatus, error) {
-	controllers := make([]*model.OperatorControllerStatus, 0)
+func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler, ch chan struct{}) ([]*OperatorControllerStatus, error) {
+	controllers := make([]*OperatorControllerStatus, 0)
 	var broker *operatorv1alpha1.Broker
 	var meshsync *operatorv1alpha1.MeshSync
 	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
 		if mesheryclient == nil {
-			return controllers, model.ErrMesheryClient(nil)
+			return controllers, ErrMesheryClient(nil)
 		}
-		return controllers, model.ErrMesheryClient(err)
+		return controllers, ErrMesheryClient(err)
 	}
 
 	broker, err = mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
-		return controllers, model.ErrMesheryClient(err)
+		return controllers, ErrMesheryClient(err)
 	}
 	if err == nil {
-		status := model.StatusEnabled
+		status := StatusEnabled
 		if brokerConn.Info() == brokerpkg.NotConnected {
-			status = model.StatusDisabled
+			status = StatusDisabled
 		}
-		controllers = append(controllers, &model.OperatorControllerStatus{
+		controllers = append(controllers, &OperatorControllerStatus{
 			Name:    "broker",
 			Version: broker.Labels["version"],
 			Status:  status,
@@ -98,10 +97,10 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 
 	meshsync, err = mesheryclient.CoreV1Alpha1().MeshSyncs(Namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
-		return controllers, model.ErrMesheryClient(err)
+		return controllers, ErrMesheryClient(err)
 	}
 	if err == nil {
-		status := model.StatusDisabled
+		status := StatusDisabled
 		flag := false
 		for start := time.Now(); time.Since(start) < 5*time.Second; {
 			select {
@@ -113,9 +112,9 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 			}
 		}
 		if flag {
-			status = model.StatusEnabled
+			status = StatusEnabled
 		}
-		controllers = append(controllers, &model.OperatorControllerStatus{
+		controllers = append(controllers, &OperatorControllerStatus{
 			Name:    "meshsync",
 			Version: meshsync.Labels["version"],
 			Status:  status,
@@ -130,9 +129,9 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
 		if mesheryclient == nil {
-			return "", model.ErrMesheryClient(nil)
+			return "", ErrMesheryClient(nil)
 		}
-		return "", model.ErrMesheryClient(err)
+		return "", ErrMesheryClient(err)
 	}
 
 	timeout := 60
@@ -193,7 +192,7 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 
 	err = brokerConn.SubscribeWithChannel(MeshsyncSubject, BrokerQueue, datach)
 	if err != nil {
-		return endpoint, model.ErrSubscribeChannel(err)
+		return endpoint, ErrSubscribeChannel(err)
 	}
 
 	err = brokerConn.Publish(RequestSubject, &brokerpkg.Message{
@@ -202,7 +201,7 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 		},
 	})
 	if err != nil {
-		return endpoint, model.ErrPublishBroker(err)
+		return endpoint, ErrPublishBroker(err)
 	}
 
 	return endpoint, nil

@@ -17,7 +17,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/helpers"
-	graphqlModel "github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
@@ -461,25 +460,25 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	}
 
 	// publish result to graphql subscription
-	startTime := fmt.Sprintf("%v", result.TestStartTime)
-	serverBoardConfig := fmt.Sprintf("%v", result.ServerBoardConfig)
-	serverMetrics := fmt.Sprintf("%v", result.ServerMetrics)
-	performanceProfile := fmt.Sprintf("%v", result.PerformanceProfileInfo.ID)
+	// startTime := fmt.Sprintf("%v", result.TestStartTime)
+	// serverBoardConfig := fmt.Sprintf("%v", result.ServerBoardConfig)
+	// serverMetrics := fmt.Sprintf("%v", result.ServerMetrics)
+	// performanceProfile := fmt.Sprintf("%v", result.PerformanceProfileInfo.ID)
 
-	h.config.PerformanceChannels[performanceProfileID] <- &graphqlModel.MesheryResult{
-		MesheryID:          &resultID,
-		Name:               &result.Name,
-		Mesh:               &result.Mesh,
-		PerformanceProfile: &performanceProfile,
-		TestID:             &result.TestID,
-		RunnerResults:      result.Result,
-		ServerMetrics:      &serverMetrics,
-		ServerBoardConfig:  &serverBoardConfig,
-		TestStartTime:      &startTime,
-		UserID:             &result.UserID,
-		UpdatedAt:          &result.UpdatedAt,
-		CreatedAt:          &result.CreatedAt,
-	}
+	// h.config.PerformanceChannels[performanceProfileID] <- &graphqlModel.MesheryResult{
+	// 	MesheryID:          &resultID,
+	// 	Name:               &result.Name,
+	// 	Mesh:               &result.Mesh,
+	// 	PerformanceProfile: &performanceProfile,
+	// 	TestID:             &result.TestID,
+	// 	RunnerResults:      result.Result,
+	// 	ServerMetrics:      &serverMetrics,
+	// 	ServerBoardConfig:  &serverBoardConfig,
+	// 	TestStartTime:      &startTime,
+	// 	UserID:             &result.UserID,
+	// 	UpdatedAt:          &result.UpdatedAt,
+	// 	CreatedAt:          &result.CreatedAt,
+	// }
 }
 
 // CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider

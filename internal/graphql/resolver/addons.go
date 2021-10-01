@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/internal/graphql/services"
 	"github.com/layer5io/meshery/models"
 )
 
@@ -22,7 +21,7 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provi
 		selectors = append(selectors, *selector)
 	}
 
-	addonlist, err := services.GetAddonsState(selectors, r.Config.KubeClient, provider)
+	addonlist, err := model.GetAddonsState(selectors, r.Config.KubeClient, provider)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err

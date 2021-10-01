@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/internal/graphql/services"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -22,7 +21,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("Initializing MeshSync subscription")
-		go services.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.controlPlaneSyncChannel, r.meshsyncLivenessChannel)
+		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.controlPlaneSyncChannel, r.meshsyncLivenessChannel)
 
 		// signal to install operator when initialized
 		r.MeshSyncChannel <- struct{}{}
@@ -47,7 +46,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		}
 	}
 	if actions.ReSync == "true" {
-		err := r.BrokerConn.Publish(services.RequestSubject, &broker.Message{
+		err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
 			Request: &broker.RequestObject{
 				Entity: broker.ReSyncDiscoveryEntity,
 			},
@@ -65,7 +64,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		return err
 	}
 	if r.BrokerConn.IsEmpty() && status != nil && status.Status == model.StatusEnabled {
-		endpoint, err := services.SubscribeToBroker(provider, r.Config.KubeClient, r.brokerChannel, r.BrokerConn)
+		endpoint, err := model.SubscribeToBroker(provider, r.Config.KubeClient, r.brokerChannel, r.BrokerConn)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
 			r.operatorChannel <- &model.OperatorStatus{

@@ -5,7 +5,6 @@ import (
 
 	"time"
 
-	graphqlModel "github.com/layer5io/meshery/internal/graphql/model"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/vmihailenco/taskq/v3"
 )
@@ -134,7 +133,6 @@ type HandlerConfig struct {
 	Providers              map[string]Provider
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
-	PerformanceChannels    map[string](chan *graphqlModel.MesheryResult)
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics
