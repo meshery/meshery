@@ -60,13 +60,13 @@ export function getMetadata(res) {
     title : {
       display : {
         key : 'Title',
-        value : res.Labels.split(' -_- ')?.[0] || "No Title"
+        value : res.name || "No Title"
       }
     },
     url : {
       display : {
         key : 'URL',
-        value : res.Labels.split(' -_- ')?.[1] || "No URL"
+        value : res.URL || "No URL"
       }
     },
     startTime : {
