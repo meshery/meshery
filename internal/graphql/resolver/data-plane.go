@@ -30,8 +30,8 @@ func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, 
 func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
 	dataPlaneChannel := make(chan []*model.DataPlane)
 
-	dataPlaneSyncChannel := make(chan broadcast.BroadcastMessage)
-	r.Broadcast.Register(dataPlaneSyncChannel)
+	broadcastChannel := make(chan broadcast.BroadcastMessage)
+	r.Broadcast.Register(broadcastChannel)
 
 	go func() {
 		r.Log.Info("Initializing DataPlane subscription")
@@ -43,20 +43,22 @@ func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.P
 
 		for {
 			select {
-			case <-r.MeshSyncChannel:
-				r.Log.Info("Dataplane sync channel called")
-				containers, err := r.getDataPlanes(ctx, provider, filter)
-				if err != nil {
-					r.Log.Error(ErrDataPlaneSubscription(err))
-					break
-				}
+			case message := <-broadcastChannel:
+				if message.Source == broadcast.MeshSyncChannel {
+					r.Log.Info("Dataplane sync channel called")
+					containers, err := r.getDataPlanes(ctx, provider, filter)
+					if err != nil {
+						r.Log.Error(ErrDataPlaneSubscription(err))
+						break
+					}
 
-				dataPlaneChannel <- containers
+					dataPlaneChannel <- containers
+				}
 			case <-ctx.Done():
 				r.Log.Info("DataPlane subscription stopped")
 				close(dataPlaneChannel)
-				r.Broadcast.Unregister((dataPlaneSyncChannel))
-				close(dataPlaneSyncChannel)
+				r.Broadcast.Unregister((broadcastChannel))
+				close(broadcastChannel)
 				return
 			}
 		}

@@ -177,8 +177,8 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) 
 func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider) (<-chan *model.OperatorStatus, error) {
 	operatorChannel := make(chan *model.OperatorStatus)
 
-	operatorSyncChannel := make(chan broadcast.BroadcastMessage)
-	r.Broadcast.Register(operatorSyncChannel)
+	broadcastChannel := make(chan broadcast.BroadcastMessage)
+	r.Broadcast.Register(broadcastChannel)
 
 	go func() {
 		r.Log.Info("Operator subscription started")
@@ -204,18 +204,18 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 		}
 		for {
 			select {
-			case processing := <-operatorSyncChannel:
-				r.Log.Info("Operator sync channel called")
-				status, err := r.getOperatorStatus(ctx, provider)
-				if err != nil {
-					r.Log.Error(ErrOperatorSubscription(err))
-					r.Log.Info("Operator subscription flushed")
-					close(operatorChannel)
-					// return
-					continue
-				}
-
+			case processing := <-broadcastChannel:
 				if processing.Source == broadcast.OperatorSyncChannel {
+					r.Log.Info("Operator sync channel called")
+					status, err := r.getOperatorStatus(ctx, provider)
+					if err != nil {
+						r.Log.Error(ErrOperatorSubscription(err))
+						r.Log.Info("Operator subscription flushed")
+						close(operatorChannel)
+						// return
+						continue
+					}
+
 					switch processing.Data.(type) {
 					case bool:
 						if processing.Data.(bool) {
@@ -237,8 +237,8 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 			case <-ctx.Done():
 				r.Log.Info("Operator subscription flushed")
 				close(operatorChannel)
-				r.Broadcast.Unregister(operatorSyncChannel)
-				close(operatorSyncChannel)
+				r.Broadcast.Unregister(broadcastChannel)
+				close(broadcastChannel)
 				return
 			}
 		}

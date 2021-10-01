@@ -3,6 +3,8 @@ package resolver
 import (
 	"context"
 
+	"time"
+
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
@@ -16,16 +18,22 @@ var (
 
 func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.Provider) (<-chan *model.OperatorControllerStatus, error) {
 	channel := make(chan *model.OperatorControllerStatus)
+
 	if r.brokerChannel == nil {
 		r.brokerChannel = make(chan *broker.Message)
 	}
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("Initializing MeshSync subscription")
-		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.Broadcast)
+		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.Broadcast)
 
 		// signal to install operator when initialized
-		r.MeshSyncChannel <- struct{}{}
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Source: broadcast.MeshSyncChannel,
+			Type:   "meshsync",
+			Data:   struct{}{},
+			Time:   time.Now(),
+		})
 		// extension to notify other channel when data comes in
 	}(channel)
 

@@ -34,8 +34,8 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provi
 func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provider, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	addonChannel := make(chan []*model.AddonList)
 
-	addonSyncChannel := make(chan broadcast.BroadcastMessage)
-	r.Broadcast.Register(addonSyncChannel)
+	broadcastChannel := make(chan broadcast.BroadcastMessage)
+	r.Broadcast.Register(broadcastChannel)
 
 	go func() {
 		r.Log.Info("Addons subscription started")
@@ -47,18 +47,22 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 
 		for {
 			select {
-			case <-r.MeshSyncChannel:
-				status, err := r.getAvailableAddons(ctx, provider, selector)
-				if err != nil {
-					r.Log.Error(ErrAddonSubscription(err))
-					break
+			case message := <-broadcastChannel:
+				// filtering based on source
+				// TODO: change to meshsync source
+				if message.Source == broadcast.MeshSyncChannel {
+					status, err := r.getAvailableAddons(ctx, provider, selector)
+					if err != nil {
+						r.Log.Error(ErrAddonSubscription(err))
+						break
+					}
+					addonChannel <- status
 				}
-				addonChannel <- status
 			case <-ctx.Done():
 				r.Log.Info("Addons subscription stopped")
 				close(addonChannel)
-				r.Broadcast.Unregister((addonSyncChannel))
-				close(addonSyncChannel)
+				r.Broadcast.Unregister((broadcastChannel))
+				close(broadcastChannel)
 				return
 			}
 		}

@@ -30,8 +30,8 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
 	controlPlaneChannel := make(chan []*model.ControlPlane)
 
-	controlPlaneSyncChannel := make(chan broadcast.BroadcastMessage)
-	r.Broadcast.Register(controlPlaneSyncChannel)
+	broadcastChannel := make(chan broadcast.BroadcastMessage)
+	r.Broadcast.Register(broadcastChannel)
 
 	go func() {
 		r.Log.Info("Initializing ControlPlane subscription")
@@ -43,18 +43,20 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 
 		for {
 			select {
-			case <-r.MeshSyncChannel:
-				status, err := r.getControlPlanes(ctx, provider, filter)
-				if err != nil {
-					r.Log.Error(ErrControlPlaneSubscription(err))
-					break
+			case message := <-broadcastChannel:
+				if message.Source == broadcast.MeshSyncChannel {
+					status, err := r.getControlPlanes(ctx, provider, filter)
+					if err != nil {
+						r.Log.Error(ErrControlPlaneSubscription(err))
+						break
+					}
+					controlPlaneChannel <- status
 				}
-				controlPlaneChannel <- status
 			case <-ctx.Done():
 				r.Log.Info("ControlPlane subscription stopped")
 				close(controlPlaneChannel)
-				r.Broadcast.Unregister(controlPlaneSyncChannel)
-				close(controlPlaneSyncChannel)
+				r.Broadcast.Unregister(broadcastChannel)
+				close(broadcastChannel)
 				return
 			}
 		}

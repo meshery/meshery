@@ -3,6 +3,8 @@ package model
 import (
 	"sync"
 
+	"time"
+
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -39,13 +41,12 @@ var (
 func ListernToEvents(log logger.Handler,
 	handler *database.Handler,
 	datach chan *broker.Message,
-	meshsyncCh chan struct{},
 	broadcast broadcast.Broadcaster,
 ) {
 	var wg sync.WaitGroup
 	for msg := range datach {
 		wg.Add(1)
-		go persistData(*msg, log, handler, meshsyncCh, broadcast, &wg)
+		go persistData(*msg, log, handler, broadcast, &wg)
 	}
 
 	wg.Wait()
@@ -55,7 +56,6 @@ func ListernToEvents(log logger.Handler,
 func persistData(msg broker.Message,
 	log logger.Handler,
 	handler *database.Handler,
-	meshsyncCh chan struct{},
 	broadcaster broadcast.Broadcaster,
 	wg *sync.WaitGroup,
 ) {
@@ -84,7 +84,12 @@ func persistData(msg broker.Message,
 			log.Error(err)
 			return
 		}
-		meshsyncCh <- struct{}{}
+		broadcaster.Submit(broadcast.BroadcastMessage{
+			Source: broadcast.MeshSyncChannel,
+			Type:   "meshsync",
+			Data:   struct{}{},
+			Time:   time.Now(),
+		})
 	case broker.SMI:
 		log.Info("Received SMI Result")
 	}
