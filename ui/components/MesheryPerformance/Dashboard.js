@@ -12,15 +12,15 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CloseIcon from "@material-ui/icons/Close";
 import { withRouter } from "next/router";
-import dataFetch from "../../lib/data-fetch";
 import MesheryMetrics from "../MesheryMetrics";
 import PerformanceCalendar from "./PerformanceCalendar";
 import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
+import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
 
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
-const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
+// const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
 const useStyles = makeStyles(() => ({
   paper : { padding : "1rem", },
@@ -97,8 +97,8 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
       next : (res) => {
         // @ts-ignore
         let result = res?.getPerformanceProfiles;
+        updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          updateProgress({ showProgress : false });
           if (result) {
             setProfiles({ count : result.total_count || 0,
               profiles : result.profiles || [], });
@@ -112,18 +112,30 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
   function fetchTests() {
     updateProgress({ showProgress : true });
 
-    dataFetch(
-      `${MESHERY_PERFORMANCE_TEST_URL}`,
-      { credentials : "include", },
-      (result) => {
+    fetchAllResults({
+      selector : {
+        // default
+        pageSize : `10`,
+        page : `0`,
+        search : ``,
+        order : ``,
+        from : ``,
+        to : ``,
+      },
+    }).subscribe({
+      next : (res) => {
+        // @ts-ignore
+        let result = res?.fetchAllResults;
         updateProgress({ showProgress : false });
-        if (result) {
-          setTests({ count : result.total_count || 0,
-            tests : result.results || [], });
+        if (typeof result !== "undefined") {
+          if (result) {
+            setTests({ count : result.total_count || 0,
+              tests : result.results || [], });
+          }
         }
       },
-      handleError("Failed to Fetch Results")
-    );
+      error : handleError("Failed to Fetch Results"),
+    });
   }
 
   function handleError(msg) {

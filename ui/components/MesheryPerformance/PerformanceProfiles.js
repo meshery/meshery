@@ -102,8 +102,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
       next : (res) => {
         // @ts-ignore
         let result = res?.getPerformanceProfiles;
+        updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          updateProgress({ showProgress : false });
           if (result) {
             setCount(result.total_count || 0);
             setPageSize(result.page_size || 0);
