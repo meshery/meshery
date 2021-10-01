@@ -40,14 +40,12 @@ func ListernToEvents(log logger.Handler,
 	handler *database.Handler,
 	datach chan *broker.Message,
 	meshsyncCh chan struct{},
-	controlPlaneSyncChannel chan struct{},
-	meshsyncLivenessChannel chan struct{},
 	broadcast broadcast.Broadcaster,
 ) {
 	var wg sync.WaitGroup
 	for msg := range datach {
 		wg.Add(1)
-		go persistData(*msg, log, handler, meshsyncCh,  controlPlaneSyncChannel, broadcast, &wg)
+		go persistData(*msg, log, handler, meshsyncCh, broadcast, &wg)
 	}
 
 	wg.Wait()
@@ -58,7 +56,6 @@ func persistData(msg broker.Message,
 	log logger.Handler,
 	handler *database.Handler,
 	meshsyncCh chan struct{},
-	controlPlaneSyncChannel chan struct{},
 	broadcaster broadcast.Broadcaster,
 	wg *sync.WaitGroup,
 ) {

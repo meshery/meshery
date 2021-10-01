@@ -18,7 +18,6 @@ type Resolver struct {
 	Config          *models.HandlerConfig
 	Broadcast       broadcast.Broadcaster
 
-	controlPlaneSyncChannel chan struct{}
 	meshsyncLivenessChannel chan struct{}
 	// operatorChannel         chan *model.OperatorStatus
 	brokerChannel chan *broker.Message
