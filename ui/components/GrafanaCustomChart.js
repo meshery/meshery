@@ -431,7 +431,10 @@ class GrafanaCustomChart extends Component {
 
         if (typeof result !== 'undefined') {
           const fullData = self.transformDataForChart(result);
-          xAxis = ['x'];
+          if (fullData.length === 0) {
+            return
+          }
+
           fullData.forEach(({ metric, data }, di) => {
             const datasetInd = self.getOrCreateIndex(`${ind}_${di}`);
             const newData = [];
@@ -461,7 +464,7 @@ class GrafanaCustomChart extends Component {
             //   legend = 'NO VALUE';
             // }
             newData.push(legend);
-
+            xAxis = ['x'];
             // }
             data.forEach(({ x, y }) => {
               newData.push(y);
@@ -479,10 +482,11 @@ class GrafanaCustomChart extends Component {
             });
             groups = [panelGroups];
           }
+          let chartDataFiltered = chartData.filter(( element ) => element !== undefined);
           if (self.chart && self.chart !== null) {
-            self.chart.load({ columns : [xAxis, ...chartData], });
+            self.chart.load({ columns : [xAxis, ...chartDataFiltered], });
           } else {
-            self.createOptions(xAxis, chartData, groups);
+            self.createOptions(xAxis, chartDataFiltered, groups);
           }
           self.state.error && self.setState({
             xAxis, chartData, error : '', errorCount : 0,
@@ -754,7 +758,7 @@ class GrafanaCustomChart extends Component {
       } else {
         mainChart = (
           <div>
-            <div className={classes.error}>{error && 'There was an error communicating with the server'}</div>
+            <div className={classes.error}>{error}</div>
             <div ref={(ch) => self.chartRef = ch} className={classes.root} />
           </div>
         );
