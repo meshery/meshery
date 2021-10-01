@@ -7,6 +7,7 @@ import (
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
@@ -18,6 +19,7 @@ type ExtensionInput struct {
 	MeshSyncChannel chan struct{}
 	Logger          logger.Handler
 	BrokerConn      broker.Handler
+	Broadcast       broadcast.Broadcaster
 }
 
 // Router

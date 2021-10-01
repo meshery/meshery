@@ -205,7 +205,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 		for {
 			select {
 			case processing := <-broadcastChannel:
-				if processing.Source == broadcast.OperatorSyncChannel {
+				if processing.Source == broadcast.OperatorSyncChannel && processing.Type == "health" {
 					r.Log.Info("Operator sync channel called")
 					status, err := r.getOperatorStatus(ctx, provider)
 					if err != nil {

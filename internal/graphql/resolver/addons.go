@@ -50,7 +50,7 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 			case message := <-broadcastChannel:
 				// filtering based on source
 				// TODO: change to meshsync source
-				if message.Source == broadcast.MeshSyncChannel {
+				if message.Source == "meshsync" {
 					status, err := r.getAvailableAddons(ctx, provider, selector)
 					if err != nil {
 						r.Log.Error(ErrAddonSubscription(err))

@@ -29,7 +29,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 
 		// signal to install operator when initialized
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.MeshSyncChannel,
+			Source: broadcast.OperatorSyncChannel,
 			Type:   "meshsync",
 			Data:   struct{}{},
 			Time:   time.Now(),

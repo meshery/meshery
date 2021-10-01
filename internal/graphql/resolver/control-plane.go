@@ -44,7 +44,7 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 		for {
 			select {
 			case message := <-broadcastChannel:
-				if message.Source == broadcast.MeshSyncChannel {
+				if message.Type == "meshsync" {
 					status, err := r.getControlPlanes(ctx, provider, filter)
 					if err != nil {
 						r.Log.Error(ErrControlPlaneSubscription(err))

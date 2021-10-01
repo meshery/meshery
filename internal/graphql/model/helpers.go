@@ -85,7 +85,7 @@ func persistData(msg broker.Message,
 			return
 		}
 		broadcaster.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.MeshSyncChannel,
+			Source: broadcast.OperatorSyncChannel,
 			Type:   "meshsync",
 			Data:   struct{}{},
 			Time:   time.Now(),
