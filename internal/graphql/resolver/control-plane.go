@@ -7,7 +7,7 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
-func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provider, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error) {
+func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error) {
 	selectors := make([]model.MeshType, 0)
 	if filter.Type == nil {
 		for _, mesh := range model.AllMeshType {
@@ -26,7 +26,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 	return controlplanelist, nil
 }
 
-func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider models.Provider, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error) {
+func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
 	if r.controlPlaneChannel == nil {
 		r.controlPlaneChannel = make(chan []*model.ControlPlane)
 	}

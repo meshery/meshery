@@ -18,6 +18,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  CircularProgress,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -32,8 +33,9 @@ import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatu
 import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
 import changeOperatorState from "./graphql/mutations/OperatorStatusMutation";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
+import NatsStatusQuery from "./graphql/queries/NatsStatusQuery";
+import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
 import PromptComponent from "./PromptComponent";
-import { getOperatorStatusFromQueryResult } from "./ConnectionWizard/helpers/mesheryOperator.js";
 
 const styles = (theme) => ({
   root : { padding : theme.spacing(5), },
@@ -147,10 +149,16 @@ class MeshConfigComponent extends React.Component {
       operatorVersion : "N/A",
       meshSyncInstalled : false,
       meshSyncVersion : "N/A",
-      NATSInstalled : false,
+      NATSState : "UNKNOWN",
       NATSVersion : "N/A",
 
       operatorSwitch : false,
+      operatorProcessing : false,
+
+
+      meshSyncStatusEventsSubscription : null,
+      operatorStatusEventsSubscription : null,
+
     };
     this.ref = React.createRef();
   }
@@ -178,35 +186,52 @@ class MeshConfigComponent extends React.Component {
     return {};
   }
 
+
   componentDidMount() {
     const self = this;
     // Subscribe to the operator events
-    subscribeMeshSyncStatusEvents((res) => {
+    let meshSyncStatusEventsSubscription = subscribeMeshSyncStatusEvents((res) => {
       if (res.meshsync?.error) {
         self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
         return;
       }
     });
 
-    subscribeOperatorStatusEvents(self.setOperatorState);
-    fetchMesheryOperatorStatus().subscribe({ next : (res) => {
-      self.setOperatorState(res);
-    },
-    error : (err) => console.log("error at operator scan: " + err), });
+
+    let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState);
+    fetchMesheryOperatorStatus().subscribe({
+      next : (res) => {
+        self.setOperatorState(res);
+      },
+      error : (err) => console.log("error at operator scan: " + err),
+    });
+
+    self.setState({ meshSyncStatusEventsSubscription, operatorStatusEventsSubscription })
+  }
+
+
+  componentWillUnmount () {
+    this.state.meshSyncStatusEventsSubscription.dispose()
+    this.state.operatorStatusEventsSubscription.dispose()
   }
 
   setOperatorState = (res) => {
+    console.log("incoming change")
     const self = this;
     if (res.operator?.error) {
       self.handleError("Operator could not be reached")(res.operator?.error?.description);
+      self.setState({ operatorProcessing : false })
       return false;
     }
 
     if (res.operator?.status === "ENABLED") {
+      self.setState({ operatorProcessing : false })
       res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status == "ENABLED") {
-          self.setState({ NATSInstalled : true,
-            NATSVersion : controller.version, });
+        if (controller.name === "broker" && controller.status == "CONNECTED") {
+          self.setState({
+            NATSState : controller.status,
+            NATSVersion : controller.version,
+          });
         } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
           self.setState({ meshSyncInstalled : true,
             meshSyncVersion : controller.version, });
@@ -218,9 +243,17 @@ class MeshConfigComponent extends React.Component {
       return true;
     }
 
+    if (res.operator?.status === "DISABLED") self.setState({ operatorProcessing : false })
+
+    if (res.operator?.status === "PROCESSING") {
+      console.log("setting to processing")
+      self.setState({ operatorProcessing : true })
+    }
+
+
     self.setState({
       operatorInstalled : false,
-      NATSInstalled : false,
+      NATSState : "UNKNOWN",
       meshSyncInstalled : false,
       operatorSwitch : false,
       operatorVersion : "N/A",
@@ -451,28 +484,94 @@ class MeshConfigComponent extends React.Component {
     },
     error : self.handleError("Operator could not be pinged"), });
   };
+
+handleNATSClick = () => {
+  this.props.updateProgress({ showProgress : true });
+  const self = this;
+
+  NatsStatusQuery().subscribe({
+    next : (res) => {
+      self.props.updateProgress({ showProgress : false });
+      self.setState({
+        NATSState : res.controller.status,
+        NATSVersion : res.controller.version,
+      });
+    },
+    error : self.handleError("NATS status could not be retrieved"), });
+
+  // connectToNats().subscribe({
+  //   next : (res) => {
+  //     if (res.connectToNats === "PROCESSING") {
+  //       this.props.updateProgress({ showProgress : false });
+  //       this.props.enqueueSnackbar(`Reconnecting to NATS...`, {
+  //         variant : "info",
+  //         action : (key) => (
+  //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+  //             <CloseIcon />
+  //           </IconButton>
+  //         ),
+  //         autohideduration : 7000,
+  //       })
+  //     }
+  //     if (res.connectToNats === "CONNECTED") {
+  //       this.props.updateProgress({ showProgress : false });
+  //       this.props.enqueueSnackbar(`Successfully connected to NATS`, {
+  //         variant : "success",
+  //         action : (key) => (
+  //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+  //             <CloseIcon />
+  //           </IconButton>
+  //         ),
+  //         autohideduration : 7000,
+  //       })
+  //     }
+
+  //   },
+  //   error : self.handleError("Failed to request reconnection with NATS"),
+  // });
+
+};
+
   handleMeshSyncClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
-    fetchMesheryOperatorStatus().subscribe({ next : (res) => {
-      let [, operatorInformation] = getOperatorStatusFromQueryResult(res);
+
+    MeshsyncStatusQuery().subscribe({ next : (res) => {
       self.props.updateProgress({ showProgress : false });
-      setState({ meshSyncVersion : operatorInformation.meshSyncVersion,
-        meshSyncInstalled : operatorInformation.meshSyncInstalled, });
-      if (operatorInformation.meshSyncInstalled == true) {
-        this.props.enqueueSnackbar("MeshSync was successfully pinged!", { variant : "success",
-          autoHideDuration : 2000,
-          action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ), });
+      if (res.controller.name === "meshsync" && res.controller.status == "ENABLED") {
+        self.setState({
+          meshSyncInstalled : true,
+          meshSyncVersion : res.controller.version,
+        });
       } else {
-        self.handleError("MeshSync could not be reached")("MeshSync is disabled");
+        self.setState({
+          meshSyncInstalled : false,
+          meshSyncVersion : "",
+        });
       }
     },
-    error : self.handleError("MeshSync could not be pinged"), });
+    error : self.handleError("MeshSync status could not be retrieved"), });
+
+    // deployMeshSync().subscribe({
+    //   next : (res) => {
+    //     if (res.deployMeshsync === "PROCESSING") {
+    //       this.props.updateProgress({ showProgress : false });
+    //       this.props.enqueueSnackbar(`MeshSync deployment in progress`, {
+    //         variant : "info",
+    //         action : (key) => (
+    //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+    //             <CloseIcon />
+    //           </IconButton>
+    //         ),
+    //         autohideduration : 7000,
+    //       })
+    //     }
+
+    //   },
+    //   error : self.handleError("Failed to request Meshsync redeployment"),
+    // });
   };
+
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
@@ -570,7 +669,7 @@ class MeshConfigComponent extends React.Component {
       operatorVersion,
       meshSyncInstalled,
       meshSyncVersion,
-      NATSInstalled,
+      NATSState,
       NATSVersion,
       operatorSwitch,
     } = this.state;
@@ -662,26 +761,46 @@ class MeshConfigComponent extends React.Component {
                 </ListItem>
               </List>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <List>
-                <ListItem>
-                  <Tooltip
-                    title={meshSyncInstalled
-                      ? `Version: ${meshSyncVersion}`
-                      : "Not Available"}
-                    aria-label="meshSync"
-                  >
-                    <Chip
-                      label={"MeshSync"}
-                      onClick={self.handleMeshSyncClick}
-                      icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
-                      variant="outlined"
-                      data-cy="chipMeshSync"
-                    />
-                  </Tooltip>
-                </ListItem>
-              </List>
-            </Grid>
+            {operatorInstalled &&
+            <>
+              <Grid item xs={12} md={4}>
+                <List>
+                  <ListItem>
+                    <Tooltip
+                      title={meshSyncInstalled ? `Redeploy MeshSync` : "Not Available"}
+                      aria-label="meshSync"
+                    >
+                      <Chip
+                        label={"MeshSync"}
+                        onClick={self.handleMeshSyncClick}
+                        icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+                        variant="outlined"
+                        data-cy="chipMeshSync"
+                      />
+                    </Tooltip>
+                  </ListItem>
+                </List>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <List>
+                  <ListItem>
+                    <Tooltip
+                      title={NATSState === "CONNECTED" ? `Reconnect NATS` : "Not Available"}
+                      aria-label="nats"
+                    >
+                      <Chip
+                        label={"NATS"}
+                        onClick={self.handleNATSClick}
+                        icon={<img src="/static/img/nats-icon-color.svg" className={classes.icon} />}
+                        variant="outlined"
+                        data-cy="chipNATS"
+                      />
+                    </Tooltip>
+                  </ListItem>
+                </List>
+              </Grid>
+            </>
+            }
           </Grid>
           <Grid container spacing={1}>
             <Grid item xs={12} md={4}>
@@ -711,9 +830,7 @@ class MeshConfigComponent extends React.Component {
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="NATS State" secondary={NATSInstalled
-                    ? "Active"
-                    : "Disabled"} />
+                  <ListItemText primary="NATS State" secondary={NATSState} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="NATS Version" secondary={NATSVersion} />
@@ -729,12 +846,14 @@ class MeshConfigComponent extends React.Component {
                 <Switch
                   checked={operatorSwitch}
                   onClick={self.handleOperatorSwitch}
+                  disabled={self.state.operatorProcessing}
                   name="OperatorSwitch"
                   color="primary"
                 />
               }
               label="Meshery Operator"
             />
+            {self.state.operatorProcessing && <CircularProgress />}
           </FormGroup>
         </div>
       </React.Fragment>

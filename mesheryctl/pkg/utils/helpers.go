@@ -102,6 +102,10 @@ var (
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
 	ServiceAccount = "service-account.yaml"
+	// To upload with param name
+	ParamName = "k8sfile"
+	// kubeconfig file name
+	KubeConfigYaml = "kubeconfig.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
 	// ViperDocker is an instance of viper for the meshconfig file when the platform is docker
@@ -112,12 +116,15 @@ var (
 	SilentFlag bool
 	// PlatformFlag sets the platform for the initial config file
 	PlatformFlag string
+	// Paths to kubeconfig files
+	ConfigPath string
+	KubeConfig string
 )
 
 var CfgFile string
 
 // ListOfAdapters returns the list of adapters available
-var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh"}
+var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
@@ -173,36 +180,6 @@ func SafeClose(co io.Closer) {
 	if cerr := co.Close(); cerr != nil {
 		log.Error(cerr)
 	}
-}
-
-// TODO: Use the same DownloadFile function from MeshKit instead of the function below
-// and change all it's occurrences
-
-// DownloadFile from url and save to configured file location
-func DownloadFile(filepath string, url string) error {
-	// Get the data
-	resp, err := http.Get(url)
-	if err != nil {
-		return errors.Wrapf(err, "failed to make GET request to %s", url)
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
-		return errors.Wrapf(err, "failed to create file %s", filepath)
-	}
-	defer func() {
-		_ = out.Close()
-	}()
-	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		return errors.Wrap(err, "failed to copy response body")
-	}
-
-	return nil
 }
 
 func prereq() ([]byte, []byte, error) {

@@ -337,7 +337,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 			}
 		} else { // if not error we check if we are supposed to print logs
 			if hc.Options.PrintLogs { // log if we're supposed to
-				log.Info("✓ is running the minimum Kubernetes version")
+				log.Info("✓ running the minimum Kubernetes version")
 			}
 		}
 	}
@@ -354,7 +354,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 		}
 	} else { // if not error we check if we are supposed to print logs
 		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Info("✓ is running the minimum kubectl version")
+			log.Info("✓ running the minimum kubectl version")
 		}
 	}
 
@@ -392,7 +392,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	// failed to fetch response for server version
 	if err != nil || resp.StatusCode != 200 {
 		if hc.Options.PrintLogs { // log if we're supposed to
-			log.Info("!! failed to check server version. try starting Meshery with `mesheryctl system start`")
+			log.Info("!! failed to check Meshery Server version. try starting Meshery with `mesheryctl system start`")
 			skipServerLogs = true
 		} else {
 			return err
@@ -419,13 +419,13 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		}
 		if hc.Options.PrintLogs { // log if we're supposed to
 			if res.Latest {
-				log.Infof("✓ server is up-to-date (stable-%s)", serverVersion.GetBuild())
+				log.Infof("✓ Meshery Server is up-to-date (stable-%s)", serverVersion.GetBuild())
 			} else {
-				log.Info("!! server is not up-to-date")
+				log.Info("!! Meshery Server is not up-to-date")
 			}
 		} else { // else we grab the error
 			if !res.Latest {
-				return errors.New("!! server is not up-to-date")
+				return errors.New("!! Meshery Server is not up-to-date")
 			}
 		}
 	}
@@ -443,13 +443,13 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	version := constants.GetMesheryctlVersion()
 	if hc.Options.PrintLogs { // log if we're supposed to
 		if latest == version {
-			log.Infof("✓ cli is up-to-date (stable-%s)", version)
+			log.Infof("✓ CLI is up-to-date (stable-%s)", version)
 		} else {
-			log.Infof("!! cli is not up-to-date (stable-%s)", version)
+			log.Infof("!! CLI is not up-to-date (stable-%s)", version)
 		}
 	} else { // else we grab the error
 		if latest != version {
-			return errors.New("!! cli is not up-to-date")
+			return errors.New("!! CLI is not up-to-date")
 		}
 	}
 
@@ -482,11 +482,11 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
 		if hc.Options.PrintLogs {
-			log.Info("!! authentication token not found. please supply a valid user token. login with `mesheryctl system login`")
+			log.Info("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
 			// skip further as we failed to attach token
 			return nil
 		}
-		return errors.New("authentication token not found. please supply a valid user token. login with `mesheryctl system login`")
+		return errors.New("Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
 	}
 
 	var adapters []*models.Adapter
@@ -494,7 +494,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 	// failed to grab response from the request
 	if err != nil || resp.StatusCode != 200 {
 		if hc.Options.PrintLogs {
-			log.Info("!! failed to grab running adapters")
+			log.Info("!! Failed to connect to Meshery Adapters")
 			// skip further as we failed to grab the response from server
 			return nil
 		}
@@ -532,10 +532,10 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 		resp, err := client.Do(req)
 		if err != nil {
 			if hc.Options.PrintLogs { // incase we're printing logs
-				log.Infof("!! failed to check %s adapter", name)
+				log.Infof("!! failed to connect to Meshery Adapter for %s ", name)
 				skipAdapter = true
 			} else { // or we're supposed to grab the errors
-				return fmt.Errorf("!! failed to check %s adapter: %s", name, err)
+				return fmt.Errorf("!! failed to connect to Meshery Adapter for%s adapter: %s", name, err)
 			}
 			continue
 		}
@@ -546,9 +546,9 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 			defer resp.Body.Close()
 			if resp.StatusCode != 200 {
 				if hc.Options.PrintLogs { // incase we're printing logs
-					log.Infof("!! %s adapter is running but not reachable", name)
+					log.Infof("!! Meshery Adapter for %s is running but not reachable", name)
 				} else { // or we're supposed to grab the errors
-					return fmt.Errorf("!! %s adapter is running but not reachable", name)
+					return fmt.Errorf("!! Meshery Adapter for %s is running, but not reachable", name)
 				}
 			} else { // if status == 200 we check if we are supposed to print logs
 				if hc.Options.PrintLogs { // incase we're printing logs

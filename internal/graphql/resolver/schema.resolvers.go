@@ -35,10 +35,19 @@ func (r *queryResolver) GetAvailableAddons(ctx context.Context, selector *model.
 	return nil, ErrInvalidRequest
 }
 
-func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error) {
+func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if filter != nil {
 		return r.getControlPlanes(ctx, provider, filter)
+	}
+
+	return nil, ErrInvalidRequest
+}
+
+func (r *queryResolver) GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if filter != nil {
+		return r.getDataPlanes(ctx, provider, filter)
 	}
 
 	return nil, ErrInvalidRequest
@@ -52,6 +61,26 @@ func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.OperatorS
 func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.resyncCluster(ctx, provider, selector)
+}
+
+func (r *queryResolver) GetMeshsyncStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getMeshsyncStatus(ctx, provider)
+}
+
+func (r *queryResolver) DeployMeshsync(ctx context.Context) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.deployMeshsync(ctx, provider)
+}
+
+func (r *queryResolver) GetNatsStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getNatsStatus(ctx, provider)
+}
+
+func (r *queryResolver) ConnectToNats(ctx context.Context) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.connectToNats(ctx, provider)
 }
 
 func (r *queryResolver) GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error) {
@@ -84,10 +113,19 @@ func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector 
 	return nil, ErrInvalidRequest
 }
 
-func (r *subscriptionResolver) ListenToControlPlaneState(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error) {
+func (r *subscriptionResolver) ListenToControlPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if filter != nil {
 		return r.listenToControlPlaneState(ctx, provider, filter)
+	}
+
+	return nil, ErrInvalidRequest
+}
+
+func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if filter != nil {
+		return r.listenToDataPlaneState(ctx, provider, filter)
 	}
 
 	return nil, ErrInvalidRequest

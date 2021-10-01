@@ -19,7 +19,6 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
 
@@ -55,20 +54,20 @@ func resetMesheryConfig() error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		return ErrProcessingMctlConfig(err)
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
 	if tempContext != "" {
 		err = mctlCfg.SetCurrentContext(tempContext)
 		if err != nil {
-			return errors.Wrap(err, "failed to set temporary context")
+			return ErrSettingTemporaryContext(err)
 		}
 	}
 
 	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
-		return errors.Wrap(err, "failed to retrieve current-context")
+		return ErrRetrievingCurrentContext(err)
 	}
 
 	log.Info("Meshery resetting...\n")
@@ -80,30 +79,30 @@ func resetMesheryConfig() error {
 	switch currCtx.GetPlatform() {
 	case "docker":
 
-		log.Printf("Fetching default docker-compose file as per current-context: %s...\n", mctlCfg.GetCurrentContextName())
+		log.Printf("Fetching default docker-compose file as per current-context: %s...", mctlCfg.GetCurrentContextName())
 		err = utils.DownloadDockerComposeFile(currCtx, true)
 		if err != nil {
-			return errors.Wrap(err, "failed to fetch docker-compose file")
+			return ErrDownloadFile(err, utils.DockerComposeFile)
 		}
 
 		err = utils.CreateManifestsFolder()
 
 		if err != nil {
-			return err
+			return ErrCreateManifestsFolder(err)
 		}
 
-		log.Printf("Fetching Meshery Operator manifests...\n")
+		log.Printf("...fetching Meshery Operator manifests for Kubernetes...")
 		err = utils.DownloadOperatorManifest()
 
 		if err != nil {
-			return err
+			return ErrDownloadFile(err, "operator manifest")
 		}
 
-		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
+		log.Info("...meshconfig (" + utils.DockerComposeFile + ") now reset to default settings.")
 
 	case "kubernetes":
 
-		log.Printf("Fetching Meshery Server and Meshery Operator manifests...")
+		log.Printf("Fetching Meshery Server and Meshery Operator manifests for  %s context...", mctlCfg.GetCurrentContextName())
 		// fetch the manifest files corresponding to the version specified
 		_, err := utils.FetchManifests(currCtx)
 

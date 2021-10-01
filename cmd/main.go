@@ -20,6 +20,7 @@ import (
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
@@ -184,6 +185,10 @@ func main() {
 		GenericPersister:                dbHandler,
 	}
 	lProv.Initialize()
+	seededUUIDs, err := lProv.SeedContent(log)
+	if err != nil {
+		logrus.Error(err)
+	}
 	provs[lProv.Name()] = lProv
 
 	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
@@ -240,11 +245,15 @@ func main() {
 
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn)
 
+	b := broadcast.NewBroadcaster(100)
+	defer b.Close()
+
 	g := graphql.New(graphql.Options{
 		Config:          hc,
 		Logger:          log,
 		MeshSyncChannel: meshsyncCh,
 		BrokerConn:      brokerConn,
+		Broadcaster:     b,
 	})
 
 	gp := graphql.NewPlayground(graphql.Options{
@@ -263,5 +272,7 @@ func main() {
 		}
 	}()
 	<-c
+	logrus.Info("Doing seeded content cleanup...")
+	lProv.CleanupSeeded(seededUUIDs)
 	logrus.Info("Shutting down Meshery")
 }

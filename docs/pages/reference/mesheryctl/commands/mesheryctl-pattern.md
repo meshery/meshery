@@ -5,7 +5,7 @@ permalink: reference/mesheryctl/pattern
 type: reference
 display-title: "false"
 language: en
-lang: en
+command: pattern
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -17,20 +17,19 @@ lang: en
 <!-- Description of the command. Preferably a paragraph -->
 ## Description
 
-{% for command_hash in site.data.mesheryctlcommands.pattern.commands %}{% assign command = command_hash[1] %}
-{{ command.description }}
-{% endfor %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command] %}
+{{ name.description }}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl pattern [flags] 
+  {{ name.usage }}
   </div>
 </pre>
 
 ## Examples
 
-{% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+{% for subcommand_hash in name.subcommands %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -43,7 +42,7 @@ lang: en
 <!-- Options/Flags available in this command -->
 ## Options & Flags
 
-{% for flag_hash in site.data.mesheryctlcommands.pattern.flags %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">

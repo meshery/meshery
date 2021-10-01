@@ -5,7 +5,8 @@ permalink: reference/mesheryctl/system/update
 type: reference
 display-title: "false"
 language: en
-lang: en
+command: system 
+subcommand: update
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -18,9 +19,8 @@ lang: en
 
 Meshery container images are updated by `mesheryctl system update`. The update process for `mesheryctl` is handled separately from the `system update` command. If you want to update `mesheryctl`, see <a href = "{{site.baseurl}}/guides/upgrade">Upgrade Guide</a>.
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.update.command %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
-{% endfor %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
+{{ name.description }}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
@@ -31,15 +31,13 @@ Meshery container images are updated by `mesheryctl system update`. The update p
 
 ## Examples
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.update.command %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
+{{ name.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ subcommand.usage }}
+  {{ name.usage }}
   </div>
 </pre>
-{% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.update.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -53,11 +51,11 @@ Meshery container images are updated by `mesheryctl system update`. The update p
 <!-- Options/Flags available in this command -->
 ## Options
 
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.update.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {{ flag.flag }}
+    {{ flag.name }}
   </div>
 </pre>
 {% endfor %}

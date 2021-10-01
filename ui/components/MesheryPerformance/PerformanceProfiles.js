@@ -86,6 +86,9 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
   function fetchTestProfiles(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
+    // const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
+    //   sortOrder
+    // )}`;
 
     updateProgress({ showProgress : true });
     fetchPerformanceProfiles({
@@ -113,21 +116,29 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     });
   }
 
-  async function deleteProfile(id) {
-    let response = await modalRef.current.show({ title : "Delete Performance Profile?",
+  async function showModal() {
+    let response = await modalRef.current.show({
+      title : "Delete Performance Profile?",
 
       subtitle : "Are you sure you want to delete this performance profile?",
 
-      options : ["YES", "NO"], })
-    if (response === "NO") return
+      options : ["yes", "no"],
+    })
+    return response;
+  }
+
+  function deleteProfile(id) {
     dataFetch(
       `${MESHERY_PERFORMANCE_URL}/${id}`,
-      { method : "DELETE",
-        credentials : "include", },
+      {
+        method : "DELETE",
+        credentials : "include",
+      },
       () => {
         updateProgress({ showProgress : false });
 
-        enqueueSnackbar("Performance Profile Successfully Deleted!", { variant : "success",
+        enqueueSnackbar("Performance Profile Successfully Deleted!", {
+          variant : "success",
           autoHideDuration : 2000,
           action : function Action(key) {
             return (
@@ -135,7 +146,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
                 <CloseIcon />
               </IconButton>
             );
-          }, });
+          },
+        });
 
         fetchTestProfiles(page, pageSize, search, sortOrder);
       },
@@ -148,7 +160,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     return function (error) {
       updateProgress({ showProgress : false });
 
-      enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+      enqueueSnackbar(`${msg} : ${error}`, {
+        variant : "error",
         action : function Action(key) {
           return (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -156,15 +169,40 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
             </IconButton>
           );
         },
-        autoHideDuration : 8000, });
+        autoHideDuration : 8000,
+      });
     };
   }
 
   return (
     <>
       <div style={{ padding : "0.5rem" }}>
-        <div style={{ margin : "0 0 2rem auto", width : "fit-content" }}>
-          <ViewSwitch view={viewType} changeView={setViewType} />
+        <div
+          style={{
+            margin : "2rem auto",
+            display : "flex",
+            justifyContent : "space-between",
+            paddingLeft : "1rem"
+          }}
+        >
+          {testProfiles.length > 0 && (
+            <div style={{ width : "fit-content", alignSelf : "flex-start" }}>
+              <Button
+                aria-label="Add Performance Profile"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={() => setProfileForModal({})}
+              >
+                <AddIcon />
+                Add Performance Profile
+              </Button>
+            </div>
+          )}
+          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingLeft : "1rem" }}>
+            <ViewSwitch view={viewType} changeView={setViewType} />
+          </div>
         </div>
         {viewType === "grid"
           ? (
@@ -190,9 +228,11 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               testProfiles={testProfiles}
               setProfileForModal={setProfileForModal}
               handleDelete={deleteProfile}
+              showModal={showModal}
+              fetchTestProfiles={fetchTestProfiles}
             />
           )}
-        {!testProfiles.length ? (
+        {testProfiles.length == 0 && (
           <Paper style={{ padding : "0.5rem" }}>
             <div
               style={{
@@ -204,7 +244,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               }}
             >
               <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-              No Performance Profiles Found
+                No Performance Profiles Found
               </Typography>
               <Button
                 aria-label="Add Performance Profile"
@@ -215,32 +255,17 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
                 onClick={() => setProfileForModal({})}
               >
                 <AddIcon />
-              Add Performance Profile
+                Add Performance Profile
               </Button>
             </div>
           </Paper>
-        ) : (
-          <div style={{ width : "fit-content", margin : "4rem auto 0" }}>
-            <Button
-              aria-label="Add Performance Profile"
-              variant="contained"
-              color="primary"
-              size="large"
-              // @ts-ignore
-              onClick={() => setProfileForModal({})}
-            >
-              <AddIcon />
-            Add Performance Profile
-            </Button>
-          </div>
         )}
-
         <GenericModal
           open={!!profileForModal}
           Content={
             <Paper style={{ margin : "auto", maxWidth : "90%", outline : "none" }}>
               <MesheryPerformanceComponent
-              // @ts-ignore
+                // @ts-ignore
                 loadAsPerformanceProfile
                 // @ts-ignore
                 performanceProfileID={profileForModal?.id}

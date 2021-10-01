@@ -239,7 +239,7 @@ GEM
     mercenary (0.3.6)
     method_source (1.0.0)
     mini_mime (1.1.0)
-    mini_portile2 (2.5.3)
+    mini_portile2 (2.6.1)
     minima (2.5.1)
       jekyll (>= 3.5, < 5.0)
       jekyll-feed (~> 0.9)
@@ -247,8 +247,8 @@ GEM
     minitest (5.14.4)
     multipart-post (2.1.1)
     nio4r (2.5.7)
-    nokogiri (1.11.7)
-      mini_portile2 (~> 2.5.0)
+    nokogiri (1.12.5)
+      mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
     octokit (4.21.0)
       faraday (>= 0.9)
@@ -348,4 +348,4 @@ RUBY VERSION
    ruby 2.7.1p83
 
 BUNDLED WITH
-   2.2.17
+   2.2.27

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -31,6 +33,7 @@ import (
 var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
+	ReleaseTag      string
 )
 
 // ChangePlatform changes the platform specified in the current context to the specified platform
@@ -173,7 +176,7 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
 			// download the manifest files to ~/.meshery/manifests folder
 			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
-			if err := DownloadFile(filepath, manifestFile); err != nil {
+			if err := meshkitutils.DownloadFile(filepath, manifestFile); err != nil {
 				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
 			}
 		}
@@ -184,19 +187,19 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 // DownloadOperatorManifest downloads the operator manifest files
 func DownloadOperatorManifest() error {
 	operatorFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)
-	err := DownloadFile(operatorFilepath, OperatorURL)
+	err := meshkitutils.DownloadFile(operatorFilepath, OperatorURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)))
 	}
 
 	brokerFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)
-	err = DownloadFile(brokerFilepath, BrokerURL)
+	err = meshkitutils.DownloadFile(brokerFilepath, BrokerURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", brokerFilepath, MesheryOperatorBroker)))
 	}
 
 	meshsyncFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)
-	err = DownloadFile(meshsyncFilepath, MeshsyncURL)
+	err = meshkitutils.DownloadFile(meshsyncFilepath, MeshsyncURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", meshsyncFilepath, MesheryOperatorMeshsync)))
 	}
@@ -405,17 +408,17 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/docker-compose.yaml"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "latest" {
-				ctx.Version, err = GetLatestStableReleaseTag()
+				ReleaseTag, err = GetLatestStableReleaseTag()
 				if err != nil {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
 			}
-			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ctx.Version + "/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/docker-compose.yaml"
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
 
-		if err := DownloadFile(DockerComposeFile, fileURL); err != nil {
+		if err := meshkitutils.DownloadFile(DockerComposeFile, fileURL); err != nil {
 			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
 		}
 	}
@@ -758,7 +761,7 @@ func InstallprereqDocker() error {
 		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
 	}
 	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
-	if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
+	if err := meshkitutils.DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
 		return errors.Wrapf(err, "failed to download %s from %s", dockerComposeBinary, dockerComposeBinaryURL)
 	}
 	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
@@ -766,4 +769,17 @@ func InstallprereqDocker() error {
 	}
 	log.Info("Prerequisite Docker Compose is installed.")
 	return nil
+}
+
+// Sets the path to user's kubeconfig file into global variables
+func SetKubeConfig() {
+	// Define the path where the kubeconfig.yaml will be written to
+	usr, err := user.Current()
+	if err != nil {
+		ConfigPath = filepath.Join(".meshery", KubeConfigYaml)
+		KubeConfig = filepath.Join(".kube", "config")
+	} else {
+		ConfigPath = filepath.Join(usr.HomeDir, ".meshery", KubeConfigYaml)
+		KubeConfig = filepath.Join(usr.HomeDir, ".kube", "config")
+	}
 }

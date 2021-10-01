@@ -33,6 +33,8 @@ After making changes, run `make` in the `mesheryctl` folder to build the binary.
 
 A central `struct` is maintained in the `mesheryctl/internal/cli/root/config/config.go` file. These are updated and should be used for getting the Meshery configuration.
 
+Updates to this central `struct` is made through updates in `Context` with setter functions. The changes made in this central `struct` are reflected back in the Meshery configuration file (`.meshery/config.yaml`). 
+
 **Logging**
 
 For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going through the docs and understanding the different [log-levels](https://github.com/sirupsen/logrus#level-logging) will help a lot.

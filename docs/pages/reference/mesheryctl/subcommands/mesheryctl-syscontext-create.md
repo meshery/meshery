@@ -5,7 +5,8 @@ permalink: reference/mesheryctl/system/context/create
 type: reference
 display-title: "false"
 language: en
-lang: en
+command: system-context
+subcommand: create
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -17,9 +18,8 @@ lang: en
 <!-- Description of the command. Preferably a paragraph -->
 ## Description 
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.create.command %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
-{% endfor %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
+{{ name.description }}
 
 
 <!-- Basic usage of the command -->
@@ -32,15 +32,13 @@ lang: en
 <!-- All possible example use cases of the command -->
 ## Examples
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.create.command %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
+{{ name.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ subcommand.usage }}
+  {{ name.usage }}
   </div>
 </pre>
-{% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.create.flags %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -53,11 +51,11 @@ lang: en
 <!-- Options/Flags available in this command -->
 ## Options & Flags
 
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.create.flags %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {{ flag.flag }}
+    {{ flag.name }}
   </div>
 </pre>
 {% endfor %}

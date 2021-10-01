@@ -59,7 +59,7 @@ func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, s
 		return nil, handlers.ErrQueryGet("*profileID")
 	}
 
-	tokenString := ctx.Value("token").(string)
+	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
 	bdr, err := provider.FetchResults(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, profileID)
 

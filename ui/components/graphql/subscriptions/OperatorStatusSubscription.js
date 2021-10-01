@@ -20,7 +20,7 @@ const operatorStatusSubscription = graphql`
 `;
 
 export default function subscribeOperatorStatusEvents(dataCB) {
-  requestSubscription(environment, {
+  return  requestSubscription(environment, {
     subscription : operatorStatusSubscription,
     variables : {},
     onNext : dataCB,

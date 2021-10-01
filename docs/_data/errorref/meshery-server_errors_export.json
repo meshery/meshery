@@ -3,6 +3,15 @@
     "component_name": "meshery-server",
     "component_type": "component",
     "errors": {
+      "1013": {
+        "name": "ErrDataPlaneSubscriptionCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Data Plane stopped",
+        "short_description": "Data Plane Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Check if meshery server is reachable from the browser"
+      },
       "2000": {
         "name": "ErrInvalidK8SConfigCode",
         "code": "2000",
@@ -1299,23 +1308,23 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "2151": {
-        "name": "ErrInvalidRequestObjectCode",
-        "code": "2151",
-        "severity": "",
+      "2153": {
+        "name": "ErrGettingSeededComponentsCode",
+        "code": "2153",
+        "severity": "Alert",
         "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "Error while getting \n from sample content",
+        "probable_cause": "Sample content does not exist.\\nContent file format not supported.\\nUser doesn't have permission to read sample content.\\nContent file corrupt.",
+        "suggested_remediation": "Try restarting Meshery.\\nTry fetching content again."
       },
-      "2152": {
-        "name": "ErrChangeK8sContextCode",
-        "code": "2152",
-        "severity": "",
+      "2154": {
+        "name": "ErrGetK8sComponentsCode",
+        "code": "2154",
+        "severity": "Alert",
         "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "Could not get K8s components for registration",
+        "probable_cause": "Invalid kubeconfig\nFilters passed incorrectly in config\nCould not fetch API resources from Kubernetes server",
+        "suggested_remediation": "Make sure that the configuration filters passed are in accordance with output from /openapi/v2"
       }
     }
   }

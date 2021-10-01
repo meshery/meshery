@@ -5,7 +5,8 @@ permalink: reference/mesheryctl/mesheryctl/version
 type: reference
 display-title: "false"
 language: en
-lang: en
+command: global
+subcommand: version
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -17,14 +18,17 @@ lang: en
 <!-- Description of the command. Preferably a paragraph -->
 ## Description 
 
-{% for subcommand_hash in site.data.mesheryctlcommands.global.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command] %}
+{% for subcommand_hash in name.subcommands %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 {% endfor %}
 
 
 <!-- Basic usage of the command -->
+{% for subcommand_hash in name.subcommands %}{% assign subcommand = subcommand_hash[1] %}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl version
+    {{ subcommand.usage }}
   </div>
 </pre> 
+{% endfor %}

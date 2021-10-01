@@ -30,6 +30,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/docker/docker/api/types"
@@ -67,15 +68,36 @@ var startCmd = &cobra.Command{
 		err = hc.RunPreflightHealthChecks()
 		if err != nil {
 			cmd.SilenceUsage = true
+			return err
 		}
-
-		return err
+		cfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		ctx, err := cfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
 		}
 		return nil
+	},
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		latest, err := utils.GetLatestStableReleaseTag()
+		version := constants.GetMesheryctlVersion()
+		if err == nil && latest != version {
+			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+		}
 	},
 }
 
@@ -111,6 +133,14 @@ func start() error {
 			currCtx.SetPlatform(utils.PlatformFlag)
 		} else {
 			return ErrUnsupportedPlatform(utils.PlatformFlag, utils.CfgFile)
+		}
+	}
+
+	// Reset Meshery config file to default settings
+	if utils.ResetFlag {
+		err := resetMesheryConfig()
+		if err != nil {
+			return ErrResetMeshconfig(err)
 		}
 	}
 
@@ -205,14 +235,6 @@ func start() error {
 			err := utils.UpdateMesheryContainers()
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
-			}
-		}
-
-		// Reset Meshery config file to default settings
-		if utils.ResetFlag {
-			err := resetMesheryConfig()
-			if err != nil {
-				return ErrResetMeshconfig(err)
 			}
 		}
 
