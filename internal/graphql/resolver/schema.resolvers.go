@@ -104,8 +104,9 @@ func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-ch
 }
 
 func (r *subscriptionResolver) SubscribePerfProfile(ctx context.Context, profileID string) (<-chan *model.MesheryResult, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.listenToPerformanceResult(ctx, provider, profileID)
+	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	// return r.listenToPerformanceResult(ctx, provider, profileID)
+	panic(fmt.Errorf("not implemented"))
 }
 
 // Mutation returns generated.MutationResolver implementation.
