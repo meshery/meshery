@@ -1,6 +1,7 @@
 // @ts-check
 import React, { useState, useRef, useEffect } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles, MuiThemeProvider } from "@material-ui/core/styles";
+import {  createTheme } from '@material-ui/core/styles';
 import {
   NoSsr, TableCell, IconButton, TableRow, Typography
 } from "@material-ui/core";
@@ -51,6 +52,43 @@ function MesheryTestProfiles({
   }, [selectedProfile]);
 
   const searchTimeout = useRef(null);
+
+  const getMuiTheme = () => createTheme({
+    overrides : {
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
+          },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b" ,
+          marginTop : "7px",
+          marginRight : "8px",
+        },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      }
+    }
+  })
 
   const columns = [
     { name : "name",
@@ -277,13 +315,15 @@ function MesheryTestProfiles({
   return (
     <NoSsr>
       {testProfiles?.length ? (
-        <MUIDataTable
-          title={<div className={classes.tableHeader}>Profiles</div>}
-          data={testProfiles}
-          columns={columns}
-          // @ts-ignore
-          options={options}
-        />
+        <MuiThemeProvider theme={getMuiTheme()}>
+          <MUIDataTable
+            title={<div className={classes.tableHeader}>Profiles</div>}
+            data={testProfiles}
+            columns={columns}
+            // @ts-ignore
+            options={options}
+          />
+        </MuiThemeProvider>
       ) : null}
     </NoSsr>
   );
