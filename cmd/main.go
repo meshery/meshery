@@ -75,15 +75,6 @@ func main() {
 
 	store.Initialize()
 
-	// Register local OAM traits and workloads
-	if err := core.RegisterMesheryOAMTraits(); err != nil {
-		logrus.Error(err)
-	}
-	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
-		logrus.Error(err)
-	}
-	logrus.Info("Registered Meshery local Capabilities")
-
 	// Get the channel
 	logrus.Info("Meshery server current channel: ", releasechannel)
 
@@ -190,6 +181,19 @@ func main() {
 		logrus.Error(err)
 	}
 	provs[lProv.Name()] = lProv
+
+	//Register meshery local capabilities and trigger the seeding to seed the applications that can be handled
+	go func(l models.Provider) {
+		// Register local OAM traits and workloads
+		if err := core.RegisterMesheryOAMTraits(); err != nil {
+			logrus.Error(err)
+		}
+		if err := core.RegisterMesheryOAMWorkloads(); err != nil {
+			logrus.Error(err)
+		}
+		logrus.Info("Registered Meshery local Capabilities")
+		handlers.SeedApplications(lProv)
+	}(lProv)
 
 	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
 	if err != nil {

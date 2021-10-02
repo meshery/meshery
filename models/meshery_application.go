@@ -10,10 +10,10 @@ import (
 
 // MesheryApplication represents the applications that needs to be saved
 type MesheryApplication struct {
-	ID *uuid.UUID `json:"id,omitempty"`
-
-	Name            string `json:"name,omitempty"`
-	ApplicationFile string `json:"application_file"`
+	ID              *uuid.UUID `json:"id,omitempty"`
+	SHA             string     `json:"sha,omitempty"`
+	Name            string     `json:"name,omitempty"`
+	ApplicationFile string     `json:"application_file"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id" gorm:"-"`

@@ -1,6 +1,8 @@
 package models
 
 import (
+	"crypto/sha1"
+	"encoding/base64"
 	"encoding/json"
 	"strings"
 
@@ -63,6 +65,16 @@ func (maap *MesheryApplicationPersister) DeleteMesheryApplication(id uuid.UUID) 
 }
 
 func (maap *MesheryApplicationPersister) SaveMesheryApplication(application *MesheryApplication) ([]byte, error) {
+	hasher := sha1.New()
+	hasher.Write([]byte(application.ApplicationFile))
+	sha := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+	var app MesheryApplication
+	err := maap.DB.Where("sha = ?", sha).First(&app).Error
+
+	//If a row with the given sha field is successfully found, we can skip saving it
+	if err == nil {
+		return marshalMesheryApplications([]MesheryApplication{app}), nil
+	}
 	if application.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {

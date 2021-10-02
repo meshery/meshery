@@ -33,7 +33,7 @@ func Filler(data *Data, err error, next ChainStageNextFunction) {
 	flatSvc := map[string]interface{}{}
 	utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flatSvc)
 
-	fmt.Printf("%+#v\n", flatSvc)
+	// fmt.Printf("%+#v\n", flatSvc)
 
 	err = fill(data.Pattern, flatSvc)
 

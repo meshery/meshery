@@ -168,10 +168,22 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	}
 
 	if typ == "workload" {
-		return core.RegisterWorkload(body)
+		err := core.RegisterWorkload(body)
+		if err == nil {
+			if h.config.Providers["None"] != nil {
+				SeedApplications(h.config.Providers["None"])
+			}
+		}
+		return err
 	}
 	if typ == "trait" {
-		return core.RegisterTrait(body)
+		err := core.RegisterWorkload(body)
+		if err == nil {
+			if h.config.Providers["None"] != nil {
+				SeedApplications(h.config.Providers["None"])
+			}
+		}
+		return err
 	}
 	if typ == "scope" {
 		return core.RegisterScope(body)
@@ -338,7 +350,7 @@ type serviceActionProvider struct {
 }
 
 func (sap *serviceActionProvider) Terminate(err error) {
-	logrus.Error(err)
+	// logrus.Error(err)
 	sap.err = err
 }
 
