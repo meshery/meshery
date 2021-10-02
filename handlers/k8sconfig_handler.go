@@ -339,6 +339,8 @@ func registerK8sComponents(l logger.Handler, config []byte, ctx string) error {
 		var ord core.WorkloadCapability
 		ord.Metadata = make(map[string]string)
 		ord.Metadata["io.meshery.ctxid"] = ctx
+		ord.Metadata["adapter.meshery.io/name"] = "kubernetes"
+		ord.Host = "<none-local>"
 		ord.OAMRefSchema = man.Schemas[i]
 
 		var definition v1alpha1.WorkloadDefinition

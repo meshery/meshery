@@ -106,6 +106,7 @@ module.exports = { resolve : {
   "@material-ui/icons/Print" : require("@material-ui/icons/Print"),
   "@material-ui/icons/ViewColumn" : require("@material-ui/icons/ViewColumn"),
   "@material-ui/icons/FilterList" : require("@material-ui/icons/FilterList"),
+  "@material-ui/icons/CenterFocusStrong" : require("@material-ui/icons/CenterFocusStrong"),
   "mui-datatables" : require("mui-datatables"),
   notistack : require("notistack"),
   "react-dom/server" : require("react-dom/server"),

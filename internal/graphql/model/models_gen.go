@@ -115,11 +115,33 @@ type PageFilter struct {
 	To       *string `json:"to"`
 }
 
+type PerfPageProfiles struct {
+	Page       int            `json:"page"`
+	PageSize   int            `json:"page_size"`
+	TotalCount int            `json:"total_count"`
+	Profiles   []*PerfProfile `json:"profiles"`
+}
+
 type PerfPageResult struct {
 	Page       int              `json:"page"`
 	PageSize   int              `json:"page_size"`
 	TotalCount int              `json:"total_count"`
 	Results    []*MesheryResult `json:"results"`
+}
+
+type PerfProfile struct {
+	ConcurrentRequest int       `json:"concurrent_request"`
+	CreatedAt         *string   `json:"created_at"`
+	Duration          string    `json:"duration"`
+	Endpoints         []*string `json:"endpoints"`
+	ID                string    `json:"id"`
+	LastRun           *string   `json:"last_run"`
+	LoadGenerators    []*string `json:"load_generators"`
+	Name              *string   `json:"name"`
+	QPS               *int      `json:"qps"`
+	TotalResults      *int      `json:"total_results"`
+	UpdatedAt         *string   `json:"updated_at"`
+	UserID            string    `json:"user_id"`
 }
 
 type ReSyncActions struct {

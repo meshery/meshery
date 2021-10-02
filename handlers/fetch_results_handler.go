@@ -68,7 +68,9 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 	}
 	q := req.Form
 
-	bdr, err := p.FetchAllResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
+	tokenString := req.Context().Value("token").(string)
+
+	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return
