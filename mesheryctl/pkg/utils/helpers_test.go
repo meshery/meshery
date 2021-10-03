@@ -80,20 +80,8 @@ func TestUploadFileWithParams(t *testing.T) {
 	fixtureFileName := "listmanifest.api.response.golden" // any arbitrary fixture file
 	uploadFilePath := filepath.Join(fixturesDir, fixtureFileName)
 
-	test := struct {
-		uri       string
-		params    map[string]string
-		paramName string
-		path      string
-	}{
-		uri:       "https://www.layer5.io",
-		params:    nil,
-		paramName: "meshery",
-		path:      uploadFilePath,
-	}
-
 	// returns *http.Request
-	_, err := UploadFileWithParams(test.uri, test.params, test.paramName, test.path)
+	_, err := UploadFileWithParams("https://www.layer5.io", nil, "meshery", uploadFilePath)
 
 	if err != nil {
 		t.Errorf("UploadFileWithParams error = %v", err)
