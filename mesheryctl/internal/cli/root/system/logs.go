@@ -37,6 +37,16 @@ import (
 	"github.com/spf13/viper"
 )
 
+// IsPodRequired checks if a given pod is specified in the required pods
+func IsPodRequired(requiredPods []string, pod string) bool {
+	for _, rp := range requiredPods {
+		if rp == pod {
+			return true
+		}
+	}
+	return false
+}
+
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
 	Use:   "logs",
@@ -174,7 +184,7 @@ It also shows the logs of a specific component.`,
 
 				// Only print the logs from the required pods
 				if len(requiredPods) > 0 {
-					if !utils.IsPodRequired(requiredPods, name) {
+					if !IsPodRequired(requiredPods, name) {
 						continue
 					}
 				}

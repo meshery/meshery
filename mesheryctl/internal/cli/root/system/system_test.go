@@ -26,7 +26,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// update all location
-	utils.SetFileLocationTesting(t, currDir)
+	utils.SetFileLocationTesting(currDir)
 
 	tests := []struct {
 		Name            string
