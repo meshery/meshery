@@ -3,7 +3,10 @@ layout: page
 title: GKE
 permalink: es/installation/platforms/gke
 language: es
+lang: es
+categories: es
 type: installation
+list: include
 ---
 
 # Inicio rápido con Google Kubernetes Engine (GKE)

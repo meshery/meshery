@@ -3,7 +3,10 @@ layout: page
 title: EKS
 permalink: es/installation/platforms/eks
 language: es
+lang: es
+categories: es
 type: installation
+list: include
 ---
 
 # Inicio rápido con el Servicio Elastic Kubernetes de Amazon (EKS)

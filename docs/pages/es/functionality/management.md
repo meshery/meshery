@@ -1,13 +1,16 @@
 ---
 layout: page
-title: Lifecycle Management
+title: Gestión del Ciclo de Vida
 permalink: es/functionality/lifecycle-management
 type: functionality
 language: es
+lang: es
+categories: es
 ---
 
 # Gestión del ciclo de vida del service mesh
-Meshery soporta varios [service mesh diferentes](installation/adapters), de modo que puede aprender y comparar diferentes funcionalidades de service mesh. Una vez que haya seleccionado operar un service mesh determinado, Meshery le ayudará con las actividades en curso.
+Meshery soporta varios [service mesh diferentes]({{ site.baseurl }}/es/service-meshes), de modo que puede aprender y comparar diferentes funcionalidades de service mesh. Una vez que haya seleccionado operar un service mesh determinado, Meshery le ayudará con las actividades en curso.
+---
 
 ## Despliegue de un service mesh
 Meshery automatiza el aprovisionamiento de varios service mesh, permitiendo a los usuarios seleccionar diferentes perfiles de configuración para admitir una variedad de modelos de despliegue.

@@ -3,6 +3,8 @@ layout: page
 title: Descripción General
 permalink: es/overview
 language: es
+lang: es
+categories: es
 ---
 
 # Introducción a Meshery

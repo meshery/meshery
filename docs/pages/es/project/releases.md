@@ -3,6 +3,8 @@ layout: page
 title: Lanzamientos
 permalink: es/project/releases
 language: es
+lang: es
+categories: es
 type: project
 ---
 

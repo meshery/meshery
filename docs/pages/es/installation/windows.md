@@ -3,7 +3,10 @@ layout: page
 title: Windows
 permalink: es/installation/platforms/windows
 language: es
+lang: es
+categories: es
 type: installation
+list: include
 ---
 
 # **Inicio rápido con Windows**

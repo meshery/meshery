@@ -1,9 +1,12 @@
 ---
 layout: page
 title: AKS
-permalink: es/installation/platforms/aks
+permalink: /es/installation/platforms/aks
 language: es
+lang: es
+categories: es
 type: installation
+list: include
 ---
 
 # Inicio rápido con el Servicio Kubernetes de Azure (AKS)
