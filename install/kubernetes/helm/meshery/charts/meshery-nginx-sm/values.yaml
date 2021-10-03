@@ -26,10 +26,10 @@ fullnameOverride: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: meshery-nginx-sm
+  name: meshery-server
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -49,7 +49,7 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 10010
-  targetPOrt: 10010
+  targetPort: 10010
   annotations: {}
 
 ingress:
