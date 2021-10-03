@@ -1,17 +1,17 @@
 global:
   name: mesheryctl
-  description : Global command
+  description : A global command that displays an overview of all commands.
   usage:
     mesheryctl
   example: |
-    mesheryctl system start
+    mesheryctl
       mesheryctl --help
-      mesheryctl system stop
+      mesheryctl version
 
   flags:
     config:
       name: --config
-      description: configures Meshery with the kubeconfig, generated with the help of user details, to provide cluster access for public clouds(GKE/EKS).
+      description: configures Meshery with the meshconfig, generated with the help of user details to provide cluster access for public clouds(GKE/EKS).
       usage:
           mesheryctl [command] --config=[path to config file]
       example:
@@ -49,11 +49,14 @@ system:
     context:
       name: --context, -c
       arg: system
-      description: Temporarily change the current context.
+      description: Change from one context to another in meshconfig
       usage:
         mesheryctl system reset -c [temporary context name]
-      example:
+      example: |
+        
+        # Resets the given context 
         mesheryctl system reset -c docker-edge
+        
 
   subcommands:
     start:
