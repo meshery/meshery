@@ -78,7 +78,7 @@ func TestNavigateToBrowser(t *testing.T) {
 
 func TestUploadFileWithParams(t *testing.T) {
 	fixtureFileName := "listmanifest.api.response.golden" // any arbitrary fixture file
-	uploadFilePath := filepath.Join(fixturesDir, fixtureFileName)
+	uploadFilePath := filepath.Join(fixturesDir, "platform", fixtureFileName)
 
 	// returns *http.Request
 	_, err := UploadFileWithParams("https://www.layer5.io", nil, "meshery", uploadFilePath)
