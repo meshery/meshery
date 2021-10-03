@@ -518,6 +518,9 @@ pattern:
       usage: |
         mesheryctl pattern apply --file [pattern path]
         mesheryctl pattern delete --file [pattern path]
+      example: |
+        mesheryctl pattern apply --file "bookInfo.yaml"
+          mesheryctl pattern delete --file "bookInfo.yaml"
 
   subcommands:
     apply:
@@ -530,7 +533,10 @@ pattern:
           name: --file, -f
           description: apply pattern file will trigger deploy of the pattern file and also supports file retrieval from GitHub
           usage:
-              mesheryctl exp pattern apply --file [path to pattern file]
+              mesheryctl pattern apply --file [path to pattern file]
+          example:
+              mesheryctl pattern apply -f "bookInfo.yaml"
+              
 
     delete:
       name: delete
@@ -543,6 +549,8 @@ pattern:
           description: Deletes the resources that were created, using pattern file
           usage:
               mesheryctl pattern delete -f [path to pattern file]
+          example:
+              mesheryctl pattern delete -f "bookInfo.yaml"
 
     list:
       name: list
@@ -567,11 +575,15 @@ pattern:
           description: show all pattern file content
           usage:
               mesheryctl pattern view [pattern-name|pattern-id] --all
+          example:
+              mesheryctl pattern view bookInfo --all
         json:
           name: -o json
           description: display the content of a pattern in json format
           usage:
               mesheryctl pattern view [pattern-name|pattern-id] -o json
+          example:
+              mesheryctl pattern view bookInfo -o json
 
 app:
   name: app
@@ -584,6 +596,8 @@ app:
       description: (required) path to pattern file
       usage:
         mesheryctl app --file [path to pattern file]
+      example:
+        mesheryctl app --file "bookInfo.yaml"
   subcommands:
     list:
       name: list
@@ -601,6 +615,8 @@ app:
           description: Offboard application with an application file
           usage:
               mesheryctl app offboard -f [filepath] 
+          example:
+              mesheryctl app offboard -f "bookInfo.yaml"
     onboard:
       name: onboard
       description: onboard application
@@ -612,6 +628,8 @@ app:
           description: onboard application with application file
           usage:
               mesheryctl app onboard --file [filepath]
+          example:
+              mesheryctl app onboard -f "bookInfo.yaml"
     view:
       name: view
       description: displays the contents of a application
@@ -623,8 +641,12 @@ app:
           description: show all application file content
           usage:
               mesheryctl app view --all
+          example:
+              mesheryctl app view --all
         view-json:
           name: -o json
           description: display the content of an application in json format
           usage: | 
               mesheryctl app view [application-name|application-id] -o json  
+          example:
+              mesheryctl app view bookInfo -o json
