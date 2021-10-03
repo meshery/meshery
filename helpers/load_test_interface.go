@@ -254,7 +254,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		}
 		// Add support for more protocols here
 	}
-
+	labels := opts.Name + " -_- " + rURL
 	ro := &nighthawk_proto.CommandLineOptions{
 		Connections: &wrappers.UInt32Value{Value: uint32(2)},
 		OneofDurationOptions: &nighthawk_proto.CommandLineOptions_Duration{
@@ -290,7 +290,8 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		OpenLoop:                             &wrappers.BoolValue{Value: false},
 		JitterUniform:                        durationpb.New(0 * time.Second),
 		ExperimentalH2UseMultipleConnections: &wrappers.BoolValue{Value: false},
-		Labels:                               make([]string, 0),
+		// Labels:                               make([]string, 0),
+		Labels:                               labels,
 		//TransportSocket: &v3.TransportSocket{
 		//	Name: "test",
 		//	ConfigType: &v3.TransportSocket_TypedConfig{
