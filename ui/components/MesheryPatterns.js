@@ -509,7 +509,7 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
-              <Tooltip title = "Configure">
+              <Tooltip title="Configure">
                 <IconButton onClick={() => setShowForm({ pattern : patterns[tableMeta.rowIndex], show : true })}>
                   <ListAltIcon />
                 </IconButton>
@@ -536,42 +536,45 @@ function MesheryPatterns({
     }
   });
 
-  async function showModal() {
+  async function showModal(numberOfPatterns) {
     let response = await modalRef.current.show({
-      title : "Delete Pattern?",
+      title : "Delete Patterns?",
 
-      subtitle : "Are you sure you want to delete this pattern?",
+      subtitle : `Are you sure you want to delete ${numberOfPatterns} patterns?`,
 
       options : ["Yes", "No"],
     })
     return response;
   }
 
-  function deletePattern(id) {
+  async function deletePatterns(patternIds) {
     dataFetch(
-      `/api/pattern/${id}`,
+      `/api/patterns`,
       {
         method : "DELETE",
         credentials : "include",
+        body : patternIds,
       },
       () => {
         updateProgress({ showProgress : false });
-
-        enqueueSnackbar("Pattern deleted.", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-        });
+        setTimeout(() => {
+          enqueueSnackbar(`${patternIds.length} Patterns deleted.`, {
+            variant : "success",
+            autoHideDuration : 3000,
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+          });
+        }, 1000);
         fetchPatterns(page, pageSize, search, sortOrder);
       },
-      handleError("Failed to delete pattern")
+      handleError("Failed to delete patterns")
     );
+
   }
 
   const options = {
@@ -594,11 +597,10 @@ function MesheryPatterns({
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showModal()
-      console.log(response)
-      if (response === "Yes") {
-        const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
-        fid.forEach(fid => deletePattern(fid))
+      const patternIds = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
+      let response = await showModal(patternIds.length)
+      if (response === "yes") {
+        deletePatterns(patternIds)
       }
       if (response === "No")
         fetchPatterns(page, pageSize, search, sortOrder);
