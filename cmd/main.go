@@ -199,7 +199,7 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	defer preferencePersister.ClosePersister()
+	defer cPreferencePersister.ClosePersister()
 
 	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
 	for _, providerurl := range RemoteProviderURLs {
