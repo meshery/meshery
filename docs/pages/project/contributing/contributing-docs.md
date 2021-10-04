@@ -30,7 +30,8 @@ Meshery documentation is made of these components:
 
 **Note:** Windows users can run Jekyll by following the [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) and also installing Ruby Version Manager [RVM](https://rvm.io). RVM is a command-line tool which allows you to work with multiple Ruby environments on your local machine. Alternatively, if you're running Windows 10 version 1903 Build 18362 or higher, you can upgrade to Windows Subsystem for Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and run Jekyll in Linux instead.
 
-- Fire up your WSL VM and install the ruby version manager (RVM): 
+- Fire up your WSL VM and install the ruby version manager (RVM):
+
 ```bash
   sudo apt update
   sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
@@ -39,19 +40,22 @@ Meshery documentation is made of these components:
     	libreadline-dev libssl-dev
   sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
   curl -sSL https://get.rvm.io | sudo bash -s stable
-  sudo usermod -a -G rvm `whoami` 
+  sudo usermod -a -G rvm `whoami`
 ```
 
-  
-  If `gpg --keyserver` gives an error, you can use:
-  ```bash
-    sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-  ```
-  or
-  ```bash
-    sudo gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-  ```
-  Restart your WSL VM before moving forward.
+If `gpg --keyserver` gives an error, you can use:
+
+```bash
+  sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+```
+
+or
+
+```bash
+  sudo gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+```
+
+Restart your WSL VM before moving forward.
 
 - For installing Ruby, run:
   ```bash
@@ -88,7 +92,6 @@ Meshery documentation is made of these components:
     source ~/.bashrc
   ```
   <strong>Note:</strong> Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
-  
 - Check installation
   ```bash
     type rbenv
@@ -97,18 +100,25 @@ Meshery documentation is made of these components:
 #### Install Ruby
 
 - rbenv install version
+
 ```bash
   rbenv install 2.5.1
 ```
+
 - To list all the versions that can be installed
+
 ```bash
   rbenv install --list-all
 ```
+
 - Set which Ruby version you want to use
+
 ```bash
   rbenv global version
 ```
+
 - Check Ruby installation
+
 ```bash
   ruby -v
 ```
@@ -128,6 +138,7 @@ Meshery documentation is made of these components:
   $ cd docs
   ```
 - Install any Ruby dependencies
+
   ```bash
   $ gem install bundler
   $ bundle install
@@ -142,6 +153,7 @@ Meshery documentation is made of these components:
   $ make site
   ```
 - If that gives an error run:
+
   ```bash
     $ bundle exec jekyll serve
   ```
@@ -149,15 +161,19 @@ Meshery documentation is made of these components:
   _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
 
 ### Using Docker
+
 If you've Docker and `make` installed in your system, then you can serve the site locally
-  ```
-  $ make docker-docs
-  ```
+
+```
+$ make docker-docs
+```
 
 This doesn't require the need for installing Jekyll and Ruby in your system
 
-**But, you need to make sure that GNU make is working in your system (might not work in Windows)** 
+**But, you need to make sure that GNU make is working in your system (might not work in Windows)**
+
 #### Note
+
 While performing the above step, if you're facing errors with a message like below...
 
 `Your ruby version is x.x.x but your Gemfile specified 2.7.x`
@@ -165,15 +181,17 @@ While performing the above step, if you're facing errors with a message like bel
 This is because Jekyll always considers the exact version of Ruby unlike JavaScript.
 
 So, you need to follow either of the three steps to resolve this problem;
-  - Install the required Ruby version by using `rvm` or by any means given above
-  - Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes
-  - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below (not recommended! Do only if above two steps fail):
-  ```
-  source "https://rubygems.org" 
-  ruby '2.7.1' //to any version you have installed
-  ```
-  Automatically the `Gemfile.lock` will update once the `make site` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
 
+- Install the required Ruby version by using `rvm` or by any means given above
+- Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes
+- If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below (not recommended! Do only if above two steps fail):
+
+```
+source "https://rubygems.org"
+ruby '2.7.1' //to any version you have installed
+```
+
+Automatically the `Gemfile.lock` will update once the `make site` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
 
 **WARNING: If you have followed the third step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
 
@@ -204,8 +222,9 @@ Most popular clipboard plugins like Clipboard JS require the manual creation of 
    <code class="clipboardjs">
      code snippet
    </code></div></pre>
-``` 
- **<pre></pre>** _tags are optional unless the code snippet is in a paragraph format and also gives a terminal like effect to the code_
+```
+
+**<pre></pre>** _tags are optional unless the code snippet is in a paragraph format and also gives a terminal like effect to the code_
 
 **A full block:**
 
@@ -213,7 +232,7 @@ Most popular clipboard plugins like Clipboard JS require the manual creation of 
 ```code snippet```
 ````
 
-Inline formatting: 
+Inline formatting:
 
 \`code snippet\`: `code snippet`
 
@@ -221,7 +240,7 @@ Inline formatting:
 
 ````
 ```(language name)
-  code snippet  
+  code snippet
 ```
 ````
 
@@ -244,7 +263,7 @@ The following is a concise summary of the steps to contribute to Meshery documen
    `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.
 
-###  Table of Contents in Sidebar (toc)
+### Table of Contents in Sidebar (toc)
 
 Sidebars use toc to create a table of contents. It is written in the following manner:
 
@@ -303,12 +322,12 @@ The output produced by the above code snippet:
 
 ### Comment
 
-Comments allow to leave a block of code unattended, any statements between opening and closing comment would not be executed. 
-
+Comments allow to leave a block of code unattended, any statements between opening and closing comment would not be executed.
 
 ### Include
 
 The above tag is used to insert a already rendered file within the current template. It is written in the following manner:
+
 ```
     {{ "{% include file.html " }}%}
 ```
@@ -327,7 +346,7 @@ The assign tag is used to create a new variable. It is written in the following 
 
 <ul>
   {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" and item.url!=page.url %}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endif %}
