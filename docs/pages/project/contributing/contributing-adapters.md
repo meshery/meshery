@@ -12,7 +12,7 @@ category: contributing
 
 Meshery Adapters are an Extension Point in Meshery's architecture. Their design and the process of creating a new adapter or contributing to an existing adapter is documented in [Extensibility: Service Mesh Adapters]({{site.baseurl}}/extensibility/adapters).
 
-# Contributing Guides
+# Suggested Reading
 
 {% assign sorted_reading = site.pages | sort: page.title | reverse %}
 
