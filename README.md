@@ -77,7 +77,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 <p style="clear:both;">&nbsp;</p>
  
 <h3><a name="service-meshes"></a>Supported Service Meshes</h3>
-<p>Meshery supports 10 diffferent service meshes.</p>
+<p>Meshery supports 10 different service meshes.</p>
 
 <details>
   <summary><strong>See all Supported Service Meshes</strong></summary>
