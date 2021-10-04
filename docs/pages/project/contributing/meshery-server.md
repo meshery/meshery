@@ -8,23 +8,21 @@ type: project
 category: contributing
 ---
 
+
 As a new contributor, you’re going to want to familiarize with the project in order to resolve the issues in the best way. Installing and playing around with Meshery will give you context for the any issues that you might work on.
 
 Once an issue has been addressed, you’ll need to test it as well. Ideally, these tests are run from the user’s perspective (someone running Meshery in a container), not from a contributor’s perspective (someone running Meshery as a locally-compiled service).
 
 ## Compiling and Running Meshery server
 
-To build and run Meshery server from source:
+To build and run Meshery server from source: 
 
 1. Build the static assets for the UI by running
-
 ```sh
 make setup-ui-libs
 make build-ui
 ```
-
 2. Build & run the server code by running
-
 ```sh
 make run-local // Or make run-fast
 ```
@@ -51,13 +49,14 @@ make error
 
 For more details, <a href="{{ site.baseurl }}/project/contributing-error">Error Utility</a>
 
+
 # Suggested Reading
 
 {% assign sorted_reading = site.pages | sort: page.title | reverse %}
 
 <ul>
   {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" and item.url!=page.url %}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endif %}
