@@ -29,6 +29,15 @@ var tokenCmd = &cobra.Command{
 	},
 }
 
+func checkTokenName(n int) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) != n || args[0] == "" {
+			return fmt.Errorf("token name is required in command, accepts %d arg(s), received %d", n, len(args))
+		}
+		return nil
+	}
+}
+
 var createTokenCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a token in your meshconfig",
@@ -38,7 +47,7 @@ var createTokenCmd = &cobra.Command{
 	mesheryctl system token create <token-name> (default path is auth.json)
 	mesheryctl system token create <token-name> -f <token-path> --set
 	`,
-	Args: cobra.ExactArgs(1),
+	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
 		if tokenPath == "" {
