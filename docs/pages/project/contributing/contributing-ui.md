@@ -6,7 +6,6 @@ description: How to contribute to Meshery UI (web-based user interface).
 language: en
 type: project
 category: contributing
-# exclude: true
 ---
 
 ### <a name="contributing-ui">UI Contribution Flow</a>
@@ -38,6 +37,8 @@ Go [here](https://docs.meshery.io/extensibility/api#rest) for the docs.
 
 - Meshery provides a GraphQl API available through the default port of `9081/tcp`.
 - [Relay](https://relay.dev) is the client used.
+
+
 
 ### Design
 
@@ -74,15 +75,18 @@ The designs in this specification should result in enabling:
 
 - Meshery UI should be event-driven where possible.
 
+
+
 ### Setting up
 
 #### Linting-UI
 
 - When contributing to this project, it is advisable to
 
-  - Use [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) plugin for Visual Studio Code.
+    - Use [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) plugin for Visual Studio Code.
 
-  - Disable plugins other than `eslint` for formatting and linting, if any.
+    - Disable plugins other than `eslint` for formatting and linting, if any.
+
 
 #### Install UI dependencies
 
@@ -104,15 +108,15 @@ make build-ui
 
 > Changes are not recompiled directly, you will have to run to rebuild the UI to see them
 
+
 #### Run Meshery
-
 To start running Meshery locally:
-
 ```
 make run-fast
 ```
 
 > Now, Meshery will run on the default port `http://localhost:9081`.
+
 
 #### UI Development Server
 
@@ -152,7 +156,7 @@ If you want to run Meshery from IDE like Goland, VSCode.
 
 <ul>
   {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" and item.url!=page.url %}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endif %}

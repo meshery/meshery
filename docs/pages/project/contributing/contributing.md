@@ -18,12 +18,13 @@ This project is community-built and welcomes collaboration. Contributors are exp
 
 <ul>
   {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" and item.url!=page.url %}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endif %}
   {% endfor %}
 </ul>
+
 
 ## Not sure where to start?
 
