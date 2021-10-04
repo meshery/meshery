@@ -14,11 +14,11 @@ import (
 func getFixturesDirectory() string {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		log.Fatal("TestBackupConfigFile: Cannot get current working directory")
+		log.Fatal("helpers_test.go: Cannot get current working directory")
 	}
-	currDir := filepath.Dir(filename)
+	currentDirectory := filepath.Dir(filename)
 	// get the fixtures file directory
-	fixturesDir := filepath.Join(currDir, "fixtures")
+	fixturesDir := filepath.Join(currentDirectory, "fixtures")
 	return fixturesDir
 }
 
@@ -62,6 +62,16 @@ func TestPrereq(t *testing.T) {
 }
 
 func TestSetFileLocation(t *testing.T) {
+	originalMesheryFolder := MesheryFolder
+	originalDockerComposeFile := DockerComposeFile
+	originalAuthConfigFile := AuthConfigFile
+	originalDefaultConfigPath := DefaultConfigPath
+	defer func() {
+		MesheryFolder = originalMesheryFolder
+		DockerComposeFile = originalDockerComposeFile
+		AuthConfigFile = originalAuthConfigFile
+		DefaultConfigPath = originalDefaultConfigPath
+	}()
 	err := SetFileLocation()
 	if err != nil {
 		t.Errorf("SetFileLocation error = %v", err)
