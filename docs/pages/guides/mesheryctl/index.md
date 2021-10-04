@@ -7,22 +7,19 @@ language: en
 list: exclude
 ---
 
-Guides to using Meshery's various features and components. 
+Guides to using Meshery's various features and components.
 
 {% assign sorted_guides = site.pages | sort: "type" | reverse %}
 
 <ul>
   <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></lI>
   {% for item in sorted_guides %}
-  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" -%}
+  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" %}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endif %}
   {% endfor %}
 </ul>
-
-
-
 
 <!-- {% include toc.html page=Guides %} -->
 
