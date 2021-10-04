@@ -8,12 +8,11 @@ type: project
 category: contributing
 ---
 
-Meshery pervasively uses MeshKit as a golang and service mesh management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes. 
+Meshery pervasively uses MeshKit as a golang and service mesh management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes.
 
 To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery [error codes reference page](https://docs.meshery.io/reference/error-codes). The objective to create this was to avoid centralized handling of error codes and automating everything
 
-In order to create a Meshery error object, you will need to create a custom wrapper object for the native golang error. This can be done from the <a href="https://github.com/layer5io/meshkit/tree/master/errors">MeshKit Error</a> package. 
-
+In order to create a Meshery error object, you will need to create a custom wrapper object for the native golang error. This can be done from the <a href="https://github.com/layer5io/meshkit/tree/master/errors">MeshKit Error</a> package.
 
 ## Some rules for making Errors codes
 
@@ -27,7 +26,7 @@ In order to create a Meshery error object, you will need to create a custom wrap
 
 - Set the value to any string, like "replace_me" (no convention here), e.g. ErrApplyManifestCode = "replace_me".
 
-- Error codes are not to be set as integer 
+- Error codes are not to be set as integer
 
 - CI will take care of updating Error codes from a string to an integer.
 
@@ -47,10 +46,9 @@ In order to create a Meshery error object, you will need to create a custom wrap
 
 - Running `make error` would analyze the code and return you with a warning.
 
-
-
-Use the `errors.New()` function to create a new instance of the error object and pass situation-specific attributes as function arguments. 
+Use the `errors.New()` function to create a new instance of the error object and pass situation-specific attributes as function arguments.
 These attributes are:
+
 - Code
 - Short Description
 - Long Description
@@ -58,9 +56,8 @@ These attributes are:
 - Suggested Remediation
 
 ### Syntax
-     errors.New(ErrExampleCode, errors.Alert, []string{"<short-description>"}, []string{"<long-description>"}, []string{"<probable-cause>"}, []string{"<suggested remediation>"})
-  
 
+     errors.New(ErrExampleCode, errors.Alert, []string{"<short-description>"}, []string{"<long-description>"}, []string{"<probable-cause>"}, []string{"<suggested remediation>"})
 
 ## Example
 
@@ -68,7 +65,7 @@ In this example we are creating an Error for being unable to marshal JSON
 
 ```code
 var (
-    // Error code 
+    // Error code
     ErrMarshalCode= "replace_me"
 
     //Static errors (for example)
@@ -82,58 +79,61 @@ func ErrMarshal(err error, obj string) error {
 }
 
 ```
-### Replacing old Error Codes 
 
- Old
- ```Code 
-    bd, err := json.Marshal(providers)
+### Replacing old Error Codes
+
+Old
+
+```Code
+   bd, err := json.Marshal(providers)
 	if err != nil {
 		http.Error(w, "unable to marshal the providers", http.StatusInternalServerError)
 		return
 	}
- ```
+```
+
 New
-  ```Code 
-    bd, err := json.Marshal(providers)
-    if err != nil {
-            obj := "provider"
-            http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-            return
-        }
- ```
 
+```Code
+  bd, err := json.Marshal(providers)
+  if err != nil {
+          obj := "provider"
+          http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+          return
+      }
+```
 
+## Replacing logrus
 
+There already exists an [interface for logger](https://github.com/layer5io/meshkit/blob/master/logger/logger.go) in MeshKit.
 
-## Replacing logrus 
- There already exists an [interface for logger](https://github.com/layer5io/meshkit/blob/master/logger/logger.go) in MeshKit.
+#### Defining a Logger
 
-#### Defining a Logger 
-
-   ```Code 
-    type Logger struct {
-        log   logger.Handler
-    }
- ```
-
+```Code
+ type Logger struct {
+     log   logger.Handler
+ }
+```
 
 #### Debug
- 
-##### Old
-  `logrus.Debugf("meshLocationURL: %s", meshLocationURL)`
-##### New
-  `l.log.Debug("meshLocationURL: ", meshLocationURL)`
 
+##### Old
+
+`logrus.Debugf("meshLocationURL: %s", meshLocationURL)`
+
+##### New
+
+`l.log.Debug("meshLocationURL: ", meshLocationURL)`
 
 #### Error
-  
+
 ##### Old
-  `logrus.Errorf("error marshaling data: %v.", err)`
+
+`logrus.Errorf("error marshaling data: %v.", err)`
+
 ##### New
-  `l.log.Error(ErrMarshal(err, obj))`
 
-
-
+`l.log.Error(ErrMarshal(err, obj))`
 
 # Suggested Reading
 
@@ -141,7 +141,7 @@ New
 
 <ul>
   {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" and item.url!=page.url %}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endif %}

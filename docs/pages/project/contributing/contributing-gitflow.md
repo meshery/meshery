@@ -133,7 +133,7 @@ Once you've committed and pushed all of your changes to GitHub, go to the page f
 
 <ul>
   {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" and item.url!=page.url%}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endif %}
