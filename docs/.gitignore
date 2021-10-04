@@ -51,3 +51,6 @@ dist/
 
 
 **/.idea
+
+/Gemfile.save
+/.ruby-version
