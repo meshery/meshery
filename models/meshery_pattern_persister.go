@@ -64,7 +64,7 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id uuid.UUID) ([]byte, 
 }
 
 // DeleteMesheryPatterns takes in a array of profile ids and delete those if exist
-func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(/*ids []uuid.UUID*/) ([]byte, error) {
+func (mpp *MesheryPatternPersister) DeleteMesheryPatterns( /*ids []uuid.UUID*/ ) ([]byte, error) {
 	// for _, id := range(ids) {
 	// 	pattern := MesheryPattern{ID: &id}
 	// 	mpp.DB.Delete(&pattern)
