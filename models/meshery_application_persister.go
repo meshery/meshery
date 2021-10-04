@@ -83,7 +83,7 @@ func (maap *MesheryApplicationPersister) SaveMesheryApplication(application *Mes
 
 		application.ID = &id
 	}
-
+	application.SHA = sha
 	return marshalMesheryApplications([]MesheryApplication{*application}), maap.DB.Save(application).Error
 }
 

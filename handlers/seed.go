@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"crypto/sha1"
-	"encoding/base64"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -41,13 +39,9 @@ func SeedApplications(l models.Provider) {
 			Other:   map[string]interface{}{},
 		})
 		if sap.err == nil {
-			hasher := sha1.New()
-			hasher.Write(content)
-			sha := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
 			app := models.MesheryApplication{
 				Name:            name,
 				ApplicationFile: string(content),
-				SHA:             sha,
 			}
 			_, err := l.SaveMesheryApplication("", &app) //This function is only used for local provider, which doesn't make use of token hence it is passed as an empty string
 			if err != nil {
