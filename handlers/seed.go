@@ -49,8 +49,6 @@ func SeedApplications(l models.Provider) {
 			}
 		}
 	}
-	return
-
 }
 
 // getSeededComponents reads the directory recursively looking for seed content
