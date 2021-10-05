@@ -652,16 +652,6 @@ func GetPods(client *meshkitkube.Client, namespace string) (*v1core.PodList, err
 	return podList, nil
 }
 
-// IsPodRequired checks if a given pod is specified in the required pods
-func IsPodRequired(requiredPods []string, pod string) bool {
-	for _, rp := range requiredPods {
-		if rp == pod {
-			return true
-		}
-	}
-	return false
-}
-
 // GetRequiredPods checks if the pods specified by the user is valid returns a list of the required pods
 func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]string, error) {
 	var requiredPods []string

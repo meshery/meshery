@@ -21,13 +21,14 @@ display-title: "false"
 <!-- QUICK START -->
   <div>
     <a href="{{ site.baseurl }}/es/installation">
-        <div class="overview">Quick&nbsp;Start</div>
+        <div class="overview">Inicio&nbsp;Rápido</div>
     </a>
-    <ul><b><a href="{{ site.baseurl }}/es/installation">Getting Started</a></b>
-        <li><a href="{{ site.baseurl }}/es/overview">Introducing Meshery</a></li>
-        <li><a href="{{ site.baseurl }}/es/project">Project and Community</a></li>
+    <ul>
+        <b><a href="{{ site.baseurl }}/es/installation" class="text-black">Inicio Rápido</a></b>
+        <li><a href="{{ site.baseurl }}/es/overview">Introducción a Meshery</a></li>
+        <li><a href="{{ site.baseurl }}/es/project">Proyecto y Comunidad</a></li>
     </ul>
-    <ul><b><a href="{{ site.baseurl }}/es/installation/platforms" class="text-black">Supported Platforms</a></b>
+    <ul><b><a href="{{ site.baseurl }}/es/installation/platforms" class="text-black">Plataformas Soportadas</a></b>
         {% for item in sorted_pages %}
         {% if item.type=="installation" %}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
