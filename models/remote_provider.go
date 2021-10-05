@@ -49,7 +49,7 @@ type RemoteProvider struct {
 	syncChan     chan *userSession
 
 	ProviderVersion    string
-	SmiResultPersister *BitCaskSmiResultsPersister
+	SmiResultPersister *SmiResultsPersister
 	GenericPersister   database.Handler
 	KubeClient         *mesherykube.Client
 }

@@ -32,7 +32,7 @@ type DefaultLocalProvider struct {
 	ProviderProperties
 	ProviderBaseURL                 string
 	ResultPersister                 *MesheryResultsPersister
-	SmiResultPersister              *BitCaskSmiResultsPersister
+	SmiResultPersister              *SmiResultsPersister
 	TestProfilesPersister           *BitCaskTestProfilesPersister
 	PerformanceProfilesPersister    *PerformanceProfilePersister
 	MesheryPatternPersister         *MesheryPatternPersister

@@ -166,7 +166,7 @@ func main() {
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
 		ResultPersister:                 &models.MesheryResultsPersister{DB: &dbHandler},
-		SmiResultPersister:              &models.BitCaskSmiResultsPersister{DB: &dbHandler},
+		SmiResultPersister:              &models.SmiResultsPersister{DB: &dbHandler},
 		TestProfilesPersister:           &models.BitCaskTestProfilesPersister{DB: &dbHandler},
 		PerformanceProfilesPersister:    &models.PerformanceProfilePersister{DB: &dbHandler},
 		MesheryPatternPersister:         &models.MesheryPatternPersister{DB: &dbHandler},
@@ -203,7 +203,7 @@ func main() {
 			LoginCookieDuration:        1 * time.Hour,
 			SessionPreferencePersister: &models.SessionPreferencePersister{DB: &dbHandler},
 			ProviderVersion:            "v0.3.14",
-			SmiResultPersister:         &models.BitCaskSmiResultsPersister{DB: &dbHandler},
+			SmiResultPersister:         &models.SmiResultsPersister{DB: &dbHandler},
 			GenericPersister:           dbHandler,
 		}
 

@@ -8,7 +8,7 @@ import (
 )
 
 // BitCaskSmiResultsPersister assists with persisting session in a Bitcask store
-type BitCaskSmiResultsPersister struct {
+type SmiResultsPersister struct {
 	DB *database.Handler
 }
 
@@ -26,7 +26,7 @@ type SmiResultPage struct {
 }
 
 // GetSmiResults - gets result for the page and pageSize
-func (s *BitCaskSmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
+func (s *SmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
@@ -57,7 +57,7 @@ func (s *BitCaskSmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, 
 }
 
 // WriteSmiResult persists the result
-func (s *BitCaskSmiResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
+func (s *SmiResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
@@ -80,7 +80,7 @@ func (s *BitCaskSmiResultsPersister) WriteResult(key uuid.UUID, result []byte) e
 	return s.DB.Model(&SmiResultWithID{}).Create(&r).Error
 }
 
-func (s *BitCaskSmiResultsPersister) DeleteResult(key uuid.UUID) error {
+func (s *SmiResultsPersister) DeleteResult(key uuid.UUID) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
