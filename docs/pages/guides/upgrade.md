@@ -6,11 +6,13 @@ permalink: guides/upgrade
 display-title: "false"
 type: Guides
 ---
+
 # Upgrade Guide
 
 ## Upgrading Meshery Server, Adapters, and UI
 
 Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of different functional components.
+
 <p style="text-align:center">
 <a href="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg">
     <img src="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg" style="margin: 1rem;" width="50%" />
@@ -18,8 +20,6 @@ Various components of Meshery will need to be upgraded as new releases become av
 </p>
 
 Some of the components must be upgraded simultaneously, while others may be upgraded independently. The following table depicts components, their versions, and deployment units (deployment groups).
-
-
 
 ### Versioning of Meshery components
 
@@ -79,7 +79,6 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         <td> Static Extension: Integrators manage the lifecycle of their Meshery Extensions. Process is unique per provider.</td>
     </tr>
 </table>
-
 
 Sub-components deploy as a unit, however, they do not share the same version number.
 
