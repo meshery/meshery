@@ -23,13 +23,14 @@ You can retrieve your authentication token from either of Meshery's two clients:
 
 - Get your token through **Meshery CLI**.
   <br/>
-  > To get the token through `mesheryctl` you would have to use the following command and the path to token for authenticating to Meshery API (default "auth.json").
-      <br/>
-      <pre class="codeblock-pre">
-          <div class="codeblock">
-          mesheryctl system config --token [path-to-file]
-          </div>
-      </pre>
+  To get the token through `mesheryctl` you would have to use the following command and the path to token for authenticating to Meshery API (default "auth.json").
+
+  <pre class="codeblock-pre">
+  <div class="codeblock"><div class="clipboardjs">
+  mesheryctl system config --token [path-to-file] 
+  
+  </div></div>
+  </pre>
   <br />
 
 **_The need for authentication to `Meshery` [provider](http://localhost:9081/provider) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
@@ -46,7 +47,7 @@ Guides to using Meshery's various features and components.
 {% assign sorted_guides = site.pages | sort: "type" | reverse %}
 
 <ul>
-  <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></lI>
+  <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
   {% for item in sorted_guides %}
   {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" and item.url!=page.url %}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
