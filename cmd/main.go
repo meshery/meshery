@@ -138,12 +138,6 @@ func main() {
 	}
 	defer smiResultPersister.CloseResultPersister()
 
-	testConfigPersister, err := models.NewBitCaskTestProfilesPersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	defer testConfigPersister.CloseTestConfigsPersister()
-
 	dbHandler, err := database.New(database.Options{
 		Filename: fmt.Sprintf("%s/mesherydb.sql", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
@@ -167,6 +161,7 @@ func main() {
 		models.PatternResource{},
 		models.MesheryApplication{},
 		models.UserPreference{},
+		models.PerformanceTestConfig{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -177,7 +172,7 @@ func main() {
 		MapPreferencePersister:          preferencePersister,
 		ResultPersister:                 &models.MesheryResultsPersister{DB: &dbHandler},
 		SmiResultPersister:              smiResultPersister,
-		TestProfilesPersister:           testConfigPersister,
+		TestProfilesPersister:           &models.BitCaskTestProfilesPersister{DB: &dbHandler},
 		PerformanceProfilesPersister:    &models.PerformanceProfilePersister{DB: &dbHandler},
 		MesheryPatternPersister:         &models.MesheryPatternPersister{DB: &dbHandler},
 		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: &dbHandler},

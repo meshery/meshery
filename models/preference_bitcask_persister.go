@@ -31,7 +31,7 @@ func (s *SessionPreferencePersister) ReadFromPersister(userID string) (*Preferen
 		AnonymousPerfResults: true,
 	}
 	var u UserPreference
-	err := s.DB.Where("id = ?", userID).First(&u).Error
+	err := s.DB.Model(&UserPreference{}).Where("id = ?", userID).First(&u).Error
 	if err != nil {
 		return nil, err
 	}
@@ -39,17 +39,16 @@ func (s *SessionPreferencePersister) ReadFromPersister(userID string) (*Preferen
 	if err != nil {
 		return nil, err
 	}
-
 	return data, nil
 }
 
 // WriteToPersister persists session for the user
 func (s *SessionPreferencePersister) WriteToPersister(userID string, data *Preference) error {
 	var u UserPreference
-	err := s.DB.Where("id = ?", userID).First(&u).Error
+	err := s.DB.Model(&UserPreference{}).Where("id = ?", userID).First(&u).Error
 	if err == nil {
 		data.UpdatedAt = time.Now()
-		return s.DB.Where("id = ?", userID).Update("id", userID).Error
+		return s.DB.Model(&UserPreference{}).Where("id = ?", userID).Update("id", userID).Error
 	}
 	if s.DB == nil {
 		return ErrDBConnection
@@ -73,7 +72,7 @@ func (s *SessionPreferencePersister) WriteToPersister(userID string, data *Prefe
 		ID:              userID,
 	}
 
-	return s.DB.Create(&p).Error
+	return s.DB.Model(&UserPreference{}).Create(&p).Error
 
 }
 
@@ -87,7 +86,7 @@ func (s *SessionPreferencePersister) DeleteFromPersister(userID string) error {
 		return ErrUserID
 	}
 
-	return s.DB.Where("id = ?", userID).Delete(&UserPreference{}).Error
+	return s.DB.Model(&UserPreference{}).Where("id = ?", userID).Delete(&UserPreference{}).Error
 }
 
 // // ClosePersister closes the badger store
