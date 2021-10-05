@@ -156,7 +156,7 @@ func main() {
 		models.MesheryApplication{},
 		models.UserPreference{},
 		models.PerformanceTestConfig{},
-		models.SmiResultWithId{},
+		models.SmiResultWithID{},
 	)
 	if err != nil {
 		logrus.Fatal(err)

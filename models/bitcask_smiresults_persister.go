@@ -12,7 +12,7 @@ type BitCaskSmiResultsPersister struct {
 	DB *database.Handler
 }
 
-type SmiResultWithId struct {
+type SmiResultWithID struct {
 	ID        uuid.UUID
 	SmiResult `gorm:"embedded"`
 }
@@ -32,16 +32,20 @@ func (s *BitCaskSmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, 
 	}
 
 	total := int64(0)
-	s.DB.Model(&SmiResultWithId{}).Count(&total)
-	results := []*SmiResult{}
+	s.DB.Model(&SmiResultWithID{}).Count(&total)
+	results := []*SmiResultWithID{}
 	order := "updated_at desc"
 	query := s.DB.Order(order)
 	Paginate(uint(page), uint(pageSize))(query).Find(&results)
+	var smiresults []*SmiResult
+	for _, r := range results {
+		smiresults = append(smiresults, &r.SmiResult)
+	}
 	bd, err := json.Marshal(&SmiResultPage{
 		Page:       page,
 		PageSize:   pageSize,
 		TotalCount: int(total),
-		Results:    results,
+		Results:    smiresults,
 	})
 	if err != nil {
 		obj := "result data"
@@ -61,8 +65,8 @@ func (s *BitCaskSmiResultsPersister) WriteResult(key uuid.UUID, result []byte) e
 	if result == nil {
 		return ErrResultData()
 	}
-	var r SmiResultWithId
-	if err := s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).First(&r).Error; err == nil {
+	var r SmiResultWithID
+	if err := s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).First(&r).Error; err == nil {
 		err = s.DeleteResult(key)
 		if err != nil {
 			return err
@@ -73,14 +77,14 @@ func (s *BitCaskSmiResultsPersister) WriteResult(key uuid.UUID, result []byte) e
 		return err
 	}
 	r.ID = key
-	return s.DB.Model(&PerformanceTestConfig{}).Create(&r).Error
+	return s.DB.Model(&SmiResultWithID{}).Create(&r).Error
 }
 
 func (s *BitCaskSmiResultsPersister) DeleteResult(key uuid.UUID) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
-	return s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).Delete(&PerformanceTestConfig{}).Error
+	return s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).Delete(&SmiResultWithID{}).Error
 }
 
 // CloseSmiResultPersister closes the badger store

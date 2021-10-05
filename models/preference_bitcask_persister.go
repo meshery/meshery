@@ -73,7 +73,6 @@ func (s *SessionPreferencePersister) WriteToPersister(userID string, data *Prefe
 	}
 
 	return s.DB.Model(&UserPreference{}).Create(&p).Error
-
 }
 
 // DeleteFromPersister removes the session for the user
