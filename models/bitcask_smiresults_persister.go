@@ -2,19 +2,19 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
-	"os"
-	"path"
 
-	"git.mills.io/prologic/bitcask"
 	"github.com/gofrs/uuid"
-	"github.com/sirupsen/logrus"
+	"github.com/layer5io/meshkit/database"
 )
 
 // BitCaskSmiResultsPersister assists with persisting session in a Bitcask store
 type BitCaskSmiResultsPersister struct {
-	fileName string
-	db       *bitcask.Bitcask
+	DB *database.Handler
+}
+
+type SmiResultWithId struct {
+	ID        uuid.UUID
+	SmiResult `gorm:"embedded"`
 }
 
 // SmiResultPage - represents a page of meshery results
@@ -25,83 +25,22 @@ type SmiResultPage struct {
 	Results    []*SmiResult `json:"results"`
 }
 
-// NewBitCaskSmiResultsPersister creates a new BitCaskSmiResultsPersister instance
-func NewBitCaskSmiResultsPersister(folderName string) (*BitCaskSmiResultsPersister, error) {
-	_, err := os.Stat(folderName)
-	if err != nil {
-		if os.IsNotExist(err) {
-			err = os.MkdirAll(folderName, os.ModePerm)
-			if err != nil {
-				// unable to create directory
-				obj := folderName
-				return nil, ErrMakeDir(err, obj)
-			}
-		} else {
-			//unable to find folder
-			obj := folderName
-			return nil, ErrFolderStat(err, obj)
-		}
-	}
-
-	fileName := path.Join(folderName, "smiresultDB")
-	db, err := bitcask.Open(fileName, bitcask.WithSync(true))
-	if err != nil {
-		return nil, ErrDBOpen(err)
-	}
-	bd := &BitCaskSmiResultsPersister{
-		fileName: fileName,
-		db:       db,
-	}
-	return bd, nil
-}
-
 // GetSmiResults - gets result for the page and pageSize
 func (s *BitCaskSmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
-	if s.db == nil {
+	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
 
-	total := s.db.Len()
-
+	total := int64(0)
+	s.DB.Model(&SmiResultWithId{}).Count(&total)
 	results := []*SmiResult{}
-
-	start := page * pageSize
-	end := (page+1)*pageSize - 1
-	logrus.Debugf("received page: %d, page size: %d, total: %d", page, pageSize, total)
-
-	logrus.Debugf("computed start index: %d, end index: %d", start, end)
-
-	if start > uint64(total) {
-		return nil, fmt.Errorf("index out of range")
-	}
-	var localIndex uint64
-
-	for k := range s.db.Keys() {
-		if localIndex >= start && localIndex <= end {
-			dd, err := s.db.Get(k)
-			if err != nil {
-				//err = errors.Wrapf(err, "Unable to read data from bitcask store")
-				//logrus.Error(err)
-				return nil, ErrDBRead(err)
-			}
-			if len(dd) > 0 {
-				result := &SmiResult{}
-				if err := json.Unmarshal(dd, result); err != nil {
-					obj := "result data"
-					//err = errors.Wrapf(err, "Unable to unmarshal data.")
-					//logrus.Error(err)
-					return nil, ErrUnmarshal(err, obj)
-				}
-				results = append(results, result)
-			}
-		}
-		localIndex++
-	}
-
+	order := "updated_at desc"
+	query := s.DB.Order(order)
+	Paginate(uint(page), uint(pageSize))(query).Find(&results)
 	bd, err := json.Marshal(&SmiResultPage{
 		Page:       page,
 		PageSize:   pageSize,
-		TotalCount: total,
+		TotalCount: int(total),
 		Results:    results,
 	})
 	if err != nil {
@@ -115,28 +54,39 @@ func (s *BitCaskSmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, 
 
 // WriteSmiResult persists the result
 func (s *BitCaskSmiResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
-	if s.db == nil {
+	if s.DB == nil {
 		return ErrDBConnection
 	}
 
 	if result == nil {
 		return ErrResultData()
 	}
-
-	if err := s.db.Put(key.Bytes(), result); err != nil {
-		//err = errors.Wrapf(err, "Unable to persist result data.")
-		//unable to persists result
-		//l.log.Error(ErrUnableToPersists(err))
-		//logrus.Error(err)
-		return ErrUnableToPersistsResult(err)
+	var r SmiResultWithId
+	if err := s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).First(&r).Error; err == nil {
+		err = s.DeleteResult(key)
+		if err != nil {
+			return err
+		}
 	}
-	return nil
+	err := json.Unmarshal(result, &r.SmiResult)
+	if err != nil {
+		return err
+	}
+	r.ID = key
+	return s.DB.Model(&PerformanceTestConfig{}).Create(&r).Error
+}
+
+func (s *BitCaskSmiResultsPersister) DeleteResult(key uuid.UUID) error {
+	if s.DB == nil {
+		return ErrDBConnection
+	}
+	return s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).Delete(&PerformanceTestConfig{}).Error
 }
 
 // CloseSmiResultPersister closes the badger store
-func (s *BitCaskSmiResultsPersister) CloseResultPersister() {
-	if s.db == nil {
-		return
-	}
-	_ = s.db.Close()
-}
+// func (s *BitCaskSmiResultsPersister) CloseResultPersister() {
+// 	if s.db == nil {
+// 		return
+// 	}
+// 	_ = s.db.Close()
+// }

@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -31,7 +30,6 @@ type UserTestProfiles struct {
 
 // GetTestConfigs - gets result for the page and pageSize
 func (s *BitCaskTestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, error) {
-	fmt.Println("BITCH M HERE")
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
@@ -64,13 +62,12 @@ func (s *BitCaskTestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]
 
 // GetTestConfig - gets result for a specific key
 func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.PerformanceTestConfig, error) {
-	fmt.Println("GET")
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
 	testConfig := &SMP.PerformanceTestConfig{}
 	var u PerformanceTestConfig
-	err := s.DB.Where("id = ?", key).First(&u).Error
+	err := s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).First(&u).Error
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +84,7 @@ func (s *BitCaskTestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 		return ErrDBConnection
 	}
 
-	return s.DB.Where("id = ?", key).Delete(&PerformanceTestConfig{}).Error
+	return s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).Delete(&PerformanceTestConfig{}).Error
 }
 
 // WriteTestConfig persists the result
@@ -100,7 +97,7 @@ func (s *BitCaskTestProfilesPersister) WriteTestConfig(key uuid.UUID, result []b
 		return ErrResultData()
 	}
 	var p PerformanceTestConfig
-	if err := s.DB.Where("id = ?", key).First(&p).Error; err == nil {
+	if err := s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).First(&p).Error; err == nil {
 		err = s.DeleteTestConfig(key)
 		if err != nil {
 			return err
@@ -108,7 +105,7 @@ func (s *BitCaskTestProfilesPersister) WriteTestConfig(key uuid.UUID, result []b
 	}
 	p.ID = key
 	p.PerformanceTestConfigBytes = result
-	return s.DB.Create(&p).Error
+	return s.DB.Model(&PerformanceTestConfig{}).Create(&p).Error
 }
 
 // // CloseTestConfigsPersister closes the badger store
