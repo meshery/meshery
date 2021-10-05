@@ -166,6 +166,7 @@ func main() {
 		models.MesheryFilter{},
 		models.PatternResource{},
 		models.MesheryApplication{},
+		models.UserPreference{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -191,11 +192,11 @@ func main() {
 	}
 	provs[lProv.Name()] = lProv
 
-	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	defer preferencePersister.ClosePersister()
+	// cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
+	// if err != nil {
+	// 	logrus.Fatal(err)
+	// }
+	// defer preferencePersister.ClosePersister()
 
 	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
 	for _, providerurl := range RemoteProviderURLs {
@@ -210,7 +211,7 @@ func main() {
 			SessionName:                parsedURL.Host,
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
-			BitCaskPreferencePersister: cPreferencePersister,
+			SessionPreferencePersister: &models.SessionPreferencePersister{DB: &dbHandler},
 			ProviderVersion:            "v0.3.14",
 			SmiResultPersister:         smiResultPersister,
 			GenericPersister:           dbHandler,
