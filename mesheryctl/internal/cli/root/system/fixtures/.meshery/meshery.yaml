@@ -22,7 +22,7 @@ services:
     ports:
     - 10000:10000
   watchtower:
-    image: containrrr/watchtower
+    image: v2tec/watchtower
     labels:
     - com.centurylinklabs.watchtower.enable=true
     volumes:
