@@ -1,8 +1,8 @@
 name: Notify Remote Providers
 on:
   push:
-    branches:
-      - 'master'
+#     branches:
+#       - 'master'
     tags:
       - 'v*'
     paths-ignore:
