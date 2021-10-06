@@ -166,30 +166,21 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-
 	if typ == "workload" {
-		err := core.RegisterWorkload(body)
-		if err == nil {
-			if h.config.Providers["None"] != nil {
-				SeedApplications(h.config.Providers["None"])
-			}
-		}
-		return err
+		err = core.RegisterWorkload(body)
 	}
 	if typ == "trait" {
-		err := core.RegisterWorkload(body)
-		if err == nil {
-			if h.config.Providers["None"] != nil {
-				SeedApplications(h.config.Providers["None"])
-			}
-		}
-		return err
+		err = core.RegisterWorkload(body)
 	}
 	if typ == "scope" {
-		return core.RegisterScope(body)
+		err = core.RegisterScope(body)
 	}
-
-	return nil
+	if err == nil {
+		if h.config.Providers["None"] != nil {
+			SeedApplications(h.config.Providers["None"])
+		}
+	}
+	return err
 }
 
 // swagger:route GET /api/oam/{type} PatternsAPI idGETOAMMesheryPattern

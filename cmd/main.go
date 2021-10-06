@@ -191,7 +191,7 @@ func main() {
 		if err := core.RegisterMesheryOAMWorkloads(); err != nil {
 			logrus.Error(err)
 		}
-		logrus.Info("Registered Meshery local Capabilities")
+		logrus.Info("Registered Meshery local capabilities")
 		handlers.SeedApplications(lProv)
 	}(lProv)
 

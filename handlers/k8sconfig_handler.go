@@ -235,7 +235,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 		prefObj.K8SConfig = kc
 		ctxID := "0" // To be replaced after multi-context support
 		go func(l logger.Handler, config []byte, ctx string) {
-			err := registerK8sComponents(h, prefObj.K8SConfig.Config, ctxID)
+			err := registerK8sComponents(h, prefObj.K8SConfig.Config, ctxID, provider)
 			if err != nil {
 				logrus.Error(err)
 			}
@@ -325,20 +325,22 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 	kc.ClusterConfigured = true
 	return kc, nil
 }
-func registerK8sComponents(l *Handler, config []byte, ctx string) error {
-	l.log.Info("Starting to register k8s native components")
+func registerK8sComponents(h *Handler, config []byte, ctx string, prov models.Provider) error {
+	h.log.Info("Starting to register k8s native components")
 	man, err := core.GetK8Components(config, ctx)
 	if err != nil {
 		return err
 	}
 	if man == nil {
-		l.log.Error(errors.New("Could not get k8s components"))
+		h.log.Error(errors.New("Could not get k8s components"))
 		return err
 	}
 	for i, def := range man.Definitions {
 		var ord core.WorkloadCapability
 		ord.Metadata = make(map[string]string)
 		ord.Metadata["io.meshery.ctxid"] = ctx
+		ord.Metadata["adapter.meshery.io/name"] = "kubernetes"
+		ord.Host = "<none-local>"
 		ord.OAMRefSchema = man.Schemas[i]
 
 		var definition v1alpha1.WorkloadDefinition
@@ -354,14 +356,14 @@ func registerK8sComponents(l *Handler, config []byte, ctx string) error {
 		err = core.RegisterWorkload(content)
 		// Everytime a worload is registered successfully, the SeedApplication function will run and seed all the applications that can be handled with local provider.
 		if err == nil {
-			if l.config.Providers["None"] != nil {
-				SeedApplications(l.config.Providers["None"])
+			if prov.Name() == "None" {
+				SeedApplications(prov)
 			}
 		}
 		if err != nil {
 			return err
 		}
 	}
-	l.log.Info("Registration of k8s native components completed")
+	h.log.Info("Registration of k8s native components completed")
 	return nil
 }
