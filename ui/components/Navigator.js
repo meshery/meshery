@@ -483,7 +483,6 @@ class Navigator extends React.Component {
                 <ListItem
                   button
                   key={id}
-                  onClick={() => this.toggleMiniDrawer(true)}
                   className={classNames(
                     depth === 1
                       ? classes.nested1
@@ -505,11 +504,22 @@ class Navigator extends React.Component {
     }
   }
 
+  onClickCallback(href){
+    if (typeof(href) === "string")
+      switch (href){
+        case '/extension/meshmap':
+          return this.toggleMiniDrawer(true)
+        default:
+          // by default, sidebar is opened
+          return this.toggleMiniDrawer(false)
+      }
+  }
+
   extensionPointContent(icon, href, name, drawerCollapsed) {
     const { classes } = this.props;
 
     const content = (
-      <div className={classNames(classes.link)}>
+      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
         <Tooltip
           title={name}
           placement="right"
@@ -860,7 +870,7 @@ class Navigator extends React.Component {
                     <Link href={link
                       ? href
                       : ""}>
-                      <div className={classNames(classes.link)}>
+                      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
                         <Tooltip
                           title={childId}
                           placement="right"
