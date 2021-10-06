@@ -413,7 +413,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
 			}
-			// else we get release tag from the config file
+			// else we get version tag from the config file
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				return errors.Wrap(err, "error processing config")
