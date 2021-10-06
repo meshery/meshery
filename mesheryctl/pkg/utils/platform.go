@@ -416,7 +416,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			// else we get version tag from the config file
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				return errors.Wrap(err, "error processing config")
+				return errors.Wrap(err, "error processing meshconfig")
 			}
 
 			currCtx, err := mctlCfg.GetCurrentContext()
