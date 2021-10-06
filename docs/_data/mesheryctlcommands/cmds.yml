@@ -49,7 +49,7 @@ system:
     context:
       name: --context, -c
       arg: system
-      description: Change from one context to another in meshconfig
+      description: Temporarily override your current context by specifying an alternative context as an argument.
       usage:
         mesheryctl system reset -c [temporary context name]
       example: |
