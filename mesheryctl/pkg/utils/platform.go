@@ -413,7 +413,18 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
 			}
-			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/docker-compose.yaml"
+			// else we get version tag from the config file
+			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+			if err != nil {
+				return errors.Wrap(err, "error processing meshconfig")
+			}
+
+			currCtx, err := mctlCfg.GetCurrentContext()
+			if err != nil {
+				return err
+			}
+
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + currCtx.GetVersion() + "/docker-compose.yaml"
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
@@ -650,16 +661,6 @@ func GetPods(client *meshkitkube.Client, namespace string) (*v1core.PodList, err
 		return nil, err
 	}
 	return podList, nil
-}
-
-// IsPodRequired checks if a given pod is specified in the required pods
-func IsPodRequired(requiredPods []string, pod string) bool {
-	for _, rp := range requiredPods {
-		if rp == pod {
-			return true
-		}
-	}
-	return false
 }
 
 // GetRequiredPods checks if the pods specified by the user is valid returns a list of the required pods
