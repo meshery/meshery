@@ -130,7 +130,7 @@ var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consu
 var TemplateContext = config.Context{
 	Endpoint: EndpointProtocol + "://localhost:9081",
 	Token:    "Default",
-	Platform: "docker",
+	Platform: "kubernetes",
 	Adapters: ListOfAdapters,
 	Channel:  "stable",
 	Version:  "latest",

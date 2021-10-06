@@ -537,7 +537,7 @@ func start() error {
 
 	for !(time.Now().After(waittime)) {
 		// Request to check whether endpoint is up or not
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s", url), nil)
+		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			log.Info("To open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 			return nil
