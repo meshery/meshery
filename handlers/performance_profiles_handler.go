@@ -76,7 +76,9 @@ func (h *Handler) GetPerformanceProfilesHandler(
 ) {
 	q := r.URL.Query()
 
-	resp, err := provider.GetPerformanceProfiles(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	tokenString := r.Context().Value("token").(string)
+
+	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		obj := "performance profile"
 		//get query performance profile

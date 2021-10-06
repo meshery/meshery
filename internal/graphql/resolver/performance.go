@@ -7,43 +7,11 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/handlers"
-	graphqlModels "github.com/layer5io/meshery/internal/graphql/model"
+	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 )
 
-// func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Provider, filter *graphqlModels.PageFilter) (<-chan *graphqlModels.PerfPageResult, error) {
-// 	if r.performanceChannel == nil {
-// 		r.performanceChannel = make(chan *graphqlModels.PerfPageResult)
-// 		r.operatorSyncChannel = make(chan struct{})
-// 	}
-
-// 	go func() {
-// 		r.Log.Info("Performance subscription started")
-
-// 		tokenString := ctx.Value("token").(string)
-
-// 		provider.FetchAllResults()
-
-// 		for {
-// 			select {
-// 			case <-r.operatorSyncChannel:
-// 				status, err := r.getOperatorStatus(ctx, provider)
-// 				if err != nil {
-// 					r.Log.Error(ErrOperatorSubscription(err))
-// 					return
-// 				}
-// 				r.performanceChannel <- status
-// 			case <-ctx.Done():
-// 				r.Log.Info("Operator subscription flushed")
-// 				return
-// 			}
-// 		}
-// 	}()
-
-// 	return r.performanceChannel, nil
-// }
-
-func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, id string) (*graphqlModels.MesheryResult, error) {
+func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, id string) (*model.MesheryResult, error) {
 	if id == "" {
 		return nil, handlers.ErrQueryGet("*id")
 	}
@@ -70,7 +38,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 	mesheryID := fmt.Sprintf("%v", bdr.ID)
 	performanceProfile := fmt.Sprintf("%v", bdr.PerformanceProfileInfo.ID)
 
-	return &graphqlModels.MesheryResult{
+	return &model.MesheryResult{
 		MesheryID:          &mesheryID,
 		Name:               &bdr.Name,
 		Mesh:               &bdr.Mesh,
@@ -86,7 +54,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 	}, nil
 }
 
-func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, selector graphqlModels.PageFilter, profileID string) (*graphqlModels.PerfPageResult, error) {
+func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, selector model.PageFilter, profileID string) (*model.PerfPageResult, error) {
 	if profileID == "" {
 		return nil, handlers.ErrQueryGet("*profileID")
 	}
@@ -100,7 +68,7 @@ func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, s
 		return nil, err
 	}
 
-	result := &graphqlModels.PerfPageResult{}
+	result := &model.PerfPageResult{}
 
 	if err := json.Unmarshal(bdr, result); err != nil {
 		obj := "result data"
@@ -108,4 +76,70 @@ func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, s
 	}
 
 	return result, nil
+}
+
+// func (r *Resolver) listenToPerformanceResult(ctx context.Context, provider models.Provider, profileID string) (<-chan *model.MesheryResult, error) {
+// 	// fmt.Println("SUBSCRIPTION STARTED!")
+// 	// fmt.Println(r.Config.PerformanceChannels)
+// 	if r.Config.PerformanceChannels == nil {
+// 		r.Config.PerformanceChannels = make(map[string](chan *model.MesheryResult))
+// 	}
+// 	if r.Config.PerformanceChannels[profileID] == nil {
+// 		r.Config.PerformanceChannels[profileID] = make(chan *model.MesheryResult)
+// 	}
+// 	// fmt.Println(r.Config.PerformanceChannels)
+// 	go func() {
+// 		r.Log.Info("Performance subscription started")
+
+// 		for {
+// 			select {
+// 			case <-ctx.Done():
+// 				r.Log.Info("Performance subscription stopped")
+// 				// delete channel from channels
+// 				delete(r.Config.PerformanceChannels, profileID)
+// 				return
+// 			}
+// 		}
+// 	}()
+// 	return r.Config.PerformanceChannels[profileID], nil
+// }
+
+func (r *Resolver) getPerformanceProfiles(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PerfPageProfiles, error) {
+	tokenString := ctx.Value("token").(string)
+
+	bdr, err := provider.GetPerformanceProfiles(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
+
+	if err != nil {
+		r.Log.Error(err)
+		return nil, err
+	}
+
+	profiles := &model.PerfPageProfiles{}
+
+	if err := json.Unmarshal(bdr, profiles); err != nil {
+		obj := "performance profiles data"
+		return nil, handlers.ErrUnmarshal(err, obj)
+	}
+
+	return profiles, nil
+}
+
+func (r *Resolver) fetchAllResults(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PerfPageResult, error) {
+	tokenString := ctx.Value("token").(string)
+
+	bdr, err := provider.FetchAllResults(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, *selector.From, *selector.To)
+
+	if err != nil {
+		r.Log.Error(err)
+		return nil, err
+	}
+
+	performanceResults := &model.PerfPageResult{}
+
+	if err := json.Unmarshal(bdr, performanceResults); err != nil {
+		obj := "performance results data"
+		return nil, handlers.ErrUnmarshal(err, obj)
+	}
+
+	return performanceResults, nil
 }

@@ -205,7 +205,7 @@ type Provider interface {
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request)
 	FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error)
-	FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error)
+	FetchAllResults(tokenVal string, page, pageSize, search, order, from, to string) ([]byte, error)
 	PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error)
 	FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	PublishSmiResults(result *SmiResult) (string, error)
@@ -249,7 +249,7 @@ type Provider interface {
 	RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
-	GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
 	DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
 

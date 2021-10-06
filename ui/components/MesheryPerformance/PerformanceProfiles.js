@@ -17,6 +17,7 @@ import { withSnackbar } from "notistack";
 import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button } from "@material-ui/core";
+import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 
@@ -85,27 +86,34 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
   function fetchTestProfiles(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
-    console.log(pageSize)
-    const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-      sortOrder
-    )}`;
+    // const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
+    //   sortOrder
+    // )}`;
 
     updateProgress({ showProgress : true });
-
-    dataFetch(
-      `${MESHERY_PERFORMANCE_URL}${query}`,
-      { credentials : "include", },
-      (result) => {
+    fetchPerformanceProfiles({
+      selector : {
+        pageSize : `${pageSize}`,
+        page : `${page}`,
+        search : `${encodeURIComponent(search)}`,
+        order : `${encodeURIComponent(sortOrder)}`,
+      },
+    }).subscribe({
+      next : (res) => {
+        // @ts-ignore
+        let result = res?.getPerformanceProfiles;
         updateProgress({ showProgress : false });
-        if (result) {
-          setTestProfiles(result.profiles || []);
-          setPage(result.page || 0);
-          setPageSize(result.page_size || 0);
-          setCount(result.total_count || 0);
+        if (typeof result !== "undefined") {
+          if (result) {
+            setCount(result.total_count || 0);
+            setPageSize(result.page_size || 0);
+            setTestProfiles(result.profiles || []);
+            setPage(result.page || 0);
+          }
         }
       },
-      handleError("Failed to Fetch Profiles")
-    );
+      error : handleError("Failed to Fetch Profiles"),
+    });
   }
 
   async function showModal() {
@@ -114,7 +122,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
 
       subtitle : "Are you sure you want to delete this performance profile?",
 
-      options : ["yes", "no"],
+      options : ["Yes", "No"],
     })
     return response;
   }
