@@ -23,13 +23,14 @@ You can retrieve your authentication token from either of Meshery's two clients:
 
 - Get your token through **Meshery CLI**.
   <br/>
-  > To get the token through `mesheryctl` you would have to use the following command and the path to token for authenticating to Meshery API (default "auth.json").
-      <br/>
-      <pre class="codeblock-pre">
-          <div class="codeblock">
-          mesheryctl system config --token [path-to-file]
-          </div>
-      </pre>
+  To get the token through `mesheryctl` you would have to use the following command and the path to token for authenticating to Meshery API (default "auth.json").
+  <br/>
+  <pre class="codeblock-pre">
+  <div class="codeblock"><div class="clipboardjs">
+  mesheryctl system config --token [path-to-file]
+  
+  </div></div>
+  </pre>
   <br />
 
 **_The need for authentication to `Meshery` [provider](http://localhost:9081/provider) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
@@ -46,6 +47,7 @@ Guides to using Meshery's various features and components.
 {% capture tag %}
 
 <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
+
 {% endcapture %}
 
 {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
