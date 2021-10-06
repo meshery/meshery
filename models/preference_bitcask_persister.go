@@ -48,7 +48,11 @@ func (s *SessionPreferencePersister) WriteToPersister(userID string, data *Prefe
 	err := s.DB.Model(&UserPreference{}).Where("id = ?", userID).First(&u).Error
 	if err == nil {
 		data.UpdatedAt = time.Now()
-		return s.DB.Model(&UserPreference{}).Where("id = ?", userID).Update("id", userID).Error
+		p, err := json.Marshal(data)
+		if err != nil {
+			return err
+		}
+		return s.DB.Model(&UserPreference{}).Where("id = ?", userID).Update("preference_bytes", p).Error
 	}
 	if s.DB == nil {
 		return ErrDBConnection
