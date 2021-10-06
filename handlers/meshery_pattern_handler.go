@@ -69,7 +69,8 @@ func (h *Handler) handlePatternPOST(
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
