@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing to Meshery using git
-permalink: project/contributing-gitflow
+permalink: project/contributing/contributing-gitflow
 description: How to contribute to Meshery using git
 language: en
 type: project
@@ -127,15 +127,4 @@ This will open up a text editor where you can specify which commits to squash.
 
 Once you've committed and pushed all of your changes to GitHub, go to the page for your fork on GitHub, select your development branch, and click the pull request button. If you need to make any adjustments to your pull request, just push the updates to GitHub. Your pull request will automatically track the changes in your development branch and update it.
 
-# Suggested Reading
-
-{% assign sorted_reading = site.pages | sort: page.title | reverse %}
-
-<ul>
-  {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+{% include suggested-reading.html %}
