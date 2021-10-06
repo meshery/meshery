@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,6 +10,8 @@ import (
 
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/layer5io/meshkit/utils/manifests"
 )
 
 type genericCapability struct {
@@ -212,6 +215,9 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 			"oam_ref_schema": string(schemaFile),
 			"oam_definition": tempDef,
 			"host":           "<none-local>",
+			"metadata": map[string]string{
+				"adapter.meshery.io/name": "core",
+			},
 		}
 
 		// Serialize the data
@@ -232,4 +238,108 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 	}
 
 	return fmt.Errorf("%s", strings.Join(errs, "\n"))
+}
+
+// GetK8Components returns all the generated definitions and schemas for available api resources
+func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
+	cli, err := kubernetes.New(config)
+	if err != nil {
+		return nil, ErrGetK8sComponents(err)
+	}
+	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v2")
+	k8version, err := cli.KubeClient.ServerVersion()
+	if err != nil {
+		return nil, ErrGetK8sComponents(err)
+	}
+	res := req.Do(context.Background())
+	content, err := res.Raw()
+	if err != nil {
+		return nil, ErrGetK8sComponents(err)
+	}
+	apiResources, err := getAPIRes(cli)
+	if err != nil {
+		return nil, ErrGetK8sComponents(err)
+	}
+	manifest := string(content)
+	man, err := manifests.GenerateComponents(manifest, manifests.K8s, manifests.Config{
+		Name: "Kubernetes",
+		Filter: manifests.CrdFilter{
+			IsJson:        true,
+			OnlyRes:       apiResources, //When crd or api-resource names are directly given, we dont need NameFilter
+			RootFilter:    []string{"$.definitions"},
+			VersionFilter: []string{"$[0]"},
+			GroupFilter:   []string{"$[0]"},
+			ItrFilter:     []string{"$..[\"x-kubernetes-group-version-kind\"][?(@.kind"},
+			ItrSpecFilter: []string{"$[0][?(@[\"x-kubernetes-group-version-kind\"][0][\"kind\"]"},
+			ResolveFilter: []string{"--resolve", "$"},
+			GField:        "group",
+			VField:        "version",
+		},
+		K8sVersion: k8version.String(),
+		ModifyDefSchema: func(s1, s2 *string) {
+			var schema map[string]interface{}
+			err := json.Unmarshal([]byte(*s2), &schema)
+			if err != nil {
+				return
+			}
+			prop, ok := schema["properties"].(map[string]interface{})
+			if !ok {
+				return
+			}
+			// The schema generated has few fields that are not required and can break things, so they are removed here
+			delete(prop, "apiVersion")
+			delete(prop, "metadata")
+			delete(prop, "kind")
+			delete(prop, "status")
+			schema["properties"] = prop
+			schema["$schema"] = "http://json-schema.org/draft-04/schema"
+			b, err := json.Marshal(schema)
+			if err != nil {
+				return
+			}
+			*s2 = string(b)
+		},
+	})
+	if err != nil {
+		return nil, ErrGetK8sComponents(err)
+	}
+	return man, nil
+}
+
+// DeleteK8sWorkloads deletes the registered in memory k8s workloads for a given k8s contextID.
+func DeleteK8sWorkloads(ctx string) {
+	//Iterate through entire store
+	vals := store.PrefixMatch("")
+	for _, val := range vals {
+		value, ok := val.(WorkloadCapability)
+		if !ok {
+			continue
+		}
+		var workload = value
+		//delete only the ones with given context in metadata
+		if workload.OAMDefinition.Spec.Metadata["@type"] == "pattern.meshery.io/k8s" && workload.Metadata["io.meshery.ctxid"] == ctx {
+			key := fmt.Sprintf(
+				"/meshery/registry/definition/%s/%s/%s",
+				workload.OAMDefinition.APIVersion,
+				workload.OAMDefinition.Kind,
+				workload.OAMDefinition.Name,
+			)
+			store.Delete(key, value)
+		}
+	}
+}
+
+// getAPIRes gets all the available api resources from kube-api server. It is equivalent to the output of `kubectl api-resources`
+func getAPIRes(cli *kubernetes.Client) ([]string, error) {
+	var apiRes []string
+	lists, err := cli.KubeClient.DiscoveryClient.ServerPreferredResources()
+	if err != nil {
+		return nil, err
+	}
+	for _, list := range lists {
+		for _, name := range list.APIResources {
+			apiRes = append(apiRes, name.Kind)
+		}
+	}
+	return apiRes, nil
 }

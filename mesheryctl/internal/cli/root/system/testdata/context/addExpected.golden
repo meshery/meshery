@@ -18,7 +18,7 @@ contexts:
   local3:
     endpoint: http://localhost:9081
     token: Default
-    platform: docker
+    platform: kubernetes
     adapters:
     - meshery-istio
     - meshery-linkerd

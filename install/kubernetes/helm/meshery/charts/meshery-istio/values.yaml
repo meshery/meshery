@@ -11,25 +11,25 @@ image:
 env: {}
 
 probe:
-  #TODO: Need to confirm the health check path of meshery. 
+  #TODO: Need to confirm the health check path of meshery.
   livenessProbe:
     enabled: false
-  readinessProbe: 
+  readinessProbe:
     enabled: false
 
 imagePullSecrets: []
 nameOverride: ""
+# By default, this is provided by the top-level chart as "meshery-consul"
 fullnameOverride: ""
+# By default, this is provided by the top-level chart as "meshery-server"
+serviceAccountNameOverride: ""
 
 serviceAccount:
-  # TODO: Need to confirm that is there all the adapter need to have the cluster role the same as meshery? If this is true
-  # we need to split to every adapter with themself's cluster role. Although there a lot of work to do but can make the charts flexible.
-
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: meshery-adapter-istio
+  name: ""
 
 podSecurityContext: {}
   # fsGroup: 2000

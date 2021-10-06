@@ -353,13 +353,20 @@ function MesheryPatterns({
       );
     }
 
-    if (type === "upload") {
+    if (type === "upload" || type=== "urlupload") {
+      let body = { save : true }
+      if (type === "upload") {
+        body = JSON.stringify({  pattern_data : { pattern_data : data }, ...body })
+      }
+      if (type === "urlupload") {
+        body = JSON.stringify({ url : data, ...body })
+      }
       dataFetch(
         `/api/pattern`,
         {
           credentials : "include",
           method : "POST",
-          body : JSON.stringify({ pattern_data : { pattern_file : data }, save : true }),
+          body,
         },
         () => {
           console.log("PatternFile API", `/api/pattern`);
@@ -383,14 +390,14 @@ function MesheryPatterns({
         event.target.result,
         "",
         file?.name || "meshery_" + Math.floor(Math.random() * 100),
-        "upload",
+        "urlupload",
       );
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
     // console.log(link, "valid");
   }
   const columns = [
@@ -504,7 +511,7 @@ function MesheryPatterns({
 
       subtitle : "Are you sure you want to delete this pattern?",
 
-      options : ["yes", "no"],
+      options : ["Yes", "No"],
     })
     return response;
   }
@@ -558,11 +565,11 @@ function MesheryPatterns({
     onRowsDelete : async function handleDelete(row) {
       let response = await showModal()
       console.log(response)
-      if (response === "yes") {
+      if (response === "Yes") {
         const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
         fid.forEach(fid => deletePattern(fid))
       }
-      if (response === "no")
+      if (response === "No")
         fetchPatterns(page, pageSize, search, sortOrder);
     },
 
