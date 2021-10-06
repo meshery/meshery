@@ -86,6 +86,15 @@ const (
 	ErrImportFilterCode         = "replace_5"
 	ErrFetchFilterCode          = "replace_6"
 	ErrDeleteFilterCode         = "replace_7"
+	ErrSavePatternCode          = "replace_8"
+	ErrGetPatternCode           = "replace_9"
+	ErrDeletePatternCode        = "replace_10"
+	ErrFetchPatternCode         = "replace_11"
+	ErrImportPatternCode        = "replace_12"
+	ErrEncodePatternCode        = "replace_13"
+	ErrDecodePatternCode        = "replace_14"
+	ErrParsePatternCode         = "replace_15"
+	ErrConvertPatternCode       = "replace_16"
 )
 
 var (
@@ -356,4 +365,40 @@ func ErrFetchFilter(err error) error {
 
 func ErrDeleteFilter(err error) error {
 	return errors.New(ErrDeleteFilterCode, errors.Alert, []string{"Error failed to delete filter"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrSavePattern(err error) error {
+	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save pattern"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGetPattern(err error) error {
+	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get pattern"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDeletePattern(err error) error {
+	return errors.New(ErrDeletePatternCode, errors.Alert, []string{"Error failed to delete pattern"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrFetchPattern(err error) error {
+	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch pattern"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrImportPattern(err error) error {
+	return errors.New(ErrImportPatternCode, errors.Alert, []string{"Error failed to import pattern"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrEncodePattern(err error) error {
+	return errors.New(ErrEncodePatternCode, errors.Alert, []string{"Error failed to encode pattern"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDecodePattern(err error) error {
+	return errors.New(ErrDecodePatternCode, errors.Alert, []string{"Error failed to decode patterns data into go slice"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrParsePattern(err error) error {
+	return errors.New(ErrParsePatternCode, errors.Alert, []string{"Error failed to parse pattern file"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrConvertPattern(err error) error {
+	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert PatternFile to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
 }
