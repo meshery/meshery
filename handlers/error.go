@@ -79,6 +79,13 @@ const (
 	ErrCreateDirCode            = "2150"
 	ErrInvalidRequestObjectCode = "2151"
 	ErrChangeK8sContextCode     = "2152"
+	ErrGetFilterCode            = "replace_1"
+	ErrSaveFilterCode           = "replace_2"
+	ErrDecodeFilterCode         = "replace_3"
+	ErrEncodeFilterCode         = "replace_4"
+	ErrImportFilterCode         = "replace_5"
+	ErrFetchFilterCode          = "replace_6"
+	ErrDeleteFilterCode         = "replace_7"
 )
 
 var (
@@ -321,4 +328,32 @@ func ErrInvalidRequestObject(fields ...string) error {
 
 func ErrChangeK8sContext(err error) error {
 	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
+}
+
+func ErrGetFilter(err error) error {
+	return errors.New(ErrGetFilterCode, errors.Alert, []string{"Error failed to get filter"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrSaveFilter(err error) error {
+	return errors.New(ErrSaveFilterCode, errors.Alert, []string{"Error failed to save filter"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDecodeFilter(err error) error {
+	return errors.New(ErrDecodeFilterCode, errors.Alert, []string{"Error failed to decode filters data into go slice"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrEncodeFilter(err error) error {
+	return errors.New(ErrEncodeFilterCode, errors.Alert, []string{"Error failed to encode filter"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrImportFilter(err error) error {
+	return errors.New(ErrImportFilterCode, errors.Alert, []string{"Error failed to import filter"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrFetchFilter(err error) error {
+	return errors.New(ErrFetchFilterCode, errors.Alert, []string{"Error failed to fetch filter"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDeleteFilter(err error) error {
+	return errors.New(ErrDeleteFilterCode, errors.Alert, []string{"Error failed to delete filter"}, []string{err.Error()}, []string{}, []string{})
 }
