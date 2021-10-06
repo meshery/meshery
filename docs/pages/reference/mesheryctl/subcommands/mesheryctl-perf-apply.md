@@ -5,9 +5,8 @@ permalink: reference/mesheryctl/perf/apply
 type: reference
 display-title: "false"
 language: en
-lang: en
-categories: en
-list: exclude
+command: perf
+subcommand: apply
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -18,9 +17,8 @@ list: exclude
 
 ## Description
 
-{% for command_hash in site.data.mesheryctlcommands.performance.apply.command %}{% assign command = command_hash[1] %}
-{{ command.description }}
-{% endfor %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
+{{ name.description }}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
@@ -31,16 +29,14 @@ list: exclude
 
 ## Examples
 
-{% for subcommand_hash in site.data.mesheryctlcommands.performance.apply.command %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
+{{ name.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ subcommand.usage }}
+  {{ name.usage }}
   </div>
 </pre>
-{% endfor %}
 
-{% for flag_hash in site.data.mesheryctlcommands.performance.apply.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -52,11 +48,13 @@ list: exclude
 
 <!-- Options/Flags available in this command -->
 ## Options
+
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.performance.apply.flag %}{% assign flag = flag_hash[1] %}
-    {{ flag.flag }} # {{ flag.description }}
-    {% endfor %}
+    {{ flag.name }}
   </div>
 </pre>
+{% endfor %}
 <br/>

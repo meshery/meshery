@@ -22,6 +22,7 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 |  | meshery-linkerd | stable-latest |
 |  | meshery-nsm | stable-latest |
 |  | meshery-osm | stable-latest |
+|  | meshery-nginx-sm | stable-latest |
 
 ## Values
 
@@ -44,16 +45,28 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | ingress.tls | list | `[]` |  |
 | meshery-consul.enabled | bool | `true` |  |
 | meshery-consul.fullnameOverride | string | `"meshery-consul"` |  |
+| meshery-consul.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-istio.enabled | bool | `true` |  |
 | meshery-istio.fullnameOverride | string | `"meshery-istio"` |  |
+| meshery-istio.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-kuma.enabled | bool | `true` |  |
 | meshery-kuma.fullnameOverride | string | `"meshery-kuma"` |  |
+| meshery-kuma.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-linkerd.enabled | bool | `true` |  |
 | meshery-linkerd.fullnameOverride | string | `"meshery-linkerd"` |  |
+| meshery-linkerd.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-nsm.enabled | bool | `true` |  |
 | meshery-nsm.fullnameOverride | string | `"meshery-nsm"` |  |
+| meshery-nsm.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-osm.enabled | bool | `true` |  |
 | meshery-osm.fullnameOverride | string | `"meshery-osm"` |  |
+| meshery-osm.serviceAccountNameOverride | string | `"meshery-server"` |  |
+| meshery-nginx-sm.fullnameOverride | string | `"meshery-ngnix-sm"` |  |
+| meshery-nginx-sm.serviceAccountNameOverride | string | `"meshery-server"` |  |
+| meshery-cpx.fullnameOverride | string | `"meshery-cpx"` |  |
+| meshery-cpx.serviceAccountNameOverride | string | `"meshery-server"` |
+| meshery-traefik-mesh.fullnameOverride | string | `"meshery-traefik-mesh"` |  |
+| meshery-traefik-mesh.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | mesherygateway.enabled | bool | `false` |  |
 | mesherygateway.selector.istio | string | `"ingressgateway"` |  |
 | nameOverride | string | `""` |  |

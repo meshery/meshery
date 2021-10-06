@@ -210,11 +210,11 @@ function MesheryTestProfiles({
     onRowsDelete : async function handleDeleteRow(row) {
       let response = await showModal()
       console.log(response)
-      if (response === "yes") {
+      if (response === "Yes") {
         const pids = Object.keys(row.lookup).map(idx => testProfiles[idx]?.id)
         pids.forEach(pid => handleDelete(pid))
       }
-      if (response === "no") {
+      if (response === "No") {
         fetchTestProfiles(page, pageSize, search, sortOrder);
       }
     },
@@ -292,7 +292,7 @@ function MesheryTestProfiles({
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user").toObject(), };
+  return { user : state.get("user")?.toObject(), };
 };
 
 // @ts-ignore

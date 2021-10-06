@@ -63,6 +63,26 @@ func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyn
 	return r.resyncCluster(ctx, provider, selector)
 }
 
+func (r *queryResolver) GetMeshsyncStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getMeshsyncStatus(ctx, provider)
+}
+
+func (r *queryResolver) DeployMeshsync(ctx context.Context) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.deployMeshsync(ctx, provider)
+}
+
+func (r *queryResolver) GetNatsStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getNatsStatus(ctx, provider)
+}
+
+func (r *queryResolver) ConnectToNats(ctx context.Context) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.connectToNats(ctx, provider)
+}
+
 func (r *queryResolver) GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getAvailableNamespaces(ctx, provider)
@@ -77,7 +97,16 @@ func (r *queryResolver) GetPerfResult(ctx context.Context, id string) (*model.Me
 func (r *queryResolver) FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.fetchResults(ctx, provider, selector, profileID)
-	// panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) GetPerformanceProfiles(ctx context.Context, selector model.PageFilter) (*model.PerfPageProfiles, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getPerformanceProfiles(ctx, provider, selector)
+}
+
+func (r *queryResolver) FetchAllResults(ctx context.Context, selector model.PageFilter) (*model.PerfPageResult, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.fetchAllResults(ctx, provider, selector)
 }
 
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
@@ -117,11 +146,9 @@ func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-ch
 	return r.listenToMeshSyncEvents(ctx, provider)
 }
 
-func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector *model.PageFilter) (<-chan *model.PerfPageResult, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *subscriptionResolver) SubscribePerfProfile(ctx context.Context, selector *model.PageFilter) (<-chan *model.PerfPageResult, error) {
+func (r *subscriptionResolver) SubscribePerfProfile(ctx context.Context, profileID string) (<-chan *model.MesheryResult, error) {
+	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	// return r.listenToPerformanceResult(ctx, provider, profileID)
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -137,3 +164,13 @@ func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subsc
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector *model.PageFilter) (<-chan *model.PerfPageResult, error) {
+	panic(fmt.Errorf("not implemented"))
+}

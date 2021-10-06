@@ -39,12 +39,11 @@ import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
-import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
+import PatternServiceForm from "./MesheryPatternServiceForm";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import { Button } from "@material-ui/core";
 import jsYaml from "js-yaml";
 import ListAltIcon from '@material-ui/icons/ListAlt';
-import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import URLUploader from "./URLUploader";
 
@@ -354,13 +353,20 @@ function MesheryPatterns({
       );
     }
 
-    if (type === "upload") {
+    if (type === "upload" || type=== "urlupload") {
+      let body = { save : true }
+      if (type === "upload") {
+        body = JSON.stringify({  pattern_data : { pattern_data : data }, ...body })
+      }
+      if (type === "urlupload") {
+        body = JSON.stringify({ url : data, ...body })
+      }
       dataFetch(
         `/api/pattern`,
         {
           credentials : "include",
           method : "POST",
-          body : JSON.stringify({ pattern_data : { pattern_file : data }, save : true }),
+          body,
         },
         () => {
           console.log("PatternFile API", `/api/pattern`);
@@ -384,14 +390,14 @@ function MesheryPatterns({
         event.target.result,
         "",
         file?.name || "meshery_" + Math.floor(Math.random() * 100),
-        "upload",
+        "urlupload",
       );
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
     // console.log(link, "valid");
   }
   const columns = [
@@ -472,9 +478,11 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
-              <IconButton onClick={() => setShowForm({ pattern : patterns[tableMeta.rowIndex], show : true })}>
-                <ListAltIcon />
-              </IconButton>
+              <Tooltip title = "Configure">
+                <IconButton onClick={() => setShowForm({ pattern : patterns[tableMeta.rowIndex], show : true })}>
+                  <ListAltIcon />
+                </IconButton>
+              </Tooltip>
               <IconButton>
                 <PlayArrowIcon
                   title="Deploy"
@@ -483,6 +491,7 @@ function MesheryPatterns({
                   onClick={() => handleDeploy(rowData.pattern_file)} //deploy endpoint to be called here
                 />
               </IconButton>
+
             </>
           );
         },
@@ -502,7 +511,7 @@ function MesheryPatterns({
 
       subtitle : "Are you sure you want to delete these patterns?",
 
-      options : ["yes", "no"],
+      options : ["Yes", "No"],
     })
     return response;
   }
@@ -556,11 +565,11 @@ function MesheryPatterns({
     onRowsDelete : async function handleDelete(row) {
       let response = await showModal()
       console.log(response)
-      if (response === "yes") {
+      if (response === "Yes") {
         const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
         fid.forEach(fid => deletePattern(fid))
       }
-      if (response === "no")
+      if (response === "No")
         fetchPatterns(page, pageSize, search, sortOrder);
     },
 
@@ -634,15 +643,19 @@ function MesheryPatterns({
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user").toObject(), };
+  return { user : state.get("user")?.toObject(), };
 };
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPatterns)));
 
+
+
 // --------------------------------------------------------------------------------------------------
 // -------------------------------------------- PATTERNS FORM ---------------------------------------
 // --------------------------------------------------------------------------------------------------
+
+
 
 function PatternForm({ pattern, onSubmit, show }) {
   const [schemaSet, setSchemaSet] = useState();
@@ -720,7 +733,7 @@ function PatternForm({ pattern, onSubmit, show }) {
   }
 
   function getPatternAttributeName(jsonSchema) {
-    return PascalCaseToKebab(jsonSchema?._internal?.patternAttributeName || "NA");
+    return jsonSchema?._internal?.patternAttributeName || "NA";
   }
 
   function getPatternKey(cfg) {
@@ -777,6 +790,19 @@ function PatternForm({ pattern, onSubmit, show }) {
 
   function saveCodeEditorChanges(data) {
     setYaml(data.valueOf().getValue())
+  }
+
+  function insertPattern(workload) {
+    const attrName = getPatternAttributeName(workload);
+    var returnValue = {}
+    Object.keys(deployServiceConfig).find(key => {
+      if (deployServiceConfig[key]['type'] === attrName) {
+        returnValue = deployServiceConfig[key]
+        return true
+      }
+    })
+
+    return returnValue;
   }
 
   useEffect(() => {
@@ -865,7 +891,7 @@ function PatternForm({ pattern, onSubmit, show }) {
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <PatternServiceForm formData={deployServiceConfig[getPatternAttributeName(schema.workload)]} onChange={handleChangeData} schemaSet={schema} onSubmit={(val) => handleSubmit(val, patternName)} onDelete={(val) => handleDelete(val, patternName)} namespace={ns} />
+        <PatternServiceForm formData={insertPattern(schema.workload)} onChange={handleChangeData} schemaSet={schema} onSubmit={(val) => handleSubmit(val, patternName)} onDelete={(val) => handleDelete(val, patternName)} namespace={ns} />
       </AccordionDetails>
     </Accordion>;
   }

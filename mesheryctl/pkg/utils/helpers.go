@@ -102,6 +102,10 @@ var (
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
 	ServiceAccount = "service-account.yaml"
+	// To upload with param name
+	ParamName = "k8sfile"
+	// kubeconfig file name
+	KubeConfigYaml = "kubeconfig.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
 	// ViperDocker is an instance of viper for the meshconfig file when the platform is docker
@@ -112,6 +116,9 @@ var (
 	SilentFlag bool
 	// PlatformFlag sets the platform for the initial config file
 	PlatformFlag string
+	// Paths to kubeconfig files
+	ConfigPath string
+	KubeConfig string
 )
 
 var CfgFile string
@@ -123,7 +130,7 @@ var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consu
 var TemplateContext = config.Context{
 	Endpoint: EndpointProtocol + "://localhost:9081",
 	Token:    "Default",
-	Platform: "docker",
+	Platform: "kubernetes",
 	Adapters: ListOfAdapters,
 	Channel:  "stable",
 	Version:  "latest",

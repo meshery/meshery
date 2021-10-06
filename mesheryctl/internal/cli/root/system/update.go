@@ -18,6 +18,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 
@@ -181,6 +182,15 @@ var updateCmd = &cobra.Command{
 
 		log.Info("Meshery is now up-to-date")
 		return nil
+	},
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		latest, err := utils.GetLatestStableReleaseTag()
+		version := constants.GetMesheryctlVersion()
+		if err == nil && latest != version {
+			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+		}
 	},
 }
 

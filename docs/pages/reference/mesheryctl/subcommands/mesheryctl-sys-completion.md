@@ -5,7 +5,8 @@ permalink: reference/mesheryctl/system/completion
 type: reference
 display-title: "false"
 language: en
-lang: en
+command: system
+subcommand: completion
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -16,37 +17,17 @@ lang: en
 
 ## Description
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.completion.command %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
-{% endfor %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command].subcommands[page.subcommand] %}
+{{ name.description }}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl system completion [bash|zsh|fish]
+    {{ name.usage }}
   </div>
 </pre>
 
 ## Examples
-
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.completion.command %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ subcommand.usage }}
-  </div>
-</pre>
-{% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.completion.flag %}{% assign flag = flag_hash[1] %}
-{{ flag.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ flag.usage }}
-  </div>
-</pre>
-{% endfor %}
-
-<br/>
 
 bash <= 3.2
 <pre class="codeblock-pre">

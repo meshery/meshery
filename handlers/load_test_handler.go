@@ -411,7 +411,9 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		Result: resultsMap,
 	}
 
-	resultID, err := provider.PublishResults(req, result, mux.Vars(req)["id"])
+	performanceProfileID := mux.Vars(req)["id"]
+
+	resultID, err := provider.PublishResults(req, result, performanceProfileID)
 	if err != nil {
 		h.log.Error(ErrLoadTest(err, "unable to persist"))
 		respChan <- &models.LoadTestResponse{
@@ -456,6 +458,27 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		Status: models.LoadTestSuccess,
 		Result: result,
 	}
+
+	// publish result to graphql subscription
+	// startTime := fmt.Sprintf("%v", result.TestStartTime)
+	// serverBoardConfig := fmt.Sprintf("%v", result.ServerBoardConfig)
+	// serverMetrics := fmt.Sprintf("%v", result.ServerMetrics)
+	// performanceProfile := fmt.Sprintf("%v", result.PerformanceProfileInfo.ID)
+
+	// h.config.PerformanceChannels[performanceProfileID] <- &graphqlModel.MesheryResult{
+	// 	MesheryID:          &resultID,
+	// 	Name:               &result.Name,
+	// 	Mesh:               &result.Mesh,
+	// 	PerformanceProfile: &performanceProfile,
+	// 	TestID:             &result.TestID,
+	// 	RunnerResults:      result.Result,
+	// 	ServerMetrics:      &serverMetrics,
+	// 	ServerBoardConfig:  &serverBoardConfig,
+	// 	TestStartTime:      &startTime,
+	// 	UserID:             &result.UserID,
+	// 	UpdatedAt:          &result.UpdatedAt,
+	// 	CreatedAt:          &result.CreatedAt,
+	// }
 }
 
 // CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider

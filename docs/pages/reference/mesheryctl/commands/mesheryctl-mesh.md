@@ -5,7 +5,7 @@ permalink: reference/mesheryctl/mesh
 type: reference
 display-title: "false"
 language: en
-lang: en
+command: mesh
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -17,9 +17,8 @@ lang: en
 <!-- Description of the command. Preferably a paragraph -->
 ## Description
 
-{% for command_hash in site.data.mesheryctlcommands.meshes.commands %}{% assign command = command_hash[1] %}
-{{ command.description }}
-{% endfor %}
+{% assign name = site.data.mesheryctlcommands.cmds[page.command] %}
+{{ name.description }}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">

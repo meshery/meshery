@@ -52,7 +52,7 @@ jobs:
     - name: Setup Go
       uses: actions/setup-go@v2
       with:
-        go-version: ${{ secrets.GO_VERSION }}
+        go-version: '1.16.7'
     - name: Setup Cache
       uses: actions/cache@v2
       with:
@@ -61,7 +61,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-
     - run: |
-        GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
+        GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:

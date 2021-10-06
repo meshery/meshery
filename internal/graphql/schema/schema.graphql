@@ -59,6 +59,9 @@ enum Status {
 	# Enabled
 	ENABLED
 
+	# Connected (Applicable only for NATS status for now)
+	CONNECTED
+
 	# Disabled
 	DISABLED
 
@@ -248,39 +251,28 @@ type PerfPageResult {
 	results: [MesheryResult]
 }
 
-# type PerfResult {
-# 	smp_version: String
-# 	id: String
-# 	labels: [String]
-# 	start_time: Int
-# 	end_time: Int
-# 	latencies_ms: LatenciesMs
-# 	actual_qps: Float
-# 	details_uri: String
-# 	test_id: String
-# 	mesh_config_id: String
-# 	env_id: String
-# }
+type PerfPageProfiles {
+	page: Int!
+	page_size: Int!
+	total_count: Int!
 
-# type PerformanceProfile {
-# 	id: String
-# 	name: String
-# 	last_run: Time
-# 	schedule: String
-# 	load_generators: [String]
-# 	endpoints: [String]
-# 	service_mesh: String
-# 	concurrent_request: String
-# 	qps: Int
-# 	duration: String
-# 	total_results: Int
-# 	request_headers: String
-# 	request_cookies: String
-# 	request_body: String
-# 	content_type: String
-# 	updated_at: Time
-# 	created_at: Time
-# }
+	profiles: [PerfProfile]
+}
+
+type PerfProfile {
+	concurrent_request: Int!
+	created_at: String
+	duration: String!
+	endpoints: [String]
+	id: String!
+	last_run: String
+	load_generators: [String]
+	name: String
+	qps: Int
+	total_results: Int
+	updated_at: String
+	user_id: String!
+}
 
 type MesheryResult {
 	meshery_id: String
@@ -300,10 +292,10 @@ type MesheryResult {
 input PageFilter {
 	page: String!
 	pageSize: String!
-	order: String = ""
-	search: String = ""
-	from: String = ""
-	to: String = ""
+	order: String
+	search: String
+	from: String
+	to: String
 }
 # ============== RESYNC =============================
 
@@ -344,6 +336,18 @@ type Query {
         selector: ReSyncActions
     ): Status!
 
+	# Check the Meshsync Status
+	getMeshsyncStatus: OperatorControllerStatus!
+
+	# Check the Meshsync Status and deploy if not enabled
+	deployMeshsync: Status!
+
+	# Check is Meshey Server is connected to NATS
+	getNatsStatus: OperatorControllerStatus!
+
+	# Check is Meshey Server is connected to NATS, if not connect to the NATS Server
+	connectToNats: Status!
+
 	# Query available Namesapces in your cluster
 	getAvailableNamespaces: [NameSpace!]!
 
@@ -352,6 +356,12 @@ type Query {
 
 	# Query for fetching all results for profile ID
 	fetchResults(selector: PageFilter!, profileID: String!): PerfPageResult!
+
+	# Query for fetching all results for profile ID
+	getPerformanceProfiles(selector: PageFilter!): PerfPageProfiles!
+
+	# Query for fetching all results for profile ID
+	fetchAllResults(selector: PageFilter!): PerfPageResult!
 }
 
 # 
@@ -363,6 +373,7 @@ type Mutation {
 
 	# Change the Operator Status
 	changeOperatorStatus(input: OperatorStatusInput): Status!
+
 }
 
 type Subscription {
@@ -391,10 +402,7 @@ type Subscription {
 	# Listen to changes in the list of available Namesapces in your cluster
     listenToMeshSyncEvents: OperatorControllerStatus!
 
-	# Listen to changes in Performance Results	
-	subscribePerfResults(selector: PageFilter): PerfPageResult!
-
 	# Listen to changes in Performance Profile
-	subscribePerfProfile(selector: PageFilter): PerfPageResult!
+	subscribePerfProfile(profileID: String!): MesheryResult!
 
 }

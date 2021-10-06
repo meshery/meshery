@@ -1,10 +1,14 @@
 import React from "react";
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import { Button } from "@material-ui/core";
+import { Button, TextField, Typography } from "@material-ui/core";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
+import { Tooltip, IconButton } from "@material-ui/core";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import CustomObjectFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate"
+
 
 const Form = withTheme(MaterialUITheme);
 
@@ -43,7 +47,7 @@ const muiTheme = createTheme({
     MuiFormLabel : {
       root : {
         color : "#333",
-        fontSize : '1.2rem',
+        fontSize : '0.8rem',
         textTransform : 'capitalize',
       }
     },
@@ -79,6 +83,90 @@ function deleteTitleFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, title : "" };
 }
 
+function deleteDescriptionFromJSONSchema(jsonSchema) {
+  return { ...jsonSchema, description : "" };
+}
+
+function formatString(text){
+  if (!text) return null
+
+  // format string for prettified camelCase
+  const result = text.replaceAll("IP", "Ip");
+
+  return result;
+}
+
+function camelCaseToCapitalize(text){
+  if (!text) return null
+
+  const result = text.replace(/([A-Z])/g, " $1");
+
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
+function addTitleToPropertiesJSONSchema(jsonSchema) {
+  const newProperties = jsonSchema?.properties
+
+  if (newProperties && typeof newProperties === 'object'){
+    Object.keys(newProperties).map(key => {
+      if (Object.prototype.hasOwnProperty.call(newProperties, key)){
+        let defaultValue;
+        let types = []
+        if (!Array.isArray(newProperties[key].type) && Object.prototype.hasOwnProperty.call(newProperties[key], 'type')){
+          types.push(newProperties[key].type)
+        } else {
+          types.push(...newProperties[key].type)
+        }
+        if (types.includes('null')){
+          defaultValue = null
+        } else if (types.includes('integer')){
+          defaultValue = 0
+        } else if (types.includes('string')){
+          defaultValue = ''
+        } else if (types.includes('array')){
+          defaultValue = []
+        }
+        newProperties[key] = {
+          ...newProperties[key],
+          title : camelCaseToCapitalize(formatString(key)),
+          default : defaultValue
+        }
+        // if (typeof newProperties[key] === 'object' && Object.prototype.hasOwnProperty.call(newProperties[key], 'properties')){
+        //   newProperties[key] = {
+        //     ...newProperties[key],
+        //     properties : addTitleToPropertiesJSONSchema(newProperties[key])
+        //   }
+        // }
+      }
+
+    })
+
+    return { ...jsonSchema, properties : newProperties };
+  }
+  return undefined
+}
+
+const CustomInputField = (props) => {
+  const name = props?.name || props?.idSchema['$id']?.split('_')[1]
+  const prettifiedName = camelCaseToCapitalize(formatString(name)) || 'Input'
+  return (
+    <div key={props.id}>
+      <Typography variant="body1" style={{ fontWeight : "bold" }}>{prettifiedName}
+        {props.schema?.description && (
+          <Tooltip title={props.schema?.description}>
+            <IconButton component="span" size="small">
+              <HelpOutlineIcon style={{ fontSize : 17 }} />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Typography>
+      <TextField variant="outlined" size="small" style={{ margin : '10px 0 ' }} autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`}/>
+    </div>
+  )
+}
+
+const MemoizedCustomInputField = React.memo(CustomInputField)
+
 function RJSFButton({ handler, text, ...restParams }) {
   return (
     <Button variant="contained" color="primary" style={{ marginRight : "0.5rem" }} onClick={handler} {...restParams}>
@@ -88,13 +176,38 @@ function RJSFButton({ handler, text, ...restParams }) {
 }
 
 function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete, renderAsTooltip, ...restparams }) {
+  let uiJsonSchema = {}
+  // TODO: needs to do recursively for deep fields
+  Object.keys(jsonSchema.properties).map(key => {
+    uiJsonSchema = {
+      ...uiJsonSchema,
+      [key] : {
+        'ui:description' : ' '
+      },
+    }
+  })
+
   const uiSchema = {
+    // hide all descriptions from fields
+    ...uiJsonSchema,
     replicas : {
       "ui:widget" : "range"
-    }
+    },
+    "ui:order" : [
+      "name",
+      "namespace",
+      "*",
+    ],
+
   };
 
-  const [data, setData] = React.useState({ ...formData });
+  // define new string field
+  const fields =  {
+    // eslint-disable-next-line
+    StringField : ({idSchema, formData, ...props}) => <MemoizedCustomInputField id={idSchema['$id']} value={formData} idSchema={idSchema} {...props} />
+  }
+
+  const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
 
   React.useEffect(() => {
     onChange?.(data);
@@ -104,10 +217,13 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
     <>
       {!renderAsTooltip ? (
         <Form
-          schema={hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema}
+          schema={hideTitle ? deleteTitleFromJSONSchema(deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))) : deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))}
           idPrefix={jsonSchema?.title}
-          onChange={(e) => setData(e.formData)}
+          onChange={(e) => {
+            setData(e.formData)
+          }}
           formData={data}
+          fields={fields}
           liveValidate
           additionalMetaSchemas={[JS4]}
         // noHtml5Validate
@@ -117,11 +233,15 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
         </Form>) : (
         <MuiThemeProvider theme={muiTheme}>
           <Form
-            schema={hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema}
+            schema={hideTitle ? deleteTitleFromJSONSchema(deleteDescriptionFromJSONSchema(jsonSchema)) : deleteDescriptionFromJSONSchema(jsonSchema)}
             idPrefix={jsonSchema?.title}
-            onChange={(e) => setData(e.formData)}
+            onChange={(e) => {
+              setData(e.formData)
+            }}
             formData={data}
+            fields={fields}
             showErrorList={false}
+            ObjectFieldTemplate={CustomObjectFieldTemplate}
             ArrayFieldTemplate={ArrayFieldTemplate}
             additionalMetaSchemas={[JS4]}
             uiSchema={uiSchema}

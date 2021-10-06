@@ -32,7 +32,7 @@ import { faChevronCircleLeft,
   faExternalLinkAlt,
   faDigitalTachograph, } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { updatepagetitle } from "../lib/store";
+import { updatepagetitle, updatebetabadge } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
@@ -112,7 +112,7 @@ const styles = (theme) => ({
     textAlign : "center",
     display : "inline-table",
     paddingRight : theme.spacing(0.5),
-    marginLeft : theme.spacing(0.3),
+    marginLeft : theme.spacing(0.8),
   },
   listIcon1 : {
     minWidth : theme.spacing(3.5),
@@ -207,10 +207,10 @@ const styles = (theme) => ({
     transform : 'translateX(3px)',
     '&:hover' : { color : "#4fc3f7", }
   },
-  collapsed : { transform : 'rotate(180deg) translateX(-3px)', },
-  collapsedHelpButton : { height : '30px',
+  collapsed : { transform : 'rotate(180deg) translateX(-0.8px)', },
+  collapsedHelpButton : { height : '1.45rem',
     marginTop : '-4px',
-    transform : 'translateX(-1px)' },
+    transform : 'translateX(0px)' },
   rightTranslate : { transform : 'translateX(0.5px)' }
 });
 
@@ -323,6 +323,7 @@ const categories = [
         title : "Applications",
         show : true,
         link : true,
+        isBeta : true
       },
       {
         id : "Filters",
@@ -331,6 +332,7 @@ const categories = [
         title : "Filters",
         show : true,
         link : true,
+        isBeta : true
       },
       {
         id : "Patterns",
@@ -339,6 +341,7 @@ const categories = [
         title : "Patterns",
         show : false,
         link : true,
+        isBeta : true
       },
     ],
   },
@@ -438,6 +441,7 @@ class Navigator extends React.Component {
       showHelperButton : false,
       capabilities : [],
       openItems : [],
+      hoveredId : null,
     };
   }
 
@@ -588,20 +592,21 @@ class Navigator extends React.Component {
       st.mts = meshAdaptersts;
     }
 
-    const fetchNestedPathAndTitle = (path, title, href, children) => {
+    const fetchNestedPathAndTitle = (path, title, href, children, isBeta) => {
       if (href === path) {
         props.updatepagetitle({ title });
+        props.updatebetabadge({ isBeta });
         return;
       }
       if (children && children.length > 0) {
-        children.forEach(({ title, href, children }) => {
-          fetchNestedPathAndTitle(path, title, href, children);
+        children.forEach(({ title, href, children, isBeta }) => {
+          fetchNestedPathAndTitle(path, title, href, children, isBeta);
         });
       }
     };
 
-    categories.forEach(({ title, href, children }) => {
-      fetchNestedPathAndTitle(path, title, href, children);
+    categories.forEach(({ title, href, children, isBeta }) => {
+      fetchNestedPathAndTitle(path, title, href, children, isBeta);
     });
     st.path = path;
     return st;
@@ -848,6 +853,8 @@ class Navigator extends React.Component {
                       path === href && classes.itemActiveItem
                     )}
                     onClick={() => this.toggleItemCollapse(childId)}
+                    onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
+                    onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }): null}
                   >
                     <Link href={link
                       ? href
@@ -860,7 +867,15 @@ class Navigator extends React.Component {
                           disableHoverListener={!isDrawerCollapsed}
                           disableTouchListener={!isDrawerCollapsed}
                         >
-                          <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
+                            <ExpandMoreIcon
+                              onClick={() => this.toggleItemCollapse(childId)}
+                              className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "0.4rem" }}
+                            /> :
+                            <ListItemIcon className={classes.listIcon}>
+                              {icon}
+                            </ListItemIcon>
+                          }
                         </Tooltip>
                         <ListItemText
                           className={isDrawerCollapsed
@@ -880,7 +895,7 @@ class Navigator extends React.Component {
                         : {}}
                     />
                   </ListItem>
-                  <Collapse in={isDrawerCollapsed || this.state.openItems.includes(childId)}>
+                  <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679", opacity : "100%" }}>
                     {this.renderChildren(childId, children, 1)}
                   </Collapse>
                 </React.Fragment>
@@ -970,7 +985,7 @@ class Navigator extends React.Component {
               <FontAwesomeIcon
                 icon={faChevronCircleLeft}
                 fixedWidth
-                color="#FFFFFF"
+                color="#eeeeee"
                 size="lg"
                 alt="Sidebar collapse toggle icon"
               />
@@ -985,7 +1000,8 @@ class Navigator extends React.Component {
 Navigator.propTypes = { classes : PropTypes.object.isRequired,
   onCollapseDrawer : PropTypes.func.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({ updatepagetitle : bindActionCreators(updatepagetitle, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updatepagetitle : bindActionCreators(updatepagetitle, dispatch), updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
+});
 
 const mapStateToProps = (state) => {
   const meshAdapters = state.get("meshAdapters").toJS();

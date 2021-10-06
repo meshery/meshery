@@ -9,11 +9,11 @@
 <img src="https://github.com/layer5io/meshery/workflows/Meshery/badge.svg" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
 <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
-<a href="https://github.com/layer5io/meshery" alt="Website">
+<a href="https://meshery.io" alt="Website">
 <img src="https://img.shields.io/website/https/layer5.io/meshery.svg" /></a>
 <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+" alt="GitHub issues by-label">
 <img src="https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg" /></a>
-<a href="http://slack.layer5.io" alt="Join Slack">
+<a href="https://slack.layer5.io" alt="Join Slack">
 <img src="https://img.shields.io/badge/Slack-@layer5.svg?logo=slack"></a>
 <a href="https://twitter.com/intent/follow?screen_name=mesheryio" alt="Twitter Follow">
 <img src="https://img.shields.io/twitter/follow/layer5.svg?label=Follow+Layer5&style=social" /></a>
@@ -25,13 +25,29 @@
 
 [Meshery](https://meshery.io) is the multi-service mesh management plane offering lifecycle, configuration, and performance management of service meshes and their workloads.
 
-<h2><a name="running"></a>Run Meshery</h2>
+<p align="center">
+MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
+</p>
+<p align="center">
+<img src="docs/assets/img/readme/cncf-horizontal-color.svg" width="30%" align="center" />
+</p>
+
+
+<h2><a name="running"></a>Get Started with Meshery</h2>
+<p style="clear:both;">
+<img alt="Layer5 Service Mesh Management" src="docs/assets/img/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/>
+<h3>Using `mesheryctl`</h3>
 <p>Meshery runs as a set of containers inside or outside of your Kubernetes cluster.</p>
+<code><pre>curl -L https://git.io/meshery | PLATFORM=kubernetes bash -</pre></code>
+<p>See the <a href="https://docs.meshery.io/installation/quick-start">quick start</a> guide.</p>
+<p style="clear:both;">&nbsp;</p>
 
+<h3>Supported Platforms</h3>
+<p>Meshery supports 10+ platforms.
 <details>
-  <summary><strong>See all Supported Platforms</strong></summary>
+  <summary><strong>See all supported platforms</strong></summary>
 
-See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
+  See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
 
 | Platform                                                                                                                                                                                                                        | Supported?  |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------: |
@@ -57,12 +73,14 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 [Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
 
  </details>
+
+<p style="clear:both;">&nbsp;</p>
  
-<h2><a name="service-meshes"></a>Supported Service Meshes</h2>
-<p>Meshery supports 10 diffferent service meshes.</p>
+<h3><a name="service-meshes"></a>Supported Service Meshes</h3>
+<p>Meshery supports 10 different service meshes.</p>
 
 <details>
-  <summary><strong>See all Support Service Meshes</strong></summary>
+  <summary><strong>See all Supported Service Meshes</strong></summary>
 <div class="container flex">
   <div class="text editable">
     <p>Service mesh adapters provision, configure, and manage their respective service meshes.
@@ -149,13 +167,17 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
   </p>
 </div>
  </details>
+<p style="clear:both;">&nbsp;</p>
+<hr />
+<p style="clear:both;">&nbsp;</p>
 
-## Overview
+<a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img alt="Layer5 Service Mesh Management" src=".github/assets/images/meshery/meshery-logo-tag-dark-text-side.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="left"/></a>
 
-<a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img src=".github/assets/images/meshery/meshery-logo-tag-dark-text-side.png" width="50%" /></a>
-<p>
-  <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><i>Project Overview Presentation</i></a>
-</p>
+<h3 style="margin:auto;"><br /><br />
+  <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
+  <br /><br />
+</h3>
+<p style="clear:both;">&nbsp;</p>
 
 ## <a name="functionality">Functionality</a>
 

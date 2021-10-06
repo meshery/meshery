@@ -8,29 +8,71 @@ import {
   Button, Grid, Paper, Typography
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CloseIcon from "@material-ui/icons/Close";
 import { withRouter } from "next/router";
-import dataFetch from "../../lib/data-fetch";
 import MesheryMetrics from "../MesheryMetrics";
-import { withStyles } from "@material-ui/core/styles";
 import PerformanceCalendar from "./PerformanceCalendar";
 import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
+import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
+import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
 
-const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
-const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
+// const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
+// const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
-const styles = () => ({ paper : { padding : "1rem", }, });
+const useStyles = makeStyles(() => ({
+  paper : { padding : "1rem", },
+  resultContainer : {
+    display : "flex",
+    flexDirection : "row",
+    justifyContent : "space-between",
+    ["@media (max-width: 830px)"] : {
+      flexDirection : "column"
+    },
+  },
+  vSep : {
+    height : "10.4rem",
+    width : "1px",
+    background : "black",
+    marginTop : "1.1rem",
+    bottom : "0" ,
+    left : "36%",
+    backgroundColor : "#36454f",
+    opacity : "0.7",
+    ["@media (max-width: 830px)"] : {
+      display : "none",
+    }
+  },
+  hSep : {
+    display : "none",
+    ["@media (max-width: 830px)"] : {
+      display : "block",
+      width : "100%",
+      height : "1px",
+      background : "black",
+      marginTop : "1.1rem",
+      bottom : "0" ,
+      left : "36%",
+      backgroundColor : "#36454f",
+      opacity : "0.7",
+    }
+  }
+}));
 
-function Dashboard({
-  updateProgress, enqueueSnackbar, closeSnackbar, grafana, router, classes
-}) {
-  const [profiles, setProfiles] = useState({ count : 0,
-    profiles : [], });
-  const [tests, setTests] = useState({ count : 0,
-    tests : [], });
-
+function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router }) {
+  const [profiles, setProfiles] = useState({ count : 0, profiles : [] });
+  const [tests, setTests] = useState({ count : 0, tests : [] });
   const [runTest, setRunTest] = useState(false);
+  const classes = useStyles();
+
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("xs"))
+
+  if (matches) {
+    console.log("HIT")
+  }
 
   /**
    * fetch performance profiles when the page loads
@@ -43,35 +85,57 @@ function Dashboard({
   function fetchTestProfiles() {
     updateProgress({ showProgress : true });
 
-    dataFetch(
-      `${MESHERY_PERFORMANCE_URL}`,
-      { credentials : "include", },
-      (result) => {
+    fetchPerformanceProfiles({
+      selector : {
+        // default
+        pageSize : `10`,
+        page : `0`,
+        search : ``,
+        order : ``,
+      },
+    }).subscribe({
+      next : (res) => {
+        // @ts-ignore
+        let result = res?.getPerformanceProfiles;
         updateProgress({ showProgress : false });
-        if (result) {
-          setProfiles({ count : result.total_count || 0,
-            profiles : result.profiles || [], });
+        if (typeof result !== "undefined") {
+          if (result) {
+            setProfiles({ count : result.total_count || 0,
+              profiles : result.profiles || [], });
+          }
         }
       },
-      handleError("Failed to Fetch Profiles")
-    );
+      error : handleError("Failed to Fetch Profiles"),
+    });
   }
 
   function fetchTests() {
     updateProgress({ showProgress : true });
 
-    dataFetch(
-      `${MESHERY_PERFORMANCE_TEST_URL}`,
-      { credentials : "include", },
-      (result) => {
+    fetchAllResults({
+      selector : {
+        // default
+        pageSize : `10`,
+        page : `0`,
+        search : ``,
+        order : ``,
+        from : ``,
+        to : ``,
+      },
+    }).subscribe({
+      next : (res) => {
+        // @ts-ignore
+        let result = res?.fetchAllResults;
         updateProgress({ showProgress : false });
-        if (result) {
-          setTests({ count : result.total_count || 0,
-            tests : result.results || [], });
+        if (typeof result !== "undefined") {
+          if (result) {
+            setTests({ count : result.total_count || 0,
+              tests : result.results || [], });
+          }
         }
       },
-      handleError("Failed to Fetch Results")
-    );
+      error : handleError("Failed to Fetch Results"),
+    });
   }
 
   function handleError(msg) {
@@ -92,11 +156,11 @@ function Dashboard({
 
   return (
     <>
-      <Grid container spacing={2} style={{ padding : "0.5rem" }} alignItems="flex-start" alignContent="space-around">
-        <Grid item lg={6} xs={12}>
-          <Paper className={classes.paper}>
-            <Grid container spacing={1}>
-              <Grid item xs>
+      <Grid container spacing={2} style={{ padding : "0.5rem" }} alignContent="space-around">
+        <Grid container item spacing={1} direction="column" lg xs={12}>
+          <Grid item>
+            <Paper className={classes.paper}>
+              <div className={classes.resultContainer}>
                 <div className={classes.paper}>
                   <div style={{ display : "flex", alignItems : "center" , height : "6.8rem" }}>
                     <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
@@ -112,9 +176,8 @@ function Dashboard({
                     </Button>
                   </div>
                 </div>
-              </Grid>
-              <div style={{ height : "10.4rem", width : "1px", background : "black", top : "11.2rem", bottom : "0", position : "absolute", left : "36%", backgroundColor : "#36454f", opacity : "0.7" }}></div>
-              <Grid item xs>
+                <div className={classes.vSep} />
+                <div className={classes.hSep} />
                 <div className={classes.paper}>
                   <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
                     <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
@@ -130,12 +193,17 @@ function Dashboard({
                     </Button>
                   </div>
                 </div>
-              </Grid>
-            </Grid>
-          </Paper>
+              </div>
+            </Paper>
+          </Grid>
+          <Grid item>
+            <Paper className={classes.paper}>
+              <PerformanceCalendar style={{ height : "40rem", margin : "2rem 0 0" }} />
+            </Paper>
+          </Grid>
         </Grid>
-        <Grid item lg={6} xs={12}>
-          <Paper className={classes.paper}>
+        <Grid item lg xs={12}>
+          <Paper className={classes.paper} style={{ height : "100%" }}>
             <MesheryMetrics
               boardConfigs={grafana.selectedBoardsConfigs}
               grafanaURL={grafana.grafanaURL}
@@ -145,12 +213,6 @@ function Dashboard({
           </Paper>
         </Grid>
       </Grid>
-      <Grid>
-        <Paper className={classes.paper}>
-          <PerformanceCalendar style={{ height : "40rem", margin : "2rem 0 0" }} />
-        </Paper>
-      </Grid>
-
 
       <GenericModal
         open={!!runTest}
@@ -172,4 +234,4 @@ const mapStateToProps = (st) => {
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard))));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard)));
