@@ -7,7 +7,7 @@ import (
 	"github.com/layer5io/meshkit/database"
 )
 
-// BitCaskSmiResultsPersister assists with persisting session in a Bitcask store
+// SmiResultsPersister assists with persisting session in store
 type SmiResultsPersister struct {
 	DB *database.Handler
 }

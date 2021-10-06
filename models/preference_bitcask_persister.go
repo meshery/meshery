@@ -7,7 +7,7 @@ import (
 	"github.com/layer5io/meshkit/database"
 )
 
-// BitCaskPreferencePersister assists with persisting session in a Bitcask store
+// PreferencePersister assists with persisting session in store
 type SessionPreferencePersister struct {
 	DB *database.Handler
 }

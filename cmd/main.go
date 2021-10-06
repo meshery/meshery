@@ -167,7 +167,7 @@ func main() {
 		MapPreferencePersister:          preferencePersister,
 		ResultPersister:                 &models.MesheryResultsPersister{DB: &dbHandler},
 		SmiResultPersister:              &models.SmiResultsPersister{DB: &dbHandler},
-		TestProfilesPersister:           &models.BitCaskTestProfilesPersister{DB: &dbHandler},
+		TestProfilesPersister:           &models.TestProfilesPersister{DB: &dbHandler},
 		PerformanceProfilesPersister:    &models.PerformanceProfilePersister{DB: &dbHandler},
 		MesheryPatternPersister:         &models.MesheryPatternPersister{DB: &dbHandler},
 		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: &dbHandler},
@@ -181,12 +181,6 @@ func main() {
 		logrus.Error(err)
 	}
 	provs[lProv.Name()] = lProv
-
-	// cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
-	// if err != nil {
-	// 	logrus.Fatal(err)
-	// }
-	// defer preferencePersister.ClosePersister()
 
 	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
 	for _, providerurl := range RemoteProviderURLs {

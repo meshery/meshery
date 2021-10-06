@@ -9,8 +9,8 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
-// BitCaskTestProfilesPersister assists with persisting session in a Bitcask store
-type BitCaskTestProfilesPersister struct {
+// TestProfilesPersister assists with persisting session in store
+type TestProfilesPersister struct {
 	DB *database.Handler
 }
 
@@ -29,7 +29,7 @@ type UserTestProfiles struct {
 }
 
 // GetTestConfigs - gets result for the page and pageSize
-func (s *BitCaskTestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, error) {
+func (s *TestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
@@ -61,7 +61,7 @@ func (s *BitCaskTestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]
 }
 
 // GetTestConfig - gets result for a specific key
-func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.PerformanceTestConfig, error) {
+func (s *TestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.PerformanceTestConfig, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
@@ -79,7 +79,7 @@ func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.Perfor
 }
 
 // DeleteTestConfig - delete result for a specific key
-func (s *BitCaskTestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
+func (s *TestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
@@ -88,7 +88,7 @@ func (s *BitCaskTestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 }
 
 // WriteTestConfig persists the result
-func (s *BitCaskTestProfilesPersister) WriteTestConfig(key uuid.UUID, result []byte) error {
+func (s *TestProfilesPersister) WriteTestConfig(key uuid.UUID, result []byte) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
