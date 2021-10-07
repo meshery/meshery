@@ -7,8 +7,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
 import { pSBCr } from "../../utils/lightenOrDarkenColor"
-import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
 import { CamelCaseToSentanceCase } from "../../utils/camelCaseToSentanceCase.js";
+import { getPatternAttributeName, createPatternFromConfig } from "./helpers";
 
 function TabPanel(props) {
   const {
@@ -37,66 +37,6 @@ function a11yProps(index) {
   };
 }
 
-function getPatternAttributeName(jsonSchema) {
-  return jsonSchema?._internal?.patternAttributeName || "NA";
-}
-
-function recursiveCleanObject(obj) {
-  for (const k in obj) {
-    if (!obj[k] || typeof obj[k] !== "object") continue;
-
-    recursiveCleanObject(obj[k]);
-
-    if (Object.keys(obj[k]).length === 0) delete obj[k];
-  }
-}
-
-function recursiveCleanObjectExceptEmptyArray(obj) {
-
-  for (const k in obj) {
-    if (!obj[k] || typeof obj[k] !== "object" || Array.isArray(obj[k])) continue;
-
-    recursiveCleanObjectExceptEmptyArray(obj[k]);
-
-    if (Object.keys(obj[k]).length === 0) delete obj[k];
-  }
-}
-
-/**
- * createPatternFromConfig will take in the form data
- * and will create a valid pattern from it
- *
- * It will/may also perform some sanitization on the
- * given inputs
- * @param {*} config
- */
-function createPatternFromConfig(config, namespace, partialClean = false) {
-  const pattern = {
-    name : `pattern-${Math.random().toString(36).substr(2, 5)}`,
-    services : {},
-  };
-
-  partialClean ? recursiveCleanObjectExceptEmptyArray(config) : recursiveCleanObject(config);
-
-  Object.keys(config).forEach((key) => {
-    // Add it only if the settings are non empty or "true"
-    if (config[key].settings) {
-      const name = PascalCaseToKebab(key);
-      pattern.services[name] = config[key];
-
-      pattern.services[name].type = key;
-      pattern.services[name].namespace = namespace;
-    }
-  });
-
-  Object.keys(pattern.services).forEach((key) => {
-    // Delete the settings attribute/field if it is set to "true"
-    if (pattern.services[key].settings === true) delete pattern.services[key].settings;
-  });
-
-  return pattern;
-}
-
 /**
  * PatternServiceForm renders a form from the workloads schema and
  * traits schema
@@ -106,19 +46,21 @@ function createPatternFromConfig(config, namespace, partialClean = false) {
  *  onDelete: Function;
  *  namespace: string;
  *  onChange?: Function
+ *  onSettingsChange?: Function;
+ *  onTraitsChange?: Function;
  *  formData?: Record<String, unknown>
  *  renderAsTooltip: boolean;
  *  reference?: Record<any, any>;
+ *  appBarColor?: any;
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip, appBarColor }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip, appBarColor, onSettingsChange, onTraitsChange }) {
   const [tab, setTab] = React.useState(0);
-  const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {});
-  const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {});
-  const handleTabChange = (_, newValue) => {
-    setTab(newValue);
-  };
+  const [settings, setSettings, getSettingsRefValue] = useStateCB(formData?.settings ? formData.settings : {}, onSettingsChange);
+  const [traits, setTraits, getTraitsRefValue] = useStateCB(formData?.traits ? formData.traits : {}, onTraitsChange);
+  const handleTabChange = (_, newValue) => setTab(newValue);
+
   const renderTraits = () => !!schemaSet.traits?.length;
 
   const submitHandler = (val) => {
@@ -130,9 +72,8 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
   };
 
   if (reference){
-    if (reference.current == null) {
-      reference.current = {}
-    }
+    if (reference.current == null) reference.current = {}
+
     reference.current.submit = (cb) => {
       submitHandler(cb(getSettingsRefValue(), getTraitsRefValue()))
     }

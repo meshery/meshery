@@ -48,6 +48,7 @@ export default function LazyPatternServiceForm(props) {
     try {
       // Get the schema sets for the workload
       const workloadSchema = await fetchJSONSchema(getItemName(props?.schemaSet?.workload), "workload", getItemID(props?.schemaSet?.workload));
+      workloadSchema._internal = { patternAttributeName : getItemName(props?.schemaSet?.workload, false) };
 
       // Get the schema sets for the traits
       const traitsSchemas = await Promise.all(props?.schemaSet?.traits?.map(async t => {
@@ -86,7 +87,7 @@ export default function LazyPatternServiceForm(props) {
   );
 }
 
-function LazyAccordionDetails(props = {}) {
+function LazyAccordionDetails(props) {
   if (!props.expanded) return <AccordionDetails />
 
   return <AccordionDetails style={{ maxHeight : "20rem", overflow : "auto" }}>{props.children}</AccordionDetails>
