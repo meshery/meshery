@@ -108,6 +108,7 @@ function createPatternFromConfig(config, namespace, partialClean = false) {
  *  onChange?: Function
  *  formData?: Record<String, unknown>
  *  renderAsTooltip: boolean;
+ *  reference?: Record<any, any>;
  * }} props
  * @returns
  */
@@ -135,6 +136,8 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
     reference.current.submit = (cb) => {
       submitHandler(cb(getSettingsRefValue(), getTraitsRefValue()))
     }
+    reference.current.getSettings = () => getSettingsRefValue()
+    reference.current.getTraits = () => getTraitsRefValue()
   }
 
   if (schemaSet.type === "addon") {
@@ -151,11 +154,10 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
     );
   }
 
-  console.log(schemaSet)
   return (
     <div>
       {!renderAsTooltip ? (<Typography variant="h6" gutterBottom>
-        {schemaSet.workload.title}
+        {schemaSet.workload?.title}
       </Typography>) : (
         <AppBar style={{ boxShadow : `0px 2px 4px -1px ${pSBCr(appBarColor, -30)}` }}>
           <Toolbar variant="dense" style={{ padding : "0 0px", background : `linear-gradient(115deg, ${pSBCr( appBarColor, -20)} 0%, ${appBarColor} 100%)`, height : "0.7rem !important" }}>

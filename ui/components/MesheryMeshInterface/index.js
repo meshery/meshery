@@ -4,7 +4,8 @@ import {
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { promisifiedDataFetch } from "../../lib/data-fetch";
-import PatternServiceForm from "./PatternServiceForm";
+import { getPatternServiceName, getPatternServiceType } from "./helpers";
+import PatternServiceForm from "./LazyPatternServiceForm";
 
 // ********************************** TYPE DEFINTIONS **********************************
 
@@ -38,7 +39,7 @@ import PatternServiceForm from "./PatternServiceForm";
  */
 async function getWorkloadDefinitionsForAdapter(adapter) {
   try {
-    const res = await promisifiedDataFetch("/api/oam/workload");
+    const res = await promisifiedDataFetch("/api/oam/workload?trim=true");
 
     return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
   } catch (error) {
@@ -55,7 +56,7 @@ async function getWorkloadDefinitionsForAdapter(adapter) {
  */
 async function getTraitDefinitionsForAdapter(adapter) {
   try {
-    const res = await promisifiedDataFetch("/api/oam/trait");
+    const res = await promisifiedDataFetch("/api/oam/trait?trim=true");
 
     return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
   } catch (error) {
@@ -71,6 +72,7 @@ async function getTraitDefinitionsForAdapter(adapter) {
  * @returns {Promise<Array<{
  *  workload: OAMGenericResponse;
  *  traits: Array<OAMGenericResponse>;
+ *  type?: string;
  * }>>}
  */
 async function createWorkloadTraitSets(adapter) {
@@ -79,7 +81,7 @@ async function createWorkloadTraitSets(adapter) {
 
   const sets = [];
   workloads?.forEach((w) => {
-    const item = { workload : w, traits : [] };
+    const item = { workload : w, traits : [], type : getPatternServiceType(w?.metadata) };
 
     item.traits = traits?.filter((t) => {
       if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
@@ -94,46 +96,20 @@ async function createWorkloadTraitSets(adapter) {
   return sets;
 }
 
-/**
- * getJSONSchemaSets
- * @param {string} adapter
- * @returns
- */
-async function getJSONSchemaSets(adapter) {
-  const wtSets = await createWorkloadTraitSets(adapter);
-
-  return wtSets?.map((s) => {
-    const item = { workload : JSON.parse(s.workload?.oam_ref_schema),
-      traits : s.traits?.map((t) => {
-        const trait = JSON.parse(t?.oam_ref_schema);
-
-        // Attaching internal metadata to the json schema
-        trait._internal = { patternAttributeName : t?.oam_definition.metadata.name, };
-
-        return trait;
-      }),
-      type : s.workload?.metadata?.["ui.meshery.io/category"], };
-
-    // Attaching internal metadata to the json schema
-    item.workload._internal = { patternAttributeName : s.workload?.oam_definition.metadata.name, };
-
-    return item;
-  });
-}
-
 async function submitPattern(pattern, del = false) {
-  console.log({ pattern, del })
-  const res = await fetch("/api/pattern/deploy", { headers : { "Content-Type" : "application/json", },
-    method : del
-      ? "DELETE"
-      : "POST",
-    body : JSON.stringify(pattern), });
+  const res = await fetch(
+    "/api/pattern/deploy", {
+      headers : { "Content-Type" : "application/json", },
+      method : del ? "DELETE" : "POST",
+      body : JSON.stringify(pattern),
+    });
 
   return res.text();
 }
 
+
 function MesheryMeshInterface({ adapter }) {
-  const [schemeSets, setSchemaSets] = useState([]);
+  const [workloadTraitsSet, setWorkloadTraitsSet] = useState([]);
   const [ns, setNS] = useState("default");
 
   const handleSubmit = (cfg) => {
@@ -149,7 +125,7 @@ function MesheryMeshInterface({ adapter }) {
   };
 
   useEffect(() => {
-    getJSONSchemaSets(adapter).then((res) => setSchemaSets(res));
+    createWorkloadTraitSets(adapter).then(res => setWorkloadTraitsSet(res))
   }, []);
 
   return (
@@ -167,11 +143,9 @@ function MesheryMeshInterface({ adapter }) {
       <Grid item md={8} xs={12}>
         <div>
           <Grid container spacing={1}>
-            {schemeSets
+            {workloadTraitsSet
               .filter((s) => s.type !== "addon")
-              .sort((a, b) => (a.workload?.title < b.workload?.title
-                ? -1
-                : 1))
+              .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
               .map((s) => (
                 <Grid item xs={12}>
                   <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} renderAsTooltip={false} />
@@ -186,11 +160,9 @@ function MesheryMeshInterface({ adapter }) {
             Addons
           </Typography>
           <Grid container spacing={1}>
-            {schemeSets
+            {workloadTraitsSet
               .filter((s) => s.type === "addon")
-              .sort((a, b) => (a.workload?.title < b.workload?.title
-                ? -1
-                : 1))
+              .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
               .map((s) => (
                 <Grid item>
                   <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} renderAsTooltip={false} />
