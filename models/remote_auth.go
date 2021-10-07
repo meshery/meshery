@@ -230,9 +230,12 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 
 	// TODO: Once hydra fixes https://github.com/ory/hydra/issues/1542
 	// we should rather configure hydra auth server to remove nbf field in the token
-	exp := int64(jtk["exp"].(float64))
-	if jwt.TimeFunc().Unix() > exp {
-		return nil, ErrTokenExpired
+	_, ok := jtk["exp"]
+	if ok {
+		exp := int64(jtk["exp"].(float64))
+		if jwt.TimeFunc().Unix() > exp {
+			return nil, ErrTokenExpired
+		}
 	}
 
 	keyJSON, err := l.GetJWK(kid)
