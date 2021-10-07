@@ -429,7 +429,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
-		log.Info(fileURL)
+
 		if err := meshkitutils.DownloadFile(DockerComposeFile, fileURL); err != nil {
 			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
 		}
