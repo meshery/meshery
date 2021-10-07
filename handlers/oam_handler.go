@@ -127,7 +127,7 @@ func (h *Handler) PatternFileHandler(
 // These operations can be:
 // 1. Adding a workload/trait/scope
 // 2. Getting list of workloads/traits/scopes
-func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
+func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request, pref *models.Preference, u *models.User, prov models.Provider) {
 	typ := mux.Vars(r)["type"]
 
 	if !(typ == "workload" || typ == "trait" || typ == "scope") {
@@ -137,7 +137,7 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 
 	method := r.Method
 	if method == "POST" {
-		if err := h.POSTOAMRegisterHandler(typ, r); err != nil {
+		if err := h.POSTOAMRegisterHandler(typ, r, prov); err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
 			h.log.Debug(err)
 			_, _ = rw.Write([]byte(err.Error()))
@@ -160,7 +160,7 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 // 	200:
 
 // POSTOAMRegisterHandler handles registering OMA objects
-func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
+func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request, prov models.Provider) error {
 	// Get the body
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -176,8 +176,8 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 		err = core.RegisterScope(body)
 	}
 	if err == nil {
-		if h.config.Providers["None"] != nil {
-			SeedApplications(h.config.Providers["None"])
+		if prov.Name() == "None" {
+			SeedApplications(prov)
 		}
 	}
 	return err
