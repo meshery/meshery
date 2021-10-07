@@ -90,5 +90,6 @@ export default function LazyPatternServiceForm(props) {
 function LazyAccordionDetails(props) {
   if (!props.expanded) return <AccordionDetails />
 
-  return <AccordionDetails style={{ maxHeight : "20rem", overflow : "auto" }}>{props.children}</AccordionDetails>
+  // LEE: This behavior is more like what we need - https://codesandbox.io/s/upbeat-tesla-uchsb?file=/src/MyAccordion.js
+  return <AccordionDetails style={{ height : "50rem", overflow : "auto" }}>{props.children}</AccordionDetails>
 }
