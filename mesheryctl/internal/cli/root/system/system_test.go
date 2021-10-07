@@ -1,12 +1,14 @@
 package system
 
 import (
-	"path/filepath"
-	"runtime"
+	"os"
 	"testing"
 	"time"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func TestSystemCmdIntegration(t *testing.T) {
@@ -15,18 +17,42 @@ func TestSystemCmdIntegration(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 
-	// setup current context
-	utils.SetupContextEnv(t)
-
-	// get current directory
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
+	err := utils.SetFileLocation()
+	if err != nil {
+		t.Fatal(err)
 	}
-	currDir := filepath.Dir(filename)
 
-	// update all location
-	utils.SetFileLocationTesting(currDir)
+	// create .meshery directory if not present
+	if _, err := os.Stat(utils.MesheryFolder); err != nil {
+		if os.IsNotExist(err) {
+			err = os.MkdirAll(utils.MesheryFolder, 0775)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	}
+
+	// Create config file if not present in meshery folder
+	err = utils.CreateConfigFile()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Add Token to context file
+	err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Add Context to context file
+	err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	viper.SetConfigFile(utils.DefaultConfigPath)
+
+	viper.AutomaticEnv() // read in environment variables that match
 
 	tests := []struct {
 		Name            string
