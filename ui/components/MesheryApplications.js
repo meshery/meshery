@@ -475,9 +475,9 @@ function MesheryApplications({
   });
 
   async function showModal() {
-    let response = await modalRef.current.show({ title : "Delete Aplications?",
+    let response = await modalRef.current.show({ title : "Delete Aplication(s)?",
 
-      subtitle : "Are you sure you want to delete these applications?",
+      subtitle : "Are you sure you want to delete application(s)?",
 
       options : ["Yes", "No"], })
     return response;

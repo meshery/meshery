@@ -425,9 +425,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   });
 
   async function showmodal() {
-    let response = await modalRef.current.show({ title : "Delete Filters?",
+    let response = await modalRef.current.show({ title : "Delete Filter(s)?",
 
-      subtitle : "Are you sure you want to delete these filters?",
+      subtitle : "Are you sure you want to delete filter(s)?",
 
       options : ["Yes", "No"], })
     return response;

@@ -507,9 +507,9 @@ function MesheryPatterns({
 
   async function showModal() {
     let response = await modalRef.current.show({
-      title : "Delete Patterns?",
+      title : "Delete Pattern(s)?",
 
-      subtitle : "Are you sure you want to delete these patterns?",
+      subtitle : "Are you sure you want to delete pattern(s)?",
 
       options : ["Yes", "No"],
     })

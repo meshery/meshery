@@ -117,9 +117,9 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
   }
 
   async function showModal() {
-    let response = await modalRef.current.show({ title : "Delete Performance Profiles?",
+    let response = await modalRef.current.show({ title : "Delete Performance Profile(s)?",
 
-      subtitle : "Are you sure you want to delete these performance profiles?",
+      subtitle : "Are you sure you want to delete performance profile(s)?",
 
       options : ["Yes", "No"],
     })
