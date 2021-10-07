@@ -52,7 +52,7 @@
     "@zeit/next-css": "^1.0.1",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-relay": "^11.0.2",
-    "billboard.js": "=3.1.2",
+    "billboard.js": "=3.1.5",
     "caniuse-lite": "^1.0.30001252",
     "classnames": "^2.3.1",
     "codemirror": "^5.62.2",
@@ -88,7 +88,7 @@
     "redux": "^4.1.0",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.3.0",
-    "relay-runtime": "^11.0.2",
+    "relay-runtime": "^12.0.0",
     "styled-jsx": "latest",
     "subscriptions-transport-ws": "^0.9.19",
     "uuid": "^8.3.2"
