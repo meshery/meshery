@@ -109,7 +109,7 @@ system:
 
     completion:
       name: completion
-      description: Output shell completion code.
+      description: Output shell completion code for the specified shell.
       usage:
           mesheryctl system completion [bash|zsh|fish]
       example: |
@@ -153,8 +153,11 @@ system:
     logs:
       name: logs
       description: Starts tailing Meshery server debug logs
-      usage:
+      usage: |
+
+          # View logs for specific component
           mesheryctl system logs [component-name]
+          
       example: |
           mesheryctl system logs --verbose
             mesheryctl system logs meshery-istio
@@ -203,7 +206,7 @@ system-channel:
   subcommands:
     set:
       name: set
-      description: set release channel and version.
+      description: Subscribe to release channel and version.
       usage:
           mesheryctl system channel set [stable|stable-version|edge|edge-version]
       example: |
