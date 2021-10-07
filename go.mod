@@ -16,7 +16,7 @@ replace (
 require (
 	fortio.org/fortio v1.17.0
 	git.mills.io/prologic/bitcask v0.3.14
-	github.com/99designs/gqlgen v0.13.0
+	github.com/99designs/gqlgen v0.14.0
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/aws/aws-sdk-go v1.36.30 // indirect
 	github.com/briandowns/spinner v1.16.0
