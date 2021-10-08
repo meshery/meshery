@@ -8,6 +8,15 @@ import (
 	"testing"
 )
 
+// Dummy struct
+type dummy_value struct {
+	ID    string
+	Value interface{}
+}
+
+func (d *dummy_value) SetID(id string) { d.ID = id }
+func (d dummy_value) GetID() string    { return d.ID }
+
 func TestSet(t *testing.T) {
 	// Reset global store
 	globalStore = newThreadSafeStore()
@@ -15,20 +24,16 @@ func TestSet(t *testing.T) {
 	// Initialize the store
 	Initialize()
 
-	// Dummy struct
-	type dummy struct{}
-
 	type args struct {
 		key   string
-		value interface{}
+		value Value
 	}
 	tests := []struct {
 		name string
 		args args
 	}{
-		{name: "When value is a string", args: args{key: "k1", value: "val1"}},
-		{name: "When value is a number", args: args{key: "k2", value: 1234}},
-		{name: "When value is custom struct", args: args{key: "k3", value: dummy{}}},
+		{name: "When value is an int", args: args{key: "k2", value: &dummy_value{Value: 123}}},
+		{name: "When value is a string", args: args{key: "k3", value: &dummy_value{Value: "123"}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -53,32 +58,31 @@ func TestGetAll(t *testing.T) {
 	}
 
 	// Add data to the store
-	Set("key1", 1234)
-	Set("key1", 1235)
-	Set("key1", 1235)
-	Set("key2", struct{ Name string }{Name: "val1"})
-	Set("key2", struct{ Name string }{Name: "val2"})
+	Set("key1", &dummy_value{Value: 12345})
+	Set("key1", &dummy_value{Value: 12345})
+	Set("key2", &dummy_value{Value: struct{ Name string }{Name: "val1"}})
+	Set("key2", &dummy_value{Value: struct{ Name string }{Name: "val2"}})
 
 	tests := []struct {
 		name string
 		args args
-		want []interface{}
+		want []Value
 	}{
 		{
 			name: "When key exists with multiple values including duplicates",
 			args: args{
 				key: "key1",
 			},
-			want: []interface{}{1234, 1235},
+			want: []Value{&dummy_value{Value: 12345}},
 		},
 		{
 			name: "When key exists with multiple values without duplicates",
 			args: args{
 				key: "key2",
 			},
-			want: []interface{}{
-				struct{ Name string }{Name: "val1"},
-				struct{ Name string }{Name: "val2"},
+			want: []Value{
+				&dummy_value{Value: struct{ Name string }{Name: "val1"}},
+				&dummy_value{Value: struct{ Name string }{Name: "val2"}},
 			},
 		},
 		{
@@ -86,7 +90,7 @@ func TestGetAll(t *testing.T) {
 			args: args{
 				key: "key3",
 			},
-			want: []interface{}{},
+			want: []Value{},
 		},
 	}
 	for _, tt := range tests {
@@ -110,27 +114,27 @@ func TestPrefixMatch(t *testing.T) {
 	}
 
 	// Add data to the store
-	Set("key1", 1234)
-	Set("key1", 1235)
-	Set("key1", 1235)
-	Set("key2", struct{ Name string }{Name: "val1"})
-	Set("key2", struct{ Name string }{Name: "val2"})
+	Set("key1", &dummy_value{Value: 1234})
+	Set("key1", &dummy_value{Value: 1235})
+	Set("key1", &dummy_value{Value: 1235})
+	Set("key2", &dummy_value{Value: struct{ Name string }{Name: "val1"}})
+	Set("key2", &dummy_value{Value: struct{ Name string }{Name: "val2"}})
 
 	tests := []struct {
 		name    string
 		args    args
-		wantRes []interface{}
+		wantRes []Value
 	}{
 		{
 			name: "",
 			args: args{
 				key: "key",
 			},
-			wantRes: []interface{}{
-				1234,
-				1235,
-				struct{ Name string }{Name: "val1"},
-				struct{ Name string }{Name: "val2"},
+			wantRes: []Value{
+				&dummy_value{Value: 1234},
+				&dummy_value{Value: 1235},
+				&dummy_value{Value: struct{ Name string }{Name: "val1"}},
+				&dummy_value{Value: struct{ Name string }{Name: "val2"}},
 			},
 		},
 	}
@@ -143,7 +147,7 @@ func TestPrefixMatch(t *testing.T) {
 	}
 }
 
-func includes(s map[string]interface{}, v interface{}) bool {
+func includes(s map[string]Value, v Value) bool {
 	for _, si := range s {
 		if reflect.DeepEqual(si, v) {
 			return true
@@ -153,14 +157,15 @@ func includes(s map[string]interface{}, v interface{}) bool {
 	return false
 }
 
-func matchSlice(arr1 []interface{}, arr2 []interface{}) bool {
-	mp := map[interface{}]bool{}
+func matchSlice(arr1 []Value, arr2 []Value) bool {
+	mp := map[string]bool{}
 	for _, el := range arr1 {
-		mp[el] = true
+		mp[el.GetID()] = true
 	}
 
 	for _, el := range arr2 {
-		if !mp[el] {
+		id := md5Hash(el)
+		if !mp[id] {
 			return false
 		}
 	}

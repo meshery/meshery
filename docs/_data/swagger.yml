@@ -6918,7 +6918,43 @@ definitions:
           x-go-package: github.com/layer5io/meshery/models
         x-go-package: github.com/layer5io/meshery/models
       navigator:
-        $ref: '#/definitions/NavigatorExtensions'
+        description: NavigatorExtensions is a collection of NavigatorExtension
+        type: array
+        items:
+          description: NavigatorExtension describes the Navigator extension point
+            in the UI
+          type: object
+          properties:
+            children:
+              $ref: '#/definitions/NavigatorExtensions'
+            component:
+              type: string
+              x-go-name: Component
+            href:
+              description: Href describes a link along with its type
+              type: object
+              properties:
+                external:
+                  type: boolean
+                  x-go-name: External
+                uri:
+                  type: string
+                  x-go-name: URI
+              x-go-package: github.com/layer5io/meshery/models
+            icon:
+              type: string
+              x-go-name: Icon
+            link:
+              type: boolean
+              x-go-name: Link
+            show:
+              type: boolean
+              x-go-name: Show
+            title:
+              type: string
+              x-go-name: Title
+          x-go-package: github.com/layer5io/meshery/models
+        x-go-package: github.com/layer5io/meshery/models
       user_prefs:
         description: UserPrefsExtensions is a collection of UserPrefsExtension
         type: array
@@ -8741,1372 +8777,7 @@ definitions:
       panels:
         type: array
         items:
-          type: object
-          properties:
-            alert:
-              type: object
-              properties:
-                alertRuleTags:
-                  type: object
-                  additionalProperties:
-                    type: string
-                  x-go-name: AlertRuleTags
-                conditions:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      evaluator:
-                        type: object
-                        properties:
-                          params:
-                            type: array
-                            items:
-                              type: number
-                              format: double
-                            x-go-name: Params
-                          type:
-                            type: string
-                            x-go-name: Type
-                        x-go-package: github.com/grafana-tools/sdk
-                      operator:
-                        type: object
-                        properties:
-                          type:
-                            type: string
-                            x-go-name: Type
-                        x-go-package: github.com/grafana-tools/sdk
-                      query:
-                        type: object
-                        properties:
-                          params:
-                            type: array
-                            items:
-                              type: string
-                            x-go-name: Params
-                        x-go-package: github.com/grafana-tools/sdk
-                      reducer:
-                        type: object
-                        properties:
-                          params:
-                            type: array
-                            items:
-                              type: string
-                            x-go-name: Params
-                          type:
-                            type: string
-                            x-go-name: Type
-                        x-go-package: github.com/grafana-tools/sdk
-                      type:
-                        type: string
-                        x-go-name: Type
-                    x-go-package: github.com/grafana-tools/sdk
-                  x-go-name: Conditions
-                executionErrorState:
-                  type: string
-                  x-go-name: ExecutionErrorState
-                for:
-                  type: string
-                  x-go-name: For
-                frequency:
-                  type: string
-                  x-go-name: Frequency
-                handler:
-                  type: integer
-                  format: int64
-                  x-go-name: Handler
-                message:
-                  type: string
-                  x-go-name: Message
-                name:
-                  type: string
-                  x-go-name: Name
-                noDataState:
-                  type: string
-                  x-go-name: NoDataState
-                notifications:
-                  type: array
-                  items:
-                    description: |-
-                      AlertNotification as described in the doc
-                      https://grafana.com/docs/grafana/latest/http_api/alerting_notification_channels/
-                    type: object
-                    properties:
-                      disableResolveMessage:
-                        type: boolean
-                        x-go-name: DisableResolveMessage
-                      frequency:
-                        type: string
-                        x-go-name: Frequency
-                      id:
-                        type: integer
-                        format: int64
-                        x-go-name: ID
-                      isDefault:
-                        type: boolean
-                        x-go-name: IsDefault
-                      name:
-                        type: string
-                        x-go-name: Name
-                      sendReminder:
-                        type: boolean
-                        x-go-name: SendReminder
-                      settings:
-                        type: object
-                        x-go-name: Settings
-                      type:
-                        type: string
-                        x-go-name: Type
-                      uid:
-                        type: string
-                        x-go-name: UID
-                    x-go-package: github.com/grafana-tools/sdk
-                  x-go-name: Notifications
-              x-go-package: github.com/grafana-tools/sdk
-            aliasColors:
-              type: object
-              x-go-name: AliasColors
-            bars:
-              type: boolean
-              x-go-name: Bars
-            cards:
-              type: object
-              properties:
-                cardPadding:
-                  type: number
-                  format: double
-                  x-go-name: CardPadding
-                cardRound:
-                  type: number
-                  format: double
-                  x-go-name: CardRound
-              x-go-name: Cards
-            collapsed:
-              type: boolean
-              x-go-name: Collapsed
-            color:
-              type: object
-              properties:
-                cardColor:
-                  type: string
-                  x-go-name: CardColor
-                colorScale:
-                  type: string
-                  x-go-name: ColorScale
-                colorScheme:
-                  type: string
-                  x-go-name: ColorScheme
-                exponent:
-                  type: number
-                  format: double
-                  x-go-name: Exponent
-                max:
-                  type: number
-                  format: double
-                  x-go-name: Max
-                min:
-                  type: number
-                  format: double
-                  x-go-name: Min
-                mode:
-                  type: string
-                  x-go-name: Mode
-              x-go-name: Color
-            colorBackground:
-              type: boolean
-              x-go-name: ColorBackground
-            colorValue:
-              type: boolean
-              x-go-name: ColorValue
-            colors:
-              type: array
-              items:
-                type: string
-              x-go-name: Colors
-            columns:
-              type: array
-              items:
-                description: for a table
-                type: object
-                properties:
-                  text:
-                    type: string
-                    x-go-name: TextType
-                  value:
-                    type: string
-                    x-go-name: Value
-                x-go-package: github.com/grafana-tools/sdk
-              x-go-name: Columns
-            content:
-              type: string
-              x-go-name: Content
-            dashLength:
-              type: integer
-              format: uint64
-              x-go-name: DashLength
-            dashboardTags:
-              type: array
-              items:
-                type: string
-              x-go-name: DashboardTags
-            dashes:
-              type: boolean
-              x-go-name: Dashes
-            dataFormat:
-              type: string
-              x-go-name: DataFormat
-            datasource:
-              type: string
-              x-go-name: Datasource
-            decimals:
-              type: integer
-              format: int64
-              x-go-name: Decimals
-            description:
-              type: string
-              x-go-name: Description
-            editable:
-              type: boolean
-              x-go-name: Editable
-            error:
-              type: boolean
-              x-go-name: Error
-            fieldConfig:
-              type: object
-              properties:
-                defaults:
-                  type: object
-                  properties:
-                    threshold:
-                      type: object
-                      properties:
-                        mode:
-                          type: string
-                          x-go-name: Mode
-                        steps:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              color:
-                                type: string
-                                x-go-name: Color
-                              value:
-                                type: string
-                                x-go-name: Value
-                          x-go-name: Steps
-                      x-go-name: Threshold
-                    unit:
-                      type: string
-                      x-go-name: Unit
-                  x-go-name: Defaults
-              x-go-package: github.com/grafana-tools/sdk
-            fill:
-              type: integer
-              format: int64
-              x-go-name: Fill
-            folderId:
-              type: integer
-              format: int64
-              x-go-name: FolderID
-            format:
-              type: string
-              x-go-name: Format
-            gauge:
-              description: for a stat
-              type: object
-              properties:
-                maxValue:
-                  type: number
-                  format: float
-                  x-go-name: MaxValue
-                minValue:
-                  type: number
-                  format: float
-                  x-go-name: MinValue
-                show:
-                  type: boolean
-                  x-go-name: Show
-                thresholdLabels:
-                  type: boolean
-                  x-go-name: ThresholdLabels
-                thresholdMarkers:
-                  type: boolean
-                  x-go-name: ThresholdMarkers
-              x-go-package: github.com/grafana-tools/sdk
-            gridPos:
-              type: object
-              properties:
-                h:
-                  type: integer
-                  format: int64
-                  x-go-name: H
-                w:
-                  type: integer
-                  format: int64
-                  x-go-name: W
-                x:
-                  type: integer
-                  format: int64
-                  x-go-name: X
-                "y":
-                  type: integer
-                  format: int64
-                  x-go-name: "Y"
-              x-go-name: GridPos
-            headings:
-              type: boolean
-              x-go-name: Headings
-            height:
-              type: object
-              x-go-name: Height
-            hideTimeOverride:
-              type: boolean
-              x-go-name: HideTimeOverride
-            hideZeroBuckets:
-              type: boolean
-              x-go-name: HideZeroBuckets
-            highlightCards:
-              type: boolean
-              x-go-name: HighlightCards
-            id:
-              type: integer
-              format: uint64
-              x-go-name: ID
-            isNew:
-              type: boolean
-              x-go-name: IsNew
-            leftYAxisLabel:
-              type: string
-              x-go-name: LeftYAxisLabel
-            legend:
-              description: for a graph panel
-              type: object
-              properties:
-                alignAsTable:
-                  type: boolean
-                  x-go-name: AlignAsTable
-                avg:
-                  type: boolean
-                  x-go-name: Avg
-                current:
-                  type: boolean
-                  x-go-name: Current
-                hideEmpty:
-                  type: boolean
-                  x-go-name: HideEmpty
-                hideZero:
-                  type: boolean
-                  x-go-name: HideZero
-                max:
-                  type: boolean
-                  x-go-name: Max
-                min:
-                  type: boolean
-                  x-go-name: Min
-                rightSide:
-                  type: boolean
-                  x-go-name: RightSide
-                show:
-                  type: boolean
-                  x-go-name: Show
-                sideWidth:
-                  type: integer
-                  format: uint64
-                  x-go-name: SideWidth
-                total:
-                  type: boolean
-                  x-go-name: Total
-                values:
-                  type: boolean
-                  x-go-name: Values
-              x-go-package: github.com/grafana-tools/sdk
-            limit:
-              type: integer
-              format: int64
-              x-go-name: Limit
-            lines:
-              type: boolean
-              x-go-name: Lines
-            linewidth:
-              type: integer
-              format: uint64
-              x-go-name: Linewidth
-            links:
-              type: array
-              items:
-                type: object
-                properties:
-                  asDropdown:
-                    type: boolean
-                    x-go-name: AsDropdown
-                  dashUri:
-                    type: string
-                    x-go-name: DashURI
-                  dashboard:
-                    type: string
-                    x-go-name: Dashboard
-                  icon:
-                    type: string
-                    x-go-name: Icon
-                  includeVars:
-                    type: boolean
-                    x-go-name: IncludeVars
-                  keepTime:
-                    type: boolean
-                    x-go-name: KeepTime
-                  params:
-                    type: string
-                    x-go-name: Params
-                  tags:
-                    type: array
-                    items:
-                      type: string
-                    x-go-name: Tags
-                  targetBlank:
-                    type: boolean
-                    x-go-name: TargetBlank
-                  title:
-                    type: string
-                    x-go-name: Title
-                  tooltip:
-                    type: string
-                    x-go-name: Tooltip
-                  type:
-                    type: string
-                    x-go-name: Type
-                  url:
-                    type: string
-                    x-go-name: URL
-                x-go-package: github.com/grafana-tools/sdk
-              x-go-name: Links
-            mappingType:
-              type: integer
-              format: uint64
-              x-go-name: MappingType
-            mappingTypes:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    x-go-name: Name
-                  value:
-                    type: integer
-                    format: int64
-                    x-go-name: Value
-                x-go-package: github.com/grafana-tools/sdk
-              x-go-name: MappingTypes
-            maxDataPoints:
-              type: object
-              title: 'IntString represents special type for json values that could
-                be strings or ints: 100 or "100"'
-              properties:
-                Valid:
-                  type: boolean
-                Value:
-                  type: integer
-                  format: int64
-              x-go-package: github.com/grafana-tools/sdk
-            minSpan:
-              type: number
-              format: float
-              x-go-name: MinSpan
-            mode:
-              type: string
-              x-go-name: Mode
-            nameFilter:
-              type: string
-              x-go-name: NameFilter
-            nullPointMode:
-              type: string
-              x-go-name: NullPointMode
-            onlyAlertsOnDashboard:
-              type: boolean
-              x-go-name: OnlyAlertsOnDashboard
-            options:
-              type: object
-              properties:
-                colorMode:
-                  type: string
-                  x-go-name: ColorMode
-                content:
-                  type: string
-                  x-go-name: Content
-                displayMode:
-                  type: string
-                  x-go-name: DisplayMode
-                graphMode:
-                  type: string
-                  x-go-name: GraphMode
-                justifyMode:
-                  type: string
-                  x-go-name: JustifyMode
-                mode:
-                  type: string
-                  x-go-name: Mode
-                orientation:
-                  type: string
-                  x-go-name: Orientation
-                reduceOptions:
-                  type: object
-                  properties:
-                    calcs:
-                      type: array
-                      items:
-                        type: string
-                      x-go-name: Calcs
-                    fields:
-                      type: string
-                      x-go-name: Fields
-                    values:
-                      type: boolean
-                      x-go-name: Values
-                  x-go-name: ReduceOptions
-                textMode:
-                  type: string
-                  x-go-name: TextMode
-              x-go-package: github.com/grafana-tools/sdk
-            pageSize:
-              type: integer
-              format: uint64
-              x-go-name: PageSize
-            panels:
-              type: array
-              items:
-                $ref: '#/definitions/Panel'
-              x-go-name: Panels
-            percentage:
-              type: boolean
-              x-go-name: Percentage
-            pointradius:
-              type: number
-              format: float
-              x-go-name: Pointradius
-            points:
-              type: boolean
-              x-go-name: Points
-            postfix:
-              type: string
-              x-go-name: Postfix
-            postfixFontSize:
-              type: string
-              x-go-name: PostfixFontSize
-            prefix:
-              type: string
-              x-go-name: Prefix
-            prefixFontSize:
-              type: string
-              x-go-name: PrefixFontSize
-            query:
-              type: string
-              x-go-name: Query
-            rangeMaps:
-              type: array
-              items:
-                type: object
-                properties:
-                  from:
-                    type: string
-                    x-go-name: From
-                  text:
-                    type: string
-                    x-go-name: Text
-                  to:
-                    type: string
-                    x-go-name: To
-                x-go-package: github.com/grafana-tools/sdk
-              x-go-name: RangeMaps
-            recent:
-              type: boolean
-              x-go-name: Recent
-            renderer:
-              type: string
-              x-go-name: Renderer
-            repeat:
-              type: string
-              x-go-name: Repeat
-            repeatPanelId:
-              description: RepeatIteration *int64   `json:"repeatIteration,omitempty"`
-              type: integer
-              format: uint64
-              x-go-name: RepeatPanelID
-            reverseYBuckets:
-              type: boolean
-              x-go-name: ReverseYBuckets
-            rightYAxisLabel:
-              type: string
-              x-go-name: RightYAxisLabel
-            scopedVars:
-              type: object
-              additionalProperties:
-                type: object
-                properties:
-                  selected:
-                    type: boolean
-                    x-go-name: Selected
-                  text:
-                    type: string
-                    x-go-name: Text
-                  value:
-                    type: string
-                    x-go-name: Value
-              x-go-name: ScopedVars
-            scroll:
-              type: boolean
-              x-go-name: Scroll
-            search:
-              type: boolean
-              x-go-name: Search
-            seriesOverrides:
-              type: array
-              items:
-                description: for a graph panel
-                type: object
-                properties:
-                  alias:
-                    type: string
-                    x-go-name: Alias
-                  bars:
-                    type: boolean
-                    x-go-name: Bars
-                  color:
-                    type: string
-                    x-go-name: Color
-                  dashes:
-                    type: boolean
-                    x-go-name: Dashes
-                  fill:
-                    type: integer
-                    format: int64
-                    x-go-name: Fill
-                  fillBelowTo:
-                    type: string
-                    x-go-name: FillBelowTo
-                  legend:
-                    type: boolean
-                    x-go-name: Legend
-                  lines:
-                    type: boolean
-                    x-go-name: Lines
-                  linewidth:
-                    type: integer
-                    format: int64
-                    x-go-name: LineWidth
-                  nullPointMode:
-                    type: string
-                    x-go-name: NullPointMode
-                  stack:
-                    type: object
-                    properties:
-                      Flag:
-                        type: boolean
-                      Value:
-                        type: string
-                    x-go-package: github.com/grafana-tools/sdk
-                  transform:
-                    type: string
-                    x-go-name: Transform
-                  yaxis:
-                    type: integer
-                    format: int64
-                    x-go-name: YAxis
-                  zindex:
-                    type: integer
-                    format: int64
-                    x-go-name: ZIndex
-                x-go-package: github.com/grafana-tools/sdk
-              x-go-name: SeriesOverrides
-            show:
-              type: string
-              x-go-name: Show
-            showHeader:
-              type: boolean
-              x-go-name: ShowHeader
-            sort:
-              description: for a graph panel
-              type: object
-              properties:
-                col:
-                  type: integer
-                  format: int64
-                  x-go-name: Col
-                desc:
-                  type: boolean
-                  x-go-name: Desc
-              x-go-package: github.com/grafana-tools/sdk
-            sortOrder:
-              type: integer
-              format: int64
-              x-go-name: SortOrder
-            spaceLength:
-              type: integer
-              format: uint64
-              x-go-name: SpaceLength
-            span:
-              type: number
-              format: float
-              x-go-name: Span
-            sparkline:
-              description: for a stat
-              type: object
-              properties:
-                fillColor:
-                  type: string
-                  x-go-name: FillColor
-                full:
-                  type: boolean
-                  x-go-name: Full
-                lineColor:
-                  type: string
-                  x-go-name: LineColor
-                show:
-                  type: boolean
-                  x-go-name: Show
-                ymax:
-                  type: number
-                  format: double
-                  x-go-name: YMax
-                ymin:
-                  type: number
-                  format: double
-                  x-go-name: YMin
-              x-go-package: github.com/grafana-tools/sdk
-            stack:
-              type: boolean
-              x-go-name: Stack
-            starred:
-              type: boolean
-              x-go-name: Starred
-            stateFilter:
-              type: array
-              items:
-                type: string
-              x-go-name: StateFilter
-            steppedLine:
-              type: boolean
-              x-go-name: SteppedLine
-            styles:
-              type: array
-              items:
-                description: for a table
-                type: object
-                properties:
-                  alias:
-                    type: string
-                    x-go-name: Alias
-                  colorMode:
-                    type: string
-                    x-go-name: ColorMode
-                  colors:
-                    type: array
-                    items:
-                      type: string
-                    x-go-name: Colors
-                  dateFormat:
-                    type: string
-                    x-go-name: DateFormat
-                  decimals:
-                    type: integer
-                    format: uint64
-                    x-go-name: Decimals
-                  link:
-                    type: boolean
-                    x-go-name: Link
-                  linkTargetBlank:
-                    type: boolean
-                    x-go-name: LinkTargetBlank
-                  linkTooltip:
-                    type: string
-                    x-go-name: LinkTooltip
-                  linkUrl:
-                    type: string
-                    x-go-name: LinkUrl
-                  mappingType:
-                    type: integer
-                    format: int64
-                    x-go-name: MappingType
-                  pattern:
-                    type: string
-                    x-go-name: Pattern
-                  thresholds:
-                    type: array
-                    items:
-                      type: string
-                    x-go-name: Thresholds
-                  type:
-                    type: string
-                    x-go-name: Type
-                  unit:
-                    type: string
-                    x-go-name: Unit
-                  valueMaps:
-                    type: array
-                    items:
-                      description: for a stat
-                      type: object
-                      properties:
-                        op:
-                          type: string
-                          x-go-name: Op
-                        text:
-                          type: string
-                          x-go-name: TextType
-                        value:
-                          type: string
-                          x-go-name: Value
-                      x-go-package: github.com/grafana-tools/sdk
-                    x-go-name: ValueMaps
-                x-go-package: github.com/grafana-tools/sdk
-              x-go-name: Styles
-            tags:
-              type: array
-              items:
-                type: string
-              x-go-name: Tags
-            targets:
-              type: array
-              items:
-                description: for an any panel
-                type: object
-                properties:
-                  alias:
-                    type: string
-                    x-go-name: Alias
-                  aliasBy:
-                    type: string
-                    x-go-name: AliasBy
-                  alignOptions:
-                    type: array
-                    items:
-                      description: |-
-                        StackdriverAlignOptions defines the list of alignment options shown in
-                        Grafana during query configuration.
-                      type: object
-                      properties:
-                        expanded:
-                          type: boolean
-                          x-go-name: Expanded
-                        label:
-                          type: string
-                          x-go-name: Label
-                        options:
-                          type: array
-                          items:
-                            description: |-
-                              StackdriverAlignOption defines a single alignment option shown in Grafana
-                              during query configuration.
-                            type: object
-                            properties:
-                              label:
-                                type: string
-                                x-go-name: Label
-                              metricKinds:
-                                type: array
-                                items:
-                                  type: string
-                                x-go-name: MetricKinds
-                              text:
-                                type: string
-                                x-go-name: Text
-                              value:
-                                type: string
-                                x-go-name: Value
-                              valueTypes:
-                                type: array
-                                items:
-                                  type: string
-                                x-go-name: ValueTypes
-                            x-go-package: github.com/grafana-tools/sdk
-                          x-go-name: Options
-                      x-go-package: github.com/grafana-tools/sdk
-                    x-go-name: AlignOptions
-                  alignmentPeriod:
-                    type: string
-                    x-go-name: AlignmentPeriod
-                  bucketAggs:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        field:
-                          type: string
-                          x-go-name: Field
-                        id:
-                          type: string
-                          x-go-name: ID
-                        settings:
-                          type: object
-                          properties:
-                            interval:
-                              type: string
-                              x-go-name: Interval
-                            min_doc_count:
-                              type: object
-                              x-go-name: MinDocCount
-                            order:
-                              type: string
-                              x-go-name: Order
-                            orderBy:
-                              type: string
-                              x-go-name: OrderBy
-                            size:
-                              type: string
-                              x-go-name: Size
-                          x-go-name: Settings
-                        type:
-                          type: string
-                          x-go-name: Type
-                    x-go-name: BucketAggs
-                  crossSeriesReducer:
-                    type: string
-                    x-go-name: CrossSeriesReducer
-                  datasource:
-                    type: string
-                    x-go-name: Datasource
-                  dimensions:
-                    type: object
-                    additionalProperties:
-                      type: string
-                    x-go-name: Dimensions
-                  dsType:
-                    description: For Elasticsearch
-                    type: string
-                    x-go-name: DsType
-                  expr:
-                    description: For Prometheus
-                    type: string
-                    x-go-name: Expr
-                  filters:
-                    type: array
-                    items:
-                      type: string
-                    x-go-name: Filters
-                  format:
-                    type: string
-                    x-go-name: Format
-                  group:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        params:
-                          type: array
-                          items:
-                            type: string
-                          x-go-name: Params
-                        type:
-                          type: string
-                          x-go-name: Type
-                    x-go-name: Group
-                  groupBys:
-                    type: array
-                    items:
-                      type: string
-                    x-go-name: GroupBys
-                  hide:
-                    type: boolean
-                    x-go-name: Hide
-                  instant:
-                    type: boolean
-                    x-go-name: Instant
-                  interval:
-                    type: string
-                    x-go-name: Interval
-                  intervalFactor:
-                    type: integer
-                    format: int64
-                    x-go-name: IntervalFactor
-                  legendFormat:
-                    type: string
-                    x-go-name: LegendFormat
-                  measurement:
-                    description: For InfluxDB
-                    type: string
-                    x-go-name: Measurement
-                  metricColumn:
-                    type: string
-                    x-go-name: MetricColumn
-                  metricKind:
-                    type: string
-                    x-go-name: MetricKind
-                  metricName:
-                    type: string
-                    x-go-name: MetricName
-                  metricType:
-                    type: string
-                    x-go-name: MetricType
-                  metrics:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        field:
-                          type: string
-                          x-go-name: Field
-                        id:
-                          type: string
-                          x-go-name: ID
-                        type:
-                          type: string
-                          x-go-name: Type
-                    x-go-name: Metrics
-                  namespace:
-                    description: For CloudWatch
-                    type: string
-                    x-go-name: Namespace
-                  perSeriesAligner:
-                    type: string
-                    x-go-name: PerSeriesAligner
-                  period:
-                    type: string
-                    x-go-name: Period
-                  projectName:
-                    description: |-
-                      For the Stackdriver data source. Find out more information at
-                      https:/grafana.com/docs/grafana/v6.0/features/datasources/stackdriver/
-                    type: string
-                    x-go-name: ProjectName
-                  query:
-                    type: string
-                    x-go-name: Query
-                  rawQuery:
-                    type: boolean
-                    x-go-name: RawQuery
-                  rawSql:
-                    type: string
-                    x-go-name: RawSql
-                  refId:
-                    type: string
-                    x-go-name: RefID
-                  region:
-                    type: string
-                    x-go-name: Region
-                  select:
-                    type: array
-                    items:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          params:
-                            type: array
-                            items:
-                              type: string
-                            x-go-name: Params
-                          type:
-                            type: string
-                            x-go-name: Type
-                    x-go-name: Select
-                  statistics:
-                    type: array
-                    items:
-                      type: string
-                    x-go-name: Statistics
-                  step:
-                    type: integer
-                    format: int64
-                    x-go-name: Step
-                  table:
-                    description: For PostgreSQL
-                    type: string
-                    x-go-name: Table
-                  target:
-                    description: For Graphite
-                    type: string
-                    x-go-name: Target
-                  timeColumn:
-                    type: string
-                    x-go-name: TimeColumn
-                  timeField:
-                    type: string
-                    x-go-name: TimeField
-                  valueType:
-                    type: string
-                    x-go-name: ValueType
-                  where:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        datatype:
-                          type: string
-                          x-go-name: Datatype
-                        name:
-                          type: string
-                          x-go-name: Name
-                        params:
-                          type: array
-                          items:
-                            type: string
-                          x-go-name: Params
-                        type:
-                          type: string
-                          x-go-name: Type
-                    x-go-name: Where
-                x-go-package: github.com/grafana-tools/sdk
-              x-go-name: Targets
-            thresholds:
-              type: string
-              items:
-                type: object
-                properties:
-                  colorMode:
-                    description: critical, warning, ok, custom
-                    type: string
-                    x-go-name: ColorMode
-                  fill:
-                    type: boolean
-                    x-go-name: Fill
-                  fillColor:
-                    description: 'hexadecimal color (e.g. #629e51, only when ColorMode
-                      is "custom")'
-                    type: string
-                    x-go-name: FillColor
-                  line:
-                    type: boolean
-                    x-go-name: Line
-                  lineColor:
-                    description: 'hexadecimal color (e.g. #629e51, only when ColorMode
-                      is "custom")'
-                    type: string
-                    x-go-name: LineColor
-                  op:
-                    description: gt or lt
-                    type: string
-                    x-go-name: Op
-                  value:
-                    description: |-
-                      the alert threshold value, we do not omitempty, since 0 is a valid
-                      threshold
-                    type: number
-                    format: float
-                    x-go-name: Value
-                  yaxis:
-                    description: left or right
-                    type: string
-                    x-go-name: Yaxis
-                x-go-package: github.com/grafana-tools/sdk
-              x-go-name: Thresholds
-            timeFrom:
-              type: string
-              x-go-name: TimeFrom
-            timeShift:
-              type: string
-              x-go-name: TimeShift
-            title:
-              type: string
-              x-go-name: Title
-            tooltip:
-              type: object
-              properties:
-                msResolution:
-                  type: boolean
-                  x-go-name: MsResolution
-                shared:
-                  type: boolean
-                  x-go-name: Shared
-                sort:
-                  type: integer
-                  format: int64
-                  x-go-name: Sort
-                value_type:
-                  type: string
-                  x-go-name: ValueType
-              x-go-package: github.com/grafana-tools/sdk
-            tooltipDecimals:
-              type: integer
-              format: int64
-              x-go-name: TooltipDecimals
-            transform:
-              type: string
-              x-go-name: Transform
-            transparent:
-              type: boolean
-              x-go-name: Transparent
-            type:
-              type: string
-              x-go-name: Type
-            valueFontSize:
-              type: string
-              x-go-name: ValueFontSize
-            valueMaps:
-              type: array
-              items:
-                description: for a stat
-                type: object
-                properties:
-                  op:
-                    type: string
-                    x-go-name: Op
-                  text:
-                    type: string
-                    x-go-name: TextType
-                  value:
-                    type: string
-                    x-go-name: Value
-                x-go-package: github.com/grafana-tools/sdk
-              x-go-name: ValueMaps
-            valueName:
-              type: string
-              x-go-name: ValueName
-            x-axis:
-              type: boolean
-              x-go-name: XAxis
-            xAxis:
-              type: object
-              properties:
-                show:
-                  type: boolean
-                  x-go-name: Show
-              x-go-name: XAxis
-            xBucketNumber:
-              type: number
-              format: double
-              x-go-name: XBucketNumber
-            xBucketSize:
-              type: string
-              x-go-name: XBucketSize
-            xaxis:
-              description: for a graph panel
-              type: object
-              properties:
-                decimals:
-                  type: integer
-                  format: int64
-                  x-go-name: Decimals
-                format:
-                  type: string
-                  x-go-name: Format
-                label:
-                  type: string
-                  x-go-name: Label
-                logBase:
-                  type: integer
-                  format: int64
-                  x-go-name: LogBase
-                max:
-                  type: object
-                  title: 'FloatString represents special type for json values that
-                    could be strings or ints: 100 or "100"'
-                  properties:
-                    Valid:
-                      type: boolean
-                    Value:
-                      type: number
-                      format: double
-                  x-go-package: github.com/grafana-tools/sdk
-                min:
-                  type: object
-                  title: 'FloatString represents special type for json values that
-                    could be strings or ints: 100 or "100"'
-                  properties:
-                    Valid:
-                      type: boolean
-                    Value:
-                      type: number
-                      format: double
-                  x-go-package: github.com/grafana-tools/sdk
-                show:
-                  type: boolean
-                  x-go-name: Show
-              x-go-package: github.com/grafana-tools/sdk
-            y-axis:
-              type: boolean
-              x-go-name: YAxis
-            yAxis:
-              type: object
-              properties:
-                decimals:
-                  type: integer
-                  format: int64
-                  x-go-name: Decimals
-                format:
-                  type: string
-                  x-go-name: Format
-                logBase:
-                  type: integer
-                  format: int64
-                  x-go-name: LogBase
-                max:
-                  type: string
-                  x-go-name: Max
-                min:
-                  type: string
-                  x-go-name: Min
-                show:
-                  type: boolean
-                  x-go-name: Show
-                splitFactor:
-                  type: number
-                  format: double
-                  x-go-name: SplitFactor
-              x-go-name: YAxis
-            yBucketBound:
-              type: string
-              x-go-name: YBucketBound
-            yBucketNumber:
-              type: number
-              format: double
-              x-go-name: YBucketNumber
-            yBucketSize:
-              type: number
-              format: double
-              x-go-name: YBucketSize
-            y_formats:
-              type: array
-              items:
-                type: string
-              x-go-name: YFormats
-            yaxes:
-              type: array
-              items:
-                description: for a graph panel
-                type: object
-                properties:
-                  decimals:
-                    type: integer
-                    format: int64
-                    x-go-name: Decimals
-                  format:
-                    type: string
-                    x-go-name: Format
-                  label:
-                    type: string
-                    x-go-name: Label
-                  logBase:
-                    type: integer
-                    format: int64
-                    x-go-name: LogBase
-                  max:
-                    type: object
-                    title: 'FloatString represents special type for json values that
-                      could be strings or ints: 100 or "100"'
-                    properties:
-                      Valid:
-                        type: boolean
-                      Value:
-                        type: number
-                        format: double
-                    x-go-package: github.com/grafana-tools/sdk
-                  min:
-                    type: object
-                    title: 'FloatString represents special type for json values that
-                      could be strings or ints: 100 or "100"'
-                    properties:
-                      Valid:
-                        type: boolean
-                      Value:
-                        type: number
-                        format: double
-                    x-go-package: github.com/grafana-tools/sdk
-                  show:
-                    type: boolean
-                    x-go-name: Show
-                x-go-package: github.com/grafana-tools/sdk
-              x-go-name: Yaxes
-          x-go-package: github.com/grafana-tools/sdk
+          $ref: '#/definitions/Panel'
         x-go-name: Panels
       percentage:
         type: boolean
@@ -12934,7 +11605,1374 @@ definitions:
                     panels:
                       type: array
                       items:
-                        $ref: '#/definitions/Panel'
+                        type: object
+                        properties:
+                          alert:
+                            type: object
+                            properties:
+                              alertRuleTags:
+                                type: object
+                                additionalProperties:
+                                  type: string
+                                x-go-name: AlertRuleTags
+                              conditions:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    evaluator:
+                                      type: object
+                                      properties:
+                                        params:
+                                          type: array
+                                          items:
+                                            type: number
+                                            format: double
+                                          x-go-name: Params
+                                        type:
+                                          type: string
+                                          x-go-name: Type
+                                      x-go-package: github.com/grafana-tools/sdk
+                                    operator:
+                                      type: object
+                                      properties:
+                                        type:
+                                          type: string
+                                          x-go-name: Type
+                                      x-go-package: github.com/grafana-tools/sdk
+                                    query:
+                                      type: object
+                                      properties:
+                                        params:
+                                          type: array
+                                          items:
+                                            type: string
+                                          x-go-name: Params
+                                      x-go-package: github.com/grafana-tools/sdk
+                                    reducer:
+                                      type: object
+                                      properties:
+                                        params:
+                                          type: array
+                                          items:
+                                            type: string
+                                          x-go-name: Params
+                                        type:
+                                          type: string
+                                          x-go-name: Type
+                                      x-go-package: github.com/grafana-tools/sdk
+                                    type:
+                                      type: string
+                                      x-go-name: Type
+                                  x-go-package: github.com/grafana-tools/sdk
+                                x-go-name: Conditions
+                              executionErrorState:
+                                type: string
+                                x-go-name: ExecutionErrorState
+                              for:
+                                type: string
+                                x-go-name: For
+                              frequency:
+                                type: string
+                                x-go-name: Frequency
+                              handler:
+                                type: integer
+                                format: int64
+                                x-go-name: Handler
+                              message:
+                                type: string
+                                x-go-name: Message
+                              name:
+                                type: string
+                                x-go-name: Name
+                              noDataState:
+                                type: string
+                                x-go-name: NoDataState
+                              notifications:
+                                type: array
+                                items:
+                                  description: |-
+                                    AlertNotification as described in the doc
+                                    https://grafana.com/docs/grafana/latest/http_api/alerting_notification_channels/
+                                  type: object
+                                  properties:
+                                    disableResolveMessage:
+                                      type: boolean
+                                      x-go-name: DisableResolveMessage
+                                    frequency:
+                                      type: string
+                                      x-go-name: Frequency
+                                    id:
+                                      type: integer
+                                      format: int64
+                                      x-go-name: ID
+                                    isDefault:
+                                      type: boolean
+                                      x-go-name: IsDefault
+                                    name:
+                                      type: string
+                                      x-go-name: Name
+                                    sendReminder:
+                                      type: boolean
+                                      x-go-name: SendReminder
+                                    settings:
+                                      type: object
+                                      x-go-name: Settings
+                                    type:
+                                      type: string
+                                      x-go-name: Type
+                                    uid:
+                                      type: string
+                                      x-go-name: UID
+                                  x-go-package: github.com/grafana-tools/sdk
+                                x-go-name: Notifications
+                            x-go-package: github.com/grafana-tools/sdk
+                          aliasColors:
+                            type: object
+                            x-go-name: AliasColors
+                          bars:
+                            type: boolean
+                            x-go-name: Bars
+                          cards:
+                            type: object
+                            properties:
+                              cardPadding:
+                                type: number
+                                format: double
+                                x-go-name: CardPadding
+                              cardRound:
+                                type: number
+                                format: double
+                                x-go-name: CardRound
+                            x-go-name: Cards
+                          collapsed:
+                            type: boolean
+                            x-go-name: Collapsed
+                          color:
+                            type: object
+                            properties:
+                              cardColor:
+                                type: string
+                                x-go-name: CardColor
+                              colorScale:
+                                type: string
+                                x-go-name: ColorScale
+                              colorScheme:
+                                type: string
+                                x-go-name: ColorScheme
+                              exponent:
+                                type: number
+                                format: double
+                                x-go-name: Exponent
+                              max:
+                                type: number
+                                format: double
+                                x-go-name: Max
+                              min:
+                                type: number
+                                format: double
+                                x-go-name: Min
+                              mode:
+                                type: string
+                                x-go-name: Mode
+                            x-go-name: Color
+                          colorBackground:
+                            type: boolean
+                            x-go-name: ColorBackground
+                          colorValue:
+                            type: boolean
+                            x-go-name: ColorValue
+                          colors:
+                            type: array
+                            items:
+                              type: string
+                            x-go-name: Colors
+                          columns:
+                            type: array
+                            items:
+                              description: for a table
+                              type: object
+                              properties:
+                                text:
+                                  type: string
+                                  x-go-name: TextType
+                                value:
+                                  type: string
+                                  x-go-name: Value
+                              x-go-package: github.com/grafana-tools/sdk
+                            x-go-name: Columns
+                          content:
+                            type: string
+                            x-go-name: Content
+                          dashLength:
+                            type: integer
+                            format: uint64
+                            x-go-name: DashLength
+                          dashboardTags:
+                            type: array
+                            items:
+                              type: string
+                            x-go-name: DashboardTags
+                          dashes:
+                            type: boolean
+                            x-go-name: Dashes
+                          dataFormat:
+                            type: string
+                            x-go-name: DataFormat
+                          datasource:
+                            type: string
+                            x-go-name: Datasource
+                          decimals:
+                            type: integer
+                            format: int64
+                            x-go-name: Decimals
+                          description:
+                            type: string
+                            x-go-name: Description
+                          editable:
+                            type: boolean
+                            x-go-name: Editable
+                          error:
+                            type: boolean
+                            x-go-name: Error
+                          fieldConfig:
+                            type: object
+                            properties:
+                              defaults:
+                                type: object
+                                properties:
+                                  threshold:
+                                    type: object
+                                    properties:
+                                      mode:
+                                        type: string
+                                        x-go-name: Mode
+                                      steps:
+                                        type: array
+                                        items:
+                                          type: object
+                                          properties:
+                                            color:
+                                              type: string
+                                              x-go-name: Color
+                                            value:
+                                              type: string
+                                              x-go-name: Value
+                                        x-go-name: Steps
+                                    x-go-name: Threshold
+                                  unit:
+                                    type: string
+                                    x-go-name: Unit
+                                x-go-name: Defaults
+                            x-go-package: github.com/grafana-tools/sdk
+                          fill:
+                            type: integer
+                            format: int64
+                            x-go-name: Fill
+                          folderId:
+                            type: integer
+                            format: int64
+                            x-go-name: FolderID
+                          format:
+                            type: string
+                            x-go-name: Format
+                          gauge:
+                            description: for a stat
+                            type: object
+                            properties:
+                              maxValue:
+                                type: number
+                                format: float
+                                x-go-name: MaxValue
+                              minValue:
+                                type: number
+                                format: float
+                                x-go-name: MinValue
+                              show:
+                                type: boolean
+                                x-go-name: Show
+                              thresholdLabels:
+                                type: boolean
+                                x-go-name: ThresholdLabels
+                              thresholdMarkers:
+                                type: boolean
+                                x-go-name: ThresholdMarkers
+                            x-go-package: github.com/grafana-tools/sdk
+                          gridPos:
+                            type: object
+                            properties:
+                              h:
+                                type: integer
+                                format: int64
+                                x-go-name: H
+                              w:
+                                type: integer
+                                format: int64
+                                x-go-name: W
+                              x:
+                                type: integer
+                                format: int64
+                                x-go-name: X
+                              "y":
+                                type: integer
+                                format: int64
+                                x-go-name: "Y"
+                            x-go-name: GridPos
+                          headings:
+                            type: boolean
+                            x-go-name: Headings
+                          height:
+                            type: object
+                            x-go-name: Height
+                          hideTimeOverride:
+                            type: boolean
+                            x-go-name: HideTimeOverride
+                          hideZeroBuckets:
+                            type: boolean
+                            x-go-name: HideZeroBuckets
+                          highlightCards:
+                            type: boolean
+                            x-go-name: HighlightCards
+                          id:
+                            type: integer
+                            format: uint64
+                            x-go-name: ID
+                          isNew:
+                            type: boolean
+                            x-go-name: IsNew
+                          leftYAxisLabel:
+                            type: string
+                            x-go-name: LeftYAxisLabel
+                          legend:
+                            description: for a graph panel
+                            type: object
+                            properties:
+                              alignAsTable:
+                                type: boolean
+                                x-go-name: AlignAsTable
+                              avg:
+                                type: boolean
+                                x-go-name: Avg
+                              current:
+                                type: boolean
+                                x-go-name: Current
+                              hideEmpty:
+                                type: boolean
+                                x-go-name: HideEmpty
+                              hideZero:
+                                type: boolean
+                                x-go-name: HideZero
+                              max:
+                                type: boolean
+                                x-go-name: Max
+                              min:
+                                type: boolean
+                                x-go-name: Min
+                              rightSide:
+                                type: boolean
+                                x-go-name: RightSide
+                              show:
+                                type: boolean
+                                x-go-name: Show
+                              sideWidth:
+                                type: integer
+                                format: uint64
+                                x-go-name: SideWidth
+                              total:
+                                type: boolean
+                                x-go-name: Total
+                              values:
+                                type: boolean
+                                x-go-name: Values
+                            x-go-package: github.com/grafana-tools/sdk
+                          limit:
+                            type: integer
+                            format: int64
+                            x-go-name: Limit
+                          lines:
+                            type: boolean
+                            x-go-name: Lines
+                          linewidth:
+                            type: integer
+                            format: uint64
+                            x-go-name: Linewidth
+                          links:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                asDropdown:
+                                  type: boolean
+                                  x-go-name: AsDropdown
+                                dashUri:
+                                  type: string
+                                  x-go-name: DashURI
+                                dashboard:
+                                  type: string
+                                  x-go-name: Dashboard
+                                icon:
+                                  type: string
+                                  x-go-name: Icon
+                                includeVars:
+                                  type: boolean
+                                  x-go-name: IncludeVars
+                                keepTime:
+                                  type: boolean
+                                  x-go-name: KeepTime
+                                params:
+                                  type: string
+                                  x-go-name: Params
+                                tags:
+                                  type: array
+                                  items:
+                                    type: string
+                                  x-go-name: Tags
+                                targetBlank:
+                                  type: boolean
+                                  x-go-name: TargetBlank
+                                title:
+                                  type: string
+                                  x-go-name: Title
+                                tooltip:
+                                  type: string
+                                  x-go-name: Tooltip
+                                type:
+                                  type: string
+                                  x-go-name: Type
+                                url:
+                                  type: string
+                                  x-go-name: URL
+                              x-go-package: github.com/grafana-tools/sdk
+                            x-go-name: Links
+                          mappingType:
+                            type: integer
+                            format: uint64
+                            x-go-name: MappingType
+                          mappingTypes:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  x-go-name: Name
+                                value:
+                                  type: integer
+                                  format: int64
+                                  x-go-name: Value
+                              x-go-package: github.com/grafana-tools/sdk
+                            x-go-name: MappingTypes
+                          maxDataPoints:
+                            type: object
+                            title: 'IntString represents special type for json values
+                              that could be strings or ints: 100 or "100"'
+                            properties:
+                              Valid:
+                                type: boolean
+                              Value:
+                                type: integer
+                                format: int64
+                            x-go-package: github.com/grafana-tools/sdk
+                          minSpan:
+                            type: number
+                            format: float
+                            x-go-name: MinSpan
+                          mode:
+                            type: string
+                            x-go-name: Mode
+                          nameFilter:
+                            type: string
+                            x-go-name: NameFilter
+                          nullPointMode:
+                            type: string
+                            x-go-name: NullPointMode
+                          onlyAlertsOnDashboard:
+                            type: boolean
+                            x-go-name: OnlyAlertsOnDashboard
+                          options:
+                            type: object
+                            properties:
+                              colorMode:
+                                type: string
+                                x-go-name: ColorMode
+                              content:
+                                type: string
+                                x-go-name: Content
+                              displayMode:
+                                type: string
+                                x-go-name: DisplayMode
+                              graphMode:
+                                type: string
+                                x-go-name: GraphMode
+                              justifyMode:
+                                type: string
+                                x-go-name: JustifyMode
+                              mode:
+                                type: string
+                                x-go-name: Mode
+                              orientation:
+                                type: string
+                                x-go-name: Orientation
+                              reduceOptions:
+                                type: object
+                                properties:
+                                  calcs:
+                                    type: array
+                                    items:
+                                      type: string
+                                    x-go-name: Calcs
+                                  fields:
+                                    type: string
+                                    x-go-name: Fields
+                                  values:
+                                    type: boolean
+                                    x-go-name: Values
+                                x-go-name: ReduceOptions
+                              textMode:
+                                type: string
+                                x-go-name: TextMode
+                            x-go-package: github.com/grafana-tools/sdk
+                          pageSize:
+                            type: integer
+                            format: uint64
+                            x-go-name: PageSize
+                          panels:
+                            type: array
+                            items:
+                              $ref: '#/definitions/Panel'
+                            x-go-name: Panels
+                          percentage:
+                            type: boolean
+                            x-go-name: Percentage
+                          pointradius:
+                            type: number
+                            format: float
+                            x-go-name: Pointradius
+                          points:
+                            type: boolean
+                            x-go-name: Points
+                          postfix:
+                            type: string
+                            x-go-name: Postfix
+                          postfixFontSize:
+                            type: string
+                            x-go-name: PostfixFontSize
+                          prefix:
+                            type: string
+                            x-go-name: Prefix
+                          prefixFontSize:
+                            type: string
+                            x-go-name: PrefixFontSize
+                          query:
+                            type: string
+                            x-go-name: Query
+                          rangeMaps:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                from:
+                                  type: string
+                                  x-go-name: From
+                                text:
+                                  type: string
+                                  x-go-name: Text
+                                to:
+                                  type: string
+                                  x-go-name: To
+                              x-go-package: github.com/grafana-tools/sdk
+                            x-go-name: RangeMaps
+                          recent:
+                            type: boolean
+                            x-go-name: Recent
+                          renderer:
+                            type: string
+                            x-go-name: Renderer
+                          repeat:
+                            type: string
+                            x-go-name: Repeat
+                          repeatPanelId:
+                            description: RepeatIteration *int64   `json:"repeatIteration,omitempty"`
+                            type: integer
+                            format: uint64
+                            x-go-name: RepeatPanelID
+                          reverseYBuckets:
+                            type: boolean
+                            x-go-name: ReverseYBuckets
+                          rightYAxisLabel:
+                            type: string
+                            x-go-name: RightYAxisLabel
+                          scopedVars:
+                            type: object
+                            additionalProperties:
+                              type: object
+                              properties:
+                                selected:
+                                  type: boolean
+                                  x-go-name: Selected
+                                text:
+                                  type: string
+                                  x-go-name: Text
+                                value:
+                                  type: string
+                                  x-go-name: Value
+                            x-go-name: ScopedVars
+                          scroll:
+                            type: boolean
+                            x-go-name: Scroll
+                          search:
+                            type: boolean
+                            x-go-name: Search
+                          seriesOverrides:
+                            type: array
+                            items:
+                              description: for a graph panel
+                              type: object
+                              properties:
+                                alias:
+                                  type: string
+                                  x-go-name: Alias
+                                bars:
+                                  type: boolean
+                                  x-go-name: Bars
+                                color:
+                                  type: string
+                                  x-go-name: Color
+                                dashes:
+                                  type: boolean
+                                  x-go-name: Dashes
+                                fill:
+                                  type: integer
+                                  format: int64
+                                  x-go-name: Fill
+                                fillBelowTo:
+                                  type: string
+                                  x-go-name: FillBelowTo
+                                legend:
+                                  type: boolean
+                                  x-go-name: Legend
+                                lines:
+                                  type: boolean
+                                  x-go-name: Lines
+                                linewidth:
+                                  type: integer
+                                  format: int64
+                                  x-go-name: LineWidth
+                                nullPointMode:
+                                  type: string
+                                  x-go-name: NullPointMode
+                                stack:
+                                  type: object
+                                  properties:
+                                    Flag:
+                                      type: boolean
+                                    Value:
+                                      type: string
+                                  x-go-package: github.com/grafana-tools/sdk
+                                transform:
+                                  type: string
+                                  x-go-name: Transform
+                                yaxis:
+                                  type: integer
+                                  format: int64
+                                  x-go-name: YAxis
+                                zindex:
+                                  type: integer
+                                  format: int64
+                                  x-go-name: ZIndex
+                              x-go-package: github.com/grafana-tools/sdk
+                            x-go-name: SeriesOverrides
+                          show:
+                            type: string
+                            x-go-name: Show
+                          showHeader:
+                            type: boolean
+                            x-go-name: ShowHeader
+                          sort:
+                            description: for a graph panel
+                            type: object
+                            properties:
+                              col:
+                                type: integer
+                                format: int64
+                                x-go-name: Col
+                              desc:
+                                type: boolean
+                                x-go-name: Desc
+                            x-go-package: github.com/grafana-tools/sdk
+                          sortOrder:
+                            type: integer
+                            format: int64
+                            x-go-name: SortOrder
+                          spaceLength:
+                            type: integer
+                            format: uint64
+                            x-go-name: SpaceLength
+                          span:
+                            type: number
+                            format: float
+                            x-go-name: Span
+                          sparkline:
+                            description: for a stat
+                            type: object
+                            properties:
+                              fillColor:
+                                type: string
+                                x-go-name: FillColor
+                              full:
+                                type: boolean
+                                x-go-name: Full
+                              lineColor:
+                                type: string
+                                x-go-name: LineColor
+                              show:
+                                type: boolean
+                                x-go-name: Show
+                              ymax:
+                                type: number
+                                format: double
+                                x-go-name: YMax
+                              ymin:
+                                type: number
+                                format: double
+                                x-go-name: YMin
+                            x-go-package: github.com/grafana-tools/sdk
+                          stack:
+                            type: boolean
+                            x-go-name: Stack
+                          starred:
+                            type: boolean
+                            x-go-name: Starred
+                          stateFilter:
+                            type: array
+                            items:
+                              type: string
+                            x-go-name: StateFilter
+                          steppedLine:
+                            type: boolean
+                            x-go-name: SteppedLine
+                          styles:
+                            type: array
+                            items:
+                              description: for a table
+                              type: object
+                              properties:
+                                alias:
+                                  type: string
+                                  x-go-name: Alias
+                                colorMode:
+                                  type: string
+                                  x-go-name: ColorMode
+                                colors:
+                                  type: array
+                                  items:
+                                    type: string
+                                  x-go-name: Colors
+                                dateFormat:
+                                  type: string
+                                  x-go-name: DateFormat
+                                decimals:
+                                  type: integer
+                                  format: uint64
+                                  x-go-name: Decimals
+                                link:
+                                  type: boolean
+                                  x-go-name: Link
+                                linkTargetBlank:
+                                  type: boolean
+                                  x-go-name: LinkTargetBlank
+                                linkTooltip:
+                                  type: string
+                                  x-go-name: LinkTooltip
+                                linkUrl:
+                                  type: string
+                                  x-go-name: LinkUrl
+                                mappingType:
+                                  type: integer
+                                  format: int64
+                                  x-go-name: MappingType
+                                pattern:
+                                  type: string
+                                  x-go-name: Pattern
+                                thresholds:
+                                  type: array
+                                  items:
+                                    type: string
+                                  x-go-name: Thresholds
+                                type:
+                                  type: string
+                                  x-go-name: Type
+                                unit:
+                                  type: string
+                                  x-go-name: Unit
+                                valueMaps:
+                                  type: array
+                                  items:
+                                    description: for a stat
+                                    type: object
+                                    properties:
+                                      op:
+                                        type: string
+                                        x-go-name: Op
+                                      text:
+                                        type: string
+                                        x-go-name: TextType
+                                      value:
+                                        type: string
+                                        x-go-name: Value
+                                    x-go-package: github.com/grafana-tools/sdk
+                                  x-go-name: ValueMaps
+                              x-go-package: github.com/grafana-tools/sdk
+                            x-go-name: Styles
+                          tags:
+                            type: array
+                            items:
+                              type: string
+                            x-go-name: Tags
+                          targets:
+                            type: array
+                            items:
+                              description: for an any panel
+                              type: object
+                              properties:
+                                alias:
+                                  type: string
+                                  x-go-name: Alias
+                                aliasBy:
+                                  type: string
+                                  x-go-name: AliasBy
+                                alignOptions:
+                                  type: array
+                                  items:
+                                    description: |-
+                                      StackdriverAlignOptions defines the list of alignment options shown in
+                                      Grafana during query configuration.
+                                    type: object
+                                    properties:
+                                      expanded:
+                                        type: boolean
+                                        x-go-name: Expanded
+                                      label:
+                                        type: string
+                                        x-go-name: Label
+                                      options:
+                                        type: array
+                                        items:
+                                          description: |-
+                                            StackdriverAlignOption defines a single alignment option shown in Grafana
+                                            during query configuration.
+                                          type: object
+                                          properties:
+                                            label:
+                                              type: string
+                                              x-go-name: Label
+                                            metricKinds:
+                                              type: array
+                                              items:
+                                                type: string
+                                              x-go-name: MetricKinds
+                                            text:
+                                              type: string
+                                              x-go-name: Text
+                                            value:
+                                              type: string
+                                              x-go-name: Value
+                                            valueTypes:
+                                              type: array
+                                              items:
+                                                type: string
+                                              x-go-name: ValueTypes
+                                          x-go-package: github.com/grafana-tools/sdk
+                                        x-go-name: Options
+                                    x-go-package: github.com/grafana-tools/sdk
+                                  x-go-name: AlignOptions
+                                alignmentPeriod:
+                                  type: string
+                                  x-go-name: AlignmentPeriod
+                                bucketAggs:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      field:
+                                        type: string
+                                        x-go-name: Field
+                                      id:
+                                        type: string
+                                        x-go-name: ID
+                                      settings:
+                                        type: object
+                                        properties:
+                                          interval:
+                                            type: string
+                                            x-go-name: Interval
+                                          min_doc_count:
+                                            type: object
+                                            x-go-name: MinDocCount
+                                          order:
+                                            type: string
+                                            x-go-name: Order
+                                          orderBy:
+                                            type: string
+                                            x-go-name: OrderBy
+                                          size:
+                                            type: string
+                                            x-go-name: Size
+                                        x-go-name: Settings
+                                      type:
+                                        type: string
+                                        x-go-name: Type
+                                  x-go-name: BucketAggs
+                                crossSeriesReducer:
+                                  type: string
+                                  x-go-name: CrossSeriesReducer
+                                datasource:
+                                  type: string
+                                  x-go-name: Datasource
+                                dimensions:
+                                  type: object
+                                  additionalProperties:
+                                    type: string
+                                  x-go-name: Dimensions
+                                dsType:
+                                  description: For Elasticsearch
+                                  type: string
+                                  x-go-name: DsType
+                                expr:
+                                  description: For Prometheus
+                                  type: string
+                                  x-go-name: Expr
+                                filters:
+                                  type: array
+                                  items:
+                                    type: string
+                                  x-go-name: Filters
+                                format:
+                                  type: string
+                                  x-go-name: Format
+                                group:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      params:
+                                        type: array
+                                        items:
+                                          type: string
+                                        x-go-name: Params
+                                      type:
+                                        type: string
+                                        x-go-name: Type
+                                  x-go-name: Group
+                                groupBys:
+                                  type: array
+                                  items:
+                                    type: string
+                                  x-go-name: GroupBys
+                                hide:
+                                  type: boolean
+                                  x-go-name: Hide
+                                instant:
+                                  type: boolean
+                                  x-go-name: Instant
+                                interval:
+                                  type: string
+                                  x-go-name: Interval
+                                intervalFactor:
+                                  type: integer
+                                  format: int64
+                                  x-go-name: IntervalFactor
+                                legendFormat:
+                                  type: string
+                                  x-go-name: LegendFormat
+                                measurement:
+                                  description: For InfluxDB
+                                  type: string
+                                  x-go-name: Measurement
+                                metricColumn:
+                                  type: string
+                                  x-go-name: MetricColumn
+                                metricKind:
+                                  type: string
+                                  x-go-name: MetricKind
+                                metricName:
+                                  type: string
+                                  x-go-name: MetricName
+                                metricType:
+                                  type: string
+                                  x-go-name: MetricType
+                                metrics:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      field:
+                                        type: string
+                                        x-go-name: Field
+                                      id:
+                                        type: string
+                                        x-go-name: ID
+                                      type:
+                                        type: string
+                                        x-go-name: Type
+                                  x-go-name: Metrics
+                                namespace:
+                                  description: For CloudWatch
+                                  type: string
+                                  x-go-name: Namespace
+                                perSeriesAligner:
+                                  type: string
+                                  x-go-name: PerSeriesAligner
+                                period:
+                                  type: string
+                                  x-go-name: Period
+                                projectName:
+                                  description: |-
+                                    For the Stackdriver data source. Find out more information at
+                                    https:/grafana.com/docs/grafana/v6.0/features/datasources/stackdriver/
+                                  type: string
+                                  x-go-name: ProjectName
+                                query:
+                                  type: string
+                                  x-go-name: Query
+                                rawQuery:
+                                  type: boolean
+                                  x-go-name: RawQuery
+                                rawSql:
+                                  type: string
+                                  x-go-name: RawSql
+                                refId:
+                                  type: string
+                                  x-go-name: RefID
+                                region:
+                                  type: string
+                                  x-go-name: Region
+                                select:
+                                  type: array
+                                  items:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        params:
+                                          type: array
+                                          items:
+                                            type: string
+                                          x-go-name: Params
+                                        type:
+                                          type: string
+                                          x-go-name: Type
+                                  x-go-name: Select
+                                statistics:
+                                  type: array
+                                  items:
+                                    type: string
+                                  x-go-name: Statistics
+                                step:
+                                  type: integer
+                                  format: int64
+                                  x-go-name: Step
+                                table:
+                                  description: For PostgreSQL
+                                  type: string
+                                  x-go-name: Table
+                                target:
+                                  description: For Graphite
+                                  type: string
+                                  x-go-name: Target
+                                timeColumn:
+                                  type: string
+                                  x-go-name: TimeColumn
+                                timeField:
+                                  type: string
+                                  x-go-name: TimeField
+                                valueType:
+                                  type: string
+                                  x-go-name: ValueType
+                                where:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      datatype:
+                                        type: string
+                                        x-go-name: Datatype
+                                      name:
+                                        type: string
+                                        x-go-name: Name
+                                      params:
+                                        type: array
+                                        items:
+                                          type: string
+                                        x-go-name: Params
+                                      type:
+                                        type: string
+                                        x-go-name: Type
+                                  x-go-name: Where
+                              x-go-package: github.com/grafana-tools/sdk
+                            x-go-name: Targets
+                          thresholds:
+                            type: string
+                            items:
+                              type: object
+                              properties:
+                                colorMode:
+                                  description: critical, warning, ok, custom
+                                  type: string
+                                  x-go-name: ColorMode
+                                fill:
+                                  type: boolean
+                                  x-go-name: Fill
+                                fillColor:
+                                  description: 'hexadecimal color (e.g. #629e51, only
+                                    when ColorMode is "custom")'
+                                  type: string
+                                  x-go-name: FillColor
+                                line:
+                                  type: boolean
+                                  x-go-name: Line
+                                lineColor:
+                                  description: 'hexadecimal color (e.g. #629e51, only
+                                    when ColorMode is "custom")'
+                                  type: string
+                                  x-go-name: LineColor
+                                op:
+                                  description: gt or lt
+                                  type: string
+                                  x-go-name: Op
+                                value:
+                                  description: |-
+                                    the alert threshold value, we do not omitempty, since 0 is a valid
+                                    threshold
+                                  type: number
+                                  format: float
+                                  x-go-name: Value
+                                yaxis:
+                                  description: left or right
+                                  type: string
+                                  x-go-name: Yaxis
+                              x-go-package: github.com/grafana-tools/sdk
+                            x-go-name: Thresholds
+                          timeFrom:
+                            type: string
+                            x-go-name: TimeFrom
+                          timeShift:
+                            type: string
+                            x-go-name: TimeShift
+                          title:
+                            type: string
+                            x-go-name: Title
+                          tooltip:
+                            type: object
+                            properties:
+                              msResolution:
+                                type: boolean
+                                x-go-name: MsResolution
+                              shared:
+                                type: boolean
+                                x-go-name: Shared
+                              sort:
+                                type: integer
+                                format: int64
+                                x-go-name: Sort
+                              value_type:
+                                type: string
+                                x-go-name: ValueType
+                            x-go-package: github.com/grafana-tools/sdk
+                          tooltipDecimals:
+                            type: integer
+                            format: int64
+                            x-go-name: TooltipDecimals
+                          transform:
+                            type: string
+                            x-go-name: Transform
+                          transparent:
+                            type: boolean
+                            x-go-name: Transparent
+                          type:
+                            type: string
+                            x-go-name: Type
+                          valueFontSize:
+                            type: string
+                            x-go-name: ValueFontSize
+                          valueMaps:
+                            type: array
+                            items:
+                              description: for a stat
+                              type: object
+                              properties:
+                                op:
+                                  type: string
+                                  x-go-name: Op
+                                text:
+                                  type: string
+                                  x-go-name: TextType
+                                value:
+                                  type: string
+                                  x-go-name: Value
+                              x-go-package: github.com/grafana-tools/sdk
+                            x-go-name: ValueMaps
+                          valueName:
+                            type: string
+                            x-go-name: ValueName
+                          x-axis:
+                            type: boolean
+                            x-go-name: XAxis
+                          xAxis:
+                            type: object
+                            properties:
+                              show:
+                                type: boolean
+                                x-go-name: Show
+                            x-go-name: XAxis
+                          xBucketNumber:
+                            type: number
+                            format: double
+                            x-go-name: XBucketNumber
+                          xBucketSize:
+                            type: string
+                            x-go-name: XBucketSize
+                          xaxis:
+                            description: for a graph panel
+                            type: object
+                            properties:
+                              decimals:
+                                type: integer
+                                format: int64
+                                x-go-name: Decimals
+                              format:
+                                type: string
+                                x-go-name: Format
+                              label:
+                                type: string
+                                x-go-name: Label
+                              logBase:
+                                type: integer
+                                format: int64
+                                x-go-name: LogBase
+                              max:
+                                type: object
+                                title: 'FloatString represents special type for json
+                                  values that could be strings or ints: 100 or "100"'
+                                properties:
+                                  Valid:
+                                    type: boolean
+                                  Value:
+                                    type: number
+                                    format: double
+                                x-go-package: github.com/grafana-tools/sdk
+                              min:
+                                type: object
+                                title: 'FloatString represents special type for json
+                                  values that could be strings or ints: 100 or "100"'
+                                properties:
+                                  Valid:
+                                    type: boolean
+                                  Value:
+                                    type: number
+                                    format: double
+                                x-go-package: github.com/grafana-tools/sdk
+                              show:
+                                type: boolean
+                                x-go-name: Show
+                            x-go-package: github.com/grafana-tools/sdk
+                          y-axis:
+                            type: boolean
+                            x-go-name: YAxis
+                          yAxis:
+                            type: object
+                            properties:
+                              decimals:
+                                type: integer
+                                format: int64
+                                x-go-name: Decimals
+                              format:
+                                type: string
+                                x-go-name: Format
+                              logBase:
+                                type: integer
+                                format: int64
+                                x-go-name: LogBase
+                              max:
+                                type: string
+                                x-go-name: Max
+                              min:
+                                type: string
+                                x-go-name: Min
+                              show:
+                                type: boolean
+                                x-go-name: Show
+                              splitFactor:
+                                type: number
+                                format: double
+                                x-go-name: SplitFactor
+                            x-go-name: YAxis
+                          yBucketBound:
+                            type: string
+                            x-go-name: YBucketBound
+                          yBucketNumber:
+                            type: number
+                            format: double
+                            x-go-name: YBucketNumber
+                          yBucketSize:
+                            type: number
+                            format: double
+                            x-go-name: YBucketSize
+                          y_formats:
+                            type: array
+                            items:
+                              type: string
+                            x-go-name: YFormats
+                          yaxes:
+                            type: array
+                            items:
+                              description: for a graph panel
+                              type: object
+                              properties:
+                                decimals:
+                                  type: integer
+                                  format: int64
+                                  x-go-name: Decimals
+                                format:
+                                  type: string
+                                  x-go-name: Format
+                                label:
+                                  type: string
+                                  x-go-name: Label
+                                logBase:
+                                  type: integer
+                                  format: int64
+                                  x-go-name: LogBase
+                                max:
+                                  type: object
+                                  title: 'FloatString represents special type for
+                                    json values that could be strings or ints: 100
+                                    or "100"'
+                                  properties:
+                                    Valid:
+                                      type: boolean
+                                    Value:
+                                      type: number
+                                      format: double
+                                  x-go-package: github.com/grafana-tools/sdk
+                                min:
+                                  type: object
+                                  title: 'FloatString represents special type for
+                                    json values that could be strings or ints: 100
+                                    or "100"'
+                                  properties:
+                                    Valid:
+                                      type: boolean
+                                    Value:
+                                      type: number
+                                      format: double
+                                  x-go-package: github.com/grafana-tools/sdk
+                                show:
+                                  type: boolean
+                                  x-go-name: Show
+                              x-go-package: github.com/grafana-tools/sdk
+                            x-go-name: Yaxes
+                        x-go-package: github.com/grafana-tools/sdk
                       x-go-name: Panels
                     slug:
                       type: string
