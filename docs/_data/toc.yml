@@ -1,6 +1,6 @@
 - title: 🚀 Quick Start
   url: installation/quick-start
-  
+
 - title: 🗺 Overview
   url: project
   links:
@@ -18,9 +18,9 @@
         - title: Meshery Docs
           url: project/contributing-docs
         - title: Meshery Errors
-          url: project/contributing-error            
+          url: project/contributing-error
         - title: Meshery Server
-          url: project/contributing-server        
+          url: project/contributing-server
         - title: Meshery UI
           url: project/contributing-ui
     - title: Releases
@@ -110,6 +110,16 @@
       url: guides/upgrade
     - title: Using mesheryctl
       url: guides/mesheryctl
+      children:
+        - title: Using mesheryCTL
+          url: guides/mesheryctl/using-mesheryctl
+        - title: Configure autocompletion mesheryctl
+          url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
+        - title: Authenticate via meshery CLI
+          url: guides/mesheryctl/authenticate-with-meshery-via-cli
+        - title: Upgrading meshery CLI
+          url: guides/upgrade#upgrading-meshery-cli
+
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
 - title: 🛠 Extensibility
