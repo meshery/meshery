@@ -76,7 +76,7 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, req *http.Requ
 
 	// gets the extension version from package URL
 	splitURL := strings.Split(provider.GetProviderProperties().PackageURL, "/")
-	version := splitURL[len(splitURL) - 2]
+	version := splitURL[len(splitURL)-2]
 
 	extensionVersion := &ExtensionVersion{
 		Version: version,
