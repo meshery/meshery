@@ -51,7 +51,7 @@ WORKDIR /
 RUN UTIL_VERSION=$(curl -L -s https://api.github.com/repos/layer5io/kubeopenapi-jsonschema/releases/latest | \
 	grep tag_name | sed "s/ *\"tag_name\": *\"\\(.*\\)\",*/\\1/" | \
 	grep -v "rc\.[0-9]$"| head -n 1 ) \
-	&& curl -LO https://github.com/layer5io/kubeopenapi-jsonschema/releases/download/${UTIL_VERSION}/kubeopenapi-jsonschema \
+	&& curl -L https://github.com/layer5io/kubeopenapi-jsonschema/releases/download/${UTIL_VERSION}/kubeopenapi-jsonschema-alpine -o kubeopenapi-jsonschema \
 	&& chmod +x /kubeopenapi-jsonschema
 
 FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32

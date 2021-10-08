@@ -412,7 +412,19 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 				if err != nil {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
+			} else { // else we get version tag from the config file
+				mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+				if err != nil {
+					return errors.Wrap(err, "error processing meshconfig")
+				}
+
+				currCtx, err := mctlCfg.GetCurrentContext()
+				if err != nil {
+					return err
+				}
+				ReleaseTag = currCtx.GetVersion()
 			}
+
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/docker-compose.yaml"
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)

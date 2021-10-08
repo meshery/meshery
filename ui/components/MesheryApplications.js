@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
+import {  createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -197,6 +198,42 @@ function MesheryApplications({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const DEPLOY_URL = '/api/application/deploy';
 
+  const getMuiTheme = () => createTheme({
+    overrides : {
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
+          },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b" ,
+          marginTop : "7px",
+          marginRight : "8px",
+        },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      }
+    }
+  })
 
   const ACTION_TYPES = {
     FETCH_APPLICATIONS : { name : "FETCH_APPLICATION" ,
@@ -592,7 +629,7 @@ function MesheryApplications({
         <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       {
-        !showForm && <MUIDataTable
+        !showForm && <MuiThemeProvider theme={getMuiTheme()}><MUIDataTable
           title={<div className={classes.tableHeader}>Applications</div>}
           data={applications}
           columns={columns}
@@ -600,6 +637,7 @@ function MesheryApplications({
           options={options}
           className={classes.muiRow}
         />
+        </MuiThemeProvider>
       }
       <PromptComponent ref={modalRef} />
     </NoSsr>

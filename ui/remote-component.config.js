@@ -105,6 +105,8 @@ module.exports = { resolve : {
   "@material-ui/icons/CloudDownload" : require("@material-ui/icons/CloudDownload"),
   "@material-ui/icons/Print" : require("@material-ui/icons/Print"),
   "@material-ui/icons/ViewColumn" : require("@material-ui/icons/ViewColumn"),
+  "@material-ui/icons/PanTool" : require("@material-ui/icons/PanTool"),
+  "@material-ui/icons/ArrowDropUp" : require("@material-ui/icons/ArrowDropUp"),
   "@material-ui/icons/FilterList" : require("@material-ui/icons/FilterList"),
   "@material-ui/icons/CenterFocusStrong" : require("@material-ui/icons/CenterFocusStrong"),
   "mui-datatables" : require("mui-datatables"),
