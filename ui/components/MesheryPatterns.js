@@ -1,6 +1,7 @@
 // @ts-check
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
+import {  createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -202,6 +203,43 @@ function MesheryPatterns({
   const [showForm, setShowForm] = useState(false);
 
   const DEPLOY_URL = '/api/pattern/deploy';
+
+  const getMuiTheme = () => createTheme({
+    overrides : {
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
+          },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b" ,
+          marginTop : "7px",
+          marginRight : "8px",
+        },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      }
+    }
+  })
 
   const ACTION_TYPES = {
     FETCH_PATTERNS : {
@@ -619,14 +657,16 @@ function MesheryPatterns({
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       {
-        !showForm && <MUIDataTable
-          title={<div className={classes.tableHeader}>Patterns</div>}
-          data={patterns}
-          columns={columns}
-          // @ts-ignore
-          options={options}
-          className={classes.muiRow}
-        />
+        !showForm && <MuiThemeProvider theme={getMuiTheme()}>
+          <MUIDataTable
+            title={<div className={classes.tableHeader}>Patterns</div>}
+            data={patterns}
+            columns={columns}
+            // @ts-ignore
+            options={options}
+            className={classes.muiRow}
+          />
+        </MuiThemeProvider>
       }
       <PromptComponent ref={modalRef} />
     </NoSsr>
