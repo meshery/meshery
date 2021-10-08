@@ -9,13 +9,13 @@ import (
 )
 
 // Dummy struct
-type dummy_value struct {
+type dummyValue struct {
 	ID    string
 	Value interface{}
 }
 
-func (d *dummy_value) SetID(id string) { d.ID = id }
-func (d dummy_value) GetID() string    { return d.ID }
+func (d *dummyValue) SetID(id string) { d.ID = id }
+func (d dummyValue) GetID() string    { return d.ID }
 
 func TestSet(t *testing.T) {
 	// Reset global store
@@ -32,8 +32,8 @@ func TestSet(t *testing.T) {
 		name string
 		args args
 	}{
-		{name: "When value is an int", args: args{key: "k2", value: &dummy_value{Value: 123}}},
-		{name: "When value is a string", args: args{key: "k3", value: &dummy_value{Value: "123"}}},
+		{name: "When value is an int", args: args{key: "k2", value: &dummyValue{Value: 123}}},
+		{name: "When value is a string", args: args{key: "k3", value: &dummyValue{Value: "123"}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -58,10 +58,10 @@ func TestGetAll(t *testing.T) {
 	}
 
 	// Add data to the store
-	Set("key1", &dummy_value{Value: 12345})
-	Set("key1", &dummy_value{Value: 12345})
-	Set("key2", &dummy_value{Value: struct{ Name string }{Name: "val1"}})
-	Set("key2", &dummy_value{Value: struct{ Name string }{Name: "val2"}})
+	Set("key1", &dummyValue{Value: 12345})
+	Set("key1", &dummyValue{Value: 12345})
+	Set("key2", &dummyValue{Value: struct{ Name string }{Name: "val1"}})
+	Set("key2", &dummyValue{Value: struct{ Name string }{Name: "val2"}})
 
 	tests := []struct {
 		name string
@@ -73,7 +73,7 @@ func TestGetAll(t *testing.T) {
 			args: args{
 				key: "key1",
 			},
-			want: []Value{&dummy_value{Value: 12345}},
+			want: []Value{&dummyValue{Value: 12345}},
 		},
 		{
 			name: "When key exists with multiple values without duplicates",
@@ -81,8 +81,8 @@ func TestGetAll(t *testing.T) {
 				key: "key2",
 			},
 			want: []Value{
-				&dummy_value{Value: struct{ Name string }{Name: "val1"}},
-				&dummy_value{Value: struct{ Name string }{Name: "val2"}},
+				&dummyValue{Value: struct{ Name string }{Name: "val1"}},
+				&dummyValue{Value: struct{ Name string }{Name: "val2"}},
 			},
 		},
 		{
@@ -114,11 +114,11 @@ func TestPrefixMatch(t *testing.T) {
 	}
 
 	// Add data to the store
-	Set("key1", &dummy_value{Value: 1234})
-	Set("key1", &dummy_value{Value: 1235})
-	Set("key1", &dummy_value{Value: 1235})
-	Set("key2", &dummy_value{Value: struct{ Name string }{Name: "val1"}})
-	Set("key2", &dummy_value{Value: struct{ Name string }{Name: "val2"}})
+	Set("key1", &dummyValue{Value: 1234})
+	Set("key1", &dummyValue{Value: 1235})
+	Set("key1", &dummyValue{Value: 1235})
+	Set("key2", &dummyValue{Value: struct{ Name string }{Name: "val1"}})
+	Set("key2", &dummyValue{Value: struct{ Name string }{Name: "val2"}})
 
 	tests := []struct {
 		name    string
@@ -131,10 +131,10 @@ func TestPrefixMatch(t *testing.T) {
 				key: "key",
 			},
 			wantRes: []Value{
-				&dummy_value{Value: 1234},
-				&dummy_value{Value: 1235},
-				&dummy_value{Value: struct{ Name string }{Name: "val1"}},
-				&dummy_value{Value: struct{ Name string }{Name: "val2"}},
+				&dummyValue{Value: 1234},
+				&dummyValue{Value: 1235},
+				&dummyValue{Value: struct{ Name string }{Name: "val1"}},
+				&dummyValue{Value: struct{ Name string }{Name: "val2"}},
 			},
 		},
 	}
