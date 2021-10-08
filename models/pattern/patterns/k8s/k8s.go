@@ -16,8 +16,6 @@ func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v
 		return err
 	}
 
-	println(string(manifest))
-
 	return kubeClient.ApplyManifest(manifest, meshkube.ApplyOptions{
 		Namespace: oamComp.Namespace,
 		Update:    true,
@@ -55,7 +53,7 @@ func getAPIVersionFromComponent(comp v1alpha1.Component) string {
 }
 
 func getKindFromComponent(comp v1alpha1.Component) string {
-	kind := strings.TrimPrefix(comp.Annotations["pattern.meshery.io.k8s.k8skind"], "/")
+	kind := strings.TrimPrefix(comp.Annotations["pattern.meshery.io.k8s.k8sKind"], "/")
 
 	return kind
 }
