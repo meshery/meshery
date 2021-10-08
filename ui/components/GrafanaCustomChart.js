@@ -3,15 +3,15 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
   NoSsr, IconButton, Card, CardContent, CardHeader,
+  Tooltip, LinearProgress, Box
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withSnackbar } from 'notistack';
 import moment from 'moment';
 import OpenInNewIcon from '@material-ui/icons/OpenInNewOutlined';
+import WarningIcon from '@material-ui/icons/Warning';
 import CachedIcon from '@material-ui/icons/Cached';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Box from '@material-ui/core/Box';
 import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
@@ -40,14 +40,7 @@ const grafanaStyles = (theme) => ({
     gap : ' 0.5rem', },
   cardContent : { height : '100%',
     width : "100%" },
-  error : {
-    color : '#D32F2F',
-    width : '100%',
-    textAlign : 'center',
-    fontSize : '12px',
-    // fontFamily: 'Helvetica Nueue',
-    fontWeight : 'bold',
-  },
+  error : { color : '#D32F2F', },
 });
 
 const grafanaDateRangeToDate = (dt, startDate) => {
@@ -736,7 +729,6 @@ class GrafanaCustomChart extends Component {
 
       let loadingBar;
       let reloadButton;
-      let errorMessage;
 
       if (error){
         self.createOptions([], [], []); // add empty data to charts
@@ -745,12 +737,10 @@ class GrafanaCustomChart extends Component {
             <LinearProgress />
           </Box>
         );
-        errorMessage = 'Trying to reconnect to the Server';
       }
 
       if (errorCount > 3*panel.targets.length && typeof self.interval !== 'undefined') {
         clearInterval(self.interval); // clearing the interval to prevent further calls to get chart data
-        errorMessage = 'There was an error communicating with the server';
         loadingBar = null;
         reloadButton = (
           <IconButton
@@ -790,7 +780,6 @@ class GrafanaCustomChart extends Component {
       } else {
         mainChart = (
           <div>
-            <div className={classes.error}>{error && errorMessage}</div>
             <div ref={(ch) => self.chartRef = ch} className={classes.root} />
           </div>
         );
@@ -814,6 +803,12 @@ class GrafanaCustomChart extends Component {
             {!inDialog && (
               <CardHeader
                 disableTypography
+                avatar={
+                  error &&
+                  <Tooltip title="There was an error communicating with the server" placement="top">
+                    <WarningIcon className={classes.error}/>
+                  </Tooltip>
+                }
                 title={panel.title}
                 action={iconComponent}
                 className={classes.cardHeader}
