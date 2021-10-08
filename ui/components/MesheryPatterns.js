@@ -384,10 +384,10 @@ function MesheryPatterns({
       );
     }
 
-    if (type === "upload" || type=== "urlupload") {
+    if (type === "upload" || type === "urlupload") {
       let body = { save : true }
       if (type === "upload") {
-        body = JSON.stringify({  pattern_data : { pattern_data : data }, ...body })
+        body = JSON.stringify({ pattern_data : { pattern_data : data }, ...body })
       }
       if (type === "urlupload") {
         body = JSON.stringify({ url : data, ...body })
@@ -597,12 +597,17 @@ function MesheryPatterns({
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      const patternIds = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
-      let response = await showModal(patternIds.length)
-      if (response === "yes") {
-        deletePatterns(patternIds)
+      const toBeDeleted = Object.keys(row.lookup).map(idx => (
+        {
+          id : patterns[idx]?.id,
+          name : patterns[idx]?.name,
+        }
+      ))
+      let response = await showModal(toBeDeleted.length)
+      if (response.toLowerCase() === "yes") {
+        deletePatterns(JSON.stringify({ patterns : toBeDeleted }))
       }
-      if (response === "No")
+      if (response.toLowerCase() === "no")
         fetchPatterns(page, pageSize, search, sortOrder);
     },
 

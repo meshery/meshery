@@ -6,7 +6,6 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
-	"github.com/sirupsen/logrus"
 )
 
 // MesheryPatternPersister is the persister for persisting
@@ -63,15 +62,17 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id uuid.UUID) ([]byte, 
 	return marshalMesheryPattern(&pattern), nil
 }
 
-// DeleteMesheryPatterns takes in a array of profile ids and delete those if exist
-func (mpp *MesheryPatternPersister) DeleteMesheryPatterns( /*ids []uuid.UUID*/ ) ([]byte, error) {
-	// for _, id := range(ids) {
-	// 	pattern := MesheryPattern{ID: &id}
-	// 	mpp.DB.Delete(&pattern)
-	// }
-	logrus.Info("Came here did nothing-.................")
+// DeleteMesheryPatterns takes in a meshery-patterns and delete those if exist
+func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+	var deletedMaptterns []MesheryPattern
+	for _, pObj := range patterns.Patterns {
+		id := uuid.FromStringOrNil(pObj.Id)
+		pattern := MesheryPattern{ID: &id}
+		mpp.DB.Delete(&pattern)
+		deletedMaptterns = append(deletedMaptterns, pattern)
+	}
 
-	return nil, nil // ...
+	return marshalMesheryPatterns(deletedMaptterns), nil
 }
 
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {

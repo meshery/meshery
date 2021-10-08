@@ -1117,23 +1117,25 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// DeleteMesheryPatterns deletes meshery patterns with the given ids
-func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns string) ([]byte, error) {
+// DeleteMesheryPatterns deletes meshery patterns with the given ids and names
+func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
+	var reqBodyBuffer bytes.Buffer
+	if err := json.NewEncoder(&reqBodyBuffer).Encode(patterns); err != nil {
+		logrus.Error("unable to encode json: ", err)
+	}
 
-	// convert to buffer
-	bf := bytes.NewBufferString(patterns)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
 	// Create remote provider-url
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
 
-	cReq, _ := http.NewRequest(http.MethodDelete, "http://localhost:9876/patterns", bf)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), &reqBodyBuffer)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
@@ -1161,7 +1163,7 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns strin
 		return bdr, nil
 	}
 	// logrus.Errorf("error while fetching pattern: %s", bdr)
-	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", 200, "bdr")
+	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", 200, bdr)
 }
 
 func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {

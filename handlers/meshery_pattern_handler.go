@@ -241,13 +241,9 @@ func (h *Handler) DeleteMesheryPatternHandler(
 }
 
 // swagger:route DELETE /api/patterns PatternsAPI idDeleteMesheryPattern
-// Handle Delete for a Meshery Pattern
+// Handle Delete for multiple Meshery Patterns
 //
-// Deletes a meshery pattern with ID: id
-// responses:
-// 	200: noContentWrapper
-//
-// DeleteMultiMesheryPatternsHandler deletes a pattern with the given id
+// DeleteMultiMesheryPatternsHandler deletes patterns with the given ids
 func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -260,10 +256,16 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		logrus.Error(rw, "err deleting pattern, converting bytes: ", err)
 	}
 
-	strBody := string(body)
-	logrus.Debug("patterns to be deleted: ", strBody)
+	var patterns models.MesheryPatternDeleteRequestBody
+	fmt.Println(string(body))
+	err = json.Unmarshal([]byte(body), &patterns)
+	if err != nil {
+		logrus.Error("error marshalling patterns json: ", err)
+	}
 
-	resp, err := provider.DeleteMesheryPatterns(r, strBody)
+	logrus.Debugf("patterns to be deleted: %+v", patterns)
+
+	resp, err := provider.DeleteMesheryPatterns(r, patterns)
 
 	if err != nil {
 		http.Error(rw, fmt.Sprintf("failed to delete the pattern: %s", err), http.StatusInternalServerError)
