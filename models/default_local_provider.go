@@ -863,7 +863,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 			seededUUIDs = append(seededUUIDs, id)
 		}
 	}
-
 	names, content, err = getSeededComponents("Filter", log)
 	if err != nil {
 		log.Error(ErrGettingSeededComponents(err, "Filters"))
@@ -883,9 +882,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 			}
 			seededUUIDs = append(seededUUIDs, id)
 		}
-
 	}
-
 	names, content, err = getSeededComponents("Application", log)
 	if err != nil {
 		log.Error(ErrGettingSeededComponents(err, "Applications"))
