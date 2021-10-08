@@ -13,6 +13,7 @@
 | Dhruv Patel  | dhruv0000    | Layer5      |
 | Lee Calcote  | leecalcote   | Layer5      |
 | Nikhil Ladha | Nikhil-Ladha | Red Hat     |
+| Nithish Karthik  | sudo-NithishKarthik | Layer5 |
 
 ### Adapter Maintainers
 
