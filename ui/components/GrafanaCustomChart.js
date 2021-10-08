@@ -9,6 +9,9 @@ import { bindActionCreators } from 'redux';
 import { withSnackbar } from 'notistack';
 import moment from 'moment';
 import OpenInNewIcon from '@material-ui/icons/OpenInNewOutlined';
+import CachedIcon from '@material-ui/icons/Cached';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Box from '@material-ui/core/Box';
 import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
@@ -731,19 +734,48 @@ class GrafanaCustomChart extends Component {
       const { error, errorCount, chartData, } = this.state;
       const self = this;
 
-      if (errorCount > 3 && typeof self.interval !== 'undefined') {
+      let loadingBar;
+      let reloadButton;
+      let errorMessage;
+
+      if (error){
+        self.createOptions([], [], []); // add empty data to charts
+        loadingBar = (
+          <Box sx={{ width : '100%' }}>
+            <LinearProgress />
+          </Box>
+        );
+        errorMessage = 'Trying to reconnect to the Server';
+      }
+
+      if (errorCount > 3*panel.targets.length && typeof self.interval !== 'undefined') {
         clearInterval(self.interval); // clearing the interval to prevent further calls to get chart data
+        errorMessage = 'There was an error communicating with the server';
+        loadingBar = null;
+        reloadButton = (
+          <IconButton
+            key="Relaod"
+            aria-label="reloadButton the Chart"
+            color="inherit"
+            onClick={() => self.configChartData()}
+          >
+            <CachedIcon className={classes.cardHeaderIcon} />
+          </IconButton>
+        );
       }
 
       const iconComponent = (
-        <IconButton
-          key="chartDialog"
-          aria-label="Open chart in a dialog"
-          color="inherit"
-          onClick={() => handleChartDialogOpen(board, panel, panelData)}
-        >
-          <OpenInNewIcon className={classes.cardHeaderIcon} />
-        </IconButton>
+        <div>
+          {reloadButton}
+          <IconButton
+            key="chartDialog"
+            aria-label="Open chart in a dialog"
+            color="inherit"
+            onClick={() => handleChartDialogOpen(board, panel, panelData)}
+          >
+            <OpenInNewIcon className={classes.cardHeaderIcon} />
+          </IconButton>
+        </div>
       );
 
       let mainChart;
@@ -758,7 +790,7 @@ class GrafanaCustomChart extends Component {
       } else {
         mainChart = (
           <div>
-            <div className={classes.error}>{error && 'There was an error communicating with the server'}</div>
+            <div className={classes.error}>{error && errorMessage}</div>
             <div ref={(ch) => self.chartRef = ch} className={classes.root} />
           </div>
         );
@@ -766,6 +798,7 @@ class GrafanaCustomChart extends Component {
       if (this.state.sparkline){
         return (
           <NoSsr>
+            {loadingBar}
             <div className={classes.sparklineCardContent}>
               <div>{panel.title}</div>
               <div>{mainChart}</div>
@@ -776,6 +809,7 @@ class GrafanaCustomChart extends Component {
       }
       return (
         <NoSsr>
+          {loadingBar}
           <Card className={classes.card}>
             {!inDialog && (
               <CardHeader
