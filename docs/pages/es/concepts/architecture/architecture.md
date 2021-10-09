@@ -17,7 +17,7 @@ Meshery y sus componentes están escritos utilizando los siguientes lenguajes de
 | :------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | Meshery Server                                                       | Golang, gRPC, GraphQL, [SMP](https://smp-spec.io)                                 |
 | [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/), [SMI](https://smi-spec.io), [OAM](https://oam.dev)  |
-| [Meshery WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
+| [Meshery WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust y C++                                                                        |
 | Meshery UI                                                           | ReactJS, NextJS, BillboardJS                                                      |
 | Meshery Provider UI                                                  | ReactJS, NextJS                                                                   |
 | [Meshery Remote Providers](/extensibility/providers)                 | _cualquiera_ - debe adherirse a los [Extension Points]({{site.baseurl}}/extensibility) de Meshery |
@@ -78,7 +78,7 @@ _Ver la sección [**Operator**]({{ site.baseurl }}/concepts/architecture/operato
 
 ## Base de datos
 
-La base de datos de Meshery es responsable de recopilar y centralizar el estado de todos los elementos bajo administración, incluyendo la infraestructura, la aplicación y los propios componentes de Meshery. La base de datos de Meshery, a la vez que persiste para archivar, es tratado como caché.
+La base de datos de Meshery es responsable de recopilar y centralizar el estado de todos los elementos bajo administración, incluyendo la infraestructura, la aplicación y los propios componentes de Meshery. La base de datos de Meshery, a la vez que persiste para archivar, es tratada como caché.
 
 [![Meshery Database]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)]({{ site.baseurl }}/concepts/architecture/database)
 
