@@ -259,7 +259,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	var patterns models.MesheryPatternDeleteRequestBody
 	err = json.Unmarshal([]byte(body), &patterns)
 	if err != nil {
-		logrus.Error("error marshalling patterns json: ", err)
+		logrus.Error("error marshaling patterns json: ", err)
 	}
 
 	logrus.Debugf("patterns to be deleted: %+v", patterns)

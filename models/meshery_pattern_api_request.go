@@ -8,6 +8,6 @@ type MesheryPatternDeleteRequestBody struct {
 
 // DeletePatternModel is the model for individual patterns to be deleted
 type deletePatternModel struct {
-	Id   string `json:"id,omitempty"`
+	ID   string `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
 }
