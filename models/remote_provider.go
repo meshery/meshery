@@ -1132,10 +1132,10 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
 	// Create remote provider-url
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, "delete"))
 	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
 
-	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), &reqBodyBuffer)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), &reqBodyBuffer)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {

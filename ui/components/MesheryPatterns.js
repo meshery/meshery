@@ -551,8 +551,8 @@ function MesheryPatterns({
     const jsonPatterns = JSON.stringify(patterns)
 
     try {
-      await promisifiedDataFetch("/api/patterns", {
-        method : "DELETE",
+      await promisifiedDataFetch("/api/patterns/delete", {
+        method : "POST",
         credentials : "include",
         body : jsonPatterns
       })
