@@ -1,7 +1,7 @@
 // @ts-check
 import React, { useState, useEffect, useRef } from "react";
 import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import {  createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -189,6 +189,10 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
   );
 }
 
+function resetSelectedPattern() {
+  return { show : false, pattern : null }
+}
+
 function MesheryPatterns({
   updateProgress, enqueueSnackbar, closeSnackbar, user, classes
 }) {
@@ -200,7 +204,7 @@ function MesheryPatterns({
   const modalRef = useRef(null);
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [showForm, setShowForm] = useState(false);
+  const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
 
   const DEPLOY_URL = '/api/pattern/deploy';
 
@@ -218,7 +222,7 @@ function MesheryPatterns({
       },
       MUIDataTableSearch : {
         searchIcon : {
-          color : "#607d8b" ,
+          color : "#607d8b",
           marginTop : "7px",
           marginRight : "8px",
         },
@@ -384,13 +388,13 @@ function MesheryPatterns({
       );
     }
 
-    if (type === "upload" || type=== "urlupload") {
-      let body = { save : true }
+    if (type === "upload" || type === "urlupload") {
+      let body
       if (type === "upload") {
-        body = JSON.stringify({  pattern_data : { pattern_data : data }, ...body })
+        body = JSON.stringify({ pattern_data : { pattern_file : data }, save : true })
       }
       if (type === "urlupload") {
-        body = JSON.stringify({ url : data, ...body })
+        body = JSON.stringify({ url : data, save : true })
       }
       dataFetch(
         `/api/pattern`,
@@ -413,7 +417,6 @@ function MesheryPatterns({
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
-
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
@@ -421,7 +424,7 @@ function MesheryPatterns({
         event.target.result,
         "",
         file?.name || "meshery_" + Math.floor(Math.random() * 100),
-        "urlupload",
+        "upload",
       );
     });
     reader.readAsText(file);
@@ -509,8 +512,8 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
-              <Tooltip title = "Configure">
-                <IconButton onClick={() => setShowForm({ pattern : patterns[tableMeta.rowIndex], show : true })}>
+              <Tooltip title="Configure">
+                <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
                   <ListAltIcon />
                 </IconButton>
               </Tooltip>
@@ -650,14 +653,14 @@ function MesheryPatterns({
 
   return (
     <NoSsr>
-      {showForm &&
-        <PatternForm onSubmit={handleSubmit} show={setShowForm} pattern={showForm.pattern} />}
+      {selectedPattern.show &&
+        <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
 
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       {
-        !showForm && <MuiThemeProvider theme={getMuiTheme()}>
+        !selectedPattern.show && <MuiThemeProvider theme={getMuiTheme()}>
           <MUIDataTable
             title={<div className={classes.tableHeader}>Patterns</div>}
             data={patterns}
@@ -690,7 +693,7 @@ export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(w
 
 
 
-function PatternForm({ pattern, onSubmit, show }) {
+function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState([]);
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
   const [yaml, setYaml] = useState(pattern.pattern_file);
@@ -751,7 +754,7 @@ function PatternForm({ pattern, onSubmit, show }) {
 
   function handleSubmitFinalPattern(yaml, id, name, action) {
     onSubmit(yaml, id, name, action);
-    show(false);
+    setSelectedPattern(resetSelectedPattern()); // Remove selected pattern
   }
 
   const ns = "default";
@@ -783,7 +786,7 @@ function PatternForm({ pattern, onSubmit, show }) {
     <>
       <AppBar position="static" className={classes.appBar} elevation={0}>
         <Toolbar>
-          <IconButton edge="start" className={classes.backButton} color="inherit" onClick={() => show(false)}>
+          <IconButton edge="start" className={classes.backButton} color="inherit" onClick={() => setSelectedPattern(resetSelectedPattern())}>
             <ArrowBackIcon />
           </IconButton>
           <Typography variant="h6">
@@ -865,7 +868,9 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
 
   return (
     <div>
-      <Card style={cardStyle}>
+      <Card
+      // @ts-ignore
+        style={cardStyle}>
         <CardContent style={cardcontentStyle}>
           <CodeMirror
             value={yaml}
