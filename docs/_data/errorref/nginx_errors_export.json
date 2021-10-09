@@ -128,6 +128,15 @@
         "short_description": "Error occured while applying Helm Chart",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1014": {
+        "name": "ErrUnmarshalCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to unmarshal the : ",
+        "probable_cause": "Object is not a valid json object",
+        "suggested_remediation": "Make sure if the object passed is a valid json"
       }
     }
   }
