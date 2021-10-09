@@ -9,9 +9,9 @@ language: es
 list: include
 ---
 
-## ¿Qué es Meshery Databases?
+## ¿Qué son las Meshery Databases?
 
-Meshery Databases funciona como repositorio para [MeshSync](/concepts/architecture/meshsync), preferencias del usuario y configuraciones del sistema. Ambas base de datos se consideran efímeras y deben ser tratadas como cachés. La retención de datos está atada a la vida útil de su instancia de Meshery Server. [Remote Providers](/extensibility/providers) pueden ofrecer persistencia de datos a largo plazo. Las API de Meshery ofrecen mecanismos para clientes, como [`mesheryctl`](/reference/mesheryctl) y UI de Meshery para recuperar datos.
+Las Meshery Databases funcionan como repositorios para [MeshSync](/concepts/architecture/meshsync), preferencias del usuario y configuraciones del sistema. Ambas bases de datos se consideran efímeras y deben ser tratadas como cachés. La retención de datos está atada a la vida útil de su instancia de Meshery Server. Los [Remote Providers](/extensibility/providers) pueden ofrecer persistencia de datos a largo plazo. Las API de Meshery ofrecen mecanismos para clientes, como [`mesheryctl`](/reference/mesheryctl) y UI de Meshery para recuperar datos.
 
 Ver la figura a continuación para obtener detalles adicionales de los formatos de datos soportados y el tipo de datos almacenados.
 
