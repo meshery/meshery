@@ -1,4 +1,3 @@
- 
 // @ts-check
 import React, { useState, useEffect, useRef } from "react";
 import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
@@ -38,7 +37,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import { actionTypes, updateProgress } from "../lib/store";
+import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
