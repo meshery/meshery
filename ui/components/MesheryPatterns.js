@@ -547,34 +547,33 @@ function MesheryPatterns({
     return response;
   }
 
-  async function deletePatterns(patternIds) {
-    dataFetch(
-      `/api/patterns`,
-      {
+  async function deletePatterns(patterns) {
+    const jsonPatterns = JSON.stringify(patterns)
+
+    try {
+      await promisifiedDataFetch("/api/patterns", {
         method : "DELETE",
         credentials : "include",
-        body : patternIds,
-      },
-      () => {
-        updateProgress({ showProgress : false });
-        setTimeout(() => {
-          enqueueSnackbar(`${patternIds.length} Patterns deleted.`, {
-            variant : "success",
-            autoHideDuration : 3000,
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-          });
-        }, 1000);
-        fetchPatterns(page, pageSize, search, sortOrder);
-      },
+        body : jsonPatterns
+      })
+      updateProgress({ showProgress : false });
+      setTimeout(() => {
+        enqueueSnackbar(`${patterns.patterns.length} Patterns deleted.`, {
+          variant : "success",
+          autoHideDuration : 3000,
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+        });
+      }, 1500);
+      fetchPatterns(page, pageSize, search, sortOrder);
+    } catch (e) {
       handleError("Failed to delete patterns")
-    );
-
+    }
   }
 
   const options = {
@@ -605,7 +604,7 @@ function MesheryPatterns({
       ))
       let response = await showModal(toBeDeleted.length)
       if (response.toLowerCase() === "yes") {
-        deletePatterns(JSON.stringify({ patterns : toBeDeleted }))
+        deletePatterns({ patterns : toBeDeleted })
       }
       if (response.toLowerCase() === "no")
         fetchPatterns(page, pageSize, search, sortOrder);
