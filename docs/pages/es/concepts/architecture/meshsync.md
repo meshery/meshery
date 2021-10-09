@@ -13,13 +13,13 @@ list: include
 <img src="{{site.baseurl}}/assets/img/meshsync/meshsync.svg" align="left" 
     style="margin-right:1rem;margin-bottom:.5rem;" width="20%" />
 
-MeshSync es un controlador personalizado de Kubernetes que provee descubrimiento escalonado y sincronización continua con Meshery Server en cuanto al estado del clúster de Kubernetes, service meshes, y sus cargas de trabajo.
+MeshSync es un controlador de Kubernetes personalizado que provee descubrimiento escalonado y sincronización continua con Meshery Server en cuanto al estado del clúster de Kubernetes, service meshes y sus cargas de trabajo.
 
 </p>
 
 La instantánea de trabajo de MeshSync del estado de cada clúster y service mesh bajo administración se almacena en la memoria y se actualiza continuamente.
 
-MeshSync es administrada por el <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>.
+MeshSync es administrado por el <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>.
 
 ## ¿Cuáles son las responsabilidades principales de MeshSync?
 
