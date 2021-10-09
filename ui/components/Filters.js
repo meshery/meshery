@@ -31,6 +31,7 @@ import dataFetch from "../lib/data-fetch";
 import URLUploader from "./URLUploader";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
+import fileOperations from "../utils/configurationFileHandlersEnum"
 
 const styles = (theme) => ({
   grid : {
@@ -142,7 +143,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, filter.id, filter.name, "delete")}
+            onClick={() => onSubmit(yaml, filter.id, filter.name, fileOperations.DELETE)}
           >
             <DeleteIcon />
           </IconButton>
@@ -302,7 +303,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   function handleSubmit(data, id, name, type) {
     updateProgress({ showProgress : true });
-    if (type === "delete") {
+    if (type === fileOperations.DELETE) {
       dataFetch(
         `/api/filter/${id}`,
         { credentials : "include", method : "DELETE" },
@@ -317,12 +318,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       );
     }
 
-    if (type === "upload" || type === "urlupload") {
+    if (type === fileOperations.FILE_UPLOAD || type === fileOperations.URL_UPLOAD) {
       let body = { save : true }
-      if (type === "upload") {
-        body = JSON.stringify({ ...body, filter_data : { filter_data : data } })
+      if (type ===fileOperations.FILE_UPLOAD) {
+        body = JSON.stringify({ ...body, filter_data : { filter_file : data } })
       }
-      if (type === "urlupload") {
+      if (type ===  fileOperations.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
@@ -347,12 +348,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(Math.random() * 100), "upload");
+      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(Math.random() * 100), fileOperations.FILE_UPLOAD);
     });
     reader.readAsText(file);
   }
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), fileOperations.URL_UPLOAD);
     console.log(link, "valid");
   }
   const columns = [
