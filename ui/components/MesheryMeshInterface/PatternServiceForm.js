@@ -1,8 +1,10 @@
 // @ts-check
-import React from "react";
+import React, { useState } from "react";
 import { Tab, Tabs, AppBar, Typography, IconButton, Toolbar } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCompress, faExpandArrowsAlt} from "@fortawesome/free-solid-svg-icons";
 import Tooltip from '@material-ui/core/Tooltip';
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
@@ -55,12 +57,14 @@ function a11yProps(index) {
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip, appBarColor, onSettingsChange, onTraitsChange }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip, appBarColor, tooltipConfigurations, onSettingsChange, onTraitsChange }) {
   const [tab, setTab] = React.useState(0);
-  const [settings, setSettings, getSettingsRefValue] = useStateCB(formData?.settings ? formData.settings : {}, onSettingsChange);
-  const [traits, setTraits, getTraitsRefValue] = useStateCB(formData?.traits ? formData.traits : {}, onTraitsChange);
-  const handleTabChange = (_, newValue) => setTab(newValue);
-
+  const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {}, onSettingsChange);
+  const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {}, onTraitsChange);
+  const [tooltipExpanded, setTooltipExpanded] = useState(false)
+  const handleTabChange = (_, newValue) => {
+    setTab(newValue);
+  };
   const renderTraits = () => !!schemaSet.traits?.length;
 
   const submitHandler = (val) => {
@@ -95,6 +99,13 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
     );
   }
 
+  const hanldeMaximizeOrMinimize = () => {
+              if(tooltipExpanded) tooltipConfigurations.minimizeTooltip()
+              else tooltipConfigurations.maximizeTooltip()
+              setTooltipExpanded(prev => !prev)
+            }
+  
+  console.log(schemaSet)
   return (
     <div>
       {!renderAsTooltip ? (<Typography variant="h6" gutterBottom>
@@ -112,9 +123,8 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                 </Tooltip>
               </label>
             )}
-            <IconButton style={{ paddingLeft : '0.1rem' }} onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}>
-              <Delete style={{ color : "#ffffff" }} fontSize="small"/>
-            </IconButton>
+            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={hanldeMaximizeOrMinimize} style={{cursor : "pointer", marginRight: "0.2rem"}} />
+              <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem', marginRight: "0.2rem", cursor: "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}/>
           </Toolbar>
         </AppBar>
       )}
