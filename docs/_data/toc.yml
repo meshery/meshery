@@ -111,14 +111,15 @@
     - title: Using mesheryctl
       url: guides/mesheryctl
       children:
-        - title: Using mesheryCTL
+        - title: Using mesheryctl
           url: guides/mesheryctl/using-mesheryctl
-        - title: Configure autocompletion mesheryctl
+        - title: Configure autocompletion for mesheryctl
           url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
-        - title: Authenticate via meshery CLI
+        - title: Authenticate via Meshery CLI
           url: guides/mesheryctl/authenticate-with-meshery-via-cli
-        - title: Upgrading meshery CLI
+        - title: Upgrading Meshery CLI
           url: guides/upgrade#upgrading-meshery-cli
+
 
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
