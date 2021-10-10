@@ -48,7 +48,7 @@ import jsYaml from "js-yaml";
 import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppsIcon from "./ConnectionWizard/icons/apps";
-import fileOperations from "../utils/configurationFileHandlersEnum"
+import FILE_OPS from "../utils/configurationFileHandlersEnum"
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
   tableHeader : { fontWeight : "bolder",
@@ -166,7 +166,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit(yaml, application.id, application.name, fileOperations.UPDATE)}
+            onClick={() => onSubmit(yaml, application.id, application.name, FILE_OPS.UPDATE)}
           >
             <SaveIcon />
           </IconButton>
@@ -175,7 +175,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, application.id, application.name, fileOperations.DELETE)}
+            onClick={() => onSubmit(yaml, application.id, application.name, FILE_OPS.DELETE)}
           >
             <DeleteIcon />
           </IconButton>
@@ -335,7 +335,7 @@ function MesheryApplications({
 
   function handleSubmit(data, id, name, type) {
     updateProgress({ showProgress : true })
-    if (type === fileOperations.DELETE) {
+    if (type === FILE_OPS.DELETE) {
       dataFetch(
         `/api/application/${id}`,
         { credentials : "include",
@@ -351,7 +351,7 @@ function MesheryApplications({
       );
     }
 
-    if (type === fileOperations.UPDATE) {
+    if (type === FILE_OPS.UPDATE) {
       dataFetch(
         `/api/application`,
         { credentials : "include",
@@ -367,13 +367,13 @@ function MesheryApplications({
       );
     }
 
-    if (type === fileOperations.FILE_UPLOAD || type === fileOperations.URL_UPLOAD) {
+    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
-      if (type === fileOperations.FILE_UPLOAD) {
+      if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({ ...body,   application_data : { application_file : data }
         })
       }
-      if (type === fileOperations.URL_UPLOAD) {
+      if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
@@ -404,14 +404,14 @@ function MesheryApplications({
         event.target.result,
         "",
         file?.name || "meshery_" + Math.floor(Math.random() * 100),
-        fileOperations.FILE_UPLOAD,
+        FILE_OPS.FILE_UPLOAD,
       );
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), fileOperations.URL_UPLOAD);
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), FILE_OPS.URL_UPLOAD);
     // console.log(link, "valid");
   }
 
@@ -907,13 +907,13 @@ function PatternForm({ application, onSubmit, show }) {
               }}
               onBlur={(a) => saveCodeEditorChanges(a)}
             />
-            <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, fileOperations.FILE_UPLOAD)} />
+            <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, FILE_OPS.FILE_UPLOAD)} />
             <CardActions style={{ justifyContent : "flex-end" }}>
               <Tooltip title="Update Application">
                 <IconButton
                   aria-label="Update"
                   color="primary"
-                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, fileOperations.UPDATE)}
+                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, FILE_OPS.UPDATE)}
                 >
                   <SaveIcon />
                 </IconButton>
@@ -922,7 +922,7 @@ function PatternForm({ application, onSubmit, show }) {
                 <IconButton
                   aria-label="Delete"
                   color="primary"
-                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, fileOperations.DELETE)}
+                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, FILE_OPS.DELETE)}
                 >
                   <DeleteIcon />
                 </IconButton>

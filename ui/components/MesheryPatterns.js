@@ -49,7 +49,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import URLUploader from "./URLUploader";
 import { createPatternFromConfig, createWorkloadTraitSets, getPatternServiceName } from "./MesheryMeshInterface/helpers";
 import LazyPatternServiceForm from "./MesheryMeshInterface/LazyPatternServiceForm";
-import fileOperations from "../utils/configurationFileHandlersEnum"
+import FILE_OPS from "../utils/configurationFileHandlersEnum"
 
 const styles = (theme) => ({
   grid : {
@@ -171,7 +171,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name, fileOperations.UPDATE)}
+            onClick={() => onSubmit(yaml, pattern.id, pattern.name, FILE_OPS.UPDATE)}
           >
             <SaveIcon />
           </IconButton>
@@ -351,7 +351,7 @@ function MesheryPatterns({
 
   function handleSubmit(data, id, name, type) {
     updateProgress({ showProgress : true })
-    if (type === fileOperations.DELETE) {
+    if (type === FILE_OPS.DELETE) {
       dataFetch(
         `/api/pattern/${id}`,
         {
@@ -368,7 +368,7 @@ function MesheryPatterns({
       );
     }
 
-    if (type === fileOperations.UPDATE) {
+    if (type === FILE_OPS.UPDATE) {
       dataFetch(
         `/api/pattern`,
         {
@@ -385,12 +385,12 @@ function MesheryPatterns({
       );
     }
 
-    if (type === fileOperations.FILE_UPLOAD || type=== fileOperations.URL_UPLOAD) {
+    if (type === FILE_OPS.FILE_UPLOAD || type=== FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
-      if (type === fileOperations.FILE_UPLOAD) {
+      if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({  pattern_data : { pattern_file : data }, ...body })
       }
-      if (type === fileOperations.URL_UPLOAD) {
+      if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ url : data, ...body })
       }
       dataFetch(
@@ -422,14 +422,14 @@ function MesheryPatterns({
         event.target.result,
         "",
         file?.name || "meshery_" + Math.floor(Math.random() * 100),
-        fileOperations.URL_UPLOAD,
+        FILE_OPS.URL_UPLOAD,
       );
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), fileOperations.URL_UPLOAD);
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), FILE_OPS.URL_UPLOAD);
     // console.log(link, "valid");
   }
   const columns = [
@@ -880,13 +880,13 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
             }}
             onBlur={(a) => saveCodeEditorChanges(a)}
           />
-          <CustomButton title="Save Pattern" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, fileOperations.FILE_UPLOAD)} />
+          <CustomButton title="Save Pattern" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, FILE_OPS.FILE_UPLOAD)} />
           <CardActions style={{ justifyContent : "flex-end" }}>
             <Tooltip title="Update Pattern">
               <IconButton
                 aria-label="Update"
                 color="primary"
-                onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, fileOperations.UPDATE)}
+                onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, FILE_OPS.UPDATE)}
               >
                 <SaveIcon />
               </IconButton>
@@ -895,7 +895,7 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
               <IconButton
                 aria-label="Delete"
                 color="primary"
-                onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, fileOperations.DELETE)}
+                onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, FILE_OPS.DELETE)}
               >
                 <DeleteIcon />
               </IconButton>
