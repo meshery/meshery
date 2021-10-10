@@ -9,7 +9,7 @@ language: es
 list: include
 ---
 
-## Componentes, su proposito y Lenguajes
+## Componentes, su propósito y Lenguajes
 
 Meshery y sus componentes están escritos utilizando los siguientes lenguajes de programación y tecnologías.
 
