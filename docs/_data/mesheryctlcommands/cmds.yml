@@ -255,16 +255,22 @@ system-context:
           description: create a new context in config.yaml file- specify the list of adapters to be added
           usage:
               mesheryctl system context create [context name] --adapters [list of adapters]
+          example:
+              mesheryctl system context create k8s-sample --adapters "meshery-osm:10010", "meshery-istio:10000"
         set:
           name: --set, -s
           description: create a new context in config.yaml file- set as current context
           usage:
               mesheryctl system context create [context name] --set
+          example:
+              mesheryctl system context create k8s-sample --set
         url:
           name: --url, -u
           description: create a new context in config.yaml file- set Meshery server URL. Defaults to "https://localhost:9081"
           usage:
               mesheryctl system context create [context name] --url [URL]
+          example:
+              mesheryctl system context create k8s-sample --url "https://localhost:9990"
     
     delete:
       name: delete
@@ -364,6 +370,8 @@ perf:
           description: 'Path to service mesh performance test configuration file (default: empty string).'
           usage:
               mesheryctl perf apply [profile-name] --url [URL] --file [path to file]
+          example:
+              mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --file perf-config.yaml
         load-generator:
           name: --load-generator 
           arg: apply
