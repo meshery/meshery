@@ -61,13 +61,13 @@ export function getMetadata(rawdata,res) {
       display : {
         key : 'Title',
         // value : res.Labels.split(' -_- ')?.[0] || "No Title"
-        value : (rawdata[0] ? rawdata[0].name : res.Labels.split(' -_- ')?.[0]) || "No Title"
+        value : (rawdata ? rawdata[0].name : res.Labels.split(' -_- ')?.[0]) || "No Title"
       }
     },
     url : {
       display : {
         key : 'URL',
-        value : (rawdata[0] ? rawdata[0].runner_results.URL: res.Labels.split(' -_- ')?.[1]) || "No URL"
+        value : (rawdata ? rawdata[0].runner_results.URL: res.Labels.split(' -_- ')?.[1]) || "No URL"
       }
     },
     startTime : {
@@ -224,8 +224,8 @@ export function makeTitle (rawdata,res) {
       console.log(res.Labels)
       var labels = res.Labels.split(' -_- ')
       // title.push(`Labels: ${labels.map(item => item + '\n')}`)
-      title.push(`Title: ${rawdata[0] ? rawdata[0].name : labels[0]}`)
-      title.push(`URL: ${rawdata[0] ? rawdata[0].runner_results.URL : labels[1]}`)
+      title.push(`Title: ${rawdata ? rawdata[0].name : labels[0]}`)
+      title.push(`URL: ${rawdata ? rawdata[0].runner_results.URL : labels[1]}`)
       title.push(`Start Time: ${formatDate(res.StartTime)}`)
     } else { // grpc results
       title.push(`Destination: ${res.Destination}`)

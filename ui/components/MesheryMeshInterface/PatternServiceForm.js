@@ -4,7 +4,7 @@ import { Tab, Tabs, AppBar, Typography, IconButton, Toolbar } from "@material-ui
 import { Delete } from "@material-ui/icons";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCompress, faExpandArrowsAlt} from "@fortawesome/free-solid-svg-icons";
+import { faCompress, faExpandArrowsAlt } from "@fortawesome/free-solid-svg-icons";
 import Tooltip from '@material-ui/core/Tooltip';
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
@@ -100,11 +100,11 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
   }
 
   const hanldeMaximizeOrMinimize = () => {
-              if(tooltipExpanded) tooltipConfigurations.minimizeTooltip()
-              else tooltipConfigurations.maximizeTooltip()
-              setTooltipExpanded(prev => !prev)
-            }
-  
+    if (tooltipExpanded) tooltipConfigurations.minimizeTooltip()
+    else tooltipConfigurations.maximizeTooltip()
+    setTooltipExpanded(prev => !prev)
+  }
+
   console.log(schemaSet)
   return (
     <div>
@@ -123,8 +123,8 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                 </Tooltip>
               </label>
             )}
-            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={hanldeMaximizeOrMinimize} style={{cursor : "pointer", marginRight: "0.2rem"}} />
-              <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem', marginRight: "0.2rem", cursor: "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}/>
+            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={hanldeMaximizeOrMinimize} style={{ cursor : "pointer", marginRight : "0.2rem" }} />
+            <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem', marginRight : "0.2rem", cursor : "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}/>
           </Toolbar>
         </AppBar>
       )}
