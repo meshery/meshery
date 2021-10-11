@@ -272,6 +272,10 @@ type PerfProfile {
 	total_results: Int
 	updated_at: String
 	user_id: String!
+	request_headers: String
+	request_cookies: String
+	request_body: String
+	content_type: String
 }
 
 type MesheryResult {

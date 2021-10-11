@@ -142,6 +142,10 @@ type PerfProfile struct {
 	TotalResults      *int      `json:"total_results"`
 	UpdatedAt         *string   `json:"updated_at"`
 	UserID            string    `json:"user_id"`
+	RequestHeaders    *string   `json:"request_headers"`
+	RequestCookies    *string   `json:"request_cookies"`
+	RequestBody       *string   `json:"request_body"`
+	ContentType       *string   `json:"content_type"`
 }
 
 type ReSyncActions struct {

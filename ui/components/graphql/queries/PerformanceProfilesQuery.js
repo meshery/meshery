@@ -23,6 +23,10 @@ export default function fetchPerformanceProfiles(variables) {
               total_results
               updated_at
               user_id
+              request_body
+              request_cookies
+              request_headers
+              content_type
             }
           }
         }
