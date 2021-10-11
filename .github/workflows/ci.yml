@@ -200,7 +200,7 @@ jobs:
           mkdir /home/runner/.meshery
           cd ./meshery-consul
           go run main.go &
-          sleep 10
+          sleep 60
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: http://localhost:9876
