@@ -10,8 +10,7 @@ import (
 )
 
 func TestSystemCmdIntegration(t *testing.T) {
-	// FIXME: skipping this integration test until it is fixed
-	if true {
+	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
 
