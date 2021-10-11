@@ -22,7 +22,6 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -127,6 +126,9 @@ func start() error {
 		return err
 	}
 	mesheryImageVersion := currCtx.GetVersion()
+	if currCtx.GetChannel() == "stable" && currCtx.GetVersion() == "latest" {
+		mesheryImageVersion = "latest"
+	}
 
 	if utils.PlatformFlag != "" {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
@@ -147,10 +149,6 @@ func start() error {
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
-		if currCtx.GetChannel() == "stable" && currCtx.GetVersion() == "latest" {
-			mesheryImageVersion = "latest"
-		}
-
 		// download the docker-compose.yaml file corresponding to the current version
 		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
 			return ErrDownloadFile(err, utils.DockerComposeFile)
@@ -338,67 +336,29 @@ func start() error {
 			return err
 		}
 
-		channel, _, err := utils.GetChannelAndVersion(currCtx)
-		if err != nil {
-			return err
-		}
-
-		var manifests []utils.Manifest
-		// check if skipUpdate flag is used
-		// if it is, check if cached manifests can be used
-		if skipUpdateFlag {
-			err = utils.CanUseCachedManifests(currCtx)
-			if err != nil {
-				return errors.Wrap(err, "cannot start Meshery")
-			}
-			for _, adapter := range currCtx.GetAdapters() {
-				var temp utils.Manifest
-				temp.Path = adapter + "-deployment.yaml"
-				manifests = append(manifests, temp)
-			}
-		} else {
-			// fetch the manifest files corresponding to the version specified
-			manifests, err = utils.FetchManifests(currCtx)
-			// here, if there is some error fetching manifests, check if cached manifests can be used
-			// if there is an error using cached manifests too(err from CanUseCachedManifests), return error
-			if err != nil {
-				err = utils.CanUseCachedManifests(currCtx)
-				if err != nil {
-					return errors.Wrap(err, "cannot fetch manifests or use cached manifests")
-				}
-			} else { // case when fetch manifests works as expected
-				// path to the manifest files ~/.meshery/manifests
-				manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
-
-				// change version in meshery-deployment manifest
-				if currCtx.GetVersion() == "latest" && currCtx.GetChannel() == "stable" {
-					mesheryImageVersion = "latest"
-				}
-
-				err = utils.ChangeManifestVersion(channel, mesheryImageVersion, filepath.Join(manifestFiles, utils.MesheryDeployment))
-				if err != nil {
-					return err
-				}
-
-				for _, adapter := range currCtx.Adapters {
-					adapterManifest := adapter + "-deployment.yaml"
-					err = utils.ChangeManifestVersion(channel, "latest", filepath.Join(manifestFiles, adapterManifest))
-					if err != nil {
-						return err
-					}
-				}
-			}
-		}
-
 		log.Info("Starting Meshery...")
 
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 		spinner.Start()
 
-		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-		err = utils.ApplyManifestFiles(manifests, currCtx.GetAdapters(), kubeClient, false, false)
-		if err != nil {
-			return ErrApplyManifest(err, false, false)
+		// Apply the helm charts with specified meshery image version
+		var chartVersion string
+		if mesheryImageVersion != "latest" {
+			chartVersion = mesheryImageVersion
+		}
+		if err = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+			Namespace:       utils.MesheryNamespace,
+			CreateNamespace: true,
+			ChartLocation: meshkitkube.HelmChartLocation{
+				Repository: utils.HelmChartURL,
+				Chart:      utils.HelmChartName,
+				Version:    chartVersion,
+			},
+			OverrideValues: map[string]interface{}{
+				"image.tag": currCtx.GetChannel() + "-" + mesheryImageVersion,
+			},
+		}); err != nil {
+			return errors.Wrap(err, "cannot start Meshery")
 		}
 
 		deadline := time.Now().Add(20 * time.Second)
@@ -490,43 +450,8 @@ func start() error {
 		return ErrHealthCheckFailed(err)
 	}
 	// If k8s is available in case of platform docker than we deploy operator
-	if err = hc.Run(); err == nil {
-		// create a client
-		kubeClient, err := meshkitkube.New([]byte(""))
-		if err != nil {
-			return err
-		}
-
-		err = utils.CreateManifestsFolder()
-		if err != nil {
-			return err
-		}
-
-		if skipUpdateFlag {
-			err = utils.CanUseCachedOperatorManifests(currCtx)
-			if err != nil {
-				return errors.Wrap(err, "no cached operator manifests")
-			}
-			log.Println("using cached operator manifests...")
-			// skip applying update on operators when the flag is used
-			err = utils.ApplyOperatorManifest(kubeClient, false, false)
-
-			if err != nil {
-				return ErrApplyOperatorManifest(err, false, false)
-			}
-		} else {
-			// Download operator manifest
-			err = utils.DownloadOperatorManifest()
-			if err != nil {
-				return ErrDownloadFile(err, "operator manifest")
-			}
-
-			err = utils.ApplyOperatorManifest(kubeClient, true, false)
-
-			if err != nil {
-				return ErrApplyOperatorManifest(err, true, false)
-			}
-		}
+	if err = hc.Run(); err != nil {
+		return ErrHealthCheckFailed(err)
 	}
 
 	// Check for Meshery status before opening it in browser

@@ -65,6 +65,11 @@ const (
 	cmdSystem cmdType = "system"
 )
 
+const (
+	HelmChartURL = "https://meshery.io/charts/"
+	HelmChartName = "meshery"
+)
+
 var (
 	// ResetFlag indicates if a reset is required
 	ResetFlag bool
