@@ -17,8 +17,6 @@ package system
 import (
 	"os"
 	"os/exec"
-	"path/filepath"
-	"time"
 
 	"github.com/pkg/errors"
 
@@ -86,9 +84,6 @@ func stop() error {
 		return nil
 	}
 
-	// Get the current platform and the specified adapters in the config.yaml
-	RequestedAdapters := currCtx.GetAdapters()
-
 	switch currCtx.GetPlatform() {
 	case "docker":
 		// if the platform is docker, then stop all the running containers
@@ -135,55 +130,23 @@ func stop() error {
 			return nil
 		}
 
-		// check if the manifest folder exists on the machine
-		if _, err := os.Stat(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)); os.IsNotExist(err) {
-			log.Errorf("%s folder does not exist.", utils.ManifestsFolder)
-			return err
-		}
-
-		// check if deployments exists in manifest folder
-		if _, err := os.Stat(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder, utils.MesheryDeployment)); os.IsNotExist(err) {
-			_, err = utils.FetchManifests(currCtx)
-			if err != nil {
-				return errors.Wrap(err, "Unable to fetch Meshery deployment manifests")
-			}
-			// Download operator manifest
-			err = utils.DownloadOperatorManifest()
-			if err != nil {
-				return ErrDownloadFile(err, "Meshery Operator manifest")
-			}
-		}
-
-		version := currCtx.GetVersion()
-		if version == "latest" {
-			if currCtx.GetChannel() == "edge" {
-				version = "master"
-			} else {
-				version, err = utils.GetLatestStableReleaseTag()
-				if err != nil {
-					return err
-				}
-			}
-		}
-		// get correct manfestsURL based on version
-		manifestsURL, err := utils.GetManifestTreeURL(version)
-		if err != nil {
-			return errors.Wrap(err, "failed to make GET request")
-		}
-		// pick all the manifest files stored in minfestsURL
-		manifests, err := utils.ListManifests(manifestsURL)
-
-		if err != nil {
-			return errors.Wrap(err, "failed to make GET request")
-		}
-
 		log.Info("Stopping Meshery...")
 
-		// delete the Meshery deployment using the manifest files to stop Meshery
-		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, true)
-		if err != nil {
-			return ErrApplyManifest(err, false, true)
+		// Delete the helm chart installation
+		// Note: this doesn't delete the CRDs (broker and meshsync)
+		if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+			Namespace: utils.MesheryNamespace,
+			ChartLocation: meshkitkube.HelmChartLocation{
+				Repository: utils.HelmChartURL,
+				Chart: utils.HelmChartName,
+			},
+			Delete: true,
+		}); err != nil {
+			return errors.Wrap(err, "cannot stop Meshery")
 		}
+
+		// TODO: need to delete the CRDs and CR instances
+
 	}
 
 	// If k8s is available in case of platform docker than we remove operator
@@ -197,36 +160,9 @@ func stop() error {
 	if err != nil {
 		return ErrHealthCheckFailed(err)
 	}
-	// stopping meshery operator pods if k8s is running
-	if err = hc.Run(); err == nil {
-		client, err := meshkitkube.New([]byte(""))
-		if err != nil {
-			return err
-		}
-		err = utils.ApplyOperatorManifest(client, false, true)
-		if err != nil {
-			return ErrApplyOperatorManifest(err, false, true)
-		}
 
-		s := utils.CreateDefaultSpinner("Terminating Meshery pods", "\nPods terminated.")
-		s.Start()
-
-		deadline := time.Now().Add(20 * time.Second)
-
-		for !(time.Now().After(deadline)) {
-			ok, err := utils.IsMesheryRunning("kubernetes")
-
-			if err != nil {
-				return err
-			}
-
-			if !ok {
-				break
-			} else {
-				time.Sleep(1 * time.Second)
-			}
-		}
-		s.Stop()
+	if err = hc.Run(); err != nil {
+		return ErrHealthCheckFailed(err)
 	}
 
 	log.Info("Meshery is stopped.")
