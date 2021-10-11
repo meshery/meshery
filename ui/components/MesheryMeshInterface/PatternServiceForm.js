@@ -99,7 +99,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
     );
   }
 
-  const hanldeMaximizeOrMinimize = () => {
+  const handleMaximizeOrMinimize = () => {
     if (tooltipExpanded) tooltipConfigurations.minimizeTooltip()
     else tooltipConfigurations.maximizeTooltip()
     setTooltipExpanded(prev => !prev)
@@ -123,7 +123,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                 </Tooltip>
               </label>
             )}
-            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={hanldeMaximizeOrMinimize} style={{ cursor : "pointer", marginRight : "0.2rem" }} />
+            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={handleMaximizeOrMinimize} style={{ cursor : "pointer", marginRight : "0.2rem" }} />
             <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem', marginRight : "0.2rem", cursor : "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}/>
           </Toolbar>
         </AppBar>
