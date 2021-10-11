@@ -5,4 +5,4 @@ const FILE_OPS = {
   DELETE : "delete",
 }
 
-export default FILE_OPS
+export default FILE_OPS;
