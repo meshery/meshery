@@ -989,7 +989,9 @@ class MesheryPerformanceComponent extends React.Component {
                   </IconButton>
                 </Typography>
                 <div className={classes.chartContent} style={chartStyle}>
-                  <MesheryChart data={[result && result.runner_results ? result.runner_results : {}]} />
+                  <MesheryChart
+                    rawdata={[result && result.runner_results ? result : {}]}
+                    data={[result && result.runner_results ? result.runner_results : {}]} />
                 </div>
               </div>
             )}
