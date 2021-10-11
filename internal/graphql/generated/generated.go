@@ -167,6 +167,7 @@ type ComplexityRoot struct {
 		RequestBody       func(childComplexity int) int
 		RequestCookies    func(childComplexity int) int
 		RequestHeaders    func(childComplexity int) int
+		ServiceMesh       func(childComplexity int) int
 		TotalResults      func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
 		UserID            func(childComplexity int) int
@@ -785,6 +786,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PerfProfile.RequestHeaders(childComplexity), true
 
+	case "PerfProfile.service_mesh":
+		if e.complexity.PerfProfile.ServiceMesh == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.ServiceMesh(childComplexity), true
+
 	case "PerfProfile.total_results":
 		if e.complexity.PerfProfile.TotalResults == nil {
 			break
@@ -1365,6 +1373,7 @@ type PerfProfile {
 	request_cookies: String
 	request_body: String
 	content_type: String
+	service_mesh: String
 }
 
 type MesheryResult {
@@ -4444,6 +4453,38 @@ func (ec *executionContext) _PerfProfile_content_type(ctx context.Context, field
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PerfProfile_service_mesh(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ServiceMesh, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_getAvailableAddons(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7280,6 +7321,8 @@ func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._PerfProfile_request_body(ctx, field, obj)
 		case "content_type":
 			out.Values[i] = ec._PerfProfile_content_type(ctx, field, obj)
+		case "service_mesh":
+			out.Values[i] = ec._PerfProfile_service_mesh(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

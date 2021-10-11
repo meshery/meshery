@@ -41,6 +41,7 @@ export type PerformanceProfilesQueryResponse = {|
       +request_cookies: ?string,
       +request_headers: ?string,
       +content_type: ?string,
+      +service_mesh: ?string,
     |}>,
   |}
 |};
@@ -76,6 +77,7 @@ query PerformanceProfilesQuery(
       request_cookies
       request_headers
       content_type
+      service_mesh
     }
   }
 }
@@ -244,6 +246,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "content_type",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "service_mesh",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -270,16 +279,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ea8e58dcb4fd2f943108faa643b46074",
+    "cacheID": "9d7eded079e0a1f23d58b8f400fbf1f7",
     "id": null,
     "metadata": {},
     "name": "PerformanceProfilesQuery",
     "operationKind": "query",
-    "text": "query PerformanceProfilesQuery(\n  $selector: PageFilter!\n) {\n  getPerformanceProfiles(selector: $selector) {\n    page\n    page_size\n    total_count\n    profiles {\n      concurrent_request\n      created_at\n      duration\n      endpoints\n      id\n      last_run\n      load_generators\n      name\n      qps\n      total_results\n      updated_at\n      user_id\n      request_body\n      request_cookies\n      request_headers\n      content_type\n    }\n  }\n}\n"
+    "text": "query PerformanceProfilesQuery(\n  $selector: PageFilter!\n) {\n  getPerformanceProfiles(selector: $selector) {\n    page\n    page_size\n    total_count\n    profiles {\n      concurrent_request\n      created_at\n      duration\n      endpoints\n      id\n      last_run\n      load_generators\n      name\n      qps\n      total_results\n      updated_at\n      user_id\n      request_body\n      request_cookies\n      request_headers\n      content_type\n      service_mesh\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'f587a62f5e14961b9b0ced17a5c3e8a5';
+(node/*: any*/).hash = '8c86c93431616aef124858b289e06a4f';
 
 module.exports = node;

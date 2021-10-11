@@ -276,6 +276,7 @@ type PerfProfile {
 	request_cookies: String
 	request_body: String
 	content_type: String
+	service_mesh: String
 }
 
 type MesheryResult {

@@ -146,6 +146,7 @@ type PerfProfile struct {
 	RequestCookies    *string   `json:"request_cookies"`
 	RequestBody       *string   `json:"request_body"`
 	ContentType       *string   `json:"content_type"`
+	ServiceMesh       *string   `json:"service_mesh"`
 }
 
 type ReSyncActions struct {
