@@ -398,7 +398,7 @@ class MesheryResults extends Component {
             <TableRow>
               <TableCell colSpan={colSpan}>
                 <div className={classes.chartContent}>
-                  <MesheryChart data={[row]} hideTitle />
+                  <MesheryChart rawdata={[self.state.results[rowMeta.dataIndex]]} data={[row]} hideTitle />
                 </div>
                 {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
                   <div>
