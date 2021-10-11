@@ -162,7 +162,7 @@ function PerformanceCalendar({
       >
         <div>
           <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
-          <MesheryChart data={[result && result.runner_results
+          <MesheryChart rawdata={[result && result.runner_results ? result : {}]} data={[result && result.runner_results
             ? result.runner_results
             : {}]} />
         </div>
