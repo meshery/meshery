@@ -21,9 +21,13 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/protobuf/encoding/protojson"
 	corev1 "k8s.io/api/core/v1"
 )
+
+type tempPerformanceConfig struct {
+	Config      *SMP.PerformanceTestConfig `json:"test,omitempty"`
+	ServiceMesh *SMP.ServiceMesh           `json:"mesh,omitempty"`
+}
 
 // LoadTestUsingSMPHandler runs the load test with the given parameters and SMP
 func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -54,35 +58,57 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	jsonBytes, _ := yaml.YAMLToJSON(body)
 
-	perfTest := &SMP.PerformanceTestConfig{}
-	if err := protojson.Unmarshal(jsonBytes, perfTest); err != nil {
+	perfTest := &tempPerformanceConfig{}
+	if err := json.Unmarshal(jsonBytes, perfTest); err != nil {
 		h.log.Error(ErrParseBool(err, "provided input"))
 		http.Error(w, ErrParseBool(err, "provided input").Error(), http.StatusBadRequest)
 		return
 	}
 
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
-	testName := perfTest.Name
+	testName := perfTest.Config.Name
 	if testName == "" {
 		h.log.Error(ErrBlankName(err))
 		http.Error(w, ErrBlankName(err).Error(), http.StatusForbidden)
 		return
 	}
 
-	// get mesh name from the query
-	q := req.URL.Query()
-	meshName := q.Get("mesh")
+	var meshName string
 
-	// in-case of empty meshName run test with istio
-	if meshName == "" {
+	switch perfTest.ServiceMesh.Type {
+	case 0:
+		meshName = "none"
+	case 1:
+		meshName = "app_mesh"
+	case 2:
+		meshName = "consul"
+	case 3:
+		meshName = "istio"
+	case 4:
+		meshName = "kuma"
+	case 5:
+		meshName = "linkerd"
+	case 6:
+		meshName = "traefik_mesh"
+	case 7:
+		meshName = "octarine"
+	case 8:
+		meshName = "network_service_mesh"
+	case 9:
+		meshName = "tanzu"
+	case 10:
+		meshName = "open_service_mesh"
+	case 11:
+		meshName = "nginx_service_mesh"
+	default:
 		meshName = "istio"
 	}
 
-	profileID := perfTest.Id
+	profileID := perfTest.Config.Id
 
 	loadTestOptions := &models.LoadTestOptions{}
 
-	testDuration, err := time.ParseDuration(perfTest.Duration)
+	testDuration, err := time.ParseDuration(perfTest.Config.Duration)
 	if err != nil {
 		h.log.Error(ErrParseDuration)
 		http.Error(w, ErrParseDuration.Error(), http.StatusBadRequest)
@@ -94,7 +120,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}
 
 	// TODO: check multiple clients in case of distributed perf test
-	testClient := perfTest.Clients[0]
+	testClient := perfTest.Config.Clients[0]
 
 	// TODO: consider the multiple endpoints
 	loadTestOptions.URL = testClient.EndpointUrls[0]

@@ -75,13 +75,6 @@ var applyCmd = &cobra.Command{
 			if err != nil {
 				return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 			}
-			q := req.URL.Query()
-
-			// add service mesh to the request as query parameter
-			if testMesh != "" {
-				q.Add("mesh", testMesh)
-			}
-
 		} else {
 			// Run test based on flags
 			if testName == "" {
