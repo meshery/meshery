@@ -4,7 +4,7 @@ import { Tab, Tabs, AppBar, Typography, IconButton, Toolbar } from "@material-ui
 import { Delete } from "@material-ui/icons";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCompress, faExpandArrowsAlt} from "@fortawesome/free-solid-svg-icons";
+import { faCompress, faExpandArrowsAlt } from "@fortawesome/free-solid-svg-icons";
 import Tooltip from '@material-ui/core/Tooltip';
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
@@ -100,18 +100,18 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
   }
 
   const hanldeMaximizeOrMinimize = () => {
-              if(tooltipExpanded) tooltipConfigurations.minimizeTooltip()
-              else tooltipConfigurations.maximizeTooltip()
-              setTooltipExpanded(prev => !prev)
-            }
-  
+    if (tooltipExpanded) tooltipConfigurations.minimizeTooltip()
+    else tooltipConfigurations.maximizeTooltip()
+    setTooltipExpanded(prev => !prev)
+  }
+
   console.log(schemaSet)
   return (
     <div>
       {!renderAsTooltip ? (<Typography variant="h6" gutterBottom>
         {schemaSet.workload?.title}
       </Typography>) : (
-        <AppBar style={{ boxShadow : `0px 2px 4px -1px ${pSBCr(appBarColor, -30)}`, position: "sticky" }}>
+        <AppBar style={{ boxShadow : `0px 2px 4px -1px ${pSBCr(appBarColor, -30)}`, position : "sticky" }}>
           <Toolbar variant="dense" style={{ padding : "0 0px", background : `linear-gradient(115deg, ${pSBCr( appBarColor, -20)} 0%, ${appBarColor} 100%)`, height : "0.7rem !important" }}>
             <p style={{ margin : "auto auto auto 10px", fontSize : "16px" }}>{schemaSet.workload.title || CamelCaseToSentanceCase(schemaSet.workload["object-type"])}</p>
             {schemaSet?.workload?.description && (
@@ -123,8 +123,8 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                 </Tooltip>
               </label>
             )}
-            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={hanldeMaximizeOrMinimize} style={{cursor : "pointer", marginRight: "0.2rem"}} />
-              <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem', marginRight: "0.2rem", cursor: "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}/>
+            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={hanldeMaximizeOrMinimize} style={{ cursor : "pointer", marginRight : "0.2rem" }} />
+            <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem', marginRight : "0.2rem", cursor : "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}/>
           </Toolbar>
         </AppBar>
       )}
