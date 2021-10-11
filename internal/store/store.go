@@ -29,14 +29,14 @@ func Initialize() {
 // If the key already exists but the data has changed then
 // it will also be added to the list. It computes md5 hash of the data
 // to check if the data already exists
-func Set(key string, value interface{}) {
+func Set(key string, value Value) {
 	globalStore.Lock()
 	defer globalStore.Unlock()
 
 	hash := md5Hash(value)
 
 	if globalStore.store[key] == nil {
-		globalStore.store[key] = map[string]interface{}{}
+		globalStore.store[key] = map[string]Value{}
 	}
 
 	_, ok := globalStore.store[key][hash]
@@ -44,11 +44,13 @@ func Set(key string, value interface{}) {
 		return
 	}
 
+	value.SetID(hash)
+
 	globalStore.store[key][hash] = value
 }
 
 // Delete will take the key and values which needs to be deleted from the global store and delete that entry
-func Delete(key string, value interface{}) {
+func Delete(key string, value Value) {
 	globalStore.Lock()
 	defer globalStore.Unlock()
 
@@ -58,11 +60,11 @@ func Delete(key string, value interface{}) {
 }
 
 // GetAll returns all the values stored against the key
-func GetAll(key string) []interface{} {
+func GetAll(key string) []Value {
 	globalStore.RLock()
 	defer globalStore.RUnlock()
 
-	res := []interface{}{}
+	res := []Value{}
 
 	val, ok := globalStore.store[key]
 	if !ok {
@@ -77,7 +79,7 @@ func GetAll(key string) []interface{} {
 }
 
 // PrefixMatch will return all the values which matches the given key
-func PrefixMatch(key string) (res []interface{}) {
+func PrefixMatch(key string) (res []Value) {
 	globalStore.RLock()
 	defer globalStore.RUnlock()
 
@@ -90,6 +92,22 @@ func PrefixMatch(key string) (res []interface{}) {
 	}
 
 	return
+}
+
+// GetByID takes in an id and returns the result that matches that ID
+func GetByID(id string) (Value, bool) {
+	globalStore.RLock()
+	defer globalStore.RUnlock()
+
+	for _, v := range globalStore.store {
+		for _, el := range v {
+			if el.GetID() == id {
+				return el, true
+			}
+		}
+	}
+
+	return nil, false
 }
 
 // md5Hash takes in any value and returns md5 hash of it
