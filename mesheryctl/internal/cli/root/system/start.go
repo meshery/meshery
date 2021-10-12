@@ -337,7 +337,6 @@ func start() error {
 		}
 
 		log.Info("Starting Meshery...")
-
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 		spinner.Start()
 
@@ -354,8 +353,11 @@ func start() error {
 				Chart:      utils.HelmChartName,
 				Version:    chartVersion,
 			},
+			// this is the same as setting flag --set image.tag=channel-version
 			OverrideValues: map[string]interface{}{
-				"image.tag": currCtx.GetChannel() + "-" + mesheryImageVersion,
+				"image": map[string]interface{}{
+					"tag": currCtx.GetChannel() + "-" + mesheryImageVersion,
+				},
 			},
 		}); err != nil {
 			return errors.Wrap(err, "cannot start Meshery")
