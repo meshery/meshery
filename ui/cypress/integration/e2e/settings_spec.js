@@ -1,12 +1,9 @@
 describe('Settings', () => {
   describe('Environment', () => {
     beforeEach(() => {
-      // cy.intercept('GET', '/api/system/meshsync/grafana').as('getScan')
-
       cy.selectProviderNone()
 
       cy.visit('/settings')
-      // cy.wait('@getScan')
     })
 
     it('click on Discover Cluster and send a ping to the cluster', () => {
@@ -34,17 +31,15 @@ describe('Settings', () => {
 
   describe('Service Meshes', () => {
     beforeEach(() => {
-      // cy.intercept('GET', '/api/system/meshsync/grafana').as('getScan')
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters')
 
       cy.selectProviderNone()
       cy.visit('/settings')
-      // cy.wait('@getScan')
 
       cy.get('[data-cy="tabServiceMeshes"]').click()
       cy.wait('@getMeshAdapters')
     })
-    it('ping and submit Consul', () => {
+    it.skip('ping and submit Consul', () => {
       cy.intercept('GET', '/api/system/adapters*').as('getAdapterPing')
       cy.intercept('POST', '/api/system/adapter/manage').as('postMeshManage')
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters')
