@@ -138,9 +138,9 @@ func stop() error {
 			Namespace: utils.MesheryNamespace,
 			ChartLocation: meshkitkube.HelmChartLocation{
 				Repository: utils.HelmChartURL,
-				Chart: utils.HelmChartName,
+				Chart:      utils.HelmChartName,
 			},
-			Delete: true,
+			Action: "Uninstall",
 		}); err != nil {
 			return errors.Wrap(err, "cannot stop Meshery")
 		}
