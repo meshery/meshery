@@ -1,6 +1,6 @@
 services:
   meshery:
-    image: layer5/meshery:stable-v0.5.10
+    image: layer5/meshery:stable-latest
     labels:
     - com.centurylinklabs.watchtower.enable=true
     environment:
@@ -8,13 +8,15 @@ services:
     - SAAS_BASE_URL=https://meshery.layer5.io
     - ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002
       meshery-octarine:10003 meshery-nsm:10004 meshery-kuma:10007 meshery-cpx:10008
-      meshery-osm:10009 meshery-traefik-mesh:10006
+      meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010
     - EVENT=mesheryLocal
+    - PORT=9081
     - MESHERY_SERVER_CALLBACK_URL=
     volumes:
     - $HOME/.kube:/home/appuser/.kube:ro
+    - $HOME/.minikube:$HOME/.minikube:ro
     ports:
-    - 9081:8080
+    - 32088:9081
   meshery-istio:
     image: layer5/meshery-istio:stable-latest
     labels:
@@ -22,7 +24,7 @@ services:
     ports:
     - 10000:10000
   watchtower:
-    image: containrrr/watchtower
+    image: v2tec/watchtower
     labels:
     - com.centurylinklabs.watchtower.enable=true
     volumes:

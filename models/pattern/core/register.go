@@ -15,6 +15,8 @@ import (
 )
 
 type genericCapability struct {
+	ID string `json:"id,omitempty"`
+
 	// OAMRefSchema is the json schema for the workload
 	OAMRefSchema string `json:"oam_ref_schema,omitempty"`
 
@@ -24,6 +26,16 @@ type genericCapability struct {
 	Restricted bool `json:"restricted,omitempty"`
 
 	Metadata map[string]string `json:"metadata,omitempty"`
+}
+
+// SetID sets the ID of the capability
+func (cap *genericCapability) SetID(id string) {
+	cap.ID = id
+}
+
+// GetID returns the ID of the capability
+func (cap *genericCapability) GetID() string {
+	return cap.ID
 }
 
 // WorkloadCapability is the struct for capturing the workload definition
@@ -49,7 +61,15 @@ func RegisterWorkload(data []byte) (err error) {
 		workload.OAMDefinition.Kind,
 		workload.OAMDefinition.Name,
 	)
-	store.Set(key, workload)
+
+	schema := map[string]interface{}{}
+	_ = json.Unmarshal([]byte(workload.OAMRefSchema), &schema)
+	if workload.Metadata == nil {
+		workload.Metadata = map[string]string{}
+	}
+	workload.Metadata["display.ui.meshery.io/name"], _ = schema["title"].(string)
+
+	store.Set(key, &workload)
 
 	return
 }
@@ -77,7 +97,15 @@ func RegisterTrait(data []byte) (err error) {
 		trait.OAMDefinition.Kind,
 		trait.OAMDefinition.Name,
 	)
-	store.Set(key, trait)
+
+	schema := map[string]interface{}{}
+	_ = json.Unmarshal([]byte(trait.OAMRefSchema), &schema)
+	if trait.Metadata == nil {
+		trait.Metadata = map[string]string{}
+	}
+	trait.Metadata["display.ui.meshery.io/name"], _ = schema["title"].(string)
+
+	store.Set(key, &trait)
 
 	return
 }
@@ -105,7 +133,15 @@ func RegisterScope(data []byte) (err error) {
 		scope.OAMDefinition.Kind,
 		scope.OAMDefinition.Name,
 	)
-	store.Set(key, scope)
+
+	schema := map[string]interface{}{}
+	_ = json.Unmarshal([]byte(scope.OAMRefSchema), &schema)
+	if scope.Metadata == nil {
+		scope.Metadata = map[string]string{}
+	}
+	scope.Metadata["display.ui.meshery.io/name"], _ = schema["title"].(string)
+
+	store.Set(key, &scope)
 
 	return
 }
@@ -116,9 +152,9 @@ func GetWorkloads() (caps []WorkloadCapability) {
 
 	res := store.PrefixMatch(key)
 	for _, wc := range res {
-		casted, ok := wc.(WorkloadCapability)
+		casted, ok := wc.(*WorkloadCapability)
 		if ok {
-			caps = append(caps, casted)
+			caps = append(caps, *casted)
 		}
 	}
 
@@ -131,9 +167,9 @@ func GetTraits() (traits []TraitCapability) {
 
 	res := store.PrefixMatch(key)
 	for _, wc := range res {
-		casted, ok := wc.(TraitCapability)
+		casted, ok := wc.(*TraitCapability)
 		if ok {
-			traits = append(traits, casted)
+			traits = append(traits, *casted)
 		}
 	}
 
@@ -146,13 +182,97 @@ func GetScopes() (scopes []ScopeCapability) {
 
 	res := store.PrefixMatch(key)
 	for _, wc := range res {
-		casted, ok := wc.(ScopeCapability)
+		casted, ok := wc.(*ScopeCapability)
 		if ok {
-			scopes = append(scopes, casted)
+			scopes = append(scopes, *casted)
 		}
 	}
 
 	return
+}
+
+// GetWorkload takes in a workload name and will return a SLICE of all of the workloads
+// registered against the name
+func GetWorkload(name string) (w []WorkloadCapability) {
+	key := "/meshery/registry/definition/core.oam.dev/v1alpha1/WorkloadDefinition/" + name
+
+	res := store.GetAll(key)
+	for _, wc := range res {
+		casted, ok := wc.(*WorkloadCapability)
+		if ok {
+			w = append(w, *casted)
+		}
+	}
+
+	return
+}
+
+// GetTrait takes in a trait name and will return a SLICE of all of the traits
+// registered against the name
+func GetTrait(name string) (t []TraitCapability) {
+	key := "/meshery/registry/definition/core.oam.dev/v1alpha1/TraitDefinition/" + name
+
+	res := store.GetAll(key)
+	for _, wc := range res {
+		casted, ok := wc.(*TraitCapability)
+		if ok {
+			t = append(t, *casted)
+		}
+	}
+
+	return
+}
+
+// GetScope takes in a scope name and will return a SLICE of all of the scopes
+// registered against the name
+func GetScope(name string) (s []ScopeCapability) {
+	key := "/meshery/registry/definition/core.oam.dev/v1alpha1/ScopeDefinition/" + name
+
+	res := store.GetAll(key)
+	for _, wc := range res {
+		casted, ok := wc.(*ScopeCapability)
+		if ok {
+			s = append(s, *casted)
+		}
+	}
+
+	return
+}
+
+// GetWorkloadByID takes an id of a workload and returns the workload
+func GetWorkloadByID(name, id string) *WorkloadCapability {
+	res := GetWorkload(name)
+	for _, f := range res {
+		if f.GetID() == id {
+			return &f
+		}
+	}
+
+	return nil
+}
+
+// GetTraitByID takes an id of a trait and returns the trait
+func GetTraitByID(name, id string) *TraitCapability {
+	res := GetTrait(name)
+	for _, f := range res {
+		if f.GetID() == id {
+			return &f
+		}
+	}
+
+	return nil
+}
+
+// GetScopeByID takes an id of a scope and returns the scope
+func GetScopeByID(name, id string) (w *ScopeCapability) {
+	res := GetScope(name)
+	for _, f := range res {
+		if f.GetID() == id {
+			return &f
+		}
+	}
+
+	return nil
 }
 
 // RegisterMesheryOAMTraits will register local meshery traits with meshery server
@@ -215,6 +335,9 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 			"oam_ref_schema": string(schemaFile),
 			"oam_definition": tempDef,
 			"host":           "<none-local>",
+			"metadata": map[string]string{
+				"adapter.meshery.io/name": "core",
+			},
 		}
 
 		// Serialize the data
@@ -237,20 +360,25 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 	return fmt.Errorf("%s", strings.Join(errs, "\n"))
 }
 
+// GetK8Components returns all the generated definitions and schemas for available api resources
 func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
 	cli, err := kubernetes.New(config)
 	if err != nil {
-		return nil, err
+		return nil, ErrGetK8sComponents(err)
 	}
 	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v2")
+	k8version, err := cli.KubeClient.ServerVersion()
+	if err != nil {
+		return nil, ErrGetK8sComponents(err)
+	}
 	res := req.Do(context.Background())
 	content, err := res.Raw()
 	if err != nil {
-		return nil, err
+		return nil, ErrGetK8sComponents(err)
 	}
 	apiResources, err := getAPIRes(cli)
 	if err != nil {
-		return nil, err
+		return nil, ErrGetK8sComponents(err)
 	}
 	manifest := string(content)
 	man, err := manifests.GenerateComponents(manifest, manifests.K8s, manifests.Config{
@@ -261,23 +389,49 @@ func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
 			RootFilter:    []string{"$.definitions"},
 			VersionFilter: []string{"$[0]"},
 			GroupFilter:   []string{"$[0]"},
-			ItrFilter:     "$..[\"x-kubernetes-group-version-kind\"][?(@.kind",
-			ItrSpecFilter: "$[0][?(@[\"x-kubernetes-group-version-kind\"][0][\"kind\"]",
+			ItrFilter:     []string{"$..[\"x-kubernetes-group-version-kind\"][?(@.kind"},
+			ItrSpecFilter: []string{"$[0][?(@[\"x-kubernetes-group-version-kind\"][0][\"kind\"]"},
+			ResolveFilter: []string{"--resolve", "$"},
 			GField:        "group",
 			VField:        "version",
 		},
+		K8sVersion: k8version.String(),
+		ModifyDefSchema: func(s1, s2 *string) {
+			var schema map[string]interface{}
+			err := json.Unmarshal([]byte(*s2), &schema)
+			if err != nil {
+				return
+			}
+			prop, ok := schema["properties"].(map[string]interface{})
+			if !ok {
+				return
+			}
+			// The schema generated has few fields that are not required and can break things, so they are removed here
+			delete(prop, "apiVersion")
+			delete(prop, "metadata")
+			delete(prop, "kind")
+			delete(prop, "status")
+			schema["properties"] = prop
+			schema["$schema"] = "http://json-schema.org/draft-04/schema"
+			b, err := json.Marshal(schema)
+			if err != nil {
+				return
+			}
+			*s2 = string(b)
+		},
 	})
 	if err != nil {
-		return nil, err
+		return nil, ErrGetK8sComponents(err)
 	}
 	return man, nil
 }
 
+// DeleteK8sWorkloads deletes the registered in memory k8s workloads for a given k8s contextID.
 func DeleteK8sWorkloads(ctx string) {
 	//Iterate through entire store
 	vals := store.PrefixMatch("")
 	for _, val := range vals {
-		value, ok := val.(WorkloadCapability)
+		value, ok := val.(*WorkloadCapability)
 		if !ok {
 			continue
 		}
@@ -295,6 +449,7 @@ func DeleteK8sWorkloads(ctx string) {
 	}
 }
 
+// getAPIRes gets all the available api resources from kube-api server. It is equivalent to the output of `kubectl api-resources`
 func getAPIRes(cli *kubernetes.Client) ([]string, error) {
 	var apiRes []string
 	lists, err := cli.KubeClient.DiscoveryClient.ServerPreferredResources()

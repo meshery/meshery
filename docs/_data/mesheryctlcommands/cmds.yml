@@ -51,6 +51,11 @@ system:
       description: Start Meshery
       usage:
         mesheryctl system start
+      notes:
+        name: Set k8s context
+        description: To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
+        usage:
+          mesheryctl system context create k8s -p kubernetes -s
       flags:
         skip-update:
           name: --skip-update

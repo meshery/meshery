@@ -48,6 +48,15 @@
         "probable_cause": "Yaml could not be populated with the returned manifests",
         "suggested_remediation": ""
       },
+      "1006": {
+        "name": "ErrAbsentFilterCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with passed filters",
+        "probable_cause": "ItrFilter or ItrSpecFilter is either not passed or empty",
+        "suggested_remediation": "Pass the correct ItrFilter and ItrSpecFilter"
+      },
       "11010": {
         "name": "ErrNoneDatabaseCode",
         "code": "11010",

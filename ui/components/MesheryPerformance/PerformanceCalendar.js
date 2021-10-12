@@ -5,7 +5,6 @@ import moment from "moment";
 import { connect } from "react-redux";
 import { updateProgress } from "../../lib/store";
 import { bindActionCreators } from "redux";
-import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { withSnackbar } from "notistack";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
@@ -15,10 +14,11 @@ import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import MesheryChart from "../MesheryChart";
 import { Paper } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
+import fetchAllResults from '../graphql/queries/FetchAllResultsQuery'
 
 const localizer = momentLocalizer(moment);
 
-const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
+// const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
 
 /**
  * generateCalendarEventsFromResults takes in performance results data
@@ -100,19 +100,30 @@ function PerformanceCalendar({
   async function fetchResults(start, end) {
     updateProgress({ showProgress : true });
 
-    try {
-      const res = await promisifiedDataFetch(
-        `${PERFORMANCE_PROFILE_RESULTS_URL}?from=${start}&to=${end}`,
-        { credentials : "include" }
-      );
-      updateProgress({ showProgress : false });
-      if (res) {
-        setResults(res.results || []);
-      }
-    } catch (error) {
-      console.error(error)
-      handleError("Failed to Fetch Profiles")(error)
-    }
+    fetchAllResults({
+      selector : {
+        // default
+        pageSize : `10`,
+        page : `0`,
+        search : ``,
+        order : ``,
+        from : start,
+        to : end,
+      },
+    }).subscribe({
+      next : (res) => {
+        // @ts-ignore
+        let result = res?.fetchAllResults;
+        updateProgress({ showProgress : false });
+        if (typeof result !== "undefined") {
+          if (result) {
+            // @ts-ignore
+            setResults(result.results || []);
+          }
+        }
+      },
+      error : handleError("Failed to Fetch Profiles"),
+    });
   }
 
   function handleError(msg) {
@@ -151,7 +162,7 @@ function PerformanceCalendar({
       >
         <div>
           <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
-          <MesheryChart data={[result && result.runner_results
+          <MesheryChart rawdata={[result && result.runner_results ? result : {}]} data={[result && result.runner_results
             ? result.runner_results
             : {}]} />
         </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
+import {  createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -39,6 +40,8 @@ import URLUploader from "./URLUploader";
 import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import { Button } from "@material-ui/core";
 import jsYaml from "js-yaml";
@@ -69,7 +72,21 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar : {
     marginBottom : "16px"
-  }
+  },
+  ymlDialogTitle : {
+    display : "flex",
+    alignItems : "center"
+  },
+  ymlDialogTitleText : {
+    flexGrow : 1
+  },
+  fullScreenCodeMirror : {
+    height : '100%',
+    '& .CodeMirror' : {
+      minHeight : "300px",
+      height : '100%',
+    }
+  },
 }))
 
 
@@ -92,17 +109,45 @@ function CustomToolbar(onClick, urlOnClick) {
     );
   };
 }
+function TooltipIcon({ children, onClick, title }) {
+  return (
+    <Tooltip title={title} placement="top" arrow interactive >
+      <IconButton onClick={onClick}>
+        {children}
+      </IconButton>
+    </Tooltip>
+  )
+}
 
 function YAMLEditor({ application, onClose, onSubmit }) {
+  const classes = useStyles();
   const [yaml, setYaml] = useState("");
+  const [fullScreen, setFullScreen] = useState(false);
+
+  const toggleFullScreen = () => {
+    setFullScreen(!fullScreen);
+  }
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="application-dialog-title" open fullWidth maxWidth="md">
-      <DialogTitle id="application-dialog-title">{application.name}</DialogTitle>
+    <Dialog onClose={onClose} aria-labelledby="application-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
+      <DialogTitle disableTypography id="application-dialog-title" className={classes.ymlDialogTitle}>
+        <Typography variant="h6" className={classes.ymlDialogTitleText}>
+          {application.name}
+        </Typography>
+        <TooltipIcon
+          title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          onClick={toggleFullScreen}>
+          {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+        </TooltipIcon>
+        <TooltipIcon title="Exit" onClick={onClose}>
+          <CloseIcon />
+        </TooltipIcon>
+      </DialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
         <CodeMirror
           value={application.application_file}
+          className={fullScreen ? classes.fullScreenCodeMirror : ""}
           options={{
             theme : "material",
             lineNumbers : true,
@@ -153,6 +198,42 @@ function MesheryApplications({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const DEPLOY_URL = '/api/application/deploy';
 
+  const getMuiTheme = () => createTheme({
+    overrides : {
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
+          },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b" ,
+          marginTop : "7px",
+          marginRight : "8px",
+        },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      }
+    }
+  })
 
   const ACTION_TYPES = {
     FETCH_APPLICATIONS : { name : "FETCH_APPLICATION" ,
@@ -286,12 +367,19 @@ function MesheryApplications({
     }
 
     if (type === "upload" || type === "urlupload") {
-      const body = type==="upload" ? JSON.stringify({ application_data : { application_file : data }, save : true }) : JSON.stringify({ url : data, save : true });
+      let body = { save : true }
+      if (type === "upload") {
+        body = JSON.stringify({ ...body,   application_data : { application_file : data }
+        })
+      }
+      if (type === "urlupload") {
+        body = JSON.stringify({ ...body, url : data })
+      }
       dataFetch(
         `/api/application`,
         { credentials : "include",
           method : "POST",
-          body : body, },
+          body },
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
@@ -428,7 +516,7 @@ function MesheryApplications({
 
       subtitle : "Are you sure you want to delete this application?",
 
-      options : ["yes", "no"], })
+      options : ["Yes", "No"], })
     return response;
   }
 
@@ -481,11 +569,11 @@ function MesheryApplications({
     onRowsDelete : async function handleDelete(row) {
       let response = await showModal()
       console.log(response)
-      if (response === "yes") {
+      if (response === "Yes") {
         const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id)
         fid.forEach(fid => deleteApplication(fid))
       }
-      if (response === "no")
+      if (response === "No")
         fetchApplications(page, pageSize, search, sortOrder);
     },
 
@@ -541,7 +629,7 @@ function MesheryApplications({
         <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       {
-        !showForm && <MUIDataTable
+        !showForm && <MuiThemeProvider theme={getMuiTheme()}><MUIDataTable
           title={<div className={classes.tableHeader}>Applications</div>}
           data={applications}
           columns={columns}
@@ -549,6 +637,7 @@ function MesheryApplications({
           options={options}
           className={classes.muiRow}
         />
+        </MuiThemeProvider>
       }
       <PromptComponent ref={modalRef} />
     </NoSsr>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
+import {  createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -10,6 +11,7 @@ import {
   DialogActions,
   Divider,
   Tooltip,
+  Typography
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -27,6 +29,8 @@ import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import URLUploader from "./URLUploader";
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 
 const styles = (theme) => ({
   grid : {
@@ -37,6 +41,24 @@ const styles = (theme) => ({
     fontSize : 18,
   },
 });
+
+const useStyles = makeStyles(() => ({
+  ymlDialogTitle : {
+    display : "flex",
+    alignItems : "center"
+  },
+  ymlDialogTitleText : {
+    flexGrow : 1
+  },
+  fullScreenCodeMirror : {
+    height : '100%',
+    '& .CodeMirror' : {
+      minHeight : "300px",
+      height : '100%',
+    }
+  },
+
+}))
 
 function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
@@ -63,16 +85,46 @@ function CustomToolbar(onClick, urlOnClick) {
     );
   };
 }
+
+function TooltipIcon({ children, onClick, title }) {
+  return (
+    <Tooltip title={title} placement="top" arrow interactive >
+      <IconButton onClick={onClick}>
+        {children}
+      </IconButton>
+    </Tooltip>
+  )
+}
+
 function YAMLEditor({ filter, onClose, onSubmit }) {
+  const classes = useStyles();
   const [yaml, setYaml] = useState("");
+  const [fullScreen, setFullScreen] = useState(false);
+
+  const toggleFullScreen = () => {
+    setFullScreen(!fullScreen);
+  }
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="filter-dialog-title" open fullWidth maxWidth="md">
-      <DialogTitle id="filter-dialog-title">{filter.name}</DialogTitle>
+    <Dialog onClose={onClose} aria-labelledby="filter-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
+      <DialogTitle disableTypography id="filter-dialog-title" className={classes.ymlDialogTitle}>
+        <Typography variant="h6" className={classes.ymlDialogTitleText}>
+          {filter.name}
+        </Typography>
+        <TooltipIcon
+          title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          onClick={toggleFullScreen}>
+          {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+        </TooltipIcon>
+        <TooltipIcon title="Exit" onClick={onClose}>
+          <CloseIcon />
+        </TooltipIcon>
+      </DialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
         <CodeMirror
           value={filter.filter_file}
+          className={fullScreen ? classes.fullScreenCodeMirror : ""}
           options={{
             theme : "material",
             lineNumbers : true,
@@ -100,9 +152,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
   );
 }
 
-function MesheryFilters({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
-}) {
+function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -111,8 +161,44 @@ function MesheryFilters({
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const DEPLOY_URL = '/api/filter/deploy';
+  const DEPLOY_URL = "/api/filter/deploy";
 
+  const getMuiTheme = () => createTheme({
+    overrides : {
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
+          },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b" ,
+          marginTop : "7px",
+          marginRight : "8px",
+        },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      }
+    }
+  })
 
   const ACTION_TYPES = {
     FETCH_FILTERS : {
@@ -127,7 +213,7 @@ function MesheryFilters({
       name : "DEPLOY_FILTERS",
       error_msg : "Failed to deploy filter file",
     },
-    UPLOADFILTERS : {
+    UPLOAD_FILTERS : {
       name : "UPLOAD_FILTERS",
       error_msg : "Failed to upload filter file",
     },
@@ -154,11 +240,10 @@ function MesheryFilters({
   const handleDeploy = (filter_file) => {
     dataFetch(
       DEPLOY_URL,
-      { credentials : "include",
-        method : "POST",
-        body : filter_file, },() => {
+      { credentials : "include", method : "POST", body : filter_file },
+      () => {
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        updateProgress({ showProgress : false })
+        updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.DEPLOY_FILTERS)
     );
@@ -176,7 +261,7 @@ function MesheryFilters({
 
     dataFetch(
       `/api/filter${query}`,
-      { credentials : "include", },
+      { credentials : "include" },
       (result) => {
         console.log("FilterFile API", `/api/filter${query}`);
         updateProgress({ showProgress : false });
@@ -220,8 +305,7 @@ function MesheryFilters({
     if (type === "delete") {
       dataFetch(
         `/api/filter/${id}`,
-        { credentials : "include",
-          method : "DELETE", },
+        { credentials : "include", method : "DELETE" },
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
@@ -233,12 +317,17 @@ function MesheryFilters({
       );
     }
 
-    if (type === "upload") {
+    if (type === "upload" || type === "urlupload") {
+      let body = { save : true }
+      if (type === "upload") {
+        body = JSON.stringify({ ...body, filter_data : { filter_data : data } })
+      }
+      if (type === "urlupload") {
+        body = JSON.stringify({ ...body, url : data })
+      }
       dataFetch(
         `/api/filter`,
-        { credentials : "include",
-          method : "POST",
-          body : JSON.stringify({ filter_data : { filter_file : data }, save : true }), },
+        { credentials : "include", method : "POST", body },
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
@@ -263,7 +352,7 @@ function MesheryFilters({
     reader.readAsText(file);
   }
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "upload");
+    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
     console.log(link, "valid");
   }
   const columns = [
@@ -374,11 +463,12 @@ function MesheryFilters({
   });
 
   async function showmodal() {
-    let response = await modalRef.current.show({ title : "Delete Filter?",
+    let response = await modalRef.current.show({
+      title : "Delete Filter?",
 
       subtitle : "Are you sure you want to delete this filter?",
 
-      options : ["yes", "no"], })
+      options : ["Yes", "No"], })
     return response;
   }
 
@@ -430,11 +520,11 @@ function MesheryFilters({
     onRowsDelete : async function handleDelete(row) {
       let response  = await showmodal()
       console.log(response)
-      if (response === "yes") {
+      if (response === "Yes") {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
       }
-      if (response === "no")
+      if (response === "No")
         fetchFilters(page, pageSize, search, sortOrder);
     },
 
@@ -483,13 +573,15 @@ function MesheryFilters({
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
-      <MUIDataTable
-        title={<div className={classes.tableHeader}>Filters</div>}
-        data={filters}
-        columns={columns}
-        // @ts-ignore
-        options={options}
-      />
+      <MuiThemeProvider theme={getMuiTheme()}>
+        <MUIDataTable
+          title={<div className={classes.tableHeader}>Filters</div>}
+          data={filters}
+          columns={columns}
+          // @ts-ignore
+          options={options}
+        />
+      </MuiThemeProvider>
       <PromptComponent ref={modalRef} />
     </NoSsr>
   );
