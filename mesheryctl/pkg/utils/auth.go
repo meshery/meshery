@@ -266,12 +266,14 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 	}
 
 	req.AddCookie(&http.Cookie{
-		Name:  tokenName,
-		Value: token,
+		Name:     tokenName,
+		Value:    token,
+		HttpOnly: true,
 	})
 	req.AddCookie(&http.Cookie{
-		Name:  "meshery-provider",
-		Value: provider,
+		Name:     "meshery-provider",
+		Value:    provider,
+		HttpOnly: true,
 	})
 
 	cli := &http.Client{}
