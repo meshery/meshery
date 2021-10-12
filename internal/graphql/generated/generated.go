@@ -155,6 +155,7 @@ type ComplexityRoot struct {
 
 	PerfProfile struct {
 		ConcurrentRequest func(childComplexity int) int
+		ContentType       func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		Duration          func(childComplexity int) int
 		Endpoints         func(childComplexity int) int
@@ -163,6 +164,10 @@ type ComplexityRoot struct {
 		LoadGenerators    func(childComplexity int) int
 		Name              func(childComplexity int) int
 		QPS               func(childComplexity int) int
+		RequestBody       func(childComplexity int) int
+		RequestCookies    func(childComplexity int) int
+		RequestHeaders    func(childComplexity int) int
+		ServiceMesh       func(childComplexity int) int
 		TotalResults      func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
 		UserID            func(childComplexity int) int
@@ -697,6 +702,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PerfProfile.ConcurrentRequest(childComplexity), true
 
+	case "PerfProfile.content_type":
+		if e.complexity.PerfProfile.ContentType == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.ContentType(childComplexity), true
+
 	case "PerfProfile.created_at":
 		if e.complexity.PerfProfile.CreatedAt == nil {
 			break
@@ -752,6 +764,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PerfProfile.QPS(childComplexity), true
+
+	case "PerfProfile.request_body":
+		if e.complexity.PerfProfile.RequestBody == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.RequestBody(childComplexity), true
+
+	case "PerfProfile.request_cookies":
+		if e.complexity.PerfProfile.RequestCookies == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.RequestCookies(childComplexity), true
+
+	case "PerfProfile.request_headers":
+		if e.complexity.PerfProfile.RequestHeaders == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.RequestHeaders(childComplexity), true
+
+	case "PerfProfile.service_mesh":
+		if e.complexity.PerfProfile.ServiceMesh == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.ServiceMesh(childComplexity), true
 
 	case "PerfProfile.total_results":
 		if e.complexity.PerfProfile.TotalResults == nil {
@@ -1329,6 +1369,11 @@ type PerfProfile {
 	total_results: Int
 	updated_at: String
 	user_id: String!
+	request_headers: String
+	request_cookies: String
+	request_body: String
+	content_type: String
+	service_mesh: String
 }
 
 type MesheryResult {
@@ -1349,10 +1394,10 @@ type MesheryResult {
 input PageFilter {
 	page: String!
 	pageSize: String!
-	order: String = " "
-	search: String = " "
-	from: String = " "
-	to: String = " "
+	order: String
+	search: String
+	from: String
+	to: String
 }
 # ============== RESYNC =============================
 
@@ -4280,6 +4325,166 @@ func (ec *executionContext) _PerfProfile_user_id(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PerfProfile_request_headers(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RequestHeaders, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_request_cookies(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RequestCookies, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_request_body(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RequestBody, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_content_type(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ContentType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PerfProfile_service_mesh(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ServiceMesh, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_getAvailableAddons(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -5326,6 +5531,41 @@ func (ec *executionContext) ___Directive_args(ctx context.Context, field graphql
 	return ec.marshalN__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "__Directive",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRepeatable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) ___EnumValue_name(ctx context.Context, field graphql.CollectedField, obj *introspection.EnumValue) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6278,7 +6518,10 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 func (ec *executionContext) unmarshalInputAddonStatusInput(ctx context.Context, obj interface{}) (model.AddonStatusInput, error) {
 	var it model.AddonStatusInput
-	var asMap = obj.(map[string]interface{})
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
 
 	for k, v := range asMap {
 		switch k {
@@ -6306,7 +6549,10 @@ func (ec *executionContext) unmarshalInputAddonStatusInput(ctx context.Context, 
 
 func (ec *executionContext) unmarshalInputOperatorStatusInput(ctx context.Context, obj interface{}) (model.OperatorStatusInput, error) {
 	var it model.OperatorStatusInput
-	var asMap = obj.(map[string]interface{})
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
 
 	for k, v := range asMap {
 		switch k {
@@ -6326,19 +6572,9 @@ func (ec *executionContext) unmarshalInputOperatorStatusInput(ctx context.Contex
 
 func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj interface{}) (model.PageFilter, error) {
 	var it model.PageFilter
-	var asMap = obj.(map[string]interface{})
-
-	if _, present := asMap["order"]; !present {
-		asMap["order"] = " "
-	}
-	if _, present := asMap["search"]; !present {
-		asMap["search"] = " "
-	}
-	if _, present := asMap["from"]; !present {
-		asMap["from"] = " "
-	}
-	if _, present := asMap["to"]; !present {
-		asMap["to"] = " "
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
 	}
 
 	for k, v := range asMap {
@@ -6399,7 +6635,10 @@ func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj in
 
 func (ec *executionContext) unmarshalInputReSyncActions(ctx context.Context, obj interface{}) (model.ReSyncActions, error) {
 	var it model.ReSyncActions
-	var asMap = obj.(map[string]interface{})
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
 
 	for k, v := range asMap {
 		switch k {
@@ -6427,7 +6666,10 @@ func (ec *executionContext) unmarshalInputReSyncActions(ctx context.Context, obj
 
 func (ec *executionContext) unmarshalInputServiceMeshFilter(ctx context.Context, obj interface{}) (model.ServiceMeshFilter, error) {
 	var it model.ServiceMeshFilter
-	var asMap = obj.(map[string]interface{})
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
 
 	for k, v := range asMap {
 		switch k {
@@ -7071,6 +7313,16 @@ func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "request_headers":
+			out.Values[i] = ec._PerfProfile_request_headers(ctx, field, obj)
+		case "request_cookies":
+			out.Values[i] = ec._PerfProfile_request_cookies(ctx, field, obj)
+		case "request_body":
+			out.Values[i] = ec._PerfProfile_request_body(ctx, field, obj)
+		case "content_type":
+			out.Values[i] = ec._PerfProfile_content_type(ctx, field, obj)
+		case "service_mesh":
+			out.Values[i] = ec._PerfProfile_service_mesh(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7360,6 +7612,11 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "isRepeatable":
+			out.Values[i] = ec.___Directive_isRepeatable(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7611,6 +7868,13 @@ func (ec *executionContext) marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -7673,6 +7937,13 @@ func (ec *executionContext) marshalNContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -7720,6 +7991,13 @@ func (ec *executionContext) marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5io�
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -7767,6 +8045,13 @@ func (ec *executionContext) marshalNControlPlaneMember2ᚕᚖgithubᚗcomᚋlaye
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -7814,6 +8099,13 @@ func (ec *executionContext) marshalNDataPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -7905,6 +8197,13 @@ func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -7956,6 +8255,13 @@ func (ec *executionContext) marshalNOperatorControllerStatus2ᚕᚖgithubᚗcom�
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -8079,6 +8385,13 @@ func (ec *executionContext) marshalN__Directive2ᚕgithubᚗcomᚋ99designsᚋgq
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -8152,6 +8465,13 @@ func (ec *executionContext) marshalN__DirectiveLocation2ᚕstringᚄ(ctx context
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -8201,6 +8521,13 @@ func (ec *executionContext) marshalN__InputValue2ᚕgithubᚗcomᚋ99designsᚋg
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -8242,6 +8569,13 @@ func (ec *executionContext) marshalN__Type2ᚕgithubᚗcomᚋ99designsᚋgqlgen�
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -8354,6 +8688,13 @@ func (ec *executionContext) marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -8394,6 +8735,7 @@ func (ec *executionContext) marshalOContainer_Port2ᚕᚖgithubᚗcomᚋlayer5io
 
 	}
 	wg.Wait()
+
 	return ret
 }
 
@@ -8501,6 +8843,7 @@ func (ec *executionContext) marshalOMesheryResult2ᚕᚖgithubᚗcomᚋlayer5io�
 
 	}
 	wg.Wait()
+
 	return ret
 }
 
@@ -8563,6 +8906,7 @@ func (ec *executionContext) marshalOPerfProfile2ᚕᚖgithubᚗcomᚋlayer5ioᚋ
 
 	}
 	wg.Wait()
+
 	return ret
 }
 
@@ -8686,6 +9030,13 @@ func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgq
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -8726,6 +9077,13 @@ func (ec *executionContext) marshalO__Field2ᚕgithubᚗcomᚋ99designsᚋgqlgen
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -8766,6 +9124,13 @@ func (ec *executionContext) marshalO__InputValue2ᚕgithubᚗcomᚋ99designsᚋg
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
@@ -8813,6 +9178,13 @@ func (ec *executionContext) marshalO__Type2ᚕgithubᚗcomᚋ99designsᚋgqlgen�
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
