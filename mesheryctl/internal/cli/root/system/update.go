@@ -127,10 +127,10 @@ var updateCmd = &cobra.Command{
 						Repository: utils.HelmChartURL,
 						Chart:      utils.HelmChartName,
 					},
+					Action: "Upgrade",
 				}); err != nil {
 					return errors.Wrap(err, "cannot update Meshery")
 				}
-
 			}
 
 			// run k8s checks to make sure if k8s cluster is running
