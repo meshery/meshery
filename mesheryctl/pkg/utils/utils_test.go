@@ -1,10 +1,14 @@
 package utils
 
 import (
+	"context"
 	"flag"
 	"fmt"
+	"net/http"
 	"reflect"
 	"testing"
+
+	"github.com/spf13/viper"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -363,3 +367,139 @@ spec:
 		})
 	}
 }
+
+func TestAddAuthDetails(t *testing.T) {
+	tests := []struct {
+		request  *http.Request
+		filepath string
+		wantErr  bool
+	}{
+		{
+			request: &http.Request{
+				Header: http.Header{
+					"Authorization": []string{"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"},
+				},
+			},
+			filepath: " ",
+			wantErr:  false,
+		},
+		{
+			request: &http.Request{
+				Header: http.Header{
+					"Authorization": []string{"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"},
+				},
+			},
+			filepath: " ",
+			wantErr:  false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.filepath, func(t *testing.T) {
+			if err := AddAuthDetails(tt.request, tt.filepath); (err != nil) == tt.wantErr {
+				t.Errorf("AddAuthDetails() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestUpdateAuthDetails(t *testing.T) {
+	viper.Set("contexts."+"test", context.Background())
+	tests := []struct {
+		filepath string
+	}{
+		{
+			filepath: "",
+		},
+		{
+			filepath: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.filepath, func(t *testing.T) {
+			if err := UpdateAuthDetails(tt.filepath); (err != nil) == false {
+				t.Errorf("UpdateAuthDetails() error = %v, wantErr %v", err, false)
+			}
+		})
+	}
+}
+
+func TestCreateTempAuthServer(t *testing.T) {
+	tests := []struct {
+		fn      func(http.ResponseWriter, *http.Request)
+		wantErr bool
+	}{
+		{
+			fn: func(response http.ResponseWriter, request *http.Request) {
+				response.WriteHeader(http.StatusOK)
+			},
+			wantErr: true,
+		},
+		{
+			fn: func(response http.ResponseWriter, request *http.Request) {
+				response.WriteHeader(http.StatusOK)
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run("", func(t *testing.T) {
+			if _, _, err := CreateTempAuthServer(tt.fn); (err != nil) == tt.wantErr {
+				t.Errorf("CreateTempAuthServer() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+/*func TestInitiateLogin(t *testing.T) {
+	viper.Set("contexts."+"test", context.Background())
+	mesherycltconfig := config.MesheryCtlConfig{nil, "test", nil}
+	tests := []struct {
+		want    []byte
+		wantErr bool
+		mctlCfg *config.MesheryCtlConfig
+	}{
+		{
+			want:    []byte(`{"access_token":"Y3ODkwIiwibmFtZSI6IkpvaG4eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c","token_type":"bearer","expires_in":3600,"refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c","refresh_token_expires_in":3600}`),
+			wantErr: false,
+			mctlCfg: &config.MesheryCtlConfig{nil, mesherycltconfig.GetCurrentContextName(), nil},
+		},
+		{
+			want:    []byte(`{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c","token_type":"bearer","expires_in":3600,"refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c","refresh_token_expires_in":3600}`),
+			wantErr: false,
+			mctlCfg: &config.MesheryCtlConfig{nil, mesherycltconfig.GetCurrentContextName(), nil},
+		},
+	}
+	for _, tt := range tests {
+		t.Run("", func(t *testing.T) {
+			if got, err := InitiateLogin(tt.mctlCfg); (err != nil) == tt.wantErr {
+				t.Errorf("InitiateLogin() error = %v, wantErr %v", err, tt.wantErr)
+			} else if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("InitiateLogin() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGetProviderInfo(t *testing.T){
+	tests := []struct {
+		mctlCfg *config.MesheryCtlConfig
+		wantErr bool
+	}{
+		{
+			mctlCfg: &config.MesheryCtlConfig{nil, "test", nil},
+			wantErr: true,
+		},
+		{
+			mctlCfg: &config.MesheryCtlConfig{nil, "test", nil},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run("", func(t *testing.T) {
+			if _, err := GetProviderInfo(tt.mctlCfg); (err != nil) == tt.wantErr {
+				t.Errorf("GetProviderInfo() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+*/
