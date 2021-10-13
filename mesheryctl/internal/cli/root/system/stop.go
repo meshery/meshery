@@ -22,14 +22,15 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
+	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	controllerConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 
 	"github.com/layer5io/meshery-operator/api/v1alpha1"
 )
@@ -137,14 +138,12 @@ func stop() error {
 		log.Info("Stopping Meshery...")
 
 		// Delete the CR instances for brokers and meshsyncs
+		// this needs to be executed before deleting the helm release, or the CR instances cannot be found for some reason
 		if err = invokeDeleteCRs(client); err != nil {
 			return err
 		}
 
-		// TODO: Delete the CRDs for brokers and meshsyncs
-
-		// Delete the helm chart installation
-		// Note: this doesn't delete the CRDs (broker and meshsync)
+		// Delete the helm release
 		if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 			Namespace: utils.MesheryNamespace,
 			ChartLocation: meshkitkube.HelmChartLocation{
@@ -154,6 +153,11 @@ func stop() error {
 			Action: meshkitkube.UNINSTALL,
 		}); err != nil {
 			return errors.Wrap(err, "cannot stop Meshery")
+		}
+
+		// Delete the CRDs for brokers and meshsyncs
+		if err = invokeDeleteCRDs(); err != nil {
+			return err
 		}
 	}
 
@@ -204,6 +208,7 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 
 	return nil
 }
+
 // deleteCRs delete the specified CR instance in the clusters
 func deleteCR(resourceName, instanceName string, client *meshkitkube.Client) error {
 	return client.DynamicKubeClient.Resource(schema.GroupVersionResource{
@@ -211,6 +216,35 @@ func deleteCR(resourceName, instanceName string, client *meshkitkube.Client) err
 		Version:  v1alpha1.GroupVersion.Version,
 		Resource: resourceName,
 	}).Namespace(utils.MesheryNamespace).Delete(context.TODO(), instanceName, metav1.DeleteOptions{})
+}
+
+// invokeDeleteCRs is a wrapper of deleteCRD to delete CRDs (brokers and meshsyncs)
+func invokeDeleteCRDs() error {
+	const (
+		brokderCRDName  = "brokers.meshery.layer5.io"
+		meshsyncCRDName = "meshsyncs.meshery.layer5.io"
+	)
+
+	cfg := controllerConfig.GetConfigOrDie()
+	client, err := apiextension.NewForConfig(cfg)
+	if err != nil {
+		return errors.Wrap(err, "cannot invoke delete CRDs")
+	}
+
+	if err = deleteCRD(brokderCRDName, client); err != nil {
+		return errors.Wrap(err, "cannot delete CRD "+brokderCRDName)
+	}
+
+	if err = deleteCRD(meshsyncCRDName, client); err != nil {
+		return errors.Wrap(err, "cannot delete CRD "+meshsyncCRDName)
+	}
+
+	return nil
+}
+
+// deleteCRs delete the specified CRD in the clusters
+func deleteCRD(name string, client *apiextension.Clientset) error {
+	return client.ApiextensionsV1().CustomResourceDefinitions().Delete(context.TODO(), name, metav1.DeleteOptions{})
 }
 
 func init() {
