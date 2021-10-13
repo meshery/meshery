@@ -513,7 +513,6 @@ function MesheryPatterns({
           return (
             <>
               <Tooltip title="Configure">
-                <IconButton onClick={() => setShowForm({ pattern : patterns[tableMeta.rowIndex], show : true })}>
                 <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
                   <ListAltIcon />
                 </IconButton>
@@ -554,30 +553,36 @@ function MesheryPatterns({
   async function deletePatterns(patterns) {
     const jsonPatterns = JSON.stringify(patterns)
 
-    try {
-      await promisifiedDataFetch("/api/patterns/delete", {
-        method : "POST",
-        credentials : "include",
-        body : jsonPatterns
-      })
+
+    updateProgress({ showProgress : true })
+    dataFetch("/api/patterns/delete", {
+      method : "POST",
+      credentials : "include",
+      body : jsonPatterns
+    },
+    () => {
+      console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
       updateProgress({ showProgress : false });
       setTimeout(() => {
-        enqueueSnackbar(`${patterns.patterns.length} Patterns deleted.`, {
-          variant : "success",
-          autoHideDuration : 3000,
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-        });
+        enqueueSnackbar(`${patterns.patterns.length} Patterns Deleted`,
+          {
+            variant : "success",
+            autoHideDuration : 2000,
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            }
+          }
+        )
       }, 1500);
       fetchPatterns(page, pageSize, search, sortOrder);
-    } catch (e) {
-      handleError("Failed to delete patterns")
-    }
+      resetSelectedRowData()()
+    },
+    handleError(ACTION_TYPES.DELETE_PATTERN)
+    );
   }
 
   const options = {
@@ -876,7 +881,7 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
   return (
     <div>
       <Card
-      // @ts-ignore
+        // @ts-ignore
         style={cardStyle}>
         <CardContent style={cardcontentStyle}>
           <CodeMirror

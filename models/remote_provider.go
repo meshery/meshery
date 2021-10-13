@@ -1162,7 +1162,7 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 		logrus.Infof("pattern successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	// logrus.Errorf("error while fetching pattern: %s", bdr)
+	logrus.Errorf("error while fetching pattern: %s", bdr)
 	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", 200, bdr)
 }
 
