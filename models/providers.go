@@ -70,13 +70,14 @@ type GraphQLExtension struct {
 
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
-	Title     string              `json:"title,omitempty"`
-	Href      Href                `json:"href,omitempty"`
-	Component string              `json:"component,omitempty"`
-	Icon      string              `json:"icon,omitempty"`
-	Link      *bool               `json:"link,omitempty"`
-	Show      *bool               `json:"show,omitempty"`
-	Children  NavigatorExtensions `json:"children,omitempty"`
+	Title           string              `json:"title,omitempty"`
+	OnClickCallback int                 `json:"on_click_callback,omitempty"`
+	Href            Href                `json:"href,omitempty"`
+	Component       string              `json:"component,omitempty"`
+	Icon            string              `json:"icon,omitempty"`
+	Link            *bool               `json:"link,omitempty"`
+	Show            *bool               `json:"show,omitempty"`
+	Children        NavigatorExtensions `json:"children,omitempty"`
 }
 
 // UserPrefsExtension describes the user preference extension point in the UI
