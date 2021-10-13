@@ -2,6 +2,8 @@ package utils
 
 import (
 	"testing"
+
+	"k8s.io/apimachinery/pkg/version"
 )
 
 var versionCheck = []struct {
@@ -22,9 +24,60 @@ var versionCheck = []struct {
 }
 
 func TestGetK8sVersionInfo(t *testing.T) {
-	_, err := GetK8sVersionInfo()
-	if err != nil {
-		t.Errorf("Error getting k8s version info: %v", err)
+	tests := []struct {
+		version  string        // input
+		expected *version.Info // expected output
+	}{
+		{
+			version:  "1.12.0",
+			expected: &version.Info{Major: "1", Minor: "12", GitVersion: "v1.12.0"},
+		},
+		{
+			version:  "1.13.0",
+			expected: &version.Info{Major: "1", Minor: "13", GitVersion: "v1.13.0"},
+		},
+		{
+			version:  "1.14.0",
+			expected: &version.Info{Major: "1", Minor: "14", GitVersion: "v1.14.0"},
+		},
+		{
+			version:  "1.15.0",
+			expected: &version.Info{Major: "1", Minor: "15", GitVersion: "v1.15.0"},
+		},
+		{
+			version:  "1.16.0",
+			expected: &version.Info{Major: "1", Minor: "16", GitVersion: "v1.16.0"},
+		},
+		{
+			version:  "1.17.0",
+			expected: &version.Info{Major: "1", Minor: "17", GitVersion: "v1.17.0"},
+		},
+		{
+			version:  "1.18.0",
+			expected: &version.Info{Major: "1", Minor: "18", GitVersion: "v1.18.0"},
+		},
+		{
+			version:  "1.19.0",
+			expected: &version.Info{Major: "1", Minor: "19", GitVersion: "v1.19.0"},
+		},
+		{
+			version:  "1.20.0",
+			expected: &version.Info{Major: "1", Minor: "20", GitVersion: "v1.20.0"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.version, func(t *testing.T) {
+			got, err := GetK8sVersionInfo()
+			if got == nil {
+				t.Fatalf("GetK8sVersionInfo() error = %v", err)
+				return
+			}
+			if got != tt.expected {
+				t.Fatalf("GetK8sVersionInfo() = %v, want %v", got, tt.expected)
+				return
+			}
+		})
 	}
 }
 
