@@ -293,6 +293,26 @@ class MesheryPerformanceComponent extends React.Component {
     this.handleProfileUpload(profile, true, cb);
   };
 
+  handleAbort = () => {
+    this.setState({
+      profileName : "",
+      loadGenerator : "",
+      url : "",
+      meshName : "",
+      c : 0,
+      qps : 0,
+      t : "30s",
+      headers : "",
+      cookies : "",
+      reqBody : "",
+      contentType : "",
+      testName : "",
+      performanceProfileID : "",
+    });
+    this.setState({ disableTest : true });
+    return;
+  };
+
   handleProfileUpload = (body, generateNotif, cb) => {
     if (generateNotif) this.props.updateProgress({ showProgress : true });
 
@@ -937,6 +957,17 @@ class MesheryPerformanceComponent extends React.Component {
             </Grid>
             <React.Fragment>
               <div className={classes.buttons}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  className={classes.button}
+                  disabled={disableTest}
+                  onClick={() => this.handleAbort()}
+                >
+                  Clear
+                </Button>
                 <Button
                   type="submit"
                   variant="contained"
