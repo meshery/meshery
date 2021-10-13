@@ -9,7 +9,7 @@ export const linearXAxe = {
       beginAtZero: true
     }
   }
-}
+};
 export const logXAxe = {
   type: 'logarithmic',
   scaleLabel: {
@@ -19,10 +19,10 @@ export const logXAxe = {
   ticks: {
     // min: dataH[0].x, // newer chart.js are ok with 0 on x axis too
     callback: function (tick, index, ticks) {
-      return tick.toLocaleString()
+      return tick.toLocaleString();
     }
   }
-}
+};
 export const linearYAxe = {
   id: 'H',
   type: 'linear',
@@ -33,7 +33,7 @@ export const linearYAxe = {
     display: true,
     labelString: 'Count'
   }
-}
+};
 export const logYAxe = {
   id: 'H',
   type: 'logarithmic',
@@ -42,7 +42,7 @@ export const logYAxe = {
     // min: 1, // log mode works even with 0s
     // Needed to not get scientific notation display:
     callback: function (tick, index, ticks) {
-      return tick.toString()
+      return tick.toString();
     }
   },
   scaleLabel: {
