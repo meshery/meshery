@@ -347,7 +347,7 @@ module Graphql
                   "The connection type for [`#{base}`](##{base.downcase})."
                 else
                   object[:description]&.strip
-                end
+               end
 
         return if desc.blank?
 
