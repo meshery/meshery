@@ -359,6 +359,7 @@ func start() error {
 					"tag": currCtx.GetChannel() + "-" + mesheryImageVersion,
 				},
 			},
+			Action: meshkitkube.INSTALL,
 		}); err != nil {
 			return errors.Wrap(err, "cannot start Meshery")
 		}
