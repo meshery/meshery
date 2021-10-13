@@ -290,6 +290,15 @@
         "short_description": "Error while making istioctl an executable",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1032": {
+        "name": "ErrLoadNamespaceCode",
+        "code": "1032",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while labeling namespace:",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
