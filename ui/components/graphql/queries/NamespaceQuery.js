@@ -10,5 +10,5 @@ export default function fetchAvailableNamespaces() {
         }
     `;
 
-  return fetchQuery(environment, query)
+  return fetchQuery(environment, query);
 }

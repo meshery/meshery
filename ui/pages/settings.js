@@ -8,7 +8,7 @@ import { getPath } from "../lib/path";
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
-  overflow : 'hidden', } }
+  overflow : 'hidden', } };
 
 class Settings extends React.Component {
   componentDidMount () {
