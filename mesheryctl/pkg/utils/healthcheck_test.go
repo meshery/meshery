@@ -29,7 +29,6 @@ func TestGetK8sVersionInfo(t *testing.T) {
 }
 
 func TestCheckK8sVersion(t *testing.T) {
-
 	for _, tt := range versionCheck {
 		t.Run(tt.version, func(t *testing.T) {
 			_, err := getK8sVersion(tt.version)
@@ -103,5 +102,4 @@ func TestCheckKubectlVersion(t *testing.T) {
 			}
 		})
 	}
-
 }
