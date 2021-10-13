@@ -32,7 +32,7 @@ subcommand: apply
 {{ name.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ name.usage }}
+  {{ name.example }}
   </div>
 </pre>
 
@@ -40,12 +40,11 @@ subcommand: apply
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ flag.usage }}
+  {{ flag.example }}
   </div>
 </pre>
 {% endfor %}
 <br/>
-
 <!-- Options/Flags available in this command -->
 ## Options
 
