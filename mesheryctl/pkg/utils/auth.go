@@ -40,11 +40,13 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 		Name:     tokenName,
 		Value:    tokenObj[tokenName],
 		HttpOnly: true,
+		Secure:   true,
 	})
 	req.AddCookie(&http.Cookie{
 		Name:     providerName,
 		Value:    tokenObj[providerName],
 		HttpOnly: true,
+		Secure:   true,
 	})
 	return nil
 }
@@ -269,11 +271,13 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 		Name:     tokenName,
 		Value:    token,
 		HttpOnly: true,
+		Secure:   true,
 	})
 	req.AddCookie(&http.Cookie{
 		Name:     "meshery-provider",
 		Value:    provider,
 		HttpOnly: true,
+		Secure:   true,
 	})
 
 	cli := &http.Client{}

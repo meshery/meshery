@@ -259,6 +259,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			Expires:  time.Now().Add(l.LoginCookieDuration),
 			Path:     "/",
 			HttpOnly: true,
+			Secure:   true,
 		})
 		http.Redirect(w, r, l.RemoteProviderURL+"?source="+base64.RawURLEncoding.EncodeToString([]byte(tu))+"&provider_version="+l.ProviderVersion, http.StatusFound)
 		return
@@ -2057,6 +2058,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		Value:    string(tokenString),
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   true,
 	}
 	http.SetCookie(w, ck)
 
@@ -2086,6 +2088,7 @@ func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) str
 			Value:    newts,
 			Path:     "/",
 			HttpOnly: true,
+			Secure:   true,
 		})
 		return newts
 	}

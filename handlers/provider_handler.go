@@ -27,6 +27,7 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 				Expires:  time.Now().Add(h.config.ProviderCookieDuration),
 				Path:     "/",
 				HttpOnly: true,
+				Secure:   true,
 			})
 			http.Redirect(w, r, "/", http.StatusFound)
 			return

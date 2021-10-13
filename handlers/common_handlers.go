@@ -43,6 +43,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		Expires:  time.Now().Add(-time.Hour),
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   true,
 	})
 	p.Logout(w, req)
 }
