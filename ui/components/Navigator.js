@@ -473,7 +473,7 @@ class Navigator extends React.Component {
       return (
         <List disablePadding>
           {children.map(({
-            id, icon, href, title, children
+            id, onClickCallback, icon, href, title, children
           }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
@@ -493,7 +493,7 @@ class Navigator extends React.Component {
                     isDrawerCollapsed && classes.noPadding
                   )}
                 >
-                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed)}
+                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed, onClickCallback)}
                 </ListItem>
                 {this.renderNavigatorExtensions(children, depth + 1)}
               </React.Fragment>
@@ -504,22 +504,23 @@ class Navigator extends React.Component {
     }
   }
 
-  onClickCallback(href){
-    if (typeof(href) === "string")
-      switch (href){
-        case '/extension/meshmap':
-          return this.toggleMiniDrawer(true)
-        default:
-          // by default, sidebar is opened
-          return this.toggleMiniDrawer(false)
-      }
+  onClickCallback(onClickCallback){
+    switch (onClickCallback){
+      case 0:
+        return this.toggleMiniDrawer(false)
+      case 1:
+        return this.toggleMiniDrawer(true)
+      default:
+        // by default, nothing happened
+        return undefined
+    }
   }
 
-  extensionPointContent(icon, href, name, drawerCollapsed) {
+  extensionPointContent(icon, href, name, drawerCollapsed, onClickCallback) {
     const { classes } = this.props;
 
     const content = (
-      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
+      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)}>
         <Tooltip
           title={name}
           placement="right"
