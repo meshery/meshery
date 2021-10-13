@@ -201,6 +201,43 @@ system:
       description: Invalidate current session with your Meshery Provider.
       usage:
         mesheryctl system logout
+
+    check:
+      name: check
+      description: Run system checks for both pre and post mesh deployment scenarios on Meshery
+      usage:
+        mesheryctl system check [flags]
+      example:
+        mesheryctl system check
+      flags:
+        preflight:
+          name: --preflight
+          description: Run Pre-mesh deployment checks (Docker and Kubernetes)
+          usage:
+            mesheryctl system check --preflight
+          example:
+            mesheryctl system check --preflight
+        adapter:
+          name: --adapter
+          description: Run checks on specific mesh adapter
+          usage:
+            mesheryctl system check --adapter [adapter-name]
+          example:
+            mesheryctl system check --adapter meshery-istio:10000
+        operator:
+          name: --operator
+          description: Verify the health of Meshery Operator deployment with MeshSync and Broker
+          usage:
+            mesheryctl system check --operator
+          example:
+            mesheryctl system check --operator
+        report:
+          name: --report
+          description: Runs diagnostics check and bundles up to open an issue if present
+          usage:
+            mesheryctl system check --report
+          example:
+            mesheryctl system check --report
     
 system-channel:
   name: system-channel
