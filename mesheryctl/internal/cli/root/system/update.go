@@ -124,7 +124,7 @@ var updateCmd = &cobra.Command{
 						Repository: utils.HelmChartURL,
 						Chart:      utils.HelmChartName,
 					},
-					Action: "Upgrade",
+					Action: meshkitkube.UPGRADE,
 					OverrideValues: map[string]interface{}{
 						"image": map[string]interface{}{
 							"tag": "stable-latest",

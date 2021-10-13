@@ -15,19 +15,23 @@
 package system
 
 import (
+	"context"
 	"os"
 	"os/exec"
 
-	"github.com/pkg/errors"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+
+	"github.com/layer5io/meshery-operator/api/v1alpha1"
 )
 
 // stopCmd represents the stop command
@@ -132,6 +136,13 @@ func stop() error {
 
 		log.Info("Stopping Meshery...")
 
+		// Delete the CR instances for brokers and meshsyncs
+		if err = invokeDeleteCRs(client); err != nil {
+			return err
+		}
+
+		// TODO: Delete the CRDs for brokers and meshsyncs
+
 		// Delete the helm chart installation
 		// Note: this doesn't delete the CRDs (broker and meshsync)
 		if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
@@ -140,13 +151,10 @@ func stop() error {
 				Repository: utils.HelmChartURL,
 				Chart:      utils.HelmChartName,
 			},
-			Action: "Uninstall",
+			Action: meshkitkube.UNINSTALL,
 		}); err != nil {
 			return errors.Wrap(err, "cannot stop Meshery")
 		}
-
-		// TODO: need to delete the CRDs and CR instances
-
 	}
 
 	// If k8s is available in case of platform docker than we remove operator
@@ -175,6 +183,34 @@ func stop() error {
 		}
 	}
 	return nil
+}
+
+// invokeDeleteCRs is a wrapper of deleteCR to delete CR instances (brokers and meshsyncs)
+func invokeDeleteCRs(client *meshkitkube.Client) error {
+	const (
+		brokerResourceName   = "brokers"
+		brokerInstanceName   = "meshery-broker"
+		meshsyncResourceName = "meshsyncs"
+		meshsyncInstanceName = "meshery-meshsync"
+	)
+
+	if err := deleteCR(brokerResourceName, brokerInstanceName, client); err != nil {
+		return errors.Wrap(err, "cannot delete CR "+brokerInstanceName)
+	}
+
+	if err := deleteCR(meshsyncResourceName, meshsyncInstanceName, client); err != nil {
+		return errors.Wrap(err, "cannot delete CR "+meshsyncInstanceName)
+	}
+
+	return nil
+}
+// deleteCRs delete the specified CR instance in the clusters
+func deleteCR(resourceName, instanceName string, client *meshkitkube.Client) error {
+	return client.DynamicKubeClient.Resource(schema.GroupVersionResource{
+		Group:    v1alpha1.GroupVersion.Group,
+		Version:  v1alpha1.GroupVersion.Version,
+		Resource: resourceName,
+	}).Namespace(utils.MesheryNamespace).Delete(context.TODO(), instanceName, metav1.DeleteOptions{})
 }
 
 func init() {
