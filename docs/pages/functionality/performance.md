@@ -48,19 +48,7 @@ NightHawk is an L7 (HTTP/HTTPS/HTTP2) performance characterization tool. It curr
 - A simple test server which is capable of generating dynamic response sizes, as well as inject delays.
 - A binary to transform nighthawk output to well-known formats, allowing integration with other systems and dashboards.
 
-##### Steps to setup nighthawk locally before running test
-
-This will pull the getnighthawk image and run it as a container.
-```
-$ docker run -it --rm --name=getnighthawk layer5/getnighthawk:latest sh
-```
-In a new terminal, run the following commands to have the binaries in your current directory.
-```
-$ docker cp getnighthawk:/usr/local/bin/nighthawk_output_transform .
-
-$ docker cp getnighthawk:/usr/local/bin/nighthawk_service .
-```
-Place the above two files in **meshery/cmd** and start Meshery again.
+*Guide to setup [Nighthawk]({{ site.baseurl }}/guides/performance-management#steps-to-setup-nighthawkload-generator-before-running-test)
 
 ## Configuring performance testing settings
 

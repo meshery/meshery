@@ -73,6 +73,20 @@ _Selecting multiple test results_
 
 _Comparing multiple test results_
 
+##### *Steps to setup nighthawk(load generator) before running test
+
+This will pull the getnighthawk image and run it as a container.
+```
+$ docker run -it --rm --name=getnighthawk layer5/getnighthawk:latest sh
+```
+In a new terminal, run the following commands to have the binaries in your current directory.
+```
+$ docker cp getnighthawk:/usr/local/bin/nighthawk_output_transform .
+
+$ docker cp getnighthawk:/usr/local/bin/nighthawk_service .
+```
+Place the above two files in **meshery/cmd** and start Meshery again.
+
 ## Running Performance Benchmarks Through mesheryctl
 
 The `mesheryctl perf` subcommand provides the performance management features of Meshery in the CLI.
