@@ -15,7 +15,7 @@ const actionsStyles = (theme) => ({ root : { flexShrink : 0,
 class TablePaginationActions extends React.Component {
   handleFirstPageButtonClick = () => {
     this.props.onChangePage(0);
-  };
+  }
 
   handleBackButtonClick = () => {
     this.props.onChangePage(this.props.page - 1);

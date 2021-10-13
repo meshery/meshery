@@ -178,7 +178,7 @@ class MesheryApp extends App {
 
   handleDrawerToggle = () => {
     this.setState(state => ({ mobileOpen : !state.mobileOpen }));
-  };
+  }
 
   handleCollapseDrawer = () => {
     this.setState(state => ({ isDrawerCollapsed : !state.isDrawerCollapsed }));
@@ -275,7 +275,7 @@ class MesheryApp extends App {
   static async getInitialProps({ Component, ctx }) {
     const pageProps = Component.getInitialProps
       ? await Component.getInitialProps(ctx)
-      : {};
+      : {}
     return { pageProps };
   }
 
