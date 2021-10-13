@@ -97,9 +97,7 @@ export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, a
 
   const inClusterConfigForm = false
   const formData = new FormData();
-  formData.append("inClusterConfig", inClusterConfigForm
-    ? "on"
-    : ""); // to simulate form behaviour of a checkbox
+  formData.append("inClusterConfig", inClusterConfigForm ? "on" : ""); // to simulate form behaviour of a checkbox
   if (!inClusterConfigForm) {
     formData.append("contextName", contextName);
     formData.append("k8sfile", k8sfile);

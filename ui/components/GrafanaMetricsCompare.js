@@ -39,9 +39,7 @@ class GrafanaMetricsCompare extends Component {
 
   componentDidMount() {
     const { panels } = this.state;
-    const panel = Object.keys(panels).length > 0
-      ? Object.keys(panels)[0]
-      : '';
+    const panel = Object.keys(panels).length > 0 ? Object.keys(panels)[0] : '';
     let series = [];
     if (panels[panel] && panels[panel].targets) {
       series = panels[panel].targets.map((target) => target.expr);
