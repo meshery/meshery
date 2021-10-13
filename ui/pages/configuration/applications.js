@@ -1,4 +1,4 @@
-import { NoSsr, Paper, withStyles } from "@material-ui/core";
+import { NoSsr, withStyles } from "@material-ui/core";
 import MesheryApplications from "../../components/MesheryApplications";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
@@ -23,9 +23,7 @@ class Applications extends React.Component {
         <Head>
           <title>Applications | Meshery</title>
         </Head>
-        <Paper className={this.props.classes.paper}>
-          <MesheryApplications />
-        </Paper>
+        <MesheryApplications />
       </NoSsr>
     );
   }

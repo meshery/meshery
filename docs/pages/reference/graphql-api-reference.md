@@ -35,6 +35,18 @@ Check the Meshsync Status and deploy if not enabled.
 
 ###### **Returns** [`Status!`](#status).
 
+### `Query.fetchAllResults`
+
+Query for fetching all results for profile ID.
+
+###### **Returns** [`PerfPageResult!`](#perfpageresult).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="queryfetchallresultsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
+
 ### `Query.fetchResults`
 
 Query for fetching all results for profile ID.
@@ -119,6 +131,18 @@ Query for performance result.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="querygetperfresultid"></a>`id` | [`ID!`](#id) |  |
+
+### `Query.getPerformanceProfiles`
+
+Query for fetching all results for profile ID.
+
+###### **Returns** [`PerfPageProfiles!`](#perfpageprofiles).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetperformanceprofilesselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
 
 ### `Query.resyncCluster`
 
@@ -223,25 +247,13 @@ Listen to changes in status of Meshery Operator in your cluster.
 
 Listen to changes in Performance Profile.
 
-###### **Returns** [`PerfPageResult!`](#perfpageresult).
+###### **Returns** [`MesheryResult!`](#mesheryresult).
 
 #### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="subscriptionsubscribeperfprofileselector"></a>`selector` | [`PageFilter`](#pagefilter) |  |
-
-### `Subscription.subscribePerfResults`
-
-Listen to changes in Performance Results.
-
-###### **Returns** [`PerfPageResult!`](#perfpageresult).
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="subscriptionsubscribeperfresultsselector"></a>`selector` | [`PageFilter`](#pagefilter) |  |
+| <a id="subscriptionsubscribeperfprofileprofileid"></a>`profileID` | [`String!`](#string) |  |
 
 ## Object types
 
@@ -407,6 +419,17 @@ Status of Meshery Operator and its controllers.
 | <a id="operatorstatusstatus"></a>`status` | [`Status!`](#status) | Status of Meshery Operator. |
 | <a id="operatorstatusversion"></a>`version` | [`String!`](#string) | Verion of Meshery Operator. |
 
+### `PerfPageProfiles`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="perfpageprofilespage"></a>`page` | [`Int!`](#int) |  |
+| <a id="perfpageprofilespage_size"></a>`page_size` | [`Int!`](#int) |  |
+| <a id="perfpageprofilesprofiles"></a>`profiles` | [`[PerfProfile]`](#perfprofile) |  |
+| <a id="perfpageprofilestotal_count"></a>`total_count` | [`Int!`](#int) |  |
+
 ### `PerfPageResult`
 
 #### **Fields**
@@ -417,6 +440,30 @@ Status of Meshery Operator and its controllers.
 | <a id="perfpageresultpage_size"></a>`page_size` | [`Int!`](#int) |  |
 | <a id="perfpageresultresults"></a>`results` | [`[MesheryResult]`](#mesheryresult) |  |
 | <a id="perfpageresulttotal_count"></a>`total_count` | [`Int!`](#int) |  |
+
+### `PerfProfile`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="perfprofileconcurrent_request"></a>`concurrent_request` | [`Int!`](#int) |  |
+| <a id="perfprofilecontent_type"></a>`content_type` | [`String`](#string) |  |
+| <a id="perfprofilecreated_at"></a>`created_at` | [`String`](#string) |  |
+| <a id="perfprofileduration"></a>`duration` | [`String!`](#string) |  |
+| <a id="perfprofileendpoints"></a>`endpoints` | [`[String]`](#string) |  |
+| <a id="perfprofileid"></a>`id` | [`String!`](#string) |  |
+| <a id="perfprofilelast_run"></a>`last_run` | [`String`](#string) |  |
+| <a id="perfprofileload_generators"></a>`load_generators` | [`[String]`](#string) |  |
+| <a id="perfprofilename"></a>`name` | [`String`](#string) |  |
+| <a id="perfprofileqps"></a>`qps` | [`Int`](#int) |  |
+| <a id="perfprofilerequest_body"></a>`request_body` | [`String`](#string) |  |
+| <a id="perfprofilerequest_cookies"></a>`request_cookies` | [`String`](#string) |  |
+| <a id="perfprofilerequest_headers"></a>`request_headers` | [`String`](#string) |  |
+| <a id="perfprofileservice_mesh"></a>`service_mesh` | [`String`](#string) |  |
+| <a id="perfprofiletotal_results"></a>`total_results` | [`Int`](#int) |  |
+| <a id="perfprofileupdated_at"></a>`updated_at` | [`String`](#string) |  |
+| <a id="perfprofileuser_id"></a>`user_id` | [`String!`](#string) |  |
 
 ## Enumeration types
 

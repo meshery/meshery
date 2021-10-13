@@ -72,7 +72,7 @@ services:
   # nighthawk-lg:
   #   image: envoyproxy/nighthawk-dev:latest
   watchtower:
-    image: v2tec/watchtower
+    image: containrrr/watchtower
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     volumes:

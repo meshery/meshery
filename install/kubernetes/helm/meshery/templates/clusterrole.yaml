@@ -10,14 +10,7 @@ rules:
   resources:
   - '*'
   verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-  - approve
+  - '*'
 - nonResourceURLs: ["/metrics", "/health", "/ping"]
   verbs:
   - get

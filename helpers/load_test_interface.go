@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -174,8 +175,19 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 func startNighthawkServer(timeout int64) error {
 	nighthawkStatus.Lock()
 	defer nighthawkStatus.Unlock()
-	command := "./nighthawk_service"
-	transformCommand := "./nighthawk_output_transform"
+
+	curDir, err := os.Getwd()
+	if err != nil {
+		return ErrStartingNighthawkServer(err)
+	}
+
+	command := filepath.Join(curDir, "nighthawk_service")
+	transformCommand := filepath.Join(curDir, "nighthawk_output_transform")
+
+	_, err = os.Stat(command)
+	if err != nil {
+		return ErrStartingNighthawkServer(err)
+	}
 	cmd := exec.Command(command)
 	if !nighthawkRunning {
 		err := cmd.Start()
@@ -193,7 +205,7 @@ func startNighthawkServer(timeout int64) error {
 		}
 	}()
 
-	_, err := os.Stat(transformCommand)
+	_, err = os.Stat(transformCommand)
 	if err != nil {
 		nighthawkStatus.Unlock()
 		return ErrStartingNighthawkServer(err)
@@ -219,12 +231,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		return nil, nil, ErrRunningNighthawkServer(err)
 	}
 
-	qps := opts.HTTPQPS
-
-	if qps <= 0 {
-		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
-	}
-
 	u, err := url.Parse(opts.URL)
 	if err != nil {
 		return nil, nil, ErrRunningTest(err)
@@ -232,24 +238,24 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	rURL := u.Host
 	if u.Hostname() == "localhost" {
 		if u.Port() != "" {
-			rURL = fmt.Sprintf("0.0.0.0:%s", u.Port())
+			rURL = fmt.Sprintf("0.0.0.0:%s%s", u.Port(), u.Path)
 		} else {
-			rURL = "0.0.0.0"
+			rURL = fmt.Sprintf("0.0.0.0%s", u.Path)
 		}
 	}
 
 	if u.Port() == "" {
 		if u.Scheme == "http" {
-			rURL = fmt.Sprintf("http://%s:80", u.Hostname())
+			rURL = fmt.Sprintf("http://%s:80%s", u.Hostname(), u.Path)
+			//rURL = fmt.Sprintf("http://%s:80/%s", u.Port(), u.Path)
 		} else {
-			rURL = fmt.Sprintf("https://%s:443", u.Hostname())
+			rURL = fmt.Sprintf("http://%s:443%s", u.Port(), u.Path)
+			//rURL = fmt.Sprintf("https://%s:443", u.Hostname())
 		}
 		// Add support for more protocols here
 	}
-
 	ro := &nighthawk_proto.CommandLineOptions{
-		RequestsPerSecond: &wrappers.UInt32Value{Value: uint32(qps)},
-		Connections:       &wrappers.UInt32Value{Value: uint32(2)},
+		Connections: &wrappers.UInt32Value{Value: uint32(2)},
 		OneofDurationOptions: &nighthawk_proto.CommandLineOptions_Duration{
 			Duration: durationpb.New(opts.Duration),
 		},
@@ -302,6 +308,13 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		//	Nanos:   0,
 		//},
 		ExecutionId: &wrappers.StringValue{Value: "gg"},
+	}
+
+	qps := opts.HTTPQPS
+	// set QPS only if given QPS > 0
+	// user nighthawk's default QPS otherwise
+	if qps > 0 {
+		ro.RequestsPerSecond = &wrappers.UInt32Value{Value: uint32(qps)}
 	}
 
 	if opts.SupportedLoadTestMethods == 2 {

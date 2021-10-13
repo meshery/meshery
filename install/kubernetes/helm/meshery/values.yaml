@@ -13,7 +13,7 @@ env:
   EVENT: mesheryLocal
   SAAS_BASE_URL: https://meshery.layer5.io
   PROVIDER_BASE_URLS: https://meshery.layer5.io
-  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nsm:10004 meshery-traefik-mesh:10006 meshery-cpx:10008
+  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-traefik-mesh:10006 meshery-cpx:10008
 
 probe:
   #TODO: Need to confirm the health check path of meshery.
@@ -88,43 +88,56 @@ tolerations: []
 affinity: {}
 
 
-# Deploy meshery-istio
-#
+# By default, the adapters need to have the same cluster role as the meshery to have permissions for performing necessary operations
+
+# If need to use a different service accounts for the adapters, modify the serviceAccountNameOverride for the corresponding adapters here,
+# or set the serviceAccountNameOverride to empty while setting the serviceAccount information in the sub-chart accordingly
 meshery-istio:
   enabled: true
   fullnameOverride: meshery-istio
+  serviceAccountNameOverride: meshery-server
 
-
-# Deploy meshery-linkerd
-#
 meshery-linkerd:
   enabled: true
   fullnameOverride: meshery-linkerd
+  serviceAccountNameOverride: meshery-server
 
 meshery-consul:
   enabled: true
   fullnameOverride: meshery-consul
+  serviceAccountNameOverride: meshery-server
 
 meshery-kuma:
   enabled: true
   fullnameOverride: meshery-kuma
+  serviceAccountNameOverride: meshery-server
 
 meshery-osm:
   enabled: true
   fullnameOverride: meshery-osm
+  serviceAccountNameOverride: meshery-server
 
 meshery-nsm:
   enabled: true
   fullnameOverride: meshery-nsm
+  serviceAccountNameOverride: meshery-server
+
+meshery-nginx-sm:
+  enabled: true
+  fullnameOverride: meshery-nginx-sm
+  serviceAccountNameOverride: meshery-server
 
 meshery-traefik-mesh:
   enabled: true
   fullnameOverride: meshery-traefik-mesh
+  serviceAccountNameOverride: meshery-server
 
 meshery-cpx:
   enabled: true
   fullnameOverride: meshery-cpx
+  serviceAccountNameOverride: meshery-server
 
+# The operator has its own cluster role
 meshery-operator:
   enabled: true
   fullnameOverride: meshery-operator

@@ -13,12 +13,12 @@
 | Dhruv Patel  | dhruv0000    | Layer5      |
 | Lee Calcote  | leecalcote   | Layer5      |
 | Nikhil Ladha | Nikhil-Ladha | Red Hat     |
+| Nithish Karthik  | sudo-NithishKarthik | Layer5 |
 
 ### Adapter Maintainers
 
 | Name               | GitHub      | Affiliation |
 | ------------------ | ----------- | ----------- |
-| Abishek Kumar      | kumarabd    | Layer5      |
 | Aisuko             | Aisuko      | Layer5      |
 | Dhiraj Gedam       | dheerajng   | Citrix      |
 | Haim Helman        | thehh1974   | VMware      |
@@ -46,6 +46,5 @@
 
 | Name               | GitHub      | Affiliation |
 | ------------------ | ----------- | ----------- |
-| Abishek Kumar      | kumarabd    | Layer5      |
 | Lee Calcote        | leecalcote  | Layer5      |
 | Utkarsh Srivastava | utkarsh-pro | Layer5      |
