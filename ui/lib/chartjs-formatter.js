@@ -49,7 +49,7 @@ export const logYAxe = {
     display: true,
     labelString: 'Count (log scale)'
   }
-}
+};
 
 /**
  * getMetadata takes in the test data and returns an object
@@ -212,57 +212,57 @@ export function getMetadata(rawdata,res) {
         ],
       }
     }
-  }
+  };
 }
 
 export function makeTitle (rawdata,res) {
-  var title = []
+  var title = [];
   if (res.Labels !== '') {
     if (res.URL) { // http results
       // title.push(res.Labels + ' - ' + res.URL + ' - ' + formatDate(res.StartTime))
       // title.push(res.URL + ' - ' + formatDate(res.StartTime))
-      console.log(res.Labels)
-      var labels = res.Labels.split(' -_- ')
+      console.log(res.Labels);
+      var labels = res.Labels.split(' -_- ');
       // title.push(`Labels: ${labels.map(item => item + '\n')}`)
-      title.push(`Title: ${rawdata ? rawdata[0].name : labels[0]}`)
-      title.push(`URL: ${rawdata ? rawdata[0].runner_results.URL : labels[1]}`)
-      title.push(`Start Time: ${formatDate(res.StartTime)}`)
+      title.push(`Title: ${rawdata ? rawdata[0].name : labels[0]}`);
+      title.push(`URL: ${rawdata ? rawdata[0].runner_results.URL : labels[1]}`);
+      title.push(`Start Time: ${formatDate(res.StartTime)}`);
     } else { // grpc results
-      title.push(`Destination: ${res.Destination}`)
-      title.push(`Start Time: ${formatDate(res.StartTime)}`)
+      title.push(`Destination: ${res.Destination}`);
+      title.push(`Start Time: ${formatDate(res.StartTime)}`);
     }
   }
-  title.push(`Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms`)
-  title.push(`Average: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms`)
-  title.push(`Maximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms`)
-  var percStr = `Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms \nAverage: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms \nMaximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms\n`
-  var percStr_2 = 'Percentiles: '
+  title.push(`Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms`);
+  title.push(`Average: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms`);
+  title.push(`Maximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms`);
+  var percStr = `Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms \nAverage: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms \nMaximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms\n`;
+  var percStr_2 = 'Percentiles: ';
   if (res.DurationHistogram.Percentiles) {
     for (var i = 0; i < res.DurationHistogram.Percentiles.length; i++) {
-      var p = res.DurationHistogram.Percentiles[i]
-      percStr_2 += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms; `
-      percStr += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms; `
+      var p = res.DurationHistogram.Percentiles[i];
+      percStr_2 += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms; `;
+      percStr += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms; `;
     }
-    percStr=percStr.slice(0,-2)
+    percStr=percStr.slice(0,-2);
   }
   var statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes[200]:0;
   if (!statusOk) { // grpc results
     statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes["SERVING"]:0;
   }
-  var total = res.DurationHistogram.Count
-  var errStr = 'No Error'
+  var total = res.DurationHistogram.Count;
+  var errStr = 'No Error';
   if (statusOk !== total) {
     if (statusOk) {
-      errStr = myRound(100.0 * (total - statusOk) / total, 2) + '% errors'
+      errStr = myRound(100.0 * (total - statusOk) / total, 2) + '% errors';
     } else {
-      errStr = '100% errors!'
+      errStr = '100% errors!';
     }
   }
-  title.push(`Target QPS: ${res.RequestedQPS} ( Actual QPS: ${myRound(res.ActualQPS, 1)} )`)
-  title.push(`No of Connections: ${res.NumThreads}`)
-  title.push(`Requested Duration: ${res.RequestedDuration} ( Actual Duration: ${myRound(res.ActualDuration / 1e9, 1)} )`)
-  title.push(`Errors: ${ errStr }`)
-  title.push(percStr_2)
+  title.push(`Target QPS: ${res.RequestedQPS} ( Actual QPS: ${myRound(res.ActualQPS, 1)} )`);
+  title.push(`No of Connections: ${res.NumThreads}`);
+  title.push(`Requested Duration: ${res.RequestedDuration} ( Actual Duration: ${myRound(res.ActualDuration / 1e9, 1)} )`);
+  title.push(`Errors: ${ errStr }`);
+  title.push(percStr_2);
   if(res.kubernetes){
     title.push(`Kubernetes server version: ${res.kubernetes.server_version}`);
     title.push("Nodes:");
@@ -272,51 +272,51 @@ export function makeTitle (rawdata,res) {
     });
   }
 
-  return title
+  return title;
 }
 
 export function fortioResultToJsChartData (rawdata,res) {
   var dataP = [{
     x: 0.0,
     y: 0.0
-  }]
-  var len = res.DurationHistogram.Data.length
-  var prevX = 0.0
-  var prevY = 0.0
+  }];
+  var len = res.DurationHistogram.Data.length;
+  var prevX = 0.0;
+  var prevY = 0.0;
   for (var i = 0; i < len; i++) {
-    var it = res.DurationHistogram.Data[i]
-    var x = myRound(1000.0 * it.Start)
+    var it = res.DurationHistogram.Data[i];
+    var x = myRound(1000.0 * it.Start);
     if (i === 0) {
       // Extra point, 1/N at min itself
       dataP.push({
         x: x,
         // y: myRound(100.0 / res.DurationHistogram.Count, 3)
         y: myRound(100.0 / res.DurationHistogram.Count, 2)
-      })
+      });
     } else {
       if (prevX !== x) {
         dataP.push({
           x: x,
           y: prevY
-        })
+        });
       }
     }
-    x = myRound(1000.0 * it.End)
+    x = myRound(1000.0 * it.End);
     // var y = myRound(it.Percent, 3)
-    var y = myRound(it.Percent, 2)
+    var y = myRound(it.Percent, 2);
     dataP.push({
       x: x,
       y: y
-    })
-    prevX = x
-    prevY = y
+    });
+    prevX = x;
+    prevY = y;
   }
-  var dataH = []
-  var prev = 1000.0 * res.DurationHistogram.Data[0].Start
+  var dataH = [];
+  var prev = 1000.0 * res.DurationHistogram.Data[0].Start;
   for (i = 0; i < len; i++) {
-    it = res.DurationHistogram.Data[i]
-    var startX = 1000.0 * it.Start
-    var endX = 1000.0 * it.End
+    it = res.DurationHistogram.Data[i];
+    var startX = 1000.0 * it.Start;
+    var endX = 1000.0 * it.End;
     if (startX !== prev) {
       dataH.push({
         x: myRound(prev),
@@ -324,7 +324,7 @@ export function fortioResultToJsChartData (rawdata,res) {
       }, {
         x: myRound(startX),
         y: 0
-      })
+      });
     }
     dataH.push({
       x: myRound(startX),
@@ -332,8 +332,8 @@ export function fortioResultToJsChartData (rawdata,res) {
     }, {
       x: myRound(endX),
       y: it.Count
-    })
-    prev = endX
+    });
+    prev = endX;
   }
   return {
     title: makeTitle(rawdata,res),
@@ -341,23 +341,23 @@ export function fortioResultToJsChartData (rawdata,res) {
     dataP: dataP,
     dataH: dataH,
     percentiles: res.DurationHistogram.Percentiles,
-  }
+  };
 }
 
 // export function myRound (v, digits = 6) {
 export function myRound (v, digits = 2) {
-  var p = Math.pow(10, digits)
-  return Math.round(v * p) / p
+  var p = Math.pow(10, digits);
+  return Math.round(v * p) / p;
 }
 
 export function pad (n) {
-  return (n < 10) ? ('0' + n) : n
+  return (n < 10) ? ('0' + n) : n;
 }
 
 export function formatDate (dStr) {
-  var d = new Date(dStr)
+  var d = new Date(dStr);
   return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' +
-          pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds())
+          pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
 }
 
 export function makeChart (data) {
@@ -415,7 +415,7 @@ export function makeChart (data) {
         ]
       }
     }
-  }
+  };
 
   //     // TODO may need updateChart() if we persist settings even the first time
   // } else {
@@ -432,7 +432,7 @@ export function makeOverlayChartTitle (titleA, titleB) {
     'A: ' + titleA[0], titleA[1], // Skip 3rd line.
     '',
     'B: ' + titleB[0], titleB[1], // Skip 3rd line.
-  ]
+  ];
 }
 
 export function makeOverlayChart (dataA, dataB) {
@@ -444,7 +444,7 @@ export function makeOverlayChart (dataA, dataB) {
   // deleteSingleChart()
   // deleteMultiChart()
   // var ctx = chartEl.getContext('2d')
-  var title = makeOverlayChartTitle(dataA.title, dataB.title)
+  var title = makeOverlayChartTitle(dataA.title, dataB.title);
   return {
     data: {
       // "Cumulative %" datasets are listed first so they are drawn on top of the histograms.
@@ -518,7 +518,7 @@ export function makeOverlayChart (dataA, dataB) {
         ]
       }
     }
-  }
+  };
   // updateChart(overlayChart)
 }
 
@@ -651,7 +651,7 @@ export function makeMultiChart (rawdata,results) {
         }]
       }
     }
-  }
+  };
 
   const multiLabel = (res) => {
     var l = formatDate(res.StartTime)
@@ -664,11 +664,11 @@ export function makeMultiChart (rawdata,results) {
           l += ' - ' + res.Labels;
         }
       } else {
-        l += ' - ' + res.Labels
+        l += ' - ' + res.Labels;
       }
     }
     return label_trunc(l);
-  }
+  };
 
   const label_trunc = function(str) {
     if (str.length > length) {
@@ -680,39 +680,39 @@ export function makeMultiChart (rawdata,results) {
 
   const findData = (slot, idx, res, p) => {
     // Not very efficient but there are only a handful of percentiles
-    var pA = res.DurationHistogram.Percentiles
+    var pA = res.DurationHistogram.Percentiles;
     if (!pA) {
       //    console.log('No percentiles in res', res)
-      return
+      return;
     }
     var pN = Number(p)
     for (var i = 0; i < pA.length; i++) {
       if (pA[i].Percentile === pN) {
-        data.data.datasets[slot].data[idx] = 1000.0 * pA[i].Value
-        return
+        data.data.datasets[slot].data[idx] = 1000.0 * pA[i].Value;
+        return;
       }
     }
-    console.log('Not Found', p, pN, pA)
+    console.log('Not Found', p, pN, pA);
     // not found, not set
   }
 
   const fortioAddToMultiResult = (i, res) => {
-    data.data.labels[i] = multiLabel(res)
-    data.data.datasets[0].data[i] = 1000.0 * res.DurationHistogram.Min
-    findData(1, i, res, '50')
-    data.data.datasets[2].data[i] = 1000.0 * res.DurationHistogram.Avg
-    findData(3, i, res, '75')
-    findData(4, i, res, '90')
-    findData(5, i, res, '99')
-    findData(6, i, res, '99.9')
-    data.data.datasets[7].data[i] = 1000.0 * res.DurationHistogram.Max
-    data.data.datasets[8].data[i] = res.ActualQPS
+    data.data.labels[i] = multiLabel(res);
+    data.data.datasets[0].data[i] = 1000.0 * res.DurationHistogram.Min;
+    findData(1, i, res, '50');
+    data.data.datasets[2].data[i] = 1000.0 * res.DurationHistogram.Avg;
+    findData(3, i, res, '75');
+    findData(4, i, res, '90');
+    findData(5, i, res, '99');
+    findData(6, i, res, '99.9');
+    data.data.datasets[7].data[i] = 1000.0 * res.DurationHistogram.Max;
+    data.data.datasets[8].data[i] = res.ActualQPS;
   }
 
   const endMultiChart = (len) => {
-    data.data.labels = data.data.labels.slice(0, len)
+    data.data.labels = data.data.labels.slice(0, len);
     for (var i = 0; i < data.data.datasets.length; i++) {
-      data.data.datasets[i].data = data.data.datasets[i].data.slice(0, len)
+      data.data.datasets[i].data = data.data.datasets[i].data.slice(0, len);
     }
     // mchart.update()
   }
