@@ -55,18 +55,19 @@ export const logYAxe = {
  * getMetadata takes in the test data and returns an object
  * with partially computed data and a "display" field
  */
-export function getMetadata(res) {
+export function getMetadata(rawdata,res) {
   return {
     title : {
       display : {
         key : 'Title',
-        value : res.Labels.split(' -_- ')?.[0] || "No Title"
+        // value : res.Labels.split(' -_- ')?.[0] || "No Title"
+        value : (rawdata ? rawdata[0].name : res.Labels.split(' -_- ')?.[0]) || "No Title"
       }
     },
     url : {
       display : {
         key : 'URL',
-        value : res.Labels.split(' -_- ')?.[1] || "No URL"
+        value : (rawdata ? rawdata[0].runner_results.URL: res.Labels.split(' -_- ')?.[1]) || "No URL"
       }
     },
     startTime : {
@@ -214,7 +215,7 @@ export function getMetadata(res) {
   }
 }
 
-export function makeTitle (res) {
+export function makeTitle (rawdata,res) {
   var title = []
   if (res.Labels !== '') {
     if (res.URL) { // http results
@@ -223,8 +224,8 @@ export function makeTitle (res) {
       console.log(res.Labels)
       var labels = res.Labels.split(' -_- ')
       // title.push(`Labels: ${labels.map(item => item + '\n')}`)
-      title.push(`Title: ${labels[0]}`)
-      title.push(`URL: ${labels[1]}`)
+      title.push(`Title: ${rawdata ? rawdata[0].name : labels[0]}`)
+      title.push(`URL: ${rawdata ? rawdata[0].runner_results.URL : labels[1]}`)
       title.push(`Start Time: ${formatDate(res.StartTime)}`)
     } else { // grpc results
       title.push(`Destination: ${res.Destination}`)
@@ -274,7 +275,7 @@ export function makeTitle (res) {
   return title
 }
 
-export function fortioResultToJsChartData (res) {
+export function fortioResultToJsChartData (rawdata,res) {
   var dataP = [{
     x: 0.0,
     y: 0.0
@@ -335,8 +336,8 @@ export function fortioResultToJsChartData (res) {
     prev = endX
   }
   return {
-    title: makeTitle(res),
-    metadata: getMetadata(res),
+    title: makeTitle(rawdata,res),
+    metadata: getMetadata(rawdata,res),
     dataP: dataP,
     dataH: dataH,
     percentiles: res.DurationHistogram.Percentiles,
@@ -521,7 +522,7 @@ export function makeOverlayChart (dataA, dataB) {
   // updateChart(overlayChart)
 }
 
-export function makeMultiChart (results) {
+export function makeMultiChart (rawdata,results) {
   // document.getElementById('running').style.display = 'none'
   // document.getElementById('update').style.visibility = 'hidden'
   // var chartEl = document.getElementById('chart1')

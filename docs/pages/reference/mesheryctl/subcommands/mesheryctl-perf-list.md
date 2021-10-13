@@ -33,7 +33,7 @@ subcommand: list
 {{ name.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ name.usage }}
+  {{ name.example }}
   </div>
 </pre>
 
