@@ -49,6 +49,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import URLUploader from "./URLUploader";
 import { createPatternFromConfig, createWorkloadTraitSets, getPatternServiceName } from "./MesheryMeshInterface/helpers";
 import LazyPatternServiceForm from "./MesheryMeshInterface/LazyPatternServiceForm";
+import { trueRandom } from "../lib/trueRandom";
 
 const styles = (theme) => ({
   grid : {
@@ -423,7 +424,7 @@ function MesheryPatterns({
       handleSubmit(
         event.target.result,
         "",
-        file?.name || "meshery_" + Math.floor(Math.random() * 100),
+        file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         "upload",
       );
     });
@@ -431,7 +432,7 @@ function MesheryPatterns({
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
     // console.log(link, "valid");
   }
   const columns = [
@@ -873,7 +874,7 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
               <IconButton
                 aria-label="Save"
                 color="primary"
-                onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, "upload")}
+                onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, "upload")}
               >
                 <FileCopyIcon />
               </IconButton>
