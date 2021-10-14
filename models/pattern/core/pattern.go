@@ -19,7 +19,7 @@ import (
 // config file model
 type Pattern struct {
 	// Name is the human-readable, display-friendly descriptor of the pattern
-	Name      string              `yaml:"name,omitempty" json:"name,omitempty"`
+	Name string `yaml:"name,omitempty" json:"name,omitempty"`
 	// PatternID is the moniker use to uniquely identify any given pattern
 	// Convention: SMP-###-v#.#.#
 	PatternID string              `yaml:"patternID,omitempty" json:"patternID,omitempty"`
@@ -34,9 +34,9 @@ type Service struct {
 	// Name is the name of the service and is an optional parameter
 	// If given then this supercedes the name of the service inherited
 	// from the parent
-	Name      string   `yaml:"name,omitempty" json:"name,omitempty"`
-	Type      string   `yaml:"type,omitempty" json:"type,omitempty"`
-	Namespace string   `yaml:"namespace,omitempty" json:"namespace,omitempty"`
+	Name      string `yaml:"name,omitempty" json:"name,omitempty"`
+	Type      string `yaml:"type,omitempty" json:"type,omitempty"`
+	Namespace string `yaml:"namespace,omitempty" json:"namespace,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
 	// DependsOn is used to determine sequence of operations
 	DependsOn []string `yaml:"dependsOn,omitempty" json:"dependsOn,omitempty"`
