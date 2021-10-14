@@ -6,6 +6,7 @@ import React from "react";
 import theme from "../../styles/theme";
 import Header from "../Header/Header";
 import Navbar from "../Navbar/Navbar";
+import Footer from "../Footer/Footer";
 import { NavbarContainer } from "../Navbar/NavbarContainer";
 
 export const Layout = ({ children }) => (
@@ -22,7 +23,7 @@ export const Layout = ({ children }) => (
           />
           <main style={{ flex: 1, padding: "48px 36px 24px", background: "#eaeff1" }}>{children}</main>
 
-          <footer>Hello</footer>
+          <Footer />
         </div>
       </div>
     </ThemeProvider>
