@@ -48,6 +48,7 @@ import jsYaml from "js-yaml";
 import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppsIcon from "./ConnectionWizard/icons/apps";
+import { trueRandom } from "../lib/trueRandom";
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
   tableHeader : { fontWeight : "bolder",
@@ -402,7 +403,7 @@ function MesheryApplications({
       handleSubmit(
         event.target.result,
         "",
-        file?.name || "meshery_" + Math.floor(Math.random() * 100),
+        file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         "upload",
       );
     });
@@ -410,7 +411,7 @@ function MesheryApplications({
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
     // console.log(link, "valid");
   }
 
@@ -906,7 +907,7 @@ function PatternForm({ application, onSubmit, show }) {
               }}
               onBlur={(a) => saveCodeEditorChanges(a)}
             />
-            <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, "upload")} />
+            <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, "upload")} />
             <CardActions style={{ justifyContent : "flex-end" }}>
               <Tooltip title="Update Application">
                 <IconButton
