@@ -78,12 +78,16 @@ const ConfigurationWizard = () => {
     switch (step) {
       case 0:
         return <KubernetesScreen setStepStatus={setStepStatus}/>;
+        break;
       case 1:
         return <MesheryOperatorScreen setStepStatus={setStepStatus}/>;
+        break;
       case 2:
         return <ServiceMeshScreen />;
+        break;
       case 3:
         return <MetricsScreen />;
+        break;
       default:
         return null;
     }
