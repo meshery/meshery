@@ -18,7 +18,10 @@ import (
 // Pattern is the golang representation of the Pattern
 // config file model
 type Pattern struct {
+	// Name is the human-readable, display-friendly descriptor of the pattern
 	Name      string              `yaml:"name,omitempty" json:"name,omitempty"`
+	// PatternID is the moniker use to uniquely identify any given pattern
+	// Convention: SMP-###-v#.#.#
 	PatternID string              `yaml:"patternID,omitempty" json:"patternID,omitempty"`
 	Services  map[string]*Service `yaml:"services,omitempty" json:"services,omitempty"`
 }
@@ -34,6 +37,8 @@ type Service struct {
 	Name      string   `yaml:"name,omitempty" json:"name,omitempty"`
 	Type      string   `yaml:"type,omitempty" json:"type,omitempty"`
 	Namespace string   `yaml:"namespace,omitempty" json:"namespace,omitempty"`
+	// DependsOn correlates one or more objects as a required dependency of this service
+	// DependsOn is used to determine sequence of operations
 	DependsOn []string `yaml:"dependsOn,omitempty" json:"dependsOn,omitempty"`
 
 	Settings map[string]interface{} `yaml:"settings,omitempty" json:"settings,omitempty"`
