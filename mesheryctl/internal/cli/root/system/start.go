@@ -22,6 +22,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -340,6 +341,10 @@ func start() error {
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 		spinner.Start()
 
+		//if err := utils.CreateManifestsFolder(); err != nil {
+		//	return err
+		//}
+
 		// Apply the helm charts with specified meshery image version
 		var chartVersion string
 		if mesheryImageVersion != "latest" {
@@ -360,6 +365,8 @@ func start() error {
 				},
 			},
 			Action: meshkitkube.INSTALL,
+			// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+			DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		}); err != nil {
 			return errors.Wrap(err, "cannot start Meshery")
 		}
