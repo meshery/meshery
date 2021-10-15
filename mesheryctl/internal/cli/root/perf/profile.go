@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"github.com/manifoldco/promptui"
+	termbox "github.com/nsf/termbox-go"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshery/internal/sql"
@@ -18,7 +21,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -104,21 +106,25 @@ mesheryctl perf profile --expand
 		} else if !expand {
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
 		} else {
-			for _, a := range expandedData {
-				fmt.Printf("Name: %v\n", a.Name)
-				fmt.Printf("ID: %s\n", a.ID.String())
-				fmt.Printf("Total Results: %d\n", a.TotalResults)
-				fmt.Printf("Endpoint: %v\n", a.Endpoints[0])
-				fmt.Printf("Load Generators: %v\n", a.Loadgenerators[0])
-				fmt.Printf("Test run duration: %v\n", a.Duration)
-				fmt.Printf("QPS: %d\n", a.QPS)
-				fmt.Printf("Service Mesh: %v\n", a.ServiceMesh)
-				if a.LastRun != nil {
-					fmt.Printf("Last Run: %v\n", a.LastRun.Time.Format("2006-01-02 15:04:05"))
-				} else {
-					fmt.Printf("Last Run: %v\n", "nil")
-				}
-				fmt.Println("#####################")
+
+			index, err := userPromptProfile(data)
+			if err != nil {
+				return err
+			}
+			a := expandedData[index]
+
+			fmt.Printf("Name: %v\n", a.Name)
+			fmt.Printf("ID: %s\n", a.ID.String())
+			fmt.Printf("Total Results: %d\n", a.TotalResults)
+			fmt.Printf("Endpoint: %v\n", a.Endpoints[0])
+			fmt.Printf("Load Generators: %v\n", a.Loadgenerators[0])
+			fmt.Printf("Test run duration: %v\n", a.Duration)
+			fmt.Printf("QPS: %d\n", a.QPS)
+			fmt.Printf("Service Mesh: %v\n", a.ServiceMesh)
+			if a.LastRun != nil {
+				fmt.Printf("Last Run: %v\n", a.LastRun.Time.Format("2006-01-02 15:04:05"))
+			} else {
+				fmt.Printf("Last Run: %v\n", "nil")
 			}
 		}
 
@@ -198,4 +204,47 @@ func fetchPerformanceProfiles(url, searchString string) ([][]string, []profileSt
 
 func init() {
 	profileCmd.Flags().BoolVarP(&expand, "expand", "e", false, "(optional) Expand performance profile for more info")
+}
+
+func userPromptProfile(data [][]string) (int, error) {
+	err := termbox.Init()
+	if err != nil {
+		return -1, err
+	}
+	for i, _ := range data {
+		data[i] = append([]string{strconv.Itoa(i)}, data[i]...)
+	}
+
+	utils.PrintToTable([]string{"Index", "Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
+	fmt.Printf("\n")
+	validate := func(input string) error {
+		index, err := strconv.Atoi(input)
+		if err != nil {
+			return err
+		}
+		if index < 0 || index >= len(data) {
+			return errors.New("Invalid index")
+		}
+		return nil
+	}
+
+	prompt := promptui.Prompt{
+		Label:    "Enter index of the profile",
+		Validate: validate,
+	}
+
+	result, err := prompt.Run()
+
+	if err != nil {
+		termbox.Close()
+		return -1, errors.New(fmt.Sprintf("Prompt failed %v\n", err))
+	}
+
+	termbox.Close()
+
+	index, err := strconv.Atoi(result)
+	if err != nil {
+		return -1, err
+	}
+	return index, nil
 }
