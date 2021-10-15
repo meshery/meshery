@@ -81,7 +81,7 @@ var deleteTokenCmd = &cobra.Command{
 	Example: `
 	mesheryctl system token delete <token-name>
 	`,
-	Args: cobra.ExactArgs(1),
+	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tokenName := args[0]
 
