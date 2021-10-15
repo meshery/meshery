@@ -106,11 +106,15 @@ mesheryctl perf profile --expand
 		} else if !expand {
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
 		} else {
-
-			index, err := userPromptProfile(data)
-			if err != nil {
-				return err
+			// if data consists only one profile, directly print profile
+			index := 0
+			if len(data) > 1 {
+				index, err = userPromptProfile(data)
+				if err != nil {
+					return err
+				}
 			}
+
 			a := expandedData[index]
 
 			fmt.Printf("Name: %v\n", a.Name)
