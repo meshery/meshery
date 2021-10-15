@@ -26,6 +26,7 @@ import {
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import UploadIcon from "@material-ui/icons/Publish";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -41,8 +42,7 @@ import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-import { Button } from "@material-ui/core";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import jsYaml from "js-yaml";
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -845,24 +845,8 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   );
 }
 
-function CustomButton({ title, onClick }) {
-  return <Button
-    fullWidth
-    color="primary"
-    variant="contained"
-    onClick={onClick}
-    style={{
-      marginTop : "16px",
-      padding : "10px"
-    }}
-  >
-    {title}
-  </Button>;
-}
-
 function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pattern }) {
-  const cardStyle = { marginBottom : "16px", position : "sticky", minWidth : "100%" };
-  const cardcontentStyle = { margin : "16px" };
+  const cardStyle = { position : "sticky", minWidth : "100%" };
 
   const classes = useStyles();
 
@@ -871,7 +855,7 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
       <Card
       // @ts-ignore
         style={cardStyle}>
-        <CardContent style={cardcontentStyle}>
+        <CardContent >
           <CodeMirror
             value={yaml}
             className={classes.codeMirror}
@@ -884,8 +868,16 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
             }}
             onBlur={(a) => saveCodeEditorChanges(a)}
           />
-          <CustomButton title="Save Pattern" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, "upload")} />
-          <CardActions style={{ justifyContent : "flex-end" }}>
+          <CardActions style={{ justifyContent : "flex-end", marginBottom : '0px' }}>
+            <Tooltip title="Save Pattern as New File">
+              <IconButton
+                aria-label="Save"
+                color="primary"
+                onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, "upload")}
+              >
+                <FileCopyIcon />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Update Pattern">
               <IconButton
                 aria-label="Update"
@@ -898,7 +890,7 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
             <Tooltip title="Delete Pattern">
               <IconButton
                 aria-label="Delete"
-                color="primary"
+                color="secondary"
                 onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
               >
                 <DeleteIcon />
