@@ -14,7 +14,8 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
 ## Bash
 
 **Install** and **Upgrade**
-<h6>Install `mesheryctl` command</h6>
+
+Install `mesheryctl` command
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
@@ -22,7 +23,7 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
  </div></div>
  </pre>
 
-<h6>Install `mesheryctl` command and deploy Meshery on Docker</h6>
+Install `mesheryctl` command and deploy Meshery on Docker
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
@@ -30,11 +31,19 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
  </div></div>
  </pre>
 
-<h6>Install `mesheryctl` command and deploy Meshery on Kubernetes</h6>
+Install `mesheryctl` command and deploy Meshery on Kubernetes
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
   $ curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
+ </div></div>
+ </pre>
+
+ Install `mesheryctl` command and choose an [adapter]({{ site.baseurl }}/concepts/architecture/adapters) to be loaded.
+ <pre class="codeblock-pre">
+ <div class="codeblock">
+ <div class="clipboardjs">
+  $ curl -L https://git.io/meshery | ADAPTERS=consul PLATFORM=kubernetes bash -
  </div></div>
  </pre>
 
