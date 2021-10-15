@@ -237,7 +237,7 @@ func userPromptProfile(data [][]string) (int, error) {
 
 	if err != nil {
 		termbox.Close()
-		return -1, fmt.Errorf("prompt failed %v\n", err)
+		return -1, fmt.Errorf("prompt failed %v", err)
 	}
 
 	termbox.Close()
