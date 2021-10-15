@@ -48,8 +48,10 @@ const AccordionSummary = withStyles({
     },
   },
   content : {
+    justifyContent : "flex-end",
     '&$expanded' : {
       margin : '12px 0',
+      justifyContent : "flex-end",
     },
   },
   expanded : {},
@@ -79,6 +81,7 @@ export default function SimpleAccordion(props) {
           {props.childProps.hasRemove && (
 
             <IconButton
+              style={{ padding : "0" }}
               // style={btnStyle}
               disabled={props.childProps.disabled || props.childProps.readonly}
               onClick={props.childProps.onDropIndexClick(
