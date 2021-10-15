@@ -211,8 +211,8 @@ func userPromptProfile(data [][]string) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	for i, _ := range data {
-		data[i] = append([]string{strconv.Itoa(i)}, data[i]...)
+	for i, a := range data {
+		data[i] = append([]string{strconv.Itoa(i)}, a...)
 	}
 
 	utils.PrintToTable([]string{"Index", "Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
@@ -237,7 +237,7 @@ func userPromptProfile(data [][]string) (int, error) {
 
 	if err != nil {
 		termbox.Close()
-		return -1, errors.New(fmt.Sprintf("Prompt failed %v\n", err))
+		return -1, fmt.Errorf("prompt failed %v\n", err)
 	}
 
 	termbox.Close()
