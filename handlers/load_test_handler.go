@@ -73,36 +73,8 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	var meshName string
-
-	switch perfTest.ServiceMesh.Type {
-	case 0:
-		meshName = "none"
-	case 1:
-		meshName = "app_mesh"
-	case 2:
-		meshName = "consul"
-	case 3:
-		meshName = "istio"
-	case 4:
-		meshName = "kuma"
-	case 5:
-		meshName = "linkerd"
-	case 6:
-		meshName = "traefik_mesh"
-	case 7:
-		meshName = "octarine"
-	case 8:
-		meshName = "network_service_mesh"
-	case 9:
-		meshName = "tanzu"
-	case 10:
-		meshName = "open_service_mesh"
-	case 11:
-		meshName = "nginx_service_mesh"
-	default:
-		meshName = "istio"
-	}
+	meshType := perfTest.ServiceMesh.Type
+	meshName := SMP.ServiceMesh_Type_name[int32(meshType)]
 
 	profileID := perfTest.Config.Id
 
