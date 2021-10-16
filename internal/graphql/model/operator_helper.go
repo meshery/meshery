@@ -25,21 +25,25 @@ const (
 	MeshsyncSubject = "meshery.meshsync.core"
 	BrokerQueue     = "meshery"
 
+	operatorHelmChart = "meshery-operator"
+	brokerHelmChart = "meshery-broker"
+
 	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
 )
 
 func Initialize(client *mesherykube.Client, delete bool) error {
 	// installOperator
-	err := applyYaml(client, delete, operatorYaml)
+	// install using helm
+	err := installUsingHelm(client, delete, operatorHelmChart)
 	if err != nil {
-		return err
+		return ErrInstallUsingHelm(err)
 	}
 
 	// installBroker
-	err = applyYaml(client, delete, brokerYaml)
+	err = installUsingHelm(client, delete, brokerHelmChart)
 	if err != nil {
-		return err
+		return ErrInstallUsingHelm(err)
 	}
 
 	return nil

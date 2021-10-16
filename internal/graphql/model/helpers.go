@@ -1,8 +1,17 @@
 package model
 
 import (
+	"archive/tar"
+	"compress/gzip"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path"
+	"runtime"
 	"sync"
 
+	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -10,6 +19,11 @@ import (
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/spf13/viper"
+)
+
+const (
+	platform = runtime.GOOS
 )
 
 var (
@@ -34,6 +48,8 @@ var (
 		"kiali":            "http",
 		"zipkin":           "http-query",
 	}
+
+	downloadLocation = path.Join(utils.GetHome(), ".meshery", "charts")
 )
 
 // listernToEvents - scale this function with the number of channels
@@ -97,19 +113,139 @@ func persistData(msg broker.Message,
 	}
 }
 
-func applyYaml(client *mesherykube.Client, delete bool, file string) error {
-	contents, err := utils.ReadRemoteFile(file)
+// installUsingHelm is for installing helm dependencies. We need this because
+// meshery operator and controllers don't have published separate charts but are
+// dependencies for meshery's chart.
+// We plan to have separate charts for these components once we wish to offer
+// users the control over which version of helm want to use
+func installUsingHelm(client *mesherykube.Client, delete bool, dependencyName string) error {
+	releaseVersion := viper.GetString("BUILD")
+	if releaseVersion == "" || releaseVersion == "Not Set" || releaseVersion == "edge-latest" {
+		latestReleaseData, err := handlers.CheckLatestVersion("")
+		if err != nil {
+			releaseVersion = latestReleaseData.Current
+		}
+	}
+
+	releaseName := fmt.Sprintf("meshery-%s", releaseVersion)
+
+	err := getHelmChart(releaseName)
 	if err != nil {
 		return err
 	}
 
-	err = client.ApplyManifest([]byte(contents), mesherykube.ApplyOptions{
-		Namespace: Namespace,
-		Update:    true,
-		Delete:    delete,
+	dependencyLocation := path.Join(downloadLocation, releaseName, "meshery", "charts", dependencyName)
+
+	err = client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
+		Namespace:       "meshery",
+		Delete:          delete,
+		CreateNamespace: true,
+		LocalPath:       dependencyLocation,
 	})
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func getHelmChart(releaseName string) error {
+	fmt.Println("Looking for parent chart in ", downloadLocation)
+	// see if chart for current release already exist on fs
+	_, err := os.Stat(path.Join(downloadLocation, releaseName))
+	if os.IsExist(err) {
+		return nil
+	}
+
+	fmt.Println("Downloading chart: ", releaseName)
+
+	chartURL := fmt.Sprintf("https://meshery.github.io/meshery.io/charts/%s.tgz", releaseName)
+	fmt.Println(chartURL)
+
+	err = downloadTar(chartURL, releaseName)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func downloadTar(url, releaseName string) error {
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		_ = resp.Body.Close()
+		return err
+	}
+
+	// make the directory corresponding to release version
+	if err := os.MkdirAll(path.Join(downloadLocation, releaseName), 0750); err != nil {
+		return err
+	}
+
+	if err := tarxzf(path.Join(downloadLocation, releaseName), resp.Body); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func tarxzf(location string, stream io.Reader) error {
+	uncompressedStream, err := gzip.NewReader(stream)
+	if err != nil {
+		return err
+	}
+
+	tarReader := tar.NewReader(uncompressedStream)
+
+	for {
+		header, err := tarReader.Next()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			return err
+		}
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			// File traversal is required to store the extracted manifests at the right place
+			// #nosec
+			if err := os.MkdirAll(path.Join(location, header.Name), 0750); err != nil {
+				return err
+			}
+		case tar.TypeReg:
+			// A fallback case because the downloaded tar doesn't have proper header
+			// entries for dir
+			// #nosec
+			if _, err := os.Stat(path.Join(location, path.Dir(header.Name))); os.IsNotExist(err) {
+				if err := os.MkdirAll(path.Join(location, path.Dir(header.Name)), 0750); err != nil {
+					return err
+				}
+			}
+
+			outFile, err := os.Create(path.Join(location, header.Name))
+			if err != nil {
+				return err
+			}
+			// Trust meshery tar
+			// #nosec
+			if _, err := io.Copy(outFile, tarReader); err != nil {
+				return err
+			}
+			if err = outFile.Close(); err != nil {
+				return err
+			}
+
+		default:
+			return err
+		}
 	}
 
 	return nil
