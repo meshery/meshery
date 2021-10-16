@@ -11,7 +11,7 @@ Meshery’s build and release system incorporates many tools, organized into dif
 
 ## Artifacts
 
-Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts.The process of creating Docker images, tagging with the git commit SHA and pushing to Docker Hub is being done automatically using GitHub Actions.
+Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts.The process of creating Docker images, tagging with the git commit SHA and pushing to Docker Hub is being done automatically using GitHub Actions. And When the contribution includes content of Helm chart of Meshery and Meshery Adapter was lint and merged, it will be pushing and release to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
 
 ### Artifact Repositories
 
@@ -24,6 +24,7 @@ Artifacts produced in the build processes are published and persisted in differe
 | Docker Hub    | Meshery Adapter for \<service-mesh\> | https://hub.docker.com/r/layer5/meshery-\<service-mesh\> |
 | Docs          | Meshery Documentation | [https://docs.meshery.io](https://docs.meshery.io) |
 | GitHub        | [Service Mesh Performance](https://smp-spec.io) | [https://github.com/layer5io/service-mesh-performance](https://github.com/layer5io/service-mesh-performance) |
+| GIthub        | The Helm charts   | [https://github.com/meshery/meshery.io/tree/master/charts](https://github.com/meshery/meshery.io/tree/master/charts) |
 
 ## Secrets
 
@@ -52,6 +53,8 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Build (go build)
 - Release binaries through GoReleaser (only for mesheryctl in the Meshery repository)
 - Docker build, tag and push
+- Helm charts lint (helm)
+- Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
 
 ## Automated Builds
 
@@ -86,6 +89,17 @@ GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homeb
 #### Scoop
 
 GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Layer5’s Scoop bucket.
+
+## Helm charts check, build and release
+
+The charts check, build and release all trigger by the Github Action automatically.
+### Check Helm charts
+
+Every PR which includes the files under `install/kubernetes/` folder in Meshery repo will trigger the Github Action to check the mistakes in Helm charts, here we use `helm lint` command.
+
+### Release Helm charts to Github
+
+Only when the PR which includes the files under `install/kubernetes/` folder in Meshery repo and was succeed merged that the can trigger to release the new version Helm charts to build and release to the [Meshery's Helm charts release page](https://github.com/meshery/meshery.io/tree/master/charts), and it will automatically sync to [Artifact HUB](https://artifacthub.io/packages/helm/meshery/meshery?modal=security-report).
 
 ## Release Versioning
 
