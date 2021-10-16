@@ -66,7 +66,7 @@ const (
 )
 
 const (
-	HelmChartURL = "https://meshery.io/charts/"
+	HelmChartURL  = "https://meshery.io/charts/"
 	HelmChartName = "meshery"
 )
 
