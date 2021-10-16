@@ -341,9 +341,9 @@ func start() error {
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 		spinner.Start()
 
-		//if err := utils.CreateManifestsFolder(); err != nil {
-		//	return err
-		//}
+		if err := utils.CreateManifestsFolder(); err != nil {
+			return err
+		}
 
 		// Apply the helm charts with specified meshery image version
 		var chartVersion string
