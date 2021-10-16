@@ -26,7 +26,7 @@ const (
 	BrokerQueue     = "meshery"
 
 	operatorHelmChart = "meshery-operator"
-	brokerHelmChart = "meshery-broker"
+	brokerHelmChart   = "meshery-broker"
 
 	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"

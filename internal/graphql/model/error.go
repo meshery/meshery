@@ -18,7 +18,7 @@ const (
 	ErrPublishBrokerCode            = "1010"
 	ErrNoMeshSyncCode               = "1011"
 	ErrNoExternalEndpointCode       = "1012"
-	ErrInstallUsingHelmCode = "error_code"
+	ErrInstallUsingHelmCode         = "error_code"
 )
 
 var (
@@ -61,5 +61,5 @@ func ErrMesheryClient(err error) error {
 }
 
 func ErrInstallUsingHelm(err error) error {
-		return errors.New(ErrInstallUsingHelmCode, errors.Alert, []string{err.Error()}, []string{}, []string{}, []string{})
+	return errors.New(ErrInstallUsingHelmCode, errors.Alert, []string{err.Error()}, []string{}, []string{}, []string{})
 }
