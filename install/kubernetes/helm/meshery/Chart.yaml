@@ -41,8 +41,7 @@ version: 2.1.2
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 # TODO: Need to confirm the image version
-appVersion: stable-latest
-
+appVersion: v0.6.0
 
 dependencies:
 - name: meshery-istio
