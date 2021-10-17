@@ -25,6 +25,7 @@ RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
 FROM alpine:3.14 as seed_content
+ARG GIT_VERSION
 RUN apk add --no-cache curl
 WORKDIR /
 # bundling filters
@@ -50,6 +51,10 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/web.yml) \
     && awk 'FNR==1 && NR>1 { printf("\n%s\n\n","---") } 1' /emojivoto/*.yml > /seed_content/applications/emojivoto.yml
 
+RUN RELEASE_NAME=meshery-${GIT_VERSION} \
+   && curl -LO https://meshery.github.io/meshery.io/charts/${RELEASE_NAME}.tgz \
+   && mkdir ${RELEASE_NAME}; tar -xzvf ${RELEASE_NAME}.tgz --directory=${RELEASE_NAME}
+
 #FROM ubuntu as nighthawk
 #RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
 #RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
@@ -68,6 +73,7 @@ RUN UTIL_VERSION=$(curl -L -s https://api.github.com/repos/layer5io/kubeopenapi-
 	&& chmod +x /kubeopenapi-jsonschema
 
 FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
+ARG GIT_VERSION
 #RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
 RUN update-ca-certificates
@@ -80,6 +86,7 @@ COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
+COPY --from=seed_content /meshery-$GIT_VERSION /home/appuser/.meshery/charts/meshery-$GIT_VERSION
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_service /app/cmd/
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_output_transform /app/cmd/
 COPY --from=jsonschema-util /kubeopenapi-jsonschema /home/appuser/.meshery/bin/kubeopenapi-jsonschema
