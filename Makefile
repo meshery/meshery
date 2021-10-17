@@ -186,3 +186,10 @@ gqlgen-generate:
 .PHONY: error
 error:
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers --skip-dirs mesheryctl
+
+# simply stopping meshery server won't delete these resources and their existence causes trouble with normal deployments
+# also, doing this cleanup everytime meshery server terminates is not desired
+cleanup-cluster:
+	kubectl delete ns meshery
+	kubectl delete clusterroles.rbac.authorization.k8s.io meshery-controller-role meshery-operator-role meshery-proxy-role meshery-metrics-reader
+	kubectl delete clusterrolebindings.rbac.authorization.k8s.io meshery-controller-rolebinding meshery-operator-rolebinding meshery-proxy-rolebinding
