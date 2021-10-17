@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"runtime"
 	"testing"
+
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 )
 
 func getFixturesDirectory() string {
@@ -504,5 +506,146 @@ func TestContainsStringPrefix(t *testing.T) {
 				t.Errorf("ContainsStringPrefix got = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestSetOverrideValues(t *testing.T) {
+	testChannel := "testChannel"
+
+	tests := []struct {
+		name                   string
+		ctx                    *config.Context
+		mesheryImageVersion string
+		want                map[string]interface{}
+	}{
+		{
+			name: "Context contains no adapters and no meshery image version",
+			ctx: &config.Context{
+				Adapters: nil,
+				Channel: testChannel,
+			},
+			mesheryImageVersion: "",
+			want: map[string]interface{}{
+				"meshery-istio": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-linkerd": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-consul": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-kuma": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-osm": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-nsm": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-nginx-sm": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-traefik-mesh": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-cpx": map[string]interface{}{
+					"enabled": false,
+				},
+				"image": map[string]interface{}{
+					"tag": testChannel + "-",
+				},
+			},
+		},
+		{
+			name: "Context contains part of all available adapters and meshery image version",
+			ctx: &config.Context{
+				Adapters: []string{"meshery-istio", "meshery-osm", "meshery-nsm"},
+				Channel: testChannel,
+			},
+			mesheryImageVersion: "testImageVersion",
+			want: map[string]interface{}{
+				"meshery-istio": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-linkerd": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-consul": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-kuma": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-osm": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-nsm": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-nginx-sm": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-traefik-mesh": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-cpx": map[string]interface{}{
+					"enabled": false,
+				},
+				"image": map[string]interface{}{
+					"tag": testChannel + "-testImageVersion",
+				},
+			},
+		},
+		{
+			name: "Context contains all available adapters and meshery image version",
+			ctx: &config.Context{
+				Adapters: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-kuma",
+					"meshery-osm", "meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cpx"},
+				Channel: testChannel,
+			},
+			mesheryImageVersion: "testImageVersion",
+			want: map[string]interface{}{
+				"meshery-istio": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-linkerd": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-consul": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-kuma": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-osm": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-nsm": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-nginx-sm": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-traefik-mesh": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-cpx": map[string]interface{}{
+					"enabled": true,
+				},
+				"image": map[string]interface{}{
+					"tag": testChannel + "-testImageVersion",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		got := SetOverrideValues(tt.ctx, tt.mesheryImageVersion)
+		eq := reflect.DeepEqual(got, tt.want)
+		if !eq {
+			t.Errorf("ReadToken got = %v want = %v", got, tt.want)
+		}
 	}
 }

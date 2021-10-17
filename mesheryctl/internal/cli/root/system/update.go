@@ -116,6 +116,9 @@ var updateCmd = &cobra.Command{
 			}
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
+				// get value overrides to install the helm chart
+				overrideValues := utils.SetOverrideValues(currCtx, "latest")
+
 				// Apply the latest helm chart along with the default image tag specified in the charts "stable-latest"
 				if err = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 					Namespace:       utils.MesheryNamespace,
@@ -125,11 +128,7 @@ var updateCmd = &cobra.Command{
 						Chart:      utils.HelmChartName,
 					},
 					Action: meshkitkube.UPGRADE,
-					OverrideValues: map[string]interface{}{
-						"image": map[string]interface{}{
-							"tag": "stable-latest",
-						},
-					},
+					OverrideValues: overrideValues,
 				}); err != nil {
 					return errors.Wrap(err, "cannot update Meshery")
 				}
