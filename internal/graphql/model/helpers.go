@@ -165,9 +165,9 @@ func installUsingHelm(client *mesherykube.Client, delete bool, dependencyName st
 
 	if delete {
 		err = client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
-			Namespace:       "meshery",
-			LocalPath:       dependencyLocation,
-			Action:          mesherykube.UNINSTALL,
+			Namespace: "meshery",
+			LocalPath: dependencyLocation,
+			Action:    mesherykube.UNINSTALL,
 		})
 		if err != nil {
 			return err
