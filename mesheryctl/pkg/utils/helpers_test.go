@@ -513,8 +513,8 @@ func TestSetOverrideValues(t *testing.T) {
 	testChannel := "testChannel"
 
 	tests := []struct {
-		name                   string
-		ctx                    *config.Context
+		name                string
+		ctx                 *config.Context
 		mesheryImageVersion string
 		want                map[string]interface{}
 	}{
@@ -522,7 +522,7 @@ func TestSetOverrideValues(t *testing.T) {
 			name: "Context contains no adapters and no meshery image version",
 			ctx: &config.Context{
 				Adapters: nil,
-				Channel: testChannel,
+				Channel:  testChannel,
 			},
 			mesheryImageVersion: "",
 			want: map[string]interface{}{
@@ -562,7 +562,7 @@ func TestSetOverrideValues(t *testing.T) {
 			name: "Context contains part of all available adapters and meshery image version",
 			ctx: &config.Context{
 				Adapters: []string{"meshery-istio", "meshery-osm", "meshery-nsm"},
-				Channel: testChannel,
+				Channel:  testChannel,
 			},
 			mesheryImageVersion: "testImageVersion",
 			want: map[string]interface{}{
