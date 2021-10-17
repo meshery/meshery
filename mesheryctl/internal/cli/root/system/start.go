@@ -346,7 +346,7 @@ func start() error {
 		}
 
 		// get value overrides to install the helm chart
-		overrideValues := setOverrideValues(currCtx, mesheryImageVersion)
+		overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
 
 		// install the helm charts with specified override values
 		var chartVersion string
@@ -498,57 +498,6 @@ func start() error {
 	}
 
 	return nil
-}
-
-// setOverrideValues returns the necessary value overrides to install the helm chart
-func setOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
-	// first initialize all the adapters' "enabled" field to false
-	// this matches to the adapters listed in install/kubernetes/helm/meshery/values.yaml
-	valueOverrides := map[string]interface{}{
-		"meshery-istio": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-linkerd": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-consul": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-kuma": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-osm": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-nsm": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-nginx-sm": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-cpx": map[string]interface{}{
-			"enabled": false,
-		},
-	}
-
-	// set the "enabled" field to true only for the adapters listed in the context
-	for _, adapter := range ctx.GetAdapters() {
-		if _, ok := valueOverrides[adapter]; ok {
-			valueOverrides[adapter] = map[string]interface{}{
-				"enabled": true,
-			}
-		}
-	}
-
-	// set the meshery image version
-	valueOverrides["image"] = map[string]interface{}{
-		"tag": ctx.GetChannel() + "-" + mesheryImageVersion,
-	}
-
-	return valueOverrides
 }
 
 func init() {
