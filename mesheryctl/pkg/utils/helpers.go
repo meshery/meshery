@@ -773,7 +773,6 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 	return v
 }
 
-
 // SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
 func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
 	// first initialize all the adapters' "enabled" field to false

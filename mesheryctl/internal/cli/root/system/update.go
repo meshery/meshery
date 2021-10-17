@@ -85,6 +85,8 @@ var updateCmd = &cobra.Command{
 			currCtx.SetVersion("latest")
 		}
 
+		log.Info("Updating Meshery...")
+
 		switch currCtx.GetPlatform() {
 		case "docker":
 			if !utils.SkipResetFlag {
@@ -94,8 +96,6 @@ var updateCmd = &cobra.Command{
 					return err
 				}
 			}
-
-			log.Info("Updating Meshery...")
 
 			err = utils.UpdateMesheryContainers()
 			if err != nil {
@@ -127,7 +127,7 @@ var updateCmd = &cobra.Command{
 						Repository: utils.HelmChartURL,
 						Chart:      utils.HelmChartName,
 					},
-					Action: meshkitkube.UPGRADE,
+					Action:         meshkitkube.UPGRADE,
 					OverrideValues: overrideValues,
 				}); err != nil {
 					return errors.Wrap(err, "cannot update Meshery")
@@ -150,13 +150,15 @@ var updateCmd = &cobra.Command{
 				return ErrHealthCheckFailed(err)
 			}
 
-			skipUpdateFlag = true
-
-			// restart the pods in meshery namespace
-			err = restart()
-
+			running, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 			if err != nil {
 				return err
+			}
+			if !running {
+				// Meshery is not running, run the start command
+				if err := start(); err != nil {
+					return ErrRestartMeshery(err)
+				}
 			}
 
 			currCtx.SetVersion("latest")
