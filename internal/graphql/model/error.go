@@ -18,7 +18,7 @@ const (
 	ErrPublishBrokerCode            = "1010"
 	ErrNoMeshSyncCode               = "1011"
 	ErrNoExternalEndpointCode       = "1012"
-	ErrInstallUsingHelmCode         = "error_code"
+	ErrInstallingUsingHelmCode         = "error_code"
 )
 
 var (
@@ -60,6 +60,6 @@ func ErrMesheryClient(err error) error {
 	return errors.New(ErrMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 }
 
-func ErrInstallUsingHelm(err error) error {
-	return errors.New(ErrInstallUsingHelmCode, errors.Alert, []string{err.Error()}, []string{}, []string{}, []string{})
+func ErrInstallingUsingHelm(err error, chart string) error {
+	return errors.New(ErrInstallingUsingHelmCode, errors.Alert, []string{"Error installing ", chart}, []string{err.Error()}, []string{"Kubernetes cluster not connected.\n", "Invalid kubeconfig.\n", "Unable to fetch/read chart: ", chart, ".\n"}, []string{"Try re-uploading your kubeconfig\n"})
 }

@@ -11,13 +11,12 @@ import (
 
 const (
 	meshsyncHelmChart = "meshery-meshsync"
-	meshsyncYaml      = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
 )
 
 func RunMeshSync(client *mesherykube.Client, delete bool) error {
 	err := installUsingHelm(client, delete, meshsyncHelmChart)
 	if err != nil {
-		return ErrInstallUsingHelm(err)
+		return ErrInstallingUsingHelm(err, brokerHelmChart)
 	}
 	return nil
 }

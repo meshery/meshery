@@ -27,22 +27,19 @@ const (
 
 	operatorHelmChart = "meshery-operator"
 	brokerHelmChart   = "meshery-broker"
-
-	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
-	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
 )
 
 func Initialize(client *mesherykube.Client, delete bool) error {
 	// install CRDs and operaotr
 	err := installUsingHelm(client, delete, operatorHelmChart)
 	if err != nil {
-		return ErrInstallUsingHelm(err)
+		return ErrInstallingUsingHelm(err, operatorHelmChart)
 	}
 
 	// installBroker
 	err = installUsingHelm(client, delete, brokerHelmChart)
 	if err != nil {
-		return ErrInstallUsingHelm(err)
+		return ErrInstallingUsingHelm(err, brokerHelmChart)
 	}
 
 	return nil
