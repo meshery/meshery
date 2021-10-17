@@ -60,6 +60,23 @@ mesheryctl system check
 
 In addition to pre and post deployment checks, the `mesheryctl system check` also has flags that let's you allow to run checks on specific components like Mesh adapters, Meshery Operator and so on. Refer [`mesheryctl system check`]({{ site.baseurl }}/reference/mesheryctl/system/check) documentation page for more details.
 
+## FAQ
+
+##### Question: While running `mesheryctl system check --preflight` it says I didn't install Kubernetes, but I have Docker installed and the test returned "Meshery prerequisites met". Is that all good?
+**Answer**: _Yes, as long as you've Docker installed, it's fine to run Meshery. But while handling tasks like deploying service mesh and so on, you need a Kubernetes cluster to do so if you want to do them via Meshery._
+
+##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned postive results but I couldn't start Meshery. What to do?
+**Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page](https://docs.meshery.io/installation/platforms) to see instructions related to the platform you use._
+
+##### Question: Is Docker alone enough to run meshery?
+**Answer**: _For basic tasks, yes. But do note that, some functionality will not be available if you don't use a Kubernetes cluster._
+
+##### Question: What should I have in order to run and use Meshery in full scale?
+**Answer**: _You should have a Kubernetes cluster or Docker with Kubernetes in order to use Meshery in full scale_
+
+##### Question: For system checks, do I need any add-ons to pass the check?
+**Answer**: _Not necessary. Basic requirements are enough to pass the check._
+
 # Suggested Reading
 
 For an exhaustive list of `mesheryctl` commands and syntax:
