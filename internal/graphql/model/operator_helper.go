@@ -33,8 +33,7 @@ const (
 )
 
 func Initialize(client *mesherykube.Client, delete bool) error {
-	// installOperator
-	// install using helm
+	// install CRDs and operaotr
 	err := installUsingHelm(client, delete, operatorHelmChart)
 	if err != nil {
 		return ErrInstallUsingHelm(err)

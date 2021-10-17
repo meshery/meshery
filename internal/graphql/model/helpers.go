@@ -20,6 +20,7 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
+	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 )
 
 const (
@@ -113,9 +114,27 @@ func persistData(msg broker.Message,
 	}
 }
 
+func applyYaml(client *mesherykube.Client, delete bool, file string) error {
+	contents, err := utils.ReadLocalFile(file)
+	if err != nil {
+		return err
+	}
+
+	err = client.ApplyManifest([]byte(contents), mesherykube.ApplyOptions{
+		Namespace: Namespace,
+		Update:    true,
+		Delete:    delete,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // installUsingHelm is for installing helm dependencies. We need this because
-// meshery operator and controllers don't have published separate charts but are
-// dependencies for meshery's chart.
+// meshery operator and controllers don't have published separate charts but
+// exist as subcharts for meshery's chart.
 // We plan to have separate charts for these components once we wish to offer
 // users the control over which version of helm want to use
 func installUsingHelm(client *mesherykube.Client, delete bool, dependencyName string) error {
@@ -134,16 +153,35 @@ func installUsingHelm(client *mesherykube.Client, delete bool, dependencyName st
 		return err
 	}
 
-	dependencyLocation := path.Join(downloadLocation, releaseName, "meshery", "charts", dependencyName)
+	downloadedChartLocation := path.Join(downloadLocation, releaseName, "meshery")
 
-	err = client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
-		Namespace:       "meshery",
-		Delete:          delete,
-		CreateNamespace: true,
-		LocalPath:       dependencyLocation,
-	})
+	// install CRDs
+	err = applyYaml(client, delete, path.Join(downloadedChartLocation, "crds", "crds.yaml"))
 	if err != nil {
 		return err
+	}
+
+	dependencyLocation := path.Join(downloadedChartLocation, "charts", dependencyName)
+
+	if delete {
+		err = client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
+			Namespace:       "meshery",
+			LocalPath:       dependencyLocation,
+			Action:          mesherykube.UNINSTALL,
+		})
+		if err != nil {
+			return err
+		}
+	} else {
+		err = client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
+			Namespace:       "meshery",
+			CreateNamespace: true,
+			LocalPath:       dependencyLocation,
+			Action:          mesherykube.INSTALL,
+		})
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -153,7 +191,7 @@ func getHelmChart(releaseName string) error {
 	fmt.Println("Looking for parent chart in ", downloadLocation)
 	// see if chart for current release already exist on fs
 	_, err := os.Stat(path.Join(downloadLocation, releaseName))
-	if os.IsExist(err) {
+	if err == nil {
 		return nil
 	}
 
@@ -224,7 +262,7 @@ func tarxzf(location string, stream io.Reader) error {
 			// A fallback case because the downloaded tar doesn't have proper header
 			// entries for dir
 			// #nosec
-			if _, err := os.Stat(path.Join(location, path.Dir(header.Name))); os.IsNotExist(err) {
+			if _, err := os.Stat(path.Join(location, path.Dir(header.Name))); err != nil {
 				if err := os.MkdirAll(path.Join(location, path.Dir(header.Name)), 0750); err != nil {
 					return err
 				}
