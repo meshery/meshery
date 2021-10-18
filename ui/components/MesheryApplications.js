@@ -511,11 +511,9 @@ function MesheryApplications({
     }
   });
 
-  async function showModal() {
-    let response = await modalRef.current.show({ title : "Delete Aplication?",
-
-      subtitle : "Are you sure you want to delete this application?",
-
+  async function showModal(count) {
+    let response = await modalRef.current.show({ title : `Delete ${count ? count : ""} Application${count > 1 ? "s" : '' }?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} pattern${count > 1 ? "s" : '' }?`,
       options : ["Yes", "No"], })
     return response;
   }
@@ -567,7 +565,7 @@ function MesheryApplications({
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showModal()
+      let response = await showModal(Object.keys(row.lookup).length)
       console.log(response)
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id)
