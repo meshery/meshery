@@ -235,6 +235,13 @@ const categories = [
     link : true,
     children : [
       {
+        id : "App_Mesh",
+        href : "/management/app-mesh",
+        title : "AWS App Mesh",
+        link : true,
+        show : true,
+      },
+      {
         id : "Citrix_Service_Mesh",
         href : "/management/citrix",
         title : "Citrix Service Mesh",
