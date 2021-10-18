@@ -77,6 +77,21 @@ In addition to pre and post deployment checks, the `mesheryctl system check` als
 ##### Question: For system checks, do I need any add-ons to pass the check?
 **Answer**: _Not necessary. Basic requirements are enough to pass the check._
 
+##### Question: The Adapter check is failing, it returns "Auth token not found". 
+**Answer**: _You can supply an authentication token by downloading from "Get Token" option in Meshery UI or by typing `mesheryctl system login`_
+
+##### Question: I have a Kubernetes cluster enabled but Meshery couldn't reach the cluster and the checks are failing! What to do?
+**Answer**: _To resolve this error, you can upload your kubeconfig file in the Meshery UI under settings and Meshery will reconfigure to use your Kubernetes cluster._
+
+##### Question: Under Meshery Version test, I'm getting error like "CLI is not up-to-date". Should I update mesheryctl often?
+**Answer**: _Yes! You should update the mesheryctl often in order to run Meshery smoothly. The reason behind it is because not only the CLI is updated, but also the Meshery app. So it is advisable to update Meshery often._
+
+##### Question: Is it advisable to keep Meshery in sleep mode while running system checks?
+**Answer**: _Not necessary. It is good to keep Meshery up and running, else the system checks will fail to detect Meshery version._
+
+##### Question: What is the minimum version of k8s cluster and kubectl required to run Meshery?
+**Answer**: _For Kubernetes, version >=1.12.0 is recommended. For kubectl version >=1.12 is recommended._
+
 # Suggested Reading
 
 For an exhaustive list of `mesheryctl` commands and syntax:
