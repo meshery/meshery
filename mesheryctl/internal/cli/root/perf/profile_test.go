@@ -91,9 +91,6 @@ func TestProfileCmd(t *testing.T) {
 		{"profiles searching test 3", []string{"profile", "test", "3"}, []utils.MockURL{
 			{Method: "GET", URL: profileURL, Response: profile1003, ResponseCode: 200},
 		}, profile1003output, testToken, false},
-		{"standard profiles in expand output", []string{"profile", "--expand"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
-		}, profile1004output, testToken, false},
 		{"Unmarshal error", []string{"profile"}, []utils.MockURL{
 			{Method: "GET", URL: profileURL, Response: profile1005, ResponseCode: 200},
 		}, profile1010output, testToken, true},

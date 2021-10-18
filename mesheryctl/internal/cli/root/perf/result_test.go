@@ -74,10 +74,6 @@ func TestResultCmd(t *testing.T) {
 			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
 		}, result1001output, testToken, false},
-		{"standard results in expand output", []string{"result", "abhishek", "--expand"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
-			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
-		}, result1004output, testToken, false},
 		{"Unmarshal error", []string{"result", "abhishek"}, []utils.MockURL{
 			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1005, ResponseCode: 200},
@@ -91,10 +87,6 @@ func TestResultCmd(t *testing.T) {
 	}
 
 	testsforLogrusOutputs := []tempTestStruct{
-		{"No results found", []string{"result", "abhishek", "--expand"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
-			{Method: "GET", URL: resultURL, Response: result1004, ResponseCode: 200},
-		}, result1005output, testToken, false},
 		{"standard results in json output", []string{"result", "abhishek", "-o", "json"}, []utils.MockURL{
 			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
 			{Method: "GET", URL: resultURL, Response: result1001, ResponseCode: 200},
