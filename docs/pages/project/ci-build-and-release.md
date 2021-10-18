@@ -24,7 +24,7 @@ Artifacts produced in the build processes are published and persisted in differe
 | Docker Hub    | Meshery Adapter for \<service-mesh\> | https://hub.docker.com/r/layer5/meshery-\<service-mesh\> |
 | Docs          | Meshery Documentation | [https://docs.meshery.io](https://docs.meshery.io) |
 | GitHub        | [Service Mesh Performance](https://smp-spec.io) | [https://github.com/layer5io/service-mesh-performance](https://github.com/layer5io/service-mesh-performance) |
-| GIthub        | The Helm charts   | [https://github.com/meshery/meshery.io/tree/master/charts](https://github.com/meshery/meshery.io/tree/master/charts) |
+| Github        | Helm charts   | [https://github.com/meshery/meshery.io/tree/master/charts](https://github.com/meshery/meshery.io/tree/master/charts) |
 
 ## Secrets
 
@@ -90,20 +90,20 @@ GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homeb
 
 GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Layer5’s Scoop bucket.
 
-## Helm charts check, build and release
+## Helm Charts Lint Check, Build, and Release
 
-The charts check, build and release all trigger by the Github Action automatically.
-### Check Helm charts
+The charts lint check, charts build, and charts release workflows are all triggered by GitHub events. Sometimes this event is the opening, updating, or merging of a branch, or sometimes a manual invocation, or a GitHub release event.
+### Check Helm Charts
 
-Every PR which includes the files under `install/kubernetes/` folder in Meshery repo will trigger the Github Action to check the mistakes in Helm charts, here we use `helm lint` command.
+Every PR which includes changes to the files under `install/kubernetes/` directory in the `meshery/meshery` will trigger a Github Action to check for any mistakes in Helm charts using the `helm lint` command.
 
-### Release Helm charts to Github
+### Release Helm Charts to Github and Artifact Hub
 
-Only when the PR which includes the files under `install/kubernetes/` folder in Meshery repo and was succeed merged that the can trigger to release the new version Helm charts to build and release to the [Meshery's Helm charts release page](https://github.com/meshery/meshery.io/tree/master/charts), and it will automatically sync to [Artifact HUB](https://artifacthub.io/packages/helm/meshery/meshery?modal=security-report).
+New Meshery Helm charts are published upon trigger of a release event in the `meshery/meshery` repo. New versions of Meshery's Helm charts are published to [Meshery's Helm charts release page](https://github.com/meshery/meshery.io/tree/master/charts). [Artifact Hub] (https://artifacthub.io/packages/helm/meshery/meshery) syncs with these updated Meshery Helm charts.
 
 ## Release Versioning
 
-We follow the commonly used semantic versioning for Meshery, Meshery Adapter and Performance Benchmark Specification releases. Given a version number MAJOR.MINOR.PATCH.BUILD, increment the:
+Meshery and its components follow the commonly used, semantic versioning for its release numbering scheme. Given a version number MAJOR.MINOR.PATCH.BUILD, increment the:
 
 - MAJOR version - major changes with rare potential for incompatible API changes.
 - MINOR version - add functionality in a backwards-compatible manner.
