@@ -109,7 +109,7 @@ mesheryctl perf profile --expand
 			// if data consists only one profile, directly print profile
 			index := 0
 			if len(data) > 1 {
-				index, err = userPromptProfile(data)
+				index, err = userPrompt("profile", "Enter index of the profile", data)
 				if err != nil {
 					return err
 				}
@@ -210,7 +210,7 @@ func init() {
 	profileCmd.Flags().BoolVarP(&expand, "expand", "e", false, "(optional) Expand performance profile for more info")
 }
 
-func userPromptProfile(data [][]string) (int, error) {
+func userPrompt(key string, label string, data [][]string) (int, error) {
 	err := termbox.Init()
 	if err != nil {
 		return -1, err
@@ -219,7 +219,12 @@ func userPromptProfile(data [][]string) (int, error) {
 		data[i] = append([]string{strconv.Itoa(i)}, a...)
 	}
 
-	utils.PrintToTable([]string{"Index", "Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
+	if key == "result" {
+		utils.PrintToTable([]string{"Index", "Name", "Mesh", "QPS", "Duration", "P50", "P99.9", "Start-Time"}, data)
+	} else {
+		utils.PrintToTable([]string{"Index", "Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
+	}
+
 	fmt.Printf("\n")
 	validate := func(input string) error {
 		index, err := strconv.Atoi(input)
@@ -233,7 +238,7 @@ func userPromptProfile(data [][]string) (int, error) {
 	}
 
 	prompt := promptui.Prompt{
-		Label:    "Enter index of the profile",
+		Label:    label,
 		Validate: validate,
 	}
 

@@ -56,7 +56,6 @@ mesheryctl perf result saturday profile --page 2
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
 		var searchString, profileID string
-		var profileResp *models.PerformanceProfilesAPIResponse
 		// setting up for error formatting
 		cmdUsed = "result"
 
@@ -75,30 +74,27 @@ mesheryctl perf result saturday profile --page 2
 		// Merge args to get result-name
 		searchString = strings.Join(args, "%20")
 
-		_, _, body, err := fetchPerformanceProfiles(profileURL, searchString)
-		if err != nil {
-			return err
-		}
-		err = json.Unmarshal(body, &profileResp)
+		data, _, _, err := fetchPerformanceProfiles(profileURL, searchString)
 		if err != nil {
 			return err
 		}
 
-		if len(profileResp.Profiles) == 0 {
+		if len(data) == 0 {
 			log.Info("No Performance Profiles found with the given name")
 			return nil
 		}
 
-		if len(profileResp.Profiles) == 1 {
+		if len(data) == 1 {
 			// found only one profile with matching name
-			profileID = profileResp.Profiles[0].ID.String()
+			profileID = data[0][1]
 		} else {
-			fmt.Printf("Found multiple profiles with given name\n")
-			fmt.Printf("Select a performance profile\n")
-			fmt.Printf("-----------------------------\n")
-			selectedProfileIndex := multipleProfileConfirmation(profileResp.Profiles)
-			profileID = profileResp.Profiles[selectedProfileIndex].ID.String()
-			fmt.Printf("\n")
+			// user prompt to select profile
+			selectedProfileIndex, err := userPrompt("profile", "Found multiple profiles with given name, select a profile", data)
+			if err != nil {
+				return err
+			}
+			// ids got shifted with 1 in userPrompt()
+			profileID = data[selectedProfileIndex][2]
 		}
 
 		resultURL := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles/" + profileID + "/results"
@@ -129,18 +125,24 @@ mesheryctl perf result saturday profile --page 2
 		} else if !expand {
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data)
 		} else {
-			for _, a := range expandedData {
-				fmt.Printf("Name: %v\n", a.Name)
-				fmt.Printf("UserID: %s\n", a.UserID.String())
-				fmt.Printf("Endpoint: %v\n", a.URL)
-				fmt.Printf("QPS: %v\n", a.QPS)
-				fmt.Printf("Test run duration: %v\n", a.Duration)
-				fmt.Printf("Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
-				fmt.Printf("Start Time: %v\n", fmt.Sprintf("%d-%d-%d %d:%d:%d", int(a.StartTime.Month()), a.StartTime.Day(), a.StartTime.Year(), a.StartTime.Hour(), a.StartTime.Minute(), a.StartTime.Second()))
-				fmt.Printf("Meshery ID: %v\n", a.MesheryID.String())
-				fmt.Printf("Load Generator: %v\n", a.LoadGenerator)
-				fmt.Println("#####################")
+			// if data consists only one profile, directly print profile
+			index := 0
+			if len(data) > 1 {
+				index, err = userPrompt("result", "Select Performance-test result to exapand", data)
+				if err != nil {
+					return err
+				}
 			}
+			a := expandedData[index]
+			fmt.Printf("Name: %v\n", a.Name)
+			fmt.Printf("UserID: %s\n", a.UserID.String())
+			fmt.Printf("Endpoint: %v\n", a.URL)
+			fmt.Printf("QPS: %v\n", a.QPS)
+			fmt.Printf("Test run duration: %v\n", a.Duration)
+			fmt.Printf("Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
+			fmt.Printf("Start Time: %v\n", fmt.Sprintf("%d-%d-%d %d:%d:%d", int(a.StartTime.Month()), a.StartTime.Day(), a.StartTime.Year(), a.StartTime.Hour(), a.StartTime.Minute(), a.StartTime.Second()))
+			fmt.Printf("Meshery ID: %v\n", a.MesheryID.String())
+			fmt.Printf("Load Generator: %v\n", a.LoadGenerator)
 		}
 		return nil
 	},
