@@ -39,18 +39,29 @@ var validateCmd = &cobra.Command{
 	Long:  `Validate service mesh conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		log.Infof("Verifying prerequisites...")
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err)
 		}
-		// sync with available adapters
+
+		prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
+		//resolve adapterUrl to adapter Location
+		for _, adapter := range prefs.MeshAdapters {
+			adapterName := strings.Split(adapter.Location, ":")
+			if adapterName[0] == adapterURL {
+				adapterURL = adapter.Location
+				meshName = adapter.Location
+			}
+		}
+		//sync with available adapters
 		if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
 			log.Fatalln(err)
 		}
+		log.Info("verified prerequisites")
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		log.Infof("Starting service mesh validation...")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -141,7 +152,6 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
 	method := "POST"
-
 	data := url.Values{}
 	data.Set("adapter", adapterURL)
 	data.Set("query", query)
