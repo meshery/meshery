@@ -462,11 +462,11 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   });
 
-  async function showmodal() {
+  async function showmodal(count) {
     let response = await modalRef.current.show({
-      title : "Delete Filter?",
+      title : `Delete ${count ? count : ""} Filter${count > 1 ? "s" : '' }?`,
 
-      subtitle : "Are you sure you want to delete this filter?",
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} filter${count > 1 ? "s" : '' }?`,
 
       options : ["Yes", "No"], })
     return response;
@@ -518,7 +518,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onRowsDelete : async function handleDelete(row) {
-      let response  = await showmodal()
+      let response  = await showmodal(Object.keys(row.lookup).length)
       console.log(response)
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
