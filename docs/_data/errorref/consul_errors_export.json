@@ -38,6 +38,15 @@
         "short_description": "Config is empty",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrLoadingPathsetCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not create a pathset for static component generation",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
