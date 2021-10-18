@@ -20,6 +20,7 @@ contexts:
     token: Default
     platform: kubernetes
     adapters:
+    - meshery-app-mesh
     - meshery-istio
     - meshery-linkerd
     - meshery-consul
