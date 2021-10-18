@@ -89,7 +89,7 @@ var validateCmd = &cobra.Command{
 func init() {
 	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "specification to be used for conformance test")
 	_ = validateCmd.MarkFlagRequired("spec")
-	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm:10010", "Adapter to use for validation")
+	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = validateCmd.MarkFlagRequired("tokenPath")
