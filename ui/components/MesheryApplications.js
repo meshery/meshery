@@ -513,7 +513,7 @@ function MesheryApplications({
 
   async function showModal(count) {
     let response = await modalRef.current.show({ title : `Delete ${count ? count : ""} Application${count > 1 ? "s" : '' }?`,
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} pattern${count > 1 ? "s" : '' }?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} application${count > 1 ? "s" : '' }?`,
       options : ["Yes", "No"], })
     return response;
   }
