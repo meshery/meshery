@@ -46,6 +46,9 @@ var validateCmd = &cobra.Command{
 		}
 
 		prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
+		if err != nil {
+			log.Fatalln(err)
+		}
 		//resolve adapterUrl to adapter Location
 		for _, adapter := range prefs.MeshAdapters {
 			adapterName := strings.Split(adapter.Location, ":")
