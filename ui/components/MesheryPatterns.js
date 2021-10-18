@@ -539,11 +539,11 @@ function MesheryPatterns({
     }
   });
 
-  async function showModal() {
+  async function showModal(count) {
     let response = await modalRef.current.show({
-      title : "Delete Pattern?",
+      title : `Delete ${count ? count : ""} Pattern${count > 1 ? "s" : '' }?`,
 
-      subtitle : "Are you sure you want to delete this pattern?",
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' }  ${count ? count : ""}  pattern${count > 1 ? "s" : '' }?`,
 
       options : ["Yes", "No"],
     })
@@ -597,7 +597,7 @@ function MesheryPatterns({
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showModal()
+      let response = await showModal(Object.keys(row.lookup).length)
       console.log(response)
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
