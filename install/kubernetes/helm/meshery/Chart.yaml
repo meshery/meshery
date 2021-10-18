@@ -14,6 +14,7 @@ keywords:
   - meshery-traefik-mesh
   - meshery-cpx
   - meshery-nginx-sm
+  - meshery-app-mesh
   - meshery-operator
   - meshery-broker
   - meshery-meshsync
@@ -72,6 +73,9 @@ dependencies:
 - name: meshery-nginx-sm
   version: 2.1.2
   condition: meshery-nginx-sm.enabled
+- name: meshery-app-mesh
+  version: 2.1.2
+  condition: meshery-app-mesh.enabled
 - name: meshery-operator
   version: 2.1.2
   condition: meshery-operator.enabled

@@ -1,39 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "meshery-cpx.fullname" . }}
+  name: {{ include "meshery-app-mesh.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "meshery-cpx.labels" . | nindent 4 }}
+    {{- include "meshery-app-mesh.labels" . | nindent 4 }}
   annotations:
     {{- toYaml .Values.annotations | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "meshery-cpx.selectorLabels" . | nindent 6 }}
+      {{- include "meshery-app-mesh.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "meshery-cpx.selectorLabels" . | nindent 8 }}
+        {{- include "meshery-app-mesh.selectorLabels" . | nindent 8 }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "meshery-cpx.serviceAccountName" . }}
+      serviceAccountName: {{ include "meshery-app-mesh.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          # TODO: Need to confirm the meshery-cpx image version
+          # TODO: Need to confirm the meshery-app-mesh image version
           image: "{{ .Values.image.repository }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 10008
+              containerPort: 10005
               protocol: TCP
           {{- if .Values.probe.livenessProbe.enabled }}
           livenessProbe:
