@@ -29,6 +29,15 @@
         "short_description": "Unable to fetch manifest names from github",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
