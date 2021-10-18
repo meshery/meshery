@@ -11,7 +11,7 @@ Meshery’s build and release system incorporates many tools, organized into dif
 
 ## Artifacts
 
-Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts.The process of creating Docker images, tagging with the git commit SHA and pushing to Docker Hub is being done automatically using GitHub Actions.
+Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts.The process of creating Docker images, tagging with the git commit SHA and pushing to Docker Hub is being done automatically using GitHub Actions. And When the contribution includes content of Helm chart of Meshery and Meshery Adapter was lint and merged, it will be pushing and release to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
 
 ### Artifact Repositories
 
@@ -24,6 +24,7 @@ Artifacts produced in the build processes are published and persisted in differe
 | Docker Hub    | Meshery Adapter for \<service-mesh\> | https://hub.docker.com/r/layer5/meshery-\<service-mesh\> |
 | Docs          | Meshery Documentation | [https://docs.meshery.io](https://docs.meshery.io) |
 | GitHub        | [Service Mesh Performance](https://smp-spec.io) | [https://github.com/layer5io/service-mesh-performance](https://github.com/layer5io/service-mesh-performance) |
+| Github        | Helm charts   | [https://github.com/meshery/meshery.io/tree/master/charts](https://github.com/meshery/meshery.io/tree/master/charts) |
 
 ## Secrets
 
@@ -52,6 +53,8 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Build (go build)
 - Release binaries through GoReleaser (only for mesheryctl in the Meshery repository)
 - Docker build, tag and push
+- Helm charts lint (helm)
+- Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
 
 ## Automated Builds
 
@@ -87,9 +90,20 @@ GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homeb
 
 GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Layer5’s Scoop bucket.
 
+## Helm Charts Lint Check, Build, and Release
+
+The charts lint check, charts build, and charts release workflows are all triggered by GitHub events. Sometimes this event is the opening, updating, or merging of a branch, or sometimes a manual invocation, or a GitHub release event.
+### Check Helm Charts
+
+Every PR which includes changes to the files under `install/kubernetes/` directory in the `meshery/meshery` will trigger a Github Action to check for any mistakes in Helm charts using the `helm lint` command.
+
+### Release Helm Charts to Github and Artifact Hub
+
+New Meshery Helm charts are published upon trigger of a release event in the `meshery/meshery` repo. New versions of Meshery's Helm charts are published to [Meshery's Helm charts release page](https://github.com/meshery/meshery.io/tree/master/charts). [Artifact Hub] (https://artifacthub.io/packages/helm/meshery/meshery) syncs with these updated Meshery Helm charts.
+
 ## Release Versioning
 
-We follow the commonly used semantic versioning for Meshery, Meshery Adapter and Performance Benchmark Specification releases. Given a version number MAJOR.MINOR.PATCH.BUILD, increment the:
+Meshery and its components follow the commonly used, semantic versioning for its release numbering scheme. Given a version number MAJOR.MINOR.PATCH.BUILD, increment the:
 
 - MAJOR version - major changes with rare potential for incompatible API changes.
 - MINOR version - add functionality in a backwards-compatible manner.
