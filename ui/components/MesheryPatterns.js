@@ -12,21 +12,10 @@ import {
   DialogActions,
   Divider,
   Tooltip,
-  Grid,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  CardContent,
-  Card,
-  CardActions,
-  AppBar,
-  Toolbar
-} from "@material-ui/core";
+  Typography } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
 import UploadIcon from "@material-ui/icons/Publish";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -41,14 +30,9 @@ import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
-import { CircularProgress } from "@material-ui/core";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import jsYaml from "js-yaml";
 import ListAltIcon from '@material-ui/icons/ListAlt';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import URLUploader from "./URLUploader";
-import { createPatternFromConfig, createWorkloadTraitSets, getPatternServiceName } from "./MesheryMeshInterface/helpers";
-import LazyPatternServiceForm from "./MesheryMeshInterface/LazyPatternServiceForm";
+import { MesheryConfigurationForm } from './MesheryConfigurationForm/MesheryConfigurationForm'
 
 const styles = (theme) => ({
   grid : {
@@ -654,7 +638,7 @@ function MesheryPatterns({
   return (
     <NoSsr>
       {selectedPattern.show &&
-        <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
+        <MesheryConfigurationForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
 
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
@@ -684,221 +668,3 @@ const mapStateToProps = (state) => {
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPatterns)));
-
-
-
-// --------------------------------------------------------------------------------------------------
-// -------------------------------------------- PATTERNS FORM ---------------------------------------
-// --------------------------------------------------------------------------------------------------
-
-
-
-function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
-  const [workloadTraitsSet, setWorkloadTraitsSet] = useState([]);
-  const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
-  const [yaml, setYaml] = useState(pattern.pattern_file);
-  const classes = useStyles();
-  const reference = useRef({});
-
-  function getPatternJson() {
-    const patternString = pattern.pattern_file;
-    // @ts-ignore
-    return jsYaml.load(patternString).services;
-  }
-
-  function getPatternKey(cfg) {
-    return Object.keys(cfg?.services)?.[0] || undefined;
-  }
-
-  const handleSubmit = (cfg, patternName) => {
-    console.log("submitted", { cfg, patternName })
-    const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
-    if (key) setDeployServiceConfig({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
-  }
-
-  const handleSettingsChange = (schemaSet) => () => {
-    const config = createPatternFromConfig({
-      [getPatternServiceName(schemaSet)] : {
-        // @ts-ignore
-        settings : reference.current?.getSettings(),
-        // @ts-ignore
-        traits : reference.current?.getTraits()
-      }
-    }, "default", true);
-
-    handleChangeData(config, "");
-  }
-
-  const handleChangeData = (cfg, patternName) => {
-    console.log("Ran Changed", { cfg, patternName })
-    const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-    if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-  }
-
-  const handleDelete = (cfg, patternName) => {
-    console.log("deleted", cfg);
-    const newCfg = workloadTraitsSet?.filter(schema => schema.workload.title !== patternName)
-    setWorkloadTraitsSet(newCfg);
-  }
-
-  const handleDeploy = (cfg) => {
-    const deployConfig = {};
-    deployConfig.name = pattern.name;
-    deployConfig.services = cfg;
-    const deployConfigYaml = jsYaml.dump(deployConfig);
-    setYaml(deployConfigYaml);
-  }
-
-  function handleSubmitFinalPattern(yaml, id, name, action) {
-    onSubmit(yaml, id, name, action);
-    setSelectedPattern(resetSelectedPattern()); // Remove selected pattern
-  }
-
-  const ns = "default";
-
-  function saveCodeEditorChanges(data) {
-    setYaml(data.valueOf().getValue())
-  }
-
-  function insertPattern(workload) {
-    const attrName = getPatternServiceName(workload);
-    var returnValue = {}
-    Object.keys(deployServiceConfig).find(key => {
-      if (deployServiceConfig[key]['type'] === attrName) {
-        returnValue = deployServiceConfig[key]
-        return true
-      }
-    })
-
-    return returnValue;
-  }
-
-  useEffect(() => {
-    createWorkloadTraitSets("").then(res => setWorkloadTraitsSet(res))
-  }, []);
-
-  if (!workloadTraitsSet) return <CircularProgress />
-
-  return (
-    <>
-      <AppBar position="static" className={classes.appBar} elevation={0}>
-        <Toolbar>
-          <IconButton edge="start" className={classes.backButton} color="inherit" onClick={() => setSelectedPattern(resetSelectedPattern())}>
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h6">
-            Edit Pattern Configuration of <i>{`${pattern.name}`}</i>
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          {workloadTraitsSet
-            .filter((s) => s.type !== "addon")
-            .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
-            .map((s, i) => (
-              <div style={{ marginBottom : "0.5rem" }} key={`svc-form-${i}`} >
-                <LazyPatternServiceForm
-                  schemaSet={s}
-                  formData={insertPattern(s.workload)}
-                  onSettingsChange={handleSettingsChange(s.workload)}
-                  onSubmit={(val) => handleSubmit(val, pattern.name)}
-                  onDelete={(val) => handleDelete(val, pattern.name)}
-                  namespace={ns}
-                  reference={reference}
-                />
-              </div>))}
-          <Accordion style={{ width : '100%' }}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">
-                Configure Addons
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {workloadTraitsSet
-                .filter((s) => s.type === "addon")
-                .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
-                .map((s, i) => (
-                  <Grid item key={`svc-form-addons-${i}`}>
-                    <LazyPatternServiceForm
-                      formData={deployServiceConfig[s.workload?.title]}
-                      onSettingsChange={handleSettingsChange(s.workload)}
-                      schemaSet={s}
-                      onSubmit={handleSubmit}
-                      onDelete={handleDelete}
-                      namespace={ns}
-                      reference={reference}
-                    />
-                  </Grid>
-                ))}
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-        <Grid item xs={12} md={6} >
-          <CodeEditor yaml={yaml} pattern={pattern} handleSubmitFinalPattern={handleSubmitFinalPattern} saveCodeEditorChanges={saveCodeEditorChanges} />
-        </Grid>
-      </Grid>
-    </>
-  );
-}
-
-function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pattern }) {
-  const cardStyle = { position : "sticky", minWidth : "100%" };
-
-  const classes = useStyles();
-
-  return (
-    <div>
-      <Card
-      // @ts-ignore
-        style={cardStyle}>
-        <CardContent >
-          <CodeMirror
-            value={yaml}
-            className={classes.codeMirror}
-            options={{
-              theme : "material",
-              lineNumbers : true,
-              lineWrapping : true,
-              gutters : ["CodeMirror-lint-markers"],
-              mode : "text/x-yaml",
-            }}
-            onBlur={(a) => saveCodeEditorChanges(a)}
-          />
-          <CardActions style={{ justifyContent : "flex-end", marginBottom : '0px' }}>
-            <Tooltip title="Save Pattern as New File">
-              <IconButton
-                aria-label="Save"
-                color="primary"
-                onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, "upload")}
-              >
-                <FileCopyIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Update Pattern">
-              <IconButton
-                aria-label="Update"
-                color="primary"
-                onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "update")}
-              >
-                <SaveIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete Pattern">
-              <IconButton
-                aria-label="Delete"
-                color="secondary"
-                onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-          </CardActions>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
