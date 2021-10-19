@@ -81,7 +81,7 @@ export const actionTypes = {
   UPDATE_ANONYMOUS_PERFORMANCE_RESULTS : 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
   UPDATE_PROGRESS : 'UPDATE_PROGRESS',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
-}
+};
 
 // REDUCERS
 export const reducer = (state = initialState, action) => {
@@ -174,9 +174,9 @@ export const reducer = (state = initialState, action) => {
       //     return state
 
     default:
-      return state
+      return state;
   }
-}
+};
 
 // ACTION CREATOR
 export const updatepagepath = ({ path }) => dispatch => {
@@ -276,11 +276,11 @@ export const makeStore = (initialState, options) => {
     reducer,
     initialState,
     composeWithDevTools(applyMiddleware(thunkMiddleware))
-  )
+  );
 }
 
 export const resultsMerge = (arr1, arr2) => {
-  const keys = {}
+  const keys = {};
   var arr = [];
   const compareAndAdd = (a) => {
     if (typeof keys[a.meshery_id] === 'undefined'){
