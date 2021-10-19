@@ -246,8 +246,8 @@ class MeshConfigComponent extends React.Component {
     if (res.operator?.status === "DISABLED") self.setState({ operatorProcessing : false })
 
     if (res.operator?.status === "PROCESSING") {
-      console.log("setting to processing")
-      self.setState({ operatorProcessing : true })
+      console.log("setting to processing");
+      self.setState({ operatorProcessing : true });
     }
 
 

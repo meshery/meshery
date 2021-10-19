@@ -287,8 +287,8 @@ export const resultsMerge = (arr1, arr2) => {
       keys[a.meshery_id] = true;
       arr = arr.push(a);
     }
-  }
+  };
   arr1.map(compareAndAdd);
   arr2.map(compareAndAdd);
   return arr;
-}
+};
