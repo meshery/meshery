@@ -65,6 +65,11 @@ const (
 	cmdSystem cmdType = "system"
 )
 
+const (
+	HelmChartURL  = "https://meshery.io/charts/"
+	HelmChartName = "meshery"
+)
+
 var (
 	// ResetFlag indicates if a reset is required
 	ResetFlag bool
@@ -766,4 +771,55 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 	}
 
 	return v
+}
+
+// SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
+func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
+	// first initialize all the adapters' "enabled" field to false
+	// this matches to the adapters listed in install/kubernetes/helm/meshery/values.yaml
+	valueOverrides := map[string]interface{}{
+		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-linkerd": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-consul": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-kuma": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-osm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nsm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nginx-sm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-traefik-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cpx": map[string]interface{}{
+			"enabled": false,
+		},
+	}
+
+	// set the "enabled" field to true only for the adapters listed in the context
+	for _, adapter := range ctx.GetAdapters() {
+		if _, ok := valueOverrides[adapter]; ok {
+			valueOverrides[adapter] = map[string]interface{}{
+				"enabled": true,
+			}
+		}
+	}
+
+	// set the meshery image version
+	valueOverrides["image"] = map[string]interface{}{
+		"tag": ctx.GetChannel() + "-" + mesheryImageVersion,
+	}
+
+	return valueOverrides
 }
