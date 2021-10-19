@@ -19,6 +19,7 @@ import (
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 )
@@ -50,7 +51,7 @@ var (
 		"zipkin":           "http-query",
 	}
 
-	downloadLocation = path.Join(utils.GetHome(), ".meshery", "charts")
+	downloadLocation = path.Join(utils.GetHome(), ".meshery", "manifests")
 )
 
 // listernToEvents - scale this function with the number of channels
@@ -188,17 +189,16 @@ func installUsingHelm(client *mesherykube.Client, delete bool, dependencyName st
 }
 
 func getHelmChart(releaseName string) error {
-	fmt.Println("Looking for parent chart in ", downloadLocation)
+	logrus.Println("Looking for parent chart in ", downloadLocation)
 	// see if chart for current release already exist on fs
 	_, err := os.Stat(path.Join(downloadLocation, releaseName))
 	if err == nil {
 		return nil
 	}
 
-	fmt.Println("Downloading chart: ", releaseName)
+	logrus.Println("Downloading chart: ", releaseName)
 
 	chartURL := fmt.Sprintf("https://meshery.github.io/meshery.io/charts/%s.tgz", releaseName)
-	fmt.Println(chartURL)
 
 	err = downloadTar(chartURL, releaseName)
 	if err != nil {

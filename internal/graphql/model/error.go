@@ -18,7 +18,7 @@ const (
 	ErrPublishBrokerCode            = "1010"
 	ErrNoMeshSyncCode               = "1011"
 	ErrNoExternalEndpointCode       = "1012"
-	ErrInstallingUsingHelmCode         = "error_code"
+	ErrInstallingUsingHelmCode      = "error_code"
 )
 
 var (

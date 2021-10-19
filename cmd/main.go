@@ -13,6 +13,7 @@ import (
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/internal/graphql"
+	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
@@ -264,5 +265,12 @@ func main() {
 	<-c
 	logrus.Info("Doing seeded content cleanup...")
 	lProv.CleanupSeeded(seededUUIDs)
+
+	logrus.Print("Deleting meshery-operator and CRs")
+	err = model.Initialize(hc.KubeClient, true)
+	if err != nil {
+		logrus.Error("Error deleting meshery-operator and CRs ", err.Error())
+	}
+
 	logrus.Info("Shutting down Meshery")
 }
