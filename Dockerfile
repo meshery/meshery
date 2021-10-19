@@ -51,9 +51,14 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/web.yml) \
     && awk 'FNR==1 && NR>1 { printf("\n%s\n\n","---") } 1' /emojivoto/*.yml > /seed_content/applications/emojivoto.yml
 
-RUN RELEASE_NAME=meshery-${GIT_VERSION} \
-   && curl -LO https://meshery.github.io/meshery.io/charts/${RELEASE_NAME}.tgz \
-   && mkdir ${RELEASE_NAME}; tar -xzvf ${RELEASE_NAME}.tgz --directory=${RELEASE_NAME}
+RUN if [[ $GIT_VERSION == "edge-latest" || $GIT_VERSION == "" ]]; \
+    then RELEASE_NAME=meshery-$(curl -L -s https://api.github.com/repos/meshery/meshery/releases/latest | \
+       grep tag_name | sed "s/ *\"tag_name\": *\"\\(.*\\)\",*/\\1/" | \
+       grep -v "rc\.[0-9]$"| head -n 1 ); \
+    else RELEASE_NAME=meshery-${GIT_VERSION}; \
+    fi \
+    && curl -LO https://meshery.github.io/meshery.io/charts/${RELEASE_NAME}.tgz \
+    && mkdir -p /charts/${RELEASE_NAME}; tar -xzvf ${RELEASE_NAME}.tgz --directory=/charts/${RELEASE_NAME}
 
 #FROM ubuntu as nighthawk
 #RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
@@ -86,7 +91,7 @@ COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
-COPY --from=seed_content /meshery-$GIT_VERSION /home/appuser/.meshery/charts/meshery-$GIT_VERSION
+COPY --from=seed_content /charts/ /home/appuser/.meshery/manifests/
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_service /app/cmd/
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_output_transform /app/cmd/
 COPY --from=jsonschema-util /kubeopenapi-jsonschema /home/appuser/.meshery/bin/kubeopenapi-jsonschema
