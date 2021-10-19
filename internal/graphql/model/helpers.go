@@ -209,7 +209,6 @@ func getHelmChart(releaseName string) error {
 }
 
 func downloadTar(url, releaseName string) error {
-
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
@@ -225,11 +224,9 @@ func downloadTar(url, releaseName string) error {
 		return err
 	}
 
-	if err := tarxzf(path.Join(downloadLocation, releaseName), resp.Body); err != nil {
-		return err
-	}
+	err = tarxzf(path.Join(downloadLocation, releaseName), resp.Body)
+	return err
 
-	return nil
 }
 
 func tarxzf(location string, stream io.Reader) error {
