@@ -226,7 +226,6 @@ func downloadTar(url, releaseName string) error {
 
 	err = tarxzf(path.Join(downloadLocation, releaseName), resp.Body)
 	return err
-
 }
 
 func tarxzf(location string, stream io.Reader) error {
