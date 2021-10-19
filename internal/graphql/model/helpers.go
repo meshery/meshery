@@ -269,9 +269,7 @@ func tarxzf(location string, stream io.Reader) error {
 			if err != nil {
 				return err
 			}
-			// Trust meshery tar
-			// #nosec
-			if _, err := io.Copy(outFile, tarReader); err != nil {
+			if _, err := io.CopyN(outFile, tarReader, header.Size); err != nil {
 				return err
 			}
 			if err = outFile.Close(); err != nil {

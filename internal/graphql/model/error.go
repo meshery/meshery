@@ -61,5 +61,5 @@ func ErrMesheryClient(err error) error {
 }
 
 func ErrInstallingUsingHelm(err error, chart string) error {
-	return errors.New(ErrInstallingUsingHelmCode, errors.Alert, []string{"Error installing ", chart}, []string{err.Error()}, []string{"Kubernetes cluster not connected.\n", "Invalid kubeconfig.\n", "Unable to fetch/read chart: ", chart, ".\n"}, []string{"Try re-uploading your kubeconfig\n"})
+	return errors.New(ErrInstallingUsingHelmCode, errors.Alert, []string{"Error installing ", chart}, []string{err.Error()}, []string{"Kubernetes cluster not connected.\n ", "Invalid kubeconfig.\n ", "Unable to fetch/read chart: ", chart, "\n. "}, []string{"Try re-uploading your kubeconfig\n"})
 }
