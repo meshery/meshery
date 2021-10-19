@@ -104,7 +104,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
 
   </tbody>
   </table>
-  <a href="#{{ component[1].component_name }}">Top</a>
+  <a href="#error-code-reference">Top</a>
   <hr>
   <br>
 {% endif %}

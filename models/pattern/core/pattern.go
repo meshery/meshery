@@ -18,18 +18,28 @@ import (
 // Pattern is the golang representation of the Pattern
 // config file model
 type Pattern struct {
-	Name     string              `yaml:"name,omitempty" json:"name,omitempty"`
-	Services map[string]*Service `yaml:"services,omitempty" json:"services,omitempty"`
+	// Name is the human-readable, display-friendly descriptor of the pattern
+	Name string `yaml:"name,omitempty" json:"name,omitempty"`
+	// PatternID is the moniker use to uniquely identify any given pattern
+	// Convention: SMP-###-v#.#.#
+	PatternID string              `yaml:"patternID,omitempty" json:"patternID,omitempty"`
+	Services  map[string]*Service `yaml:"services,omitempty" json:"services,omitempty"`
 }
 
 // Service represents the services defined within the appfile
 type Service struct {
 	// ID is the id of the service and is completely internal to
 	// Meshery Server and meshery providers
-	ID        *uuid.UUID `yaml:"id,omitempty" json:"id,omitempty"`
-	Type      string     `yaml:"type,omitempty" json:"type,omitempty"`
-	Namespace string     `yaml:"namespace,omitempty" json:"namespace,omitempty"`
-	DependsOn []string   `yaml:"dependsOn,omitempty" json:"dependsOn,omitempty"`
+	ID *uuid.UUID `yaml:"id,omitempty" json:"id,omitempty"`
+	// Name is the name of the service and is an optional parameter
+	// If given then this supercedes the name of the service inherited
+	// from the parent
+	Name      string `yaml:"name,omitempty" json:"name,omitempty"`
+	Type      string `yaml:"type,omitempty" json:"type,omitempty"`
+	Namespace string `yaml:"namespace,omitempty" json:"namespace,omitempty"`
+	// DependsOn correlates one or more objects as a required dependency of this service
+	// DependsOn is used to determine sequence of operations
+	DependsOn []string `yaml:"dependsOn,omitempty" json:"dependsOn,omitempty"`
 
 	Settings map[string]interface{} `yaml:"settings,omitempty" json:"settings,omitempty"`
 	Traits   map[string]interface{} `yaml:"traits,omitempty" json:"traits,omitempty"`
@@ -39,7 +49,13 @@ type Service struct {
 func NewPatternFile(yml []byte) (af Pattern, err error) {
 	err = yaml.Unmarshal(yml, &af)
 
-	for _, svc := range af.Services {
+	for svcName, svc := range af.Services {
+		// If an explicit name is not given to the service then use
+		// the service identifier as its name
+		if svc.Name == "" {
+			svc.Name = svcName
+		}
+
 		svc.Settings = utils.RecursiveCastMapStringInterfaceToMapStringInterface(svc.Settings)
 		svc.Traits = utils.RecursiveCastMapStringInterfaceToMapStringInterface(svc.Traits)
 
@@ -64,7 +80,7 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 
 	comp := v1alpha1.Component{
 		TypeMeta:   v1.TypeMeta{Kind: "Component", APIVersion: "core.oam.dev/v1alpha2"},
-		ObjectMeta: v1.ObjectMeta{Name: name, Namespace: svc.Namespace},
+		ObjectMeta: v1.ObjectMeta{Name: svc.Name, Namespace: svc.Namespace},
 		Spec: v1alpha1.ComponentSpec{
 			Type:     svc.Type,
 			Settings: svc.Settings,
