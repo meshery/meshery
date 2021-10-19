@@ -1,10 +1,10 @@
 package core
 
 import (
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	"math/rand"
-	"time"
+	"math/big"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/models/pattern/utils"
@@ -150,7 +150,10 @@ func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
 			ID: name, // Assuming that the service names are unique
 		}
 
-		elemPosition := getCytoscapeJSPosition(svc)
+		elemPosition, err := getCytoscapeJSPosition(svc)
+		if err != nil {
+			return cy, err
+		}
 
 		elem := cytoscapejs.Element{
 			Data:       elemData,
@@ -229,33 +232,45 @@ func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
 	return pf, nil
 }
 
-func getCytoscapeJSPosition(svc *Service) (pos cytoscapejs.Position) {
+func getCytoscapeJSPosition(svc *Service) (cytoscapejs.Position, error) {
+	pos := cytoscapejs.Position{}
+
 	// Check if the service has "meshmap" as a trait
 	mpi, ok := svc.Traits["meshmap"]
-	if !ok {
-		rand.Seed(time.Now().UnixNano())
-		pos.X = float64(rand.Intn(100))
-		pos.Y = float64(rand.Intn(100))
 
-		return
+	if !ok {
+		randX, err := rand.Int(rand.Reader, big.NewInt(100))
+		if err != nil {
+			return pos, err
+		}
+		randY, err := rand.Int(rand.Reader, big.NewInt(100))
+		if err != nil {
+			return pos, err
+		}
+
+		pos := cytoscapejs.Position{}
+		pos.X, _ = big.NewFloat(0).SetInt(randX).Float64()
+		pos.Y, _ = big.NewFloat(0).SetInt(randY).Float64()
+
+		return pos, nil
 	}
 
 	mpStrInterface, ok := mpi.(map[string]interface{})
 	if !ok {
 		logrus.Debugf("failed to cast meshmap trait (MPI): %+#v", mpi)
-		return
+		return pos, nil
 	}
 
 	posInterface, ok := mpStrInterface["position"]
 	if !ok {
 		logrus.Debugf("failed to cast meshmap trait (posInterface): %+#v", mpStrInterface)
-		return
+		return pos, nil
 	}
 
 	posMap, ok := posInterface.(map[string]interface{})
 	if !ok {
 		logrus.Debugf("failed to cast meshmap trait (posMap): %+#v", posInterface)
-		return
+		return pos, nil
 	}
 
 	pos.X, ok = posMap["posX"].(float64)
@@ -283,5 +298,5 @@ func getCytoscapeJSPosition(svc *Service) (pos cytoscapejs.Position) {
 		pos.Y = float64(intY)
 	}
 
-	return
+	return pos, nil
 }
