@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
+import { trueRandom } from '../lib/trueRandom';
 
 const grafanaStyles = (theme) => ({
   root : { padding : theme.spacing(5), },
@@ -185,7 +186,7 @@ class GrafanaSelectionComponent extends Component {
       this.props.addSelectedBoardPanelConfig(boardConfig);
     }
 
-    genRandomNumberForKey = () => Math.floor((Math.random() * 1000) + 1)
+    genRandomNumberForKey = () => Math.floor((trueRandom() * 1000) + 1)
 
     render = () => {
       const self = this;

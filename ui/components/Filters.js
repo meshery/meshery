@@ -31,6 +31,7 @@ import dataFetch from "../lib/data-fetch";
 import URLUploader from "./URLUploader";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
+import { trueRandom } from "../lib/trueRandom";
 
 const styles = (theme) => ({
   grid : {
@@ -347,12 +348,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(Math.random() * 100), "upload");
+      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(trueRandom() * 100), "upload");
     });
     reader.readAsText(file);
   }
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
     console.log(link, "valid");
   }
   const columns = [
