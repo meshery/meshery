@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -44,6 +45,10 @@ var validateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
+		// set default tokenpath for command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+		}
 
 		prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
 		if err != nil {
@@ -71,7 +76,6 @@ var validateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
-
 		_, err = sendValidateRequest(mctlCfg, meshName, false)
 		if err != nil {
 			log.Fatalln(err)
@@ -95,7 +99,6 @@ func init() {
 	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
-	_ = validateCmd.MarkFlagRequired("tokenPath")
 	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 
