@@ -49,6 +49,7 @@ import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppsIcon from "./ConnectionWizard/icons/apps";
 import FILE_OPS from "../utils/configurationFileHandlersEnum"
+import { trueRandom } from "../lib/trueRandom";
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
   tableHeader : { fontWeight : "bolder",
@@ -403,7 +404,7 @@ function MesheryApplications({
       handleSubmit(
         event.target.result,
         "",
-        file?.name || "meshery_" + Math.floor(Math.random() * 100),
+        file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         FILE_OPS.FILE_UPLOAD,
       );
     });
@@ -411,7 +412,7 @@ function MesheryApplications({
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), FILE_OPS.URL_UPLOAD);
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.URL_UPLOAD);
     // console.log(link, "valid");
   }
 
@@ -512,11 +513,9 @@ function MesheryApplications({
     }
   });
 
-  async function showModal() {
-    let response = await modalRef.current.show({ title : "Delete Aplication?",
-
-      subtitle : "Are you sure you want to delete this application?",
-
+  async function showModal(count) {
+    let response = await modalRef.current.show({ title : `Delete ${count ? count : ""} Application${count > 1 ? "s" : '' }?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} application${count > 1 ? "s" : '' }?`,
       options : ["Yes", "No"], })
     return response;
   }
@@ -568,7 +567,7 @@ function MesheryApplications({
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showModal()
+      let response = await showModal(Object.keys(row.lookup).length)
       console.log(response)
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id)
@@ -907,7 +906,7 @@ function PatternForm({ application, onSubmit, show }) {
               }}
               onBlur={(a) => saveCodeEditorChanges(a)}
             />
-            <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, FILE_OPS.FILE_UPLOAD)} />
+            <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, FILE_OPS.FILE_UPLOAD)} />
             <CardActions style={{ justifyContent : "flex-end" }}>
               <Tooltip title="Update Application">
                 <IconButton

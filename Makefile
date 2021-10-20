@@ -1,4 +1,4 @@
-ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009 meshery-nginx-sm:10010"
+ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10005 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009 meshery-nginx-sm:10010"
 
 MESHERY_CLOUD_LOCAL="http://mesherylocal.layer5.io:9876"
 MESHERY_CLOUD_DEV="http://localhost:9876"
@@ -62,7 +62,7 @@ run-local-cloud: error
 run-local: error
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \

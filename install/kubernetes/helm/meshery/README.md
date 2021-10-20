@@ -16,6 +16,7 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 
 | Repository | Name | Version |
 |------------|------|---------|
+|  | meshery-app-mesh | stable-latest |
 |  | meshery-consul | stable-latest |
 |  | meshery-istio | stable-latest |
 |  | meshery-kuma | stable-latest |
@@ -63,6 +64,8 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | meshery-osm.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-nginx-sm.fullnameOverride | string | `"meshery-ngnix-sm"` |  |
 | meshery-nginx-sm.serviceAccountNameOverride | string | `"meshery-server"` |  |
+| meshery-app-mesh.fullnameOverride | string | `"meshery-app-mesh"` |  |
+| meshery-app-mesh.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-cpx.fullnameOverride | string | `"meshery-cpx"` |  |
 | meshery-cpx.serviceAccountNameOverride | string | `"meshery-server"` |
 | meshery-traefik-mesh.fullnameOverride | string | `"meshery-traefik-mesh"` |  |
@@ -85,4 +88,3 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | serviceAccount.name | string | `"meshery:server"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
-

@@ -85,6 +85,8 @@ var updateCmd = &cobra.Command{
 			currCtx.SetVersion("latest")
 		}
 
+		log.Info("Updating Meshery...")
+
 		switch currCtx.GetPlatform() {
 		case "docker":
 			if !utils.SkipResetFlag {
@@ -94,8 +96,6 @@ var updateCmd = &cobra.Command{
 					return err
 				}
 			}
-
-			log.Info("Updating Meshery...")
 
 			err = utils.UpdateMesheryContainers()
 			if err != nil {
@@ -116,24 +116,21 @@ var updateCmd = &cobra.Command{
 			}
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
-				RequestedAdapters := currCtx.Adapters
+				// get value overrides to install the helm chart
+				overrideValues := utils.SetOverrideValues(currCtx, "latest")
 
-				// fetch the manifest files corresponding to the version specified
-				manifests, err := utils.FetchManifests(currCtx)
-
-				if err != nil {
-					return err
-				}
-
-				// downloaded required files successfully now apply the manifest files
-				log.Info("Updating Meshery...")
-
-				log.Info("applying the manifests to Kubernetes cluster...")
-
-				// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-				err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, true, false)
-				if err != nil {
-					return err
+				// Apply the latest helm chart along with the default image tag specified in the charts "stable-latest"
+				if err = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+					Namespace:       utils.MesheryNamespace,
+					CreateNamespace: true,
+					ChartLocation: meshkitkube.HelmChartLocation{
+						Repository: utils.HelmChartURL,
+						Chart:      utils.HelmChartName,
+					},
+					Action:         meshkitkube.UPGRADE,
+					OverrideValues: overrideValues,
+				}); err != nil {
+					return errors.Wrap(err, "cannot update Meshery")
 				}
 			}
 
@@ -149,26 +146,19 @@ var updateCmd = &cobra.Command{
 				return errors.Wrapf(err, "failed to initialize healthchecker")
 			}
 			// If k8s is available in case of platform docker than we deploy operator
-			if err = hc.Run(); err == nil {
-				// create a client
-				kubeClient, err := meshkitkube.New([]byte(""))
-				if err != nil {
-					return err
-				}
-
-				err = utils.ApplyOperatorManifest(kubeClient, true, false)
-				if err != nil {
-					return err
-				}
+			if err = hc.Run(); err != nil {
+				return ErrHealthCheckFailed(err)
 			}
 
-			skipUpdateFlag = true
-
-			// restart the pods in meshery namespace
-			err = restart()
-
+			running, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 			if err != nil {
 				return err
+			}
+			if !running {
+				// Meshery is not running, run the start command
+				if err := start(); err != nil {
+					return ErrRestartMeshery(err)
+				}
 			}
 
 			currCtx.SetVersion("latest")

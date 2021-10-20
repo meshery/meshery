@@ -110,7 +110,7 @@ class UserPreference extends React.Component {
     }
 
     this.handleChange(name);
-  };
+  }
 
   handleError = (msg) => () => {
     const self = this;
