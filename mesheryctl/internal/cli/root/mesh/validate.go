@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -47,7 +46,11 @@ var validateCmd = &cobra.Command{
 		}
 		// set default tokenpath for command.
 		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
+			activeToken, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			tokenPath = activeToken.GetLocation()
 		}
 
 		prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
