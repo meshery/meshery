@@ -37,7 +37,7 @@ function capitalize(string) {
 }
 
 function Mesh() {
-  const name = extractComponentName(getPath())
+  const name = extractComponentName(getPath());
 
   return (
     <NoSsr>

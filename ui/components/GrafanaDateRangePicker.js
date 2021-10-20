@@ -100,7 +100,7 @@ class GrafanaDateRangePicker extends Component {
 
   handleClick = () => {
     this.setState({ open : true, });
-  };
+  }
 
   setRange = (range) => () => {
     let startDate; let endDate; let liveTail; let startGDate; let

@@ -94,7 +94,7 @@ class MesheryPlayComponent extends React.Component {
 
   handleConfigure = () => {
     this.props.router.push("/settings#service-mesh");
-  };
+  }
 
   pickImage(adapter) {
     const { classes } = this.props;

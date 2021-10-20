@@ -2,6 +2,7 @@
 // ********************************** TYPE DEFINTIONS **********************************
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
+import { trueRandom } from "../../lib/trueRandom";
 import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
 
 /**
@@ -176,7 +177,7 @@ export function recursiveCleanObjectExceptEmptyArray(obj) {
  */
 export function createPatternFromConfig(config, namespace, partialClean = false) {
   const pattern = {
-    name : `pattern-${Math.random().toString(36).substr(2, 5)}`,
+    name : `pattern-${trueRandom().toString(36).substr(2, 5)}`,
     services : {},
   };
 

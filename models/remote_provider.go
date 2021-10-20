@@ -2414,7 +2414,8 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 				return err
 			}
 			defer outFile.Close()
-			if _, err := io.Copy(outFile, tarReader); err != nil {
+			// Sets a limit of 1 GB on an outfile
+			if _, err := io.CopyN(outFile, tarReader, 1073741824); err != nil {
 				return err
 			}
 		default:

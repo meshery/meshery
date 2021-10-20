@@ -112,7 +112,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
         {schemaSet.workload?.title}
       </Typography>) : (
         <AppBar style={{ boxShadow : `0px 2px 4px -1px ${pSBCr(appBarColor, -30)}`, position : "sticky" }}>
-          <Toolbar variant="dense" style={{ padding : "0 0px", background : `linear-gradient(115deg, ${pSBCr( appBarColor, -20)} 0%, ${appBarColor} 100%)`, height : "0.7rem !important" }}>
+          <Toolbar variant="dense" style={{ padding : "0 0px", paddingRight : "5px", background : `linear-gradient(115deg, ${pSBCr( appBarColor, -20)} 0%, ${appBarColor} 100%)`, height : "0.7rem !important" }}>
             <p style={{ margin : "auto auto auto 10px", fontSize : "16px" }}>{schemaSet.workload.title || CamelCaseToSentanceCase(schemaSet.workload["object-type"])}</p>
             {schemaSet?.workload?.description && (
               <label htmlFor="help-button" >
@@ -128,7 +128,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
           </Toolbar>
         </AppBar>
       )}
-      <div style={{ maxHeight : '300px', scrollbarWidth : 'thin' }}>
+      <div style={{ height : '57vh', overflowY : "scroll", overflowX : "hidden", scrollbarWidth : 'thin' }}>
         {!renderAsTooltip && (<AppBar position="static" >
           <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service" >
             <Tab label="Settings" {...a11yProps(0)} />

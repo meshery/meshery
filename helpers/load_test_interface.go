@@ -247,19 +247,68 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	if u.Port() == "" {
 		if u.Scheme == "http" {
 			rURL = fmt.Sprintf("http://%s:80%s", u.Hostname(), u.Path)
-			//rURL = fmt.Sprintf("http://%s:80/%s", u.Port(), u.Path)
 		} else {
-			rURL = fmt.Sprintf("http://%s:443%s", u.Port(), u.Path)
-			//rURL = fmt.Sprintf("https://%s:443", u.Hostname())
+			rURL = fmt.Sprintf("https://%s:443%s", u.Hostname(), u.Path)
 		}
 		// Add support for more protocols here
 	}
+
+	// advanced request options supported by nighthawk
+	requestOptions := &nighthawk_proto.RequestOptions{}
+
+	headers := make([]*v3.HeaderValueOption, 0)
+	if opts.Headers != nil {
+		for key, value := range *opts.Headers {
+			headers = append(headers, &v3.HeaderValueOption{
+				Header: &v3.HeaderValue{
+					Key:   key,
+					Value: value,
+				},
+			})
+		}
+	}
+
+	if opts.Cookies != nil {
+		cookies := ""
+		for key, val := range *opts.Cookies {
+			cookies += fmt.Sprintf(" %s=%s;", key, val)
+		}
+		headers = append(headers, &v3.HeaderValueOption{
+			Header: &v3.HeaderValue{
+				Key:   "Cookie",
+				Value: cookies,
+			},
+		})
+	}
+
+	if len(opts.ContentType) > 0 {
+		headers = append(headers, &v3.HeaderValueOption{
+			Header: &v3.HeaderValue{
+				Key:   "Content-Type",
+				Value: opts.ContentType,
+			},
+		})
+	}
+
+	requestOptions.RequestHeaders = headers
+
+	// Nighthawk doesn't send the specified request payload but instead sends
+	// 'a' characters corresponding to that body's size
+	// TODO: Request method should be specifiable through UI
+	if reqBodyLength := len(opts.Body); reqBodyLength > 0 {
+		requestOptions.RequestBodySize = &wrappers.UInt32Value{Value: uint32(len(opts.Body))}
+		requestOptions.RequestMethod = v3.RequestMethod_POST
+	} else {
+		requestOptions.RequestBodySize = &wrappers.UInt32Value{Value: uint32(0)}
+		requestOptions.RequestMethod = v3.RequestMethod_GET
+	}
+
 	ro := &nighthawk_proto.CommandLineOptions{
-		Connections: &wrappers.UInt32Value{Value: uint32(2)},
 		OneofDurationOptions: &nighthawk_proto.CommandLineOptions_Duration{
 			Duration: durationpb.New(opts.Duration),
 		},
-		Timeout:             durationpb.New(10 * time.Second),
+		Timeout: durationpb.New(10 * time.Second),
+		// TODO: support multiple http versions
 		H2:                  &wrappers.BoolValue{Value: false},
 		Concurrency:         &wrappers.StringValue{Value: fmt.Sprint(opts.HTTPNumThreads)},
 		Verbosity:           &nighthawk_proto.Verbosity{Value: nighthawk_proto.Verbosity_INFO},
@@ -268,28 +317,27 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		BurstSize:           &wrappers.UInt32Value{Value: uint32(0)},
 		AddressFamily:       &nighthawk_proto.AddressFamily{Value: nighthawk_proto.AddressFamily_AUTO},
 		OneofRequestOptions: &nighthawk_proto.CommandLineOptions_RequestOptions{
-			RequestOptions: &nighthawk_proto.RequestOptions{
-				RequestMethod:   v3.RequestMethod_GET,
-				RequestHeaders:  make([]*v3.HeaderValueOption, 0),
-				RequestBodySize: &wrappers.UInt32Value{Value: uint32(10)},
-			},
+			RequestOptions: requestOptions,
 		},
-		MaxPendingRequests:       &wrappers.UInt32Value{Value: uint32(10)},
-		MaxActiveRequests:        &wrappers.UInt32Value{Value: uint32(100)},
-		MaxRequestsPerConnection: &wrappers.UInt32Value{Value: uint32(100)},
-		SequencerIdleStrategy:    &nighthawk_proto.SequencerIdleStrategy{Value: nighthawk_proto.SequencerIdleStrategy_DEFAULT},
+		// use default values for nighthawk's configuration to avoid any unexpected
+		// failures until there is a dynamic way to specify this
+		// MaxPendingRequests:       &wrappers.UInt32Value{Value: uint32(10)},
+		// MaxActiveRequests:        &wrappers.UInt32Value{Value: uint32(100)},
+		// MaxRequestsPerConnection: &wrappers.UInt32Value{Value: uint32(100)},
+		SequencerIdleStrategy: &nighthawk_proto.SequencerIdleStrategy{Value: nighthawk_proto.SequencerIdleStrategy_DEFAULT},
 		OneofUri: &nighthawk_proto.CommandLineOptions_Uri{
 			Uri: &wrappers.StringValue{Value: rURL},
 		},
 		ExperimentalH1ConnectionReuseStrategy: &nighthawk_proto.H1ConnectionReuseStrategy{
 			Value: nighthawk_proto.H1ConnectionReuseStrategy_DEFAULT,
 		},
-		TerminationPredicates:                make(map[string]uint64),
-		FailurePredicates:                    make(map[string]uint64),
+		TerminationPredicates: make(map[string]uint64),
+		// Used for specifying parameters for failing execution. Use defailt for now
+		//FailurePredicates:                    make(map[string]uint64),
 		OpenLoop:                             &wrappers.BoolValue{Value: false},
 		JitterUniform:                        durationpb.New(0 * time.Second),
 		ExperimentalH2UseMultipleConnections: &wrappers.BoolValue{Value: false},
-		Labels:                               make([]string, 0),
+		Labels:                               []string{opts.Name, " -_- ", rURL},
 		//TransportSocket: &v3.TransportSocket{
 		//	Name: "test",
 		//	ConfigType: &v3.TransportSocket_TypedConfig{

@@ -31,6 +31,7 @@ import dataFetch from "../lib/data-fetch";
 import URLUploader from "./URLUploader";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
+import { trueRandom } from "../lib/trueRandom";
 
 const styles = (theme) => ({
   grid : {
@@ -347,12 +348,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(Math.random() * 100), "upload");
+      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(trueRandom() * 100), "upload");
     });
     reader.readAsText(file);
   }
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
     console.log(link, "valid");
   }
   const columns = [
@@ -462,11 +463,11 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   });
 
-  async function showmodal() {
+  async function showmodal(count) {
     let response = await modalRef.current.show({
-      title : "Delete Filter?",
+      title : `Delete ${count ? count : ""} Filter${count > 1 ? "s" : '' }?`,
 
-      subtitle : "Are you sure you want to delete this filter?",
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} filter${count > 1 ? "s" : '' }?`,
 
       options : ["Yes", "No"], })
     return response;
@@ -518,7 +519,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onRowsDelete : async function handleDelete(row) {
-      let response  = await showmodal()
+      let response  = await showmodal(Object.keys(row.lookup).length)
       console.log(response)
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);

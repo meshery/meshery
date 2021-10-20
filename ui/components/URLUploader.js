@@ -42,6 +42,7 @@ const URLUploader = ({ onSubmit }) => {
   }
   const handleSubmit = () => {
     validURL(input) ? onSubmit(input) : handleError(input);
+    handleClose()
   }
 
   return (
