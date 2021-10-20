@@ -396,7 +396,7 @@ function MesheryPatterns({
         body = JSON.stringify({  pattern_data : { pattern_file : data }, save : true })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url : data, save : true})
+        body = JSON.stringify({ url : data, save : true })
       }
       dataFetch(
         `/api/pattern`,
@@ -425,7 +425,7 @@ function MesheryPatterns({
       handleSubmit(
         event.target.result,
         "",
-        file?.name || "meshery_" + Math.floor(trueRandom() * 100),        
+        file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         FILE_OPS.URL_UPLOAD,
       );
     });
