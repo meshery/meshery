@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
 import { createTheme } from '@material-ui/core/styles';
 import {
@@ -50,6 +50,8 @@ import URLUploader from "./URLUploader";
 import { createPatternFromConfig, createWorkloadTraitSets, getPatternServiceName } from "./MesheryMeshInterface/helpers";
 import LazyPatternServiceForm from "./MesheryMeshInterface/LazyPatternServiceForm";
 import { trueRandom } from "../lib/trueRandom";
+import { SchemaContext } from "../utils/context/schemaSet"
+import {FilterWorkloadByType} from "../utils/workloadFilter"
 
 const styles = (theme) => ({
   grid : {
@@ -518,15 +520,12 @@ function MesheryPatterns({
                   <ListAltIcon />
                 </IconButton>
               </Tooltip>
-              <IconButton>
-                <PlayArrowIcon
-                  title="Deploy"
-                  aria-label="deploy"
-                  color="inherit"
-                  onClick={() => handleDeploy(rowData.pattern_file)} //deploy endpoint to be called here
-                />
+              <IconButton
+                title="Deploy"
+                onClick={() => handleDeploy(rowData.pattern_file)}
+              >
+                <PlayArrowIcon />
               </IconButton>
-
             </>
           );
         },
@@ -542,9 +541,9 @@ function MesheryPatterns({
 
   async function showModal(count) {
     let response = await modalRef.current.show({
-      title : `Delete ${count ? count : ""} Pattern${count > 1 ? "s" : '' }?`,
+      title : `Delete ${count ? count : ""} Pattern${count > 1 ? "s" : ''}?`,
 
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' }  ${count ? count : ""}  pattern${count > 1 ? "s" : '' }?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'}  ${count ? count : ""}  pattern${count > 1 ? "s" : ''}?`,
 
       options : ["Yes", "No"],
     })
@@ -697,9 +696,16 @@ export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(w
 function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState([]);
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
-  const [yaml, setYaml] = useState(pattern.pattern_file);
+  const [yaml, setYaml] = useState(pattern.pattern_file);  
   const classes = useStyles();
   const reference = useRef({});
+  const {workloadTraitSet} = useContext(SchemaContext);
+
+  useEffect(() => {
+    if(workloadTraitSet) {
+      setWorkloadTraitsSet(workloadTraitSet)
+    }
+  }, [workloadTraitSet]);
 
   function getPatternJson() {
     const patternString = pattern.pattern_file;
@@ -777,10 +783,6 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     return returnValue;
   }
 
-  useEffect(() => {
-    createWorkloadTraitSets("").then(res => setWorkloadTraitsSet(res))
-  }, []);
-
   if (!workloadTraitsSet) return <CircularProgress />
 
   return (
@@ -854,7 +856,7 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
   return (
     <div>
       <Card
-      // @ts-ignore
+        // @ts-ignore
         style={cardStyle}>
         <CardContent >
           <CodeMirror
