@@ -78,7 +78,7 @@ In addition to pre and post deployment checks, the `mesheryctl system check` als
 **Answer**: _Not necessary. Basic requirements are enough to pass the check._
 
 ##### Question: The Adapter check is failing, it returns "Auth token not found". 
-**Answer**: _You can supply an authentication token by downloading from "Get Token" option in Meshery UI or by typing `mesheryctl system login`_
+**Answer**: _You can login into Meshery using `mesheryctl system login` to generate OAuth token and logging in. After that, the check will start to function._
 
 ##### Question: I have a Kubernetes cluster enabled but Meshery couldn't reach the cluster and the checks are failing! What to do?
 **Answer**: _To resolve this error, you can upload your kubeconfig file in the Meshery UI under settings and Meshery will reconfigure to use your Kubernetes cluster._
@@ -91,6 +91,12 @@ In addition to pre and post deployment checks, the `mesheryctl system check` als
 
 ##### Question: What is the minimum version of k8s cluster and kubectl required to run Meshery?
 **Answer**: _For Kubernetes, version >=1.12.0 is recommended. For kubectl version >=1.12 is recommended._
+
+##### Question: In the "Meshery Adapter" section of check, I could see only some service mesh adapters up and running and not all. Is this fine?
+**Answer**: _Not a problem, if you feel you need to have all mesh adapters to be up running, you can do so by creating a new context `mesheryctl system context create [context-name] --set` (if you voluntarily deleted mesh adapters in your current context)_
+
+##### Question: I started Meshery fresh, didn't change any of the details in the context I have. But I see that all adapter checks are failing. What to do?
+**Answer**: _Configure Meshery to use on your Kubernetes cluster, then upload the kubeconfig file via Meshery UI to notify Meshery to use that cluster. If that didn't work, feel free to [open up an issue](https://github.com/meshery/meshery/issues) in GitHub._
 
 # Suggested Reading
 
