@@ -52,7 +52,7 @@
         "name": "ErrNoAdaptersCode",
         "code": "1010",
         "severity": "Fatal",
-        "long_description": "",
+        "long_description": "Adapter for required mesh not found",
         "short_description": "Adapter for required mesh not found",
         "probable_cause": "",
         "suggested_remediation": "Deploy the proper Meshery Adapter for your service mesh"
@@ -106,7 +106,7 @@
         "name": "ErrTimeoutWaitingForDeployResponseCode",
         "code": "1016",
         "severity": "Fatal",
-        "long_description": "",
+        "long_description": "Timed out waiting for deployment",
         "short_description": "Timed out waiting for deploy event",
         "probable_cause": "",
         "suggested_remediation": "Check your environment and try again"
@@ -115,7 +115,7 @@
         "name": "ErrFailedDeployingMeshCode",
         "code": "1017",
         "severity": "Fatal",
-        "long_description": "",
+        "long_description": "Failed to deploy the service mesh",
         "short_description": "Failed to deploy the service mesh",
         "probable_cause": "",
         "suggested_remediation": "Check your environment and try again"
@@ -142,7 +142,7 @@
         "name": "ErrTimeoutWaitingForValidateResponseCode",
         "code": "1020",
         "severity": "Fatal",
-        "long_description": "",
+        "long_description": "Timed out waiting for validate response",
         "short_description": "Timed out waiting for validate response",
         "probable_cause": "",
         "suggested_remediation": "Check your environment and try again"
@@ -151,7 +151,7 @@
         "name": "ErrSMIConformanceTestsFailedCode",
         "code": "1021",
         "severity": "Fatal",
-        "long_description": "",
+        "long_description": "SMI conformance tests failed",
         "short_description": "SMI conformance tests failed",
         "probable_cause": "",
         "suggested_remediation": "Join https://layer5io.slack.com/archives/C010H0HE2E6"
