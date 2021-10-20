@@ -2,6 +2,7 @@
 layout: default
 title: Service Mesh Pattern Management
 permalink: functionality/pattern-management
+redirect_from: functionality/pattern-management/
 type: functionality
 language: en
 list: include
@@ -105,7 +106,7 @@ services:
 
 ## Importing Patterns
 
-You may import a pattern using `mesheryctl` or Meshery UI. Patterns can be imported from local filesystem, an HTTP/S endpoint, or from GitHub. When provided a GitHub location, Meshery will recursively search the given directory (or entire repository) for existing pattern files.
+You may import a pattern using `mesheryctl` or Meshery UI. Patterns can be imported from a local filesystem, an HTTP/S endpoint, or from GitHub. When provided a GitHub location, Meshery will recursively search the given directory (or the entire repository) for existing pattern files.
 
 ### Using Mesheryctl:
 
@@ -124,7 +125,7 @@ From the UI, patterns can be uploaded locally or by url.
     <img src="{{ site.baseurl }}/assets/img/patterns/ImportPatternUI.png" style="width: 60%" />
 </a>
 
-_To upload from url click link icon_
+_To upload from url click the link icon_
 
 <a href="{{ site.baseurl }}/assets/img/patterns/UrlImport.png">
     <img src="{{ site.baseurl }}/assets/img/patterns/UrlImport.png" style="width: 60%" />
