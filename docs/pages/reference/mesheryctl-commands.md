@@ -68,7 +68,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% assign command2 = site.data.mesheryctlcommands.cmds.system %}
     <tr>
-      <td rowspan=20><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command2.name }}</a></td>
+      <td rowspan=25><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command2.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command2.description }}</td>
@@ -210,8 +210,20 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       <tr>
         <td>{{ flag.name }}</td>
         <td>{{ flag.description }}</td>
+      </tr>   
+    {% endfor %} 
+    {% assign subcommand12 = command2.subcommands.check %}
+    <tr>
+      <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">{{ subcommand12.name }}</a></td>
+      <td></td>
+      <td>{{ subcommand12.description }}</td>
+    </tr>
+    {% for flag_hash in subcommand12.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
       </tr>
-    {% endfor %}    
+    {% endfor %}
 
   {% assign command3 = site.data.mesheryctlcommands.cmds.system-channel %}
         <tr>
