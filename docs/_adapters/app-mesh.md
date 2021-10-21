@@ -11,15 +11,6 @@ image: /assets/img/service-meshes/app-mesh.svg
 permalink: service-meshes/adapters/app-mesh
 ---
 
-### Lifecycle management
-
-The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh.
-
-### Suggested Topics
-
-- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
-
 ## Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
