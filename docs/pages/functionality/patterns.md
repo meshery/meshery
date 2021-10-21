@@ -108,7 +108,7 @@ services:
 
 You may import a pattern using `mesheryctl` or Meshery UI. Patterns can be imported from a local filesystem, an HTTP/S endpoint, or from GitHub. When provided a GitHub location, Meshery will recursively search the given directory (or the entire repository) for existing pattern files.
 
-### Using Mesheryctl:
+### Using Meshery CLI
 
 #### To import a pattern, execute this command:
 
