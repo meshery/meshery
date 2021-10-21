@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { SchemaContext } from "../utils/context/schemaSet"
-import { groupWorkloadByType, groupWorkloadByVersion } from '../utils/workloadFilter';
+import { groupWorkloadByType } from '../utils/workloadFilter';
 import { createWorkloadTraitSets } from './MesheryMeshInterface/helpers';
 
 function ConfigurationWrapper({ children }) {

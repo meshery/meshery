@@ -6,7 +6,7 @@
  * @returns {Array.Array.<Object>} filteredWorkloads: workloads filtered by Mesh Type
  */
 export function groupWorkloadByType(workloads) {
-  let filteredWorkloads = {}  
+  let filteredWorkloads = {}
   workloads.map((wtSet) => {
     if (wtSet.workload.metadata != null) {
       const adapterName = wtSet.workload.metadata["adapter.meshery.io/name"];

@@ -12,12 +12,12 @@ import PatternServiceForm from "./PatternServiceForm";
 import { getPatternServiceName as getItemName, getPatternServiceID as getItemID, getPatternServiceType } from "./helpers"
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "100%",
+  root : {
+    width : "100%",
   },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
+  heading : {
+    fontSize : theme.typography.pxToRem(15),
+    fontWeight : theme.typography.fontWeightRegular,
   },
 }));
 
@@ -32,19 +32,19 @@ async function fetchJSONSchema(name, type, id) {
 export async function getWorkloadTraitAndType(schemaSet) {
   // Get the schema sets for the workload
   const workloadSchema = await fetchJSONSchema(getItemName(schemaSet?.workload), "workload", getItemID(schemaSet?.workload));
-  workloadSchema._internal = { patternAttributeName: getItemName(schemaSet?.workload, false) };
+  workloadSchema._internal = { patternAttributeName : getItemName(schemaSet?.workload, false) };
 
   // Get the schema sets for the traits
   const traitsSchemas = await Promise.all(schemaSet?.traits?.map(async t => {
     const schema = await fetchJSONSchema(getItemName(t, false), "trait", getItemID(t));
 
-    schema._internal = { patternAttributeName: getItemName(t, false) };
+    schema._internal = { patternAttributeName : getItemName(t, false) };
 
     return schema;
   }));
 
   const type = getPatternServiceType(schemaSet?.workload)
-  return { workload: workloadSchema, traits: traitsSchemas, type }
+  return { workload : workloadSchema, traits : traitsSchemas, type }
 }
 
 export default function LazyPatternServiceForm(props) {
@@ -111,5 +111,5 @@ function LazyAccordionDetails(props) {
   if (!props.expanded) return <AccordionDetails />
 
   // LEE: This behavior is more like what we need - https://codesandbox.io/s/upbeat-tesla-uchsb?file=/src/MyAccordion.js
-  return <AccordionDetails style={{ height: "50rem", overflow: "auto" }}>{props.children}</AccordionDetails>
+  return <AccordionDetails style={{ height : "50rem", overflow : "auto" }}>{props.children}</AccordionDetails>
 }
