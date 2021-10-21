@@ -201,7 +201,7 @@ system:
       description: Invalidate current session with your Meshery Provider.
       usage:
         mesheryctl system logout
-        
+
     check:
       name: check
       description: Run system checks for both pre and post mesh deployment scenarios on Meshery
@@ -226,14 +226,14 @@ system:
             mesheryctl system check --adapter meshery-istio:10000
         operator:
           name: --operator
-          description: Verify the health of Meshery Operator deployment with MeshSync and Broker
+          description: Verify the health of Meshery Operator's deployment with MeshSync and Broker
           usage:
             mesheryctl system check --operator
           example:
             mesheryctl system check --operator
         report:
           name: --report
-          description: Runs diagnostics check and bundles up to open an issue if present
+          description: Runs diagnostic checks and bundles up to open an issue if present
           usage:
             mesheryctl system check --report
           example:
