@@ -119,7 +119,7 @@ Pattern successfully imported.
 ```
 ### Using Meshery UI:
 
-From the UI, patterns can be uploaded locally or by url.
+From Meshery UI, patterns can be imported from your local filesystem or imported from a remote URL.
 
 <a href="{{ site.baseurl }}/assets/img/patterns/ImportPatternUI.png">
     <img src="{{ site.baseurl }}/assets/img/patterns/ImportPatternUI.png" style="width: 60%" />
