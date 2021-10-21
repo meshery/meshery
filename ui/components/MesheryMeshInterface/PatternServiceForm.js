@@ -58,6 +58,7 @@ function a11yProps(index) {
  * @returns
  */
 function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip, appBarColor, tooltipConfigurations, onSettingsChange, onTraitsChange }) {
+  console.log("hello", { formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip, appBarColor, tooltipConfigurations, onSettingsChange, onTraitsChange })
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {}, onSettingsChange);
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {}, onTraitsChange);

@@ -6,16 +6,15 @@
  * @returns {Array.Array.<Object>} filteredWorkloads: workloads filtered by Mesh Type
  */
 export function groupWorkloadByType(workloads) {
-  let filteredWorkloads = {}
-  workloads.map((workload) => {
-    if (workload.metadata != null) {
-      const adapterName = workload.metadata["adapter.meshery.io/name"];
+  let filteredWorkloads = {}  
+  workloads.map((wtSet) => {
+    if (wtSet.workload.metadata != null) {
+      const adapterName = wtSet.workload.metadata["adapter.meshery.io/name"];
       let wl = filteredWorkloads[adapterName] || []
-      wl.push(workload)
+      wl.push(wtSet)
       filteredWorkloads[adapterName] = wl;
     }
   })
-
   return filteredWorkloads;
 }
 
@@ -28,11 +27,11 @@ export function groupWorkloadByType(workloads) {
  */
 export function groupWorkloadByVersion(meshfilteredWorkloads) {
   let versionedFilteredWorkloads = {}
-  meshfilteredWorkloads.map(workload => {
-    const version = workload?.oam_definition?.spec?.metadata?.meshVersion;
+  meshfilteredWorkloads.map(wtSet => {
+    const version = wtSet.workload?.oam_definition?.spec?.metadata?.meshVersion;
     if (version) {
       let versionedFilteredMesh = versionedFilteredWorkloads[version] || []
-      versionedFilteredMesh.push(workload)
+      versionedFilteredMesh.push(wtSet)
       versionedFilteredWorkloads[version] = versionedFilteredMesh
     }
   })
