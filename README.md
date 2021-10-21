@@ -110,7 +110,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-octarine">
-            <img src='https://docs.meshery.io/assets/img/service-meshes/octarine.svg' alt='Octarine Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Octarine</a>
+            <img src='https://docs.meshery.io/assets/img/service-meshes/octarine.svg' alt='Octarine Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Octarine**</a>
           </td>
         </tr>
         <tr>
@@ -128,6 +128,16 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
             <img src='https://docs.meshery.io/assets/img/service-meshes/osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
           </td>
         </tr>
+        <tr>
+          <td><a href="https://github.com/layer5io/meshery-traefik-mesh">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/traefik-mesh.svg' alt='Traefik Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Traefik Mesh</a>
+          </td>
+        </tr>
+           <tr>
+          <td><a href="https://github.com/meshery/meshery-nginx-sm">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/nginx-sm.svg' alt='NGINX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for NGINX Service Mesh</a>
+          </td>
+        </tr>          
         <tr><td colspan="2" class="stable-adapters"></td></tr>
         <tr>
           <td rowspan="5" class="beta-adapters">beta</td>
@@ -138,13 +148,8 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
           </td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-traefik-mesh">
-            <img src='https://docs.meshery.io/assets/img/service-meshes/traefik-mesh.svg' alt='Traefik Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Traefik Mesh</a>
-          </td>
-        </tr>
-           <tr>
-          <td><a href="https://github.com/meshery/meshery-nginx-sm">
-            <img src='https://docs.meshery.io/assets/img/service-meshes/nginx-sm.svg' alt='NGINX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for NGINX Service Mesh</a>
+          <td><a href="https://github.com/meshery/meshery-app-mesh">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/app-mesh.svg' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
           </td>
         </tr>
         <tr><td colspan="2" class="beta-adapters"></td></tr>
@@ -154,11 +159,6 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
         <tr>
           <td><a href="https://github.com/meshery/meshery-tanzu-sm">
             <img src='https://docs.meshery.io/assets/img/service-meshes/tanzu.svg' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Tanzu SM</a>
-          </td>
-        </tr>
-        <tr>
-          <td><a href="https://github.com/meshery/meshery-app-mesh">
-            <img src='https://docs.meshery.io/assets/img/service-meshes/app-mesh.svg' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
           </td>
         </tr>
         <tr><td colspan="2" class="alpha-adapters"></td></tr>
