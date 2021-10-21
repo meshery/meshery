@@ -91,7 +91,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
         </thead>
         <tbody>
         <tr>
-          <td rowspan="9" class="stable-adapters">stable</td>
+          <td rowspan="10" class="stable-adapters">stable</td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-istio">
@@ -140,7 +140,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
         </tr>          
         <tr><td colspan="2" class="stable-adapters"></td></tr>
         <tr>
-          <td rowspan="5" class="beta-adapters">beta</td>
+          <td rowspan="3" class="beta-adapters">beta</td>
         </tr>
          <tr>
           <td><a href="https://github.com/layer5io/meshery-cpx">
@@ -154,7 +154,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
         </tr>
         <tr><td colspan="2" class="beta-adapters"></td></tr>
         <tr>
-          <td rowspan="3" class="alpha-adapters">alpha</td>
+          <td rowspan="2" class="alpha-adapters">alpha</td>
         </tr>
         <tr>
           <td><a href="https://github.com/meshery/meshery-tanzu-sm">
@@ -164,6 +164,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
         <tr><td colspan="2" class="alpha-adapters"></td></tr>
         </tbody>
     </table>
+   ** Depreciating
   </p>
 </div>
  </details>
