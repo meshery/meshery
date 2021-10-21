@@ -11,6 +11,8 @@ image: /assets/img/service-meshes/app-mesh.svg
 permalink: service-meshes/adapters/app-mesh
 ---
 
+{% include adapter-status.html %}
+
 ## Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
