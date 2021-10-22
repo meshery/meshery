@@ -114,6 +114,7 @@ module.exports = { resolve : {
   "@material-ui/icons/Undo" : require("@material-ui/icons/Undo"),
   "@material-ui/icons/Redo" : require("@material-ui/icons/Redo"),
   "@material-ui/core/Menu" : require("@material-ui/core/Menu"),
+  "@material-ui/icons/Edit" : require("@material-ui/icons/Edit"),
   "mui-datatables" : require("mui-datatables"),
   notistack : require("notistack"),
   "react-dom/server" : require("react-dom/server"),
