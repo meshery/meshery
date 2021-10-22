@@ -35,7 +35,6 @@ const styles = makeStyles((theme) => ({
     left : '50%',
     transform : `translate(-50%, -50%)`,
     borderRadius : 10,
-    label : '#607d8b'
   },
   grid : {
     width : '100%'
