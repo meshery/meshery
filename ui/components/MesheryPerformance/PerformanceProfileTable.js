@@ -77,6 +77,13 @@ function MesheryTestProfiles({
           }
         },
       },
+       MUIDataTableSelectCell: { 
+        checkboxRoot: { 
+          '&$checked': { 
+            color: '#607d8b',
+          },
+        },
+      },
       MUIDataTableToolbar : {
         iconActive : {
           color : "#222"
