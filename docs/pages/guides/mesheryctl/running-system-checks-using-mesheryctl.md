@@ -7,7 +7,7 @@ type: Guides
 category: mesheryctl
 ---
 
-To check if Meshery is suitable on a system for both pre and post mesh deployment scenarios, `mesheryctl system check` helps to run several checks on the system.
+Meshery's CLI, `mesheryctl`, includes commands for verifying system readiness for a Meshery deployment and health checks to confirm the health of an existing Meshery deployment. Whether you have yet to deploy Meshery or have already deployed Meshery, `mesheryctl system check` is a useful utility to ensure that your Meshery deployments are healthy. 
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">
@@ -24,7 +24,7 @@ mesheryctl system check
 
 ### Pre-deployment check
 
-In this kind of test, the `mesheryctl system check` runs the following checks to determine if a system is compatible with Meshery or not. The checks done here are:
+Determine readiness of your environment for a Meshery deployment. Verify that your environment has all necessary prerequisites met prior to deploying Meshery.
  - Docker healthchecks
  - Kubernetes healthchecks
  - Kubernetes version healthchecks
@@ -37,9 +37,9 @@ mesheryctl system check --preflight
 </div></div>
 </pre>
 
-### Post deployment check
+### Post-deployment check
 
-Here, the command runs several checks to determine if the system is good to deploy a service mesh over a kubernetes cluster using Meshery. The checks done here are:
+Verify the health of your Meshery deployment using `mesheryctl system check` to perform several tests to validate the state of your deployment.
  - Docker healthchecks
  - Kubernetes healthchecks
  - Kubernetes version healthchecks
