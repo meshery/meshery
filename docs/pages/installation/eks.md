@@ -26,10 +26,19 @@ Once you fulfil the above two requirements, you should be able to install Mesher
 ___Note: It is advisable to [Install Meshery into your EKS clusters](#install-meshery-into-your-eks-cluster)___
 
 ### Install Meshery into your EKS cluster
-
-Execute the following to install Meshery
+To set the context to Kubernetes
 <pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">$ mesheryctl system start -p kubernetes
+<div class="clipboardjs">
+$ mesheryctl system context create [context-name] -p kubernetes -s
+</div></div>
+</pre>
+<br/>
+
+
+Execute the following to start Meshery
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+$ mesheryctl system start
 </div></div>
 </pre>
 <br/>
