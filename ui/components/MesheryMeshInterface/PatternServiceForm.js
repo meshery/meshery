@@ -118,13 +118,13 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               <label htmlFor="help-button" >
                 <Tooltip title={schemaSet?.workload?.description} >
                   <IconButton component="span" style={{ paddingRight : "0.1rem" }} >
-                    <HelpOutlineIcon style={{ color : '#fff', marginRight : '0.4rem' }} fontSize="small" />
+                    <HelpOutlineIcon style={{ color : '#fff',marginRight : '0.4rem' }} fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </label>
             )}
-            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={handleMaximizeOrMinimize} style={{ cursor : "pointer", marginRight : "0.5rem" }} />
-            <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem', marginRight : "0.5rem", cursor : "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}/>
+            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={handleMaximizeOrMinimize} style={{ cursor : "pointer",marginRight : "0.5rem" }} />
+            <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem',marginRight : "0.5rem", cursor : "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}/>
           </Toolbar>
         </AppBar>
       )}
