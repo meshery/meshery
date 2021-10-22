@@ -44,6 +44,7 @@ $ mesheryctl system start
 <br/>
 
 <button class="toggle-button" onclick="HideToggleFunction()">Optional</button> Customize your Meshery Provider Callback URL
+<div id="hiddendiv">
 Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
@@ -52,6 +53,7 @@ Meshery Server supports customizing authentication flow callback URL, which can 
 <br/>
 Meshery should now be running in your EKS cluster and Meshery UI should be accessible at the `EXTERNAL IP` of `meshery` service.
 <br/>
+</div>
 <br/>
 Also see: [Install Meshery into Kubernetes](https://docs.meshery.io/installation/platforms/kubernetes)
 
