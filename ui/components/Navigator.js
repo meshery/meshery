@@ -150,8 +150,9 @@ const styles = (theme) => ({
     marginBottom : "0.5rem",
   },
   collapseButtonWrapper : {
-    position : "absolute",
+    position : "fixed",
     top : "50%",
+    pointerEvents : "none",
     left : "235px",
     zIndex : "1400",
     width : "auto",
@@ -162,11 +163,12 @@ const styles = (theme) => ({
       background : "transparent", },
   },
   collapseButtonWrapperRotated : {
-    position : "absolute",
+    position : "fixed",
     top : "50%",
     left : "45px",
     zIndex : "1400",
     width : "auto",
+    pointerEvents : "none",
     transition : "left 225ms",
     transform : "rotate(180deg)",
     "&:hover" : { opacity : 1,
@@ -856,7 +858,11 @@ class Navigator extends React.Component {
         </span>
       );
 
-    return <>Running latest</>;
+    return (
+      <span style = {{ marginLeft : '15px' }}>
+        Running latest
+      </span>
+    )
   };
 
   /**
@@ -917,7 +923,7 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Menu = (
-      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden" }}>
+      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-0.7rem" }}>
         {categories.map(({
           id : childId, title, icon, href, show, link, children
         }) => {
@@ -1089,11 +1095,7 @@ class Navigator extends React.Component {
     )
     return (
       <NoSsr>
-        <div className={classname}
-          onClick={() => this.toggleMiniDrawer()}
-          onMouseEnter={() => !isDrawerCollapsed ? this.toggleMiniDrawer() : null}
-          onMouseLeave={() => isDrawerCollapsed ? this.toggleMiniDrawer() : null}
-        >
+        <div className={classname}>
           <FontAwesomeIcon
             icon={faChevronCircleLeft}
             fixedWidth
