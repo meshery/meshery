@@ -27,18 +27,17 @@ ___Note: It is advisable to [Install Meshery into your EKS clusters](#install-me
 
 ### Install Meshery into your EKS cluster
 
-Execute the following to install meshery
+Execute the following to install Meshery
 <pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
-$ mesheryctl system start -p kubernetes
+<div class="clipboardjs">$ mesheryctl system start -p kubernetes
 </div></div>
 </pre>
 <br/>
 
-Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+<button class="toggle-button" onclick="HideToggleFunction()">Optional</button> Customize your Meshery Provider Callback URL
+Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way
 <pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
-$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
+<div class="clipboardjs">$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
 </div></div>
 </pre>
 <br/>
@@ -53,16 +52,14 @@ ___Note: Out-of-cluster support for EKS is still beta and on [roadmap](https://g
 
 Install Meshery in Docker
 <pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
-$ mesheryctl system start -p docker
+<div class="clipboardjs">$ mesheryctl system start -p docker
 </div></div>
 </pre>
 <br/>
 
 Configure Meshery to connect to your cluster by executing:
 <pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
-$ mesheryctl system config eks
+<div class="clipboardjs">$ mesheryctl system config eks
 </div></div>
 </pre>
 <br/>
