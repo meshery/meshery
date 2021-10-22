@@ -151,7 +151,7 @@ const styles = (theme) => ({
   },
   collapseButtonWrapper : {
     position : "absolute",
-    top : "65%",
+    top : "50%",
     left : "235px",
     zIndex : "1400",
     width : "auto",
@@ -163,7 +163,7 @@ const styles = (theme) => ({
   },
   collapseButtonWrapperRotated : {
     position : "absolute",
-    top : "65%",
+    top : "50%",
     left : "45px",
     zIndex : "1400",
     width : "auto",
@@ -1091,8 +1091,8 @@ class Navigator extends React.Component {
       <NoSsr>
         <div className={classname}
           onClick={() => this.toggleMiniDrawer()}
-          onMouseEnter={() => isDrawerCollapsed ? this.toggleMiniDrawer() : null}
-          onMouseLeave={() => !isDrawerCollapsed ? this.toggleMiniDrawer() : null}
+          onMouseEnter={() => !isDrawerCollapsed ? this.toggleMiniDrawer() : null}
+          onMouseLeave={() => isDrawerCollapsed ? this.toggleMiniDrawer() : null}
         >
           <FontAwesomeIcon
             icon={faChevronCircleLeft}

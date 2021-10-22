@@ -21,8 +21,6 @@ import {
   Paper,
   Select,
   MenuItem,
-  Link,
-  Box,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
@@ -42,7 +40,6 @@ import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
-import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import { podNameMapper, versionMapper } from "../utils/nameMapper";
 import { subscriptionClient } from "../lib/relayEnvironment";
 //import MesheryMetrics from "./MesheryMetrics";
@@ -86,16 +83,6 @@ const styles = (theme) => ({
     height : "100%",
   },
 });
-
-/**
- * capitalize takes in a string and returns
- * capitalized string
- * @param {string} str string to be capitalized
- */
-function capitalize(str) {
-  return `${str?.charAt(0).toUpperCase()}${str?.substring(1)}`;
-}
-
 class DashboardComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -122,14 +109,6 @@ class DashboardComponent extends React.Component {
 
       grafana,
       prometheus,
-
-      versionDetail : {
-        build : "",
-        latest : "",
-        outdated : false,
-        commitsha : "",
-        release_channel : "NA",
-      },
 
       urlError : false,
       grafanaConfigSuccess : props.grafana.grafanaURL !== "",
@@ -214,7 +193,6 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this._isMounted = true
     this.fetchAvailableAdapters();
-    this.fetchVersionDetails();
 
     if (this.state.isMetricsConfigured){
       this.fetchMetricComponents();
@@ -313,31 +291,6 @@ class DashboardComponent extends React.Component {
         }
       },
       self.handleError("Unable to fetch list of adapters.")
-    );
-  };
-
-  fetchVersionDetails = () => {
-    const self = this;
-    this.props.updateProgress({ showProgress : true });
-    dataFetch(
-      "/api/system/version",
-      { credentials : "same-origin",
-        method : "GET",
-        credentials : "include", },
-      (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          this.setState({ versionDetail : result });
-        } else {
-          this.setState({ versionDetail : {
-            build : "Unknown",
-            latest : "Unknown",
-            outdated : false,
-            commitsha : "Unknown",
-          }, });
-        }
-      },
-      self.handleError("Unable to fetch Meshery version.")
     );
   };
 
@@ -966,98 +919,6 @@ class DashboardComponent extends React.Component {
           )}
       </>
     );
-
-    /**
-     * getMesheryVersionText returs a well formatted version text
-     *
-     * If the meshery is running latest version then and is using "edge" channel
-     * then it will just show "edge-latest". However, if the meshery is on edge and
-     * is running an outdated version then it will return "edge-$version".
-     *
-     * If on stable channel, then it will always show "stable-$version"
-     */
-    const getMesheryVersionText = () => {
-      const { build, outdated, release_channel } = this.state.versionDetail;
-
-      // If the version is outdated then no matter what the
-      // release channel is, specify the build
-      if (outdated) return `${release_channel}-${build}`;
-
-      if (release_channel === "edge") return `${release_channel}-latest`;
-      if (release_channel === "stable") return `${release_channel}-${build}`;
-
-      return `${build}`;
-    };
-
-    /**
-     * versionUpdateMsg returns the appropriate message
-     * based on the meshery's current running version and latest available
-     * version.
-     *
-     * @returns {React.ReactNode} react component to display
-     */
-    const versionUpdateMsg = () => {
-      const { outdated, latest } = this.state.versionDetail;
-
-      if (outdated)
-        return (
-          <>
-            Newer version of Meshery available:{" "}
-            <Link href={`https://docs.meshery.io/project/releases/${latest}`}>{`${latest}`}</Link>
-          </>
-        );
-
-      return <>Running latest Meshery version.</>;
-    };
-
-    /**
-     * openReleaseNotesInNew returns the appropriate link to the release note
-     * based on the meshery's current running channel and version.
-     *
-     * @returns {React.ReactNode} react component to display
-     */
-    const openReleaseNotesInNew = () => {
-      const { release_channel, build } = this.state.versionDetail;
-
-      if (release_channel === "edge")
-        return (
-          <Link href="https://docs.meshery.io/project/releases" target="_blank">
-            <OpenInNewIcon style={{ height : "1rem", width : "1rem" }} />
-          </Link>
-        );
-
-      return (
-        <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
-          <OpenInNewIcon style={{ height : "1rem", width : "1rem" }} />
-        </Link>
-      );
-    };
-
-    const showRelease = (
-      <>
-        <Grid container justify="space-between" spacing={1}>
-          <Grid item xs={12} md={6}>
-            <Typography style={{ fontWeight : "bold", paddingBottom : "4px" }}>Channel Subscription</Typography>
-            <Typography style={{ paddingTop : "2px", paddingBottom : "8px" }}>
-              {capitalize(this.state.versionDetail.release_channel)}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} md={6} style={{ padding : "0" }}>
-            <Typography style={{ fontWeight : "bold", paddingBottom : "4px" }}>Version</Typography>
-            <Typography style={{ paddingTop : "2px", paddingBottom : "8px" }}>
-              {getMesheryVersionText()}
-              {openReleaseNotesInNew()}
-            </Typography>
-          </Grid>
-        </Grid>
-        <Typography component="div" style={{ marginTop : "1.5rem" }}>
-          <Box fontStyle="italic" fontSize={14}>
-            {versionUpdateMsg()}
-          </Box>
-        </Typography>
-      </>
-    );
-
     return (
       <NoSsr>
         <div className={classes.root}>
@@ -1078,7 +939,6 @@ class DashboardComponent extends React.Component {
                 <div>{self.showCard("Kubernetes", showConfigured)}</div>
                 <div>{self.showCard("Adapters", showAdapters)}</div>
                 <div>{self.showCard("Metrics", showMetrics)}</div>
-                <div>{self.showCard("Release", showRelease)}</div>
               </div>
             </Grid>
           </Grid>
