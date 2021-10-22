@@ -437,7 +437,6 @@ class Navigator extends React.Component {
       // decoder which in turn will return an empty array when there is no content
       // passed into it
       navigator : ExtensionPointSchemaValidator("navigator")(),
-      showHelperButton : false,
       capabilities : [],
       openItems : [],
       hoveredId : null,
@@ -529,6 +528,14 @@ class Navigator extends React.Component {
     }
   }
 
+  /**
+   * @param {JSX.Element} icon
+   * @param {String} href
+   * @param {String} name
+   * @param {Boolean} drawerCollapsed
+   *
+   * @return {JSX.Element} content
+   */
   extensionPointContent(icon, href, name, drawerCollapsed) {
     const { classes } = this.props;
 
@@ -637,6 +644,13 @@ class Navigator extends React.Component {
     return st;
   }
 
+  /**
+   * @param {String} category
+   *
+   * Format and return the meshadapters
+   *
+   * @returns {Array<{id : Number, icon : JSX.Element, href : String, title : String, link : Boolean, show : Boolean}>} children
+   */
   fetchChildren(category) {
     const { meshAdapters } = this.state;
     const children = [];
@@ -660,6 +674,11 @@ class Navigator extends React.Component {
     return children;
   }
 
+  /**
+   * @param {String} aName
+   *
+   * @returns {JSX.Element} image to display
+   */
   pickIcon(aName) {
     aName = aName.toLowerCase();
     const { classes } = this.props;
@@ -672,28 +691,40 @@ class Navigator extends React.Component {
     return logoIcon;
   }
 
-  handleTitleClick = () => {
+  /**
+   * Changes the route to "/"
+   */
+  handleTitleClick() {
     this.props.router.push("/");
-  };
+  }
 
-  handleAdapterClick = (id, link) => {
+  /**
+   * @param {number} id
+   * @param {Boolean link
+   *
+   * Changes the route to "/management"
+   */
+  handleAdapterClick(id, link) {
     if (id != -1 && !link) {
       this.props.router.push("/management");
     }
-  };
-
-  toggleMiniDrawer = () => {
-    const { onCollapseDrawer } = this.props;
-    onCollapseDrawer();
-  };
-
-  toggleSpacing = () => {
-    const { showHelperButton } = this.state;
-    this.setState({ showHelperButton : !showHelperButton });
-
   }
 
-  toggleItemCollapse = (id) => {
+  /**
+   * Calls onCollapseDrawer on toggle of Drawer
+   */
+  toggleMiniDrawer() {
+    const { onCollapseDrawer } = this.props;
+    onCollapseDrawer();
+  }
+
+  /**
+   * @param {number} id
+   *
+   * Removes id from openitems if present
+   * Adds id in openitems if not present already
+   */
+  toggleItemCollapse(id) {
     const activeItems = [...this.state.openItems];
     if (this.state.openItems.includes(id)) {
       this.setState({ openItems : activeItems.filter(item => item !== id) })
@@ -703,6 +734,15 @@ class Navigator extends React.Component {
     }
   }
 
+  /**
+   * @param {String} idname
+   * @param {Array<{id : Number, icon : JSX.Element, href : String, title : String, link : Boolean, show : Boolean}>} children
+   * @param {Number} depth
+   *
+   * Renders children of the menu
+   *
+   * @returns {JSX.Element}
+   */
   renderChildren(idname, children, depth) {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
@@ -782,6 +822,15 @@ class Navigator extends React.Component {
     return "";
   }
 
+  /**
+   * @param {JSX.Element} iconc
+   * @param {String} titlec
+   * @param {String} hrefc
+   * @param {Boolean} linkc
+   * @param {Boolean} drawerCollapsed
+   *
+   * @return {JSX.Element} content
+   */
   linkContent(iconc, titlec, hrefc, linkc, drawerCollapsed) {
     const { classes } = this.props;
 
@@ -813,15 +862,15 @@ class Navigator extends React.Component {
   }
 
   /**
-     * getMesheryVersionText returs a well formatted version text
-     *
-     * If the meshery is running latest version then and is using "edge" channel
-     * then it will just show "edge-latest". However, if the meshery is on edge and
-     * is running an outdated version then it will return "edge-$version".
-     *
-     * If on stable channel, then it will always show "stable-$version"
-     */
-  getMesheryVersionText = () => {
+   * getMesheryVersionText returs a well formatted version text
+   *
+   * If the meshery is running latest version then and is using "edge" channel
+   * then it will just show "edge-latest". However, if the meshery is on edge and
+   * is running an outdated version then it will return "edge-$version".
+   *
+   * If on stable channel, then it will always show "stable-$version"
+   */
+  getMesheryVersionText() {
     const { build, outdated, release_channel } = this.state.versionDetail;
 
     // If the version is outdated then no matter what the
@@ -832,7 +881,7 @@ class Navigator extends React.Component {
     if (release_channel === "stable") return `${release_channel}-${build}`;
 
     return `${build}`;
-  };
+  }
 
   /**
    * versionUpdateMsg returns the appropriate message
@@ -841,7 +890,7 @@ class Navigator extends React.Component {
    *
    * @returns {React.ReactNode} react component to display
    */
-  versionUpdateMsg = () => {
+  versionUpdateMsg() {
     const { outdated, latest } = this.state.versionDetail;
 
     if (outdated)
@@ -863,7 +912,7 @@ class Navigator extends React.Component {
         Running latest
       </span>
     )
-  };
+  }
 
   /**
    * openReleaseNotesInNew returns the appropriate link to the release note
@@ -871,7 +920,7 @@ class Navigator extends React.Component {
    *
    * @returns {React.ReactNode} react component to display
    */
-  openReleaseNotesInNew = () => {
+  openReleaseNotesInNew() {
     const { release_channel, build } = this.state.versionDetail;
 
     if (release_channel === "edge")
@@ -886,11 +935,11 @@ class Navigator extends React.Component {
         <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
       </Link>
     );
-  };
+  }
 
   render() {
     const { classes, isDrawerCollapsed, ...other } = this.props;
-    const { path, showHelperButton } = this.state;
+    const { path } = this.state;
     this.updateCategoriesMenus();
     let classname;
     if (isDrawerCollapsed) {
@@ -1020,12 +1069,12 @@ class Navigator extends React.Component {
             <ListItem
               key={id}
               className={classes.item}
-              style={isDrawerCollapsed && !showHelperButton
+              style={isDrawerCollapsed
                 ? { display : 'none' }
                 : {}}
             >
               <Grow
-                in={showHelperButton || !isDrawerCollapsed }
+                in={!isDrawerCollapsed }
                 timeout={{ enter : (600 - index * 200), exit : 100 * index }}
               >
                 <a
