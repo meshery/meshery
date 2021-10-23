@@ -35,6 +35,7 @@ To set the context to Kubernetes
  $ mesheryctl system context create [context-name] -p kubernetes -s
  </div></div>
  </pre>
+ <br>
 
 Execute the following to start Meshery
 
@@ -43,6 +44,7 @@ Execute the following to start Meshery
  $ mesheryctl system start 
  </div></div>
  </pre>
+ <br>
 
 <button class="toggle-button" onclick="HideToggleFunction()">Optional</button> Customize your Meshery Provider Callback URL
 
