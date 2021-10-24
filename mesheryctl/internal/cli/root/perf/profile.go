@@ -54,8 +54,8 @@ mesheryctl perf profile
 // List performance profiles with search (maximum 25 profiles)
 mesheryctl perf profile test profile 2 
 
-// View performance profiles with more information
-mesheryctl perf profile --expand
+// View single performance profile with detailed information
+mesheryctl perf profile --view
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
@@ -142,7 +142,7 @@ func fetchPerformanceProfiles(url, searchString string) ([][]string, []profileSt
 	var response *models.PerformanceProfilesAPIResponse
 
 	// update the url
-	tempURL := fmt.Sprintf("%s?page_size=%d", url, pageSize)
+	tempURL := fmt.Sprintf("%s?page_size=%d&page=%d", url, pageSize, resultPage-1)
 	if searchString != "" {
 		tempURL = tempURL + "&search=" + searchString
 	}
@@ -207,7 +207,8 @@ func fetchPerformanceProfiles(url, searchString string) ([][]string, []profileSt
 }
 
 func init() {
-	profileCmd.Flags().BoolVarP(&expand, "expand", "e", false, "(optional) Expand performance profile for more info")
+	profileCmd.Flags().BoolVarP(&expand, "view", "v", false, "(optional) View single performance profile with more info")
+	profileCmd.Flags().IntVarP(&resultPage, "page", "p", 1, "(optional) List next set of performance results with --page (default = 1)")
 }
 
 func userPrompt(key string, label string, data [][]string) (int, error) {

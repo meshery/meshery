@@ -47,11 +47,11 @@ var resultCmd = &cobra.Command{
 // List Test results (maximum 25 results)	
 mesheryctl perf result saturday profile 
 
-// View performance results with more information (maximum 25 results)
-mesheryctl perf result saturday profile --expand
-
 // View other set of performance results with --page (maximum 25 results)
 mesheryctl perf result saturday profile --page 2
+
+// View single performance result with detailed information
+mesheryctl perf result saturday profile --view
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
@@ -237,6 +237,6 @@ func fetchPerformanceProfileResults(url string) ([][]string, []resultStruct, []b
 }
 
 func init() {
-	resultCmd.Flags().BoolVarP(&expand, "expand", "e", false, "(optional) Expand the performance results for more info")
-	resultCmd.Flags().IntVarP(&resultPage, "page", "", 1, "(optional) List next set of performance results with --page")
+	resultCmd.Flags().BoolVarP(&expand, "view", "v", false, "(optional) View single performance results with more info")
+	resultCmd.Flags().IntVarP(&resultPage, "page", "p", 1, "(optional) List next set of performance results with --page (default = 1)")
 }
