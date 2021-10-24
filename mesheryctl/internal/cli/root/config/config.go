@@ -223,7 +223,7 @@ func (ctx *Context) ValidateVersion() error {
 		return nil
 	}
 
-	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + ctx.Version + "?recursive=1"
+	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/tag/" + ctx.Version
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
