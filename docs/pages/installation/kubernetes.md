@@ -60,7 +60,7 @@ Run the following for default:
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
  $ helm repo add meshery https://meshery.io/charts/
- $ helm install my-meshery meshery/meshery --version 2.1.2
+ $ helm install my-meshery meshery/meshery --version 0.5.67
  </div></div>
  </pre>
 
@@ -71,7 +71,7 @@ Customize of deployment the Meshery adapters:
  $ helm repo add meshery https://meshery.io/charts/
 
  # Manually disable the adapters you do not want to deploy
- $ helm install --set key=value --set key=value my-meshery meshery/meshery --version 2.1.2
+ $ helm install --set key=value --set key=value my-meshery meshery/meshery --version 0.5.67
 
  # Example : Disabled the Linkerd2 adapter and check the deployment manifest that the helm will deploy
  $ helm install --set meshery-linkerd.enabled=false meshery/meshery --version 2.1.2 --dry-run
