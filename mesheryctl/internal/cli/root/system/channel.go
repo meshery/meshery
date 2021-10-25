@@ -81,11 +81,37 @@ var viewCmd = &cobra.Command{
 	},
 }
 
+//check release channel string supplied by user for validity
+func validChannel(c string) bool {
+	valid := false
+	validChannels := [4]string{"stable", "stable-version", "edge", "edge-version"}
+	for _, v := range validChannels {
+		if c == v {
+			valid = true
+			break
+		}
+	}
+	return valid
+}
+
+//func to validate CLI argument
+func checkChannelArg(n int) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) != n {
+			return fmt.Errorf("release channel is a required in command, accepts %d arg(s), received %d ", n, len(args))
+		}
+		if !validChannel(args[0]) {
+			return fmt.Errorf("invalid release channel, accepts [stable|stable-version|edge|edge-version] recieved %s", args[0])
+		}
+		return nil
+	}
+}
+
 var setCmd = &cobra.Command{
 	Use:   "set [stable|stable-version|edge|edge-version]",
 	Short: "set release channel and version",
 	Long:  `Set release channel and version of context in focus`,
-	Args:  cobra.ExactArgs(1),
+	Args:  checkChannelArg(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
@@ -147,7 +173,7 @@ var switchCmd = &cobra.Command{
 	Use:   "switch [stable|stable-version|edge|edge-version]",
 	Short: "switch release channel and version",
 	Long:  `Switch release channel and version of context in focus`,
-	Args:  cobra.ExactArgs(1),
+	Args:  checkChannelArg(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
