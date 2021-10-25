@@ -8,20 +8,20 @@ import (
 )
 
 const (
-	ErrMesheryConfigCode       = "replace me"
-	ErrReadFilepathCode        = "replace me"
-	ErrNoProfileNameCode       = "replace me"
-	ErrNoTestURLCode           = "replace me"
-	ErrNotValidURLCode         = "replace me"
-	ErrFailMarshalCode         = "replace me"
-	ErrAttachAuthTokenCode     = "replace me"
-	ErrFailRequestCode         = "replace me"
-	ErrFailReqStatusCode       = "replace me"
-	ErrFailUnmarshalCode       = "replace me"
-	ErrNoProfileFoundCode      = "replace me"
-	ErrFailTestRunCode         = "replace me"
-	ErrInvalidOutputChoiceCode = "replace me"
-	ErrUnauthenticatedCode     = "replace me"
+	ErrMesheryConfigCode       = "1027"
+	ErrReadFilepathCode        = "1028"
+	ErrNoProfileNameCode       = "1029"
+	ErrNoTestURLCode           = "1030"
+	ErrNotValidURLCode         = "1031"
+	ErrFailMarshalCode         = "1032"
+	ErrAttachAuthTokenCode     = "1033"
+	ErrFailRequestCode         = "1034"
+	ErrFailReqStatusCode       = "1035"
+	ErrFailUnmarshalCode       = "1036"
+	ErrNoProfileFoundCode      = "1037"
+	ErrFailTestRunCode         = "1038"
+	ErrInvalidOutputChoiceCode = "1039"
+	ErrUnauthenticatedCode     = "1040"
 )
 
 func ErrMesheryConfig(err error) error {
