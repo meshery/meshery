@@ -98,7 +98,7 @@ func validChannel(c string) bool {
 func checkChannelArg(n int) cobra.PositionalArgs {
 	return func(cmd *cobra.Command, args []string) error {
 		if len(args) != n {
-			return fmt.Errorf("release channel is a required in command, accepts %d arg(s), received %d ", n, len(args))
+			return fmt.Errorf("release channel is a required argument in command, accepts %d arg(s), received %d ", n, len(args))
 		}
 		if !validChannel(args[0]) {
 			return fmt.Errorf("invalid release channel, accepts [stable|stable-version|edge|edge-version] recieved %s", args[0])
