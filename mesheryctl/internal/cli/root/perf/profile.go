@@ -207,7 +207,7 @@ func fetchPerformanceProfiles(url, searchString string) ([][]string, []profileSt
 }
 
 func init() {
-	profileCmd.Flags().BoolVarP(&expand, "view", "v", false, "(optional) View single performance profile with more info")
+	profileCmd.Flags().BoolVarP(&expand, "view", "", false, "(optional) View single performance profile with more info")
 	profileCmd.Flags().IntVarP(&resultPage, "page", "p", 1, "(optional) List next set of performance results with --page (default = 1)")
 }
 
