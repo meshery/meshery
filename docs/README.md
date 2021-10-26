@@ -2,7 +2,7 @@
 
 ![assets/img/docs-screenshot.png](assets/img/docs-screenshot.png)
 _Check out the [Meshery Docs](https://docs.meshery.io/)!_
-Detailed documentation of the Meshery doc is available here - [https://docs.meshery.io/project/contributing/contributing-docs](https://docs.meshery.io/project/contributing/contributing-docs).
+Detailed documentation on contributing to  Meshery docs is available here - [https://docs.meshery.io/project/contributing/contributing-docs](https://docs.meshery.io/project/contributing/contributing-docs).
 
 ## Contributing to the Meshery Documentation
 
