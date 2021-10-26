@@ -1,0 +1,9 @@
+area/docs:
+- docs/**/*
+area/ci:
+- '.github/**/*'      
+component/ui:
+- 'ui/**/*'
+- 'provider-ui/**/*'
+component/mesheryctl:
+- 'mesheryctl/**/*'

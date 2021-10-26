@@ -1,7 +1,7 @@
 // @ts-check
 import React, { useState, useEffect, useRef } from "react";
 import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import {  createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -26,6 +26,7 @@ import {
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import UploadIcon from "@material-ui/icons/Publish";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -41,14 +42,14 @@ import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-import { Button } from "@material-ui/core";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import jsYaml from "js-yaml";
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import URLUploader from "./URLUploader";
 import { createPatternFromConfig, createWorkloadTraitSets, getPatternServiceName } from "./MesheryMeshInterface/helpers";
 import LazyPatternServiceForm from "./MesheryMeshInterface/LazyPatternServiceForm";
+import { trueRandom } from "../lib/trueRandom";
 
 const styles = (theme) => ({
   grid : {
@@ -189,6 +190,10 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
   );
 }
 
+function resetSelectedPattern() {
+  return { show : false, pattern : null }
+}
+
 function MesheryPatterns({
   updateProgress, enqueueSnackbar, closeSnackbar, user, classes
 }) {
@@ -200,7 +205,7 @@ function MesheryPatterns({
   const modalRef = useRef(null);
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [showForm, setShowForm] = useState(false);
+  const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
 
   const DEPLOY_URL = '/api/pattern/deploy';
 
@@ -218,7 +223,7 @@ function MesheryPatterns({
       },
       MUIDataTableSearch : {
         searchIcon : {
-          color : "#607d8b" ,
+          color : "#607d8b",
           marginTop : "7px",
           marginRight : "8px",
         },
@@ -226,6 +231,13 @@ function MesheryPatterns({
           "&:hover" : {
             color : "#607d8b"
           }
+        },
+      },
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
+          },
         },
       },
       MUIDataTableToolbar : {
@@ -384,13 +396,13 @@ function MesheryPatterns({
       );
     }
 
-    if (type === "upload" || type=== "urlupload") {
-      let body = { save : true }
+    if (type === "upload" || type === "urlupload") {
+      let body
       if (type === "upload") {
-        body = JSON.stringify({  pattern_data : { pattern_data : data }, ...body })
+        body = JSON.stringify({ pattern_data : { pattern_file : data }, save : true })
       }
       if (type === "urlupload") {
-        body = JSON.stringify({ url : data, ...body })
+        body = JSON.stringify({ url : data, save : true })
       }
       dataFetch(
         `/api/pattern`,
@@ -413,22 +425,21 @@ function MesheryPatterns({
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
-
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
       handleSubmit(
         event.target.result,
         "",
-        file?.name || "meshery_" + Math.floor(Math.random() * 100),
-        "urlupload",
+        file?.name || "meshery_" + Math.floor(trueRandom() * 100),
+        "upload",
       );
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
     // console.log(link, "valid");
   }
   const columns = [
@@ -509,8 +520,8 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
-              <Tooltip title = "Configure">
-                <IconButton onClick={() => setShowForm({ pattern : patterns[tableMeta.rowIndex], show : true })}>
+              <Tooltip title="Configure">
+                <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
                   <ListAltIcon />
                 </IconButton>
               </Tooltip>
@@ -536,11 +547,11 @@ function MesheryPatterns({
     }
   });
 
-  async function showModal() {
+  async function showModal(count) {
     let response = await modalRef.current.show({
-      title : "Delete Pattern?",
+      title : `Delete ${count ? count : ""} Pattern${count > 1 ? "s" : '' }?`,
 
-      subtitle : "Are you sure you want to delete this pattern?",
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' }  ${count ? count : ""}  pattern${count > 1 ? "s" : '' }?`,
 
       options : ["Yes", "No"],
     })
@@ -594,7 +605,7 @@ function MesheryPatterns({
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showModal()
+      let response = await showModal(Object.keys(row.lookup).length)
       console.log(response)
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
@@ -650,14 +661,14 @@ function MesheryPatterns({
 
   return (
     <NoSsr>
-      {showForm &&
-        <PatternForm onSubmit={handleSubmit} show={setShowForm} pattern={showForm.pattern} />}
+      {selectedPattern.show &&
+        <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
 
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       {
-        !showForm && <MuiThemeProvider theme={getMuiTheme()}>
+        !selectedPattern.show && <MuiThemeProvider theme={getMuiTheme()}>
           <MUIDataTable
             title={<div className={classes.tableHeader}>Patterns</div>}
             data={patterns}
@@ -690,7 +701,7 @@ export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(w
 
 
 
-function PatternForm({ pattern, onSubmit, show }) {
+function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState([]);
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
   const [yaml, setYaml] = useState(pattern.pattern_file);
@@ -751,7 +762,7 @@ function PatternForm({ pattern, onSubmit, show }) {
 
   function handleSubmitFinalPattern(yaml, id, name, action) {
     onSubmit(yaml, id, name, action);
-    show(false);
+    setSelectedPattern(resetSelectedPattern()); // Remove selected pattern
   }
 
   const ns = "default";
@@ -783,7 +794,7 @@ function PatternForm({ pattern, onSubmit, show }) {
     <>
       <AppBar position="static" className={classes.appBar} elevation={0}>
         <Toolbar>
-          <IconButton edge="start" className={classes.backButton} color="inherit" onClick={() => show(false)}>
+          <IconButton edge="start" className={classes.backButton} color="inherit" onClick={() => setSelectedPattern(resetSelectedPattern())}>
             <ArrowBackIcon />
           </IconButton>
           <Typography variant="h6">
@@ -842,31 +853,17 @@ function PatternForm({ pattern, onSubmit, show }) {
   );
 }
 
-function CustomButton({ title, onClick }) {
-  return <Button
-    fullWidth
-    color="primary"
-    variant="contained"
-    onClick={onClick}
-    style={{
-      marginTop : "16px",
-      padding : "10px"
-    }}
-  >
-    {title}
-  </Button>;
-}
-
 function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pattern }) {
-  const cardStyle = { marginBottom : "16px", position : "sticky", minWidth : "100%" };
-  const cardcontentStyle = { margin : "16px" };
+  const cardStyle = { position : "sticky", minWidth : "100%" };
 
   const classes = useStyles();
 
   return (
     <div>
-      <Card style={cardStyle}>
-        <CardContent style={cardcontentStyle}>
+      <Card
+      // @ts-ignore
+        style={cardStyle}>
+        <CardContent >
           <CodeMirror
             value={yaml}
             className={classes.codeMirror}
@@ -879,8 +876,16 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
             }}
             onBlur={(a) => saveCodeEditorChanges(a)}
           />
-          <CustomButton title="Save Pattern" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(Math.random() * 100)}`, "upload")} />
-          <CardActions style={{ justifyContent : "flex-end" }}>
+          <CardActions style={{ justifyContent : "flex-end", marginBottom : '0px' }}>
+            <Tooltip title="Save Pattern as New File">
+              <IconButton
+                aria-label="Save"
+                color="primary"
+                onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, "upload")}
+              >
+                <FileCopyIcon />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Update Pattern">
               <IconButton
                 aria-label="Update"
@@ -893,7 +898,7 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
             <Tooltip title="Delete Pattern">
               <IconButton
                 aria-label="Delete"
-                color="primary"
+                color="secondary"
                 onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
               >
                 <DeleteIcon />

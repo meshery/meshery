@@ -36,28 +36,35 @@ var (
 )
 
 var applyCmd = &cobra.Command{
-	Use:   "apply",
+	Use:   "apply [profile-name | --profile | --file] --flags",
 	Short: "Run a Performance test",
 	Long:  `Run Performance test using existing profiles or using flags`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-	Execute a Performance test with the specified performance profile
-	mesheryctl perf apply <profile name> --flags
+// Execute a Performance test with the specified performance profile
+mesheryctl perf apply meshery-profile --flags
 
-	Execute a Performance test without a specified performance profile
-	mesheryctl perf apply --profile <profile-name> --url <url>
+// Execute a Performance test with creating a new performance profile
+mesheryctl perf apply --profile meshery-profile-new --url <url>
 
-	Run Performance test using SMP compatible test configuration
-	mesheryctl perf apply -f <filepath>
+// Run Performance test using SMP compatible test configuration
+mesheryctl perf apply -f <filepath>
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		client := &http.Client{}
 		var profileID string
+		// setting up for error formatting
+		cmdUsed = "apply"
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			return ErrMesheryConfig(err)
+		}
+
+		// set default tokenpath for command.
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
 		}
 
 		if tokenPath == "" {
@@ -88,17 +95,17 @@ var applyCmd = &cobra.Command{
 				log.Debug("Creating new performance profile")
 
 				if profileName == "" {
-					return errors.New(utils.PerfError("please enter a profile-name"))
+					return ErrNoProfileName()
 				}
 
 				// ask for test url first
 				if testURL == "" {
-					return errors.New(utils.PerfError("please enter a test URL"))
+					return ErrNoTestURL()
 				}
 
 				// Method to check if the entered Test URL is valid or not
 				if validURL := govalidator.IsURL(testURL); !validURL {
-					return errors.New(utils.PerfError("please enter a valid test URL"))
+					return ErrNotValidURL()
 				}
 
 				convReq, err := strconv.Atoi(concurrentRequests)
@@ -121,27 +128,24 @@ var applyCmd = &cobra.Command{
 
 				jsonValue, err := json.Marshal(values)
 				if err != nil {
-					return err
+					return ErrFailMarshal(err)
 				}
-				req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
-				if err != nil {
-					return err
-				}
+				req, _ = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
 
 				err = utils.AddAuthDetails(req, tokenPath)
 				if err != nil {
-					return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
+					return ErrAttachAuthToken(err)
 				}
 
 				resp, err := client.Do(req)
 				if err != nil {
-					return err
+					return ErrFailRequest(err)
 				}
 
 				var response *models.PerformanceProfile
 				// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
 				if resp.StatusCode != 200 {
-					return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+					return ErrFailReqStatus(resp.StatusCode)
 				}
 				defer resp.Body.Close()
 				body, err := ioutil.ReadAll(resp.Body)
@@ -150,7 +154,7 @@ var applyCmd = &cobra.Command{
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					return errors.Wrap(err, "failed to unmarshal response body")
+					return ErrFailUnmarshal(err)
 				}
 				profileID = response.ID.String()
 				profileName = response.Name
@@ -163,25 +167,22 @@ var applyCmd = &cobra.Command{
 				// search and fetch performance profile with profile-name
 				log.Debug("Fetching performance profile")
 
-				req, err = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles?search="+profileName, nil)
-				if err != nil {
-					return err
-				}
+				req, _ = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles?search="+profileName, nil)
 
 				err = utils.AddAuthDetails(req, tokenPath)
 				if err != nil {
-					return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
+					return ErrAttachAuthToken(err)
 				}
 
 				resp, err := client.Do(req)
 				if err != nil {
-					return err
+					return ErrFailRequest(err)
 				}
 
 				var response *models.PerformanceProfilesAPIResponse
 				// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
 				if resp.StatusCode != 200 {
-					return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+					return ErrFailReqStatus(resp.StatusCode)
 				}
 				defer resp.Body.Close()
 				body, err := ioutil.ReadAll(resp.Body)
@@ -190,12 +191,12 @@ var applyCmd = &cobra.Command{
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					return errors.Wrap(err, "failed to unmarshal response body")
+					return ErrFailUnmarshal(err)
 				}
 
 				index := 0
 				if len(response.Profiles) == 0 {
-					return errors.New("no profiles found with the given name")
+					return ErrNoProfileFound()
 				} else if len(response.Profiles) == 1 {
 					profileID = response.Profiles[0].ID.String()
 				} else {
@@ -214,7 +215,7 @@ var applyCmd = &cobra.Command{
 			}
 
 			if testURL == "" {
-				return errors.New(utils.PerfError("please enter a test URL"))
+				return ErrNoTestURL()
 			}
 
 			log.Debugf("performance profile is: %s", profileName)
@@ -222,13 +223,10 @@ var applyCmd = &cobra.Command{
 
 			// Method to check if the entered Test URL is valid or not
 			if validURL := govalidator.IsURL(testURL); !validURL {
-				return errors.New(utils.PerfError("please enter a valid test URL"))
+				return ErrNotValidURL()
 			}
 
-			req, err = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
-			if err != nil {
-				return err
-			}
+			req, _ = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
 
 			q := req.URL.Query()
 
@@ -253,18 +251,18 @@ var applyCmd = &cobra.Command{
 
 		err = utils.AddAuthDetails(req, tokenPath)
 		if err != nil {
-			return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
+			return ErrAttachAuthToken(err)
 		}
 
 		resp, err := client.Do(req)
 		if err != nil {
-			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to make request to %s", testURL)))
+			return ErrFailRequest(err)
 		}
 		if utils.ContentTypeIsHTML(resp) {
-			return errors.New("failed to run test")
+			return ErrFailTestRun()
 		}
 		if resp.StatusCode != 200 {
-			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+			return ErrFailTestRun()
 		}
 
 		defer utils.SafeClose(resp.Body)
@@ -311,9 +309,9 @@ func multipleProfileConfirmation(profiles []models.PerformanceProfile) int {
 }
 
 func init() {
-	applyCmd.Flags().StringVar(&testURL, "url", "", "(required/optional) Endpoint URL to test")
+	applyCmd.Flags().StringVar(&testURL, "url", "", "(optional) Endpoint URL to test (required with --profile)")
 	applyCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
-	applyCmd.Flags().StringVar(&profileName, "profile", "", "(required/optional) Name for the new Performance Profile")
+	applyCmd.Flags().StringVar(&profileName, "profile", "", "(optional) Name for the new Performance Profile (required to create a new profile)")
 	applyCmd.Flags().StringVar(&testMesh, "mesh", "None", "(optional) Name of the Service Mesh")
 	applyCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
 	applyCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(optional) Number of Parallel Requests")

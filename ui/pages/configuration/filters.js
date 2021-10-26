@@ -2,13 +2,13 @@ import { NoSsr, Paper, withStyles } from "@material-ui/core";
 import MesheryFilters from "../../components/Filters";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
-import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from "../../lib/path";
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
-  overflow : 'hidden', } }
+  overflow : 'hidden', } };
 
 class NewFilters extends React.Component {
   componentDidMount () {

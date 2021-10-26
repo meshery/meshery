@@ -24,6 +24,7 @@ var (
 		MeshTypeNginxServiceMesh:   "nginx-system",
 		MeshTypeNetworkServiceMesh: "nsm-system",
 		MeshTypeCitrixServiceMesh:  "ctrix-system",
+		MeshTypeAppMesh:            "appmesh-system",
 	}
 
 	addonPortSelector = map[string]string{

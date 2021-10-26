@@ -3,7 +3,10 @@ layout: default
 title: Command Reference
 abstract: "A guide to Meshery's CLI: mesheryctl"
 permalink: reference/mesheryctl
-redirect_from: reference/mesheryctl/commands/
+redirect_from: 
+  - reference/mesheryctl/commands/
+  - reference/mesheryctl/commands
+  - reference/mesheryctl/
 type: Reference
 
 ---
@@ -215,20 +218,30 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 
   {% assign command3 = site.data.mesheryctlcommands.cmds.system-channel %}
         <tr>
-          <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel">{{ command3.name }}</a></td>
+          <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel">{{ command3.name }}</a></td>
           <td></td>
           <td></td>
           <td>{{ command3.description }}</td>
         </tr>
-        {% for subcommand_hash in command3.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+        {% assign subcommand1 = command3.subcommands.set %}
           <tr>
-            <td>{{ subcommand.name }}</td>
+            <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/set">{{ subcommand1.name }}</a></td>
             <td></td>
-            <td>{{ subcommand.description }}</td>
+            <td>{{ subcommand1.description }}</td>
           </tr>
-        {% endfor %}
-    {% assign subcommand1 = command3.subcommands.view %}
-    {% for flag_hash in subcommand1.flag %}{% assign flag = flag_hash[1] %}
+        {% assign subcommand2 = command3.subcommands.switch %}
+          <tr>
+            <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/switch">{{ subcommand2.name }}</a></td>
+            <td></td>
+            <td>{{ subcommand2.description }}</td>
+          </tr>
+    {% assign subcommand3 = command3.subcommands.view %}
+        <tr>
+            <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/view">{{ subcommand3.name }}</a></td>
+            <td></td>
+            <td>{{ subcommand3.description }}</td>
+          </tr>
+    {% for flag_hash in subcommand3.flags %}{% assign flag = flag_hash[1] %}
       <tr>
         <td>{{ flag.name }}</td>
         <td>{{ flag.description }}</td>
