@@ -93,6 +93,11 @@ func waitForRemoveResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 		return "", ErrCreatingRemoveResponseRequest(err)
 	}
 
+	err = utils.AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return "", ErrAddingAuthDetails(err)
+	}
+
 	res, err := client.Do(req)
 	if err != nil {
 		return "", ErrCreatingRemoveResponseRequest(err)
