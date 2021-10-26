@@ -41,7 +41,7 @@ subcommand: apply
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ flag.usage }}
+  {{ flag.example }}
   </div>
 </pre>
 {% endfor %}

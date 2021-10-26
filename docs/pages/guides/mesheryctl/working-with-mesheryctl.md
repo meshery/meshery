@@ -11,6 +11,7 @@ category: mesheryctl
 Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and service mesh management functions. `mesheryctl` commands can be categorized as follows:
 
 - `mesheryctl` - Global overrides and flags
+- `mesheryctl app` - Service Mesh Application Management
 - `mesheryctl filter` - Service Mesh Filter Management
 - `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management
 - `mesheryctl perf` - Service Mesh Performance Management
@@ -105,17 +106,13 @@ For an exhaustive list of `mesheryctl` commands and syntax:
 
 Guides to using Meshery's various features and components.
 
-{% assign sorted_guides = site.pages | sort: "type" | reverse %}
+{% capture tag %}
 
-<ul>
-  <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></lI>
-  {% for item in sorted_guides %}
-  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+<li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
+
+{% endcapture %}
+
+{% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
 
 <!-- ## Related Guides
 

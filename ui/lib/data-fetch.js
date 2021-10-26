@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-unfetch'
+import fetch from 'isomorphic-unfetch';
 
 const dataFetch = (url, options = {}, successFn, errorFn) => {
   // const controller = new AbortController();
@@ -37,8 +37,8 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
 
 export function promisifiedDataFetch(url, options = {}) {
   return new Promise((resolve, reject) => {
-    dataFetch(url, options, result => resolve(result), err => reject(err))
-  })
+    dataFetch(url, options, result => resolve(result), err => reject(err));
+  });
 }
 
 export default dataFetch;

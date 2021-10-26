@@ -10,7 +10,12 @@ categories:
       - 'component/mesheryctl'
   - title: '🖥 Meshery UI'
     labels:
-      - 'component/ui'      
+      - 'component/ui'
+  - title: '🔋 Patterns, Filters, Applications'
+    labels:
+      - 'component/patterns'
+      - 'component/applications'
+      - 'component/filters'      
   - title: '🐛 Bug Fixes'
     labels:
       - 'kind/fix'
@@ -23,6 +28,8 @@ categories:
       - 'area/tests'
   - title: 📖 Documentation
     label: area/docs
+  - title: 🔒 Security
+    label: security  
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 template: |
   ## What's New
@@ -35,25 +42,16 @@ template: |
   $CONTRIBUTORS
 autolabeler:
   - label: 'area/docs'
-    files:
-      - 'docs/**/*'
     branch:
       - '/docs/'
-  - label: 'area/ci'
-    files:
-      - '.github/**/*'      
+  - label: 'area/ci'    
     branch:
       - '/.github/'
   - label: 'component/ui'
-    files:
-      - 'ui/**/*'
-      - 'provider-ui/**/*'
     branch:
       - '/ui/'
       - '/provider-ui/'
   - label: 'component/mesheryctl'
-    files:
-      - 'mesheryctl/**/*'
     branch:
       - '/mesheryctl/'
   - label: 'area/lifecycle'

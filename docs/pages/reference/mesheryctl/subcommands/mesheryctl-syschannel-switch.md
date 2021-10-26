@@ -32,12 +32,10 @@ subcommand: switch
   {{ name.usage }}
   </div>
 </pre>
-{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
-{{ flag.description }}
+<br />
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ flag.usage }}
+  {{ name.example }}
   </div>
 </pre>
-{% endfor %}
 <br/>

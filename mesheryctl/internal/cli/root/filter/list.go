@@ -103,7 +103,7 @@ var listCmd = &cobra.Command{
 		// Check if messhery provider is set
 		if provider == "None" {
 			for _, v := range response.Filters {
-				FilterName := fmt.Sprintf("%s", strings.Trim(v.Name, filepath.Ext(v.Name)))
+				FilterName := strings.Trim(v.Name, filepath.Ext(v.Name))
 				FilterID := utils.TruncateID(v.ID.String())
 				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())

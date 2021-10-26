@@ -1,15 +1,15 @@
-import { NoSsr, Paper, withStyles } from "@material-ui/core";
+import { NoSsr, withStyles } from "@material-ui/core";
 import MesheryApplications from "../../components/MesheryApplications";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
-import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from "../../lib/path";
 
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
-  overflow : 'hidden', } }
+  overflow : 'hidden', } };
 
 class Applications extends React.Component {
   componentDidMount () {
@@ -23,9 +23,7 @@ class Applications extends React.Component {
         <Head>
           <title>Applications | Meshery</title>
         </Head>
-        <Paper className={this.props.classes.paper}>
-          <MesheryApplications />
-        </Paper>
+        <MesheryApplications />
       </NoSsr>
     );
   }

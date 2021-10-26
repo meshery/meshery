@@ -235,6 +235,13 @@ const categories = [
     link : true,
     children : [
       {
+        id : "App_Mesh",
+        href : "/management/app-mesh",
+        title : "AWS App Mesh",
+        link : true,
+        show : true,
+      },
+      {
         id : "Citrix_Service_Mesh",
         href : "/management/citrix",
         title : "Citrix Service Mesh",
@@ -870,7 +877,7 @@ class Navigator extends React.Component {
                           { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
                             <ExpandMoreIcon
                               onClick={() => this.toggleItemCollapse(childId)}
-                              className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft: "0.4rem"}}
+                              className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "0.4rem" }}
                             /> :
                             <ListItemIcon className={classes.listIcon}>
                               {icon}

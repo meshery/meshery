@@ -61,7 +61,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
   handleChange = (name) => (event) => {
     this.setState({ [name]: event.target.value });
-  };
+  }
 
   handleDurationChange = (event, newValue) => {
     this.setState({tValue: newValue})

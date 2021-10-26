@@ -24,6 +24,7 @@ var (
 		MeshTypeNginxServiceMesh:   "nginx-system",
 		MeshTypeNetworkServiceMesh: "nsm-system",
 		MeshTypeCitrixServiceMesh:  "ctrix-system",
+		MeshTypeAppMesh:            "appmesh-system",
 	}
 
 	addonPortSelector = map[string]string{
@@ -80,8 +81,9 @@ func persistData(msg broker.Message,
 		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
 			// operatorSyncChannel <- false
 			broadcaster.Submit(broadcast.BroadcastMessage{
-				Type:    broadcast.OperatorSyncChannel,
-				Message: false,
+				Source: broadcast.OperatorSyncChannel,
+				Data:   false,
+				Type:   "health",
 			})
 		}
 		err = recordMeshSyncData(msg.EventType, handler, &object)

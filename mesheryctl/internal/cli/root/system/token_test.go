@@ -40,6 +40,20 @@ func TestTokenCreateCmd(t *testing.T) {
 			ExpectedResponseYaml: "create_err.yaml",
 			ExpectError:          true,
 		},
+		{
+			Name:                 "create the passed token with default location and set it as the current token",
+			Args:                 []string{"token", "create", "new-token", "--set"},
+			ExpectedResponse:     "create_default_set.golden",
+			ExpectedResponseYaml: "create_default_set.yaml",
+			ExpectError:          false,
+		},
+		{
+			Name:                 "create the passed token with passed location and set it as the current token",
+			Args:                 []string{"token", "create", "new-token", "--set"},
+			ExpectedResponse:     "create_set.golden",
+			ExpectedResponseYaml: "create_set.yaml",
+			ExpectError:          false,
+		},
 	}
 
 	for _, tt := range tests {

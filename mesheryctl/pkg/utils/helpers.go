@@ -65,6 +65,11 @@ const (
 	cmdSystem cmdType = "system"
 )
 
+const (
+	HelmChartURL  = "https://meshery.io/charts/"
+	HelmChartName = "meshery"
+)
+
 var (
 	// ResetFlag indicates if a reset is required
 	ResetFlag bool
@@ -102,6 +107,10 @@ var (
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
 	ServiceAccount = "service-account.yaml"
+	// To upload with param name
+	ParamName = "k8sfile"
+	// kubeconfig file name
+	KubeConfigYaml = "kubeconfig.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
 	// ViperDocker is an instance of viper for the meshconfig file when the platform is docker
@@ -112,18 +121,21 @@ var (
 	SilentFlag bool
 	// PlatformFlag sets the platform for the initial config file
 	PlatformFlag string
+	// Paths to kubeconfig files
+	ConfigPath string
+	KubeConfig string
 )
 
 var CfgFile string
 
 // ListOfAdapters returns the list of adapters available
-var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
+var ListOfAdapters = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
 	Endpoint: EndpointProtocol + "://localhost:9081",
 	Token:    "Default",
-	Platform: "docker",
+	Platform: "kubernetes",
 	Adapters: ListOfAdapters,
 	Channel:  "stable",
 	Version:  "latest",
@@ -759,4 +771,55 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 	}
 
 	return v
+}
+
+// SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
+func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
+	// first initialize all the adapters' "enabled" field to false
+	// this matches to the adapters listed in install/kubernetes/helm/meshery/values.yaml
+	valueOverrides := map[string]interface{}{
+		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-linkerd": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-consul": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-kuma": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-osm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nsm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nginx-sm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-traefik-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cpx": map[string]interface{}{
+			"enabled": false,
+		},
+	}
+
+	// set the "enabled" field to true only for the adapters listed in the context
+	for _, adapter := range ctx.GetAdapters() {
+		if _, ok := valueOverrides[adapter]; ok {
+			valueOverrides[adapter] = map[string]interface{}{
+				"enabled": true,
+			}
+		}
+	}
+
+	// set the meshery image version
+	valueOverrides["image"] = map[string]interface{}{
+		"tag": ctx.GetChannel() + "-" + mesheryImageVersion,
+	}
+
+	return valueOverrides
 }
