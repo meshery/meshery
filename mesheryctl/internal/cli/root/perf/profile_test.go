@@ -101,7 +101,7 @@ func TestProfileCmd(t *testing.T) {
 	}
 
 	testsforLogrusOutputs := []tempTestStruct{
-		{"No profiles found", []string{"profile", "--expand"}, []utils.MockURL{{Method: "GET", URL: profileURL, Response: profile1004, ResponseCode: 200}}, profile1005output, testToken, false},
+		{"No profiles found", []string{"profile", "--view"}, []utils.MockURL{{Method: "GET", URL: profileURL, Response: profile1004, ResponseCode: 200}}, profile1005output, testToken, false},
 		{"standard profiles in json output", []string{"profile", "-o", "json"}, []utils.MockURL{
 			{Method: "GET", URL: profileURL, Response: profile1001, ResponseCode: 200},
 		}, profile1006output, testToken, false},
