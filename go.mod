@@ -42,7 +42,7 @@ require (
 	github.com/layer5io/meshsync v0.1.25
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.3
-	github.com/lib/pq v1.10.2
+	github.com/lib/pq v1.10.3
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/manifoldco/promptui v0.8.0
 	github.com/mattn/go-isatty v0.0.13 // indirect
