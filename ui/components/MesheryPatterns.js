@@ -233,9 +233,9 @@ function MesheryPatterns({
           }
         },
       },
-      MUIDataTableSelectCell : { 
-        checkboxRoot : { 
-          '&$checked' : {  
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
             color : '#607d8b',
           },
         },
