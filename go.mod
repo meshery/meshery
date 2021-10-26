@@ -23,7 +23,7 @@ require (
 	github.com/docker/docker v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/envoyproxy/go-control-plane v0.9.10-0.20210907150352-cf90f659a021
 	github.com/ghodss/yaml v1.0.0
-	github.com/go-openapi/runtime v0.19.31
+	github.com/go-openapi/runtime v0.20.0
 	github.com/go-openapi/strfmt v0.20.2
 	github.com/gofrs/uuid v3.4.0+incompatible
 	github.com/golang/protobuf v1.5.2
