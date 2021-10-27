@@ -10,7 +10,6 @@ import (
 )
 
 func TestSystemCmdIntegration(t *testing.T) {
-	// skipping this integration test with --short flag
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}

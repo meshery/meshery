@@ -19,9 +19,9 @@ metadata:
 {{- include "meshery-operator.labels" . | nindent 4 }}
 rules:
 - apiGroups:
-  - '*'
+  - meshery.layer5.io
   resources:
-  - '*'
+  - brokers
   verbs:
   - create
   - delete
@@ -30,7 +30,14 @@ rules:
   - patch
   - update
   - watch
-  - approve
+- apiGroups:
+  - meshery.layer5.io
+  resources:
+  - brokers/status
+  verbs:
+  - get
+  - patch
+  - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -87,3 +94,23 @@ rules:
   verbs:
   - create
   - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: meshery-controller-role
+  labels:
+  {{- include "meshery-operator.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import Extension from "../../components/NavigatorExtension";
-import ExtensionSandbox, { getCapabilities, getComponentTitleFromPathForNavigator } from "../../components/ExtensionSandbox"
+import ExtensionSandbox, { getCapabilities, getComponentTitleFromPathForNavigator } from "../../components/ExtensionSandbox";
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
@@ -50,9 +50,9 @@ class Settings extends React.Component {
 
   componentDidMount() {
     getCapabilities("navigator", extensions => {
-      this.setState({ componentTitle : getComponentTitleFromPathForNavigator(extensions, getPath()) })
+      this.setState({ componentTitle : getComponentTitleFromPathForNavigator(extensions, getPath()) });
       this.props.updatepagetitle({ title : getComponentTitleFromPathForNavigator(extensions, getPath()) });
-    })
+    });
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path : getPath() });
 

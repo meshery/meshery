@@ -63,7 +63,7 @@ class MeshAdapterConfigComponent extends React.Component {
 
   componentDidMount = () => {
     this.fetchAvailableAdapters();
-  };
+  }
 
   fetchAvailableAdapters = () => {
     const self = this;

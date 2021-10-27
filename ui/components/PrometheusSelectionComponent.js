@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { updateProgress } from '../lib/store';
+import { trueRandom } from '../lib/trueRandom';
 import dataFetch from '../lib/data-fetch';
 
 
@@ -247,7 +248,7 @@ class PrometheusSelectionComponent extends Component {
       this.props.addSelectedBoardPanelConfig(boardConfig);
     }
 
-    genRandomNumberForKey = () => Math.floor((Math.random() * 1000) + 1)
+    genRandomNumberForKey = () => Math.floor((trueRandom() * 1000) + 1)
 
     render = () => {
       const self = this;

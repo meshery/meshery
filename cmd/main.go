@@ -176,10 +176,7 @@ func main() {
 		GenericPersister:                dbHandler,
 	}
 	lProv.Initialize()
-	seededUUIDs, err := lProv.SeedContent(log)
-	if err != nil {
-		logrus.Error(err)
-	}
+	seededUUIDs := lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
 
 	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")

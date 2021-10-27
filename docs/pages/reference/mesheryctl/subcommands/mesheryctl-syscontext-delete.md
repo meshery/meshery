@@ -37,6 +37,12 @@ subcommand: delete
   {{ name.usage }}
   </div>
 </pre>
+<br />
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ name.example }}
+  </div>
+</pre>
 {% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">

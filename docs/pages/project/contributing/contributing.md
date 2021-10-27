@@ -14,17 +14,7 @@ This project is community-built and welcomes collaboration. Contributors are exp
 
 # Contributing Guides
 
-{% assign sorted_reading = site.pages | sort: page.title | reverse %}
-
-<ul>
-  {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
-
+{% include suggested-reading.html diffName ="true" %}
 
 ## Not sure where to start?
 
