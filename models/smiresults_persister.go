@@ -8,7 +8,7 @@ import (
 )
 
 // SmiResultsPersister assists with persisting session in store
-type SmiResultsPersister struct {
+type SMIResultsPersister struct {
 	DB *database.Handler
 }
 
@@ -19,14 +19,14 @@ type SmiResultWithID struct {
 
 // SmiResultPage - represents a page of meshery results
 type SmiResultPage struct {
-	Page       uint64       `json:"page"`
-	PageSize   uint64       `json:"page_size"`
-	TotalCount int          `json:"total_count"`
-	Results    []*SmiResult `json:"results"`
+	Page       uint64             `json:"page"`
+	PageSize   uint64             `json:"page_size"`
+	TotalCount int                `json:"total_count"`
+	Results    []*SmiResultWithID `json:"results"`
 }
 
 // GetSmiResults - gets result for the page and pageSize
-func (s *SmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
+func (s *SMIResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
@@ -37,15 +37,11 @@ func (s *SmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) 
 	order := "updated_at desc"
 	query := s.DB.Order(order)
 	Paginate(uint(page), uint(pageSize))(query).Find(&results)
-	var smiresults []*SmiResult
-	for _, r := range results {
-		smiresults = append(smiresults, &r.SmiResult)
-	}
 	bd, err := json.Marshal(&SmiResultPage{
 		Page:       page,
 		PageSize:   pageSize,
 		TotalCount: int(total),
-		Results:    smiresults,
+		Results:    results,
 	})
 	if err != nil {
 		obj := "result data"
@@ -57,7 +53,7 @@ func (s *SmiResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) 
 }
 
 // WriteSmiResult persists the result
-func (s *SmiResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
+func (s *SMIResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
@@ -67,10 +63,7 @@ func (s *SmiResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
 	}
 	var r SmiResultWithID
 	if err := s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).First(&r).Error; err == nil {
-		err = s.DeleteResult(key)
-		if err != nil {
-			return err
-		}
+		return s.UpdateResult(key, r)
 	}
 	err := json.Unmarshal(result, &r.SmiResult)
 	if err != nil {
@@ -80,17 +73,13 @@ func (s *SmiResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
 	return s.DB.Model(&SmiResultWithID{}).Create(&r).Error
 }
 
-func (s *SmiResultsPersister) DeleteResult(key uuid.UUID) error {
+func (s *SMIResultsPersister) DeleteResult(key uuid.UUID) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
 	return s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).Delete(&SmiResultWithID{}).Error
 }
 
-// CloseSmiResultPersister closes the badger store
-// func (s *BitCaskSmiResultsPersister) CloseResultPersister() {
-// 	if s.db == nil {
-// 		return
-// 	}
-// 	_ = s.db.Close()
-// }
+func (s *SMIResultsPersister) UpdateResult(key uuid.UUID, res SmiResultWithID) error {
+	return s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).UpdateColumns(res).Error
+}

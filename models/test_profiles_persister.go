@@ -15,7 +15,7 @@ type TestProfilesPersister struct {
 }
 
 type PerformanceTestConfig struct {
-	ID                         uuid.UUID `gorm:"primarykey"`
+	ID                         uuid.UUID
 	PerformanceTestConfigBytes []byte
 	UpdatedAt                  time.Time
 }
@@ -98,20 +98,13 @@ func (s *TestProfilesPersister) WriteTestConfig(key uuid.UUID, result []byte) er
 	}
 	var p PerformanceTestConfig
 	if err := s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).First(&p).Error; err == nil {
-		err = s.DeleteTestConfig(key)
-		if err != nil {
-			return err
-		}
+		return s.UpdateTestConfig(key, p)
 	}
 	p.ID = key
 	p.PerformanceTestConfigBytes = result
 	return s.DB.Model(&PerformanceTestConfig{}).Create(&p).Error
 }
 
-// // CloseTestConfigsPersister closes the badger store
-// func (s *BitCaskTestProfilesPersister) CloseTestConfigsPersister() {
-// 	if s.db == nil {
-// 		return
-// 	}
-// 	_ = s.db.Close()
-// }
+func (s *TestProfilesPersister) UpdateTestConfig(key uuid.UUID, p PerformanceTestConfig) error {
+	return s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).UpdateColumns(p).Error
+}
