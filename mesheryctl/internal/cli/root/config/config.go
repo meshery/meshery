@@ -244,6 +244,10 @@ func (ctx *Context) ValidateVersion() error {
 		log.Fatal("version " + ctx.Version + " is not a valid Meshery release")
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		log.Fatal("failed to validate Meshery release version " + ctx.Version)
+	}
+
 	if err != nil {
 		return errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
