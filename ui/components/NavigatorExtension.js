@@ -8,6 +8,7 @@ import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch"
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
+import { ShowToolButtonsLabel } from './UserPreferences'
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -31,7 +32,8 @@ function Extension({ grafana, updateLoadTestData, url }) {
         PatternServiceForm,
         grafana,
         MesheryPerformanceComponent,
-        dataFetch
+        dataFetch,
+        ShowToolButtonsLabel
       }}
     />
   );

@@ -6,7 +6,17 @@ import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import {
-  IconButton, FormControl, FormLabel, FormGroup, FormControlLabel, Switch
+  IconButton,
+  FormControl,
+  FormLabel,
+  FormGroup,
+  FormControlLabel,
+  Switch,
+  TableContainer,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
 } from '@material-ui/core';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
@@ -15,6 +25,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { Paper, Tooltip } from '@material-ui/core';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
+import PowerIcon from '@material-ui/icons/Power';
 import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import ExtensionSandbox from "./ExtensionSandbox";
 import RemoteUserPref from "./RemoteUserPref";
@@ -76,6 +87,7 @@ const styles = (theme) => ({
   },
   track : { backgroundColor : 'rgba(100,120,129,0.5)', },
   checked : {},
+  tableCell : { border : "none", fontSize : ".9rem", },
   tabLabel : {
     [theme.breakpoints.up("sm")] : {
       fontSize : '1em'
@@ -83,8 +95,10 @@ const styles = (theme) => ({
     [theme.breakpoints.between("xs", 'sm')] : {
       fontSize : '0.8em'
     }
-  }
+  },
 });
+
+export let ShowToolButtonsLabel = true;
 
 class UserPreference extends React.Component {
   constructor(props) {
@@ -95,8 +109,15 @@ class UserPreference extends React.Component {
       startOnZoom : props.startOnZoom,
       tabVal : 0,
       userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
-      providerType : ''
+      providerType : '',
+      showBtnLabels : true
     };
+  }
+
+  showBtnLabelHandler = () => {
+    const self = this;
+    ShowToolButtonsLabel = !this.state.showBtnLabels
+    self.setState((state) => ({ showBtnLabels : !state.showBtnLabels }))
   }
 
   handleToggle = (name) => () => {
@@ -200,16 +221,20 @@ class UserPreference extends React.Component {
       },
       err => console.error(err)
     )
+    if (!ShowToolButtonsLabel) {
+      this.setState({ showBtnLabels : false })
+    }
   }
 
   render() {
     const {
-      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs, providerType
+      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs, providerType, showBtnLabels
     } = this.state;
     const { classes } = this.props;
 
     const mainIconScale = 'grow-10';
     const handleToggle = this.handleToggle('startOnZoom');
+    const showBtnLabelHandler  = this.showBtnLabelHandler
 
     return (
       <NoSsr>
@@ -252,6 +277,15 @@ class UserPreference extends React.Component {
                 />
               </Tooltip>
             }
+            <Tooltip title="Extension preferences" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <PowerIcon />
+                }
+                label={<span className={classes.tabLabel}>Extension</span>}
+              />
+            </Tooltip>
           </Tabs>
         </Paper>
         <Paper className={classes.root}>
@@ -301,6 +335,37 @@ class UserPreference extends React.Component {
           }
           {tabVal == 2 && userPrefs && providerType != 'local' &&
             <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
+          }
+          {tabVal == 3 &&
+            <div className={classes.formContainer}>
+              <TableContainer>
+                <Table aria-label="simple table">
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className={classes.tableCell} component="th" scope="row">
+                          Hide Button Labels
+                      </TableCell>
+                      <TableCell className={classes.tableCell} align="right">
+                        <Switch
+                          focusVisibleClassName={classes.focusVisible}
+                          disableRipple
+                          classes={{
+                            root : classes.switchRoot,
+                            switchBase : classes.switchBase,
+                            thumb : classes.thumb,
+                            track : classes.track,
+                            checked : classes.checked,
+                          }}
+                          checked={!showBtnLabels}
+                          onChange={showBtnLabelHandler}
+                          name="showLabel"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
           }
         </Paper>
       </NoSsr>
