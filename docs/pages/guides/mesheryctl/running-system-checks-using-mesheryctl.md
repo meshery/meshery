@@ -25,9 +25,9 @@ mesheryctl system check
 ### Pre-deployment check
 
 In this kind of test, the `mesheryctl system check` runs the following checks to determine if a system is compatible with Meshery or not. The checks done here are:
- - Docker healthchecks
- - Kubernetes healthchecks
- - Kubernetes version healthchecks
+ - Docker health checks
+ - Kubernetes health checks
+ - Kubernetes version health checks
 
 To run pre-deployment checks, type the following command:
 <pre class="codeblock-pre">
@@ -40,11 +40,11 @@ mesheryctl system check --preflight
 ### Post deployment check
 
 Here, the command runs several checks to determine if the system is good to deploy a service mesh over a kubernetes cluster using Meshery. The checks done here are:
- - Docker healthchecks
- - Kubernetes healthchecks
- - Kubernetes version healthchecks
- - Meshery version healthchecks
- - Meshery Adapter healthchecks
+ - Docker health checks
+ - Kubernetes health checks
+ - Kubernetes version health checks
+ - Meshery version health checks
+ - Meshery Adapter health checks
 
 To run post-deployment checks, type the following command:
 <pre class="codeblock-pre">
