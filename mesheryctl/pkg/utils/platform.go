@@ -361,7 +361,7 @@ func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
 
 // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 func GetLatestStableReleaseTag() (string, error) {
-	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases"
+	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/latest"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
