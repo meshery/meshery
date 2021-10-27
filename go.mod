@@ -14,7 +14,7 @@ replace (
 
 require (
 	fortio.org/fortio v1.17.0
-	github.com/99designs/gqlgen v0.13.0
+	github.com/99designs/gqlgen v0.14.0
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.16.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
