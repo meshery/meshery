@@ -25,7 +25,6 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { Paper, Tooltip } from '@material-ui/core';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import PowerIcon from '@material-ui/icons/Power';
 import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import ExtensionSandbox from "./ExtensionSandbox";
 import RemoteUserPref from "./RemoteUserPref";
@@ -277,15 +276,6 @@ class UserPreference extends React.Component {
                 />
               </Tooltip>
             }
-            <Tooltip title="Extension preferences" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={
-                  <PowerIcon />
-                }
-                label={<span className={classes.tabLabel}>Extension</span>}
-              />
-            </Tooltip>
           </Tabs>
         </Paper>
         <Paper className={classes.root}>
@@ -334,37 +324,37 @@ class UserPreference extends React.Component {
             <MesherySettingsPerformanceComponent />
           }
           {tabVal == 2 && userPrefs && providerType != 'local' &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
-          }
-          {tabVal == 3 &&
-            <div className={classes.formContainer}>
-              <TableContainer>
-                <Table aria-label="simple table">
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className={classes.tableCell} component="th" scope="row">
-                          Hide Button Labels
-                      </TableCell>
-                      <TableCell className={classes.tableCell} align="right">
-                        <Switch
-                          focusVisibleClassName={classes.focusVisible}
-                          disableRipple
-                          classes={{
-                            root : classes.switchRoot,
-                            switchBase : classes.switchBase,
-                            thumb : classes.thumb,
-                            track : classes.track,
-                            checked : classes.checked,
-                          }}
-                          checked={!showBtnLabels}
-                          onChange={showBtnLabelHandler}
-                          name="showLabel"
-                        />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
+            <div>
+              <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
+              <div className={classes.formContainer}>
+                <TableContainer>
+                  <Table aria-label="simple table">
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className={classes.tableCell} component="th" scope="row">
+                            Hide Button Labels
+                        </TableCell>
+                        <TableCell className={classes.tableCell} align="right">
+                          <Switch
+                            focusVisibleClassName={classes.focusVisible}
+                            disableRipple
+                            classes={{
+                              root : classes.switchRoot,
+                              switchBase : classes.switchBase,
+                              thumb : classes.thumb,
+                              track : classes.track,
+                              checked : classes.checked,
+                            }}
+                            checked={!showBtnLabels}
+                            onChange={showBtnLabelHandler}
+                            name="showLabel"
+                          />
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
             </div>
           }
         </Paper>
