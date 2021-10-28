@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"path"
 	"plugin"
-	"strings"
 
 	"github.com/layer5io/meshery/models"
 )
@@ -74,9 +73,8 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	// gets the extension version from package URL
-	splitURL := strings.Split(provider.GetProviderProperties().PackageURL, "/")
-	version := splitURL[len(splitURL)-2]
+	// gets the extension version from provider properties
+	version := provider.GetProviderProperties().PackageVersion
 
 	extensionVersion := &ExtensionVersion{
 		Version: version,
