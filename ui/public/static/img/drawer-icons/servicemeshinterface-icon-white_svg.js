@@ -1,6 +1,6 @@
-const st0 = { opacity: 0.6 }
-const st1 = { opacity: 0.8 }
-const style = { enableBackground: "new 0 0 22 20" }
+const st0 = { opacity: 0.6 };
+const st1 = { opacity: 0.8 };
+const style = { enableBackground: "new 0 0 22 20" };
 
 const Service = ({ fill, className, ...rest }) => (
 	<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"

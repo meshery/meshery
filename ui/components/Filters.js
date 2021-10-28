@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
+import {  createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -30,6 +31,7 @@ import dataFetch from "../lib/data-fetch";
 import URLUploader from "./URLUploader";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
+import { trueRandom } from "../lib/trueRandom";
 
 const styles = (theme) => ({
   grid : {
@@ -161,6 +163,50 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [filters, setFilters] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const DEPLOY_URL = "/api/filter/deploy";
+
+  const getMuiTheme = () => createTheme({
+    overrides : {
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
+          },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b" ,
+          marginTop : "7px",
+          marginRight : "8px",
+        },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
+          },
+        },
+      },
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      }
+    }
+  })
 
   const ACTION_TYPES = {
     FETCH_FILTERS : {
@@ -309,12 +355,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(Math.random() * 100), "upload");
+      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(trueRandom() * 100), "upload");
     });
     reader.readAsText(file);
   }
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(Math.random() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
     console.log(link, "valid");
   }
   const columns = [
@@ -424,11 +470,11 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   });
 
-  async function showmodal() {
+  async function showmodal(count) {
     let response = await modalRef.current.show({
-      title : "Delete Filter?",
+      title : `Delete ${count ? count : ""} Filter${count > 1 ? "s" : '' }?`,
 
-      subtitle : "Are you sure you want to delete this filter?",
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} filter${count > 1 ? "s" : '' }?`,
 
       options : ["Yes", "No"], })
     return response;
@@ -480,7 +526,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onRowsDelete : async function handleDelete(row) {
-      let response  = await showmodal()
+      let response  = await showmodal(Object.keys(row.lookup).length)
       console.log(response)
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
@@ -535,13 +581,15 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
-      <MUIDataTable
-        title={<div className={classes.tableHeader}>Filters</div>}
-        data={filters}
-        columns={columns}
-        // @ts-ignore
-        options={options}
-      />
+      <MuiThemeProvider theme={getMuiTheme()}>
+        <MUIDataTable
+          title={<div className={classes.tableHeader}>Filters</div>}
+          data={filters}
+          columns={columns}
+          // @ts-ignore
+          options={options}
+        />
+      </MuiThemeProvider>
       <PromptComponent ref={modalRef} />
     </NoSsr>
   );

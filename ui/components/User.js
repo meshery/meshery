@@ -43,7 +43,7 @@ class User extends React.Component {
       return;
     }
     this.setState({ open : false });
-  };
+  }
 
   handleLogout = () => {
     window.location = '/user/logout';

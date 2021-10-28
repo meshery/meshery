@@ -2,7 +2,7 @@ import DashboardComponent from "../components/DashboardComponent";
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
-import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
 
 class Index extends React.Component {

@@ -1,0 +1,2 @@
+output-format choice invalid, use [json|yaml].
+See https://docs.meshery.io/reference/mesheryctl/perf/profile for usage details

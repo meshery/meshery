@@ -11,7 +11,7 @@ import Hidden from '@material-ui/core/Hidden';
 import withRedux from "next-redux-wrapper";
 import { makeStore, actionTypes } from '../lib/store';
 import { Provider } from "react-redux";
-import { fromJS } from 'immutable'
+import { fromJS } from 'immutable';
 import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { SnackbarProvider } from 'notistack';
@@ -22,7 +22,7 @@ import {
   Info,
   Error,
   Warning
-} from '@material-ui/icons'
+} from '@material-ui/icons';
 
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs
 // link clicks, hence attempting to add them here
@@ -128,7 +128,7 @@ const notificationColors = {
   warning : "#F0A303",
   success : "#206D24",
   info : "#2196F3"
-}
+};
 
 const styles = {
   root : { display : 'flex',
@@ -178,18 +178,20 @@ class MesheryApp extends App {
 
   handleDrawerToggle = () => {
     this.setState(state => ({ mobileOpen : !state.mobileOpen }));
-  };
-
-  handleCollapseDrawer = () => {
-    this.setState(state => ({ isDrawerCollapsed : !state.isDrawerCollapsed }));
   }
+
+  handleCollapseDrawer = (open = null) => {
+    if (typeof(open) === 'boolean')
+      return this.setState({ isDrawerCollapsed : open });
+    this.setState(state => ({ isDrawerCollapsed : !state.isDrawerCollapsed }));
+  };
 
   handleL5CommunityClick = () => {
     if (typeof window !== 'undefined'){
       const w = window.open('https://layer5.io', '_blank');
       w.focus();
     }
-  }
+  };
 
   async loadConfigFromServer() {
     const { store } = this.props;
@@ -275,7 +277,7 @@ class MesheryApp extends App {
   static async getInitialProps({ Component, ctx }) {
     const pageProps = Component.getInitialProps
       ? await Component.getInitialProps(ctx)
-      : {};
+      : {}
     return { pageProps };
   }
 
@@ -307,13 +309,13 @@ class MesheryApp extends App {
                       variant="temporary"
                       open={this.state.mobileOpen}
                       onClose={this.handleDrawerToggle}
-                      onCollapseDrawer={this.handleCollapseDrawer}
+                      onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
                       isDrawerCollapsed={isDrawerCollapsed}
                     />
                   </Hidden>
                   <Hidden xsDown implementation="css">
                     <Navigator
-                      onCollapseDrawer={this.handleCollapseDrawer}
+                      onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
                       isDrawerCollapsed={isDrawerCollapsed} />
                   </Hidden>
                 </nav>
