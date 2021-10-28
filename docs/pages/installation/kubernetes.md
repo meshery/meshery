@@ -83,7 +83,7 @@ Customize of deployment the Meshery adapters:
 
 The key of Meshery adapters you can find [here](https://artifacthub.io/packages/helm/meshery/meshery#values)
 
-### **Using Kubernetes Manifests**
+### **Using Kubernetes Manifests [deprecated]**
 Meshery can also be deployed on an existing Kubernetes cluster. See [compatibility table](#compatibility-matrix) for version compatibility. To install Meshery on your cluster, clone the Meshery repo:
 
  <pre class="codeblock-pre">
