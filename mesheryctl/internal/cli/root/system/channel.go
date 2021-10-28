@@ -16,6 +16,7 @@ package system
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -83,15 +84,15 @@ var viewCmd = &cobra.Command{
 
 //check release channel string supplied by user for validity
 func validChannel(c string) bool {
-	valid := false
-	validChannels := [4]string{"stable", "stable-version", "edge", "edge-version"}
-	for _, v := range validChannels {
-		if c == v {
-			valid = true
-			break
-		}
+	switch c {
+	case "stable":
+		return true
+	case "edge":
+		return true
 	}
-	return valid
+	stableRegx := regexp.MustCompile(`^stable-v[0-9]+\.[0-9]+\.[0-9]+$`)
+	edgeRegx := regexp.MustCompile(`^edge-v[0-9]+\.[0-9]+\.[0-9]+$`)
+	return stableRegx.MatchString(c) || edgeRegx.MatchString(c)
 }
 
 //func to validate CLI argument
