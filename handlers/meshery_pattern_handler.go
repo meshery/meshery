@@ -109,7 +109,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format)
+			formatPatternOutput(rw, resp, format)
 			return
 		}
 
@@ -120,7 +120,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format)
+		formatPatternOutput(rw, byt, format)
 		return
 	}
 
@@ -133,7 +133,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, resp, format)
+		formatPatternOutput(rw, resp, format)
 		return
 	}
 
@@ -177,7 +177,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format)
+			formatPatternOutput(rw, resp, format)
 			return
 		}
 
@@ -188,7 +188,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format)
+		formatPatternOutput(rw, byt, format)
 		return
 	}
 }
@@ -278,11 +278,10 @@ func (h *Handler) GetMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, format string) {
+func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) {
 	contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryPatternSlice); err != nil {
-		h.log.Error(ErrDecodePattern(err))
 		http.Error(rw, ErrDecodePattern(err).Error(), http.StatusInternalServerError)
 		// rw.WriteHeader(http.StatusInternalServerError)
 		// fmt.Fprintf(rw, "failed to decode patterns data into go slice: %s", err)
@@ -295,7 +294,6 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 		if format == "cytoscape" {
 			patternFile, err := pCore.NewPatternFile([]byte(content.PatternFile))
 			if err != nil {
-				h.log.Error(ErrParsePattern(err))
 				http.Error(rw, ErrParsePattern(err).Error(), http.StatusBadRequest)
 				// rw.WriteHeader(http.StatusBadRequest)
 				// fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
@@ -306,7 +304,6 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 
 			bytes, err := json.Marshal(&cyjs)
 			if err != nil {
-				h.log.Error(ErrConvertPattern(err))
 				http.Error(rw, ErrConvertPattern(err).Error(), http.StatusInternalServerError)
 				// rw.WriteHeader(http.StatusInternalServerError)
 				// fmt.Fprintf(rw, "failed to convert PatternFile to Cytoscape object: %s", err)
@@ -323,7 +320,6 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	data, err := json.Marshal(&result)
 	if err != nil {
 		obj := "pattern file"
-		h.log.Error(ErrMarshal(err, obj))
 		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		// rw.WriteHeader(http.StatusInternalServerError)
 		// fmt.Fprintf(rw, "failed to marshal pattern file: %s", err)
