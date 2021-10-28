@@ -135,7 +135,7 @@ func (h *Handler) handleFilterPOST(
 				return
 			}
 
-			h.formatFilterOutput(rw, resp, format)
+			formatFilterOutput(rw, resp, format)
 			return
 		}
 
@@ -146,7 +146,7 @@ func (h *Handler) handleFilterPOST(
 			return
 		}
 
-		h.formatFilterOutput(rw, byt, format)
+		formatFilterOutput(rw, byt, format)
 		return
 	}
 
@@ -159,7 +159,7 @@ func (h *Handler) handleFilterPOST(
 			return
 		}
 
-		h.formatFilterOutput(rw, resp, format)
+		formatFilterOutput(rw, resp, format)
 		return
 	}
 }
@@ -241,11 +241,10 @@ func (h *Handler) GetMesheryFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, format string) {
+func formatFilterOutput(rw http.ResponseWriter, content []byte, format string) {
 	contentMesheryFilterSlice := make([]models.MesheryFilter, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryFilterSlice); err != nil {
-		h.log.Error(ErrDecodeFilter(err))
 		http.Error(rw, ErrDecodeFilter(err).Error(), http.StatusInternalServerError)
 		// rw.WriteHeader(http.StatusInternalServerError)
 		// fmt.Fprintf(rw, "failed to decode filters data into go slice: %s", err)
@@ -257,7 +256,6 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, for
 	data, err := json.Marshal(&result)
 	if err != nil {
 		obj := "filter file"
-		h.log.Error(ErrMarshal(err, obj))
 		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		// rw.WriteHeader(http.StatusInternalServerError)
 		// fmt.Fprintf(rw, "failed to marshal filter file: %s", err)
