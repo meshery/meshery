@@ -15,21 +15,46 @@ mesheryctl system check
 
 </div></div>
 </pre>
+<br/>
+<pre class="codeblock-pre">
+<div class="codeblock"><div class="clipboardjs">
+Verify environment pre/post-deployment of Meshery.
 
-## Types of deployment checks
+Usage:
+  mesheryctl system check [flags]
 
-`mesheryctl system check` command has two variants to run different kinds of checks:
- - Pre-deployment
- - Post-deployment
+Flags:
+      --adapter     Check status of Meshery adapters
+  -h, --help        help for check
+      --operator    Check status of Meshery operators
+      --pre         Verify environment readiness to deploy Meshery
+      --preflight   Verify environment readiness to deploy Meshery
 
-### Pre-deployment check
+Global Flags:
+      --config string    path to config file (default "/Users/navendu/.meshery/config.yaml")
+  -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
+  -y, --yes              (optional) assume yes for user interactive prompts.
 
-In this kind of test, the `mesheryctl system check` runs the following checks to determine if a system is compatible with Meshery or not. The checks done here are:
- - Docker health checks
- - Kubernetes health checks
- - Kubernetes version health checks
+</div></div>
+</pre>
 
-To run pre-deployment checks, type the following command:
+## Deployment checks
+
+`mesheryctl system check` command can run two types of system checks. A pre-deployment check which verifies the environment to deploy Meshery and a post-deployment check which runs validation checks on a running Meshery deployment.
+
+### Pre-deployment checks
+
+Pre-deployment checks runs checks on the environment and verifies whether it is ready for deploying Meshery.
+
+The following checks are done here:
+
+ - Docker health checks: Checks for the availability of Docker and docker-compose in the user's machine
+ - Kubernetes health checks: Checks for the availability of a Kubernetes cluster and checks if Meshery can initialize a Kubernetes client
+ - Kubernetes version checks: Checks if kubectl and the Kubernetes version are higher than the minimum supported versions
+
+Pre-deployment checks are run with the `--preflight` flag as shown below:
+
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">
 mesheryctl system check --preflight
@@ -37,16 +62,17 @@ mesheryctl system check --preflight
 </div></div>
 </pre>
 
-### Post-deployment check
+### Post-deployment checks
 
-Here, the command runs several checks to determine if the system is good to deploy a service mesh over a kubernetes cluster using Meshery. The checks done here are:
- - Docker health checks
- - Kubernetes health checks
- - Kubernetes version health checks
- - Meshery version health checks
- - Meshery Adapter health checks
+Post-deployment checks are run after deploying Meshery in the user's environment. These checks ensure that the running deployment of Meshery and Meshery adapters are working as expected.
 
-To run post-deployment checks, type the following command:
+In addition to the pre-flight checks, the following checks are also run in this check:
+
+ - Meshery version checks: Checks the version of Meshery server and CLI and shows if a new version is available
+ - Meshery Adapter health checks: Checks if all the specified adapters are deployed and reachable
+
+Post-deployment checks are run as shown below:
+
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">
 mesheryctl system check
@@ -54,11 +80,25 @@ mesheryctl system check
 </div></div>
 </pre>
 
-**Note: This deployment check is a full test along with pre-deployment checks**
-
 ## Additional checks
 
-In addition to pre and post deployment checks, `mesheryctl system check` also has flags that  allow to run checks on specific components like Meshery adapters, Meshery Operator and so on. Refer [`mesheryctl system check`]({{ site.baseurl }}/reference/mesheryctl/system/check) documentation page for more details.
+To check the status of the deployed adapters only, users can leverage the `--adapter` flag as shown below:
+
+<pre class="codeblock-pre">
+<div class="codeblock"><div class="clipboardjs">
+mesheryctl system check --adapter
+
+</div></div>
+</pre>
+
+Users can also narrow down the tests to just check the status of the Meshery operator deployed on their Kubernetes cluster:
+
+<pre class="codeblock-pre">
+<div class="codeblock"><div class="clipboardjs">
+mesheryctl system check --operator
+
+</div></div>
+</pre>
 
 ## FAQ
 
