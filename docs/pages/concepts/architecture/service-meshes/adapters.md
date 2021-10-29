@@ -19,7 +19,7 @@ Meshery has adapters for managing the following service meshes.
 {% assign sorted = site.adapters | sort: "project_status" | reverse %}
 
 | Adapter Status | Service Mesh | Service Mesh Version | Port | earliest version supported |
-| :------------: | :----------- | :------------------: | :--- | :------------------------- |
+| :------------: | :----------- | :------------------: | :--: | :------------------------- |
 
 {% for adapter in sorted -%}
 {% if adapter.project_status -%}
