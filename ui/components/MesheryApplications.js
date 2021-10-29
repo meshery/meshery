@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import {  createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -50,9 +50,12 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppsIcon from "./ConnectionWizard/icons/apps";
 import { trueRandom } from "../lib/trueRandom";
 
-const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
-  tableHeader : { fontWeight : "bolder",
-    fontSize : 18, },
+const styles = (theme) => ({
+  grid : { padding : theme.spacing(2), },
+  tableHeader : {
+    fontWeight : "bolder",
+    fontSize : 18,
+  },
   muiRow : {
     '& .MuiTableRow-root' : {
       cursor : 'pointer'
@@ -213,7 +216,7 @@ function MesheryApplications({
       },
       MUIDataTableSearch : {
         searchIcon : {
-          color : "#607d8b" ,
+          color : "#607d8b",
           marginTop : "7px",
           marginRight : "8px",
         },
@@ -237,16 +240,26 @@ function MesheryApplications({
   })
 
   const ACTION_TYPES = {
-    FETCH_APPLICATIONS : { name : "FETCH_APPLICATION" ,
-      error_msg : "Failed to fetch application" },
-    UPDATE_APPLICATIONS : { name : "UPDATEAPPLICATION",
-      error_msg : "Failed to update application file" },
-    DELETE_APPLICATIONS : { name : "DELETEAPPLICATION",
-      error_msg : "Failed to delete application file" },
-    DEPLOY_APPLICATIONS : { name : "DEPLOY_APPLICATION",
-      error_msg : "Failed to deploy application file" },
-    UPLOAD_APPLICATION : { name : "UPLOAD_APPLICATION",
-      error_msg : "Failed to upload application file" },
+    FETCH_APPLICATIONS : {
+      name : "FETCH_APPLICATION",
+      error_msg : "Failed to fetch application"
+    },
+    UPDATE_APPLICATIONS : {
+      name : "UPDATEAPPLICATION",
+      error_msg : "Failed to update application file"
+    },
+    DELETE_APPLICATIONS : {
+      name : "DELETEAPPLICATION",
+      error_msg : "Failed to delete application file"
+    },
+    DEPLOY_APPLICATIONS : {
+      name : "DEPLOY_APPLICATION",
+      error_msg : "Failed to deploy application file"
+    },
+    UPLOAD_APPLICATION : {
+      name : "UPLOAD_APPLICATION",
+      error_msg : "Failed to upload application file"
+    },
   }
 
 
@@ -271,9 +284,11 @@ function MesheryApplications({
   const handleDeploy = (application_file) => {
     dataFetch(
       DEPLOY_URL,
-      { credentials : "include",
+      {
+        credentials : "include",
         method : "POST",
-        body : application_file, },() => {
+        body : application_file,
+      }, () => {
         console.log("ApplicationFile Deploy API", `/api/application/deploy`);
         // },(e) => {
         //   console.error(e)
@@ -301,7 +316,7 @@ function MesheryApplications({
         console.log("ApplicationFile API", `/api/application${query}`);
         updateProgress({ showProgress : false });
         if (result) {
-          setApplications(result.applications|| []);
+          setApplications(result.applications || []);
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
@@ -313,10 +328,11 @@ function MesheryApplications({
   }
 
   // function handleError(error) {
-  const handleError = (action) => (error) =>  {
+  const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
 
-    enqueueSnackbar(`${action.error_msg}: ${error}`, { variant : "error",
+    enqueueSnackbar(`${action.error_msg}: ${error}`, {
+      variant : "error",
       action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -324,7 +340,8 @@ function MesheryApplications({
           </IconButton>
         );
       },
-      autoHideDuration : 8000, });
+      autoHideDuration : 8000,
+    });
   }
 
   function resetSelectedRowData() {
@@ -338,8 +355,10 @@ function MesheryApplications({
     if (type === "delete") {
       dataFetch(
         `/api/application/${id}`,
-        { credentials : "include",
-          method : "DELETE", },
+        {
+          credentials : "include",
+          method : "DELETE",
+        },
         () => {
           console.log("ApplicationFile API", `/api/application/${id}`);
           updateProgress({ showProgress : false });
@@ -354,9 +373,11 @@ function MesheryApplications({
     if (type === "update") {
       dataFetch(
         `/api/application`,
-        { credentials : "include",
+        {
+          credentials : "include",
           method : "POST",
-          body : JSON.stringify({ application_data : { id, application_file : data }, save : true }), },
+          body : JSON.stringify({ application_data : { id, application_file : data }, save : true }),
+        },
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
@@ -370,7 +391,8 @@ function MesheryApplications({
     if (type === "upload" || type === "urlupload") {
       let body = { save : true }
       if (type === "upload") {
-        body = JSON.stringify({ ...body,   application_data : { application_file : data }
+        body = JSON.stringify({
+          ...body, application_data : { application_file : data }
         })
       }
       if (type === "urlupload") {
@@ -378,9 +400,11 @@ function MesheryApplications({
       }
       dataFetch(
         `/api/application`,
-        { credentials : "include",
+        {
+          credentials : "include",
           method : "POST",
-          body },
+          body
+        },
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
@@ -416,7 +440,8 @@ function MesheryApplications({
   }
 
   const columns = [
-    { name : "name",
+    {
+      name : "name",
       label : "Application Name",
       options : {
         filter : false,
@@ -431,8 +456,10 @@ function MesheryApplications({
             </TableCell>
           );
         },
-      }, },
-    { name : "created_at",
+      },
+    },
+    {
+      name : "created_at",
       label : "Upload Timestamp",
       options : {
         filter : false,
@@ -450,8 +477,10 @@ function MesheryApplications({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
-    { name : "updated_at",
+      },
+    },
+    {
+      name : "updated_at",
       label : "Update Timestamp",
       options : {
         filter : false,
@@ -469,8 +498,10 @@ function MesheryApplications({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
-    { name : "Actions",
+      },
+    },
+    {
+      name : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -487,7 +518,7 @@ function MesheryApplications({
           return (
             <>
               <Tooltip
-                title = "configure">
+                title="configure">
                 <IconButton onClick={() => setShowForm({ application : applications[tableMeta.rowIndex], show : true })}>
                   <AppsIcon />
                 </IconButton>
@@ -503,7 +534,8 @@ function MesheryApplications({
             </>
           );
         },
-      }, },
+      },
+    },
   ];
 
   columns.forEach((column, idx) => {
@@ -513,9 +545,11 @@ function MesheryApplications({
   });
 
   async function showModal(count) {
-    let response = await modalRef.current.show({ title : `Delete ${count ? count : ""} Application${count > 1 ? "s" : '' }?`,
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} application${count > 1 ? "s" : '' }?`,
-      options : ["Yes", "No"], })
+    let response = await modalRef.current.show({
+      title : `Delete ${count ? count : ""} Application${count > 1 ? "s" : ''}?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'} ${count ? count : ""} application${count > 1 ? "s" : ''}?`,
+      options : ["Yes", "No"],
+    })
     return response;
   }
 
@@ -561,7 +595,7 @@ function MesheryApplications({
     page,
     print : false,
     download : false,
-    customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
+    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
 
@@ -673,8 +707,6 @@ function PatternForm({ application, onSubmit, show }) {
     try {
       const workloads = await promisifiedDataFetch("/api/oam/workload");
       const traits = await promisifiedDataFetch("/api/oam/trait");
-
-      console.log({ workloads, traits });
 
       const workloadTraitSets = createWorkloadTraitSets(workloads, traits);
 

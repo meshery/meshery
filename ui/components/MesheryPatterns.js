@@ -1,66 +1,31 @@
 // @ts-check
-import React, { useState, useEffect, useRef, useContext } from "react";
-import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import { createTheme } from '@material-ui/core/styles';
 import {
-  NoSsr,
-  TableCell,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Divider,
-  Tooltip,
-  Grid,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  CardContent,
-  Card,
-  CardActions,
-  AppBar,
-  Toolbar,
-  TextField,
-  FormControl,
-  Select,
-  MenuItem,
-  ButtonGroup
+  Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  TableCell, Tooltip, Typography
 } from "@material-ui/core";
-import { UnControlled as CodeMirror } from "react-codemirror2";
-import DeleteIcon from "@material-ui/icons/Delete";
-import SaveIcon from '@material-ui/icons/Save';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import UploadIcon from "@material-ui/icons/Publish";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import MUIDataTable from "mui-datatables";
-import PromptComponent from "./PromptComponent";
-import Moment from "react-moment";
-import { withSnackbar } from "notistack";
+import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
-import LockIcon from '@material-ui/icons/Lock';
-import ExploreIcon from '@material-ui/icons/Explore';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import { updateProgress } from "../lib/store";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import dataFetch from "../lib/data-fetch";
-import { CircularProgress } from "@material-ui/core";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import jsYaml from "js-yaml";
 import ListAltIcon from '@material-ui/icons/ListAlt';
-import URLUploader from "./URLUploader";
-import { createPatternFromConfig,  getPatternServiceName } from "./MesheryMeshInterface/helpers";
-import LazyPatternServiceForm, { getWorkloadTraitAndType } from "./MesheryMeshInterface/LazyPatternServiceForm";
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import UploadIcon from "@material-ui/icons/Publish";
+import SaveIcon from '@material-ui/icons/Save';
+import MUIDataTable from "mui-datatables";
+import { withSnackbar } from "notistack";
+import React, { useEffect, useRef, useState } from "react";
+import { UnControlled as CodeMirror } from "react-codemirror2";
+import Moment from "react-moment";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import dataFetch from "../lib/data-fetch";
+import { updateProgress } from "../lib/store";
 import { trueRandom } from "../lib/trueRandom";
-import { SchemaContext } from "../utils/context/schemaSet"
-import { Autocomplete } from '@material-ui/lab';
-import { groupWorkloadByVersion } from "../utils/workloadFilter"
-import { AddCircle,  DirectionsCar, Filter, SimCard, SupervisedUserCircle } from "@material-ui/icons";
-import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
+import PatternForm from "./configuratorComponents/patternConfigurator";
+import PromptComponent from "./PromptComponent";
+import URLUploader from "./URLUploader";
 
 const styles = (theme) => ({
   grid : {
@@ -78,19 +43,8 @@ const styles = (theme) => ({
 });
 
 const useStyles = makeStyles((theme) => ({
-  codeMirror : {
-    '& .CodeMirror' : {
-      minHeight : "300px",
-      height : '60vh',
-    }
-  },
   backButton : {
     marginRight : theme.spacing(2),
-  },
-  appBar : {
-    marginBottom : "16px",
-    backgroundColor : "#fff",
-    borderRadius : "8px"
   },
   yamlDialogTitle : {
     display : "flex",
@@ -106,27 +60,12 @@ const useStyles = makeStyles((theme) => ({
       height : '100%',
     }
   },
-  formCtrl : {
-    width : "90px",
-    minWidth : "90px",
-    maxWidth : "90px",
-    marginRight : 8,
-  },
   autoComplete : {
     width : "120px",
     minWidth : "120px",
     maxWidth : 150,
     marginRight : "auto"
   },
-  btngroup : {
-    marginLeft : "auto"
-  },
-  // meshSelector: {
-  //   flexGrow: 1
-  // },
-  // toolbar: {
-  //   display: "flex"
-  // }
 }))
 
 function CustomToolbar(onClick, urlOnClick) {
@@ -716,424 +655,3 @@ const mapStateToProps = (state) => {
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPatterns)));
-
-
-
-// --------------------------------------------------------------------------------------------------
-// -------------------------------------------- PATTERNS FORM ---------------------------------------
-// --------------------------------------------------------------------------------------------------
-
-
-
-function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
-  const { workloadTraitSet, meshWorkloads } = useContext(SchemaContext);
-  const [workloadTraitsSet, setWorkloadTraitsSet] = useState(workloadTraitSet);
-  const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
-  const [yaml, setYaml] = useState(pattern.pattern_file);
-  const classes = useStyles();
-  const reference = useRef({});
-  const [selectedMeshType, setSelectedMeshType] = useState("core")
-  const [selectedVersionMesh, setSelectedVersionMesh] = useState()
-  const [selectedVersion, setSelectedVersion] = useState("")
-  const [activeForm, setActiveForm] = useState()
-
-  useEffect(() => {
-    if (workloadTraitSet != workloadTraitsSet) {
-      setWorkloadTraitsSet(workloadTraitSet)
-    }
-  }, [workloadTraitSet]);
-
-  useEffect(() => {
-    const meshVersionsWithDetails = groupWlByVersion()
-    setSelectedVersionMesh(meshVersionsWithDetails)
-  }, [selectedMeshType])
-
-  useEffect(() => {
-    if (selectedVersionMesh) {
-      setSelectedVersion(Object.keys(selectedVersionMesh).sort().reverse()[0])
-    }
-  }, [selectedVersionMesh])
-
-
-  function groupWlByVersion() {
-    const mfw = meshWorkloads[selectedMeshType];
-    return mfw ? groupWorkloadByVersion(mfw) : {};
-  }
-
-
-  function getPatternJson() {
-    const patternString = pattern.pattern_file;
-    // @ts-ignore
-    return jsYaml.load(patternString).services;
-  }
-
-  function getPatternKey(cfg) {
-    return Object.keys(cfg?.services)?.[0] || undefined;
-  }
-
-  const handleSubmit = (cfg, patternName) => {
-    console.log("submitted", { cfg, patternName })
-    const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
-    if (key) setDeployServiceConfig({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
-  }
-
-  const handleSettingsChange = (schemaSet) => () => {
-    const config = createPatternFromConfig({
-      [getPatternServiceName(schemaSet)] : {
-        // @ts-ignore
-        settings : reference.current?.getSettings(),
-        // @ts-ignore
-        traits : reference.current?.getTraits()
-      }
-    }, "default", true);
-
-    handleChangeData(config, "");
-  }
-
-  const handleChangeData = (cfg, patternName) => {
-    console.log("Ran Changed", { cfg, patternName })
-    const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-    if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-  }
-
-  const handleDelete = (cfg, patternName) => {
-    console.log("deleted", cfg);
-    const newCfg = workloadTraitsSet?.filter(schema => schema.workload.title !== patternName)
-    setWorkloadTraitsSet(newCfg);
-  }
-
-  const handleDeploy = (cfg) => {
-    const deployConfig = {};
-    deployConfig.name = pattern.name;
-    deployConfig.services = cfg;
-    const deployConfigYaml = jsYaml.dump(deployConfig);
-    setYaml(deployConfigYaml);
-  }
-
-  function handleSubmitFinalPattern(yaml, id, name, action) {
-    onSubmit(yaml, id, name, action);
-    setSelectedPattern(resetSelectedPattern()); // Remove selected pattern
-  }
-
-  const ns = "default";
-
-  function saveCodeEditorChanges(data) {
-    setYaml(data.valueOf().getValue())
-  }
-
-  function insertPattern(workload) {
-    const attrName = getPatternServiceName(workload);
-    var returnValue = {}
-    Object.keys(deployServiceConfig).find(key => {
-      if (deployServiceConfig[key]['type'] === attrName) {
-        returnValue = deployServiceConfig[key]
-        return true
-      }
-    })
-
-    return returnValue;
-  }
-
-  function getMeshOptions() {
-    return meshWorkloads ? Object.keys(meshWorkloads) : []
-  }
-
-  function getMeshProps(name) {
-    switch (name) {
-      case "istio": return { name, img : "/static/img/istio.svg" }
-      case "linkerd": return { name, img : "/static/img/linkerd.svg" }
-      case "nginx": return { name, img : "/static/img/nginx.svg" }
-      case "smi": return { name, img : "/static/img/smi.png" }
-      case "citrix": return { name, img : "/static/img/citrix_service_mesh.svg" }
-      case "core": return { name, img : "/static/img/kubernetes.svg" }
-      default: return {}
-    }
-  }
-
-  function handleMeshSelection(event) {
-    setSelectedMeshType(event.target.value);
-  }
-
-  function handleVersionChange(_, value) {
-    setSelectedVersion(value)
-  }
-
-  async function getPatternProps(schema) {
-    const refinedSchema = await getWorkloadTraitAndType(schema)
-    setActiveForm(refinedSchema)
-  }
-
-  console.log({ selectedVersionMesh })
-
-  if (!workloadTraitsSet) return <CircularProgress />
-
-  return (
-    <>
-      <AppBar position="static" className={classes.appBar} elevation={0}>
-        <Toolbar className={classes.toolbar}>
-          <FormControl className={classes.formCtrl}>
-            <Select
-              labelId="service-mesh-selector"
-              id="service-mesh-selector"
-              value={selectedMeshType}
-              onChange={handleMeshSelection}
-              disableUnderline
-            >
-              {getMeshOptions().map(item => {
-                const details = getMeshProps(item)
-                return (<MenuItem value={details.name}>
-                  <li>
-                    <img src={details.img} height="32px" />
-                  </li>
-                </MenuItem>)
-              })}
-            </Select>
-
-
-          </FormControl>
-          {
-            selectedVersion &&
-            <Autocomplete
-              options={Object.keys(selectedVersionMesh).sort().reverse()}
-              renderInput={(params) => <TextField {...params} variant="outlined" label="Version" />}
-              value={selectedVersion}
-              onChange={handleVersionChange}
-              className={classes.autoComplete}
-              disableClearable
-            />
-          }
-          {/* <Autocomplete
-            id="service-meshes-versions"
-            limitTags={2}
-            options={meshOptions}
-            getOptionLabel={option => option.title}
-            disableClearable
-            renderInput={(params) => <TextField {...params} variant="outlined" label="Custom filter" />}
-            renderOption={(option) => {
-              return (
-                <li>
-                  <img src={option.img} height="50px" />
-                </li>
-              )
-            }}
-            renderTags={(option) => {
-              return (
-                <li>
-                  <img src={option.img} height="50px" />
-                </li>
-              )
-            }}
-          /> */}
-          {/* <IconButton edge="start" className={classes.backButton} color="inherit" onClick={() => setSelectedPattern(resetSelectedPattern())}>
-            <ArrowBackIcon />
-          </IconButton> */}
-          <ButtonGroup
-            disableFocusRipple
-            disableElevation
-            className={classes.btngroup}
-          >
-            {selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
-              ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
-              .map((s) => {
-                const name = s?.workload?.oam_definition?.spec?.metadata?.k8sKind
-                return nameToIcon(name, () => getPatternProps(s))
-              })
-            }
-            <Divider
-              orientation="vertical"
-            />
-          </ButtonGroup>
-          <Tooltip title="Save Pattern as New File">
-            <IconButton
-              aria-label="Save"
-              color="primary"
-              onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, "upload")}
-            >
-              <FileCopyIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Update Pattern">
-            <IconButton
-              aria-label="Update"
-              color="primary"
-              onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "update")}
-            >
-              <SaveIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete Pattern">
-            <IconButton
-              aria-label="Delete"
-              color="secondary"
-              onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="List View">
-            <IconButton color="primary" onClick={() => setActiveForm(null)}>
-              <ListAltIcon />
-            </IconButton>
-          </Tooltip>
-          {/* <Typography variant="h6">
-            Edit Pattern Configuration of <i>{`${pattern.name}`}</i>
-          </Typography> */}
-        </Toolbar>
-      </AppBar>
-      <Grid container spacing={3}>
-        {
-          activeForm
-            ? (
-              <Grid item xs={12} md={6}>
-                <PatternServiceForm
-                  schemaSet={activeForm}
-                  jsonSchema={activeForm.workload}
-                  formData={insertPattern(activeForm.workload)}
-                  onSettingsChange={handleSettingsChange(activeForm.workload)}
-                  onSubmit={(val) => handleSubmit(val, pattern.name)}
-                  onDelete={(val) => handleDelete(val, pattern.name)}
-                  namespace={ns}
-                  reference={reference}
-                />
-              </Grid>
-            ) : (
-              <Grid item xs={12} md={6}>
-                {selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
-                  ?.filter((s) => s.type !== "addon")
-                  .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
-                  .map((s, i) => (
-                    <div style={{ marginBottom : "0.5rem" }} key={`svc-form-${i}`} >
-                      {
-                        console.log("pa:", i, s)
-                      }
-                      <LazyPatternServiceForm
-                        schemaSet={s}
-                        formData={insertPattern(s.workload)}
-                        onSettingsChange={handleSettingsChange(s.workload)}
-                        onSubmit={(val) => handleSubmit(val, pattern.name)}
-                        onDelete={(val) => handleDelete(val, pattern.name)}
-                        namespace={ns}
-                        reference={reference}
-                      />
-                    </div>))}
-                <Accordion style={{ width : '100%' }}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6">
-                      Configure Addons
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
-                      ?.filter((s) => s.type === "addon")
-                      .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
-                      .map((s, i) => (
-                        <Grid item key={`svc-form-addons-${i}`}>
-                          <LazyPatternServiceForm
-                            formData={deployServiceConfig[s.workload?.title]}
-                            onSettingsChange={handleSettingsChange(s.workload)}
-                            schemaSet={s}
-                            onSubmit={handleSubmit}
-                            onDelete={handleDelete}
-                            namespace={ns}
-                            reference={reference}
-                          />
-                        </Grid>
-                      ))}
-                  </AccordionDetails>
-                </Accordion>
-              </Grid>)
-        }
-        <Grid item xs={12} md={6} >
-          <CodeEditor yaml={yaml} pattern={pattern} handleSubmitFinalPattern={handleSubmitFinalPattern} saveCodeEditorChanges={saveCodeEditorChanges} />
-        </Grid>
-      </Grid>
-    </>
-  );
-}
-
-function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pattern }) {
-  const cardStyle = { position : "sticky", minWidth : "100%" };
-
-  const classes = useStyles();
-
-  return (
-    <div>
-      <Card
-        // @ts-ignore
-        style={cardStyle}>
-        <CardContent >
-          <CodeMirror
-            value={yaml}
-            className={classes.codeMirror}
-            options={{
-              theme : "material",
-              lineNumbers : true,
-              lineWrapping : true,
-              gutters : ["CodeMirror-lint-markers"],
-              mode : "text/x-yaml",
-            }}
-            onBlur={(a) => saveCodeEditorChanges(a)}
-          />
-          <CardActions style={{ justifyContent : "flex-end", marginBottom : '0px' }}>
-            <Tooltip title="Save Pattern as New File">
-              <IconButton
-                aria-label="Save"
-                color="primary"
-                onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, "upload")}
-              >
-                <FileCopyIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Update Pattern">
-              <IconButton
-                aria-label="Update"
-                color="primary"
-                onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "update")}
-              >
-                <SaveIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete Pattern">
-              <IconButton
-                aria-label="Delete"
-                color="secondary"
-                onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-          </CardActions>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
-
-function nameToIcon(name, action) {
-  console.log("name: ", name)
-  function CustomIcon({ Icon }) {
-    return (
-      <Tooltip
-        title={name}>
-        <IconButton onClick={action}>
-          <Icon />
-        </IconButton>
-      </Tooltip>
-    )
-  }
-
-  switch (name) {
-    case "AuthorizationPolicy": return <CustomIcon Icon={LockIcon} />
-    case "DestinationRule": return <CustomIcon Icon={ExploreIcon} />
-    case "EnvoyFilter": return <CustomIcon Icon={Filter} />
-    case "Gateway": return <CustomIcon Icon={ListAltIcon} />
-    case "PeerAuthentication": return <CustomIcon Icon={FileCopyIcon} />
-    case "Sidecar": return <CustomIcon Icon={DirectionsCar} />
-    case "VirtualService": return <CustomIcon Icon={SupervisedUserCircle} />
-    case "WorkloadEntry": return <CustomIcon Icon={SimCard} />
-    default: return <CustomIcon Icon={AddCircle} />
-  }
-}
