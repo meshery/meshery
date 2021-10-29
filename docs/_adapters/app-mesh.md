@@ -9,6 +9,7 @@ project_status: beta
 github_link: https://github.com/meshery/meshery-app-mesh
 image: /assets/img/service-meshes/app-mesh.svg
 permalink: service-meshes/adapters/app-mesh
+earliest_version: v1.4.1
 ---
 
 {% include adapter-status.html %}

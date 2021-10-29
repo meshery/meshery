@@ -12,14 +12,16 @@ github_link: https://github.com/meshery/meshery-consul
 image: /assets/img/service-meshes/consul.svg
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul
+earliest_version: v1.8.4
 ---
+
 {% include adapter-status.html %}
 
 {% include adapter-labs.html %}
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. 
+The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh.
 
 ### Install {{ page.mesh_name }}
 
@@ -42,7 +44,7 @@ A number of [sample applications](#sample-applications) for {{page.mesh_name}} c
 1. Lifecycle management of {{page.mesh_name}}
 1. Lifecycle management of sample applications
 1. Performance management of {{page.mesh_name}} and it workloads
-    - Prometheus and Grafana integration
+   - Prometheus and Grafana integration
 1. Configuration management and best practices of {{page.mesh_name}}
 1. Custom service mesh configuration
 
@@ -51,11 +53,11 @@ A number of [sample applications](#sample-applications) for {{page.mesh_name}} c
 Meshery supports the deployment of a variety of sample applications on {{ page.name }}. Use Meshery to deploy any of these sample applications.
 
 - [httpbin]({{site.baseurl}}/guides/sample-apps#httpbin)
-    - Httpbin is a simple HTTP request and response service.
-- [Bookinfo]({{site.baseurl}}/guides/sample-apps#bookinfo) 
-    - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+  - Httpbin is a simple HTTP request and response service.
+- [Bookinfo]({{site.baseurl}}/guides/sample-apps#bookinfo)
+  - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 - [Image Hub]({{site.baseurl}}/guides/sample-apps#imagehub)
-    - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
+  - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 [![Layer5 Image Hub on HashiCorp Consul]({{ site.baseurl }}/service-meshes/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)]({{ site.baseurl }}/service-meshes/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)
 
