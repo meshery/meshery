@@ -1,13 +1,3 @@
-import {
-  IconButton, Tooltip
-} from "@material-ui/core";
-import { AddCircle, DirectionsCar, Filter, SimCard, SupervisedUserCircle } from "@material-ui/icons";
-import ExploreIcon from '@material-ui/icons/Explore';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import LockIcon from '@material-ui/icons/Lock';
-import React from "react";
-
 export const podNameMapper = (serviceMeshName, podName) => {
   switch (serviceMeshName) {
     case "istio":
@@ -49,44 +39,19 @@ export const podNameMapper = (serviceMeshName, podName) => {
 
 export const versionMapper = (versionName) => (versionName.charAt(0) === "v" ? versionName : `v${versionName}`);
 
-export function nameToIcon(name, action) {
-  console.log("name: ", name)
-  function CustomIcon({ Icon }) {
-    return (
-      <Tooltip
-        title={name}>
-        <IconButton onClick={action}>
-          <Icon />
-        </IconButton>
-      </Tooltip>
-    )
-  }
-
-  switch (name) {
-    case "AuthorizationPolicy": return <CustomIcon Icon={LockIcon} />
-    case "DestinationRule": return <CustomIcon Icon={ExploreIcon} />
-    case "EnvoyFilter": return <CustomIcon Icon={Filter} />
-    case "Gateway": return <CustomIcon Icon={ListAltIcon} />
-    case "PeerAuthentication": return <CustomIcon Icon={FileCopyIcon} />
-    case "Sidecar": return <CustomIcon Icon={DirectionsCar} />
-    case "VirtualService": return <CustomIcon Icon={SupervisedUserCircle} />
-    case "WorkloadEntry": return <CustomIcon Icon={SimCard} />
-    default: return <CustomIcon Icon={AddCircle} />
-  }
-}
 
 export function getMeshProperties(name) {
   switch (name) {
-    case "istio": return { name, img : "/static/img/istio.svg", color: "#466BB0"  }
-    case "linkerd": return { name, img : "/static/img/linkerd.svg", color: "#2beda7" }
-    case "kuma": return {name, img: "/static/img/kuma.svg", color: "#291953"}
-    case "nginx_service_mesh": return { name, img : "/static/img/nginx.svg", color: "#009639" }
-    case "open_service_mesh": return { name, img : "/static/img/openservicemesh.svg", color: "#6ED3B9" }
-    case "citrix": return { name, img : "/static/img/citrix_service_mesh.svg", color: "#466BB0" }
-    case "traefik_mesh": return {name, img: "/static/img/traefik_mesh.svg", color: "#9D0FB0"}
-    case "consul": return {name, img: "/static/img/consul.svg", color: "#D62783"}
-    case "consul": return {name, img: "/static/img/app_mesh.svg", color: "#F49322"}
-    case "core": return { name, img : "/static/img/kubernetes.svg", color: "#00B39F" }
+    case "istio": return { name, img : "/static/img/istio.svg", color : "#466BB0" }
+    case "linkerd": return { name, img : "/static/img/linkerd.svg", color : "#2beda7" }
+    case "kuma": return { name, img : "/static/img/kuma.svg", color : "#291953" }
+    case "nginx_service_mesh": return { name, img : "/static/img/nginx.svg", color : "#009639" }
+    case "open_service_mesh": return { name, img : "/static/img/openservicemesh.svg", color : "#6ED3B9" }
+    case "citrix": return { name, img : "/static/img/citrix_service_mesh.svg", color : "#466BB0" }
+    case "traefik_mesh": return { name, img : "/static/img/traefik_mesh.svg", color : "#9D0FB0" }
+    case "consul": return { name, img : "/static/img/consul.svg", color : "#D62783" }
+    case "app_mesh": return { name, img : "/static/img/app_mesh.svg", color : "#F49322" }
+    case "core": return { name, img : "/static/img/kubernetes.svg", color : "#00B39F" }
     default: return {}
   }
 }

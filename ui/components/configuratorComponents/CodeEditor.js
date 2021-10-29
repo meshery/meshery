@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-export default function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pattern }) {
+export default function CodeEditor({ yaml, saveCodeEditorChanges }) {
   const classes = useStyles();
 
   return (

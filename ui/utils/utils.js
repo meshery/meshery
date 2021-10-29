@@ -6,9 +6,10 @@
  * @returns {Boolean} if obj is empty
  */
 export function isEmptyObj(obj) {
-  return obj
-    && Object.keys(obj).length === 0
-    && Object.getPrototypeOf(obj) === Object.prototype
+  return !obj
+    || obj
+      && Object.keys(obj).length === 0
+      && Object.getPrototypeOf(obj) === Object.prototype
 }
 
 /**

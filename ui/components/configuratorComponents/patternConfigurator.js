@@ -12,62 +12,63 @@ import jsYaml from "js-yaml";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { trueRandom } from "../../lib/trueRandom";
 import { SchemaContext } from "../../utils/context/schemaSet";
-import { nameToIcon, getMeshProperties } from "../../utils/nameMapper";
+import { getMeshProperties } from "../../utils/nameMapper";
 import { groupWorkloadByVersion } from "../../utils/workloadFilter";
 import { createPatternFromConfig, getPatternServiceName } from "../MesheryMeshInterface/helpers";
 import LazyPatternServiceForm, { getWorkloadTraitAndType } from "../MesheryMeshInterface/LazyPatternServiceForm";
 import PatternServiceForm from "../MesheryMeshInterface/PatternServiceForm";
 import CodeEditor from "./CodeEditor";
+import NameToIcon from "./NameToIcon";
 
 const useStyles = makeStyles((theme) => ({
-  backButton: {
-    marginRight: theme.spacing(2),
+  backButton : {
+    marginRight : theme.spacing(2),
   },
-  appBar: {
-    marginBottom: "16px",
-    backgroundColor: "#fff",
-    borderRadius: "8px"
+  appBar : {
+    marginBottom : "16px",
+    backgroundColor : "#fff",
+    borderRadius : "8px"
   },
-  yamlDialogTitle: {
-    display: "flex",
-    alignItems: "center"
+  yamlDialogTitle : {
+    display : "flex",
+    alignItems : "center"
   },
-  yamlDialogTitleText: {
-    flexGrow: 1
+  yamlDialogTitleText : {
+    flexGrow : 1
   },
-  fullScreenCodeMirror: {
-    height: '100%',
-    '& .CodeMirror': {
-      minHeight: "300px",
-      height: '100%',
+  fullScreenCodeMirror : {
+    height : '100%',
+    '& .CodeMirror' : {
+      minHeight : "300px",
+      height : '100%',
     }
   },
-  formCtrl: {
-    width: "90px",
-    minWidth: "90px",
-    maxWidth: "90px",
-    marginRight: 8,
+  formCtrl : {
+    width : "90px",
+    minWidth : "90px",
+    maxWidth : "90px",
+    marginRight : 8,
   },
-  autoComplete: {
-    width: "120px",
-    minWidth: "120px",
-    maxWidth: 150,
-    marginRight: "auto"
+  autoComplete : {
+    width : "120px",
+    minWidth : "120px",
+    maxWidth : 150,
+    marginRight : "auto"
   },
-  btngroup: {
-    marginLeft: "auto",
-    overflowX: "auto",
-    overflowY: "hidden"
+  btngroup : {
+    marginLeft : "auto",
+    overflowX : "auto",
+    overflowY : "hidden"
   },
-  paper: {
-    backgroundColor: "#fcfcfc",
-    padding: 12,
-    height: "100%",
+  paper : {
+    backgroundColor : "#fcfcfc",
+    padding : 8,
+    height : "100%",
   },
 }))
 
 
-function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
+function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const { workloadTraitSet, meshWorkloads } = useContext(SchemaContext);
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState(workloadTraitSet);
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
@@ -88,11 +89,12 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
   useEffect(() => {
     // core is not versioned
     if (selectedMeshType == "core") {
-      console.log({ meshWorkloads })
+      setSelectedVersionMesh(null)
     } else {
       const meshVersionsWithDetails = groupWlByVersion()
       setSelectedVersionMesh(meshVersionsWithDetails)
     }
+    setActiveForm(null)
   }, [selectedMeshType])
 
   useEffect(() => {
@@ -121,17 +123,17 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
   const handleSubmit = (cfg, patternName) => {
     console.log("submitted", { cfg, patternName })
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [key]: cfg?.services?.[key] });
-    if (key) setDeployServiceConfig({ ...deployServiceConfig, [key]: cfg?.services?.[key] });
+    handleDeploy({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
+    if (key) setDeployServiceConfig({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
   }
 
   const handleSettingsChange = (schemaSet) => () => {
     const config = createPatternFromConfig({
-      [getPatternServiceName(schemaSet)]: {
+      [getPatternServiceName(schemaSet)] : {
         // @ts-ignore
-        settings: reference.current?.getSettings(),
+        settings : reference.current?.getSettings(),
         // @ts-ignore
-        traits: reference.current?.getTraits()
+        traits : reference.current?.getTraits()
       }
     }, "default", true);
 
@@ -139,11 +141,11 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
   }
 
   const handleChangeData = (cfg, patternName) => {
-    console.log("Ran Changed", { cfg, patternName })
+    console.log(patternName)
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
     if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
   }
 
   const handleDelete = (cfg, patternName) => {
@@ -196,14 +198,14 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
     setSelectedVersion(value)
   }
 
+  function getTooltipTitleForIcons(schema) {
+    return schema?.workload?.metadata?.["display.ui.meshery.io/name"] || schema?.workload?.oam_definition?.spec?.metadata?.k8sKind || "N/A"
+  }
+
   async function getPatternProps(schema) {
     const refinedSchema = await getWorkloadTraitAndType(schema)
     setActiveForm(refinedSchema)
   }
-
-  console.log({ selectedVersionMesh })
-  console.log({ selectedMeshType })
-  console.log({ selectedVersionMesh })
 
   if (!workloadTraitsSet) return <CircularProgress />
 
@@ -230,7 +232,7 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
             </Select>
           </FormControl>
           {
-            selectedVersion &&
+            selectedVersion && selectedVersionMesh &&
             <Autocomplete
               options={Object.keys(selectedVersionMesh).sort().reverse()}
               renderInput={(params) => <TextField {...params} variant="outlined" label="Version" />}
@@ -245,11 +247,24 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
             disableElevation
             className={classes.btngroup}
           >
+            {
+              selectedMeshType === "core" &&
+              meshWorkloads["core"]
+                ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
+                .map((s) => {
+                  const name = getTooltipTitleForIcons(s)
+                  return name === activeForm?.workload?.title
+                    ? <NameToIcon name={name} action={() => getPatternProps(s)} color={getMeshProperties(selectedMeshType).color} />
+                    : <NameToIcon name={name} action={() => getPatternProps(s)} />
+                })
+            }
             {selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
               ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
               .map((s) => {
-                const name = s?.workload?.oam_definition?.spec?.metadata?.k8sKind
-                return nameToIcon(name, () => getPatternProps(s))
+                const name = getTooltipTitleForIcons(s)
+                return name === activeForm?.workload["object-type"]
+                  ? <NameToIcon name={name} action={() => getPatternProps(s)} color={getMeshProperties(selectedMeshType).color} />
+                  : <NameToIcon name={name} action={() => getPatternProps(s)} />
               })
             }
             <Divider
@@ -289,16 +304,17 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
             </IconButton>
           </Tooltip>
           {/* <Typography variant="h6">
-            Edit Pattern Configuration of <i>{`${pattern.name}`}</i>
-          </Typography> */}
+        Edit Pattern Configuration of <i>{`${pattern.name}`}</i>
+      </Typography> */}
         </Toolbar>
       </AppBar>
       <Grid container spacing={3}>
         {
+          // active Form is used to show a only one RJSF form on the screen
           activeForm
             ? (
               <Grid item xs={12} md={6}>
-                <Paper className={classes.paper} >
+                <Paper className={classes.paper} elevation={0}>
                   <PatternServiceForm
                     schemaSet={activeForm}
                     jsonSchema={activeForm.workload}
@@ -308,6 +324,8 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
                     onDelete={(val) => handleDelete(val, pattern.name)}
                     namespace={ns}
                     reference={reference}
+                    renderAsTooltip
+                    appBarColor={getMeshProperties(selectedMeshType).color}
                   />
                 </Paper>
               </Grid>
@@ -319,7 +337,7 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
                     ?.filter((s) => s.type !== "addon")
                     .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
                     .map((s, i) => (
-                      <div style={{ marginBottom: "0.5rem" }} key={`svc-form-${i}`} >
+                      <div style={{ marginBottom : "0.5rem" }} key={`svc-form-${i}`} >
                         <LazyPatternServiceForm
                           schemaSet={s}
                           formData={insertPattern(s.workload)}
@@ -337,7 +355,7 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
                   ?.filter((s) => s.type !== "addon")
                   .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
                   .map((s, i) => (
-                    <div style={{ marginBottom: "0.5rem" }} key={`svc-form-${i}`} >
+                    <div style={{ marginBottom : "0.5rem" }} key={`svc-form-${i}`} >
                       <LazyPatternServiceForm
                         schemaSet={s}
                         formData={insertPattern(s.workload)}
@@ -350,7 +368,7 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
                         appBarColor={getMeshProperties(selectedMeshType).color}
                       />
                     </div>))}
-                <Accordion elevation={0} style={{ width: '100%' }}>
+                <Accordion elevation={0} style={{ width : '100%' }}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography variant="h6">
                       Configure Addons
@@ -378,11 +396,24 @@ function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
               </Grid>)
         }
         <Grid item xs={12} md={6} >
-          {/* <CodeEditor yaml={yaml} pattern={pattern} handleSubmitFinalPattern={handleSubmitFinalPattern} saveCodeEditorChanges={saveCodeEditorChanges} /> */}
+          <CodeEditor yaml={yaml} pattern={pattern} handleSubmitFinalPattern={handleSubmitFinalPattern} saveCodeEditorChanges={saveCodeEditorChanges} />
         </Grid>
       </Grid>
     </>
   );
+
+
+  /*
+    FUNCTIONAL COMPONENTS IN PATTERNS CONFIGURATOR PAGE
+  */
+
+  // The toolbar component on Patterns configurator Page
+  // function ToolbarComponent() {
+  //   return (
+
+  //   )
+  // }
+
 }
 
 export default PatternForm
