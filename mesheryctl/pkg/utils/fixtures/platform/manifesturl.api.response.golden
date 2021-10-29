@@ -11621,7 +11621,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/8a1cf92391860eebc4381e74bb5e76b9f0557588"
 },
 {
-"path": "ui/components/ExtensionSandbox.js",
+"path": "ui/components/ExtensionPoint.js",
 "mode": "100644",
 "type": "blob",
 "sha": "20b30686441ff242b08f8fb3b3ee09b3393908be",

@@ -26,7 +26,7 @@ import Tab from '@material-ui/core/Tab';
 import { Paper, Tooltip } from '@material-ui/core';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SettingsCellIcon from '@material-ui/icons/SettingsCell';
-import ExtensionSandbox from "./ExtensionSandbox";
+import ExtensionPoint from "./ExtensionPoint";
 import RemoteUserPref from "./RemoteUserPref";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -325,7 +325,7 @@ class UserPreference extends React.Component {
           }
           {tabVal == 2 && userPrefs && providerType != 'local' &&
             <div>
-              <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
+              <ExtensionPoint type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
               <div className={classes.formContainer}>
                 <TableContainer>
                   <Table aria-label="simple table">

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import Extension from "../../components/NavigatorExtension";
-import ExtensionSandbox, { getCapabilities, getComponentTitleFromPathForNavigator } from "../../components/ExtensionSandbox";
+import ExtensionPoint, { getCapabilities, getComponentTitleFromPathForNavigator } from "../../components/ExtensionPoint";
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
@@ -67,7 +67,7 @@ class Settings extends React.Component {
             : ""}</title>
         </Head>
         <NoSsr>
-          <ExtensionSandbox type="navigator" Extension={Extension} />
+          <ExtensionPoint type="navigator" Extension={Extension} />
         </NoSsr>
       </NoSsr>
     );

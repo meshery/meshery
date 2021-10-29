@@ -119,7 +119,7 @@ function createPathForRemoteComponent(componentName) {
 }
 
 /**
- * ExtensionSandbox takes in an extension and it's type and will handle the internal mapping
+ * ExtensionPoint takes in an extension and it's type and will handle the internal mapping
  * for the uris and components by querying the meshery server for providers capabilities
  *
  * Only two "types" are supported by the sandbox:
@@ -127,7 +127,7 @@ function createPathForRemoteComponent(componentName) {
  *  2. user_prefs - for user preference extension
  * @param {{ type: "navigator" | "user_prefs", Extension: JSX.Element }} props
  */
-function ExtensionSandbox({ type, Extension }) {
+function ExtensionPoint({ type, Extension }) {
   const [extensions, setExtensions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -163,4 +163,4 @@ function ExtensionSandbox({ type, Extension }) {
   return null
 }
 
-export default ExtensionSandbox;
+export default ExtensionPoint;
