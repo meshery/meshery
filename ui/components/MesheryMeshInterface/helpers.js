@@ -97,6 +97,7 @@ export async function createWorkloadTraitSets(adapter) {
 /**
  * getPatternServiceName takes in the pattern service metadata and returns
  * the name of the service
+ *
  * @param {*} item pattern service component
  * @param {boolean} includeDisplayName if set to true, display name is checked first
  * @returns {string} service name

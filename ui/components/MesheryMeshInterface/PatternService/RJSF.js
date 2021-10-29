@@ -13,65 +13,65 @@ import CustomObjectFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplat
 const Form = withTheme(MaterialUITheme);
 
 const muiTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#607d8b',
+  palette : {
+    primary : {
+      main : '#607d8b',
     },
   },
-  typography: {
-    fontSize: 13,
+  typography : {
+    fontSize : 13,
   },
-  props: {
-    MuiTextField: {
-      variant: 'outlined',
-      margin: 'dense',
+  props : {
+    MuiTextField : {
+      variant : 'outlined',
+      margin : 'dense',
     },
   },
-  overrides: {
-    MuiButton: {
-      textSecondary: {
-        color: '#00b39f',
-        "&:hover": "00b39f"
+  overrides : {
+    MuiButton : {
+      textSecondary : {
+        color : '#00b39f',
+        "&:hover" : "00b39f"
       }
     },
-    MuiBox: {
-      root: {
-        marginTop: 0
+    MuiBox : {
+      root : {
+        marginTop : 0
       }
     },
-    MuiDivider: {
-      root: {
-        height: '0.5px'
+    MuiDivider : {
+      root : {
+        height : '0.5px'
       }
     },
-    MuiFormLabel: {
-      root: {
-        color: "#333",
-        fontSize: '0.8rem',
-        textTransform: 'capitalize',
+    MuiFormLabel : {
+      root : {
+        color : "#333",
+        fontSize : '0.8rem',
+        textTransform : 'capitalize',
       }
     },
-    MuiTypography: {
-      body1: {
-        fontSize: '0.8rem'
+    MuiTypography : {
+      body1 : {
+        fontSize : '0.8rem'
       },
-      h5: {
-        textTransform: 'capitalize',
-        fontSize: '1.2rem',
+      h5 : {
+        textTransform : 'capitalize',
+        fontSize : '1.2rem',
       }
     },
-    MuiGrid: {
-      root: {
-        "& > *": {
-          border: 'none !important'
+    MuiGrid : {
+      root : {
+        "& > *" : {
+          border : 'none !important'
         },
-        marginTop: '0.2rem !important',
+        marginTop : '0.2rem !important',
       },
-      'spacing-xs-2': {
-        padding: 0,
-        '& > *': {
-          paddingTop: '0 !important',
-          paddingBottom: '0 !important'
+      'spacing-xs-2' : {
+        padding : 0,
+        '& > *' : {
+          paddingTop : '0 !important',
+          paddingBottom : '0 !important'
         }
 
       }
@@ -80,11 +80,11 @@ const muiTheme = createTheme({
 });
 
 function deleteTitleFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, title: "" };
+  return { ...jsonSchema, title : "" };
 }
 
 function deleteDescriptionFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, description: "" };
+  return { ...jsonSchema, description : "" };
 }
 
 function formatString(text) {
@@ -128,8 +128,8 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
         }
         newProperties[key] = {
           ...newProperties[key],
-          title: camelCaseToCapitalize(formatString(key)),
-          default: defaultValue
+          title : camelCaseToCapitalize(formatString(key)),
+          default : defaultValue
         }
         // if (typeof newProperties[key] === 'object' && Object.prototype.hasOwnProperty.call(newProperties[key], 'properties')){
         //   newProperties[key] = {
@@ -141,7 +141,7 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
 
     })
 
-    return { ...jsonSchema, properties: newProperties };
+    return { ...jsonSchema, properties : newProperties };
   }
   return undefined
 }
@@ -151,16 +151,16 @@ const CustomInputField = (props) => {
   const prettifiedName = camelCaseToCapitalize(formatString(name)) || 'Input'
   return (
     <div key={props.id}>
-      <Typography variant="body1" style={{ fontWeight: "bold" }}>{prettifiedName}
+      <Typography variant="body1" style={{ fontWeight : "bold" }}>{prettifiedName}
         {props.schema?.description && (
           <Tooltip title={props.schema?.description}>
             <IconButton component="span" size="small">
-              <HelpOutlineIcon style={{ fontSize: 17 }} />
+              <HelpOutlineIcon style={{ fontSize : 17 }} />
             </IconButton>
           </Tooltip>
         )}
       </Typography>
-      <TextField variant="outlined" size="small" style={{ margin: '10px 0 ' }} autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`} />
+      <TextField variant="outlined" size="small" style={{ margin : '10px 0 ' }} autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`} />
     </div>
   )
 }
@@ -169,7 +169,7 @@ const MemoizedCustomInputField = React.memo(CustomInputField)
 
 function RJSFButton({ handler, text, ...restParams }) {
   return (
-    <Button variant="contained" color="primary" style={{ marginRight: "0.5rem" }} onClick={handler} {...restParams}>
+    <Button variant="contained" color="primary" style={{ marginRight : "0.5rem" }} onClick={handler} {...restParams}>
       {text}
     </Button>
   );
@@ -185,8 +185,8 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
     Object.keys(jsonSchema.properties).map(key => {
       uiJsonSchema = {
         ...uiJsonSchema,
-        [key]: {
-          'ui:description': ' '
+        [key] : {
+          'ui:description' : ' '
         },
       }
     })
@@ -194,10 +194,10 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
     setUiSchema({
       // hide all descriptions from fields
       ...uiJsonSchema,
-      replicas: {
-        "ui:widget": "range"
+      replicas : {
+        "ui:widget" : "range"
       },
-      "ui:order": [
+      "ui:order" : [
         "name",
         "namespace",
         "*",
@@ -256,7 +256,7 @@ function RJSF({ formData, jsonSchema, onChange, hideSubmit, hideTitle, onSubmit,
             uiSchema={uiSchema}
           // noHtml5Validate
           >
-            <button style={{ opacity: '0' }} />
+            <button style={{ opacity : '0' }} />
           </Form>
         </MuiThemeProvider>
       )}

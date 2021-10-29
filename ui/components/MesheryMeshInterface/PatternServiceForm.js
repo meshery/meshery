@@ -11,6 +11,7 @@ import useStateCB from "../../utils/hooks/useStateCB";
 import { pSBCr } from "../../utils/lightenOrDarkenColor"
 import { CamelCaseToSentanceCase } from "../../utils/camelCaseToSentanceCase.js";
 import { getPatternAttributeName, createPatternFromConfig } from "./helpers";
+import { isEmptyObj } from "../../utils/utils";
 
 function TabPanel(props) {
   const {
@@ -58,7 +59,6 @@ function a11yProps(index) {
  * @returns
  */
 function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip, appBarColor, tooltipConfigurations, onSettingsChange, onTraitsChange }) {
-  console.log("hello", { formData, schemaSet, onSubmit, onDelete, reference, namespace, renderAsTooltip, appBarColor, tooltipConfigurations, onSettingsChange, onTraitsChange })
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {}, onSettingsChange);
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {}, onTraitsChange);
@@ -76,7 +76,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
     onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace), true)
   };
 
-  if (reference){
+  if (reference) {
     if (reference.current == null) reference.current = {}
 
     reference.current.submit = (cb) => {
@@ -113,7 +113,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
         {schemaSet.workload?.title}
       </Typography>) : (
         <AppBar style={{ boxShadow : `0px 2px 4px -1px ${pSBCr(appBarColor, -30)}`, position : "sticky" }}>
-          <Toolbar variant="dense" style={{ padding : "0 0px", paddingRight : "5px", background : `linear-gradient(115deg, ${pSBCr( appBarColor, -20)} 0%, ${appBarColor} 100%)`, height : "0.7rem !important" }}>
+          <Toolbar variant="dense" style={{ padding : "0 0px", paddingRight : "5px", background : `linear-gradient(115deg, ${pSBCr(appBarColor, -20)} 0%, ${appBarColor} 100%)`, height : "0.7rem !important" }}>
             <p style={{ margin : "auto auto auto 10px", fontSize : "16px" }}>{schemaSet.workload.title || CamelCaseToSentanceCase(schemaSet.workload["object-type"])}</p>
             {schemaSet?.workload?.description && (
               <label htmlFor="help-button" >
@@ -124,8 +124,10 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                 </Tooltip>
               </label>
             )}
-            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={handleMaximizeOrMinimize} style={{ cursor : "pointer", marginRight : "0.2rem" }} />
-            <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem', marginRight : "0.2rem", cursor : "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}/>
+            {
+              !isEmptyObj(tooltipExpanded) && <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={handleMaximizeOrMinimize} style={{ cursor : "pointer", marginRight : "0.2rem" }} />
+            }
+            <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem', marginRight : "0.2rem", cursor : "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })} />
           </Toolbar>
         </AppBar>
       )}
