@@ -2,7 +2,7 @@
 layout: default
 title: Citrix Service Mesh (CPX)
 name: Meshery Adapter for Citrix Service Mesh
-mesh_name: Citrix 
+mesh_name: Citrix
 version: "1.0"
 port: 10008/tcp
 project_status: beta
@@ -13,7 +13,8 @@ image: /assets/img/service-meshes/citrix.svg
 {% include adapter-status.html %}
 
 ## Lifecycle management
-The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}. 
+
+The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}.
 
 ### Install {{ page.mesh_name }}
 
@@ -39,11 +40,11 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}.
 The {{page.name}} includes a handful of sample applications. Some of these applications are from other service meshes and some of these sample applications are general-purpose examples. Use Meshery to deploy any of these sample applications.
 
 - [Bookinfo]({{site.baseurl}}/guides/sample-apps#bookinfo)
-    - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery. 
+  - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
 - [Httpbin]({{site.baseurl}}/guides/sample-apps#httpbin)
-    - Httpbin is a simple HTTP request and response service.
+  - Httpbin is a simple HTTP request and response service.
 - [Online Boutique]({{site.baseurl}}/guides/sample-apps#online-boutique)
-    - Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.
+  - Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.
 
 ### Suggested Topics
 

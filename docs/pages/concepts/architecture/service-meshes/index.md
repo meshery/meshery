@@ -14,8 +14,7 @@ As the multi-mesh manager, Meshery offers support for more adapters than any oth
 ## Support for Service Meshes
 
 | Service Mesh | Earliest Version |
-| :----------- | :--------------: |
-
+| :----------: | :--------------: |
 {% for adapter in site.adapters -%}
 {% if adapter.port -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {{ adapter.earliest_version }} |

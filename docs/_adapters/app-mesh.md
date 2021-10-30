@@ -3,7 +3,6 @@ layout: default
 title: Meshery Adapter for App Mesh
 name: Meshery Adapter for App Mesh
 mesh_name: App Mesh
-version: v0.2.2
 port: 10005/tcp
 project_status: beta
 github_link: https://github.com/meshery/meshery-app-mesh

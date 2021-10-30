@@ -3,7 +3,6 @@ layout: default
 title: Meshery Adapter for Open Service Mesh
 name: Meshery Adapter for Open Service Mesh
 mesh_name: Open Service Mesh
-version: v0.5.0
 port: 10009/tcp
 project_status: stable
 lab: osm-meshery-adapter
