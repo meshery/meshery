@@ -60,7 +60,7 @@ display-title: "false"
 
   <!-- FUNCTIONALITY -->
   <div>
-    <a href="{{ site.baseurl }}/guides">
+    <a href="{{ site.baseurl }}/functionality">
         <div class="overview">Functionality</div>
     </a>
     <h6><a href="{{ site.baseurl }}/functionality" class="text-black section-title">Service Mesh Management</a></h6>
