@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Broker
-permalink: concepts/architecture/broker
+permalink: /v0.4/concepts/architecture/broker
 type: concepts
 redirect_from: architecture/broker
 abstract: "Meshery broker component fascilitates data streaming between kubernetes cluster components and outside world."

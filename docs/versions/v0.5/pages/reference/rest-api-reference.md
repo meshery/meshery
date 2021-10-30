@@ -1,7 +1,7 @@
 ---
 layout: swagger
 title: "REST API Reference"
-permalink: reference/rest-apis
+permalink: /v0.5/reference/rest-apis
 type: Reference
 abstract: 'Meshery REST API Documentation and Reference'
 data: swagger

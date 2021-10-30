@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Documentación en Español 🇲🇽
-permalink: es
+permalink: /v0.2/es
 display-title: "false"
 ---
 
@@ -30,7 +30,7 @@ display-title: "false"
     </ul>
     <ul><b><a href="{{ site.baseurl }}/es/installation/platforms" class="text-black">Plataformas Soportadas</a></b>
         {% for item in sorted_pages %}
-        {% if item.type=="installation" %}
+        {% if item.type=="installation" and item.url contains '/v0.2/' %}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
           {% endif %}
         {% endfor %}

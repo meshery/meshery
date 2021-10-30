@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Layer5 Community
-permalink: project/community
+permalink: /v0.5/project/community
 description: Open source, service mesh-centric community at Layer5
 redirect_from: project/community/
 language: en

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing to Meshery using git
-permalink: project/contributing/contributing-gitflow
+permalink: /v0.3/project/contributing/contributing-gitflow
 description: How to contribute to Meshery using git
 language: en
 type: project

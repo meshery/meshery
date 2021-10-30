@@ -2,7 +2,7 @@
 layout: default
 title: Command Reference
 abstract: "A guide to Meshery's CLI: mesheryctl"
-permalink: reference/mesheryctl
+permalink: /v0.3/reference/mesheryctl
 redirect_from: 
   - reference/mesheryctl/commands/
   - reference/mesheryctl/commands

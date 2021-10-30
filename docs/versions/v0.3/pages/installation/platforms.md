@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Supported Platforms
-permalink: installation/platforms
+permalink: /v0.3/installation/platforms
 type: installation
 display-title: "false"
 redirect_from: installation/platforms/

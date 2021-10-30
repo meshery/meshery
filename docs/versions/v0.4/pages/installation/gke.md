@@ -1,7 +1,7 @@
 ---
 layout: default
 title: GKE
-permalink: installation/platforms/gke
+permalink: /v0.4/installation/platforms/gke
 type: installation
 display-title: "false"
 language: en

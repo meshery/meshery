@@ -1,7 +1,7 @@
 ---
 layout: page
 title: FAQ
-permalink: project/faq
+permalink: /v0.4/project/faq
 description: General commonly asked questions and answers about Meshery.
 language: en
 type: project

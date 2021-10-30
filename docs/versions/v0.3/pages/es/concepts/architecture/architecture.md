@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Arquitectura
-permalink: es/concepts/architecture
+permalink: /v0.3/es/concepts/architecture
 redirect_from: architecture
 type: concepts
 abstract: descripción general de diferentes componentes individuales de la arquitectura de Meshery y cómo interactuan como un sistema.

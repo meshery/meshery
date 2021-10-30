@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Using Multiple Adapters
-permalink: guides/multiple-adapters
+permalink: /v0.4/guides/multiple-adapters
 type: Guides
 ---
 

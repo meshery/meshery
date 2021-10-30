@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing to Meshery UI
-permalink: project/contributing/contributing-ui
+permalink: /v0.2/project/contributing/contributing-ui
 description: How to contribute to Meshery UI (web-based user interface).
 language: en
 type: project

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Performance Management
-permalink: es/functionality/performance-management
+permalink: /v0.4/es/functionality/performance-management
 type: functionality 
 language: es
 ---

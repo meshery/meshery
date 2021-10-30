@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Service Mesh Pattern Management
-permalink: functionality/pattern-management
+permalink: /v0.2/functionality/pattern-management
 redirect_from: functionality/pattern-management/
 type: functionality
 language: en

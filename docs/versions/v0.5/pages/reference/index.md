@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Reference
-permalink: reference
+permalink: /v0.5/reference
 redirect_from: reference/
 language: en
 list: exclude
@@ -12,7 +12,7 @@ References for using Meshery's various features and components.
 
 <ul>
     {% for item in sorted_reference %}
-    {% if item.type=="Reference" -%}
+    {% if item.type=="Reference" and item.url contains '/v0.5/' -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
       {% if item.abstract != " " %}
         -  {{ item.abstract }}

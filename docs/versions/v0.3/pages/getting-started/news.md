@@ -1,6 +1,6 @@
 ---
 title: News
-permalink: /news/
+permalink: /v0.3/news/
 excluded_in_search: true
 ---
 

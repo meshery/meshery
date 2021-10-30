@@ -14,7 +14,7 @@ display-title: "false"
     </a>
 </div>
 <p style="margin:auto;padding:1rem;font-size: 1.25rem;">Meshery is the open source, service mesh management plane that enables the adoption, operation, and management of any service mesh and their workloads.</p>
-
+<h2>Meshery v0.1</h2> 
 <div class="wrapper" style="text-align: left;">
 
   <!-- QUICK START -->
@@ -24,14 +24,14 @@ display-title: "false"
     </a>
     <h6>Getting Started</h6>
     <ul>
-        <li><a href="{{ site.baseurl }}/getting-started/overview">Meshery Overview</a></li>
-        <li><a href="{{ site.baseurl }}/project/community">Community</a></li>
-        <li><a href="{{ site.baseurl }}/project/contributing">Contributing</a></li> 
+        <li><a href="{{ site.baseurl }}/v0.1/getting-started/overview">Meshery Overview</a></li>
+        <li><a href="{{ site.baseurl }}/v0.1/project/community">Community</a></li>
+        <li><a href="{{ site.baseurl }}/v0.1/project/contributing">Contributing</a></li> 
     </ul>
     <h6><a href="{{ site.baseurl }}/installation/platforms" class="text-black section-title">Supported Platforms</a></h6>
     <ul>
         {% for item in sorted_pages %}
-        {% if item.type=="installation" and item.list=="include" and item.language!="es" and item.url contains 'v0.1' -%}
+        {% if item.type=="installation" and item.list=="include" and item.language!="es" and item.url contains 'v0.1'  -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           </li>
           {% endif %}
@@ -47,7 +47,7 @@ display-title: "false"
     <h6><a href="{{ site.baseurl }}/concepts" class="text-black section-title">Concepts</a></h6>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="concepts" and item.list!="exclude" and item.language!="es"and item.url contains 'v0.1' -%}
+      {% if item.type=="concepts" and item.list!="exclude" and item.language!="es" and item.url contains 'v0.1' -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -66,7 +66,7 @@ display-title: "false"
     <h6><a href="{{ site.baseurl }}/functionality" class="text-black section-title">Service Mesh Management</a></h6>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="functionality" and item.list!="exclude" and item.language !="es" and item.url contains 'v0.1'-%}
+      {% if item.type=="functionality" and item.list!="exclude" and item.language !="es" and item.url contains 'v0.1' -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -96,7 +96,7 @@ display-title: "false"
     <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="Guides" and item.list!="exclude"  and item.language!="es" and item.url contains 'v0.1'-%}
+      {% if item.type=="Guides" and item.list!="exclude"  and item.language!="es" and item.url contains 'v0.1' -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}

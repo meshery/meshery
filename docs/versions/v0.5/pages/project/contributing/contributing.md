@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing
-permalink: project/contributing
+permalink: /v0.5/project/contributing
 description: How to contribute to the Meshery project.
 language: en
 type: project

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Minikube
-permalink: installation/platforms/minikube
+permalink: /v0.2/installation/platforms/minikube
 type: installation
 display-title: "false"
 language: en

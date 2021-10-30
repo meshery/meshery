@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Filter Management
-permalink: functionality/filter-management
+permalink: /v0.2/functionality/filter-management
 type: functionality
 language: en
 list: include

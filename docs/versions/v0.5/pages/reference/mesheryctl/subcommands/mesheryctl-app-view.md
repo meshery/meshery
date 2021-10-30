@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl app view
-permalink: reference/mesheryctl/apps/view
+permalink: /v0.5/reference/mesheryctl/apps/view
 type: reference
 display-title: "false"
 language: en

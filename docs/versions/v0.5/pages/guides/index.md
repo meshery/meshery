@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Operation Guides
-permalink: guides
+permalink: /v0.5/guides
 redirect_from: guides/
 language: en
 list: exclude
@@ -17,7 +17,7 @@ Guides to using and troubleshooting Meshery's various features and components.
 
 <ul>
     {% for item in sorted_guides %}
-    {% if item.type=="Guides" and item.category!="mesheryctl" and item.list!="exclude"  -%}
+    {% if item.type=="Guides" and item.category!="mesheryctl" and item.list!="exclude" and item.url contains '/v0.5/' -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}
@@ -27,7 +27,7 @@ Guides to using and troubleshooting Meshery's various features and components.
 
 <ul>
   {% for item in sorted_guides %}
-  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" -%}
+  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" and item.url contains '/v0.5/'-%}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endif %}

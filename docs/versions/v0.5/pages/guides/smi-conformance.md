@@ -2,7 +2,7 @@
 layout: default
 title: Running SMI Conformance Tests
 description: This guide is to help users get a better understanding of sample apps
-permalink: guides/smi-conformance
+permalink: /v0.5/guides/smi-conformance
 type: Guides
 ---
 

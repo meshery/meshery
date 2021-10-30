@@ -1,7 +1,7 @@
 ---
 layout: default
 title: KinD
-permalink: installation/platforms/kind
+permalink: /v0.5/installation/platforms/kind
 type: installation
 display-title: "false"
 language: en

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "GraphQL API Reference"
-permalink: reference/graphql-apis
+permalink: /v0.5/reference/graphql-apis
 type: Reference
 abstract: 'Meshery GraphQL API Documentation and Reference'
 ---

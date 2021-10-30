@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing to Meshery Server
-permalink: project/contributing/contributing-server
+permalink: /v0.5/project/contributing/contributing-server
 description: How to contribute to Meshery Server
 language: en
 type: project

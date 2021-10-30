@@ -1,7 +1,7 @@
 ---
 layout: default
 title: EKS
-permalink: installation/platforms/eks
+permalink: /v0.5/installation/platforms/eks
 type: installation
 display-title: "false"
 language: en

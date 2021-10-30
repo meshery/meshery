@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Performance Management
-permalink: functionality/performance-management
+permalink: /v0.5/functionality/performance-management
 type: functionality
 language: en
 list: include

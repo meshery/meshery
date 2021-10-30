@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Architecture
-permalink: concepts/architecture
+permalink: /v0.3/concepts/architecture
 redirect_from: architecture
 type: concepts
 abstract: overview of different individual components of Meshery architecture and how they interact as a system.

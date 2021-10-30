@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Arquitectura de Meshery 
-permalink: es/architecture
+permalink: /v0.4/es/architecture
 language: es
 ---
 

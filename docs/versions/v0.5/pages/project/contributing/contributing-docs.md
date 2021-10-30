@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing to Meshery Docs
-permalink: project/contributing/contributing-docs
+permalink: /v0.5/project/contributing/contributing-docs
 description: How to contribute to Meshery Docs.
 language: en
 type: project

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Lanzamientos
-permalink: es/project/releases
+permalink: /v0.4/es/project/releases
 language: es
 type: project
 ---
@@ -412,7 +412,7 @@ Lanzado el 1 de mayo de 2020
   - Capacidad para ejecutar pruebas de rendimiento de forma asincrónica.
   - Recopila y conserva métricas de nodos.
 
-## [v0.1.6](https://github.com/layer5io/meshery/releases/tag/v0.1.6)
+## [v0.4.6](https://github.com/layer5io/meshery/releases/tag/v0.4.6)
 
 **¿Qué hay de nuevo?**
 
@@ -422,7 +422,7 @@ Lanzado el 1 de mayo de 2020
 * Nueva compatibilidad de `mesheryctl` para Windows para abrir el navegador predeterminado al `iniciar`.
 * Nueva aplicación de muestra agregada al adaptador istio: aplicación Hipster (aplicación de demostración de microservicios de Google).
 
-## [v0.1.5](https://github.com/layer5io/meshery/releases/tag/v0.1.5)
+## [v0.4.5](https://github.com/layer5io/meshery/releases/tag/v0.4.5)
 
 **¿Qué hay de nuevo?**
 
@@ -432,19 +432,19 @@ Lanzado el 1 de mayo de 2020
 * `mesheryctl start` ahora espera a que los contenedores de la aplicación Meshery estén activos antes de iniciar el navegador del usuario.
 * `mesheryctl stop` ahora muestra el progreso del comando similar a la experiencia cuando se usa el script bash `meshery`.
 
-## [v0.1.4](https://github.com/layer5io/meshery/releases/tag/v0.1.4)
+## [v0.4.4](https://github.com/layer5io/meshery/releases/tag/v0.4.4)
 
 **¿Qué hay de nuevo?**
 
 - Registro de cambios
 
-## [v0.1.3](https://github.com/layer5io/meshery/releases/tag/v0.1.3)
+## [v0.4.3](https://github.com/layer5io/meshery/releases/tag/v0.4.3)
 
 **¿Qué hay de nuevo?**
 
 - Migrar desde Configurar Meshery a la página Configuración.
 
-## [v0.1.2](https://github.com/layer5io/meshery/releases/tag/v0.1.2)
+## [v0.4.2](https://github.com/layer5io/meshery/releases/tag/v0.4.2)
 
 **¿Qué hay de nuevo?**
 
@@ -452,13 +452,13 @@ Lanzado el 1 de mayo de 2020
 
 * Almacenamiento de sesiones en memoria de Meshery.
 
-## [v0.1.1](https://github.com/layer5io/meshery/releases/tag/v0.1.1)
+## [v0.4.1](https://github.com/layer5io/meshery/releases/tag/v0.4.1)
 
 **¿Qué hay de nuevo?**
 
 - Parche para el bug Alpine.
 
-## [v0.1.0](https://github.com/layer5io/meshery/releases/tag/v0.1.0)
+## [v0.4.0](https://github.com/layer5io/meshery/releases/tag/v0.4.0)
 
 **What's new**
 
@@ -727,7 +727,7 @@ Lanzado el 1 de mayo de 2020
       <td>Parche para el bug Alpine.</td>
       <td>31 may, 2019</td>
     </tr>
-    <tr><td colspan="3"><strong>v0.1.0</strong></td></tr>
+    <tr><td colspan="3"><strong>v0.4.0</strong></td></tr>
     <tr>
       <td class="centered">0.0.9</td>
       <td>Sitio de documentación segregado y contenido presentado.</td>

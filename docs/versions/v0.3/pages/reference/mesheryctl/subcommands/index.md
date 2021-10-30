@@ -2,7 +2,7 @@
 layout: default
 title: subcommands
 description: Meshery CLI Subcommands
-permalink: /reference/mesheryctl/commands/subcommands/index.html
+permalink: /v0.3/reference/mesheryctl/commands/subcommands/index.html
 ---
 
 

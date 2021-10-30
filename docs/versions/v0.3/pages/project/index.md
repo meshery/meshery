@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Project
-permalink: project
+permalink: /v0.3/project
 redirect_from: project/
 language: en
 display-title: "false"
@@ -17,7 +17,7 @@ As the service mesh management plane, Meshery enables the adoption, operation, a
 
 <ul>
     {% for item in sorted_pages %}
-    {% if item.type=="project" and item.language=="en" -%}
+    {% if item.type=="project" and item.language=="en" and item.url contains '/v0.3/'-%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
       {% if item.description != " " %}
         -  {{ item.description }}

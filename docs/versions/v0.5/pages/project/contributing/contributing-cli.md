@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing to Meshery CLI
-permalink: project/contributing/contributing-cli
+permalink: /v0.5/project/contributing/contributing-cli
 description: How to contribute to Meshery Command Line Interface.
 language: en
 type: project

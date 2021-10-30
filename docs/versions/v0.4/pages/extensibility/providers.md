@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Extensibility: Providers"
-permalink: extensibility/providers
+permalink: /v0.4/extensibility/providers
 type: Extensibility
 #redirect_from: architecture/adapters
 abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."
@@ -126,7 +126,7 @@ Meshery Seerver will proxy all requests to remote provider endpoints. Endpoints 
 ```json
 {
   "provider_type": "remote",
-  "package_version": "v0.1.0",
+  "package_version": "v0.4.0",
   "package_url": "https://layer5labs.github.io/meshery-extensions-packages/provider.tar.gz",
   "provider_name": "Meshery",
   "provider_description": [

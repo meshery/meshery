@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Minikube
-permalink: es/installation/platforms/minikube
+permalink: /v0.2/es/installation/platforms/minikube
 language: es
 type: installation
 ---

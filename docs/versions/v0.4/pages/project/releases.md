@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Releases
-permalink: project/releases
+permalink: /v0.4/project/releases
 description: List of released Meshery versions and their release notes.
 redirect_from: project/releases/
 language: en

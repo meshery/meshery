@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contribuir
-permalink: es/project/contributing
+permalink: /v0.4/es/project/contributing
 language: es
 type: project
 ---

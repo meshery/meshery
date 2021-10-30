@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Supported Platforms
-permalink: es/installation/platforms
+permalink: /v0.4/es/installation/platforms
 language: es
 type: installation
 language: en

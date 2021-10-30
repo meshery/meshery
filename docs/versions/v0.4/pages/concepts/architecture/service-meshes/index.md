@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Service Meshes
-permalink: service-meshes
+permalink: /v0.4/service-meshes
 redirect_from: 
   - service-meshes/adapters/
   - service-meshes/

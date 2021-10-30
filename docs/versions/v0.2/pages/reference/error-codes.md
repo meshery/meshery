@@ -2,7 +2,7 @@
 layout: default
 title: Error Code Reference
 abstract: "Meshery Error Code Reference"
-permalink: reference/error-codes
+permalink: /v0.2/reference/error-codes
 type: Reference
 ---
 <style>

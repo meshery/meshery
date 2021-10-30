@@ -2,7 +2,7 @@
 layout: default
 title: "Meshery Contributing Guidelines"
 abstract: "Design principles and code conventions."
-permalink: project/contributing/contributing-guide
+permalink: /v0.5/project/contributing/contributing-guide
 type: project
 category: contributing
 ---

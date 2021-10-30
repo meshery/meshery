@@ -2,7 +2,7 @@
 layout: default
 title: Interpreting Performance Test Results
 description: This guide is to help users to glean an insights of what the performance tests result should look like.
-permalink: guides/interpreting-performance-test-results
+permalink: /v0.3/guides/interpreting-performance-test-results
 type: guides
 ---
 

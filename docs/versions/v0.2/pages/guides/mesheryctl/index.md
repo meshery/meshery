@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Meshery CLI Guides
-permalink: guides/mesheryctl
+permalink: /v0.2/guides/mesheryctl
 redirect_from: guides/mesheryctl/
 language: en
 type: Guides

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Build & Release (CI)
-permalink: project/build-and-release
+permalink: /v0.4/project/build-and-release
 description: Details of Meshery's build and release strategy.
 language: en
 type: project

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Proyecto
-permalink: es/project
+permalink: /v0.2/es/project
 description: Proyecto Meshery
 language: es
 type: project

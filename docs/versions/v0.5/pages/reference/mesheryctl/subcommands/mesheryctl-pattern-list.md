@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl pattern list
-permalink: reference/mesheryctl/pattern/list
+permalink: /v0.5/reference/mesheryctl/pattern/list
 type: reference
 display-title: "false"
 language: en

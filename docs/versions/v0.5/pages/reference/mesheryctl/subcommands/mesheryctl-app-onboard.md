@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl app onboard --file
-permalink: reference/mesheryctl/apps/onboard
+permalink: /v0.5/reference/mesheryctl/apps/onboard
 type: reference
 display-title: "false"
 language: en

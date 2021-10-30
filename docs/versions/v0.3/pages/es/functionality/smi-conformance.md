@@ -1,7 +1,7 @@
 ---
 layout: page
 title: SMI Conformance Capability
-permalink: es/functionality/smi-conformance
+permalink: /v0.3/es/functionality/smi-conformance
 type: functionality 
 language: es
 ---

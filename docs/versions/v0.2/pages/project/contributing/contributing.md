@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing
-permalink: project/contributing
+permalink: /v0.2/project/contributing
 description: How to contribute to the Meshery project.
 language: en
 type: project
@@ -13,9 +13,9 @@ Please do! Thanks for your help! 🎈
 This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md).
 
 # Contributing Guides
-
+{% if item.url contains '/v0.2/' %}
 {% include suggested-reading.html diffName ="true" %}
-
+{% endif %}
 ## Not sure where to start?
 
 Follow these steps and you'll be right at home.

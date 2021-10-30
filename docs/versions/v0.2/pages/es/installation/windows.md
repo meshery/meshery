@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Windows
-permalink: es/installation/platforms/windows
+permalink: /v0.2/es/installation/platforms/windows
 language: es
 type: installation
 ---

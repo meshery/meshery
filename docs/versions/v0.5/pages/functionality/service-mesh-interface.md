@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Meshery and Service Mesh Interface (SMI)
-permalink: functionality/service-mesh-interface
+permalink: /v0.5/functionality/service-mesh-interface
 type: functionality
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Lifecycle Management
-permalink: es/functionality/lifecycle-management
+permalink: /v0.4/es/functionality/lifecycle-management
 type: functionality
 language: es
 ---

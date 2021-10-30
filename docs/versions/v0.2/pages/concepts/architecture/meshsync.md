@@ -1,7 +1,7 @@
 ---
 layout: default
 title: MeshSync
-permalink: concepts/architecture/meshsync
+permalink: /v0.2/concepts/architecture/meshsync
 type: concepts
 redirect_from: architecture/meshsync
 abstract: "Meshery offers support for kubernetes cluster/service mesh state synchronization with the help of MeshSync."

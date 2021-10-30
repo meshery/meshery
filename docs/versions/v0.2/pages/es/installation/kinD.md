@@ -1,7 +1,7 @@
 ---
 layout: page
 title: KinD
-permalink: es/installation/platforms/kind
+permalink: /v0.2/es/installation/platforms/kind
 language: es
 type: installation
 ---

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing to Meshery Adapters
-permalink: project/contributing/contributing-adapters
+permalink: /v0.2/project/contributing/contributing-adapters
 description: How to contribute to Meshery Adapters
 language: en
 type: project
