@@ -158,14 +158,17 @@ func main() {
 	brokerConn := nats.NewEmptyConnection
 
 	err = dbHandler.AutoMigrate(
-		meshsyncmodel.KeyValue{},
-		meshsyncmodel.Object{},
-		models.PerformanceProfile{},
-		models.MesheryResult{},
-		models.MesheryPattern{},
-		models.MesheryFilter{},
-		models.PatternResource{},
-		models.MesheryApplication{},
+		&meshsyncmodel.KeyValue{},
+		&meshsyncmodel.Object{},
+		&meshsyncmodel.ResourceSpec{},
+		&meshsyncmodel.ResourceStatus{},
+		&meshsyncmodel.ResourceObjectMeta{},
+		&models.PerformanceProfile{},
+		&models.MesheryResult{},
+		&models.MesheryPattern{},
+		&models.MesheryFilter{},
+		&models.PatternResource{},
+		&models.MesheryApplication{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
