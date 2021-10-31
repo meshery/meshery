@@ -32,7 +32,7 @@ import URLUploader from "./URLUploader";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { trueRandom } from "../lib/trueRandom";
-
+import GithubUploader from "./GithubImport";
 const styles = (theme) => ({
   grid : {
     padding : theme.spacing(2),
@@ -61,7 +61,7 @@ const useStyles = makeStyles(() => ({
 
 }))
 
-function CustomToolbar(onClick, urlOnClick) {
+function CustomToolbar(onClick, urlOnClick, importRepository) {
   return function Toolbar() {
     return (
       <>
@@ -80,8 +80,8 @@ function CustomToolbar(onClick, urlOnClick) {
             </IconButton>
           </Tooltip>
         </label>
-
         <URLUploader onSubmit={urlOnClick} />
+        <GithubUploader onSubmit={importRepository}/>
       </>
     );
   };
@@ -142,7 +142,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
         <Tooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
-            color="primary"
+            color="primary"Import
             onClick={() => onSubmit(yaml, filter.id, filter.name, "delete")}
           >
             <DeleteIcon />
@@ -188,10 +188,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
         },
       },
-      MUIDataTableSelectCell: { 
-        checkboxRoot: { 
-          '&$checked': { 
-            color: '#607d8b',
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
           },
         },
       },
@@ -325,7 +325,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       );
     }
 
-    if (type === "upload" || type === "urlupload") {
+    if (type === "upload" || type === "urlupload" || type === "githubimport") {
       let body = { save : true }
       if (type === "upload") {
         body = JSON.stringify({ ...body, filter_data : { filter_data : data } })
@@ -333,7 +333,25 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       if (type === "urlupload") {
         body = JSON.stringify({ ...body, url : data })
       }
-      dataFetch(
+      if (type === "githubimport") {
+        body = JSON.stringify({ ...body })
+        dataFetch(
+          `api/filter`,
+          {
+            credentials : "include", method : "POST", body, save : false
+          }
+        )
+      } else {
+        body = JSON.stringify({ ...body })
+        dataFetch(
+          `api/filter`,
+          {
+            method : "POST", body, save : false
+          }
+        )
+      }
+    }
+    dataFetch(
         `/api/filter`,
         { credentials : "include", method : "POST", body },
         () => {
@@ -343,8 +361,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         },
         // handleError
         handleError(ACTION_TYPES.UPLOAD_FILTERS)
-      );
-    }
+    );
   }
 
   function uploadHandler(ev) {
@@ -362,6 +379,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   function urlUploadHandler(link) {
     handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
     console.log(link, "valid");
+  }
+  function githubImportHandler(repo) {
+    handleSubmit(repo, "", "meshery_" + Math.floor(trueRandom() * 100), "githubimport");
+    console(repo, "valid repository");
   }
   const columns = [
     {
@@ -523,7 +544,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     page,
     print : false,
     download : false,
-    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
+    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler, githubImportHandler),
 
     onRowsDelete : async function handleDelete(row) {
       let response  = await showmodal(Object.keys(row.lookup).length)
