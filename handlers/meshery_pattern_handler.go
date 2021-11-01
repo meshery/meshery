@@ -18,6 +18,7 @@ type MesheryPatternRequestBody struct {
 	Save          bool                   `json:"save,omitempty"`
 	PatternData   *models.MesheryPattern `json:"pattern_data,omitempty"`
 	CytoscapeJSON string                 `json:"cytoscape_json,omitempty"`
+	K8sManifest   string                 `json:"k8s_manifest,omitempty"`
 }
 
 // PatternFileRequestHandler will handle requests of both type GET and POST
@@ -173,6 +174,55 @@ func (h *Handler) handlePatternPOST(
 		}
 
 		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
+		if err != nil {
+			http.Error(rw, fmt.Sprintf("failed to encode pattern: %s", err), http.StatusInternalServerError)
+			return
+		}
+
+		formatPatternOutput(rw, byt, format)
+		return
+	}
+
+	if parsedBody.K8sManifest != "" {
+		pattern, err := pCore.NewPatternFileFromK8sManifest(parsedBody.K8sManifest, false)
+		if err != nil {
+			http.Error(rw, fmt.Sprintf("failed to convert to pattern: %s", err), http.StatusBadRequest)
+			return
+		}
+
+		fmt.Printf("%+#v\n", pattern)
+
+		patternYAML, err := pattern.ToYAML()
+		if err != nil {
+			http.Error(rw, fmt.Sprintf("failed to generate pattern: %s", err), http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Printf("%s\n", patternYAML)
+
+		name, err := models.GetPatternName(string(patternYAML))
+		if err != nil {
+			http.Error(rw, fmt.Sprintf("failed to get pattern name: %s", err), http.StatusInternalServerError)
+			return
+		}
+
+		patternModel := &models.MesheryPattern{
+			Name:        name,
+			PatternFile: string(patternYAML),
+		}
+
+		if parsedBody.Save {
+			resp, err := provider.SaveMesheryPattern(token, patternModel)
+			if err != nil {
+				http.Error(rw, fmt.Sprintf("failed to save the pattern: %s", err), http.StatusInternalServerError)
+				return
+			}
+
+			formatPatternOutput(rw, resp, format)
+			return
+		}
+
+		byt, err := json.Marshal([]models.MesheryPattern{*patternModel})
 		if err != nil {
 			http.Error(rw, fmt.Sprintf("failed to encode pattern: %s", err), http.StatusInternalServerError)
 			return
