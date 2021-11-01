@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshery/models"
 	pCore "github.com/layer5io/meshery/models/pattern/core"
 )
@@ -205,6 +206,11 @@ func (h *Handler) handlePatternPOST(
 		patternModel := &models.MesheryPattern{
 			Name:        name,
 			PatternFile: string(patternYAML),
+			Location: sql.Map{
+				"host": "",
+				"path": "",
+				"type": "local",
+			},
 		}
 
 		if parsedBody.Save {
