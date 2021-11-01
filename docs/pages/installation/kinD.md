@@ -156,9 +156,8 @@ Run the following:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
-$ kubectl create ns meshery
 $ helm repo add meshery https://meshery.io/charts/
-$ helm install meshery meshery/meshery -n meshery
+$ helm install meshery meshery/meshery -n meshery --create-namespace
  </div></div>
  </pre>
  - Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
