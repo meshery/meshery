@@ -249,7 +249,7 @@ ManifestLoop:
 			if ignoreErrors {
 				continue
 			}
-			return pattern, err // TODO: replace with meshkit error
+			return pattern, ErrParseK8sManifest(err)
 		}
 
 		// Recursive casting
@@ -258,7 +258,7 @@ ManifestLoop:
 			if ignoreErrors {
 				continue
 			}
-			return pattern, fmt.Errorf("failed to create ") // TODO: replace with meshkit error
+			return pattern, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
 		}
 
 		// Treat Kubernetes core resources specially as we don't enforce "spec" as the top field there
@@ -266,7 +266,11 @@ ManifestLoop:
 			if manifest["apiVersion"] == core {
 				name, svc, err := createPatternServiceFromCoreK8s(manifest)
 				if err != nil {
-					continue
+					if ignoreErrors {
+						continue ManifestLoop
+					}
+
+					return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from core kubernetes component"))
 				}
 				pattern.Services[name] = &svc
 
@@ -280,8 +284,10 @@ ManifestLoop:
 			if ignoreErrors {
 				continue
 			}
-			return pattern, err // TODO: replace with meshkit error
+
+			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from extended kubernetes component"))
 		}
+
 		pattern.Services[name] = &svc
 	}
 
@@ -315,7 +321,7 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 	w := GetWorkloadsByK8sAPIVersionKind(apiVersion, kind)
 
 	if len(w) == 0 {
-		return "", Service{}, fmt.Errorf("failed to generate service") // TODO: replace with meshkit error
+		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
 	svc := Service{
@@ -345,7 +351,7 @@ func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (strin
 	w := GetWorkloadsByK8sAPIVersionKind(apiVersion, kind)
 
 	if len(w) == 0 {
-		return "", Service{}, fmt.Errorf("failed to generate service") // TODO: replace with meshkit error
+		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
 	svc := Service{
