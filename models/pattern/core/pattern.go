@@ -298,7 +298,6 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 	// rest will store a map of everything other than the above mentioned fields
 	rest := map[string]interface{}{}
 	for k, v := range manifest {
-		println("Copying this key: ", k)
 		// Ignore a few fields
 		if k == "apiVersion" || k == "kind" || k == "metadata" || k == "status" {
 			continue
@@ -306,8 +305,6 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 
 		rest[k] = v
 	}
-
-	fmt.Printf("%+#v\n", rest)
 
 	id := name
 	uid, err := uuid.NewV4()
@@ -327,8 +324,6 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 		Namespace: namespace,
 		Settings:  rest,
 	}
-
-	fmt.Printf("PRINTING SERVICE:\n%+#v\n", svc)
 
 	return id, svc, nil
 }

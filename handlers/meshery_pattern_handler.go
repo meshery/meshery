@@ -190,15 +190,11 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		fmt.Printf("%+#v\n", pattern)
-
 		patternYAML, err := pattern.ToYAML()
 		if err != nil {
 			http.Error(rw, fmt.Sprintf("failed to generate pattern: %s", err), http.StatusInternalServerError)
 			return
 		}
-
-		fmt.Printf("%s\n", patternYAML)
 
 		name, err := models.GetPatternName(string(patternYAML))
 		if err != nil {
