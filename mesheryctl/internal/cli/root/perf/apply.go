@@ -124,6 +124,10 @@ mesheryctl perf apply -f <filepath>
 					"name":               profileName,
 					"qps":                convQPS,
 					"service_mesh":       testMesh,
+					"request_body":       "",
+					"request_cookies":    "",
+					"request_headers":    "",
+					"content_type":       "",
 				}
 
 				jsonValue, err := json.Marshal(values)
