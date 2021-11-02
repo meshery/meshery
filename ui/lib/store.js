@@ -149,7 +149,6 @@ export const reducer = (state = initialState, action) => {
       } else {
         return state.deleteIn(['results_selection', action.page]);
       }
-      break;
     case actionTypes.UPDATE_GRAFANA_CONFIG:
       action.grafana.ts = new Date();
       return state.updateIn(['grafana'], val => fromJS(action.grafana));
