@@ -223,7 +223,7 @@ func (ctx *Context) ValidateVersion() error {
 		return nil
 	}
 
-	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + ctx.Version + "?recursive=1"
+	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/tag/" + ctx.Version
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
@@ -242,6 +242,10 @@ func (ctx *Context) ValidateVersion() error {
 
 	if resp.StatusCode == 404 {
 		log.Fatal("version " + ctx.Version + " is not a valid Meshery release")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		log.Fatal("failed to validate Meshery release version " + ctx.Version)
 	}
 
 	if err != nil {
