@@ -6,14 +6,15 @@ replicaCount: 1
 restartPolicy: Always
 
 image:
-  repository: layer5/meshery:stable-latest
+  repository: layer5/meshery
+  tag: stable-latest
   pullPolicy: Always
 
 env:
   EVENT: mesheryLocal
   SAAS_BASE_URL: https://meshery.layer5.io
   PROVIDER_BASE_URLS: https://meshery.layer5.io
-  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-traefik-mesh:10006 meshery-cpx:10008
+  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cpx:10008
 
 probe:
   #TODO: Need to confirm the health check path of meshery.
@@ -92,6 +93,11 @@ affinity: {}
 
 # If need to use a different service accounts for the adapters, modify the serviceAccountNameOverride for the corresponding adapters here,
 # or set the serviceAccountNameOverride to empty while setting the serviceAccount information in the sub-chart accordingly
+meshery-app-mesh:
+  enabled: true
+  fullnameOverride: meshery-app-mesh
+  serviceAccountNameOverride: meshery-server
+
 meshery-istio:
   enabled: true
   fullnameOverride: meshery-istio

@@ -29,28 +29,27 @@ var (
 	availableSubcommands []*cobra.Command
 	outputFormatFlag     string
 	tokenPath            string
+	// setting up for error formatting
+	cmdUsed string
 )
 
 // PerfCmd represents the Performance Management CLI command
 var PerfCmd = &cobra.Command{
 	Use:   "perf",
 	Short: "Performance Management",
-	Long:  `Performance Management & Benchmarking using Meshery CLI.`,
+	Long:  `Performance Management & Benchmarking`,
 	Example: `
-	// Run performance test
-	mesheryctl perf apply --profile test --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"
+// Run performance test
+mesheryctl perf apply --profile test --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"
 	
-	// List performance profiles
-	mesheryctl perf list
+// List performance profiles
+mesheryctl perf profile
 
-	// View performance profiles or results
-	mesheryctl perf view
+// List performance results
+mesheryctl perf result
 	`,
 	Args: cobra.MinimumNArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
-		}
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &system.HealthCheckOptions{
 			IsPreRunE:  true,
@@ -63,12 +62,18 @@ var PerfCmd = &cobra.Command{
 		}
 		return hc.RunPreflightHealthChecks()
 	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+		}
+		return nil
+	},
 }
 
 func init() {
 	PerfCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "(required) Path to meshery auth config")
 	PerfCmd.PersistentFlags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 
-	availableSubcommands = []*cobra.Command{listCmd, viewCmd, applyCmd}
+	availableSubcommands = []*cobra.Command{profileCmd, resultCmd, applyCmd}
 	PerfCmd.AddCommand(availableSubcommands...)
 }

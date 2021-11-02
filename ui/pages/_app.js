@@ -178,9 +178,11 @@ class MesheryApp extends App {
 
   handleDrawerToggle = () => {
     this.setState(state => ({ mobileOpen : !state.mobileOpen }));
-  };
+  }
 
-  handleCollapseDrawer = () => {
+  handleCollapseDrawer = (open = null) => {
+    if (typeof(open) === 'boolean')
+      return this.setState({ isDrawerCollapsed : open });
     this.setState(state => ({ isDrawerCollapsed : !state.isDrawerCollapsed }));
   };
 
@@ -275,7 +277,7 @@ class MesheryApp extends App {
   static async getInitialProps({ Component, ctx }) {
     const pageProps = Component.getInitialProps
       ? await Component.getInitialProps(ctx)
-      : {};
+      : {}
     return { pageProps };
   }
 
@@ -307,13 +309,13 @@ class MesheryApp extends App {
                       variant="temporary"
                       open={this.state.mobileOpen}
                       onClose={this.handleDrawerToggle}
-                      onCollapseDrawer={this.handleCollapseDrawer}
+                      onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
                       isDrawerCollapsed={isDrawerCollapsed}
                     />
                   </Hidden>
                   <Hidden xsDown implementation="css">
                     <Navigator
-                      onCollapseDrawer={this.handleCollapseDrawer}
+                      onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
                       isDrawerCollapsed={isDrawerCollapsed} />
                   </Hidden>
                 </nav>

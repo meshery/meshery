@@ -5,6 +5,7 @@ go 1.16
 replace (
 	//golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
 	github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
+	github.com/go-redis/redis/v8 => github.com/go-redis/redis/v8 v8.11.4
 	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
 	github.com/spf13/afero => github.com/spf13/afero v1.5.1 // Until viper bug is resolved #1161
 	go.mongodb.org/mongo-driver v1.5.1 => github.com/mongodb/mongo-go-driver v1.5.1
@@ -37,12 +38,12 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/klauspost/compress v1.11.0 // indirect
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.2.21
-	github.com/layer5io/meshkit v0.2.30
-	github.com/layer5io/meshsync v0.1.25
+	github.com/layer5io/meshery-operator v0.2.22
+	github.com/layer5io/meshkit v0.2.31
+	github.com/layer5io/meshsync v0.1.27
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.3
-	github.com/lib/pq v1.10.2
+	github.com/lib/pq v1.10.3
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/manifoldco/promptui v0.8.0
 	github.com/mattn/go-isatty v0.0.13 // indirect
@@ -67,8 +68,10 @@ require (
 	google.golang.org/grpc v1.41.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/gorm v1.21.14
-	k8s.io/api v0.21.0
-	k8s.io/apimachinery v0.21.0
-	k8s.io/client-go v0.21.0
+	gorm.io/gorm v1.21.16
+	k8s.io/api v0.22.2
+	k8s.io/apiextensions-apiserver v0.22.2
+	k8s.io/apimachinery v0.22.2
+	k8s.io/client-go v0.22.2
+	sigs.k8s.io/controller-runtime v0.10.2
 )

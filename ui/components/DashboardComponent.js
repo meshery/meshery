@@ -220,7 +220,7 @@ class DashboardComponent extends React.Component {
       });
     }
 
-  };
+  }
 
   componentWillUnmount = () => {
     this._isMounted = false

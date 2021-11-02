@@ -15,4 +15,4 @@ export const eventTypes = {
     icon: ErrorIcon,
     type: 'error',
   },
-}
+};

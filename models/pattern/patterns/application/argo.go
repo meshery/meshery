@@ -48,7 +48,7 @@ func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
 			return fmt.Errorf("failed to delete resource with name \"%s\" in namespace \"%s\"", opt.Name, opt.Namespace)
 		}
 
-		if opt.Advanced.SkipService {
+		if !*opt.Advanced.CreateService {
 			return nil
 		}
 
@@ -81,7 +81,7 @@ func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
 		return fmt.Errorf("failed to create resource with name \"%s\" in namespace \"%s\"", opt.Name, opt.Namespace)
 	}
 
-	if opt.Advanced.SkipService {
+	if !*opt.Advanced.CreateService {
 		return nil
 	}
 
