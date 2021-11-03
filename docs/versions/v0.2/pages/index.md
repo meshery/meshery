@@ -19,7 +19,7 @@ display-title: "false"
 
   <!-- QUICK START -->
   <div>
-    <a href="{{ site.baseurl }}/installation/quick-start">
+    <a href="{{ site.baseurl }}/v0.2/installation/quick-start">
         <div class="overview">Quick&nbsp;Start</div>
     </a>
     <h6>Getting Started</h6>
@@ -28,7 +28,7 @@ display-title: "false"
         <li><a href="{{ site.baseurl }}/v0.2/project/community">Community</a></li>
         <li><a href="{{ site.baseurl }}/v0.2/project/contributing">Contributing</a></li> 
     </ul>
-    <h6><a href="{{ site.baseurl }}/installation/platforms" class="text-black section-title">Supported Platforms</a></h6>
+    <h6><a href="{{ site.baseurl }}/v0.2/installation/platforms" class="text-black section-title">Supported Platforms</a></h6>
     <ul>
         {% for item in sorted_pages %}
         {% if item.type=="installation" and item.list=="include" and item.language!="es" and item.url contains 'v0.2'  -%}
@@ -41,10 +41,10 @@ display-title: "false"
   
   <!-- CONCEPTS -->
   <div>
-    <a href="{{ site.baseurl }}/concepts">
+    <a href="{{ site.baseurl }}/v0.2/concepts">
         <div class="overview">Concepts</div>
     </a>
-    <h6><a href="{{ site.baseurl }}/concepts" class="text-black section-title">Concepts</a></h6>
+    <h6><a href="{{ site.baseurl }}/v0.2/concepts" class="text-black section-title">Concepts</a></h6>
     <ul>
       {% for item in sorted_pages %}
       {% if item.type=="concepts" and item.list!="exclude" and item.language!="es" and item.url contains 'v0.2' -%}
@@ -60,10 +60,10 @@ display-title: "false"
 
   <!-- FUNCTIONALITY -->
   <div>
-    <a href="{{ site.baseurl }}/guides">
+    <a href="{{ site.baseurl }}/v0.2/functionality">
         <div class="overview">Functionality</div>
     </a>
-    <h6><a href="{{ site.baseurl }}/functionality" class="text-black section-title">Service Mesh Management</a></h6>
+    <h6><a href="{{ site.baseurl }}/v0.2/functionality" class="text-black section-title">Service Mesh Management</a></h6>
     <ul>
       {% for item in sorted_pages %}
       {% if item.type=="functionality" and item.list!="exclude" and item.language !="es" and item.url contains 'v0.2' -%}
@@ -72,7 +72,7 @@ display-title: "false"
         {% endif %}
       {% endfor %}
     </ul>
-    <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6>
+    <h6><a href="{{ site.baseurl }}/v0.2/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6>
     <ul>
       {% for item in sorted_pages %}
       {% if item.type=="service-mesh" and item.list!="exclude" and item.language!="es" and item.url contains 'v0.2' -%}
@@ -90,10 +90,10 @@ display-title: "false"
 
   <!-- GUIDES -->
   <div>
-    <a href="{{ site.baseurl }}/guides">
+    <a href="{{ site.baseurl }}/v0.2/guides">
         <div class="overview">Guides and Reference</div>
     </a>
-    <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6>
+    <h6><a href="{{ site.baseurl }}/v0.2/guides" class="text-black section-title">Guides</a></h6>
     <ul>
       {% for item in sorted_pages %}
       {% if item.type=="Guides" and item.list!="exclude"  and item.language!="es" and item.url contains 'v0.2' -%}
@@ -102,7 +102,7 @@ display-title: "false"
         {% endif %}
       {% endfor %}
     </ul>
-    <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Reference</a></h6>
+    <h6><a href="{{ site.baseurl }}/v0.2/reference" class="text-black section-title">Reference</a></h6>
     <ul>
         {% for item in sorted_pages %}
         {% if item.type=="Reference" and item.list!="exclude"  and item.language!="es" and item.url contains 'v0.2' -%}
