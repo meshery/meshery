@@ -26,6 +26,8 @@ require (
 	github.com/docker/docker v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/envoyproxy/go-control-plane v0.9.10-0.20210907150352-cf90f659a021
 	github.com/ghodss/yaml v1.0.0
+	github.com/go-openapi/runtime v0.19.15
+	github.com/go-openapi/strfmt v0.19.5
 	github.com/gofrs/uuid v3.4.0+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-github v17.0.0+incompatible // indirect
@@ -67,9 +69,9 @@ require (
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.22.2
-	k8s.io/api v0.22.2
+	k8s.io/api v0.22.3
 	k8s.io/apiextensions-apiserver v0.22.3
-	k8s.io/apimachinery v0.22.2
-	k8s.io/client-go v0.22.2
+	k8s.io/apimachinery v0.22.3
+	k8s.io/client-go v0.22.3
 	sigs.k8s.io/controller-runtime v0.10.2
 )
