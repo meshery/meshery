@@ -9,10 +9,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	mesheryServiceName = "meshery"
-)
-
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Open Meshery UI",
