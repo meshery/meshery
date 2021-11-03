@@ -1325,6 +1325,24 @@
         "short_description": "Could not get K8s components for registration",
         "probable_cause": "Invalid kubeconfig\nFilters passed incorrectly in config\nCould not fetch API resources from Kubernetes server",
         "suggested_remediation": "Make sure that the configuration filters passed are in accordance with output from /openapi/v2"
+      },
+      "2155": {
+        "name": "ErrParseK8sManifestCode",
+        "code": "2155",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2156": {
+        "name": "ErrCreatePatternServiceCode",
+        "code": "2156",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
