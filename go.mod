@@ -5,6 +5,8 @@ go 1.16
 replace (
 	//golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
 	github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
+	github.com/go-openapi/runtime => github.com/go-openapi/runtime v0.19.31
+	github.com/go-openapi/strfmt => github.com/go-openapi/strfmt v0.20.2
 	github.com/go-redis/redis/v8 => github.com/go-redis/redis/v8 v8.11.4
 	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
 	github.com/spf13/afero => github.com/spf13/afero v1.5.1 // Until viper bug is resolved #1161
@@ -24,8 +26,8 @@ require (
 	github.com/docker/docker v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/envoyproxy/go-control-plane v0.9.10-0.20210907150352-cf90f659a021
 	github.com/ghodss/yaml v1.0.0
-	github.com/go-openapi/runtime v0.21.0
-	github.com/go-openapi/strfmt v0.21.0
+	github.com/go-openapi/runtime v0.19.15
+	github.com/go-openapi/strfmt v0.19.5
 	github.com/gofrs/uuid v3.4.0+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-github v17.0.0+incompatible // indirect
