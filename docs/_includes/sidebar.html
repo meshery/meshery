@@ -4,6 +4,32 @@
     <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
     </button>
   </form>  
+  <hr>
+  
+  <div class="version" class="nav-item  ml-md-auto ">
+    <span class="text-black text-bold"> &nbsp;Meshery Version &nbsp;
+  <select onchange="window.location=this.value" class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide bg-white focus:outline-none" name="versioningSelection" id="versioningSelection">
+
+    {% assign versions = site.data.versions  %}
+
+    {% for link in versions%}
+    {%- capture linkUrl -%}/{{link.url}}/{%- endcapture -%}
+
+     {%- if page.url==linkUrl or page.url contains linkUrl -%}
+      {%- assign optionSelected = "selected" -%}
+      {%- assign linkUrlSelected = linkUrl -%}
+     {%- else -%}
+      {%- assign optionSelected = "" -%}
+     {%- endif -%}
+    <option {{optionSelected}} value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0">
+      <span>{{ link.version }}</span>
+    </option>
+    {% endfor %}
+    </select>
+    </span>
+</div>
+
+<hr>
 
   <nav class="collapse td-sidebar-nav pt-2 pl-4" id="td-section-nav">
   {% for section in site.data.toc %}
