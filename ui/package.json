@@ -11,7 +11,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "dev:proxy": "node ui_dev_server.js",
-    "prepare": "cd .. && husky install ui/.husky"
+    "postinstall": "cd .. && npx husky install ui/.husky"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -57,6 +57,7 @@
     "husky": "^7.0.2",
     "jest": "^27.1.0",
     "lint-staged": "^11.1.2",
+    "pinst": "^2.1.6",
     "prettier": "2.3.2",
     "relay-compiler": "^11.0.2",
     "relay-config": "^11.0.2"

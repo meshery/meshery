@@ -1,4 +1,13 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-cd ui && npx --no-install lint-staged
+
+if [ -e "$(dirname "$0")/../package-lock.json" ]
+then
+  echo  "[Husky] Looks like you have used npm for installing dependencies 😅 "
+  echo "[Husky] Please remove package-lock.json and use yarn for installing dependenies 🙌 "
+  exit 2 
+else
+  cd ui && npx  lint-staged
+fi
+
