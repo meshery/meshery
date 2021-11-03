@@ -50,7 +50,6 @@ dist/
 
 **/.idea
 
-yarn.lock
 
 # Generated binaries
 **/bin
