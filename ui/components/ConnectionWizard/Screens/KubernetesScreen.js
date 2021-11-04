@@ -40,9 +40,7 @@ const KubernetesScreen = ({
           ...clusterInformation,
           isClusterConfigured : k8sconfig.clusterConfigured,
           inClusterConfig : k8sconfig.inClusterConfig,
-          kubernetesPingStatus : res !== undefined
-            ? true
-            : false,
+          kubernetesPingStatus : res !== undefined,
           contextName : k8sconfig.contextName,
           serverVersion : k8sconfig.server_version,
           configuredServer : k8sconfig.configuredServer,
