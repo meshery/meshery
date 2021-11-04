@@ -1,0 +1,7 @@
+{
+    "version": "v1.12.0",
+    "expectedVersion": "v1.12.0",
+    "Major": 1,
+    "Minor": 12,
+    "GitVersion": "1.12.0-alpha.1+1",
+}
