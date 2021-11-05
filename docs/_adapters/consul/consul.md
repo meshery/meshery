@@ -3,6 +3,7 @@ layout: default
 title: Meshery Adapter for Consul
 name: Meshery Adapter for Consul
 mesh_name: Consul
+earliest_version: v1.8.4
 port: 10002/tcp
 project_status: stable
 adapter_version: v0.5.2
@@ -11,7 +12,6 @@ github_link: https://github.com/meshery/meshery-consul
 image: /assets/img/service-meshes/consul.svg
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul
-earliest_version: v1.8.4
 ---
 
 {% include adapter-status.html %}

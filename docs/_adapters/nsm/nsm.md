@@ -3,6 +3,7 @@ layout: default
 title: Meshery Adapter for Network Service Mesh
 name: Meshery Adapter for Network Service Mesh
 mesh_name: Network Service Mesh
+earliest_version: v0.2.1
 port: 10004/tcp
 project_status: stable
 lab: nsm-meshery-adapter

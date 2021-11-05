@@ -3,6 +3,7 @@ layout: default
 title: Meshery Adapter for Istio
 name: Meshery Adapter for Istio
 mesh_name: Istio
+earliest_version: v1.6.0
 port: 10000/tcp
 project_status: stable
 adapter_version: v0.5.4
@@ -10,7 +11,6 @@ lab: istio-meshery-adapter
 github_link: https://github.com/meshery/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 permalink: service-meshes/adapters/istio
-earliest_version: v1.6.0
 ---
 
 {% include adapter-status.html %}

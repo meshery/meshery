@@ -3,7 +3,7 @@ layout: default
 title: Citrix Service Mesh (CPX)
 name: Meshery Adapter for Citrix Service Mesh
 mesh_name: Citrix
-version: "1.0"
+earliest_version: "1.0"
 port: 10008/tcp
 project_status: beta
 github_link: https://github.com/meshery/meshery-cpx

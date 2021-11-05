@@ -3,12 +3,12 @@ layout: default
 title: Meshery Adapter for NGINX Service Mesh
 name: Meshery Adapter for NGINX Service Mesh
 mesh_name: NGINX Service Mesh
+earliest_version: v1.2.0
 port: 10010/tcp
 project_status: beta
 github_link: https://github.com/meshery/meshery-nginx-sm
 image: /assets/img/service-meshes/nginx-sm.svg
 permalink: service-meshes/adapters/nginx-sm
-earliest_version: v1.2.0
 ---
 
 {% include adapter-status.html %}
