@@ -139,8 +139,8 @@ function ExtensionSandbox({ type, Extension }) {
   }, []);
 
   if (type === "navigator") {
-    return isLoading
-      ? <Typography align="center">
+    return isLoading?
+      <Typography align="center">
         <CircularProgress/>
       </Typography>
       : (

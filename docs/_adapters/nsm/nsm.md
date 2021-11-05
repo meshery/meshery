@@ -3,7 +3,7 @@ layout: default
 title: Meshery Adapter for Network Service Mesh
 name: Meshery Adapter for Network Service Mesh
 mesh_name: Network Service Mesh
-version: v0.2.1
+earliest_version: v0.2.1
 port: 10004/tcp
 project_status: stable
 lab: nsm-meshery-adapter
@@ -61,8 +61,8 @@ Working process
 
 This will install two Deployments:
 
-| Name                       | Description                  |
-| :------------------------- | :--------------------------- |
+| Name                   | Description                  |
+| :--------------------- | :--------------------------- |
 | vpp-icmp-responder-nsc | The Clients (four replicas)  |
 | vpp-icmp-responder-nse | The Endpoints (two replicas) |
 
@@ -100,8 +100,8 @@ Outcomes
 
 This will install two Deployments:
 
-| Name                   | Description                 |
-| :--------------------- | :-------------------------- |
+| Name               | Description                 |
+| :----------------- | :-------------------------- |
 | icmp-responder-nsc | The Clients, four replicas  |
 | icmp-responder-nse | The Endpoints, two replicas |
 
@@ -111,7 +111,7 @@ Network Service Discovery and Routing, as well as the vWire 'Connection Handling
 ![icmp-responder-example-2](./icmp-responder-example-2.svg)
 
 In order to make this case more interesting, Endpoint1 and Endpoint2 are deployed on two separate Nodes using
-*PodAntiAffinity*, so that the Network Service Mesh has to demonstrate the ability to string vWires between Clients and
+_PodAntiAffinity_, so that the Network Service Mesh has to demonstrate the ability to string vWires between Clients and
 Endpoints on the same Node and Clients and Endpoints on different Nodes.
 
 Verification

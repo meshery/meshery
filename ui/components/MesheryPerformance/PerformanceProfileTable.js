@@ -251,6 +251,11 @@ function MesheryTestProfiles({
     page,
     print : false,
     download : false,
+    textLabels : {
+      selectedRows : {
+        text : "profile(s) selected"
+      }
+    },
 
     onRowsDelete : async function handleDeleteRow(row) {
       let response = await showModal()

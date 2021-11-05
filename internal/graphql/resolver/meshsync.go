@@ -79,7 +79,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
-
+		r.Config.BrokerEndpointURL = &endpoint
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
 			Source: broadcast.OperatorSyncChannel,
 			Data:   false,

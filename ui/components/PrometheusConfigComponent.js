@@ -23,9 +23,7 @@ class PrometheusConfigComponent extends Component {
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <ReactSelectWrapper
-                    onChange={(select) => handleChange('prometheusURL')(select
-                      ? select.value
-                      : '')}
+                    onChange={(select) => handleChange('prometheusURL')(select ? select.value : '')}
                     options={options}
                     value={prometheusURL}
                     label="Prometheus Base URL"
