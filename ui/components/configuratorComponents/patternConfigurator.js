@@ -2,7 +2,7 @@
 import {
   Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select, TextField, Toolbar, Tooltip, Typography
 } from "@material-ui/core";
-import { AddAlarm, AddIcCallOutlined } from "@material-ui/icons";
+import { AddIcCallOutlined } from "@material-ui/icons";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import FileCopyIcon from '@material-ui/icons/FileCopy';
@@ -10,7 +10,7 @@ import ListAltIcon from '@material-ui/icons/ListAlt';
 import SaveIcon from '@material-ui/icons/Save';
 import { Autocomplete } from '@material-ui/lab';
 import jsYaml from "js-yaml";
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { trueRandom } from "../../lib/trueRandom";
 import { SchemaContext } from "../../utils/context/schemaSet";
 import { getMeshProperties } from "../../utils/nameMapper";
@@ -137,7 +137,11 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     return Object.keys(cfg?.services)?.[0] || undefined;
   }
 
-  const getFormOptions = () => {
+  function resetSelectedPattern() {
+    return { show : false, pattern : null }
+  }
+
+  function getFormOptions() {
     if (selectedMeshType === "core") {
       return meshWorkloads["core"].map(mwl => {
         const name = mwl?.workload?.metadata?.["display.ui.meshery.io/name"]
