@@ -12,6 +12,15 @@
         "probable_cause": "Could be a network issue",
         "suggested_remediation": "Check if meshery server is reachable from the browser"
       },
+      "1014": {
+        "name": "ErrGettingNamespaceCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Cannot get available namespaces",
+        "probable_cause": "The table in the database might not exist",
+        "suggested_remediation": ""
+      },
       "2000": {
         "name": "ErrInvalidK8SConfigCode",
         "code": "2000",
