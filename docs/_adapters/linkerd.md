@@ -3,7 +3,7 @@ layout: default
 title: Meshery Adapter for Linkerd
 name: Meshery Adapter for Linkerd
 mesh_name: Linkerd
-version: v2.5.0
+earliest_version: v2.10.2
 port: 10001/tcp
 project_status: stable
 adapter_version: v0.5.2
