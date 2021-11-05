@@ -2,7 +2,8 @@
 layout: page
 title: Arquitectura
 permalink: /es/concepts/architecture
-abstract: "descripción general de los diferentes componentes individuales de la arquitectura Meshery y cómo interactúan como sistema."
+abstract: "Descripción general de los diferentes componentes individuales de la arquitectura Meshery y cómo interactúan como sistema."
+
 language: es
 lang: es
 categories: es
@@ -18,7 +19,8 @@ type: concepts
 
 ![Meshery architecture](/assets/img/architecture/Meshery-architecture-diagram.png)
 
-### 1. **Arquitectura del Client**
+### 1. **Arquitectura del Cliente**
+
 
 ![Client architecture](/assets/img/architecture/Meshery-client-architecture.svg)
 

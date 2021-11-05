@@ -15,7 +15,8 @@ Los usuarios pueden preferir usar un generador de carga sobre el siguiente dada 
 
 ### ¿Qué función cumplen los generadores de carga en Meshery?
 
-Los generadores de carga proporcionarán la capacidad de ejecutar pruebas de carga desde Meshery. A partir de hoy, los generadores de carga están integrados como bibliotecas en Meshery y Meshery invoca las API de los generadores de carga con las opciones de prueba de carga adecuadas para ejecutar la prueba de carga. Por el momento, Meshery tiene soporte para generadores de carga HTTP. El soporte para pruebas de carga de GRPC y TCP está en la hoja de ruta. Meshery tiene integración funcional con fortio, wrk2 y nighthawk.
+Los generadores de carga proporcionarán la capacidad de ejecutar pruebas de carga desde Meshery. A partir de hoy, los generadores de carga están integrados como bibliotecas en Meshery y Meshery invoca las API de los generadores de carga con las opciones de prueba de carga adecuadas para ejecutar la prueba de carga. Por el momento, Meshery tiene soporte para generadores de carga HTTP. El soporte para pruebas de carga de gRPC y TCP está en la hoja de ruta. Meshery tiene integración funcional con fortio, wrk2 y nighthawk.
+
 
 ### ¿Por qué admitir varios generadores de carga?
 

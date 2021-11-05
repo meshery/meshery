@@ -23,7 +23,8 @@ Meshery mantiene los siguientes principios rectores para el diseño de adaptador
 
 
 ### Capacidades de los Adaptadores
-Meshery se comunica con los adaptadores a través de grpc. Los adaptadores establecen comunicación con la malla de servicios. Los adaptadores tienen un conjunto predefinido de operaciones que se agrupan en función de tipos de operaciones predefinidos.
+Meshery se comunica con los adaptadores a través de gRPC. Los adaptadores establecen comunicación con la malla de servicios. Los adaptadores tienen un conjunto predefinido de operaciones que se agrupan en función de tipos de operaciones predefinidos.
+
 
 Los tipos de operación predefinidos son:
 
