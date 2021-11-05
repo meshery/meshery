@@ -119,7 +119,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               <label htmlFor="help-button" >
                 <Tooltip title={schemaSet?.workload?.description} >
                   <IconButton component="span" style={{ paddingRight : "0.1rem" }} >
-                    <HelpOutlineIcon style={{ color : '#fff' }} fontSize="small" />
+                    <HelpOutlineIcon style={{ color : '#fff',marginRight : '0.4rem' }} fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </label>

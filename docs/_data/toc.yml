@@ -119,6 +119,8 @@
           url: guides/mesheryctl/authenticate-with-meshery-via-cli
         - title: Upgrading Meshery CLI
           url: guides/upgrade#upgrading-meshery-cli
+        - title: Running system checks using Meshery CLI
+          url: guides/mesheryctl/running-system-checks-using-cli
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
 - title: 🛠 Extensibility

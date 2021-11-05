@@ -330,6 +330,78 @@ definitions:
         x-go-name: ValueMaps
     type: object
     x-go-package: github.com/grafana-tools/sdk
+  Condition:
+    description: |-
+      This struct is intended for direct use as an array at the field path .status.conditions.  For example,
+      type FooStatus struct{
+      Represents the observations of a foo's current state.
+      Known .status.conditions.type are: "Available", "Progressing", and "Degraded"
+      +patchMergeKey=type
+      +patchStrategy=merge
+      +listType=map
+      +listMapKey=type
+      Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
+
+      other fields
+      }
+    properties:
+      lastTransitionTime:
+        $ref: '#/definitions/Time'
+      message:
+        description: |-
+          message is a human readable message indicating details about the transition.
+          This may be an empty string.
+          +required
+          +kubebuilder:validation:Required
+          +kubebuilder:validation:MaxLength=32768
+        type: string
+        x-go-name: Message
+      observedGeneration:
+        description: |-
+          observedGeneration represents the .metadata.generation that the condition was set based upon.
+          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+          with respect to the current state of the instance.
+          +optional
+          +kubebuilder:validation:Minimum=0
+        format: int64
+        type: integer
+        x-go-name: ObservedGeneration
+      reason:
+        description: |-
+          reason contains a programmatic identifier indicating the reason for the condition's last transition.
+          Producers of specific condition types may define expected values and meanings for this field,
+          and whether the values are considered a guaranteed API.
+          The value should be a CamelCase string.
+          This field may not be empty.
+          +required
+          +kubebuilder:validation:Required
+          +kubebuilder:validation:MaxLength=1024
+          +kubebuilder:validation:MinLength=1
+          +kubebuilder:validation:Pattern=`^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$`
+        type: string
+        x-go-name: Reason
+      status:
+        $ref: '#/definitions/ConditionStatus'
+      type:
+        description: |-
+          type of condition in CamelCase or in foo.example.com/CamelCase.
+
+          Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+          useful (see .node.status.conditions), the ability to deconflict is important.
+          The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+          +required
+          +kubebuilder:validation:Required
+          +kubebuilder:validation:Pattern=`^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$`
+          +kubebuilder:validation:MaxLength=316
+        type: string
+        x-go-name: Type
+    title: Condition contains details for one aspect of the current state of this
+      API Resource.
+    type: object
+    x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
+  ConditionStatus:
+    type: string
+    x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
   ContainerChangeResponseItem:
     description: ContainerChangeResponseItem change item in response to ContainerChanges
       operation
@@ -485,6 +557,7 @@ definitions:
       If a key maps to an empty Fields value, the field that key represents is part of the set.
 
       The exact format is defined in sigs.k8s.io/structured-merge-diff
+      +protobuf.options.(gogoproto.goproto_stringer)=false
     title: FieldsV1 stores a set of fields in a data structure like a Trie, in JSON
       format.
     type: object
@@ -720,7 +793,12 @@ definitions:
   IPFamily:
     description: |-
       IPFamily represents the IP Family (IPv4 or IPv6). This type is used
-      to express the family of an IP expressed by a type (i.e. service.Spec.IPFamily)
+      to express the family of an IP expressed by a type (e.g. service.spec.ipFamilies).
+    type: string
+    x-go-package: k8s.io/api/core/v1
+  IPFamilyPolicyType:
+    description: IPFamilyPolicyType represents the dual-stack-ness requested or required
+      by a Service
     type: string
     x-go-package: k8s.io/api/core/v1
   IdResponse:
@@ -1059,6 +1137,16 @@ definitions:
           +optional
         type: string
         x-go-name: IP
+      ports:
+        description: |-
+          Ports is a list of records of service ports
+          If used, every port defined in the service should have an entry in it
+          +listType=atomic
+          +optional
+        items:
+          $ref: '#/definitions/PortStatus'
+        type: array
+        x-go-name: Ports
     title: 'LoadBalancerIngress represents the status of a load-balancer ingress point:'
     type: object
     x-go-package: k8s.io/api/core/v1
@@ -1122,6 +1210,17 @@ definitions:
         x-go-name: Manager
       operation:
         $ref: '#/definitions/ManagedFieldsOperationType'
+      subresource:
+        description: |-
+          Subresource is the name of the subresource used to update that object, or
+          empty string if the object was updated through the main resource. The
+          value of this field is used to distinguish between managers, even if they
+          share the same name. For example, a status update will be distinct from a
+          regular update using the same manager name.
+          Note that the APIVersion field is not related to the Subresource field and
+          it always corresponds to the version of the main resource.
+        type: string
+        x-go-name: Subresource
       time:
         $ref: '#/definitions/Time'
     type: object
@@ -1256,6 +1355,10 @@ definitions:
       link:
         type: boolean
         x-go-name: Link
+      on_click_callback:
+        format: int64
+        type: integer
+        x-go-name: OnClickCallback
       show:
         type: boolean
         x-go-name: Show
@@ -1322,6 +1425,7 @@ definitions:
       OwnerReference contains enough information to let you identify an owning
       object. An owning object must be in the same namespace as the dependent, or
       be cluster-scoped, so there is no namespace field.
+      +structType=atomic
     properties:
       apiVersion:
         description: API version of the referent.
@@ -2535,6 +2639,34 @@ definitions:
     - Type
     type: object
     x-go-package: github.com/docker/docker/api/types
+  PortStatus:
+    properties:
+      error:
+        description: |-
+          Error is to record the problem with the service port
+          The format of the error shall comply with the following rules:
+          built-in error values shall be specified in this file and those shall use
+          CamelCase names
+          cloud provider specific error values must have names that comply with the
+          format foo.example.com/CamelCase.
+
+          The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+          +optional
+          +kubebuilder:validation:Required
+          +kubebuilder:validation:Pattern=`^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$`
+          +kubebuilder:validation:MaxLength=316
+        type: string
+        x-go-name: Error
+      port:
+        description: Port is the port number of the service port of which status is
+          recorded here
+        format: int32
+        type: integer
+        x-go-name: Port
+      protocol:
+        $ref: '#/definitions/Protocol'
+    type: object
+    x-go-package: k8s.io/api/core/v1
   Preference:
     description: Preference represents the data stored in session / local DB
     properties:
@@ -2643,7 +2775,6 @@ definitions:
       ActualDuration:
         format: uint64
         type: integer
-        x-go-name: Duration
       ActualQPS:
         format: double
         type: number
@@ -2672,6 +2803,8 @@ definitions:
               type: object
             type: array
         type: object
+      RequestedDuration:
+        type: string
       StartTime:
         format: date-time
         type: string
@@ -2929,7 +3062,7 @@ definitions:
         x-go-name: Name
       namespace:
         description: |-
-          Namespace defines the space within each name must be unique. An empty namespace is
+          Namespace defines the space within which each name must be unique. An empty namespace is
           equivalent to the "default" namespace, but "default" is the canonical representation.
           Not all objects are required to be scoped to a namespace - the value of this field for
           those objects will be empty.
@@ -2996,6 +3129,12 @@ definitions:
     description: Service External Traffic Policy Type string
     type: string
     x-go-package: k8s.io/api/core/v1
+  ServiceInternalTrafficPolicyType:
+    description: |-
+      ServiceInternalTrafficPolicyType describes the type of traffic routing for
+      internal traffic
+    type: string
+    x-go-package: k8s.io/api/core/v1
   ServicePort:
     properties:
       appProtocol:
@@ -3006,7 +3145,6 @@ definitions:
           RFC-6335 and http://www.iana.org/assignments/service-names).
           Non-standard protocols should use prefixed names such as
           mycompany.com/my-custom-protocol.
-          Field can be enabled with ServiceAppProtocol feature gate.
           +optional
         type: string
         x-go-name: AppProtocol
@@ -3022,10 +3160,14 @@ definitions:
         x-go-name: Name
       nodePort:
         description: |-
-          The port on each node on which this service is exposed when type=NodePort or LoadBalancer.
-          Usually assigned by the system. If specified, it will be allocated to the service
-          if unused or else creation of the service will fail.
-          Default is to auto-allocate a port if the ServiceType of this Service requires one.
+          The port on each node on which this service is exposed when type is
+          NodePort or LoadBalancer.  Usually assigned by the system. If a value is
+          specified, in-range, and not in use it will be used, otherwise the
+          operation will fail.  If not specified, a port will be allocated if this
+          Service requires one.  If this field is specified when creating a
+          Service which does not need it, creation will fail. This field will be
+          wiped when updating a Service to no longer need it (e.g. changing type
+          from NodePort to ClusterIP).
           More info: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
           +optional
         format: int32
@@ -3045,20 +3187,74 @@ definitions:
     x-go-package: k8s.io/api/core/v1
   ServiceSpec:
     properties:
+      allocateLoadBalancerNodePorts:
+        description: |-
+          allocateLoadBalancerNodePorts defines if NodePorts will be automatically
+          allocated for services with type LoadBalancer.  Default is "true". It
+          may be set to "false" if the cluster load-balancer does not rely on
+          NodePorts.  If the caller requests specific NodePorts (by specifying a
+          value), those requests will be respected, regardless of this field.
+          This field may only be set for services with type LoadBalancer and will
+          be cleared if the type is changed to any other type.
+          This field is beta-level and is only honored by servers that enable the ServiceLBNodePortControl feature.
+          +featureGate=ServiceLBNodePortControl
+          +optional
+        type: boolean
+        x-go-name: AllocateLoadBalancerNodePorts
       clusterIP:
         description: |-
           clusterIP is the IP address of the service and is usually assigned
-          randomly by the master. If an address is specified manually and is not in
-          use by others, it will be allocated to the service; otherwise, creation
-          of the service will fail. This field can not be changed through updates.
-          Valid values are "None", empty string (""), or a valid IP address. "None"
-          can be specified for headless services when proxying is not required.
-          Only applies to types ClusterIP, NodePort, and LoadBalancer. Ignored if
-          type is ExternalName.
+          randomly. If an address is specified manually, is in-range (as per
+          system configuration), and is not in use, it will be allocated to the
+          service; otherwise creation of the service will fail. This field may not
+          be changed through updates unless the type field is also being changed
+          to ExternalName (which requires this field to be blank) or the type
+          field is being changed from ExternalName (in which case this field may
+          optionally be specified, as describe above).  Valid values are "None",
+          empty string (""), or a valid IP address. Setting this to "None" makes a
+          "headless service" (no virtual IP), which is useful when direct endpoint
+          connections are preferred and proxying is not required.  Only applies to
+          types ClusterIP, NodePort, and LoadBalancer. If this field is specified
+          when creating a Service of type ExternalName, creation will fail. This
+          field will be wiped when updating a Service to type ExternalName.
           More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
           +optional
         type: string
         x-go-name: ClusterIP
+      clusterIPs:
+        description: |-
+          ClusterIPs is a list of IP addresses assigned to this service, and are
+          usually assigned randomly.  If an address is specified manually, is
+          in-range (as per system configuration), and is not in use, it will be
+          allocated to the service; otherwise creation of the service will fail.
+          This field may not be changed through updates unless the type field is
+          also being changed to ExternalName (which requires this field to be
+          empty) or the type field is being changed from ExternalName (in which
+          case this field may optionally be specified, as describe above).  Valid
+          values are "None", empty string (""), or a valid IP address.  Setting
+          this to "None" makes a "headless service" (no virtual IP), which is
+          useful when direct endpoint connections are preferred and proxying is
+          not required.  Only applies to types ClusterIP, NodePort, and
+          LoadBalancer. If this field is specified when creating a Service of type
+          ExternalName, creation will fail. This field will be wiped when updating
+          a Service to type ExternalName.  If this field is not specified, it will
+          be initialized from the clusterIP field.  If this field is specified,
+          clients must ensure that clusterIPs[0] and clusterIP have the same
+          value.
+
+          Unless the "IPv6DualStack" feature gate is enabled, this field is
+          limited to one value, which must be the same as the clusterIP field.  If
+          the feature gate is enabled, this field may hold a maximum of two
+          entries (dual-stack IPs, in either order).  These IPs must correspond to
+          the values of the ipFamilies field. Both clusterIPs and ipFamilies are
+          governed by the ipFamilyPolicy field.
+          More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
+          +listType=atomic
+          +optional
+        items:
+          type: string
+        type: array
+        x-go-name: ClusterIPs
       externalIPs:
         description: |-
           externalIPs is a list of IP addresses for which nodes in the cluster
@@ -3073,10 +3269,10 @@ definitions:
         x-go-name: ExternalIPs
       externalName:
         description: |-
-          externalName is the external reference that kubedns or equivalent will
-          return as a CNAME record for this service. No proxying will be involved.
-          Must be a valid RFC-1123 hostname (https://tools.ietf.org/html/rfc1123)
-          and requires Type to be ExternalName.
+          externalName is the external reference that discovery mechanisms will
+          return as an alias for this service (e.g. a DNS CNAME record). No
+          proxying will be involved.  Must be a lowercase RFC-1123 hostname
+          (https://tools.ietf.org/html/rfc1123) and requires `type` to be "ExternalName".
           +optional
         type: string
         x-go-name: ExternalName
@@ -3085,16 +3281,63 @@ definitions:
       healthCheckNodePort:
         description: |-
           healthCheckNodePort specifies the healthcheck nodePort for the service.
-          If not specified, HealthCheckNodePort is created by the service api
-          backend with the allocated nodePort. Will use user-specified nodePort value
-          if specified by the client. Only effects when Type is set to LoadBalancer
-          and ExternalTrafficPolicy is set to Local.
+          This only applies when type is set to LoadBalancer and
+          externalTrafficPolicy is set to Local. If a value is specified, is
+          in-range, and is not in use, it will be used.  If not specified, a value
+          will be automatically allocated.  External systems (e.g. load-balancers)
+          can use this port to determine if a given node holds endpoints for this
+          service or not.  If this field is specified when creating a Service
+          which does not need it, creation will fail. This field will be wiped
+          when updating a Service to no longer need it (e.g. changing type).
           +optional
         format: int32
         type: integer
         x-go-name: HealthCheckNodePort
-      ipFamily:
-        $ref: '#/definitions/IPFamily'
+      internalTrafficPolicy:
+        $ref: '#/definitions/ServiceInternalTrafficPolicyType'
+      ipFamilies:
+        description: |-
+          IPFamilies is a list of IP families (e.g. IPv4, IPv6) assigned to this
+          service, and is gated by the "IPv6DualStack" feature gate.  This field
+          is usually assigned automatically based on cluster configuration and the
+          ipFamilyPolicy field. If this field is specified manually, the requested
+          family is available in the cluster, and ipFamilyPolicy allows it, it
+          will be used; otherwise creation of the service will fail.  This field
+          is conditionally mutable: it allows for adding or removing a secondary
+          IP family, but it does not allow changing the primary IP family of the
+          Service.  Valid values are "IPv4" and "IPv6".  This field only applies
+          to Services of types ClusterIP, NodePort, and LoadBalancer, and does
+          apply to "headless" services.  This field will be wiped when updating a
+          Service to type ExternalName.
+
+          This field may hold a maximum of two entries (dual-stack families, in
+          either order).  These families must correspond to the values of the
+          clusterIPs field, if specified. Both clusterIPs and ipFamilies are
+          governed by the ipFamilyPolicy field.
+          +listType=atomic
+          +optional
+        items:
+          $ref: '#/definitions/IPFamily'
+        type: array
+        x-go-name: IPFamilies
+      ipFamilyPolicy:
+        $ref: '#/definitions/IPFamilyPolicyType'
+      loadBalancerClass:
+        description: |-
+          loadBalancerClass is the class of the load balancer implementation this Service belongs to.
+          If specified, the value of this field must be a label-style identifier, with an optional prefix,
+          e.g. "internal-vip" or "example.com/internal-vip". Unprefixed names are reserved for end-users.
+          This field can only be set when the Service type is 'LoadBalancer'. If not set, the default load
+          balancer implementation is used, today this is typically done through the cloud provider integration,
+          but should apply for any default implementation. If set, it is assumed that a load balancer
+          implementation is watching for Services with a matching class. Any default load balancer
+          implementation (e.g. cloud providers) should ignore Services that set this field.
+          This field can only be set when creating or updating a Service to type 'LoadBalancer'.
+          Once set, it can not be changed. This field will be wiped when a service is updated to a non 'LoadBalancer' type.
+          +featureGate=LoadBalancerClass
+          +optional
+        type: string
+        x-go-name: LoadBalancerClass
       loadBalancerIP:
         description: |-
           Only applies to Service Type: LoadBalancer
@@ -3110,7 +3353,7 @@ definitions:
           If specified and supported by the platform, this will restrict traffic through the cloud-provider
           load-balancer will be restricted to the specified client IPs. This field will be ignored if the
           cloud-provider does not support the feature."
-          More info: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/
+          More info: https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/
           +optional
         items:
           type: string
@@ -3131,12 +3374,14 @@ definitions:
         x-go-name: Ports
       publishNotReadyAddresses:
         description: |-
-          publishNotReadyAddresses, when set to true, indicates that DNS implementations
-          must publish the notReadyAddresses of subsets for the Endpoints associated with
-          the Service. The default value is false.
-          The primary use case for setting this field is to use a StatefulSet's Headless Service
-          to propagate SRV records for its Pods without respect to their readiness for purpose
-          of peer discovery.
+          publishNotReadyAddresses indicates that any agent which deals with endpoints for this
+          Service should disregard any indications of ready/not-ready.
+          The primary use case for setting this field is for a StatefulSet's Headless Service to
+          propagate SRV DNS records for its Pods for the purpose of peer discovery.
+          The Kubernetes controllers that generate Endpoints and EndpointSlice resources for
+          Services interpret this to mean that all endpoints are considered "ready" even if the
+          Pods themselves are not. Agents which consume only Kubernetes generated endpoints
+          through the Endpoints or EndpointSlice resources can safely assume this behavior.
           +optional
         type: boolean
         x-go-name: PublishNotReadyAddresses
@@ -3151,31 +3396,13 @@ definitions:
           Ignored if type is ExternalName.
           More info: https://kubernetes.io/docs/concepts/services-networking/service/
           +optional
+          +mapType=atomic
         type: object
         x-go-name: Selector
       sessionAffinity:
         $ref: '#/definitions/ServiceAffinity'
       sessionAffinityConfig:
         $ref: '#/definitions/SessionAffinityConfig'
-      topologyKeys:
-        description: |-
-          topologyKeys is a preference-order list of topology keys which
-          implementations of services should use to preferentially sort endpoints
-          when accessing this Service, it can not be used at the same time as
-          externalTrafficPolicy=Local.
-          Topology keys must be valid label keys and at most 16 keys may be specified.
-          Endpoints are chosen based on the first topology key with available backends.
-          If this field is specified and all entries have no backends that match
-          the topology of the client, the service has no backends for that client
-          and connections should fail.
-          The special value "*" may be used to mean "any topology". This catch-all
-          value, if used, only makes sense as the last value in the list.
-          If this is not specified or empty, no topology constraints will be applied.
-          +optional
-        items:
-          type: string
-        type: array
-        x-go-name: TopologyKeys
       type:
         $ref: '#/definitions/ServiceType'
     title: ServiceSpec describes the attributes that a user creates on a service.
@@ -3183,6 +3410,18 @@ definitions:
     x-go-package: k8s.io/api/core/v1
   ServiceStatus:
     properties:
+      conditions:
+        description: |-
+          Current service state
+          +optional
+          +patchMergeKey=type
+          +patchStrategy=merge
+          +listType=map
+          +listMapKey=type
+        items:
+          $ref: '#/definitions/Condition'
+        type: array
+        x-go-name: Conditions
       loadBalancer:
         $ref: '#/definitions/LoadBalancerStatus'
     title: ServiceStatus represents the current status of a service.

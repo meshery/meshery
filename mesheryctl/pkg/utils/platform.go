@@ -361,7 +361,7 @@ func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
 
 // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 func GetLatestStableReleaseTag() (string, error) {
-	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/latest"
+	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/latest"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
@@ -372,19 +372,15 @@ func GetLatestStableReleaseTag() (string, error) {
 		return "", errors.New("failed to get latest stable release tag")
 	}
 
-	var dat map[string]interface{}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to read response body")
 	}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		return "", errors.Wrap(err, "failed to unmarshal json into object")
-	}
-	null := ""
-	if dat["tag_name"] != nil {
-		null = dat["tag_name"].(string)
-	}
-	return null, nil
+	re := regexp.MustCompile("/releases/tag/(.*?)\"")
+	releases := re.FindAllString(string(body), -1)
+	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
+	latest = strings.ReplaceAll(latest, "\"", "")
+	return latest, nil
 }
 
 // IsAdapterValid checks if the adapter mentioned by the user is a valid adapter
