@@ -13,7 +13,7 @@ func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.P
 
 	result := provider.GetGenericPersister().Distinct("namespace").Not("namespace = ?", "").Find(&resourceobjects)
 	if result.Error != nil {
-		r.Log.Error(result.Error)
+		r.Log.Error(ErrGettingNamespace(result.Error))
 		return nil, result.Error
 	}
 	namespaces := make([]*model.NameSpace, 0)
