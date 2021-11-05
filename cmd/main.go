@@ -94,8 +94,15 @@ func main() {
 		}
 		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
 	}
+	_, er := os.Stat(viper.GetString("USER_DATA_FOLDER"))
+	if os.IsNotExist(er) {
+		logrus.Infof("Creating directory for storing user data in %v", viper.GetString("USER_DATA_FOLDER"))
+		errDir := os.MkdirAll(viper.GetString("USER_DATA_FOLDER"), 0755)
+		if errDir != nil {
+			logrus.Fatalf("unable to create the directory for storing user data at %v", viper.GetString("USER_DATA_FOLDER"))
+		}
+	}
 	logrus.Infof("Using '%s' to store user data", viper.GetString("USER_DATA_FOLDER"))
-
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
 		if err != nil {
 			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
