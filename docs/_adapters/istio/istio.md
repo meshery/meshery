@@ -2,8 +2,8 @@
 layout: default
 title: Meshery Adapter for Istio
 name: Meshery Adapter for Istio
-version: v1.8.1
 mesh_name: Istio
+earliest_version: v1.6.0
 port: 10000/tcp
 project_status: stable
 adapter_version: v0.5.4
@@ -46,7 +46,6 @@ Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service m
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png" />
 </a>
 
-
 ### Workload Management
 
 The ({{page.name}}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
@@ -66,7 +65,6 @@ As the service mesh management plane, Meshery enables the adoption, operation, a
 
 ### Service Mesh Patterns and Open Application Model (OAM)
 
-
 ### Complying with Service Mesh Interface (SMI)
 
 Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
@@ -79,17 +77,15 @@ Learn more about the SMI specification and [Meshery's conformance test suite]({{
 
 The {{page.name}} allows you to quickly deploy (or remove) an Istio add-ons. Meshery will deploy the Prometheus and Grafana add-ons (including Jaeger and Kiali) into Istio's control plane (typically the `istio-system` namespace). You can also connect Meshery to Prometheus, Grafana instances not running in the service mesh's control plane.
 
-If you already have existing Prometheus or Grafana deployments in your cluster, MeshSync will discover them and attempt to automatically register them for use. 
+If you already have existing Prometheus or Grafana deployments in your cluster, MeshSync will discover them and attempt to automatically register them for use.
 
 ## Configuration Management
 
-{{page.name}} provides 
+{{page.name}} provides
+
 ### Configuration best practices
 
 On demand, the {{page.name}} will parse all of Istio's configuration and compare the running configuration of the service mesh against known best practices for an {{page.title}} deployment.
-
-
-
 
 ### Custom service mesh configuration
 

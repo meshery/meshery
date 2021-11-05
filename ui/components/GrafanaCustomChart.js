@@ -279,9 +279,7 @@ class GrafanaCustomChart extends Component {
     this.datasetIndex = {};
     this.state = {
       xAxis : [],
-      sparkline : sparkline && sparkline !== null
-        ? true
-        : false,
+      sparkline : !!sparkline,
       chartData : [],
       error : '',
       errorCount : 0,
@@ -436,12 +434,10 @@ class GrafanaCustomChart extends Component {
             const newData = [];
 
             // if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
-            let legend = typeof target.legendFormat !== 'undefined'
-              ? target.legendFormat
+            let legend = typeof target.legendFormat !== undefined ? target.legendFormat
               : '';
             if (legend === '') {
-              legend = Object.keys(metric).length > 0
-                ? JSON.stringify(metric)
+              legend = Object.keys(metric).length > 0 ? JSON.stringify(metric)
                 : '';
             } else {
               Object.keys(metric).forEach((metricKey) => {
@@ -566,9 +562,7 @@ class GrafanaCustomChart extends Component {
               position : 'outer-middle', };
           }
           if (ya.format.toLowerCase().startsWith('percent')) {
-            const mulFactor = ya.format.toLowerCase() === 'percentunit'
-              ? 100
-              : 1;
+            const mulFactor = ya.format.toLowerCase() === 'percentunit' ? 100 : 1;
             yAxes.tick = { format(d) {
               const tk = (d * mulFactor).toFixed(2);
               return `${tk}%`;
@@ -586,13 +580,9 @@ class GrafanaCustomChart extends Component {
         // }
       };
 
-      const linked = this.state.sparkline
-        ?(false)
+      const linked = this.state.sparkline?(false)
         :(
-          !inDialog
-            ? { name : board && board.title
-              ? board.title
-              : '', }
+          !inDialog ? { name : board && board.title? board.title : '', }
             : false
         );
 
@@ -644,8 +634,7 @@ class GrafanaCustomChart extends Component {
           // cd.datasets[datasetInd].borderColor = panel.sparkline.lineColor;
           // cd.datasets[datasetInd].backgroundColor = panel.sparkline.fillColor;
 
-          const dataLength = chartConfig.data.columns && chartConfig.data.columns.length > 1
-            ? chartConfig.data.columns[1].length
+          const dataLength = chartConfig.data.columns && Array.isArray(chartConfig.data.columns) &&chartConfig.data.columns.length > 1 ? chartConfig.data.columns[1].length
             : 0; // 0 is for x axis
           if (dataLength > 0) {
             if (typeof chartConfig.data.colors === 'undefined') {
@@ -711,10 +700,8 @@ class GrafanaCustomChart extends Component {
       const self = this;
       this.props.updateProgress({ showProgress : false });
       if (error){
-        this.setState({ error : error.message && error.message !== ''
-          ? error.message
-          : (error !== ''
-            ? error
+        this.setState({ error : error.message && error.message !== '' ? error.message
+          : (error !== '' ? error
             : ''), errorCount : self.state.errorCount + 1 });
       }
     }

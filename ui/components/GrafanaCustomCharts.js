@@ -42,24 +42,17 @@ class GrafanaCustomCharts extends Component {
       startDate, from, endDate, to, liveTail, sparkline
     } = props;
     this.state = {
-      startDate : startDate && startDate !== null
-        ? startDate
-        : newStartDate,
-      from : from && from !== null
-        ? from
+      startDate : !!startDate,
+      from : from && from !== null ? from
         : 'now-5m',
-      endDate : endDate && endDate !== null
-        ? endDate
+      endDate : endDate && endDate !== null ? endDate
         : new Date(),
-      to : to && to !== null
-        ? to
+      to : to && to !== null ? to
         : 'now',
-      liveTail : liveTail && liveTail !== null
-        ? liveTail
+      liveTail : liveTail && liveTail !== null ? liveTail
         : true,
       refresh : '10s',
-      sparkline : sparkline && sparkline !== null
-        ? true
+      sparkline : sparkline && sparkline !== null ? true
         : false,
       chartDialogOpen : false,
       chartDialogPanelData : {},
