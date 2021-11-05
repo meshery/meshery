@@ -1,6 +1,6 @@
 // @ts-check
 import {
-  Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
   TableCell, Tooltip, Typography
 } from "@material-ui/core";
 import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
@@ -9,7 +9,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import ListAltIcon from '@material-ui/icons/ListAlt';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import UploadIcon from "@material-ui/icons/Publish";
 import SaveIcon from '@material-ui/icons/Save';
@@ -39,6 +38,10 @@ const styles = (theme) => ({
     '& .MuiTableRow-root' : {
       cursor : 'pointer'
     }
+  },
+  iconPatt : {
+    width : "24px",
+    height : "24px",
   }
 });
 
@@ -66,6 +69,14 @@ const useStyles = makeStyles((theme) => ({
     maxWidth : 150,
     marginRight : "auto"
   },
+  iconPatt : {
+    width : "10px",
+    height : "10px",
+    "& .MuiAvatar-img" : {
+      height : '60%',
+      width : '60%'
+    }
+  }
 }))
 
 function CustomToolbar(onClick, urlOnClick) {
@@ -486,11 +497,12 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex]
           return (
             <>
-              <Tooltip title="Configure">
-                <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
-                  <ListAltIcon />
-                </IconButton>
-              </Tooltip>
+              {/* <Tooltip title="Configure">*/}
+              <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
+
+                <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+              </IconButton>
+              {/*</Tooltip> */}
               <IconButton
                 title="Deploy"
                 onClick={() => handleDeploy(rowData.pattern_file)}
