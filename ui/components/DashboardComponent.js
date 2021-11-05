@@ -474,8 +474,7 @@ class DashboardComponent extends React.Component {
   generateMeshScanPodName = (podname, hash, custom) => {
     const str = custom || podname;
     return { full : podname,
-      trimmed : str.substring(0, (hash
-        ? str.indexOf(hash)
+      trimmed : str.substring(0, (hash ? str.indexOf(hash)
         : str.length) - 1), };
   };
 
