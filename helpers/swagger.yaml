@@ -1210,6 +1210,17 @@ definitions:
         x-go-name: Manager
       operation:
         $ref: '#/definitions/ManagedFieldsOperationType'
+      subresource:
+        description: |-
+          Subresource is the name of the subresource used to update that object, or
+          empty string if the object was updated through the main resource. The
+          value of this field is used to distinguish between managers, even if they
+          share the same name. For example, a status update will be distinct from a
+          regular update using the same manager name.
+          Note that the APIVersion field is not related to the Subresource field and
+          it always corresponds to the version of the main resource.
+        type: string
+        x-go-name: Subresource
       time:
         $ref: '#/definitions/Time'
     type: object
@@ -1344,6 +1355,10 @@ definitions:
       link:
         type: boolean
         x-go-name: Link
+      on_click_callback:
+        format: int64
+        type: integer
+        x-go-name: OnClickCallback
       show:
         type: boolean
         x-go-name: Show
@@ -1410,6 +1425,7 @@ definitions:
       OwnerReference contains enough information to let you identify an owning
       object. An owning object must be in the same namespace as the dependent, or
       be cluster-scoped, so there is no namespace field.
+      +structType=atomic
     properties:
       apiVersion:
         description: API version of the referent.
@@ -3129,8 +3145,6 @@ definitions:
           RFC-6335 and http://www.iana.org/assignments/service-names).
           Non-standard protocols should use prefixed names such as
           mycompany.com/my-custom-protocol.
-          This is a beta field that is guarded by the ServiceAppProtocol feature
-          gate and enabled by default.
           +optional
         type: string
         x-go-name: AppProtocol
@@ -3176,11 +3190,14 @@ definitions:
       allocateLoadBalancerNodePorts:
         description: |-
           allocateLoadBalancerNodePorts defines if NodePorts will be automatically
-          allocated for services with type LoadBalancer.  Default is "true". It may be
-          set to "false" if the cluster load-balancer does not rely on NodePorts.
-          allocateLoadBalancerNodePorts may only be set for services with type LoadBalancer
-          and will be cleared if the type is changed to any other type.
-          This field is alpha-level and is only honored by servers that enable the ServiceLBNodePortControl feature.
+          allocated for services with type LoadBalancer.  Default is "true". It
+          may be set to "false" if the cluster load-balancer does not rely on
+          NodePorts.  If the caller requests specific NodePorts (by specifying a
+          value), those requests will be respected, regardless of this field.
+          This field may only be set for services with type LoadBalancer and will
+          be cleared if the type is changed to any other type.
+          This field is beta-level and is only honored by servers that enable the ServiceLBNodePortControl feature.
+          +featureGate=ServiceLBNodePortControl
           +optional
         type: boolean
         x-go-name: AllocateLoadBalancerNodePorts
@@ -3336,7 +3353,7 @@ definitions:
           If specified and supported by the platform, this will restrict traffic through the cloud-provider
           load-balancer will be restricted to the specified client IPs. This field will be ignored if the
           cloud-provider does not support the feature."
-          More info: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/
+          More info: https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/
           +optional
         items:
           type: string
@@ -3379,33 +3396,13 @@ definitions:
           Ignored if type is ExternalName.
           More info: https://kubernetes.io/docs/concepts/services-networking/service/
           +optional
+          +mapType=atomic
         type: object
         x-go-name: Selector
       sessionAffinity:
         $ref: '#/definitions/ServiceAffinity'
       sessionAffinityConfig:
         $ref: '#/definitions/SessionAffinityConfig'
-      topologyKeys:
-        description: |-
-          topologyKeys is a preference-order list of topology keys which
-          implementations of services should use to preferentially sort endpoints
-          when accessing this Service, it can not be used at the same time as
-          externalTrafficPolicy=Local.
-          Topology keys must be valid label keys and at most 16 keys may be specified.
-          Endpoints are chosen based on the first topology key with available backends.
-          If this field is specified and all entries have no backends that match
-          the topology of the client, the service has no backends for that client
-          and connections should fail.
-          The special value "*" may be used to mean "any topology". This catch-all
-          value, if used, only makes sense as the last value in the list.
-          If this is not specified or empty, no topology constraints will be applied.
-          This field is alpha-level and is only honored by servers that enable the ServiceTopology feature.
-          This field is deprecated and will be removed in a future version.
-          +optional
-        items:
-          type: string
-        type: array
-        x-go-name: TopologyKeys
       type:
         $ref: '#/definitions/ServiceType'
     title: ServiceSpec describes the attributes that a user creates on a service.

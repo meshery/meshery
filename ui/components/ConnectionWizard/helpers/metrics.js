@@ -266,8 +266,7 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
 }
 
 export const deleteMetricsComponentConfig = (componentName) => (successCb, errorCb) => dataFetch(
-    `/api/telemetry/metrics${componentName === 'Grafana'
-      ? "/grafana"
+    `/api/telemetry/metrics${componentName === 'Grafana' ? "/grafana"
       : ""}/config`,
     { credentials : "same-origin",
       method : "DELETE",
