@@ -2,7 +2,6 @@
 import {
   Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select, TextField, Toolbar, Tooltip, Typography
 } from "@material-ui/core";
-import { AddIcCallOutlined } from "@material-ui/icons";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import FileCopyIcon from '@material-ui/icons/FileCopy';
@@ -145,7 +144,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     if (selectedMeshType === "core") {
       return meshWorkloads["core"].map(mwl => {
         const name = mwl?.workload?.metadata?.["display.ui.meshery.io/name"]
-        return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} /> }
+        return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color}  /> }
       })
     }
     return selectedVersionMesh
@@ -153,7 +152,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
       ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
       .map(item => {
         const name = item.workload?.oam_definition?.metadata?.name
-        return { name, icon : <AddIcCallOutlined /> }
+        return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} /> }
       })
   }
 
@@ -233,10 +232,6 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
 
   function handleVersionChange(_, value) {
     setSelectedVersion(value)
-  }
-
-  function getTooltipTitleForIcons(schema) {
-    return schema?.workload?.metadata?.["display.ui.meshery.io/name"] || schema?.workload?.oam_definition?.spec?.metadata?.k8sKind || "N/A"
   }
 
   async function setActivePatternWithRefinedSchema(schema) {
@@ -400,9 +395,6 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
               <ListAltIcon />
             </IconButton>
           </Tooltip>
-          {/* <Typography variant="h6">
-        Edit Pattern Configuration of <i>{`${pattern.name}`}</i>
-      </Typography> */}
         </Toolbar>
       </AppBar>
       <Grid container spacing={3}>

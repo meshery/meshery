@@ -103,7 +103,7 @@ export async function createWorkloadTraitSets(adapter) {
  * @returns {string} service name
  */
 export function getPatternServiceName(item, includeDisplayName = true) {
-  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || "NA";
+  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || getPatternAttributeName(item) || "NA";
 
   return item?.oam_definition?.metadata?.name || "NA";
 }

@@ -1,6 +1,3 @@
-import {
-  IconButton, Tooltip
-} from "@material-ui/core";
 import { AddCircle, BuildRounded, DirectionsCar, Filter, SimCard, SupervisedUserCircle, TouchApp } from "@material-ui/icons";
 import ExploreIcon from '@material-ui/icons/Explore';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
@@ -12,12 +9,10 @@ import React from "react";
  * nameToIcon returns icons for the rjsf form titles
  *
  * @param {string} name Tooltip name
- * @param {Function} action onCLick handler for IconButton
  * @param {string} color default value is primary
  * @returns CustomIconButton
  */
-export default function NameToIcon(props) {
-  const { name, action, color = "#607D8B", key, ...other } = props
+export default function NameToIcon({ name, color = "#607D8B", ...other }) {
 
   const CustomIcon = ({ Icon }) => <Icon style={{ color }}  {...other} />
 
