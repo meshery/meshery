@@ -3,7 +3,7 @@ layout: default
 title: Meshery Adapter for Consul
 name: Meshery Adapter for Consul
 mesh_name: Consul
-version: v1.8.2
+earliest_version: v1.8
 port: 10002/tcp
 project_status: stable
 adapter_version: v0.5.2

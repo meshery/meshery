@@ -3,7 +3,7 @@ layout: page
 title: Meshery Adapter for Kuma
 name: Meshery Adapter for Kuma
 mesh_name: Kuma
-version: v1.0
+earliest_version: v1.2.2
 port: 10007/tcp
 project_status: stable
 adapter_version: v0.5.2
