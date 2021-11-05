@@ -31,7 +31,7 @@ import (
 // RemoteProvider - represents a local provider
 type RemoteProvider struct {
 	ProviderProperties
-	*BitCaskPreferencePersister
+	*SessionPreferencePersister
 
 	SaaSTokenName     string
 	RemoteProviderURL string
@@ -49,7 +49,7 @@ type RemoteProvider struct {
 	syncChan     chan *userSession
 
 	ProviderVersion    string
-	SmiResultPersister *BitCaskSmiResultsPersister
+	SmiResultPersister *SMIResultsPersister
 	GenericPersister   database.Handler
 	KubeClient         *mesherykube.Client
 }
@@ -2037,7 +2037,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 		logrus.Error("operation not available")
 		return ErrInvalidCapability("SyncPrefs", l.ProviderName)
 	}
-	if err := l.BitCaskPreferencePersister.WriteToPersister(userID, data); err != nil {
+	if err := l.SessionPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err
 	}
 	tokenVal, _ := l.GetToken(req)
@@ -2365,8 +2365,7 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 				return err
 			}
 			defer outFile.Close()
-			// Sets a limit of 1 GB on an outfile
-			if _, err := io.CopyN(outFile, tarReader, 1073741824); err != nil {
+			if _, err := io.Copy(outFile, tarReader); err != nil {
 				return err
 			}
 		default:
