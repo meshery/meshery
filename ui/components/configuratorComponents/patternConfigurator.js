@@ -142,8 +142,8 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   }
 
   function getFormOptions() {
-    if (selectedMeshType === "core") {
-      return meshWorkloads["core"].map(mwl => {
+    if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
+      return meshWorkloads[selectedMeshType].map(mwl => {
         const name = mwl?.workload?.metadata?.["display.ui.meshery.io/name"]
         return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} /> }
       })
@@ -224,6 +224,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   }
 
   function getMeshOptions() {
+    console.log({ meshWorkloads })
     return meshWorkloads ? Object.keys(meshWorkloads) : []
   }
 
@@ -245,8 +246,8 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
       if (isEmptyObj(activeForm)) {
         // core resources are handled sepaeratrly since they are not versioned
         setMeshFormTitles(getFormOptions())
-        if (selectedMeshType === "core") {
-          setActivePatternWithRefinedSchema(meshWorkloads["core"]
+        if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
+          setActivePatternWithRefinedSchema(meshWorkloads[selectedMeshType]
             ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0])
         } else {
           setActivePatternWithRefinedSchema(selectedVersionMesh?.[selectedVersion]
@@ -261,8 +262,8 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
 
   function handleFormSelection(_, selectedField) {
     let activeSchema;
-    if (selectedMeshType === "core") {
-      activeSchema = meshWorkloads["core"]
+    if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
+      activeSchema = meshWorkloads[selectedMeshType]
         .find(schema => schema?.workload?.metadata?.["display.ui.meshery.io/name"] === selectedField.name)
     } else {
       activeSchema = selectedVersionMesh?.[selectedVersion]
@@ -431,7 +432,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
             ) : (
               <Grid item xs={12} md={6}>
                 {
-                  selectedMeshType === "core"
+                  (selectedMeshType === "core" || selectedMeshType === "kubernetes")
                   && meshWorkloads[selectedMeshType]
                     ?.filter((s) => s.type !== "addon")
                     .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))

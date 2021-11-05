@@ -51,7 +51,8 @@ export function getMeshProperties(name) {
     case "traefik_mesh": return { name, img : "/static/img/traefik_mesh.svg", color : "#9D0FB0" }
     case "consul": return { name, img : "/static/img/consul.svg", color : "#D62783" }
     case "app_mesh": return { name, img : "/static/img/app_mesh.svg", color : "#F49322" }
-    case "core": return { name, img : "/static/img/kubernetes.svg", color : "#00B39F" }
+    case "core": return { name, img : "/static/img/meshery-logo.png", color : "#00B39F" }
+    case "kubernetes": return { name, img : "/static/img/kubernetes.svg", color : "#293CDA" }
     default: return {}
   }
 }

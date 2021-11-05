@@ -506,7 +506,6 @@ function MesheryPatterns({
             <>
               {/* <Tooltip title="Configure">*/}
               <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
-
                 <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
               </IconButton>
               {/*</Tooltip> */}
