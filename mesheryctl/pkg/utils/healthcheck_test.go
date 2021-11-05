@@ -29,7 +29,6 @@ func TestGetK8sVersionInfo(t *testing.T) {
 		version  string        // input
 		expected *version.Info // expected output
 		fixture  string        // fixture file
-		golden   string        // golden fileō
 	}{
 		{
 			version:  "v1.12.0",
