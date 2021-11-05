@@ -204,8 +204,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             label : "default" })
         }
         namespaces.sort((a, b) => (
-          a.value > b.value
-            ? 1
+          a.value > b.value ? 1
             : -1
         ))
         self.setState({ namespaceList : namespaces })
@@ -225,8 +224,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const localState = {}
     data?.addonsState?.forEach(addon => {
       if (addon.owner === meshname) {
-        const name = addon.name !== "jaeger-collector"
-          ? addon.name
+        const name = addon.name !== "jaeger-collector" ? addon.name
           : "jaeger"
         localState[`${name}-addon`] = true
       }
