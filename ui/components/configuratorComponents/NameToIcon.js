@@ -17,19 +17,9 @@ import React from "react";
  * @returns CustomIconButton
  */
 export default function NameToIcon(props) {
-  const { name, action, color = "#607D8B", key } = props
+  const { name, action, color = "#607D8B", key, ...other } = props
 
-  function CustomIcon({ Icon }) {
-    return (
-      <Tooltip
-        key={key}
-        title={name}>
-        <IconButton onClick={action}>
-          <Icon style={{ color }} />
-        </IconButton>
-      </Tooltip>
-    )
-  }
+  const CustomIcon = ({ Icon }) => <Icon style={{ color }}  {...other} />
 
   switch (name) {
     //core

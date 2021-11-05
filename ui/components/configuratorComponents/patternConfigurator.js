@@ -2,6 +2,7 @@
 import {
   Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select, TextField, Toolbar, Tooltip, Typography
 } from "@material-ui/core";
+import { AddAlarm, AddIcCallOutlined } from "@material-ui/icons";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import FileCopyIcon from '@material-ui/icons/FileCopy';
@@ -9,10 +10,11 @@ import ListAltIcon from '@material-ui/icons/ListAlt';
 import SaveIcon from '@material-ui/icons/Save';
 import { Autocomplete } from '@material-ui/lab';
 import jsYaml from "js-yaml";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { trueRandom } from "../../lib/trueRandom";
 import { SchemaContext } from "../../utils/context/schemaSet";
 import { getMeshProperties } from "../../utils/nameMapper";
+import { isEmptyObj } from "../../utils/utils";
 import { groupWorkloadByVersion } from "../../utils/workloadFilter";
 import { createPatternFromConfig, getPatternServiceName } from "../MesheryMeshInterface/helpers";
 import LazyPatternServiceForm, { getWorkloadTraitAndType } from "../MesheryMeshInterface/LazyPatternServiceForm";
@@ -52,7 +54,11 @@ const useStyles = makeStyles((theme) => ({
   autoComplete : {
     width : "120px",
     minWidth : "120px",
-    maxWidth : 150,
+    maxWidth : 120,
+  },
+  autoComplete2 : {
+    width : 300,
+    marginLeft : 16,
     marginRight : "auto"
   },
   btngroup : {
@@ -76,7 +82,9 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const [selectedMeshType, setSelectedMeshType] = useState("core")
   const [selectedVersionMesh, setSelectedVersionMesh] = useState()
   const [selectedVersion, setSelectedVersion] = useState("")
+  const [meshFormTitles, setMeshFormTitles] = useState(null)
   const [activeForm, setActiveForm] = useState()
+  const [viewType, setViewType] = useState("list")
   const classes = useStyles();
   const reference = useRef({});
 
@@ -94,6 +102,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
       const meshVersionsWithDetails = groupWlByVersion()
       setSelectedVersionMesh(meshVersionsWithDetails)
     }
+    setViewType("list")
     setActiveForm(null)
   }, [selectedMeshType])
 
@@ -102,6 +111,14 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
       setSelectedVersion(Object.keys(selectedVersionMesh).sort().reverse()[0])
     }
   }, [selectedVersionMesh])
+
+  useEffect(() => {
+    if (selectedVersion) {
+      setMeshFormTitles(getFormOptions())
+      setActivePatternWithRefinedSchema(selectedVersionMesh?.[selectedVersion]
+        ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0])
+    }
+  }, [selectedVersion])
 
 
   function groupWlByVersion() {
@@ -118,6 +135,22 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
 
   function getPatternKey(cfg) {
     return Object.keys(cfg?.services)?.[0] || undefined;
+  }
+
+  const getFormOptions = () => {
+    if (selectedMeshType === "core") {
+      return meshWorkloads["core"].map(mwl => {
+        const name = mwl?.workload?.metadata?.["display.ui.meshery.io/name"]
+        return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} /> }
+      })
+    }
+    return selectedVersionMesh
+      ?.[selectedVersion]
+      ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
+      .map(item => {
+        const name = item.workload?.oam_definition?.metadata?.name
+        return { name, icon : <AddIcCallOutlined /> }
+      })
   }
 
   const handleSubmit = (cfg, patternName) => {
@@ -202,12 +235,43 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     return schema?.workload?.metadata?.["display.ui.meshery.io/name"] || schema?.workload?.oam_definition?.spec?.metadata?.k8sKind || "N/A"
   }
 
-  async function getPatternProps(schema) {
+  async function setActivePatternWithRefinedSchema(schema) {
     const refinedSchema = await getWorkloadTraitAndType(schema)
     setActiveForm(refinedSchema)
   }
 
-  if (!workloadTraitsSet) return <CircularProgress />
+  function toggleView() {
+    if (viewType == "list") {
+      if (isEmptyObj(activeForm)) {
+        // core resources are handled sepaeratrly since they are not versioned
+        setMeshFormTitles(getFormOptions())
+        if (selectedMeshType === "core") {
+          setActivePatternWithRefinedSchema(meshWorkloads["core"]
+            ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0])
+        } else {
+          setActivePatternWithRefinedSchema(selectedVersionMesh?.[selectedVersion]
+            ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0])
+        }
+      }
+      setViewType("form")
+    } else {
+      setViewType("list")
+    }
+  }
+
+  function handleFormSelection(_, selectedField) {
+    let activeSchema;
+    if (selectedMeshType === "core") {
+      activeSchema = meshWorkloads["core"]
+        .find(schema => schema?.workload?.metadata?.["display.ui.meshery.io/name"] === selectedField.name)
+    } else {
+      activeSchema = selectedVersionMesh?.[selectedVersion]
+        .find(schema => schema?.workload?.oam_definition?.metadata?.name === selectedField.name)
+    }
+    setActivePatternWithRefinedSchema(activeSchema)
+  }
+
+  if (isEmptyObj(workloadTraitsSet)) return <CircularProgress />
 
   return (
     <>
@@ -242,20 +306,48 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
               disableClearable
             />
           }
+          {
+            viewType === "form" && meshFormTitles && meshFormTitles.length > 0
+            && <Autocomplete
+              className={classes.autoComplete2}
+              disableClearable
+              options={meshFormTitles}
+              getOptionLabel={(option) => option.name}
+              onChange={handleFormSelection}
+              renderOption={option => {
+                return (
+                  <>
+                    <IconButton color="primary">
+                      {option.icon}
+                    </IconButton>
+                    {option.name}
+                  </>
+                );
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Configure"
+                  placeholder={selectedMeshType}
+                />
+              )}
+            />
+          }
           <ButtonGroup
             disableFocusRipple
             disableElevation
             className={classes.btngroup}
           >
-            {
+            {/* {
               selectedMeshType === "core" &&
               meshWorkloads["core"]
                 ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
                 .map((s) => {
                   const name = getTooltipTitleForIcons(s)
                   return name === activeForm?.workload?.title
-                    ? <NameToIcon name={name} action={() => getPatternProps(s)} color={getMeshProperties(selectedMeshType).color} />
-                    : <NameToIcon name={name} action={() => getPatternProps(s)} />
+                    ? <NameToIcon name={name} action={() => setActivePatternWithRefinedSchema(s)} color={getMeshProperties(selectedMeshType).color} />
+                    : <NameToIcon name={name} action={() => setActivePatternWithRefinedSchema(s)} />
                 })
             }
             {selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
@@ -263,14 +355,15 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
               .map((s) => {
                 const name = getTooltipTitleForIcons(s)
                 return name === activeForm?.workload["object-type"]
-                  ? <NameToIcon name={name} action={() => getPatternProps(s)} color={getMeshProperties(selectedMeshType).color} />
-                  : <NameToIcon name={name} action={() => getPatternProps(s)} />
+                  ? <NameToIcon name={name} action={() => setActivePatternWithRefinedSchema(s)} color={getMeshProperties(selectedMeshType).color} />
+                  : <NameToIcon name={name} action={() => setActivePatternWithRefinedSchema(s)} />
               })
-            }
+            } */}
             <Divider
               orientation="vertical"
             />
           </ButtonGroup>
+
           <Tooltip title="Save Pattern as New File">
             <IconButton
               aria-label="Save"
@@ -298,8 +391,8 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
               <DeleteIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="List View">
-            <IconButton color="primary" onClick={() => setActiveForm(null)}>
+          <Tooltip title="Toggle View">
+            <IconButton color="primary" onClick={toggleView}>
               <ListAltIcon />
             </IconButton>
           </Tooltip>
@@ -311,7 +404,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
       <Grid container spacing={3}>
         {
           // active Form is used to show a only one RJSF form on the screen
-          activeForm
+          activeForm && viewType === "form"
             ? (
               <Grid item xs={12} md={6}>
                 <Paper className={classes.paper} elevation={0}>
@@ -401,19 +494,6 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
       </Grid>
     </>
   );
-
-
-  /*
-    FUNCTIONAL COMPONENTS IN PATTERNS CONFIGURATOR PAGE
-  */
-
-  // The toolbar component on Patterns configurator Page
-  // function ToolbarComponent() {
-  //   return (
-
-  //   )
-  // }
-
 }
 
 export default PatternForm
