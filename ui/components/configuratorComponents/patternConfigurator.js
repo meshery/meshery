@@ -2,6 +2,7 @@
 import {
   Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select, TextField, Toolbar, Tooltip, Typography
 } from "@material-ui/core";
+import Cancel from "@material-ui/icons/Cancel";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import FileCopyIcon from '@material-ui/icons/FileCopy';
@@ -144,7 +145,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     if (selectedMeshType === "core") {
       return meshWorkloads["core"].map(mwl => {
         const name = mwl?.workload?.metadata?.["display.ui.meshery.io/name"]
-        return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color}  /> }
+        return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} /> }
       })
     }
     return selectedVersionMesh
@@ -393,6 +394,15 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
           <Tooltip title="Toggle View">
             <IconButton color="primary" onClick={toggleView}>
               <ListAltIcon />
+            </IconButton>
+          </Tooltip>
+          <Divider
+            orientation="vertical"
+            style={{ width : '16px' }}
+          />
+          <Tooltip title="Exit">
+            <IconButton color="primary" onClick={() => setSelectedPattern(resetSelectedPattern())}>
+              <Cancel />
             </IconButton>
           </Tooltip>
         </Toolbar>
