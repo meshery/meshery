@@ -124,6 +124,10 @@ mesheryctl perf apply -f <filepath>
 					"name":               profileName,
 					"qps":                convQPS,
 					"service_mesh":       testMesh,
+					"request_body":       "",
+					"request_cookies":    "",
+					"request_headers":    "",
+					"content_type":       "",
 				}
 
 				jsonValue, err := json.Marshal(values)
@@ -212,6 +216,11 @@ mesheryctl perf apply -f <filepath>
 
 				// reset profile name without %20
 				profileName = response.Profiles[index].Name
+				loadGenerator = response.Profiles[index].LoadGenerators[0]
+				concurrentRequests = strconv.Itoa(response.Profiles[index].ConcurrentRequest)
+				qps = strconv.Itoa(response.Profiles[index].QPS)
+				testDuration = response.Profiles[index].Duration
+				testMesh = response.Profiles[index].ServiceMesh
 			}
 
 			if testURL == "" {
