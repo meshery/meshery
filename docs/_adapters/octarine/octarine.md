@@ -3,7 +3,7 @@ layout: default
 title: Octarine
 name: Meshery Adapter for Octarine
 mesh_name: Octarine
-version: v1.0
+earliest_version: v1.0
 port: 10003/tcp
 project_status: retiring
 github_link: https://github.com/meshery/meshery-octarine

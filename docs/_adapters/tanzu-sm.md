@@ -3,7 +3,7 @@ layout: default
 title: Meshery Adapter for Tanzu Service Mesh
 name: Meshery Adapter for Tanzu Service Mesh
 mesh_name: Tanzu Service Mesh
-version: pre-GA
+earliest_version: pre-GA
 port: 10011/tcp
 project_status: alpha
 github_link: https://github.com/meshery/meshery-tanzu-sm

@@ -602,7 +602,12 @@ function MesheryApplications({
     page,
     print : false,
     download : false,
-    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
+    textLabels : {
+      selectedRows : {
+        text : "application(s) selected"
+      }
+    },
+    customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
 

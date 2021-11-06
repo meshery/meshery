@@ -137,6 +137,8 @@ type HandlerConfig struct {
 	Providers              map[string]Provider
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
+
+	BrokerEndpointURL *string
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics

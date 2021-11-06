@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Functionality
+title: Funcionalidad
 permalink: es/functionality
 type: functionality
 language: es

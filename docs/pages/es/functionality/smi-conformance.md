@@ -1,6 +1,6 @@
 ---
 layout: page
-title: SMI Conformance Capability
+title: Capacidad de cumplimiento de SMI
 permalink: es/functionality/smi-conformance
 type: functionality 
 language: es
