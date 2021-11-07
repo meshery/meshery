@@ -77,10 +77,10 @@ function MesheryTestProfiles({
           }
         },
       },
-       MUIDataTableSelectCell: { 
-        checkboxRoot: { 
-          '&$checked': { 
-            color: '#607d8b',
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
           },
         },
       },
@@ -251,9 +251,14 @@ function MesheryTestProfiles({
     page,
     print : false,
     download : false,
+    textLabels : {
+      selectedRows : {
+        text : "profile(s) selected"
+      }
+    },
 
     onRowsDelete : async function handleDeleteRow(row) {
-      let response = await showModal()
+      let response = await showModal(Object.keys(row.lookup).length)
       console.log(response)
       if (response === "Yes") {
         const pids = Object.keys(row.lookup).map(idx => testProfiles[idx]?.id)

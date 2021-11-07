@@ -15,7 +15,7 @@ list: include
 
 ## Use Meshery to Deploy a Service Mesh Pattern
 
-You can use Meshery to deploy a service mesh pattern. Service mesh patterns are detailed as a YAML file. The format of the YAML is based on the [Service Mesh Performance](https://smp-spec.io) (SMP) specification.
+You can use Meshery to deploy a service mesh pattern. Service mesh patterns are detailed as a YAML file. See the [Configuration Management]({{ site.baseurl }}/guides/configuration-management) guide.
 
 ### Pattern Repository
 

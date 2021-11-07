@@ -67,6 +67,10 @@ mesheryctl perf apply -f <filepath>
 			tokenPath = constants.GetCurrentAuthToken()
 		}
 
+		if tokenPath == "" {
+			tokenPath = constants.GetCurrentAuthToken()
+		}
+
 		// Importing SMP Configuration from the file
 		if filePath != "" {
 			smpConfig, err := ioutil.ReadFile(filePath)
@@ -120,6 +124,10 @@ mesheryctl perf apply -f <filepath>
 					"name":               profileName,
 					"qps":                convQPS,
 					"service_mesh":       testMesh,
+					"request_body":       "",
+					"request_cookies":    "",
+					"request_headers":    "",
+					"content_type":       "",
 				}
 
 				jsonValue, err := json.Marshal(values)
@@ -208,6 +216,11 @@ mesheryctl perf apply -f <filepath>
 
 				// reset profile name without %20
 				profileName = response.Profiles[index].Name
+				loadGenerator = response.Profiles[index].LoadGenerators[0]
+				concurrentRequests = strconv.Itoa(response.Profiles[index].ConcurrentRequest)
+				qps = strconv.Itoa(response.Profiles[index].QPS)
+				testDuration = response.Profiles[index].Duration
+				testMesh = response.Profiles[index].ServiceMesh
 			}
 
 			if testURL == "" {
@@ -313,5 +326,5 @@ func init() {
 	applyCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(optional) Number of Parallel Requests")
 	applyCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
 	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
-	applyCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 }

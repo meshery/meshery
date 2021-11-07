@@ -92,6 +92,7 @@ module.exports = { resolve : {
   "@material-ui/core/TablePagination" : require("@material-ui/core/TablePagination"),
   "@material-ui/core/TableHead" : require("@material-ui/core/TableHead"),
   "@material-ui/core/TableFooter" : require("@material-ui/core/TableFooter"),
+  "@material-ui/icons/Code" : require("@material-ui/icons/Code"),
   "@material-ui/core/TableSortLabel" : require("@material-ui/core/TableSortLabel"),
   "@material-ui/icons/KeyboardArrowRight" : require("@material-ui/icons/KeyboardArrowRight"),
   "@material-ui/icons/KeyboardArrowLeft" : require("@material-ui/icons/KeyboardArrowLeft"),

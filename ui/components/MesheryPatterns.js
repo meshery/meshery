@@ -233,9 +233,9 @@ function MesheryPatterns({
           }
         },
       },
-      MUIDataTableSelectCell : { 
-        checkboxRoot : { 
-          '&$checked' : {  
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
             color : '#607d8b',
           },
         },
@@ -600,6 +600,11 @@ function MesheryPatterns({
     page,
     print : false,
     download : false,
+    textLabels : {
+      selectedRows : {
+        text : "pattern(s) selected"
+      }
+    },
     customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),

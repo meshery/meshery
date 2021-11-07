@@ -54,8 +54,7 @@ const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
 const AdapterChip = withStyles(chipStyles)(({
   classes, handleAdapterClick, isConnected, handleAdapterDelete, componentName
 }) => {
-  let image = componentName === "Grafana"
-    ? "/static/img/grafana_icon.svg"
+  let image = componentName === "Grafana" ? "/static/img/grafana_icon.svg"
     : "/static/img/prometheus_logo_orange_circle.svg";
   let logoIcon = <img src={image} className={classes.chipIcon} />;
   return (

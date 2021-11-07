@@ -4,7 +4,7 @@ updates:
   directory: "/"
   schedule:
     interval: monthly
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 6
   labels:
   - pr/dependencies
   - kind/chore
@@ -29,7 +29,7 @@ updates:
   directory: "/ui"
   schedule:
     interval: monthly
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 6
   reviewers:
   - dhruv0000
   labels:
@@ -56,7 +56,7 @@ updates:
   directory: "/provider-ui"
   schedule:
     interval: monthly
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 6
   reviewers:
   - ramrodo
   labels:
