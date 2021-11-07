@@ -8,7 +8,7 @@ import { getPath } from "../lib/path";
 class Index extends React.Component {
   componentDidMount () {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
+    this.props.updatepagepath({ path: getPath() });
   }
 
   render () {
@@ -20,7 +20,7 @@ class Index extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) });
+const mapDispatchToProps = dispatch => ({ updatepagepath: bindActionCreators(updatepagepath, dispatch) });
 
 export default connect(
   null,

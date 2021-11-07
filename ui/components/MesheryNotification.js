@@ -24,47 +24,47 @@ import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
 
 const styles = (theme) => ({
-  sidelist : { width : 450, },
-  notificationButton : { height : '100%', },
-  notificationDrawer : {
-    backgroundColor : '#FFFFFF',
-    display : 'flex',
-    flexDirection : 'column',
-    justifyContent : 'space-between'
+  sidelist: { width: 450, },
+  notificationButton: { height: '100%', },
+  notificationDrawer: {
+    backgroundColor: '#FFFFFF',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
-  listTop : {
-    display : 'grid',
-    alignItems : 'center',
-    gridTemplateColumns : "2fr 6fr 2fr",
-    paddingTop : theme.spacing(2),
-    paddingLeft : theme.spacing(1),
-    paddingRight : theme.spacing(1),
-    paddingBottom : theme.spacing(2),
+  listTop: {
+    display: 'grid',
+    alignItems: 'center',
+    gridTemplateColumns: "2fr 6fr 2fr",
+    paddingTop: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingBottom: theme.spacing(2),
   },
-  notificationTitle : { textAlign : 'left', },
-  notifSelector : { display : 'flex', },
-  icon : { fontSize : 20, },
-  iconVariant : { opacity : 0.9,
-    marginRight : theme.spacing(1),
-    marginTop : theme.spacing(1) * 3 / 4, },
-  error : { backgroundColor : theme.palette.error.dark, },
-  info : { backgroundColor : theme.palette.primary.dark, },
-  warning : { backgroundColor : amber[700], },
-  message : { display : 'flex',
+  notificationTitle: { textAlign: 'left', },
+  notifSelector: { display: 'flex', },
+  icon: { fontSize: 20, },
+  iconVariant: { opacity: 0.9,
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1) * 3 / 4, },
+  error: { backgroundColor: theme.palette.error.dark, },
+  info: { backgroundColor: theme.palette.primary.dark, },
+  warning: { backgroundColor: amber[700], },
+  message: { display: 'flex',
     // alignItems: 'center',
   },
-  clearAllButton : { display : 'flex',
-    justifyContent : 'flex-end' },
-  HeaderItem : { fontSize : '1.6rem',
-    height : '1.6rem',
-    width : '1.6rem', },
-  drawerButton : {
-    padding : '0.45rem',
-    margin : '0.2rem',
-    backgroundColor : theme.palette.secondary.dark,
-    color : '#FFFFFF',
-    "&:hover" : { backgroundColor : '#FFFFFF',
-      color : theme.palette.secondary.dark }
+  clearAllButton: { display: 'flex',
+    justifyContent: 'flex-end' },
+  HeaderItem: { fontSize: '1.6rem',
+    height: '1.6rem',
+    width: '1.6rem', },
+  drawerButton: {
+    padding: '0.45rem',
+    margin: '0.2rem',
+    backgroundColor: theme.palette.secondary.dark,
+    color: '#FFFFFF',
+    "&:hover": { backgroundColor: '#FFFFFF',
+      color: theme.palette.secondary.dark }
   }
 });
 
@@ -126,20 +126,20 @@ function NotificationIcon ({ type, className }) {
 
 class MesheryNotification extends React.Component {
   state = {
-    events : [],
-    open : false,
-    dialogShow : false,
-    k8sConfig : { inClusterConfig : false,
-      clusterConfigured : false,
-      contextName : '', },
-    meshAdapters : [],
-    createStream : false,
-    displayEventType : "*",
-    tabValue : 0,
+    events: [],
+    open: false,
+    dialogShow: false,
+    k8sConfig: { inClusterConfig: false,
+      clusterConfigured: false,
+      contextName: '', },
+    meshAdapters: [],
+    createStream: false,
+    displayEventType: "*",
+    tabValue: 0,
   }
 
   handleToggle = () => {
-    this.setState((state) => ({ open : !state.open }));
+    this.setState((state) => ({ open: !state.open }));
   };
 
   handleClose() {
@@ -148,7 +148,7 @@ class MesheryNotification extends React.Component {
       if (self.anchorEl.contains(event.target)) {
         return;
       }
-      self.setState({ open : false });
+      self.setState({ open: false });
     };
   }
 
@@ -159,9 +159,9 @@ class MesheryNotification extends React.Component {
    */
   notificationDispatcher(type, message) {
     const self = this;
-    self.props.enqueueSnackbar(message, { variant : eventTypes[type]?.type,
-      autoHideDuration : 5000,
-      action : (key) => (
+    self.props.enqueueSnackbar(message, { variant: eventTypes[type]?.type,
+      autoHideDuration: 5000,
+      action: (key) => (
         <IconButton
           key="close"
           aria-label="Close"
@@ -176,9 +176,9 @@ class MesheryNotification extends React.Component {
   static getDerivedStateFromProps(props, state) {
     if (JSON.stringify(props.k8sConfig) !== JSON.stringify(state.k8sConfig)
         || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
-      return { createStream : true,
-        k8sConfig : props.k8sConfig,
-        meshAdapters : props.meshAdapters, };
+      return { createStream: true,
+        k8sConfig: props.k8sConfig,
+        meshAdapters: props.meshAdapters, };
     }
     return null;
   }
@@ -198,7 +198,7 @@ class MesheryNotification extends React.Component {
     this.eventStream = new EventSource('/api/events');
     this.eventStream.onmessage = this.handleEvents();
     this.eventStream.onerror = this.handleError();
-    this.setState({ createStream : false });
+    this.setState({ createStream: false });
   }
 
   handleEvents() {
@@ -226,7 +226,7 @@ class MesheryNotification extends React.Component {
     return () => {
       self.closeEventStream();
       // check if server is available
-      dataFetch('/api/user', { credentials : 'same-origin' }, () => {
+      dataFetch('/api/user', { credentials: 'same-origin' }, () => {
         // attempting to reestablish connection
         // setTimeout(() => function() {
         self.startEventStream();
@@ -248,33 +248,33 @@ class MesheryNotification extends React.Component {
     if (events[ind]) {
       events.splice(ind, 1);
     }
-    this.setState({ events, dialogShow : false });
+    this.setState({ events, dialogShow: false });
   }
 
   handleDialogClose = () => {
-    this.setState({ dialogShow : false });
+    this.setState({ dialogShow: false });
   };
 
   handleClearAllNotifications() {
     const self = this;
     return () => {
-      self.setState({ events : [], open : false });
+      self.setState({ events: [], open: false });
     };
   }
 
   handleNotifFiltering(type) {
     return () => {
-      this.setState({ displayEventType : type });
+      this.setState({ displayEventType: type });
     };
   }
 
   handleTabChange = (event, newTabValue) => {
-    this.setState({ tabValue : newTabValue });
+    this.setState({ tabValue: newTabValue });
   }
 
   handleBellButtonClick = () => {
-    this.setState({ tabValue : 0,
-      displayEventType : '*' });
+    this.setState({ tabValue: 0,
+      displayEventType: '*' });
   }
 
   render() {
@@ -320,7 +320,7 @@ class MesheryNotification extends React.Component {
             anchor="right"
             open={open}
             onClose={this.handleClose()}
-            classes={{ paper : classes.notificationDrawer, }}
+            classes={{ paper: classes.notificationDrawer, }}
           >
             <div>
               <div className={classes.sidelist}>
@@ -361,10 +361,10 @@ class MesheryNotification extends React.Component {
                   textColor="primary"
                   variant="fullWidth"
                 >
-                  <Tab label="All" onClick={this.handleNotifFiltering('*')} style={{ minWidth : "15%" }}/>
-                  <Tab label="Error"  onClick={this.handleNotifFiltering('error')} style={{ minWidth : "15%" }}/>
-                  <Tab label="Warning" onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }}/>
-                  <Tab label="Success" onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }}/>
+                  <Tab label="All" onClick={this.handleNotifFiltering('*')} style={{ minWidth: "15%" }}/>
+                  <Tab label="Error"  onClick={this.handleNotifFiltering('error')} style={{ minWidth: "15%" }}/>
+                  <Tab label="Warning" onClick={this.handleNotifFiltering('warning')} style={{ minWidth: "15%" }}/>
+                  <Tab label="Success" onClick={this.handleNotifFiltering('success')} style={{ minWidth: "15%" }}/>
                 </Tabs>
                 {getNotifications(events, this.state.displayEventType).map((event, ind) => (
                   <MesheryEventViewer

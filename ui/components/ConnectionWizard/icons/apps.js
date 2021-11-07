@@ -5,7 +5,7 @@ import SvgIcon from "@material-ui/core/SvgIcon";
 const AppsIcon = ({ isActive }) => {
   return (
     <SvgIcon
-      style = {{ width : "25", height : "22" }}
+      style = {{ width: "25", height: "22" }}
       xmlns="http://www.w3.org/2000/svg" id="body_1"
     >
 

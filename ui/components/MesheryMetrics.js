@@ -13,7 +13,7 @@ function MesheryMetrics({
         <Typography
           align="center"
           variant="h6"
-          style={{ margin : "0 0 2.5rem 0", }}
+          style={{ margin: "0 0 2.5rem 0", }}
         >
           Service Mesh Metrics
         </Typography>
@@ -30,14 +30,14 @@ function MesheryMetrics({
   return (
     <div
       style={{
-        padding : "2rem",
-        display : "flex",
-        justifyContent : "center",
-        alignItems : "center",
-        flexDirection : "column",
+        padding: "2rem",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
       }}
     >
-      <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+      <Typography style={{ fontSize: "1.5rem", marginBottom: "2rem" }} align="center" color="textSecondary">
         No Service Mesh Metrics Configurations Found
       </Typography>
       <Button

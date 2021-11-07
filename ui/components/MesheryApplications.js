@@ -50,42 +50,42 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppsIcon from "./ConnectionWizard/icons/apps";
 import { trueRandom } from "../lib/trueRandom";
 
-const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
-  tableHeader : { fontWeight : "bolder",
-    fontSize : 18, },
-  muiRow : {
-    '& .MuiTableRow-root' : {
-      cursor : 'pointer'
+const styles = (theme) => ({ grid: { padding: theme.spacing(2), },
+  tableHeader: { fontWeight: "bolder",
+    fontSize: 18, },
+  muiRow: {
+    '& .MuiTableRow-root': {
+      cursor: 'pointer'
     }
   }
 });
 
 
 const useStyles = makeStyles((theme) => ({
-  codeMirror : {
-    '& .CodeMirror' : {
-      minHeight : "300px",
-      height : '60vh',
+  codeMirror: {
+    '& .CodeMirror': {
+      minHeight: "300px",
+      height: '60vh',
     }
   },
-  backButton : {
-    marginRight : theme.spacing(2),
+  backButton: {
+    marginRight: theme.spacing(2),
   },
-  appBar : {
-    marginBottom : "16px"
+  appBar: {
+    marginBottom: "16px"
   },
-  ymlDialogTitle : {
-    display : "flex",
-    alignItems : "center"
+  ymlDialogTitle: {
+    display: "flex",
+    alignItems: "center"
   },
-  ymlDialogTitleText : {
-    flexGrow : 1
+  ymlDialogTitleText: {
+    flexGrow: 1
   },
-  fullScreenCodeMirror : {
-    height : '100%',
-    '& .CodeMirror' : {
-      minHeight : "300px",
-      height : '100%',
+  fullScreenCodeMirror: {
+    height: '100%',
+    '& .CodeMirror': {
+      minHeight: "300px",
+      height: '100%',
     }
   },
 }));
@@ -150,12 +150,12 @@ function YAMLEditor({ application, onClose, onSubmit }) {
           value={application.application_file}
           className={fullScreen ? classes.fullScreenCodeMirror : ""}
           options={{
-            theme : "material",
-            lineNumbers : true,
-            lineWrapping : true,
-            gutters : ["CodeMirror-lint-markers"],
-            lint : true,
-            mode : "text/x-yaml",
+            theme: "material",
+            lineNumbers: true,
+            lineWrapping: true,
+            gutters: ["CodeMirror-lint-markers"],
+            lint: true,
+            mode: "text/x-yaml",
           }}
           onChange={(_, data, val) => setYaml(val)}
         />
@@ -200,43 +200,43 @@ function MesheryApplications({
   const DEPLOY_URL = '/api/application/deploy';
 
   const getMuiTheme = () => createTheme({
-    overrides : {
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
+    overrides: {
+      MuiInput: {
+        underline: {
+          "&:hover:not(.Mui-disabled):before": {
+            borderBottom: "2px solid #222"
           },
-          "&:after" : {
-            borderBottom : "2px solid #222"
+          "&:after": {
+            borderBottom: "2px solid #222"
           }
         }
       },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b" ,
-          marginTop : "7px",
-          marginRight : "8px",
+      MUIDataTableSearch: {
+        searchIcon: {
+          color: "#607d8b" ,
+          marginTop: "7px",
+          marginRight: "8px",
         },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
+        clearIcon: {
+          "&:hover": {
+            color: "#607d8b"
           }
         },
       },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
+      MUIDataTableSelectCell: {
+        checkboxRoot: {
+          '&$checked': {
+            color: '#607d8b',
           },
         },
       },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
+      MUIDataTableToolbar: {
+        iconActive: {
+          color: "#222"
         },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
+        icon: {
+          "&:hover": {
+            color: "#607d8b"
           }
         },
       }
@@ -244,16 +244,16 @@ function MesheryApplications({
   });
 
   const ACTION_TYPES = {
-    FETCH_APPLICATIONS : { name : "FETCH_APPLICATION" ,
-      error_msg : "Failed to fetch application" },
-    UPDATE_APPLICATIONS : { name : "UPDATEAPPLICATION",
-      error_msg : "Failed to update application file" },
-    DELETE_APPLICATIONS : { name : "DELETEAPPLICATION",
-      error_msg : "Failed to delete application file" },
-    DEPLOY_APPLICATIONS : { name : "DEPLOY_APPLICATION",
-      error_msg : "Failed to deploy application file" },
-    UPLOAD_APPLICATION : { name : "UPLOAD_APPLICATION",
-      error_msg : "Failed to upload application file" },
+    FETCH_APPLICATIONS: { name: "FETCH_APPLICATION" ,
+      error_msg: "Failed to fetch application" },
+    UPDATE_APPLICATIONS: { name: "UPDATEAPPLICATION",
+      error_msg: "Failed to update application file" },
+    DELETE_APPLICATIONS: { name: "DELETEAPPLICATION",
+      error_msg: "Failed to delete application file" },
+    DEPLOY_APPLICATIONS: { name: "DEPLOY_APPLICATION",
+      error_msg: "Failed to deploy application file" },
+    UPLOAD_APPLICATION: { name: "UPLOAD_APPLICATION",
+      error_msg: "Failed to upload application file" },
   };
 
 
@@ -278,14 +278,14 @@ function MesheryApplications({
   const handleDeploy = (application_file) => {
     dataFetch(
       DEPLOY_URL,
-      { credentials : "include",
-        method : "POST",
-        body : application_file, },() => {
+      { credentials: "include",
+        method: "POST",
+        body: application_file, },() => {
         console.log("ApplicationFile Deploy API", `/api/application/deploy`);
         // },(e) => {
         //   console.error(e)
         // })
-        updateProgress({ showProgress : false });
+        updateProgress({ showProgress: false });
       },
       handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
     );
@@ -299,14 +299,14 @@ function MesheryApplications({
       sortOrder
     )}`;
 
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
 
     dataFetch(
       `/api/application${query}`,
-      { credentials : "include", },
+      { credentials: "include", },
       (result) => {
         console.log("ApplicationFile API", `/api/application${query}`);
-        updateProgress({ showProgress : false });
+        updateProgress({ showProgress: false });
         if (result) {
           setApplications(result.applications|| []);
           setPage(result.page || 0);
@@ -321,17 +321,17 @@ function MesheryApplications({
 
   // function handleError(error) {
   const handleError = (action) => (error) =>  {
-    updateProgress({ showProgress : false });
+    updateProgress({ showProgress: false });
 
-    enqueueSnackbar(`${action.error_msg}: ${error}`, { variant : "error",
-      action : function Action(key) {
+    enqueueSnackbar(`${action.error_msg}: ${error}`, { variant: "error",
+      action: function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
         );
       },
-      autoHideDuration : 8000, });
+      autoHideDuration: 8000, });
   };
 
   function resetSelectedRowData() {
@@ -341,15 +341,15 @@ function MesheryApplications({
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
     if (type === "delete") {
       dataFetch(
         `/api/application/${id}`,
-        { credentials : "include",
-          method : "DELETE", },
+        { credentials: "include",
+          method: "DELETE", },
         () => {
           console.log("ApplicationFile API", `/api/application/${id}`);
-          updateProgress({ showProgress : false });
+          updateProgress({ showProgress: false });
           fetchApplications(page, pageSize, search, sortOrder);
           resetSelectedRowData()();
         },
@@ -361,12 +361,12 @@ function MesheryApplications({
     if (type === "update") {
       dataFetch(
         `/api/application`,
-        { credentials : "include",
-          method : "POST",
-          body : JSON.stringify({ application_data : { id, application_file : data }, save : true }), },
+        { credentials: "include",
+          method: "POST",
+          body: JSON.stringify({ application_data: { id, application_file: data }, save: true }), },
         () => {
           console.log("ApplicationFile API", `/api/application`);
-          updateProgress({ showProgress : false });
+          updateProgress({ showProgress: false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
         // handleError
@@ -375,22 +375,22 @@ function MesheryApplications({
     }
 
     if (type === "upload" || type === "urlupload") {
-      let body = { save : true };
+      let body = { save: true };
       if (type === "upload") {
-        body = JSON.stringify({ ...body,   application_data : { application_file : data }
+        body = JSON.stringify({ ...body,   application_data: { application_file: data }
         });
       }
       if (type === "urlupload") {
-        body = JSON.stringify({ ...body, url : data });
+        body = JSON.stringify({ ...body, url: data });
       }
       dataFetch(
         `/api/application`,
-        { credentials : "include",
-          method : "POST",
+        { credentials: "include",
+          method: "POST",
           body },
         () => {
           console.log("ApplicationFile API", `/api/application`);
-          updateProgress({ showProgress : false });
+          updateProgress({ showProgress: false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
         // handleError
@@ -423,13 +423,13 @@ function MesheryApplications({
   }
 
   const columns = [
-    { name : "name",
-      label : "Application Name",
-      options : {
-        filter : false,
-        sort : true,
-        searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+    { name: "name",
+      label: "Application Name",
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -439,13 +439,13 @@ function MesheryApplications({
           );
         },
       }, },
-    { name : "created_at",
-      label : "Upload Timestamp",
-      options : {
-        filter : false,
-        sort : true,
-        searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+    { name: "created_at",
+      label: "Upload Timestamp",
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -454,17 +454,17 @@ function MesheryApplications({
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(value) {
+        customBodyRender: function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
       }, },
-    { name : "updated_at",
-      label : "Update Timestamp",
-      options : {
-        filter : false,
-        sort : true,
-        searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+    { name: "updated_at",
+      label: "Update Timestamp",
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -473,29 +473,29 @@ function MesheryApplications({
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(value) {
+        customBodyRender: function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
       }, },
-    { name : "Actions",
-      options : {
-        filter : false,
-        sort : false,
-        searchable : false,
-        customHeadRender : function CustomHead({ index, ...column }) {
+    { name: "Actions",
+      options: {
+        filter: false,
+        sort: false,
+        searchable: false,
+        customHeadRender: function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(_, tableMeta) {
+        customBodyRender: function CustomBody(_, tableMeta) {
           const rowData = applications[tableMeta.rowIndex];
           return (
             <>
               <Tooltip
                 title = "configure">
-                <IconButton onClick={() => setShowForm({ application : applications[tableMeta.rowIndex], show : true })}>
+                <IconButton onClick={() => setShowForm({ application: applications[tableMeta.rowIndex], show: true })}>
                   <AppsIcon />
                 </IconButton>
               </Tooltip>
@@ -520,9 +520,9 @@ function MesheryApplications({
   });
 
   async function showModal(count) {
-    let response = await modalRef.current.show({ title : `Delete ${count ? count : ""} Application${count > 1 ? "s" : '' }?`,
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} application${count > 1 ? "s" : '' }?`,
-      options : ["Yes", "No"], });
+    let response = await modalRef.current.show({ title: `Delete ${count ? count : ""} Application${count > 1 ? "s" : '' }?`,
+      subtitle: `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} application${count > 1 ? "s" : '' }?`,
+      options: ["Yes", "No"], });
     return response;
   }
 
@@ -530,16 +530,16 @@ function MesheryApplications({
     dataFetch(
       `/api/application/${id}`,
       {
-        method : "DELETE",
-        credentials : "include",
+        method: "DELETE",
+        credentials: "include",
       },
       () => {
-        updateProgress({ showProgress : false });
+        updateProgress({ showProgress: false });
 
         enqueueSnackbar("Application deleted.", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : function Action(key) {
+          variant: "success",
+          autoHideDuration: 2000,
+          action: function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon />
@@ -554,30 +554,30 @@ function MesheryApplications({
   }
 
   const options = {
-    filter : false,
-    sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
-    filterType : "textField",
-    responsive : "scrollFullHeight",
-    resizableColumns : true,
-    serverSide : true,
+    filter: false,
+    sort: !(user && user.user_id === "meshery"),
+    search: !(user && user.user_id === "meshery"),
+    filterType: "textField",
+    responsive: "scrollFullHeight",
+    resizableColumns: true,
+    serverSide: true,
     count,
-    rowsPerPage : pageSize,
-    rowsPerPageOptions : [10, 20, 25],
-    fixedHeader : true,
+    rowsPerPage: pageSize,
+    rowsPerPageOptions: [10, 20, 25],
+    fixedHeader: true,
     page,
-    print : false,
-    download : false,
-    textLabels : {
-      selectedRows : {
-        text : "application(s) selected"
+    print: false,
+    download: false,
+    textLabels: {
+      selectedRows: {
+        text: "application(s) selected"
       }
     },
-    customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
+    customToolbar: CustomToolbar(uploadHandler,urlUploadHandler),
 
-    onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
+    onCellClick: (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
 
-    onRowsDelete : async function handleDelete(row) {
+    onRowsDelete: async function handleDelete(row) {
       let response = await showModal(Object.keys(row.lookup).length);
       console.log(response);
       if (response === "Yes") {
@@ -588,7 +588,7 @@ function MesheryApplications({
         fetchApplications(page, pageSize, search, sortOrder);
     },
 
-    onTableChange : (action, tableState) => {
+    onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText
         ? tableState.announceText.split(" : ")
         : [];
@@ -655,10 +655,10 @@ function MesheryApplications({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), };
+  return { user: state.get("user")?.toObject(), };
 };
 
 // @ts-ignore
@@ -700,7 +700,7 @@ function PatternForm({ application, onSubmit, show }) {
   function createWorkloadTraitSets(workloads, traits) {
     const sets = [];
     workloads?.forEach((w) => {
-      const item = { workload : w, traits : [] };
+      const item = { workload: w, traits: [] };
 
       item.traits = traits?.filter((t) => {
         if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
@@ -720,23 +720,23 @@ function PatternForm({ application, onSubmit, show }) {
 
     return wtSets?.map((s) => {
       const item = {
-        workload : JSON.parse(s.workload?.oam_ref_schema),
-        traits : s.traits?.map((t) => {
+        workload: JSON.parse(s.workload?.oam_ref_schema),
+        traits: s.traits?.map((t) => {
           const trait = JSON.parse(t?.oam_ref_schema);
 
           // Attaching internal metadata to the json schema
           trait._internal = {
-            patternAttributeName : t?.oam_definition.metadata.name,
+            patternAttributeName: t?.oam_definition.metadata.name,
           };
 
           return trait;
         }),
-        type : s.workload?.metadata?.["ui.meshery.io/category"],
+        type: s.workload?.metadata?.["ui.meshery.io/category"],
       };
 
       // Attaching internal metadata to the json schema
       item.workload._internal = {
-        patternAttributeName : s.workload?.oam_definition.metadata.name,
+        patternAttributeName: s.workload?.oam_definition.metadata.name,
       };
 
       return item;
@@ -754,18 +754,18 @@ function PatternForm({ application, onSubmit, show }) {
   const handleSubmit = (cfg, patternName) => {
     console.log("submitted", { cfg, patternName });
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
     if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
     handleExpansion(patternName);
   };
 
   const handleChangeData = (cfg, patternName) => {
     console.log("Ran Changed", { cfg, patternName });
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
     if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
   };
 
   const handleDelete = (cfg, patternName) => {
@@ -834,7 +834,7 @@ function PatternForm({ application, onSubmit, show }) {
           <Accordion
             expanded={expanded.includes('addon')}
             onChange={() => handleExpansion('addon')}
-            style={{ width : '100%' }}
+            style={{ width: '100%' }}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="h6">
@@ -867,8 +867,8 @@ function PatternForm({ application, onSubmit, show }) {
       variant="contained"
       onClick={onClick}
       style={{
-        marginTop : "16px",
-        padding : "10px"
+        marginTop: "16px",
+        padding: "10px"
       }}
     >
       {title}
@@ -881,7 +881,7 @@ function PatternForm({ application, onSubmit, show }) {
     return <Accordion
       expanded={expanded.includes(patternName)}
       onChange={() => handleExpansion(patternName)}
-      style={{ width : '100%' }}
+      style={{ width: '100%' }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography variant="h6">
@@ -895,8 +895,8 @@ function PatternForm({ application, onSubmit, show }) {
   }
 
   function CodeEditor() {
-    const cardStyle = { marginBottom : "16px", position : "sticky", float : "right", minWidth : "100%" };
-    const cardcontentStyle = { margin : "16px" };
+    const cardStyle = { marginBottom: "16px", position: "sticky", float: "right", minWidth: "100%" };
+    const cardcontentStyle = { margin: "16px" };
 
     const classes = useStyles();
 
@@ -908,17 +908,17 @@ function PatternForm({ application, onSubmit, show }) {
               value={yaml}
               className={classes.codeMirror}
               options={{
-                theme : "material",
-                lineNumbers : true,
-                lineWrapping : true,
-                gutters : ["CodeMirror-lint-markers"],
-                lint : true,
-                mode : "text/x-yaml",
+                theme: "material",
+                lineNumbers: true,
+                lineWrapping: true,
+                gutters: ["CodeMirror-lint-markers"],
+                lint: true,
+                mode: "text/x-yaml",
               }}
               onBlur={(a) => saveCodeEditorChanges(a)}
             />
             <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, "upload")} />
-            <CardActions style={{ justifyContent : "flex-end" }}>
+            <CardActions style={{ justifyContent: "flex-end" }}>
               <Tooltip title="Update Application">
                 <IconButton
                   aria-label="Update"

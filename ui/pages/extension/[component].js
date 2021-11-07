@@ -46,15 +46,15 @@ function capitalize(string) {
 
 class Settings extends React.Component {
 
-  state = { componentTitle : "" }
+  state = { componentTitle: "" }
 
   componentDidMount() {
     getCapabilities("navigator", extensions => {
-      this.setState({ componentTitle : getComponentTitleFromPathForNavigator(extensions, getPath()) });
-      this.props.updatepagetitle({ title : getComponentTitleFromPathForNavigator(extensions, getPath()) });
+      this.setState({ componentTitle: getComponentTitleFromPathForNavigator(extensions, getPath()) });
+      this.props.updatepagetitle({ title: getComponentTitleFromPathForNavigator(extensions, getPath()) });
     });
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
+    this.props.updatepagepath({ path: getPath() });
 
   }
 
@@ -74,7 +74,7 @@ class Settings extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch),
-  updatepagetitle : bindActionCreators(updatepagetitle, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updatepagepath: bindActionCreators(updatepagepath, dispatch),
+  updatepagetitle: bindActionCreators(updatepagetitle, dispatch), });
 
 export default connect(null, mapDispatchToProps)(Settings);

@@ -8,12 +8,12 @@ const operatorStatusMutation = graphql`
 `;
 
 export default function changeOperatorState(onComplete, variables) {
-  const vars = { input : { targetStatus : variables.status, } };
+  const vars = { input: { targetStatus: variables.status, } };
 
   commitMutation(environment,{
-    mutation : operatorStatusMutation,
-    variables : vars,
-    onCompleted : onComplete,
-    onError : error => console.log(`An error occured:`, error),
+    mutation: operatorStatusMutation,
+    variables: vars,
+    onCompleted: onComplete,
+    onError: error => console.log(`An error occured:`, error),
   });
 }

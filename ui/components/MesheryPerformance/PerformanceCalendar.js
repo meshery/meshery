@@ -48,10 +48,10 @@ function generateCalendarEventsFromResults(results) {
     ntzEndTime.setSeconds(ntzEndTime.getSeconds() + (runner_results.ActualDuration / 1e9));
 
     return {
-      title : name,
-      start : ntzStartTime,
-      end : ntzEndTime,
-      resource : index
+      title: name,
+      start: ntzStartTime,
+      end: ntzEndTime,
+      resource: index
     };
   });
 }
@@ -68,12 +68,12 @@ function generateCalendarEventsFromResults(results) {
  */
 function generateDateRange(from, to) {
   if (from && to) {
-    return { start : moment(from).format("YYYY-MM-DD"),
-      end : moment(to).format("YYYY-MM-DD"), };
+    return { start: moment(from).format("YYYY-MM-DD"),
+      end: moment(to).format("YYYY-MM-DD"), };
   }
 
-  return { start : moment().startOf("M").format("YYYY-MM-DD"),
-    end : moment().add(1, "M").startOf("M").format("YYYY-MM-DD"), };
+  return { start: moment().startOf("M").format("YYYY-MM-DD"),
+    end: moment().add(1, "M").startOf("M").format("YYYY-MM-DD"), };
 }
 
 /**
@@ -98,23 +98,23 @@ function PerformanceCalendar({
   }, [time]);
 
   async function fetchResults(start, end) {
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
 
     fetchAllResults({
-      selector : {
+      selector: {
         // default
-        pageSize : `10`,
-        page : `0`,
-        search : ``,
-        order : ``,
-        from : start,
-        to : end,
+        pageSize: `10`,
+        page: `0`,
+        search: ``,
+        order: ``,
+        from: start,
+        to: end,
       },
     }).subscribe({
-      next : (res) => {
+      next: (res) => {
         // @ts-ignore
         let result = res?.fetchAllResults;
-        updateProgress({ showProgress : false });
+        updateProgress({ showProgress: false });
         if (typeof result !== "undefined") {
           if (result) {
             // @ts-ignore
@@ -122,23 +122,23 @@ function PerformanceCalendar({
           }
         }
       },
-      error : handleError("Failed to Fetch Profiles"),
+      error: handleError("Failed to Fetch Profiles"),
     });
   }
 
   function handleError(msg) {
     return function (error) {
-      updateProgress({ showProgress : false });
+      updateProgress({ showProgress: false });
 
-      enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-        action : function Action(key) {
+      enqueueSnackbar(`${msg}: ${error}`, { variant: "error",
+        action: function Action(key) {
           return (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
               <CloseIcon />
             </IconButton>
           );
         },
-        autoHideDuration : 8000, });
+        autoHideDuration: 8000, });
     };
   }
 
@@ -156,9 +156,9 @@ function PerformanceCalendar({
     const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
     return (
       <Paper
-        style={{ width : "100%",
-          maxWidth : "90vw",
-          padding : "0.5rem" }}
+        style={{ width: "100%",
+          maxWidth: "90vw",
+          padding: "0.5rem" }}
       >
         <div>
           <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
@@ -194,7 +194,7 @@ function PerformanceCalendar({
         showMultiDayTimes
         defaultDate={new Date()}
         localizer={localizer}
-        style={{ height : "100%", }}
+        style={{ height: "100%", }}
         // @ts-ignore
         onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
         onSelectEvent={(results) => handleEventClick(results)}
@@ -210,6 +210,6 @@ function PerformanceCalendar({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch), });
 
 export default connect(null, mapDispatchToProps)(withSnackbar(PerformanceCalendar));

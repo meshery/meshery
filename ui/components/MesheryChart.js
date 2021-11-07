@@ -8,24 +8,24 @@ import bb, { areaStep, line } from 'billboard.js';
 
 
 const styles = (theme) => ({
-  title : {
-    textAlign : 'center',
-    fontSize : theme.spacing(1.75),
-    marginBottom : theme.spacing(1)
+  title: {
+    textAlign: 'center',
+    fontSize: theme.spacing(1.75),
+    marginBottom: theme.spacing(1)
   },
-  percentiles : {
-    height : "100%",
-    justifyContent : "center",
-    display : "flex",
-    position : "relative",
-    alignItems : "center",
-    transform : "translateY(-30%)"
+  percentiles: {
+    height: "100%",
+    justifyContent: "center",
+    display: "flex",
+    position: "relative",
+    alignItems: "center",
+    transform: "translateY(-30%)"
   },
-  chart : {
-    width : "calc( 100% - 150px )"
+  chart: {
+    width: "calc( 100% - 150px )"
   },
-  chartWrapper : {
-    display : "flex", flexWrap : "no-wrap", justifyContent : "center", alignItems : "center"
+  chartWrapper: {
+    display: "flex", flexWrap: "no-wrap", justifyContent: "center", alignItems: "center"
   }
 });
 
@@ -102,16 +102,16 @@ class MesheryChart extends React.Component {
 
         if (chartData.options.scales.xAxes) {
           chartData.options.scales.xAxes.forEach((ya) => {
-            axis.x = { show : true,
-              label : { text : ya.scaleLabel.labelString,
-                position : 'outer-middle', }, };
+            axis.x = { show: true,
+              label: { text: ya.scaleLabel.labelString,
+                position: 'outer-middle', }, };
           });
         }
         if (chartData.options.scales.yAxes) {
           chartData.options.scales.yAxes.forEach((ya) => {
-            axis[yAxisTracker[ya.id]] = { show : true,
-              label : { text : ya.scaleLabel.labelString,
-                position : 'outer-middle', }, };
+            axis[yAxisTracker[ya.id]] = { show: true,
+              label: { text: ya.scaleLabel.labelString,
+                position: 'outer-middle', }, };
           });
         }
 
@@ -122,8 +122,8 @@ class MesheryChart extends React.Component {
           // position: "start"
           let reTrack = 0;
           const percentiles = chartData.percentiles.map(({ Percentile, Value }) => {
-            const re = { value : (Value * 1000).toFixed(2),
-              text : `p${Percentile}`, };
+            const re = { value: (Value * 1000).toFixed(2),
+              text: `p${Percentile}`, };
             switch (reTrack % 3) {
               case 0:
               // re.position
@@ -141,7 +141,7 @@ class MesheryChart extends React.Component {
             return re;
           });
 
-          grid.x = { lines : percentiles, };
+          grid.x = { lines: percentiles, };
         }
 
         const chartConfig = {
@@ -151,14 +151,14 @@ class MesheryChart extends React.Component {
           // title: {
           //   text: chartData.options.title.text.join('\n'),
           // },
-          bindto : self.chartRef,
-          type : line(),
-          data : {
+          bindto: self.chartRef,
+          type: line(),
+          data: {
             // x: 'x',
-            xs : xAxisTracker,
+            xs: xAxisTracker,
             // xFormat: self.bbTimeFormat,
-            columns : [...xAxes, ...yAxes],
-            colors : { ...colors, "Cumulative %" : "rgb(71,126,150)" },
+            columns: [...xAxes, ...yAxes],
+            colors: { ...colors, "Cumulative %": "rgb(71,126,150)" },
             axes,
             types,
             // groups,
@@ -167,10 +167,10 @@ class MesheryChart extends React.Component {
           axis,
 
           grid,
-          legend : { show : true, },
-          point : { r : 0,
-            focus : { expand : { r : 5, }, }, },
-          tooltip : { show : true, },
+          legend: { show: true, },
+          point: { r: 0,
+            focus: { expand: { r: 5, }, }, },
+          tooltip: { show: true, },
         };
         if (!self.props.hideTitle) {
           if (this.props.data.length == 4) {
@@ -184,9 +184,9 @@ class MesheryChart extends React.Component {
         self.chart = bb.generate(chartConfig);
       } else {
         self.chart = bb.generate({
-          type : line(),
-          data : { columns : [] },
-          bindto : self.chartRef,
+          type: line(),
+          data: { columns: [] },
+          bindto: self.chartRef,
         });
       }
     }
@@ -229,9 +229,9 @@ class MesheryChart extends React.Component {
       }
 
       axis.x = {
-        show : true,
-        label : {},
-        type : 'category',
+        show: true,
+        label: {},
+        type: 'category',
         categories,
       };
 
@@ -242,11 +242,11 @@ class MesheryChart extends React.Component {
           else lab = 'y';
 
           axis[lab] = {
-            show : true,
-            min : 0,
-            label : {
-              text : ya.scaleLabel.labelString,
-              position : 'outer-middle',
+            show: true,
+            min: 0,
+            label: {
+              text: ya.scaleLabel.labelString,
+              position: 'outer-middle',
             },
           };
         });
@@ -254,18 +254,18 @@ class MesheryChart extends React.Component {
 
       if (self.chartRef && self.chartRef !== null) {
         const chartConfig = {
-          bindto : self.chartRef,
-          data : {
-            columns : [...xAxes, ...yAxes],
+          bindto: self.chartRef,
+          data: {
+            columns: [...xAxes, ...yAxes],
             colors,
             axes,
           },
           axis,
-          legend : { show : true,
-            position : 'right', },
-          point : { r : 0,
-            focus : { expand : { r : 5, }, }, },
-          tooltip : { show : true,
+          legend: { show: true,
+            position: 'right', },
+          point: { r: 0,
+            focus: { expand: { r: 5, }, }, },
+          tooltip: { show: true,
           },
         };
         if (!self.props.hideTitle) {
@@ -301,8 +301,8 @@ class MesheryChart extends React.Component {
     return (
       <NoSsr>
         <div>
-          <div ref={(ch) => this.titleRef = ch} className={classes.title} style={{ display : "none" }}/>
-          <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
+          <div ref={(ch) => this.titleRef = ch} className={classes.title} style={{ display: "none" }}/>
+          <Grid container spacing={1} style={{ margin: "1rem" }} justifyContent="center">
             {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => {
               return <Grid item xs={4} key={`nri-${i}`}>{el}</Grid>;
             })}
@@ -324,8 +324,8 @@ class MesheryChart extends React.Component {
               {
                 this.props.data.length == 1
                   ?
-                  <div style={{ margin : "1rem" }}>
-                    <Typography style={{ whiteSpace : "nowrap" }} gutterBottom>Percentile Summary</Typography>
+                  <div style={{ margin: "1rem" }}>
+                    <Typography style={{ whiteSpace: "nowrap" }} gutterBottom>Percentile Summary</Typography>
                     <div>
                       {
                         NonRecursiveConstructDisplayCells(chartData?.options?.metadata?.percentiles?.display?.value || {}).map((el, i) => {

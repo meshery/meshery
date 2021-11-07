@@ -19,36 +19,36 @@ import { deleteMetricsComponentConfig, pingGrafanaWithNotification, pingPromethe
 
 const styles = theme => ({
 
-  infoContainer : {
-    width : "20rem",
-    height : "15rem",
-    padding : "1rem 1rem",
-    boxShadow : "0px 1px 6px 1px rgba(0,0,0,0.20)",
-    borderRadius : '1rem',
+  infoContainer: {
+    width: "20rem",
+    height: "15rem",
+    padding: "1rem 1rem",
+    boxShadow: "0px 1px 6px 1px rgba(0,0,0,0.20)",
+    borderRadius: '1rem',
   },
-  infoTitle : {
-    color : "#647881",
-    width : "3rem",
-    background : "#F1F3F4",
-    padding : ".5rem 5rem .75rem 1.5rem",
-    borderRadius : "0.25rem",
-    fontSize : ".8rem",
+  infoTitle: {
+    color: "#647881",
+    width: "3rem",
+    background: "#F1F3F4",
+    padding: ".5rem 5rem .75rem 1.5rem",
+    borderRadius: "0.25rem",
+    fontSize: ".8rem",
   },
-  infoLabel : {
-    fontSize : ".9rem",
-    color : theme.palette.text.primary,
-    marginRight : "1rem",
-    fontWeight : 500
+  infoLabel: {
+    fontSize: ".9rem",
+    color: theme.palette.text.primary,
+    marginRight: "1rem",
+    fontWeight: 500
   },
-  infoData : { fontSize : ".9rem",
-    color : theme.palette.text.secondary, },
+  infoData: { fontSize: ".9rem",
+    color: theme.palette.text.secondary, },
 
 
 });
 
-const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
-  chip : { marginRight : theme.spacing(1),
-    marginBottom : theme.spacing(1), }, });
+const chipStyles = (theme) => ({ chipIcon: { width: theme.spacing(2.5) },
+  chip: { marginRight: theme.spacing(1),
+    marginBottom: theme.spacing(1), }, });
 
 
 const AdapterChip = withStyles(chipStyles)(({
@@ -89,40 +89,40 @@ const MetricsDataPlane = ({
 
   const handleDeleteAdapter = () => {
 
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
 
     const successCb = (result) => {
-      updateProgress({ showProgress : false });
+      updateProgress({ showProgress: false });
       if (typeof result !== "undefined") {
 
         if (componentName === "Grafana")
           console.log("Updating grafana config");
-        updateGrafanaConfig({ grafana : {
-          grafanaURL : "",
-          grafanaAPIKey : "",
-          grafanaBoardSearch : "",
-          grafanaBoards : [],
-          selectedBoardsConfigs : [],
+        updateGrafanaConfig({ grafana: {
+          grafanaURL: "",
+          grafanaAPIKey: "",
+          grafanaBoardSearch: "",
+          grafanaBoards: [],
+          selectedBoardsConfigs: [],
         }, });
 
 
         if (componentName === "Prometheus")
           console.log("Updating prometheus config");
 
-        updatePrometheusConfig({ prometheus : { prometheusURL : "",
-          selectedPrometheusBoardsConfigs : [], }, });
+        updatePrometheusConfig({ prometheus: { prometheusURL: "",
+          selectedPrometheusBoardsConfigs: [], }, });
 
-        enqueueSnackbar(`${componentName} was successfully disconnected!` , { variant : "success",
-          autoHideDuration : 2000,
-          action : AdapterPingSnackbarAction });
+        enqueueSnackbar(`${componentName} was successfully disconnected!` , { variant: "success",
+          autoHideDuration: 2000,
+          action: AdapterPingSnackbarAction });
       }
     };
 
     const errorCb = (error) => {
-      updateProgress({ showProgress : false });
-      enqueueSnackbar(`${componentName} could not be disconnected!: ${error}` , { variant : "error",
-        autoHideDuration : 2000,
-        action : AdapterPingSnackbarAction });
+      updateProgress({ showProgress: false });
+      enqueueSnackbar(`${componentName} could not be disconnected!: ${error}` , { variant: "error",
+        autoHideDuration: 2000,
+        action: AdapterPingSnackbarAction });
     };
 
     deleteMetricsComponentConfig(componentName)(successCb, errorCb);
@@ -170,9 +170,9 @@ const MetricsDataPlane = ({
 };
 
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
-  updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch), });
 
 const mapStateToProps = (state) => {
   const grafana = state.get("grafana").toJS();

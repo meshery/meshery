@@ -22,9 +22,9 @@ function getPath() {
 export function getCapabilities(type, cb) {
   dataFetch(
     "/api/provider/capabilities",
-    { credentials : "same-origin",
-      method : "GET",
-      credentials : "include", },
+    { credentials: "same-origin",
+      method: "GET",
+      credentials: "include", },
     (result) => {
       if (result) {
         cb(ExtensionPointSchemaValidator(type)(result?.extensions[type]));

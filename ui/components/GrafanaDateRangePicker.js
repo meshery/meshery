@@ -10,25 +10,25 @@ import PropTypes from 'prop-types';
 import MesheryDateTimePicker from './MesheryDateTimePicker';
 
 const styles = (theme) => ({
-  rangeDialog : {
+  rangeDialog: {
     // width: window.innerWidth * 0.7,
   },
-  rangeDialogRow : { display : 'flex',
-    gap : '4rem',
-    '&>*' : { flex : '1', }, },
-  dateTimePicker : { marginTop : theme.spacing(2),
-    marginBottom : theme.spacing(1), },
-  innerGrid : { borderTop : `1px solid ${theme.palette.divider}`,
-    paddingTop : theme.spacing(2),
-    marginTop : theme.spacing(2), },
-  timeList : {
-    display : 'flex',
-    flexDirection : 'column',
-    alignItems : 'flex-start',
-    '& *' : { textAlign : 'left', },
+  rangeDialogRow: { display: 'flex',
+    gap: '4rem',
+    '&>*': { flex: '1', }, },
+  dateTimePicker: { marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1), },
+  innerGrid: { borderTop: `1px solid ${theme.palette.divider}`,
+    paddingTop: theme.spacing(2),
+    marginTop: theme.spacing(2), },
+  timeList: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    '& *': { textAlign: 'left', },
   },
-  space : { margin : theme.spacing(1), },
-  rangeButton : { border : '1px solid rgba(0, 0, 0, 0.23)' },
+  space: { margin: theme.spacing(1), },
+  rangeButton: { border: '1px solid rgba(0, 0, 0, 0.23)' },
 });
 
 const refreshIntervals = [
@@ -95,11 +95,11 @@ class GrafanaDateRangePicker extends Component {
       // endGDate: props.to,
       // liveTail: true,
       // refreshInterval: props.refresh,
-      open : false, };
+      open: false, };
   }
 
   handleClick = () => {
-    this.setState({ open : true, });
+    this.setState({ open: true, });
   }
 
   setRange = (range) => () => {
@@ -475,7 +475,7 @@ class GrafanaDateRangePicker extends Component {
     // if (this.anchorEl.contains(event.target)) {
     //     return;
     // }
-    this.setState({ open : false });
+    this.setState({ open: false });
     // this.setState({
     //     anchorEl: null,
     //   });
@@ -516,7 +516,7 @@ class GrafanaDateRangePicker extends Component {
       this.props.updateDateRange(this.props.from, this.props.startDate, this.props.to, this.props.endDate, this.props.liveTail, event.target.value);
       return;
     }
-    this.setState({ [name] : event.target.value });
+    this.setState({ [name]: event.target.value });
   };
 
   render() {
@@ -535,9 +535,9 @@ class GrafanaDateRangePicker extends Component {
             // aria-owns={open ? 'daterange-popper' : undefined}
             // aria-haspopup="true"
             onClick={this.handleClick}
-            classes={{ root : classes.rangeButton }}
+            classes={{ root: classes.rangeButton }}
           >
-            <AccessTimeIcon style={{ marginRight : "0.25rem" }} />
+            <AccessTimeIcon style={{ marginRight: "0.25rem" }} />
             <Moment format="LLLL">{startDate}</Moment>
             <span className={classes.space}>-</span>
             {liveTail
@@ -651,13 +651,13 @@ class GrafanaDateRangePicker extends Component {
 }
 
 GrafanaDateRangePicker.propTypes = {
-  updateDateRange : PropTypes.func.isRequired,
-  from : PropTypes.string.isRequired,
-  startDate : PropTypes.object.isRequired,
-  to : PropTypes.string.isRequired,
-  endDate : PropTypes.object.isRequired,
+  updateDateRange: PropTypes.func.isRequired,
+  from: PropTypes.string.isRequired,
+  startDate: PropTypes.object.isRequired,
+  to: PropTypes.string.isRequired,
+  endDate: PropTypes.object.isRequired,
   // liveTail: PropTypes.bool.isRequired,
-  refresh : PropTypes.string.isRequired,
+  refresh: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(GrafanaDateRangePicker);

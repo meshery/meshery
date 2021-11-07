@@ -17,21 +17,21 @@ export const verifyGrafanaConnection = (grafanaUrl) => {
 
 export const pingGrafanaWithNotification = (updateProgress, action, enqueueSnackbar) => {
 
-  updateProgress({ showProgress : true });
+  updateProgress({ showProgress: true });
 
   const successCb = (result) => {
-    updateProgress({ showProgress : false });
+    updateProgress({ showProgress: false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Grafana successfully pinged!", { variant : "success",
-        autoHideDuration : 2000,
+      enqueueSnackbar("Grafana successfully pinged!", { variant: "success",
+        autoHideDuration: 2000,
         action });
     }
   };
 
   const errorCb = (error) => {
-    updateProgress({ showProgress : false });
-    enqueueSnackbar("Grafana could not be pinged! : "+error, { variant : "error",
-      autoHideDuration : 2000,
+    updateProgress({ showProgress: false });
+    enqueueSnackbar("Grafana could not be pinged! : "+error, { variant: "error",
+      autoHideDuration: 2000,
       action });
   };
 
@@ -41,8 +41,8 @@ export const pingGrafanaWithNotification = (updateProgress, action, enqueueSnack
 export const pingGrafana = (successCb, errorCb) =>
   dataFetch(
     "/api/telemetry/metrics/grafana/ping",
-    { credentials : "same-origin",
-      credentials : "include", },
+    { credentials: "same-origin",
+      credentials: "include", },
     successCb,
     errorCb
   );
@@ -64,21 +64,21 @@ export const verifyPrometheusConnection =  (prometheusUrl) => {
 
 export const pingPrometheusWithNotification = (updateProgress, action, enqueueSnackbar) => {
 
-  updateProgress({ showProgress : true });
+  updateProgress({ showProgress: true });
 
   const successCb = (result) => {
-    updateProgress({ showProgress : false });
+    updateProgress({ showProgress: false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Prometheus successfully pinged!", { variant : "success",
-        autoHideDuration : 2000,
+      enqueueSnackbar("Prometheus successfully pinged!", { variant: "success",
+        autoHideDuration: 2000,
         action });
     }
   };
 
   const errorCb = (error) => {
-    updateProgress({ showProgress : false });
-    enqueueSnackbar("Prometheus could not be pinged! : "+error, { variant : "error",
-      autoHideDuration : 2000,
+    updateProgress({ showProgress: false });
+    enqueueSnackbar("Prometheus could not be pinged! : "+error, { variant: "error",
+      autoHideDuration: 2000,
       action });
   };
 
@@ -88,8 +88,8 @@ export const pingPrometheusWithNotification = (updateProgress, action, enqueueSn
 export const pingPrometheus = (successCb, errorCb) =>
   dataFetch(
     "/api/telemetry/metrics/ping",
-    { credentials : "same-origin",
-      credentials : "include", },
+    { credentials: "same-origin",
+      credentials: "include", },
     successCb,
     errorCb
   );
@@ -100,12 +100,12 @@ export const fetchPromGrafanaScanData = () => {
     dataFetch(
       '/api/system/meshsync/grafana',
       {
-        credentials : "same-origin",
-        method : "GET",
-        credentials : "include",
+        credentials: "same-origin",
+        method: "GET",
+        credentials: "include",
       },
       (result) => {
-        let metricsUrls = { grafana : [], prometheus : [] };
+        let metricsUrls = { grafana: [], prometheus: [] };
         if (!result) res(metricsUrls);
         console.log();
 
@@ -188,31 +188,31 @@ export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
     .join("&");
 
-  updateProgress({ showProgress : true });
+  updateProgress({ showProgress: true });
   dataFetch(
     "/api/telemetry/metrics/grafana/config",
     {
-      credentials : "same-origin",
-      method : "POST",
-      credentials : "include",
-      headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
-      body : params,
+      credentials: "same-origin",
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
+      body: params,
     },
     (result) => {
-      updateProgress({ showProgress : false });
+      updateProgress({ showProgress: false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Grafana was successfully configured!", { variant : "success",
-          autoHideDuration : 2000,
+        enqueueSnackbar("Grafana was successfully configured!", { variant: "success",
+          autoHideDuration: 2000,
           action });
-        updateGrafanaConfig({ grafana : { grafanaURL,
+        updateGrafanaConfig({ grafana: { grafanaURL,
           grafanaAPIKey, }, });
       }
     },
     (err) => {
-      updateProgress({ showProgress : false });
+      updateProgress({ showProgress: false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Grafana was not successfully configured! :" + err, { variant : "error",
-          autoHideDuration : 2000,
+        enqueueSnackbar("Grafana was not successfully configured! :" + err, { variant: "error",
+          autoHideDuration: 2000,
           action });
       }
     }
@@ -233,31 +233,31 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
     .join("&");
 
-  updateProgress({ showProgress : true });
+  updateProgress({ showProgress: true });
   dataFetch(
     "/api/telemetry/metrics/config",
     {
-      credentials : "same-origin",
-      method : "POST",
-      credentials : "include",
-      headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
-      body : params,
+      credentials: "same-origin",
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
+      body: params,
     },
     (result) => {
-      updateProgress({ showProgress : false });
+      updateProgress({ showProgress: false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Prometheus was successfully configured!", { variant : "success",
-          autoHideDuration : 2000,
+        enqueueSnackbar("Prometheus was successfully configured!", { variant: "success",
+          autoHideDuration: 2000,
           action });
-        updatePrometheusConfig({ prometheus : { prometheusURL,
-          selectedPrometheusBoardsConfigs : [], }, });
+        updatePrometheusConfig({ prometheus: { prometheusURL,
+          selectedPrometheusBoardsConfigs: [], }, });
       }
     },
     (err) => {
-      updateProgress({ showProgress : false });
+      updateProgress({ showProgress: false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Prometheus was not successfully configured! :" + err, { variant : "error",
-          autoHideDuration : 2000,
+        enqueueSnackbar("Prometheus was not successfully configured! :" + err, { variant: "error",
+          autoHideDuration: 2000,
           action });
       }
     }
@@ -268,9 +268,9 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
 export const deleteMetricsComponentConfig = (componentName) => (successCb, errorCb) => dataFetch(
     `/api/telemetry/metrics${componentName === 'Grafana' ? "/grafana"
       : ""}/config`,
-    { credentials : "same-origin",
-      method : "DELETE",
-      credentials : "include", },
+    { credentials: "same-origin",
+      method: "DELETE",
+      credentials: "include", },
     successCb,
     errorCb
 );

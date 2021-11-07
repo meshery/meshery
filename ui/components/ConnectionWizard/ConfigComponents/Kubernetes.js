@@ -16,14 +16,14 @@ const KubernetesConfig = ({
 }) => {
 
   const [state, setState] = useState({
-    contextNameForForm : "",
-    contextsFromFile : [],
-    k8sfile : "",
-    k8sfileError : false,
-    k8sfileElement : null,
-    k8sfileElementVal : "",
-    inClusterConfigForm : false,
-    contextNameForForm : ""
+    contextNameForForm: "",
+    contextsFromFile: [],
+    k8sfile: "",
+    k8sfileError: false,
+    k8sfileElement: null,
+    k8sfileElementVal: "",
+    inClusterConfigForm: false,
+    contextNameForForm: ""
   });
 
 
@@ -31,7 +31,7 @@ const KubernetesConfig = ({
     return (event) => {
       if (name === "k8sfile") {
         if (event.target.value !== "") {
-          setState({ ...state, k8sfileError : false });
+          setState({ ...state, k8sfileError: false });
         }
 
         let fileInput = document.querySelector("#k8sfile");
@@ -40,7 +40,7 @@ const KubernetesConfig = ({
         fetchContexts(updateProgress, k8sfile )
           .then(res => {
             setState({
-              ...state, contextsFromFile : res.result, k8sfile, contextNameForForm : res.currentContextName
+              ...state, contextsFromFile: res.result, k8sfile, contextNameForForm: res.currentContextName
             });
             if (res.result.length === 1)
               submitConfig(enqueueSnackbar, updateProgress, updateK8SConfig, () => null, res.currentContextName, k8sfile);
@@ -55,7 +55,7 @@ const KubernetesConfig = ({
 
   return (
     <>
-      <Grid item xs={12} style={{ marginBottom : "0.6rem" }}>
+      <Grid item xs={12} style={{ marginBottom: "0.6rem" }}>
         {/*<TextField
           id="k8sfileLabelText"
           name="k8sfileLabelText"
@@ -113,8 +113,8 @@ const KubernetesConfig = ({
             value={""}
             onClick={() => document.querySelector("#k8sfile").click()}
             margin="normal"
-            InputProps={{ readOnly : true,
-              endAdornment : (
+            InputProps={{ readOnly: true,
+              endAdornment: (
                 <InputAdornment position="end">
                   <BackupIcon />
                 </InputAdornment>

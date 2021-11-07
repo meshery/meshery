@@ -7,28 +7,28 @@ export default function subscribeServiceMeshEvents(dataCB, variables) {
   let controlRes = null;
 
   requestSubscription(environment, {
-    subscription : controlPlaneSubscription,
-    variables : {
-      filter : variables,
+    subscription: controlPlaneSubscription,
+    variables: {
+      filter: variables,
     },
-    onNext : (res) => {
+    onNext: (res) => {
       // decrease state change in dashboard
 
       // dataCB(res, null)
       controlRes = res;
     },
-    onError : (error) => console.log(`An error occured:`, error),
+    onError: (error) => console.log(`An error occured:`, error),
   });
 
   requestSubscription(environment, {
-    subscription : dataPlaneSubscription,
-    variables : {
-      filter : variables,
+    subscription: dataPlaneSubscription,
+    variables: {
+      filter: variables,
     },
-    onNext : (dataRes) => {
+    onNext: (dataRes) => {
       if (controlRes) dataCB(controlRes, dataRes);
     },
-    onError : (error) => {
+    onError: (error) => {
       if (controlRes) dataCB(controlRes, null);
       console.log(`An error occured:`, error);
     },

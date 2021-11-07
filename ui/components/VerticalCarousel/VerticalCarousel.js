@@ -61,17 +61,17 @@ const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
 
   const settings = {
     // dots : true,
-    infinite : false,
-    slidesToShow : 1,
-    arrows : true,
+    infinite: false,
+    slidesToShow: 1,
+    arrows: true,
     // slidesToScroll : 1,
     // adaptiveHeight : true,
     // centerMode : true,
     // centerPadding : "0px",
-    vertical : true,
+    vertical: true,
     // verticalSwiping : true,
     // swipeToSlide : true,
-    afterChange : handleAfterSlideChange
+    afterChange: handleAfterSlideChange
   };
 
   return (

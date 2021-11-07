@@ -12,17 +12,17 @@ import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 
-const styles = () => ({ input : { display : 'flex', },
-  valueContainer : {
-    display : 'flex',
-    flexWrap : 'wrap',
-    flex : 1,
-    alignItems : 'center',
-    overflow : 'hidden',
+const styles = () => ({ input: { display: 'flex', },
+  valueContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    flex: 1,
+    alignItems: 'center',
+    overflow: 'hidden',
   },
-  placeholder : { position : 'absolute',
-    left : 16,
-    fontSize : 16, }, });
+  placeholder: { position: 'absolute',
+    left: 16,
+    fontSize: 16, }, });
 
 function NoOptionsMessage(props) {
   return (
@@ -46,10 +46,10 @@ function Control(props) {
       fullWidth
       variant="outlined"
       InputProps={{ inputComponent,
-        inputProps : {
-          className : props.selectProps.classes.input,
-          inputRef : props.innerRef,
-          children : props.children,
+        inputProps: {
+          className: props.selectProps.classes.input,
+          inputRef: props.innerRef,
+          children: props.children,
           ...props.innerProps,
         }, }}
       {...props.selectProps.textFieldProps}
@@ -63,7 +63,7 @@ function Option(props) {
       buttonRef={props.innerRef}
       selected={props.isFocused}
       component="div"
-      style={{ fontWeight : props.isSelected
+      style={{ fontWeight: props.isSelected
         ? 500
         : 400, }}
       {...props.innerProps}
@@ -102,7 +102,7 @@ function MultiValue(props) {
     <Chip
       tabIndex={-1}
       label={props.children}
-      className={classNames(props.selectProps.classes.chip, { [props.selectProps.classes.chipFocused] : props.isFocused, })}
+      className={classNames(props.selectProps.classes.chip, { [props.selectProps.classes.chipFocused]: props.isFocused, })}
       onDelete={props.removeProps.onClick}
       deleteIcon={<CancelIcon {...props.removeProps} />}
     />
@@ -134,9 +134,9 @@ class ReactSelectWrapper extends React.Component {
       classes, theme, label, placeholder, onChange, onInputChange, value, options, error, noOptionsMessage = "No Options"
     } = this.props;
 
-    const selectStyles = { input : (base) => ({ ...base,
-      color : theme.palette.text.primary,
-      '& input' : { font : 'inherit', }, }), };
+    const selectStyles = { input: (base) => ({ ...base,
+      color: theme.palette.text.primary,
+      '& input': { font: 'inherit', }, }), };
 
     return (
       <div className={classes.root}>
@@ -145,7 +145,7 @@ class ReactSelectWrapper extends React.Component {
             classes={classes}
             styles={selectStyles}
             textFieldProps={{ label,
-              InputLabelProps : { shrink : true, },
+              InputLabelProps: { shrink: true, },
               error, }}
             options={options}
             components={components}
@@ -163,15 +163,15 @@ class ReactSelectWrapper extends React.Component {
 }
 
 ReactSelectWrapper.propTypes = {
-  classes : PropTypes.object.isRequired,
-  theme : PropTypes.object.isRequired,
-  label : PropTypes.string.isRequired,
-  onChange : PropTypes.func.isRequired,
-  onInputChange : PropTypes.func.isRequired,
-  value : PropTypes.object.isRequired,
-  options : PropTypes.array.isRequired,
-  error : PropTypes.bool.isRequired,
-  noOptionsMessage : PropTypes.string
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  label: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onInputChange: PropTypes.func.isRequired,
+  value: PropTypes.object.isRequired,
+  options: PropTypes.array.isRequired,
+  error: PropTypes.bool.isRequired,
+  noOptionsMessage: PropTypes.string
 };
 
-export default withStyles(styles, { withTheme : true })(ReactSelectWrapper);
+export default withStyles(styles, { withTheme: true })(ReactSelectWrapper);

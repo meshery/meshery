@@ -12,20 +12,20 @@ import { getOperatorStatusFromQueryResult, isMesheryOperatorConnected } from "..
 const MesheryOperatorScreen = ({ setStepStatus }) => {
 
   const [operatorInformation,setOperatorInformation] = useState({
-    operatorInstalled : false,
-    NATSInstalled : false,
-    meshSyncInstalled : false,
-    operatorVersion : "N/A",
-    meshSyncVersion : "N/A",
-    NATSVersion : "N/A",
+    operatorInstalled: false,
+    NATSInstalled: false,
+    meshSyncInstalled: false,
+    operatorVersion: "N/A",
+    meshSyncVersion: "N/A",
+    NATSVersion: "N/A",
   });
   const [isConnected,setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const mesheryOperatorinfo = {
-    name : "Meshery Operator",
-    logoComponent : MesheryOperatorIcon,
-    configComp : <div />,
+    name: "Meshery Operator",
+    logoComponent: MesheryOperatorIcon,
+    configComp: <div />,
     operatorInformation
   };
 
@@ -33,17 +33,17 @@ const MesheryOperatorScreen = ({ setStepStatus }) => {
     isMesheryOperatorConnected(operatorInformation);
 
   useEffect(() => {
-    setStepStatus(prev => ({ ...prev, operator : isConnected }));
+    setStepStatus(prev => ({ ...prev, operator: isConnected }));
   },[isConnected]);
 
   useEffect(() => {
     subscribeOperatorStatusEvents(setOperatorState);
     setIsLoading(true);
-    fetchMesheryOperatorStatus().subscribe({ next : (res) => {
+    fetchMesheryOperatorStatus().subscribe({ next: (res) => {
       setIsLoading(false);
       setOperatorState(res);
     },
-    error : (err) => setIsLoading(false), });
+    error: (err) => setIsLoading(false), });
 
   },[]);
 
@@ -58,8 +58,8 @@ const MesheryOperatorScreen = ({ setStepStatus }) => {
 
   return (
     <Grid item xs={12} container justify="center" alignItems="flex-start">
-      <Grid item container justify="center" alignItems="flex-start" lg={6} sm={12} md={12} style={{ paddingLeft : "1rem" }}>
-        <ServiceCard serviceInfo={mesheryOperatorinfo} isConnected={isConnected} style={{ paddingRight : "1rem" }}/>
+      <Grid item container justify="center" alignItems="flex-start" lg={6} sm={12} md={12} style={{ paddingLeft: "1rem" }}>
+        <ServiceCard serviceInfo={mesheryOperatorinfo} isConnected={isConnected} style={{ paddingRight: "1rem" }}/>
       </Grid>
       <Grid item lg={6} sm={12} md={12} container justify="center" >
         {

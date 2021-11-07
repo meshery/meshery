@@ -9,9 +9,9 @@ import PatternServiceForm from "./LazyPatternServiceForm";
 async function submitPattern(pattern, del = false) {
   const res = await fetch(
     "/api/pattern/deploy", {
-      headers : { "Content-Type" : "application/json", },
-      method : del ? "DELETE" : "POST",
-      body : JSON.stringify(pattern),
+      headers: { "Content-Type": "application/json", },
+      method: del ? "DELETE" : "POST",
+      body: JSON.stringify(pattern),
     });
 
   return res.text();
@@ -64,7 +64,7 @@ function MesheryMeshInterface({ adapter }) {
         </div>
       </Grid>
       <Grid item md={4} xs={12}>
-        <Paper style={{ padding : "1rem" }}>
+        <Paper style={{ padding: "1rem" }}>
           <Typography variant="h6" gutterBottom>
             Addons
           </Typography>

@@ -31,7 +31,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
 
   const id = `${idSchema.$id}__title`;
   // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
-  return <Typography variant="body1" style={{ fontWeight : "bold" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
+  return <Typography variant="body1" style={{ fontWeight: "bold" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
   // return <TitleField id={id} title={title} required={required} />;
 };
 
@@ -47,17 +47,17 @@ const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {
 // Used in the two templates
 const DefaultArrayItem = (props) => {
   const btnStyle = {
-    flex : 1,
-    paddingLeft : 6,
-    paddingRight : 6,
-    fontWeight : "bold",
-    minWidth : 0
+    flex: 1,
+    paddingLeft: 6,
+    paddingRight: 6,
+    fontWeight: "bold",
+    minWidth: 0
   };
   return (
     <SimpleAccordion childProps={props}>
       <Grid container={true} key={props.key} alignItems="center">
         <Grid item={true} xs >
-          <Box mb={2} style={{ border : "0.5px solid black" }}>
+          <Box mb={2} style={{ border: "0.5px solid black" }}>
             <Paper elevation={0}>
               <Box p={2}>{props.children}</Box>
             </Paper>
@@ -72,7 +72,7 @@ const DefaultArrayItem = (props) => {
                 className="array-item-move-up"
                 tabIndex={-1}
                 style={btnStyle}
-                iconProps={{ fontSize : "small" }}
+                iconProps={{ fontSize: "small" }}
                 disabled={props.disabled || props.readonly || !props.hasMoveUp}
                 onClick={props.onReorderClick(props.index, props.index - 1)}
               />
@@ -83,7 +83,7 @@ const DefaultArrayItem = (props) => {
                 icon="arrow-down"
                 tabIndex={-1}
                 style={btnStyle}
-                iconProps={{ fontSize : "small" }}
+                iconProps={{ fontSize: "small" }}
                 disabled={
                   props.disabled || props.readonly || !props.hasMoveDown
                 }
@@ -141,7 +141,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
   return (
     <Paper elevation={0}>
       <Box p={1}>
-        <Grid item container alignItems="center" xs={12} justify="space-between" style={{ marginBottom : "0.3rem" }}>
+        <Grid item container alignItems="center" xs={12} justify="space-between" style={{ marginBottom: "0.3rem" }}>
           <Grid item xs={4}>
             <ArrayFieldTitle
               key={`array-field-title-${props.idSchema.$id}`}

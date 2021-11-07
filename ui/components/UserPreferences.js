@@ -25,63 +25,63 @@ import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceCom
 
 
 const styles = (theme) => ({
-  root : {
-    maxWidth : "100%",
-    height : 'auto',
-    borderTopLeftRadius : 0,
-    borderTopRightRadius : 0,
-    borderBottomLeftRadius : 3,
-    borderBottomRightRadius : 3,
+  root: {
+    maxWidth: "100%",
+    height: 'auto',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: 3,
+    borderBottomRightRadius: 3,
   },
-  paperRoot : {
-    flexGrow : 1,
-    maxWidth : "100%",
-    marginLeft : 0,
-    borderTopLeftRadius : 3,
-    borderTopRightRadius : 3,
+  paperRoot: {
+    flexGrow: 1,
+    maxWidth: "100%",
+    marginLeft: 0,
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
   },
-  tabs : { marginLeft : 0 },
-  tab : {
-    maxWidth : 'min(33%, 200px)',
-    minWidth : '50px',
-    margin : 0
+  tabs: { marginLeft: 0 },
+  tab: {
+    maxWidth: 'min(33%, 200px)',
+    minWidth: '50px',
+    margin: 0
   },
-  icon : {
-    display : 'inline',
-    verticalAlign : 'text-top',
-    width : theme.spacing(1.75),
-    marginLeft : theme.spacing(0.5),
+  icon: {
+    display: 'inline',
+    verticalAlign: 'text-top',
+    width: theme.spacing(1.75),
+    marginLeft: theme.spacing(0.5),
   },
-  iconText : {
-    display : 'inline',
-    verticalAlign : 'middle',
+  iconText: {
+    display: 'inline',
+    verticalAlign: 'middle',
   },
-  backToPlay : { margin : theme.spacing(2), },
-  link : { cursor : 'pointer', },
-  formContainer : {
-    display : 'flex',
-    'flex-wrap' : 'wrap',
-    'justify-content' : 'space-evenly',
-    padding : 50
+  backToPlay: { margin: theme.spacing(2), },
+  link: { cursor: 'pointer', },
+  formContainer: {
+    display: 'flex',
+    'flex-wrap': 'wrap',
+    'justify-content': 'space-evenly',
+    padding: 50
   },
-  formGrp : {
-    padding : 20,
-    border : '1.5px solid #969696',
+  formGrp: {
+    padding: 20,
+    border: '1.5px solid #969696',
   },
-  formLegend : { fontSize : 20, },
-  switchBase : {
-    color : '#647881',
-    "&$checked" : { color : '#00b39f' },
-    "&$checked + $track" : { backgroundColor : 'rgba(0,179,159,0.5)' },
+  formLegend: { fontSize: 20, },
+  switchBase: {
+    color: '#647881',
+    "&$checked": { color: '#00b39f' },
+    "&$checked + $track": { backgroundColor: 'rgba(0,179,159,0.5)' },
   },
-  track : { backgroundColor : 'rgba(100,120,129,0.5)', },
-  checked : {},
-  tabLabel : {
-    [theme.breakpoints.up("sm")] : {
-      fontSize : '1em'
+  track: { backgroundColor: 'rgba(100,120,129,0.5)', },
+  checked: {},
+  tabLabel: {
+    [theme.breakpoints.up("sm")]: {
+      fontSize: '1em'
     },
-    [theme.breakpoints.between("xs", 'sm')] : {
-      fontSize : '0.8em'
+    [theme.breakpoints.between("xs", 'sm')]: {
+      fontSize: '0.8em'
     }
   }
 });
@@ -90,23 +90,23 @@ class UserPreference extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      anonymousStats : props.anonymousStats,
-      perfResultStats : props.perfResultStats,
-      startOnZoom : props.startOnZoom,
-      tabVal : 0,
-      userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
-      providerType : ''
+      anonymousStats: props.anonymousStats,
+      perfResultStats: props.perfResultStats,
+      startOnZoom: props.startOnZoom,
+      tabVal: 0,
+      userPrefs: ExtensionPointSchemaValidator("user_prefs")(),
+      providerType: ''
     };
   }
 
   handleToggle = (name) => () => {
     const self = this;
     if (name == 'anonymousUsageStats') {
-      self.setState((state) => ({ anonymousStats : !state.anonymousStats }));
+      self.setState((state) => ({ anonymousStats: !state.anonymousStats }));
     } else if (name == 'anonymousPerfResults') {
-      self.setState((state) => ({ perfResultStats : !state.perfResultStats }));
+      self.setState((state) => ({ perfResultStats: !state.perfResultStats }));
     } else {
-      self.setState((state) => ({ startOnZoom : !state.startOnZoom }));
+      self.setState((state) => ({ startOnZoom: !state.startOnZoom }));
     }
 
     this.handleChange(name);
@@ -114,9 +114,9 @@ class UserPreference extends React.Component {
 
   handleError = (msg) => () => {
     const self = this;
-    this.props.updateProgress({ showProgress : false });
-    this.props.enqueueSnackbar(msg, { variant : 'error',
-      action : (key) => (
+    this.props.updateProgress({ showProgress: false });
+    this.props.enqueueSnackbar(msg, { variant: 'error',
+      action: (key) => (
         <IconButton
           key="close"
           aria-label="Close"
@@ -126,7 +126,7 @@ class UserPreference extends React.Component {
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 8000, });
+      autoHideDuration: 8000, });
   }
 
   handleChange = (name) => {
@@ -152,21 +152,21 @@ class UserPreference extends React.Component {
     }
 
     const params = `${encodeURIComponent(name)}=${encodeURIComponent(!val)}`;
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     dataFetch('/api/user/prefs', {
-      credentials : 'same-origin',
-      method : 'POST',
-      credentials : 'include',
-      headers : { 'Content-Type' : 'application/x-www-form-urlencoded;charset=UTF-8', },
-      body : params,
+      credentials: 'same-origin',
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', },
+      body: params,
     }, (result) => {
-      this.props.updateProgress({ showProgress : false });
+      this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar(msg, { variant : !val
+        this.props.enqueueSnackbar(msg, { variant: !val
           ? 'success'
           : 'info',
-        autoHideDuration : 4000,
-        action : (key) => (
+        autoHideDuration: 4000,
+        action: (key) => (
           <IconButton
             key="close"
             aria-label="Close"
@@ -181,20 +181,20 @@ class UserPreference extends React.Component {
   }
 
   handleTabValChange = (event, newVal) => {
-    this.setState({ tabVal : newVal });
+    this.setState({ tabVal: newVal });
   }
 
   componentDidMount = () => {
     dataFetch(
       "/api/provider/capabilities",
-      { credentials : "same-origin",
-        method : "GET",
-        credentials : "include", },
+      { credentials: "same-origin",
+        method: "GET",
+        credentials: "include", },
       (result) => {
         if (result) {
           this.setState({
-            userPrefs : ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs),
-            providerType : result?.provider_type
+            userPrefs: ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs),
+            providerType: result?.provider_type
           });
         }
       },
@@ -267,9 +267,9 @@ class UserPreference extends React.Component {
                         checked={anonymousStats}
                         onChange={this.handleToggle('anonymousUsageStats')}
                         color="primary"
-                        classes={{ switchBase : classes.switchBase,
-                          track : classes.track,
-                          checked : classes.checked, }}
+                        classes={{ switchBase: classes.switchBase,
+                          track: classes.track,
+                          checked: classes.checked, }}
                         data-cy="UsageStatsPreference"
                       />
                     )}
@@ -283,9 +283,9 @@ class UserPreference extends React.Component {
                         checked={perfResultStats}
                         onChange={this.handleToggle('anonymousPerfResults')}
                         color="primary"
-                        classes={{ switchBase : classes.switchBase,
-                          track : classes.track,
-                          checked : classes.checked, }}
+                        classes={{ switchBase: classes.switchBase,
+                          track: classes.track,
+                          checked: classes.checked, }}
                         data-cy="PerfResultPreference"
                       />
                     )}
@@ -308,8 +308,8 @@ class UserPreference extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateUser: bindActionCreators(updateUser, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch), });
 
 export default withStyles(styles)(connect(
   null,

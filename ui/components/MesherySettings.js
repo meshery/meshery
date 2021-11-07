@@ -26,42 +26,42 @@ import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
 
 const styles = (theme) => ({
-  root : { flexGrow : 1,
-    maxWidth : '100%',
-    height : 'auto', },
-  tab : { minWidth : 40,
-    paddingLeft : 0,
-    paddingRight : 0, },
-  icon : {
-    display : 'inline',
-    verticalAlign : 'text-top',
-    width : theme.spacing(1.75),
-    marginLeft : theme.spacing(0.5),
+  root: { flexGrow: 1,
+    maxWidth: '100%',
+    height: 'auto', },
+  tab: { minWidth: 40,
+    paddingLeft: 0,
+    paddingRight: 0, },
+  icon: {
+    display: 'inline',
+    verticalAlign: 'text-top',
+    width: theme.spacing(1.75),
+    marginLeft: theme.spacing(0.5),
   },
-  iconText : { display : 'inline',
-    verticalAlign : 'middle', },
-  backToPlay : { margin : theme.spacing(2), },
-  link : { cursor : 'pointer', },
+  iconText: { display: 'inline',
+    verticalAlign: 'middle', },
+  backToPlay: { margin: theme.spacing(2), },
+  link: { cursor: 'pointer', },
 });
 
 function TabContainer(props) {
   return (
     <Typography
       component="div"
-      style={{ paddingTop : 2, }}
+      style={{ paddingTop: 2, }}
     >
       {props.children}
     </Typography>
   );
 }
 
-TabContainer.propTypes = { children : PropTypes.node.isRequired, };
+TabContainer.propTypes = { children: PropTypes.node.isRequired, };
 
 class MesherySettings extends React.Component {
   constructor(props) {
     super(props);
     const {
-      k8sconfig, meshAdapters, grafana, prometheus, router : { asPath }
+      k8sconfig, meshAdapters, grafana, prometheus, router: { asPath }
     } = props;
 
     let tabVal = 0, subTabVal = 0;
@@ -100,7 +100,7 @@ class MesherySettings extends React.Component {
       }
     }
     this.state = {
-      completed : {},
+      completed: {},
       k8sconfig,
       meshAdapters,
       grafana,
@@ -108,12 +108,12 @@ class MesherySettings extends React.Component {
       tabVal,
       subTabVal,
 
-      isMeshConfigured : k8sconfig.clusterConfigured,
+      isMeshConfigured: k8sconfig.clusterConfigured,
 
       // Array of scanned prometheus urls
-      scannedPrometheus : [],
+      scannedPrometheus: [],
       // Array of scanned grafan urls
-      scannedGrafana : []
+      scannedGrafana: []
     };
   }
 
@@ -121,10 +121,10 @@ class MesherySettings extends React.Component {
     if (JSON.stringify(props.k8sconfig) !== JSON.stringify(state.k8sconfig)
       || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
       return {
-        k8sconfig : props.k8sconfig,
-        meshAdapters : props.meshAdapters,
-        grafana : props.grafana,
-        prometheus : props.prometheus,
+        k8sconfig: props.k8sconfig,
+        meshAdapters: props.meshAdapters,
+        grafana: props.grafana,
+        prometheus: props.prometheus,
       };
     }
     return null;
@@ -136,26 +136,26 @@ class MesherySettings extends React.Component {
 
   fetchPromGrafanaScanData = () => {
     const self = this;
-    self.props.updateProgress({ showProgress : true });
+    self.props.updateProgress({ showProgress: true });
     dataFetch(
       '/api/system/meshsync/grafana',
       {
-        credentials : "same-origin",
-        method : "GET",
-        credentials : "include",
+        credentials: "same-origin",
+        method: "GET",
+        credentials: "include",
       },
       (result) => {
-        self.props.updateProgress({ showProgress : false });
+        self.props.updateProgress({ showProgress: false });
         if (!result) return;
 
         if (Array.isArray(result.prometheus)) {
           const urls = self.extractURLFromScanData(result.prometheus);
-          self.setState(state => ({ scannedPrometheus : [...state.scannedPrometheus, ...urls] }));
+          self.setState(state => ({ scannedPrometheus: [...state.scannedPrometheus, ...urls] }));
         }
 
         if (Array.isArray(result.grafana)) {
           const urls = self.extractURLFromScanData(result.grafana);
-          self.setState(state => ({ scannedGrafana : [...state.scannedGrafana, ...urls] }));
+          self.setState(state => ({ scannedGrafana: [...state.scannedGrafana, ...urls] }));
         }
       },
       self.handleError("Unable to fetch prometheus and grafana scan data")
@@ -209,15 +209,15 @@ class MesherySettings extends React.Component {
   }
 
   handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
+    this.props.updateProgress({ showProgress: false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-      action : (key) => (
+    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant: "error",
+      action: (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 7000, });
+      autoHideDuration: 7000, });
   };
 
   handleChange = (val) => {
@@ -241,7 +241,7 @@ class MesherySettings extends React.Component {
         }
         if (this.props.router.route != newRoute)
           this.props.router.push(newRoute);
-        self.setState({ tabVal : newVal });
+        self.setState({ tabVal: newVal });
       } else if (val === 'subTabVal') {
         let newRoute = this.props.router.route;
         switch (newVal) {
@@ -260,7 +260,7 @@ class MesherySettings extends React.Component {
         }
         if (this.props.router.route != newRoute)
           this.props.router.push(newRoute);
-        self.setState({ subTabVal : newVal });
+        self.setState({ subTabVal: newVal });
       }
     };
   }
@@ -438,9 +438,9 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch), });
 
-MesherySettings.propTypes = { classes : PropTypes.object, };
+MesherySettings.propTypes = { classes: PropTypes.object, };
 
 export default withStyles(styles)(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesherySettings)))

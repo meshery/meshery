@@ -4,26 +4,26 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import bb, { gauge } from 'billboard.js';
 
 const useStyles = makeStyles({
-  '@global' : { '.bb-chart-arcs-background' : { fill : '#e0e0e0',
-    stroke : 'none', }, },
-  root : { width : '100%',
-    height : '75%',
-    minHeight : '18rem', },
-  error : {
-    color : '#D32F2F',
-    width : '100%',
-    textAlign : 'center',
-    fontSize : '12px',
+  '@global': { '.bb-chart-arcs-background': { fill: '#e0e0e0',
+    stroke: 'none', }, },
+  root: { width: '100%',
+    height: '75%',
+    minHeight: '18rem', },
+  error: {
+    color: '#D32F2F',
+    width: '100%',
+    textAlign: 'center',
+    fontSize: '12px',
     // fontFamily: 'Helvetica Nueue',
-    fontWeight : 'bold',
+    fontWeight: 'bold',
   },
-  title : {
-    fontSize : '12px',
-    color : '#666666',
+  title: {
+    fontSize: '12px',
+    color: '#666666',
     // fontFamily: 'Helvetica Nueue',
-    fontWeight : 'bold',
-    textAlign : 'center',
-    width : '100%',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    width: '100%',
   },
 });
 
@@ -68,18 +68,18 @@ export default function GrafanaCustomGaugeChart(props) {
         // oninit: function(args){
         //   console.log(JSON.stringify(args));
         // },
-        bindto : chartRef,
-        data : { columns : [
+        bindto: chartRef,
+        data: { columns: [
           [
             glabel,
             gdata,
           ],
         ],
-        type : gauge(), },
-        gauge : { min,
+        type: gauge(), },
+        gauge: { min,
           max,
           // units,
-          label : {
+          label: {
             // show: glabel && glabel !== '',
             format(value) {
               return value + units;
@@ -90,13 +90,13 @@ export default function GrafanaCustomGaugeChart(props) {
             }, },
           //    width: 39 // for adjusting arc thickness
         },
-        color : { pattern : colors, // the three color levels for the percentage values.
-          threshold : {
+        color: { pattern: colors, // the three color levels for the percentage values.
+          threshold: {
             //            unit: 'value', // percentage is default
             //            max: 200, // 100 is default
-            values : thresholds, }, },
-        legend : { show : false, },
-        tooltip : { show : false, },
+            values: thresholds, }, },
+        legend: { show: false, },
+        tooltip: { show: false, },
         // size: {
         //   height: '100%',
         // }

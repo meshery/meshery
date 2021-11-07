@@ -9,57 +9,57 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { IconButton } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  root : {
-    width : "100%",
-    marginBottom : "1rem"
+  root: {
+    width: "100%",
+    marginBottom: "1rem"
   },
-  heading : {
-    fontSize : theme.typography.pxToRem(15),
-    fontWeight : theme.typography.fontWeightRegular
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular
   }
 }));
 
 
 const Accordion = withStyles({
-  root : {
-    border : '1px solid rgba(0, 0, 0, .125)',
-    boxShadow : 'none',
-    '&:not(:last-child)' : {
-      borderBottom : 0,
+  root: {
+    border: '1px solid rgba(0, 0, 0, .125)',
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+      borderBottom: 0,
     },
-    '&:before' : {
-      display : 'none',
+    '&:before': {
+      display: 'none',
     },
-    '&$expanded' : {
-      margin : 'auto',
+    '&$expanded': {
+      margin: 'auto',
     },
   },
-  expanded : {},
+  expanded: {},
 })(MuiAccordion);
 
 const AccordionSummary = withStyles({
-  root : {
-    backgroundColor : 'rgba(0, 0, 0, .03)',
-    borderBottom : '1px solid rgba(0, 0, 0, .125)',
-    marginBottom : -1,
-    maxHeight : "1.5rem",
-    '&$expanded' : {
-      minHeight : 56,
+  root: {
+    backgroundColor: 'rgba(0, 0, 0, .03)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)',
+    marginBottom: -1,
+    maxHeight: "1.5rem",
+    '&$expanded': {
+      minHeight: 56,
     },
   },
-  content : {
-    justifyContent : "flex-end",
-    '&$expanded' : {
-      margin : '12px 0',
-      justifyContent : "flex-end",
+  content: {
+    justifyContent: "flex-end",
+    '&$expanded': {
+      margin: '12px 0',
+      justifyContent: "flex-end",
     },
   },
-  expanded : {},
+  expanded: {},
 })(MuiAccordionSummary);
 
 const AccordionDetails = withStyles((theme) => ({
-  root : {
-    padding : theme.spacing(2),
+  root: {
+    padding: theme.spacing(2),
   },
 }))(MuiAccordionDetails);
 
@@ -73,7 +73,7 @@ export default function SimpleAccordion(props) {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
-          style={{ backgroundColor : "F7F7F7" }}
+          style={{ backgroundColor: "F7F7F7" }}
         >
 
           <Typography className={classes.heading}>{props.heading}</Typography>
@@ -81,7 +81,7 @@ export default function SimpleAccordion(props) {
           {props.childProps.hasRemove && (
 
             <IconButton
-              style={{ padding : "0" }}
+              style={{ padding: "0" }}
               // style={btnStyle}
               disabled={props.childProps.disabled || props.childProps.readonly}
               onClick={props.childProps.onDropIndexClick(

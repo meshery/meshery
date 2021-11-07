@@ -8,13 +8,13 @@ const addonStatusMutation = graphql`
 `;
 
 export default function changeAddonStatus(onComplete, variables) {
-  const vars = { input : { selector : variables.serviceMesh,
-    targetStatus : variables.status } };
+  const vars = { input: { selector: variables.serviceMesh,
+    targetStatus: variables.status } };
 
   commitMutation(environment,{
-    mutation : addonStatusMutation,
-    variables : vars,
-    onCompleted : onComplete,
-    onError : error => console.log(`An error occured:`, error),
+    mutation: addonStatusMutation,
+    variables: vars,
+    onCompleted: onComplete,
+    onError: error => console.log(`An error occured:`, error),
   });
 }

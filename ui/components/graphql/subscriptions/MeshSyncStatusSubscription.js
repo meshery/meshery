@@ -17,9 +17,9 @@ subscription MeshSyncStatusSubscription {
 
 export default function subscribeMeshSyncStatusEvents(dataCB) {
   return requestSubscription(environment, {
-    subscription : meshSyncStatusSubscription,
-    variables : {},
-    onNext : dataCB,
-    onError : (error) => console.log(`An error occured:`, error),
+    subscription: meshSyncStatusSubscription,
+    variables: {},
+    onNext: dataCB,
+    onError: (error) => console.log(`An error occured:`, error),
   });
 }

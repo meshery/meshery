@@ -8,15 +8,15 @@ import { URLValidator } from '../utils/URLValidator';
 
 
 const getMuiTheme = () => createTheme({
-  palette : {
-    primary : {
-      main : "#607d8b"
+  palette: {
+    primary: {
+      main: "#607d8b"
     }
   },
-  overrides : {
-    MuiGrid : {
-      input : {
-        color : '#607d8b'
+  overrides: {
+    MuiGrid: {
+      input: {
+        color: '#607d8b'
       }
     },
   }
@@ -24,20 +24,20 @@ const getMuiTheme = () => createTheme({
 
 
 const styles = makeStyles((theme) => ({
-  paper : {
-    position : 'absolute',
-    width : 600,
-    backgroundColor : theme.palette.background.paper,
-    border : '0px solid #000',
-    boxShadow : theme.shadows[5],
-    padding : theme.spacing(2, 4, 3),
-    top : '50%',
-    left : '50%',
-    transform : `translate(-50%, -50%)`,
-    borderRadius : 10,
+  paper: {
+    position: 'absolute',
+    width: 600,
+    backgroundColor: theme.palette.background.paper,
+    border: '0px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+    top: '50%',
+    left: '50%',
+    transform: `translate(-50%, -50%)`,
+    borderRadius: 10,
   },
-  grid : {
-    width : '100%'
+  grid: {
+    width: '100%'
   },
 
 

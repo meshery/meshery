@@ -18,29 +18,29 @@ import {
 
 const styles = theme => ({
 
-  infoContainer : {
-    width : "20rem",
-    height : "15rem",
-    padding : "1rem 1rem",
-    boxShadow : "0px 1px 6px 1px rgba(0,0,0,0.20)",
-    borderRadius : '1rem',
+  infoContainer: {
+    width: "20rem",
+    height: "15rem",
+    padding: "1rem 1rem",
+    boxShadow: "0px 1px 6px 1px rgba(0,0,0,0.20)",
+    borderRadius: '1rem',
   },
-  infoTitle : {
-    color : "#647881",
-    width : "3rem",
-    background : "#F1F3F4",
-    padding : ".5rem 5rem .75rem 1.5rem",
-    borderRadius : "0.25rem",
-    fontSize : ".8rem",
+  infoTitle: {
+    color: "#647881",
+    width: "3rem",
+    background: "#F1F3F4",
+    padding: ".5rem 5rem .75rem 1.5rem",
+    borderRadius: "0.25rem",
+    fontSize: ".8rem",
   },
-  infoLabel : {
-    fontSize : ".9rem",
-    color : theme.palette.text.primary,
-    marginRight : "1rem",
-    fontWeight : 500
+  infoLabel: {
+    fontSize: ".9rem",
+    color: theme.palette.text.primary,
+    marginRight: "1rem",
+    fontWeight: 500
   },
-  infoData : { fontSize : ".9rem",
-    color : theme.palette.text.secondary, },
+  infoData: { fontSize: ".9rem",
+    color: theme.palette.text.secondary, },
 
 
 });
@@ -50,11 +50,11 @@ const KubernetesDataPanel = ({
   clusterInformation, classes, updateProgress, enqueueSnackbar, closeSnackbar, setClusterInformation, setIsConnected, updateK8SConfig
 }) => {
 
-  const resetKubernetesConfig = () => updateK8SConfig({ k8sConfig : {
-    inClusterConfig : false,
-    k8sfile : "",
-    contextName : "",
-    clusterConfigured : false,
+  const resetKubernetesConfig = () => updateK8SConfig({ k8sConfig: {
+    inClusterConfig: false,
+    k8sfile: "",
+    contextName: "",
+    clusterConfigured: false,
   }, });
 
 
@@ -91,7 +91,7 @@ const KubernetesDataPanel = ({
         />
       </Grid>
 
-      <Grid item xs={12} style={{ marginBottom : "1rem" }}>
+      <Grid item xs={12} style={{ marginBottom: "1rem" }}>
         <Typography className={classes.infoTitle}>Details</Typography>
       </Grid>
 
@@ -118,7 +118,7 @@ const KubernetesDataPanel = ({
 };
 
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
-  updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch), });
 
 export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(KubernetesDataPanel)));

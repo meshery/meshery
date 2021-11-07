@@ -79,7 +79,7 @@ export async function createWorkloadTraitSets(adapter) {
 
   const sets = [];
   workloads?.forEach((w) => {
-    const item = { workload : w, traits : [], type : getPatternServiceType(w?.metadata) };
+    const item = { workload: w, traits: [], type: getPatternServiceType(w?.metadata) };
 
     item.traits = traits?.filter((t) => {
       if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
@@ -177,8 +177,8 @@ export function recursiveCleanObjectExceptEmptyArray(obj) {
  */
 export function createPatternFromConfig(config, namespace, partialClean = false) {
   const pattern = {
-    name : `pattern-${trueRandom().toString(36).substr(2, 5)}`,
-    services : {},
+    name: `pattern-${trueRandom().toString(36).substr(2, 5)}`,
+    services: {},
   };
 
   partialClean ? recursiveCleanObjectExceptEmptyArray(config) : recursiveCleanObject(config);

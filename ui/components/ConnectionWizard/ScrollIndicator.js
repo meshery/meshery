@@ -7,11 +7,11 @@ import TimelineConnector from '@material-ui/lab/TimelineConnector';
 import TimelineContent from '@material-ui/lab/TimelineContent';
 import TimelineDot from '@material-ui/lab/TimelineDot';
 
-const useStyles = makeStyles((theme) => ({ paper : { padding : '6px 16px', },
-  secondaryTail : {
+const useStyles = makeStyles((theme) => ({ paper: { padding: '6px 16px', },
+  secondaryTail: {
     // backgroundColor: "black",
   },
-  chipIcon : { width : theme.spacing(2.5) }, }));
+  chipIcon: { width: theme.spacing(2.5) }, }));
 
 export const ScrollIndicator = ({ items, handleClick, activeIndex }) => {
 
@@ -25,7 +25,7 @@ export const ScrollIndicator = ({ items, handleClick, activeIndex }) => {
           <TimelineSeparator>
             <TimelineDot variant={activeIndex === index
               ?"outlined"
-              : "default"} style={{ cursor : "pointer" }} onClick={handleClick(index)}>
+              : "default"} style={{ cursor: "pointer" }} onClick={handleClick(index)}>
               <img src={ activeIndex === index ? item.activeIcon : item.inactiveIcon}  className={classes.chipIcon} />
             </TimelineDot>
             {index === items.length-1

@@ -4,7 +4,7 @@ import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import PerformanceCard from "./PerformanceCard";
 
-const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
+const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
@@ -29,8 +29,8 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal })
         lastRun={profile.last_run}
         handleEdit={() => setProfileForModal(profile)}
         handleDelete={() => deleteHandler(profile.id)}
-        handleRunTest={() => setProfileForModal({ ...profile, runTest : true })}
-        requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
+        handleRunTest={() => setProfileForModal({ ...profile, runTest: true })}
+        requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
       />
     </Grid>
@@ -61,7 +61,7 @@ function PerformanceProfileGrid({
 }) {
   return (
     <div>
-      <Grid container spacing={2} style={{ padding : "1rem" }}>
+      <Grid container spacing={2} style={{ padding: "1rem" }}>
         {profiles.map((profile) => (
           <PerformanceCardGridItem
             key={profile.id}
@@ -74,7 +74,7 @@ function PerformanceProfileGrid({
       {profiles.length
         ? (
           <div style={{
-            display : "flex", justifyContent : "center", alignItems : "center", marginTop : "2rem"
+            display: "flex", justifyContent: "center", alignItems: "center", marginTop: "2rem"
           }}>
             <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
           </div>

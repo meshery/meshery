@@ -38,21 +38,21 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
   const AdapterIcon = (name) => ({ isActive }) => {
 
     let image = "/static/img/" + name?.toLowerCase() + ".svg";
-    return  <img style={{ height : "4rem", width : "4rem" }} src={isActive ? image :"/static/img/meshery-logo/meshery-white.png"} />;
+    return  <img style={{ height: "4rem", width: "4rem" }} src={isActive ? image :"/static/img/meshery-logo/meshery-white.png"} />;
   };
 
   const serviceMeshComponents = availableAdapters.map(adapter => ({
-    name : adapter.name
+    name: adapter.name
       ? adapter.name
       : adapter.label.split(":")[0],
-    logoComponent : AdapterIcon(adapter.name),
-    configComp : <ServiceMeshConfig adapterLoc={adapter.value}/>,
-    adapterInfo : adapter
+    logoComponent: AdapterIcon(adapter.name),
+    configComp: <ServiceMeshConfig adapterLoc={adapter.value}/>,
+    adapterInfo: adapter
   }));
 
 
 
-  const scrollItems = serviceMeshComponents.map(smesh => ({ activeIcon : "/static/img/meshery-logo.png", inactiveIcon : "/static/img/meshery-logo/meshery-white.png" }));
+  const scrollItems = serviceMeshComponents.map(smesh => ({ activeIcon: "/static/img/meshery-logo.png", inactiveIcon: "/static/img/meshery-logo/meshery-white.png" }));
 
 
   const itemsToBeRendered = serviceMeshComponents.map(comp => {
@@ -85,20 +85,20 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
 
   return (
     <Grid xs={12} container justify="center" alignItems="flex-start">
-      <Grid item lg={6} sm={12} md={12} container justify="center" alignItems="flex-start" style={{ paddingLeft : "1rem" }}>
-        <div style={{ height : "18rem", overflow : "scroll", marginTop : "-1.2rem" }} className="hide-scrollbar">
+      <Grid item lg={6} sm={12} md={12} container justify="center" alignItems="flex-start" style={{ paddingLeft: "1rem" }}>
+        <div style={{ height: "18rem", overflow: "scroll", marginTop: "-1.2rem" }} className="hide-scrollbar">
           <ScrollIndicator items={scrollItems} handleClick={handleIndicatorClick} activeIndex={activeIndex} />
         </div>
         <VerticalCarousel slides={itemsToBeRendered} handleAfterSlideChange={handleAfterSlideChange} sliderRef={sliderRef}/>
       </Grid>
-      <Grid item lg={6} sm={12} md={12} container justify="center" style={{ paddingRight : "1rem" }}>
+      <Grid item lg={6} sm={12} md={12} container justify="center" style={{ paddingRight: "1rem" }}>
         <ServiceMeshDataPanel adapterInfo={serviceMeshComponents[activeIndex]?.adapterInfo} isActive={isAdapterActive(serviceMeshComponents[activeIndex]?.adapterInfo.value)}  />
       </Grid>
     </Grid>
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
   const meshAdapters = state.get("meshAdapters").toJS();

@@ -21,9 +21,9 @@ import AdapterChip from "./AdapterChip";
 import { closeButtonForSnackbarAction, errorHandlerGenerator,successHandlerGenerator } from "../helpers/common";
 
 
-const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
-  chip : { marginRight : theme.spacing(1),
-    marginBottom : theme.spacing(1), }, });
+const chipStyles = (theme) => ({ chipIcon: { width: theme.spacing(2.5) },
+  chip: { marginRight: theme.spacing(1),
+    marginBottom: theme.spacing(1), }, });
 
 
 
@@ -41,20 +41,20 @@ const MesheryOperatorDataPanel = ({
 
     const successCb = (res) => {
       if (res?.operator?.status == "ENABLED") {
-        enqueueSnackbar('Operator was successfully pinged!', { variant : 'success',
-          autoHideDuration : 2000,
-          action : closeButtonForSnackbarAction(closeSnackbar) });
+        enqueueSnackbar('Operator was successfully pinged!', { variant: 'success',
+          autoHideDuration: 2000,
+          action: closeButtonForSnackbarAction(closeSnackbar) });
       } else {
-        enqueueSnackbar('Operator was not successfully pinged!', { variant : 'failure',
-          autoHideDuration : 2000,
-          action : closeButtonForSnackbarAction(closeSnackbar) });
+        enqueueSnackbar('Operator was not successfully pinged!', { variant: 'failure',
+          autoHideDuration: 2000,
+          action: closeButtonForSnackbarAction(closeSnackbar) });
       }
     };
 
     const errorCb = (err) => {
-      enqueueSnackbar('Unable to ping meshery operator!'+err, { variant : 'error',
-        autoHideDuration : 2000,
-        action : closeButtonForSnackbarAction(closeSnackbar) });
+      enqueueSnackbar('Unable to ping meshery operator!'+err, { variant: 'error',
+        autoHideDuration: 2000,
+        action: closeButtonForSnackbarAction(closeSnackbar) });
     };
 
 
@@ -68,7 +68,7 @@ const MesheryOperatorDataPanel = ({
 
 
   return (
-    <Paper style={{ padding : "2rem" }}>
+    <Paper style={{ padding: "2rem" }}>
       <AdapterChip
         handleClick={handleMesheryOperatorClick}
         isActive={true}
@@ -118,6 +118,6 @@ const MesheryOperatorDataPanel = ({
 };
 
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch), });
 
 export default connect(null, mapDispatchToProps)(withSnackbar(MesheryOperatorDataPanel));

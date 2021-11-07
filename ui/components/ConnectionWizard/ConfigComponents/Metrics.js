@@ -38,9 +38,9 @@ const MetricsConfig = ({
   };
   const getOptions = () => {
     if (componentName === "Grafana")
-      return grafanaScannedUrls?.map((graf) => ({ label : graf, value : graf }));
+      return grafanaScannedUrls?.map((graf) => ({ label: graf, value: graf }));
     if (componentName === "Prometheus")
-      return prometheusScannedUrls?.map((prom) => ({ label : prom, value : prom }));
+      return prometheusScannedUrls?.map((prom) => ({ label: prom, value: prom }));
   };
 
   const [url, setUrl] = useState();
@@ -51,21 +51,21 @@ const MetricsConfig = ({
   return (
     <>
       {componentName === "Prometheus" &&
-      <Grid item xs={12} style={{ height : "12.2rem" }}>
-        <Grid item xs={12} style={{ marginTop : "2rem", cursor : "pointer" }}>
+      <Grid item xs={12} style={{ height: "12.2rem" }}>
+        <Grid item xs={12} style={{ marginTop: "2rem", cursor: "pointer" }}>
           <ReactSelectWrapper
             onChange={(select) => setUrl(select
               ? select.value
               : "")}
             options={getOptions()}
-            value={{ label : url, value : url }}
+            value={{ label: url, value: url }}
             label={`${componentName} Base URL`}
             error={false}
             placeholder={`Address of ${componentName} Server`}
             noOptionsMessage={`No ${componentName} servers discovered`}
           />
         </Grid>
-        <Grid item xs={12} style={{ textAlign : "center", marginTop : "2rem" }}>
+        <Grid item xs={12} style={{ textAlign: "center", marginTop: "2rem" }}>
           <Button
             type="submit"
             variant="contained"
@@ -79,14 +79,14 @@ const MetricsConfig = ({
       </Grid>
       }
       {componentName === "Grafana" &&
-      <Grid item xs={12} style={{ height : "13rem" }}>
-        <Grid item xs={12} style={{ marginTop : "1.2rem" }}>
+      <Grid item xs={12} style={{ height: "13rem" }}>
+        <Grid item xs={12} style={{ marginTop: "1.2rem" }}>
           <ReactSelectWrapper
             onChange={(select) => setUrl(select
               ? select.value
               : "")}
             options={getOptions()}
-            value={{ label : url, value : url }}
+            value={{ label: url, value: url }}
             label={`${componentName} Base URL`}
             error={false}
             placeholder={`Address of ${componentName} Server`}
@@ -103,7 +103,7 @@ const MetricsConfig = ({
             variant="outlined"
             // disabled={inClusterConfigForm === true}
           />
-          <Grid item xs={12} style={{ marginTop : "0.8rem", marginBottom : "0.8rem", textAlign : "center" }}>
+          <Grid item xs={12} style={{ marginTop: "0.8rem", marginBottom: "0.8rem", textAlign: "center" }}>
             <Button
               type="submit"
               variant="contained"
@@ -121,8 +121,8 @@ const MetricsConfig = ({
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch), });
 
 export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(MetricsConfig)));

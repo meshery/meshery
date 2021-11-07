@@ -52,45 +52,45 @@ import LazyPatternServiceForm from "./MesheryMeshInterface/LazyPatternServiceFor
 import { trueRandom } from "../lib/trueRandom";
 
 const styles = (theme) => ({
-  grid : {
-    padding : theme.spacing(2),
+  grid: {
+    padding: theme.spacing(2),
   },
-  tableHeader : {
-    fontWeight : "bolder",
-    fontSize : 18,
+  tableHeader: {
+    fontWeight: "bolder",
+    fontSize: 18,
   },
-  muiRow : {
-    '& .MuiTableRow-root' : {
-      cursor : 'pointer'
+  muiRow: {
+    '& .MuiTableRow-root': {
+      cursor: 'pointer'
     }
   }
 });
 
 const useStyles = makeStyles((theme) => ({
-  codeMirror : {
-    '& .CodeMirror' : {
-      minHeight : "300px",
-      height : '60vh',
+  codeMirror: {
+    '& .CodeMirror': {
+      minHeight: "300px",
+      height: '60vh',
     }
   },
-  backButton : {
-    marginRight : theme.spacing(2),
+  backButton: {
+    marginRight: theme.spacing(2),
   },
-  appBar : {
-    marginBottom : "16px"
+  appBar: {
+    marginBottom: "16px"
   },
-  yamlDialogTitle : {
-    display : "flex",
-    alignItems : "center"
+  yamlDialogTitle: {
+    display: "flex",
+    alignItems: "center"
   },
-  yamlDialogTitleText : {
-    flexGrow : 1
+  yamlDialogTitleText: {
+    flexGrow: 1
   },
-  fullScreenCodeMirror : {
-    height : '100%',
-    '& .CodeMirror' : {
-      minHeight : "300px",
-      height : '100%',
+  fullScreenCodeMirror: {
+    height: '100%',
+    '& .CodeMirror': {
+      minHeight: "300px",
+      height: '100%',
     }
   },
 }));
@@ -155,12 +155,12 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           value={pattern.pattern_file}
           className={fullScreen ? classes.fullScreenCodeMirror : ""}
           options={{
-            theme : "material",
-            lineNumbers : true,
-            lineWrapping : true,
-            gutters : ["CodeMirror-lint-markers"],
-            lint : true,
-            mode : "text/x-yaml",
+            theme: "material",
+            lineNumbers: true,
+            lineWrapping: true,
+            gutters: ["CodeMirror-lint-markers"],
+            lint: true,
+            mode: "text/x-yaml",
           }}
           onChange={(_, data, val) => setYaml(val)}
         />
@@ -191,7 +191,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
 }
 
 function resetSelectedPattern() {
-  return { show : false, pattern : null };
+  return { show: false, pattern: null };
 }
 
 function MesheryPatterns({
@@ -210,43 +210,43 @@ function MesheryPatterns({
   const DEPLOY_URL = '/api/pattern/deploy';
 
   const getMuiTheme = () => createTheme({
-    overrides : {
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
+    overrides: {
+      MuiInput: {
+        underline: {
+          "&:hover:not(.Mui-disabled):before": {
+            borderBottom: "2px solid #222"
           },
-          "&:after" : {
-            borderBottom : "2px solid #222"
+          "&:after": {
+            borderBottom: "2px solid #222"
           }
         }
       },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b",
-          marginTop : "7px",
-          marginRight : "8px",
+      MUIDataTableSearch: {
+        searchIcon: {
+          color: "#607d8b",
+          marginTop: "7px",
+          marginRight: "8px",
         },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
+        clearIcon: {
+          "&:hover": {
+            color: "#607d8b"
           }
         },
       },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
+      MUIDataTableSelectCell: {
+        checkboxRoot: {
+          '&$checked': {
+            color: '#607d8b',
           },
         },
       },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
+      MUIDataTableToolbar: {
+        iconActive: {
+          color: "#222"
         },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
+        icon: {
+          "&:hover": {
+            color: "#607d8b"
           }
         },
       }
@@ -254,25 +254,25 @@ function MesheryPatterns({
   });
 
   const ACTION_TYPES = {
-    FETCH_PATTERNS : {
-      name : "FETCH_PATTERNS",
-      error_msg : "Failed to fetch patterns"
+    FETCH_PATTERNS: {
+      name: "FETCH_PATTERNS",
+      error_msg: "Failed to fetch patterns"
     },
-    UPDATE_PATTERN : {
-      name : "UPDATE_PATTERN",
-      error_msg : "Failed to update pattern file"
+    UPDATE_PATTERN: {
+      name: "UPDATE_PATTERN",
+      error_msg: "Failed to update pattern file"
     },
-    DELETE_PATTERN : {
-      name : "DELETE_PATTERN",
-      error_msg : "Failed to delete pattern file"
+    DELETE_PATTERN: {
+      name: "DELETE_PATTERN",
+      error_msg: "Failed to delete pattern file"
     },
-    DEPLOY_PATTERN : {
-      name : "DEPLOY_PATTERN",
-      error_msg : "Failed to deploy pattern file"
+    DEPLOY_PATTERN: {
+      name: "DEPLOY_PATTERN",
+      error_msg: "Failed to deploy pattern file"
     },
-    UPLOAD_PATTERN : {
-      name : "UPLOAD_PATTERN",
-      error_msg : "Failed to upload pattern file"
+    UPLOAD_PATTERN: {
+      name: "UPLOAD_PATTERN",
+      error_msg: "Failed to upload pattern file"
     },
   };
 
@@ -285,26 +285,26 @@ function MesheryPatterns({
   }, []);
 
   const handleDeploy = (pattern_file) => {
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
     dataFetch(
       DEPLOY_URL,
       {
-        credentials : "include",
-        method : "POST",
-        body : pattern_file,
+        credentials: "include",
+        method: "POST",
+        body: pattern_file,
       }, () => {
         console.log("PatternFile Deploy API", `/api/pattern/deploy`);
-        updateProgress({ showProgress : false });
+        updateProgress({ showProgress: false });
         enqueueSnackbar("Pattern Successfully Deployed!", {
-          variant : "success",
-          action : function Action(key) {
+          variant: "success",
+          action: function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             );
           },
-          autoHideDuration : 2000,
+          autoHideDuration: 2000,
         });
       },
       handleError(ACTION_TYPES.DEPLOY_PATTERN),
@@ -319,14 +319,14 @@ function MesheryPatterns({
       sortOrder
     )}`;
 
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
 
     dataFetch(
       `/api/pattern${query}`,
-      { credentials : "include", },
+      { credentials: "include", },
       (result) => {
         console.log("PatternFile API", `/api/pattern${query}`);
-        updateProgress({ showProgress : false });
+        updateProgress({ showProgress: false });
         if (result) {
           setPatterns(result.patterns || []);
           setPage(result.page || 0);
@@ -339,18 +339,18 @@ function MesheryPatterns({
   }
 
   const handleError = (action) => (error) => {
-    updateProgress({ showProgress : false });
+    updateProgress({ showProgress: false });
 
     enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
+      variant: "error",
+      action: function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
         );
       },
-      autoHideDuration : 8000,
+      autoHideDuration: 8000,
     });
   };
 
@@ -361,17 +361,17 @@ function MesheryPatterns({
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
     if (type === "delete") {
       dataFetch(
         `/api/pattern/${id}`,
         {
-          credentials : "include",
-          method : "DELETE",
+          credentials: "include",
+          method: "DELETE",
         },
         () => {
           console.log("PatternFile API", `/api/pattern/${id}`);
-          updateProgress({ showProgress : false });
+          updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
           resetSelectedRowData()();
         },
@@ -383,13 +383,13 @@ function MesheryPatterns({
       dataFetch(
         `/api/pattern`,
         {
-          credentials : "include",
-          method : "POST",
-          body : JSON.stringify({ pattern_data : { id, pattern_file : data }, save : true }),
+          credentials: "include",
+          method: "POST",
+          body: JSON.stringify({ pattern_data: { id, pattern_file: data }, save: true }),
         },
         () => {
           console.log("PatternFile API", `/api/pattern`);
-          updateProgress({ showProgress : false });
+          updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPDATE_PATTERN)
@@ -399,21 +399,21 @@ function MesheryPatterns({
     if (type === "upload" || type === "urlupload") {
       let body;
       if (type === "upload") {
-        body = JSON.stringify({ pattern_data : { pattern_file : data }, save : true });
+        body = JSON.stringify({ pattern_data: { pattern_file: data }, save: true });
       }
       if (type === "urlupload") {
-        body = JSON.stringify({ url : data, save : true });
+        body = JSON.stringify({ url: data, save: true });
       }
       dataFetch(
         `/api/pattern`,
         {
-          credentials : "include",
-          method : "POST",
+          credentials: "include",
+          method: "POST",
           body,
         },
         () => {
           console.log("PatternFile API", `/api/pattern`);
-          updateProgress({ showProgress : false });
+          updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPLOAD_PATTERN)
@@ -444,13 +444,13 @@ function MesheryPatterns({
   }
   const columns = [
     {
-      name : "name",
-      label : "Pattern Name",
-      options : {
-        filter : false,
-        sort : true,
-        searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+      name: "name",
+      label: "Pattern Name",
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -462,13 +462,13 @@ function MesheryPatterns({
       },
     },
     {
-      name : "created_at",
-      label : "Upload Timestamp",
-      options : {
-        filter : false,
-        sort : true,
-        searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+      name: "created_at",
+      label: "Upload Timestamp",
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -477,19 +477,19 @@ function MesheryPatterns({
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(value) {
+        customBodyRender: function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
       },
     },
     {
-      name : "updated_at",
-      label : "Update Timestamp",
-      options : {
-        filter : false,
-        sort : true,
-        searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+      name: "updated_at",
+      label: "Update Timestamp",
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -498,30 +498,30 @@ function MesheryPatterns({
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(value) {
+        customBodyRender: function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
       },
     },
     {
-      name : "Actions",
-      options : {
-        filter : false,
-        sort : false,
-        searchable : false,
-        customHeadRender : function CustomHead({ index, ...column }) {
+      name: "Actions",
+      options: {
+        filter: false,
+        sort: false,
+        searchable: false,
+        customHeadRender: function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(_, tableMeta) {
+        customBodyRender: function CustomBody(_, tableMeta) {
           const rowData = patterns[tableMeta.rowIndex];
           return (
             <>
               <Tooltip title="Configure">
-                <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
+                <IconButton onClick={() => setSelectedPattern({ pattern: patterns[tableMeta.rowIndex], show: true })}>
                   <ListAltIcon />
                 </IconButton>
               </Tooltip>
@@ -549,11 +549,11 @@ function MesheryPatterns({
 
   async function showModal(count) {
     let response = await modalRef.current.show({
-      title : `Delete ${count ? count : ""} Pattern${count > 1 ? "s" : '' }?`,
+      title: `Delete ${count ? count : ""} Pattern${count > 1 ? "s" : '' }?`,
 
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' }  ${count ? count : ""}  pattern${count > 1 ? "s" : '' }?`,
+      subtitle: `Are you sure you want to delete ${count > 1 ? "these" : 'this' }  ${count ? count : ""}  pattern${count > 1 ? "s" : '' }?`,
 
-      options : ["Yes", "No"],
+      options: ["Yes", "No"],
     });
     return response;
   }
@@ -562,16 +562,16 @@ function MesheryPatterns({
     dataFetch(
       `/api/pattern/${id}`,
       {
-        method : "DELETE",
-        credentials : "include",
+        method: "DELETE",
+        credentials: "include",
       },
       () => {
-        updateProgress({ showProgress : false });
+        updateProgress({ showProgress: false });
 
         enqueueSnackbar("Pattern deleted.", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : function Action(key) {
+          variant: "success",
+          autoHideDuration: 2000,
+          action: function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon />
@@ -586,30 +586,30 @@ function MesheryPatterns({
   }
 
   const options = {
-    filter : false,
-    sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
-    filterType : "textField",
-    responsive : "scrollFullHeight",
-    resizableColumns : true,
-    serverSide : true,
+    filter: false,
+    sort: !(user && user.user_id === "meshery"),
+    search: !(user && user.user_id === "meshery"),
+    filterType: "textField",
+    responsive: "scrollFullHeight",
+    resizableColumns: true,
+    serverSide: true,
     count,
-    rowsPerPage : pageSize,
-    rowsPerPageOptions : [10, 20, 25],
-    fixedHeader : true,
+    rowsPerPage: pageSize,
+    rowsPerPageOptions: [10, 20, 25],
+    fixedHeader: true,
     page,
-    print : false,
-    download : false,
-    textLabels : {
-      selectedRows : {
-        text : "pattern(s) selected"
+    print: false,
+    download: false,
+    textLabels: {
+      selectedRows: {
+        text: "pattern(s) selected"
       }
     },
-    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
+    customToolbar: CustomToolbar(uploadHandler, urlUploadHandler),
 
-    onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
+    onCellClick: (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
-    onRowsDelete : async function handleDelete(row) {
+    onRowsDelete: async function handleDelete(row) {
       let response = await showModal(Object.keys(row.lookup).length);
       console.log(response);
       if (response === "Yes") {
@@ -620,7 +620,7 @@ function MesheryPatterns({
         fetchPatterns(page, pageSize, search, sortOrder);
     },
 
-    onTableChange : (action, tableState) => {
+    onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText
         ? tableState.announceText.split(" : ")
         : [];
@@ -689,10 +689,10 @@ function MesheryPatterns({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), };
+  return { user: state.get("user")?.toObject(), };
 };
 
 // @ts-ignore
@@ -706,7 +706,7 @@ export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(w
 
 
 
-function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
+function PatternForm({ pattern, onSubmit, show: setSelectedPattern }) {
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState([]);
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
   const [yaml, setYaml] = useState(pattern.pattern_file);
@@ -726,17 +726,17 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const handleSubmit = (cfg, patternName) => {
     console.log("submitted", { cfg, patternName });
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
-    if (key) setDeployServiceConfig({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
+    handleDeploy({ ...deployServiceConfig, [key]: cfg?.services?.[key] });
+    if (key) setDeployServiceConfig({ ...deployServiceConfig, [key]: cfg?.services?.[key] });
   };
 
   const handleSettingsChange = (schemaSet) => () => {
     const config = createPatternFromConfig({
-      [getPatternServiceName(schemaSet)] : {
+      [getPatternServiceName(schemaSet)]: {
         // @ts-ignore
-        settings : reference.current?.getSettings(),
+        settings: reference.current?.getSettings(),
         // @ts-ignore
-        traits : reference.current?.getTraits()
+        traits: reference.current?.getTraits()
       }
     }, "default", true);
 
@@ -746,9 +746,9 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const handleChangeData = (cfg, patternName) => {
     console.log("Ran Changed", { cfg, patternName });
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
     if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
   };
 
   const handleDelete = (cfg, patternName) => {
@@ -813,7 +813,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
             .filter((s) => s.type !== "addon")
             .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
             .map((s, i) => (
-              <div style={{ marginBottom : "0.5rem" }} key={`svc-form-${i}`} >
+              <div style={{ marginBottom: "0.5rem" }} key={`svc-form-${i}`} >
                 <LazyPatternServiceForm
                   schemaSet={s}
                   formData={insertPattern(s.workload)}
@@ -824,7 +824,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
                   reference={reference}
                 />
               </div>))}
-          <Accordion style={{ width : '100%' }}>
+          <Accordion style={{ width: '100%' }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="h6">
                 Configure Addons
@@ -859,7 +859,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
 }
 
 function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pattern }) {
-  const cardStyle = { position : "sticky", minWidth : "100%" };
+  const cardStyle = { position: "sticky", minWidth: "100%" };
 
   const classes = useStyles();
 
@@ -873,15 +873,15 @@ function CodeEditor({ yaml, handleSubmitFinalPattern, saveCodeEditorChanges, pat
             value={yaml}
             className={classes.codeMirror}
             options={{
-              theme : "material",
-              lineNumbers : true,
-              lineWrapping : true,
-              gutters : ["CodeMirror-lint-markers"],
-              mode : "text/x-yaml",
+              theme: "material",
+              lineNumbers: true,
+              lineWrapping: true,
+              gutters: ["CodeMirror-lint-markers"],
+              mode: "text/x-yaml",
             }}
             onBlur={(a) => saveCodeEditorChanges(a)}
           />
-          <CardActions style={{ justifyContent : "flex-end", marginBottom : '0px' }}>
+          <CardActions style={{ justifyContent: "flex-end", marginBottom: '0px' }}>
             <Tooltip title="Save Pattern as New File">
               <IconButton
                 aria-label="Save"

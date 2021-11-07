@@ -55,115 +55,115 @@ if (typeof window !== 'undefined') {
 }
 
 let theme = createTheme({
-  typography : { useNextVariants : true,
-    h5 : { fontWeight : 'bolder',
-      fontSize : 26,
-      letterSpacing : 0.5, }, },
-  palette : {
+  typography: { useNextVariants: true,
+    h5: { fontWeight: 'bolder',
+      fontSize: 26,
+      letterSpacing: 0.5, }, },
+  palette: {
     // primary: {
     //   light: '#cfd8dc',
     //   main: '#607d8b',
     //   dark: '#455a64',
     // },
-    primary : blueGrey,
-    secondary : { main : '#EE5351',
-      dark : '#1E2117', }, },
-  shape : { borderRadius : 8, },
-  breakpoints : { values : {
-    xs : 0,
-    sm : 600,
-    md : 960,
-    lg : 1280,
-    xl : 1920,
+    primary: blueGrey,
+    secondary: { main: '#EE5351',
+      dark: '#1E2117', }, },
+  shape: { borderRadius: 8, },
+  breakpoints: { values: {
+    xs: 0,
+    sm: 600,
+    md: 960,
+    lg: 1280,
+    xl: 1920,
   }, },
 });
 
 theme = {
   ...theme,
-  overrides : {
-    MuiDrawer : { paper : { backgroundColor : '#263238', }, },
-    MuiButton : { label : { textTransform : 'initial', },
-      contained : { boxShadow : 'none',
-        '&:active' : { boxShadow : 'none', }, }, },
-    MuiToggleButton : { label : { textTransform : 'initial',
-      color : '#607d8b', }, },
-    MuiTabs : { root : { marginLeft : theme.spacing(1), },
-      indicator : { height : 3,
-        borderTopLeftRadius : 3,
-        borderTopRightRadius : 3, }, },
-    MuiTab : { root : { textTransform : 'initial',
-      margin : '0 16px',
-      minWidth : 0,
+  overrides: {
+    MuiDrawer: { paper: { backgroundColor: '#263238', }, },
+    MuiButton: { label: { textTransform: 'initial', },
+      contained: { boxShadow: 'none',
+        '&:active': { boxShadow: 'none', }, }, },
+    MuiToggleButton: { label: { textTransform: 'initial',
+      color: '#607d8b', }, },
+    MuiTabs: { root: { marginLeft: theme.spacing(1), },
+      indicator: { height: 3,
+        borderTopLeftRadius: 3,
+        borderTopRightRadius: 3, }, },
+    MuiTab: { root: { textTransform: 'initial',
+      margin: '0 16px',
+      minWidth: 0,
       // [theme.breakpoints.up('md')]: {
       //   minWidth: 0,
       // },
     },
-    labelContainer : { padding : 0,
+    labelContainer: { padding: 0,
       // [theme.breakpoints.up('md')]: {
       //   padding: 0,
       // },
     }, },
-    MuiIconButton : { root : { padding : theme.spacing(1), }, },
-    MuiTooltip : { tooltip : { borderRadius : 4, }, },
-    MuiDivider : { root : { backgroundColor : '#404854', }, },
-    MuiListItemText : { primary : { fontWeight : theme.typography.fontWeightMedium, }, },
-    MuiListItemIcon : { root : {
-      color : 'inherit',
-      marginRight : 0,
-      '& svg' : { fontSize : 20, },
-      justifyContent : 'center',
-      minWidth : 0
+    MuiIconButton: { root: { padding: theme.spacing(1), }, },
+    MuiTooltip: { tooltip: { borderRadius: 4, }, },
+    MuiDivider: { root: { backgroundColor: '#404854', }, },
+    MuiListItemText: { primary: { fontWeight: theme.typography.fontWeightMedium, }, },
+    MuiListItemIcon: { root: {
+      color: 'inherit',
+      marginRight: 0,
+      '& svg': { fontSize: 20, },
+      justifyContent: 'center',
+      minWidth: 0
     }, },
-    MuiAvatar : { root : { width : 32,
-      height : 32, }, },
+    MuiAvatar: { root: { width: 32,
+      height: 32, }, },
   },
-  props : { MuiTab : { disableRipple : true, }, },
-  mixins : { ...theme.mixins, },
+  props: { MuiTab: { disableRipple: true, }, },
+  mixins: { ...theme.mixins, },
 };
 
 const drawerWidth = 256;
 
 const notificationColors = {
-  error : "#F91313",
-  warning : "#F0A303",
-  success : "#206D24",
-  info : "#2196F3"
+  error: "#F91313",
+  warning: "#F0A303",
+  success: "#206D24",
+  info: "#2196F3"
 };
 
 const styles = {
-  root : { display : 'flex',
-    minHeight : '100vh', },
-  drawer : { [theme.breakpoints.up('sm')] : { width : drawerWidth,
-    flexShrink : 0, },
-  transition : theme.transitions.create('width', { easing : theme.transitions.easing.sharp,
-    duration : theme.transitions.duration.enteringScreen, }), },
-  drawerCollapsed : { [theme.breakpoints.up('sm')] : { width : theme.spacing(8.4) + 1, },
-    transition : theme.transitions.create('width', { easing : theme.transitions.easing.sharp,
-      duration : theme.transitions.duration.leavingScreen, }),
-    overflowX : 'hidden', },
-  appContent : { flex : 1,
-    display : 'flex',
-    flexDirection : 'column', },
-  mainContent : { flex : 1,
-    padding : '48px 36px 24px',
-    background : '#eaeff1', },
-  footer : { backgroundColor : theme.palette.background.paper,
-    padding : theme.spacing(2),
-    color : '#737373', },
-  footerText : { cursor : 'pointer',
-    display : 'inline',
-    verticalAlign : 'middle', },
-  footerIcon : { display : 'inline',
-    verticalAlign : 'top', },
-  icon : { fontSize : 20, },
-  notifSuccess : { backgroundColor : "rgba(248, 252, 248) !important",
-    color : `${notificationColors.success} !important`, pointerEvents : "auto !important" },
-  notifInfo : { backgroundColor : "rgba(250, 254, 255) !important",
-    color : `${notificationColors.info} !important`, pointerEvents : "auto !important" },
-  notifWarn : { backgroundColor : "rgba(240, 163, 3, 0.04) !important",
-    color : `${notificationColors.warning} !important`, pointerEvents : "auto !important" },
-  notifError : { backgroundColor : "rgba(255, 250, 250) !important",
-    color : `${notificationColors.error} !important`, pointerEvents : "auto !important" },
+  root: { display: 'flex',
+    minHeight: '100vh', },
+  drawer: { [theme.breakpoints.up('sm')]: { width: drawerWidth,
+    flexShrink: 0, },
+  transition: theme.transitions.create('width', { easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen, }), },
+  drawerCollapsed: { [theme.breakpoints.up('sm')]: { width: theme.spacing(8.4) + 1, },
+    transition: theme.transitions.create('width', { easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen, }),
+    overflowX: 'hidden', },
+  appContent: { flex: 1,
+    display: 'flex',
+    flexDirection: 'column', },
+  mainContent: { flex: 1,
+    padding: '48px 36px 24px',
+    background: '#eaeff1', },
+  footer: { backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(2),
+    color: '#737373', },
+  footerText: { cursor: 'pointer',
+    display: 'inline',
+    verticalAlign: 'middle', },
+  footerIcon: { display: 'inline',
+    verticalAlign: 'top', },
+  icon: { fontSize: 20, },
+  notifSuccess: { backgroundColor: "rgba(248, 252, 248) !important",
+    color: `${notificationColors.success} !important`, pointerEvents: "auto !important" },
+  notifInfo: { backgroundColor: "rgba(250, 254, 255) !important",
+    color: `${notificationColors.info} !important`, pointerEvents: "auto !important" },
+  notifWarn: { backgroundColor: "rgba(240, 163, 3, 0.04) !important",
+    color: `${notificationColors.warning} !important`, pointerEvents: "auto !important" },
+  notifError: { backgroundColor: "rgba(255, 250, 250) !important",
+    color: `${notificationColors.error} !important`, pointerEvents: "auto !important" },
 };
 
 
@@ -172,18 +172,18 @@ class MesheryApp extends App {
     super();
     this.pageContext = getPageContext();
 
-    this.state = { mobileOpen : false,
-      isDrawerCollapsed : false };
+    this.state = { mobileOpen: false,
+      isDrawerCollapsed: false };
   }
 
   handleDrawerToggle = () => {
-    this.setState(state => ({ mobileOpen : !state.mobileOpen }));
+    this.setState(state => ({ mobileOpen: !state.mobileOpen }));
   }
 
   handleCollapseDrawer = (open = null) => {
     if (typeof(open) === 'boolean')
-      return this.setState({ isDrawerCollapsed : open });
-    this.setState(state => ({ isDrawerCollapsed : !state.isDrawerCollapsed }));
+      return this.setState({ isDrawerCollapsed: open });
+    this.setState(state => ({ isDrawerCollapsed: !state.isDrawerCollapsed }));
   };
 
   handleL5CommunityClick = () => {
@@ -195,9 +195,9 @@ class MesheryApp extends App {
 
   async loadConfigFromServer() {
     const { store } = this.props;
-    dataFetch('/api/system/sync', { credentials : 'same-origin',
-      method : 'GET',
-      credentials : 'include', }, result => {
+    dataFetch('/api/system/sync', { credentials: 'same-origin',
+      method: 'GET',
+      credentials: 'include', }, result => {
       if (typeof result !== 'undefined'){
         if (result.k8sConfig){
           if (typeof result.k8sConfig.inClusterConfig === 'undefined'){
@@ -215,10 +215,10 @@ class MesheryApp extends App {
           if (typeof result.k8sConfig.configuredServer === 'undefined'){
             result.k8sConfig.configuredServer = '';
           }
-          store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : result.k8sConfig });
+          store.dispatch({ type: actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig: result.k8sConfig });
         }
         if (result.meshAdapters && result.meshAdapters !== null && result.meshAdapters.length > 0) {
-          store.dispatch({ type : actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters : result.meshAdapters });
+          store.dispatch({ type: actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters: result.meshAdapters });
         }
         if (result.grafana){
           if (typeof result.grafana.grafanaURL === 'undefined'){
@@ -236,7 +236,7 @@ class MesheryApp extends App {
           if (typeof result.grafana.selectedBoardsConfigs === 'undefined'){
             result.grafana.selectedBoardsConfigs = [];
           }
-          store.dispatch({ type : actionTypes.UPDATE_GRAFANA_CONFIG, grafana : result.grafana });
+          store.dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana: result.grafana });
         }
         if (result.prometheus){
           if (typeof result.prometheus.prometheusURL === 'undefined'){
@@ -245,7 +245,7 @@ class MesheryApp extends App {
           if (typeof result.prometheus.selectedPrometheusBoardsConfigs === 'undefined'){
             result.prometheus.selectedPrometheusBoardsConfigs = [];
           }
-          store.dispatch({ type : actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus : result.prometheus });
+          store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: result.prometheus });
         }
         if (result.loadTestPrefs){
           if (typeof result.loadTestPrefs.c === 'undefined'){
@@ -260,13 +260,13 @@ class MesheryApp extends App {
           if (typeof result.loadTestPrefs.gen === 'undefined'){
             result.loadTestPrefs.gen = '';
           }
-          store.dispatch({ type : actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref : result.loadTestPrefs });
+          store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref: result.loadTestPrefs });
         }
         if (typeof result.anonymousUsageStats !== 'undefined'){
-          store.dispatch({ type : actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats : result.anonymousUsageStats });
+          store.dispatch({ type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats: result.anonymousUsageStats });
         }
         if (typeof result.anonymousPerfResults !== 'undefined'){
-          store.dispatch({ type : actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults : result.anonymousPerfResults });
+          store.dispatch({ type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults: result.anonymousPerfResults });
         }
       }
     }, error => {
@@ -321,19 +321,19 @@ class MesheryApp extends App {
                 </nav>
                 <div className={classes.appContent}>
                   <SnackbarProvider
-                    anchorOrigin={{ vertical : 'bottom',
-                      horizontal : 'right', }}
+                    anchorOrigin={{ vertical: 'bottom',
+                      horizontal: 'right', }}
                     iconVariant = {{
-                      success : <CheckCircle style={{ marginRight : "0.5rem" }} />,
-                      error : <Error style={{ marginRight : "0.5rem" }} />,
-                      warning : <Warning style={{ marginRight : "0.5rem" }} />,
-                      info : <Info style={{ marginRight : "0.5rem" }} />
+                      success: <CheckCircle style={{ marginRight: "0.5rem" }} />,
+                      error: <Error style={{ marginRight: "0.5rem" }} />,
+                      warning: <Warning style={{ marginRight: "0.5rem" }} />,
+                      info: <Info style={{ marginRight: "0.5rem" }} />
                     }}
                     classes={{
-                      variantSuccess : classes.notifSuccess,
-                      variantError : classes.notifError,
-                      variantWarning : classes.notifWarn,
-                      variantInfo : classes.notifInfo,
+                      variantSuccess: classes.notifSuccess,
+                      variantError: classes.notifError,
+                      variantWarning: classes.notifWarn,
+                      variantInfo: classes.notifInfo,
                     }}
                     maxSnack={10}
                   >
@@ -361,7 +361,7 @@ class MesheryApp extends App {
   }
 }
 
-MesheryApp.propTypes = { classes : PropTypes.object.isRequired, };
+MesheryApp.propTypes = { classes: PropTypes.object.isRequired, };
 
-export default withStyles(styles)(withRedux(makeStore, { serializeState : state => state.toJS(),
-  deserializeState : state => fromJS(state) })(MesheryApp));
+export default withStyles(styles)(withRedux(makeStore, { serializeState: state => state.toJS(),
+  deserializeState: state => fromJS(state) })(MesheryApp));

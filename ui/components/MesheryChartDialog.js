@@ -46,10 +46,10 @@ class MesheryChartDialog extends React.Component {
 }
 
 MesheryChartDialog.propTypes = {
-  classes : PropTypes.object.isRequired,
-  open : PropTypes.bool.isRequired,
-  handleClose : PropTypes.func.isRequired,
-  content : PropTypes.node.isRequired,
+  classes: PropTypes.object.isRequired,
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  content: PropTypes.node.isRequired,
 };
 
 export default withStyles(styles)(MesheryChartDialog);

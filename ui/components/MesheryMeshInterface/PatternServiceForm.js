@@ -34,8 +34,8 @@ function TabPanel(props) {
 
 function a11yProps(index) {
   return {
-    id : `simple-tab-${index}`,
-    "aria-controls" : `simple-tabpanel-${index}`,
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
@@ -68,11 +68,11 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
   const renderTraits = () => !!schemaSet.traits?.length;
 
   const submitHandler = (val) => {
-    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace));
+    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace));
   };
 
   const deleteHandler = (val) => {
-    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace), true);
+    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace), true);
   };
 
   if (reference){
@@ -92,8 +92,8 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
         type="workload"
         jsonSchema={schemaSet.workload}
         onChange={setSettings}
-        onSubmit={() => submitHandler({ settings : getSettingsRefValue() })}
-        onDelete={() => deleteHandler({ settings : getSettingsRefValue() })}
+        onSubmit={() => submitHandler({ settings: getSettingsRefValue() })}
+        onDelete={() => deleteHandler({ settings: getSettingsRefValue() })}
         renderAsTooltip={renderAsTooltip}
       />
     );
@@ -111,24 +111,24 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       {!renderAsTooltip ? (<Typography variant="h6" gutterBottom>
         {schemaSet.workload?.title}
       </Typography>) : (
-        <AppBar style={{ boxShadow : `0px 2px 4px -1px ${pSBCr(appBarColor, -30)}`, position : "sticky" }}>
-          <Toolbar variant="dense" style={{ padding : "0 0px", paddingRight : "5px", background : `linear-gradient(115deg, ${pSBCr( appBarColor, -20)} 0%, ${appBarColor} 100%)`, height : "0.7rem !important" }}>
-            <p style={{ margin : "auto auto auto 10px", fontSize : "16px" }}>{schemaSet.workload.title || CamelCaseToSentanceCase(schemaSet.workload["object-type"])}</p>
+        <AppBar style={{ boxShadow: `0px 2px 4px -1px ${pSBCr(appBarColor, -30)}`, position: "sticky" }}>
+          <Toolbar variant="dense" style={{ padding: "0 0px", paddingRight: "5px", background: `linear-gradient(115deg, ${pSBCr( appBarColor, -20)} 0%, ${appBarColor} 100%)`, height: "0.7rem !important" }}>
+            <p style={{ margin: "auto auto auto 10px", fontSize: "16px" }}>{schemaSet.workload.title || CamelCaseToSentanceCase(schemaSet.workload["object-type"])}</p>
             {schemaSet?.workload?.description && (
               <label htmlFor="help-button" >
                 <Tooltip title={schemaSet?.workload?.description} >
-                  <IconButton component="span" style={{ paddingRight : "0.1rem" }} >
-                    <HelpOutlineIcon style={{ color : '#fff',marginRight : '0.4rem' }} fontSize="small" />
+                  <IconButton component="span" style={{ paddingRight: "0.1rem" }} >
+                    <HelpOutlineIcon style={{ color: '#fff',marginRight: '0.4rem' }} fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </label>
             )}
-            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={handleMaximizeOrMinimize} style={{ cursor : "pointer",marginRight : "0.5rem" }} />
-            <Delete style={{ color : "#ffffff", paddingLeft : '0.1rem',marginRight : "0.5rem", cursor : "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings : getSettingsRefValue(), traits : getTraitsRefValue() })}/>
+            <FontAwesomeIcon icon={tooltipExpanded ? faCompress : faExpandArrowsAlt} onClick={handleMaximizeOrMinimize} style={{ cursor: "pointer",marginRight: "0.5rem" }} />
+            <Delete style={{ color: "#ffffff", paddingLeft: '0.1rem',marginRight: "0.5rem", cursor: "pointer" }} fontSize="small" onClick={() => deleteHandler({ settings: getSettingsRefValue(), traits: getTraitsRefValue() })}/>
           </Toolbar>
         </AppBar>
       )}
-      <div style={{ height : '57vh', overflowY : "scroll", overflowX : "hidden", scrollbarWidth : 'thin' }}>
+      <div style={{ height: '57vh', overflowY: "scroll", overflowX: "hidden", scrollbarWidth: 'thin' }}>
         {!renderAsTooltip && (<AppBar position="static" >
           <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service" >
             <Tab label="Settings" {...a11yProps(0)} />
@@ -138,31 +138,31 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
           </Tabs>
         </AppBar>)}
         {renderAsTooltip && renderTraits() && (
-          <AppBar style={{ background : 'inherit', boxShadow : 'none', color : 'black' }} position="static">
-            <Tabs TabIndicatorProps={{ style : { background : '#00b39f' } }} style={{ margin : 0 }} value={tab} onChange={handleTabChange} aria-label="Pattern Service">
-              <Tab label="Settings" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(0)} />
-              <Tab label="Traits" style={{ minWidth : "50%", margin : 0 }} {...a11yProps(1)} />
+          <AppBar style={{ background: 'inherit', boxShadow: 'none', color: 'black' }} position="static">
+            <Tabs TabIndicatorProps={{ style: { background: '#00b39f' } }} style={{ margin: 0 }} value={tab} onChange={handleTabChange} aria-label="Pattern Service">
+              <Tab label="Settings" style={{ minWidth: "50%", margin: 0 }} {...a11yProps(0)} />
+              <Tab label="Traits" style={{ minWidth: "50%", margin: 0 }} {...a11yProps(1)} />
             </Tabs>
           </AppBar>)}
-        <TabPanel value={tab} index={0} style={{ marginTop : "1.1rem" }}>
+        <TabPanel value={tab} index={0} style={{ marginTop: "1.1rem" }}>
           <PatternService
             type="workload"
             formData={settings}
             jsonSchema={schemaSet.workload}
             onChange={setSettings}
-            onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits })}
-            onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits })}
+            onSubmit={() => submitHandler({ settings: getSettingsRefValue(), traits })}
+            onDelete={() => deleteHandler({ settings: getSettingsRefValue(), traits })}
             renderAsTooltip={renderAsTooltip}
           />
         </TabPanel>
         {renderTraits() ? (
-          <TabPanel value={tab} index={1} style={{ marginTop : "1.1rem" }}>
+          <TabPanel value={tab} index={1} style={{ marginTop: "1.1rem" }}>
             {schemaSet.traits?.map((trait) => (
               <PatternService
                 formData={traits[getPatternAttributeName(trait)]}
                 type="trait"
                 jsonSchema={trait}
-                onChange={(val) => setTraits({ ...traits, [getPatternAttributeName(trait)] : val })}
+                onChange={(val) => setTraits({ ...traits, [getPatternAttributeName(trait)]: val })}
                 renderAsTooltip={renderAsTooltip}
               />
             ))}

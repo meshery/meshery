@@ -3,7 +3,7 @@ import SvgIcon from "@material-ui/core/SvgIcon";
 
 const MesheryOperatorIcon = ({ isActive }) => {
   return (
-    <SvgIcon style={{ width : '3rem', height : 'auto' }} viewBox="0 0 204 204" fill="none" xmlns="http://www.w3.org/2000/svg" >
+    <SvgIcon style={{ width: '3rem', height: 'auto' }} viewBox="0 0 204 204" fill="none" xmlns="http://www.w3.org/2000/svg" >
       <g clipPath="url(#clip0)">
         <path d="M138.901 99.6146C137.462 99.6146 136.273 100.1 135.319 101.054C126.481 109.658 114.529 114.429 102.109 114.429C89.6884 114.429 77.9877 109.641 68.9151 101.037C67.9609 100.083 66.5214 99.5979 65.3329 99.5979C39.2868 101.523 18.7479 123.501 18.7479 149.782V172.949C18.7479 190.14 32.6079 204 49.799 204H154.184C171.375 204 185.235 190.14 185.235 172.949V149.782C185.486 123.501 164.948 101.523 138.901 99.6146Z" fill={isActive
           ? "#00d3a9"

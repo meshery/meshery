@@ -8,22 +8,22 @@ import MesheryChartDialog from './MesheryChartDialog';
 
 
 const defaultToolbarSelectStyles = {
-  iconButton : {
-    marginRight : '24px',
-    top : '50%',
-    display : 'inline-block',
-    position : 'relative',
+  iconButton: {
+    marginRight: '24px',
+    top: '50%',
+    display: 'inline-block',
+    position: 'relative',
   },
-  icon : { color : '#000', },
-  inverseIcon : { transform : 'rotate(90deg)', },
-  row : { borderBottom : 'none', },
+  icon: { color: '#000', },
+  inverseIcon: { transform: 'rotate(90deg)', },
+  row: { borderBottom: 'none', },
 };
 
 class MesheryResultDialog extends React.Component {
-    state = { dialogOpen : true, }
+    state = { dialogOpen: true, }
 
     handleDialogClose = () => {
-      this.setState({ dialogOpen : false });
+      this.setState({ dialogOpen: false });
       this.props.close();
     }
 
@@ -212,7 +212,7 @@ class MesheryResultDialog extends React.Component {
 
 MesheryResultDialog.propTypes = {
   // classes: PropTypes.object.isRequired,
-  rowData : PropTypes.object.isRequired,
-  close : PropTypes.func.isRequired, };
+  rowData: PropTypes.object.isRequired,
+  close: PropTypes.func.isRequired, };
 
-export default withStyles(defaultToolbarSelectStyles, { name : 'MesheryResultDialog' })(MesheryResultDialog);
+export default withStyles(defaultToolbarSelectStyles, { name: 'MesheryResultDialog' })(MesheryResultDialog);

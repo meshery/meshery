@@ -23,47 +23,47 @@ import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
 const useStyles = makeStyles(() => ({
-  paper : { padding : "1rem", },
-  resultContainer : {
-    display : "flex",
-    flexDirection : "row",
-    justifyContent : "space-between",
-    ["@media (max-width: 830px)"] : {
-      flexDirection : "column"
+  paper: { padding: "1rem", },
+  resultContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    ["@media (max-width: 830px)"]: {
+      flexDirection: "column"
     },
   },
-  vSep : {
-    height : "10.4rem",
-    width : "1px",
-    background : "black",
-    marginTop : "1.1rem",
-    bottom : "0" ,
-    left : "36%",
-    backgroundColor : "#36454f",
-    opacity : "0.7",
-    ["@media (max-width: 830px)"] : {
-      display : "none",
+  vSep: {
+    height: "10.4rem",
+    width: "1px",
+    background: "black",
+    marginTop: "1.1rem",
+    bottom: "0" ,
+    left: "36%",
+    backgroundColor: "#36454f",
+    opacity: "0.7",
+    ["@media (max-width: 830px)"]: {
+      display: "none",
     }
   },
-  hSep : {
-    display : "none",
-    ["@media (max-width: 830px)"] : {
-      display : "block",
-      width : "100%",
-      height : "1px",
-      background : "black",
-      marginTop : "1.1rem",
-      bottom : "0" ,
-      left : "36%",
-      backgroundColor : "#36454f",
-      opacity : "0.7",
+  hSep: {
+    display: "none",
+    ["@media (max-width: 830px)"]: {
+      display: "block",
+      width: "100%",
+      height: "1px",
+      background: "black",
+      marginTop: "1.1rem",
+      bottom: "0" ,
+      left: "36%",
+      backgroundColor: "#36454f",
+      opacity: "0.7",
     }
   }
 }));
 
 function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router }) {
-  const [profiles, setProfiles] = useState({ count : 0, profiles : [] });
-  const [tests, setTests] = useState({ count : 0, tests : [] });
+  const [profiles, setProfiles] = useState({ count: 0, profiles: [] });
+  const [tests, setTests] = useState({ count: 0, tests: [] });
   const [runTest, setRunTest] = useState(false);
   const classes = useStyles();
 
@@ -83,94 +83,94 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
   }, []);
 
   function fetchTestProfiles() {
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
 
     fetchPerformanceProfiles({
-      selector : {
+      selector: {
         // default
-        pageSize : `10`,
-        page : `0`,
-        search : ``,
-        order : ``,
+        pageSize: `10`,
+        page: `0`,
+        search: ``,
+        order: ``,
       },
     }).subscribe({
-      next : (res) => {
+      next: (res) => {
         // @ts-ignore
         let result = res?.getPerformanceProfiles;
-        updateProgress({ showProgress : false });
+        updateProgress({ showProgress: false });
         if (typeof result !== "undefined") {
           if (result) {
-            setProfiles({ count : result.total_count || 0,
-              profiles : result.profiles || [], });
+            setProfiles({ count: result.total_count || 0,
+              profiles: result.profiles || [], });
           }
         }
       },
-      error : handleError("Failed to Fetch Profiles"),
+      error: handleError("Failed to Fetch Profiles"),
     });
   }
 
   function fetchTests() {
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
 
     fetchAllResults({
-      selector : {
+      selector: {
         // default
-        pageSize : `10`,
-        page : `0`,
-        search : ``,
-        order : ``,
-        from : ``,
-        to : ``,
+        pageSize: `10`,
+        page: `0`,
+        search: ``,
+        order: ``,
+        from: ``,
+        to: ``,
       },
     }).subscribe({
-      next : (res) => {
+      next: (res) => {
         // @ts-ignore
         let result = res?.fetchAllResults;
-        updateProgress({ showProgress : false });
+        updateProgress({ showProgress: false });
         if (typeof result !== "undefined") {
           if (result) {
-            setTests({ count : result.total_count || 0,
-              tests : result.results || [], });
+            setTests({ count: result.total_count || 0,
+              tests: result.results || [], });
           }
         }
       },
-      error : handleError("Failed to Fetch Results"),
+      error: handleError("Failed to Fetch Results"),
     });
   }
 
   function handleError(msg) {
     return function (error) {
-      updateProgress({ showProgress : false });
+      updateProgress({ showProgress: false });
 
-      enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-        action : function Action(key) {
+      enqueueSnackbar(`${msg}: ${error}`, { variant: "error",
+        action: function Action(key) {
           return (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
               <CloseIcon />
             </IconButton>
           );
         },
-        autoHideDuration : 8000, });
+        autoHideDuration: 8000, });
     };
   }
 
   return (
     <>
-      <Grid container spacing={2} style={{ padding : "0.5rem" }} alignContent="space-around">
+      <Grid container spacing={2} style={{ padding: "0.5rem" }} alignContent="space-around">
         <Grid container item spacing={1} direction="column" lg xs={12}>
           <Grid item>
             <Paper className={classes.paper}>
               <div className={classes.resultContainer}>
                 <div className={classes.paper}>
-                  <div style={{ display : "flex", alignItems : "center" , height : "6.8rem" }}>
-                    <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
+                  <div style={{ display: "flex", alignItems: "center" , height: "6.8rem" }}>
+                    <Typography variant="h2" component="div" color="primary" style={{ marginRight: "0.75rem" }}>
                       {(tests.count).toLocaleString('en')}
                     </Typography>
-                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                    <Typography variant="body1" style={{ color: "rgba(0, 0, 0, 0.54)" }} component="div">
                       Results
                     </Typography>
                   </div>
-                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
+                  <div style={{ margin: "2rem 0 0 auto", width: "fit-content" }}>
                     <Button variant="contained" color="primary" onClick={() => setRunTest(true)}>
                       Run Test
                     </Button>
@@ -179,15 +179,15 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
                 <div className={classes.vSep} />
                 <div className={classes.hSep} />
                 <div className={classes.paper}>
-                  <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
-                    <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", height: "6.8rem" }}>
+                    <Typography variant="h2" component="div" color="primary" style={{ marginRight: "0.75rem" }}>
                       {profiles.count}
                     </Typography>
-                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                    <Typography variant="body1" style={{ color: "rgba(0, 0, 0, 0.54)" }} component="div">
                       Profiles
                     </Typography>
                   </div>
-                  <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
+                  <div style={{ margin: "2rem 0 0 auto", width: "fit-content" }}>
                     <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
                       Manage Profiles
                     </Button>
@@ -198,12 +198,12 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
           </Grid>
           <Grid item>
             <Paper className={classes.paper}>
-              <PerformanceCalendar style={{ height : "40rem", margin : "2rem 0 0" }} />
+              <PerformanceCalendar style={{ height: "40rem", margin: "2rem 0 0" }} />
             </Paper>
           </Grid>
         </Grid>
         <Grid item lg xs={12}>
-          <Paper className={classes.paper} style={{ height : "100%" }}>
+          <Paper className={classes.paper} style={{ height: "100%" }}>
             <MesheryMetrics
               boardConfigs={grafana.selectedBoardsConfigs}
               grafanaURL={grafana.grafanaURL}
@@ -217,7 +217,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
       <GenericModal
         open={!!runTest}
         Content={
-          <Paper style={{ margin : "auto", maxWidth : "90%", outline : "none" }}>
+          <Paper style={{ margin: "auto", maxWidth: "90%", outline: "none" }}>
             <MesheryPerformanceComponent />
           </Paper>
         }
@@ -229,9 +229,9 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
 
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
-  return { grafana : { ...grafana, ts : new Date(grafana.ts) } };
+  return { grafana: { ...grafana, ts: new Date(grafana.ts) } };
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch), });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard)));

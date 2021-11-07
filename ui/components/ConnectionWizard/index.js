@@ -13,40 +13,40 @@ import MetricsScreen from "./Screens/MetricsScreen";
 import CompletionScreen from "./Screens/CompletionScreen";
 
 const useStyles = makeStyles((theme) => ({
-  container : {
-    minHeight : "32.5rem",
-    margin : "5rem auto",
-    padding : "2rem",
-    paddingRight : "4rem",
-    paddingLeft : "4rem",
-    background : "white",
-    boxShadow : "lightgrey 0px 0px 10px",
-    display : "flex",
-    flexDirection : "column",
-    justifyContent : "space-between",
+  container: {
+    minHeight: "32.5rem",
+    margin: "5rem auto",
+    padding: "2rem",
+    paddingRight: "4rem",
+    paddingLeft: "4rem",
+    background: "white",
+    boxShadow: "lightgrey 0px 0px 10px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
   },
-  buttonContainer : { textAlign : "right",
-    paddingRight : "3rem",
-    marginTop : "2rem" },
-  button : {
-    boxContent : "border-box",
-    marginRight : theme.spacing(1),
-    padding : "0.5rem 2rem",
-    textDecoration : "none",
-    background : "white",
-    color : "#647881",
-    border : "1.5px solid #647881",
-    "&:hover" : { backgroundColor : "#647881",
-      color : "white", },
+  buttonContainer: { textAlign: "right",
+    paddingRight: "3rem",
+    marginTop: "2rem" },
+  button: {
+    boxContent: "border-box",
+    marginRight: theme.spacing(1),
+    padding: "0.5rem 2rem",
+    textDecoration: "none",
+    background: "white",
+    color: "#647881",
+    border: "1.5px solid #647881",
+    "&:hover": { backgroundColor: "#647881",
+      color: "white", },
   },
-  backButton : {
-    marginRight : theme.spacing(1),
-    padding : "0.5rem 2rem",
-    background : "#EFEFEF",
-    color : "#607D8B",
+  backButton: {
+    marginRight: theme.spacing(1),
+    padding: "0.5rem 2rem",
+    background: "#EFEFEF",
+    color: "#607D8B",
   },
-  skipButton : { color : "#647881",
-    "&:hover" : { backgroundColor : "white" } },
+  skipButton: { color: "#647881",
+    "&:hover": { backgroundColor: "white" } },
 }));
 
 function getSteps() {
@@ -59,8 +59,8 @@ const ConfigurationWizard = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const router = useRouter();
-  const [stepStatus, setStepStatus] = React.useState({ kubernetes : false,
-    operator : false, });
+  const [stepStatus, setStepStatus] = React.useState({ kubernetes: false,
+    operator: false, });
   const steps = getSteps();
 
   const handleNext = () => {
@@ -115,16 +115,16 @@ const ConfigurationWizard = () => {
   return (
     <Container className={classes.container}>
       <Stepper steps={steps} activeStep={activeStep} handleUserClick={handleUserClick} />
-      <Fade timeout={{ enter : "1500ms" }} in="true">
+      <Fade timeout={{ enter: "1500ms" }} in="true">
         <div>
           {activeStep === steps.length
             ? (
-              <Fade timeout={{ enter : "500ms" }} in="true">
+              <Fade timeout={{ enter: "500ms" }} in="true">
                 <CompletionScreen handleUserClick={handleUserClick} />
               </Fade>
             )
             : (
-              <Grid container xs={12} style={{ marginTop : "4rem" }} justify="center" alignItems="flex-start">{handleStep(activeStep)}</Grid>
+              <Grid container xs={12} style={{ marginTop: "4rem" }} justify="center" alignItems="flex-start">{handleStep(activeStep)}</Grid>
             )}
         </div>
       </Fade>
