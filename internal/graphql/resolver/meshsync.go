@@ -36,8 +36,24 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	if actions.ClearDb == "true" {
 		// Clear existing data
 		err := provider.GetGenericPersister().Migrator().DropTable(
-			meshsyncmodel.KeyValue{},
-			meshsyncmodel.Object{},
+			&meshsyncmodel.KeyValue{},
+			&meshsyncmodel.Object{},
+			&meshsyncmodel.ResourceSpec{},
+			&meshsyncmodel.ResourceStatus{},
+			&meshsyncmodel.ResourceObjectMeta{},
+		)
+		if err != nil {
+			if provider.GetGenericPersister() == nil {
+				return "", ErrEmptyHandler
+			}
+			r.Log.Warn(ErrDeleteData(err))
+		}
+		err = provider.GetGenericPersister().Migrator().CreateTable(
+			&meshsyncmodel.KeyValue{},
+			&meshsyncmodel.Object{},
+			&meshsyncmodel.ResourceSpec{},
+			&meshsyncmodel.ResourceStatus{},
+			&meshsyncmodel.ResourceObjectMeta{},
 		)
 		if err != nil {
 			if provider.GetGenericPersister() == nil {
