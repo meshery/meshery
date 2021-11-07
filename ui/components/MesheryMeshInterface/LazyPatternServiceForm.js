@@ -9,8 +9,8 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./PatternServiceForm";
-import { getPatternServiceName as getItemName, getPatternServiceID as getItemID, getPatternServiceType } from "./helpers"
-import { isEmptyObj } from "../../utils/utils"
+import { getPatternServiceName as getItemName, getPatternServiceID as getItemID, getPatternServiceType } from "./helpers";
+import { isEmptyObj } from "../../utils/utils";
 
 const useStyles = makeStyles((theme) => ({
   root : {
@@ -31,7 +31,7 @@ async function fetchJSONSchema(name, type, id) {
   const url = `/api/oam/${type}/${name}/${id}`;
 
   const res = await promisifiedDataFetch(url);
-  return JSON.parse(res?.oam_ref_schema) || {}
+  return JSON.parse(res?.oam_ref_schema) || {};
 }
 
 export async function getWorkloadTraitAndType(schemaSet) {
@@ -48,8 +48,8 @@ export async function getWorkloadTraitAndType(schemaSet) {
     return schema;
   }));
 
-  const type = getPatternServiceType(schemaSet?.workload)
-  return { workload : workloadSchema, traits : traitsSchemas, type }
+  const type = getPatternServiceType(schemaSet?.workload);
+  return { workload : workloadSchema, traits : traitsSchemas, type };
 }
 
 /**
@@ -90,7 +90,7 @@ export default function LazyPatternServiceForm(props) {
       // thus only trigger stateChange when required
       if (isEmptyObj(schemaSet)) {
         // Get the schema sets consisting the workloads, traits and type
-        const { workload, traits, type } = await getWorkloadTraitAndType(props?.schemaSet)
+        const { workload, traits, type } = await getWorkloadTraitAndType(props?.schemaSet);
 
         setSchemaSet({
           workload,
@@ -99,7 +99,7 @@ export default function LazyPatternServiceForm(props) {
         });
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
@@ -120,8 +120,8 @@ export default function LazyPatternServiceForm(props) {
 }
 
 function LazyAccordionDetails(props) {
-  if (!props.expanded) return <AccordionDetails />
+  if (!props.expanded) return <AccordionDetails />;
 
   // LEE: This behavior is more like what we need - https://codesandbox.io/s/upbeat-tesla-uchsb?file=/src/MyAccordion.js
-  return <AccordionDetails style={{ height : "50rem", overflow : "auto" }}>{props.children}</AccordionDetails>
+  return <AccordionDetails style={{ height : "50rem", overflow : "auto" }}>{props.children}</AccordionDetails>;
 }

@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
     padding : 8,
     height : "100%",
   },
-}))
+}));
 
 
 function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
@@ -79,46 +79,46 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState(workloadTraitSet);
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
   const [yaml, setYaml] = useState(pattern.pattern_file);
-  const [selectedMeshType, setSelectedMeshType] = useState("core")
-  const [selectedVersionMesh, setSelectedVersionMesh] = useState()
-  const [selectedVersion, setSelectedVersion] = useState("")
-  const [meshFormTitles, setMeshFormTitles] = useState(null)
-  const [activeForm, setActiveForm] = useState()
-  const [viewType, setViewType] = useState("list")
+  const [selectedMeshType, setSelectedMeshType] = useState("core");
+  const [selectedVersionMesh, setSelectedVersionMesh] = useState();
+  const [selectedVersion, setSelectedVersion] = useState("");
+  const [meshFormTitles, setMeshFormTitles] = useState(null);
+  const [activeForm, setActiveForm] = useState();
+  const [viewType, setViewType] = useState("list");
   const classes = useStyles();
   const reference = useRef({});
 
   useEffect(() => {
     if (workloadTraitSet != workloadTraitsSet) {
-      setWorkloadTraitsSet(workloadTraitSet)
+      setWorkloadTraitsSet(workloadTraitSet);
     }
   }, [workloadTraitSet]);
 
   useEffect(() => {
     // core is not versioned
     if (selectedMeshType == "core") {
-      setSelectedVersionMesh(null)
+      setSelectedVersionMesh(null);
     } else {
-      const meshVersionsWithDetails = groupWlByVersion()
-      setSelectedVersionMesh(meshVersionsWithDetails)
+      const meshVersionsWithDetails = groupWlByVersion();
+      setSelectedVersionMesh(meshVersionsWithDetails);
     }
-    setViewType("list")
-    setActiveForm(null)
-  }, [selectedMeshType])
+    setViewType("list");
+    setActiveForm(null);
+  }, [selectedMeshType]);
 
   useEffect(() => {
     if (selectedVersionMesh) {
-      setSelectedVersion(Object.keys(selectedVersionMesh).sort().reverse()[0])
+      setSelectedVersion(Object.keys(selectedVersionMesh).sort().reverse()[0]);
     }
-  }, [selectedVersionMesh])
+  }, [selectedVersionMesh]);
 
   useEffect(() => {
     if (selectedVersion) {
-      setMeshFormTitles(getFormOptions())
+      setMeshFormTitles(getFormOptions());
       setActivePatternWithRefinedSchema(selectedVersionMesh?.[selectedVersion]
-        ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0])
+        ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0]);
     }
-  }, [selectedVersion])
+  }, [selectedVersion]);
 
 
   function groupWlByVersion() {
@@ -138,31 +138,31 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   }
 
   function resetSelectedPattern() {
-    return { show : false, pattern : null }
+    return { show : false, pattern : null };
   }
 
   function getFormOptions() {
     if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
       return meshWorkloads[selectedMeshType].map(mwl => {
-        const name = mwl?.workload?.metadata?.["display.ui.meshery.io/name"]
-        return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} /> }
-      })
+        const name = mwl?.workload?.metadata?.["display.ui.meshery.io/name"];
+        return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} /> };
+      });
     }
     return selectedVersionMesh
       ?.[selectedVersion]
       ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
       .map(item => {
-        const name = item.workload?.oam_definition?.metadata?.name
-        return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} /> }
-      })
+        const name = item.workload?.oam_definition?.metadata?.name;
+        return { name, icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} /> };
+      });
   }
 
   const handleSubmit = (cfg, patternName) => {
-    console.log("submitted", { cfg, patternName })
+    console.log("submitted", { cfg, patternName });
     const key = getPatternKey(cfg);
     handleDeploy({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
     if (key) setDeployServiceConfig({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
-  }
+  };
 
   const handleSettingsChange = (schemaSet) => () => {
     const config = createPatternFromConfig({
@@ -175,21 +175,21 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     }, "default", true);
 
     handleChangeData(config, "");
-  }
+  };
 
   const handleChangeData = (cfg, patternName) => {
-    console.log(patternName)
+    console.log(patternName);
     const key = getPatternKey(cfg);
     handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-  }
+  };
 
   const handleDelete = (cfg, patternName) => {
     console.log("deleted", cfg);
-    const newCfg = workloadTraitsSet?.filter(schema => schema.workload.title !== patternName)
+    const newCfg = workloadTraitsSet?.filter(schema => schema.workload.title !== patternName);
     setWorkloadTraitsSet(newCfg);
-  }
+  };
 
   const handleDeploy = (cfg) => {
     const deployConfig = {};
@@ -197,7 +197,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     deployConfig.services = cfg;
     const deployConfigYaml = jsYaml.dump(deployConfig);
     setYaml(deployConfigYaml);
-  }
+  };
 
   function handleSubmitFinalPattern(yaml, id, name, action) {
     onSubmit(yaml, id, name, action);
@@ -207,25 +207,25 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const ns = "default";
 
   function saveCodeEditorChanges(data) {
-    setYaml(data.valueOf().getValue())
+    setYaml(data.valueOf().getValue());
   }
 
   function insertPattern(workload) {
     const attrName = getPatternServiceName(workload);
-    var returnValue = {}
+    var returnValue = {};
     Object.keys(deployServiceConfig).find(key => {
       if (deployServiceConfig[key]['type'] === attrName) {
-        returnValue = deployServiceConfig[key]
-        return true
+        returnValue = deployServiceConfig[key];
+        return true;
       }
-    })
+    });
 
     return returnValue;
   }
 
   function getMeshOptions() {
-    console.log({ meshWorkloads })
-    return meshWorkloads ? Object.keys(meshWorkloads) : []
+    console.log({ meshWorkloads });
+    return meshWorkloads ? Object.keys(meshWorkloads) : [];
   }
 
   function handleMeshSelection(event) {
@@ -233,30 +233,30 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   }
 
   function handleVersionChange(_, value) {
-    setSelectedVersion(value)
+    setSelectedVersion(value);
   }
 
   async function setActivePatternWithRefinedSchema(schema) {
-    const refinedSchema = await getWorkloadTraitAndType(schema)
-    setActiveForm(refinedSchema)
+    const refinedSchema = await getWorkloadTraitAndType(schema);
+    setActiveForm(refinedSchema);
   }
 
   function toggleView() {
     if (viewType == "list") {
       if (isEmptyObj(activeForm)) {
         // core resources are handled sepaeratrly since they are not versioned
-        setMeshFormTitles(getFormOptions())
+        setMeshFormTitles(getFormOptions());
         if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
           setActivePatternWithRefinedSchema(meshWorkloads[selectedMeshType]
-            ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0])
+            ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0]);
         } else {
           setActivePatternWithRefinedSchema(selectedVersionMesh?.[selectedVersion]
-            ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0])
+            ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0]);
         }
       }
-      setViewType("form")
+      setViewType("form");
     } else {
-      setViewType("list")
+      setViewType("list");
     }
   }
 
@@ -264,15 +264,15 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     let activeSchema;
     if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
       activeSchema = meshWorkloads[selectedMeshType]
-        .find(schema => schema?.workload?.metadata?.["display.ui.meshery.io/name"] === selectedField.name)
+        .find(schema => schema?.workload?.metadata?.["display.ui.meshery.io/name"] === selectedField.name);
     } else {
       activeSchema = selectedVersionMesh?.[selectedVersion]
-        .find(schema => schema?.workload?.oam_definition?.metadata?.name === selectedField.name)
+        .find(schema => schema?.workload?.oam_definition?.metadata?.name === selectedField.name);
     }
-    setActivePatternWithRefinedSchema(activeSchema)
+    setActivePatternWithRefinedSchema(activeSchema);
   }
 
-  if (isEmptyObj(workloadTraitsSet)) return <CircularProgress />
+  if (isEmptyObj(workloadTraitsSet)) return <CircularProgress />;
 
   return (
     <>
@@ -287,12 +287,12 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
               disableUnderline
             >
               {getMeshOptions().map(item => {
-                const details = getMeshProperties(item)
+                const details = getMeshProperties(item);
                 return (<MenuItem value={details.name}>
                   <li>
                     <img src={details.img} height="32px" />
                   </li>
-                </MenuItem>)
+                </MenuItem>);
               })}
             </Select>
           </FormControl>
@@ -503,4 +503,4 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   );
 }
 
-export default PatternForm
+export default PatternForm;

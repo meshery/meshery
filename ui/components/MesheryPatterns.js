@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
       width : '60%'
     }
   }
-}))
+}));
 
 function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
@@ -106,7 +106,7 @@ function TooltipIcon({ children, onClick, title }) {
         {children}
       </IconButton>
     </Tooltip>
-  )
+  );
 }
 
 function YAMLEditor({ pattern, onClose, onSubmit }) {
@@ -116,7 +116,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
-  }
+  };
 
   return (
     <Dialog onClose={onClose} aria-labelledby="pattern-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
@@ -175,7 +175,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
 }
 
 function resetSelectedPattern() {
-  return { show : false, pattern : null }
+  return { show : false, pattern : null };
 }
 
 function MesheryPatterns({
@@ -235,7 +235,7 @@ function MesheryPatterns({
         },
       }
     }
-  })
+  });
 
   const ACTION_TYPES = {
     FETCH_PATTERNS : {
@@ -258,7 +258,7 @@ function MesheryPatterns({
       name : "UPLOAD_PATTERN",
       error_msg : "Failed to upload pattern file"
     },
-  }
+  };
 
   const searchTimeout = useRef(null);
   /**
@@ -269,7 +269,7 @@ function MesheryPatterns({
   }, []);
 
   const handleDeploy = (pattern_file) => {
-    updateProgress({ showProgress : true })
+    updateProgress({ showProgress : true });
     dataFetch(
       DEPLOY_URL,
       {
@@ -292,8 +292,8 @@ function MesheryPatterns({
         });
       },
       handleError(ACTION_TYPES.DEPLOY_PATTERN),
-    )
-  }
+    );
+  };
 
   function fetchPatterns(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -336,7 +336,7 @@ function MesheryPatterns({
       },
       autoHideDuration : 8000,
     });
-  }
+  };
 
   function resetSelectedRowData() {
     return () => {
@@ -345,7 +345,7 @@ function MesheryPatterns({
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({ showProgress : true })
+    updateProgress({ showProgress : true });
     if (type === "delete") {
       dataFetch(
         `/api/pattern/${id}`,
@@ -357,7 +357,7 @@ function MesheryPatterns({
           console.log("PatternFile API", `/api/pattern/${id}`);
           updateProgress({ showProgress : false });
           fetchPatterns(page, pageSize, search, sortOrder);
-          resetSelectedRowData()()
+          resetSelectedRowData()();
         },
         handleError(ACTION_TYPES.DELETE_PATTERN)
       );
@@ -381,12 +381,12 @@ function MesheryPatterns({
     }
 
     if (type === "upload" || type === "urlupload") {
-      let body
+      let body;
       if (type === "upload") {
-        body = JSON.stringify({ pattern_data : { pattern_file : data }, save : true })
+        body = JSON.stringify({ pattern_data : { pattern_file : data }, save : true });
       }
       if (type === "urlupload") {
-        body = JSON.stringify({ url : data, save : true })
+        body = JSON.stringify({ url : data, save : true });
       }
       dataFetch(
         `/api/pattern`,
@@ -501,7 +501,7 @@ function MesheryPatterns({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const rowData = patterns[tableMeta.rowIndex]
+          const rowData = patterns[tableMeta.rowIndex];
           return (
             <>
               {/* <Tooltip title="Configure">*/}
@@ -535,7 +535,7 @@ function MesheryPatterns({
       subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'}  ${count ? count : ""}  pattern${count > 1 ? "s" : ''}?`,
 
       options : ["Yes", "No"],
-    })
+    });
     return response;
   }
 
@@ -586,11 +586,11 @@ function MesheryPatterns({
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showModal(Object.keys(row.lookup).length)
-      console.log(response)
+      let response = await showModal(Object.keys(row.lookup).length);
+      console.log(response);
       if (response === "Yes") {
-        const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id)
-        fid.forEach(fid => deletePattern(fid))
+        const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id);
+        fid.forEach(fid => deletePattern(fid));
       }
       if (response === "No")
         fetchPatterns(page, pageSize, search, sortOrder);

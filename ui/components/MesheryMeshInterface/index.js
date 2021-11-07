@@ -34,7 +34,7 @@ function MesheryMeshInterface({ adapter }) {
   };
 
   useEffect(() => {
-    createWorkloadTraitSets(adapter).then(res => setWorkloadTraitsSet(res))
+    createWorkloadTraitSets(adapter).then(res => setWorkloadTraitsSet(res));
   }, []);
 
   return (

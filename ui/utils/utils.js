@@ -9,7 +9,7 @@ export function isEmptyObj(obj) {
   return !obj
     || obj
       && Object.keys(obj).length === 0
-      && Object.getPrototypeOf(obj) === Object.prototype
+      && Object.getPrototypeOf(obj) === Object.prototype;
 }
 
 /**
@@ -19,5 +19,5 @@ export function isEmptyObj(obj) {
  * @returns {Boolean} if arr is empty
  */
 export function isEmptyArr(arr) {
-  return arr && arr.length === 0
+  return arr && arr.length === 0;
 }

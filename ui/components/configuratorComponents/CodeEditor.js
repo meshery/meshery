@@ -11,7 +11,7 @@ const useStyles = makeStyles(() => ({
       height : '60vh',
     }
   },
-}))
+}));
 
 export default function CodeEditor({ yaml, saveCodeEditorChanges }) {
   const classes = useStyles();
@@ -38,5 +38,5 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges }) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
