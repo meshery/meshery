@@ -151,8 +151,7 @@ const styles = (theme) => ({
   },
   collapseButtonWrapper : {
     position : "fixed",
-    top : "50%",
-    pointerEvents : "none",
+    bottom : "12%",
     left : "235px",
     zIndex : "1400",
     width : "auto",
@@ -164,11 +163,10 @@ const styles = (theme) => ({
   },
   collapseButtonWrapperRotated : {
     position : "fixed",
-    top : "50%",
+    bottom : "12%",
     left : "45px",
     zIndex : "1400",
     width : "auto",
-    pointerEvents : "none",
     transition : "left 225ms",
     transform : "rotate(180deg)",
     "&:hover" : { opacity : 1,
@@ -213,7 +211,7 @@ const styles = (theme) => ({
   rightTranslate : { transform : 'translateX(0.5px)' }
 });
 
-const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.21rem" };
+const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
 const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
 const categories = [
@@ -444,6 +442,7 @@ class Navigator extends React.Component {
       // decoder which in turn will return an empty array when there is no content
       // passed into it
       navigator : ExtensionPointSchemaValidator("navigator")(),
+      showHelperButton : false,
       capabilities : [],
       openItems : [],
       hoveredId : null,
@@ -732,6 +731,12 @@ class Navigator extends React.Component {
 
   }
 
+  toggleSpacing = () => {
+    const { showHelperButton } = this.state;
+    this.setState({ showHelperButton : !showHelperButton });
+
+  }
+
   /**
    * @param {number} id
    *
@@ -849,7 +854,7 @@ class Navigator extends React.Component {
     const { classes } = this.props;
 
     let linkContent = (
-      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
+      <div className={classNames(classes.link)}>
         <Tooltip
           title={titlec}
           placement="right"
@@ -953,7 +958,7 @@ class Navigator extends React.Component {
 
   render() {
     const { classes, isDrawerCollapsed, ...other } = this.props;
-    const { path } = this.state;
+    const { path, showHelperButton } = this.state;
     this.updateCategoriesMenus();
     let classname;
     if (isDrawerCollapsed) {
@@ -1013,7 +1018,7 @@ class Navigator extends React.Component {
                 <Link href={link
                   ? href
                   : ""}>
-                  <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)}>
+                  <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
                     <Tooltip
                       title={childId}
                       placement="right"
@@ -1083,12 +1088,12 @@ class Navigator extends React.Component {
             <ListItem
               key={id}
               className={classes.item}
-              style={isDrawerCollapsed
+              style={isDrawerCollapsed && !showHelperButton
                 ? { display : 'none' }
                 : {}}
             >
               <Grow
-                in={!isDrawerCollapsed }
+                in={showHelperButton || !isDrawerCollapsed }
                 timeout={{ enter : (600 - index * 200), exit : 100 * index }}
               >
                 <a
@@ -1115,7 +1120,7 @@ class Navigator extends React.Component {
           className={classes.rightMargin}
           style={!isDrawerCollapsed
             ? { display : 'none' }
-            : {}}
+            : { marginLeft : '4px' }}
         >
           <Tooltip
             title="Help"
@@ -1125,7 +1130,7 @@ class Navigator extends React.Component {
           >
             <IconButton className={isDrawerCollapsed
               ? classes.collapsedHelpButton
-              : classes.rightTranslate} onClick={() => this.toggleSpacing()}>
+              : classes.rightTranslate} onClick={this.toggleSpacing}>
               <HelpIcon
                 className={classes.helpIcon}
                 style={{ fontSize : '1.45rem', }}
@@ -1137,13 +1142,16 @@ class Navigator extends React.Component {
     )
     const Version = (
       <ListItem style={{
-        position : "sticky",paddingLeft : 8, paddingright : 0, color : "#eeeeee", fontSize : "0.75rem" }}>
+        position : "sticky",paddingLeft : 0, paddingRight : 0, color : "#eeeeee", fontSize : "0.75rem", }}>
         {isDrawerCollapsed
-          ? this.state.versionDetail.build
+          ? <div style = {{ textAlign : "center" , width : "100%" }}>
+            {this.state.versionDetail.build}
+          </div>
           :
           <Grow
             in={!isDrawerCollapsed }
             timeout={{ enter : (800), exit : 100 }}
+            style = {{ textAlign : "center" , width : "100%" }}
           >
             <span>
               {this.getMesheryVersionText()} {'  '}
@@ -1162,14 +1170,13 @@ class Navigator extends React.Component {
           <FontAwesomeIcon
             icon={faChevronCircleLeft}
             fixedWidth
-            color="#ffffff"
+            color="#e7e7e7"
             size="2x"
             alt="Sidebar collapse toggle icon"
+            onClick={this.toggleMiniDrawer}
           />
         </div>
         <Drawer
-          onMouseEnter={() => isDrawerCollapsed ? this.toggleMiniDrawer() : null}
-          onMouseLeave={() => !isDrawerCollapsed ? this.toggleMiniDrawer() : null}
           variant="permanent"
           {...other}
           className={isDrawerCollapsed
