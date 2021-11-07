@@ -234,6 +234,13 @@ const categories = [
     link : true,
     children : [
       {
+        id : "App_Mesh",
+        href : "/management/app-mesh",
+        title : "AWS App Mesh",
+        link : true,
+        show : true,
+      },
+      {
         id : "Citrix_Service_Mesh",
         href : "/management/citrix",
         title : "Citrix Service Mesh",
@@ -497,7 +504,7 @@ class Navigator extends React.Component {
       return (
         <List disablePadding>
           {children.map(({
-            id, icon, href, title, children
+            id, onClickCallback, icon, href, title, children
           }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
@@ -517,7 +524,7 @@ class Navigator extends React.Component {
                     isDrawerCollapsed && classes.noPadding
                   )}
                 >
-                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed)}
+                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed, onClickCallback)}
                 </ListItem>
                 {this.renderNavigatorExtensions(children, depth + 1)}
               </React.Fragment>
@@ -528,19 +535,23 @@ class Navigator extends React.Component {
     }
   }
 
-  /**
-   * @param {JSX.Element} icon
-   * @param {String} href
-   * @param {String} name
-   * @param {Boolean} drawerCollapsed
-   *
-   * @return {JSX.Element} content
-   */
-  extensionPointContent(icon, href, name, drawerCollapsed) {
+  onClickCallback(onClickCallback){
+    switch (onClickCallback){
+      case 0:
+        return this.toggleMiniDrawer(false)
+      case 1:
+        return this.toggleMiniDrawer(true)
+      default:
+        // by default, nothing happened
+        return undefined
+    }
+  }
+
+  extensionPointContent(icon, href, name, drawerCollapsed, onClickCallback) {
     const { classes } = this.props;
 
     const content = (
-      <div className={classNames(classes.link)}>
+      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)}>
         <Tooltip
           title={name}
           placement="right"
@@ -710,12 +721,15 @@ class Navigator extends React.Component {
     }
   }
 
-  /**
-   * Calls onCollapseDrawer on toggle of Drawer
-   */
-  toggleMiniDrawer() {
+  toggleMiniDrawer = (open = null) => {
     const { onCollapseDrawer } = this.props;
-    onCollapseDrawer();
+    onCollapseDrawer(open);
+  };
+
+  toggleSpacing = () => {
+    const { showHelperButton } = this.state;
+    this.setState({ showHelperButton : !showHelperButton });
+
   }
 
   /**
@@ -835,7 +849,7 @@ class Navigator extends React.Component {
     const { classes } = this.props;
 
     let linkContent = (
-      <div className={classNames(classes.link)}>
+      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
         <Tooltip
           title={titlec}
           placement="right"
@@ -999,7 +1013,7 @@ class Navigator extends React.Component {
                 <Link href={link
                   ? href
                   : ""}>
-                  <div className={classNames(classes.link)}>
+                  <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)}>
                     <Tooltip
                       title={childId}
                       placement="right"

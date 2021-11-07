@@ -214,7 +214,7 @@ func TestAddContextCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			if expectedResponse != actualResponse {
-				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
+				t.Errorf("Context: expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			}
 			path, err := os.Getwd()
 			if err != nil {
@@ -233,7 +233,7 @@ func TestAddContextCmd(t *testing.T) {
 			}
 			addExpected := golden.Load()
 			if actualResponse != addExpected {
-				t.Errorf("expected response [%v] and actual response [%v] don't match", addExpected, actualResponse)
+				t.Errorf("ExpectedAdd: expected response [%v] and actual response [%v] don't match", addExpected, actualResponse)
 			}
 
 			//Repopulating Expected yaml

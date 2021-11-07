@@ -236,7 +236,7 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, tokenPath string, name strin
 		return "", ErrGettingSessionData(err)
 	}
 
-	meshNameMap := make(map[string]struct{}, 0)
+	meshNameMap := make(map[string]struct{})
 	meshNames := []string{}
 	for _, adapter := range prefs.MeshAdapters {
 		if _, ok := meshNameMap[adapter.Name]; !ok {

@@ -15,7 +15,7 @@ list: include
 
 ## Use Meshery to Deploy a Service Mesh Pattern
 
-You can use Meshery to deploy a service mesh pattern. Service mesh patterns are detailed as a YAML file. The format of the YAML is based on the [Service Mesh Performance](https://smp-spec.io) (SMP) specification.
+You can use Meshery to deploy a service mesh pattern. Service mesh patterns are detailed as a YAML file. See the [Configuration Management]({{ site.baseurl }}/guides/configuration-management) guide.
 
 ### Pattern Repository
 
@@ -106,7 +106,9 @@ services:
 
 ## Importing Patterns
 
-You may import a pattern using `mesheryctl` or Meshery UI. Patterns can be imported from local filesystem, an HTTP/S endpoint, or from GitHub. When provided a GitHub location, Meshery will recursively search the given directory (or entire repository) for existing pattern files.
+You can import a pattern using `mesheryctl` or Meshery UI. Patterns can be imported from your local filesystem, an HTTP/S endpoint, or from GitHub. When provided a GitHub location (org/repo), Meshery will recursively search the given directory (or the entire repository) for existing pattern files.
+
+### Using Meshery CLI
 
 #### To import a pattern, execute this command:
 
@@ -115,6 +117,20 @@ $ mesheryctl pattern import -f <path to the pattern>
 Importing pattern…
 Pattern successfully imported.
 ```
+### Using Meshery UI:
+
+From Meshery UI, patterns can be imported from your local filesystem or imported from a remote URL.
+
+<a href="{{ site.baseurl }}/assets/img/patterns/ImportPatternUI.png">
+    <img src="{{ site.baseurl }}/assets/img/patterns/ImportPatternUI.png" style="width: 60%" />
+</a>
+
+_To upload from url click the link icon_
+
+<a href="{{ site.baseurl }}/assets/img/patterns/UrlImport.png">
+    <img src="{{ site.baseurl }}/assets/img/patterns/UrlImport.png" style="width: 60%" />
+</a>
+
 
 #### To deploy a pattern, execute this command:
 

@@ -70,13 +70,14 @@ type GraphQLExtension struct {
 
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
-	Title     string              `json:"title,omitempty"`
-	Href      Href                `json:"href,omitempty"`
-	Component string              `json:"component,omitempty"`
-	Icon      string              `json:"icon,omitempty"`
-	Link      *bool               `json:"link,omitempty"`
-	Show      *bool               `json:"show,omitempty"`
-	Children  NavigatorExtensions `json:"children,omitempty"`
+	Title           string              `json:"title,omitempty"`
+	OnClickCallback int                 `json:"on_click_callback,omitempty"`
+	Href            Href                `json:"href,omitempty"`
+	Component       string              `json:"component,omitempty"`
+	Icon            string              `json:"icon,omitempty"`
+	Link            *bool               `json:"link,omitempty"`
+	Show            *bool               `json:"show,omitempty"`
+	Children        NavigatorExtensions `json:"children,omitempty"`
 }
 
 // UserPrefsExtension describes the user preference extension point in the UI
@@ -149,6 +150,9 @@ const (
 
 	// UserPrefsCtxKey is the context key for persisting user preferences to context
 	PerfObjCtxKey = "perf_obj"
+
+	// UserPrefsCtxKey is the context key for latest broker endpoint to context
+	BrokerURLCtxKey = "broker_endpoint"
 )
 
 // IsSupported returns true if the given feature is listed as one of
@@ -205,7 +209,7 @@ type Provider interface {
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request)
 	FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error)
-	FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error)
+	FetchAllResults(tokenVal string, page, pageSize, search, order, from, to string) ([]byte, error)
 	PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error)
 	FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	PublishSmiResults(result *SmiResult) (string, error)
@@ -249,7 +253,7 @@ type Provider interface {
 	RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
-	GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
 	DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
 

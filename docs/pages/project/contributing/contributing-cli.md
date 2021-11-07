@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing to Meshery CLI
-permalink: project/contributing-cli
+permalink: project/contributing/contributing-cli
 description: How to contribute to Meshery Command Line Interface.
 language: en
 type: project
@@ -33,7 +33,7 @@ After making changes, run `make` in the `mesheryctl` folder to build the binary.
 
 A central `struct` is maintained in the `mesheryctl/internal/cli/root/config/config.go` file. These are updated and should be used for getting the Meshery configuration.
 
-Updates to this central `struct` is made through updates in `Context` with setter functions. The changes made in this central `struct` are reflected back in the Meshery configuration file (`.meshery/config.yaml`). 
+Updates to this central `struct` is made through updates in `Context` with setter functions. The changes made in this central `struct` are reflected back in the Meshery configuration file (`.meshery/config.yaml`).
 
 **Logging**
 
@@ -132,16 +132,15 @@ You will need to provide a short and long description of the command for the hel
 
 # Writing unit tests and integration tests for mesheryctl
 
- Unit tests and integration tests are essential to make each mesheryctl release robust and fault tolerant.
+Unit tests and integration tests are essential to make each mesheryctl release robust and fault tolerant.
 
- Below you will find guidelines to write unit tests and integration tests and examples of how they are implemented in mesheryctl.
+Below you will find guidelines to write unit tests and integration tests and examples of how they are implemented in mesheryctl.
 
- Unit tests: Individual components are tested.
+Unit tests: Individual components are tested.
 
- Integration tests: Individual components are combined and tested as a group.
+Integration tests: Individual components are combined and tested as a group.
 
-
-### References 
+### References
 
 - [jarcoal/httpmock](https://github.com/jarcoal/httpmock)
 - [Unit testing CLIs in Go](https://medium.com/swlh/unit-testing-cli-programs-in-go-6275c85af2e7)
@@ -151,11 +150,12 @@ You will need to provide a short and long description of the command for the hel
 ### Key principles
 
 The following key principles should be taken to mind when writing tests:
+
 1. Golang’s standard library will be used to write tests.
 2. The tests should cover all possible use cases and not just the happy paths.
 3. Integration tests should contain the keyword **“Integration”** in the title and should be marked to be skipped under unit testing. (See below)
 4. **Fixtures** are mock/raw data to use(for e.g. API response to mock an HTTP call).
-5. **Testdata** is  the expected response of mesheryctl commands or functions.
+5. **Testdata** is the expected response of mesheryctl commands or functions.
 6. The mock data and the expected responses are stored in the **golden files**.
 7. Table formatted tests are performed on functions and commands.
 8. [mesheryctl/pkg/utils/fixtures/validate.version.github.golden](https://github.com/meshery/meshery/blob/master/mesheryctl/pkg/utils/fixtures/validate.version.github.golden) file needs to be updated regularly.
@@ -190,26 +190,12 @@ go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic</code>
 
 <code> go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic </code>
 
-
-To update  golden files with the test output use the `--update` flag:
+To update golden files with the test output use the `--update` flag:
 
 <code> var update = flag.Bool("update", false, "update golden files") </code>
-
 
 To grab console logs - `fmt.Println()` (check [mesheryctl/internal/cli/root/perf/view_test.go](https://github.com/meshery/meshery/blob/master/mesheryctl/internal/cli/root/perf/view_test.go) )
 
 To grab Logrus logs - `logrus.Info()` (check [mesheryctl/internal/cli/root/perf/apply_test.go](https://github.com/meshery/meshery/blob/master/mesheryctl/internal/cli/root/perf/apply_test.go) )
 
-
-# Suggested Reading
-
-{% assign sorted_reading = site.pages | sort: page.title | reverse %}
-
-<ul>
-  {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+{% include suggested-reading.html %}

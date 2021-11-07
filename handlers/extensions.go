@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"path"
 	"plugin"
@@ -11,6 +12,11 @@ import (
 var (
 	extendedEndpoints = make(map[string]*models.Router)
 )
+
+// Defines the version metadata for the extension
+type ExtensionVersion struct {
+	Version string `json:"version,omitempty"`
+}
 
 func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if val, ok := extendedEndpoints[req.URL.Path]; ok {
@@ -55,4 +61,29 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 	}
 
 	return nil
+}
+
+func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider.GetProviderType() == models.LocalProviderType {
+		err := json.NewEncoder(w).Encode("extension not available for current provider")
+		if err != nil {
+			h.log.Error(ErrEncoding(err, "extension version"))
+			http.Error(w, ErrEncoding(err, "extension version").Error(), http.StatusNotFound)
+		}
+		return
+	}
+
+	// gets the extension version from provider properties
+	version := provider.GetProviderProperties().PackageVersion
+
+	extensionVersion := &ExtensionVersion{
+		Version: version,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(extensionVersion)
+	if err != nil {
+		h.log.Error(ErrEncoding(err, "extension version"))
+		http.Error(w, ErrEncoding(err, "extension version").Error(), http.StatusNotFound)
+	}
 }
