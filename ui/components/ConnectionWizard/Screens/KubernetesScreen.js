@@ -24,18 +24,18 @@ const KubernetesScreen = ({
   });
 
   const [isConnected, setIsConnected] = useState(false);
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
 
   useEffect(() => {
-    setStepStatus(prev => ({ ...prev, kubernetes : isConnected }))
-  },[isConnected])
+    setStepStatus(prev => ({ ...prev, kubernetes : isConnected }));
+  },[isConnected]);
 
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     pingKubernetes(
       (res) => {
-        setIsLoading(false)
+        setIsLoading(false);
         setClusterInformation({
           ...clusterInformation,
           isClusterConfigured : k8sconfig.clusterConfigured,

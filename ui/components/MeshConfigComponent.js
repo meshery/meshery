@@ -206,26 +206,26 @@ class MeshConfigComponent extends React.Component {
       error : (err) => console.log("error at operator scan: " + err),
     });
 
-    self.setState({ meshSyncStatusEventsSubscription, operatorStatusEventsSubscription })
+    self.setState({ meshSyncStatusEventsSubscription, operatorStatusEventsSubscription });
   }
 
 
   componentWillUnmount () {
-    this.state.meshSyncStatusEventsSubscription.dispose()
-    this.state.operatorStatusEventsSubscription.dispose()
+    this.state.meshSyncStatusEventsSubscription.dispose();
+    this.state.operatorStatusEventsSubscription.dispose();
   }
 
   setOperatorState = (res) => {
-    console.log("incoming change")
+    console.log("incoming change");
     const self = this;
     if (res.operator?.error) {
       self.handleError("Operator could not be reached")(res.operator?.error?.description);
-      self.setState({ operatorProcessing : false })
+      self.setState({ operatorProcessing : false });
       return false;
     }
 
     if (res.operator?.status === "ENABLED") {
-      self.setState({ operatorProcessing : false })
+      self.setState({ operatorProcessing : false });
       res.operator?.controllers?.forEach((controller) => {
         if (controller.name === "broker" && controller.status == "CONNECTED") {
           self.setState({
@@ -243,7 +243,7 @@ class MeshConfigComponent extends React.Component {
       return true;
     }
 
-    if (res.operator?.status === "DISABLED") self.setState({ operatorProcessing : false })
+    if (res.operator?.status === "DISABLED") self.setState({ operatorProcessing : false });
 
     if (res.operator?.status === "PROCESSING") {
       console.log("setting to processing");

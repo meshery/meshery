@@ -18,7 +18,7 @@ function Switch({
             setIsOn((isOn) => {
               const newState = !isOn;
 
-              if (!newState) onDelete?.(!newState) // Trigger this before actually updating the state
+              if (!newState) onDelete?.(!newState); // Trigger this before actually updating the state
               onChange?.(newState, (state) => {
                 if (state) onSubmit?.(state); // Trigger this after state update
               });

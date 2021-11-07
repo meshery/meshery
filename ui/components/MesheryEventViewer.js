@@ -11,7 +11,7 @@ class MesheryEventViewer extends React.Component {
   state = { dialogShow : false, }
 
   handleSnackbarClose = (_, reason) => {
-    if (reason === 'clickaway') return
+    if (reason === 'clickaway') return;
 
     this.props.deleteEvent();
   }

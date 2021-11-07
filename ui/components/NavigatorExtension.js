@@ -6,7 +6,7 @@ import { bindActionCreators } from "redux";
 import { updateLoadTestData } from "../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import MesheryPerformanceComponent from "./MesheryPerformance";
-import dataFetch from "../lib/data-fetch"
+import dataFetch from "../lib/data-fetch";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 
 const requires = createRequires(getDependencies);

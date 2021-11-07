@@ -50,7 +50,7 @@ completed : { border : ".2rem solid #00B39F",
   background : "#00B39F",
   transition : "all 0.5s ease-in", }, });
 
-const useStepperStyles = makeStyles({ removePadding : { padding : "0 !important" } })
+const useStepperStyles = makeStyles({ removePadding : { padding : "0 !important" } });
 
 function ColorlibStepIcon(props) {
   const classes = useColorlibStepIconStyles();

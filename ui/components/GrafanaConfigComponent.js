@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import {
   NoSsr, TextField, Grid, Button,
 } from '@material-ui/core';
-import ReactSelectWrapper from './ReactSelectWrapper'
+import ReactSelectWrapper from './ReactSelectWrapper';
 
 const grafanaStyles = (theme) => ({
   root : { padding : theme.spacing(5), },

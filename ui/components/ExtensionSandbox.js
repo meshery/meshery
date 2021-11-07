@@ -99,10 +99,10 @@ export function getComponentTitleFromPathForNavigator(extensions, path) {
 function getComponentURIFromPathForUserPrefs(extensions) {
 
   if (Array.isArray(extensions)) {
-    return extensions.map(ext => ext.component)
+    return extensions.map(ext => ext.component);
   }
 
-  return []
+  return [];
 }
 
 /**
@@ -155,12 +155,12 @@ function ExtensionSandbox({ type, Extension }) {
       </Typography>
       : (
         getComponentURIFromPathForUserPrefs(extensions).map(uri => {
-          return <Extension url={createPathForRemoteComponent(uri)} />
+          return <Extension url={createPathForRemoteComponent(uri)} />;
         })
       );
   }
 
-  return null
+  return null;
 }
 
 export default ExtensionSandbox;

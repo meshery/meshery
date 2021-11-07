@@ -195,11 +195,11 @@ class UserPreference extends React.Component {
           this.setState({
             userPrefs : ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs),
             providerType : result?.provider_type
-          })
+          });
         }
       },
       err => console.error(err)
-    )
+    );
   }
 
   render() {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import SvgIcon from "@material-ui/core/SvgIcon";
 
 const MesheryOperatorIcon = ({ isActive }) => {
@@ -34,7 +34,7 @@ const MesheryOperatorIcon = ({ isActive }) => {
         </clipPath>
       </defs>
     </SvgIcon>
-  )
-}
+  );
+};
 
-export default MesheryOperatorIcon
+export default MesheryOperatorIcon;

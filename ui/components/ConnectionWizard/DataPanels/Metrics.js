@@ -14,7 +14,7 @@ import { bindActionCreators } from "redux";
 import {
   updateProgress, updateK8SConfig, updateGrafanaConfig, updatePrometheusConfig
 } from "../../../lib/store";
-import { pingAdapterWithNotification } from "../helpers/serviceMeshes"
+import { pingAdapterWithNotification } from "../helpers/serviceMeshes";
 import { deleteMetricsComponentConfig, pingGrafanaWithNotification, pingPrometheusWithNotification } from "../helpers/metrics";
 
 const styles = theme => ({
@@ -44,11 +44,11 @@ const styles = theme => ({
     color : theme.palette.text.secondary, },
 
 
-})
+});
 
 const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
   chip : { marginRight : theme.spacing(1),
-    marginBottom : theme.spacing(1), }, })
+    marginBottom : theme.spacing(1), }, });
 
 
 const AdapterChip = withStyles(chipStyles)(({
@@ -71,15 +71,15 @@ const AdapterChip = withStyles(chipStyles)(({
         ? "outlined"
         : "default"}
     />
-  )
-})
+  );
+});
 
 
 const AdapterPingSnackbarAction = (closeSnackbar) => (key) => (
   <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
     <CloseIcon />
   </IconButton>
-)
+);
 
 
 
@@ -96,43 +96,43 @@ const MetricsDataPlane = ({
       if (typeof result !== "undefined") {
 
         if (componentName === "Grafana")
-          console.log("Updating grafana config")
+          console.log("Updating grafana config");
         updateGrafanaConfig({ grafana : {
           grafanaURL : "",
           grafanaAPIKey : "",
           grafanaBoardSearch : "",
           grafanaBoards : [],
           selectedBoardsConfigs : [],
-        }, })
+        }, });
 
 
         if (componentName === "Prometheus")
-          console.log("Updating prometheus config")
+          console.log("Updating prometheus config");
 
         updatePrometheusConfig({ prometheus : { prometheusURL : "",
           selectedPrometheusBoardsConfigs : [], }, });
 
         enqueueSnackbar(`${componentName} was successfully disconnected!` , { variant : "success",
           autoHideDuration : 2000,
-          action : AdapterPingSnackbarAction })
+          action : AdapterPingSnackbarAction });
       }
-    }
+    };
 
     const errorCb = (error) => {
       updateProgress({ showProgress : false });
       enqueueSnackbar(`${componentName} could not be disconnected!: ${error}` , { variant : "error",
         autoHideDuration : 2000,
-        action : AdapterPingSnackbarAction })
-    }
+        action : AdapterPingSnackbarAction });
+    };
 
-    deleteMetricsComponentConfig(componentName)(successCb, errorCb)
-  }
+    deleteMetricsComponentConfig(componentName)(successCb, errorCb);
+  };
 
 
   const handleAdapterClick = () => {
-    if (componentName === "Prometheus") pingPrometheusWithNotification(updateProgress, AdapterPingSnackbarAction(closeSnackbar), enqueueSnackbar)
-    if (componentName === "Grafana") pingGrafanaWithNotification(updateProgress, AdapterPingSnackbarAction(closeSnackbar), enqueueSnackbar)
-  }
+    if (componentName === "Prometheus") pingPrometheusWithNotification(updateProgress, AdapterPingSnackbarAction(closeSnackbar), enqueueSnackbar);
+    if (componentName === "Grafana") pingGrafanaWithNotification(updateProgress, AdapterPingSnackbarAction(closeSnackbar), enqueueSnackbar);
+  };
 
   return (
     <Grid container className={classes.infoContainer} xs={10}>
@@ -166,8 +166,8 @@ const MetricsDataPlane = ({
       </Grid>
     </Grid>
 
-  )
-}
+  );
+};
 
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
@@ -181,4 +181,4 @@ const mapStateToProps = (state) => {
     prometheus };
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MetricsDataPlane)))
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MetricsDataPlane)));

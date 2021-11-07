@@ -12,7 +12,7 @@ import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { updateResultsSelection, clearResultsSelection, updateProgress, } from '../lib/store';
-import TableSortLabel from '@material-ui/core/TableSortLabel'
+import TableSortLabel from '@material-ui/core/TableSortLabel';
 import dataFetch from '../lib/data-fetch';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import MesheryChart from './MesheryChart';
@@ -78,7 +78,7 @@ class MesheryResults extends Component {
       dataFetch(`${endpoint}${query}`, { credentials : 'same-origin',
         method : 'GET',
         credentials : 'include', }, (result) => {
-        console.log("Results API",`${endpoint}${query}`)
+        console.log("Results API",`${endpoint}${query}`);
         self.props.updateProgress({ showProgress : false });
         // console.log(`received results: ${JSON.stringify(result)}`);
         if (typeof result !== 'undefined') {
@@ -164,7 +164,7 @@ class MesheryResults extends Component {
                     <b>{column.label}</b>
                   </TableSortLabel>
                 </TableCell>
-              )
+              );
             },
           }, },
         { name : 'mesh',
@@ -180,7 +180,7 @@ class MesheryResults extends Component {
                     <b>{column.label}</b>
                   </TableSortLabel>
                 </TableCell>
-              )
+              );
             },
           }, },
         { name : 'test_start_time',
@@ -196,7 +196,7 @@ class MesheryResults extends Component {
                     <b>{column.label}</b>
                   </TableSortLabel>
                 </TableCell>
-              )
+              );
             },
             customBodyRender : (value) => (
               <Moment format="LLLL">{value}</Moment>
@@ -213,7 +213,7 @@ class MesheryResults extends Component {
                 <TableCell key={index}>
                   <b>{column.label}</b>
                 </TableCell>
-              )
+              );
             },
           }, },
         { name : 'duration',
@@ -227,7 +227,7 @@ class MesheryResults extends Component {
                 <TableCell key={index}>
                   <b>{column.label}</b>
                 </TableCell>
-              )
+              );
             },
           }, },
 
@@ -243,7 +243,7 @@ class MesheryResults extends Component {
                   <b>{column.label}</b>
                 </TableCell>
 
-              )
+              );
             },
           }, },
 
@@ -259,7 +259,7 @@ class MesheryResults extends Component {
                   <b>{column.label}</b>
                 </TableCell>
 
-              )
+              );
             },
           }, },
         { name : 'Details',
@@ -273,7 +273,7 @@ class MesheryResults extends Component {
                   <b>{column.label}</b>
                 </TableCell>
 
-              )
+              );
             },
             customBodyRender : (value, tableMeta) => (
               <IconButton
@@ -291,7 +291,7 @@ class MesheryResults extends Component {
         if (column.name === this.state.sortOrder.split(' ')[0]) {
           columns[idx].options.sortDirection = this.state.sortOrder.split(' ')[1];
         }
-      })
+      });
 
       const rowsSelected = [];
       Object.keys(results_selection).forEach((pg) => {
@@ -302,7 +302,7 @@ class MesheryResults extends Component {
           });
         } else {
           Object.keys(results_selection[page]).forEach((ind) => {
-            const val = parseInt(ind)
+            const val = parseInt(ind);
             rowsSelected.push(val);
           });
         }

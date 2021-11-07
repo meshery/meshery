@@ -37,4 +37,4 @@ export const ScrollIndicator = ({ items, handleClick, activeIndex }) => {
 
     </Timeline>  );
 
-}
+};

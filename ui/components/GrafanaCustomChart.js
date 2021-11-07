@@ -16,7 +16,7 @@ import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 
-import bb, { area, line } from 'billboard.js'
+import bb, { area, line } from 'billboard.js';
 
 const grafanaStyles = (theme) => ({
   root : { width : '100%', },
@@ -420,13 +420,13 @@ class GrafanaCustomChart extends Component {
         self.props.updateProgress({ showProgress : false });
 
         if (typeof result == 'undefined' || result?.status != "success") {
-          return
+          return;
         }
 
         if (typeof result !== 'undefined') {
           const fullData = self.transformDataForChart(result);
           if (fullData.length === 0) {
-            return
+            return;
           }
 
           fullData.forEach(({ metric, data }, di) => {
@@ -489,7 +489,7 @@ class GrafanaCustomChart extends Component {
       if (panelData && panelData[expr]) {
         processReceivedData(panelData[expr]);
       } else {
-        queryParams+=`&url=${encodeURIComponent(endpointURL)}&api-key=${encodeURIComponent(endpointAPIKey)}`
+        queryParams+=`&url=${encodeURIComponent(endpointURL)}&api-key=${encodeURIComponent(endpointAPIKey)}`;
         dataFetch(`${queryRangeURL}?${queryParams}`, { method : 'GET',
           credentials : 'include',
           // headers: headers,
@@ -781,7 +781,7 @@ class GrafanaCustomChart extends Component {
               <div>{iconComponent}</div>
             </div>
           </NoSsr>
-        )
+        );
       }
       return (
         <NoSsr>

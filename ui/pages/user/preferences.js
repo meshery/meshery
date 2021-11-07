@@ -43,7 +43,7 @@ class UserPref extends React.Component {
     const { anonymousStats, perfResultStats, startOnZoom }=this.state;
     if (anonymousStats==undefined){
       // Skip rendering till data is not loaded
-      return <div></div>
+      return <div></div>;
     }
     return (
       <NoSsr>
@@ -59,7 +59,7 @@ class UserPref extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
+const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) });
 
 export default withStyles(styles)(connect(
   null,

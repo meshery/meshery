@@ -68,10 +68,10 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
   const classes = useStyles();
 
   const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.up("xs"))
+  const matches = useMediaQuery(theme.breakpoints.up("xs"));
 
   if (matches) {
-    console.log("HIT")
+    console.log("HIT");
   }
 
   /**

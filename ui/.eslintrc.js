@@ -62,6 +62,7 @@ module.exports = {
     "react/jsx-key" : "off",
     "no-dupe-keys" : "off",
     "react/jsx-filename-extension" : [1, { "extensions" : [".js", ".jsx"] }],
-    "react/prop-types" : "off"
+    "react/prop-types" : "off",
+    "semi" : [2, "always"],
   }
 };

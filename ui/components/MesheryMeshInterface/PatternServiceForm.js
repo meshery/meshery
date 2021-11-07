@@ -8,7 +8,7 @@ import { faCompress, faExpandArrowsAlt } from "@fortawesome/free-solid-svg-icons
 import Tooltip from '@material-ui/core/Tooltip';
 import PatternService from "./PatternService";
 import useStateCB from "../../utils/hooks/useStateCB";
-import { pSBCr } from "../../utils/lightenOrDarkenColor"
+import { pSBCr } from "../../utils/lightenOrDarkenColor";
 import { CamelCaseToSentanceCase } from "../../utils/camelCaseToSentanceCase.js";
 import { getPatternAttributeName, createPatternFromConfig } from "./helpers";
 
@@ -61,28 +61,28 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {}, onSettingsChange);
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {}, onTraitsChange);
-  const [tooltipExpanded, setTooltipExpanded] = useState(false)
+  const [tooltipExpanded, setTooltipExpanded] = useState(false);
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
   };
   const renderTraits = () => !!schemaSet.traits?.length;
 
   const submitHandler = (val) => {
-    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace))
+    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace));
   };
 
   const deleteHandler = (val) => {
-    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace), true)
+    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace), true);
   };
 
   if (reference){
-    if (reference.current == null) reference.current = {}
+    if (reference.current == null) reference.current = {};
 
     reference.current.submit = (cb) => {
-      submitHandler(cb(getSettingsRefValue(), getTraitsRefValue()))
-    }
-    reference.current.getSettings = () => getSettingsRefValue()
-    reference.current.getTraits = () => getTraitsRefValue()
+      submitHandler(cb(getSettingsRefValue(), getTraitsRefValue()));
+    };
+    reference.current.getSettings = () => getSettingsRefValue();
+    reference.current.getTraits = () => getTraitsRefValue();
   }
 
   if (schemaSet.type === "addon") {
@@ -100,12 +100,12 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
   }
 
   const handleMaximizeOrMinimize = () => {
-    if (tooltipExpanded) tooltipConfigurations.minimizeTooltip()
-    else tooltipConfigurations.maximizeTooltip()
-    setTooltipExpanded(prev => !prev)
-  }
+    if (tooltipExpanded) tooltipConfigurations.minimizeTooltip();
+    else tooltipConfigurations.maximizeTooltip();
+    setTooltipExpanded(prev => !prev);
+  };
 
-  console.log(schemaSet)
+  console.log(schemaSet);
   return (
     <div>
       {!renderAsTooltip ? (<Typography variant="h6" gutterBottom>

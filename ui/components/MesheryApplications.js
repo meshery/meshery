@@ -42,7 +42,7 @@ import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { Button } from "@material-ui/core";
 import jsYaml from "js-yaml";
 import PascalCaseToKebab from "../utils/PascalCaseToKebab";
@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
       height : '100%',
     }
   },
-}))
+}));
 
 
 function CustomToolbar(onClick, urlOnClick) {
@@ -117,7 +117,7 @@ function TooltipIcon({ children, onClick, title }) {
         {children}
       </IconButton>
     </Tooltip>
-  )
+  );
 }
 
 function YAMLEditor({ application, onClose, onSubmit }) {
@@ -127,7 +127,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
-  }
+  };
 
   return (
     <Dialog onClose={onClose} aria-labelledby="application-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
@@ -241,7 +241,7 @@ function MesheryApplications({
         },
       }
     }
-  })
+  });
 
   const ACTION_TYPES = {
     FETCH_APPLICATIONS : { name : "FETCH_APPLICATION" ,
@@ -254,7 +254,7 @@ function MesheryApplications({
       error_msg : "Failed to deploy application file" },
     UPLOAD_APPLICATION : { name : "UPLOAD_APPLICATION",
       error_msg : "Failed to upload application file" },
-  }
+  };
 
 
   const searchTimeout = useRef(null);
@@ -285,11 +285,11 @@ function MesheryApplications({
         // },(e) => {
         //   console.error(e)
         // })
-        updateProgress({ showProgress : false })
+        updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
-    )
-  }
+    );
+  };
 
   function fetchApplications(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -332,7 +332,7 @@ function MesheryApplications({
         );
       },
       autoHideDuration : 8000, });
-  }
+  };
 
   function resetSelectedRowData() {
     return () => {
@@ -341,7 +341,7 @@ function MesheryApplications({
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({ showProgress : true })
+    updateProgress({ showProgress : true });
     if (type === "delete") {
       dataFetch(
         `/api/application/${id}`,
@@ -351,7 +351,7 @@ function MesheryApplications({
           console.log("ApplicationFile API", `/api/application/${id}`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
-          resetSelectedRowData()()
+          resetSelectedRowData()();
         },
         // handleError
         handleError(ACTION_TYPES.DELETE_APPLICATIONS)
@@ -375,13 +375,13 @@ function MesheryApplications({
     }
 
     if (type === "upload" || type === "urlupload") {
-      let body = { save : true }
+      let body = { save : true };
       if (type === "upload") {
         body = JSON.stringify({ ...body,   application_data : { application_file : data }
-        })
+        });
       }
       if (type === "urlupload") {
-        body = JSON.stringify({ ...body, url : data })
+        body = JSON.stringify({ ...body, url : data });
       }
       dataFetch(
         `/api/application`,
@@ -490,7 +490,7 @@ function MesheryApplications({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const rowData = applications[tableMeta.rowIndex]
+          const rowData = applications[tableMeta.rowIndex];
           return (
             <>
               <Tooltip
@@ -522,7 +522,7 @@ function MesheryApplications({
   async function showModal(count) {
     let response = await modalRef.current.show({ title : `Delete ${count ? count : ""} Application${count > 1 ? "s" : '' }?`,
       subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} application${count > 1 ? "s" : '' }?`,
-      options : ["Yes", "No"], })
+      options : ["Yes", "No"], });
     return response;
   }
 
@@ -578,11 +578,11 @@ function MesheryApplications({
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showModal(Object.keys(row.lookup).length)
-      console.log(response)
+      let response = await showModal(Object.keys(row.lookup).length);
+      console.log(response);
       if (response === "Yes") {
-        const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id)
-        fid.forEach(fid => deleteApplication(fid))
+        const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id);
+        fid.forEach(fid => deleteApplication(fid));
       }
       if (response === "No")
         fetchApplications(page, pageSize, search, sortOrder);
@@ -752,27 +752,27 @@ function PatternForm({ application, onSubmit, show }) {
   }
 
   const handleSubmit = (cfg, patternName) => {
-    console.log("submitted", { cfg, patternName })
+    console.log("submitted", { cfg, patternName });
     const key = getPatternKey(cfg);
     handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-    handleExpansion(patternName)
-  }
+    handleExpansion(patternName);
+  };
 
   const handleChangeData = (cfg, patternName) => {
-    console.log("Ran Changed", { cfg, patternName })
+    console.log("Ran Changed", { cfg, patternName });
     const key = getPatternKey(cfg);
     handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-  }
+  };
 
   const handleDelete = (cfg, patternName) => {
     console.log("deleted", cfg);
-    const newCfg = schemaSet.filter(schema => schema.workload.title !== patternName)
+    const newCfg = schemaSet.filter(schema => schema.workload.title !== patternName);
     setSchemaSet(newCfg);
-  }
+  };
 
   const handleDeploy = (cfg) => {
     const deployConfig = {};
@@ -780,7 +780,7 @@ function PatternForm({ application, onSubmit, show }) {
     deployConfig.services = cfg;
     const deployConfigYaml = jsYaml.dump(deployConfig);
     setYaml(deployConfigYaml);
-  }
+  };
 
   const handleExpansion = (item) => {
     let expandedItems = [...expanded];
@@ -790,7 +790,7 @@ function PatternForm({ application, onSubmit, show }) {
       expandedItems.push(item);
     }
     setExpanded(expandedItems);
-  }
+  };
 
   function handleSubmitFinalPattern(yaml, id, name, action) {
     onSubmit(yaml, id, name, action);
@@ -800,7 +800,7 @@ function PatternForm({ application, onSubmit, show }) {
   const ns = "default";
 
   function saveCodeEditorChanges(data) {
-    setYaml(data.valueOf().getValue())
+    setYaml(data.valueOf().getValue());
   }
 
   useEffect(() => {
@@ -808,7 +808,7 @@ function PatternForm({ application, onSubmit, show }) {
   }, []);
 
   if (!schemaSet) {
-    return <CircularProgress />
+    return <CircularProgress />;
   }
 
   return (
@@ -941,6 +941,6 @@ function PatternForm({ application, onSubmit, show }) {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 }

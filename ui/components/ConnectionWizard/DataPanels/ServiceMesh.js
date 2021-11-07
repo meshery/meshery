@@ -12,8 +12,8 @@ import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress, updateK8SConfig, updateAdaptersInfo } from "../../../lib/store";
-import { pingAdapterWithNotification, handleDeleteAdapter } from "../helpers/serviceMeshes"
-import AdapterChip from "./AdapterChip"
+import { pingAdapterWithNotification, handleDeleteAdapter } from "../helpers/serviceMeshes";
+import AdapterChip from "./AdapterChip";
 
 const styles = theme => ({
 
@@ -42,11 +42,11 @@ const styles = theme => ({
     color : theme.palette.text.secondary, },
 
 
-})
+});
 
 const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
   chip : { marginRight : theme.spacing(1),
-    marginBottom : theme.spacing(1), }, })
+    marginBottom : theme.spacing(1), }, });
 
 
 const MeshAdapterChip = ({
@@ -63,15 +63,15 @@ const MeshAdapterChip = ({
         : null}
       isActive={isActive}
     />
-  )
-}
+  );
+};
 
 
 const AdapterPingSnackbarAction = (closeSnackbar) => (key) => (
   <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
     <CloseIcon />
   </IconButton>
-)
+);
 
 
 
@@ -97,7 +97,7 @@ const ServiceMeshDataPlane= ({
         autoHideDuration : 2000,
         action : AdapterPingSnackbarAction(closeSnackbar) });
     }
-  )
+  );
 
   return (
     <Grid container className={classes.infoContainer} xs={10}>
@@ -131,11 +131,11 @@ const ServiceMeshDataPlane= ({
       </Grid>
     </Grid>
 
-  )
-}
+  );
+};
 
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
   updateAdaptersInfo : bindActionCreators(updateAdaptersInfo, dispatch), });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(ServiceMeshDataPlane)))
+export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(ServiceMeshDataPlane)));

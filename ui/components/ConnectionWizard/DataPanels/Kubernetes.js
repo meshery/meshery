@@ -10,11 +10,11 @@ import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress, updateK8SConfig } from "../../../lib/store";
-import AdapterChip from "./AdapterChip"
-import { deleteKubernetesConfig, pingKubernetes } from "../helpers/kubernetesHelpers"
+import AdapterChip from "./AdapterChip";
+import { deleteKubernetesConfig, pingKubernetes } from "../helpers/kubernetesHelpers";
 import {
   successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction, showProgress, hideProgress
-} from "../helpers/common"
+} from "../helpers/common";
 
 const styles = theme => ({
 
@@ -43,7 +43,7 @@ const styles = theme => ({
     color : theme.palette.text.secondary, },
 
 
-})
+});
 
 
 const KubernetesDataPanel = ({
@@ -55,28 +55,28 @@ const KubernetesDataPanel = ({
     k8sfile : "",
     contextName : "",
     clusterConfigured : false,
-  }, })
+  }, });
 
 
   const handleKubernetesDelete = () => {
-    showProgress()
+    showProgress();
 
-    const handlerCb = () => resetKubernetesConfig()
+    const handlerCb = () => resetKubernetesConfig();
 
     deleteKubernetesConfig(
       successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed", handlerCb),
       errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config")
-    )
-  }
+    );
+  };
 
   const handleKubernetesClick = () => {
-    showProgress()
+    showProgress();
     pingKubernetes(
       successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
       errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
-    )
+    );
 
-  }
+  };
 
   return (
     <Grid container className={classes.infoContainer} xs={10}>
@@ -114,11 +114,11 @@ const KubernetesDataPanel = ({
       </Grid>
     </Grid>
 
-  )
-}
+  );
+};
 
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
   updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch), });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(KubernetesDataPanel)))
+export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(KubernetesDataPanel)));

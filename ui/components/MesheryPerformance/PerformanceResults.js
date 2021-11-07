@@ -303,9 +303,9 @@ function MesheryResults({
     },
     profileID : endpoint.split("/")[endpoint.split("/").length - 2] }).subscribe({ next : (res) => {
       // @ts-ignore
-      let result = res?.fetchResults
+      let result = res?.fetchResults;
       if (typeof result !== "undefined") {
-        updateProgress({ showProgress : false })
+        updateProgress({ showProgress : false });
 
         if (result) {
           setCount(result.total_count);

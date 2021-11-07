@@ -4,7 +4,7 @@ import { requestSubscription } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
 export default function subscribeServiceMeshEvents(dataCB, variables) {
-  let controlRes = null
+  let controlRes = null;
 
   requestSubscription(environment, {
     subscription : controlPlaneSubscription,
@@ -15,7 +15,7 @@ export default function subscribeServiceMeshEvents(dataCB, variables) {
       // decrease state change in dashboard
 
       // dataCB(res, null)
-      controlRes = res
+      controlRes = res;
     },
     onError : (error) => console.log(`An error occured:`, error),
   });
@@ -26,11 +26,11 @@ export default function subscribeServiceMeshEvents(dataCB, variables) {
       filter : variables,
     },
     onNext : (dataRes) => {
-      if (controlRes) dataCB(controlRes, dataRes)
+      if (controlRes) dataCB(controlRes, dataRes);
     },
     onError : (error) => {
-      if (controlRes) dataCB(controlRes, null)
-      console.log(`An error occured:`, error)
+      if (controlRes) dataCB(controlRes, null);
+      console.log(`An error occured:`, error);
     },
   });
 

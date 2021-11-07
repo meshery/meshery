@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import LinkIcon from '@material-ui/icons/Link';
 import { Tooltip, IconButton, TextField,Button, Grid } from '@material-ui/core';
 import { makeStyles,  MuiThemeProvider  } from '@material-ui/core/styles';
@@ -20,7 +20,7 @@ const getMuiTheme = () => createTheme({
       }
     },
   }
-})
+});
 
 
 const styles = makeStyles((theme) => ({
@@ -58,14 +58,14 @@ const URLUploader = ({ onSubmit }) => {
   };
   const validURL = (str) =>  {
     return URLValidator(str);
-  }
+  };
   const handleError = (input) => {
-    console.log(input + ' is not valid url')
-  }
+    console.log(input + ' is not valid url');
+  };
   const handleSubmit = () => {
     validURL(input) ? onSubmit(input) : handleError(input);
-    handleClose()
-  }
+    handleClose();
+  };
 
   return (
     <>
@@ -109,7 +109,7 @@ const URLUploader = ({ onSubmit }) => {
         />
       </label>
     </>
-  )
-}
+  );
+};
 
-export default URLUploader
+export default URLUploader;

@@ -13,19 +13,19 @@ import { useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../../../lib/store";
-import ReactSelectWrapper from "../../ReactSelectWrapper"
+import ReactSelectWrapper from "../../ReactSelectWrapper";
 import { handleGrafanaConfigure, handlePrometheusConfigure } from "../helpers/metrics";
 import CloseIcon from "@material-ui/icons/Close";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 
-const styles = () => ({})
+const styles = () => ({});
 
 const configurationNotificationAction = (closeSnackbar) => (key) => (
   <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
     <CloseIcon />
   </IconButton>
-)
+);
 
 const MetricsConfig = ({
   classes, componentName, prometheusScannedUrls, grafanaScannedUrls,updatePrometheusConfig, updateGrafanaConfig, closeSnackbar, enqueueSnackbar, updateProgress
@@ -33,18 +33,18 @@ const MetricsConfig = ({
 
   const  handleConfigurationSubmit = () => {
 
-    if (componentName === "Grafana") handleGrafanaConfigure(url,apiKey, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updateGrafanaConfig  )
-    if (componentName === "Prometheus") handlePrometheusConfigure(url, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updatePrometheusConfig  )
-  }
+    if (componentName === "Grafana") handleGrafanaConfigure(url,apiKey, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updateGrafanaConfig  );
+    if (componentName === "Prometheus") handlePrometheusConfigure(url, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updatePrometheusConfig  );
+  };
   const getOptions = () => {
     if (componentName === "Grafana")
-      return grafanaScannedUrls?.map((graf) => ({ label : graf, value : graf }))
+      return grafanaScannedUrls?.map((graf) => ({ label : graf, value : graf }));
     if (componentName === "Prometheus")
-      return prometheusScannedUrls?.map((prom) => ({ label : prom, value : prom }))
-  }
+      return prometheusScannedUrls?.map((prom) => ({ label : prom, value : prom }));
+  };
 
-  const [url, setUrl] = useState()
-  const [apiKey, setApiKey] = useState("")
+  const [url, setUrl] = useState();
+  const [apiKey, setApiKey] = useState("");
 
 
 
@@ -118,11 +118,11 @@ const MetricsConfig = ({
       </Grid>
       }
     </>
-  )
-}
+  );
+};
 
 const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
   updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(MetricsConfig)))
+export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(MetricsConfig)));

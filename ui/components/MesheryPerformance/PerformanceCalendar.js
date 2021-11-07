@@ -14,7 +14,7 @@ import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import MesheryChart from "../MesheryChart";
 import { Paper } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
-import fetchAllResults from '../graphql/queries/FetchAllResultsQuery'
+import fetchAllResults from '../graphql/queries/FetchAllResultsQuery';
 
 const localizer = momentLocalizer(moment);
 

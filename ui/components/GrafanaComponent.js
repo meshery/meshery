@@ -60,7 +60,7 @@ const getGrafanaBoards = (self, cb = () => {}) => {
           grafanaBoards : result,
           selectedBoardsConfigs,
         }, });
-        cb()
+        cb();
       }
     },
     self.handleError("There was an error communicating with Grafana")
@@ -174,7 +174,7 @@ class GrafanaComponent extends Component {
               next : (res) => {
                 res?.addonsState?.forEach((addon) => {
                   if (addon.name === "grafana" && self.state.grafanaURL === "") {
-                    self.setState({ grafanaURL : "http://" + addon.endpoint })
+                    self.setState({ grafanaURL : "http://" + addon.endpoint });
                     submitGrafanaConfigure(self, () => self.setState({ selectedBoardsConfigs : self.state.grafanaBoards?.[2]
                       ? [self.state.grafanaBoards[2]]
                       : [] }));
@@ -186,7 +186,7 @@ class GrafanaComponent extends Component {
           }
         },
         self.handleError("There was an error communicating with grafana config")
-      )
+      );
   }
 
   handleChange = (name) => (event) => {

@@ -207,12 +207,12 @@ class DashboardComponent extends React.Component {
   }
 
   componentWillUnmount = () => {
-    this._isMounted = false
-    subscriptionClient.close()
+    this._isMounted = false;
+    subscriptionClient.close();
   }
 
   componentDidMount = () => {
-    this._isMounted = true
+    this._isMounted = true;
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
 
@@ -240,7 +240,7 @@ class DashboardComponent extends React.Component {
           fetchAvailableAddons(selector).subscribe({ next : (res) => {
             res?.addonsState?.forEach((addon) => {
               if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-                self.setState({ prometheusURL : "http://" + addon.endpoint })
+                self.setState({ prometheusURL : "http://" + addon.endpoint });
                 submitPrometheusConfigure(self, () => console.log("Prometheus added"));
               }
             });
@@ -263,7 +263,7 @@ class DashboardComponent extends React.Component {
           fetchAvailableAddons(selector).subscribe({ next : (res) => {
             res?.addonsState?.forEach((addon) => {
               if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-                self.setState({ grafanaURL : "http://" + addon.endpoint })
+                self.setState({ grafanaURL : "http://" + addon.endpoint });
                 submitGrafanaConfigure(self, () => {
                   self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
                   console.log("Grafana added");
@@ -282,10 +282,10 @@ class DashboardComponent extends React.Component {
     fetchAvailableAddons(selector).subscribe({ next : (res) => {
       res?.addonsState?.forEach((addon) => {
         if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-          self.setState({ prometheusURL : "http://" + addon.endpoint })
+          self.setState({ prometheusURL : "http://" + addon.endpoint });
           submitPrometheusConfigure(self, () => console.log("Prometheus added"));
         } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-          self.setState({ grafanaURL : "http://" + addon.endpoint })
+          self.setState({ grafanaURL : "http://" + addon.endpoint });
           submitGrafanaConfigure(self, () => {
             self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
             console.log("Grafana added");
@@ -385,12 +385,12 @@ class DashboardComponent extends React.Component {
       if (!mesh?.members?.length) {
         return;
       }
-      let proxies = []
+      let proxies = [];
 
       if (Array.isArray(dataPlanesData?.dataPlanesState)){
-        const dataplane = dataPlanesData.dataPlanesState.find(mesh_ => mesh_.name === mesh.name)
+        const dataplane = dataPlanesData.dataPlanesState.find(mesh_ => mesh_.name === mesh.name);
 
-        if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies
+        if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies;
       }
       const processedMember = mesh?.members?.map((member) => {
         if (namespaces[mesh.name]) {
@@ -401,17 +401,17 @@ class DashboardComponent extends React.Component {
 
         // retrieve data planes according to mesh name
         if (proxies.length > 0){
-          const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name)
+          const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name);
 
           if (controlPlaneMemberProxies.length > 0){
             member = {
               ...member,
               data_planes : controlPlaneMemberProxies
-            }
+            };
           }
         }
 
-        return member
+        return member;
       });
       namespaces[mesh.name] = [...namespaces[mesh.name]];
       activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
@@ -419,7 +419,7 @@ class DashboardComponent extends React.Component {
       return {
         ...mesh,
         members : processedMember
-      }
+      };
     });
 
     self.setState({ meshScan : processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0) });
@@ -694,14 +694,14 @@ class DashboardComponent extends React.Component {
                                       </div>
                                     )}
                                   </div>
-                                )
+                                );
                               })
                             ) : "No data plane is running"}
                         >
                           <TableCell align="center">{component?.data_planes?.length || 0}</TableCell>
                         </Tooltip>
                       </TableRow>
-                    )
+                    );
                   })}
               </TableBody>
             </Table>

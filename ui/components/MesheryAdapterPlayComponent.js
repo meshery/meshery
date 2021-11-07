@@ -51,7 +51,7 @@ import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatu
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import ReactSelectWrapper from "./ReactSelectWrapper";
-import MesheryMetrics from "./MesheryMetrics"
+import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
   root : { backgroundColor : "#eaeff1", },
@@ -174,42 +174,42 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   componentDidMount() {
     const self = this;
-    const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
-    const variables = { serviceMesh : meshname }
+    const meshname = self.mapAdapterNameToMeshName(self.activeMesh);
+    const variables = { serviceMesh : meshname };
     subscribeMeshSyncStatusEvents(res => {
       if (res.meshsync?.error) {
-        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
-        return
+        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
+        return;
       }
-    })
-    subscribeOperatorStatusEvents(self.setOperatorState)
-    subscribeAddonStatusEvents(self.setAddonsState, variables)
+    });
+    subscribeOperatorStatusEvents(self.setOperatorState);
+    subscribeAddonStatusEvents(self.setAddonsState, variables);
 
     fetchAvailableAddons(variables)
       .subscribe({ next : res => {
-        self.setAddonsState(res)
+        self.setAddonsState(res);
       },
-      error : (err) => console.log("error at addon fetch: " + err), })
+      error : (err) => console.log("error at addon fetch: " + err), });
     fetchAvailableNamespaces()
       .subscribe({ next : res => {
-        let namespaces = []
+        let namespaces = [];
         res?.namespaces?.map(ns => {
           namespaces.push(
             { value : ns?.namespace,
               label : ns?.namespace }
-          )
-        })
+          );
+        });
         if (namespaces.length === 0) {
           namespaces.push({ value : "default",
-            label : "default" })
+            label : "default" });
         }
         namespaces.sort((a, b) => (
           a.value > b.value ? 1
             : -1
-        ))
-        self.setState({ namespaceList : namespaces })
+        ));
+        self.setState({ namespaceList : namespaces });
       },
-      error : (err) => console.log("error at namespace fetch: " + err), })
+      error : (err) => console.log("error at namespace fetch: " + err), });
   }
 
   mapAdapterNameToMeshName(name) {
@@ -220,18 +220,18 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   setAddonsState = (data) => {
     const self = this;
-    const meshname = self.activeMesh
-    const localState = {}
+    const meshname = self.activeMesh;
+    const localState = {};
     data?.addonsState?.forEach(addon => {
       if (addon.owner === meshname) {
         const name = addon.name !== "jaeger-collector" ? addon.name
-          : "jaeger"
-        localState[`${name}-addon`] = true
+          : "jaeger";
+        localState[`${name}-addon`] = true;
       }
-    })
+    });
     self.setState(() => {
-      return { addonSwitchGroup : localState }
-    })
+      return { addonSwitchGroup : localState };
+    });
   }
 
   handleChange = (name, isDelete = false) => {

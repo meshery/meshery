@@ -52,7 +52,7 @@ class PromptComponent extends React.Component {
       title : "",
       subtitle : "",
       options : []
-    }
+    };
     this.promiseInfo = {};
   }
 

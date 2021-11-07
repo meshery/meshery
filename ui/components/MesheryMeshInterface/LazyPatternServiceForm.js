@@ -9,7 +9,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./PatternServiceForm";
-import { getPatternServiceName as getItemName, getPatternServiceID as getItemID, getPatternServiceType } from "./helpers"
+import { getPatternServiceName as getItemName, getPatternServiceID as getItemID, getPatternServiceType } from "./helpers";
 
 const useStyles = makeStyles((theme) => ({
   root : {
@@ -26,7 +26,7 @@ async function fetchJSONSchema(name, type, id) {
   const url = `/api/oam/${type}/${name}/${id}`;
 
   const res = await promisifiedDataFetch(url);
-  return JSON.parse(res?.oam_ref_schema) || {}
+  return JSON.parse(res?.oam_ref_schema) || {};
 }
 
 export default function LazyPatternServiceForm(props) {
@@ -59,7 +59,7 @@ export default function LazyPatternServiceForm(props) {
         return schema;
       }));
 
-      console.log({ workloadSchema, traitsSchemas })
+      console.log({ workloadSchema, traitsSchemas });
 
       setSchemaSet({
         workload : workloadSchema,
@@ -67,7 +67,7 @@ export default function LazyPatternServiceForm(props) {
         type : getPatternServiceType(props?.schemaSet?.workload),
       });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -88,8 +88,8 @@ export default function LazyPatternServiceForm(props) {
 }
 
 function LazyAccordionDetails(props) {
-  if (!props.expanded) return <AccordionDetails />
+  if (!props.expanded) return <AccordionDetails />;
 
   // LEE: This behavior is more like what we need - https://codesandbox.io/s/upbeat-tesla-uchsb?file=/src/MyAccordion.js
-  return <AccordionDetails style={{ height : "50rem", overflow : "auto" }}>{props.children}</AccordionDetails>
+  return <AccordionDetails style={{ height : "50rem", overflow : "auto" }}>{props.children}</AccordionDetails>;
 }

@@ -1,32 +1,32 @@
 /* eslint-disable no-unused-vars */
-import GrafanaIcon from "../icons/GrafanaIcon"
-import PrometheusIcon from "../icons/PrometheusIcon"
+import GrafanaIcon from "../icons/GrafanaIcon";
+import PrometheusIcon from "../icons/PrometheusIcon";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import MetricsConfig from "../ConfigComponents/Metrics.js"
-import ServiceCard from "../ServiceCard.js"
-import { Grid } from "@material-ui/core"
-import VerticalCarousel from "../../VerticalCarousel/VerticalCarousel"
-import MetricsDataPanel from "../DataPanels/Metrics"
+import MetricsConfig from "../ConfigComponents/Metrics.js";
+import ServiceCard from "../ServiceCard.js";
+import { Grid } from "@material-ui/core";
+import VerticalCarousel from "../../VerticalCarousel/VerticalCarousel";
+import MetricsDataPanel from "../DataPanels/Metrics";
 import {
   createRef, useEffect, useRef, useState
-} from "react"
+} from "react";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../../../lib/store.js";
-import { fetchPromGrafanaScanData, verifyGrafanaConnection, verifyPrometheusConnection } from "../helpers/metrics"
-import { ScrollIndicator } from "../ScrollIndicator"
+import { fetchPromGrafanaScanData, verifyGrafanaConnection, verifyPrometheusConnection } from "../helpers/metrics";
+import { ScrollIndicator } from "../ScrollIndicator";
 
 const MetricsScreen = ({ grafana, prometheus }) => {
 
-  const [isGrafanaConnected, setIsGrafanaConnected] = useState(false)
-  const [isPrometheusConnected, setIsPrometheusConnected] = useState(false)
-  const [metricsScanUrls, setMetricsScanUrls] = useState({ grafana : [], prometheus : [] })
+  const [isGrafanaConnected, setIsGrafanaConnected] = useState(false);
+  const [isPrometheusConnected, setIsPrometheusConnected] = useState(false);
+  const [metricsScanUrls, setMetricsScanUrls] = useState({ grafana : [], prometheus : [] });
   const [activeIndex, setActiveIndex] = useState(0);
-  const sliderRef = createRef()
+  const sliderRef = createRef();
 
   const handleIndicatorClick = (index) => () => {
-    sliderRef?.current?.slickGoTo(index,false)
-    setActiveIndex(index)
-  }
+    sliderRef?.current?.slickGoTo(index,false);
+    setActiveIndex(index);
+  };
 
   const metricsComponents = [
     { name : "Prometheus",
@@ -36,59 +36,59 @@ const MetricsScreen = ({ grafana, prometheus }) => {
       logoComponent : GrafanaIcon,
       configComp : <MetricsConfig componentName="Grafana" grafanaScannedUrls={metricsScanUrls.grafana}/> }
 
-  ]
+  ];
 
-  const handleAfterSlideChange = (curSlide) => setActiveIndex(curSlide)
+  const handleAfterSlideChange = (curSlide) => setActiveIndex(curSlide);
 
   const getConnectionStatus = (name) => {
-    if (name === "Grafana") return isGrafanaConnected
-    if (name === "Prometheus") return isPrometheusConnected
-  }
+    if (name === "Grafana") return isGrafanaConnected;
+    if (name === "Prometheus") return isPrometheusConnected;
+  };
 
   useEffect(() => {
-    console.log("Prometheus effect", prometheus)
+    console.log("Prometheus effect", prometheus);
     verifyPrometheusConnection(prometheus.prometheusURL)
       .then(res => {
-        console.log(res)
-        if ( typeof res !== "undefined") setIsPrometheusConnected(true)
-        else setIsPrometheusConnected(false)
+        console.log(res);
+        if ( typeof res !== "undefined") setIsPrometheusConnected(true);
+        else setIsPrometheusConnected(false);
       })
       .catch(err => {
-        setIsPrometheusConnected(false)
-        console.log(err)
-      })
+        setIsPrometheusConnected(false);
+        console.log(err);
+      });
 
-  }, [prometheus.ts])
+  }, [prometheus.ts]);
 
   useEffect(() => {
-    console.log("Greafana effect", grafana)
+    console.log("Greafana effect", grafana);
     verifyGrafanaConnection(grafana.grafanaURL)
       .then(res => {
-        if ( typeof res !== "undefined") setIsGrafanaConnected(true)
-        else setIsGrafanaConnected(false)
+        if ( typeof res !== "undefined") setIsGrafanaConnected(true);
+        else setIsGrafanaConnected(false);
       })
-      .catch(err => setIsGrafanaConnected(false))
-  }, [grafana.ts])
+      .catch(err => setIsGrafanaConnected(false));
+  }, [grafana.ts]);
 
   useEffect(() => {
     fetchPromGrafanaScanData()
       .then(res => setMetricsScanUrls(res))
-      .catch(console.log)
+      .catch(console.log);
 
-  },[])
+  },[]);
 
 
 
   const scrollItems = metricsComponents.map(metricComp => {
-    if (metricComp.name === "Grafana") return { activeIcon : "/static/img/grafana_icon.svg", inactiveIcon : "/static/img/grafana_icon.svg" }
-    if (metricComp.name === "Prometheus") return { activeIcon : "/static/img/prometheus_logo_orange_circle.svg",inactiveIcon : "/static/img/prometheus_logo_orange_circle.svg" }
-  })
+    if (metricComp.name === "Grafana") return { activeIcon : "/static/img/grafana_icon.svg", inactiveIcon : "/static/img/grafana_icon.svg" };
+    if (metricComp.name === "Prometheus") return { activeIcon : "/static/img/prometheus_logo_orange_circle.svg",inactiveIcon : "/static/img/prometheus_logo_orange_circle.svg" };
+  });
 
   const itemsToBeRendered = metricsComponents.map(comp => {
     return (
       <ServiceCard serviceInfo={comp} isConnected={getConnectionStatus(comp.name)} />
-    )
-  })
+    );
+  });
 
 
   return (
@@ -108,8 +108,8 @@ const MetricsScreen = ({ grafana, prometheus }) => {
         />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
 const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
   updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch), });
@@ -121,5 +121,5 @@ const mapStateToProps = (state) => {
     prometheus };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MetricsScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(MetricsScreen);
 

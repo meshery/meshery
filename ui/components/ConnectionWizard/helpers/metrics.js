@@ -7,17 +7,17 @@ export const verifyGrafanaConnection = (grafanaUrl) => {
       pingGrafana(
         result => res("Grafana connected !"),
         error => rej("Grafana not connected ! " + error)
-      )
-      return
+      );
+      return;
     }
-    rej("Grafana not connected! "+ "Url not found")
-  })
-}
+    rej("Grafana not connected! "+ "Url not found");
+  });
+};
 
 
 export const pingGrafanaWithNotification = (updateProgress, action, enqueueSnackbar) => {
 
-  updateProgress({ showProgress : true })
+  updateProgress({ showProgress : true });
 
   const successCb = (result) => {
     updateProgress({ showProgress : false });
@@ -26,17 +26,17 @@ export const pingGrafanaWithNotification = (updateProgress, action, enqueueSnack
         autoHideDuration : 2000,
         action });
     }
-  }
+  };
 
   const errorCb = (error) => {
     updateProgress({ showProgress : false });
     enqueueSnackbar("Grafana could not be pinged! : "+error, { variant : "error",
       autoHideDuration : 2000,
       action });
-  }
+  };
 
-  pingGrafana(successCb, errorCb)
-}
+  pingGrafana(successCb, errorCb);
+};
 
 export const pingGrafana = (successCb, errorCb) =>
   dataFetch(
@@ -48,23 +48,23 @@ export const pingGrafana = (successCb, errorCb) =>
   );
 
 export const verifyPrometheusConnection =  (prometheusUrl) => {
-  console.log(prometheusUrl)
+  console.log(prometheusUrl);
   return new Promise((res, rej) => {
     if (prometheusUrl !== ""){
       pingPrometheus(
         result => res("Prometheus connected !"),
         error => rej("Prometheus not connected ! " + error)
-      )
-      return
+      );
+      return;
     } else
-      rej("Prometheus not connected! "+ "Url not found")
-  })
-}
+      rej("Prometheus not connected! "+ "Url not found");
+  });
+};
 
 
 export const pingPrometheusWithNotification = (updateProgress, action, enqueueSnackbar) => {
 
-  updateProgress({ showProgress : true })
+  updateProgress({ showProgress : true });
 
   const successCb = (result) => {
     updateProgress({ showProgress : false });
@@ -73,17 +73,17 @@ export const pingPrometheusWithNotification = (updateProgress, action, enqueueSn
         autoHideDuration : 2000,
         action });
     }
-  }
+  };
 
   const errorCb = (error) => {
     updateProgress({ showProgress : false });
     enqueueSnackbar("Prometheus could not be pinged! : "+error, { variant : "error",
       autoHideDuration : 2000,
       action });
-  }
+  };
 
-  pingPrometheus(successCb, errorCb)
-}
+  pingPrometheus(successCb, errorCb);
+};
 
 export const pingPrometheus = (successCb, errorCb) =>
   dataFetch(
@@ -105,26 +105,26 @@ export const fetchPromGrafanaScanData = () => {
         credentials : "include",
       },
       (result) => {
-        let metricsUrls = { grafana : [], prometheus : [] }
+        let metricsUrls = { grafana : [], prometheus : [] };
         if (!result) res(metricsUrls);
-        console.log()
+        console.log();
 
         if (Array.isArray(result.prometheus)) {
           const urls = extractURLFromScanData(result.prometheus);
-          metricsUrls.prometheus = urls
+          metricsUrls.prometheus = urls;
         }
 
         if (Array.isArray(result.grafana)) {
           const urls = extractURLFromScanData(result.grafana);
-          metricsUrls.grafana = urls
+          metricsUrls.grafana = urls;
         }
-        res(metricsUrls)
+        res(metricsUrls);
       },
       (err) => rej("Unable to fetch grafana and prometheus scan data:"+err)
-    )
+    );
   }
-  )
-}
+  );
+};
 
 /**
    * extractURLFromScanData scans the ingress urls from the
@@ -150,9 +150,9 @@ const extractURLFromScanData = (scannedData) => {
             // IP is set for load-balancer ingress points that are IP based (typically GCE or OpenStack load-balancers)
             let address = lbdata.ip || lbdata.hostname;
             if (address) result.push(`${protocol}://${address}:${port}`);
-          })
+          });
         }
-      })
+      });
     }
 
     // Add clusterip based url
@@ -164,13 +164,13 @@ const extractURLFromScanData = (scannedData) => {
         data.spec.ports.forEach(({ port }) => {
           if (port === 443) protocol = "https";
           result.push(`${protocol}://${data.spec.clusterIP}:${port}`);
-        })
+        });
       }
     }
-  })
+  });
 
-  return result
-}
+  return result;
+};
 
 
 
@@ -217,8 +217,8 @@ export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress
       }
     }
 
-  )
-}
+  );
+};
 
 export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueueSnackbar, action, updatePrometheusConfig) => {
 
@@ -262,8 +262,8 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
       }
     }
 
-  )
-}
+  );
+};
 
 export const deleteMetricsComponentConfig = (componentName) => (successCb, errorCb) => dataFetch(
     `/api/telemetry/metrics${componentName === 'Grafana' ? "/grafana"
@@ -273,7 +273,7 @@ export const deleteMetricsComponentConfig = (componentName) => (successCb, error
       credentials : "include", },
     successCb,
     errorCb
-)
+);
 
 
 

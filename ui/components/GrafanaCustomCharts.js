@@ -93,7 +93,7 @@ class GrafanaCustomCharts extends Component {
           className={classes.chip}
           variant="outlined"
         />
-      )
+      );
     }
     render() {
       const {

@@ -1,4 +1,4 @@
-import dataFetch from "../../../lib/data-fetch"
+import dataFetch from "../../../lib/data-fetch";
 
 /**
   * fetch the adapters that are available
@@ -22,14 +22,14 @@ export const fetchAvailableAdapters = () => {
             name : res.name,
             version : res.version
           }));
-          res(options)
+          res(options);
         }
       },
 
       (err) => rej(err)
 
     )
-  )
+  );
 };
 
 
@@ -42,17 +42,17 @@ export const pingAdapterWithNotification = (updateProgress, enqueueSnackbar, act
         autoHideDuration : 2000,
         action });
     }
-  }
+  };
 
   const errorCb = (err) => {
     updateProgress({ showProgress : false });
     enqueueSnackbar("Adapter ping failed! : "+err, { variant : "error",
       autoHideDuration : 2000,
       action });
-  }
+  };
 
-  pingAdapter(adapterLoc, successCb, errorCb)
-}
+  pingAdapter(adapterLoc, successCb, errorCb);
+};
 
 
 export const pingAdapter = (adapterLoc, successCb, errorCb) => {
@@ -64,7 +64,7 @@ export const pingAdapter = (adapterLoc, successCb, errorCb) => {
       successCb,
       errorCb
   );
-}
+};
 
 export const configureAdapterWithNotification = (enqueueSnackbar, updateProgress, action, adapterLocation, updateAdaptersInfo) => {
 
@@ -79,17 +79,17 @@ export const configureAdapterWithNotification = (enqueueSnackbar, updateProgress
       });
       updateAdaptersInfo({ meshAdapters : result });
     }
-  }
+  };
 
   const errorCb = (err) => {
     updateProgress({ showProgress : false });
     enqueueSnackbar("Adapter configuration failed! : "+err, { variant : "error",
       autoHideDuration : 2000,
       action });
-  }
+  };
 
-  configureAdapter(successCb, errorCb, adapterLocation)
-}
+  configureAdapter(successCb, errorCb, adapterLocation);
+};
 
 export const configureAdapter = (successCb, errorCb, adapterLocation) => {
 
@@ -111,7 +111,7 @@ export const configureAdapter = (successCb, errorCb, adapterLocation) => {
     successCb,
     errorCb
   );
-}
+};
 
 
 export const handleDeleteAdapter =  (successCb, errorCb) => (adapterLoc) => {

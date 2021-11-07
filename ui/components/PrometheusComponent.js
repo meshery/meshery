@@ -69,7 +69,7 @@ export const submitPrometheusConfigure = (self, cb = () => {}) => {
         self.setState({ prometheusConfigSuccess : true });
         self.props.updatePrometheusConfig({ prometheus : { prometheusURL,
           selectedPrometheusBoardsConfigs, }, });
-        cb()
+        cb();
       }
     },
     self.handleError
@@ -121,7 +121,7 @@ class PrometheusComponent extends Component {
               next : (res) => {
                 res?.addonsState?.forEach((addon) => {
                   if (addon.name === "prometheus" && self.state.prometheusURL === "") {
-                    self.setState({ prometheusURL : "http://" + addon.endpoint })
+                    self.setState({ prometheusURL : "http://" + addon.endpoint });
                     submitPrometheusConfigure(self);
                   }
                 });
@@ -131,7 +131,7 @@ class PrometheusComponent extends Component {
           }
         },
         self.handleError
-      )
+      );
   }
 
   static getDerivedStateFromProps(props, state) {

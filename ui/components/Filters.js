@@ -59,7 +59,7 @@ const useStyles = makeStyles(() => ({
     }
   },
 
-}))
+}));
 
 function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
@@ -94,7 +94,7 @@ function TooltipIcon({ children, onClick, title }) {
         {children}
       </IconButton>
     </Tooltip>
-  )
+  );
 }
 
 function YAMLEditor({ filter, onClose, onSubmit }) {
@@ -104,7 +104,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
-  }
+  };
 
   return (
     <Dialog onClose={onClose} aria-labelledby="filter-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
@@ -206,7 +206,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         },
       }
     }
-  })
+  });
 
   const ACTION_TYPES = {
     FETCH_FILTERS : {
@@ -326,12 +326,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
 
     if (type === "upload" || type === "urlupload") {
-      let body = { save : true }
+      let body = { save : true };
       if (type === "upload") {
-        body = JSON.stringify({ ...body, filter_data : { filter_data : data } })
+        body = JSON.stringify({ ...body, filter_data : { filter_data : data } });
       }
       if (type === "urlupload") {
-        body = JSON.stringify({ ...body, url : data })
+        body = JSON.stringify({ ...body, url : data });
       }
       dataFetch(
         `/api/filter`,
@@ -476,7 +476,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
       subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} filter${count > 1 ? "s" : '' }?`,
 
-      options : ["Yes", "No"], })
+      options : ["Yes", "No"], });
     return response;
   }
 
@@ -531,8 +531,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onRowsDelete : async function handleDelete(row) {
-      let response  = await showmodal(Object.keys(row.lookup).length)
-      console.log(response)
+      let response  = await showmodal(Object.keys(row.lookup).length);
+      console.log(response);
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));

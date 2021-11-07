@@ -99,10 +99,10 @@ const styles = () => ({
 
 const ServiceSwitch = ({ serviceInfo, classes,isConnected }) => {
 
-  const ServiceIcon = serviceInfo.logoComponent
-  const ConfigComponent = serviceInfo.configComp
+  const ServiceIcon = serviceInfo.logoComponent;
+  const ConfigComponent = serviceInfo.configComp;
 
-  const showConfigComponent = () => !isConnected
+  const showConfigComponent = () => !isConnected;
 
   return (
     <Container className={ classes.cardContainer} key={ serviceInfo.name }>
@@ -136,8 +136,8 @@ const ServiceSwitch = ({ serviceInfo, classes,isConnected }) => {
         </CardContent>
       </Card>
     </Container>
-  )
-}
+  );
+};
 
 ServiceSwitch.propTypes = { serviceInfo : PropTypes.object.isRequired, };
 

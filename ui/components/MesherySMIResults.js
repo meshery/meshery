@@ -93,8 +93,8 @@ class MesherySMIResults extends Component {
       const smi_resultsForDisplay = [];
       if (smi_results&&smi_results.results) {
         smi_results.results.map((val) => {
-          smi_resultsForDisplay.push([val.id ,val.date,val.mesh_name,val.mesh_version,val.passing_percentage,val.status])
-        })
+          smi_resultsForDisplay.push([val.id ,val.date,val.mesh_name,val.mesh_version,val.passing_percentage,val.status]);
+        });
       }
 
       const smi_columns = [
@@ -110,7 +110,7 @@ class MesherySMIResults extends Component {
                   <b>{column.label}</b>
                 </TableCell>
 
-              )
+              );
             },
             customBodyRender : (value) => (
               <Tooltip title={value} placement="top">
@@ -130,7 +130,7 @@ class MesherySMIResults extends Component {
                   <b>{column.label}</b>
                 </TableCell>
 
-              )
+              );
             },
             customBodyRender : (value) => (
               <Moment format="LLLL">{value}</Moment>
@@ -148,7 +148,7 @@ class MesherySMIResults extends Component {
                   <b>{column.label}</b>
                 </TableCell>
 
-              )
+              );
             },
           }, },
         { name : 'Service Mesh Version',
@@ -163,7 +163,7 @@ class MesherySMIResults extends Component {
                   <b>{column.label}</b>
                 </TableCell>
 
-              )
+              );
             },
           }, },
         { name : '% Passed',
@@ -178,7 +178,7 @@ class MesherySMIResults extends Component {
                   <b>{column.label}</b>
                 </TableCell>
 
-              )
+              );
             },
           }, },
         { name : 'status',
@@ -193,11 +193,11 @@ class MesherySMIResults extends Component {
                   <b>{column.label}</b>
                 </TableCell>
 
-              )
+              );
             },
           }, }
 
-      ]
+      ];
 
       const smi_options = {
         sort : !(user && user.user_id === 'meshery'),
@@ -211,11 +211,11 @@ class MesherySMIResults extends Component {
         print : false,
         download : false,
         renderExpandableRow : (rowData, rowMeta) => {
-          const column = ["Specification","Assertions", "Time","Version", "Capability", "Result", "Reason"]
+          const column = ["Specification","Assertions", "Time","Version", "Capability", "Result", "Reason"];
           const data = smi_results.results[rowMeta.dataIndex].more_details.map((val) => {
-            return [val.smi_specification,val.assertions,val.time,val.smi_version,val.capability,val.status,val.reason]
-          })
-          const colSpan = rowData.length + 1
+            return [val.smi_specification,val.assertions,val.time,val.smi_version,val.capability,val.status,val.reason];
+          });
+          const colSpan = rowData.length + 1;
           return (
             <TableRow>
               <TableCell colSpan={colSpan}>
@@ -231,10 +231,10 @@ class MesherySMIResults extends Component {
                         <TableRow >
                           {row.map(val => {
                             if (val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i)!=null) {
-                              const time = val.split(/m|s/)
-                              return <TableCell colSpan={colSpan}>{time[0]+"m " + parseFloat(time[1]).toFixed(1) + "s"}</TableCell>
+                              const time = val.split(/m|s/);
+                              return <TableCell colSpan={colSpan}>{time[0]+"m " + parseFloat(time[1]).toFixed(1) + "s"}</TableCell>;
                             } else {
-                              return <TableCell colSpan={colSpan}>{val}</TableCell>
+                              return <TableCell colSpan={colSpan}>{val}</TableCell>;
                             }
                           }
                           )}
@@ -289,7 +289,7 @@ class MesherySMIResults extends Component {
               break;
           }
         },
-      }
+      };
 
       return (
         <MUIDataTable title={<div className={classes.tableHeader}>Service Mesh Interface Conformance Results</div>} data={smi_resultsForDisplay} columns={smi_columns} options={smi_options} />

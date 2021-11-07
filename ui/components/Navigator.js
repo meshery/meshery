@@ -399,7 +399,7 @@ const categories = [
   },
 ];
 
-const ExternalLinkIcon = <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />
+const ExternalLinkIcon = <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />;
 
 const externlinks = [
   {
@@ -514,12 +514,12 @@ class Navigator extends React.Component {
   onClickCallback(onClickCallback){
     switch (onClickCallback){
       case 0:
-        return this.toggleMiniDrawer(false)
+        return this.toggleMiniDrawer(false);
       case 1:
-        return this.toggleMiniDrawer(true)
+        return this.toggleMiniDrawer(true);
       default:
         // by default, nothing happened
-        return undefined
+        return undefined;
     }
   }
 
@@ -690,10 +690,10 @@ class Navigator extends React.Component {
   toggleItemCollapse = (id) => {
     const activeItems = [...this.state.openItems];
     if (this.state.openItems.includes(id)) {
-      this.setState({ openItems : activeItems.filter(item => item !== id) })
+      this.setState({ openItems : activeItems.filter(item => item !== id) });
     } else {
       activeItems.push(id);
-      this.setState({ openItems : activeItems })
+      this.setState({ openItems : activeItems });
     }
   }
 

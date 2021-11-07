@@ -1,7 +1,7 @@
 import { NoSsr } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 
-import bb, { gauge } from 'billboard.js'
+import bb, { gauge } from 'billboard.js';
 
 const useStyles = makeStyles({
   '@global' : { '.bb-chart-arcs-background' : { fill : '#e0e0e0',

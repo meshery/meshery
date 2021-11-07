@@ -1,7 +1,7 @@
-import React from 'react'
-import Link from 'next/link'
-import { makeStyles, Button, Typography, Container } from '@material-ui/core/'
-import CheckCircleIcon from '@material-ui/icons/CheckCircle'
+import React from 'react';
+import Link from 'next/link';
+import { makeStyles, Button, Typography, Container } from '@material-ui/core/';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 const useStyles = makeStyles(() => ({
   container : {
@@ -46,10 +46,10 @@ const useStyles = makeStyles(() => ({
       color : 'white',
     },
   },
-}))
+}));
 
 const ConfigurationDoneScreen = ({ handleUserClick }) => {
-  const classes = useStyles()
+  const classes = useStyles();
   return (
     <Container className={classes.container}>
       <CheckCircleIcon className={classes.checkCircleIcon} />
@@ -74,7 +74,7 @@ const ConfigurationDoneScreen = ({ handleUserClick }) => {
         Start Over
       </Button>
     </Container>
-  )
-}
+  );
+};
 
-export default ConfigurationDoneScreen
+export default ConfigurationDoneScreen;

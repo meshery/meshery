@@ -1,17 +1,17 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/display-name */
-import LinkerdIcon from "../icons/LinkerdIcon.js"
+import LinkerdIcon from "../icons/LinkerdIcon.js";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import ServiceMeshConfig from "../ConfigComponents/ServiceMesh"
-import ServiceCard from "../ServiceCard"
-import { Grid } from "@material-ui/core"
-import VerticalCarousel from "../../VerticalCarousel/VerticalCarousel"
-import ServiceMeshDataPanel from "../DataPanels/ServiceMesh"
-import { createRef, useEffect, useState } from "react"
-import { fetchAvailableAdapters } from "../helpers/serviceMeshes"
+import ServiceMeshConfig from "../ConfigComponents/ServiceMesh";
+import ServiceCard from "../ServiceCard";
+import { Grid } from "@material-ui/core";
+import VerticalCarousel from "../../VerticalCarousel/VerticalCarousel";
+import ServiceMeshDataPanel from "../DataPanels/ServiceMesh";
+import { createRef, useEffect, useState } from "react";
+import { fetchAvailableAdapters } from "../helpers/serviceMeshes";
 import { updateProgress } from "../../../lib/store.js";
-import { ScrollIndicator } from "../ScrollIndicator"
+import { ScrollIndicator } from "../ScrollIndicator";
 
 
 
@@ -19,27 +19,27 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
 
 
 
-  const [availableAdapters, setAvailableAdapters] = useState([])
-  const [activeAdapters, setActiveAdapters] = useState(meshAdapters)
+  const [availableAdapters, setAvailableAdapters] = useState([]);
+  const [activeAdapters, setActiveAdapters] = useState(meshAdapters);
   const [activeIndex, setActiveIndex] = useState(0);
-  const sliderRef = createRef()
+  const sliderRef = createRef();
 
 
-  const handleAfterSlideChange = (curSlide) => setActiveIndex(curSlide)
+  const handleAfterSlideChange = (curSlide) => setActiveIndex(curSlide);
 
   const isAdapterActive = (adapterLoc) => {
-    let isActive = false
+    let isActive = false;
     activeAdapters.forEach(adapter => {
-      if (adapter.adapter_location === adapterLoc) isActive = true
-    })
-    return isActive
-  }
+      if (adapter.adapter_location === adapterLoc) isActive = true;
+    });
+    return isActive;
+  };
 
   const AdapterIcon = (name) => ({ isActive }) => {
 
     let image = "/static/img/" + name?.toLowerCase() + ".svg";
-    return  <img style={{ height : "4rem", width : "4rem" }} src={isActive ? image :"/static/img/meshery-logo/meshery-white.png"} />
-  }
+    return  <img style={{ height : "4rem", width : "4rem" }} src={isActive ? image :"/static/img/meshery-logo/meshery-white.png"} />;
+  };
 
   const serviceMeshComponents = availableAdapters.map(adapter => ({
     name : adapter.name
@@ -48,18 +48,18 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
     logoComponent : AdapterIcon(adapter.name),
     configComp : <ServiceMeshConfig adapterLoc={adapter.value}/>,
     adapterInfo : adapter
-  }))
+  }));
 
 
 
-  const scrollItems = serviceMeshComponents.map(smesh => ({ activeIcon : "/static/img/meshery-logo.png", inactiveIcon : "/static/img/meshery-logo/meshery-white.png" }))
+  const scrollItems = serviceMeshComponents.map(smesh => ({ activeIcon : "/static/img/meshery-logo.png", inactiveIcon : "/static/img/meshery-logo/meshery-white.png" }));
 
 
   const itemsToBeRendered = serviceMeshComponents.map(comp => {
     return (
       <ServiceCard serviceInfo={comp} isConnected={isAdapterActive(comp.adapterInfo.value)} />
-    )
-  })
+    );
+  });
 
 
   useEffect(() => {
@@ -67,20 +67,20 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
       .then(res => {
         setAvailableAdapters(res.sort((fe,se) => isAdapterActive(se.value)
           ? 1
-          : -1))
+          : -1));
       })
-      .catch( err => alert(err))
-  },[meshAdapters])
+      .catch( err => alert(err));
+  },[meshAdapters]);
 
   useEffect(() => {
-    setActiveAdapters(meshAdapters)
-  }, [meshAdapters])
+    setActiveAdapters(meshAdapters);
+  }, [meshAdapters]);
 
   const handleIndicatorClick = (index) => (e) => {
-    e.preventDefault()
-    sliderRef?.current?.slickGoTo(index,false)
-    setActiveIndex(index)
-  }
+    e.preventDefault();
+    sliderRef?.current?.slickGoTo(index,false);
+    setActiveIndex(index);
+  };
 
 
   return (
@@ -95,8 +95,8 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
         <ServiceMeshDataPanel adapterInfo={serviceMeshComponents[activeIndex]?.adapterInfo} isActive={isAdapterActive(serviceMeshComponents[activeIndex]?.adapterInfo.value)}  />
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
@@ -107,5 +107,5 @@ const mapStateToProps = (state) => {
     meshAdaptersts, };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceMeshScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(ServiceMeshScreen);
 

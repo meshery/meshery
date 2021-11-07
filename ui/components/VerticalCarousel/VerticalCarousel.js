@@ -80,10 +80,10 @@ const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
         <Slider {...settings} ref={sliderRef}>{slides} </Slider>
       </Grid>
     </>
-  )
+  );
 
 
-}
+};
 
 
 export default VerticalCarousel;

@@ -57,7 +57,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     /**  @type {TypeView} */
     ("grid")
   );
-  const modalRef = useRef(null)
+  const modalRef = useRef(null);
 
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -121,7 +121,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
       subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} performance profile${count > 1 ? "s" : '' }?`,
 
       options : ["Yes", "No"],
-    })
+    });
     return response;
   }
 

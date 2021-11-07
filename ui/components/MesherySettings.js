@@ -159,7 +159,7 @@ class MesherySettings extends React.Component {
         }
       },
       self.handleError("Unable to fetch prometheus and grafana scan data")
-    )
+    );
   }
 
   /**
@@ -186,9 +186,9 @@ class MesherySettings extends React.Component {
               // IP is set for load-balancer ingress points that are IP based (typically GCE or OpenStack load-balancers)
               let address = lbdata.ip || lbdata.hostname;
               if (address) result.push(`${protocol}://${address}:${port}`);
-            })
+            });
           }
-        })
+        });
       }
 
       // Add clusterip based url
@@ -200,12 +200,12 @@ class MesherySettings extends React.Component {
           data.spec.ports.forEach(({ port }) => {
             if (port === 443) protocol = "https";
             result.push(`${protocol}://${data.spec.clusterIP}:${port}`);
-          })
+          });
         }
       }
-    })
+    });
 
-    return result
+    return result;
   }
 
   handleError = (msg) => (error) => {
@@ -227,39 +227,39 @@ class MesherySettings extends React.Component {
         let newRoute = this.props.router.route;
         switch (newVal) {
           case 0:
-            newRoute += '#environment'
+            newRoute += '#environment';
             break;
           case 1:
-            newRoute += '#service-mesh'
+            newRoute += '#service-mesh';
             break;
           case 2:
-            newRoute += '#metrics'
+            newRoute += '#metrics';
             break;
           // case 3:
           //   newRoute += '#performance'
           //   break;
         }
         if (this.props.router.route != newRoute)
-          this.props.router.push(newRoute)
+          this.props.router.push(newRoute);
         self.setState({ tabVal : newVal });
       } else if (val === 'subTabVal') {
         let newRoute = this.props.router.route;
         switch (newVal) {
           case 0:
             if (self.state.tabVal == 0)
-              newRoute += '#environment/outclusterconfig'
+              newRoute += '#environment/outclusterconfig';
             else if (self.state.tabVal == 2)
-              newRoute += '#metrics/grafana'
+              newRoute += '#metrics/grafana';
             break;
           case 1:
             if (self.state.tabVal == 0)
-              newRoute += '#environment/inclusterconfig'
+              newRoute += '#environment/inclusterconfig';
             else if (self.state.tabVal == 2)
-              newRoute += '#metrics/prometheus'
+              newRoute += '#metrics/prometheus';
             break;
         }
         if (this.props.router.route != newRoute)
-          this.props.router.push(newRoute)
+          this.props.router.push(newRoute);
         self.setState({ subTabVal : newVal });
       }
     };

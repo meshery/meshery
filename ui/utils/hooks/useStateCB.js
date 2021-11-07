@@ -23,7 +23,7 @@ function useStateCB(initState, changeTrackCB) {
     _setState(state);
   };
 
-  const getStateRefValue = () => stateRef.current
+  const getStateRefValue = () => stateRef.current;
 
   return [state, setState, getStateRefValue];
 }

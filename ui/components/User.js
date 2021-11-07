@@ -27,7 +27,7 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.setAttribute('href', dataUri);
   linkElement.setAttribute('download', exportFileDefaultName);
   linkElement.click();
-  linkElement.remove()
+  linkElement.remove();
 }
 
 class User extends React.Component {

@@ -25,6 +25,6 @@ const RemoteUserPref = ({ startOnZoom, handleToggle, url }) => {
       />
     </div>
   );
-}
+};
 
 export default RemoteUserPref;

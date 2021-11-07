@@ -3,7 +3,7 @@ import React from "react";
 import {
   makeStyles, Container, Button, Fade, Grid
 } from "@material-ui/core";
-import { useRouter } from "next/router"
+import { useRouter } from "next/router";
 
 import Stepper from "./Stepper.js";
 import KubernetesScreen from "./Screens/KubernetesScreen";
@@ -58,9 +58,9 @@ function getSteps() {
 const ConfigurationWizard = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
-  const router = useRouter()
+  const router = useRouter();
   const [stepStatus, setStepStatus] = React.useState({ kubernetes : false,
-    operator : false, })
+    operator : false, });
   const steps = getSteps();
 
   const handleNext = () => {
@@ -92,25 +92,25 @@ const ConfigurationWizard = () => {
   const isNextDisabled = () => {
     // if (activeStep === 0 && !stepStatus.kubernetes) return true
     // if (activeStep === 1 && !stepStatus.operator) return true
-    return false
-  }
+    return false;
+  };
 
   const handleAdvancedSettingsClick = () => {
     switch (activeStep) {
       case 0:
-        return
+        return;
       case 1:
-        return
+        return;
       case 2:
-        router.push("/settings#service-mesh")
-        return
+        router.push("/settings#service-mesh");
+        return;
       case 3:
-        router.push("/settings#metrics")
-        return
+        router.push("/settings#metrics");
+        return;
       default:
         return null;
     }
-  }
+  };
 
   return (
     <Container className={classes.container}>

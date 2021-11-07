@@ -38,11 +38,11 @@ const ConnectionWizard = (props) => {
       </Head>
       <ConnectionWizardComponent />
     </NoSsr>
-  )
-}
+  );
+};
 
 const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch),
-  updatepagetitle : bindActionCreators(updatepagetitle, dispatch) })
+  updatepagetitle : bindActionCreators(updatepagetitle, dispatch) });
 
 export default connect(
   null,

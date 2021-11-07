@@ -21,7 +21,7 @@ import MesheryEventViewer from './MesheryEventViewer';
 // import { bindActionCreators } from 'redux';
 // import { updateSMIResults } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
-import { withSnackbar } from 'notistack'
+import { withSnackbar } from 'notistack';
 
 const styles = (theme) => ({
   sidelist : { width : 450, },
@@ -89,8 +89,8 @@ function getNotifications(events, type) {
   if (!Array.isArray(events)) return [];
 
   if (type === "error") return events.filter(ev => ev.event_type === 2);
-  if (type === "warning") return events.filter(ev => ev.event_type === 1)
-  if (type === "success") return events.filter(ev => ev.event_type === 0)
+  if (type === "warning") return events.filter(ev => ev.event_type === 1);
+  if (type === "success") return events.filter(ev => ev.event_type === 0);
 
   return events;
 }
@@ -119,9 +119,9 @@ function getNotificationCount(events) {
  * @param {{ type: string,className: string }} props
  */
 function NotificationIcon ({ type, className }) {
-  if (type === "error") return <ErrorIcon className={className}/>
+  if (type === "error") return <ErrorIcon className={className}/>;
 
-  return <BellIcon className={className}/>
+  return <BellIcon className={className}/>;
 }
 
 class MesheryNotification extends React.Component {
@@ -211,7 +211,7 @@ class MesheryNotification extends React.Component {
       events.push(data);
 
       // Dispatch the notification
-      self.notificationDispatcher(data.event_type || 0, data.summary)
+      self.notificationDispatcher(data.event_type || 0, data.summary);
       //Temperory Hack
       // if(data.summary==="Smi conformance test completed successfully"){
       //   self.props.updateSMIResults({smi_result: data,});
@@ -264,17 +264,17 @@ class MesheryNotification extends React.Component {
 
   handleNotifFiltering(type) {
     return () => {
-      this.setState({ displayEventType : type })
-    }
+      this.setState({ displayEventType : type });
+    };
   }
 
   handleTabChange = (event, newTabValue) => {
-    this.setState({ tabValue : newTabValue })
+    this.setState({ tabValue : newTabValue });
   }
 
   handleBellButtonClick = () => {
     this.setState({ tabValue : 0,
-      displayEventType : '*' })
+      displayEventType : '*' });
   }
 
   render() {

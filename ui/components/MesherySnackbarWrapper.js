@@ -29,7 +29,7 @@ const variantHoverColor = {
   warning : "iconWarning",
   error : "iconError",
   info : "iconInfo",
-}
+};
 
 const styles = (theme) => ({
   success : { color : "#6fbf73", },
@@ -70,7 +70,7 @@ function MesherySnackbarWrapper(props) {
   const Icon = variantIcon[variant];
 
   const [expanded, setExpanded] = useState(false);
-  const [cardHover, setCardHover] = useState(false)
+  const [cardHover, setCardHover] = useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);

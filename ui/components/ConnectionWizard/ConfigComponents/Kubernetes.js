@@ -24,7 +24,7 @@ const KubernetesConfig = ({
     k8sfileElementVal : "",
     inClusterConfigForm : false,
     contextNameForForm : ""
-  })
+  });
 
 
   const handleChange = (name) => {
@@ -35,17 +35,17 @@ const KubernetesConfig = ({
         }
 
         let fileInput = document.querySelector("#k8sfile");
-        let k8sfile = fileInput.files[0]
+        let k8sfile = fileInput.files[0];
 
         fetchContexts(updateProgress, k8sfile )
           .then(res => {
             setState({
               ...state, contextsFromFile : res.result, k8sfile, contextNameForForm : res.currentContextName
-            })
+            });
             if (res.result.length === 1)
               submitConfig(enqueueSnackbar, updateProgress, updateK8SConfig, () => null, res.currentContextName, k8sfile);
           })
-          .catch(err => alert(err))
+          .catch(err => alert(err));
       }
       if ( name === "contextNameChange"){
         submitConfig(enqueueSnackbar, updateProgress, updateK8SConfig, action, event.target.value, k8sfile);
@@ -146,8 +146,8 @@ const KubernetesConfig = ({
 
       </Grid>
     </>
-  )
-}
+  );
+};
 
 
-export default withSnackbar(KubernetesConfig)
+export default withSnackbar(KubernetesConfig);

@@ -11,8 +11,8 @@ export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorIns
 export const pingMesheryOperator = (fetchMesheryOperatorStatus, successcb, errorcb) => {
   fetchMesheryOperatorStatus()
     .subscribe({ next : successcb,
-      error : errorcb, })
-}
+      error : errorcb, });
+};
 
 /**
   * Returns the connection status of Operator, Meshsync, and Broker (NATS)
@@ -33,11 +33,11 @@ export const getOperatorStatusFromQueryResult = (res) => {
     operatorVersion : "N/A",
     meshSyncVersion : "N/A",
     NATSVersion : "N/A",
-  }
+  };
 
   if (res.operator?.error) {
-    console.log("Operator could not be reached", res.operator?.error?.description)
-    return [false, operatorInformation]
+    console.log("Operator could not be reached", res.operator?.error?.description);
+    return [false, operatorInformation];
   }
 
   if (res.operator?.status === "ENABLED") {
@@ -45,20 +45,20 @@ export const getOperatorStatusFromQueryResult = (res) => {
       if (controller.name === "broker" && controller.status == "ENABLED") {
         operatorInformation = { ...operatorInformation,
           NATSInstalled : true,
-          NATSVersion : controller.version }
+          NATSVersion : controller.version };
       } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
         operatorInformation = { ...operatorInformation,
           meshSyncInstalled : true,
-          meshSyncVersion : controller.version, }
+          meshSyncVersion : controller.version, };
       }
     });
 
     operatorInformation = { ...operatorInformation,
       operatorInstalled : true,
-      operatorVersion : res.operator?.version, }
+      operatorVersion : res.operator?.version, };
 
-    return [true,operatorInformation]
+    return [true,operatorInformation];
   }
 
-  return [false, operatorInformation]
-}
+  return [false, operatorInformation];
+};

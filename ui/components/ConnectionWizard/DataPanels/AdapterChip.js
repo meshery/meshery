@@ -10,7 +10,7 @@ import { withSnackbar } from "notistack";
 
 const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
   chip : { marginRight : theme.spacing(1),
-    marginBottom : theme.spacing(1), }, })
+    marginBottom : theme.spacing(1), }, });
 
 const AdapterChip = withStyles(chipStyles)(({
   classes, handleClick, handleDelete, label, image, isActive
@@ -27,7 +27,7 @@ const AdapterChip = withStyles(chipStyles)(({
       ? "outlined"
       : 'default'}
   />
-))
+));
 
 
-export default AdapterChip
+export default AdapterChip;

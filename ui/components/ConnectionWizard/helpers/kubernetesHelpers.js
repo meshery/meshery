@@ -14,7 +14,7 @@ export const pingKubernetes = (successHandler,errorHandler) => {
     successHandler,
     errorHandler
   );
-}
+};
 
 
 
@@ -31,11 +31,11 @@ export const pingKubernetes = (successHandler,errorHandler) => {
 export const isKubernetesConnected = (isClusterConfigured,kubernetesPingStatus) => {
 
   if (isClusterConfigured){
-    if (kubernetesPingStatus) return true
+    if (kubernetesPingStatus) return true;
   }
 
-  return false
-}
+  return false;
+};
 
 
 export const deleteKubernetesConfig = (successCb,errorCb) =>
@@ -46,7 +46,7 @@ export const deleteKubernetesConfig = (successCb,errorCb) =>
       credentials : "include", },
     successCb,
     errorCb
-  )
+  );
 
 
 
@@ -83,19 +83,19 @@ export const fetchContexts = (updateProgress, k8sfile) => {
             }
           });
 
-          res({ result, currentContextName : ctName })
+          res({ result, currentContextName : ctName });
         }
       },
       (err) => rej(err)
     );
-  })
+  });
 
 };
 
 
 export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, action, contextName, k8sfile) => {
 
-  const inClusterConfigForm = false
+  const inClusterConfigForm = false;
   const formData = new FormData();
   formData.append("inClusterConfig", inClusterConfigForm ? "on" : ""); // to simulate form behaviour of a checkbox
   if (!inClusterConfigForm) {
