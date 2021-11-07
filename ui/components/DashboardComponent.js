@@ -23,6 +23,7 @@ import {
   MenuItem,
   Link,
   Box,
+  Avatar,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
@@ -45,6 +46,8 @@ import { submitGrafanaConfigure } from "./GrafanaComponent";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import { podNameMapper, versionMapper } from "../utils/nameMapper";
 import { subscriptionClient } from "../lib/relayEnvironment";
+import { capitalizeString } from "../utils/utils";
+import AvatarGroup from '@material-ui/lab/AvatarGroup';
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
@@ -85,6 +88,14 @@ const styles = (theme) => ({
     borderRadius : 4,
     height : "100%",
   },
+  avatarChip1 : {
+    padding : "3px",
+    border : "none"
+  },
+  avatarChip2 : {
+    padding : "5px",
+    border : "none"
+  }
 });
 
 /**
@@ -797,48 +808,51 @@ class DashboardComponent extends React.Component {
 
       showAdapters = (
         <div>
-          {availableAdapters.map((aa, ia) => {
-            let isDisabled = true;
-            let image = "/static/img/meshery-logo.png";
-            let logoIcon = <img src={image} className={classes.icon} />;
-            let adapterType = "";
-            let adapterVersion = "";
-            meshAdapters.forEach((adapter) => {
-              if (aa.value === adapter.adapter_location) {
-                isDisabled = false;
-                adapterType = adapter.name;
-                adapterVersion = adapter.version;
-                image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-              }
-            });
+          {
+            meshAdapters.map((runningMeshAdapter, idx) => {
+              const { label, value } = availableAdapters.find(adapter => adapter.value === runningMeshAdapter.adapter_location)
+              const adapterName = capitalizeString(runningMeshAdapter.name)
+              const logo = "/static/img/" + runningMeshAdapter.name.toLowerCase() + ".svg";
 
-            return (
-              <Tooltip
-                key={`adapters-${ia}`}
-                title={
-                  isDisabled
-                    ? "This adapter is inactive"
-                    : `${adapterType
-                      .toLowerCase()
-                      .split(" ")
-                      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")} adapter version ${adapterVersion} on port ${aa.label.split(":")[1]}`
-                }
-              >
+              return (
+                <Tooltip
+                  key={idx}
+                  title={`${adapterName} adapter version ${runningMeshAdapter.version} on port ${label.split(":")[1]}`}
+                >
+                  <Chip
+                    label={adapterName}
+                    onClick={self.handleAdapterClick(value)}
+                    icon={<img src={logo} className={classes.icon} />}
+                    className={classes.chip}
+                    key={`adapters-${adapterName}`}
+                    variant="outlined"
+                  />
+                </Tooltip>
+              );
+            })
+          }
+
+          {
+            meshAdapters.length !== availableAdapters.length
+            && (
+              <Tooltip title="Configure Additional adapters">
                 <Chip
-                  label={aa.label.split(":")[0]}
-                  onClick={self.handleAdapterClick(aa.value)}
-                  icon={logoIcon}
+                  style={{ backgroundColor : "rgb(96, 125, 139, .05" }}
+                  label="Add Adapters"
+                  icon={<AvatarGroup spacing={20} >
+                    <Avatar alt="add" src="/static/img/add.png" className={classes.avatarChip1} />
+                    <Avatar alt="istio" src="/static/img/istio.svg" className={classes.avatarChip2} />
+                    <Avatar alt="consul" src="/static/img/consul.svg" className={classes.avatarChip2} />
+                  </AvatarGroup>
+                  }
                   className={classes.chip}
-                  key={`adapters-${ia}`}
-                  variant={isDisabled
-                    ? "default"
-                    : "outlined"}
+                  variant="outlined"
+                  onClick={() => self.props.router.push("/settings#service-mesh")}
                 />
               </Tooltip>
-            );
-          })}
+            )
+          }
+
         </div>
       );
     }
