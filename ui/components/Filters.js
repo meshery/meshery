@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+/* eslint-disable no-trailing-spaces */
 import React, { useState, useEffect, useRef } from "react";
 import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
 import {  createTheme } from '@material-ui/core/styles';
@@ -32,7 +34,8 @@ import URLUploader from "./URLUploader";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { trueRandom } from "../lib/trueRandom";
-import GithubUploader from "./GithubImport";
+import GithubUploader from "./GhImport";
+import { handleGithubImport } from "../utils/GithubImport";
 const styles = (theme) => ({
   grid : {
     padding : theme.spacing(2),
@@ -334,22 +337,25 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         body = JSON.stringify({ ...body, url : data })
       }
       if (type === "githubimport") {
-        body = JSON.stringify({ ...body })
-        dataFetch(
-          `api/filter`,
-          {
-            credentials : "include", method : "POST", body, save : false
-          }
-        )
-      } else {
-        body = JSON.stringify({ ...body })
-        dataFetch(
-          `api/filter`,
-          {
-            method : "POST", body, save : false
-          }
-        )
-      }
+        body = JSON.stringify({ ...body })        
+        strings = handleGithubImport(url)
+        strings.forEach(handleSubmit("urlUpload"))
+
+      //   dataFetch(
+      //     `api/filter`,
+      //     {
+      //       credentials : "include", method : "POST", body, save : false
+      //     }
+      //   )
+      // } else {
+      //   body = JSON.stringify({ ...body })
+      //   dataFetch(
+      //     `api/filter`,
+      //     {
+      //       method : "POST", body, save : false
+      //     }
+      //   )
+      // }
     }
     dataFetch(
         `/api/filter`,
@@ -363,6 +369,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         handleError(ACTION_TYPES.UPLOAD_FILTERS)
     );
   }
+}
 
   function uploadHandler(ev) {
     if (!ev.target.files?.length) return;
