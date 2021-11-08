@@ -10,5 +10,5 @@
 export function capitalizeString(str) {
   return str.split(/[\s|_]/) // separating regex for "_" or " "
     .map(smallStr => smallStr.charAt(0).toUpperCase() + smallStr.substring(1).toLowerCase()) // transforming string
-    .join(" ") // separate by whitespace
+    .join(" ") // join by whitespace
 }
