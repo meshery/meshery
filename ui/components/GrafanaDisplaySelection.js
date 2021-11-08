@@ -18,15 +18,14 @@ class GrafanaDisplaySelection extends Component {
         ? cf.board.title
         : '',
       panels : cf.panels.map((panel, ind) => <Chip key={`${panel.id}_-_${ind}`} label={panel.title} className={classes.panelChip} />),
-      template_variables : cf.templateVars
-        ? cf.templateVars.map((tv, ind) => {
-          if (tv && tv !== '') {
-            return (
-              <Chip key={`${tv}-_-${ind}`} label={tv} className={classes.panelChip} />
-            );
-          }
-          return null;
-        })
+      template_variables : cf.templateVars ? cf.templateVars.map((tv, ind) => {
+        if (tv && tv !== '') {
+          return (
+            <Chip key={`${tv}-_-${ind}`} label={tv} className={classes.panelChip} />
+          );
+        }
+        return null;
+      })
         : [], });
     });
 

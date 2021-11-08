@@ -94,8 +94,13 @@ func main() {
 		}
 		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
 	}
-	logrus.Infof("Using '%s' to store user data", viper.GetString("USER_DATA_FOLDER"))
 
+	errDir := os.MkdirAll(viper.GetString("USER_DATA_FOLDER"), 0755)
+	if errDir != nil {
+		logrus.Fatalf("unable to create the directory for storing user data at %v", viper.GetString("USER_DATA_FOLDER"))
+	}
+
+	logrus.Infof("Using '%s' to store user data", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
 		if err != nil {
 			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
@@ -132,20 +137,8 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	smiResultPersister, err := models.NewBitCaskSmiResultsPersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	defer smiResultPersister.CloseResultPersister()
-
-	testConfigPersister, err := models.NewBitCaskTestProfilesPersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	defer testConfigPersister.CloseTestConfigsPersister()
-
 	dbHandler, err := database.New(database.Options{
-		Filename: fmt.Sprintf("%s/mesherydb.sql", viper.GetString("USER_DATA_FOLDER")),
+		Filename: fmt.Sprintf("file:%s/mesherydb.sql?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
 		Logger:   log,
 	})
@@ -158,14 +151,20 @@ func main() {
 	brokerConn := nats.NewEmptyConnection
 
 	err = dbHandler.AutoMigrate(
-		meshsyncmodel.KeyValue{},
-		meshsyncmodel.Object{},
-		models.PerformanceProfile{},
-		models.MesheryResult{},
-		models.MesheryPattern{},
-		models.MesheryFilter{},
-		models.PatternResource{},
-		models.MesheryApplication{},
+		&meshsyncmodel.KeyValue{},
+		&meshsyncmodel.Object{},
+		&meshsyncmodel.ResourceSpec{},
+		&meshsyncmodel.ResourceStatus{},
+		&meshsyncmodel.ResourceObjectMeta{},
+		&models.PerformanceProfile{},
+		&models.MesheryResult{},
+		&models.MesheryPattern{},
+		&models.MesheryFilter{},
+		&models.PatternResource{},
+		&models.MesheryApplication{},
+		&models.UserPreference{},
+		&models.PerformanceTestConfig{},
+		&models.SmiResultWithID{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -175,8 +174,8 @@ func main() {
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
 		ResultPersister:                 &models.MesheryResultsPersister{DB: &dbHandler},
-		SmiResultPersister:              smiResultPersister,
-		TestProfilesPersister:           testConfigPersister,
+		SmiResultPersister:              &models.SMIResultsPersister{DB: &dbHandler},
+		TestProfilesPersister:           &models.TestProfilesPersister{DB: &dbHandler},
 		PerformanceProfilesPersister:    &models.PerformanceProfilePersister{DB: &dbHandler},
 		MesheryPatternPersister:         &models.MesheryPatternPersister{DB: &dbHandler},
 		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: &dbHandler},
@@ -187,12 +186,6 @@ func main() {
 	lProv.Initialize()
 	seededUUIDs := lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
-
-	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	defer preferencePersister.ClosePersister()
 
 	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
 	for _, providerurl := range RemoteProviderURLs {
@@ -207,9 +200,9 @@ func main() {
 			SessionName:                parsedURL.Host,
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
-			BitCaskPreferencePersister: cPreferencePersister,
+			SessionPreferencePersister: &models.SessionPreferencePersister{DB: &dbHandler},
 			ProviderVersion:            "v0.3.14",
-			SmiResultPersister:         smiResultPersister,
+			SmiResultPersister:         &models.SMIResultsPersister{DB: &dbHandler},
 			GenericPersister:           dbHandler,
 		}
 

@@ -34,7 +34,9 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
-import subscribeServiceMeshEvents from "./graphql/subscriptions/ServiceMeshSubscription";
+// import subscribeServiceMeshEvents from "./graphql/subscriptions/ServiceMeshSubscription";
+import subscribeDataPlaneEvents from "./graphql/subscriptions/DataPlanesSubscription";
+import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
 import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
 import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
@@ -144,7 +146,9 @@ class DashboardComponent extends React.Component {
       activeMeshScanNamespace : {},
       meshScanNamespaces : {},
 
-      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured
+      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured,
+      controlPlaneState : "",
+      dataPlaneState : "",
     };
   }
 
@@ -189,13 +193,25 @@ class DashboardComponent extends React.Component {
         }
       });
       subscribeOperatorStatusEvents(self.setOperatorState);
-      subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH);
+      // subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH, this.state, e => this.setState({ ...e }));
+      subscribeControlPlaneEvents((res) => {
+        if (res?.controlPlanesState !== undefined){
+          this.setState({ controlPlaneState : res })
+        }
+      }, ALL_MESH)
+      subscribeDataPlaneEvents((res) => {
+        if (res?.dataPlanesState !== undefined){
+          this.setState({ dataPlaneState : res })
+        }
+      }, ALL_MESH)
       fetchControlPlanes(ALL_MESH).subscribe({
         next : (controlPlaneRes) => {
-          self.setMeshScanData(controlPlaneRes, null);
+          this.setState({ controlPlaneState : controlPlaneRes })
+          // self.setMeshScanData(controlPlaneRes, null);
           fetchDataPlanes(ALL_MESH).subscribe({
             next : (dataPlaneRes) => {
-              if (controlPlaneRes) self.setMeshScanData(controlPlaneRes, dataPlaneRes);
+              this.setState({ dataPlaneState : dataPlaneRes })
+              // if (controlPlaneRes) self.setMeshScanData(controlPlaneRes, dataPlaneRes);
             },
             error : (err) => console.error(err),
           });
@@ -224,6 +240,27 @@ class DashboardComponent extends React.Component {
       this.initMeshSyncControlPlaneSubscription();
     }
   };
+
+  componentDidUpdate(prevProps, prevState){
+    let updateControlPlane = false;
+    let updateDataPlane = false;
+
+    // deep compare very limited, order of object fields is important
+    if (JSON.stringify(prevState.controlPlaneState) !== JSON.stringify(this.state.controlPlaneState)){
+      updateControlPlane = true
+    }
+    if (JSON.stringify(prevState.dataPlaneState) !== JSON.stringify(this.state.dataPlaneState)){
+      updateDataPlane = true
+    }
+
+    if (updateDataPlane || updateControlPlane){
+      this.setMeshScanData(
+        updateControlPlane ? this.state.controlPlaneState : prevState.controlPlaneState,
+        updateDataPlane ? this.state.dataPlaneState : prevState.dataPlaneState
+      )
+    }
+
+  }
 
   fetchMetricComponents = () => {
     const self = this;
@@ -437,8 +474,7 @@ class DashboardComponent extends React.Component {
   generateMeshScanPodName = (podname, hash, custom) => {
     const str = custom || podname;
     return { full : podname,
-      trimmed : str.substring(0, (hash
-        ? str.indexOf(hash)
+      trimmed : str.substring(0, (hash ? str.indexOf(hash)
         : str.length) - 1), };
   };
 
