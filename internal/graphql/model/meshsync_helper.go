@@ -9,15 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	meshsyncHelmChart = "meshery-meshsync"
-)
-
 func RunMeshSync(client *mesherykube.Client, delete bool) error {
-	err := installUsingHelm(client, delete, meshsyncHelmChart)
-	if err != nil {
-		return ErrInstallingUsingHelm(err, brokerHelmChart)
-	}
+	//err := installUsingHelm(client, delete, meshsyncHelmChart)
+	//if err != nil {
+	//	return ErrInstallingUsingHelm(err, brokerHelmChart)
+	//}
 	return nil
 }
 

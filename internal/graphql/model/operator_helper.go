@@ -24,23 +24,20 @@ const (
 	RequestSubject  = "meshery.meshsync.request"
 	MeshsyncSubject = "meshery.meshsync.core"
 	BrokerQueue     = "meshery"
-
-	operatorHelmChart = "meshery-operator"
-	brokerHelmChart   = "meshery-broker"
 )
 
 func Initialize(client *mesherykube.Client, delete bool) error {
-	// install CRDs and operaotr
-	err := installUsingHelm(client, delete, operatorHelmChart)
+	// install CRs and operator
+	err := installUsingHelm(client, delete)
 	if err != nil {
-		return ErrInstallingUsingHelm(err, operatorHelmChart)
+		return ErrInstallingUsingHelm(err, "meshery-operator")
 	}
 
-	// installBroker
-	err = installUsingHelm(client, delete, brokerHelmChart)
-	if err != nil {
-		return ErrInstallingUsingHelm(err, brokerHelmChart)
-	}
+	//// installBroker
+	//err = installUsingHelm(client, delete, brokerHelmChart)
+	//if err != nil {
+	//	return ErrInstallingUsingHelm(err, brokerHelmChart)
+	//}
 
 	return nil
 }
