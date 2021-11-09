@@ -156,6 +156,26 @@ mesheryctl perf apply -f <filepath> --flags
 				return ErrNotValidURL()
 			}
 
+			if testMesh == "" {
+				testMesh = "None"
+			}
+
+			if qps == "" {
+				qps = "0"
+			}
+
+			if concurrentRequests == "" {
+				concurrentRequests = "1"
+			}
+
+			if testDuration == "" {
+				testDuration = "30s"
+			}
+
+			if loadGenerator == "" {
+				loadGenerator = "fortio"
+			}
+
 			convReq, err := strconv.Atoi(concurrentRequests)
 			if err != nil {
 				return errors.New("failed to convert concurrent-request")
