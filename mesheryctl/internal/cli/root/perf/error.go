@@ -8,20 +8,22 @@ import (
 )
 
 const (
-	ErrMesheryConfigCode       = "1027"
-	ErrReadFilepathCode        = "1028"
-	ErrNoProfileNameCode       = "1029"
-	ErrNoTestURLCode           = "1030"
-	ErrNotValidURLCode         = "1031"
-	ErrFailMarshalCode         = "1032"
-	ErrAttachAuthTokenCode     = "1033"
-	ErrFailRequestCode         = "1034"
-	ErrFailReqStatusCode       = "1035"
-	ErrFailUnmarshalCode       = "1036"
-	ErrNoProfileFoundCode      = "1037"
-	ErrFailTestRunCode         = "1038"
-	ErrInvalidOutputChoiceCode = "1039"
-	ErrUnauthenticatedCode     = "1040"
+	ErrMesheryConfigCode         = "1027"
+	ErrReadFilepathCode          = "1028"
+	ErrNoProfileNameCode         = "1029"
+	ErrNoTestURLCode             = "1030"
+	ErrNotValidURLCode           = "1031"
+	ErrFailMarshalCode           = "1032"
+	ErrAttachAuthTokenCode       = "1033"
+	ErrFailRequestCode           = "1034"
+	ErrFailReqStatusCode         = "1035"
+	ErrFailUnmarshalCode         = "1036"
+	ErrNoProfileFoundCode        = "1037"
+	ErrFailTestRunCode           = "1038"
+	ErrInvalidOutputChoiceCode   = "1039"
+	ErrUnauthenticatedCode       = "1040"
+	ErrFailUnmarshalFileCode     = "1041"
+	ErrInvalidTestConfigFileCode = "1042"
 )
 
 func ErrMesheryConfig(err error) error {
@@ -91,6 +93,16 @@ func ErrFailTestRun() error {
 
 func ErrInvalidOutputChoice() error {
 	return errors.New(ErrInvalidOutputChoiceCode, errors.Alert, []string{}, []string{"output-format choice invalid, use [json|yaml]", formatErrorWithReference()}, []string{}, []string{})
+}
+
+func ErrFailUnmarshalFile(err error) error {
+	return errors.New(ErrFailUnmarshalFileCode, errors.Alert, []string{},
+		[]string{"failed to unmarshal configuration file", err.Error(), formatErrorWithReference()}, []string{}, []string{})
+}
+
+func ErrInvalidTestConfigFile() error {
+	return errors.New(ErrInvalidTestConfigFileCode, errors.Alert, []string{},
+		[]string{"invalid test conffigration file", formatErrorWithReference()}, []string{"the test configuration is outdated or incorrect"}, []string{"see https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl for a valid configuration file"})
 }
 
 func formatErrorWithReference() string {

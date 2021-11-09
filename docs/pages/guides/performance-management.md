@@ -92,23 +92,25 @@ mesheryctl perf apply --profile istio-soak-test --concurrent-requests 1 --durati
 mesheryctl also supports test configurations written in SMP compatible format as shown below:
 
 ```
-smp_version: v0.0.1
-id:
-name: Istio Performance Test
-labels: {}
-clients:
-- internal: false
-  load_generator: fortio
-  protocol: 1
-  connections: 2
-  rps: 10
-  headers: {}
-  cookies: {}
-  body: ""
-  content_type: ""
-  endpoint_urls:
-  - http://localhost:2323/productpage
-duration: "30m"
+test:
+  smp_version: v0.0.1
+  name: Istio Performance Test
+  labels: {}
+  clients:
+    - internal: false
+      load_generator: fortio
+      protocol: 1
+      connections: 2
+      rps: 10
+      headers: {}
+      cookies: {}
+      body: ''
+      content_type: ''
+      endpoint_urls:
+        - 'http://localhost:2323/productpage'
+  duration: '30m'
+mesh:
+  type: 3
 ```
 
 And then you can pass this file to mesheryctl as:
