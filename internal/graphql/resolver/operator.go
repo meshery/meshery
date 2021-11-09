@@ -79,16 +79,16 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		}
 
 		// installMeshsync
-		err = model.RunMeshSync(kubeclient, del)
-		if err != nil {
-			r.Log.Error(err)
-			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Source: broadcast.OperatorSyncChannel,
-				Data:   err,
-				Type:   "error",
-			})
-			return
-		}
+		//err = model.RunMeshSync(kubeclient, del)
+		//if err != nil {
+		//	r.Log.Error(err)
+		//	r.Broadcast.Submit(broadcast.BroadcastMessage{
+		//		Source: broadcast.OperatorSyncChannel,
+		//		Data:   err,
+		//		Type:   "error",
+		//	})
+		//	return
+		//}
 		r.Log.Info("Meshsync operation executed")
 
 		// r.operatorChannel <- &model.OperatorStatus{

@@ -2,10 +2,14 @@ package model
 
 import (
 	"context"
+	"fmt"
+	"strings"
 	"sync"
 
+	"fortio.org/fortio/log"
 	"github.com/layer5io/meshery-operator/api/v1alpha1"
 	"github.com/layer5io/meshery/handlers"
+	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -151,26 +155,22 @@ func installUsingHelm(client *mesherykube.Client, delete bool) error {
 		}
 	}
 
-//	releaseName := fmt.Sprintf("meshery-%s", releaseVersion)
+	var (
+		act = mesherykube.INSTALL
+		chart = "meshery-operator"
+		overrideValues map[string]interface{}
+		err error
+	)
 
-//	err := getHelmChart(releaseName)
-//	if err != nil {
-//		return err
-//	}
-
-// downloadedChartLocation := path.Join(downloadLocation, releaseName, "meshery")
-
-//	// install CRDs
-//	err = applyYaml(client, delete, path.Join(downloadedChartLocation, "crds", "crds.yaml"))
-//	if err != nil {
-//		return err
-//	}
-
-// dependencyLocation := path.Join(downloadedChartLocation, "charts", dependencyName)
-	var act mesherykube.HelmChartAction
-	act = mesherykube.INSTALL
-	if delete {
+	// if meshery server is in cluster, we upgrade the release
+	if viper.GetString("KUBERNETES_SERVICE_HOST") != "" {
+		act = mesherykube.UPGRADE
+		chart = "meshery"
+	} else if delete {
 		act = mesherykube.UNINSTALL
+	}
+
+	if delete {
 		// Delete the CR instances for brokers and meshsyncs
 		// this needs to be executed before deleting the helm release, or the CR instances cannot be found for some reason
 		if err := DeleteCR(brokerResourceName, brokerInstanceName, client); err != nil {
@@ -181,51 +181,23 @@ func installUsingHelm(client *mesherykube.Client, delete bool) error {
 		}
 	}
 
-	err := client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
+	overrideValues, err = SetOverrideValues(delete)
+	if err != nil {
+		return err
+	}
+
+	log.Infof("Installing operator using chart: %s", chart)
+
+	err = client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
 		Namespace: "meshery",
 		ChartLocation: mesherykube.HelmChartLocation{
 			Repository: chartRepo,
-			Chart: "meshery-operator",
+			Chart: chart,
 			Version: releaseVersion,
 		},
 		CreateNamespace: true,
 		Action:    act,
-		OverrideValues: map[string]interface{}{
-			"meshery": map[string]interface{}{
-				"enabled": false,
-			},
-			"meshery-istio": map[string]interface{}{
-				"enabled": false,
-			},
-			"meshery-linkerd": map[string]interface{}{
-				"enabled": false,
-			},
-			"meshery-consul": map[string]interface{}{
-				"enabled": false,
-			},
-			"meshery-kuma": map[string]interface{}{
-				"enabled": false,
-			},
-			"meshery-osm": map[string]interface{}{
-				"enabled": false,
-			},
-			"meshery-nsm": map[string]interface{}{
-				"enabled": false,
-			},
-			"meshery-nginx-sm": map[string]interface{}{
-				"enabled": false,
-			},
-			"meshery-traefik-mesh": map[string]interface{}{
-				"enabled": false,
-			},
-			"meshery-cpx": map[string]interface{}{
-				"enabled": false,
-			},
-			"meshery-app-mesh": map[string]interface{}{
-				"enabled": false,
-			},
-		},
-//		LocalPath: dependencyLocation,
+		OverrideValues: overrideValues,
 	})
 	if err != nil {
 		return err
@@ -233,6 +205,7 @@ func installUsingHelm(client *mesherykube.Client, delete bool) error {
 
 	if delete {
 		// Delete the CRDs for brokers and meshsyncs
+		// These need to be deleted after deleting the chart
 		if err = DeleteCRD(brokderCRDName); err != nil {
 			return errors.Wrap(err, "cannot delete CRD "+brokderCRDName)
 		}
@@ -243,6 +216,88 @@ func installUsingHelm(client *mesherykube.Client, delete bool) error {
 	}
 
 	return nil
+}
+
+// SetOverrideValues detects the currently insalled adapters and sets uninstalls
+// enable flag for operator to true or false
+func SetOverrideValues(delete bool) (map[string]interface{}, error) {
+	adapters := make([]string, 0)
+	installedAdapters := helpers.NewAdaptersTracker(viper.GetStringSlice("ADAPTER_URLS")).GetAdapters(context.TODO())
+
+	for _, adapter := range installedAdapters {
+		if adapter.Name != "" {
+			adapters = append(adapters, strings.Split(adapter.Location, ":")[0])
+		}
+	}
+
+	overrideValues := map[string]interface{} {
+		// TODO: update operator chart and remove meshery
+		"meshery": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-linkerd": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-consul": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-kuma": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-osm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nsm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nginx-sm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-traefik-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cpx": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-app-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-operator": map[string]interface{}{
+			"enabled": true,
+		},
+		"meshery-meshsync": map[string]interface{}{
+			"enabled": true,
+		},
+		"meshery-broker": map[string]interface{}{
+			"enabled": true,
+		},
+	}
+
+	for _, adapter := range adapters {
+		if _, ok := overrideValues[adapter]; ok {
+			fmt.Println(adapter)
+			overrideValues[adapter] = map[string]interface{} {
+				"enabled": true,
+			}
+		}
+	}
+
+	if delete {
+		overrideValues["meshery-operator"] = map[string]interface{} {
+			"enabled": false,
+		}
+		overrideValues["meshery-meshsync"] = map[string]interface{} {
+			"enabled": false,
+		}
+		overrideValues["meshery-broker"] = map[string]interface{} {
+			"enabled": false,
+		}
+	}
+
+	return overrideValues, nil
 }
 
 // DeleteCRs delete the specified CR instance in the clusters
@@ -263,98 +318,3 @@ func DeleteCRD(name string) error {
 	}
 	return client.ApiextensionsV1().CustomResourceDefinitions().Delete(context.TODO(), name, metav1.DeleteOptions{})
 }
-
-//func getHelmChart(releaseName string) error {
-//	logrus.Println("Looking for parent chart in ", downloadLocation)
-//	// see if chart for current release already exist on fs
-//	_, err := os.Stat(path.Join(downloadLocation, releaseName))
-//	if err == nil {
-//		return nil
-//	}
-//
-//	logrus.Println("Downloading chart: ", releaseName)
-//
-//	chartURL := fmt.Sprintf("https://meshery.github.io/meshery.io/charts/%s.tgz", releaseName)
-//
-//	err = downloadTar(chartURL, releaseName)
-//	if err != nil {
-//		return err
-//	}
-//
-//	return nil
-//}
-//
-//func downloadTar(url, releaseName string) error {
-//	resp, err := http.Get(url)
-//	if err != nil {
-//		return err
-//	}
-//
-//	if resp.StatusCode != http.StatusOK {
-//		_ = resp.Body.Close()
-//		return err
-//	}
-//
-//	// make the directory corresponding to release version
-//	if err := os.MkdirAll(path.Join(downloadLocation, releaseName), 0750); err != nil {
-//		return err
-//	}
-//
-//	err = tarxzf(path.Join(downloadLocation, releaseName), resp.Body)
-//	return err
-//}
-//
-//func tarxzf(location string, stream io.Reader) error {
-//	uncompressedStream, err := gzip.NewReader(stream)
-//	if err != nil {
-//		return err
-//	}
-//
-//	tarReader := tar.NewReader(uncompressedStream)
-//
-//	for {
-//		header, err := tarReader.Next()
-//
-//		if err == io.EOF {
-//			break
-//		}
-//
-//		if err != nil {
-//			return err
-//		}
-//
-//		switch header.Typeflag {
-//		case tar.TypeDir:
-//			// File traversal is required to store the extracted manifests at the right place
-//			// #nosec
-//			if err := os.MkdirAll(path.Join(location, header.Name), 0750); err != nil {
-//				return err
-//			}
-//		case tar.TypeReg:
-//			// A fallback case because the downloaded tar doesn't have proper header
-//			// entries for dir
-//			// #nosec
-//			if _, err := os.Stat(path.Join(location, path.Dir(header.Name))); err != nil {
-//				if err := os.MkdirAll(path.Join(location, path.Dir(header.Name)), 0750); err != nil {
-//					return err
-//				}
-//			}
-//
-//			outFile, err := os.Create(path.Join(location, header.Name))
-//			if err != nil {
-//				return err
-//			}
-//			if _, err := io.CopyN(outFile, tarReader, header.Size); err != nil {
-//				return err
-//			}
-//			if err = outFile.Close(); err != nil {
-//				return err
-//			}
-//
-//		default:
-//			return err
-//		}
-//	}
-//
-//	return nil
-//}

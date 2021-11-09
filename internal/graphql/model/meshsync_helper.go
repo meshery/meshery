@@ -3,19 +3,18 @@ package model
 import (
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 
 	"gorm.io/gorm"
 )
 
-func RunMeshSync(client *mesherykube.Client, delete bool) error {
-	//err := installUsingHelm(client, delete, meshsyncHelmChart)
-	//if err != nil {
-	//	return ErrInstallingUsingHelm(err, brokerHelmChart)
-	//}
-	return nil
-}
+//func RunMeshSync(client *mesherykube.Client, delete bool) error {
+//	err := installUsingHelm(client, delete, meshsyncHelmChart)
+//	if err != nil {
+//		return ErrInstallingUsingHelm(err, brokerHelmChart)
+//	}
+//	return nil
+//}
 
 func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object *meshsyncmodel.Object) error {
 	if handler == nil {
