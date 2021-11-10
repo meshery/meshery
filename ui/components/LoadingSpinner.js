@@ -8,7 +8,7 @@ const CustomLoadingSpinnerWrapper = styled(CircularProgress)(({theme})=>({
     thickness: 2.7,
 }))
 
-const CustomLoadingSpinner = () =>  { const theme = useTheme();
+export const CustomLoadingSpinner = () =>  { const theme = useTheme();
     return (
       <CustomLoadingSpinnerWrapper/>
     );

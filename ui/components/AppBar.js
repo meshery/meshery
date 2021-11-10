@@ -2,9 +2,10 @@ import { AppBar } from '@mui/material';
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/system";
 import theme from '../styles/theme'
+import { appBarColor } from '../styles/colors';
 
 const CustomAppBarWrapper = styled(AppBar)(({theme})=>({
-    backgroundColor: '#396679', 
+    backgroundColor: appBarColor, 
     position: "sticky",
     elevation: 0,
     padding: theme.spacing(1.4),
