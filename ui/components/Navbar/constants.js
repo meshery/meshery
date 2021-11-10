@@ -1,5 +1,7 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LifecycleIcon from "./drawer-icons/lifecycle_mgmt_svg";
 import PerformanceIcon from "./drawer-icons/performance_svg";
@@ -8,14 +10,17 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import MailIcon from "@mui/icons-material/Mail";
 import ConformanceIcon from "./drawer-icons/conformance_svg";
 import SmiIcon from "./drawer-icons/servicemeshinterface-icon-white_svg";
-import { drawerIconsStyle, externalLinkIconStyle } from "./Navbar.styles";
-import { faDigitalTachograph } from "@fortawesome/free-solid-svg-icons";
-import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import { drawerIconsStyle } from "./Navbar.styles";
 
-const ExternalLinkIcon = (
-  <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />
-);
+// import { faDigitalTachograph } from "@fortawesome/free-solid-svg-icons";
+// import { faSlack } from "@fortawesome/free-brands-svg-icons";
+// import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+
+// const ExternalLinkIcon = (
+//   <FontAwesomeIcon style={externalLinkIconStyle} icon={MailIcon} transform="shrink-7" />
+// );
+
+const ExternalLinkIcon = <MailIcon />;
 
 export const externlinks = [
   {
@@ -29,7 +34,8 @@ export const externlinks = [
     id: "community",
     href: "http://slack.layer5.io",
     title: "Community",
-    icon: <FontAwesomeIcon style={{ marginBottom: 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
+    // icon: <FontAwesomeIcon style={{ marginBottom: 2, ...drawerIconsStyle }} icon={MailIcon} transform="grow-1" />,
+    icon: <MailIcon />,
     external_icon: ExternalLinkIcon,
   },
   {
@@ -183,7 +189,8 @@ export const navigatorItemsTree = [
     children: [
       {
         id: "Profiles",
-        icon: <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ verticalAlign: "top" }} />,
+        // icon: <FontAwesomeIcon icon={MailIcon} transform="shrink-2" style={{ verticalAlign: "top" }} />,
+        icon: <MailIcon />,
         href: "/performance/profiles",
         title: "Profiles",
         show: true,

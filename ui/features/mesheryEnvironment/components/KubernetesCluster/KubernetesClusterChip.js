@@ -18,15 +18,15 @@ export const KuberenetesClusterChip = ({ cluster, handleClick }) => {
     <Image
       src={image}
       style={{ width: "1rem" }}
-      alt={cluster.configuredServer}
+      alt={cluster?.configuredServer}
       width={theme.spacing(2.5)}
       height={theme.spacing(2.5)}
     />
   );
   return (
-    <Tooltip title={`Server: ${cluster.configuredServer}`}>
+    <Tooltip title={`Server: ${cluster?.configuredServer}`}>
       <Chip
-        label={cluster.inClusterConfig ? "Using In Cluster Config" : cluster.contextName}
+        label={cluster?.inClusterConfig ? "Using In Cluster Config" : cluster?.contextName}
         onClick={handleClick}
         icon={logoIcon}
         variant="outlined"

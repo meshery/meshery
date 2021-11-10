@@ -1,7 +1,7 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
 import { useStyles } from "./Footer.styles";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { Typography } from "@mui/material";
 const FooterComponent = () => {
   const classes = useStyles();
 
