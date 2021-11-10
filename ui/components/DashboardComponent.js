@@ -825,6 +825,11 @@ class DashboardComponent extends React.Component {
     }
 
     let showAdapters = "No adapters configured.";
+    let showActiveAdapters = "No active Adapters.";
+
+    //just in case inactive adapters need to be shown //
+    // let showInactiveAdapters = "No inactive Adapters.";
+
     if (availableAdapters.length > 0) {
       availableAdapters.sort((a1, a2) => (a1.value < a2.value
         ? -1
@@ -832,52 +837,63 @@ class DashboardComponent extends React.Component {
           ? 1
           : 0));
 
-      showAdapters = (
-        <div>
-          {availableAdapters.map((aa, ia) => {
-            let isDisabled = true;
-            let image = "/static/img/meshery-logo.png";
-            let logoIcon = <img src={image} className={classes.icon} />;
-            let adapterType = "";
-            let adapterVersion = "";
-            meshAdapters.forEach((adapter) => {
-              if (aa.value === adapter.adapter_location) {
-                isDisabled = false;
-                adapterType = adapter.name;
-                adapterVersion = adapter.version;
-                image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-              }
-            });
+      showAdapters = availableAdapters.map((aa, ia) => {
+        let isDisabled = true;
+        let image = "/static/img/meshery-logo.png";
+        let logoIcon = <img src={image} className={classes.icon} />;
+        let adapterType = "";
+        let adapterVersion = "";
+        meshAdapters.forEach((adapter) => {
+          if (aa.value === adapter.adapter_location) {
+            isDisabled = false;
+            adapterType = adapter.name;
+            adapterVersion = adapter.version;
+            image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
+            logoIcon = <img src={image} className={classes.icon} />;
+          }
+        });
 
-            return (
-              <Tooltip
-                key={`adapters-${ia}`}
-                title={
-                  isDisabled
-                    ? "This adapter is inactive"
-                    : `${adapterType
-                      .toLowerCase()
-                      .split(" ")
-                      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")} adapter version ${adapterVersion} on port ${aa.label.split(":")[1]}`
-                }
-              >
-                <Chip
-                  label={aa.label.split(":")[0]}
-                  onClick={self.handleAdapterClick(aa.value)}
-                  icon={logoIcon}
-                  className={classes.chip}
-                  key={`adapters-${ia}`}
-                  variant={isDisabled
-                    ? "default"
-                    : "outlined"}
-                />
-              </Tooltip>
-            );
-          })}
-        </div>
-      );
+        return (
+          <Tooltip
+            key={`adapters-${ia}`}
+            title={
+              isDisabled
+                ? "This adapter is inactive"
+                : `${adapterType
+                  .toLowerCase()
+                  .split(" ")
+                  .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                  .join(" ")} adapter version ${adapterVersion} on port ${aa.label.split(":")[1]}`
+            }
+          >
+            <Chip
+              label={aa.label.split(":")[0]}
+              onClick={self.handleAdapterClick(aa.value)}
+              icon={logoIcon}
+              className={classes.chip}
+              key={`adapters-${ia}`}
+              variant={isDisabled
+                ? "default"
+                : "outlined"}
+            />
+          </Tooltip>
+        );
+      })
+
+      let ActiveAdapters = showAdapters.filter(adapters => adapters.props.title !== "This adapter is inactive");
+
+      //just in case inactive adapters need to be shown //
+      // let InactiveAdapters = showAdapters.filter(adapters => adapters.props.title === "This adapter is inactive");
+
+      if (ActiveAdapters.length > 0) {
+        showActiveAdapters = ActiveAdapters
+      }
+
+      //just in case inactive adapters need to be shown //
+      // if (InactiveAdapters.length > 0) {
+      //   showInactiveAdapters = InactiveAdapters
+      // }
+
     }
     let showGrafana;
     if (grafanaUrl === "") {
@@ -1112,7 +1128,10 @@ class DashboardComponent extends React.Component {
                   Connection Status
                 </Typography>
                 <div>{self.showCard("Kubernetes", showConfigured)}</div>
-                <div>{self.showCard("Adapters", showAdapters)}</div>
+                <div>{self.showCard("Adapters", showActiveAdapters)}</div>
+
+                {/*just in case inactive adapters need to be shown */}
+                {/* <div>{self.showCard("All Available Adapters", showInactiveAdapters)}</div> */}
                 <div>{self.showCard("Metrics", showMetrics)}</div>
                 <div>{self.showCard("Release", showRelease)}</div>
               </div>
