@@ -1,36 +1,9 @@
 dependencies:
-- name: meshery-istio
+- name: meshery-broker
   repository: ""
-  version: 2.1.2
-- name: meshery-linkerd
+  version: 0.1.0
+- name: meshery-meshsync
   repository: ""
-  version: 2.1.2
-- name: meshery-consul
-  repository: ""
-  version: 2.1.2
-- name: meshery-kuma
-  repository: ""
-  version: 2.1.2
-- name: meshery-osm
-  repository: ""
-  version: 2.1.2
-- name: meshery-nsm
-  repository: ""
-  version: 2.1.2
-- name: meshery-traefik-mesh
-  repository: ""
-  version: 2.1.2
-- name: meshery-cpx
-  repository: ""
-  version: 2.1.2
-- name: meshery-nginx-sm
-  repository: ""
-  version: 2.1.2
-- name: meshery-app-mesh
-  repository: ""
-  version: 2.1.2
-- name: meshery
-  repository: ""
-  version: 2.1.2
-digest: sha256:b1230f6f0c6dd0017f96599eaaf38d8dc6d4127dc285a06464d5e04608754abf
-generated: "2021-10-29T15:10:39.691795+08:00"
+  version: 0.1.0
+digest: sha256:276d1539ccf683459c4212861d3b4640d5d718ae877ebc3404c47a3a224dfb7c
+generated: "2021-11-10T16:45:44.540012823+05:30"

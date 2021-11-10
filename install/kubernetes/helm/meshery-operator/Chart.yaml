@@ -29,6 +29,14 @@ version: 0.6.0
 # TODO: Need the confirm the image tag.
 appVersion: 0.6.0
 
+dependencies:
+- name: meshery-broker
+  version: 0.1.0
+  condition: meshery-broker.enabled
+- name: meshery-meshsync
+  version: 0.1.0
+  condition: meshery-meshsync.enabled
+
 maintainers:
   - name: Layer5 Authors
     email: community@layer5.io
