@@ -1,0 +1,566 @@
+{
+  "errors_export": {
+    "component_name": "meshkit",
+    "component_type": "library",
+    "errors": {
+      "1001": {
+        "name": "ErrGetCrdNamesCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting crd names",
+        "probable_cause": "Could not execute kubeopenapi-jsonschema correctly",
+        "suggested_remediation": "Make sure the binary is valid and correct\nMake sure the filter passed is correct"
+      },
+      "1002": {
+        "name": "ErrGetSchemasCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting schemas",
+        "probable_cause": "Schemas Json could not be produced from given crd.",
+        "suggested_remediation": "Make sure the filter passed is correct"
+      },
+      "1003": {
+        "name": "ErrGetAPIVersionCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting api version",
+        "probable_cause": "Api version could not be parsed",
+        "suggested_remediation": "Make sure the filter passed is correct"
+      },
+      "1004": {
+        "name": "ErrGetAPIGroupCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting api group",
+        "probable_cause": "Api group could not be parsed",
+        "suggested_remediation": "Make sure the filter passed is correct"
+      },
+      "1005": {
+        "name": "ErrPopulatingYamlCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error populating yaml",
+        "probable_cause": "Yaml could not be populated with the returned manifests",
+        "suggested_remediation": ""
+      },
+      "1006": {
+        "name": "ErrAbsentFilterCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with passed filters",
+        "probable_cause": "ItrFilter or ItrSpecFilter is either not passed or empty",
+        "suggested_remediation": "Pass the correct ItrFilter and ItrSpecFilter"
+      },
+      "11010": {
+        "name": "ErrNoneDatabaseCode",
+        "code": "11010",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No Database selected",
+        "probable_cause": "database name is empty",
+        "suggested_remediation": "Input a name for the database"
+      },
+      "11011": {
+        "name": "ErrDatabaseOpenCode",
+        "code": "11011",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to open database",
+        "probable_cause": "Database is unreachable",
+        "suggested_remediation": "Make sure your database is reachable"
+      },
+      "11012": {
+        "name": "ErrSQLMapUnmarshalJSONCode",
+        "code": "11012",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to unmarshal json",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11013": {
+        "name": "ErrSQLMapUnmarshalTextCode",
+        "code": "11013",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to unmarshal text",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11014": {
+        "name": "ErrSQLMapMarshalValueCode",
+        "code": "11014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to marshal value",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11015": {
+        "name": "ErrSQLMapUnmarshalScannedCode",
+        "code": "11015",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11016": {
+        "name": "ErrSQLMapInvalidScanCode",
+        "code": "11016",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11021": {
+        "name": "ErrApplyManifestCode",
+        "code": "11021",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error Applying manifest",
+        "probable_cause": "Manifest could be invalid",
+        "suggested_remediation": "Make sure manifest yaml is valid"
+      },
+      "11022": {
+        "name": "ErrServiceDiscoveryCode",
+        "code": "11022",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error Discovering service",
+        "probable_cause": "Network not reachable to the service",
+        "suggested_remediation": "Make sure the endpoint is reachable"
+      },
+      "11023": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "11023",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying helm chart",
+        "probable_cause": "Chart could be invalid",
+        "suggested_remediation": "Make sure to apply valid chart"
+      },
+      "11024": {
+        "name": "ErrNewKubeClientCode",
+        "code": "11024",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating kubernetes clientset",
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      },
+      "11025": {
+        "name": "ErrNewDynClientCode",
+        "code": "11025",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating dynamic client",
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      },
+      "11026": {
+        "name": "ErrNewDiscoveryCode",
+        "code": "11026",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating discovery client",
+        "probable_cause": "Discovery resource is invalid or doesnt exist",
+        "suggested_remediation": "Makes sure the you input valid resource for discovery"
+      },
+      "11027": {
+        "name": "ErrNewInformerCode",
+        "code": "11027",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating informer client",
+        "probable_cause": "Informer is invalid or doesnt exist",
+        "suggested_remediation": "Makes sure the you input valid resource for the informer"
+      },
+      "11028": {
+        "name": "ErrEndpointNotFoundCode",
+        "code": "11028",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to discover an endpoint",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11029": {
+        "name": "ErrInvalidAPIServerCode",
+        "code": "11029",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid API Server URL",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11030": {
+        "name": "ErrLoadConfigCode",
+        "code": "11030",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error loading kubernetes config",
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      },
+      "11031": {
+        "name": "ErrValidateConfigCode",
+        "code": "11031",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Validation failed in the kubernetes config",
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      },
+      "11036": {
+        "name": "ErrSelectorBasedMapCode",
+        "code": "11036",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11037": {
+        "name": "ErrProtocolBasedMapCode",
+        "code": "11037",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11038": {
+        "name": "ErrLableBasedMapCode",
+        "code": "11038",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11039": {
+        "name": "ErrPortParsingCode",
+        "code": "11039",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11040": {
+        "name": "ErrGenerateServiceCode",
+        "code": "11040",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11041": {
+        "name": "ErrConstructingRestHelperCode",
+        "code": "11041",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11042": {
+        "name": "ErrCreatingServiceCode",
+        "code": "11042",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11043": {
+        "name": "ErrUnmarshalCode",
+        "code": "11043",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unmarshal unknown error: %s",
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
+      },
+      "11044": {
+        "name": "ErrUnmarshalInvalidCode",
+        "code": "11044",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unmarshal invalid error for type: ",
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
+      },
+      "11045": {
+        "name": "ErrUnmarshalSyntaxCode",
+        "code": "11045",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unmarshal syntax error at offest: ",
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
+      },
+      "11046": {
+        "name": "ErrUnmarshalTypeCode",
+        "code": "11046",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unmarshal type error at key: %s. Error: %s",
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
+      },
+      "11047": {
+        "name": "ErrUnmarshalUnsupportedTypeCode",
+        "code": "11047",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unmarshal unsupported type error at key: ",
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
+      },
+      "11048": {
+        "name": "ErrUnmarshalUnsupportedValueCode",
+        "code": "11048",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unmarshal unsupported value error at key: ",
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
+      },
+      "11049": {
+        "name": "ErrMarshalCode",
+        "code": "11049",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Marshal error, Description: %s",
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
+      },
+      "11050": {
+        "name": "ErrGetBoolCode",
+        "code": "11050",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while getting Boolean value for key: %s, error: %s",
+        "probable_cause": "Not a valid boolean",
+        "suggested_remediation": "Make sure it is a boolean"
+      },
+      "11051": {
+        "name": "ErrInvalidProtocolCode",
+        "code": "11051",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid protocol: only http, https and file are valid protocols",
+        "probable_cause": "Network protocol is incorrect",
+        "suggested_remediation": "Make sure to specify the right network protocol"
+      },
+      "11052": {
+        "name": "ErrRemoteFileNotFoundCode",
+        "code": "11052",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "remote file not found at",
+        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
+        "suggested_remediation": "Make sure to input the right file name and location"
+      },
+      "11053": {
+        "name": "ErrReadingRemoteFileCode",
+        "code": "11053",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading remote file",
+        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
+        "suggested_remediation": "Make sure to input the right file name and location"
+      },
+      "11054": {
+        "name": "ErrReadingLocalFileCode",
+        "code": "11054",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading local file",
+        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
+        "suggested_remediation": "Make sure to input the right file name and location"
+      },
+      "11055": {
+        "name": "ErrEmptyConfigCode",
+        "code": "11055",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config not initialized",
+        "probable_cause": "Viper is crashing",
+        "suggested_remediation": "Make sure viper is configured properly"
+      },
+      "11056": {
+        "name": "ErrViperCode",
+        "code": "11056",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Viper configuration initialization failed",
+        "probable_cause": "Viper is crashing",
+        "suggested_remediation": "Make sure viper is configured properly"
+      },
+      "11057": {
+        "name": "ErrInMemCode",
+        "code": "11057",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "InMem configuration initialization failed",
+        "probable_cause": "In memory map is crashing",
+        "suggested_remediation": "Make sure map is configured properly"
+      },
+      "11058": {
+        "name": "ErrPodHasNoLabelsCode",
+        "code": "11058",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "the pod has no labels and cannot be exposed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11059": {
+        "name": "ErrServiceHasNoSelectorsCode",
+        "code": "11059",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "the service has no pod selector set",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11060": {
+        "name": "ErrInvalidDeploymentNoSelectorsLabelsCode",
+        "code": "11060",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "the deployment has no labels or selectors and cannot be exposed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11061": {
+        "name": "ErrInvalidDeploymentNoSelectorsCode",
+        "code": "11061",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid deployment: no selectors, therefore cannot be exposed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11062": {
+        "name": "ErrInvalidReplicaNoSelectorsLabelsCode",
+        "code": "11062",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "the replica set has no labels or selectors and cannot be exposed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11063": {
+        "name": "ErrInvalidReplicaSetNoSelectorsCode",
+        "code": "11063",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid replicaset: no selectors, therefore cannot be exposed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11064": {
+        "name": "ErrNoPortsFoundForHeadlessResourceCode",
+        "code": "11064",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "no ports found for the non headless resource",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11065": {
+        "name": "ErrUnknownSessionAffinityErrCode",
+        "code": "11065",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unknown session affinity:",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11066": {
+        "name": "ErrMatchExpressionsConvertionErrCode",
+        "code": "11066",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "couldn't convert expressions - to map-based selector format",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11067": {
+        "name": "ErrFailedToExtractPodSelectorErrCode",
+        "code": "11067",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "cannot extract pod selector from ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11068": {
+        "name": "ErrFailedToExtractPortsCode",
+        "code": "11068",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "cannot extract ports from ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11069": {
+        "name": "ErrFailedToExtractProtocolsErrCode",
+        "code": "11069",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "cannot extract protocols from ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11070": {
+        "name": "ErrCannotExposeObjectErrCode",
+        "code": "11070",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "cannot expose a ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11071": {
+        "name": "ErrControllerCode",
+        "code": "11071",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11072": {
+        "name": "ErrInvalidSizeFileCode",
+        "code": "11072",
+        "severity": "Alert",
+        "long_description": "Could not read the file while walking the repo",
+        "short_description": "",
+        "probable_cause": "Given file size is either 0 or exceeds the limit of 50 MB",
+        "suggested_remediation": ""
+      },
+      "11073": {
+        "name": "ErrCloningRepoCode",
+        "code": "11073",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "could not clone the repo",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    }
+  }
+}

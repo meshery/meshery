@@ -1,0 +1,52 @@
+pre.codeblock-pre {
+    display: inline-flex;
+    justify-content: left;
+    text-align: left;
+    align-items: left;
+    align-content: left;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    background-color: #111;
+    margin: 0;
+    padding: 10px;
+    border-radius: 0.3rem;
+    width: 100%;
+}
+
+.codeblock {
+    width: 100%;
+    display: inline-flex;
+    overflow: auto;
+    justify-content: left;
+    color: #ddd;
+    margin: 0px;
+    padding: 0px;
+}
+
+.clipboardjs {
+    display: inline-flex;
+    align-self: flex-end;
+    justify-content: left;
+    width: 100%;
+    overflow-x: auto;
+    padding: 0px;
+    margin: 0px;
+}
+
+.btn-copy-wrap {
+   
+    align-content: flex-end;
+}
+
+.clipbtn {
+    margin: 5px;
+    border: 0px;
+    background-color: transparent;
+    color: #ccc;
+    font-size: 1.2rem;
+}
+
+.clipbtn:hover {
+    color: #fff;
+    cursor: pointer;
+}
