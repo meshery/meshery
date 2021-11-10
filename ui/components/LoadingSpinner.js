@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/system";
 
 const CustomLoadingSpinnerWrapper = styled(CircularProgress)(({theme})=>({
-    color: "primary", 
+    backgroundColor: '#396679', 
     size: 30,
     thickness: 2.7,
 }))
@@ -14,4 +14,4 @@ const CustomLoadingSpinner = () =>  { const theme = useTheme();
     );
   }
 
-export default CustomLoadingSpinner;
+export default CustomLoadingSpinnerWrapper;

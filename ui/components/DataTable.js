@@ -6,12 +6,13 @@ const CustomDataTableWrapper = styled(DataGrid)(({theme})=>({
     autoHeight: true,
 }))
 
-export const CustomDataTable = ({rows, columns}) =>  { const theme = useTheme();
+export const CustomDataTable = ({rows, columns, options}) =>  { const theme = useTheme();
     return (
       <CustomDataTableWrapper>
         <DataGrid
             rows={rows}
             columns={columns}
+            options={options}
             pageSize={25}
             rowsPerPageOptions={[6]}
             checkboxSelection
