@@ -102,7 +102,7 @@ proto:
 
 # Installs dependencies for building the user interface.
 setup-ui-libs:
-	cd ui; npm i; cd ..
+	cd ui; yarn; cd ..
 	cd provider-ui; npm i; cd ..
 
 # Runs the Meshery UI interface on your local machine.
