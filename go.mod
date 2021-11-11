@@ -20,13 +20,13 @@ require (
 	github.com/99designs/gqlgen v0.14.0
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.16.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/envoyproxy/go-control-plane v0.9.10-0.20210907150352-cf90f659a021
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-openapi/runtime v0.19.15
 	github.com/go-openapi/strfmt v0.19.5
 	github.com/gofrs/uuid v3.4.0+incompatible
-	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-github v17.0.0+incompatible // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
