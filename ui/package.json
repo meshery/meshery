@@ -53,7 +53,7 @@
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-relay": "^11.0.2",
     "billboard.js": "=3.2.1",
-    "caniuse-lite": "^1.0.30001252",
+    "caniuse-lite": "^1.0.30001279",
     "classnames": "^2.3.1",
     "codemirror": "^5.63.3",
     "color-string": "^1.5.5",
