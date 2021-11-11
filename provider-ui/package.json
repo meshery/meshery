@@ -40,7 +40,7 @@
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-react": "^7.26.1",
     "http-proxy": "^1.18.1",
-    "nodemon": "^2.0.13",
+    "nodemon": "^2.0.15",
     "nyc": "^15.1.0",
     "start-server-and-test": "^1.14.0"
   }
