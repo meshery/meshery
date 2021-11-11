@@ -1,13 +1,3 @@
-// const exports = {}
-// const proxy_exports = new Proxy(exports, {
-//   get : (target, prop) => {
-//     return require(prop)
-//   },
-//   has : () => true,
-// });
-
-// module.exports = { resolve : proxy_exports }
-
 module.exports = { resolve : {
   react : require("react"),
   "@material-ui/core/styles" : require("@material-ui/core/styles"),
