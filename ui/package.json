@@ -57,7 +57,7 @@
     "classnames": "^2.3.1",
     "codemirror": "^5.63.3",
     "color-string": "^1.5.5",
-    "cron-time-generator": "^1.2.0",
+    "cron-time-generator": "^1.2.2",
     "eslint-loader": "^4.0.2",
     "graphql": "^15.5.1",
     "immutable": "^4.0.0-rc.15",
