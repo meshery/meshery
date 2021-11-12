@@ -3,6 +3,7 @@ package model
 import (
 	"sync"
 
+	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -10,6 +11,12 @@ import (
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/spf13/viper"
+)
+
+const (
+	//platform = runtime.GOOS
+	chartRepo            = "https://meshery.github.io/meshery.io/charts"
 )
 
 var (
@@ -34,6 +41,7 @@ var (
 		"kiali":            "http",
 		"zipkin":           "http-query",
 	}
+
 )
 
 // listernToEvents - scale this function with the number of channels
@@ -107,6 +115,41 @@ func applyYaml(client *mesherykube.Client, delete bool, file string) error {
 		Namespace: Namespace,
 		Update:    true,
 		Delete:    delete,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// installs operator
+func installUsingHelm(client *mesherykube.Client, delete bool) error {
+	// retrieving meshery's version to apply the appropriate chart
+	mesheryReleaseVersion := viper.GetString("BUILD")
+	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
+		latestReleaseData, err := handlers.CheckLatestVersion("")
+		if err != nil {
+			mesheryReleaseVersion = latestReleaseData.Current
+		}
+	}
+
+	act := mesherykube.INSTALL
+
+	if delete {
+		act = mesherykube.UNINSTALL
+	}
+
+	err := client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
+		Namespace: "meshery",
+		ChartLocation: mesherykube.HelmChartLocation{
+			Repository: chartRepo,
+			Chart:      "meshery",
+			Version:    mesheryReleaseVersion,
+		},
+		CreateNamespace: true,
+		Action:          act,
+		//OverrideValues:  overrideValues,
 	})
 	if err != nil {
 		return err

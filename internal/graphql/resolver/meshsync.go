@@ -112,7 +112,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 }
 
 func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider) (model.Status, error) {
-	err := model.RunMeshSync(r.Config.KubeClient, false)
+	//err := model.RunMeshSync(r.Config.KubeClient, false)
 	r.Log.Info("Installing Meshsync")
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
 		Source: broadcast.OperatorSyncChannel,
@@ -120,15 +120,15 @@ func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider)
 		Type:   "health",
 	})
 
-	if err != nil {
-		r.Log.Error(err)
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data:   err,
-			Type:   "error",
-		})
-		return model.StatusDisabled, err
-	}
+//	if err != nil {
+//		r.Log.Error(err)
+//		r.Broadcast.Submit(broadcast.BroadcastMessage{
+//			Source: broadcast.OperatorSyncChannel,
+//			Data:   err,
+//			Type:   "error",
+//		})
+//		return model.StatusDisabled, err
+//	}
 
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
 		Source: broadcast.OperatorSyncChannel,
