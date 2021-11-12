@@ -37,7 +37,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	}
 
 	go func(del bool, kubeclient *mesherykube.Client) {
-		err := model.Initialize(kubeclient, del)
+		err := model.Initialize(kubeclient, del, r.Config.AdapterTracker)
 		if err != nil {
 			r.Log.Error(err)
 			r.Broadcast.Submit(broadcast.BroadcastMessage{

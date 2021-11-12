@@ -8,19 +8,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// Not needed
-//const (
-//	meshsyncYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
-//)
-//
-//func RunMeshSync(client *mesherykube.Client, delete bool) error {
-//	err := applyYaml(client, delete, meshsyncYaml)
-//	if err != nil {
-//		return err
-//	}
-//	return nil
-//}
-
 func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object *meshsyncmodel.Object) error {
 	if handler == nil {
 		return ErrEmptyHandler

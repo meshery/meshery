@@ -1,9 +1,12 @@
 package model
 
 import (
+	"context"
+	"strings"
 	"sync"
 
 	"github.com/layer5io/meshery/handlers"
+	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -15,7 +18,6 @@ import (
 )
 
 const (
-	//platform = runtime.GOOS
 	chartRepo            = "https://meshery.github.io/meshery.io/charts"
 )
 
@@ -124,7 +126,7 @@ func applyYaml(client *mesherykube.Client, delete bool, file string) error {
 }
 
 // installs operator
-func installUsingHelm(client *mesherykube.Client, delete bool) error {
+func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface ) error {
 	// retrieving meshery's version to apply the appropriate chart
 	mesheryReleaseVersion := viper.GetString("BUILD")
 	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
@@ -134,26 +136,109 @@ func installUsingHelm(client *mesherykube.Client, delete bool) error {
 		}
 	}
 
-	act := mesherykube.INSTALL
+	var (
+		act = mesherykube.INSTALL
+		chart = "meshery-operator"
+	)
 
-	if delete {
+	// a basic check to see if meshery is installed in cluster
+	// this helps decide what chart should be used for installing operator
+	if viper.GetString("KUBERNETES_SERVICE_HOST") != "" {
+		act = mesherykube.UPGRADE
+		chart = "meshery"
+	} else if delete {
 		act = mesherykube.UNINSTALL
 	}
 
-	err := client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
+	overrides, err := SetOverrideValues(delete, adapterTracker)
+	if err != nil {
+		return err
+	}
+
+	err = client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
 		Namespace: "meshery",
 		ChartLocation: mesherykube.HelmChartLocation{
 			Repository: chartRepo,
-			Chart:      "meshery",
+			Chart:      chart,
 			Version:    mesheryReleaseVersion,
 		},
 		CreateNamespace: true,
 		Action:          act,
-		//OverrideValues:  overrideValues,
+		// Setting override values
+		OverrideValues: overrides,
 	})
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// SetOverrideValues detects the currently insalled adapters and sets appropriate
+// overrides so as to not uninstall them. It also sets override values for
+// operator so that it can be enabled or disabled depending on the need
+func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterface) (map[string]interface{}, error) {
+	installedAdapters := make([]string, 0)
+	adapters := adapterTracker.GetAdapters(context.TODO())
+
+	for _, adapter := range adapters {
+		if adapter.Name != "" {
+			installedAdapters = append(installedAdapters, strings.Split(adapter.Location, ":")[0])
+		}
+	}
+
+	overrideValues := map[string]interface{}{
+		"meshery": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-linkerd": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-consul": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-kuma": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-osm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nsm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nginx-sm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-traefik-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cpx": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-app-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-operator": map[string]interface{}{
+			"enabled": true,
+		},
+	}
+
+	for _, adapter := range installedAdapters {
+		if _, ok := overrideValues[adapter]; ok {
+			overrideValues[adapter] = map[string]interface{}{
+				"enabled": true,
+			}
+		}
+	}
+
+	if delete {
+		overrideValues["meshery-operator"] = map[string]interface{}{
+			"enabled": false,
+		}
+	}
+
+	return overrideValues, nil
 }

@@ -29,9 +29,9 @@ const (
 	// brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
 )
 
-func Initialize(client *mesherykube.Client, delete bool) error {
+func Initialize(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
 	// installOperator
-	err := installUsingHelm(client, delete)
+	err := installUsingHelm(client, delete, adapterTracker)
 	if err != nil {
 		return err
 	}
