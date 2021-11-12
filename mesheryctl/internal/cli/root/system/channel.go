@@ -91,13 +91,13 @@ func validVersionCheck(c string) (bool, error) {
 		return false, fmt.Errorf("misformatted release channel or version")
 	}
 
-	//get mesheryctl config
+	// get mesheryctl config
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 
 		return false, fmt.Errorf("error processing config %+v", err)
 	}
-	//get current context from mesheryctl config
+	// get current context from mesheryctl config
 	ctxCurrent, err := mctlCfg.GetCurrentContext()
 	if err != nil {
 
