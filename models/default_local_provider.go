@@ -1183,6 +1183,8 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 }
 
 // getSeededComponents reads the directory recursively looking for seed content
+//Note- This function does not throw meshkit errors because the only method that calls it,"SeedContent" wraps the errors in meshkit errors.
+// If this function is reused somewhere else, make sure to wrap its errors in appropriate meshkit errors, otherwise it can cause can a panic.
 func getSeededComponents(comp string, log logger.Handler) ([]string, []string, error) {
 	wd := utils.GetHome()
 	switch comp {
@@ -1193,11 +1195,21 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 	case "Application":
 		wd = filepath.Join(wd, ".meshery", "seed_content", "applications")
 	}
+	_, err := os.Stat(wd)
+	if err != nil && !os.IsNotExist(err) {
+		return nil, nil, err
+	} else if os.IsNotExist(err) {
+		log.Info("Creating directories for seeding... Populate the directories in " + wd + " to get seeded content with local provider")
+		er := os.MkdirAll(wd, 0777)
+		if er != nil {
+			return nil, nil, er
+		}
+	}
 
 	log.Info("[SEEDING] ", "Extracting "+comp+"s from ", wd)
 	var names []string
 	var contents []string
-	err := filepath.WalkDir(wd,
+	err = filepath.WalkDir(wd,
 		func(path string, d os.DirEntry, err error) error {
 			if err != nil {
 				return err
