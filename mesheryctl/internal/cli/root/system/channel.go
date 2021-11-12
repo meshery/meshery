@@ -94,13 +94,11 @@ func validVersionCheck(c string) (bool, error) {
 	// get mesheryctl config
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-
 		return false, fmt.Errorf("error processing config %+v", err)
 	}
 	// get current context from mesheryctl config
 	ctxCurrent, err := mctlCfg.GetCurrentContext()
 	if err != nil {
-
 		return false, fmt.Errorf("error fetching current context %+v", err)
 	}
 
@@ -118,7 +116,6 @@ func validVersionCheck(c string) (bool, error) {
 	}
 	ctxCurrent.SetVersion(verCurrent)
 	return true, nil
-
 }
 
 //func to validate CLI argument
