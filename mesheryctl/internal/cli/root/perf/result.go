@@ -48,10 +48,10 @@ var resultCmd = &cobra.Command{
 mesheryctl perf result saturday profile 
 
 // View other set of performance results with --page (maximum 25 results)
-mesheryctl perf result saturday profile --page 2
+mesheryctl perf result saturday profile --page 2 -t "/Downloads/auth.json"
 
 // View single performance result with detailed information
-mesheryctl perf result saturday profile --view
+mesheryctl perf result saturday profile --view -t "/Downloads/auth.json"
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile

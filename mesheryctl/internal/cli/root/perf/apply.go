@@ -47,7 +47,9 @@ var applyCmd = &cobra.Command{
 mesheryctl perf apply meshery-profile --flags
 
 // Execute a Performance test with creating a new performance profile
-mesheryctl perf apply --profile meshery-profile-new --url <url>
+mesheryctl perf apply --profile meshery-profile-new --url <url> -t "/Downloads/auth.json"
+(or)
+mesheryctl perf apply --profile meshery-profile-new --url <url> 
 
 // Run Performance test using SMP compatible test configuration
 mesheryctl perf apply -f <filepath>

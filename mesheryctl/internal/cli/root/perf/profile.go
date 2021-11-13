@@ -49,13 +49,13 @@ var profileCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // List performance profiles (maximum 25 profiles)	
-mesheryctl perf profile 
+mesheryctl perf profile
 
 // List performance profiles with search (maximum 25 profiles)
-mesheryctl perf profile test profile 2 
+mesheryctl perf profile test profile 2 -t "/Downloads/auth.json"
 
 // View single performance profile with detailed information
-mesheryctl perf profile --view
+mesheryctl perf profile --view -t "/Downloads/auth.json"
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
