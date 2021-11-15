@@ -2352,6 +2352,12 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 			return err
 		}
 
+		// Prevent Arbitrary file write during zip extraction ("zip slip")
+		// see https://snyk.io/research/zip-slip-vulnerability for more
+		if !strings.Contains(header.Name, "..") {
+			return fmt.Errorf("invalid character found in header")
+		}
+
 		loc := path.Join(destination, header.Name)
 
 		switch header.Typeflag {

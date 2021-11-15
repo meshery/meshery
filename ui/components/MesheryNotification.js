@@ -206,12 +206,14 @@ class MesheryNotification extends React.Component {
     return (e) => {
       const { events } = this.state;
       const data = JSON.parse(e.data);
+      // set null event field as success
+      data.event_type = data.event_type || 0
 
       // Add the event to the state
       events.push(data);
 
       // Dispatch the notification
-      self.notificationDispatcher(data.event_type || 0, data.summary)
+      self.notificationDispatcher(data.event_type, data.summary)
       //Temperory Hack
       // if(data.summary==="Smi conformance test completed successfully"){
       //   self.props.updateSMIResults({smi_result: data,});

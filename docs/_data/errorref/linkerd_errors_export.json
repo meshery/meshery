@@ -30,15 +30,6 @@
         "probable_cause": "Invalid release format",
         "suggested_remediation": ""
       },
-      "1003": {
-        "name": "ErrInstallLinkerdCode",
-        "code": "1003",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error with Linkerd operation: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
       "1004": {
         "name": "ErrMeshConfigCode",
         "code": "1004",
@@ -97,7 +88,7 @@
         "name": "ErrSampleAppCode",
         "code": "1011",
         "severity": "Alert",
-        "long_description": "Error occured while trying to install a sample application using manifests",
+        "long_description": "Error occurred while trying to install a sample application using manifests",
         "short_description": "Error with sample app operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
@@ -106,7 +97,7 @@
         "name": "ErrCustomOperationCode",
         "code": "1012",
         "severity": "Alert",
-        "long_description": "Error occured while applying custom manifest to the cluster",
+        "long_description": "Error occurred while applying custom manifest to the cluster",
         "short_description": "Error with custom operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Make sure to apply a valid kubernetes manifest"
@@ -160,7 +151,7 @@
         "name": "ErrParseOAMComponentCode",
         "code": "1018",
         "severity": "Alert",
-        "long_description": "Error occured while prasing application component in the OAM request made",
+        "long_description": "Error occurred while prasing application component in the OAM request made",
         "short_description": "error parsing the component",
         "probable_cause": "Invalid OAM component passed in OAM request",
         "suggested_remediation": "Check if your request has vaild OAM components"
@@ -169,7 +160,7 @@
         "name": "ErrParseOAMConfigCode",
         "code": "1019",
         "severity": "Alert",
-        "long_description": "Error occured while prasing component config in the OAM request made",
+        "long_description": "Error occurred while prasing component config in the OAM request made",
         "short_description": "error parsing the configuration",
         "probable_cause": "Invalid OAM config passed in OAM request",
         "suggested_remediation": "Check if your request has vaild OAM config"
