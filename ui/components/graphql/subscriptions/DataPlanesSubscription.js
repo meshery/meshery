@@ -32,7 +32,7 @@ export const dataPlaneSubscription = graphql`
 `;
 
 export default function subscribeDataPlaneEvents(dataCB, variables) {
-  requestSubscription(environment, {
+  return requestSubscription(environment, {
     subscription : dataPlaneSubscription,
     variables : {
       filter : variables,

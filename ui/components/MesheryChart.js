@@ -50,11 +50,11 @@ class MesheryChart extends React.Component {
     this.percentileRef=null;
   }
 
-  singleChart = (data) => {
+  singleChart = (rawdata,data) => {
     if (typeof data === 'undefined' || typeof data.StartTime === 'undefined') {
       return {};
     }
-    return makeChart(fortioResultToJsChartData(data));
+    return makeChart(fortioResultToJsChartData(rawdata,data));
   }
 
   processChartData(chartData) {
@@ -281,9 +281,9 @@ class MesheryChart extends React.Component {
     if (typeof this.props.data !== 'undefined') {
       const results = this.props.data;
       if (results.length == 2) {
-        chartData = makeOverlayChart(fortioResultToJsChartData(results[0]), fortioResultToJsChartData(results[1]));
+        chartData = makeOverlayChart(fortioResultToJsChartData(this.props.rawdata,results[0]), fortioResultToJsChartData(this.props.rawdata,results[1]));
       } else if (results.length > 2) {
-        chartData = makeMultiChart(results);
+        chartData = makeMultiChart(this.props.rawdata,results);
       }
     }
     const self = this;
@@ -293,7 +293,7 @@ class MesheryChart extends React.Component {
           ? this.props.data[0]
           : {})
         : {};
-      chartData = this.singleChart(tmpData);
+      chartData = this.singleChart(this.props.rawdata,tmpData);
     }
 
     const { classes } = this.props;

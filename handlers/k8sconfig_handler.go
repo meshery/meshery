@@ -14,6 +14,9 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
@@ -116,6 +119,8 @@ func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference,
 	// 	return
 	// }
 
+	ctxID := "0" //To be replaced with actual context ID after multi context support
+	go core.DeleteK8sWorkloads(ctxID)
 	_, _ = w.Write([]byte("{}"))
 }
 
@@ -273,10 +278,55 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 
 			if ctx.IsCurrentContext {
 				_, _ = prov.SetCurrentContext(token, cc.ID) // Ignore the error
+
+				ctxID := "0" // To be replaced after multi-context support
+				go func(l logger.Handler, config []byte, ctx string) {
+					err := registerK8sComponents(h.log, config, ctxID)
+					if err != nil {
+						logrus.Error(err)
+					}
+				}(h.log, []byte{}, ctxID)
+
 				return &ctx, nil
 			}
 		}
 	}
 
 	return &cc, nil
+}
+func registerK8sComponents(l logger.Handler, config []byte, ctx string) error {
+	l.Info("Starting to register k8s native components")
+	man, err := core.GetK8Components(config, ctx)
+	if err != nil {
+		return err
+	}
+	if man == nil {
+		l.Error(errors.New("Could not get k8s components"))
+		return err
+	}
+	for i, def := range man.Definitions {
+		var ord core.WorkloadCapability
+		ord.Metadata = make(map[string]string)
+		ord.Metadata["io.meshery.ctxid"] = ctx
+		ord.Metadata["adapter.meshery.io/name"] = "kubernetes"
+		ord.Host = "<none-local>"
+		ord.OAMRefSchema = man.Schemas[i]
+
+		var definition v1alpha1.WorkloadDefinition
+		err := json.Unmarshal([]byte(def), &definition)
+		if err != nil {
+			return err
+		}
+		ord.OAMDefinition = definition
+		content, err := json.Marshal(ord)
+		if err != nil {
+			return err
+		}
+		err = core.RegisterWorkload(content)
+		if err != nil {
+			return err
+		}
+	}
+	l.Info("Registration of k8s native components completed")
+	return nil
 }

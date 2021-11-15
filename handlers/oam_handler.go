@@ -90,6 +90,7 @@ func (h *Handler) PatternFileHandler(
 		prefObj,
 		user.UserID,
 		isDel,
+		r.URL.Query().Get("dryRun") == "true",
 	)
 
 	if err != nil {
@@ -124,7 +125,82 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if method == "GET" {
-		h.GETOAMRegisterHandler(typ, rw)
+		h.GETOAMRegisterHandler(typ, rw, r.URL.Query().Get("trim") == "true")
+	}
+}
+
+func (h *Handler) OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request) {
+	typ := mux.Vars(r)["type"]
+
+	if !(typ == "workload" || typ == "trait" || typ == "scope") {
+		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	name := mux.Vars(r)["name"]
+	res := []interface{}{}
+
+	if typ == "workload" {
+		data := core.GetWorkload(name)
+		for _, d := range data {
+			res = append(res, d)
+		}
+	}
+
+	if typ == "trait" {
+		data := core.GetTrait(name)
+		for _, d := range data {
+			res = append(res, d)
+		}
+	}
+
+	if typ == "scope" {
+		data := core.GetScope(name)
+		for _, d := range data {
+			res = append(res, d)
+		}
+	}
+
+	if err := json.NewEncoder(rw).Encode(res); err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		h.log.Debug(err)
+		_, _ = rw.Write([]byte(err.Error()))
+	}
+}
+
+func (h *Handler) OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request) {
+	typ := mux.Vars(r)["type"]
+
+	if !(typ == "workload" || typ == "trait" || typ == "scope") {
+		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	name := mux.Vars(r)["name"]
+	id := mux.Vars(r)["id"]
+	var res interface{}
+
+	if typ == "workload" {
+		res = core.GetWorkloadByID(name, id)
+	}
+
+	if typ == "trait" {
+		res = core.GetTraitByID(name, id)
+	}
+
+	if typ == "scope" {
+		res = core.GetScopeByID(name, id)
+	}
+
+	if res == nil {
+		http.Error(rw, "not found", http.StatusNotFound)
+		return
+	}
+
+	if err := json.NewEncoder(rw).Encode(res); err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		h.log.Debug(err)
+		_, _ = rw.Write([]byte(err.Error()))
 	}
 }
 
@@ -170,12 +246,19 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 // 	200:
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
-func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
+func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter, trim bool) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
 	if typ == "workload" {
 		res := core.GetWorkloads()
+
+		// If trim is set to true then remove the schema from the response
+		if trim {
+			for i := range res {
+				res[i].OAMRefSchema = ""
+			}
+		}
 
 		if err := enc.Encode(res); err != nil {
 			h.log.Error(ErrWorkloadDefinition(err))
@@ -186,6 +269,13 @@ func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 	if typ == "trait" {
 		res := core.GetTraits()
 
+		// If trim is set to true then remove the schema from the response
+		if trim {
+			for i := range res {
+				res[i].OAMRefSchema = ""
+			}
+		}
+
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
 			h.log.Error(ErrTraitDefinition(err))
@@ -195,6 +285,13 @@ func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 
 	if typ == "scope" {
 		res := core.GetScopes()
+
+		// If trim is set to true then remove the schema from the response
+		if trim {
+			for i := range res {
+				res[i].OAMRefSchema = ""
+			}
+		}
 
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
@@ -223,6 +320,7 @@ func _processPattern(
 	prefObj *models.Preference,
 	userID string,
 	isDelete bool,
+	dryRun bool,
 ) (string, error) {
 	// Get the token from the context
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
@@ -271,9 +369,15 @@ func _processPattern(
 	chain.
 		Add(stages.ServiceIdentifier(sip, sap)).
 		Add(stages.Filler).
-		Add(stages.Validator(sip, sap)).
-		Add(stages.Provision(sip, sap)).
-		Add(stages.Persist(sip, sap)).
+		Add(stages.Validator(sip, sap))
+
+	if !dryRun {
+		chain.
+			Add(stages.Provision(sip, sap)).
+			Add(stages.Persist(sip, sap))
+	}
+
+	chain.
 		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
 			data.Lock.Lock()
 			for k, v := range data.Other {

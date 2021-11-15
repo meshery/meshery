@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl <command name>
 permalink: reference/mesheryctl/commands/command_name_template
+redirect_from: reference/mesheryctl/commands/command_name_template/
 type: reference
 display-title: "false"
 language: en

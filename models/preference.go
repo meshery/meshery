@@ -82,7 +82,7 @@ type PreferencePersister interface {
 
 	// Lock(userID string)
 	// Unlock(userID string)
-	ClosePersister()
+	// ClosePersister()
 }
 
 // Parameters to save Grafana configuration

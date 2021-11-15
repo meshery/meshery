@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -32,6 +33,7 @@ import (
 var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
+	ReleaseTag      string
 )
 
 // ChangePlatform changes the platform specified in the current context to the specified platform
@@ -359,7 +361,7 @@ func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
 
 // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 func GetLatestStableReleaseTag() (string, error) {
-	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/latest"
+	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/latest"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
@@ -370,19 +372,15 @@ func GetLatestStableReleaseTag() (string, error) {
 		return "", errors.New("failed to get latest stable release tag")
 	}
 
-	var dat map[string]interface{}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to read response body")
 	}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		return "", errors.Wrap(err, "failed to unmarshal json into object")
-	}
-	null := ""
-	if dat["tag_name"] != nil {
-		null = dat["tag_name"].(string)
-	}
-	return null, nil
+	re := regexp.MustCompile("/releases/tag/(.*?)\"")
+	releases := re.FindAllString(string(body), -1)
+	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
+	latest = strings.ReplaceAll(latest, "\"", "")
+	return latest, nil
 }
 
 // IsAdapterValid checks if the adapter mentioned by the user is a valid adapter
@@ -406,12 +404,24 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/docker-compose.yaml"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "latest" {
-				ctx.Version, err = GetLatestStableReleaseTag()
+				ReleaseTag, err = GetLatestStableReleaseTag()
 				if err != nil {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
+			} else { // else we get version tag from the config file
+				mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+				if err != nil {
+					return errors.Wrap(err, "error processing meshconfig")
+				}
+
+				currCtx, err := mctlCfg.GetCurrentContext()
+				if err != nil {
+					return err
+				}
+				ReleaseTag = currCtx.GetVersion()
 			}
-			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ctx.Version + "/docker-compose.yaml"
+
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/docker-compose.yaml"
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
@@ -650,16 +660,6 @@ func GetPods(client *meshkitkube.Client, namespace string) (*v1core.PodList, err
 	return podList, nil
 }
 
-// IsPodRequired checks if a given pod is specified in the required pods
-func IsPodRequired(requiredPods []string, pod string) bool {
-	for _, rp := range requiredPods {
-		if rp == pod {
-			return true
-		}
-	}
-	return false
-}
-
 // GetRequiredPods checks if the pods specified by the user is valid returns a list of the required pods
 func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]string, error) {
 	var requiredPods []string
@@ -767,4 +767,17 @@ func InstallprereqDocker() error {
 	}
 	log.Info("Prerequisite Docker Compose is installed.")
 	return nil
+}
+
+// Sets the path to user's kubeconfig file into global variables
+func SetKubeConfig() {
+	// Define the path where the kubeconfig.yaml will be written to
+	usr, err := user.Current()
+	if err != nil {
+		ConfigPath = filepath.Join(".meshery", KubeConfigYaml)
+		KubeConfig = filepath.Join(".kube", "config")
+	} else {
+		ConfigPath = filepath.Join(usr.HomeDir, ".meshery", KubeConfigYaml)
+		KubeConfig = filepath.Join(usr.HomeDir, ".kube", "config")
+	}
 }

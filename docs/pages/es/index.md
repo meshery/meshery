@@ -17,23 +17,109 @@ display-title: "false"
     </p>
 </div>
 
-<!-- Contribuir Inicio-->
-<!-- QUICK START -->
+
+
+<div class = "wrapper">
+
+  <!-- Contribuir Inicio-->
+  <!-- QUICK START -->
+  
   <div>
     <a href="{{ site.baseurl }}/es/installation">
-        <div class="overview">Quick&nbsp;Start</div>
+      <div class="overview">Inicio&nbsp;Rápido</div>
     </a>
-    <ul><b><a href="{{ site.baseurl }}/es/installation">Getting Started</a></b>
-        <li><a href="{{ site.baseurl }}/es/overview">Introducing Meshery</a></li>
-        <li><a href="{{ site.baseurl }}/es/project">Project and Community</a></li>
+    <b><a href="{{ site.baseurl }}/es/installation" class="text-black">Inicio Rápido</a></b>
+    <ul>
+      <li><a href="{{ site.baseurl }}/es/overview">Introducción a Meshery</a></li>
+      <li><a href="{{ site.baseurl }}/es/project">Proyecto y Comunidad</a></li>
     </ul>
-    <ul><b><a href="{{ site.baseurl }}/es/installation/platforms" class="text-black">Supported Platforms</a></b>
-        {% for item in sorted_pages %}
+    <b><a href="{{ site.baseurl }}/es/installation/platforms" class="text-black">Plataformas Soportadas</a></b>
+    <ul>
+      {% for item in sorted_pages %}
         {% if item.type=="installation" %}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
-          {% endif %}
-        {% endfor %}
-      </ul>
+        {% endif %}
+      {% endfor %}
+    </ul>
   </div>
 
-{% include toc.html page=espanol %}
+  <!-- Conceptos -->
+  <!-- Concepts -->
+  <div>
+    <a href="{{ site.baseurl }}/concepts">
+        <div class="overview">Conceptos</div>
+    </a>
+    <h6><a href="{{ site.baseurl }}/concepts" class="text-black section-title">Conceptos</a></h6>
+    <ul>
+      {% for item in sorted_pages %}
+        {% if item.type=="concepts" and item.list!="exclude" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="wrapper" style="text-align: left;">
+  
+  <!-- Funcionalidad -->
+  <!-- FUNCTIONALITY -->
+
+  <div>
+    <a href="{{ site.baseurl }}/es/functionality">
+      <div class="overview">Funcionalidad</div>
+    </a>
+    <h6><a href="{{ site.baseurl }}/es/functionality" class="text-black section-title">Gestión de la malla de servicios</a></h6>
+    <ul>
+      {% for item in sorted_pages %}
+        {% if item.type=="functionality" and item.list!="exclude" %}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Gestión específica de la malla de servicios</a></h6>
+    <ul>
+      {% for item in sorted_pages %}
+        {% if item.type=="service-mesh" and item.list!="exclude" %}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a> hello </li>
+        {% endif %}
+      {% endfor %}
+      {% for adapter in site.adapters %}
+        {% if adapter.project_status and adapter.language =="es" %}
+          <li><img src="{{ adapter.image }}" style="width:20px" /> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
+        {% endif -%}
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Guías -->
+  <!-- GUIDES -->
+
+  <div>
+    <a href="{{ site.baseurl }}/guides">
+        <div class="overview">Guías y referencia</div>
+    </a>
+    <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guías</a></h6>
+    <ul>
+      {% for item in sorted_pages %}
+        {% if item.type=="Guides" and item.list!="exclude" %}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Referencia</a></h6>
+    <ul>
+      {% for item in sorted_pages %}
+        {% if item.type=="Reference" and item.list!="exclude"  %}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+
+</div>
+
+
+  
+
+

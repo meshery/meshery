@@ -29,6 +29,11 @@ subcommand: config
 
 ## Examples
 
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ name.example }}
+  </div>
+</pre>
 {% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
@@ -38,6 +43,14 @@ subcommand: config
 </pre>
 {% endfor %}
 <br/>
+{% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ flag.example }}
+  </div>
+</pre>
+{% endfor %}
+<br />
 
 {% for ex_hash in name.examples %}{% assign ex = ex_hash[1] %}
 {{ ex.description }}

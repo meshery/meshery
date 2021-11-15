@@ -16,8 +16,9 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 
 	// Tell operator status subscription that operation is starting
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Type:    broadcast.OperatorSyncChannel,
-		Message: true,
+		Source: broadcast.OperatorSyncChannel,
+		Data:   true,
+		Type:   "health",
 	})
 
 	if status == model.StatusEnabled {
@@ -34,8 +35,9 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	if kubeclient.KubeClient == nil {
 		r.Log.Error(ErrNilClient)
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Type:    broadcast.OperatorSyncChannel,
-			Message: ErrNilClient,
+			Source: broadcast.OperatorSyncChannel,
+			Data:   ErrNilClient,
+			Type:   "error",
 		})
 		return model.StatusUnknown, ErrNilClient
 	}
@@ -45,8 +47,9 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		if err != nil {
 			r.Log.Error(err)
 			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Type:    broadcast.OperatorSyncChannel,
-				Message: err,
+				Source: broadcast.OperatorSyncChannel,
+				Data:   err,
+				Type:   "error",
 			})
 			return
 		}
@@ -60,8 +63,9 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			if err != nil {
 				r.Log.Error(err)
 				r.Broadcast.Submit(broadcast.BroadcastMessage{
-					Type:    broadcast.OperatorSyncChannel,
-					Message: false,
+					Source: broadcast.OperatorSyncChannel,
+					Data:   false,
+					Type:   "health",
 				})
 				return
 			}
@@ -71,8 +75,9 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			if err != nil {
 				r.Log.Error(err)
 				r.Broadcast.Submit(broadcast.BroadcastMessage{
-					Type:    broadcast.OperatorSyncChannel,
-					Message: false,
+					Source: broadcast.OperatorSyncChannel,
+					Data:   false,
+					Type:   "health",
 				})
 				return
 			}
@@ -84,8 +89,9 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		if err != nil {
 			r.Log.Error(err)
 			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Type:    broadcast.OperatorSyncChannel,
-				Message: err,
+				Source: broadcast.OperatorSyncChannel,
+				Data:   err,
+				Type:   "error",
 			})
 			return
 		}
@@ -96,8 +102,9 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		// }
 
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Type:    broadcast.OperatorSyncChannel,
-			Message: false,
+			Source: broadcast.OperatorSyncChannel,
+			Data:   false,
+			Type:   "health",
 		})
 	}(delete, kubeclient)
 
@@ -230,21 +237,21 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 					continue
 				}
 
-				if processing.Type == broadcast.OperatorSyncChannel {
-					switch processing.Message.(type) {
+				if processing.Source == broadcast.OperatorSyncChannel {
+					switch processing.Data.(type) {
 					case bool:
-						if processing.Message.(bool) {
+						if processing.Data.(bool) {
 							status.Status = model.StatusProcessing
 						}
 					case *errors.Error:
 						status.Error = &model.Error{
-							Code:        processing.Message.(*errors.Error).Code,
-							Description: processing.Message.(*errors.Error).Error(),
+							Code:        processing.Data.(*errors.Error).Code,
+							Description: processing.Data.(*errors.Error).Error(),
 						}
 					case error:
 						status.Error = &model.Error{
 							Code:        "",
-							Description: processing.Message.(error).Error(),
+							Description: processing.Data.(error).Error(),
 						}
 					}
 				}

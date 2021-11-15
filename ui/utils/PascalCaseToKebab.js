@@ -14,5 +14,5 @@ export default function PascalCaseToKebab(str) {
  * @param {string} str string that needs to be transformed
  */
 function pascalCaseToCamelCase(str) {
-  return str.charAt(0).toLowerCase() + str.slice(1)
+  return str.charAt(0).toLowerCase() + str.slice(1);
 }

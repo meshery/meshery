@@ -10,7 +10,6 @@ import (
 )
 
 func TestSystemCmdIntegration(t *testing.T) {
-	// skipping this integration test with --short flag
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
@@ -26,7 +25,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// update all location
-	utils.SetFileLocationTesting(t, currDir)
+	utils.SetFileLocationTesting(currDir)
 
 	tests := []struct {
 		Name            string

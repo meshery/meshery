@@ -31,7 +31,7 @@ import (
 // RemoteProvider - represents a local provider
 type RemoteProvider struct {
 	ProviderProperties
-	*BitCaskPreferencePersister
+	*SessionPreferencePersister
 
 	SaaSTokenName     string
 	RemoteProviderURL string
@@ -49,7 +49,7 @@ type RemoteProvider struct {
 	syncChan     chan *userSession
 
 	ProviderVersion    string
-	SmiResultPersister *BitCaskSmiResultsPersister
+	SmiResultPersister *SMIResultsPersister
 	GenericPersister   database.Handler
 	KubeClient         *mesherykube.Client
 }
@@ -648,7 +648,7 @@ func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, o
 }
 
 // FetchAllResults - fetches results from provider backend
-func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error) {
+func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, search, order, from, to string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistResults) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("Persist Results", l.ProviderName)
@@ -683,10 +683,6 @@ func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, sear
 	logrus.Debugf("constructed results url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		return nil, ErrFetch(err, "All Perf results", resp.StatusCode)
@@ -1963,7 +1959,7 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
-func (l *RemoteProvider) GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistPerformanceProfiles", l.ProviderName)
@@ -1990,11 +1986,6 @@ func (l *RemoteProvider) GetPerformanceProfiles(req *http.Request, page, pageSiz
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed performance profiles url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
@@ -2272,7 +2263,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 		logrus.Error("operation not available")
 		return ErrInvalidCapability("SyncPrefs", l.ProviderName)
 	}
-	if err := l.BitCaskPreferencePersister.WriteToPersister(userID, data); err != nil {
+	if err := l.SessionPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err
 	}
 	tokenVal, _ := l.GetToken(req)
@@ -2585,6 +2576,12 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 
 		if err != nil {
 			return err
+		}
+
+		// Prevent Arbitrary file write during zip extraction ("zip slip")
+		// see https://snyk.io/research/zip-slip-vulnerability for more
+		if !strings.Contains(header.Name, "..") {
+			return fmt.Errorf("invalid character found in header")
 		}
 
 		loc := path.Join(destination, header.Name)
