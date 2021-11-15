@@ -1,9 +1,9 @@
 import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from "@mui/material/styles";
-import { seaGreenColor } from '../styles/colors';
+import { deepSpaceSparkle } from '../styles/colors';
 
 const CustomLoadingSpinnerWrapper = styled(CircularProgress)(({theme})=>({
-    backgroundColor: seaGreenColor, 
+    backgroundColor: deepSpaceSparkle, 
     size: 30,
     thickness: 2.7,
 }))

@@ -1,8 +1,8 @@
 import Button from '@mui/material/Button';
 import { styled } from "@mui/material/styles";
-import { seaGreenColor } from '../styles/colors';
+import { deepSpaceSparkle } from '../styles/colors';
 
 export const MetricsButton = styled(Button)(({theme})=>({
-    backgroundColor: seaGreenColor,
+    backgroundColor: deepSpaceSparkle,
     width: "240px",
 }))
