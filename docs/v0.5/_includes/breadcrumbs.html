@@ -1,0 +1,13 @@
+<div id="breadcrumbs">
+{% assign crumbs = page.url | remove:'/index.html' | split: '/' %}
+<a href="{{ site.baseurl }}/">home</a>
+{% for crumb in crumbs offset: 1 %}
+  {% if forloop.last %}
+    / {{ page.title | downcase }}
+  {% else %}
+    / <a href="{{ site.baseurl }}{% assign crumb_limit = forloop.index | plus: 1 %}{% for crumb in crumbs limit: crumb_limit %}{{ crumb | append: '/' | replace:'without-plugin/','without-plugins/' }}{% endfor %}">{{ crumb | replace:'-',' ' | remove:'.html' | lowercase  }}</a> 
+  {% endif %}
+{% endfor %}
+</div>
+
+<!-- <a href="http://idratherbewriting.com" class="noCrossRef productSubtitle"> Home </a> > <a class="noCrossRef productSubtitle" href="{{site.url}}">Learn API Doc</a> > {{page.path | remove: "pages/" | split: "/" | last | remove: ".md" }} -->

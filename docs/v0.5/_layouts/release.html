@@ -1,0 +1,20 @@
+---
+layout: default
+display-title: "false"
+---
+<h1>Meshery {{page.tag}}
+
+    <a href="{{site.repo}}/releases/tag/{{page.tag}}">
+    <img src="{{site.baseurl}}/assets/img/github.svg" 
+        style="height:1.5em;display: inline;vertical-align: top;"/>
+</a>
+</h1>
+
+<h4>Released on {{ page.date | date: "%B %d, %Y" }}</h4>
+
+{{ content }} 
+{% if page.content contains "code" %}
+<script>
+/*clipboard.js code*/
+</script>
+{% endif %}

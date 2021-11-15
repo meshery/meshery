@@ -1,0 +1,53 @@
+{
+  "errors_export": {
+    "component_name": "consul",
+    "component_type": "adapter",
+    "errors": {
+      "1000": {
+        "name": "ErrApplyOperationCode",
+        "code": "1000",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1001": {
+        "name": "ErrGetLatestReleasesCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch release info",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1002": {
+        "name": "ErrGetManifestNamesCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch manifest names from github",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrLoadingPathsetCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not create a pathset for static component generation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+---
+layout: page
+---
+
+<h1 style="margin-bottom:0px">{{ page.title }}</h1>
+{% if page.badges %}{% for badge in page.badges %}<span class="badge badge-{{ badge.type }}">{{ badge.tag }}</span>{% endfor %}{% endif %}
+<span class="post-date" style="font-style: italic;">{{ page.date | date: "%B %d, %Y" }}</span>
+{{ content }}
+{% if page.content contains "code" %}
+<script>
+/*clipboard.js code*/
+</script>
+{% endif %}
