@@ -9,7 +9,7 @@ project_status: stable
 adapter_version: v0.5.2
 lab: consul-meshery-adapter
 github_link: https://github.com/meshery/meshery-consul
-image: /assets/img/service-meshes/consul.svg
+image: /v0.5/assets/img/service-meshes/consul.svg
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul
 ---
@@ -26,14 +26,14 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
 
 ##### Choose the Meshery Adapter for {{page.mesh_name}}
 
-<a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-adapter.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-adapter.png" />
+<a href="{{ site.baseurl }}/v0.5/assets/img/adapters/consul/consul-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.5/assets/img/adapters/consul/consul-adapter.png" />
 </a>
 
 ##### Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
 
-<a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png" />
+<a href="{{ site.baseurl }}/v0.5/assets/img/adapters/consul/consul-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.5/assets/img/adapters/consul/consul-install.png" />
 </a>
 
 A number of [sample applications](#sample-applications) for {{page.mesh_name}} can also be installed using Meshery.

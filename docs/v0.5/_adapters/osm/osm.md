@@ -7,7 +7,7 @@ port: 10009/tcp
 project_status: stable
 lab: osm-meshery-adapter
 github_link: https://github.com/meshery/meshery-osm
-image: /assets/img/service-meshes/osm.svg
+image: /v0.5/assets/img/service-meshes/osm.svg
 permalink: service-meshes/adapters/osm
 earliest_version: v0.9.2
 ---
@@ -24,14 +24,14 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
 
 Choose the Meshery Adapter for {{ page.mesh_name }}.
 
-<a href="{{ site.baseurl }}/assets/img/adapters/osm/osm-adapter.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/osm/osm-adapter.png" />
+<a href="{{ site.baseurl }}/v0.5/assets/img/adapters/osm/osm-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.5/assets/img/adapters/osm/osm-adapter.png" />
 </a>
 
 Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.
 
-<a href="{{ site.baseurl }}/assets/img/adapters/osm/osm-install.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/osm/osm-install.png" />
+<a href="{{ site.baseurl }}/v0.5/assets/img/adapters/osm/osm-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.5/assets/img/adapters/osm/osm-install.png" />
 </a>
 
 ## Using Service Mesh Standards

@@ -7,7 +7,7 @@ earliest_version: v1.0
 port: 10003/tcp
 project_status: retiring
 github_link: https://github.com/meshery/meshery-octarine
-image: /assets/img/service-meshes/octarine.svg
+image: /v0.3/assets/img/service-meshes/octarine.svg
 permalink: service-meshes/adapters/octarine
 ---
 {% include adapter-status.html %}
@@ -20,14 +20,14 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
 
 ##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
-<a href="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-adapter.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-adapter.png" />
+<a href="{{ site.baseurl }}/v0.3/assets/img/adapters/octarine/octarine-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.3/assets/img/adapters/octarine/octarine-adapter.png" />
 </a>
 
 ##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
 
-<a href="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png" />
+<a href="{{ site.baseurl }}/v0.3/assets/img/adapters/octarine/octarine-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.3/assets/img/adapters/octarine/octarine-install.png" />
 </a>
 
 ### Features

@@ -9,7 +9,7 @@ project_status: stable
 adapter_version: v0.5.2
 lab: kuma-meshery-adapter
 github_link: https://github.com/meshery/meshery-kuma
-image: /assets/img/service-meshes/kuma.svg
+image: /v0.4/assets/img/service-meshes/kuma.svg
 permalink: service-meshes/adapters/kuma
 ---
 
@@ -25,14 +25,14 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 Choose the Meshery Adapter for {{ page.mesh_name }}.
 
-<a href="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-adapter.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-adapter.png" />
+<a href="{{ site.baseurl }}/v0.4/assets/img/adapters/kuma/kuma-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.4/assets/img/adapters/kuma/kuma-adapter.png" />
 </a>
 
 Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
 
-<a href="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-install.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-install.png" />
+<a href="{{ site.baseurl }}/v0.4/assets/img/adapters/kuma/kuma-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.4/assets/img/adapters/kuma/kuma-install.png" />
 </a>
 
 ## Workload Management

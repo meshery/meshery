@@ -9,7 +9,7 @@ project_status: stable
 adapter_version: v0.5.4
 lab: istio-meshery-adapter
 github_link: https://github.com/meshery/meshery-istio
-image: /assets/img/service-meshes/istio.svg
+image: /v0.3/assets/img/service-meshes/istio.svg
 permalink: service-meshes/adapters/istio
 ---
 
@@ -36,14 +36,14 @@ The {{page.name}} can install {{page.version}} of the {{page.title}} service mes
 
 In Meshery's UI, choose the Meshery Adapter for {{ page.mesh_name }}.
 
-<a href="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter.png" />
+<a href="{{ site.baseurl }}/v0.3/assets/img/adapters/istio/istio-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.3/assets/img/adapters/istio/istio-adapter.png" />
 </a>
 
 Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
 
-<a href="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png" />
+<a href="{{ site.baseurl }}/v0.3/assets/img/adapters/istio/istio-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.3/assets/img/adapters/istio/istio-install.png" />
 </a>
 
 ### Workload Management
@@ -92,7 +92,7 @@ On demand, the {{page.name}} will parse all of Istio's configuration and compare
 Meshery allows you to apply configuration to your service mesh deployment. You can paste (or type in) any Kubernetes manifest that you would like to have applied to your service mesh, in fact, you can apply any configuration that you you would like to your Kubernetes cluster. This configuration may be VirtualServices, DestinationRules or any other custom Istio resource.
 
 <a href="{{ site.baseurl }}istio-adapter-custom-configuration.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter-custom-configuration.png" />
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.3/assets/img/adapters/istio/istio-adapter-custom-configuration.png" />
 </a>
 
 Service mesh resources can be applied **or** deleted using this custom configuration operation.

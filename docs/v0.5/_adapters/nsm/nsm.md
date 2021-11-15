@@ -8,7 +8,7 @@ port: 10004/tcp
 project_status: stable
 lab: nsm-meshery-adapter
 github_link: https://github.com/meshery/meshery-nsm
-image: /assets/img/service-meshes/nsm.svg
+image: /v0.5/assets/img/service-meshes/nsm.svg
 permalink: service-meshes/adapters/nsm
 ---
 
@@ -24,14 +24,14 @@ The {{page.name}} can install {{page.version}} of {{page.mesh_name}}. A number o
 
 ##### Choose the Meshery Adapter for {{ page.mesh_name }}
 
-<a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png" />
+<a href="{{ site.baseurl }}/v0.5/assets/img/adapters/nsm/nsm-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.5/assets/img/adapters/nsm/nsm-adapter.png" />
 </a>
 
 Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
 
-<a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png" />
+<a href="{{ site.baseurl }}/v0.5/assets/img/adapters/nsm/nsm-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/v0.5/assets/img/adapters/nsm/nsm-install.png" />
 </a>
 
 ## Sample Applications

@@ -7,7 +7,7 @@ earliest_version: v1.4.1
 port: 10005/tcp
 project_status: beta
 github_link: https://github.com/meshery/meshery-app-mesh
-image: /assets/img/service-meshes/app-mesh.svg
+image: /v0.4/assets/img/service-meshes/app-mesh.svg
 permalink: service-meshes/adapters/app-mesh
 ---
 

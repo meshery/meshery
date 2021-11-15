@@ -7,7 +7,7 @@ earliest_version: pre-GA
 port: 10011/tcp
 project_status: alpha
 github_link: https://github.com/meshery/meshery-tanzu-sm
-image: /assets/img/service-meshes/tanzu.svg
+image: /v0.4/assets/img/service-meshes/tanzu.svg
 permalink: service-meshes/adapters/tanzu-sm
 ---
 
