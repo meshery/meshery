@@ -297,7 +297,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "error getting k8s file",
-        "probable_cause": "The kube config file does not exist in the location",
+        "probable_cause": "The kubeconfig file does not exist in the location",
         "suggested_remediation": "Make sure to upload the correct kubeconfig file"
       },
       "2031": {

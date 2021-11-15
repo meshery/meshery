@@ -105,7 +105,8 @@ New
 
 ## Replacing logrus
 
-There already exists an [interface for logger](https://github.com/layer5io/meshkit/blob/master/logger/logger.go) in MeshKit.
+There already exists an [interface for logger](https://github.com/layer5io/meshkit/blob/master/logger/logger.go) in MeshKit.<br><br>
+**WARNING**: To enforce the use of meshkit errors, meshkit logger was designed such that it only works with meshkit errors. If a non-meshkit error is logged through the logger, it would panic and kill the process. See: [meshkit#119](https://github.com/layer5io/meshkit/pull/119) for more insight.
 
 #### Defining a Logger
 
@@ -134,5 +135,79 @@ There already exists an [interface for logger](https://github.com/layer5io/meshk
 ##### New
 
 `l.log.Error(ErrMarshal(err, obj))`
+
+## A small program using meshkit errors and logger
+
+```Code
+package main
+
+import (
+	"fmt"
+	"os"
+
+	meshkitErrors "github.com/layer5io/meshkit/errors"
+	"github.com/layer5io/meshkit/logger"
+)
+
+var (
+	// CI will replace `test_code` with new error code
+	ErrOpeningFileCode = "test_code"
+)
+
+func main() {
+	log, err := logger.New("test", logger.Options{
+		Format:     logger.SyslogLogFormat,
+		DebugLevel: true,
+	})
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// logging meshkit error
+	err = openFileWithMeshkitError("some.txt")
+	if err != nil {
+		log.Error(err)
+	}
+	// OUTPUT
+	// ERRO[2021-11-10T17:31:28+05:30] open some.txt: no such file or directory      app=test code=1001 probable-cause="empty string passed as argument .file with this name doesn't exist" severity=2 short-description="unable to open file" suggested-remediation="pass a non-empty string as filename .create file before opening it"
+
+	// logging non meshkit error
+	err = openFile("some.txt")
+	if err != nil {
+		log.Error(err)
+	}
+	// OUTPUT
+	// panic: interface conversion: error is *fs.PathError, not *errors.Error
+	// goroutine 1 [running]:
+	// github.com/layer5io/meshkit/errors.GetCode({0x50dfc0, 0xc000068450})
+	//         /home/rudraksh/go/pkg/mod/github.com/layer5io/meshkit@v0.2.33/errors/errors.go:90 +0x90
+	// github.com/layer5io/meshkit/logger.(*Logger).Error(0xc00000e040, {0x50dfc0, 0xc000068450})
+	//         /home/rudraksh/go/pkg/mod/github.com/layer5io/meshkit@v0.2.33/logger/logger.go:57 +0xbb
+	// main.main()
+	//         /home/rudraksh/trash/meshkitplay/main.go:32 +0xe2
+	// exit status 2
+
+}
+
+// this returns a non meshkit error
+func openFile(name string) error {
+	_, err := os.Open(name)
+	return err
+}
+
+// this returns a meshkit error
+func openFileWithMeshkitError(name string) error {
+	_, err := os.Open(name)
+	return ErrOpeningFile(err)
+}
+
+func ErrOpeningFile(err error) error {
+	return meshkitErrors.New(ErrOpeningFileCode, meshkitErrors.Alert, []string{"unable to open file"},
+	[]string{err.Error()},
+	[]string{"empty string passed as argument ", "file with this name doesn't exist"},
+	[]string{"pass a non-empty string as filename ", "create file before opening it"})
+}
+```
 
 {% include suggested-reading.html %}

@@ -16,7 +16,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-// NewDynamicClientGenerator takes in the kube config *directory* path and returns a
+// NewDynamicClientGenerator takes in the kubeconfig *directory* path and returns a
 // function which can generate dynamic client
 func NewDynamicClientGenerator(path string) func() (dynamic.Interface, error) {
 	configPath := filepath.Join(path, "config")
@@ -31,7 +31,7 @@ func NewDynamicClientGenerator(path string) func() (dynamic.Interface, error) {
 	}
 }
 
-// NewKubeClientGenerator takes in the kube config *directory* path and returns a
+// NewKubeClientGenerator takes in the kubeconfig *directory* path and returns a
 // function which can generate dynamic client
 func NewKubeClientGenerator(path string) func() (*mesherykube.Client, error) {
 	configPath := filepath.Join(path, "config")

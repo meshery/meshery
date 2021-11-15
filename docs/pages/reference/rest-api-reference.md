@@ -2,6 +2,7 @@
 layout: swagger
 title: "REST API Reference"
 permalink: reference/rest-apis
+redirect_from: reference/rest-apis/
 type: Reference
 abstract: 'Meshery REST API Documentation and Reference'
 data: swagger

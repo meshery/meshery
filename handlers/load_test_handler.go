@@ -24,11 +24,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-type tempPerformanceConfig struct {
-	Config      *SMP.PerformanceTestConfig `json:"test,omitempty"`
-	ServiceMesh *SMP.ServiceMesh           `json:"mesh,omitempty"`
-}
-
 // LoadTestUsingSMPHandler runs the load test with the given parameters and SMP
 func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
@@ -58,7 +53,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	jsonBytes, _ := yaml.YAMLToJSON(body)
 
-	perfTest := &tempPerformanceConfig{}
+	perfTest := &models.PerformanceTestConfigFile{}
 	if err := json.Unmarshal(jsonBytes, perfTest); err != nil {
 		h.log.Error(ErrParseBool(err, "provided input"))
 		http.Error(w, ErrParseBool(err, "provided input").Error(), http.StatusBadRequest)
