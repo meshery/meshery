@@ -119,6 +119,12 @@ And then you can pass this file to mesheryctl as:
 mesheryctl perf apply -f perf-config.yaml
 ```
 
+You can also override the configuration passed in the file with flags like shown below:
+
+```
+mesheryctl perf apply -f perf-config.yaml --url http://localhost:2323/productpage?u=test --load-generator nighthawk --qps 5
+```
+
 ## Running Performance Benchmarks in your Pipelines
 
 Meshery also has a [meshery-smp-action](https://github.com/layer5io/meshery-smp-action) which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.
@@ -169,4 +175,6 @@ jobs:
           profile_name: soak-test
 ```
 
-More configuration details of the action can be found [here](https://github.com/layer5io/meshery-smp-action/blob/master/action.yml). 
+More configuration details of the action can be found [here](https://github.com/layer5io/meshery-smp-action/blob/master/action.yml).
+
+See [sample configurations](https://github.com/layer5io/meshery-smp-action#sample-configuration) for more workflow examples using this action.
