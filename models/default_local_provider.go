@@ -858,7 +858,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 			if err != nil {
 				log.Error(ErrGettingSeededComponents(err, comp))
 			} else {
-				log.Info("Starting to seed ", comp)
+				log.Info("starting to seed ", comp)
 				switch comp {
 				case "Pattern":
 					for i, name := range names {
@@ -868,7 +868,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 							Name:        name,
 							ID:          &id,
 						}
-						log.Info("Saving "+comp+"- ", name)
+						log.Info("saving "+comp+"- ", name)
 						switch comp {
 
 						}
@@ -886,7 +886,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 							Name:       name,
 							ID:         &id,
 						}
-						log.Info("Saving "+comp+"- ", name)
+						log.Info("saving "+comp+"- ", name)
 						switch comp {
 
 						}
@@ -904,7 +904,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 							Name:            name,
 							ID:              &id,
 						}
-						log.Info("Saving "+comp+"- ", name)
+						log.Info("saving "+comp+"- ", name)
 						switch comp {
 
 						}
@@ -1213,7 +1213,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 	if err != nil && !os.IsNotExist(err) {
 		return nil, nil, err
 	} else if os.IsNotExist(err) {
-		log.Info("Creating directories for seeding... ", wd)
+		log.Info("creating directories for seeding... ", wd)
 		er := os.MkdirAll(wd, 0777)
 		if er != nil {
 			return nil, nil, er
@@ -1225,7 +1225,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 			log.Error(ErrDownloadingSeededComponents(err, comp))
 		}
 	}
-	log.Info("[SEEDING] ", "Extracting "+comp+"s from ", wd)
+	log.Info("extracting "+comp+"s from ", wd)
 	var names []string
 	var contents []string
 	err = filepath.WalkDir(wd,
@@ -1271,28 +1271,18 @@ func downloadContent(comp string, downloadpath string, log logger.Handler) error
 	case "Filter":
 		return getFiltersFromWasmFiltersRepo(downloadpath)
 	case "Application":
-		// single application files with their URLs
-		// "bookinfo.yaml", "httpbin.yaml", "imagehub.yaml"
-		applicationsAndURL := map[string]string{
-			"bookinfo.yaml": "https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml",
-			"httpbin.yaml":  "https://raw.githubusercontent.com/istio/istio/master/samples/httpbin/httpbin.yaml",
-			"imagehub.yaml": "https://raw.githubusercontent.com/layer5io/image-hub/master/deployment.yaml",
-		}
-		for app, url := range applicationsAndURL {
-			err := downloadApplicationsFromURL(downloadpath, app, url)
+		var path string
+		path = os.Getenv("SEED_APP_PATH")
+		if path == "" {
+			wd, err := os.Getwd()
 			if err != nil {
 				return err
 			}
+			path = filepath.Join(wd, "../install/seed_apps.json")
 		}
-		//"emojivoto.yaml"
-		// Application spread across multiple yaml files(urls)
-		applicationsAndURLS := map[string][]string{
-			"emojivoto.yaml": {
-				"https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/emoji.yml",
-				"https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/vote-bot.yml",
-				"https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/voting.yml",
-				"https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/web.yml",
-			},
+		applicationsAndURLS, err := getSeededAppLocation(path)
+		if err != nil {
+			return err
 		}
 		for app, URLs := range applicationsAndURLS {
 			yamlFile := filepath.Join(downloadpath, app)
@@ -1404,4 +1394,22 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 		}
 	}
 	return nil
+}
+
+func getSeededAppLocation(path string) (map[string][]string, error) {
+	var applicationsAndURLS map[string][]string
+	f, err := os.Open(path)
+	if err != nil {
+		return applicationsAndURLS, err
+	}
+	content, err := ioutil.ReadAll(f)
+	if err != nil {
+		return applicationsAndURLS, err
+	}
+	err = json.Unmarshal(content, &applicationsAndURLS)
+	if err != nil {
+		return applicationsAndURLS, err
+
+	}
+	return applicationsAndURLS, nil
 }

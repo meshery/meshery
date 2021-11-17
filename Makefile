@@ -10,7 +10,7 @@ RELEASE_CHANNEL="edge"
 # Please do not remove the code below(the code already removed several times), those constant will help on local CI check, like $ make chart-readme or $ make golangci-run
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
-
+SEEDAPPLICATIONCONFIGPATH="../install/seed_apps.json"
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
 mesheryctl:
@@ -69,6 +69,7 @@ run-local: error
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
+	SEED_APP_PATH=$(SEEDAPPLICATIONCONFIGPATH) \
 	./meshery; \
 	cd ..
 
@@ -79,6 +80,7 @@ run-fast:
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
+	SEED_APP_PATH=$(SEEDAPPLICATIONCONFIGPATH) \
 	go run main.go;
 
 run-fast-nodownloadseed:
