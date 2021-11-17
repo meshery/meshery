@@ -27,19 +27,19 @@ RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 FROM alpine:3.14 as seed_content
 RUN apk add --no-cache curl
 WORKDIR /
-# bundling filters
+# bundling filters 
 RUN curl -L -s `curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url" | cut -d : -f 2,3 | tr -d '"'` -o wasm-filters.tar.gz \
     && mkdir -p /seed_content/filters/binaries \
     && tar xzf wasm-filters.tar.gz --directory=/seed_content/filters/binaries
 
-# bundling patterns
+# bundling patterns 
 RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
     && mkdir service-mesh-patterns \
     && mkdir -p /seed_content/patterns \
     && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
     && mv service-mesh-patterns/*/samples/* /seed_content/patterns/
 
-# bundling applications
+# bundling applications (Any change here should also be reflected in seeding at runtime in default_local_provider)
 RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/httpbin/httpbin.yaml \

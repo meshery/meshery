@@ -81,6 +81,16 @@ run-fast:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	go run main.go;
 
+run-fast-nodownloadseed:
+	cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	SKIP_DOWNLOAD_SEED_CONTENT=FALSE \
+	go run main.go;
+
 run-16-fast:
 	cd cmd; go1.16.4 mod tidy; \
 	BUILD="$(GIT_VERSION)" \
