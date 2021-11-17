@@ -16,7 +16,6 @@ package system
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/exec"
 
@@ -124,11 +123,17 @@ func stop() error {
 			return err
 		}
 		// if the platform is kubernetes, stop the deployment by uninstalling the helm charts
-		if !utils.SilentFlag {
-			if checkAbort() {
-				log.Info("Stop aborted.")
-				return nil
-			}
+		userResponse := false
+		if utils.SilentFlag {
+			userResponse = true
+		} else {
+			// ask user for confirmation
+			userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+		}
+
+		if !userResponse {
+			log.Info("Stop aborted.")
+			return nil
 		}
 
 		log.Info("Stopping Meshery...")
@@ -156,27 +161,12 @@ func stop() error {
 			return err
 		}
 
-		if !utils.KeepNsFlag {
+		if !utils.KeepNamespace {
+			log.Info("Deleting Meshery Namespace...")
 			if err = deleteNs(utils.MesheryNamespace, client.KubeClient); err != nil {
 				return err
 			}
 		}
-	}
-
-	// If k8s is available in case of platform docker than we remove operator
-	hcOptions := &HealthCheckOptions{
-		PrintLogs:           false,
-		IsPreRunE:           false,
-		Subcommand:          "",
-		RunKubernetesChecks: true,
-	}
-	hc, err := NewHealthChecker(hcOptions)
-	if err != nil {
-		return ErrHealthCheckFailed(err)
-	}
-
-	if err = hc.Run(); err != nil {
-		return ErrHealthCheckFailed(err)
 	}
 
 	log.Info("Meshery is stopped.")
@@ -253,26 +243,7 @@ func deleteNs(ns string, client *kubernetes.Clientset) error {
 	return client.CoreV1().Namespaces().Delete(context.TODO(), ns, metav1.DeleteOptions{})
 }
 
-// checkAbort checks if the `system stop` should be aborted
-func checkAbort() bool {
-	var mesheryDelRes, keepNsRes bool
-	mesheryDelRes = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
-	if !mesheryDelRes {
-		return true
-	}
-
-	if !utils.KeepNsFlag {
-		keepNsRes = utils.AskForConfirmation(fmt.Sprintf("Namespace %s and all the resources under the namespace will be deleted from your cluster. "+
-			"Are you sure you want to continue", utils.MesheryNamespace))
-		if !keepNsRes {
-			return true
-		}
-	}
-
-	return false
-}
-
 func init() {
 	stopCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
-	stopCmd.Flags().BoolVar(&utils.KeepNsFlag, "keep-namespace", false, "(optional) keep the Meshery namespace during uninstallation")
+	stopCmd.Flags().BoolVar(&utils.KeepNamespace, "keep-namespace", false, "(optional) keep the Meshery namespace during uninstallation")
 }
