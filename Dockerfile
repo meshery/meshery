@@ -39,7 +39,7 @@ RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/ta
     && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
     && mv service-mesh-patterns/*/samples/* /seed_content/patterns/
 
-# bundling applications (Any change here should also be reflected in seeding at runtime in default_local_provider)
+# bundling applications (Any change here should also be reflected in seed_apps.json in install directory)
 RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/httpbin/httpbin.yaml \
