@@ -91,7 +91,8 @@ New
 ## Replacing logrus
 
 There already exists an [interface for logger](https://github.com/layer5io/meshkit/blob/master/logger/logger.go) in MeshKit.<br><br>
-**WARNING**: To enforce the use of meshkit errors, meshkit logger was designed such that it only works with meshkit errors. If a non-meshkit error is logged through the logger, it would panic and kill the process. See: [meshkit#119](https://github.com/layer5io/meshkit/pull/119) for more insight.
+
+{% include alert.html type="warning" title="WARNING" content="To enforce the use of meshkit errors, meshkit logger was designed such that it only works with meshkit errors. If a non-meshkit error is logged through the logger, it would panic and kill the process. See: <a href='https://github.com/layer5io/meshkit/pull/119'>meshkit#119</a> for more insight." %}
 
 #### Defining a Logger
 
