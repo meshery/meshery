@@ -1364,7 +1364,7 @@ func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 	rn := helper["tag_name"]
 	releaseName, ok := rn.(string)
 	if !ok {
-		return errors.New("Did not find valid release name") //this error will be wraped in meshkit error above
+		return errors.New("did not find valid release name") //this error will be wraped in meshkit error above
 	}
 	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/" + releaseName + "/wasm-filters-v0.1.0.tar.gz"
 	res, err = http.Get(downloadURL)
