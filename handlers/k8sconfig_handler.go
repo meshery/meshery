@@ -279,6 +279,7 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 			if ctx.IsCurrentContext {
 				_, _ = prov.SetCurrentContext(token, cc.ID) // Ignore the error
 
+				// [UTKARSH] TODO: FIX WHAT YOU HAVE MESSED UP
 				ctxID := "0" // To be replaced after multi-context support
 				go func(l logger.Handler, config []byte, ctx string) {
 					err := registerK8sComponents(h.log, config, ctxID)
