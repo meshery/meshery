@@ -52,10 +52,12 @@ var profileCmd = &cobra.Command{
 mesheryctl perf profile
 
 // List performance profiles with search (maximum 25 profiles)
-mesheryctl perf profile test profile 2 -t "/Downloads/auth.json"
+mesheryctl auth login
+mesheryctl perf profile test profile 2 
 
 // View single performance profile with detailed information
-mesheryctl perf profile --view -t "/Downloads/auth.json"
+mesheryctl auth login
+mesheryctl perf profile --view
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile

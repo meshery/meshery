@@ -40,17 +40,16 @@ var PerfCmd = &cobra.Command{
 	Long:  `Performance Management & Benchmarking`,
 	Example: `
 // Run performance test
-mesheryctl perf apply --profile test --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "\Downloads\auth.json"
+mesheryctl auth login
+mesheryctl perf apply --profile test --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
 	
 // List performance profiles
-mesheryctl perf profile sam-test  // Assuming user logged in using "mesheryctl auth login"
-(or)
-mesheryctl perf profile sam-test -t "\Downloads\auth.json"
+mesheryctl auth login
+mesheryctl perf profile sam-test
 
 // List performance results
-mesheryctl perf result sam-test   // Assuming user logged in using "mesheryctl auth login"
-(or)
-mesheryctl perf result sam-test -t "\Downloads\auth.json"
+mesheryctl auth login
+mesheryctl perf result sam-test
 	`,
 	Args: cobra.MinimumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
