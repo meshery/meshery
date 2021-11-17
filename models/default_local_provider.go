@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -1377,7 +1376,7 @@ func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 	uncompressedStream, err := gzip.NewReader(gzipStream)
 	if err != nil {
-		log.Fatal("ExtractTarGz: NewReader failed")
+		return err
 	}
 
 	tarReader := tar.NewReader(uncompressedStream)
@@ -1388,7 +1387,7 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 			break
 		}
 		if err != nil {
-			log.Fatalf("ExtractTarGz: Next() failed: %s", err.Error())
+			return err
 		}
 		switch header.Typeflag {
 		case tar.TypeReg:
