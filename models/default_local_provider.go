@@ -1409,7 +1409,6 @@ func getSeededAppLocation(path string) (map[string][]string, error) {
 	err = json.Unmarshal(content, &applicationsAndURLS)
 	if err != nil {
 		return applicationsAndURLS, err
-
 	}
 	return applicationsAndURLS, nil
 }
