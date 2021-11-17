@@ -14,6 +14,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -1203,11 +1204,11 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 	wd := utils.GetHome()
 	switch comp {
 	case "Pattern":
-		wd = filepath.Join(wd, ".meshery", "seed_content", "patterns")
+		wd = filepath.Join(wd, ".meshery", "content", "patterns")
 	case "Filter":
-		wd = filepath.Join(wd, ".meshery", "seed_content", "filters", "binaries")
+		wd = filepath.Join(wd, ".meshery", "content", "filters", "binaries")
 	case "Application":
-		wd = filepath.Join(wd, ".meshery", "seed_content", "applications")
+		wd = filepath.Join(wd, ".meshery", "content", "applications")
 	}
 	_, err := os.Stat(wd)
 	if err != nil && !os.IsNotExist(err) {
@@ -1219,7 +1220,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 			return nil, nil, er
 		}
 	}
-	if os.Getenv("SKIP_DOWNLOAD_SEED_CONTENT") != "FALSE" {
+	if os.Getenv("SKIP_DOWNLOAD_CONTENT") != "FALSE" {
 		err = downloadContent(comp, wd, log)
 		if err != nil {
 			log.Error(ErrDownloadingSeededComponents(err, comp))
@@ -1272,13 +1273,13 @@ func downloadContent(comp string, downloadpath string, log logger.Handler) error
 		return getFiltersFromWasmFiltersRepo(downloadpath)
 	case "Application":
 		var path string
-		path = os.Getenv("SEED_APP_PATH")
+		path = os.Getenv("APP_PATH")
 		if path == "" {
 			wd, err := os.Getwd()
 			if err != nil {
 				return err
 			}
-			path = filepath.Join(wd, "../install/seed_apps.json")
+			path = filepath.Join(wd, "../install/apps.json")
 		}
 		applicationsAndURLS, err := getSeededAppLocation(path)
 		if err != nil {
@@ -1336,27 +1337,12 @@ func downloadYAMLSintoSingleFile(f io.Writer, URLs []string) error {
 }
 
 func getFiltersFromWasmFiltersRepo(downloadPath string) error {
-	var helper map[string]interface{}
-	res, err := http.Get("https://api.github.com/repos/layer5io/wasm-filters/releases/latest")
+	releaseName, err := getLatestStableReleaseTag()
 	if err != nil {
 		return err
-	}
-	defer res.Body.Close()
-	rescontent, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(rescontent, &helper)
-	if err != nil {
-		return err
-	}
-	rn := helper["tag_name"]
-	releaseName, ok := rn.(string)
-	if !ok {
-		return errors.New("did not find valid release name") //this error will be wraped in meshkit error above
 	}
 	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/" + releaseName + "/wasm-filters-v0.1.0.tar.gz"
-	res, err = http.Get(downloadURL)
+	res, err := http.Get(downloadURL)
 	if err != nil {
 		return err
 	}
@@ -1411,4 +1397,28 @@ func getSeededAppLocation(path string) (map[string][]string, error) {
 		return applicationsAndURLS, err
 	}
 	return applicationsAndURLS, nil
+}
+
+// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
+func getLatestStableReleaseTag() (string, error) {
+	url := "https://github.com/layer5io/wasm-filters/releases/latest"
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", errors.New("failed to get latest stable release tag")
+	}
+	defer SafeClose(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New("failed to get latest stable release tag")
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", errors.New("failed to get latest stable release tag")
+	}
+	re := regexp.MustCompile("/releases/tag/(.*?)\"")
+	releases := re.FindAllString(string(body), -1)
+	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
+	latest = strings.ReplaceAll(latest, "\"", "")
+	return latest, nil
 }
