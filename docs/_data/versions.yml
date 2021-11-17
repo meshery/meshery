@@ -1,12 +1,6 @@
 - version: "0.6"
-  external_url: https://docs.meshery.io
+  url: "v0.6"
 - version: "0.5"
-  external_url: https://docs.meshery.io/v0.5
+  url: "v0.5"
 - version: "0.4"
-  external_url: https://docs.meshery.io/v0.4
-- version: "0.3"
-  external_url: https://docs.meshery.io/v0.3
-- version: "0.2"
-  external_url: https://docs.meshery.io/v0.2
-- version: "0.1"
-  external_url: https://docs.meshery.io/v0.1
+  url: "v0.4"
