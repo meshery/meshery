@@ -83,7 +83,7 @@ run-fast:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go;
 
-run-fast-nodownloadseed:
+run-fast-no-content:
 	cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
