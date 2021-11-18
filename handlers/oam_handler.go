@@ -148,6 +148,14 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 	if method == "GET" {
 		h.GETOAMRegisterHandler(typ, rw, r.URL.Query().Get("trim") == "true")
 	}
+	if method == "DELETE" {
+		if err := h.DELETEOAMRegisterHandler(typ, r); err != nil {
+			rw.WriteHeader(http.StatusInternalServerError)
+			h.log.Debug(err)
+			_, _ = rw.Write([]byte(err.Error()))
+			return
+		}
+	}
 }
 
 func (h *Handler) OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request) {
@@ -252,6 +260,26 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	if typ == "scope" {
 		return core.RegisterScope(body)
 	}
+
+	return nil
+}
+
+func (h *Handler) DELETEOAMRegisterHandler(typ string, r *http.Request) error {
+	// Get the body
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	if typ == "workload" {
+		return core.DeregisterWorkload(body)
+	}
+	// if typ == "trait" {
+	// 	return core.RegisterTrait(body)
+	// }
+	// if typ == "scope" {
+	// 	return core.RegisterScope(body)
+	// }
 
 	return nil
 }

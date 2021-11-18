@@ -74,6 +74,34 @@ func RegisterWorkload(data []byte) (err error) {
 	return
 }
 
+// RegisterWorkload will register a workload definition into the database
+func DeregisterWorkload(data []byte) (err error) {
+	var workload WorkloadCapability
+
+	if err = json.Unmarshal(data, &workload); err != nil {
+		return
+	}
+
+	// Store it in the global store
+	key := fmt.Sprintf(
+		"/meshery/registry/definition/%s/%s/%s",
+		workload.OAMDefinition.APIVersion,
+		workload.OAMDefinition.Kind,
+		workload.OAMDefinition.Name,
+	)
+
+	schema := map[string]interface{}{}
+	_ = json.Unmarshal([]byte(workload.OAMRefSchema), &schema)
+	if workload.Metadata == nil {
+		workload.Metadata = map[string]string{}
+	}
+	workload.Metadata["display.ui.meshery.io/name"], _ = schema["title"].(string)
+
+	store.Delete(key, &workload)
+
+	return
+}
+
 // TraitCapability is the struct for capturing the workload definition
 // of a particular type
 type TraitCapability struct {
