@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	chartRepo            = "https://meshery.github.io/meshery.io/charts"
+	chartRepo = "https://meshery.github.io/meshery.io/charts"
 )
 
 var (
@@ -43,7 +43,6 @@ var (
 		"kiali":            "http",
 		"zipkin":           "http-query",
 	}
-
 )
 
 // listernToEvents - scale this function with the number of channels
@@ -126,7 +125,7 @@ func applyYaml(client *mesherykube.Client, delete bool, file string) error {
 }
 
 // installs operator
-func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface ) error {
+func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
 	// retrieving meshery's version to apply the appropriate chart
 	mesheryReleaseVersion := viper.GetString("BUILD")
 	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
@@ -137,7 +136,7 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 	}
 
 	var (
-		act = mesherykube.INSTALL
+		act   = mesherykube.INSTALL
 		chart = "meshery-operator"
 	)
 
