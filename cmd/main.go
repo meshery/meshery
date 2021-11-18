@@ -72,7 +72,8 @@ func main() {
 	viper.SetDefault("OS", "meshery")
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
-	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", "FALSE")
+	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
+	viper.SetDefault("SKIP_COMP_GEN", false)
 	store.Initialize()
 
 	// Register local OAM traits and workloads

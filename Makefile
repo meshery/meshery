@@ -83,6 +83,17 @@ run-fast:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go;
 
+run-fast-skip-compgen:
+	cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	SKIP_COMP_GEN=true \
+	go run main.go;
+		
 run-fast-no-content:
 	cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -90,7 +101,7 @@ run-fast-no-content:
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
-	SKIP_DOWNLOAD_CONTENT=FALSE \
+	SKIP_DOWNLOAD_CONTENT=true \
 	go run main.go;
 
 run-16-fast:

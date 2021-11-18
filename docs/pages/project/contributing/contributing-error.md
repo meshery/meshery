@@ -14,40 +14,25 @@ To help with creating error codes, MeshKit contains a tool that analyzes, verifi
 
 In order to create a Meshery error object, you will need to create a custom wrapper object for the native golang error. This can be done from the <a href="https://github.com/layer5io/meshkit/tree/master/errors">MeshKit Error</a> package.
 
-## Some rules for making Errors codes
+This tool will create a couple of files, one of them is designed to be used to generate the error reference on the Meshery Documentation website. The file errorutil_analyze_summary.json contains a summary of the analysis, notably lists of duplicates etc.
 
-- Errors names and codes are namespaced to components, i.e. they need to be unique within a component, which is verified by this tool.
+## Conventions to follow while creating errors
 
-- Errors are not to be reused across components and modules.
-
-- Codes carry no meaning, as e.g. HTTP status codes do.
-
-- For the Code argument in the errors.New use the same Error name and append a "Code" after it. e.g error name : ErrApplyManifest then the error code is ErrApplyManifestCode
-
-- Set the value to any string, like "replace_me" (no convention here), e.g. ErrApplyManifestCode = "replace_me".
-
-- Error codes are not to be set as integer
-
-- CI will take care of updating Error codes from a string to an integer.
-
-- Using errors.NewDefault(...) is deprecated. This tool emits a warning if this is detected.
-
-- Use errors.New(...) from MeshKit to create actual errors with all the details.
+1. Errors names and codes are namespaced to components, i.e. they need to be unique within a component, which is verified by this tool.
+1. Errors are not to be reused across components and modules.
+1. Error codes are not to be set as integer. CI will take care of updating Error codes from a string to an integer.
+1. Running `make error` analyzes your code and returns any warnings to be aware of.
+1. Capitalize the first letter of the every error description.
+1. Using errors.NewDefault(...) is deprecated. This tool emits a warning if its use is detected.
+1. Use errors.New(...) from MeshKit to create actual errors with all the details.
   This is often done in a factory function. It is important that the error code variable is used here, not a literal.
   Specify detailed descriptions, probable causes, and remedies. They need to be string literals, call expressions are ignored.
   This tool extracts this information from the code and exports it.
+  For the Code argument in the errors.New use the same Error name and append a "Code" after it. e.g error name : ErrApplyManifest then the error code is ErrApplyManifestCode
+1. Set the value to any string, like "replace_me" (no convention here), e.g. ErrApplyManifestCode = "replace_me".
+1. By convention, error codes and the factory functions live in files called error.go. The tool checks all files, but updates only error.go files.
 
-- First letter of the every error description need to capitalized
-
-- By convention, error codes and the factory functions live in files called error.go. The tool checks all files, but updates only error.go files.
-
-- This tool will create a couple of files, one of them is designed to be used to generate the error reference on the meshery website.
-  The file errorutil_analyze_summary.json contains a summary of the analysis, notably lists of duplicates etc.
-
-- Running `make error` would analyze the code and return you with a warning.
-
-Use the `errors.New()` function to create a new instance of the error object and pass situation-specific attributes as function arguments.
-These attributes are:
+Use the `errors.New()` function to create a new instance of the error object and pass situation-specific attributes as function arguments. These attributes are:
 
 - Code
 - Short Description
@@ -106,7 +91,8 @@ New
 ## Replacing logrus
 
 There already exists an [interface for logger](https://github.com/layer5io/meshkit/blob/master/logger/logger.go) in MeshKit.<br><br>
-**WARNING**: To enforce the use of meshkit errors, meshkit logger was designed such that it only works with meshkit errors. If a non-meshkit error is logged through the logger, it would panic and kill the process. See: [meshkit#119](https://github.com/layer5io/meshkit/pull/119) for more insight.
+
+{% include alert.html type="warning" title="WARNING" content="To enforce the use of meshkit errors, meshkit logger was designed such that it only works with meshkit errors. If a non-meshkit error is logged through the logger, it would panic and kill the process. See: <a href='https://github.com/layer5io/meshkit/pull/119'>meshkit#119</a> for more insight." %}
 
 #### Defining a Logger
 

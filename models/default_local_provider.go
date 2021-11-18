@@ -1220,7 +1220,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 			return nil, nil, er
 		}
 	}
-	if os.Getenv("SKIP_DOWNLOAD_CONTENT") != "FALSE" {
+	if viper.GetBool("SKIP_DOWNLOAD_CONTENT") {
 		err = downloadContent(comp, wd, log)
 		if err != nil {
 			log.Error(ErrDownloadingSeededComponents(err, comp))
