@@ -1341,7 +1341,8 @@ func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 	if err != nil {
 		return err
 	}
-	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/" + releaseName + "/wasm-filters-v0.1.0.tar.gz"
+	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/" + releaseName + "/wasm-filters-" + releaseName + ".tar.gz"
+	fmt.Println("DOWN ", downloadURL)
 	res, err := http.Get(downloadURL)
 	if err != nil {
 		return err
