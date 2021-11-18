@@ -72,7 +72,7 @@ func main() {
 	viper.SetDefault("OS", "meshery")
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
-
+	viper.SetDefault("SKIP_COMP_GEN", "FALSE")
 	store.Initialize()
 
 	// Register local OAM traits and workloads
@@ -138,7 +138,7 @@ func main() {
 	defer preferencePersister.ClosePersister()
 
 	dbHandler, err := database.New(database.Options{
-		Filename: fmt.Sprintf("%s/mesherydb.sql", viper.GetString("USER_DATA_FOLDER")),
+		Filename: fmt.Sprintf("file:%s/mesherydb.sql?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
 		Logger:   log,
 	})
@@ -151,17 +151,20 @@ func main() {
 	brokerConn := nats.NewEmptyConnection
 
 	err = dbHandler.AutoMigrate(
-		meshsyncmodel.KeyValue{},
-		meshsyncmodel.Object{},
-		models.PerformanceProfile{},
-		models.MesheryResult{},
-		models.MesheryPattern{},
-		models.MesheryFilter{},
-		models.PatternResource{},
-		models.MesheryApplication{},
-		models.UserPreference{},
-		models.PerformanceTestConfig{},
-		models.SmiResultWithID{},
+		&meshsyncmodel.KeyValue{},
+		&meshsyncmodel.Object{},
+		&meshsyncmodel.ResourceSpec{},
+		&meshsyncmodel.ResourceStatus{},
+		&meshsyncmodel.ResourceObjectMeta{},
+		&models.PerformanceProfile{},
+		&models.MesheryResult{},
+		&models.MesheryPattern{},
+		&models.MesheryFilter{},
+		&models.PatternResource{},
+		&models.MesheryApplication{},
+		&models.UserPreference{},
+		&models.PerformanceTestConfig{},
+		&models.SmiResultWithID{},
 	)
 	if err != nil {
 		logrus.Fatal(err)

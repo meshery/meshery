@@ -1,6 +1,6 @@
 <header>
   <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
-    <a class="navbar-brand" href="{{ site.baseurl }}/">
+    <a class="navbar-brand" href="{{ site.baseurl }}/{{linkUrlSelected}}">
       <div class="navbar-logo">
         {% include meshery-logo-text.svg %}<span class="font-weight-bold" style="vertical-align: bottom"
           >{{ site.title }}</span
@@ -15,14 +15,45 @@
       </li>{% endif %}  -->
 
         <!-- Internal links -->
-        {% for link in site.data.navigation %}
-        <li class="nav-item mr-4 mb-2 mb-lg-0">
-          <a
-            class="nav-link"
-            href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}"
-            ><span>{{ link.title }}</span></a
-          >
-        </li>
+        {% for link in site.data.navigation %} 
+          {%- if link.url== 'es' -%} 
+            {% assign urlSliced = site.url | split: "/" %} 
+
+            {% assign pageUrl = page.url %}
+
+            {% comment %} get which version we are on {% endcomment %}
+            {% for version in site.data.versions %}
+              {% if page.url contains version.url %}
+                {% assign verString = version.url %}
+                {% comment %} get the sting with the version in the PAGE URL {% endcomment %}
+                {% capture verString %}/{{verString}}/{% endcapture %}
+                {% capture verStringEs %}{{verString}}es/{% endcapture %}
+              {% endif %}
+            {% endfor %}         
+            {% comment %} get the new url with the 'es' on it {% endcomment %}
+            {%- capture newPageUrl -%}{{ pageUrl | replace: verString, verStringEs }}{%- endcapture -%}
+            <li class="nav-item mr-4 mb-2 mb-lg-0">
+            {% comment %} concat the site URL to this url {% endcomment %}
+            {%- capture newPageUrlES -%}{{ site.url }}{{ newPageUrl}}{%- endcapture -%}
+            {% comment %} if the page it is already in spanish, DO NOTHING! {% endcomment %}
+            {% if page.url contains 'es' %}
+              <a class="nav-link" href="{{ page.url}}">
+            {% else %}
+              <a class="nav-link" href="{{ newPageUrlES}}">
+            {% endif %}
+
+            <span>{{ link.title }}</span></a
+                >
+            </li>
+          {% else %}
+            <li class="nav-item mr-4 mb-2 mb-lg-0">
+              <a
+                class="nav-link"
+                href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}"
+                ><span>{{ link.title }}</span></a
+              >
+            </li>
+          {%- endif -%}
         {% endfor %}
       </ul>
     </div>

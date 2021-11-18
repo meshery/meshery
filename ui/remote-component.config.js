@@ -123,4 +123,8 @@ module.exports = { resolve : {
   "relay-runtime" : require("relay-runtime"),
   "@material-ui/icons/LibraryAdd" : require("@material-ui/icons/LibraryAdd"),
   "@material-ui/icons/DoneAll" : require("@material-ui/icons/DoneAll"),
+  "@material-ui/core/Accordion" : require("@material-ui/core/Accordion"),
+  "@material-ui/core/AccordionSummary" : require("@material-ui/core/AccordionSummary"),
+  "@material-ui/core/AccordionDetails" : require("@material-ui/core/AccordionDetails"),
+  "@material-ui/icons" : require("@material-ui/icons"),
 }, };

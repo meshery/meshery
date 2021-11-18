@@ -221,7 +221,7 @@ func ErrFetchSMIResults(err error) error {
 }
 
 func ErrFormFile(err error) error {
-	return errors.New(ErrFormFileCode, errors.Alert, []string{"error getting k8s file"}, []string{err.Error()}, []string{"The kube config file does not exist in the location"}, []string{"Make sure to upload the correct kubeconfig file"})
+	return errors.New(ErrFormFileCode, errors.Alert, []string{"error getting k8s file"}, []string{err.Error()}, []string{"The kubeconfig file does not exist in the location"}, []string{"Make sure to upload the correct kubeconfig file"})
 }
 
 func ErrReadConfig(err error) error {

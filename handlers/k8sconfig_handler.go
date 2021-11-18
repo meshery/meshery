@@ -23,6 +23,7 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -233,13 +234,15 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 			}
 		}
 		prefObj.K8SConfig = kc
-		ctxID := "0" // To be replaced after multi-context support
-		go func(l logger.Handler, config []byte, ctx string) {
-			err := registerK8sComponents(h.log, prefObj.K8SConfig.Config, ctxID)
-			if err != nil {
-				logrus.Error(err)
-			}
-		}(h.log, prefObj.K8SConfig.Config, ctxID)
+		if viper.Get("SKIP_COMP_GEN") != "TRUE" {
+			ctxID := "0" // To be replaced after multi-context support
+			go func(l logger.Handler, config []byte, ctx string) {
+				err := registerK8sComponents(h.log, prefObj.K8SConfig.Config, ctxID)
+				if err != nil {
+					logrus.Error(err)
+				}
+			}(h.log, prefObj.K8SConfig.Config, ctxID)
+		}
 		err = provider.RecordPreferences(req, user.UserID, prefObj)
 		if err != nil {
 			logrus.Error(ErrRecordPreferences(err))
