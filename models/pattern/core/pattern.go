@@ -35,9 +35,11 @@ type Service struct {
 	// Name is the name of the service and is an optional parameter
 	// If given then this supercedes the name of the service inherited
 	// from the parent
-	Name      string `yaml:"name,omitempty" json:"name,omitempty"`
-	Type      string `yaml:"type,omitempty" json:"type,omitempty"`
-	Namespace string `yaml:"namespace" json:"namespace"`
+	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
+	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
+	Namespace   string            `yaml:"namespace" json:"namespace"`
+	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
+	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
 	// DependsOn is used to determine sequence of operations
 	DependsOn []string `yaml:"dependsOn,omitempty" json:"dependsOn,omitempty"`
@@ -80,8 +82,13 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 	}
 
 	comp := v1alpha1.Component{
-		TypeMeta:   v1.TypeMeta{Kind: "Component", APIVersion: "core.oam.dev/v1alpha2"},
-		ObjectMeta: v1.ObjectMeta{Name: svc.Name, Namespace: svc.Namespace},
+		TypeMeta: v1.TypeMeta{Kind: "Component", APIVersion: "core.oam.dev/v1alpha2"},
+		ObjectMeta: v1.ObjectMeta{
+			Name:        svc.Name,
+			Namespace:   svc.Namespace,
+			Labels:      svc.Labels,
+			Annotations: svc.Annotations,
+		},
 		Spec: v1alpha1.ComponentSpec{
 			Type:     svc.Type,
 			Settings: svc.Settings,
@@ -270,7 +277,7 @@ ManifestLoop:
 						continue ManifestLoop
 					}
 
-					return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from core kubernetes component"))
+					return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from core kubernetes component: %s", err))
 				}
 				pattern.Services[name] = &svc
 
@@ -285,7 +292,7 @@ ManifestLoop:
 				continue
 			}
 
-			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from extended kubernetes component"))
+			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from extended kubernetes component: %s", err))
 		}
 
 		pattern.Services[name] = &svc
@@ -300,6 +307,10 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 	metadata, _ := manifest["metadata"].(map[string]interface{})
 	name, _ := metadata["name"].(string)
 	namespace, _ := metadata["namespace"].(string)
+	labels, _ := metadata["labels"].(map[string]interface{})
+	annotations, _ := metadata["annotations"].(map[string]interface{})
+
+	fmt.Printf("%+#v\n", manifest)
 
 	// rest will store a map of everything other than the above mentioned fields
 	rest := map[string]interface{}{}
@@ -324,11 +335,31 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
+	// Setup labels
+	castedLabel := map[string]string{}
+	for k, v := range labels {
+		cv, ok := v.(string)
+		if ok {
+			castedLabel[k] = cv
+		}
+	}
+
+	// Setup annotations
+	castedAnnotation := map[string]string{}
+	for k, v := range annotations {
+		cv, ok := v.(string)
+		if ok {
+			castedAnnotation[k] = cv
+		}
+	}
+
 	svc := Service{
-		Name:      name,
-		Type:      w[0].OAMDefinition.Name,
-		Namespace: namespace,
-		Settings:  rest,
+		Name:        name,
+		Type:        w[0].OAMDefinition.Name,
+		Namespace:   namespace,
+		Labels:      castedLabel,
+		Annotations: castedAnnotation,
+		Settings:    rest,
 	}
 
 	return id, svc, nil
@@ -341,6 +372,8 @@ func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (strin
 	name, _ := metadata["name"].(string)
 	namespace, _ := metadata["namespace"].(string)
 	spec, _ := manifest["spec"].(map[string]interface{})
+	labels, _ := metadata["labels"].(map[string]interface{})
+	annotations, _ := metadata["annotations"].(map[string]interface{})
 
 	id := name
 	uid, err := uuid.NewV4()
@@ -354,11 +387,31 @@ func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (strin
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
+	// Setup labels
+	castedLabel := map[string]string{}
+	for k, v := range labels {
+		cv, ok := v.(string)
+		if ok {
+			castedLabel[k] = cv
+		}
+	}
+
+	// Setup annotations
+	castedAnnotation := map[string]string{}
+	for k, v := range annotations {
+		cv, ok := v.(string)
+		if ok {
+			castedAnnotation[k] = cv
+		}
+	}
+
 	svc := Service{
-		Name:      name,
-		Type:      w[0].OAMDefinition.Name,
-		Namespace: namespace,
-		Settings:  spec,
+		Name:        name,
+		Type:        w[0].OAMDefinition.Name,
+		Namespace:   namespace,
+		Labels:      castedLabel,
+		Annotations: castedAnnotation,
+		Settings:    spec,
 	}
 
 	return id, svc, nil
