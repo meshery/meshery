@@ -261,17 +261,20 @@ func (h *Handler) GetMesheryPatternsHandler(
 		http.Error(rw, fmt.Sprintf("failed to fetch the patterns: %s", err), http.StatusInternalServerError)
 		return
 	}
-	var patternPage models.MesheryPatternPage
-	patterPageBytes := resp
-	err = json.Unmarshal(resp, &patternPage)
-	if err == nil {
-		patterPageBytes, err = addMetadataOfPatternCurrentSupport("", provider, prefObj, user.UserID, patternPage)
-		if err != nil {
-			patterPageBytes = resp
-		}
+
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
+		return
+	}
+
+	//acts like a middleware, modifying
+	err = addMetadataOfPatternCurrentSupport(token, provider, prefObj, user.UserID, &resp)
+	if err != nil {
+		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(patterPageBytes))
+	fmt.Fprint(rw, string(resp))
 }
 
 // swagger:route DELETE /api/pattern/{id} PatternsAPI idDeleteMesheryPattern
@@ -375,7 +378,9 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 	fmt.Fprint(rw, string(data))
 }
 
-func addMetadataOfPatternCurrentSupport(token string, provider models.Provider, prefObj *models.Preference, uid string, patternsPage models.MesheryPatternPage) ([]byte, error) {
+func addMetadataOfPatternCurrentSupport(token string, provider models.Provider, prefObj *models.Preference, uid string, resp *[]byte) error {
+	var patternsPage models.MesheryPatternPage
+	err := json.Unmarshal(*resp, &patternsPage)
 	patterns := patternsPage.Patterns
 	var patternsPageMap map[string]interface{}
 	patternsPageBytes, _ := json.Marshal(patternsPage)
@@ -385,40 +390,42 @@ func addMetadataOfPatternCurrentSupport(token string, provider models.Provider, 
 		patterncontent := pattern.PatternFile
 		temp, err := json.Marshal(pattern)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		err = json.Unmarshal(temp, &p[i])
 		if err != nil {
-			return nil, err
+			return err
 		}
-		p[i]["canSupport"] = canSupport(token, provider, prefObj, uid, patterncontent)
+		msg, ok := canSupport(token, provider, prefObj, uid, patterncontent)
+		p[i]["canSupport"] = ok
+		p[i]["errmsg"] = msg
 	}
 	patternsPageMap["patterns"] = p
-	modres, err := json.Marshal(patternsPageMap)
+	*resp, err = json.Marshal(patternsPageMap)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return modres, nil
+	return err
 }
 
-func canSupport(token string, provider models.Provider, prefObj *models.Preference, uid string, patternfile string) bool {
+func canSupport(token string, provider models.Provider, prefObj *models.Preference, uid string, patternfile string) (string, bool) {
 	var pattern map[string]interface{}
 	err := yaml.Unmarshal([]byte(patternfile), &pattern)
 	if err != nil {
-		return false
+		return "", false
 	}
 	patternFile, err := core.NewPatternFile([]byte(patternfile))
 	if err != nil {
-		return false
+		return "", false
 	}
 	if prefObj == nil || prefObj.K8SConfig == nil {
-		return false
+		return "", false
 	}
 	kc, err := meshkube.New(prefObj.K8SConfig.Config) //possible nil dereference
 	if err != nil {
-		return false
+		return "", false
 	}
-	_, err = _processPattern(
+	msg, err := _processPattern(
 		token,
 		provider,
 		patternFile,
@@ -429,7 +436,7 @@ func canSupport(token string, provider models.Provider, prefObj *models.Preferen
 		true,
 	)
 	if err != nil {
-		return false
+		return err.Error(), false
 	}
-	return true
+	return msg, true
 }
