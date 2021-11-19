@@ -67,6 +67,7 @@ function RJSFFormChildComponent({ onSubmit, onDelete }){
  */
 function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange }) {
   const [tab, setTab] = React.useState(0);
+
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
   };

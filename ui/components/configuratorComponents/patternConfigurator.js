@@ -160,7 +160,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const handleSubmit = (cfg, patternName) => {
     console.log("submitted", { cfg, patternName });
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
+    handleCodeEditorYamlChange({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
     if (key) setDeployServiceConfig({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
   };
 
@@ -180,7 +180,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const handleChangeData = (cfg, patternName) => {
     console.log(patternName);
     const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+    handleCodeEditorYamlChange({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
   };
@@ -191,7 +191,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     setWorkloadTraitsSet(newCfg);
   };
 
-  const handleDeploy = (cfg) => {
+  const handleCodeEditorYamlChange = (cfg) => {
     const deployConfig = {};
     deployConfig.name = pattern.name;
     deployConfig.services = cfg;
@@ -200,6 +200,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   };
 
   function handleSubmitFinalPattern(yaml, id, name, action) {
+    console.log("submitting a new pattern", yaml)
     onSubmit(yaml, id, name, action);
     setSelectedPattern(resetSelectedPattern()); // Remove selected pattern
   }
@@ -496,7 +497,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
               </Grid>)
         }
         <Grid item xs={12} md={6} >
-          <CodeEditor yaml={yaml} pattern={pattern} handleSubmitFinalPattern={handleSubmitFinalPattern} saveCodeEditorChanges={saveCodeEditorChanges} />
+          <CodeEditor yaml={yaml} saveCodeEditorChanges={saveCodeEditorChanges} />
         </Grid>
       </Grid>
     </>
