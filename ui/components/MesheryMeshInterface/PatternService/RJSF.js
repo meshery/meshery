@@ -5,6 +5,8 @@ import { TextField, Typography } from "@material-ui/core";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import { Tooltip, IconButton } from "@material-ui/core";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import { rjsfTheme } from "../../../themes";
 
 const Form = withTheme(MaterialUITheme);
 
@@ -120,25 +122,32 @@ function RJSF(props) {
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
 
   React.useEffect(() => {
-    onChange?.(data);
+    // Apply debouncing mechanism for the state propagation
+    const timer = setTimeout(() => {
+      onChange?.(data);
+    }, 600);
+
+    return () => clearTimeout(timer);
   }, [data]);
 
   return (
     <RJSFWrapperComponent {...{ ...props, RJSFWrapperComponent : null, RJSFFormChildComponent : null } }>
-      <Form
-        schema={hideTitle ? deleteTitleFromJSONSchema(deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))) : deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))}
-        idPrefix={jsonSchema?.title}
-        onChange={(e) => {
-          setData(e.formData)
-        }}
-        formData={data}
-        fields={fields}
-        additionalMetaSchemas={[JS4]}
-      >
-        {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
+      <MuiThemeProvider theme={rjsfTheme}>
+        <Form
+          schema={hideTitle ? deleteTitleFromJSONSchema(deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))) : deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))}
+          idPrefix={jsonSchema?.title}
+          onChange={(e) => {
+            setData(e.formData)
+          }}
+          formData={data}
+          fields={fields}
+          additionalMetaSchemas={[JS4]}
+        >
+          {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
         {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
-        <RJSFFormChildComponent />
-      </Form>
+          <RJSFFormChildComponent />
+        </Form>
+      </MuiThemeProvider>
     </RJSFWrapperComponent>
   );
 }
