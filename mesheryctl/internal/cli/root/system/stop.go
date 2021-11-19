@@ -25,6 +25,7 @@ import (
 	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/kubernetes"
 
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
@@ -121,7 +122,7 @@ func stop() error {
 		if err != nil {
 			return err
 		}
-		// if the platform is kubernetes, stop the deployment by deleting the manifest files
+		// if the platform is kubernetes, stop the deployment by uninstalling the helm charts
 		userResponse := false
 		if utils.SilentFlag {
 			userResponse = true
@@ -159,22 +160,13 @@ func stop() error {
 		if err = invokeDeleteCRDs(); err != nil {
 			return err
 		}
-	}
 
-	// If k8s is available in case of platform docker than we remove operator
-	hcOptions := &HealthCheckOptions{
-		PrintLogs:           false,
-		IsPreRunE:           false,
-		Subcommand:          "",
-		RunKubernetesChecks: true,
-	}
-	hc, err := NewHealthChecker(hcOptions)
-	if err != nil {
-		return ErrHealthCheckFailed(err)
-	}
-
-	if err = hc.Run(); err != nil {
-		return ErrHealthCheckFailed(err)
+		if !utils.KeepNamespace {
+			log.Info("Deleting Meshery Namespace...")
+			if err = deleteNs(utils.MesheryNamespace, client.KubeClient); err != nil {
+				return err
+			}
+		}
 	}
 
 	log.Info("Meshery is stopped.")
@@ -247,6 +239,11 @@ func deleteCRD(name string, client *apiextension.Clientset) error {
 	return client.ApiextensionsV1().CustomResourceDefinitions().Delete(context.TODO(), name, metav1.DeleteOptions{})
 }
 
+func deleteNs(ns string, client *kubernetes.Clientset) error {
+	return client.CoreV1().Namespaces().Delete(context.TODO(), ns, metav1.DeleteOptions{})
+}
+
 func init() {
 	stopCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
+	stopCmd.Flags().BoolVar(&utils.KeepNamespace, "keep-namespace", false, "(optional) keep the Meshery namespace during uninstallation")
 }

@@ -117,6 +117,7 @@ module.exports = { resolve : {
   "@material-ui/core/Menu" : require("@material-ui/core/Menu"),
   "@material-ui/icons/Edit" : require("@material-ui/icons/Edit"),
   "@material-ui/core/MenuList" : require("@material-ui/core/MenuList"),
+  "@material-ui/core/CircularProgress" : require("@material-ui/core/CircularProgress"),
   "mui-datatables" : require("mui-datatables"),
   notistack : require("notistack"),
   "react-dom/server" : require("react-dom/server"),
