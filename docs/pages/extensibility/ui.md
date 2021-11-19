@@ -57,5 +57,5 @@ With both of these props, Remote Providers can customize the wrapper and can als
 
 from _ui/components/MesheryMeshInterface/PatternService/index.js_
 ```
-function RJSF({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent }) 
+function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent }) 
 ```
