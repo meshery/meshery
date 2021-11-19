@@ -57,17 +57,15 @@ export async function getWorkloadTraitAndType(schemaSet) {
  * traits schema lazily and does
  *
  * @param {{
- *  schemaSet?: { workload: any, traits: any[], type: string };
- *  onSubmit?: Function;
- *  onDelete?: Function;
- *  namespace?: string;
+ *  schemaSet: { workload: any, traits: any[], type: string };
+ *  onSubmit: Function;
+ *  onDelete: Function;
+ *  namespace: string;
  *  onChange?: Function
  *  onSettingsChange?: Function;
  *  onTraitsChange?: Function;
  *  formData?: Record<String, unknown>
- *  renderAsTooltip: boolean;
  *  reference?: Record<any, any>;
- *  appBarColor?: string;
  * }} props
  *
  * @returns
@@ -123,5 +121,5 @@ function LazyAccordionDetails(props) {
   if (!props.expanded) return <AccordionDetails />;
 
   // LEE: This behavior is more like what we need - https://codesandbox.io/s/upbeat-tesla-uchsb?file=/src/MyAccordion.js
-  return <AccordionDetails style={{ height : "50rem", overflow : "auto" }}>{props.children}</AccordionDetails>;
+  return <AccordionDetails style={{ maxHeight : "75vh", overflow : "auto",scrollbarWidth : "none" }}>{props.children}</AccordionDetails>;
 }
