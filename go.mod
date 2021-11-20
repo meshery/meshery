@@ -48,6 +48,7 @@ require (
 	github.com/nats-io/nats-server/v2 v2.2.0 // indirect; https://advisories.nats.io/CVE/CVE-2021-3127.txt
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
+	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/opencontainers/runc v1.0.0-rc95 // indirect; CVE-2021-30465
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
 	github.com/pkg/errors v0.9.1
