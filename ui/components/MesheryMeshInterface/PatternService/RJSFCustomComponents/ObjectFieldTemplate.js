@@ -5,9 +5,9 @@ import { makeStyles } from '@material-ui/styles';
 
 import { utils } from '@rjsf/core';
 
-import AddButton from "@material-ui/icons/Add"
+import AddButton from "@material-ui/icons/Add";
 import { Box, IconButton, Typography } from '@material-ui/core';
-import CustomDescriptionField from "./DescriptionField"
+import CustomDescriptionField from "./DescriptionField";
 
 const { canExpand } = utils;
 
@@ -90,7 +90,7 @@ const ObjectFieldTemplate = ({
                 {element.content}
               </Grid>
             )
-          )
+          );
         })}
         {/** canExpand(schema, uiSchema, formData) && (
           <Grid container justify='flex-end'>

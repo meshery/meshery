@@ -24,4 +24,4 @@ const DescriptionField = ({ description }) => {
   return null;
 };
 
-export default DescriptionField
+export default DescriptionField;

@@ -22,11 +22,36 @@ _documentation coming soon..._
 1. **ui/components/MesheryMeshInterface/PatternServiceFormCore.js** - PatternServiceFormCore component which decouples the SettingsForm and TraitsForm from their UI representation while keeping the logic coupled. This design lets the Remote Provider amend the design of the components without interfering with Meshery UI's core logic.
 
 ### Using React JSON Schema Form
+ Meshery exposes a custom RJSF Form component which is capable of generating "Pattern" YAMLs without being extremely opiniated about the UI. This custom component is available at `ui/components/MesheryMeshInterface/PatternServiceFormCore.js`. An example usage of the component which will render the logically coupled `SettingsForm` and `TraitsForm` in a Material UI `TabPanel`:
+
+ ```js
+  <PatternServiceFormCore
+    formData={formData}
+    schemaSet={schemaSet}
+    onSubmit={onSubmit}
+    onDelete={onDelete}
+    reference={reference}
+    namespace={namespace}
+  >
+	{(SettingsForm, TraitsForm) => {
+		return (
+			<div>
+				<TabPanel value={tab} index={0} style={{ marginTop: "1.1rem" }}>
+					<SettingsForm />
+				</TabPanel>
+				<TabPanel value={tab} index={1} style={{ marginTop: "1.1rem" }}>
+					<TraitsForm />
+				</TabPanel>
+			</div>
+		);
+	}}
+  </PatternServiceFormCore>
+ ```
 
  Meshery UI's RJSF form accepts two props:
 
-- `RJSFWrapperComponent`
-- `RJSFFormChildComponent`
+- `RJSFWrapperComponent`: The wrapper component gets all of the props that are passed to the underlying form, allowing to inspect the props and changing the behaviour based on them.
+- `RJSFFormChildComponent`: This component will customize the internals of the RJSF form.
 
 With both of these props, Remote Providers can customize the wrapper and can also customize the body of the form. This allows full customization of the form.
 
