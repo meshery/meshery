@@ -116,6 +116,35 @@ theme = {
     }, },
     MuiAvatar : { root : { width : 32,
       height : 32, }, },
+    MuiCssBaseline : {
+      "@global" : {
+        body : {
+          scrollbarColor : "#6b6b6b #263238",
+          "&::-webkit-scrollbar, & *::-webkit-scrollbar" : {
+            backgroundColor : "#263238",
+            width : '0.7rem',
+          },
+          "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb" : {
+            borderRadius : 8,
+            backgroundColor : "#6b6b6b",
+            minHeight : 24,
+            border : "3px solid #263238",
+          },
+          "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus" : {
+            backgroundColor : "#959595",
+          },
+          "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active" : {
+            backgroundColor : "#959595",
+          },
+          "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover" : {
+            backgroundColor : "#959595",
+          },
+          "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner" : {
+            backgroundColor : "#263238",
+          },
+        },
+      },
+    },
   },
   props : { MuiTab : { disableRipple : true, }, },
   mixins : { ...theme.mixins, },

@@ -79,6 +79,7 @@ run-fast:
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
+	SKIP_COMP_GEN=TRUE \
 	go run main.go;
 
 run-16-fast:

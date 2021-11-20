@@ -10,7 +10,7 @@ list: include
 ---
 Meshery offers Providers as a point of extensibility. With a built-in Local Provider (named "None"), Meshery Remote Providers are designed to be pluggable. Remote Providers offer points of extension to users / integrators to deliver enhanced functionality, using Meshery as a platform.
 
-1. **Extensibility points offer clean separation of open vs closed source capabilities.**
+1. **Extensibility points offer clean separation of Meshery's core functionality versus plugin functionality.**
    - Meshmap is an example of a feature to be delivered via Remote Provider. 
 1. **Remote Providers should be able to offer custom RBAC, custom UI components, and custom backend components**
    - Dynamically loadable frameworks need to be identified or created to serve each of these purposes.
