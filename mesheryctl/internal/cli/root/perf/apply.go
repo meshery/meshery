@@ -49,7 +49,7 @@ mesheryctl perf apply meshery-profile --flags
 // Execute a Performance test with creating a new performance profile
 mesheryctl perf apply --profile meshery-profile-new --url "https://google.com"
 
-// Run Performance test using SMP compatible test configuration (if available)
+// Run Performance test using SMP compatible test configuration
 mesheryctl perf apply -f perf-config.yaml
 
 // Run performance test using SMP compatible test configuration and override values with flags
