@@ -3,8 +3,6 @@ layout: page
 title: Guia de Instalación
 permalink: es/installation/quick-start
 language: es
-lang: es
-categories: es
 type: installation
 list: exclude
 ---

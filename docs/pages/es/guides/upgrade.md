@@ -4,22 +4,19 @@ title: Actualizar `mesheryctl` y Meshery
 description: Cómo Meshery y todos sus componentes
 permalink: es/guides/upgrade
 language: es
-lang: es
-categories: es
 display-title: "false"
 type: Guides
 ---
 
 # Actualizando Meshery
 
-## Actualizar el Servidor, Adaptadores, e Interfaz Gráfica de Meshery 
+## Actualizar el Servidor, Adaptadores, e Interfaz Gráfica de Meshery
 
 Varios componentes de Meshery deberán actualizarse a medida que estén disponibles nuevas versiones. Meshery consta de una serie de componentes que incluyen un servidor, adaptadores, UI y CLI. Como aplicación, Meshery es una composición de diferentes componentes funcionales.
 
 <a href="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg">
     <img src="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg" width="20%" />
 </a>
-
 
 Algunos de los componentes deben actualizarse simultáneamente, mientras que otros pueden actualizarse de forma independiente. La siguiente tabla muestra los componentes, sus versiones y las unidades de implementación (grupos de implementación).
 
@@ -82,8 +79,7 @@ Docker Deployment: Watchtower updates this component in accordance with the user
 
 Sub-components deploy as a unit, however, they do not share the same version number.
 
-###  Despliegues Docker de Meshery
-
+### Despliegues Docker de Meshery
 
 Para actualizar el servidor Meshery, los adaptadores y la interfaz de usuario, ejecute el siguiente comando:
 
@@ -93,7 +89,7 @@ Para actualizar el servidor Meshery, los adaptadores y la interfaz de usuario, e
  </div></div>
  </pre>
 
-### Despliegues Kubernetes de Meshery 
+### Despliegues Kubernetes de Meshery
 
 Utilice `kubectl apply` o` helm` para actualizar los manifiestos de la aplicación Meshery en su clúster de Kubernetes.
 

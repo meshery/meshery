@@ -3,12 +3,11 @@ layout: default
 title: "Extensibilidad: APIs"
 permalink: es/extensibility/api
 type: Reference
-abstract: 'La arquitectura Meshery es extensible y ofrece una variedad de puntos de extensión y API REST y GraphQL.'
+abstract: "La arquitectura Meshery es extensible y ofrece una variedad de puntos de extensión y API REST y GraphQL."
 #redirect_from: extensibility
 language: es
-lang: es
-categories: es
 ---
+
 ## APIs de Meshery
 
 Cada una de las API de Meshery está sujeta al siguiente sistema de autenticación y autorización.

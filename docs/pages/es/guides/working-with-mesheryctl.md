@@ -2,10 +2,8 @@
 layout: default
 title: Usando mesheryctl
 description: Como usar mesheryctl
-permalink: es/guides/mesheryctl 
+permalink: es/guides/mesheryctl
 language: es
-lang: es
-categories: es
 type: Guides
 ---
 
@@ -27,6 +25,7 @@ type: Guides
 ### Mac ó Linux
 
 Use su elección de homebrew o bash para instalar `mesheryctl`. Solo necesitas usar uno.
+
 ### Homebrew
 
 Instale `mesheryctl` y ejecute Meshery en Mac con Homebrew.
@@ -114,7 +113,7 @@ Para actualizar `mesheryctl`, ejecute el siguiente comando:
 
 ## Instalación Avanzada
 
-Los usuarios pueden controlar la imagen del contenedor específico y la etiqueta (versión) de Meshery que les gustaría ejecutar editando su *~/.meshery/meshery.yaml* (un archivo de docker compose).
+Los usuarios pueden controlar la imagen del contenedor específico y la etiqueta (versión) de Meshery que les gustaría ejecutar editando su _~/.meshery/meshery.yaml_ (un archivo de docker compose).
 
 Alineado con la imagen del contenedor de Meshery, en lugar de dejar la etiqueta implícita: stable-latest detrás de image: layer5 / meshery, los usuarios identificarán una etiqueta de imagen específica de la siguiente manera:
 
@@ -176,7 +175,6 @@ Si desea que los comandos `mesheryctl` se completen automáticamente para usarlo
  </div></div>
  </pre><br>
 
-
 Si la finalización de shell aún no está habilitada en su entorno, deberá habilitarla. Puede ejecutar lo siguiente una vez:
 
  <pre class="codeblock-pre"><div class="codeblock">
@@ -184,6 +182,7 @@ Si la finalización de shell aún no está habilitada en su entorno, deberá hab
  ~/.zshrc > echo "autoload -U compinit; compinit" 
  </div></div>
  </pre>
+
 _Nota_ : Es posible que deba reiniciar su shell para que esta configuración surta efecto.
 
 #### zsh en MacOS y Oh My zsh
@@ -202,8 +201,8 @@ _Nota_ : Es posible que deba reiniciar su shell para que esta configuración sur
  </div></div>
  </pre><br>
 
-
 Para cargar finalizaciones de concha de pescado para cada sesión, ejecute una vez:
+
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  mesheryctl system completion fish > ~/.config/fish/completions/mesheryctl.fish

@@ -3,10 +3,9 @@ layout: default
 title: Conceptos
 permalink: es/concepts
 language: es
-lang: es
-categories: es
 list: exclude
 ---
+
 Conceptos para la comprensión de las diversas características y componentes de Meshery.
 
 {% assign sorted_pages = site.pages | sort: "name" | reverse %}

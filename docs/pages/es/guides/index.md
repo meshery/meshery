@@ -3,8 +3,6 @@ layout: default
 title: Guías de Operación
 permalink: es/guides
 language: es
-lang: es
-categories: es
 list: exclude
 ---
 
@@ -14,7 +12,7 @@ Guías para el uso de las varias características y componentes de Meshery.
 
 <ul>
     {% for item in sorted_guides %}
-    {% if item.type=="Guides" and item.lang=="es" -%}
+    {% if item.type=="Guides" and item.lang=="es" and item.list!= "exclude" -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}

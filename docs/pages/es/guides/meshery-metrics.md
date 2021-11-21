@@ -4,8 +4,6 @@ title: Usar Métricas en Meshery
 description: Cómo conectar y usar las métricas de Prometheus y Grafana en Meshery
 permalink: es/guides/meshery-metrics
 language: es
-lang: es
-categories: es
 type: Guides
 ---
 
@@ -13,16 +11,16 @@ type: Guides
 
 Meshery proporciona informes de rendimiento, incluidos los resultados de las pruebas de rendimiento, métricas de recursos de nodos, etc. para que los operadores puedan comprender fácilmente la sobrecarga del plano de control y el plano de datos de su malla de servicio en el contexto de la sobrecarga incurrida en los nodos que se ejecutan dentro del clúster. Para generar informes de prueba de rendimiento de las mallas de servicio y sus cargas de trabajo, Meshery usa Grafana y/o Prometheus como sistemas de visualización y métricas, respectivamente. Esta guía describe los requisitos necesarios para que Meshery se conecte a estos sistemas. Los pasos pueden variar según la malla de servicio y su configuración.
 
-Para obtener estas métricas de entorno, también puede configurar manualmente Meshery para que se conecte con sus instancias de Grafana y/o Prometheus existentes a través del panel de Meshery. Una vez que se han cargado y se muestran en la pantalla, también puede realizar una prueba *ad-hoc* para comprobar el estado de conexión de Meshery.
+Para obtener estas métricas de entorno, también puede configurar manualmente Meshery para que se conecte con sus instancias de Grafana y/o Prometheus existentes a través del panel de Meshery. Una vez que se han cargado y se muestran en la pantalla, también puede realizar una prueba _ad-hoc_ para comprobar el estado de conexión de Meshery.
 
 <!-- ## Tutorial Guide
 
 Connect Meshery to your Grafana and Prometheus instances to enable enhanced service mesh performance management. Deploy a service mesh and any available sample application
 
 Retreive the IP address of your Minikube cluster by executing:
-    
+
  <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">       
+ <div class="codeblock"><div class="clipboardjs">
  minikube ip
  172.17.0.2
  </div></div>
@@ -128,7 +126,7 @@ Meshery auto-discovers all Prometheus instances available on your local system a
 Meshery also provides you the option of simply pasting in your Prometheus queries:
 
 - Navigate to the management page for Istio on the Meshery UI
-- Click on <i class="fas fa-caret-right fa-lg"></i>, located under **Apply Custom Configuration** 
+- Click on <i class="fas fa-caret-right fa-lg"></i>, located under **Apply Custom Configuration**
 - Paste in your Prometherus query. Click on <i class="fas fa-caret-right fa-lg"></i>
 
 <a href="{{ site.baseurl }}/assets/img/meshery-metrics/prometheus-query.png">
@@ -145,7 +143,7 @@ Meshery also provides you the option of simply pasting in your Prometheus querie
  </div></div>
  </pre>
 
-* Find the Prometheus endpoint 
+* Find the Prometheus endpoint
 
 The Prometheus endpoint will be *http://$MINIKUBE_IP:NODE_PORT*
 

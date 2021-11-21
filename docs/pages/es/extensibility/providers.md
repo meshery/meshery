@@ -6,14 +6,13 @@ type: Reference
 #redirect_from: architecture/adapters
 abstract: "Meshery ofrece soporte para más adaptadores que cualquier otro proyecto o producto en el mundo. Meshery utiliza adaptadores para gestionar las distintas mallas de servicio."
 language: es
-lang: es
-categories: es
 list: include
 ---
+
 Meshery ofrece a los proveedores como un punto de extensibilidad. Con un proveedor local integrado (llamado "None"), los proveedores remotos de Meshery están diseñados para ser conectables. Los proveedores remotos ofrecen puntos de extensión a los usuarios / integradores para ofrecer una funcionalidad mejorada, utilizando Meshery como plataforma.
 
 1. **Los puntos de extensibilidad ofrecen una separación clara de las capacidades de código abierto y cerrado.**
-   - Meshmap es un ejemplo de una función que se entregará a través de un proveedor remoto. 
+   - Meshmap es un ejemplo de una función que se entregará a través de un proveedor remoto.
 1. **Los Proveedores Remotos deben poder ofrecer RBAC personalizado, componentes de Interfaz de Usuario (UI) personalizados y componentes de backend personalizados**
    - Es necesario identificar o crear marcos cargables dinámicamente para cumplir con cada uno de estos propósitos.
 
@@ -22,11 +21,13 @@ Meshery ofrece a los proveedores como un punto de extensibilidad. Con un proveed
 El marco de extensibilidad del proveedor remoto de Meshery está diseñado para permitir:
 
 1. **Funcionalidad de interfaz de usuario conectable:**
-    - Componentes de interfaz de usuario personalizados fuera del árbol con una experiencia de usuario perfecta.
-    - Un sistema de recuperación remota de paquetes de extensión (componentes ReactJS y binarios Golang).
+
+   - Componentes de interfaz de usuario personalizados fuera del árbol con una experiencia de usuario perfecta.
+   - Un sistema de recuperación remota de paquetes de extensión (componentes ReactJS y binarios Golang).
 
 1. **Funcionalidad backend conectable:**
-    - Los proveedores remotos tienen una cantidad de capacidades desconocidas para Meshery.
+
+   - Los proveedores remotos tienen una cantidad de capacidades desconocidas para Meshery.
 
 1. **AuthZ Conectable**
    - Diseñe un sistema de control de acceso extensible basado en roles de modo que los proveedores remotos puedan determinar su propio conjunto de controles. Proveedores remotos para devolver JWT con roles personalizados, claves de permisos y llaveros de permisos.
@@ -88,17 +89,17 @@ Meshery mantiene la implementación de los proveedores remotos por separado para
 
 Entretejidos en la interfaz de usuario basada en web de Meshery hay una variedad de puntos de extensión. Cada punto de extensión está cuidadosamente diseñado para ofrecer una experiencia de usuario perfecta. Cada punto de extensión se identifica con un nombre y un tipo. Los siguientes puntos de extensión de la interfaz de usuario de Meshery están disponibles:
 
-- **Nombre:** navigator 
-   **Tipo:** Elementos de Menú
+- **Nombre:** navigator
+  **Tipo:** Elementos de Menú
   **Descripción:** Se supone que es una extensión de página completa que obtendrá un punto final dedicado en la interfaz de usuario de meshery. Y aparecerá en la barra lateral / navegador de la interfaz de usuario de Meshery. Los elementos del menú pueden referirse a extensiones de página completa.
 
-**Name:** user_prefs 
+**Name:** user_prefs
 **Type:** Componente Único
 **Description:** Se supone que son componentes de reacción remota que se colocarán en una página preexistente y no tendrán un punto final dedicado. A partir de ahora, el único lugar donde se puede cargar esta extensión es la sección "Preferencias del usuario" en la configuración de malla.
 
 **Name:** /extension/<su nombre aquí>
 **Type:** Página Completa
-Description: 
+Description:
 
 El paquete Provider se descomprime en el sistema de archivos del servidor Meshery en `/app/provider-pkg/<package-name>`.
 
@@ -120,10 +121,9 @@ El punto de extensión UserPrefs espera y carga un componente para que se muestr
 
 El punto de extensión Navigator carga un conjunto de elementos de menú que se mostrarán en la barra de menú en el lado izquierdo de la interfaz de usuario de Meshery.
 
-
 ## Ejemplo de Punto Final de Capacidades
 
-Meshery Seerver enviará todas las solicitudes a los puntos finales del proveedor remoto. Los  endpoints (puntos finales) se determinan e identifican dinámicamente en la sección "capacidades" del punto final `/capabilities`. Los proveedores como objeto tienen los siguientes atributos (esto debe devolverse como una respuesta al endpoint `/capabilities`):
+Meshery Seerver enviará todas las solicitudes a los puntos finales del proveedor remoto. Los endpoints (puntos finales) se determinan e identifican dinámicamente en la sección "capacidades" del punto final `/capabilities`. Los proveedores como objeto tienen los siguientes atributos (esto debe devolverse como una respuesta al endpoint `/capabilities`):
 
 ```json
 {
@@ -179,7 +179,6 @@ Meshery Seerver enviará todas las solicitudes a los puntos finales del proveedo
     { "feature": "persist-smp-test-profile", "endpoint": "/user/test-config" }
   ]
 }
-
 ```
 
 Meshery le permite, como propietario de la malla de servicios, personalizar la implementación de su malla de servicios.
@@ -191,6 +190,6 @@ Las extensiones de proveedor remoto se mantienen fuera del árbol de Meshery (se
 Ofrecer soporte fuera del árbol para extensiones de Meshery significa que:
 
 1. No es necesario que el código fuente de las extensiones de Meshery sea de código abierto,
-1. La responsabilidad por la estabilidad de Meshery se reduce significativamente, evitando errores potenciales en componentes extendidos. 
+1. La responsabilidad por la estabilidad de Meshery se reduce significativamente, evitando errores potenciales en componentes extendidos.
 
 A través de puntos de extensión claramente definidos, las extensiones de Meshery pueden ofrecerse como capacidades de código cerrado que se conectan al código de Meshery de código abierto. Para facilitar la integración de sus extensiones de Meshery, puede automatizar la construcción y liberación de sus repositorios de código separados pero interdependientes. Usted será responsable de mantener sus extensiones basadas en ReactJS y Golang.

@@ -3,10 +3,9 @@ layout: default
 title: Referencia
 permalink: es/reference
 language: es
-lang: es
-categories: es
 list: exclude
 ---
+
 Referencias para utilizar las diversas funciones y componentes de Meshery.
 
 {% assign sorted_reference = site.pages | sort: "type" | reverse %}

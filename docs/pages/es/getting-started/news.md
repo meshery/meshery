@@ -2,8 +2,6 @@
 title: Noticias
 permalink: es/news/
 language: es
-lang: es
-categories: es
 excluded_in_search: true
 ---
 
@@ -15,6 +13,7 @@ For site changes, see the <a href="https://github.com/{{ site.github_user }}/{{ 
 <br>
 
 {% for post in site.posts limit:10 %}
+
    <div class="post-preview">
    <h2><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h2>
    <span class="post-date">{{ post.date | date: "%B %d, %Y" }}</span><br>

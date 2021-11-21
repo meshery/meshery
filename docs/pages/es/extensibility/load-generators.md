@@ -6,8 +6,6 @@ type: Reference
 #redirect_from: architecture/adapters
 abstract: "Meshery ofrece soporte para más adaptadores que cualquier otro proyecto o producto en el mundo. Meshery utiliza adaptadores para gestionar las distintas mallas de servicio."
 language: es
-lang: es
-categories: es
 list: include
 ---
 
@@ -16,7 +14,6 @@ Los usuarios pueden preferir usar un generador de carga sobre el siguiente dada 
 ### ¿Qué función cumplen los generadores de carga en Meshery?
 
 Los generadores de carga proporcionarán la capacidad de ejecutar pruebas de carga desde Meshery. A partir de hoy, los generadores de carga están integrados como bibliotecas en Meshery y Meshery invoca las API de los generadores de carga con las opciones de prueba de carga adecuadas para ejecutar la prueba de carga. Por el momento, Meshery tiene soporte para generadores de carga HTTP. El soporte para pruebas de carga de gRPC y TCP está en la hoja de ruta. Meshery tiene integración funcional con fortio, wrk2 y nighthawk.
-
 
 ### ¿Por qué admitir varios generadores de carga?
 
@@ -27,4 +24,5 @@ Diferentes casos de uso y diferentes opiniones requieren diferentes enfoques par
 1. [fortio](https://github.com/fortio/fortio) - Biblioteca de pruebas de carga Fortio, herramienta de línea de comandos, servidor de eco avanzado y UI web en go (golang). Permite especificar una carga establecida de consulta por segundo y registrar histogramas de latencia y otras estadísticas útiles.
 1. [wrk2](https://github.com/giltene/wrk2) - Un rendimiento constante, una variante de wrk de grabación de latencia correcta.
 1. [nighthawk](https://github.com/envoyproxy/nighthawk) - Permite a los usuarios ejecutar pruebas de rendimiento distribuidas para imitar mejor los escenarios de sistemas distribuidos del mundo real.
-  - Vea el proyecto GetNighthawk.
+
+- Vea el proyecto GetNighthawk.

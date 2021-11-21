@@ -6,8 +6,6 @@ type: Reference
 abstract: 'La arquitectura Meshery es extensible. Meshery proporciona varios puntos de extensión para trabajar con diferentes mallas de servicio a través de <a href="extensibility#adapters">adaptadores</a>, <a href="extensibility#load-generators">generadores de carga</a> and <a href="extensibility#providers">providers</a>.'
 redirect_from: reference/extensibility
 language: es
-lang: es
-categories: es
 ---
 
 Meshery tiene una arquitectura extensible con varios puntos de extensión. Meshery proporciona varios puntos de extensión para trabajar con diferentes mallas de servicio a través de [adaptadores]({{site.baseurl}}/es/extensibility/adapters), diferentes [generadores de carga]({{site.baseurl}}/es/extensibility/load-generators) y diferentes [proveedores]({{site.baseurl}}/es/extensibility/providers). Meshery también ofrece un REST API.

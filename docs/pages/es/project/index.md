@@ -4,8 +4,6 @@ title: Proyecto
 permalink: es/project
 description: Proyecto Meshery
 language: es
-lang: es
-categories: es
 type: project
 list: exclude
 ---

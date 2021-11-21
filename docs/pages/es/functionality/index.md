@@ -1,15 +1,11 @@
 ---
 layout: page
-title: Funcionalidad
+title: Funcionalidades de Meshery
 permalink: es/functionality
 type: functionality
 language: es
-lang: es
-categories: es
 list: exclude
 ---
-
-# Funcionalidades de Meshery
 
 Estas secciones proveen guías de usuario sobre las funcionalidades que ofrece Meshery.
 

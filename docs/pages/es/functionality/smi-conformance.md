@@ -1,15 +1,11 @@
 ---
 layout: page
-title: Capacidad de conformidad SMI
+title: Capacidad de conformidad de SMI
 # permalink: es/functionality/smi-conformance
 permalink: es/functionality/service-mesh-interface
-type: functionality 
+type: functionality
 language: es
-lang: es
-categories: es
 ---
-
-# Capacidad de conformidad de SMI
 
 ## Conformidad
 

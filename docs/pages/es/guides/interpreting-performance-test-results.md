@@ -5,17 +5,15 @@ description: Esta guía tiene como objetivo ayudar a los usuarios a obtener info
 permalink: es/guides/interpreting-performance-test-results
 type: guides
 language: es
-lang: es
-categories: es
 ---
 
 Una vez que se prueba el rendimiento y se ejecuta, se realiza el análisis disco y los resultados de la prueba persisten. Resultados o descargables y persistentes en el [Desempeño de la Malla de Servicio](https://smp-spec.io/) (SMP) format.
 
 ## Vista Gráfica
 
-[![{{ site.baseurl }}/assets/img/performance-management/dashboard.png](https://layer5io.github.io/meshery/assets/img/performance-management/dashboard.png)]({{ site.baseurl }}/assets/img/performance-management/dashboard.png)
+<img src="{{ site.baseurl }}/assets/img/performance-management/dashboard.png" />
 
-[![{{ site.baseurl }}/assets/img/performance-management/chart.png](https://layer5io.github.io/meshery/assets/img/performance-management/chart.png)]({{ site.baseurl }}/assets/img/performance-management/chart.png)
+<img src="{{ site.baseurl }}/assets/img/performance-management/chart.png" />
 
 ## Pruebas
 

@@ -3,8 +3,6 @@ layout: default
 title: Construcción y Lanzamiento (CI)
 permalink: es/project/build-and-release
 language: es
-lang: es
-categories: es
 ---
 
 El sistema de creación y lanzamiento de Meshery incorpora muchas herramientas, organizadas en diferentes flujos de trabajo, cada uno de los cuales se desencadena por diferentes eventos. El sistema de compilación y lanzamiento de Meshery no se ejecuta en un horario, sino que se basa en eventos. Las acciones de GitHub se utilizan para definir los flujos de trabajo de CI de Meshery. Las nuevas compilaciones de Meshery y sus diversos componentes se generan automáticamente tras la inserción, el lanzamiento y otros eventos similares, generalmente en relación con sus respectivas ramas maestras.

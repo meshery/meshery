@@ -3,8 +3,6 @@ layout: page
 title: FAQ
 permalink: es/project/faq
 language: es
-lang: es
-categories: es
 ---
 
 ## Pregunta: ¿Por qué se creó Meshery?
