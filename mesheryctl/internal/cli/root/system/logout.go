@@ -1,7 +1,7 @@
 package system
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
@@ -32,7 +32,7 @@ This command removes the authentication token from the user's filesystem`,
 		}
 
 		// Replace the content of the token file with empty content
-		if err := ioutil.WriteFile(token.GetLocation(), []byte{}, 0666); err != nil {
+		if err := os.WriteFile(token.GetLocation(), []byte{}, 0666); err != nil {
 			log.Error("logout failed: ", err)
 			return nil
 		}
