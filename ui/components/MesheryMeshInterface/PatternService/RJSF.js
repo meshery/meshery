@@ -125,7 +125,7 @@ function RJSF(props) {
     // Apply debouncing mechanism for the state propagation
     const timer = setTimeout(() => {
       onChange?.(data);
-    }, 600);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [data]);
