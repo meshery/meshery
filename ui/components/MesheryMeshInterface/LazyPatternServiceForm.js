@@ -105,8 +105,6 @@ export default function LazyPatternServiceForm(props) {
     }
   }
 
-  console.log("sc", props?.schemaSet)
-
   return (
     <div className={classes.root}>
       <Accordion elevation={0} expanded={expanded} onChange={() => expand(!expanded)}>

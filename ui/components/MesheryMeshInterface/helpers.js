@@ -117,10 +117,10 @@ export function getPatternServiceName(item, includeDisplayName = true) {
  */
 export function getHumanReadablePatternServiceName(item) {
   return item?.oam_definition?.spec?.metadata?.k8sKind
-   ||  item?.metadata?.["display.ui.meshery.io/name"]
+    || item?.metadata?.["display.ui.meshery.io/name"]
     || item?.oam_definition?.metadata?.name
     || getPatternAttributeName(item)
-     || "NA";
+    || "NA";
 }
 
 /**
