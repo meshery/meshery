@@ -149,25 +149,23 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 		act = mesherykube.UNINSTALL
 	}
 
-	overrides, err := SetOverrideValues(delete, adapterTracker)
-	if err != nil {
-		return err
-	}
+	overrides := SetOverrideValues(delete, adapterTracker)
 
-	err = client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
+	err := client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
 		Namespace: "meshery",
 		ChartLocation: mesherykube.HelmChartLocation{
 			Repository: chartRepo,
 			Chart:      chart,
 			Version:    mesheryReleaseVersion,
 		},
+		// CreateNamespace doesn't have any effect when the action is UNINSTALL
 		CreateNamespace: true,
 		Action:          act,
 		// Setting override values
 		OverrideValues: overrides,
 	})
 	if err != nil {
-		return err
+		return ErrApplyHelmChart(err)
 	}
 
 	return nil
@@ -176,7 +174,7 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 // SetOverrideValues detects the currently insalled adapters and sets appropriate
 // overrides so as to not uninstall them. It also sets override values for
 // operator so that it can be enabled or disabled depending on the need
-func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterface) (map[string]interface{}, error) {
+func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterface) map[string]interface{} {
 	installedAdapters := make([]string, 0)
 	adapters := adapterTracker.GetAdapters(context.TODO())
 
@@ -239,5 +237,5 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 		}
 	}
 
-	return overrideValues, nil
+	return overrideValues
 }

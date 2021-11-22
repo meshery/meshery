@@ -120,16 +120,6 @@ func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider)
 		Type:   "health",
 	})
 
-	//	if err != nil {
-	//		r.Log.Error(err)
-	//		r.Broadcast.Submit(broadcast.BroadcastMessage{
-	//			Source: broadcast.OperatorSyncChannel,
-	//			Data:   err,
-	//			Type:   "error",
-	//		})
-	//		return model.StatusDisabled, err
-	//	}
-
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
 		Source: broadcast.OperatorSyncChannel,
 		Data:   false,
