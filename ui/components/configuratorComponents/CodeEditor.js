@@ -83,8 +83,9 @@ function getDynamicVh(scrollPos) {
     return '67vh'
   }
   const per = getScrollPercentage()
-  const vh = 67 + 15*(per/0.6); // calc(67vh)
-  if (per < 0.6) {
+  const threshold = 0.06;
+  const vh = 67 + 15*(per/threshold); // calc(67vh)
+  if (per < threshold) {
     return scrollPos > 106 ? `${vh}vh` : '67vh';
   } else if (per > 0.95) {
     return 'calc(100vh - 232px)'

@@ -46,9 +46,9 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   formCtrl : {
-    width : "90px",
-    minWidth : "90px",
-    maxWidth : "90px",
+    width : "60px",
+    minWidth : "60px",
+    maxWidth : "60px",
     marginRight : 8,
   },
   autoComplete : {
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
+function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPattern }) {
   const { workloadTraitSet, meshWorkloads } = useContext(SchemaContext);
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState(workloadTraitSet);
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
@@ -82,9 +82,10 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   const [selectedMeshType, setSelectedMeshType] = useState("core");
   const [selectedVersionMesh, setSelectedVersionMesh] = useState();
   const [selectedVersion, setSelectedVersion] = useState("");
-  const [meshFormTitles, setMeshFormTitles] = useState(null);
+  const [briefCrsInformations, setBriefCrsInformations] = useState(null);
   const [activeForm, setActiveForm] = useState();
   const [viewType, setViewType] = useState("list");
+  const [activeCR, setActiveCR] = useState({});
   const classes = useStyles();
   const reference = useRef({});
 
@@ -114,11 +115,27 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
 
   useEffect(() => {
     if (selectedVersion) {
-      setMeshFormTitles(getFormOptions());
+      const crsBriefs = getFormBriefInformationKeys()
+      setBriefCrsInformations(crsBriefs);
       setActivePatternWithRefinedSchema(selectedVersionMesh?.[selectedVersion]
         ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0]);
+      setActiveCR(crsBriefs[0])
     }
   }, [selectedVersion]);
+
+  useEffect(() => {
+    if (!isEmptyObj(activeCR)) {
+      let activeSchema;
+      if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
+        activeSchema = meshWorkloads[selectedMeshType]
+          .find(schema => schema?.workload?.metadata?.["display.ui.meshery.io/name"] === activeCR.name);
+      } else {
+        activeSchema = selectedVersionMesh?.[selectedVersion]
+          .find(schema => schema?.workload?.oam_definition?.metadata?.name === activeCR.name);
+      }
+      setActivePatternWithRefinedSchema(activeSchema);
+    }
+  }, [activeCR])
 
 
   function groupWlByVersion() {
@@ -141,7 +158,12 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     return { show : false, pattern : null };
   }
 
-  function getFormOptions() {
+  /**
+   * get keys and mapping to the correct icons and colors
+   * for all the CRDs available in any SM
+   * @returns {{name: String, icon: React.ReactElement, color: String}}
+   */
+  function getFormBriefInformationKeys() {
     if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
       return meshWorkloads[selectedMeshType].map(mwl => {
         const name = mwl?.workload?.metadata?.["display.ui.meshery.io/name"];
@@ -239,6 +261,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
 
   async function setActivePatternWithRefinedSchema(schema) {
     const refinedSchema = await getWorkloadTraitAndType(schema);
+    console.log("refined Schema", refinedSchema)
     setActiveForm(refinedSchema);
   }
 
@@ -246,7 +269,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     if (viewType == "list") {
       if (isEmptyObj(activeForm)) {
         // core resources are handled sepaeratrly since they are not versioned
-        setMeshFormTitles(getFormOptions());
+        setBriefCrsInformations(getFormBriefInformationKeys());
         if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
           setActivePatternWithRefinedSchema(meshWorkloads[selectedMeshType]
             ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0]);
@@ -259,18 +282,6 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
     } else {
       setViewType("list");
     }
-  }
-
-  function handleFormSelection(_, selectedField) {
-    let activeSchema;
-    if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
-      activeSchema = meshWorkloads[selectedMeshType]
-        .find(schema => schema?.workload?.metadata?.["display.ui.meshery.io/name"] === selectedField.name);
-    } else {
-      activeSchema = selectedVersionMesh?.[selectedVersion]
-        .find(schema => schema?.workload?.oam_definition?.metadata?.name === selectedField.name);
-    }
-    setActivePatternWithRefinedSchema(activeSchema);
   }
 
   if (isEmptyObj(workloadTraitsSet)) return <CircularProgress />;
@@ -289,11 +300,10 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
             >
               {getMeshOptions().map(item => {
                 const details = getMeshProperties(item);
-                return (<MenuItem value={details.name}>
-                  <li>
+                return (
+                  <MenuItem key={details.name} value={details.name}>
                     <img src={details.img} height="32px" />
-                  </li>
-                </MenuItem>);
+                  </MenuItem>);
               })}
             </Select>
           </FormControl>
@@ -309,13 +319,16 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
             />
           }
           {
-            viewType === "form" && meshFormTitles && meshFormTitles.length > 0
+            viewType === "form" && briefCrsInformations && briefCrsInformations.length > 0
             && <Autocomplete
               className={classes.autoComplete2}
               disableClearable
-              options={meshFormTitles}
+              value={activeCR}
+              options={briefCrsInformations}
               getOptionLabel={(option) => option.name}
-              onChange={handleFormSelection}
+              onChange={(_, newVal) => {
+                setActiveCR(newVal)
+              }}
               renderOption={option => {
                 return (
                   <>
@@ -412,7 +425,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
       <Grid container spacing={3}>
         {
           // active Form is used to show a only one RJSF form on the screen
-          activeForm && viewType === "form"
+          viewType === "form" && activeForm
             ? (
               <Grid item xs={12} md={6}>
                 <Paper className={classes.paper} elevation={0}>
@@ -425,8 +438,7 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
                     onDelete={(val) => handleDelete(val, pattern.name)}
                     namespace={ns}
                     reference={reference}
-                    renderAsTooltip
-                    appBarColor={getMeshProperties(selectedMeshType).color}
+                    scroll
                   />
                 </Paper>
               </Grid>
@@ -447,8 +459,6 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
                           onDelete={(val) => handleDelete(val, pattern.name)}
                           namespace={ns}
                           reference={reference}
-                          renderAsTooltip
-                          appBarColor={getMeshProperties("core").color}
                         />
                       </div>))
                 }
@@ -465,8 +475,6 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
                         onDelete={(val) => handleDelete(val, pattern.name)}
                         namespace={ns}
                         reference={reference}
-                        renderAsTooltip
-                        appBarColor={getMeshProperties(selectedMeshType).color}
                       />
                     </div>))}
                 <Accordion elevation={0} style={{ width : '100%' }}>
@@ -504,4 +512,4 @@ function PatternForm({ pattern, onSubmit, show : setSelectedPattern }) {
   );
 }
 
-export default PatternForm;
+export default PatternConfiguratorComponent;
