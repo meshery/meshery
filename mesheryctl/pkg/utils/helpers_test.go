@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -288,7 +288,7 @@ func TestPrintToTable(t *testing.T) {
 
 	w.Close()
 	// read from stdout
-	out, _ := ioutil.ReadAll(r)
+	out, _ := io.ReadAll(r)
 
 	defer func() { os.Stdout = old }()
 
@@ -309,7 +309,7 @@ func TestPrintToTableWithFooter(t *testing.T) {
 
 	w.Close()
 	// read from stdout
-	out, _ := ioutil.ReadAll(r)
+	out, _ := io.ReadAll(r)
 
 	defer func() { os.Stdout = old }()
 

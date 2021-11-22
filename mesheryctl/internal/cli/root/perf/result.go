@@ -3,7 +3,7 @@ package perf
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -173,7 +173,7 @@ func fetchPerformanceProfileResults(url string) ([][]string, []resultStruct, []b
 		return nil, nil, nil, ErrFailReqStatus(resp.StatusCode)
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
 	}

@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -90,7 +89,7 @@ func TestChangePlatform(t *testing.T) {
 			}
 
 			// Actual file contents
-			actualContent, err := ioutil.ReadFile(fixture)
+			actualContent, err := os.ReadFile(fixture)
 			if err != nil {
 				t.Error("Error reading actual file contents: ", err)
 			}
@@ -169,7 +168,7 @@ func TestChangeConfigEndpoint(t *testing.T) {
 			}
 
 			// Actual file contents
-			actualContent, err := ioutil.ReadFile(testConfigPath)
+			actualContent, err := os.ReadFile(testConfigPath)
 			if err != nil {
 				t.Error("Error reading actual file contents: ", err)
 			}
@@ -232,7 +231,7 @@ func TestGetManifestURL(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Read fixture
-			file, _ := ioutil.ReadFile("fixtures/platform/" + tt.fixture)
+			file, _ := os.ReadFile("fixtures/platform/" + tt.fixture)
 			manifest := Manifest{}
 			_ = json.Unmarshal([]byte(file), &manifest)
 
@@ -298,7 +297,7 @@ func TestDownloadManifests(t *testing.T) {
 			}
 
 			// Actual file contents
-			actualContent, err := ioutil.ReadFile(filepath.Join(MesheryFolder, ManifestsFolder, tt.manifest.Path))
+			actualContent, err := os.ReadFile(filepath.Join(MesheryFolder, ManifestsFolder, tt.manifest.Path))
 			if err != nil {
 				t.Error(err)
 			}
@@ -379,7 +378,7 @@ func TestDownloadOperatorManifest(t *testing.T) {
 
 			for i, filename := range tt.filenames {
 				// Actual file contents
-				actualContent, err := ioutil.ReadFile(filepath.Join(MesheryFolder, ManifestsFolder, filename))
+				actualContent, err := os.ReadFile(filepath.Join(MesheryFolder, ManifestsFolder, filename))
 				if err != nil {
 					t.Error(err)
 				}

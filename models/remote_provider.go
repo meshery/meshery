@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -279,7 +278,7 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bd, err := ioutil.ReadAll(resp.Body)
+	bd, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "User Data")
 	}
@@ -408,7 +407,7 @@ func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, o
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Result")
 	}
@@ -464,7 +463,7 @@ func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, sea
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "All Perf results")
 	}
@@ -517,7 +516,7 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "SMI Result")
 	}
@@ -556,7 +555,7 @@ func (l *RemoteProvider) GetResult(tokenVal string, resultID uuid.UUID) (*Mesher
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Result "+resultID.String())
 	}
@@ -610,7 +609,7 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
 		return "", ErrDataRead(err, "Perf Result")
@@ -660,7 +659,7 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", ErrDataRead(err, "SMI Result")
 	}
@@ -717,7 +716,7 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return ErrDataRead(err, "metrics Data")
 	}
@@ -804,7 +803,7 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 		return &pr, nil
 	}
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Pattern Resource")
 	}
@@ -884,7 +883,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 		return &pr, nil
 	}
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Patterns Page Resource")
 	}
@@ -961,7 +960,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
 		return nil, err
@@ -1019,7 +1018,7 @@ func (l *RemoteProvider) GetMesheryPatterns(req *http.Request, page, pageSize, s
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
 		return nil, err
@@ -1061,7 +1060,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) 
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
 		return nil, err
@@ -1103,7 +1102,7 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
 		return nil, err
@@ -1160,7 +1159,7 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Pattern File")
 	}
@@ -1210,7 +1209,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Filters")
 	}
@@ -1264,7 +1263,7 @@ func (l *RemoteProvider) GetMesheryFilters(req *http.Request, page, pageSize, se
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Filter Page")
 	}
@@ -1304,7 +1303,7 @@ func (l *RemoteProvider) GetMesheryFilterFile(req *http.Request, filterID string
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Filter File: "+filterID)
 	}
@@ -1342,7 +1341,7 @@ func (l *RemoteProvider) GetMesheryFilter(req *http.Request, filterID string) ([
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Filter:"+filterID)
 	}
@@ -1381,7 +1380,7 @@ func (l *RemoteProvider) DeleteMesheryFilter(req *http.Request, filterID string)
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Filter: "+filterID)
 	}
@@ -1436,7 +1435,7 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Filter file")
 	}
@@ -1486,7 +1485,7 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Application")
 	}
@@ -1541,7 +1540,7 @@ func (l *RemoteProvider) GetMesheryApplications(req *http.Request, page, pageSiz
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
 		return nil, ErrDataRead(err, "Application")
@@ -1581,7 +1580,7 @@ func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID 
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Application: "+applicationID)
 	}
@@ -1619,7 +1618,7 @@ func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, application
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Application :"+applicationID)
 	}
@@ -1673,7 +1672,7 @@ func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, p
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Application")
 	}
@@ -1719,7 +1718,7 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Profile")
 	}
@@ -1768,7 +1767,7 @@ func (l *RemoteProvider) GetPerformanceProfiles(tokenString string, page, pageSi
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Profile Page")
 	}
@@ -1807,7 +1806,7 @@ func (l *RemoteProvider) GetPerformanceProfile(req *http.Request, performancePro
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Profile :"+performanceProfileID)
 	}
@@ -1845,7 +1844,7 @@ func (l *RemoteProvider) DeletePerformanceProfile(req *http.Request, performance
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Profile :"+performanceProfileID)
 	}
@@ -1890,7 +1889,7 @@ func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, 
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Schedule")
 	}
@@ -1941,7 +1940,7 @@ func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order s
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Schedule Page")
 	}
@@ -1980,7 +1979,7 @@ func (l *RemoteProvider) GetSchedule(req *http.Request, scheduleID string) ([]by
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Schedule :"+scheduleID)
 	}
@@ -2019,7 +2018,7 @@ func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Schedule :"+scheduleID)
 	}
@@ -2151,7 +2150,7 @@ func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.P
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusCreated || err != nil {
 		return string(bdr), err
 	}
@@ -2185,7 +2184,7 @@ func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "Perf Test Config :"+testUUID)
 	}
@@ -2229,7 +2228,7 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if resp.StatusCode == http.StatusOK || err != nil {
 		return bdr, err
 	}

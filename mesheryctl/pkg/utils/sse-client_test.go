@@ -4,8 +4,9 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -24,7 +25,7 @@ func TestConvertRespToSSE(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			resp := http.Response{
-				Body: ioutil.NopCloser(bytes.NewBufferString(tt.body)),
+				Body: io.NopCloser(bytes.NewBufferString(tt.body)),
 			}
 
 			_, err := ConvertRespToSSE(&resp)
@@ -61,7 +62,7 @@ func Test_loop(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Read fixture
-			bodyBytes, err := ioutil.ReadFile("fixtures/sse_client/" + tt.fixture)
+			bodyBytes, err := os.ReadFile("fixtures/sse_client/" + tt.fixture)
 			if err != nil {
 				t.Fatalf("Error while reading fixture: %v", err)
 			}
@@ -69,7 +70,7 @@ func Test_loop(t *testing.T) {
 			body := string(bodyBytes)
 
 			resp := http.Response{
-				Body: ioutil.NopCloser(bytes.NewBufferString(body)),
+				Body: io.NopCloser(bytes.NewBufferString(body)),
 			}
 
 			reader := bufio.NewReader(resp.Body)
