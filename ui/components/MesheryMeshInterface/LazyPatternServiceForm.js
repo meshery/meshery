@@ -9,7 +9,11 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./PatternServiceForm";
-import { getPatternServiceName as getItemName, getPatternServiceID as getItemID, getPatternServiceType } from "./helpers";
+import { getPatternServiceName as getItemName,
+  getPatternServiceID as getItemID,
+  getPatternServiceType,
+  getHumanReadablePatternServiceName as getReadableItemName
+} from "./helpers";
 import { isEmptyObj } from "../../utils/utils";
 
 const useStyles = makeStyles((theme) => ({
@@ -101,11 +105,13 @@ export default function LazyPatternServiceForm(props) {
     }
   }
 
+  console.log("sc", props?.schemaSet)
+
   return (
     <div className={classes.root}>
       <Accordion elevation={0} expanded={expanded} onChange={() => expand(!expanded)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>{getItemName(props?.schemaSet?.workload)}</Typography>
+          <Typography className={classes.heading}>{getReadableItemName(props?.schemaSet?.workload)}</Typography>
         </AccordionSummary>
         <LazyAccordionDetails expanded={expanded}>
           {isEmptyObj(schemaSet) ? <CircularProgress /> : <PatternServiceForm {...props}

@@ -2,23 +2,23 @@ import { makeStyles } from "@material-ui/core"
 import React from "react"
 
 const useStyles = makeStyles(() => ({
-  root: {
-    width: "100%",
-    color: "#fff",
-    position: "absolute",
-    top: 80,
+  root : {
+    width : "100%",
+    color : "#fff",
+    position : "absolute",
+    top : 80,
     // left: 0,
-    backgroundColor: "#477E96",
-    padding: "4px 50px",
-    transform: 'translateX(-40px)',
+    backgroundColor : "#477E96",
+    padding : "4px 50px",
+    transform : 'translateX(-40px)',
   },
-  span: {
+  span : {
     // marginLeft: 300,
-    color: "#fff",
-    fontStyle: "italic",
-    "&:hover": {
-      cursor: "pointer",
-      textDecoration: "underline"
+    color : "#fff",
+    fontStyle : "italic",
+    "&:hover" : {
+      cursor : "pointer",
+      textDecoration : "underline"
     }
   }
 }))

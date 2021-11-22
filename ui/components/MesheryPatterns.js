@@ -268,7 +268,7 @@ function MesheryPatterns({
     fetchPatterns(page, pageSize, search, sortOrder);
     document.body.style.overflowX = "hidden"
 
-    return (()=> document.body.style.overflowX = "auto")
+    return (() => document.body.style.overflowX = "auto")
   }, []);
 
   const handleDeploy = (pattern_file) => {

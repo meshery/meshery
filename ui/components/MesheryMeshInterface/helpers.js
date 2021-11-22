@@ -109,6 +109,21 @@ export function getPatternServiceName(item, includeDisplayName = true) {
 }
 
 /**
+ * getHumanReadablePatternServiceName takes in the pattern service metadata and returns
+ * the readable name of the service
+ *
+ * @param {*} item pattern service component
+ * @returns {string} service name
+ */
+export function getHumanReadablePatternServiceName(item) {
+  return item?.oam_definition?.spec?.metadata?.k8sKind
+   ||  item?.metadata?.["display.ui.meshery.io/name"]
+    || item?.oam_definition?.metadata?.name
+    || getPatternAttributeName(item)
+     || "NA";
+}
+
+/**
  * getPatternServiceID takes in the pattern service metadata and returns
  * the ID of the service
  * @param {*} item pattern service component
