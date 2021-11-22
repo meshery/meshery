@@ -18,7 +18,7 @@ const (
 	ErrPublishBrokerCode            = "1010"
 	ErrNoMeshSyncCode               = "1011"
 	ErrNoExternalEndpointCode       = "1012"
-	ErrApplyHelmChartCode           = "code"
+	ErrApplyHelmChartCode           = "2155"
 )
 
 var (
