@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"net/http"s
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -1337,12 +1337,12 @@ func downloadYAMLSintoSingleFile(f io.Writer, URLs []string) error {
 }
 
 func getFiltersFromWasmFiltersRepo(downloadPath string) error {
-	releaseName, err := getLatestStableReleaseTag()
-	if err != nil {
-		return err
-	}
-	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/" + releaseName + "/wasm-filters-" + releaseName + ".tar.gz"
-	fmt.Println("DOWN ", downloadURL)
+	// releaseName, err := getLatestStableReleaseTag()
+	// if err != nil {
+	// 	return err
+	// }
+	//Temporary hardcoding until https://github.com/layer5io/wasm-filters/issues/38 is resolved
+	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
 	res, err := http.Get(downloadURL)
 	if err != nil {
 		return err
