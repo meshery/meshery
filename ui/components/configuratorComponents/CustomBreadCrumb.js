@@ -5,7 +5,7 @@ const useStyles = makeStyles(() => ({
   root : {
     width : "100%",
     color : "#fff",
-    position : "absolute",
+    position : "fixed",
     top : 80,
     // left: 0,
     backgroundColor : "#477E96",

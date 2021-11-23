@@ -57,9 +57,16 @@ const useStyles = makeStyles((theme) => ({
     maxWidth : 120,
   },
   autoComplete2 : {
-    width : 300,
+    width : 250,
     marginLeft : 16,
-    marginRight : "auto"
+    marginRight : "auto",
+    padding : 0,
+    // "& .MuiAutocomplete-inputRoot" : {
+    //   padding : 0
+    // },
+    // '& .MuiInputBase-input' : {
+
+    // }
   },
   btngroup : {
     marginLeft : "auto",

@@ -7,6 +7,7 @@ import { Tooltip, IconButton } from "@material-ui/core";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { rjsfTheme } from "../../../themes";
+import { camelCaseToCapitalize } from "../helpers";
 
 const Form = withTheme(MaterialUITheme);
 
@@ -25,13 +26,7 @@ function formatString(text){
   return text.replaceAll("IP", "Ip");
 }
 
-function camelCaseToCapitalize(text){
-  if (!text) return null
 
-  const result = text.replace(/([A-Z])/g, " $1");
-
-  return result.charAt(0).toUpperCase() + result.slice(1);
-}
 
 function addTitleToPropertiesJSONSchema(jsonSchema) {
   const newProperties = jsonSchema?.properties
@@ -111,7 +106,8 @@ function RJSF(props) {
     onChange,
     hideTitle,
     RJSFWrapperComponent = React.Fragment,
-    RJSFFormChildComponent = React.Fragment,
+    RJSFFormChildComponent = React.Fragment, // eslint-disable-line no-unused-vars
+    //.. temporarily ignoring till handler is attached successfully
   } = props;
 
   // define new string field
@@ -145,7 +141,8 @@ function RJSF(props) {
         >
           {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
         {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
-          <RJSFFormChildComponent />
+          {/* <RJSFFormChildComponent /> */}
+          <></> {/* temporary change for functionality */}
         </Form>
       </MuiThemeProvider>
     </RJSFWrapperComponent>
