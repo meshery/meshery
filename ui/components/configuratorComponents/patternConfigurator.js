@@ -412,7 +412,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
           <Tooltip title="Delete Pattern">
             <IconButton
               aria-label="Delete"
-              color="secondary"
+              color="primary"
               onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
             >
               <DeleteIcon />
