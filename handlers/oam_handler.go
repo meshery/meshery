@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -54,7 +54,7 @@ func (h *Handler) PatternFileHandler(
 	provider models.Provider,
 ) {
 	// Read the PatternFile
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -238,7 +238,7 @@ func (h *Handler) OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.
 // POSTOAMRegisterHandler handles registering OMA objects
 func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	// Get the body
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
