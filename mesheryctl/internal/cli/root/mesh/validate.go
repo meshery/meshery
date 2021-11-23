@@ -1,7 +1,7 @@
 package mesh
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -213,7 +213,7 @@ func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete 
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return "", err
 	}

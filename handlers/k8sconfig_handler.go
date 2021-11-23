@@ -4,15 +4,14 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 	"path"
 
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"k8s.io/client-go/tools/clientcmd"
-
-	"os"
 
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
@@ -76,7 +75,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		defer func() {
 			_ = k8sfile.Close()
 		}()
-		k8sConfigBytes, err := ioutil.ReadAll(k8sfile)
+		k8sConfigBytes, err := io.ReadAll(k8sfile)
 		if err != nil {
 			logrus.Error(ErrReadConfig(err))
 			http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
@@ -153,7 +152,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	defer func() {
 		_ = k8sfile.Close()
 	}()
-	k8sConfigBytes, err = ioutil.ReadAll(k8sfile)
+	k8sConfigBytes, err = io.ReadAll(k8sfile)
 	if err != nil {
 		logrus.Error(ErrReadConfig(err))
 		http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)

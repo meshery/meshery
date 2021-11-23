@@ -9,7 +9,6 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/big"
 	"net/http"
 	"time"
@@ -130,7 +129,7 @@ func (l *RemoteProvider) UpdateJWKs() error {
 		return ErrJWKsKeys(err)
 	}
 	defer SafeClose(resp.Body)
-	jsonDataFromHTTP, err := ioutil.ReadAll(resp.Body)
+	jsonDataFromHTTP, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return ErrDataRead(err, "Response Body")
 	}

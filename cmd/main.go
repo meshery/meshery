@@ -13,6 +13,7 @@ import (
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/internal/graphql"
+	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
@@ -265,5 +266,14 @@ func main() {
 	<-c
 	logrus.Info("Doing seeded content cleanup...")
 	lProv.CleanupSeeded(seededUUIDs)
+
+	// only uninstalls meshery-operator using helm charts
+	// useful for dev deployments
+	logrus.Info("Uninstalling meshery-operator...")
+	err = model.Initialize(&kubeclient, true, adapterTracker)
+	if err != nil {
+		log.Error(err)
+	}
+
 	logrus.Info("Shutting down Meshery")
 }
