@@ -2352,30 +2352,48 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 		}
 
 		// Prevent Arbitrary file write during zip extraction ("zip slip")
+		// This checks that the zip doesn't contain filenames like
+		// `../../../tmp/some.sh`
 		// see https://snyk.io/research/zip-slip-vulnerability for more
-		if !strings.Contains(header.Name, "..") {
-			return fmt.Errorf("invalid character found in header")
+		err = validateExtractPath(header.Name, destination)
+		if err != nil {
+			return err
 		}
-
-		loc := path.Join(destination, header.Name)
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if err := os.Mkdir(loc, 0755); err != nil {
+			if err := os.MkdirAll(path.Join(destination, header.Name), 0755); err != nil {
 				return err
 			}
 		case tar.TypeReg:
-			outFile, err := os.Create(loc)
+			// When we encounter files that are in nested dirs this takes care of
+			// creating parent dirs.
+			// #nosec
+			if _, err := os.Stat(path.Join(destination, path.Dir(header.Name))); err != nil {
+				if err := os.MkdirAll(path.Join(destination, path.Dir(header.Name)), 0750); err != nil {
+					return err
+				}
+			}
+
+			outFile, err := os.Create(path.Join(destination, header.Name))
 			if err != nil {
 				return err
 			}
 			defer outFile.Close()
-			if _, err := io.Copy(outFile, tarReader); err != nil {
+			if _, err := io.CopyN(outFile, tarReader, header.Size); err != nil {
 				return err
 			}
 		default:
 			return fmt.Errorf("unknown type: %s", string(header.Typeflag))
 		}
+	}
+	return nil
+}
+
+func validateExtractPath(filePath string, destination string) error {
+	destpath := filepath.Join(destination, filePath)
+	if !strings.HasPrefix(destpath, filepath.Clean(destination)+string(os.PathSeparator)) {
+		return fmt.Errorf("%s: illegal file path", filePath)
 	}
 	return nil
 }
