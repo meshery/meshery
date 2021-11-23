@@ -8,10 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshery/models/pattern/core"
 	pCore "github.com/layer5io/meshery/models/pattern/core"
-	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"gopkg.in/yaml.v2"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -267,9 +264,9 @@ func (h *Handler) GetMesheryPatternsHandler(
 		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
 		return
 	}
-
-	//acts like a middleware, modifying
-	err = addMetadataOfPatternCurrentSupport(token, provider, prefObj, user.UserID, &resp)
+	mc := newContentModifier(token, provider, prefObj, user.UserID)
+	//acts like a middleware, modifying the bytes lazily just before sending them back
+	err = mc.addMetadataForPatterns(&resp)
 	if err != nil {
 		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}
@@ -376,67 +373,4 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
-}
-
-func addMetadataOfPatternCurrentSupport(token string, provider models.Provider, prefObj *models.Preference, uid string, resp *[]byte) error {
-	var patternsPage models.MesheryPatternPage
-	err := json.Unmarshal(*resp, &patternsPage)
-	patterns := patternsPage.Patterns
-	var patternsPageMap map[string]interface{}
-	patternsPageBytes, _ := json.Marshal(patternsPage)
-	json.Unmarshal(patternsPageBytes, &patternsPageMap)
-	p := make([]map[string]interface{}, len(patterns))
-	for i, pattern := range patterns {
-		patterncontent := pattern.PatternFile
-		temp, err := json.Marshal(pattern)
-		if err != nil {
-			return err
-		}
-		err = json.Unmarshal(temp, &p[i])
-		if err != nil {
-			return err
-		}
-		msg, ok := canSupport(token, provider, prefObj, uid, patterncontent)
-		p[i]["canSupport"] = ok
-		p[i]["errmsg"] = msg
-	}
-	patternsPageMap["patterns"] = p
-	*resp, err = json.Marshal(patternsPageMap)
-	if err != nil {
-		return err
-	}
-	return err
-}
-
-func canSupport(token string, provider models.Provider, prefObj *models.Preference, uid string, patternfile string) (string, bool) {
-	var pattern map[string]interface{}
-	err := yaml.Unmarshal([]byte(patternfile), &pattern)
-	if err != nil {
-		return "", false
-	}
-	patternFile, err := core.NewPatternFile([]byte(patternfile))
-	if err != nil {
-		return "", false
-	}
-	if prefObj == nil || prefObj.K8SConfig == nil {
-		return "", false
-	}
-	kc, err := meshkube.New(prefObj.K8SConfig.Config) //possible nil dereference
-	if err != nil {
-		return "", false
-	}
-	msg, err := _processPattern(
-		token,
-		provider,
-		patternFile,
-		prefObj,
-		kc,
-		uid,
-		false,
-		true,
-	)
-	if err != nil {
-		return err.Error(), false
-	}
-	return msg, true
 }

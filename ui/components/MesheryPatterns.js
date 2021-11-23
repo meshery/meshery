@@ -504,52 +504,6 @@ function MesheryPatterns({
       },
     },
     {
-      name : "canSupport",
-      label : "Current status",
-      options : {
-        filter : false,
-        sort : false,
-        searchable : false,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-          return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
-          );
-        },
-        customBodyRender : function CustomBody(value) {
-          let status="not supported"
-          if (value){
-            status="supported"
-          }
-          return status
-        },
-      },
-    },
-    {
-      name : "errmsg",
-      label : "Current status",
-      options : {
-        filter : false,
-        sort : false,
-        searchable : false,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-          return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
-          );
-        },
-        customBodyRender : function CustomBody(value) {
-          return value
-        },
-      },
-    },
-    {
       name : "Actions",
       options : {
         filter : false,
