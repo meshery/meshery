@@ -160,6 +160,8 @@ const (
 
 	KubeContextKey ContextKey = "kubecontext"
 
+	KubeClustersKey ContextKey = "kubeclusters"
+
 	// UserPrefsCtxKey is the context key for latest broker endpoint to context
 	BrokerURLCtxKey = "broker_endpoint"
 )

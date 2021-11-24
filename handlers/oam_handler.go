@@ -84,7 +84,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	msg, err := _processPattern(
-		r.Context(),
+		context.WithValue(r.Context(), models.KubeClustersKey, r.URL.Query()["contexts"]),
 		provider,
 		patternFile,
 		prefObj,
@@ -346,58 +346,63 @@ func _processPattern(
 		return "", ErrInvalidKubeContext(fmt.Errorf("failed to find k8s context"), "_processPattern couldn't find a valid k8s context")
 	}
 
-	sip := &serviceInfoProvider{
-		token:      token,
-		provider:   provider,
-		opIsDelete: isDelete,
-	}
-	sap := &serviceActionProvider{
-		token:       token,
-		provider:    provider,
-		prefObj:     prefObj,
-		kubeClient:  kubeClient,
-		opIsDelete:  isDelete,
-		userID:      userID,
-		kubeconfig:  kubecfg,
-		kubecontext: mk8scontext,
+	internal := func(kubeClient *meshkube.Client, kubecfg []byte, mk8scontext *models.K8sContext) {
 
-		accumulatedMsgs: []string{},
-		err:             nil,
-	}
+		sip := &serviceInfoProvider{
+			token:      token,
+			provider:   provider,
+			opIsDelete: isDelete,
+		}
+		sap := &serviceActionProvider{
+			token:       token,
+			provider:    provider,
+			prefObj:     prefObj,
+			kubeClient:  kubeClient,
+			opIsDelete:  isDelete,
+			userID:      userID,
+			kubeconfig:  kubecfg,
+			kubecontext: mk8scontext,
 
-	chain := stages.CreateChain()
-	chain.
-		Add(stages.ServiceIdentifier(sip, sap)).
-		Add(stages.Filler).
-		Add(stages.Validator(sip, sap))
+			accumulatedMsgs: []string{},
+			err:             nil,
+		}
 
-	if !dryRun {
+		chain := stages.CreateChain()
 		chain.
-			Add(stages.Provision(sip, sap)).
-			Add(stages.Persist(sip, sap))
-	}
+			Add(stages.ServiceIdentifier(sip, sap)).
+			Add(stages.Filler).
+			Add(stages.Validator(sip, sap))
 
-	chain.
-		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
-			data.Lock.Lock()
-			for k, v := range data.Other {
-				if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
-					msg, ok := v.(string)
-					if ok {
-						sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
+		if !dryRun {
+			chain.
+				Add(stages.Provision(sip, sap)).
+				Add(stages.Persist(sip, sap))
+		}
+
+		chain.
+			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
+				data.Lock.Lock()
+				for k, v := range data.Other {
+					if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
+						msg, ok := v.(string)
+						if ok {
+							sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
+						}
 					}
 				}
-			}
-			data.Lock.Unlock()
+				data.Lock.Unlock()
 
-			sap.err = err
-		}).
-		Process(&stages.Data{
-			Pattern: &pattern,
-			Other:   map[string]interface{}{},
-		})
+				sap.err = err
+			}).
+			Process(&stages.Data{
+				Pattern: &pattern,
+				Other:   map[string]interface{}{},
+			})
 
-	return mergeMsgs(sap.accumulatedMsgs), sap.err
+		return mergeMsgs(sap.accumulatedMsgs), sap.err
+	}
+
+	return "", nil
 }
 
 type serviceInfoProvider struct {
