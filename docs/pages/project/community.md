@@ -20,6 +20,7 @@ The Meshery project is community-built and welcomes collaboration!
 * Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](https://meshery.io/calendar). 
     - Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community calendar](https://bit.ly/2SbrRhe).
 * Fill-in a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
+
 ## Getting involved in the Community
 
 Want to get involved with project, read through the [Newcomers Guide](https://layer5.io/community/newcomers), which provides details on how to engage. Seek out other community members, who will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you. Check out our [community welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for more details.
