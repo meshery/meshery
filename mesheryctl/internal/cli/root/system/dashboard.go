@@ -25,7 +25,7 @@ var dashboardCmd = &cobra.Command{
 		}
 		running, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if !running {
-			return errors.New(`meshery server is not running. run "mesheryctl system start" to start meshery.`)
+			return errors.New(`meshery server is not running. run "mesheryctl system start" to start meshery`)
 		}
 
 		return nil
