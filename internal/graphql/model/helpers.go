@@ -14,6 +14,7 @@ import (
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -129,8 +130,13 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 	// retrieving meshery's version to apply the appropriate chart
 	mesheryReleaseVersion := viper.GetString("BUILD")
 	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
-		latestReleaseData, err := handlers.CheckLatestVersion("")
+		latestReleaseData, err := handlers.CheckLatestVersion(mesheryReleaseVersion)
+		// if unable to fetch latest release tag, meshkit helm functions handle
+		// this automatically fetch the latest one
 		if err != nil {
+			logrus.Errorf("Couldn't check release tag: %s. Will use latest version", err)
+			mesheryReleaseVersion = ""
+		} else {
 			mesheryReleaseVersion = latestReleaseData.Current
 		}
 	}
