@@ -29,6 +29,8 @@ The following set of instructions expects you to have created a AKS cluster in y
  </div></div>
  </pre>
 
+>Note: Before running above command, make sure the `mesheryctl` commad line program ([Meshery CLI (mesheryctl)](https://docs.meshery.io/installation/mesheryctl)) is installed in your PC from where you are trying to run the above command 
+
 #### Manual Steps
 
 Alternatively, you may execute the following steps to manually configure Meshery to connect to your AKS cluster.
@@ -62,13 +64,13 @@ kubectl cluster-info
  <div class="clipboardjs">
  $ kubectl create ns meshery
  $ helm repo add meshery https://meshery.io/charts/
- $ helm install meshery --namespace meshery
+ $ helm install meshery meshery --namespace meshery
  </div></div>
  </pre>
  - Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- $ helm install meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host meshery/meshery
+ $ helm install meshery meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host meshery/meshery
  </div></div>
  </pre>
 
