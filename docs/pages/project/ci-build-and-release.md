@@ -78,6 +78,12 @@ tests in adapters are end to end tests and use patternfile. The reusable workflo
          < Name of the pre-requisite job >
 
 
+4. There should be an infinite token passed in:
+
+---
+      ...
+      secrets:
+        token: ${{ secrets.PROVIDER_TOKEN }}
 
 
 ### The central workflow functionally does -
