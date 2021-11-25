@@ -78,7 +78,7 @@ tests in adapters are end to end tests and use patternfile. The reusable workflo
          < Name of the pre-requisite job >
 
 
-4. There should be an infinite token passed in:
+4. There should be an infinite token passed in: (Or else local provider will be used)
 
 ---
       ...
