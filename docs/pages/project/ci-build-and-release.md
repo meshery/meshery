@@ -57,8 +57,10 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
 
 ## Tests for adapters
-All meshery adapters use a central workflow that is referenced in each of their test workflows which get triggerred every time a pull request is made. These
-tests in adapters are end to end tests and use patternfile. The reusable workflow is present in .github/workflows with the workflow name "Test for Meshery adapters using patternfile"
+All Meshery adapters use a central workflow that is referenced in each of their test workflows which get triggered every time a pull request is made. These
+tests in adapters are end-to-end tests and use patternfile. The reusable workflow is present in .github/workflows in Meshery repository with the workflow name "Test for Meshery adapters using patternfile"
+
+
 
 ### The pre-requisite of referencing this workflow is -
 1. Using actions/upload-artifact@v2 a patternfile has to be uploaded as an artifact with the name as "patternfile".
@@ -114,6 +116,33 @@ tests in adapters are end to end tests and use patternfile. The reusable workflo
          expected_pods_namespaces: < pod1ns, pod2ns , pod3ns >
 
 
+### Expected inputs of this workflow 
+
+---
+    inputs:
+      expected_pods:
+        required: true
+        type: string
+      expected_pods_namespaces:
+        required: true
+        type: string
+      service_url:
+        required: true
+        type: string
+      deployment_url:
+        required: true
+        type: string
+      adapter_name:
+        required: true
+        type: string   
+      patternfile_name:
+        required: true
+        type: string   
+    secrets:
+      token:
+
+### Expected outputs of this workflow
+ The pods passed in “expected_pods” are running in the subsequent namespaces passed in “expected_pods_namespaces”. If not, the workflow fails
 ## Automated Builds
 
 All Meshery GitHub repositories are configured with GitHub Actions. Everytime a pull request is submitted against the master branch of any repository, that repository’s GitHub Actions will be invoked (whether the PR is merged or not). Workflows defined in Meshery repository will generally (but not always) perform the following actions:
