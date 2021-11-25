@@ -79,7 +79,7 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
-    - run: npm i -g npm@7
+    - run: sudo npm i -g npm@7
     - name: Cache node modules
       id: node-cache
       uses: actions/cache@v2
@@ -118,7 +118,7 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
-    - run: npm i -g npm@7
+    - run: sudo npm i -g npm@7
     - name: Cache node modules
       id: node-cache
       uses: actions/cache@v2
