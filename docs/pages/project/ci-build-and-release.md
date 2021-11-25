@@ -63,13 +63,14 @@ tests in adapters are end to end tests and use patternfile. The reusable workflo
 ### The pre-requisite of referencing this workflow is -
 1. Using actions/upload-artifact@v2 a patternfile has to be uploaded as an artifact with the name as "patternfile".
 2. The name of the uploaded patterfile should be passed in
+
 ---
       ...
       with:
           patternfile_name: < name of the patternfile which is uploaded >
 
 
-#### Note: This Job is pre-run to the actual test. This is done in order to create patternfiles dynamically and use them. Therefore name of this jobs has to be passed as
+3. Note: This Job is pre-run to the actual test. This is done in order to create patternfiles dynamically and use them. Therefore name of this jobs has to be passed as
 
 ---
       ...
@@ -85,18 +86,22 @@ tests in adapters are end to end tests and use patternfile. The reusable workflo
 3. Builds a docker image of the adapter and sets minikube to use docker's registry.
 4. Starts the adapter and meshery server (The url to deployment and service yaml of adapter are configurable).
  NOTE: The service mesh name( whose adapter we are testing ) has to passed in:
+
  ---
       ...
       with:
          adapter_name: < NAME OF THE SERVICE MESH >
+
 5. The uploaded patternfile is deployed.
 6. Workflow sleeps for some time.
 7. Then the assertion is made that the pods passed in-
+
 ---
       ...
       with:
          expected_pods: < pod1,pod2,pod3 >  #comma separated pod names that will be expected to be present after patternfile is deployed
 8. And these pods are present in their respective namespaces passed in-
+
 --- 
       ...
       with:
