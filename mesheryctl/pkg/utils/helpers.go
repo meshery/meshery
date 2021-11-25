@@ -124,6 +124,8 @@ var (
 	// Paths to kubeconfig files
 	ConfigPath string
 	KubeConfig string
+	// KeepNamespace indicates if the namespace should be kept when Meshery is uninstalled
+	KeepNamespace bool
 )
 
 var CfgFile string

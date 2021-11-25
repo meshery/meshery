@@ -31,7 +31,7 @@ import (
 // RemoteProvider - represents a local provider
 type RemoteProvider struct {
 	ProviderProperties
-	*BitCaskPreferencePersister
+	*SessionPreferencePersister
 
 	SaaSTokenName     string
 	RemoteProviderURL string
@@ -49,7 +49,7 @@ type RemoteProvider struct {
 	syncChan     chan *userSession
 
 	ProviderVersion    string
-	SmiResultPersister *BitCaskSmiResultsPersister
+	SmiResultPersister *SMIResultsPersister
 	GenericPersister   database.Handler
 	KubeClient         *mesherykube.Client
 }
@@ -2037,7 +2037,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 		logrus.Error("operation not available")
 		return ErrInvalidCapability("SyncPrefs", l.ProviderName)
 	}
-	if err := l.BitCaskPreferencePersister.WriteToPersister(userID, data); err != nil {
+	if err := l.SessionPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err
 	}
 	tokenVal, _ := l.GetToken(req)
@@ -2350,6 +2350,12 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 
 		if err != nil {
 			return err
+		}
+
+		// Prevent Arbitrary file write during zip extraction ("zip slip")
+		// see https://snyk.io/research/zip-slip-vulnerability for more
+		if !strings.Contains(header.Name, "..") {
+			return fmt.Errorf("invalid character found in header")
 		}
 
 		loc := path.Join(destination, header.Name)

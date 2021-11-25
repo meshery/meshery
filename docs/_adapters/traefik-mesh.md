@@ -3,7 +3,7 @@ layout: default
 title: Meshery Adapter for Traefik Mesh
 name: Meshery Adapter for Traefik Mesh
 mesh_name: Traefik Mesh
-version: v1.0
+earliest_version: v1.0
 port: 10006/tcp
 project_status: stable
 adapter_version: v0.5.2

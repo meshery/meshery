@@ -42,10 +42,7 @@ function capitalize(string) {
   return "";
 }
 
-
-
 class Settings extends React.Component {
-
   state = { componentTitle : "" }
 
   componentDidMount() {
@@ -55,16 +52,13 @@ class Settings extends React.Component {
     });
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path : getPath() });
-
   }
 
   render() {
     return (
       <NoSsr>
         <Head>
-          <title>{this.state.componentTitle
-            ? this.state.componentTitle
-            : ""}</title>
+          <title>{this.state.componentTitle || ""}</title>
         </Head>
         <NoSsr>
           <ExtensionSandbox type="navigator" Extension={Extension} />

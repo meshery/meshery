@@ -12,7 +12,7 @@ type SmiResult struct {
 	CasesPassed       string    `json:"cases_passed,omitempty"`
 	PassingPercentage string    `json:"passing_percentage,omitempty"`
 	Status            string    `json:"status,omitempty"`
-	MoreDetails       []*Detail `json:"more_details,omitempty"`
+	MoreDetails       []*Detail `json:"more_details,omitempty" gorm:"type:detail[]"`
 }
 
 type Detail struct {

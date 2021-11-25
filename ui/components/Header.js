@@ -119,9 +119,9 @@ class Header extends React.Component {
                           ? classes.itemActiveItem
                           : '')} />
                         {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
-                     {/* </Link>
+                  {/* </Link>
                     </IconButton>
-                  </div> */} 
+                  </div> */}
 
                   <div data-test="settings-button">
                     <IconButton color="inherit">

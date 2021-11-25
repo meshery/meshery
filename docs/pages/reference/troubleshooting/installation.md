@@ -38,3 +38,26 @@ For details about the state of the Meshery Server subscription see the http moni
 #### See Also
 
 - [Error Code Reference](/reference/error-codes)
+
+## Meshery Remote Providers
+
+Once Meshery is installed, the remote provider "Meshery" can be chosen from UI or by using the command `mesheryctl system login`:
+
+![Providers](/assets/img/providers/provider_screenshot.png)
+
+```
+➜  ~ mesheryctl system login
+Use the arrow keys to navigate: ↓ ↑ → ←
+? Select a Provider:
+  ▸ Meshery
+    None
+```
+
+If you cannot see "Meshery" Remote Provider and find such error logs in Meshery Server's logs (`mesheryctl system logs`), please make sure that Meshery Server is able to reach "https://meshery.layer5.io" in order to initialize the "Meshery" Remote Provider.
+
+```
+time="2021-11-10T11:05:30Z" level=error msg="[Initialize Provider]: Failed to get capabilities Get \"https://meshery.layer5.io/v0.5.71/capabilities?os=meshery\": dial tcp 3.140.89.205:443: i/o timeout"
+```
+
+For more details about Meshery Providers: 
+- [Extensibility: Providers](/extensibility/providers)

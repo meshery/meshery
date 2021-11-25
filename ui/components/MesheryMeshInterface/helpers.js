@@ -97,12 +97,13 @@ export async function createWorkloadTraitSets(adapter) {
 /**
  * getPatternServiceName takes in the pattern service metadata and returns
  * the name of the service
+ *
  * @param {*} item pattern service component
  * @param {boolean} includeDisplayName if set to true, display name is checked first
  * @returns {string} service name
  */
 export function getPatternServiceName(item, includeDisplayName = true) {
-  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || "NA";
+  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || getPatternAttributeName(item) || "NA";
 
   return item?.oam_definition?.metadata?.name || "NA";
 }
@@ -124,7 +125,7 @@ export function getPatternServiceID(item) {
  * @returns {string | undefined} service name
  */
 export function getPatternServiceType(item) {
-  return item?.metadata?.["ui.meshery.io/category"]
+  return item?.metadata?.["ui.meshery.io/category"];
 }
 
 /**
