@@ -11,7 +11,7 @@ import (
 
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
-	Short: "Open Meshery UI",
+	Short: "Open Meshery UI in browser.",
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// check if meshery is running or not
