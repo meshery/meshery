@@ -3,7 +3,8 @@
 import useStateCB from "../../utils/hooks/useStateCB";
 import PatternService from "./PatternService";
 import { getPatternAttributeName, createPatternFromConfig } from "./helpers";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { scrollToTop } from "../../utils/utils";
 
 /**
  * usePatternServiceForm seperates the form logic from its UI representation
@@ -18,11 +19,21 @@ import React from "react";
  *  formData?: Record<String, unknown>
  *  reference?: Record<any, any>;
  * 	children?: Function;
+ *  scroll?: Boolean; // If the window should be scrolled to zero after re-rendering
  * }} param0 props for the component
  */
-function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, children }) {
+function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, children, scroll=false }) {
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {}, onSettingsChange);
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {}, onTraitsChange);
+  const [update, forceUpdate] = useState(0)
+
+  useEffect(() => {
+    child.current = children(
+      ...propagatedChildren()
+    )
+    forceUpdate(update+1) // updating the state for simulating re-rendering of changed children
+    scroll && scrollToTop()
+  }, [schemaSet])
 
   const child = React.useRef(null);
 
@@ -33,6 +44,37 @@ function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, refer
   const deleteHandler = (val) => {
     onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace), true)
   };
+
+  const propagatedChildren = () => [
+    function(props = {}) {
+      return (
+        <PatternService
+          type="workload"
+          formData={settings}
+          jsonSchema={schemaSet.workload}
+          onChange={setSettings}
+          onSubmit={() => submitHandler(console.log("helloj"))}
+          onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits })}
+          {...props}
+        />
+      )
+    },
+    function(props = {}) {
+      return (
+        <>
+          {schemaSet.traits?.map((trait, idx) => (
+            <PatternService
+              key={`pattern-trait-${idx}`}
+              formData={traits[getPatternAttributeName(trait)]}
+              type="trait"
+              jsonSchema={trait}
+              onChange={(val) => setTraits({ ...traits, [getPatternAttributeName(trait)] : val })}
+              {...props}
+            />
+          ))}
+        </>
+      )
+    }]
 
   if (reference){
     if (!reference.current) reference.current = {}
@@ -65,37 +107,7 @@ function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, refer
     );
   }
 
-  return child.current = children(
-    function(props = {}) {
-      return (
-        <PatternService
-          type="workload"
-          formData={settings}
-          jsonSchema={schemaSet.workload}
-          onChange={setSettings}
-          onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits })}
-          onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits })}
-          {...props}
-        />
-      )
-    },
-    function(props = {}) {
-      return (
-        <>
-          {schemaSet.traits?.map((trait, idx) => (
-            <PatternService
-              key={`pattern-trait-${idx}`}
-              formData={traits[getPatternAttributeName(trait)]}
-              type="trait"
-              jsonSchema={trait}
-              onChange={(val) => setTraits({ ...traits, [getPatternAttributeName(trait)] : val })}
-              {...props}
-            />
-          ))}
-        </>
-      )
-    }
-  )
+  return child.current
 }
 
 export default PatternServiceFormCore;
