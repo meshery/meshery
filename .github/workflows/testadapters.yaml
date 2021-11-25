@@ -118,8 +118,8 @@ jobs:
             mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
 
 
-      - name: Sleep for 150 sec
-        run: sleep 150s
+      - name: Sleep for 300 sec
+        run: sleep 300s
    
       - name: Check adapter logs
         run: |
@@ -130,8 +130,9 @@ jobs:
           podName=$(kubectl get pods -o wide -n meshery | sed -n 2p | tr -s ' ' | cut -d " " -f 1)
           kubectl logs pod/$podName -n meshery
 
-        # Check if all three pods are in a Running state
-
+      - name: Whole status for debugging
+        run: kubectl get all -A
+        # Check if all  pods are in a Running state
       - name: Check if all expected pods have started
         run: |
           podnames="${{ inputs.expected_pods }}"
