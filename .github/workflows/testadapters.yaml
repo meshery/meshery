@@ -139,20 +139,41 @@ jobs:
         # Check if all  pods are in a Running state
       - name: Check if all expected pods have started
         run: |
+          SECONDS=0
+          exitstatus=0
+          end=$((SECONDS+300))
           podnames="${{ inputs.expected_pods }}"
           nsnames="${{ inputs.expected_pods_namespaces}}"
           set -f                      
           pods=(${podnames//,/ })
           ns=(${nsnames//,/ })
-          for i in "${!pods[@]}"
-          do
-              podstatus=$(kubectl get pods  -n  ${ns[i]} | grep ${pods[i]} | tr -s ' ' | cut -d " " -f 3)
-              echo $podstatus
-              if [ "$podstatus" = "Running" ];then
-                echo "Pod ${pods[i]} started in namespace  ${ns[i]}"
-              else 
-                 echo "Pod ${pods[i]}  not started in namespace  ${ns[i]}"
-                 exit 1
+          breakout=1
+
+          
+          while [ $SECONDS -lt $end ]; do
+              for i in "${!pods[@]}"
+              do
+                  podstatus=$(kubectl get pods  -n  ${ns[i]} | grep ${pods[i]} | tr -s ' ' | cut -d " " -f 3)
+                  if [ "$podstatus" != "Running" ];then
+                    breakout=0
+                  fi
+              done
+              if [ $breakout -eq 1 ];then
+                break
               fi
+              breakout=1
           done
 
+
+          for i in "${!pods[@]}"
+          do
+            podstatus=$(kubectl get pods  -n  ${ns[i]} | grep ${pods[i]} | tr -s ' ' | cut -d " " -f 3)
+            if [ "$podstatus" = "Running" ];then
+              echo "Pod ${pods[i]} started in namespace  ${ns[i]}"
+            else
+              echo "Pod ${pods[i]} did not start in namespace ${ns[i]} "
+              exitstatus=1
+            fi
+          done
+
+          exit $exitstatus
