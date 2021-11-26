@@ -1,11 +1,12 @@
 ---
 layout: page
-title: Inicio rápido con el Servicio Kubernetes de Azure (AKS)
-permalink: /es/installation/platforms/aks
+title: AKS
+permalink: es/installation/platforms/aks
 language: es
 type: installation
-list: include
 ---
+
+# Inicio rápido con el Servicio Kubernetes de Azure (AKS)
 
 ## Kubernetes administrado
 

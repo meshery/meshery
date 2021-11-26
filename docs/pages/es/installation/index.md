@@ -1,9 +1,10 @@
 ---
 layout: page
-title: Guia de Instalación
-permalink: es/installation/quick-start
+title: Installation Guide
+permalink: es/installation
 language: es
 type: installation
+language: en
 list: exclude
 ---
 

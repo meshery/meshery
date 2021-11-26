@@ -1,9 +1,10 @@
 ---
 layout: page
-title: Plataformas Compatibles
+title: Supported Platforms
 permalink: es/installation/platforms
 language: es
 type: installation
+language: en
 list: exclude
 ---
 

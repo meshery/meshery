@@ -4,7 +4,6 @@ title: Minikube
 permalink: es/installation/platforms/minikube
 language: es
 type: installation
-list: include
 ---
 
 # Inicio Rápido con Minikube

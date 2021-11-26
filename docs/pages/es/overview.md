@@ -1,10 +1,11 @@
 ---
 layout: page
-title: Meshery
-visión de conjunto
+title: Descripción General
 permalink: es/overview
 language: es
 ---
+
+# Introducción a Meshery
 
 El plano de gestión de service mesh adopta, opera y desarrolla sobre diferentes service meshes.
 Meshery facilita el aprendizaje sobre la funcionalidad y el desempeño de los service mesh e incorpora la recopilación y visualización de métricas de las aplicaciones que se ejecutan dentro de un service mesh o multiples service meshes.
@@ -96,7 +97,7 @@ Este proyecto es hecho por la comunidad y toda colaboración es bienvenida! [For
 
   - Observa las [grabaciones de la comunidad](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) y suscríbete al [calendario de la comunidad](https://bit.ly/2SbrRhe).
 
-- Ingresa al [drive de la comunidad](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) (solicita acceso).
+- Ingresa al [drive de la comunidad](https://layer5.io/newcomers) (solicita acceso).
 
 # FAQ
 

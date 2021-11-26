@@ -4,7 +4,6 @@ title: Kubernetes
 permalink: es/installation/platforms/kubernetes
 language: es
 type: installation
-list: include
 ---
 
 # Inicio Rápido con Kubernetes

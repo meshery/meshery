@@ -6,6 +6,8 @@ type: functionality
 language: es
 ---
 
+# Gestión del rendimiento
+
 La clave del funcionamiento eficiente de cualquier service mesh es la medición y gestión de su rendimiento.
 
 ## Generadores de carga

@@ -1,11 +1,12 @@
 ---
 layout: page
-title: Inicio rápido con Docker
+title: Docker
 permalink: es/installation/platforms/docker
 language: es
 type: installation
-list: include
 ---
+
+# Inicio rápido con Docker
 
 _Nota: se necesita un mínimo de 4 GB de RAM para los despliegues de [Istio (y la aplicación de muestra BookInfo)](/docs/service-meshes/adapters/istio/istio)._
 

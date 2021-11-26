@@ -1,11 +1,12 @@
 ---
 layout: page
-title: Inicio rápido con Windows
+title: Windows
 permalink: es/installation/platforms/windows
 language: es
 type: installation
-list: include
 ---
+
+# **Inicio rápido con Windows**
 
 Para configurar y ejecutar Meshery en Windows:
 
