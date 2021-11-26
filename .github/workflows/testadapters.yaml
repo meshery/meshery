@@ -1,5 +1,5 @@
 # This workflow will be called/referenced in each of the adapters and runs in the context of adapter
-name: Adapter Integration: Core
+name: Adapter Integration - Core
 
 on:
   workflow_call:
