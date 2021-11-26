@@ -1,5 +1,5 @@
 # This workflow will be called/referenced in each of the adapters and runs in the context of adapter
-name: Test for adapters using patternfile
+name: Adapter Integration: Core
 
 on:
   workflow_call:
