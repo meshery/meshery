@@ -53,6 +53,9 @@ var dashboardCmd = &cobra.Command{
 			var mesheryEndpoint string
 			var endpoint *meshkitutils.Endpoint
 			kubeClient, err := meshkitkube.New([]byte(""))
+			if err != nil {
+				return err
+			}
 			clientset := kubeClient.KubeClient
 			var opts meshkitkube.ServiceOptions
 			opts.Name = "meshery"
