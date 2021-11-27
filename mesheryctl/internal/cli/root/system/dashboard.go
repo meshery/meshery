@@ -1,8 +1,14 @@
 package system
 
 import (
+	"context"
+	"fmt"
+	"net/url"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitutils "github.com/layer5io/meshkit/utils"
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -38,6 +44,55 @@ var dashboardCmd = &cobra.Command{
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return err
+		}
+
+		switch currCtx.GetPlatform() {
+		case "docker":
+			break
+		case "kubernetes":
+			var mesheryEndpoint string
+			var endpoint *meshkitutils.Endpoint
+			kubeClient, err := meshkitkube.New([]byte(""))
+			clientset := kubeClient.KubeClient
+			var opts meshkitkube.ServiceOptions
+			opts.Name = "meshery"
+			opts.Namespace = utils.MesheryNamespace
+			opts.APIServerURL = kubeClient.RestConfig.Host
+
+			endpoint, err = meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
+			if err != nil {
+				return err
+			}
+
+			mesheryEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.Internal.Address, endpoint.Internal.Port)
+			currCtx.SetEndpoint(mesheryEndpoint)
+			if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
+				Address: endpoint.Internal.Address,
+				Port:    endpoint.Internal.Port,
+			}, nil) {
+				currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port))
+				if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
+					Address: endpoint.External.Address,
+					Port:    endpoint.External.Port,
+				}, nil) {
+					u, _ := url.Parse(opts.APIServerURL)
+					if meshkitutils.TcpCheck(&meshkitutils.HostPort{
+						Address: u.Hostname(),
+						Port:    endpoint.External.Port,
+					}, nil) {
+						mesheryEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, u.Hostname(), endpoint.External.Port)
+						currCtx.SetEndpoint(mesheryEndpoint)
+					}
+				}
+			}
+
+			if err == nil {
+				err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+				if err != nil {
+					return err
+				}
+			}
+
 		}
 
 		log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
