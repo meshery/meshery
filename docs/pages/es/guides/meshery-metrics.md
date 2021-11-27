@@ -13,6 +13,26 @@ Meshery proporciona informes de rendimiento, incluidos los resultados de las pru
 
 Para obtener estas métricas de entorno, también puede configurar manualmente Meshery para que se conecte con sus instancias de Grafana y/o Prometheus existentes a través del panel de Meshery. Una vez que se han cargado y se muestran en la pantalla, también puede realizar una prueba _ad-hoc_ para comprobar el estado de conexión de Meshery.
 
+### Gráficos de Prometheus
+
+El usuario debe configurar la URL de Prometheus y la clave API para crear y consultar tableros.
+
+[![Prometheus Charts]({{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg)]({{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg)
+
+### Gráficos de Grafana
+
+El usuario debe configurar la clave API y la URL de Grafana para crear y consultar tableros.
+
+[![Grafana Charts]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)
+
+### Tableros dinámicos
+
+Los tableros dinámicos se pueden generar desde Prometheus o Grafana. Estos tableros los define el usuario. Grafana SDK se utiliza para estas placas.
+
+### Tableros estáticos
+
+Las placas estáticas capturan el rendimiento de la malla de servicios. Ciertos protos se definen y se rastrean como parte de las pruebas de rendimiento. Placas estáticas Consultas directamente al SDK de Prometheus.
+
 <!-- ## Tutorial Guide
 
 Connect Meshery to your Grafana and Prometheus instances to enable enhanced service mesh performance management. Deploy a service mesh and any available sample application

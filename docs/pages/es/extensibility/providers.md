@@ -2,7 +2,7 @@
 layout: default
 title: "Extensibilidad: Proveedores"
 permalink: es/extensibility/providers
-type: Reference
+type: extensibility
 #redirect_from: architecture/adapters
 abstract: "Meshery ofrece soporte para más adaptadores que cualquier otro proyecto o producto en el mundo. Meshery utiliza adaptadores para gestionar las distintas mallas de servicio."
 language: es

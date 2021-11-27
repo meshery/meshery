@@ -109,7 +109,7 @@ language: es
     <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Referencia</a></h6>
     <ul>
       {% for item in sorted_pages %}
-        {% if item.type=="Reference" and item.list!="exclude"  %}
+        {% if item.type=="Reference" and item.list!="exclude" %}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
         {% endif %}
       {% endfor %}
