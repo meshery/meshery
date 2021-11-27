@@ -32,7 +32,7 @@ Los comandos de la CLI de Meshery se clasifican por función, que son:
     <th>Bandera</th>
     <th>Función</th>
   </tr>
-  {% assign command1 = site.data.mesheryctlcommands.spanish_cmds.global %}
+  {% assign command1 = site.data.mesheryctlcommands.es_cmds.global %}
     <tr>
       <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/mesheryctl">{{ command1.name }}</a></td>
       <td></td>
@@ -68,7 +68,7 @@ Instalación, resolución de problemas y depuración de Meshery y sus adaptadore
     <th>Bandera</th>
     <th>Función</th>
   </tr>
-  {% assign command2 = site.data.mesheryctlcommands.spanish_cmds.system %}
+  {% assign command2 = site.data.mesheryctlcommands.es_cmds.system %}
     <tr>
       <td rowspan=20><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command2.name }}</a></td>
       <td></td>
@@ -215,7 +215,7 @@ Instalación, resolución de problemas y depuración de Meshery y sus adaptadore
       </tr>
     {% endfor %}
 
-{% assign command3 = site.data.mesheryctlcommands.spanish_cmds.system-channel %}
+{% assign command3 = site.data.mesheryctlcommands.es_cmds.system-channel %}
 
 <tr>
 <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel">{{ command3.name }}</a></td>
@@ -237,7 +237,7 @@ Instalación, resolución de problemas y depuración de Meshery y sus adaptadore
 <td>{{ flag.description }}</td>
 </tr>
 {% endfor %}
-{% assign command4 = site.data.mesheryctlcommands.spanish_cmds.system-context %}
+{% assign command4 = site.data.mesheryctlcommands.es_cmds.system-context %}
 <tr>
 <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/system/context">{{ command4.name }}</a></td>
 <td></td>
@@ -300,7 +300,7 @@ Instalación, resolución de problemas y depuración de Meshery y sus adaptadore
     <th>Bandera</th>
     <th>Función</th>
   </tr>
-  {% assign command5 = site.data.mesheryctlcommands.spanish_cmds.perf %}
+  {% assign command5 = site.data.mesheryctlcommands.es_cmds.perf %}
     <tr>
       <td rowspan=18><a href="{{ site.baseurl }}/reference/mesheryctl/perf">{{ command5.name }}</a></td>
       <td></td>
@@ -351,7 +351,7 @@ Instalación, resolución de problemas y depuración de Meshery y sus adaptadore
     <th>Bandera</th>
     <th>Función</th>
   </tr>
-  {% assign command6 = site.data.mesheryctlcommands.spanish_cmds.mesh %}
+  {% assign command6 = site.data.mesheryctlcommands.es_cmds.mesh %}
     <tr>
       <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/mesh">{{ command6.name }}</a></td>
       <td></td>
@@ -395,7 +395,7 @@ Instalación, resolución de problemas y depuración de Meshery y sus adaptadore
     <th>Bandera</th>
     <th>Función</th>
   </tr>
-  {% assign command7 = site.data.mesheryctlcommands.spanish_cmds.pattern %}
+  {% assign command7 = site.data.mesheryctlcommands.es_cmds.pattern %}
     <tr>
       <td rowspan=12><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
       <td></td>
@@ -474,7 +474,7 @@ Instalación, resolución de problemas y depuración de Meshery y sus adaptadore
     <th>Bandera</th>
     <th>Función</th>
   </tr>
-  {% assign command8 = site.data.mesheryctlcommands.spanish_cmds.app %}
+  {% assign command8 = site.data.mesheryctlcommands.es_cmds.app %}
     <tr>
       <td rowspan=12><a href="{{ site.baseurl }}/reference/mesheryctl/apps">{{ command8.name }}</a></td>
       <td></td>
