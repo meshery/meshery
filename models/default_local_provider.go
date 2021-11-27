@@ -235,6 +235,19 @@ func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize
 	return l.SmiResultPersister.GetResults(pg, pgs)
 }
 
+// FetchSmiResults - fetches results from provider backend
+func (l *DefaultLocalProvider) FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error) {
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, ErrPageNumber(err)
+	}
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		return nil, ErrPageSize(err)
+	}
+	return l.SmiResultPersister.GetResult(pg, pgs, resultID)
+}
+
 // PublishSmiResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	key, _ := uuid.NewV4()
