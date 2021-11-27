@@ -128,6 +128,42 @@
         "short_description": "Error occured while applying Helm Chart",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrParseOAMConfigCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "Could not generate application configuration from given json",
+        "short_description": "error parsing the configuration",
+        "probable_cause": "Invalid OAM config passed in MeshOps request",
+        "suggested_remediation": "Confirm that the request has valid OAM config"
+      },
+      "1016": {
+        "name": "ErrProcessOAMCode",
+        "code": "1016",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error performing OAM operations",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1017": {
+        "name": "ErrNginxCoreComponentFailCode",
+        "code": "1017",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error in NGINX Service Mesh core component",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1018": {
+        "name": "ErrParseNginxCoreComponentCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failure to parse core component manifest for NGINX Service Mesh",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }

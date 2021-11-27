@@ -1,10 +1,10 @@
 ---
 layout: default
 title: MeshSync
-permalink: /es/concepts/architecture/meshsync
+permalink: es/concepts/architecture/meshsync
 type: concepts
 redirect_from: architecture/meshsync
-abstract: "Meshery offers support for kubernetes cluster/service mesh state synchronization with the help of MeshSync."
+abstract: "Meshery ofrece soporte para la sincronización de estado de clúster/service mesh de Kubernetes con la ayuda de MeshSync."
 language: es
 list: include
 ---
@@ -13,23 +13,22 @@ list: include
 <img src="{{site.baseurl}}/assets/img/meshsync/meshsync.svg" align="left" 
     style="margin-right:1rem;margin-bottom:.5rem;" width="20%" />
 
-MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of the Kubernetes cluster, service meshes, and their workloads.
+MeshSync es un controlador de Kubernetes personalizado que provee descubrimiento escalonado y sincronización continua con Meshery Server en cuanto al estado del clúster de Kubernetes, service meshes y sus cargas de trabajo.
 
 </p>
 
-MeshSync's working snapshot of the state of each cluster and service mesh under management is stored in-memory and continuously refreshed.
+La instantánea de trabajo de MeshSync del estado de cada clúster y service mesh bajo administración se almacena en la memoria y se actualiza continuamente.
 
-MeshSync is managed by the <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>.
+MeshSync es administrado por el <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>.
 
-## What are MeshSync's core responsibilities?
+## ¿Cuáles son las responsabilidades principales de MeshSync?
 
-### Discover existing resources inside the kubernetes cluster
+### Descubrir los recursos existentes dentro del clúster de Kubernetes
 
-The resources that are present inside the cluster are discovered efficiently with the help of pipelines. The data is constructed in a particular format specific to meshery and publish across to different parts of the architecture.
+Los recursos que están presentes dentro del clúster se descubren eficientemente con la ayuda de pipelines. Los datos se contruyen en un formato particular específico para Meshery y se publican a través de diferentes partes de la arquitectura.
 
-### Listening to events/changes on every component
+### Escuchar los eventos/cambios en cada componente
 
-MeshSync implements several informers/listeners across each resource to listen to changes that occur to them. These are reflected at real time and are updated in their respective areas.
+MeshSync implementa varios informadores/oyentes en cada recurso para escuchar cambios que ocurren en ellos. Estos se reflejan en tiempo real y se actualizan en sus respectivas áreas.
 
-## MeshSync FAQs
-
+## Preguntas más Frecuentes de MeshSync

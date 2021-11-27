@@ -122,3 +122,4 @@ Meshery usa la siguiente lista de puertos de red para interactuar con sus divers
 {% endfor %}
 
 _Ver la sección [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) para obtener más información sobre la función del adapter._
+

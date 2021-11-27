@@ -3,7 +3,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MuiAccordion from "@material-ui/core/Accordion";
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
-import DeleteIcon from "@material-ui/icons/Delete"
+import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { IconButton } from "@material-ui/core";
@@ -48,8 +48,10 @@ const AccordionSummary = withStyles({
     },
   },
   content : {
+    justifyContent : "flex-end",
     '&$expanded' : {
       margin : '12px 0',
+      justifyContent : "flex-end",
     },
   },
   expanded : {},
@@ -79,6 +81,7 @@ export default function SimpleAccordion(props) {
           {props.childProps.hasRemove && (
 
             <IconButton
+              style={{ padding : "0" }}
               // style={btnStyle}
               disabled={props.childProps.disabled || props.childProps.readonly}
               onClick={props.childProps.onDropIndexClick(

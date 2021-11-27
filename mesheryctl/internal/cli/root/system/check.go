@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os/exec"
 	"runtime"
@@ -403,7 +403,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	if !skipServerLogs {
 		// needs multiple defer as Body.Close needs a valid response
 		defer resp.Body.Close()
-		data, err := ioutil.ReadAll(resp.Body)
+		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Errorf("\n  Invalid response: %v", err)
 		}
@@ -503,7 +503,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 
 	// needs multiple defer as Body.Close needs a valid response
 	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return errors.Errorf("\n  Invalid response: %v", err)
 	}

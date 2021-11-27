@@ -36,3 +36,4 @@ La mayoría de las notificaciones son informativas y pueden descartarse fácilme
 <strong>Actuar sobre las alertas</strong>
 
 Las notificaciones particulares que Meshery presenta son accionables inmediatamente. Estas se indican por un resaltado de color rojo. Manténgase atento ante estas alertas y actue de inmediato para asegurar un buen funcionamiento del service mesh.
+

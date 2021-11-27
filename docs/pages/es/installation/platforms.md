@@ -30,3 +30,4 @@ La Tabla a continuación provee instrucciones de instalación para cada platafor
 | &nbsp;&nbsp;&nbsp; [Scoop]({{ site.baseurl }}/installation#windows)                                                                                           |                        |
 | &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/wsl2.png" width="20" height="20" /> [Windows]({{ site.baseurl }}/installation/platforms/windows)            | Build 18917 y superior |
 | <img src="/assets/img/platforms/raspberry-pi.png" width="20" height="20" /> Raspberry Pi                                                                      |     En Desarrollo      |
+

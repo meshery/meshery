@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -26,7 +26,7 @@ type Provider struct {
 
 // AddAuthDetails Adds authentication cookies to the request
 func AddAuthDetails(req *http.Request, filepath string) error {
-	file, err := ioutil.ReadFile(filepath)
+	file, err := os.ReadFile(filepath)
 	if err != nil {
 		err = errors.Wrap(err, "could not read token:")
 		return err
@@ -75,7 +75,7 @@ func UpdateAuthDetails(filepath string) error {
 		return err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		err = errors.Wrap(err, "error reading body :")
 		return err
@@ -85,7 +85,7 @@ func UpdateAuthDetails(filepath string) error {
 		return errors.New("invalid body")
 	}
 
-	return ioutil.WriteFile(filepath, data, os.ModePerm)
+	return os.WriteFile(filepath, data, os.ModePerm)
 }
 
 // CreateTempAuthServer creates a temporary http server
@@ -266,12 +266,14 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 	}
 
 	req.AddCookie(&http.Cookie{
-		Name:  tokenName,
-		Value: token,
+		Name:     tokenName,
+		Value:    token,
+		HttpOnly: true,
 	})
 	req.AddCookie(&http.Cookie{
-		Name:  "meshery-provider",
-		Value: provider,
+		Name:     "meshery-provider",
+		Value:    provider,
+		HttpOnly: true,
 	})
 
 	cli := &http.Client{}
@@ -282,5 +284,5 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 
 	defer resp.Body.Close()
 
-	return ioutil.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
 }

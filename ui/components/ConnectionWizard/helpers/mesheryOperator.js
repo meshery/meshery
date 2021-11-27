@@ -1,5 +1,5 @@
 
-export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorInstalled
+export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorInstalled;
 
 /**
   * Pings meshery operator

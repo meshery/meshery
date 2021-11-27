@@ -1,7 +1,7 @@
 package system
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -81,7 +81,7 @@ The authentication mode is web-based browser flow`,
 			}
 		}
 
-		if err := ioutil.WriteFile(token.GetLocation(), tokenData, 0666); err != nil {
+		if err := os.WriteFile(token.GetLocation(), tokenData, 0666); err != nil {
 			log.Error("failed to write the token to the filesystem: ", err)
 		}
 

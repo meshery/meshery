@@ -28,3 +28,4 @@ La instancia de Broker se implementa dentro del clúster de kubernetes como un "
 - Asegúrese de que los pods correspondientes al `Statefulset` estén en funcionamiento.
 - Asegúrese de que el clúster de kubernetes sea compatible con el tipo de `Servicio` de kubernetes` LoadBalancer` o `NodePort`.
 - Asegure la conectividad entre Meshery-Server y el punto final del servicio Broker.
+

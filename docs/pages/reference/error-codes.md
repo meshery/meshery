@@ -3,6 +3,7 @@ layout: default
 title: Error Code Reference
 abstract: "Meshery Error Code Reference"
 permalink: reference/error-codes
+redirect_from: reference/error-codes/
 type: Reference
 ---
 <style>
@@ -88,7 +89,11 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
   
     {% for err_code in component[1].errors %}    
         <tr>
-          <td >{{ err_code[1]["name"] | xml_escape }}</td>
+          <td >
+            <a id="{{component[1].component_name}}-{{err_code[1]["name"]}}">
+            {{ err_code[1]["name"] | xml_escape }}
+            </a>
+          </td>
           <td >{{ err_code[1]["code"] }}</td>
           <td >{{ err_code[1]["severity"]}}</td>
           <td style="max-width:125px;">{{ err_code[1]["short_description"] | xml_escape}}</td>
@@ -100,7 +105,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
 
   </tbody>
   </table>
-  <a href="#{{ component[1].component_name }}">Top</a>
+  <a href="#error-code-reference">Top</a>
   <hr>
   <br>
 {% endif %}

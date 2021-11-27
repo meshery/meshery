@@ -132,6 +132,11 @@ var setCmd = &cobra.Command{
 		ContextContent.Version = version
 		ContextContent.Channel = channelNameSeperated[0]
 
+		err = ContextContent.ValidateVersion()
+		if err != nil {
+			return err
+		}
+
 		mctlCfg.Contexts[focusedContext] = ContextContent
 		viper.Set("contexts", mctlCfg.Contexts)
 		err = viper.WriteConfig()

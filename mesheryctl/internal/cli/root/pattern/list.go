@@ -3,7 +3,7 @@ package pattern
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -50,7 +50,7 @@ var listCmd = &cobra.Command{
 			return err
 		}
 		defer res.Body.Close()
-		body, err := ioutil.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
@@ -100,7 +100,7 @@ var listCmd = &cobra.Command{
 		// Check if messhery provider is set
 		if provider == "None" {
 			for _, v := range response.Patterns {
-				PatterName := fmt.Sprintf("%s", strings.Trim(v.Name, filepath.Ext(v.Name)))
+				PatterName := strings.Trim(v.Name, filepath.Ext(v.Name))
 				PatternID := utils.TruncateID(v.ID.String())
 				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())

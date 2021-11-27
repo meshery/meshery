@@ -12,6 +12,15 @@
         "probable_cause": "Could be a network issue",
         "suggested_remediation": "Check if meshery server is reachable from the browser"
       },
+      "1014": {
+        "name": "ErrGettingNamespaceCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Cannot get available namespaces",
+        "probable_cause": "The table in the database might not exist",
+        "suggested_remediation": ""
+      },
       "2000": {
         "name": "ErrInvalidK8SConfigCode",
         "code": "2000",
@@ -288,7 +297,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "error getting k8s file",
-        "probable_cause": "The kube config file does not exist in the location",
+        "probable_cause": "The kubeconfig file does not exist in the location",
         "suggested_remediation": "Make sure to upload the correct kubeconfig file"
       },
       "2031": {
@@ -1325,6 +1334,15 @@
         "short_description": "Could not get K8s components for registration",
         "probable_cause": "Invalid kubeconfig\nFilters passed incorrectly in config\nCould not fetch API resources from Kubernetes server",
         "suggested_remediation": "Make sure that the configuration filters passed are in accordance with output from /openapi/v2"
+      },
+      "2156": {
+        "name": "ErrCreatePatternServiceCode",
+        "code": "2156",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }

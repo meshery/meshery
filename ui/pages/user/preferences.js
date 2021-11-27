@@ -9,7 +9,7 @@ import dataFetch from '../../lib/data-fetch';
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
-  overflow : 'hidden', } }
+  overflow : 'hidden', } };
 
 class UserPref extends React.Component {
   constructor(props){
@@ -30,13 +30,13 @@ class UserPref extends React.Component {
           this.setState({ anonymousStats : result.anonymousUsageStats||false,
             perfResultStats : result.anonymousPerfResults||false,
             startOnZoom : result.startOnZoom||false, //meshmap specific user preferences are not stored in any db as of now
-          })
+          });
         }
       },
       // Ignore error because we will fallback to default state
       // and to avoid try catch due to async await functions
       resolve);
-    })
+    });
   }
 
   render () {

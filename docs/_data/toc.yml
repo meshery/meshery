@@ -1,6 +1,6 @@
 - title: 🚀 Quick Start
   url: installation/quick-start
-  
+
 - title: 🗺 Overview
   url: project
   links:
@@ -10,19 +10,19 @@
       url: project/contributing
       children:
         - title: Design and Code Conventions
-          url: project/contributing-guide
+          url: project/contributing/contributing-guide
         - title: Meshery Adapters
-          url: project/contributing-adapters
+          url: project/contributing/contributing-adapters
         - title: Meshery CLI
-          url: project/contributing-cli
+          url: project/contributing/contributing-cli
         - title: Meshery Docs
-          url: project/contributing-docs
+          url: project/contributing/contributing-docs
         - title: Meshery Errors
-          url: project/contributing-error            
+          url: project/contributing/contributing-error
         - title: Meshery Server
-          url: project/contributing-server        
+          url: project/contributing/contributing-server
         - title: Meshery UI
-          url: project/contributing-ui
+          url: project/contributing/contributing-ui
     - title: Releases
       url: project/releases
     - title: Build & Release (CI)
@@ -60,6 +60,8 @@
 - title: ⚙️ Functionality
   url: functionality
   links:
+    - title: Application Management
+      url: functionality/application-management
     - title: Lifecycle Management
       url: functionality/lifecycle-management
     - title: Pattern Management
@@ -110,12 +112,23 @@
       url: guides/upgrade
     - title: Using mesheryctl
       url: guides/mesheryctl
+      children:
+        - title: Using mesheryctl
+          url: guides/mesheryctl/using-mesheryctl
+        - title: Configure autocompletion for mesheryctl
+          url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
+        - title: Authenticate via Meshery CLI
+          url: guides/mesheryctl/authenticate-with-meshery-via-cli
+        - title: Upgrading Meshery CLI
+          url: guides/upgrade#upgrading-meshery-cli
+        - title: Running system checks using Meshery CLI
+          url: guides/mesheryctl/running-system-checks-using-cli
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
 - title: 🛠 Extensibility
   url: extensibility
   links:
-    - title: "Service Mesh Adapters"
+    - title: "Adapters"
       url: extensibility/adapters
     - title: "Load Generators"
       url: extensibility/load-generators
@@ -123,6 +136,8 @@
       url: extensibility/providers
     - title: "REST & GraphQL APIs"
       url: extensibility/api
+    - title: "UI Plugins"
+      url: extensibility/ui      
 - title: 📖 Reference
   url: reference
   links:

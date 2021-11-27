@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/models/pattern/patterns/application"
+	"github.com/layer5io/meshery/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/models/pattern/patterns/k8s/service"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -42,6 +43,8 @@ func ProcessOAM(kubeClient *meshkube.Client, oamComps []string, oamConfig string
 			} else {
 				msgs = append(msgs, "successfully deleted application "+comp.Name)
 			}
+
+			continue
 		}
 
 		if comp.Spec.Type == "Service.K8s" {
@@ -53,6 +56,23 @@ func ProcessOAM(kubeClient *meshkube.Client, oamComps []string, oamConfig string
 				msgs = append(msgs, "successfully deployed service "+comp.Name)
 			} else {
 				msgs = append(msgs, "successfully deleted service "+comp.Name)
+			}
+
+			continue
+		}
+
+		// Handle all of the k8s component here
+		if strings.HasSuffix(strings.ToLower(comp.Spec.Type), ".k8s") {
+			if err := k8s.Deploy(kubeClient, comp, config, isDel); err != nil {
+				errs = append(errs, err)
+
+				if !isDel {
+					msgs = append(msgs, "successfully deployed kubernetes component "+comp.Name)
+				} else {
+					msgs = append(msgs, "successfully deleted kubernetes component "+comp.Name)
+				}
+
+				continue
 			}
 		}
 	}

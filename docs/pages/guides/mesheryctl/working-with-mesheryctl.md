@@ -26,17 +26,18 @@ Each of the `system` commands are used to control Meshery's lifecycle like `syst
 
 ## Meshery CLI FAQ
 
-#### Question: What are differences between contexts ?
+#### Question: What is the meshconfig?
 
-Each context is a block that defines certain parameters that are specific to meshery itself.
-This helps the user to save multiple configurations of the meshery instance, switching between them with ease.
+Like kubeconfig for `kubectl`, meshconfig is the name of your `mesheryctl` config file. You can find your meshconfig file in its default location of `~/.meshery/config.yaml`. By default, `mesheryctl` will look to this location for your meshconfig. You can override the default location at anytime with the use of the global parameter, `--config <my-other-meshconfig>`.
 
-#### Question: Why are contexts necessary ?
+#### Question: What is a context?
 
-Having configured multiple contexts and switched between environments enabled automation during the deployment process.
+A meshconfig `context` represents a single Meshery deployment. Using `context`s, you can configure different Meshery deployments with environment-specific settings and you can easily switching between your individual Meshery deployments by updating your current-context.
 
-Approach:
-Context allows us to maining context data in the configuration file similar to kube contexts. The properties could be under the context-name object and the current context can be stored using a current- context key.
+#### Question: Why are contexts necessary?
+
+Many Meshery users have more than one Meshery deployment. Contexts allow you to deploy different versions of Meshery, update your release channel subscription settings, selectively install one or more Meshery Adapters, and so on. Contexts allow you to configure your invididual Meshery deployments.
+
 
 #### Question: What is `current-context`?
 
@@ -106,17 +107,13 @@ For an exhaustive list of `mesheryctl` commands and syntax:
 
 Guides to using Meshery's various features and components.
 
-{% assign sorted_guides = site.pages | sort: "type" | reverse %}
+{% capture tag %}
 
-<ul>
-  <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></lI>
-  {% for item in sorted_guides %}
-  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+<li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
+
+{% endcapture %}
+
+{% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
 
 <!-- ## Related Guides
 
@@ -237,3 +234,4 @@ To upgrade `mesheryctl`, execute the following command:
  </pre>
 
 -->
+{% include discuss.html %}

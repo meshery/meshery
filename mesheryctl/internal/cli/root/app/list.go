@@ -3,7 +3,7 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -54,7 +54,7 @@ var listCmd = &cobra.Command{
 			return err
 		}
 		defer res.Body.Close()
-		body, err := ioutil.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
@@ -103,7 +103,7 @@ var listCmd = &cobra.Command{
 		// Check if messhery provider is set
 		if provider == "None" {
 			for _, v := range response.Applications {
-				AppName := fmt.Sprintf("%s", strings.Trim(v.Name, filepath.Ext(v.Name)))
+				AppName := strings.Trim(v.Name, filepath.Ext(v.Name))
 				AppID := utils.TruncateID(v.ID.String())
 				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())

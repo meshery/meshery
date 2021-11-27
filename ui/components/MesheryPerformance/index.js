@@ -293,6 +293,26 @@ class MesheryPerformanceComponent extends React.Component {
     this.handleProfileUpload(profile, true, cb);
   };
 
+  handleAbort = () => {
+    this.setState({
+      profileName : "",
+      loadGenerator : "",
+      url : "",
+      meshName : "",
+      c : 0,
+      qps : 0,
+      t : "30s",
+      headers : "",
+      cookies : "",
+      reqBody : "",
+      contentType : "",
+      testName : "",
+      performanceProfileID : "",
+    });
+    this.setState({ disableTest : true });
+    return;
+  };
+
   handleProfileUpload = (body, generateNotif, cb) => {
     if (generateNotif) this.props.updateProgress({ showProgress : true });
 
@@ -942,6 +962,17 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="contained"
                   color="primary"
                   size="large"
+                  className={classes.button}
+                  disabled={disableTest}
+                  onClick={() => this.handleAbort()}
+                >
+                  Clear
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
                   onClick={() => this.submitProfile()}
                   className={classes.button}
                   disabled={disableTest}
@@ -989,7 +1020,9 @@ class MesheryPerformanceComponent extends React.Component {
                   </IconButton>
                 </Typography>
                 <div className={classes.chartContent} style={chartStyle}>
-                  <MesheryChart data={[result && result.runner_results ? result.runner_results : {}]} />
+                  <MesheryChart
+                    rawdata={[result && result.runner_results ? result : {}]}
+                    data={[result && result.runner_results ? result.runner_results : {}]} />
                 </div>
               </div>
             )}

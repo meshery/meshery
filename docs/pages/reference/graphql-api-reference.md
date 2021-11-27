@@ -2,6 +2,7 @@
 layout: default
 title: "GraphQL API Reference"
 permalink: reference/graphql-apis
+redirect_from: reference/graphql-apis/
 type: Reference
 abstract: 'Meshery GraphQL API Documentation and Reference'
 ---
@@ -448,6 +449,7 @@ Status of Meshery Operator and its controllers.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="perfprofileconcurrent_request"></a>`concurrent_request` | [`Int!`](#int) |  |
+| <a id="perfprofilecontent_type"></a>`content_type` | [`String`](#string) |  |
 | <a id="perfprofilecreated_at"></a>`created_at` | [`String`](#string) |  |
 | <a id="perfprofileduration"></a>`duration` | [`String!`](#string) |  |
 | <a id="perfprofileendpoints"></a>`endpoints` | [`[String]`](#string) |  |
@@ -456,6 +458,10 @@ Status of Meshery Operator and its controllers.
 | <a id="perfprofileload_generators"></a>`load_generators` | [`[String]`](#string) |  |
 | <a id="perfprofilename"></a>`name` | [`String`](#string) |  |
 | <a id="perfprofileqps"></a>`qps` | [`Int`](#int) |  |
+| <a id="perfprofilerequest_body"></a>`request_body` | [`String`](#string) |  |
+| <a id="perfprofilerequest_cookies"></a>`request_cookies` | [`String`](#string) |  |
+| <a id="perfprofilerequest_headers"></a>`request_headers` | [`String`](#string) |  |
+| <a id="perfprofileservice_mesh"></a>`service_mesh` | [`String`](#string) |  |
 | <a id="perfprofiletotal_results"></a>`total_results` | [`Int`](#int) |  |
 | <a id="perfprofileupdated_at"></a>`updated_at` | [`String`](#string) |  |
 | <a id="perfprofileuser_id"></a>`user_id` | [`String!`](#string) |  |

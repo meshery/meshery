@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl system
 permalink: reference/mesheryctl/system
+redirect_from: reference/mesheryctl/system/
 type: reference
 display-title: "false"
 language: en
@@ -42,7 +43,7 @@ command: system
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ flag.usage }}
+  {{ flag.example }}
   </div>
 </pre>
 {% endfor %}

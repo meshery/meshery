@@ -2,13 +2,14 @@
 layout: default
 title: Conceptos
 permalink: es/concepts
+redirect_from: es/concepts/
 language: es
 list: exclude
 ---
 
-Conceptos para la comprensión de las diversas características y componentes de Meshery.
+Conceptos para comprender las diversas características y componentes de Meshery.
 
-{% assign sorted_pages = site.pages | sort: "name" | reverse %}
+{% assign sorted_pages = site.pages | sort: "name" %}
 
 <ul>
     {% for item in sorted_pages %}
@@ -21,7 +22,3 @@ Conceptos para la comprensión de las diversas características y componentes de
       {% endif %}
     {% endfor %}
 </ul>
-
-{% include toc.html page=reference %}
-
-{:toc}

@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl
 permalink: reference/mesheryctl/mesheryctl
+redirect_from: reference/mesheryctl/mesheryctl/
 type: reference
 display-title: "false"
 language: en
@@ -28,6 +29,11 @@ Global command
 ## Examples
 
 {% assign name = site.data.mesheryctlcommands.cmds[page.command] %}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ name.example }}
+  </div>
+</pre>
 {% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">

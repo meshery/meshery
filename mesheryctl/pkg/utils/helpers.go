@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"mime/multipart"
 	"net/http"
@@ -65,6 +64,11 @@ const (
 	cmdSystem cmdType = "system"
 )
 
+const (
+	HelmChartURL  = "https://meshery.io/charts/"
+	HelmChartName = "meshery"
+)
+
 var (
 	// ResetFlag indicates if a reset is required
 	ResetFlag bool
@@ -119,18 +123,20 @@ var (
 	// Paths to kubeconfig files
 	ConfigPath string
 	KubeConfig string
+	// KeepNamespace indicates if the namespace should be kept when Meshery is uninstalled
+	KeepNamespace bool
 )
 
 var CfgFile string
 
 // ListOfAdapters returns the list of adapters available
-var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
+var ListOfAdapters = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
 	Endpoint: EndpointProtocol + "://localhost:9081",
 	Token:    "Default",
-	Platform: "docker",
+	Platform: "kubernetes",
 	Adapters: ListOfAdapters,
 	Channel:  "stable",
 	Version:  "latest",
@@ -222,7 +228,7 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 	if err != nil {
 		return nil, err
 	}
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
@@ -343,7 +349,7 @@ func ValidateURL(URL string) error {
 
 // ReadToken returns a map of the token passed in
 func ReadToken(filepath string) (map[string]string, error) {
-	file, err := ioutil.ReadFile(filepath)
+	file, err := os.ReadFile(filepath)
 	if err != nil {
 		err = errors.Wrap(err, "could not read token:")
 		return nil, err
@@ -522,7 +528,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -766,4 +772,55 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 	}
 
 	return v
+}
+
+// SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
+func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
+	// first initialize all the adapters' "enabled" field to false
+	// this matches to the adapters listed in install/kubernetes/helm/meshery/values.yaml
+	valueOverrides := map[string]interface{}{
+		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-linkerd": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-consul": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-kuma": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-osm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nsm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nginx-sm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-traefik-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cpx": map[string]interface{}{
+			"enabled": false,
+		},
+	}
+
+	// set the "enabled" field to true only for the adapters listed in the context
+	for _, adapter := range ctx.GetAdapters() {
+		if _, ok := valueOverrides[adapter]; ok {
+			valueOverrides[adapter] = map[string]interface{}{
+				"enabled": true,
+			}
+		}
+	}
+
+	// set the meshery image version
+	valueOverrides["image"] = map[string]interface{}{
+		"tag": ctx.GetChannel() + "-" + mesheryImageVersion,
+	}
+
+	return valueOverrides
 }

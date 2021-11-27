@@ -1,10 +1,10 @@
 ---
 layout: default
-title: Operator
-permalink: /es/concepts/architecture/operator
+title: Operador
+permalink: es/concepts/architecture/operator
 type: concepts
 redirect_from: architecture/operator
-abstract: "Meshery Operator controls and manages the lifeycle of components deployed inside a kubernetes cluster"
+abstract: "Meshery Operator controla y administra el ciclo de vida de componentes desplegados dentro de un clúster de Kubernetes"
 language: es
 display-title: "false"
 list: include
@@ -12,46 +12,46 @@ list: include
 
 # Meshery Operator <img style="width:1em; inline; margin-bottom:10px;" src="{{ site.baseurl }}/assets/img/architecture/B203EFA85E89491B.png"/>
 
-Meshery Operator is the multi-service mesh operator (a Kubernetes custom controller) that manages MeshSync and it's messaging broker.
+Meshery Operator es el operador multi-service mesh (un controlador personalizado de Kubernetes) que administra MeshSync y su agente de mensajes.
 
-Meshery Operator is a Kubernetes controller manager, otherwise known as a Kubernetes Operator. Meshery Operator manages the lifecycle of every Meshery component that is deployed or running inside of a Kubernetes cluster.
+Meshery Operator es un administrador de controladores de Kubernetes, conocido como un Operador de Kubernetes. Meshery Operator administra el ciclo de vida de cualquier componente de Meshery que es desplegado o ejecutado dentro de un clúster de Kubernetes.
 
-## Deployments
+## Despliegues
 
-It is recommended to deploy one Meshery Operator per cluster.
+Es recomendable desplegar un Meshery Operator por clúster.
 
-[![Meshery Operator and MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg
+[![Meshery Operator y MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg
 )]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg)
 
-### Initialization Sequence
+### Secuencia de inicialización
 
-[![Meshery Operator and MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-deployment-sequence.svg
+[![Meshery Operator y MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-deployment-sequence.svg
 )]({{ site.baseurl }}/assets/img/architecture/meshery-operator-deployment-sequence.svg)
 
-## Controllers managed by Meshery Operator
+## Controladores administrados por Meshery Operator
 
-### Broker Controller
+### Controlador de Agente
 
-Meshery broker is one of the core components of the meshery architecture. This controller manages the lifecycle of broker that meshery uses for data streaming across the cluster and the outside world.
+El Meshery broker es uno de los componentes centrales de la arquitectura de Meshery. Este controlador administra el ciclo de vida del agente que Meshery usa para la transmisión de datos a través del clúster y el mundo exterior.
 
-See [Meshery Broker]({{site.baseurl}}/architecture/broker) for more information.
+Ver [Meshery Broker]({{site.baseurl}}/architecture/broker) para más información.
 
-### MeshSync Controller
+### Controlador de MeshSync
 
-MeshSync Controller manages the lifecycle of MeshSync that is deployed for resource synchronization for the cluster.
+El controlador de MeshSync administra el ciclo de vida de MeshSync que es desplegado para la sincronización de recursos para el clúster.
 
-See [MeshSync]({{site.baseurl}}/architecture/meshsync) for more information.
+Ver [MeshSync]({{site.baseurl}}/architecture/meshsync) para más información.
 
-## Operator FAQs
+## Preguntas más Frecuentes del Operador
 
-### When is Meshery Operator deployed and when is it deleted?  
-As a Kubernetes custom controller, Meshery Operator is provisioned and deprovisioned when Meshery Server is connected to or disconnected from Kubernetes cluster. Meshery Server connections to Kubernetes clusters are controlled using Meshery Server clients: `mesheryctl` or Meshery UI.  This behavior described below is consistent whether your Meshery deployment is using Docker or Kubernetes as the platform to host the Meshery deployment.
+### ¿Cuándo es desplegado Meshery Operator y cuándo es eliminado?  
+Como un controlador personalizado de Kubernetes, Meshery Operator es provisionado y desprovisionado cuando el Meshery Server está conectado o desconectado del clúster de Kubernetes. Las conexiones del Meshery Operator al clúster de Kubeernetes se controlan utilizando clientes de Meshery Server: `mesheryctl` o Meshery UI. Este comportamiento descrito a continuación es consistente si su despliegue de Meshery está usando Docker o Kubernetes como la plataforma para hospedar el despliegue de Meshery.
 
-**Meshery CLI**
-`mesheryctl` initiates connection to Kubernetes cluster when `mesheryctl system start` is executed and disconnects when `mesheryctl system stop` is executed. This behavior is consistent whether your Meshery deployment is using Docker or Kubernetes as the platform to host the Meshery deployment.
+**CLI de Meshery**
+`mesheryctl` inicia la conexión del clúster de Kubernetes cuando se ejecuta `mesheryctl system start` y desconectado cuando se ejecuta `mesheryctl system stop`. Este comportamiento es consistente si su despliegue de Meshery está usando Docker o Kubernetes como la plataforma para hospedar el despliegue de Meshery.
 
-**Meshery UI**
-Meshery UI offers more granular control over the deployment of Meshery Operator in that you can remove Meshery Operator from a Kubernetes cluster without disconnecting Meshery Server from the Kubernetes cluster. You can control the deployment of Meshery Operator using the on/off switch found in the Meshery Operator section of  Settings.
+**UI de Meshery**
+Meshery UI ofrece mayor control granular sobre el despliegue de Meshery Operator en el cual puede eliminar Meshery Operator de un clúster de Kubernetes sin desconectar Meshery Server del clúster de Kubernetes. Puede controlar el despliegue de Meshery Operator usando el interruptor de encendido/apagado que se encuentra en la sección de Configuración de Meshery Operator.
 
-### Does the Meshery Operator use an SDK or framework? 
-Yes, Meshery Operator used the Operator SDK.
+### ¿El Meshery Operator usa un SDK o framework?
+Sí, Meshery Operator usa el Operator SDK.

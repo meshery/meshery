@@ -37,7 +37,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	}
 
 	go func(del bool, kubeclient *mesherykube.Client) {
-		err := model.Initialize(kubeclient, del)
+		err := model.Initialize(kubeclient, del, r.Config.AdapterTracker)
 		if err != nil {
 			r.Log.Error(err)
 			r.Broadcast.Submit(broadcast.BroadcastMessage{
@@ -78,17 +78,6 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			r.Log.Info("Connected to broker at:", endpoint)
 		}
 
-		// installMeshsync
-		err = model.RunMeshSync(kubeclient, del)
-		if err != nil {
-			r.Log.Error(err)
-			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Source: broadcast.OperatorSyncChannel,
-				Data:   err,
-				Type:   "error",
-			})
-			return
-		}
 		r.Log.Info("Meshsync operation executed")
 
 		// r.operatorChannel <- &model.OperatorStatus{

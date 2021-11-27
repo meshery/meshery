@@ -2,7 +2,6 @@ package system
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -39,6 +38,20 @@ func TestTokenCreateCmd(t *testing.T) {
 			ExpectedResponse:     "create_err.golden",
 			ExpectedResponseYaml: "create_err.yaml",
 			ExpectError:          true,
+		},
+		{
+			Name:                 "create the passed token with default location and set it as the current token",
+			Args:                 []string{"token", "create", "new-token", "--set"},
+			ExpectedResponse:     "create_default_set.golden",
+			ExpectedResponseYaml: "create_default_set.yaml",
+			ExpectError:          false,
+		},
+		{
+			Name:                 "create the passed token with passed location and set it as the current token",
+			Args:                 []string{"token", "create", "new-token", "--set"},
+			ExpectedResponse:     "create_set.golden",
+			ExpectedResponseYaml: "create_set.yaml",
+			ExpectError:          false,
 		},
 	}
 
@@ -86,7 +99,7 @@ func TestTokenCreateCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/token/" + tt.ExpectedResponseYaml
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -177,7 +190,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/token/" + tt.ExpectedResponseYaml
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -276,7 +289,7 @@ func TestTokenSetCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/token/" + tt.ExpectedResponseYaml
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}

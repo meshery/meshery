@@ -34,7 +34,7 @@ subcommand: logs
 {{ name.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ name.usage }}
+  {{ name.example }}
   </div>
 </pre>
 {% for flag_hash in name.flags %}{% assign flag = flag_hash[1] %}

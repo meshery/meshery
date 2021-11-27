@@ -31,7 +31,7 @@ display-title: "false"
     <h6><a href="{{ site.baseurl }}/installation/platforms" class="text-black section-title">Supported Platforms</a></h6>
     <ul>
         {% for item in sorted_pages %}
-        {% if item.type=="installation" and item.list=="include" -%}
+        {% if item.type=="installation" and item.list=="include" and item.language!="es"  -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           </li>
           {% endif %}
@@ -47,7 +47,7 @@ display-title: "false"
     <h6><a href="{{ site.baseurl }}/concepts" class="text-black section-title">Concepts</a></h6>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="concepts" and item.list!="exclude" -%}
+      {% if item.type=="concepts" and item.list!="exclude" and item.language!="es" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -60,7 +60,7 @@ display-title: "false"
 
   <!-- FUNCTIONALITY -->
   <div>
-    <a href="{{ site.baseurl }}/guides">
+    <a href="{{ site.baseurl }}/functionality">
         <div class="overview">Functionality</div>
     </a>
     <h6><a href="{{ site.baseurl }}/functionality" class="text-black section-title">Service Mesh Management</a></h6>
@@ -75,7 +75,7 @@ display-title: "false"
     <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="service-mesh" and item.list!="exclude" -%}
+      {% if item.type=="service-mesh" and item.list!="exclude" and item.language!="es"  -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -96,7 +96,7 @@ display-title: "false"
     <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="Guides" and item.list!="exclude" -%}
+      {% if item.type=="Guides" and item.list!="exclude"  and item.language!="es" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -105,7 +105,7 @@ display-title: "false"
     <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Reference</a></h6>
     <ul>
         {% for item in sorted_pages %}
-        {% if item.type=="Reference" and item.list!="exclude" -%}
+        {% if item.type=="Reference" and item.list!="exclude"  and item.language!="es"  -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           </li>
           {% endif %}
@@ -119,3 +119,4 @@ display-title: "false"
 <img src="https://layer5.io/assets/images/meshery/meshery-logo-shadow-light-white-text-side.svg" width="60%" />
 <h1>Documentation</h1>
 </div> -->
+

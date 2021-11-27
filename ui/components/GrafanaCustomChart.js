@@ -3,12 +3,15 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
   NoSsr, IconButton, Card, CardContent, CardHeader,
+  Tooltip, LinearProgress, Box
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withSnackbar } from 'notistack';
 import moment from 'moment';
 import OpenInNewIcon from '@material-ui/icons/OpenInNewOutlined';
+import WarningIcon from '@material-ui/icons/Warning';
+import CachedIcon from '@material-ui/icons/Cached';
 import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
@@ -37,14 +40,7 @@ const grafanaStyles = (theme) => ({
     gap : ' 0.5rem', },
   cardContent : { height : '100%',
     width : "100%" },
-  error : {
-    color : '#D32F2F',
-    width : '100%',
-    textAlign : 'center',
-    fontSize : '12px',
-    // fontFamily: 'Helvetica Nueue',
-    fontWeight : 'bold',
-  },
+  error : { color : '#D32F2F', },
 });
 
 const grafanaDateRangeToDate = (dt, startDate) => {
@@ -283,9 +279,7 @@ class GrafanaCustomChart extends Component {
     this.datasetIndex = {};
     this.state = {
       xAxis : [],
-      sparkline : sparkline && sparkline !== null
-        ? true
-        : false,
+      sparkline : !!sparkline,
       chartData : [],
       error : '',
       errorCount : 0,
@@ -440,12 +434,10 @@ class GrafanaCustomChart extends Component {
             const newData = [];
 
             // if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
-            let legend = typeof target.legendFormat !== 'undefined'
-              ? target.legendFormat
+            let legend = typeof target.legendFormat !== undefined ? target.legendFormat
               : '';
             if (legend === '') {
-              legend = Object.keys(metric).length > 0
-                ? JSON.stringify(metric)
+              legend = Object.keys(metric).length > 0 ? JSON.stringify(metric)
                 : '';
             } else {
               Object.keys(metric).forEach((metricKey) => {
@@ -570,9 +562,7 @@ class GrafanaCustomChart extends Component {
               position : 'outer-middle', };
           }
           if (ya.format.toLowerCase().startsWith('percent')) {
-            const mulFactor = ya.format.toLowerCase() === 'percentunit'
-              ? 100
-              : 1;
+            const mulFactor = ya.format.toLowerCase() === 'percentunit' ? 100 : 1;
             yAxes.tick = { format(d) {
               const tk = (d * mulFactor).toFixed(2);
               return `${tk}%`;
@@ -590,13 +580,9 @@ class GrafanaCustomChart extends Component {
         // }
       };
 
-      const linked = this.state.sparkline
-        ?(false)
+      const linked = this.state.sparkline?(false)
         :(
-          !inDialog
-            ? { name : board && board.title
-              ? board.title
-              : '', }
+          !inDialog ? { name : board && board.title? board.title : '', }
             : false
         );
 
@@ -648,8 +634,7 @@ class GrafanaCustomChart extends Component {
           // cd.datasets[datasetInd].borderColor = panel.sparkline.lineColor;
           // cd.datasets[datasetInd].backgroundColor = panel.sparkline.fillColor;
 
-          const dataLength = chartConfig.data.columns && chartConfig.data.columns.length > 1
-            ? chartConfig.data.columns[1].length
+          const dataLength = chartConfig.data.columns && Array.isArray(chartConfig.data.columns) &&chartConfig.data.columns.length > 1 ? chartConfig.data.columns[1].length
             : 0; // 0 is for x axis
           if (dataLength > 0) {
             if (typeof chartConfig.data.colors === 'undefined') {
@@ -715,10 +700,8 @@ class GrafanaCustomChart extends Component {
       const self = this;
       this.props.updateProgress({ showProgress : false });
       if (error){
-        this.setState({ error : error.message && error.message !== ''
-          ? error.message
-          : (error !== ''
-            ? error
+        this.setState({ error : error.message && error.message !== '' ? error.message
+          : (error !== '' ? error
             : ''), errorCount : self.state.errorCount + 1 });
       }
     }
@@ -731,19 +714,45 @@ class GrafanaCustomChart extends Component {
       const { error, errorCount, chartData, } = this.state;
       const self = this;
 
-      if (errorCount > 3 && typeof self.interval !== 'undefined') {
+      let loadingBar;
+      let reloadButton;
+
+      if (error){
+        self.createOptions([], [], []); // add empty data to charts
+        loadingBar = (
+          <Box sx={{ width : '100%' }}>
+            <LinearProgress />
+          </Box>
+        );
+      }
+
+      if (errorCount > 3*panel.targets.length && typeof self.interval !== 'undefined') {
         clearInterval(self.interval); // clearing the interval to prevent further calls to get chart data
+        loadingBar = null;
+        reloadButton = (
+          <IconButton
+            key="Relaod"
+            aria-label="reloadButton the Chart"
+            color="inherit"
+            onClick={() => self.configChartData()}
+          >
+            <CachedIcon className={classes.cardHeaderIcon} />
+          </IconButton>
+        );
       }
 
       const iconComponent = (
-        <IconButton
-          key="chartDialog"
-          aria-label="Open chart in a dialog"
-          color="inherit"
-          onClick={() => handleChartDialogOpen(board, panel, panelData)}
-        >
-          <OpenInNewIcon className={classes.cardHeaderIcon} />
-        </IconButton>
+        <div>
+          {reloadButton}
+          <IconButton
+            key="chartDialog"
+            aria-label="Open chart in a dialog"
+            color="inherit"
+            onClick={() => handleChartDialogOpen(board, panel, panelData)}
+          >
+            <OpenInNewIcon className={classes.cardHeaderIcon} />
+          </IconButton>
+        </div>
       );
 
       let mainChart;
@@ -758,7 +767,6 @@ class GrafanaCustomChart extends Component {
       } else {
         mainChart = (
           <div>
-            <div className={classes.error}>{error && 'There was an error communicating with the server'}</div>
             <div ref={(ch) => self.chartRef = ch} className={classes.root} />
           </div>
         );
@@ -766,6 +774,7 @@ class GrafanaCustomChart extends Component {
       if (this.state.sparkline){
         return (
           <NoSsr>
+            {loadingBar}
             <div className={classes.sparklineCardContent}>
               <div>{panel.title}</div>
               <div>{mainChart}</div>
@@ -776,10 +785,17 @@ class GrafanaCustomChart extends Component {
       }
       return (
         <NoSsr>
+          {loadingBar}
           <Card className={classes.card}>
             {!inDialog && (
               <CardHeader
                 disableTypography
+                avatar={
+                  error &&
+                  <Tooltip title="There was an error communicating with the server" placement="top">
+                    <WarningIcon className={classes.error}/>
+                  </Tooltip>
+                }
                 title={panel.title}
                 action={iconComponent}
                 className={classes.cardHeader}
