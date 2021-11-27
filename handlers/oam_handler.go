@@ -111,7 +111,7 @@ func (h *Handler) PatternFileHandler(
 		h.config.KubeClient,
 		user.UserID,
 		isDel,
-		r.URL.Query().Get("dryRun") == "true",
+		r.URL.Query().Get("verify") == "true",
 	)
 
 	if err != nil {
@@ -342,7 +342,7 @@ func _processPattern(
 	kubeClient *meshkube.Client,
 	userID string,
 	isDelete bool,
-	dryRun bool,
+	verify bool,
 ) (string, error) {
 	sip := &serviceInfoProvider{
 		token:      token,
@@ -367,7 +367,7 @@ func _processPattern(
 		Add(stages.Filler).
 		Add(stages.Validator(sip, sap))
 
-	if !dryRun {
+	if !verify {
 		chain.
 			Add(stages.Provision(sip, sap)).
 			Add(stages.Persist(sip, sap))
