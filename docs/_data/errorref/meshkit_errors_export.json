@@ -390,15 +390,6 @@
         "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
         "suggested_remediation": "Make sure to input the right file name and location"
       },
-      "11055": {
-        "name": "ErrEmptyConfigCode",
-        "code": "11055",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Config not initialized",
-        "probable_cause": "Viper is crashing",
-        "suggested_remediation": "Make sure viper is configured properly"
-      },
       "11056": {
         "name": "ErrViperCode",
         "code": "11056",

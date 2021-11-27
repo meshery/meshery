@@ -15,12 +15,15 @@ export const rjsfTheme = createTheme({
       variant : 'outlined',
       margin : 'dense',
     },
+    MuiCheckbox : {
+      color : 'primary',
+    },
   },
   overrides : {
     MuiButton : {
       textSecondary : {
-        color : '#00b39f',
-        "&:hover" : "#00b39f"
+        color : "#00b39f",
+        "&:hover" : "00b39f"
       }
     },
     MuiBox : {
@@ -30,14 +33,14 @@ export const rjsfTheme = createTheme({
     },
     MuiDivider : {
       root : {
-        height : '0.5px'
+        height : "0.5px"
       }
     },
     MuiFormLabel : {
       root : {
         color : "#333",
-        fontSize : '0.8rem',
-        textTransform : 'capitalize',
+        fontSize : "0.8rem",
+        textTransform : "capitalize"
       }
     },
     MuiTypography : {
@@ -66,6 +69,13 @@ export const rjsfTheme = createTheme({
     MuiPaper : {
       elevation2 : {
         boxShadow : "none"
+      }
+    },
+    "spacing-xs-2" : {
+      padding : 0,
+      "& > *" : {
+        paddingTop : "0 !important",
+        paddingBottom : "0 !important"
       }
     }
   }

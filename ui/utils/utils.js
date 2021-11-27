@@ -21,3 +21,25 @@ export function isEmptyObj(obj) {
 export function isEmptyArr(arr) {
   return arr && arr.length === 0;
 }
+
+/**
+ * ScrollToTop scrolls the window to top
+ *
+ * @param {(
+ * "auto"
+ * |"smooth"
+ * |"inherit"
+ * |"initial"
+ * |"revert"
+ * |"unset"
+ * )} behavior : scroll-behaviour, see https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior
+ */
+export function scrollToTop(behavior="smooth") {
+  setTimeout(() => {
+    window.scrollTo({
+      top : 0,
+      left : 0,
+      behavior,
+    })
+  }, 0);
+}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -363,7 +363,7 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 
 		// Read the file definition file
 		defpath := fmt.Sprintf("%s_definition.json", path)
-		defFile, err := ioutil.ReadFile(defpath)
+		defFile, err := os.ReadFile(defpath)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue
@@ -378,7 +378,7 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 
 		// Read the schema file
 		schemapath := fmt.Sprintf("%s.meshery.layer5.io.schema.json", path)
-		schemaFile, err := ioutil.ReadFile(schemapath)
+		schemaFile, err := os.ReadFile(schemapath)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue

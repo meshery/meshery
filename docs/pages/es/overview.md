@@ -88,7 +88,7 @@ Este proyecto es hecho por la comunidad y toda colaboración es bienvenida! [For
 * Únete a [la reunión semanal de la comunidad](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Viernes de 10am a 11am Horario Central](/assets/projects/meshery/Meshery-Community-Meeting.ics). 
   * Observa las [grabaciones de la comunidad](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) y suscríbete al [calendario de la comunidad](https://bit.ly/2SbrRhe).
 
-* Ingresa al [drive de la comunidad](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) (solicita acceso).
+* Ingresa al [drive de la comunidad](https://layer5.io/newcomers) (solicita acceso).
 
 # FAQ 
 

@@ -49,10 +49,11 @@ function RJSFFormChildComponent({ onSubmit, onDelete }){
  *  onTraitsChange?: Function;
  *  formData?: Record<String, unknown>
  *  reference?: Record<any, any>;
+ *  scroll?: Boolean; // If the window should be scrolled to zero after re-rendering
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll=false }) {
   const [tab, setTab] = React.useState(0);
   const classes = useStyles({ color : getMeshProperties(getMeshName(schemaSet))?.color });
 
@@ -71,6 +72,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       namespace={namespace}
       onSettingsChange={onSettingsChange}
       onTraitsChange={onTraitsChange}
+      scroll={scroll}
     >
       {(SettingsForm, TraitsForm) => {
         return (
@@ -86,7 +88,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               </Tabs>
             </AppBar>
             <TabPanel value={tab} index={0} className={classes.tabPanel}>
-              <SettingsForm RJSFFormChildComponent={RJSFFormChildComponent} />
+              <SettingsForm RJSFFormChildComponent={RJSFFormChildComponent}  />
             </TabPanel>
             <TabPanel value={tab} index={0} className={classes.tabPanel}>
               <TraitsForm />
