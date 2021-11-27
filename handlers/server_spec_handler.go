@@ -65,7 +65,6 @@ func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	isOutdated := false
 	if err != nil {
 		return nil, "", ErrGetLatestVersion(err)
-
 	}
 	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
 	if latestVersion != serverVersion {
