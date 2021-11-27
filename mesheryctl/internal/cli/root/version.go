@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/layer5io/meshery/handlers"
@@ -134,7 +134,7 @@ var versionCmd = &cobra.Command{
 
 		// needs multiple defer as Body.Close needs a valid response
 		defer resp.Body.Close()
-		data, err := ioutil.ReadAll(resp.Body)
+		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows)
 			logrus.Errorf("\n  Invalid response: %v", err)

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -82,7 +81,7 @@ func GetBasePath(t *testing.T) string {
 func (tf *GoldenFile) Load() string {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		tf.t.Fatalf("could not read file %s: %v", tf.name, err)
 	}
@@ -94,7 +93,7 @@ func (tf *GoldenFile) Load() string {
 func (tf *GoldenFile) LoadByte() []byte {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		tf.t.Fatalf("could not read file %s: %v", tf.name, err)
 	}
@@ -110,7 +109,7 @@ func (tf *GoldenFile) Write(content string) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			err := ioutil.WriteFile(path, []byte(content), 0755)
+			err := os.WriteFile(path, []byte(content), 0755)
 			if err != nil {
 				fmt.Printf("Unable to write file: %v", err)
 			}
@@ -119,7 +118,7 @@ func (tf *GoldenFile) Write(content string) {
 		tf.t.Fatal(err)
 	}
 
-	err = ioutil.WriteFile(path, []byte(content), 0644)
+	err = os.WriteFile(path, []byte(content), 0644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -129,7 +128,7 @@ func (tf *GoldenFile) Write(content string) {
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	err := ioutil.WriteFile(path, content, 0644)
+	err := os.WriteFile(path, content, 0644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}

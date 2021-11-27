@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -117,7 +117,7 @@ func GetManifestTreeURL(version string) (string, error) {
 	}
 	defer SafeClose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to read response body")
 	}
@@ -144,7 +144,7 @@ func ListManifests(url string) ([]Manifest, error) {
 	}
 	defer SafeClose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read response body")
 	}
@@ -240,7 +240,7 @@ func GetDeploymentVersion(filePath string) (string, error) {
 	}
 
 	compose := K8sCompose{}
-	yamlFile, err := ioutil.ReadFile(filePath)
+	yamlFile, err := os.ReadFile(filePath)
 	if err != nil {
 		return "", err
 	}
@@ -372,7 +372,7 @@ func GetLatestStableReleaseTag() (string, error) {
 		return "", errors.New("failed to get latest stable release tag")
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to read response body")
 	}
@@ -588,7 +588,7 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 	}
 
 	compose := K8sCompose{}
-	yamlFile, err := ioutil.ReadFile(filePath)
+	yamlFile, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -621,7 +621,7 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 	if err != nil {
 		return fmt.Errorf("unable to marshal config %s | %s", filePath, err)
 	}
-	err = ioutil.WriteFile(filePath, newConfig, 0644)
+	err = os.WriteFile(filePath, newConfig, 0644)
 	if err != nil {
 		return fmt.Errorf("unable to update config %s | %s", filePath, err)
 	}
@@ -748,7 +748,7 @@ func InstallprereqDocker() error {
 		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 	} else {
 		var dat map[string]interface{}
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Wrap(err, "failed to read response body")
 		}

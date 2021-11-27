@@ -79,6 +79,7 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
+    - run: sudo npm i -g npm@7
     - name: Cache node modules
       id: node-cache
       uses: actions/cache@v2
@@ -117,6 +118,7 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
+    - run: sudo npm i -g npm@7
     - name: Cache node modules
       id: node-cache
       uses: actions/cache@v2
@@ -239,7 +241,7 @@ jobs:
         fetch-depth: 1
     - name: Docker edge build & tag
       if: startsWith(github.ref, 'refs/tags/') != true && success()
-      env: 
+      env:
         RELEASE_CHANNEL: "edge"
       run: |
         DOCKER_BUILDKIT=1 docker build --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
