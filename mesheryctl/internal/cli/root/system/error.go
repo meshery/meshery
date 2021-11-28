@@ -86,5 +86,5 @@ func ErrRestartMeshery(err error) error {
 }
 
 func ErrK8SQuery(err error) error {
-	return errors.New(ErrK8sQueryCode, errors.Alert, []string{err.Error()}, []string{"!! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes"}, []string{"Kubernetes cluster isn't running"}, []string{"Restart kubernetes cluster"})
+	return errors.New(ErrK8sQueryCode, errors.Alert, []string{err.Error()}, []string{"!! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes"}, []string{"Kubernetes cluster isn't running or inaccessible"}, []string{"Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates"})
 }
