@@ -138,6 +138,9 @@ tests in adapters are end-to-end tests and use patternfile. The reusable workflo
       patternfile_name:
         required: true
         type: string   
+      provider: 
+        required: false
+        type: string   
     secrets:
       token:
 
