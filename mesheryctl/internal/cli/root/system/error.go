@@ -22,7 +22,7 @@ const (
 	ErrCreateManifestsFolderCode    = "1024"
 	ErrProcessingMctlConfigCode     = "1025"
 	ErrRestartMesheryCode           = "1026"
-	ErrK8sQueryCode                 = "not set"
+	ErrK8sQueryCode                 = "1041"
 )
 
 func ErrHealthCheckFailed(err error) error {
