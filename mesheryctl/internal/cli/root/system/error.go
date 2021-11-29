@@ -22,6 +22,7 @@ const (
 	ErrCreateManifestsFolderCode    = "1024"
 	ErrProcessingMctlConfigCode     = "1025"
 	ErrRestartMesheryCode           = "1026"
+	ErrK8sQueryCode                 = "not set"
 )
 
 func ErrHealthCheckFailed(err error) error {
@@ -82,4 +83,8 @@ func ErrProcessingMctlConfig(err error) error {
 
 func ErrRestartMeshery(err error) error {
 	return errors.New(ErrRestartMesheryCode, errors.Alert, []string{"Error restarting Meshery"}, []string{err.Error()}, []string{"Meshery is not running"}, []string{"Restart Meshery instance"})
+}
+
+func ErrK8SQuery(err error) error {
+	return errors.New(ErrK8sQueryCode, errors.Alert, []string{err.Error()}, []string{"!! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes"}, []string{"Kubernetes cluster isn't running or inaccessible"}, []string{"Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates"})
 }
