@@ -82,7 +82,7 @@ var viewCmd = &cobra.Command{
 	},
 }
 
-//check release channel version string supplied by user for validity. This func does not set any thing.(Just for checks)
+//check release channel version string supplied by user for validity. This func does not set anything.(Just for checks)
 func validVersionCheck(c string) (bool, error) {
 	stableRegx := regexp.MustCompile(`^stable-v[0-9]+\.[0-9]+\.[0-9]+$`)
 	edgeRegx := regexp.MustCompile(`^edge-v[0-9]+\.[0-9]+\.[0-9]+$`)
