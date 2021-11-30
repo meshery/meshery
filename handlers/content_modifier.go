@@ -82,18 +82,18 @@ func (mc *contentModifier) isPatternSupported(patternfile string) (msg string, o
 	var pattern map[string]interface{}
 	err := yaml.Unmarshal([]byte(patternfile), &pattern)
 	if err != nil {
-		return "", false
+		return err.Error(), false
 	}
 	patternFile, err := core.NewPatternFile([]byte(patternfile))
 	if err != nil {
-		return "", false
+		return err.Error(), false
 	}
-	if mc.prefObj == nil || mc.prefObj.K8SConfig == nil {
-		return "", false
+	if mc.prefObj == nil || mc.prefObj.K8SConfig == nil || mc.prefObj.K8SConfig.Config == nil {
+		return "could not detect kube config from preference", false
 	}
 	kc, err := meshkube.New(mc.prefObj.K8SConfig.Config) //possible nil dereference
 	if err != nil {
-		return "", false
+		return err.Error(), false
 	}
 	msg, err = _processPattern(
 		mc.token,
