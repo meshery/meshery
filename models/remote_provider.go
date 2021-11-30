@@ -919,7 +919,7 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 	}
 
 	logrus.Errorf("error while deleting pattern resource")
-	return ErrDelete(err, "pattern: "+resourceID, resp.StatusCode)
+	return ErrDelete(fmt.Errorf("error while deleting pattern resource"), "pattern: "+resourceID, resp.StatusCode)
 }
 
 // SaveMesheryPattern saves given pattern with the provider
@@ -1169,7 +1169,7 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("could not send pattern to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SaveMesheryFilter saves given filter with the provider
@@ -1219,7 +1219,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("could not send filter to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetMesheryFilters gives the filters stored with the provider
@@ -1273,7 +1273,7 @@ func (l *RemoteProvider) GetMesheryFilters(req *http.Request, page, pageSize, se
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching filters: %s", bdr)
-	return nil, ErrFetch(err, "Filters page", resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("error while fetching filters: %s", bdr), "Filters page", resp.StatusCode)
 }
 
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
@@ -1312,7 +1312,7 @@ func (l *RemoteProvider) GetMesheryFilterFile(req *http.Request, filterID string
 		logrus.Infof("filter successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve filter from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetMesheryFilter gets filter for the given filterID
@@ -1350,7 +1350,7 @@ func (l *RemoteProvider) GetMesheryFilter(req *http.Request, filterID string) ([
 		logrus.Infof("filter successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve filter from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeleteMesheryFilter deletes a meshery filter with the given id
@@ -1390,7 +1390,7 @@ func (l *RemoteProvider) DeleteMesheryFilter(req *http.Request, filterID string)
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching filter: %s", bdr)
-	return nil, ErrDelete(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrDelete(fmt.Errorf("error while fetching filter: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
@@ -1445,7 +1445,7 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("could not send filter to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SaveMesheryApplication saves given application with the provider
@@ -1495,7 +1495,7 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("failed to send application to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetMesheryApplications gives the applications stored with the provider
@@ -1551,7 +1551,7 @@ func (l *RemoteProvider) GetMesheryApplications(req *http.Request, page, pageSiz
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching applications: %s", bdr)
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("error while fetching applications: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetMesheryApplication gets application for the given applicationID
@@ -1589,7 +1589,7 @@ func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID 
 		logrus.Infof("application successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("Failed to retrieve application from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeleteMesheryApplication deletes a meshery application with the given id
@@ -1627,7 +1627,7 @@ func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, application
 		logrus.Infof("application successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrDelete(err, "Application :"+applicationID, resp.StatusCode)
+	return nil, ErrDelete(fmt.Errorf("Could not retrieve application from remote provider"), "Application :"+applicationID, resp.StatusCode)
 }
 
 func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
@@ -1682,7 +1682,7 @@ func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, p
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("Could not sent application to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SavePerformanceProfile saves a performance profile into the remote provider
@@ -1728,7 +1728,7 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("failed to send performance profile to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
@@ -1776,7 +1776,7 @@ func (l *RemoteProvider) GetPerformanceProfiles(tokenString string, page, pageSi
 		logrus.Infof("performance profiles successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrPost(fmt.Errorf("failed to retrieve performance profile from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetPerformanceProfile gets performance profile for the given the performanceProfileID
@@ -1815,7 +1815,7 @@ func (l *RemoteProvider) GetPerformanceProfile(req *http.Request, performancePro
 		logrus.Infof("performance profile successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to retrieve performance profile from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeletePerformanceProfile deletes a performance profile with the given performanceProfileID
@@ -1853,7 +1853,7 @@ func (l *RemoteProvider) DeletePerformanceProfile(req *http.Request, performance
 		logrus.Infof("performance profile successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrDelete(err, "Perf Profile :"+performanceProfileID, resp.StatusCode)
+	return nil, ErrDelete(fmt.Errorf("failed to retrieve performance profile from remote provider"), "Perf Profile :"+performanceProfileID, resp.StatusCode)
 }
 
 // SaveSchedule saves a SaveSchedule into the remote provider
@@ -1899,7 +1899,7 @@ func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, 
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("failed to send schedule to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetSchedules gives the schedules stored with the provider
@@ -1950,7 +1950,7 @@ func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order s
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching schedules: %s", bdr)
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("error while fetching schedules: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetSchedule gets schedule for the given the scheduleID
@@ -1988,7 +1988,7 @@ func (l *RemoteProvider) GetSchedule(req *http.Request, scheduleID string) ([]by
 		logrus.Infof("schedule successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve schedule from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeleteSchedule deletes a schedule with the given scheduleID
@@ -2027,7 +2027,7 @@ func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([
 		logrus.Infof("schedule successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrDelete(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrDelete(fmt.Errorf("could not retrieve schedule from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // RecordPreferences - records the user preference
@@ -2154,7 +2154,7 @@ func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.P
 	if resp.StatusCode == http.StatusCreated || err != nil {
 		return string(bdr), err
 	}
-	return "", ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
+	return "", ErrPost(fmt.Errorf("could not send test profile details to remote provider: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SMPTestConfigGet - retrieve a single test profile details
@@ -2197,7 +2197,7 @@ func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*
 		}
 		return &testConfig, nil
 	}
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve test profile details: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SMPTestConfigFetch - retrieve list of test profiles
@@ -2233,7 +2233,7 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 		return bdr, err
 	}
 
-	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve list of test profiles: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SMPTestConfigDelete - tombstone a given test profile
@@ -2266,7 +2266,7 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 		return nil
 	}
 
-	return ErrDelete(err, "Perf Test Config :"+testUUID, resp.StatusCode)
+	return ErrDelete(fmt.Errorf("could not delete the test profile: %d", resp.StatusCode), "Perf Test Config :"+testUUID, resp.StatusCode)
 }
 
 // RecordMeshSyncData records the mesh sync data
