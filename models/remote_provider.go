@@ -6,7 +6,6 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -890,7 +889,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	}
 
 	logrus.Errorf("error while fetching pattern resource: %s", bdr)
-	return nil, ErrFetch(errors.New(fmt.Sprintf("error while fetching pattern resource: %s", bdr)), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("error while fetching pattern resource: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) error {
