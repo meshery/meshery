@@ -1589,7 +1589,7 @@ func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID 
 		logrus.Infof("application successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("Failed to retrieve application from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to retrieve application from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeleteMesheryApplication deletes a meshery application with the given id
@@ -1627,7 +1627,7 @@ func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, application
 		logrus.Infof("application successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrDelete(fmt.Errorf("Could not retrieve application from remote provider"), "Application :"+applicationID, resp.StatusCode)
+	return nil, ErrDelete(fmt.Errorf("could not retrieve application from remote provider"), "Application :"+applicationID, resp.StatusCode)
 }
 
 func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
@@ -1682,7 +1682,7 @@ func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, p
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(fmt.Errorf("Could not sent application to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("could not sent application to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SavePerformanceProfile saves a performance profile into the remote provider
