@@ -7,6 +7,7 @@ MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
 GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
 RELEASE_CHANNEL="edge"
+MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
 # Please do not remove the code below(the code already removed several times), those constant will help on local CI check, like $ make chart-readme or $ make golangci-run
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
@@ -79,7 +80,7 @@ run-fast:
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
-	SKIP_COMP_GEN=TRUE \
+	SKIP_COMP_GEN=$(MESHERY_K8S_SKIP_COMP_GEN) \
 	go run main.go;
 
 run-16-fast:
