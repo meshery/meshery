@@ -112,7 +112,7 @@ var (
 	KubeConfigYaml = "kubeconfig.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
-	// ViperMeshconfig is an instance of viper for the meshconfig file when the platform is docker
+	// ViperMeshconfig is an instance of viper for the meshconfig file
 	ViperMeshconfig = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
 	SilentFlag bool
