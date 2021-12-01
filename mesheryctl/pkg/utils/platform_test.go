@@ -84,7 +84,7 @@ func TestChangePlatform(t *testing.T) {
 
 			currCtx.SetPlatform(tt.args.platform)
 
-			if err := ChangePlatform(tt.args.contextName, *currCtx); err != nil && !tt.wantErr {
+			if err := UpdateConfigContext(tt.args.contextName, currCtx); err != nil && !tt.wantErr {
 				t.Errorf("ChangePlatform() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
@@ -163,8 +163,8 @@ func TestChangeConfigEndpoint(t *testing.T) {
 
 			currCtx.SetEndpoint(tt.endpointAddress)
 
-			if err := ChangeConfigEndpoint(tt.ctxName, currCtx); (err != nil) != tt.wantErr {
-				t.Errorf("ChangeConfigEndpoint() error = %v, wantErr %v", err, tt.wantErr)
+			if err := UpdateConfigContext(tt.ctxName, currCtx); (err != nil) != tt.wantErr {
+				t.Errorf("UpdateConfigContext() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			// Actual file contents

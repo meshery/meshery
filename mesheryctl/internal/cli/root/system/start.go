@@ -253,7 +253,7 @@ func start() error {
 			endpoint.Address = utils.EndpointProtocol + "://localhost"
 			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
 
-			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			err = utils.UpdateConfigContext(mctlCfg.CurrentContext, currCtx)
 			if err != nil {
 				return err
 			}
@@ -436,7 +436,7 @@ func start() error {
 		}
 
 		if err == nil {
-			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			err = utils.UpdateConfigContext(mctlCfg.CurrentContext, currCtx)
 			if err != nil {
 				return err
 			}
