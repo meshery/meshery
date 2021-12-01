@@ -327,15 +327,6 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1041": {
-        "name": "ErrFailUnmarshalFileCode",
-        "code": "1041",
-        "severity": "Alert",
-        "long_description": "failed to unmarshal configuration file",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
       "1042": {
         "name": "ErrInvalidTestConfigFileCode",
         "code": "1042",

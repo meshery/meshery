@@ -1,2 +1,5 @@
 import { rjsfTheme } from "./rjsf"
-export { rjsfTheme }
+import defaultTheme, { styles, notificationColors } from "./app"
+
+export default defaultTheme
+export { rjsfTheme,styles, notificationColors }

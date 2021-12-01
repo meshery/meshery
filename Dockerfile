@@ -32,15 +32,15 @@ RUN curl -L -s https://github.com/layer5io/wasm-filters/releases/download/v0.1.0
     && mkdir -p /seed_content/filters/binaries \
     && tar xzf wasm-filters.tar.gz --directory=/seed_content/filters/binaries
 
-# bundling patterns 
+# bundling patterns
 RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
     && mkdir service-mesh-patterns \
-    && mkdir -p /content/patterns \
+    && mkdir -p /seed_content/patterns \
     && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
-    && mv service-mesh-patterns/*/samples/* /content/patterns/
+    && mv service-mesh-patterns/*/samples/* /seed_content/patterns/
 
-# bundling applications (Any change here should also be reflected in apps.json in install directory)
-RUN mkdir -p /content/applications && cd /content/applications \
+# bundling applications
+RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/httpbin/httpbin.yaml \
     && curl -L https://raw.githubusercontent.com/layer5io/image-hub/master/deployment.yaml -o imagehub.yaml \
@@ -48,7 +48,7 @@ RUN mkdir -p /content/applications && cd /content/applications \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/vote-bot.yml \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/voting.yml \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/web.yml) \
-    && awk 'FNR==1 && NR>1 { printf("\n%s\n\n","---") } 1' /emojivoto/*.yml > /content/applications/emojivoto.yml
+    && awk 'FNR==1 && NR>1 { printf("\n%s\n\n","---") } 1' /emojivoto/*.yml > /seed_content/applications/emojivoto.yml
 
 #FROM ubuntu as nighthawk
 #RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
@@ -79,7 +79,7 @@ COPY --from=ui /out /app/ui/out
 COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
-COPY --from=seed_content /content /home/appuser/.meshery/content
+COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_service /app/cmd/
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_output_transform /app/cmd/
 COPY --from=jsonschema-util /kubeopenapi-jsonschema /home/appuser/.meshery/bin/kubeopenapi-jsonschema

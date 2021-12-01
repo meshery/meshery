@@ -109,6 +109,23 @@ export function getPatternServiceName(item, includeDisplayName = true) {
 }
 
 /**
+ * getHumanReadablePatternServiceName takes in the pattern service metadata and returns
+ * the readable name of the service
+ *
+ * @param {*} item pattern service component
+ * @returns {string} service name
+ */
+export function getHumanReadablePatternServiceName(item) {
+  const name = item?.oam_definition?.spec?.metadata?.k8sKind
+    || item?.metadata?.["display.ui.meshery.io/name"]
+    || item?.oam_definition?.metadata?.name
+    || getPatternAttributeName(item)
+    || "NA";
+
+  return camelCaseToCapitalize(name);
+}
+
+/**
  * getPatternServiceID takes in the pattern service metadata and returns
  * the ID of the service
  * @param {*} item pattern service component
@@ -201,4 +218,18 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
   });
 
   return pattern;
+}
+
+/**
+ * Capitalises camelcase-string
+ *
+ * @param {String} text
+ * @returns
+ */
+export function camelCaseToCapitalize(text){
+  if (!text) return null
+
+  const result = text.replace(/([A-Z])/g, " $1");
+
+  return result.charAt(0).toUpperCase() + result.slice(1);
 }
