@@ -19,7 +19,7 @@ export default function Dashboard() {
       <Stack spacing={2}>
         <KuberenetesClusterContainer>
           {({ clusters }) => {
-            if (clusters.length > 0)
+            if (clusters.length > 0 && clusters.filter((clstr) => !!clstr).length > 0)
               return (
                 <PaperWithTitle title="Kubernetes">
                   {clusters.map((cluster) => (

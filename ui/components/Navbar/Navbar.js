@@ -21,8 +21,6 @@ import { useStyles } from "./Navbar.styles";
 import { getPath } from "@/utils/path";
 import Link from "next/link";
 import { externlinks } from "./constants";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronCircleLeft } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCollapse }) => {
   const classes = useStyles();
@@ -150,7 +148,6 @@ const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCo
                         getPath() === hrefc && classes.itemActiveItem,
                         isDrawerCollapsed && classes.noPadding
                       )}
-                      //   onClick={() => this.handleAdapterClick(idc, linkc)}
                     >
                       {linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                     </ListItem>
@@ -349,13 +346,7 @@ const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCo
             right: "0",
           }}
         >
-          <FontAwesomeIcon
-            icon={faChevronCircleLeft}
-            fixedWidth
-            color="#eeeeee"
-            size="lg"
-            alt="Sidebar collapse toggle icon"
-          />
+          <HelpIcon className={classes.helpIcon} style={{ fontSize: "1.45rem" }} />
         </ListItem>
       </div>
     );
