@@ -146,10 +146,11 @@ func createNativeArgoResource(opt RolloutEngineGenericOptions) v1alpha1.Rollout 
 		}
 
 		containers = append(containers, v1.Container{
-			Name:  container.Name,
-			Image: container.Image,
-			Ports: ports,
-			Env:   container.Envs,
+			Name:    container.Name,
+			Image:   container.Image,
+			Ports:   ports,
+			Env:     container.Envs,
+			Command: container.Commands,
 		})
 	}
 
