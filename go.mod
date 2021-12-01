@@ -25,7 +25,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-openapi/runtime v0.19.15
 	github.com/go-openapi/strfmt v0.19.5
-	github.com/gofrs/uuid v3.4.0+incompatible
+	github.com/gofrs/uuid v4.2.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-github v17.0.0+incompatible // indirect
