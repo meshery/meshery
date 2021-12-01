@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Button, Grid, Link, Stack, Typography } from "@mui/material";
 import { AdaptersChipList, AdaptersListContainer, MesheryServerVersionContainer } from "@/features/mesheryComponents";
 import { PaperWithTitle } from "@/components/Paper";
@@ -9,6 +9,7 @@ import { GrafanaChip, MetricsContainer, PrometheusChip } from "@/features/mesher
 import SettingsIcon from "@mui/icons-material/Settings";
 import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { MetricsButton } from "@/components/Button"
 
 export default function Dashboard() {
   const theme = useTheme();
@@ -20,7 +21,7 @@ export default function Dashboard() {
           {({ clusters }) => {
             if (clusters.length > 0 && clusters.filter((clstr) => !!clstr).length > 0)
               return (
-                <PaperWithTitle title="Kuberetnes">
+                <PaperWithTitle title="Kubernetes">
                   {clusters.map((cluster) => (
                     <Grid item xs={6} key={`cluster+${nanoid()}`} sx={{ mb: theme.spacing(1) }}>
                       <KuberenetesClusterChip cluster={cluster} />
@@ -41,15 +42,14 @@ export default function Dashboard() {
                   {grafanas !== null && grafanas?.length > 0 && grafanas[0] ? (
                     <GrafanaChip grafana={grafanas[0]} />
                   ) : (
-                    <Button
+                    <MetricsButton
                       variant="contained"
                       startIcon={<SettingsIcon />}
-                      color="primary"
-                      size="large"
                       onClick={onGrafanaClick}
+                      size="large"
                     >
                       Configure Grafana
-                    </Button>
+                    </MetricsButton>
                   )}
                 </Grid>
 
@@ -57,15 +57,14 @@ export default function Dashboard() {
                   {prometheus !== null && prometheus?.length > 0 && prometheus[0] ? (
                     <PrometheusChip prometheus={prometheus[0]} />
                   ) : (
-                    <Button
+                    <MetricsButton
                       variant="contained"
                       startIcon={<SettingsIcon />}
-                      color="primary"
                       size="large"
                       onClick={onPrometheusClick}
                     >
                       Configure Prometheus
-                    </Button>
+                    </MetricsButton>
                   )}
                 </Grid>
               </PaperWithTitle>
