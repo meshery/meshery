@@ -49,6 +49,6 @@ Every Golang-based project that belongs to Layer5 incorporates a utility to defi
 make error
 ```
 
-For more details, <a href="{{ site.baseurl }}/project/contributing-error">Error Utility</a>
+For more details, <a href="{{ site.baseurl }}/project/contributing/contributing-error">Error Utility</a>
 
 {% include suggested-reading.html %}

@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -47,13 +47,22 @@ var applyCmd = &cobra.Command{
 mesheryctl perf apply meshery-profile --flags
 
 // Execute a Performance test with creating a new performance profile
-mesheryctl perf apply --profile meshery-profile-new --url <url>
+mesheryctl perf apply --profile meshery-profile-new --url "https://google.com"
 
 // Run Performance test using SMP compatible test configuration
-mesheryctl perf apply -f <filepath>
+mesheryctl perf apply -f perf-config.yaml
 
 // Run performance test using SMP compatible test configuration and override values with flags
 mesheryctl perf apply -f <filepath> --flags
+
+// Choice of load generator - fortio or wrk2 (default: fortio)
+mesheryctl perf apply meshery-test --load-generator wrk2
+
+// Execute a Performance test with specified queries per second
+mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
+
+// Execute a Performance test with specified service mesh
+mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
@@ -79,7 +88,7 @@ mesheryctl perf apply -f <filepath> --flags
 		// Importing SMP Configuration from the file
 		if filePath != "" {
 			// Read the test configuration file
-			smpConfig, err := ioutil.ReadFile(filePath)
+			smpConfig, err := os.ReadFile(filePath)
 			if err != nil {
 				return ErrReadFilepath(err)
 			}
@@ -220,7 +229,7 @@ mesheryctl perf apply -f <filepath> --flags
 				return ErrFailReqStatus(resp.StatusCode)
 			}
 			defer resp.Body.Close()
-			body, err := ioutil.ReadAll(resp.Body)
+			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return errors.Wrap(err, utils.PerfError("failed to read response body"))
 			}
@@ -257,7 +266,7 @@ mesheryctl perf apply -f <filepath> --flags
 				return ErrFailReqStatus(resp.StatusCode)
 			}
 			defer resp.Body.Close()
-			body, err := ioutil.ReadAll(resp.Body)
+			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return errors.Wrap(err, utils.PerfError("failed to read response body"))
 			}
@@ -342,7 +351,7 @@ mesheryctl perf apply -f <filepath> --flags
 		}
 
 		defer utils.SafeClose(resp.Body)
-		data, err := ioutil.ReadAll(resp.Body)
+		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Wrap(err, utils.PerfError("failed to read response body"))
 		}

@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -266,7 +266,7 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Warnf("unable to read response body: %v", err)
 		return "", nil
@@ -314,7 +314,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Warnf("unable to read response body: %v", err)
 		return nil
@@ -1085,7 +1085,7 @@ func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 
 	defer SafeClose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -1121,7 +1121,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 
 	defer SafeClose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -1157,7 +1157,7 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 
 	defer SafeClose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -1207,7 +1207,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 				if err != nil {
 					return err
 				}
-				content, err := ioutil.ReadAll(file)
+				content, err := io.ReadAll(file)
 				if err != nil {
 					return err
 				}

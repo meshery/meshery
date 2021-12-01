@@ -36,10 +36,10 @@ _documentation coming soon..._
 	{(SettingsForm, TraitsForm) => {
 		return (
 			<div>
-				<TabPanel value={tab} index={0} style={{ marginTop: "1.1rem" }}>
+				<TabPanel value={tab} index={0} style={ { marginTop: "1.1rem" } }>
 					<SettingsForm />
 				</TabPanel>
-				<TabPanel value={tab} index={1} style={{ marginTop: "1.1rem" }}>
+				<TabPanel value={tab} index={1} style={ { marginTop: "1.1rem" } }>
 					<TraitsForm />
 				</TabPanel>
 			</div>
