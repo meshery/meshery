@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Performance Management
+title: Gestión del rendimiento
 permalink: es/functionality/performance-management
 type: functionality 
 language: es

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -239,6 +239,60 @@ func GetScope(name string) (s []ScopeCapability) {
 	return
 }
 
+// GetWorkloadsByK8sAPIVersionKind takes in kubernetes API version of a resource and its kind
+// and returns all of the resources that matches that description
+//
+// Meshery core resources DO NOT have these attached to themselves, hence in order to get them just pass
+// in empty string for both the parameters
+func GetWorkloadsByK8sAPIVersionKind(apiVersion, kind string) (w []WorkloadCapability) {
+	wcs := GetWorkloads()
+
+	for _, wc := range wcs {
+		aversion := wc.OAMDefinition.Spec.Metadata["k8sAPIVersion"]
+		if (aversion == apiVersion || aversion == "/"+apiVersion) && wc.OAMDefinition.Spec.Metadata["k8sKind"] == kind {
+			w = append(w, wc)
+		}
+	}
+
+	return
+}
+
+// GetTraitsByK8sAPIVersionKind takes in kubernetes API version of a resource and its kind
+// and returns all of the resources that matches that description
+//
+// Meshery core resources DO NOT have these attached to themselves, hence in order to get them just pass
+// in empty string for both the parameters
+func GetTraitsByK8sAPIVersionKind(apiVersion, kind string) (t []TraitCapability) {
+	tcs := GetTraits()
+
+	for _, tc := range tcs {
+		aversion := tc.OAMDefinition.Spec.Metadata["k8sAPIVersion"]
+		if (aversion == apiVersion || aversion == "/"+apiVersion) && tc.OAMDefinition.Spec.Metadata["k8sKind"] == kind {
+			t = append(t, tc)
+		}
+	}
+
+	return
+}
+
+// GetScopesByK8sAPIVersionKind takes in kubernetes API version of a resource and its kind
+// and returns all of the resources that matches that description
+//
+// Meshery core resources DO NOT have these attached to themselves, hence in order to get them just pass
+// in empty string for both the parameters
+func GetScopesByK8sAPIVersionKind(apiVersion, kind string) (s []ScopeCapability) {
+	scs := GetScopes()
+
+	for _, sc := range scs {
+		aversion := sc.OAMDefinition.Spec.Metadata["k8sAPIVersion"]
+		if (aversion == apiVersion || aversion == "/"+apiVersion) && sc.OAMDefinition.Spec.Metadata["k8sKind"] == kind {
+			s = append(s, sc)
+		}
+	}
+
+	return
+}
+
 // GetWorkloadByID takes an id of a workload and returns the workload
 func GetWorkloadByID(name, id string) *WorkloadCapability {
 	res := GetWorkload(name)
@@ -309,7 +363,7 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 
 		// Read the file definition file
 		defpath := fmt.Sprintf("%s_definition.json", path)
-		defFile, err := ioutil.ReadFile(defpath)
+		defFile, err := os.ReadFile(defpath)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue
@@ -324,7 +378,7 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 
 		// Read the schema file
 		schemapath := fmt.Sprintf("%s.meshery.layer5.io.schema.json", path)
-		schemaFile, err := ioutil.ReadFile(schemapath)
+		schemaFile, err := os.ReadFile(schemapath)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue

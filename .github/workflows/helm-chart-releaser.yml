@@ -29,8 +29,10 @@ jobs:
       with:
         version: 'v3.6.0' # default is latest stable
       id: install
-    - name: validate
+    - name: validate meshery
       run: helm lint install/kubernetes/helm/meshery --with-subcharts
+    - name: validate meshery-operator
+      run: helm lint install/kubernetes/helm/meshery-operator --with-subcharts
   release-chart:
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'

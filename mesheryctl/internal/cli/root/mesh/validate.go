@@ -1,7 +1,7 @@
 package mesh
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -39,25 +39,46 @@ var validateCmd = &cobra.Command{
 	Long:  `Validate service mesh conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		log.Infof("Verifying prerequisites...")
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err)
 		}
-		// sync with available adapters
+		// set default tokenpath for command.
+		if tokenPath == "" {
+			activeToken, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			tokenPath = activeToken.GetLocation()
+		}
+
+		prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		//resolve adapterUrl to adapter Location
+		for _, adapter := range prefs.MeshAdapters {
+			adapterName := strings.Split(adapter.Location, ":")
+			if adapterName[0] == adapterURL {
+				adapterURL = adapter.Location
+				meshName = adapter.Location
+			}
+		}
+		//sync with available adapters
 		if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
 			log.Fatalln(err)
 		}
+		log.Info("verified prerequisites")
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		log.Infof("Starting service mesh validation...")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err)
 		}
-
 		_, err = sendValidateRequest(mctlCfg, meshName, false)
 		if err != nil {
 			log.Fatalln(err)
@@ -78,10 +99,9 @@ var validateCmd = &cobra.Command{
 func init() {
 	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "specification to be used for conformance test")
 	_ = validateCmd.MarkFlagRequired("spec")
-	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm:10010", "Adapter to use for validation")
+	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
-	_ = validateCmd.MarkFlagRequired("tokenPath")
 	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 
@@ -141,7 +161,6 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
 	method := "POST"
-
 	data := url.Values{}
 	data.Set("adapter", adapterURL)
 	data.Set("query", query)
@@ -194,7 +213,7 @@ func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete 
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return "", err
 	}

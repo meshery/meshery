@@ -36,8 +36,24 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	if actions.ClearDb == "true" {
 		// Clear existing data
 		err := provider.GetGenericPersister().Migrator().DropTable(
-			meshsyncmodel.KeyValue{},
-			meshsyncmodel.Object{},
+			&meshsyncmodel.KeyValue{},
+			&meshsyncmodel.Object{},
+			&meshsyncmodel.ResourceSpec{},
+			&meshsyncmodel.ResourceStatus{},
+			&meshsyncmodel.ResourceObjectMeta{},
+		)
+		if err != nil {
+			if provider.GetGenericPersister() == nil {
+				return "", ErrEmptyHandler
+			}
+			r.Log.Warn(ErrDeleteData(err))
+		}
+		err = provider.GetGenericPersister().Migrator().CreateTable(
+			&meshsyncmodel.KeyValue{},
+			&meshsyncmodel.Object{},
+			&meshsyncmodel.ResourceSpec{},
+			&meshsyncmodel.ResourceStatus{},
+			&meshsyncmodel.ResourceObjectMeta{},
 		)
 		if err != nil {
 			if provider.GetGenericPersister() == nil {
@@ -79,7 +95,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
-
+		r.Config.BrokerEndpointURL = &endpoint
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
 			Source: broadcast.OperatorSyncChannel,
 			Data:   false,
@@ -96,23 +112,13 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 }
 
 func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider) (model.Status, error) {
-	err := model.RunMeshSync(r.Config.KubeClient, false)
+	//err := model.RunMeshSync(r.Config.KubeClient, false)
 	r.Log.Info("Installing Meshsync")
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
 		Source: broadcast.OperatorSyncChannel,
 		Data:   true,
 		Type:   "health",
 	})
-
-	if err != nil {
-		r.Log.Error(err)
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data:   err,
-			Type:   "error",
-		})
-		return model.StatusDisabled, err
-	}
 
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
 		Source: broadcast.OperatorSyncChannel,

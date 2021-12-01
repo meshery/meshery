@@ -1,6 +1,7 @@
 /**
  * @typedef {Object} NavigatorSchema
  * @property {string} title
+ * @property {number} onClickCallback
  * @property {string} href
  * @property {string} component
  * @property {string} icon
@@ -40,6 +41,7 @@ function NavigatorExtensionSchemaDecoder(content) {
         title : item.title || "",
         href : prepareHref(item.href),
         component : item.component || "",
+        onClickCallback : item?.on_click_callback || 0,
         icon : (item.icon && "/api/provider/extension/" + item.icon) || "",
         show : !!item.show,
         children : NavigatorExtensionSchemaDecoder(item.children),

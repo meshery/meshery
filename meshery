@@ -99,9 +99,9 @@ if ! command_exists unzip ; then
 fi
 
 if [ "x${MESHERY_VERSION}" = "x" ] ; then
-  MESHERY_VERSION=$(curl -L -s https://api.github.com/repos/meshery/meshery/releases | \
-                  grep tag_name | sed "s/ *\"tag_name\": *\"\\(.*\\)\",*/\\1/" | \
-                  grep -v "rc\.[0-9]$"| head -n 1 )
+  MESHERY_VERSION=$(curl -L -s https://github.com/meshery/meshery/releases/latest | \
+                  grep "/releases/tag/" | head -1 | awk -F '"' '{print $4}' | \
+                  awk -F '/' '{print $NF}' )
 fi
 
 if [ "x${MESHERY_VERSION}" = "x" ] ; then

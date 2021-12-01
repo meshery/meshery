@@ -189,6 +189,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
         },
       },
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
+          },
+        },
+      },
       MUIDataTableToolbar : {
         iconActive : {
           color : "#222"
@@ -517,6 +524,11 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     page,
     print : false,
     download : false,
+    textLabels : {
+      selectedRows : {
+        text : "filter(s) selected"
+      }
+    },
     customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onRowsDelete : async function handleDelete(row) {

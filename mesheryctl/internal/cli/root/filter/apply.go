@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -79,7 +79,7 @@ var applyCmd = &cobra.Command{
 				return ErrInvalidAPICall(resp.StatusCode)
 			}
 			defer resp.Body.Close()
-			body, err := ioutil.ReadAll(resp.Body)
+			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return ErrReadAPIResponse(err)
 			}
@@ -101,7 +101,7 @@ var applyCmd = &cobra.Command{
 		} else {
 			// Method to check if the entered file is a URL or not
 			if validURL := govalidator.IsURL(file); !validURL {
-				content, err := ioutil.ReadFile(file)
+				content, err := os.ReadFile(file)
 				if err != nil {
 					return err
 				}
@@ -138,7 +138,7 @@ var applyCmd = &cobra.Command{
 					}
 					defer resp.Body.Close()
 
-					body, err := ioutil.ReadAll(resp.Body)
+					body, err := io.ReadAll(resp.Body)
 					if err != nil {
 						return ErrReadAPIResponse(err)
 					}
@@ -208,7 +208,7 @@ var applyCmd = &cobra.Command{
 				}
 				defer resp.Body.Close()
 
-				body, err := ioutil.ReadAll(resp.Body)
+				body, err := io.ReadAll(resp.Body)
 				if err != nil {
 					return ErrReadAPIResponse(err)
 				}
@@ -238,7 +238,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		defer res.Body.Close()
-		body, err := ioutil.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}

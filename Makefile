@@ -7,6 +7,9 @@ MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
 GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
 RELEASE_CHANNEL="edge"
+# Please do not remove the code below(the code already removed several times), those constant will help on local CI check, like $ make chart-readme or $ make golangci-run
+GOPATH = $(shell go env GOPATH)
+GOBIN  = $(GOPATH)/bin
 
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
@@ -76,7 +79,17 @@ run-fast:
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
+	SKIP_COMP_GEN=TRUE \
 	go run main.go;
+
+run-16-fast:
+	cd cmd; go1.16.4 mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	go1.16.4 run main.go;
 
 run-fast-cloud: error
 	cd cmd; go mod tidy; \
@@ -161,7 +174,8 @@ docker-docs:
 
 .PHONY: chart-readme
 chart-readme:
-	go run github.com/norwoodj/helm-docs/cmd/helm-docs -c install/kubernetes/helm/
+	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs 
+	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
 
 swagger-spec:
 	swagger generate spec -o ./helpers/swagger.yaml --scan-models

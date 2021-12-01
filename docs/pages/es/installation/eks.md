@@ -14,7 +14,7 @@ Meshery deberá tener asignada una ServiceAccount (Cuenta de servicio). Se puede
 1. Asegúrese de que la `ServiceAccount` que utiliza tenga asignada la función `cluster-admin`.
 1. Configure Meshery para que se ejecute en EKS:
    - [Configuración automática](#configuración-automática-recomendada)
-   - [Configuración manual](#configuración-manual-opcional)
+   - [Configuración manual](#configuración-manualopcional)
 
 _Nota: asegúrese de poder acceder a EKS con `kubectl` siguiendo la [Guía de EKS.](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html){:target="\_blank"}_
 

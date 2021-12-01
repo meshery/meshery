@@ -116,7 +116,7 @@ export function getMetadata(rawdata,res) {
       display : {
         key : 'Errors',
         value : (() => {
-          const status = res.RetCodes?.[200] || res.RetCodes?.["SERVING"] || 0;
+          const status = res.RetCodes?.[200] || res.RetCodes?.SERVING || 0;
           const total = res.DurationHistogram.Count;
 
           if (status !== total) {
@@ -247,7 +247,7 @@ export function makeTitle (rawdata,res) {
   }
   var statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes[200]:0;
   if (!statusOk) { // grpc results
-    statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes["SERVING"]:0;
+    statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes.SERVING:0;
   }
   var total = res.DurationHistogram.Count;
   var errStr = 'No Error';

@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/layer5io/meshery/handlers"
@@ -134,7 +134,7 @@ var versionCmd = &cobra.Command{
 
 		// needs multiple defer as Body.Close needs a valid response
 		defer resp.Body.Close()
-		data, err := ioutil.ReadAll(resp.Body)
+		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows)
 			logrus.Errorf("\n  Invalid response: %v", err)
@@ -157,18 +157,15 @@ func checkMesheryctlClientVersion(build string) {
 	logrus.Infof("\nChecking for latest version of mesheryctl...")
 
 	// Inform user of the latest release version
-	res, err := handlers.CheckLatestVersion(build)
-	if res == nil || err != nil {
-		logrus.Warn("\n  Unable to check for latest version of mesheryctl.")
+	res, err := utils.GetLatestStableReleaseTag()
+	if err != nil {
+		logrus.Warn("\n  Unable to check for latest version of mesheryctl. ", err)
 		return
 	}
 	// If user is running an outdated release, let them know.
-	if res.Outdated {
-		logrus.Info("\n  ", build, " is not the latest release. Update to ", res.Current, ".")
-	}
-
-	// If user is running the latest release, let them know.
-	if res.Latest {
-		logrus.Info("\n  ", build, " is the latest release.")
+	if res != build {
+		logrus.Info("\n  ", build, " is not the latest release. Update to ", res, ".")
+	} else { // If user is running the latest release, let them know.
+		logrus.Info("\n  ", res, " is the latest release.")
 	}
 }
