@@ -10,7 +10,7 @@ RELEASE_CHANNEL="edge"
 # Please do not remove the code below(the code already removed several times), those constant will help on local CI check, like $ make chart-readme or $ make golangci-run
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
-
+APPLICATIONCONFIGPATH="../install/apps.json"
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
 mesheryctl:
@@ -69,6 +69,7 @@ run-local: error
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	./meshery; \
 	cd ..
 
@@ -79,7 +80,29 @@ run-fast:
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
-	SKIP_COMP_GEN=TRUE \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go run main.go;
+
+run-fast-skip-compgen:
+	cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	SKIP_COMP_GEN=true \
+	go run main.go;
+		
+run-fast-no-content:
+	cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	SKIP_DOWNLOAD_CONTENT=true \
 	go run main.go;
 
 run-16-fast:
