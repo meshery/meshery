@@ -35,6 +35,8 @@ var (
 	testDuration       string
 	loadGenerator      string
 	filePath           string
+	profileID          string
+	req                *http.Request
 )
 
 var applyCmd = &cobra.Command{
@@ -65,9 +67,8 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
 mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var req *http.Request
 		client := &http.Client{}
-		var profileID string
+
 		// setting up for error formatting
 		cmdUsed = "apply"
 
@@ -111,10 +112,6 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 				testName = testConfig.Config.Name
 			}
 
-			if profileName == "" {
-				profileName = testConfig.Config.Name
-			}
-
 			if testURL == "" {
 				testURL = testClient.EndpointUrls[0]
 			}
@@ -148,102 +145,16 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		}
 
 		// If a profile is not provided, then create a new profile
-		if len(args) == 0 { // First need to create a profile id
-			log.Debug("Creating new performance profile")
-
-			if profileName == "" {
-				return ErrNoProfileName()
-			}
-
-			// ask for test url first
-			if testURL == "" {
-				return ErrNoTestURL()
-			}
-
-			// Method to check if the entered Test URL is valid or not
-			if validURL := govalidator.IsURL(testURL); !validURL {
-				return ErrNotValidURL()
-			}
-
-			if testMesh == "" {
-				testMesh = "None"
-			}
-
-			if qps == "" {
-				qps = "0"
-			}
-
-			if concurrentRequests == "" {
-				concurrentRequests = "1"
-			}
-
-			if testDuration == "" {
-				testDuration = "30s"
-			}
-
-			if loadGenerator == "" {
-				loadGenerator = "fortio"
-			}
-
-			convReq, err := strconv.Atoi(concurrentRequests)
+		if len(args) == 0 && profileName == "" { // First need to create a profile id
+			profileID, profileName, err = createPerformanceProfile(client, mctlCfg)
 			if err != nil {
-				return errors.New("failed to convert concurrent-request")
+				return err
 			}
-			convQPS, err := strconv.Atoi(qps)
-			if err != nil {
-				return errors.New("failed to convert qps")
-			}
-			values := map[string]interface{}{
-				"concurrent_request": convReq,
-				"duration":           testDuration,
-				"endpoints":          []string{testURL},
-				"load_generators":    []string{loadGenerator},
-				"name":               profileName,
-				"qps":                convQPS,
-				"service_mesh":       testMesh,
-				"request_body":       "",
-				"request_cookies":    "",
-				"request_headers":    "",
-				"content_type":       "",
-			}
-
-			jsonValue, err := json.Marshal(values)
-			if err != nil {
-				return ErrFailMarshal(err)
-			}
-			req, _ = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
-
-			err = utils.AddAuthDetails(req, tokenPath)
-			if err != nil {
-				return ErrAttachAuthToken(err)
-			}
-
-			resp, err := client.Do(req)
-			if err != nil {
-				return ErrFailRequest(err)
-			}
-
-			var response *models.PerformanceProfile
-			// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-			if resp.StatusCode != 200 {
-				return ErrFailReqStatus(resp.StatusCode)
-			}
-			defer resp.Body.Close()
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return errors.Wrap(err, utils.PerfError("failed to read response body"))
-			}
-			err = json.Unmarshal(body, &response)
-			if err != nil {
-				return ErrFailUnmarshal(err)
-			}
-			profileID = response.ID.String()
-			profileName = response.Name
-
-			log.Debug("New profile created")
 		} else { // set profile-name from args
 			// Merge args to get profile-name
-			profileName = strings.Join(args, "%20")
+			if profileName == "" {
+				profileName = strings.Join(args, "%20")
+			}
 
 			// search and fetch performance profile with profile-name
 			log.Debug("Fetching performance profile")
@@ -277,27 +188,33 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 			index := 0
 			if len(response.Profiles) == 0 {
-				return ErrNoProfileFound()
-			} else if len(response.Profiles) == 1 {
-				profileID = response.Profiles[0].ID.String()
+				// if the provided performance profile does not exist, create a new one
+				profileID, profileName, err = createPerformanceProfile(client, mctlCfg)
+				if err != nil {
+					return err
+				}
 			} else {
-				// Multiple profiles with same name
-				index = multipleProfileConfirmation(response.Profiles)
-				profileID = response.Profiles[index].ID.String()
-			}
-			// what if user passed profile-name but didn't passed the url
-			// we use url from performance profile
-			if testURL == "" {
-				testURL = response.Profiles[index].Endpoints[0]
-			}
+				if len(response.Profiles) == 1 {
+					profileID = response.Profiles[0].ID.String()
+				} else {
+					// Multiple profiles with same name
+					index = multipleProfileConfirmation(response.Profiles)
+					profileID = response.Profiles[index].ID.String()
+				}
+				// what if user passed profile-name but didn't passed the url
+				// we use url from performance profile
+				if testURL == "" {
+					testURL = response.Profiles[index].Endpoints[0]
+				}
 
-			// reset profile name without %20
-			profileName = response.Profiles[index].Name
-			loadGenerator = response.Profiles[index].LoadGenerators[0]
-			concurrentRequests = strconv.Itoa(response.Profiles[index].ConcurrentRequest)
-			qps = strconv.Itoa(response.Profiles[index].QPS)
-			testDuration = response.Profiles[index].Duration
-			testMesh = response.Profiles[index].ServiceMesh
+				// reset profile name without %20
+				profileName = response.Profiles[index].Name
+				loadGenerator = response.Profiles[index].LoadGenerators[0]
+				concurrentRequests = strconv.Itoa(response.Profiles[index].ConcurrentRequest)
+				qps = strconv.Itoa(response.Profiles[index].QPS)
+				testDuration = response.Profiles[index].Duration
+				testMesh = response.Profiles[index].ServiceMesh
+			}
 		}
 
 		if testURL == "" {
@@ -403,4 +320,100 @@ func init() {
 	applyCmd.Flags().StringVar(&testDuration, "duration", "", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
 	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio/wrk2)")
 	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+}
+
+func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlConfig) (string, string, error) {
+	log.Debug("Creating new performance profile inside function")
+
+	if profileName == "" {
+		return "", "", ErrNoProfileName()
+	}
+
+	// ask for test url first
+	if testURL == "" {
+		return "", "", ErrNoTestURL()
+	}
+
+	// Method to check if the entered Test URL is valid or not
+	if validURL := govalidator.IsURL(testURL); !validURL {
+		return "", "", ErrNotValidURL()
+	}
+
+	if testMesh == "" {
+		testMesh = "None"
+	}
+
+	if qps == "" {
+		qps = "0"
+	}
+
+	if concurrentRequests == "" {
+		concurrentRequests = "1"
+	}
+
+	if testDuration == "" {
+		testDuration = "30s"
+	}
+
+	if loadGenerator == "" {
+		loadGenerator = "fortio"
+	}
+
+	convReq, err := strconv.Atoi(concurrentRequests)
+	if err != nil {
+		return "", "", errors.New("failed to convert concurrent-request")
+	}
+	convQPS, err := strconv.Atoi(qps)
+	if err != nil {
+		return "", "", errors.New("failed to convert qps")
+	}
+	values := map[string]interface{}{
+		"concurrent_request": convReq,
+		"duration":           testDuration,
+		"endpoints":          []string{testURL},
+		"load_generators":    []string{loadGenerator},
+		"name":               profileName,
+		"qps":                convQPS,
+		"service_mesh":       testMesh,
+		"request_body":       "",
+		"request_cookies":    "",
+		"request_headers":    "",
+		"content_type":       "",
+	}
+
+	jsonValue, err := json.Marshal(values)
+	if err != nil {
+		return "", "", ErrFailMarshal(err)
+	}
+	req, _ = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
+
+	err = utils.AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return "", "", ErrAttachAuthToken(err)
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", "", ErrFailRequest(err)
+	}
+
+	var response *models.PerformanceProfile
+	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
+	if resp.StatusCode != 200 {
+		return "", "", ErrFailReqStatus(resp.StatusCode)
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", "", errors.Wrap(err, utils.PerfError("failed to read response body"))
+	}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return "", "", ErrFailUnmarshal(err)
+	}
+	profileID = response.ID.String()
+	profileName = response.Name
+
+	log.Debug("New profile created")
+	return profileID, profileName, nil
 }
