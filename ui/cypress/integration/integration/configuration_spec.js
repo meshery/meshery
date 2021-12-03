@@ -53,7 +53,6 @@ describe('Configuration Management', () => {
               expect(body).to.have.property('save');
               expect(body.save).to.eq(true);
             })
-            cy.wrap(interception.request.body).should('include','filter_data');
           });
 
         })
