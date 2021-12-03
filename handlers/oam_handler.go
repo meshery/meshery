@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/ghodss/yaml"
@@ -346,8 +347,7 @@ func _processPattern(
 		return "", ErrInvalidKubeContext(fmt.Errorf("failed to find k8s context"), "_processPattern couldn't find a valid k8s context")
 	}
 
-	internal := func(kubeClient *meshkube.Client, kubecfg []byte, mk8scontext *models.K8sContext) {
-
+	internal := func(kubeClient *meshkube.Client, kubecfg []byte, mk8scontext *models.K8sContext) (string, error) {
 		sip := &serviceInfoProvider{
 			token:      token,
 			provider:   provider,
@@ -402,7 +402,50 @@ func _processPattern(
 		return mergeMsgs(sap.accumulatedMsgs), sap.err
 	}
 
-	return "", nil
+	customK8scontexts, ok := ctx.Value("CustomK8sContexts").([]models.K8sContext)
+	if ok {
+		var wg sync.WaitGroup
+		var lock sync.Mutex
+		resp := []string{}
+		errs := []string{}
+
+		for _, c := range customK8scontexts {
+			wg.Add(1)
+			go func(c *models.K8sContext) {
+				defer wg.Done()
+
+				lock.Lock()
+				defer lock.Unlock()
+
+				// Generate Kube Handler
+				kh, err := c.GenerateKubeHandler()
+				if err != nil {
+					errs = append(errs, err.Error())
+					return
+				}
+
+				// Generate kube config
+				kcfg, err := c.GenerateKubeConfig()
+				if err != nil {
+					errs = append(errs, err.Error())
+					return
+				}
+
+				res, err := internal(kh, kcfg, c)
+				if err != nil {
+					errs = append(errs, err.Error())
+					return
+				}
+
+				resp = append(resp, res)
+			}(&c)
+		}
+
+		wg.Wait()
+		return mergeMsgs(resp), fmt.Errorf(mergeMsgs(errs))
+	}
+
+	return internal(kubeClient, kubecfg, mk8scontext)
 }
 
 type serviceInfoProvider struct {
