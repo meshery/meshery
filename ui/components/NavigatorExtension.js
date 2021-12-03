@@ -9,6 +9,8 @@ import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch"
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCore";
+import environment from "../lib/relayEnvironment";
+import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -33,7 +35,15 @@ function Extension({ grafana, updateLoadTestData, url }) {
         PatternServiceFormCore,
         grafana,
         MesheryPerformanceComponent,
-        dataFetch
+        dataFetch,
+        environment,
+        resolver : {
+          query : {},
+          mutation : {},
+          subscription : {
+            subscribeMeshSyncStatusEvents,
+          }
+        },
       }}
     />
   );
