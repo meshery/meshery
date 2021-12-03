@@ -72,6 +72,7 @@ function CustomToolbar(onClick, urlOnClick) {
             accept=".yaml, .yml, .json"
             hidden
             onChange={onClick}
+            data-cy="file-upload-button"
             id="upload-button"
             name="upload-button"
           />
@@ -580,6 +581,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           break;
       }
     },
+    setRowProps : (row, dataIndex, rowIndex) => {
+      return {
+        "data-cy" : `filter-row-${rowIndex}`
+      }
+    },
+    setTableProps : () => {
+      return {
+        "data-cy" : "filters-grid"
+      }
+    }
   };
 
   return (
