@@ -13,7 +13,6 @@ import (
 )
 
 var (
-	meshsyncYaml              = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
 	MeshSyncSubscriptionError = model.Error{
 		Description: "Failed to get MeshSync data",
 		Code:        ErrMeshsyncSubscriptionCode,
