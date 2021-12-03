@@ -151,6 +151,7 @@ const styles = (theme) => ({
   },
   collapseButtonWrapper : {
     position : "fixed",
+    cursor: "pointer",
     bottom : "12%",
     left : "235px",
     zIndex : "1400",
@@ -163,6 +164,7 @@ const styles = (theme) => ({
   },
   collapseButtonWrapperRotated : {
     position : "fixed",
+    cursor: "pointer",
     bottom : "12%",
     left : "45px",
     zIndex : "1400",
