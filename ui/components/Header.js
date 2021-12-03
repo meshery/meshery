@@ -6,6 +6,7 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
@@ -167,7 +168,9 @@ class Header extends React.Component {
                     <MesheryNotification />
                   </div>
 
-                  <div style={{ height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.meshSyncStatus.status === "ENABLED" ? "green" : "red" }} />
+                  <Tooltip title="MeshSync Status">
+                    <div style={{ height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.meshSyncStatus.status === "ENABLED" ? "green" : "red" }} />
+                  </Tooltip>
 
                   <span className={classes.userSpan}>
                     <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
