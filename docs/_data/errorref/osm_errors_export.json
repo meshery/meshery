@@ -218,6 +218,15 @@
         "short_description": "Failed to extract release names",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1024": {
+        "name": "ErrLoadNamespaceCode",
+        "code": "1024",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occured while applying namespace ",
+        "probable_cause": "Trying to access a namespace which is not available",
+        "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
       }
     }
   }

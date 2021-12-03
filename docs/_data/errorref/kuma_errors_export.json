@@ -245,6 +245,15 @@
         "short_description": "Config is empty",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1028": {
+        "name": "ErrLoadNamespaceCode",
+        "code": "1028",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occured while applying namespace ",
+        "probable_cause": "Trying to access a namespace which is not available",
+        "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
       }
     }
   }
