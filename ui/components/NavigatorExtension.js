@@ -9,7 +9,7 @@ import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch"
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCore";
-import environment from "../lib/relayEnvironment";
+import environment, { subscriptionClient } from "../lib/relayEnvironment";
 import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
 
 const requires = createRequires(getDependencies);
@@ -37,6 +37,7 @@ function Extension({ grafana, updateLoadTestData, url }) {
         MesheryPerformanceComponent,
         dataFetch,
         environment,
+        subscriptionClient,
         resolver : {
           query : {},
           mutation : {},
