@@ -317,7 +317,7 @@ class Header extends React.Component {
                   </Grid>
                 </Hidden>
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
-                  <Typography color="inherit" variant="h5" className={classes.pageTitle}>
+                  <Typography color="inherit" variant="h5" className={classes.pageTitle} data-cy="headerPageTitle">
                     {title}{isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ""}
                   </Typography>
                 </Grid>
