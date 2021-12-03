@@ -60,7 +60,7 @@
     "cron-time-generator": "^1.2.2",
     "eslint-loader": "^4.0.2",
     "glob-parent": "^5.1.2",
-    "graphql": "^15.5.1",
+    "graphql": "^15.7.2",
     "immutable": "^4.0.0-rc.15",
     "isomorphic-unfetch": "^3.1.0",
     "js-yaml": "^4.1.0",
@@ -95,7 +95,7 @@
     "set-value": "^4.0.1",
     "styled-jsx": "latest",
     "subscriptions-transport-ws": "^0.9.19",
-    "tar": "^6.1.9",
+    "tar": "^6.1.11",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

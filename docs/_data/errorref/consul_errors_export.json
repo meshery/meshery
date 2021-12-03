@@ -12,40 +12,31 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1001": {
-        "name": "ErrGetLatestReleasesCode",
-        "code": "1001",
+      "1005": {
+        "name": "ErrMeshConfigCode",
+        "code": "1005",
         "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to fetch release info",
+        "long_description": "Error getting MeshSpecKey config from in-memory configuration",
+        "short_description": "Error configuration mesh",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1002": {
-        "name": "ErrGetManifestNamesCode",
-        "code": "1002",
+      "1006": {
+        "name": "ErrConsulCoreComponentFailCode",
+        "code": "1006",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to fetch manifest names from github",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "error in Consul core component",
+        "probable_cause": "API version or Kind passed is empty",
+        "suggested_remediation": "Make sure API version and Kind are not empty"
       },
-      "1003": {
-        "name": "ErrEmptyConfigCode",
-        "code": "1003",
+      "1007": {
+        "name": "ErrParseConsulCoreComponentCode",
+        "code": "1007",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Config is empty",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "1004": {
-        "name": "ErrLoadingPathsetCode",
-        "code": "1004",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Could not create a pathset for static component generation",
-        "probable_cause": "",
+        "short_description": "Consul core component manifest parsing failing",
+        "probable_cause": "Could not marshall generated component to YAML",
         "suggested_remediation": ""
       }
     }
