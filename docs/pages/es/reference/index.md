@@ -12,7 +12,8 @@ Referencias para utilizar las diversas funciones y componentes de Meshery.
 
 <ul>
     {% for item in sorted_reference %}
-    {% if item.type=="Reference" and item.lang == "es" -%}
+    {% if item.type=="Reference" and item.lang == "es" and item.list!="exclude" -%}
+
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
       {% if item.abstract != " " %}
         -  {{ item.abstract }}
