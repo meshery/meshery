@@ -66,7 +66,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 
 func validateWorkload(comp map[string]interface{}, wc core.WorkloadCapability) error {
 	// Create schema validator from the schema
-	rs := jsonschema.GlobalJsonSchema()
+	rs := jsonschema.GlobalJSONSchema()
 	if err := json.Unmarshal([]byte(wc.OAMRefSchema), rs); err != nil {
 		return fmt.Errorf("failed to create schema: %s", err)
 	}
@@ -91,7 +91,7 @@ func validateWorkload(comp map[string]interface{}, wc core.WorkloadCapability) e
 
 func validateTrait(trait interface{}, tc core.TraitCapability, compType string) error {
 	// Create schema validator from the schema
-	rs := jsonschema.GlobalJsonSchema()
+	rs := jsonschema.GlobalJSONSchema()
 	if err := json.Unmarshal([]byte(tc.OAMRefSchema), rs); err != nil {
 		return fmt.Errorf("failed to create schema: %s", err)
 	}
