@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/layer5io/meshery/models/pattern/jsonschema"
 	"github.com/layer5io/meshery/models/pattern/resource/selector"
-	"github.com/qri-io/jsonschema"
 )
 
 func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
