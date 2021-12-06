@@ -40,7 +40,7 @@ var (
 )
 
 var applyCmd = &cobra.Command{
-	Use:   "apply [profile-name | --profile | --file] --flags",
+	Use:   "apply [profile-name | --file] --flags",
 	Short: "Run a Performance test",
 	Long:  `Run Performance test using existing profiles or using flags`,
 	Args:  cobra.MinimumNArgs(0),
@@ -49,7 +49,7 @@ var applyCmd = &cobra.Command{
 mesheryctl perf apply meshery-profile --flags
 
 // Execute a Performance test with creating a new performance profile
-mesheryctl perf apply --profile meshery-profile-new --url "https://google.com"
+mesheryctl perf apply meshery-profile-new --url "https://google.com"
 
 // Run Performance test using SMP compatible test configuration
 mesheryctl perf apply -f perf-config.yaml
@@ -79,10 +79,6 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		}
 
 		// set default tokenpath for command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
-
 		if tokenPath == "" {
 			tokenPath = constants.GetCurrentAuthToken()
 		}
