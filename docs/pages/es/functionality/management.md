@@ -6,8 +6,6 @@ type: functionality
 language: es
 ---
 
-# Gestión del ciclo de vida del service mesh
-
 Meshery soporta varios [service mesh diferentes](installation/adapters), de modo que puede aprender y comparar diferentes funcionalidades de service mesh. Una vez que haya seleccionado operar un service mesh determinado, Meshery le ayudará con las actividades en curso.
 
 ## Despliegue de un service mesh
