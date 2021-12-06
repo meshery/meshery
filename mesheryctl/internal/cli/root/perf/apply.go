@@ -68,6 +68,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client := &http.Client{}
+		userResponse := false
 
 		// setting up for error formatting
 		cmdUsed = "apply"
@@ -87,6 +88,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		}
 
 		// Importing SMP Configuration from the file
+		// TODO: Refactor: Move checks to a single location and consolidate for file, flags and performance profile
 		if filePath != "" {
 			// Read the test configuration file
 			smpConfig, err := os.ReadFile(filePath)
@@ -144,19 +146,13 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 			log.Debug("Using random test name: ", testName)
 		}
 
-		// If a profile is not provided, then create a new profile
-		if len(args) == 0 && profileName == "" { // First need to create a profile id
-			profileID, profileName, err = createPerformanceProfile(client, mctlCfg)
-			if err != nil {
-				return err
-			}
-		} else { // set profile-name from args
-			// Merge args to get profile-name
-			if profileName == "" {
-				profileName = strings.Join(args, "%20")
-			}
+		// Throw error if a profile name is not provided
+		if len(args) == 0 {
+			return ErrNoProfileName()
+		} else {
+			profileName = strings.Join(args, "%20")
 
-			// search and fetch performance profile with profile-name
+			// Check if the profile name is valid, if not prompt the user to create a new one
 			log.Debug("Fetching performance profile")
 
 			req, _ = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles?search="+profileName, nil)
@@ -188,10 +184,23 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 			index := 0
 			if len(response.Profiles) == 0 {
-				// if the provided performance profile does not exist, create a new one
-				profileID, profileName, err = createPerformanceProfile(client, mctlCfg)
-				if err != nil {
-					return err
+				// if the provided performance profile does not exist, prompt the user to create a new one
+
+				// skip asking confirmation if -y flag used
+				if utils.SilentFlag {
+					userResponse = true
+				} else {
+					// ask user for confirmation
+					userResponse = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
+				}
+
+				if userResponse {
+					profileID, profileName, err = createPerformanceProfile(client, mctlCfg)
+					if err != nil {
+						return err
+					}
+				} else {
+					return ErrNoProfileFound()
 				}
 			} else {
 				if len(response.Profiles) == 1 {
@@ -208,12 +217,15 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 				}
 
 				// reset profile name without %20
-				profileName = response.Profiles[index].Name
-				loadGenerator = response.Profiles[index].LoadGenerators[0]
-				concurrentRequests = strconv.Itoa(response.Profiles[index].ConcurrentRequest)
-				qps = strconv.Itoa(response.Profiles[index].QPS)
-				testDuration = response.Profiles[index].Duration
-				testMesh = response.Profiles[index].ServiceMesh
+				// pull test configuration from the profile only if a test configuration is not provided
+				if filePath == "" {
+					profileName = response.Profiles[index].Name
+					loadGenerator = response.Profiles[index].LoadGenerators[0]
+					concurrentRequests = strconv.Itoa(response.Profiles[index].ConcurrentRequest)
+					qps = strconv.Itoa(response.Profiles[index].QPS)
+					testDuration = response.Profiles[index].Duration
+					testMesh = response.Profiles[index].ServiceMesh
+				}
 			}
 		}
 
@@ -313,7 +325,6 @@ func multipleProfileConfirmation(profiles []models.PerformanceProfile) int {
 func init() {
 	applyCmd.Flags().StringVar(&testURL, "url", "", "(optional) Endpoint URL to test (required with --profile)")
 	applyCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
-	applyCmd.Flags().StringVar(&profileName, "profile", "", "(optional) Name for the new Performance Profile (required to create a new profile)")
 	applyCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")
 	applyCmd.Flags().StringVar(&qps, "qps", "", "(optional) Queries per second")
 	applyCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "", "(optional) Number of Parallel Requests")
