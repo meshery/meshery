@@ -36,31 +36,6 @@ var (
 	ReleaseTag      string
 )
 
-// UpdateConfigContext updates the given context in meshconfig
-func UpdateConfigContext(currCtx string, ctx *config.Context) error {
-	ViperMeshconfig.SetConfigFile(DefaultConfigPath)
-	err := ViperMeshconfig.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	meshConfig := &config.MesheryCtlConfig{}
-	err = ViperMeshconfig.Unmarshal(&meshConfig)
-	if err != nil {
-		return err
-	}
-
-	meshConfig.Contexts[currCtx] = *ctx
-	ViperMeshconfig.Set("contexts."+currCtx, ctx)
-
-	err = ViperMeshconfig.WriteConfig()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
 	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
