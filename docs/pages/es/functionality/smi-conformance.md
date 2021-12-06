@@ -6,8 +6,6 @@ type: functionality
 language: es
 ---
 
-# Capacidad de conformidad de SMI
-
 ## Conformidad
 
 Definiendo “Conformidad” - Es importante reconocer que la conformidad consiste en capacidades y estado de conformidad. Nosotros definimos la conformidad como una combinación de estos 2 conceptos.
