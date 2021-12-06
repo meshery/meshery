@@ -5,12 +5,14 @@ import (
 	"net/http"
 	"path"
 	"plugin"
+	"sync"
 
 	"github.com/layer5io/meshery/models"
 )
 
 var (
 	extendedEndpoints = make(map[string]*models.Router)
+	mx                sync.Mutex
 )
 
 // Defines the version metadata for the extension
@@ -19,6 +21,8 @@ type ExtensionVersion struct {
 }
 
 func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	mx.Lock()
+	defer mx.Unlock()
 	if val, ok := extendedEndpoints[req.URL.Path]; ok {
 		val.HTTPHandler.ServeHTTP(w, req)
 		return
