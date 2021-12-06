@@ -154,7 +154,8 @@ var versionCmd = &cobra.Command{
 }
 
 func checkMesheryctlClientVersion(build string) {
-	logrus.Infof("\nChecking for latest version of mesheryctl...")
+	logger, _ := utils.MeshkitLogger()
+	logger.Info("\nChecking for latest version of mesheryctl...")
 
 	// Inform user of the latest release version
 	res, err := utils.GetLatestStableReleaseTag()
@@ -164,8 +165,8 @@ func checkMesheryctlClientVersion(build string) {
 	}
 	// If user is running an outdated release, let them know.
 	if res != build {
-		logrus.Info("\n  ", build, " is not the latest release. Update to ", res, ".")
+		logger.Info("\n  ", build, " is not the latest release. Update to ", res, ".")
 	} else { // If user is running the latest release, let them know.
-		logrus.Info("\n  ", res, " is the latest release.")
+		logger.Info("\n  ", res, " is the latest release.")
 	}
 }

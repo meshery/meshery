@@ -11,7 +11,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/manifoldco/promptui"
 	termbox "github.com/nsf/termbox-go"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshery/internal/sql"
 
@@ -48,16 +47,19 @@ var profileCmd = &cobra.Command{
 	Long:  `List all the available performance profiles`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-// List performance profiles (maximum 25 profiles)	
+// List performance profiles (maximum 25 profiles)
 mesheryctl perf profile
 
 // List performance profiles with search (maximum 25 profiles)
-mesheryctl perf profile test 2 
+mesheryctl perf profile test 2
 
 // View single performance profile with detailed information
 mesheryctl perf profile test --view
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// get logger instance
+		log, _ := utils.MeshkitLogger()
+
 		// used for searching performance profile
 		var searchString string
 		// setting up for error formatting

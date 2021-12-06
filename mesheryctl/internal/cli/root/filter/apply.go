@@ -37,6 +37,9 @@ var applyCmd = &cobra.Command{
 		var err error
 		client := &http.Client{}
 
+		// get logger instance
+		log, _ := utils.MeshkitLogger()
+
 		// set default tokenpath for filter apply command.
 		if tokenPath == "" {
 			tokenPath = constants.GetCurrentAuthToken()
@@ -252,6 +255,9 @@ var applyCmd = &cobra.Command{
 }
 
 func multipleFiltersConfirmation(profiles []models.MesheryFilter) int {
+	// get logger instance
+	logger, _ := utils.MeshkitLogger()
+
 	reader := bufio.NewReader(os.Stdin)
 
 	for index, a := range profiles {
@@ -272,10 +278,10 @@ func multipleFiltersConfirmation(profiles []models.MesheryFilter) int {
 		response = strings.ToLower(strings.TrimSpace(response))
 		index, err := strconv.Atoi(response)
 		if err != nil {
-			log.Info(err)
+			logger.Info(err)
 		}
 		if index < 0 || index >= len(profiles) {
-			log.Info("Invalid index")
+			logger.Info("Invalid index")
 		} else {
 			return index
 		}

@@ -17,7 +17,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -40,6 +40,9 @@ var onboardCmd = &cobra.Command{
 		var req *http.Request
 		var err error
 		client := &http.Client{}
+
+		// get logger instance
+		log, _ := utils.MeshkitLogger()
 
 		// set default tokenpath for app onboard command.
 		if tokenPath == "" {
@@ -256,6 +259,9 @@ var onboardCmd = &cobra.Command{
 }
 
 func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int {
+	// get logger instance
+	log, _ := utils.MeshkitLogger()
+
 	reader := bufio.NewReader(os.Stdin)
 
 	for index, a := range profiles {
@@ -271,7 +277,7 @@ func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int 
 		fmt.Printf("Enter the index of app: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			log.Fatal(err)
+			logger.Fatal(err)
 		}
 		response = strings.ToLower(strings.TrimSpace(response))
 		index, err := strconv.Atoi(response)

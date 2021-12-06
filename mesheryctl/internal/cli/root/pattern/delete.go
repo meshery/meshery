@@ -10,7 +10,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -21,6 +20,9 @@ var deleteCmd = &cobra.Command{
 	Long:  `delete pattern file will trigger deletion of the pattern file`,
 	Args:  cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// get logger instance
+		log, _ := utils.MeshkitLogger()
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -58,7 +60,7 @@ var deleteCmd = &cobra.Command{
 			return err
 		}
 
-		log.Infof(string(body))
+		log.Info(string(body))
 
 		return nil
 	},

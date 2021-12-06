@@ -10,7 +10,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -25,6 +24,9 @@ var offboardCmd = &cobra.Command{
 	mesheryctl app offboard -f <filepath>
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// get logger instance
+		log, _ := utils.MeshkitLogger()
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -62,7 +64,7 @@ var offboardCmd = &cobra.Command{
 			return err
 		}
 
-		log.Infof(string(body))
+		log.Info(string(body))
 
 		return nil
 	},
