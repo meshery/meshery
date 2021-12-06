@@ -149,83 +149,82 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		// Throw error if a profile name is not provided
 		if len(args) == 0 {
 			return ErrNoProfileName()
-		} else {
-			profileName = strings.Join(args, "%20")
+		}
+		profileName = strings.Join(args, "%20")
 
-			// Check if the profile name is valid, if not prompt the user to create a new one
-			log.Debug("Fetching performance profile")
+		// Check if the profile name is valid, if not prompt the user to create a new one
+		log.Debug("Fetching performance profile")
 
-			req, _ = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles?search="+profileName, nil)
+		req, _ = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles?search="+profileName, nil)
 
-			err = utils.AddAuthDetails(req, tokenPath)
-			if err != nil {
-				return ErrAttachAuthToken(err)
+		err = utils.AddAuthDetails(req, tokenPath)
+		if err != nil {
+			return ErrAttachAuthToken(err)
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return ErrFailRequest(err)
+		}
+
+		var response *models.PerformanceProfilesAPIResponse
+		// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
+		if resp.StatusCode != 200 {
+			return ErrFailReqStatus(resp.StatusCode)
+		}
+		defer resp.Body.Close()
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, utils.PerfError("failed to read response body"))
+		}
+		err = json.Unmarshal(body, &response)
+		if err != nil {
+			return ErrFailUnmarshal(err)
+		}
+
+		index := 0
+		if len(response.Profiles) == 0 {
+			// if the provided performance profile does not exist, prompt the user to create a new one
+
+			// skip asking confirmation if -y flag used
+			if utils.SilentFlag {
+				userResponse = true
+			} else {
+				// ask user for confirmation
+				userResponse = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
 			}
 
-			resp, err := client.Do(req)
-			if err != nil {
-				return ErrFailRequest(err)
-			}
-
-			var response *models.PerformanceProfilesAPIResponse
-			// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-			if resp.StatusCode != 200 {
-				return ErrFailReqStatus(resp.StatusCode)
-			}
-			defer resp.Body.Close()
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return errors.Wrap(err, utils.PerfError("failed to read response body"))
-			}
-			err = json.Unmarshal(body, &response)
-			if err != nil {
-				return ErrFailUnmarshal(err)
-			}
-
-			index := 0
-			if len(response.Profiles) == 0 {
-				// if the provided performance profile does not exist, prompt the user to create a new one
-
-				// skip asking confirmation if -y flag used
-				if utils.SilentFlag {
-					userResponse = true
-				} else {
-					// ask user for confirmation
-					userResponse = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
-				}
-
-				if userResponse {
-					profileID, profileName, err = createPerformanceProfile(client, mctlCfg)
-					if err != nil {
-						return err
-					}
-				} else {
-					return ErrNoProfileFound()
+			if userResponse {
+				profileID, profileName, err = createPerformanceProfile(client, mctlCfg)
+				if err != nil {
+					return err
 				}
 			} else {
-				if len(response.Profiles) == 1 {
-					profileID = response.Profiles[0].ID.String()
-				} else {
-					// Multiple profiles with same name
-					index = multipleProfileConfirmation(response.Profiles)
-					profileID = response.Profiles[index].ID.String()
-				}
-				// what if user passed profile-name but didn't passed the url
-				// we use url from performance profile
-				if testURL == "" {
-					testURL = response.Profiles[index].Endpoints[0]
-				}
+				return ErrNoProfileFound()
+			}
+		} else {
+			if len(response.Profiles) == 1 {
+				profileID = response.Profiles[0].ID.String()
+			} else {
+				// Multiple profiles with same name
+				index = multipleProfileConfirmation(response.Profiles)
+				profileID = response.Profiles[index].ID.String()
+			}
+			// what if user passed profile-name but didn't passed the url
+			// we use url from performance profile
+			if testURL == "" {
+				testURL = response.Profiles[index].Endpoints[0]
+			}
 
-				// reset profile name without %20
-				// pull test configuration from the profile only if a test configuration is not provided
-				if filePath == "" {
-					profileName = response.Profiles[index].Name
-					loadGenerator = response.Profiles[index].LoadGenerators[0]
-					concurrentRequests = strconv.Itoa(response.Profiles[index].ConcurrentRequest)
-					qps = strconv.Itoa(response.Profiles[index].QPS)
-					testDuration = response.Profiles[index].Duration
-					testMesh = response.Profiles[index].ServiceMesh
-				}
+			// reset profile name without %20
+			// pull test configuration from the profile only if a test configuration is not provided
+			if filePath == "" {
+				profileName = response.Profiles[index].Name
+				loadGenerator = response.Profiles[index].LoadGenerators[0]
+				concurrentRequests = strconv.Itoa(response.Profiles[index].ConcurrentRequest)
+				qps = strconv.Itoa(response.Profiles[index].QPS)
+				testDuration = response.Profiles[index].Duration
+				testMesh = response.Profiles[index].ServiceMesh
 			}
 		}
 
@@ -268,7 +267,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 			return ErrAttachAuthToken(err)
 		}
 
-		resp, err := client.Do(req)
+		resp, err = client.Do(req)
 		if err != nil {
 			return ErrFailRequest(err)
 		}
