@@ -51,38 +51,33 @@ Además de solicitar la latencia y el rendimiento, Meshery también rastrea la s
 Establece un desempeño de marca y rastrea el desempeño como estándar a medida que cambia en el tiempo.
 
 ## Meshery es para cualquier service mesh
-
 La diversidad de infraestructuras es una realidad para cualquier organización. Ya sea que se esté ejecutando un solo service mesh o varios tipos de service meshes, en Meshery encontrarás que soporta una diversidad de infraestructura (o bien, la falta de una).
+
 
 - **Adaptadores disponibles de service mesh** - Adaptadores de service mesh soportados por Mashery.
 
-| Plataforma &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Estado |
-| :----------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
-
+| Plataforma    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Estado        |
+| :------------ | :------------ |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "stable" -%}
-| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }})                     |       {{ adapter.project_status }} |
 {% endif -%}
 {% endfor %}
 <br>
-
 - **Adaptadores en progreso de service mesh** - Adaptadores de service mesh sometidos por la comunidad y en desarrollo
 
-| Plataforma &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Estado |
-| :----------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
-
+| Plataforma    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Estado        |
+| :------------ | :------------ |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "beta" -%}
 | [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
 {% endif -%}
 {% endfor %}
 <br>
-
 - **Adaptadores de service mesh que buscamos apoyo** - Adaptadores de service mesh que se encuentran en búsqueda de ayuda de la comunidad.
 
-| Plataforma &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Estado |
-| :----------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
-
+| Plataforma        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;     | Estado        |
+| :------------               | :------------ |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "alpha" -%}
 | [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
@@ -90,7 +85,6 @@ La diversidad de infraestructuras es una realidad para cualquier organización. 
 {% endfor %}
 
 ## Comunidad
-
 Este proyecto es hecho por la comunidad y toda colaboración es bienvenida! [Fork here on Github](https://github.com/layer5io/meshery)
 
 - Únete a [la reunión semanal de la comunidad](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Viernes de 10am a 11am Horario Central](/assets/projects/meshery/Meshery-Community-Meeting.ics).
