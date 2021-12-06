@@ -7,8 +7,6 @@ language: es
 list: exclude
 ---
 
-# Funcionalidades de Meshery
-
 Estas secciones proveen guías de usuario sobre las funcionalidades que ofrece Meshery.
 
 {% assign sorted_functionality = site.pages | sort: "functionality" %}
