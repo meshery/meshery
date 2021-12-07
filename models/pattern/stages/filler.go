@@ -23,23 +23,27 @@ func init() {
 }
 
 // Filler - filler stage processes the pattern to subsitute Pattern
-func Filler(data *Data, err error, next ChainStageNextFunction) {
-	if err != nil {
-		next(data, err)
-		return
+func Filler(skipPrintLogs bool) ChainStageFunction {
+	return func(data *Data, err error, next ChainStageNextFunction) {
+		if err != nil {
+			next(data, err)
+			return
+		}
+
+		// Flatten the service map to perform queries
+		flatSvc := map[string]interface{}{}
+		utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flatSvc)
+
+		if !skipPrintLogs {
+			fmt.Printf("%+#v\n", flatSvc)
+		}
+		err = fill(data.Pattern, flatSvc)
+
+		if next != nil {
+			next(data, err)
+		}
 	}
 
-	// Flatten the service map to perform queries
-	flatSvc := map[string]interface{}{}
-	utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flatSvc)
-
-	fmt.Printf("%+#v\n", flatSvc)
-
-	err = fill(data.Pattern, flatSvc)
-
-	if next != nil {
-		next(data, err)
-	}
 }
 
 func fill(p *core.Pattern, flatSvc map[string]interface{}) error {

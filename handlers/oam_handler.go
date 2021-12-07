@@ -112,6 +112,7 @@ func (h *Handler) PatternFileHandler(
 		user.UserID,
 		isDel,
 		r.URL.Query().Get("verify") == "true",
+		false,
 	)
 
 	if err != nil {
@@ -343,6 +344,7 @@ func _processPattern(
 	userID string,
 	isDelete bool,
 	verify bool,
+	skipPrintLogs bool,
 ) (string, error) {
 	sip := &serviceInfoProvider{
 		token:      token,
@@ -350,13 +352,13 @@ func _processPattern(
 		opIsDelete: isDelete,
 	}
 	sap := &serviceActionProvider{
-		token:      token,
-		provider:   provider,
-		prefObj:    prefObj,
-		kubeClient: kubeClient,
-		opIsDelete: isDelete,
-		userID:     userID,
-
+		token:           token,
+		provider:        provider,
+		prefObj:         prefObj,
+		kubeClient:      kubeClient,
+		opIsDelete:      isDelete,
+		userID:          userID,
+		skipPrintLogs:   skipPrintLogs,
 		accumulatedMsgs: []string{},
 		err:             nil,
 	}
@@ -364,7 +366,7 @@ func _processPattern(
 	chain := stages.CreateChain()
 	chain.
 		Add(stages.ServiceIdentifier(sip, sap)).
-		Add(stages.Filler).
+		Add(stages.Filler(sap.skipPrintLogs)).
 		Add(stages.Validator(sip, sap))
 
 	if !verify {
@@ -430,19 +432,21 @@ func (sip *serviceInfoProvider) IsDelete() bool {
 }
 
 type serviceActionProvider struct {
-	token      string
-	provider   models.Provider
-	prefObj    *models.Preference
-	kubeClient *meshkube.Client
-	opIsDelete bool
-	userID     string
-
+	token           string
+	provider        models.Provider
+	prefObj         *models.Preference
+	kubeClient      *meshkube.Client
+	opIsDelete      bool
+	userID          string
+	skipPrintLogs   bool
 	accumulatedMsgs []string
 	err             error
 }
 
 func (sap *serviceActionProvider) Terminate(err error) {
-	logrus.Error(err)
+	if !sap.skipPrintLogs {
+		logrus.Error(err)
+	}
 	sap.err = err
 }
 
