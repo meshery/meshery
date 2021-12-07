@@ -104,6 +104,7 @@ func (mc *contentModifier) isPatternSupported(patternfile string) (msg string, o
 		mc.userID,
 		false,
 		true,
+		true,
 	)
 	if err != nil {
 		return err.Error(), false
