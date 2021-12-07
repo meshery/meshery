@@ -90,6 +90,7 @@ type Preference struct {
 	LoadTestPreferences  *LoadTestPreferences `json:"loadTestPrefs,omitempty"`
 	AnonymousUsageStats  bool                 `json:"anonymousUsageStats"`
 	AnonymousPerfResults bool                 `json:"anonymousPerfResults"`
+	UsersExtensionPreferences map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
 	UpdatedAt            time.Time            `json:"updated_at,omitempty"`
 }
 

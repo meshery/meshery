@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"encoding/json"
@@ -52,107 +52,53 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		}
 		return
 	}
-	// if req.Method != http.MethodPost {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-	var trackStats bool
-	usageStats := req.FormValue("anonymousUsageStats")
-	if usageStats != "" {
-		aUsageStats, err := strconv.ParseBool(usageStats)
-		if err != nil {
-			obj := "anonymousUsageStats"
-			h.log.Error(ErrParseBool(err, obj))
 
-			http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
-			return
-		}
-		prefObj.AnonymousUsageStats = aUsageStats
-		trackStats = true
-	}
+	defer func() {
+		_ = req.Body.Close()
+	}()
 
-	perfStats := req.FormValue("anonymousPerfResults")
-	if perfStats != "" {
-		aPerfStats, err := strconv.ParseBool(perfStats)
-		if err != nil {
-			obj := "anonymousPerfResults"
-			h.log.Error(ErrParseBool(err, obj))
-
-			http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
-			return
-		}
-		prefObj.AnonymousPerfResults = aPerfStats
-		if err = provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
-			h.log.Error(ErrRecordPreferences(err))
-			http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
-			return
-		}
-		trackStats = true
-	}
-
-	// if api has been used to update AnonymousStats we return here
-	if trackStats {
-		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
-			obj := "user preferences"
-			h.log.Error(ErrEncoding(err, obj))
-			http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
-			return
-		}
+	// read user preferences from JSON request body
+	if err := json.NewDecoder(req.Body).Decode(&prefObj); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "failed to read request body: %s", err)
 		return
 	}
 
-	// or we update Load Test preferences
-	qs := req.FormValue("qps")
-	qps, err := strconv.Atoi(qs)
-	if err != nil {
-		err = errors.Wrap(err, "unable to parse qps")
-		logrus.Error(err)
-		http.Error(w, "please provide a valid value for qps", http.StatusBadRequest)
-		return
-	}
+	// validate load test data
+	qps := prefObj.LoadTestPreferences.QueriesPerSecond
 	if qps < 0 {
 		http.Error(w, "please provide a valid value for qps", http.StatusBadRequest)
 		return
 	}
-	dur := req.FormValue("t")
-	if _, err = time.ParseDuration(dur); err != nil {
-		err = errors.Wrap(err, "unable to parse t as a duration")
+
+	dur := prefObj.LoadTestPreferences.Duration
+	if _, err := time.ParseDuration(dur); err != nil {
+		err = errors.Wrap(err, "unable to parse test duration")
 		logrus.Error(err)
-		http.Error(w, "please provide a valid value for t", http.StatusBadRequest)
+		http.Error(w, "please provide a valid value for test duration", http.StatusBadRequest)
 		return
 	}
-	cu := req.FormValue("c")
-	c, err := strconv.Atoi(cu)
-	if err != nil {
-		err = errors.Wrap(err, "unable to parse c")
-		logrus.Error(err)
-		http.Error(w, "please provide a valid value for c", http.StatusBadRequest)
-		return
-	}
+
+	c := prefObj.LoadTestPreferences.ConcurrentRequests
 	if c < 0 {
-		http.Error(w, "please provide a valid value for c", http.StatusBadRequest)
+		http.Error(w, "please provide a valid value for concurrent requests", http.StatusBadRequest)
 		return
 	}
-	gen := req.FormValue("gen")
-	genTrack := false
-	// TODO: after we have interfaces for load generators in place, we need to make a generic check, for now using a hard coded one
+
+	loadGen := prefObj.LoadTestPreferences.LoadGenerator
+	loadGenSupoorted := false
 	for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
-		if lg.Name() == gen {
-			genTrack = true
+		if lg.Name() == loadGen {
+			loadGenSupoorted = true
 		}
 	}
-	if !genTrack {
-		logrus.Error("invalid value for gen")
-		http.Error(w, "please provide a valid value for gen (load generator)", http.StatusBadRequest)
+	if !loadGenSupoorted {
+		logrus.Error("invalid value for load generator")
+		http.Error(w, "please specify a valid load generator", http.StatusBadRequest)
 		return
 	}
-	prefObj.LoadTestPreferences = &models.LoadTestPreferences{
-		ConcurrentRequests: c,
-		Duration:           dur,
-		QueriesPerSecond:   qps,
-		LoadGenerator:      gen,
-	}
-	if err = provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
+
+	if err := provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
 		logrus.Errorf("unable to save user preferences: %v", err)
 		http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
 		return
