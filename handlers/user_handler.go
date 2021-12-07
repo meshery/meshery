@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshery/models"
 )
@@ -59,29 +58,34 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 
 	// read user preferences from JSON request body
 	if err := json.NewDecoder(req.Body).Decode(&prefObj); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "failed to read request body: %s", err)
+		h.log.Error(ErrDecoding(err, "user preferences"))
+		http.Error(w, ErrDecoding(err, "user preferences").Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// validate load test data
 	qps := prefObj.LoadTestPreferences.QueriesPerSecond
 	if qps < 0 {
-		http.Error(w, "please provide a valid value for qps", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		err := fmt.Errorf("QPS value less than 0")
+		h.log.Error(ErrSavingUserPreference(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	dur := prefObj.LoadTestPreferences.Duration
 	if _, err := time.ParseDuration(dur); err != nil {
 		err = errors.Wrap(err, "unable to parse test duration")
-		logrus.Error(err)
-		http.Error(w, "please provide a valid value for test duration", http.StatusBadRequest)
+		h.log.Error(ErrSavingUserPreference(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	c := prefObj.LoadTestPreferences.ConcurrentRequests
 	if c < 0 {
-		http.Error(w, "please provide a valid value for concurrent requests", http.StatusBadRequest)
+		err := fmt.Errorf("number of concurrent requests less than 0")
+		h.log.Error(ErrSavingUserPreference(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -93,16 +97,18 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		}
 	}
 	if !loadGenSupoorted {
-		logrus.Error("invalid value for load generator")
-		http.Error(w, "please specify a valid load generator", http.StatusBadRequest)
+		err := fmt.Errorf("invalid load generator: %s", loadGen)
+		h.log.Error(ErrSavingUserPreference(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	prefObj.AnonymousUsageStats = true
 
 	if err := provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
-		logrus.Errorf("unable to save user preferences: %v", err)
-		http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
+		err := fmt.Errorf("unable to save user preferences: %v", err)
+		h.log.Error(ErrSavingUserPreference(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
