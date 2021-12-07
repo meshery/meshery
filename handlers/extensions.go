@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	//USE WITH CAUTION: Wherever read/write is performed, use this in a thread safe way, using the global mutex
 	extendedEndpoints = make(map[string]*models.Router)
 	mx                sync.Mutex
 )
@@ -22,8 +23,9 @@ type ExtensionVersion struct {
 
 func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	mx.Lock()
-	defer mx.Unlock()
-	if val, ok := extendedEndpoints[req.URL.Path]; ok {
+	val, ok := extendedEndpoints[req.URL.Path]
+	mx.Unlock()
+	if ok {
 		val.HTTPHandler.ServeHTTP(w, req)
 		return
 	}
@@ -32,8 +34,6 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
 }
 
 func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider models.Provider) error {
-	mx.Lock()
-	defer mx.Unlock()
 	packagePath := ""
 	if len(provider.GetProviderProperties().Extensions.GraphQL) > 0 {
 		packagePath = provider.GetProviderProperties().Extensions.GraphQL[0].Path
@@ -63,7 +63,9 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 
 	// Add http endpoint to serve
 	if output.Router != nil {
+		mx.Lock()
 		extendedEndpoints[output.Router.Path] = output.Router
+		mx.Unlock()
 	}
 
 	return nil
