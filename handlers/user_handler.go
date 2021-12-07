@@ -98,6 +98,8 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		return
 	}
 
+	prefObj.AnonymousUsageStats = true
+
 	if err := provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
 		logrus.Errorf("unable to save user preferences: %v", err)
 		http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
