@@ -43,7 +43,6 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 			next(data, err)
 		}
 	}
-
 }
 
 func fill(p *core.Pattern, flatSvc map[string]interface{}) error {
