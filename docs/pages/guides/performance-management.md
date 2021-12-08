@@ -86,35 +86,43 @@ mesheryctl perf apply Istio Performance Test
 You can also use flags to configure your performance test. For example:
 
 ```
-mesheryctl perf apply --profile istio-soak-test --concurrent-requests 1 --duration 15s --load-generator nighthawk --mesh istio --url http://localhost:2323
+mesheryctl perf apply istio-soak-test --concurrent-requests 1 --duration 15s --load-generator nighthawk --mesh istio --url http://localhost:2323
 ```
 
 mesheryctl also supports test configurations written in SMP compatible format as shown below:
 
 ```
-smp_version: v0.0.1
-id:
-name: Istio Performance Test
-labels: {}
-clients:
-- internal: false
-  load_generator: fortio
-  protocol: 1
-  connections: 2
-  rps: 10
-  headers: {}
-  cookies: {}
-  body: ""
-  content_type: ""
-  endpoint_urls:
-  - http://localhost:2323/productpage
-duration: "30m"
+test:
+  smp_version: v0.0.1
+  name: Istio Performance Test
+  labels: {}
+  clients:
+    - internal: false
+      load_generator: fortio
+      protocol: 1
+      connections: 2
+      rps: 10
+      headers: {}
+      cookies: {}
+      body: ''
+      content_type: ''
+      endpoint_urls:
+        - 'http://localhost:2323/productpage'
+  duration: '30m'
+mesh:
+  type: 3
 ```
 
 And then you can pass this file to mesheryctl as:
 
 ```
 mesheryctl perf apply -f perf-config.yaml
+```
+
+You can also override the configuration passed in the file with flags like shown below:
+
+```
+mesheryctl perf apply -f perf-config.yaml --url http://localhost:2323/productpage?u=test --load-generator nighthawk --qps 5
 ```
 
 ## Running Performance Benchmarks in your Pipelines
@@ -167,4 +175,6 @@ jobs:
           profile_name: soak-test
 ```
 
-More configuration details of the action can be found [here](https://github.com/layer5io/meshery-smp-action/blob/master/action.yml). 
+More configuration details of the action can be found [here](https://github.com/layer5io/meshery-smp-action/blob/master/action.yml).
+
+See [sample configurations](https://github.com/layer5io/meshery-smp-action#sample-configuration) for more workflow examples using this action.

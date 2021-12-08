@@ -2,23 +2,23 @@ name: Golang Unit and Integration Tests
 on:
   push:
     branches:
-      - 'master'
+      - "master"
     paths-ignore:
-      - 'docs/**'
-      - 'ui/**'
-      - 'provider-ui/**'
-      - '.github/**'
+      - "docs/**"
+      - "ui/**"
+      - "provider-ui/**"
+      - ".github/**"
   pull_request:
     branches:
-      - 'master'
+      - "master"
     paths-ignore:
-      - 'docs/**'
+      - "docs/**"
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Log level'
+        description: "Log level"
         required: true
-        default: 'warning'
+        default: "warning"
 
 jobs:
   unit-tests:
@@ -61,7 +61,7 @@ jobs:
         with:
           cluster_name: "kind-cluster"
       - name: Run coverage
-        run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic
+        run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic -timeout 20m
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
         uses: codecov/codecov-action@v1

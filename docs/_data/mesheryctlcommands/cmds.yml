@@ -201,6 +201,43 @@ system:
       description: Invalidate current session with your Meshery Provider.
       usage:
         mesheryctl system logout
+
+    check:
+      name: check
+      description: Run system checks for both pre and post mesh deployment scenarios on Meshery
+      usage:
+        mesheryctl system check [flags]
+      example:
+        mesheryctl system check
+      flags:
+        preflight:
+          name: --preflight
+          description: Run Pre-mesh deployment checks (Docker and Kubernetes)
+          usage:
+            mesheryctl system check --preflight
+          example:
+            mesheryctl system check --preflight
+        adapter:
+          name: --adapter
+          description: Run checks on specific mesh adapter
+          usage:
+            mesheryctl system check --adapter [adapter-name]
+          example:
+            mesheryctl system check --adapter meshery-istio:10000
+        operator:
+          name: --operator
+          description: Verify the health of Meshery Operator's deployment with MeshSync and Broker
+          usage:
+            mesheryctl system check --operator
+          example:
+            mesheryctl system check --operator
+        report:
+          name: --report
+          description: Runs diagnostic checks and bundles up to open an issue if present
+          usage:
+            mesheryctl system check --report
+          example:
+            mesheryctl system check --report
     
 system-channel:
   name: system-channel
@@ -345,7 +382,7 @@ perf:
           mesheryctl perf apply [profile-name] --flags
 
           # Execute a Performance test without a specified performance profile
-          mesheryctl perf apply --profile [profile-name] --url [url]
+          mesheryctl perf apply [profile-name] --url [url]
 
           # Run Performance test using SMP compatible test configuration
           mesheryctl perf apply -f [filepath]
@@ -402,14 +439,6 @@ perf:
             mesheryctl perf apply [profile-name] --url [URL] --name "name"
           example:
             mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --name "local-test"
-        profile:
-          name: --profile 
-          arg: apply
-          description: '(required/optional) Name for the new Performance Profile.'
-          usage:
-            mesheryctl perf apply --profile [profile-name] --url [URL]
-          example:
-            mesheryctl perf apply --profile local-perf --url https://192.168.1.15/productpage
         qps:
           name: --qps 
           arg: apply
@@ -426,31 +455,66 @@ perf:
               mesheryctl perf apply [profile-name] --url [URL]
           example:
               mesheryctl perf apply local-perf --url https://192.168.1.15/productpage
-
-
-    list:
-      name: list
-      description: Lists all the available performance profiles and results of a performance profile.
-      usage: |
-          mesheryctl perf list 
-            mesheryctl perf list [profile-id]  
-      example: |
-          mesheryctl perf list
-            mesheryctl perf list local-perf
-    
-    view:
-      name: view
-      description: Configuration of performance profile.
+    profile:
+      name: profile
+      description: List the available performance profiles.
       usage: |
 
-          # View performance profile
-          mesheryctl perf view [profile-name]
-
-          # View performance results
-          mesheryctl perf view [profile-id] [test-name]
+            # View performance profiles
+            mesheryctl perf profile [profile-id] [flags]
       example: |
-          mesheryctl perf view local-perf
-            mesheryctl perf view local-pref sample-1
+        # List performance profiles
+          mesheryctl perf profile
+
+          # Search for performance profiles
+          mesheryctl perf profile soak-test
+
+          # View detailed information about a performance profile
+          mesheryctl perf profile --view
+      flags:
+        page:
+          name: --page
+          description: '(optional) List next set of performance profiles with --page (default = 1) (default 1).'
+          usage:
+            mesheryctl perf profile --page [page number]
+          example:
+            mesheryctl perf profile --page 2
+        view:
+          name: --view
+          description: '(optional) View more information of the performance profile.'
+          usage:
+            mesheryctl perf profile --view
+          example:
+            mesheryctl perf profile --view
+
+    result:
+      name: result
+      description: View the results of a performance profile.
+      usage: |
+
+          # View results of a performance profile
+          mesheryctl perf result [profile-name] [flags]
+      example: |
+        # List test results of a performance profile
+          mesheryctl perf result soak-test
+
+          # View detailed information of a performance test result
+          mesheryctl perf result soak-test --view
+      flags:
+        page:
+          name: --page
+          description: '(optional) List next set of performance results with --page (default = 1) (default 1).'
+          usage:
+            mesheryctl perf result --page [page number]
+          example:
+            mesheryctl perf result --page 2
+        view:
+          name: --view
+          description: '(optional) View more information of the performance test results.'
+          usage:
+            mesheryctl perf result --view
+          example:
+            mesheryctl perf result --view
 
 mesh:
   name: mesh

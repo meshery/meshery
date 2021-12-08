@@ -36,7 +36,9 @@ func (h *Handler) SavePerformanceProfileHandler(
 		fmt.Fprintf(rw, ErrRequestBody(err).Error(), err)
 		return
 	}
-	fmt.Printf("%+v\n", parsedBody)
+
+	j, _ := json.Marshal(parsedBody)
+	h.log.Info("performance profile is ", string(j))
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {

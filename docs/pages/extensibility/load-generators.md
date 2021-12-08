@@ -23,5 +23,5 @@ Different use cases and different opinions call for different approaches to stat
 
 1. [fortio](https://github.com/fortio/fortio) - Fortio load testing library, command line tool, advanced echo server and web UI in go (golang). Allows to specify a set query-per-second load and record latency histograms and other useful stats.
 1. [wrk2](https://github.com/giltene/wrk2) - A constant throughput, correct latency recording variant of wrk.
-1. [nighthawk](https://github.com/envoyproxy/nighthawk) - Enables users to run distributed performance tests to better mimic real-world, distributed systems scenarios.
-  - See the GetNighthawk project.
+1. [nighthawk](https://getnighthawk.dev/) - Enables users to run distributed performance tests to better mimic real-world, distributed systems scenarios.
+  - See the Nighthawk project.

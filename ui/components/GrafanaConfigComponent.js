@@ -30,9 +30,7 @@ class GrafanaConfigComponent extends Component {
                 <Grid item xs={12} md={6}>
                   <div className={classes.inputContainer}>
                     <ReactSelectWrapper
-                      onChange={(select) => handleChange('grafanaURL')(select
-                        ? select.value
-                        : '')}
+                      onChange={(select) => handleChange('grafanaURL')(select ? select.value : '')}
                       options={options}
                       value={grafanaURL}
                       label="Grafana Base URL"

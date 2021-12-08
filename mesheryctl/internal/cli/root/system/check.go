@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os/exec"
 	"runtime"
@@ -294,7 +294,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			log.Warn("!! cannot query the Kubernetes API")
 			return nil
 		}
-		return errors.New("ctlK8sConnect1001: !! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes")
+		return ErrK8SQuery(err)
 	}
 
 	if hc.Options.PrintLogs { // log incase we're supposed to
@@ -403,7 +403,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	if !skipServerLogs {
 		// needs multiple defer as Body.Close needs a valid response
 		defer resp.Body.Close()
-		data, err := ioutil.ReadAll(resp.Body)
+		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Errorf("\n  Invalid response: %v", err)
 		}
@@ -503,7 +503,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 
 	// needs multiple defer as Body.Close needs a valid response
 	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return errors.Errorf("\n  Invalid response: %v", err)
 	}

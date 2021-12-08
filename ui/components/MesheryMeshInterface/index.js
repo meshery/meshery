@@ -34,7 +34,7 @@ function MesheryMeshInterface({ adapter }) {
   };
 
   useEffect(() => {
-    createWorkloadTraitSets(adapter).then(res => setWorkloadTraitsSet(res))
+    createWorkloadTraitSets(adapter).then(res => setWorkloadTraitsSet(res));
   }, []);
 
   return (
@@ -57,7 +57,7 @@ function MesheryMeshInterface({ adapter }) {
               .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
               .map((s) => (
                 <Grid item xs={12}>
-                  <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} renderAsTooltip={false} />
+                  <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
                 </Grid>
               ))}
           </Grid>
@@ -74,7 +74,7 @@ function MesheryMeshInterface({ adapter }) {
               .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
               .map((s) => (
                 <Grid item>
-                  <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} renderAsTooltip={false} />
+                  <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
                 </Grid>
               ))}
           </Grid>

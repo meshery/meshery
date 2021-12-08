@@ -2,7 +2,11 @@
 
 Please do! Thanks for your help in improving the project! :balloon:
 
-Be sure to see the complete set of contributor guides at https://docs.meshery.io/project/contributing
+---
+
+<h3> See the complete set of contributor guides at https://docs.meshery.io/project/contributing</h3>
+
+---
 
 All contributors are welcome. Not sure where to start? Please see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where, and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
@@ -250,9 +254,7 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 
 ### Contributing
 
-Please refer the [Meshery Contributing Guidelines](https://docs.meshery.io/project/contributing-cli) for setting up your development environment.
-
-Refer the [mesheryctl- Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
+Please refer the [Meshery Contributing Guidelines](https://docs.meshery.io/project/contributing/contributing-cli) for setting up your development environment and the [mesheryctl Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
 
 For a quick introduction to `mesheryctl`, checkout [Beginner's guide to contributing to Meshery and mesheryctl](https://youtu.be/hh_kFLZx3G4).
 
@@ -264,11 +266,12 @@ The [`/mesheryctl`](https://github.com/meshery/meshery/tree/master/mesheryctl) f
 
 After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
 
-Refer the [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) for a complete reference of `mesheryctl`.
 
 ### `mesheryctl` command reference
 
-Detailed documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
+- Seee user-facing, documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
+- See contributor-facing design spec for [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) for a complete reference of `mesheryctl`.
+
 
 ### General guidelines and resources
 

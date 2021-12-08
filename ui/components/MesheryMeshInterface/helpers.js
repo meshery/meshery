@@ -97,14 +97,32 @@ export async function createWorkloadTraitSets(adapter) {
 /**
  * getPatternServiceName takes in the pattern service metadata and returns
  * the name of the service
+ *
  * @param {*} item pattern service component
  * @param {boolean} includeDisplayName if set to true, display name is checked first
  * @returns {string} service name
  */
 export function getPatternServiceName(item, includeDisplayName = true) {
-  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || "NA";
+  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || getPatternAttributeName(item) || "NA";
 
   return item?.oam_definition?.metadata?.name || "NA";
+}
+
+/**
+ * getHumanReadablePatternServiceName takes in the pattern service metadata and returns
+ * the readable name of the service
+ *
+ * @param {*} item pattern service component
+ * @returns {string} service name
+ */
+export function getHumanReadablePatternServiceName(item) {
+  const name = item?.oam_definition?.spec?.metadata?.k8sKind
+    || item?.metadata?.["display.ui.meshery.io/name"]
+    || item?.oam_definition?.metadata?.name
+    || getPatternAttributeName(item)
+    || "NA";
+
+  return camelCaseToCapitalize(name);
 }
 
 /**
@@ -124,7 +142,7 @@ export function getPatternServiceID(item) {
  * @returns {string | undefined} service name
  */
 export function getPatternServiceType(item) {
-  return item?.metadata?.["ui.meshery.io/category"]
+  return item?.metadata?.["ui.meshery.io/category"];
 }
 
 /**
@@ -200,4 +218,18 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
   });
 
   return pattern;
+}
+
+/**
+ * Capitalises camelcase-string
+ *
+ * @param {String} text
+ * @returns
+ */
+export function camelCaseToCapitalize(text){
+  if (!text) return null
+
+  const result = text.replace(/([A-Z])/g, " $1");
+
+  return result.charAt(0).toUpperCase() + result.slice(1);
 }

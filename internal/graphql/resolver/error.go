@@ -20,6 +20,7 @@ const (
 	ErrNoExternalEndpointCode       = "1012"
 	ErrDataPlaneSubscriptionCode    = "1013"
 	ErrBrokerNotConnectedCode       = "2151"
+	ErrGettingNamespaceCode         = "1014"
 )
 
 var (
@@ -67,4 +68,7 @@ func ErrMesheryClient(err error) error {
 		return errors.New(ErrMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized", err.Error()}, []string{"Kubernetes config is not initialized with Meshery"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 	}
 	return errors.New(ErrMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+}
+func ErrGettingNamespace(err error) error {
+	return errors.New(ErrGettingNamespaceCode, errors.Alert, []string{"Cannot get available namespaces"}, []string{err.Error()}, []string{"The table in the database might not exist"}, []string{})
 }

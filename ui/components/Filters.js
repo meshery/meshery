@@ -31,6 +31,7 @@ import dataFetch from "../lib/data-fetch";
 import URLUploader from "./URLUploader";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
+import FILE_OPS from "../utils/configurationFileHandlersEnum"
 import { trueRandom } from "../lib/trueRandom";
 
 const styles = (theme) => ({
@@ -143,7 +144,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, filter.id, filter.name, "delete")}
+            onClick={() => onSubmit(yaml, filter.id, filter.name, FILE_OPS.DELETE)}
           >
             <DeleteIcon />
           </IconButton>
@@ -186,6 +187,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           "&:hover" : {
             color : "#607d8b"
           }
+        },
+      },
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
+          },
         },
       },
       MUIDataTableToolbar : {
@@ -303,7 +311,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   function handleSubmit(data, id, name, type) {
     updateProgress({ showProgress : true });
-    if (type === "delete") {
+    if (type === FILE_OPS.DELETE) {
       dataFetch(
         `/api/filter/${id}`,
         { credentials : "include", method : "DELETE" },
@@ -318,12 +326,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       );
     }
 
-    if (type === "upload" || type === "urlupload") {
+    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
-      if (type === "upload") {
-        body = JSON.stringify({ ...body, filter_data : { filter_data : data } })
+      if (type ===FILE_OPS.FILE_UPLOAD) {
+        body = JSON.stringify({ ...body, filter_data : { filter_file : data } })
       }
-      if (type === "urlupload") {
+      if (type ===  FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
@@ -348,12 +356,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(trueRandom() * 100), "upload");
+      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.FILE_UPLOAD);
     });
     reader.readAsText(file);
   }
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100),  FILE_OPS.URL_UPLOAD);
     console.log(link, "valid");
   }
   const columns = [
@@ -516,6 +524,11 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     page,
     print : false,
     download : false,
+    textLabels : {
+      selectedRows : {
+        text : "filter(s) selected"
+      }
+    },
     customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onRowsDelete : async function handleDelete(row) {

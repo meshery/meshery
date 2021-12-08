@@ -16,7 +16,7 @@ export const controlPlaneSubscription = graphql`
 `;
 
 export default function subscribeControlPlaneEvents(dataCB, variables) {
-  requestSubscription(environment, {
+  return requestSubscription(environment, {
     subscription : controlPlaneSubscription,
     variables : { filter : variables },
     onNext : dataCB,
