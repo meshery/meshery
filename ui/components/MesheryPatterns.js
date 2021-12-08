@@ -26,6 +26,7 @@ import { trueRandom } from "../lib/trueRandom";
 import PatternForm from "./configuratorComponents/patternConfigurator";
 import PromptComponent from "./PromptComponent";
 import URLUploader from "./URLUploader";
+import GHImport from "./GHImport";
 
 const styles = (theme) => ({
   grid : {
@@ -80,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function CustomToolbar(onClick, urlOnClick) {
+function CustomToolbar(onClick, urlOnClick, ghimport) {
   return function Toolbar() {
     return (
       <>
@@ -94,6 +95,9 @@ function CustomToolbar(onClick, urlOnClick) {
         </label>
         <label htmlFor="url-upload-button">
           <URLUploader onSubmit={urlOnClick} />
+        </label>
+        <label htmlFor="url-upload-button">
+          <GHImport onSubmit={ghimport} />
         </label>
       </>
     );
@@ -144,6 +148,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
             lineNumbers : true,
             lineWrapping : true,
             gutters : ["CodeMirror-lint-markers"],
+            // @ts-ignore
             lint : true,
             mode : "text/x-yaml",
           }}
@@ -384,13 +389,19 @@ function MesheryPatterns({
       );
     }
 
-    if (type === FILE_OPS.FILE_UPLOAD || type=== FILE_OPS.URL_UPLOAD) {
+    if (type === FILE_OPS.FILE_UPLOAD || type=== FILE_OPS.URL_UPLOAD || type === FILE_OPS.GH_IMPORT) {
       let body;
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({  pattern_data : { pattern_file : data }, save : true })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ url : data, save : true })
+      }
+      if (type === FILE_OPS.GH_IMPORT) {
+        body = JSON.stringify({
+          url : "https://raw.github.com/owner/repo/branch",
+          save : false
+        })
       }
       dataFetch(
         `/api/pattern`,
@@ -429,6 +440,10 @@ function MesheryPatterns({
   function urlUploadHandler(link) {
     handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.URL_UPLOAD);
     // console.log(link, "valid");
+  }
+
+  function ghImportHandler(gh) {
+    handleSubmit(gh, "",  "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.GH_IMPORT);
   }
   const columns = [
     {
@@ -590,7 +605,7 @@ function MesheryPatterns({
         text : "pattern(s) selected"
       }
     },
-    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
+    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler, ghImportHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
