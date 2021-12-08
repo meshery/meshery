@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { SchemaContext } from "../utils/context/schemaSet"
+import React, { useEffect, useState } from 'react';
+import { SchemaContext } from '../utils/context/schemaSet';
 import { groupWorkloadByType } from '../utils/workloadFilter';
 import { createWorkloadTraitSets } from './MesheryMeshInterface/helpers';
 
 function ConfigurationWrapper({ children }) {
 
-  const [workloadTraitSet, setWorkloadTraitsSet] = useState([])
-  const [meshWorkloads, setMeshWorkloads] = useState([])
+  const [workloadTraitSet, setWorkloadTraitsSet] = useState([]);
+  const [meshWorkloads, setMeshWorkloads] = useState([]);
 
   async function initialiser() {
-    const wtsets = await createWorkloadTraitSets("");
+    const wtsets = await createWorkloadTraitSets('');
     const mwloads = await groupWorkloadByType(wtsets);
     setWorkloadTraitsSet(wtsets);
     setMeshWorkloads(mwloads);
@@ -23,7 +23,7 @@ function ConfigurationWrapper({ children }) {
     <SchemaContext.Provider value={{ workloadTraitSet, meshWorkloads }}>
       {children}
     </SchemaContext.Provider>
-  )
+  );
 }
 
 export default ConfigurationWrapper;

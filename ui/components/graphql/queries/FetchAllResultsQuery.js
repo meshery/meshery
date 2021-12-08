@@ -1,8 +1,8 @@
-import { graphql, fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { graphql, fetchQuery } from 'react-relay';
+import environment from '../../../lib/relayEnvironment';
 
 export default function fetchAllResults(variables) {
-  const vars = { selector : variables.selector };
+  const vars = { selector: variables.selector };
 
   const query = graphql`
     query FetchAllResultsQuery($selector: PageFilter!) {

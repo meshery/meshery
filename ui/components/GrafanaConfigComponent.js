@@ -4,15 +4,15 @@ import { withStyles } from '@material-ui/core/styles';
 import {
   NoSsr, TextField, Grid, Button,
 } from '@material-ui/core';
-import ReactSelectWrapper from './ReactSelectWrapper'
+import ReactSelectWrapper from './ReactSelectWrapper';
 
 const grafanaStyles = (theme) => ({
-  root : { padding : theme.spacing(5), },
-  buttons : { display : 'flex',
-    justifyContent : 'flex-end', },
-  inputContainer : { marginTop : theme.spacing(2),
-    marginBottom : theme.spacing(1) },
-  button : { marginTop : theme.spacing(3),
+  root: { padding: theme.spacing(5), },
+  buttons: { display: 'flex',
+    justifyContent: 'flex-end', },
+  inputContainer: { marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1) },
+  button: { marginTop: theme.spacing(3),
     //   marginLeft: theme.spacing(1),
   },
 });
@@ -78,11 +78,11 @@ class GrafanaConfigComponent extends Component {
 }
 
 GrafanaConfigComponent.propTypes = {
-  classes : PropTypes.object.isRequired,
-  grafanaURL : PropTypes.object.isRequired,
-  grafanaAPIKey : PropTypes.string.isRequired,
-  handleChange : PropTypes.func.isRequired,
-  handleGrafanaConfigure : PropTypes.func.isRequired,
+  classes: PropTypes.object.isRequired,
+  grafanaURL: PropTypes.object.isRequired,
+  grafanaAPIKey: PropTypes.string.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleGrafanaConfigure: PropTypes.func.isRequired,
 };
 
 export default withStyles(grafanaStyles)(GrafanaConfigComponent);

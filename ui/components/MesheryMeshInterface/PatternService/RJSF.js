@@ -1,60 +1,60 @@
-import React from "react";
-import { withTheme } from "@rjsf/core";
-import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import { TextField, Typography } from "@material-ui/core";
-import JS4 from "../../../assets/jsonschema/schema-04.json";
-import { Tooltip, IconButton } from "@material-ui/core";
-import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import React from 'react';
+import { withTheme } from '@rjsf/core';
+import { Theme as MaterialUITheme } from '@rjsf/material-ui';
+import { TextField, Typography } from '@material-ui/core';
+import JS4 from '../../../assets/jsonschema/schema-04.json';
+import { Tooltip, IconButton } from '@material-ui/core';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import { rjsfTheme } from "../../../themes";
-import { camelCaseToCapitalize } from "../helpers";
+import { rjsfTheme } from '../../../themes';
+import { camelCaseToCapitalize } from '../helpers';
 
 const Form = withTheme(MaterialUITheme);
 
 function deleteTitleFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, title : "" };
+  return { ...jsonSchema, title: '' };
 }
 
 function deleteDescriptionFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, description : "" };
+  return { ...jsonSchema, description: '' };
 }
 
 function formatString(text){
-  if (!text) return null
+  if (!text) return null;
 
   // format string for prettified camelCase
-  return text.replaceAll("IP", "Ip");
+  return text.replaceAll('IP', 'Ip');
 }
 
 
 
 function addTitleToPropertiesJSONSchema(jsonSchema) {
-  const newProperties = jsonSchema?.properties
+  const newProperties = jsonSchema?.properties;
 
   if (newProperties && typeof newProperties === 'object'){
     Object.keys(newProperties).map(key => {
       if (Object.prototype.hasOwnProperty.call(newProperties, key)){
         let defaultValue;
-        let types = []
+        let types = [];
         if (!Array.isArray(newProperties[key].type) && Object.prototype.hasOwnProperty.call(newProperties[key], 'type')){
-          types.push(newProperties[key].type)
+          types.push(newProperties[key].type);
         } else {
-          types.push(...newProperties[key].type)
+          types.push(...newProperties[key].type);
         }
         if (types.includes('null')){
-          defaultValue = null
+          defaultValue = null;
         } else if (types.includes('integer')){
-          defaultValue = 0
+          defaultValue = 0;
         } else if (types.includes('string')){
-          defaultValue = ''
+          defaultValue = '';
         } else if (types.includes('array')){
-          defaultValue = []
+          defaultValue = [];
         }
         newProperties[key] = {
           ...newProperties[key],
-          title : camelCaseToCapitalize(formatString(key)),
-          default : defaultValue
-        }
+          title: camelCaseToCapitalize(formatString(key)),
+          default: defaultValue
+        };
         // if (typeof newProperties[key] === 'object' && Object.prototype.hasOwnProperty.call(newProperties[key], 'properties')){
         //   newProperties[key] = {
         //     ...newProperties[key],
@@ -63,33 +63,33 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
         // }
       }
 
-    })
+    });
 
-    return { ...jsonSchema, properties : newProperties };
+    return { ...jsonSchema, properties: newProperties };
   }
-  return undefined
+  return undefined;
 }
 
 const CustomInputField = (props) => {
-  const name = props?.name || props?.idSchema['$id']?.split('_')[1]
-  const prettifiedName = camelCaseToCapitalize(formatString(name)) || 'Input'
+  const name = props?.name || props?.idSchema['$id']?.split('_')[1];
+  const prettifiedName = camelCaseToCapitalize(formatString(name)) || 'Input';
   return (
     <div key={props.id}>
-      <Typography variant="body1" style={{ fontWeight : "bold" }}>{prettifiedName}
+      <Typography variant="body1" style={{ fontWeight: 'bold' }}>{prettifiedName}
         {props.schema?.description && (
           <Tooltip title={props.schema?.description}>
             <IconButton component="span" size="small">
-              <HelpOutlineIcon style={{ fontSize : 17 }} />
+              <HelpOutlineIcon style={{ fontSize: 17 }} />
             </IconButton>
           </Tooltip>
         )}
       </Typography>
-      <TextField variant="outlined" size="small" style={{ margin : '10px 0 ' }} autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`}/>
+      <TextField variant="outlined" size="small" style={{ margin: '10px 0 ' }} autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`}/>
     </div>
-  )
-}
+  );
+};
 
-const MemoizedCustomInputField = React.memo(CustomInputField)
+const MemoizedCustomInputField = React.memo(CustomInputField);
 
 // function RJSFButton({ handler, text, ...restParams }) {
 //   return (
@@ -112,8 +112,8 @@ function RJSF(props) {
 
   // define new string field
   const fields =  {
-    StringField : ({ idSchema, formData, ...props }) => <MemoizedCustomInputField id={idSchema['$id']} value={formData} idSchema={idSchema} {...props} />
-  }
+    StringField: ({ idSchema, formData, ...props }) => <MemoizedCustomInputField id={idSchema['$id']} value={formData} idSchema={idSchema} {...props} />
+  };
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
 
@@ -127,13 +127,13 @@ function RJSF(props) {
   }, [data]);
 
   return (
-    <RJSFWrapperComponent {...{ ...props, RJSFWrapperComponent : null, RJSFFormChildComponent : null } }>
+    <RJSFWrapperComponent {...{ ...props, RJSFWrapperComponent: null, RJSFFormChildComponent: null } }>
       <MuiThemeProvider theme={rjsfTheme}>
         <Form
           schema={hideTitle ? deleteTitleFromJSONSchema(deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))) : deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))}
           idPrefix={jsonSchema?.title}
           onChange={(e) => {
-            setData(e.formData)
+            setData(e.formData);
           }}
           formData={data}
           fields={fields}

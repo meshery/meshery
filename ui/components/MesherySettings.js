@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
-import { bindActionCreators } from "redux";
+import { bindActionCreators } from 'redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import {
   AppBar, Paper, Tooltip, IconButton
 } from '@material-ui/core';
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from '@material-ui/icons/Close';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faCloud, faPoll } from '@fortawesome/free-solid-svg-icons';
 // import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
@@ -22,46 +22,46 @@ import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './PrometheusComponent';
 // import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
 import dataFetch from '../lib/data-fetch';
-import { updateProgress } from "../lib/store";
-import { withSnackbar } from "notistack";
+import { updateProgress } from '../lib/store';
+import { withSnackbar } from 'notistack';
 
 const styles = (theme) => ({
-  root : { flexGrow : 1,
-    maxWidth : '100%',
-    height : 'auto', },
-  tab : { minWidth : 40,
-    paddingLeft : 0,
-    paddingRight : 0, },
-  icon : {
-    display : 'inline',
-    verticalAlign : 'text-top',
-    width : theme.spacing(1.75),
-    marginLeft : theme.spacing(0.5),
+  root: { flexGrow: 1,
+    maxWidth: '100%',
+    height: 'auto', },
+  tab: { minWidth: 40,
+    paddingLeft: 0,
+    paddingRight: 0, },
+  icon: {
+    display: 'inline',
+    verticalAlign: 'text-top',
+    width: theme.spacing(1.75),
+    marginLeft: theme.spacing(0.5),
   },
-  iconText : { display : 'inline',
-    verticalAlign : 'middle', },
-  backToPlay : { margin : theme.spacing(2), },
-  link : { cursor : 'pointer', },
+  iconText: { display: 'inline',
+    verticalAlign: 'middle', },
+  backToPlay: { margin: theme.spacing(2), },
+  link: { cursor: 'pointer', },
 });
 
 function TabContainer(props) {
   return (
     <Typography
       component="div"
-      style={{ paddingTop : 2, }}
+      style={{ paddingTop: 2, }}
     >
       {props.children}
     </Typography>
   );
 }
 
-TabContainer.propTypes = { children : PropTypes.node.isRequired, };
+TabContainer.propTypes = { children: PropTypes.node.isRequired, };
 
 class MesherySettings extends React.Component {
   constructor(props) {
     super(props);
     const {
-      k8sconfig, meshAdapters, grafana, prometheus, router : { asPath }
+      k8sconfig, meshAdapters, grafana, prometheus, router: { asPath }
     } = props;
 
     let tabVal = 0, subTabVal = 0;
@@ -100,7 +100,7 @@ class MesherySettings extends React.Component {
       }
     }
     this.state = {
-      completed : {},
+      completed: {},
       k8sconfig,
       meshAdapters,
       grafana,
@@ -108,12 +108,12 @@ class MesherySettings extends React.Component {
       tabVal,
       subTabVal,
 
-      isMeshConfigured : k8sconfig.clusterConfigured,
+      isMeshConfigured: k8sconfig.clusterConfigured,
 
       // Array of scanned prometheus urls
-      scannedPrometheus : [],
+      scannedPrometheus: [],
       // Array of scanned grafan urls
-      scannedGrafana : []
+      scannedGrafana: []
     };
   }
 
@@ -121,10 +121,10 @@ class MesherySettings extends React.Component {
     if (JSON.stringify(props.k8sconfig) !== JSON.stringify(state.k8sconfig)
       || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
       return {
-        k8sconfig : props.k8sconfig,
-        meshAdapters : props.meshAdapters,
-        grafana : props.grafana,
-        prometheus : props.prometheus,
+        k8sconfig: props.k8sconfig,
+        meshAdapters: props.meshAdapters,
+        grafana: props.grafana,
+        prometheus: props.prometheus,
       };
     }
     return null;
@@ -136,30 +136,30 @@ class MesherySettings extends React.Component {
 
   fetchPromGrafanaScanData = () => {
     const self = this;
-    self.props.updateProgress({ showProgress : true });
+    self.props.updateProgress({ showProgress: true });
     dataFetch(
       '/api/system/meshsync/grafana',
       {
-        credentials : "same-origin",
-        method : "GET",
-        credentials : "include",
+        credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include',
       },
       (result) => {
-        self.props.updateProgress({ showProgress : false });
+        self.props.updateProgress({ showProgress: false });
         if (!result) return;
 
         if (Array.isArray(result.prometheus)) {
           const urls = self.extractURLFromScanData(result.prometheus);
-          self.setState(state => ({ scannedPrometheus : [...state.scannedPrometheus, ...urls] }));
+          self.setState(state => ({ scannedPrometheus: [...state.scannedPrometheus, ...urls] }));
         }
 
         if (Array.isArray(result.grafana)) {
           const urls = self.extractURLFromScanData(result.grafana);
-          self.setState(state => ({ scannedGrafana : [...state.scannedGrafana, ...urls] }));
+          self.setState(state => ({ scannedGrafana: [...state.scannedGrafana, ...urls] }));
         }
       },
-      self.handleError("Unable to fetch prometheus and grafana scan data")
-    )
+      self.handleError('Unable to fetch prometheus and grafana scan data')
+    );
   }
 
   /**
@@ -174,50 +174,50 @@ class MesherySettings extends React.Component {
       // Add loadbalancer based url
       if (Array.isArray(data.status?.loadBalancer?.ingress)) {
         data.status.loadBalancer.ingress.forEach(lbdata => {
-          let protocol = "http";
+          let protocol = 'http';
 
           // Iterate over ports exposed by the service
           if (Array.isArray(data.spec.ports)) {
             data.spec.ports.forEach(({ port }) => {
-              if (port === 443) protocol = "https";
+              if (port === 443) protocol = 'https';
 
               // From kubernetes v1.19 docs
               // Hostname is set for load-balancer ingress points that are DNS based (typically AWS load-balancers)
               // IP is set for load-balancer ingress points that are IP based (typically GCE or OpenStack load-balancers)
               let address = lbdata.ip || lbdata.hostname;
               if (address) result.push(`${protocol}://${address}:${port}`);
-            })
+            });
           }
-        })
+        });
       }
 
       // Add clusterip based url
       // As per kubernetes v1.19 api, "None", "" as well as a valid ip is a valid clusterIP
       // Looking for valid ipv4 address
       if (data.spec.clusterIP?.match(/^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/g)?.[0]) {
-        let protocol = "http";
+        let protocol = 'http';
         if (Array.isArray(data.spec.ports)) {
           data.spec.ports.forEach(({ port }) => {
-            if (port === 443) protocol = "https";
+            if (port === 443) protocol = 'https';
             result.push(`${protocol}://${data.spec.clusterIP}:${port}`);
-          })
+          });
         }
       }
-    })
+    });
 
-    return result
+    return result;
   }
 
   handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
+    this.props.updateProgress({ showProgress: false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-      action : (key) => (
+    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant: 'error',
+      action: (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 7000, });
+      autoHideDuration: 7000, });
   };
 
   handleChange = (val) => {
@@ -227,40 +227,40 @@ class MesherySettings extends React.Component {
         let newRoute = this.props.router.route;
         switch (newVal) {
           case 0:
-            newRoute += '#environment'
+            newRoute += '#environment';
             break;
           case 1:
-            newRoute += '#service-mesh'
+            newRoute += '#service-mesh';
             break;
           case 2:
-            newRoute += '#metrics'
+            newRoute += '#metrics';
             break;
           // case 3:
           //   newRoute += '#performance'
           //   break;
         }
         if (this.props.router.route != newRoute)
-          this.props.router.push(newRoute)
-        self.setState({ tabVal : newVal });
+          this.props.router.push(newRoute);
+        self.setState({ tabVal: newVal });
       } else if (val === 'subTabVal') {
         let newRoute = this.props.router.route;
         switch (newVal) {
           case 0:
             if (self.state.tabVal == 0)
-              newRoute += '#environment/outclusterconfig'
+              newRoute += '#environment/outclusterconfig';
             else if (self.state.tabVal == 2)
-              newRoute += '#metrics/grafana'
+              newRoute += '#metrics/grafana';
             break;
           case 1:
             if (self.state.tabVal == 0)
-              newRoute += '#environment/inclusterconfig'
+              newRoute += '#environment/inclusterconfig';
             else if (self.state.tabVal == 2)
-              newRoute += '#metrics/prometheus'
+              newRoute += '#metrics/prometheus';
             break;
         }
         if (this.props.router.route != newRoute)
-          this.props.router.push(newRoute)
-        self.setState({ subTabVal : newVal });
+          this.props.router.push(newRoute);
+        self.setState({ subTabVal: newVal });
       }
     };
   }
@@ -438,9 +438,9 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch), });
 
-MesherySettings.propTypes = { classes : PropTypes.object, };
+MesherySettings.propTypes = { classes: PropTypes.object, };
 
 export default withStyles(styles)(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesherySettings)))

@@ -20,9 +20,9 @@
  */
 export default function ExtensionPointSchemaValidator(type) {
   switch (type) {
-    case "navigator":
+    case 'navigator':
       return NavigatorExtensionSchemaDecoder;
-    case "user_prefs":
+    case 'user_prefs':
       return UserPrefsExtensionSchemaDecoder;
     default:
       return () => {};
@@ -38,13 +38,13 @@ function NavigatorExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
     return content.map((item) => {
       return {
-        title : item.title || "",
-        href : prepareHref(item.href),
-        component : item.component || "",
-        onClickCallback : item?.on_click_callback || 0,
-        icon : (item.icon && "/api/provider/extension/" + item.icon) || "",
-        show : !!item.show,
-        children : NavigatorExtensionSchemaDecoder(item.children),
+        title: item.title || '',
+        href: prepareHref(item.href),
+        component: item.component || '',
+        onClickCallback: item?.on_click_callback || 0,
+        icon: (item.icon && '/api/provider/extension/' + item.icon) || '',
+        show: !!item.show,
+        children: NavigatorExtensionSchemaDecoder(item.children),
       };
     });
   }
@@ -60,7 +60,7 @@ function NavigatorExtensionSchemaDecoder(content) {
 function UserPrefsExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
     return content.map((item) => {
-      return { component : item.component || "", };
+      return { component: item.component || '', };
     });
   }
 
@@ -68,7 +68,7 @@ function UserPrefsExtensionSchemaDecoder(content) {
 }
 
 function prepareHref(href) {
-  if (href.external) return href.uri || "";
+  if (href.external) return href.uri || '';
 
-  return "/extension" + (href.uri || "");
+  return '/extension' + (href.uri || '');
 }

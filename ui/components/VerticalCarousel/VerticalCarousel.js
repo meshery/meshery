@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { createRef, useCallback, useEffect } from 'react';
-import Slider from "react-slick";
+import Slider from 'react-slick';
 import { Grid } from '@material-ui/core';
 // const VerticalCarousel = ({
 //   item,
@@ -61,17 +61,17 @@ const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
 
   const settings = {
     // dots : true,
-    infinite : false,
-    slidesToShow : 1,
-    arrows : true,
+    infinite: false,
+    slidesToShow: 1,
+    arrows: true,
     // slidesToScroll : 1,
     // adaptiveHeight : true,
     // centerMode : true,
     // centerPadding : "0px",
-    vertical : true,
+    vertical: true,
     // verticalSwiping : true,
     // swipeToSlide : true,
-    afterChange : handleAfterSlideChange
+    afterChange: handleAfterSlideChange
   };
 
   return (
@@ -80,10 +80,10 @@ const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
         <Slider {...settings} ref={sliderRef}>{slides} </Slider>
       </Grid>
     </>
-  )
+  );
 
 
-}
+};
 
 
 export default VerticalCarousel;

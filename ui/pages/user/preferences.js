@@ -1,15 +1,15 @@
-import UserPreferences from "../../components/UserPreferences";
-import { NoSsr, Paper, withStyles } from "@material-ui/core";
-import { updatepagepath } from "../../lib/store";
-import { connect } from "react-redux";
+import UserPreferences from '../../components/UserPreferences';
+import { NoSsr, Paper, withStyles } from '@material-ui/core';
+import { updatepagepath } from '../../lib/store';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getPath } from "../../lib/path";
+import { getPath } from '../../lib/path';
 import Head from 'next/head';
 import dataFetch from '../../lib/data-fetch';
 
-const styles = { paper : { maxWidth : '90%',
-  margin : 'auto',
-  overflow : 'hidden', } };
+const styles = { paper: { maxWidth: '90%',
+  margin: 'auto',
+  overflow: 'hidden', } };
 
 class UserPref extends React.Component {
   constructor(props){
@@ -19,17 +19,17 @@ class UserPref extends React.Component {
 
   async componentDidMount() {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
+    this.props.updatepagepath({ path: getPath() });
 
     await new Promise(resolve => {
-      dataFetch('/api/user/prefs', { credentials : 'same-origin',
-        method : 'GET',
-        credentials : 'include', }, (result) => {
+      dataFetch('/api/user/prefs', { credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include', }, (result) => {
         resolve();
         if (typeof result !== 'undefined') {
-          this.setState({ anonymousStats : result.anonymousUsageStats||false,
-            perfResultStats : result.anonymousPerfResults||false,
-            startOnZoom : result.startOnZoom||false, //meshmap specific user preferences are not stored in any db as of now
+          this.setState({ anonymousStats: result.anonymousUsageStats||false,
+            perfResultStats: result.anonymousPerfResults||false,
+            startOnZoom: result.startOnZoom||false, //meshmap specific user preferences are not stored in any db as of now
           });
         }
       },
@@ -43,7 +43,7 @@ class UserPref extends React.Component {
     const { anonymousStats, perfResultStats, startOnZoom }=this.state;
     if (anonymousStats==undefined){
       // Skip rendering till data is not loaded
-      return <div></div>
+      return <div></div>;
     }
     return (
       <NoSsr>
@@ -59,7 +59,7 @@ class UserPref extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
+const mapDispatchToProps = dispatch => ({ updatepagepath: bindActionCreators(updatepagepath, dispatch) });
 
 export default withStyles(styles)(connect(
   null,

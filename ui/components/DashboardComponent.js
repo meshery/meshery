@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import {
   NoSsr,
   Chip,
@@ -21,68 +21,68 @@ import {
   Paper,
   Select,
   MenuItem,
-} from "@material-ui/core";
-import blue from "@material-ui/core/colors/blue";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import SettingsIcon from "@material-ui/icons/Settings";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
-import { withRouter } from "next/router";
-import { withSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
-import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from "../lib/store";
-import dataFetch from "../lib/data-fetch";
+} from '@material-ui/core';
+import blue from '@material-ui/core/colors/blue';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import SettingsIcon from '@material-ui/icons/Settings';
+import AddIcon from '@material-ui/icons/AddCircleOutline';
+import { withRouter } from 'next/router';
+import { withSnackbar } from 'notistack';
+import CloseIcon from '@material-ui/icons/Close';
+import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from '../lib/store';
+import dataFetch from '../lib/data-fetch';
 // import subscribeServiceMeshEvents from "./graphql/subscriptions/ServiceMeshSubscription";
-import subscribeDataPlaneEvents from "./graphql/subscriptions/DataPlanesSubscription";
-import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
-import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
-import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
-import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
-import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
-import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
-import { submitPrometheusConfigure } from "./PrometheusComponent";
-import { submitGrafanaConfigure } from "./GrafanaComponent";
-import { podNameMapper, versionMapper } from "../utils/nameMapper";
-import { subscriptionClient } from "../lib/relayEnvironment";
+import subscribeDataPlaneEvents from './graphql/subscriptions/DataPlanesSubscription';
+import subscribeControlPlaneEvents from './graphql/subscriptions/ControlPlaneSubscription';
+import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
+import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
+import fetchControlPlanes from './graphql/queries/ControlPlanesQuery';
+import fetchDataPlanes from './graphql/queries/DataPlanesQuery';
+import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
+import { submitPrometheusConfigure } from './PrometheusComponent';
+import { submitGrafanaConfigure } from './GrafanaComponent';
+import { podNameMapper, versionMapper } from '../utils/nameMapper';
+import { subscriptionClient } from '../lib/relayEnvironment';
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
-  root : { backgroundColor : "#eaeff1", },
-  chip : { marginRight : theme.spacing(1),
-    marginBottom : theme.spacing(1), },
-  buttons : { display : "flex",
-    justifyContent : "flex-end", },
-  button : { marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1), },
-  metricsButton : { width : "240px", },
-  alreadyConfigured : { textAlign : "center", },
-  margin : { margin : theme.spacing(1), },
-  colorSwitchBase : { color : blue[300],
-    "&$colorChecked" : { color : blue[500],
-      "& + $colorBar" : { backgroundColor : blue[500], }, }, },
-  colorBar : {},
-  colorChecked : {},
-  fileLabel : { width : "100%", },
-  fileLabelText : {},
-  inClusterLabel : { paddingRight : theme.spacing(2), },
-  alignCenter : { textAlign : "center", },
-  icon : { width : theme.spacing(2.5), },
-  istioIcon : { width : theme.spacing(1.5), },
-  settingsIcon : { width : theme.spacing(2.5),
-    paddingRight : theme.spacing(0.5), },
-  addIcon : { width : theme.spacing(2.5),
-    paddingRight : theme.spacing(0.5), },
-  cardHeader : { fontSize : theme.spacing(2), },
-  card : { height : "100%",
-    marginTop : theme.spacing(2), },
-  cardContent : { height : "100%", },
-  redirectButton : { marginLeft : "-.5em",
-    color : "#000", },
-  dashboardSection : {
-    backgroundColor : "#fff",
-    padding : theme.spacing(2),
-    borderRadius : 4,
-    height : "100%",
+  root: { backgroundColor: '#eaeff1', },
+  chip: { marginRight: theme.spacing(1),
+    marginBottom: theme.spacing(1), },
+  buttons: { display: 'flex',
+    justifyContent: 'flex-end', },
+  button: { marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1), },
+  metricsButton: { width: '240px', },
+  alreadyConfigured: { textAlign: 'center', },
+  margin: { margin: theme.spacing(1), },
+  colorSwitchBase: { color: blue[300],
+    '&$colorChecked': { color: blue[500],
+      '& + $colorBar': { backgroundColor: blue[500], }, }, },
+  colorBar: {},
+  colorChecked: {},
+  fileLabel: { width: '100%', },
+  fileLabelText: {},
+  inClusterLabel: { paddingRight: theme.spacing(2), },
+  alignCenter: { textAlign: 'center', },
+  icon: { width: theme.spacing(2.5), },
+  istioIcon: { width: theme.spacing(1.5), },
+  settingsIcon: { width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5), },
+  addIcon: { width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5), },
+  cardHeader: { fontSize: theme.spacing(2), },
+  card: { height: '100%',
+    marginTop: theme.spacing(2), },
+  cardContent: { height: '100%', },
+  redirectButton: { marginLeft: '-.5em',
+    color: '#000', },
+  dashboardSection: {
+    backgroundColor: '#fff',
+    padding: theme.spacing(2),
+    borderRadius: 4,
+    height: '100%',
   },
 });
 class DashboardComponent extends React.Component {
@@ -94,40 +94,40 @@ class DashboardComponent extends React.Component {
     this._isMounted = false;
     this.state = {
       meshAdapters,
-      availableAdapters : [],
-      mts : new Date(),
-      meshLocationURLError : false,
+      availableAdapters: [],
+      mts: new Date(),
+      meshLocationURLError: false,
 
-      inClusterConfig : k8sconfig.inClusterConfig, // read from store
-      k8sfile : k8sconfig.k8sfile, // read from store
-      contextName : k8sconfig.contextName, // read from store
+      inClusterConfig: k8sconfig.inClusterConfig, // read from store
+      k8sfile: k8sconfig.k8sfile, // read from store
+      contextName: k8sconfig.contextName, // read from store
 
-      clusterConfigured : k8sconfig.clusterConfigured, // read from store
-      configuredServer : k8sconfig.configuredServer,
-      grafanaUrl : grafana.grafanaURL,
-      prometheusUrl : prometheus.prometheusURL,
-      k8sfileError : false,
-      kts : new Date(),
+      clusterConfigured: k8sconfig.clusterConfigured, // read from store
+      configuredServer: k8sconfig.configuredServer,
+      grafanaUrl: grafana.grafanaURL,
+      prometheusUrl: prometheus.prometheusURL,
+      k8sfileError: false,
+      kts: new Date(),
 
       grafana,
       prometheus,
 
-      urlError : false,
-      grafanaConfigSuccess : props.grafana.grafanaURL !== "",
-      grafanaBoardSearch : "",
-      grafanaURL : props.grafana.grafanaURL,
-      grafanaAPIKey : props.grafana.grafanaAPIKey,
-      grafanaBoards : props.grafana.grafanaBoards,
-      selectedBoardsConfigs : props.grafana.selectedBoardsConfigs,
-      ts : props.grafana.ts,
+      urlError: false,
+      grafanaConfigSuccess: props.grafana.grafanaURL !== '',
+      grafanaBoardSearch: '',
+      grafanaURL: props.grafana.grafanaURL,
+      grafanaAPIKey: props.grafana.grafanaAPIKey,
+      grafanaBoards: props.grafana.grafanaBoards,
+      selectedBoardsConfigs: props.grafana.selectedBoardsConfigs,
+      ts: props.grafana.ts,
 
-      meshScan : [],
-      activeMeshScanNamespace : {},
-      meshScanNamespaces : {},
+      meshScan: [],
+      activeMeshScanNamespace: {},
+      meshScanNamespaces: {},
 
-      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured,
-      controlPlaneState : "",
-      dataPlaneState : "",
+      isMetricsConfigured: grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured,
+      controlPlaneState: '',
+      dataPlaneState: '',
     };
   }
 
@@ -167,7 +167,7 @@ class DashboardComponent extends React.Component {
     if (self._isMounted){
       subscribeMeshSyncStatusEvents((res) => {
         if (res.meshsync?.error) {
-          self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
+          self.handleError(res.meshsync?.error?.description || 'MeshSync could not be reached');
           return;
         }
       });
@@ -175,39 +175,39 @@ class DashboardComponent extends React.Component {
       // subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH, this.state, e => this.setState({ ...e }));
       subscribeControlPlaneEvents((res) => {
         if (res?.controlPlanesState !== undefined){
-          this.setState({ controlPlaneState : res })
+          this.setState({ controlPlaneState: res });
         }
-      }, ALL_MESH)
+      }, ALL_MESH);
       subscribeDataPlaneEvents((res) => {
         if (res?.dataPlanesState !== undefined){
-          this.setState({ dataPlaneState : res })
+          this.setState({ dataPlaneState: res });
         }
-      }, ALL_MESH)
+      }, ALL_MESH);
       fetchControlPlanes(ALL_MESH).subscribe({
-        next : (controlPlaneRes) => {
-          this.setState({ controlPlaneState : controlPlaneRes })
+        next: (controlPlaneRes) => {
+          this.setState({ controlPlaneState: controlPlaneRes });
           // self.setMeshScanData(controlPlaneRes, null);
           fetchDataPlanes(ALL_MESH).subscribe({
-            next : (dataPlaneRes) => {
-              this.setState({ dataPlaneState : dataPlaneRes })
+            next: (dataPlaneRes) => {
+              this.setState({ dataPlaneState: dataPlaneRes });
               // if (controlPlaneRes) self.setMeshScanData(controlPlaneRes, dataPlaneRes);
             },
-            error : (err) => console.error(err),
+            error: (err) => console.error(err),
           });
         },
-        error : (err) => console.error(err),
+        error: (err) => console.error(err),
       });
     }
 
   }
 
   componentWillUnmount = () => {
-    this._isMounted = false
-    subscriptionClient.close()
+    this._isMounted = false;
+    subscriptionClient.close();
   }
 
   componentDidMount = () => {
-    this._isMounted = true
+    this._isMounted = true;
     this.fetchAvailableAdapters();
 
     if (this.state.isMetricsConfigured){
@@ -225,17 +225,17 @@ class DashboardComponent extends React.Component {
 
     // deep compare very limited, order of object fields is important
     if (JSON.stringify(prevState.controlPlaneState) !== JSON.stringify(this.state.controlPlaneState)){
-      updateControlPlane = true
+      updateControlPlane = true;
     }
     if (JSON.stringify(prevState.dataPlaneState) !== JSON.stringify(this.state.dataPlaneState)){
-      updateDataPlane = true
+      updateDataPlane = true;
     }
 
     if (updateDataPlane || updateControlPlane){
       this.setMeshScanData(
         updateControlPlane ? this.state.controlPlaneState : prevState.controlPlaneState,
         updateDataPlane ? this.state.dataPlaneState : prevState.dataPlaneState
-      )
+      );
     }
 
   }
@@ -244,124 +244,124 @@ class DashboardComponent extends React.Component {
     const self = this;
 
     dataFetch(
-      "/api/telemetry/metrics/config",
-      { method : "GET",
-        credentials : "include",
-        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", }, },
+      '/api/telemetry/metrics/config',
+      { method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', }, },
       (result) => {
-        self.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL != "") {
-          let selector = { serviceMesh : "ALL_MESH", };
-          fetchAvailableAddons(selector).subscribe({ next : (res) => {
+        self.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined' && result?.prometheusURL && result?.prometheusURL != '') {
+          let selector = { serviceMesh: 'ALL_MESH', };
+          fetchAvailableAddons(selector).subscribe({ next: (res) => {
             res?.addonsState?.forEach((addon) => {
-              if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-                self.setState({ prometheusURL : "http://" + addon.endpoint })
-                submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+              if (addon.name === 'prometheus' && ( self.state.prometheusURL === '' || self.state.prometheusURL == undefined )) {
+                self.setState({ prometheusURL: 'http://' + addon.endpoint });
+                submitPrometheusConfigure(self, () => console.log('Prometheus added'));
               }
             });
           },
-          error : (err) => console.log("error registering prometheus: " + err), });
+          error: (err) => console.log('error registering prometheus: ' + err), });
         }
       },
-      self.handleError("There was an error getting prometheus config")
+      self.handleError('There was an error getting prometheus config')
     );
 
     dataFetch(
-      "/api/telemetry/metrics/grafana/config",
-      { method : "GET",
-        credentials : "include",
-        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", }, },
+      '/api/telemetry/metrics/grafana/config',
+      { method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', }, },
       (result) => {
-        self.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="") {
-          let selector = { serviceMesh : "ALL_MESH", };
-          fetchAvailableAddons(selector).subscribe({ next : (res) => {
+        self.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined' && result?.grafanaURL && result?.grafanaURL !='') {
+          let selector = { serviceMesh: 'ALL_MESH', };
+          fetchAvailableAddons(selector).subscribe({ next: (res) => {
             res?.addonsState?.forEach((addon) => {
-              if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-                self.setState({ grafanaURL : "http://" + addon.endpoint })
+              if (addon.name === 'grafana' && ( self.state.grafanaURL === '' || self.state.grafanaURL == undefined )) {
+                self.setState({ grafanaURL: 'http://' + addon.endpoint });
                 submitGrafanaConfigure(self, () => {
                   self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-                  console.log("Grafana added");
+                  console.log('Grafana added');
                 });
               }
             });
           },
-          error : (err) => console.log("error registering grafana: " + err), });
+          error: (err) => console.log('error registering grafana: ' + err), });
         }
       },
-      self.handleError("There was an error communicating with grafana config")
+      self.handleError('There was an error communicating with grafana config')
     );
 
-    let selector = { serviceMesh : "ALL_MESH", };
+    let selector = { serviceMesh: 'ALL_MESH', };
 
-    fetchAvailableAddons(selector).subscribe({ next : (res) => {
+    fetchAvailableAddons(selector).subscribe({ next: (res) => {
       res?.addonsState?.forEach((addon) => {
-        if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-          self.setState({ prometheusURL : "http://" + addon.endpoint })
-          submitPrometheusConfigure(self, () => console.log("Prometheus added"));
-        } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-          self.setState({ grafanaURL : "http://" + addon.endpoint })
+        if (addon.name === 'prometheus' && ( self.state.prometheusURL === '' || self.state.prometheusURL == undefined )) {
+          self.setState({ prometheusURL: 'http://' + addon.endpoint });
+          submitPrometheusConfigure(self, () => console.log('Prometheus added'));
+        } else if (addon.name === 'grafana' && ( self.state.grafanaURL === '' || self.state.grafanaURL == undefined )) {
+          self.setState({ grafanaURL: 'http://' + addon.endpoint });
           submitGrafanaConfigure(self, () => {
             self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-            console.log("Grafana added");
+            console.log('Grafana added');
           });
         }
       });
     },
-    error : (err) => console.log("error registering addons: " + err), });
+    error: (err) => console.log('error registering addons: ' + err), });
   };
 
   fetchAvailableAdapters = () => {
     const self = this;
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     dataFetch(
-      "/api/system/adapters",
-      { credentials : "same-origin",
-        method : "GET",
-        credentials : "include", },
+      '/api/system/adapters',
+      { credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include', },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          const options = result.map((res) => ({ value : res.adapter_location,
-            label : res.adapter_location, }));
-          this.setState({ availableAdapters : options });
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          const options = result.map((res) => ({ value: res.adapter_location,
+            label: res.adapter_location, }));
+          this.setState({ availableAdapters: options });
         }
       },
-      self.handleError("Unable to fetch list of adapters.")
+      self.handleError('Unable to fetch list of adapters.')
     );
   };
 
   setOperatorState = (res) => {
     const self = this;
     if (res.operator?.error) {
-      self.handleError("Operator could not be reached")(res.operator?.error?.description);
+      self.handleError('Operator could not be reached')(res.operator?.error?.description);
       return false;
     }
 
-    if (res.operator?.status === "ENABLED") {
+    if (res.operator?.status === 'ENABLED') {
       res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status == "ENABLED") {
-          self.setState({ NATSInstalled : true,
-            NATSVersion : controller.version, });
-        } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
-          self.setState({ meshSyncInstalled : true,
-            meshSyncVersion : controller.version, });
+        if (controller.name === 'broker' && controller.status == 'ENABLED') {
+          self.setState({ NATSInstalled: true,
+            NATSVersion: controller.version, });
+        } else if (controller.name === 'meshsync' && controller.status == 'ENABLED') {
+          self.setState({ meshSyncInstalled: true,
+            meshSyncVersion: controller.version, });
         }
       });
-      self.setState({ operatorInstalled : true,
-        operatorSwitch : true,
-        operatorVersion : res.operator?.version, });
+      self.setState({ operatorInstalled: true,
+        operatorSwitch: true,
+        operatorVersion: res.operator?.version, });
       return true;
     }
 
     self.setState({
-      operatorInstalled : false,
-      NATSInstalled : false,
-      meshSyncInstalled : false,
-      operatorSwitch : false,
-      operatorVersion : "N/A",
-      meshSyncVersion : "N/A",
-      NATSVersion : "N/A",
+      operatorInstalled: false,
+      NATSInstalled: false,
+      meshSyncInstalled: false,
+      operatorSwitch: false,
+      operatorVersion: 'N/A',
+      meshSyncVersion: 'N/A',
+      NATSVersion: 'N/A',
     });
 
     return false;
@@ -375,12 +375,12 @@ class DashboardComponent extends React.Component {
       if (!mesh?.members?.length) {
         return;
       }
-      let proxies = []
+      let proxies = [];
 
       if (Array.isArray(dataPlanesData?.dataPlanesState)){
-        const dataplane = dataPlanesData.dataPlanesState.find(mesh_ => mesh_.name === mesh.name)
+        const dataplane = dataPlanesData.dataPlanesState.find(mesh_ => mesh_.name === mesh.name);
 
-        if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies
+        if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies;
       }
       const processedMember = mesh?.members?.map((member) => {
         if (namespaces[mesh.name]) {
@@ -391,29 +391,29 @@ class DashboardComponent extends React.Component {
 
         // retrieve data planes according to mesh name
         if (proxies.length > 0){
-          const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name)
+          const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name);
 
           if (controlPlaneMemberProxies.length > 0){
             member = {
               ...member,
-              data_planes : controlPlaneMemberProxies
-            }
+              data_planes: controlPlaneMemberProxies
+            };
           }
         }
 
-        return member
+        return member;
       });
       namespaces[mesh.name] = [...namespaces[mesh.name]];
-      activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
+      activeNamespaces[mesh.name] = namespaces[mesh.name][0] || '';
 
       return {
         ...mesh,
-        members : processedMember
-      }
+        members: processedMember
+      };
     });
 
-    self.setState({ meshScan : processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0) });
-    self.setState({ meshScanNamespaces : namespaces, activeMeshScanNamespace : activeNamespaces });
+    self.setState({ meshScan: processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0) });
+    self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
   };
 
   /**
@@ -426,8 +426,8 @@ class DashboardComponent extends React.Component {
    */
   generateMeshScanPodName = (podname, hash, custom) => {
     const str = custom || podname;
-    return { full : podname,
-      trimmed : str.substring(0, (hash ? str.indexOf(hash)
+    return { full: podname,
+      trimmed: str.substring(0, (hash ? str.indexOf(hash)
         : str.length) - 1), };
   };
 
@@ -439,25 +439,25 @@ class DashboardComponent extends React.Component {
    * @returns {string}
    */
   generateMeshScanVersion = (versionStr) => {
-    if (typeof versionStr !== "string") return "NA";
+    if (typeof versionStr !== 'string') return 'NA';
 
     const matchResult = versionStr.match(/\d+(\.\d+){2,}/g);
-    if (!matchResult) return "NA";
+    if (!matchResult) return 'NA';
 
     // Add "v" iff we have a valid match result
     return `v${matchResult[0]}`;
   };
 
   handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
+    this.props.updateProgress({ showProgress: false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-      action : (key) => (
+    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant: 'error',
+      action: (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 7000, });
+      autoHideDuration: 7000, });
   };
 
   /**
@@ -467,7 +467,7 @@ class DashboardComponent extends React.Component {
    * @param {string} msg
    */
   redirectErrorToConsole = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
+    this.props.updateProgress({ showProgress: false });
     console.group(msg);
     console.error(error);
     console.groupEnd();
@@ -475,11 +475,11 @@ class DashboardComponent extends React.Component {
 
   handleAdapterPingError = (msg) => () => {
     const { classes } = this.props;
-    this.props.updateProgress({ showProgress : false });
+    this.props.updateProgress({ showProgress: false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, { variant : "error",
-      autoHideDuration : 2000,
-      action : (key) => (
+    this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, { variant: 'error',
+      autoHideDuration: 2000,
+      action: (key) => (
         <>
           <Button
             variant="contained"
@@ -487,7 +487,7 @@ class DashboardComponent extends React.Component {
             aria-label="Configure"
             className={classes.redirectButton}
             onClick={() => {
-              self.props.router.push("/settings#service-mesh");
+              self.props.router.push('/settings#service-mesh');
               self.props.closeSnackbar(key);
             }}
           >
@@ -508,25 +508,25 @@ class DashboardComponent extends React.Component {
 
   handleAdapterClick = (adapterLoc) => () => {
     // const { meshAdapters } = this.state;
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
       `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      { credentials : "same-origin",
-        credentials : "include", },
+      { credentials: 'same-origin',
+        credentials: 'include', },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Adapter successfully pinged!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          this.props.enqueueSnackbar('Adapter successfully pinged!', { variant: 'success',
+            autoHideDuration: 2000,
+            action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             ), });
         }
       },
-      self.handleAdapterPingError("Could not ping adapter.")
+      self.handleAdapterPingError('Could not ping adapter.')
     );
   };
 
@@ -535,48 +535,48 @@ class DashboardComponent extends React.Component {
   };
 
   handleKubernetesClick = () => {
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/system/kubernetes/ping",
-      { credentials : "same-origin",
-        credentials : "include", },
+      '/api/system/kubernetes/ping',
+      { credentials: 'same-origin',
+        credentials: 'include', },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Kubernetes successfully pinged!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          this.props.enqueueSnackbar('Kubernetes successfully pinged!', { variant: 'success',
+            autoHideDuration: 2000,
+            action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             ), });
         }
       },
-      self.handleError("Could not ping Kubernetes.")
+      self.handleError('Could not ping Kubernetes.')
     );
   };
 
   handleGrafanaClick = () => {
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/telemetry/metrics/grafana/ping",
-      { credentials : "same-origin",
-        credentials : "include", },
+      '/api/telemetry/metrics/grafana/ping',
+      { credentials: 'same-origin',
+        credentials: 'include', },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Grafana successfully pinged!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          this.props.enqueueSnackbar('Grafana successfully pinged!', { variant: 'success',
+            autoHideDuration: 2000,
+            action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             ), });
         }
       },
-      self.handleError("Could not ping Grafana.")
+      self.handleError('Could not ping Grafana.')
     );
   };
 
@@ -591,11 +591,11 @@ class DashboardComponent extends React.Component {
     const self = this;
     if (Array.isArray(components) && components.length)
       return (
-        <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
+        <Paper elevation={1} style={{ padding: '2rem', marginTop: '1rem' }}>
           <Grid container justify="space-between" spacing={1}>
             <Grid item>
-              <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight: '0.75rem' }} />
                 <Typography variant="h6">{mesh.tag}</Typography>
               </div>
             </Grid>
@@ -604,7 +604,7 @@ class DashboardComponent extends React.Component {
                 <Select
                   value={self.state.activeMeshScanNamespace[mesh.name]}
                   onChange={(e) =>
-                    self.setState((state) => ({ activeMeshScanNamespace : { ...state.activeMeshScanNamespace, [mesh.name] : e.target.value }, }))
+                    self.setState((state) => ({ activeMeshScanNamespace: { ...state.activeMeshScanNamespace, [mesh.name]: e.target.value }, }))
                   }
                 >
                   {self.state.meshScanNamespaces[mesh.name] &&
@@ -645,7 +645,7 @@ class DashboardComponent extends React.Component {
                             Array.isArray(component?.data_planes) && component.data_planes.length > 0 ? (
                               component.data_planes.map((cont) => {
                                 return (
-                                  <div key={cont.name} style={{ color : '#ffff', paddingBottom : '10px', padding : '2vh' } }>
+                                  <div key={cont.name} style={{ color: '#ffff', paddingBottom: '10px', padding: '2vh' } }>
                                     <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
                                     <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
                                     {!cont?.status?.ready && (
@@ -667,7 +667,7 @@ class DashboardComponent extends React.Component {
                                       <div>
                                         Resources used: <br/>
 
-                                        <div style={{ paddingLeft : '2vh' }}>
+                                        <div style={{ paddingLeft: '2vh' }}>
                                           {cont?.resources?.limits && (
                                             <div>
                                               <p>Limits: <br/>
@@ -684,14 +684,14 @@ class DashboardComponent extends React.Component {
                                       </div>
                                     )}
                                   </div>
-                                )
+                                );
                               })
-                            ) : "No data plane is running"}
+                            ) : 'No data plane is running'}
                         >
                           <TableCell align="center">{component?.data_planes?.length || 0}</TableCell>
                         </Tooltip>
                       </TableRow>
-                    )
+                    );
                   })}
               </TableBody>
             </Table>
@@ -703,25 +703,25 @@ class DashboardComponent extends React.Component {
   };
 
   handlePrometheusClick = () => {
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/telemetry/metrics/ping",
-      { credentials : "same-origin",
-        credentials : "include", },
+      '/api/telemetry/metrics/ping',
+      { credentials: 'same-origin',
+        credentials: 'include', },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Prometheus successfully pinged!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          this.props.enqueueSnackbar('Prometheus successfully pinged!', { variant: 'success',
+            autoHideDuration: 2000,
+            action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             ), });
         }
       },
-      self.handleError("Could not ping Prometheus.")
+      self.handleError('Could not ping Prometheus.')
     );
   };
 
@@ -755,12 +755,12 @@ class DashboardComponent extends React.Component {
       prometheus,
     } = this.state;
     const self = this;
-    let showConfigured = "Not connected to Kubernetes.";
+    let showConfigured = 'Not connected to Kubernetes.';
     if (clusterConfigured) {
       let chp = (
         <Chip
           label={inClusterConfig
-            ? "Using In Cluster Config"
+            ? 'Using In Cluster Config'
             : contextName}
           onClick={self.handleKubernetesClick}
           icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
@@ -777,7 +777,7 @@ class DashboardComponent extends React.Component {
       showConfigured = <div showConfigured>{chp}</div>;
     }
 
-    let showAdapters = "No adapters configured.";
+    let showAdapters = 'No adapters configured.';
     if (availableAdapters.length > 0) {
       availableAdapters.sort((a1, a2) => (a1.value < a2.value
         ? -1
@@ -789,16 +789,16 @@ class DashboardComponent extends React.Component {
         <div>
           {availableAdapters.map((aa, ia) => {
             let isDisabled = true;
-            let image = "/static/img/meshery-logo.png";
+            let image = '/static/img/meshery-logo.png';
             let logoIcon = <img src={image} className={classes.icon} />;
-            let adapterType = "";
-            let adapterVersion = "";
+            let adapterType = '';
+            let adapterVersion = '';
             meshAdapters.forEach((adapter) => {
               if (aa.value === adapter.adapter_location) {
                 isDisabled = false;
                 adapterType = adapter.name;
                 adapterVersion = adapter.version;
-                image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
+                image = '/static/img/' + adapter.name.toLowerCase() + '.svg';
                 logoIcon = <img src={image} className={classes.icon} />;
               }
             });
@@ -808,23 +808,23 @@ class DashboardComponent extends React.Component {
                 key={`adapters-${ia}`}
                 title={
                   isDisabled
-                    ? "This adapter is inactive"
+                    ? 'This adapter is inactive'
                     : `${adapterType
                       .toLowerCase()
-                      .split(" ")
+                      .split(' ')
                       .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")} adapter version ${adapterVersion} on port ${aa.label.split(":")[1]}`
+                      .join(' ')} adapter version ${adapterVersion} on port ${aa.label.split(':')[1]}`
                 }
               >
                 <Chip
-                  label={aa.label.split(":")[0]}
+                  label={aa.label.split(':')[0]}
                   onClick={self.handleAdapterClick(aa.value)}
                   icon={logoIcon}
                   className={classes.chip}
                   key={`adapters-${ia}`}
                   variant={isDisabled
-                    ? "default"
-                    : "outlined"}
+                    ? 'default'
+                    : 'outlined'}
                 />
               </Tooltip>
             );
@@ -833,7 +833,7 @@ class DashboardComponent extends React.Component {
       );
     }
     let showGrafana;
-    if (grafanaUrl === "") {
+    if (grafanaUrl === '') {
       showGrafana = (
         <div className={classes.alreadyConfigured}>
           <Button
@@ -841,7 +841,7 @@ class DashboardComponent extends React.Component {
             color="primary"
             size="large"
             className={classes.metricsButton}
-            onClick={() => this.handleConfigure("grafana")}
+            onClick={() => this.handleConfigure('grafana')}
           >
             <SettingsIcon className={classes.settingsIcon} />
             Configure Grafana
@@ -849,7 +849,7 @@ class DashboardComponent extends React.Component {
         </div>
       );
     }
-    if (grafana && grafana.grafanaURL && grafana.grafanaURL !== "") {
+    if (grafana && grafana.grafanaURL && grafana.grafanaURL !== '') {
       showGrafana = (
         <Chip
           label={grafana.grafanaURL}
@@ -863,7 +863,7 @@ class DashboardComponent extends React.Component {
     }
 
     let showPrometheus;
-    if (prometheusUrl === "") {
+    if (prometheusUrl === '') {
       showPrometheus = (
         <div className={classes.alreadyConfigured}>
           <Button
@@ -871,7 +871,7 @@ class DashboardComponent extends React.Component {
             color="primary"
             size="large"
             className={classes.metricsButton}
-            onClick={() => this.handleConfigure("prometheus")}
+            onClick={() => this.handleConfigure('prometheus')}
           >
             <SettingsIcon className={classes.settingsIcon} />
             Configure Prometheus
@@ -879,7 +879,7 @@ class DashboardComponent extends React.Component {
         </div>
       );
     }
-    if (prometheus && prometheus.prometheusURL && prometheus.prometheusURL !== "") {
+    if (prometheus && prometheus.prometheusURL && prometheus.prometheusURL !== '') {
       showPrometheus = (
         <Chip
           label={prometheus.prometheusURL}
@@ -915,14 +915,14 @@ class DashboardComponent extends React.Component {
           ? (
             <>
               {self.state.meshScan.map((mesh) => {
-                let tag = "";
+                let tag = '';
                 mesh.name
-                  .split("_")
+                  .split('_')
                   .forEach((element) => {
-                    tag = tag + " " + element[0].toUpperCase() + element.slice(1, element.length);
+                    tag = tag + ' ' + element[0].toUpperCase() + element.slice(1, element.length);
                   });
                 return self.Meshcard(
-                  { name : mesh.name, tag : tag, icon : "/static/img/" + mesh.name + ".svg" },
+                  { name: mesh.name, tag: tag, icon: '/static/img/' + mesh.name + '.svg' },
                   mesh.members
                 );
               })}
@@ -931,14 +931,14 @@ class DashboardComponent extends React.Component {
           : (
             <div
               style={{
-                padding : "2rem",
-                display : "flex",
-                justifyContent : "center",
-                alignItems : "center",
-                flexDirection : "column",
+                padding: '2rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
               }}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+              <Typography style={{ fontSize: '1.5rem', marginBottom: '2rem' }} align="center" color="textSecondary">
               No service meshes detected in the {self.state.contextName} cluster.
               </Typography>
               <Button
@@ -946,7 +946,7 @@ class DashboardComponent extends React.Component {
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={() => self.props.router.push("/management")}
+                onClick={() => self.props.router.push('/management')}
               >
                 <AddIcon className={classes.addIcon} />
               Install Service Mesh
@@ -972,9 +972,9 @@ class DashboardComponent extends React.Component {
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
                   Connection Status
                 </Typography>
-                <div>{self.showCard("Kubernetes", showConfigured)}</div>
-                <div>{self.showCard("Adapters", showAdapters)}</div>
-                <div>{self.showCard("Metrics", showMetrics)}</div>
+                <div>{self.showCard('Kubernetes', showConfigured)}</div>
+                <div>{self.showCard('Adapters', showAdapters)}</div>
+                <div>{self.showCard('Metrics', showMetrics)}</div>
               </div>
             </Grid>
           </Grid>
@@ -988,17 +988,17 @@ class DashboardComponent extends React.Component {
   }
 }
 
-DashboardComponent.propTypes = { classes : PropTypes.object.isRequired, };
+DashboardComponent.propTypes = { classes: PropTypes.object.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
-  updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch), });
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get("k8sConfig").toJS();
-  const meshAdapters = state.get("meshAdapters").toJS();
-  const meshAdaptersts = state.get("meshAdaptersts");
-  const grafana = state.get("grafana").toJS();
-  const prometheus = state.get("prometheus").toJS();
+  const k8sconfig = state.get('k8sConfig').toJS();
+  const meshAdapters = state.get('meshAdapters').toJS();
+  const meshAdaptersts = state.get('meshAdaptersts');
+  const grafana = state.get('grafana').toJS();
+  const prometheus = state.get('prometheus').toJS();
   return {
     meshAdapters,
     meshAdaptersts,

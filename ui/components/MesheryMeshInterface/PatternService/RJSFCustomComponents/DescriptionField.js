@@ -5,8 +5,8 @@ import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles({
-  root : {
-    marginTop : "1rem",
+  root: {
+    marginTop: '1rem',
   },
 });
 

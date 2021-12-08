@@ -1,66 +1,66 @@
 
 import {
   Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select,  TextField, Toolbar, Tooltip, Typography,
-} from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+} from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import SaveIcon from '@material-ui/icons/Save';
 import { Autocomplete } from '@material-ui/lab';
-import jsYaml from "js-yaml";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { trueRandom } from "../../lib/trueRandom";
-import { SchemaContext } from "../../utils/context/schemaSet";
-import { getMeshProperties } from "../../utils/nameMapper";
-import { isEmptyObj } from "../../utils/utils";
-import { groupWorkloadByVersion } from "../../utils/workloadFilter";
-import { createPatternFromConfig, getHumanReadablePatternServiceName, getPatternServiceName } from "../MesheryMeshInterface/helpers";
-import LazyPatternServiceForm, { getWorkloadTraitAndType } from "../MesheryMeshInterface/LazyPatternServiceForm";
-import PatternServiceForm from "../MesheryMeshInterface/PatternServiceForm";
-import CodeEditor from "./CodeEditor";
-import NameToIcon from "./NameToIcon";
-import CustomBreadCrumb from "./CustomBreadCrumb";
+import jsYaml from 'js-yaml';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { trueRandom } from '../../lib/trueRandom';
+import { SchemaContext } from '../../utils/context/schemaSet';
+import { getMeshProperties } from '../../utils/nameMapper';
+import { isEmptyObj } from '../../utils/utils';
+import { groupWorkloadByVersion } from '../../utils/workloadFilter';
+import { createPatternFromConfig, getHumanReadablePatternServiceName, getPatternServiceName } from '../MesheryMeshInterface/helpers';
+import LazyPatternServiceForm, { getWorkloadTraitAndType } from '../MesheryMeshInterface/LazyPatternServiceForm';
+import PatternServiceForm from '../MesheryMeshInterface/PatternServiceForm';
+import CodeEditor from './CodeEditor';
+import NameToIcon from './NameToIcon';
+import CustomBreadCrumb from './CustomBreadCrumb';
 
 const useStyles = makeStyles((theme) => ({
-  backButton : {
-    marginRight : theme.spacing(2),
+  backButton: {
+    marginRight: theme.spacing(2),
   },
-  appBar : {
-    marginBottom : "16px",
-    backgroundColor : "#fff",
-    borderRadius : "8px"
+  appBar: {
+    marginBottom: '16px',
+    backgroundColor: '#fff',
+    borderRadius: '8px'
   },
-  yamlDialogTitle : {
-    display : "flex",
-    alignItems : "center"
+  yamlDialogTitle: {
+    display: 'flex',
+    alignItems: 'center'
   },
-  yamlDialogTitleText : {
-    flexGrow : 1
+  yamlDialogTitleText: {
+    flexGrow: 1
   },
-  fullScreenCodeMirror : {
-    height : '100%',
-    '& .CodeMirror' : {
-      minHeight : "300px",
-      height : '100%',
+  fullScreenCodeMirror: {
+    height: '100%',
+    '& .CodeMirror': {
+      minHeight: '300px',
+      height: '100%',
     }
   },
-  formCtrl : {
-    width : "60px",
-    minWidth : "60px",
-    maxWidth : "60px",
-    marginRight : 8,
+  formCtrl: {
+    width: '60px',
+    minWidth: '60px',
+    maxWidth: '60px',
+    marginRight: 8,
   },
-  autoComplete : {
-    width : "120px",
-    minWidth : "120px",
-    maxWidth : 120,
+  autoComplete: {
+    width: '120px',
+    minWidth: '120px',
+    maxWidth: 120,
   },
-  autoComplete2 : {
-    width : 250,
-    marginLeft : 16,
-    marginRight : "auto",
-    padding : 0,
+  autoComplete2: {
+    width: 250,
+    marginLeft: 16,
+    marginRight: 'auto',
+    padding: 0,
     // "& .MuiAutocomplete-inputRoot" : {
     //   padding : 0
     // },
@@ -68,29 +68,29 @@ const useStyles = makeStyles((theme) => ({
 
     // }
   },
-  btngroup : {
-    marginLeft : "auto",
-    overflowX : "auto",
-    overflowY : "hidden"
+  btngroup: {
+    marginLeft: 'auto',
+    overflowX: 'auto',
+    overflowY: 'hidden'
   },
-  paper : {
-    backgroundColor : "#fcfcfc",
-    padding : 8,
-    height : "100%",
+  paper: {
+    backgroundColor: '#fcfcfc',
+    padding: 8,
+    height: '100%',
   },
 }));
 
-function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPattern }) {
+function PatternConfiguratorComponent({ pattern, onSubmit, show: setSelectedPattern }) {
   const { workloadTraitSet, meshWorkloads } = useContext(SchemaContext);
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState(workloadTraitSet);
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
   const [yaml, setYaml] = useState(pattern.pattern_file);
-  const [selectedMeshType, setSelectedMeshType] = useState("core");
+  const [selectedMeshType, setSelectedMeshType] = useState('core');
   const [selectedVersionMesh, setSelectedVersionMesh] = useState();
-  const [selectedVersion, setSelectedVersion] = useState("");
+  const [selectedVersion, setSelectedVersion] = useState('');
   const [briefCrsInformations, setBriefCrsInformations] = useState(null);
   const [activeForm, setActiveForm] = useState();
-  const [viewType, setViewType] = useState("list");
+  const [viewType, setViewType] = useState('list');
   const [activeCR, setActiveCR] = useState({});
   const classes = useStyles();
   const reference = useRef({});
@@ -103,13 +103,13 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 
   useEffect(() => {
     // core is not versioned
-    if (selectedMeshType == "core") {
+    if (selectedMeshType == 'core') {
       setSelectedVersionMesh(null);
     } else {
       const meshVersionsWithDetails = groupWlByVersion();
       setSelectedVersionMesh(meshVersionsWithDetails);
     }
-    setViewType("list");
+    setViewType('list');
     setActiveForm(null);
   }, [selectedMeshType]);
 
@@ -121,27 +121,27 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 
   useEffect(() => {
     if (selectedVersion) {
-      const crsBriefs = getFormBriefInformationKeys()
+      const crsBriefs = getFormBriefInformationKeys();
       setBriefCrsInformations(crsBriefs);
       setActivePatternWithRefinedSchema(selectedVersionMesh?.[selectedVersion]
         ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0]);
-      setActiveCR(crsBriefs[0])
+      setActiveCR(crsBriefs[0]);
     }
   }, [selectedVersion]);
 
   useEffect(() => {
     if (!isEmptyObj(activeCR)) {
       let activeSchema;
-      if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
+      if (selectedMeshType === 'core' || selectedMeshType === 'kubernetes') {
         activeSchema = meshWorkloads[selectedMeshType]
-          .find(schema => schema?.workload?.metadata?.["display.ui.meshery.io/name"] === activeCR.name);
+          .find(schema => schema?.workload?.metadata?.['display.ui.meshery.io/name'] === activeCR.name);
       } else {
         activeSchema = selectedVersionMesh?.[selectedVersion]
           .find(schema => schema?.workload?.oam_definition?.metadata?.name === activeCR.name);
       }
       setActivePatternWithRefinedSchema(activeSchema);
     }
-  }, [activeCR])
+  }, [activeCR]);
 
 
   function groupWlByVersion() {
@@ -161,7 +161,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   }
 
   function resetSelectedPattern() {
-    return { show : false, pattern : null };
+    return { show: false, pattern: null };
   }
 
   /**
@@ -170,13 +170,13 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
    * @returns {{name: String, icon: React.ReactElement, color: String}}
    */
   function getFormBriefInformationKeys() {
-    if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
+    if (selectedMeshType === 'core' || selectedMeshType === 'kubernetes') {
       return meshWorkloads[selectedMeshType].map(mwl => {
-        const name = mwl?.workload?.metadata?.["display.ui.meshery.io/name"];
+        const name = mwl?.workload?.metadata?.['display.ui.meshery.io/name'];
         return {
           name,
-          icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} />,
-          readableName : getHumanReadablePatternServiceName(mwl?.workload) };
+          icon: <NameToIcon name={name.split('.')[0]} color={getMeshProperties(selectedMeshType).color} />,
+          readableName: getHumanReadablePatternServiceName(mwl?.workload) };
       });
     }
     return selectedVersionMesh
@@ -186,41 +186,41 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
         const name = item.workload?.oam_definition?.metadata?.name;
         return {
           name,
-          icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} />,
-          readableName : getHumanReadablePatternServiceName(item?.workload) };
+          icon: <NameToIcon name={name.split('.')[0]} color={getMeshProperties(selectedMeshType).color} />,
+          readableName: getHumanReadablePatternServiceName(item?.workload) };
       });
   }
 
   const handleSubmit = (cfg, patternName) => {
-    console.log("submitted", { cfg, patternName });
+    console.log('submitted', { cfg, patternName });
     const key = getPatternKey(cfg);
-    handleCodeEditorYamlChange({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
-    if (key) setDeployServiceConfig({ ...deployServiceConfig, [key] : cfg?.services?.[key] });
+    handleCodeEditorYamlChange({ ...deployServiceConfig, [key]: cfg?.services?.[key] });
+    if (key) setDeployServiceConfig({ ...deployServiceConfig, [key]: cfg?.services?.[key] });
   };
 
   const handleSettingsChange = (schemaSet) => () => {
     const config = createPatternFromConfig({
-      [getPatternServiceName(schemaSet)] : {
+      [getPatternServiceName(schemaSet)]: {
         // @ts-ignore
-        settings : reference.current?.getSettings(),
+        settings: reference.current?.getSettings(),
         // @ts-ignore
-        traits : reference.current?.getTraits()
+        traits: reference.current?.getTraits()
       }
-    }, "default", true);
+    }, 'default', true);
 
-    handleChangeData(config, "");
+    handleChangeData(config, '');
   };
 
   const handleChangeData = (cfg, patternName) => {
     console.log(patternName);
     const key = getPatternKey(cfg);
-    handleCodeEditorYamlChange({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+    handleCodeEditorYamlChange({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
     if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
+      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)]: cfg?.services?.[key] });
   };
 
   const handleDelete = (cfg, patternName) => {
-    console.log("deleted", cfg);
+    console.log('deleted', cfg);
     const newCfg = workloadTraitsSet?.filter(schema => schema.workload.title !== patternName);
     setWorkloadTraitsSet(newCfg);
   };
@@ -234,12 +234,12 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   };
 
   function handleSubmitFinalPattern(yaml, id, name, action) {
-    console.log("submitting a new pattern", yaml)
+    console.log('submitting a new pattern', yaml);
     onSubmit(yaml, id, name, action);
     setSelectedPattern(resetSelectedPattern()); // Remove selected pattern
   }
 
-  const ns = "default";
+  const ns = 'default';
 
   function saveCodeEditorChanges(data) {
     setYaml(data.valueOf().getValue());
@@ -273,16 +273,16 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 
   async function setActivePatternWithRefinedSchema(schema) {
     const refinedSchema = await getWorkloadTraitAndType(schema);
-    console.log("refined Schema", refinedSchema)
+    console.log('refined Schema', refinedSchema);
     setActiveForm(refinedSchema);
   }
 
   function toggleView() {
-    if (viewType == "list") {
+    if (viewType == 'list') {
       if (isEmptyObj(activeForm)) {
         // core resources are handled sepaeratrly since they are not versioned
         setBriefCrsInformations(getFormBriefInformationKeys());
-        if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
+        if (selectedMeshType === 'core' || selectedMeshType === 'kubernetes') {
           setActivePatternWithRefinedSchema(meshWorkloads[selectedMeshType]
             ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0]);
         } else {
@@ -290,9 +290,9 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
             ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))[0]);
         }
       }
-      setViewType("form");
+      setViewType('form');
     } else {
-      setViewType("list");
+      setViewType('list');
     }
   }
 
@@ -331,7 +331,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
             />
           }
           {
-            viewType === "form" && briefCrsInformations && briefCrsInformations.length > 0
+            viewType === 'form' && briefCrsInformations && briefCrsInformations.length > 0
             && <Autocomplete
               className={classes.autoComplete2}
               disableClearable
@@ -339,7 +339,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
               options={briefCrsInformations}
               getOptionLabel={(option) => option.readableName}
               onChange={(_, newVal) => {
-                setActiveCR(newVal)
+                setActiveCR(newVal);
               }}
               renderOption={option => {
                 return (
@@ -395,7 +395,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
             <IconButton
               aria-label="Save"
               color="primary"
-              onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, "upload")}
+              onClick={() => handleSubmitFinalPattern(yaml, '', `meshery_${Math.floor(trueRandom() * 100)}`, 'upload')}
             >
               <FileCopyIcon />
             </IconButton>
@@ -404,7 +404,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
             <IconButton
               aria-label="Update"
               color="primary"
-              onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "update")}
+              onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, 'update')}
             >
               <SaveIcon />
             </IconButton>
@@ -413,7 +413,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
             <IconButton
               aria-label="Delete"
               color="primary"
-              onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
+              onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, 'delete')}
             >
               <DeleteIcon />
             </IconButton>
@@ -428,7 +428,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
       <Grid container spacing={3}>
         {
           // active Form is used to show a only one RJSF form on the screen
-          viewType === "form" && activeForm
+          viewType === 'form' && activeForm
             ? (
               <Grid item xs={12} md={6}>
                 <Paper className={classes.paper} elevation={0}>
@@ -448,12 +448,12 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
             ) : (
               <Grid item xs={12} md={6}>
                 {
-                  (selectedMeshType === "core" || selectedMeshType === "kubernetes")
+                  (selectedMeshType === 'core' || selectedMeshType === 'kubernetes')
                   && meshWorkloads[selectedMeshType]
-                    ?.filter((s) => s.type !== "addon")
+                    ?.filter((s) => s.type !== 'addon')
                     .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
                     .map((s, i) => (
-                      <div style={{ marginBottom : "0.5rem" }} key={`svc-form-${i}`} >
+                      <div style={{ marginBottom: '0.5rem' }} key={`svc-form-${i}`} >
                         <LazyPatternServiceForm
                           schemaSet={s}
                           formData={insertPattern(s.workload)}
@@ -466,10 +466,10 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                       </div>))
                 }
                 {selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
-                  ?.filter((s) => s.type !== "addon")
+                  ?.filter((s) => s.type !== 'addon')
                   .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
                   .map((s, i) => (
-                    <div style={{ marginBottom : "0.5rem" }} key={`svc-form-${i}`} >
+                    <div style={{ marginBottom: '0.5rem' }} key={`svc-form-${i}`} >
                       <LazyPatternServiceForm
                         schemaSet={s}
                         formData={insertPattern(s.workload)}
@@ -480,7 +480,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                         reference={reference}
                       />
                     </div>))}
-                <Accordion elevation={0} style={{ width : '100%' }}>
+                <Accordion elevation={0} style={{ width: '100%' }}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography variant="h6">
                       Configure Addons
@@ -488,7 +488,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                   </AccordionSummary>
                   <AccordionDetails>
                     {selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
-                      ?.filter((s) => s.type === "addon")
+                      ?.filter((s) => s.type === 'addon')
                       .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
                       .map((s, i) => (
                         <Grid item key={`svc-form-addons-${i}`}>

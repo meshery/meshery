@@ -8,9 +8,9 @@ import Navigator from '../components/Navigator';
 import Header from '../components/Header';
 import PropTypes from 'prop-types';
 import Hidden from '@material-ui/core/Hidden';
-import withRedux from "next-redux-wrapper";
+import withRedux from 'next-redux-wrapper';
 import { makeStore, actionTypes } from '../lib/store';
-import { Provider } from "react-redux";
+import { Provider } from 'react-redux';
 import { fromJS } from 'immutable';
 import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
@@ -37,7 +37,7 @@ import 'billboard.js/dist/billboard.min.css';
 
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import dataFetch from '../lib/data-fetch';
-import theme, { styles } from "../themes"
+import theme, { styles } from '../themes';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -59,18 +59,18 @@ class MesheryApp extends App {
     super();
     this.pageContext = getPageContext();
 
-    this.state = { mobileOpen : false,
-      isDrawerCollapsed : false };
+    this.state = { mobileOpen: false,
+      isDrawerCollapsed: false };
   }
 
   handleDrawerToggle = () => {
-    this.setState(state => ({ mobileOpen : !state.mobileOpen }));
+    this.setState(state => ({ mobileOpen: !state.mobileOpen }));
   }
 
   handleCollapseDrawer = (open = null) => {
     if (typeof(open) === 'boolean')
-      return this.setState({ isDrawerCollapsed : open });
-    this.setState(state => ({ isDrawerCollapsed : !state.isDrawerCollapsed }));
+      return this.setState({ isDrawerCollapsed: open });
+    this.setState(state => ({ isDrawerCollapsed: !state.isDrawerCollapsed }));
   };
 
   handleL5CommunityClick = () => {
@@ -82,9 +82,9 @@ class MesheryApp extends App {
 
   async loadConfigFromServer() {
     const { store } = this.props;
-    dataFetch('/api/system/sync', { credentials : 'same-origin',
-      method : 'GET',
-      credentials : 'include', }, result => {
+    dataFetch('/api/system/sync', { credentials: 'same-origin',
+      method: 'GET',
+      credentials: 'include', }, result => {
       if (typeof result !== 'undefined'){
         if (result.k8sConfig){
           if (typeof result.k8sConfig.inClusterConfig === 'undefined'){
@@ -102,10 +102,10 @@ class MesheryApp extends App {
           if (typeof result.k8sConfig.configuredServer === 'undefined'){
             result.k8sConfig.configuredServer = '';
           }
-          store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : result.k8sConfig });
+          store.dispatch({ type: actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig: result.k8sConfig });
         }
         if (result.meshAdapters && result.meshAdapters !== null && result.meshAdapters.length > 0) {
-          store.dispatch({ type : actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters : result.meshAdapters });
+          store.dispatch({ type: actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters: result.meshAdapters });
         }
         if (result.grafana){
           if (typeof result.grafana.grafanaURL === 'undefined'){
@@ -123,7 +123,7 @@ class MesheryApp extends App {
           if (typeof result.grafana.selectedBoardsConfigs === 'undefined'){
             result.grafana.selectedBoardsConfigs = [];
           }
-          store.dispatch({ type : actionTypes.UPDATE_GRAFANA_CONFIG, grafana : result.grafana });
+          store.dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana: result.grafana });
         }
         if (result.prometheus){
           if (typeof result.prometheus.prometheusURL === 'undefined'){
@@ -132,7 +132,7 @@ class MesheryApp extends App {
           if (typeof result.prometheus.selectedPrometheusBoardsConfigs === 'undefined'){
             result.prometheus.selectedPrometheusBoardsConfigs = [];
           }
-          store.dispatch({ type : actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus : result.prometheus });
+          store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: result.prometheus });
         }
         if (result.loadTestPrefs){
           if (typeof result.loadTestPrefs.c === 'undefined'){
@@ -147,13 +147,13 @@ class MesheryApp extends App {
           if (typeof result.loadTestPrefs.gen === 'undefined'){
             result.loadTestPrefs.gen = '';
           }
-          store.dispatch({ type : actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref : result.loadTestPrefs });
+          store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref: result.loadTestPrefs });
         }
         if (typeof result.anonymousUsageStats !== 'undefined'){
-          store.dispatch({ type : actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats : result.anonymousUsageStats });
+          store.dispatch({ type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats: result.anonymousUsageStats });
         }
         if (typeof result.anonymousPerfResults !== 'undefined'){
-          store.dispatch({ type : actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults : result.anonymousPerfResults });
+          store.dispatch({ type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults: result.anonymousPerfResults });
         }
       }
     }, error => {
@@ -164,7 +164,7 @@ class MesheryApp extends App {
   static async getInitialProps({ Component, ctx }) {
     const pageProps = Component.getInitialProps
       ? await Component.getInitialProps(ctx)
-      : {}
+      : {};
     return { pageProps };
   }
 
@@ -208,19 +208,19 @@ class MesheryApp extends App {
                 </nav>
                 <div className={classes.appContent}>
                   <SnackbarProvider
-                    anchorOrigin={{ vertical : 'bottom',
-                      horizontal : 'right', }}
+                    anchorOrigin={{ vertical: 'bottom',
+                      horizontal: 'right', }}
                     iconVariant = {{
-                      success : <CheckCircle style={{ marginRight : "0.5rem" }} />,
-                      error : <Error style={{ marginRight : "0.5rem" }} />,
-                      warning : <Warning style={{ marginRight : "0.5rem" }} />,
-                      info : <Info style={{ marginRight : "0.5rem" }} />
+                      success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
+                      error: <Error style={{ marginRight: '0.5rem' }} />,
+                      warning: <Warning style={{ marginRight: '0.5rem' }} />,
+                      info: <Info style={{ marginRight: '0.5rem' }} />
                     }}
                     classes={{
-                      variantSuccess : classes.notifSuccess,
-                      variantError : classes.notifError,
-                      variantWarning : classes.notifWarn,
-                      variantInfo : classes.notifInfo,
+                      variantSuccess: classes.notifSuccess,
+                      variantError: classes.notifError,
+                      variantWarning: classes.notifWarn,
+                      variantInfo: classes.notifInfo,
                     }}
                     maxSnack={10}
                   >
@@ -248,7 +248,7 @@ class MesheryApp extends App {
   }
 }
 
-MesheryApp.propTypes = { classes : PropTypes.object.isRequired, };
+MesheryApp.propTypes = { classes: PropTypes.object.isRequired, };
 
-export default withStyles(styles)(withRedux(makeStore, { serializeState : state => state.toJS(),
-  deserializeState : state => fromJS(state) })(MesheryApp));
+export default withStyles(styles)(withRedux(makeStore, { serializeState: state => state.toJS(),
+  deserializeState: state => fromJS(state) })(MesheryApp));

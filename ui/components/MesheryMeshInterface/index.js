@@ -1,17 +1,17 @@
 // @ts-check
 import {
   Grid, Paper, TextField, Typography
-} from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-import { getPatternServiceName, createWorkloadTraitSets } from "./helpers";
-import PatternServiceForm from "./LazyPatternServiceForm";
+} from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import { getPatternServiceName, createWorkloadTraitSets } from './helpers';
+import PatternServiceForm from './LazyPatternServiceForm';
 
 async function submitPattern(pattern, del = false) {
   const res = await fetch(
-    "/api/pattern/deploy", {
-      headers : { "Content-Type" : "application/json", },
-      method : del ? "DELETE" : "POST",
-      body : JSON.stringify(pattern),
+    '/api/pattern/deploy', {
+      headers: { 'Content-Type': 'application/json', },
+      method: del ? 'DELETE' : 'POST',
+      body: JSON.stringify(pattern),
     });
 
   return res.text();
@@ -19,7 +19,7 @@ async function submitPattern(pattern, del = false) {
 
 function MesheryMeshInterface({ adapter }) {
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState([]);
-  const [ns, setNS] = useState("default");
+  const [ns, setNS] = useState('default');
 
   const handleSubmit = (cfg) => {
     submitPattern(cfg)
@@ -53,7 +53,7 @@ function MesheryMeshInterface({ adapter }) {
         <div>
           <Grid container spacing={1}>
             {workloadTraitsSet
-              .filter((s) => s.type !== "addon")
+              .filter((s) => s.type !== 'addon')
               .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
               .map((s) => (
                 <Grid item xs={12}>
@@ -64,13 +64,13 @@ function MesheryMeshInterface({ adapter }) {
         </div>
       </Grid>
       <Grid item md={4} xs={12}>
-        <Paper style={{ padding : "1rem" }}>
+        <Paper style={{ padding: '1rem' }}>
           <Typography variant="h6" gutterBottom>
             Addons
           </Typography>
           <Grid container spacing={1}>
             {workloadTraitsSet
-              .filter((s) => s.type === "addon")
+              .filter((s) => s.type === 'addon')
               .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
               .map((s) => (
                 <Grid item>

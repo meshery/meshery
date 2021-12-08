@@ -1,5 +1,5 @@
-import { graphql, fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { graphql, fetchQuery } from 'react-relay';
+import environment from '../../../lib/relayEnvironment';
 
 export default function fetchMesheryOperatorStatus() {
   const query = graphql`
@@ -20,5 +20,5 @@ export default function fetchMesheryOperatorStatus() {
         }
     `;
 
-  return fetchQuery(environment, query)
+  return fetchQuery(environment, query);
 }

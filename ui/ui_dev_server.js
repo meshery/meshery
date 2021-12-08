@@ -1,19 +1,19 @@
 /* eslint-disable no-unused-vars */
-const { createServer } = require("http");
-const { parse } = require("url");
-const next = require("next");
+const { createServer } = require('http');
+const { parse } = require('url');
+const next = require('next');
 
 const port = parseInt(process.env.PORT, 10) || 3000;
-const dev = process.env.NODE_ENV !== "production";
+const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
-var httpProxy = require("http-proxy");
+var httpProxy = require('http-proxy');
 
-var proxy = httpProxy.createProxyServer({ target : { host : "localhost", port : 9081 } });
+var proxy = httpProxy.createProxyServer({ target: { host: 'localhost', port: 9081 } });
 
-proxy.on("error", function (err, req, res) {
-  res.writeHead(500, { "Content-Type" : "text/plain" });
-  res.end("Unexpected issue.");
+proxy.on('error', function (err, req, res) {
+  res.writeHead(500, { 'Content-Type': 'text/plain' });
+  res.end('Unexpected issue.');
 });
 
 app.prepare().then(() => {
@@ -22,19 +22,19 @@ app.prepare().then(() => {
     // This tells it to parse the query portion of the URL.
     const { pathname } = parse(req.url, true);
     if (
-      pathname.startsWith("/api") ||
-      pathname.startsWith("/user/logout") ||
-      pathname.startsWith("/user/login") ||
-      pathname.startsWith("/provider")
+      pathname.startsWith('/api') ||
+      pathname.startsWith('/user/logout') ||
+      pathname.startsWith('/user/login') ||
+      pathname.startsWith('/provider')
     ) {
       proxy.web(req, res);
     } else {
       handle(req, res);
     }
   });
-  server.on("upgrade", (req, socket, head) => {
+  server.on('upgrade', (req, socket, head) => {
     proxy.ws(req, socket, head, (err) => {
-      socket.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n");
+      socket.write('HTTP/' + req.httpVersion + ' 500 Connection error\r\n\r\n');
       socket.end();
     });
   });

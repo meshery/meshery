@@ -9,7 +9,7 @@ export function groupWorkloadByType(workloads) {
   let filteredWorkloads = {};
   workloads.map((wtSet) => {
     if (wtSet.workload.metadata != null) {
-      const adapterName = wtSet.workload.metadata["adapter.meshery.io/name"];
+      const adapterName = wtSet.workload.metadata['adapter.meshery.io/name'];
       let wl = filteredWorkloads[adapterName] || [];
       wl.push(wtSet);
       filteredWorkloads[adapterName] = wl;

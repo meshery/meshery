@@ -1,5 +1,5 @@
-import { graphql, requestSubscription } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { graphql, requestSubscription } from 'react-relay';
+import environment from '../../../lib/relayEnvironment';
 
 export const controlPlaneSubscription = graphql`
   subscription ControlPlaneSubscription($filter: ServiceMeshFilter) {
@@ -17,9 +17,9 @@ export const controlPlaneSubscription = graphql`
 
 export default function subscribeControlPlaneEvents(dataCB, variables) {
   return requestSubscription(environment, {
-    subscription : controlPlaneSubscription,
-    variables : { filter : variables },
-    onNext : dataCB,
-    onError : (error) => console.log(`An error occured:`, error),
+    subscription: controlPlaneSubscription,
+    variables: { filter: variables },
+    onNext: dataCB,
+    onError: (error) => console.log('An error occured:', error),
   });
 }

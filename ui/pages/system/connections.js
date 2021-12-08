@@ -1,17 +1,17 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import Head from 'next/head';
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import ConnectionWizardComponent from "../../components/ConnectionWizard/index.js";
-import { updatepagepath, updatepagetitle } from "../../lib/store";
-import { getPath } from "../../lib/path";
-import { NoSsr } from "@material-ui/core";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import ConnectionWizardComponent from '../../components/ConnectionWizard/index.js';
+import { updatepagepath, updatepagetitle } from '../../lib/store';
+import { getPath } from '../../lib/path';
+import { NoSsr } from '@material-ui/core';
 
 const ConnectionWizard = (props) => {
 
   useEffect(() => {
-    props.updatepagepath({ path : getPath() });
-    props.updatepagetitle({ title : "Connection Wizard" });
+    props.updatepagepath({ path: getPath() });
+    props.updatepagetitle({ title: 'Connection Wizard' });
   },[]);
 
   return (
@@ -38,11 +38,11 @@ const ConnectionWizard = (props) => {
       </Head>
       <ConnectionWizardComponent />
     </NoSsr>
-  )
-}
+  );
+};
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch),
-  updatepagetitle : bindActionCreators(updatepagetitle, dispatch) })
+const mapDispatchToProps = dispatch => ({ updatepagepath: bindActionCreators(updatepagepath, dispatch),
+  updatepagetitle: bindActionCreators(updatepagetitle, dispatch) });
 
 export default connect(
   null,

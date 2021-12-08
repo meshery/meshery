@@ -34,12 +34,12 @@ export function isEmptyArr(arr) {
  * |"unset"
  * )} behavior : scroll-behaviour, see https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior
  */
-export function scrollToTop(behavior="smooth") {
+export function scrollToTop(behavior='smooth') {
   setTimeout(() => {
     window.scrollTo({
-      top : 0,
-      left : 0,
+      top: 0,
+      left: 0,
       behavior,
-    })
+    });
   }, 0);
 }

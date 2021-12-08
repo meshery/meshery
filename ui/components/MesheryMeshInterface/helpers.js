@@ -1,9 +1,9 @@
 // @ts-check
 // ********************************** TYPE DEFINTIONS **********************************
 
-import { promisifiedDataFetch } from "../../lib/data-fetch";
-import { trueRandom } from "../../lib/trueRandom";
-import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
+import { promisifiedDataFetch } from '../../lib/data-fetch';
+import { trueRandom } from '../../lib/trueRandom';
+import PascalCaseToKebab from '../../utils/PascalCaseToKebab';
 
 /**
  * @typedef {Object} OAMDefinition
@@ -35,9 +35,9 @@ import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
  */
 export async function getWorkloadDefinitionsForAdapter(adapter) {
   try {
-    const res = await promisifiedDataFetch("/api/oam/workload?trim=true");
+    const res = await promisifiedDataFetch('/api/oam/workload?trim=true');
 
-    if (adapter) return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
+    if (adapter) return res?.filter((el) => el?.metadata?.['adapter.meshery.io/name'] === adapter);
     return res;
   } catch (error) {
     console.error(error);
@@ -53,9 +53,9 @@ export async function getWorkloadDefinitionsForAdapter(adapter) {
  */
 export async function getTraitDefinitionsForAdapter(adapter) {
   try {
-    const res = await promisifiedDataFetch("/api/oam/trait?trim=true");
+    const res = await promisifiedDataFetch('/api/oam/trait?trim=true');
 
-    if (adapter) return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
+    if (adapter) return res?.filter((el) => el?.metadata?.['adapter.meshery.io/name'] === adapter);
     return res;
   } catch (error) {
     console.error(error);
@@ -79,7 +79,7 @@ export async function createWorkloadTraitSets(adapter) {
 
   const sets = [];
   workloads?.forEach((w) => {
-    const item = { workload : w, traits : [], type : getPatternServiceType(w?.metadata) };
+    const item = { workload: w, traits: [], type: getPatternServiceType(w?.metadata) };
 
     item.traits = traits?.filter((t) => {
       if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
@@ -103,9 +103,9 @@ export async function createWorkloadTraitSets(adapter) {
  * @returns {string} service name
  */
 export function getPatternServiceName(item, includeDisplayName = true) {
-  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || getPatternAttributeName(item) || "NA";
+  if (includeDisplayName) return item?.metadata?.['display.ui.meshery.io/name'] || item?.oam_definition?.metadata?.name || getPatternAttributeName(item) || 'NA';
 
-  return item?.oam_definition?.metadata?.name || "NA";
+  return item?.oam_definition?.metadata?.name || 'NA';
 }
 
 /**
@@ -117,10 +117,10 @@ export function getPatternServiceName(item, includeDisplayName = true) {
  */
 export function getHumanReadablePatternServiceName(item) {
   const name = item?.oam_definition?.spec?.metadata?.k8sKind
-    || item?.metadata?.["display.ui.meshery.io/name"]
+    || item?.metadata?.['display.ui.meshery.io/name']
     || item?.oam_definition?.metadata?.name
     || getPatternAttributeName(item)
-    || "NA";
+    || 'NA';
 
   return camelCaseToCapitalize(name);
 }
@@ -142,7 +142,7 @@ export function getPatternServiceID(item) {
  * @returns {string | undefined} service name
  */
 export function getPatternServiceType(item) {
-  return item?.metadata?.["ui.meshery.io/category"];
+  return item?.metadata?.['ui.meshery.io/category'];
 }
 
 /**
@@ -152,7 +152,7 @@ export function getPatternServiceType(item) {
  * @returns {string} pattern attribute name
  */
 export function getPatternAttributeName(jsonSchema) {
-  return jsonSchema?._internal?.patternAttributeName || "NA";
+  return jsonSchema?._internal?.patternAttributeName || 'NA';
 }
 
 /**
@@ -162,7 +162,7 @@ export function getPatternAttributeName(jsonSchema) {
  */
 export function recursiveCleanObject(obj) {
   for (const k in obj) {
-    if (!obj[k] || typeof obj[k] !== "object") continue;
+    if (!obj[k] || typeof obj[k] !== 'object') continue;
 
     recursiveCleanObject(obj[k]);
 
@@ -177,7 +177,7 @@ export function recursiveCleanObject(obj) {
  */
 export function recursiveCleanObjectExceptEmptyArray(obj) {
   for (const k in obj) {
-    if (!obj[k] || typeof obj[k] !== "object" || Array.isArray(obj[k])) continue;
+    if (!obj[k] || typeof obj[k] !== 'object' || Array.isArray(obj[k])) continue;
 
     recursiveCleanObjectExceptEmptyArray(obj[k]);
 
@@ -195,8 +195,8 @@ export function recursiveCleanObjectExceptEmptyArray(obj) {
  */
 export function createPatternFromConfig(config, namespace, partialClean = false) {
   const pattern = {
-    name : `pattern-${trueRandom().toString(36).substr(2, 5)}`,
-    services : {},
+    name: `pattern-${trueRandom().toString(36).substr(2, 5)}`,
+    services: {},
   };
 
   partialClean ? recursiveCleanObjectExceptEmptyArray(config) : recursiveCleanObject(config);
@@ -227,9 +227,9 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
  * @returns
  */
 export function camelCaseToCapitalize(text){
-  if (!text) return null
+  if (!text) return null;
 
-  const result = text.replace(/([A-Z])/g, " $1");
+  const result = text.replace(/([A-Z])/g, ' $1');
 
   return result.charAt(0).toUpperCase() + result.slice(1);
 }

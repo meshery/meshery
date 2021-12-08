@@ -8,9 +8,9 @@ import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 
-const actionsStyles = (theme) => ({ root : { flexShrink : 0,
-  color : theme.palette.text.secondary,
-  marginLeft : theme.spacing(2.5), }, });
+const actionsStyles = (theme) => ({ root: { flexShrink: 0,
+  color: theme.palette.text.secondary,
+  marginLeft: theme.spacing(2.5), }, });
 
 class TablePaginationActions extends React.Component {
   handleFirstPageButtonClick = () => {
@@ -61,11 +61,11 @@ class TablePaginationActions extends React.Component {
   }
 }
 
-TablePaginationActions.propTypes = { classes : PropTypes.object.isRequired,
-  onChangePage : PropTypes.func.isRequired,
-  page : PropTypes.number.isRequired, };
+TablePaginationActions.propTypes = { classes: PropTypes.object.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired, };
 
-const TablePaginationActionsWrapper = withStyles(actionsStyles, { withTheme : true })(
+const TablePaginationActionsWrapper = withStyles(actionsStyles, { withTheme: true })(
   TablePaginationActions,
 );
 
@@ -86,7 +86,7 @@ class CustomTableFooter extends Component {
               count={this.props.count}
               rowsPerPage={this.props.rowsPerPage}
               page={this.props.page}
-              SelectProps={{ native : true, }}
+              SelectProps={{ native: true, }}
               onChangePage={this.props.changePage}
               // onChangeRowsPerPage={this.handleChangeRowsPerPage}
               ActionsComponent={TablePaginationActionsWrapper}
@@ -97,8 +97,8 @@ class CustomTableFooter extends Component {
     }
 }
 
-CustomTableFooter.propTypes = { changePage : PropTypes.func.isRequired,
-  rowsPerPage : PropTypes.number.isRequired,
-  page : PropTypes.number.isRequired, };
+CustomTableFooter.propTypes = { changePage: PropTypes.func.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+  page: PropTypes.number.isRequired, };
 
-export default withStyles(defaultFooterStyles, { name : 'CustomFooter' })(CustomTableFooter);
+export default withStyles(defaultFooterStyles, { name: 'CustomFooter' })(CustomTableFooter);

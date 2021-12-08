@@ -5,12 +5,12 @@ import {
   Grid,
   Chip,
   IconButton,
-} from "@material-ui/core/";
-import { withSnackbar } from "notistack";
+} from '@material-ui/core/';
+import { withSnackbar } from 'notistack';
 
-const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
-  chip : { marginRight : theme.spacing(1),
-    marginBottom : theme.spacing(1), }, })
+const chipStyles = (theme) => ({ chipIcon: { width: theme.spacing(2.5) },
+  chip: { marginRight: theme.spacing(1),
+    marginBottom: theme.spacing(1), }, });
 
 const AdapterChip = withStyles(chipStyles)(({
   classes, handleClick, handleDelete, label, image, isActive
@@ -22,12 +22,12 @@ const AdapterChip = withStyles(chipStyles)(({
     onClick={handleClick}
     icon={<img src={image} className={classes.chipIcon} />}
     className={classes.chip}
-    key={label+"-key"}
+    key={label+'-key'}
     variant={isActive
-      ? "outlined"
+      ? 'outlined'
       : 'default'}
   />
-))
+));
 
 
-export default AdapterChip
+export default AdapterChip;

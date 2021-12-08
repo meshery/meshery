@@ -1,55 +1,55 @@
-import React from 'react'
-import Link from 'next/link'
-import { makeStyles, Button, Typography, Container } from '@material-ui/core/'
-import CheckCircleIcon from '@material-ui/icons/CheckCircle'
+import React from 'react';
+import Link from 'next/link';
+import { makeStyles, Button, Typography, Container } from '@material-ui/core/';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 const useStyles = makeStyles(() => ({
-  container : {
-    position : 'relative',
-    height : '30rem',
-    textAlign : 'center',
-    marginTop : "3rem"
+  container: {
+    position: 'relative',
+    height: '30rem',
+    textAlign: 'center',
+    marginTop: '3rem'
   },
-  checkCircleIcon : {
-    color : '#00B39F',
-    padding : '1rem',
-    height : 'auto',
-    width : '4rem',
+  checkCircleIcon: {
+    color: '#00B39F',
+    padding: '1rem',
+    height: 'auto',
+    width: '4rem',
   },
-  subtitle : {
-    fontWeight : '300',
+  subtitle: {
+    fontWeight: '300',
   },
-  link : {
-    textDecoration : 'none',
+  link: {
+    textDecoration: 'none',
   },
-  returnButton : {
-    background : '#647881',
-    color : 'white',
-    marginTop : '2rem',
-    padding : '1rem 2rem',
-    '&:hover' : {
-      background : '#647881',
-      color : 'white',
+  returnButton: {
+    background: '#647881',
+    color: 'white',
+    marginTop: '2rem',
+    padding: '1rem 2rem',
+    '&:hover': {
+      background: '#647881',
+      color: 'white',
     }
   },
-  startOverButton : {
-    position : 'absolute',
-    right : '1rem',
-    bottom : '2rem',
-    padding : '0.5rem 2rem',
-    textDecoration : 'none',
-    background : 'white',
-    color : '#647881',
-    border : '1.5px solid #647881',
-    '&:hover' : {
-      backgroundColor : '#647881',
-      color : 'white',
+  startOverButton: {
+    position: 'absolute',
+    right: '1rem',
+    bottom: '2rem',
+    padding: '0.5rem 2rem',
+    textDecoration: 'none',
+    background: 'white',
+    color: '#647881',
+    border: '1.5px solid #647881',
+    '&:hover': {
+      backgroundColor: '#647881',
+      color: 'white',
     },
   },
-}))
+}));
 
 const ConfigurationDoneScreen = ({ handleUserClick }) => {
-  const classes = useStyles()
+  const classes = useStyles();
   return (
     <Container className={classes.container}>
       <CheckCircleIcon className={classes.checkCircleIcon} />
@@ -74,7 +74,7 @@ const ConfigurationDoneScreen = ({ handleUserClick }) => {
         Start Over
       </Button>
     </Container>
-  )
-}
+  );
+};
 
-export default ConfigurationDoneScreen
+export default ConfigurationDoneScreen;

@@ -1,67 +1,69 @@
 module.exports = {
-  "env" : { "browser" : true,
-    "es6" : true },
-  'settings' : { 'react' : { 'version' : require('./package.json').dependencies.react, }, },
-  "extends" : [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:cypress/recommended"
+  'env': { 'browser': true,
+    'es6': true },
+  'settings': { 'react': { 'version': require('./package.json').dependencies.react, }, },
+  'extends': [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:cypress/recommended'
   ],
-  "globals" : { "Atomics" : "readonly",
-    "SharedArrayBuffer" : "readonly" },
-  'parser' : 'babel-eslint',
-  "parserOptions" : { "ecmaFeatures" : { "jsx" : true },
-    "ecmaVersion" : 2018,
-    "sourceType" : "module" },
-  "plugins" : [
-    "react",
-    "cypress"
+  'globals': { 'Atomics': 'readonly',
+    'SharedArrayBuffer': 'readonly' },
+  'parser': 'babel-eslint',
+  'parserOptions': { 'ecmaFeatures': { 'jsx': true },
+    'ecmaVersion': 2018,
+    'sourceType': 'module' },
+  'plugins': [
+    'react',
+    'cypress'
   ],
-  "rules" : {
-    "array-bracket-spacing" : ["error", "never"],
-    "comma-style" : ["error"],
-    "arrow-spacing" : [
-      "error",
-      { "after" : true,
-        "before" : true }
+  'rules': {
+    'array-bracket-spacing': ['error', 'never'],
+    'comma-style': ['error'],
+    'arrow-spacing': [
+      'error',
+      { 'after': true,
+        'before': true }
     ],
-    "jsx-quotes" : ["error", "prefer-double"],
-    "block-scoped-var" : "error",
-    "keyword-spacing" : "error",
-    "no-trailing-spaces" : "error",
-    "object-curly-spacing" : ["error", "always"],
-    "arrow-spacing" : ["error" ,{ "before" : true,
-      "after" : true, }],
-    "key-spacing" : ["error", { "beforeColon" : true,
-      "afterColon" : true, }],
-    "block-spacing" : "error",
-    "brace-style" : [
-      "error",
-      "1tbs"
+    'jsx-quotes': ['error', 'prefer-double'],
+    'block-scoped-var': 'error',
+    'keyword-spacing': 'error',
+    'no-trailing-spaces': 'error',
+    'object-curly-spacing': ['error', 'always'],
+    'arrow-spacing': ['error' ,{ 'before': true,
+      'after': true, }],
+    'key-spacing': ['error', {
+      'afterColon': true, }],
+    'block-spacing': 'error',
+    'brace-style': [
+      'error',
+      '1tbs'
     ],
-    'indent' : [
+    'indent': [
       'error', 2, {
-        "FunctionExpression" : { "parameters" : "first" },
-        "FunctionDeclaration" : { "parameters" : "first" },
-        "MemberExpression" : 1,
-        "SwitchCase" : 1,
-        "outerIIFEBody" : 0,
-        "VariableDeclarator" : { "var" : 2, "let" : 2, "const" : 3 },
-        ignoredNodes : ['TemplateLiteral']
+        'FunctionExpression': { 'parameters': 'first' },
+        'FunctionDeclaration': { 'parameters': 'first' },
+        'MemberExpression': 1,
+        'SwitchCase': 1,
+        'outerIIFEBody': 0,
+        'VariableDeclarator': { 'var': 2, 'let': 2, 'const': 3 },
+        ignoredNodes: ['TemplateLiteral']
       }
     ],
-    "react/react-in-jsx-scope" : "off",
-    "no-undef" : "off",
-    "react/prop-types" : 0,
-    "react/jsx-uses-vars" : [
+    'react/react-in-jsx-scope': 'off',
+    'no-undef': 'off',
+    'react/prop-types': 0,
+    'react/jsx-uses-vars': [
       2
     ],
-    "react/jsx-no-undef" : "error",
-    "no-console" : 0,
-    "no-unused-vars" : "error",
-    "react/jsx-key" : "off",
-    "no-dupe-keys" : "off",
-    "react/jsx-filename-extension" : [1, { "extensions" : [".js", ".jsx"] }],
-    "react/prop-types" : "off"
+    'react/jsx-no-undef': 'error',
+    'no-console': 0,
+    'no-unused-vars': 'error',
+    'react/jsx-key': 'off',
+    'no-dupe-keys': 'off',
+    'react/jsx-filename-extension': [1, { 'extensions': ['.js', '.jsx'] }],
+    'react/prop-types': 'off',
+    'semi': [2, 'always'],
+    'quotes': [2, 'single', { 'avoidEscape': true }]
   }
 };

@@ -12,14 +12,14 @@ import MesheryChartDialog from './MesheryChartDialog';
 import MesheryChart from './MesheryChart';
 import { clearResultsSelection } from '../lib/store';
 
-const defaultToolbarSelectStyles = { iconButton : {
-  marginRight : '24px',
-  top : '50%',
-  display : 'inline-block',
-  position : 'relative',
+const defaultToolbarSelectStyles = { iconButton: {
+  marginRight: '24px',
+  top: '50%',
+  display: 'inline-block',
+  position: 'relative',
 },
-icon : { color : '#000', },
-inverseIcon : { transform : 'rotate(90deg)', }, };
+icon: { color: '#000', },
+inverseIcon: { transform: 'rotate(90deg)', }, };
 
 class CustomToolbarSelect extends React.Component {
 //   handleClickInverseSelection = () => {
@@ -33,17 +33,17 @@ class CustomToolbarSelect extends React.Component {
 
   //     this.props.setSelectedRows(nextSelectedRows);
   //   };
-    state = { dialogOpen : false,
-      data : [],
-      chartCompare : [], // will persist start, end times, chart config and metrics for each result to be compared
+    state = { dialogOpen: false,
+      data: [],
+      chartCompare: [], // will persist start, end times, chart config and metrics for each result to be compared
     }
 
     handleDialogClose = () => {
-      this.setState({ dialogOpen : false });
+      this.setState({ dialogOpen: false });
     }
 
     handleDialogOpen = () => {
-      this.setState({ dialogOpen : true });
+      this.setState({ dialogOpen: true });
     }
 
   handleClickDeselectAll = () => {
@@ -74,7 +74,7 @@ class CustomToolbarSelect extends React.Component {
           const serverMetrics = rs[k1][k2].server_metrics;
 
           chartCompare.push({
-            label : row.Labels,
+            label: row.Labels,
             startTime,
             endTime,
             boardConfig,
@@ -83,7 +83,7 @@ class CustomToolbarSelect extends React.Component {
         }
       });
     });
-    this.setState({ data, chartCompare, dialogOpen : true });
+    this.setState({ data, chartCompare, dialogOpen: true });
     // console.log(`block users with dataIndexes: ${this.props.selectedRows.data.map(row => row.dataIndex)}`);
   };
 
@@ -148,14 +148,14 @@ class CustomToolbarSelect extends React.Component {
 }
 
 
-const mapDispatchToProps = (dispatch) => ({ clearResultsSelection : bindActionCreators(clearResultsSelection, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch), });
 
 const mapStateToProps = (state) => {
   const results_selection = state.get('results_selection').toObject();
   return { results_selection };
 };
 
-export default withStyles(defaultToolbarSelectStyles, { name : 'CustomToolbarSelect' })(
+export default withStyles(defaultToolbarSelectStyles, { name: 'CustomToolbarSelect' })(
   connect(
     mapStateToProps,
     mapDispatchToProps,

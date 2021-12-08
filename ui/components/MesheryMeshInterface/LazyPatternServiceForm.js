@@ -1,28 +1,28 @@
 // @ts-check
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import Typography from "@material-ui/core/Typography";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { promisifiedDataFetch } from "../../lib/data-fetch";
-import { CircularProgress } from "@material-ui/core";
-import PatternServiceForm from "./PatternServiceForm";
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { promisifiedDataFetch } from '../../lib/data-fetch';
+import { CircularProgress } from '@material-ui/core';
+import PatternServiceForm from './PatternServiceForm';
 import { getPatternServiceName as getItemName,
   getPatternServiceID as getItemID,
   getPatternServiceType,
   getHumanReadablePatternServiceName as getReadableItemName
-} from "./helpers";
-import { isEmptyObj } from "../../utils/utils";
+} from './helpers';
+import { isEmptyObj } from '../../utils/utils';
 
 const useStyles = makeStyles((theme) => ({
-  root : {
-    width : "100%",
+  root: {
+    width: '100%',
   },
-  heading : {
-    fontSize : theme.typography.pxToRem(15),
-    fontWeight : theme.typography.fontWeightRegular,
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
   },
 }));
 
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 // Discussion: Can we make network request without trim so that everything is fetched at once?
 // Probable-Problem: It may be too large response.
 async function fetchJSONSchema(name, type, id) {
-  if (type !== "workload" && type !== "trait") throw Error("type can be either \"workload\" or \"trait\"");
+  if (type !== 'workload' && type !== 'trait') throw Error('type can be either "workload" or "trait"');
   const url = `/api/oam/${type}/${name}/${id}`;
 
   const res = await promisifiedDataFetch(url);
@@ -40,20 +40,20 @@ async function fetchJSONSchema(name, type, id) {
 
 export async function getWorkloadTraitAndType(schemaSet) {
   // Get the schema sets for the workload
-  const workloadSchema = await fetchJSONSchema(getItemName(schemaSet?.workload, false), "workload", getItemID(schemaSet?.workload));
-  workloadSchema._internal = { patternAttributeName : getItemName(schemaSet?.workload, false) };
+  const workloadSchema = await fetchJSONSchema(getItemName(schemaSet?.workload, false), 'workload', getItemID(schemaSet?.workload));
+  workloadSchema._internal = { patternAttributeName: getItemName(schemaSet?.workload, false) };
 
   // Get the schema sets for the traits
   const traitsSchemas = await Promise.all(schemaSet?.traits?.map(async t => {
-    const schema = await fetchJSONSchema(getItemName(t, false), "trait", getItemID(t));
+    const schema = await fetchJSONSchema(getItemName(t, false), 'trait', getItemID(t));
 
-    schema._internal = { patternAttributeName : getItemName(t, false) };
+    schema._internal = { patternAttributeName: getItemName(t, false) };
 
     return schema;
   }));
 
   const type = getPatternServiceType(schemaSet?.workload);
-  return { workload : workloadSchema, traits : traitsSchemas, type };
+  return { workload: workloadSchema, traits: traitsSchemas, type };
 }
 
 /**
@@ -125,6 +125,6 @@ function LazyAccordionDetails(props) {
   if (!props.expanded) return <AccordionDetails />;
 
   // @ts-ignore // LEE: This behavior is more like what we need - https://codesandbox.io/s/upbeat-tesla-uchsb?file=/src/MyAccordion.js
-  return <AccordionDetails>{props.children}</AccordionDetails>
+  return <AccordionDetails>{props.children}</AccordionDetails>;
 }
 

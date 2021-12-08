@@ -1,53 +1,53 @@
-import React from "react";
-import { connect } from "react-redux";
-import NoSsr from "@material-ui/core/NoSsr";
+import React from 'react';
+import { connect } from 'react-redux';
+import NoSsr from '@material-ui/core/NoSsr';
 import {
   withStyles, Button, Divider, MenuItem, TextField, Grid
-} from "@material-ui/core";
-import { blue } from "@material-ui/core/colors";
-import PropTypes from "prop-types";
-import { withRouter } from "next/router";
-import SettingsIcon from "@material-ui/icons/Settings";
-import MesheryAdapterPlayComponent from "./MesheryAdapterPlayComponent";
+} from '@material-ui/core';
+import { blue } from '@material-ui/core/colors';
+import PropTypes from 'prop-types';
+import { withRouter } from 'next/router';
+import SettingsIcon from '@material-ui/icons/Settings';
+import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 
 const styles = (theme) => ({
-  icon : { fontSize : 20, },
-  root : { padding : theme.spacing(0),
-    marginBottom : theme.spacing(2), },
-  buttons : { display : "flex",
-    justifyContent : "flex-end", },
-  button : { marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1), },
-  margin : { margin : theme.spacing(1), },
-  alreadyConfigured : { textAlign : "center",
-    padding : theme.spacing(20), },
-  colorSwitchBase : { color : blue[300],
-    "&$colorChecked" : { color : blue[500],
-      "& + $colorBar" : { backgroundColor : blue[500], }, }, },
-  colorBar : {},
-  colorChecked : {},
-  uploadButton : { margin : theme.spacing(1),
-    marginTop : theme.spacing(3), },
-  fileLabel : { width : "100%", },
-  editorContainer : { width : "100%", },
-  deleteLabel : { paddingRight : theme.spacing(2), },
-  alignRight : { textAlign : "right", },
-  expTitleIcon : { width : theme.spacing(3),
-    display : "inline",
-    verticalAlign : "middle", },
-  expIstioTitleIcon : {
-    width : theme.spacing(2),
-    display : "inline",
-    verticalAlign : "middle",
-    marginLeft : theme.spacing(0.5),
-    marginRight : theme.spacing(0.5),
+  icon: { fontSize: 20, },
+  root: { padding: theme.spacing(0),
+    marginBottom: theme.spacing(2), },
+  buttons: { display: 'flex',
+    justifyContent: 'flex-end', },
+  button: { marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1), },
+  margin: { margin: theme.spacing(1), },
+  alreadyConfigured: { textAlign: 'center',
+    padding: theme.spacing(20), },
+  colorSwitchBase: { color: blue[300],
+    '&$colorChecked': { color: blue[500],
+      '& + $colorBar': { backgroundColor: blue[500], }, }, },
+  colorBar: {},
+  colorChecked: {},
+  uploadButton: { margin: theme.spacing(1),
+    marginTop: theme.spacing(3), },
+  fileLabel: { width: '100%', },
+  editorContainer: { width: '100%', },
+  deleteLabel: { paddingRight: theme.spacing(2), },
+  alignRight: { textAlign: 'right', },
+  expTitleIcon: { width: theme.spacing(3),
+    display: 'inline',
+    verticalAlign: 'middle', },
+  expIstioTitleIcon: {
+    width: theme.spacing(2),
+    display: 'inline',
+    verticalAlign: 'middle',
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(0.5),
   },
-  expTitle : { display : "inline",
-    verticalAlign : "middle",
-    marginLeft : theme.spacing(1), },
-  paneSection : { backgroundColor : "#fff",
-    padding : theme.spacing(2.5),
-    borderRadius : 4, },
+  expTitle: { display: 'inline',
+    verticalAlign: 'middle',
+    marginLeft: theme.spacing(1), },
+  paneSection: { backgroundColor: '#fff',
+    padding: theme.spacing(2.5),
+    borderRadius: 4, },
 });
 
 class MesheryPlayComponent extends React.Component {
@@ -61,10 +61,10 @@ class MesheryPlayComponent extends React.Component {
     }
     this.state = {
       k8sconfig,
-      kts : new Date(),
+      kts: new Date(),
 
       meshAdapters,
-      mts : new Date(),
+      mts: new Date(),
 
       adapter,
     };
@@ -93,15 +93,15 @@ class MesheryPlayComponent extends React.Component {
   }
 
   handleConfigure = () => {
-    this.props.router.push("/settings#service-mesh");
+    this.props.router.push('/settings#service-mesh');
   }
 
   pickImage(adapter) {
     const { classes } = this.props;
-    let image = "/static/img/meshery-logo.png";
+    let image = '/static/img/meshery-logo.png';
     let imageIcon = <img src={image} className={classes.expTitleIcon} />;
     if (adapter && adapter.name) {
-      image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
+      image = '/static/img/' + adapter.name.toLowerCase() + '.svg';
       imageIcon = <img src={image} className={classes.expTitleIcon} />;
     }
     return imageIcon;
@@ -111,10 +111,10 @@ class MesheryPlayComponent extends React.Component {
     const self = this;
     return (event) => {
       const { meshAdapters } = self.state;
-      if (event.target.value !== "") {
+      if (event.target.value !== '') {
         const selectedAdapter = meshAdapters.filter(({ adapter_location }) => adapter_location === event.target.value);
-        if (typeof selectedAdapter !== "undefined" && selectedAdapter.length === 1) {
-          self.setState({ adapter : selectedAdapter[0] });
+        if (typeof selectedAdapter !== 'undefined' && selectedAdapter.length === 1) {
+          self.setState({ adapter: selectedAdapter[0] });
         }
       }
     };
@@ -140,7 +140,7 @@ class MesheryPlayComponent extends React.Component {
         </React.Fragment>
       );
     }
-    return "";
+    return '';
   }
 
   render() {
@@ -161,9 +161,9 @@ class MesheryPlayComponent extends React.Component {
         </NoSsr>
       );
     }
-    if (this.props.adapter && this.props.adapter !== "") {
+    if (this.props.adapter && this.props.adapter !== '') {
       const indContent = this.renderIndividualAdapter();
-      if (indContent !== "") {
+      if (indContent !== '') {
         return indContent;
       } // else it will render all the available adapters
     }
@@ -185,7 +185,7 @@ class MesheryPlayComponent extends React.Component {
                   fullWidth
                   value={adapter && adapter.adapter_location
                     ? adapter.adapter_location
-                    : ""}
+                    : ''}
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleAdapterChange()}
@@ -221,14 +221,14 @@ class MesheryPlayComponent extends React.Component {
   }
 }
 
-MesheryPlayComponent.propTypes = { classes : PropTypes.object.isRequired, };
+MesheryPlayComponent.propTypes = { classes: PropTypes.object.isRequired, };
 
 const mapDispatchToProps = () => ({});
 
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get("k8sConfig").toJS();
-  const meshAdapters = state.get("meshAdapters").toJS();
-  const meshAdaptersts = state.get("meshAdaptersts");
+  const k8sconfig = state.get('k8sConfig').toJS();
+  const meshAdapters = state.get('meshAdapters').toJS();
+  const meshAdaptersts = state.get('meshAdaptersts');
   return { k8sconfig, meshAdapters, meshAdaptersts };
 };
 

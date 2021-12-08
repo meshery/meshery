@@ -1,27 +1,27 @@
 // @ts-check
-import { AppBar, Button, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
-import React from "react";
-import { pSBCr } from "../../utils/lightenOrDarkenColor";
-import { getMeshProperties } from "../../utils/nameMapper";
-import PatternServiceFormCore from "./PatternServiceFormCore";
+import { AppBar, Button, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
+import React from 'react';
+import { pSBCr } from '../../utils/lightenOrDarkenColor';
+import { getMeshProperties } from '../../utils/nameMapper';
+import PatternServiceFormCore from './PatternServiceFormCore';
 
 const useStyles = makeStyles(() => ({
-  appBar : {
+  appBar: {
     // @ts-ignore
-    boxShadow : ({ color }) =>  `0px 2px 4px -1px ${pSBCr(color, -30)}`,
+    boxShadow: ({ color }) =>  `0px 2px 4px -1px ${pSBCr(color, -30)}`,
     // @ts-ignore
-    background : ({ color }) => `linear-gradient(115deg, ${pSBCr( color, -30)} 0%, ${color} 100%)`,
-    position : "sticky",
+    background: ({ color }) => `linear-gradient(115deg, ${pSBCr( color, -30)} 0%, ${color} 100%)`,
+    position: 'sticky',
   },
-  tabPanel : {
-    marginTop : "1.1rem",
-    padding : "0px 2px"
+  tabPanel: {
+    marginTop: '1.1rem',
+    padding: '0px 2px'
   }
 }));
 
 function RJSFButton({ handler, text, ...restParams }) {
   return (
-    <Button variant="contained" color="primary" style={{ margin : "0px 0.5rem 32px 0px" }} onClick={handler} {...restParams}>
+    <Button variant="contained" color="primary" style={{ margin: '0px 0.5rem 32px 0px' }} onClick={handler} {...restParams}>
       {text}
     </Button>
   );
@@ -33,7 +33,7 @@ function RJSFFormChildComponent({ onSubmit, onDelete }){
       <RJSFButton handler={onSubmit} text="Submit" />
       <RJSFButton handler={onDelete} text="Delete" />
     </>
-  )
+  );
 }
 
 /**
@@ -55,7 +55,7 @@ function RJSFFormChildComponent({ onSubmit, onDelete }){
  */
 function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll=false }) {
   const [tab, setTab] = React.useState(0);
-  const classes = useStyles({ color : getMeshProperties(getMeshName(schemaSet))?.color });
+  const classes = useStyles({ color: getMeshProperties(getMeshName(schemaSet))?.color });
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
@@ -94,10 +94,10 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               <TraitsForm />
             </TabPanel>
           </div>
-        )
+        );
       }}
     </PatternServiceFormCore>
-  )
+  );
 }
 
 function TabPanel(props) {
@@ -122,8 +122,8 @@ function TabPanel(props) {
 
 function a11yProps(index) {
   return {
-    id : `simple-tab-${index}`,
-    "aria-controls" : `simple-tabpanel-${index}`,
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
   };
 }
 
@@ -132,7 +132,7 @@ function a11yProps(index) {
  * @returns {String} name
  */
 function getMeshName(schema) {
-  return schema?.workload?.["service-mesh"]?.toLowerCase() || "core";
+  return schema?.workload?.['service-mesh']?.toLowerCase() || 'core';
 }
 
 export default PatternServiceForm;

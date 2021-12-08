@@ -1,7 +1,7 @@
 // @ts-check
-import React, { useState } from "react";
-import { FormControlLabel } from "@material-ui/core";
-import MSwitch from "@material-ui/core/Switch";
+import React, { useState } from 'react';
+import { FormControlLabel } from '@material-ui/core';
+import MSwitch from '@material-ui/core/Switch';
 
 function Switch({
   jsonSchema, onChange, onSubmit, onDelete

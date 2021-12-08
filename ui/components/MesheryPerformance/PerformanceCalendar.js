@@ -1,20 +1,20 @@
 //@ts-check
-import React, { useEffect, useState } from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
-import { connect } from "react-redux";
-import { updateProgress } from "../../lib/store";
-import { bindActionCreators } from "redux";
-import { withSnackbar } from "notistack";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import GenericModal from "../GenericModal";
-import GrafanaCustomCharts from "../GrafanaCustomCharts";
-import MesheryChart from "../MesheryChart";
-import { Paper } from "@material-ui/core";
-import { Typography } from "@material-ui/core";
-import fetchAllResults from '../graphql/queries/FetchAllResultsQuery'
+import React, { useEffect, useState } from 'react';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import { connect } from 'react-redux';
+import { updateProgress } from '../../lib/store';
+import { bindActionCreators } from 'redux';
+import { withSnackbar } from 'notistack';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import GenericModal from '../GenericModal';
+import GrafanaCustomCharts from '../GrafanaCustomCharts';
+import MesheryChart from '../MesheryChart';
+import { Paper } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+import fetchAllResults from '../graphql/queries/FetchAllResultsQuery';
 
 const localizer = momentLocalizer(moment);
 
@@ -48,10 +48,10 @@ function generateCalendarEventsFromResults(results) {
     ntzEndTime.setSeconds(ntzEndTime.getSeconds() + (runner_results.ActualDuration / 1e9));
 
     return {
-      title : name,
-      start : ntzStartTime,
-      end : ntzEndTime,
-      resource : index
+      title: name,
+      start: ntzStartTime,
+      end: ntzEndTime,
+      resource: index
     };
   });
 }
@@ -68,12 +68,12 @@ function generateCalendarEventsFromResults(results) {
  */
 function generateDateRange(from, to) {
   if (from && to) {
-    return { start : moment(from).format("YYYY-MM-DD"),
-      end : moment(to).format("YYYY-MM-DD"), };
+    return { start: moment(from).format('YYYY-MM-DD'),
+      end: moment(to).format('YYYY-MM-DD'), };
   }
 
-  return { start : moment().startOf("M").format("YYYY-MM-DD"),
-    end : moment().add(1, "M").startOf("M").format("YYYY-MM-DD"), };
+  return { start: moment().startOf('M').format('YYYY-MM-DD'),
+    end: moment().add(1, 'M').startOf('M').format('YYYY-MM-DD'), };
 }
 
 /**
@@ -98,47 +98,47 @@ function PerformanceCalendar({
   }, [time]);
 
   async function fetchResults(start, end) {
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
 
     fetchAllResults({
-      selector : {
+      selector: {
         // default
-        pageSize : `10`,
-        page : `0`,
-        search : ``,
-        order : ``,
-        from : start,
-        to : end,
+        pageSize: '10',
+        page: '0',
+        search: '',
+        order: '',
+        from: start,
+        to: end,
       },
     }).subscribe({
-      next : (res) => {
+      next: (res) => {
         // @ts-ignore
         let result = res?.fetchAllResults;
-        updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
+        updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
           if (result) {
             // @ts-ignore
             setResults(result.results || []);
           }
         }
       },
-      error : handleError("Failed to Fetch Profiles"),
+      error: handleError('Failed to Fetch Profiles'),
     });
   }
 
   function handleError(msg) {
     return function (error) {
-      updateProgress({ showProgress : false });
+      updateProgress({ showProgress: false });
 
-      enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-        action : function Action(key) {
+      enqueueSnackbar(`${msg}: ${error}`, { variant: 'error',
+        action: function Action(key) {
           return (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
               <CloseIcon />
             </IconButton>
           );
         },
-        autoHideDuration : 8000, });
+        autoHideDuration: 8000, });
     };
   }
 
@@ -156,9 +156,9 @@ function PerformanceCalendar({
     const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
     return (
       <Paper
-        style={{ width : "100%",
-          maxWidth : "90vw",
-          padding : "0.5rem" }}
+        style={{ width: '100%',
+          maxWidth: '90vw',
+          padding: '0.5rem' }}
       >
         <div>
           <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
@@ -188,13 +188,13 @@ function PerformanceCalendar({
     <div style={style}>
       <Calendar
         events={generateCalendarEventsFromResults(results)}
-        views={["month", "week", "day"]}
+        views={['month', 'week', 'day']}
         defaultView="day"
         step={60}
         showMultiDayTimes
         defaultDate={new Date()}
         localizer={localizer}
-        style={{ height : "100%", }}
+        style={{ height: '100%', }}
         // @ts-ignore
         onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
         onSelectEvent={(results) => handleEventClick(results)}
@@ -210,6 +210,6 @@ function PerformanceCalendar({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch), });
 
 export default connect(null, mapDispatchToProps)(withSnackbar(PerformanceCalendar));

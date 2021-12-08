@@ -1,25 +1,25 @@
 //@ts-check
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
-import React, { useEffect, useState, useRef } from "react";
-import PromptComponent from "../PromptComponent";
-import GridOnIcon from "@material-ui/icons/GridOn";
-import CloseIcon from "@material-ui/icons/Close";
-import TableChartIcon from "@material-ui/icons/TableChart";
-import PerformanceProfileTable from "./PerformanceProfileTable";
-import PerformanceProfileGrid from "./PerformanceProfileGrid";
-import dataFetch from "../../lib/data-fetch";
-import IconButton from "@material-ui/core/IconButton";
-import AddIcon from "@material-ui/icons/Add";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { updateProgress } from "../../lib/store";
-import { withSnackbar } from "notistack";
-import GenericModal from "../GenericModal";
-import MesheryPerformanceComponent from "./index";
-import { Paper, Typography, Button } from "@material-ui/core";
-import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import React, { useEffect, useState, useRef } from 'react';
+import PromptComponent from '../PromptComponent';
+import GridOnIcon from '@material-ui/icons/GridOn';
+import CloseIcon from '@material-ui/icons/Close';
+import TableChartIcon from '@material-ui/icons/TableChart';
+import PerformanceProfileTable from './PerformanceProfileTable';
+import PerformanceProfileGrid from './PerformanceProfileGrid';
+import dataFetch from '../../lib/data-fetch';
+import IconButton from '@material-ui/core/IconButton';
+import AddIcon from '@material-ui/icons/Add';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { updateProgress } from '../../lib/store';
+import { withSnackbar } from 'notistack';
+import GenericModal from '../GenericModal';
+import MesheryPerformanceComponent from './index';
+import { Paper, Typography, Button } from '@material-ui/core';
+import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
 
-const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
+const MESHERY_PERFORMANCE_URL = '/api/user/performance/profiles';
 
 /**
  * Type Definition for View Type
@@ -55,13 +55,13 @@ function ViewSwitch({ view, changeView }) {
 function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
-    ("grid")
+    ('grid')
   );
-  const modalRef = useRef(null)
+  const modalRef = useRef(null);
 
   const [page, setPage] = useState(0);
-  const [search, setSearch] = useState("");
-  const [sortOrder, setSortOrder] = useState("");
+  const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [testProfiles, setTestProfiles] = useState([]);
@@ -84,26 +84,26 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
    * @param {string} sortOrder order of sort
    */
   function fetchTestProfiles(page, pageSize, search, sortOrder) {
-    if (!search) search = "";
-    if (!sortOrder) sortOrder = "";
+    if (!search) search = '';
+    if (!sortOrder) sortOrder = '';
     // const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
     //   sortOrder
     // )}`;
 
-    updateProgress({ showProgress : true });
+    updateProgress({ showProgress: true });
     fetchPerformanceProfiles({
-      selector : {
-        pageSize : `${pageSize}`,
-        page : `${page}`,
-        search : `${encodeURIComponent(search)}`,
-        order : `${encodeURIComponent(sortOrder)}`,
+      selector: {
+        pageSize: `${pageSize}`,
+        page: `${page}`,
+        search: `${encodeURIComponent(search)}`,
+        order: `${encodeURIComponent(sortOrder)}`,
       },
     }).subscribe({
-      next : (res) => {
+      next: (res) => {
         // @ts-ignore
         let result = res?.getPerformanceProfiles;
-        updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
+        updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
           if (result) {
             setCount(result.total_count || 0);
             setPageSize(result.page_size || 0);
@@ -112,16 +112,16 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
           }
         }
       },
-      error : handleError("Failed to Fetch Profiles"),
+      error: handleError('Failed to Fetch Profiles'),
     });
   }
 
   async function showModal(count) {
-    let response = await modalRef.current.show({ title : `Delete ${count ? count : ""} Performance Profile${count > 1 ? "s" : '' }?`,
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} performance profile${count > 1 ? "s" : '' }?`,
+    let response = await modalRef.current.show({ title: `Delete ${count ? count : ''} Performance Profile${count > 1 ? 's' : '' }?`,
+      subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this' } ${count ? count : ''} performance profile${count > 1 ? 's' : '' }?`,
 
-      options : ["Yes", "No"],
-    })
+      options: ['Yes', 'No'],
+    });
     return response;
   }
 
@@ -129,16 +129,16 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     dataFetch(
       `${MESHERY_PERFORMANCE_URL}/${id}`,
       {
-        method : "DELETE",
-        credentials : "include",
+        method: 'DELETE',
+        credentials: 'include',
       },
       () => {
-        updateProgress({ showProgress : false });
+        updateProgress({ showProgress: false });
 
-        enqueueSnackbar("Performance Profile Successfully Deleted!", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : function Action(key) {
+        enqueueSnackbar('Performance Profile Successfully Deleted!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon />
@@ -149,42 +149,42 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
 
         fetchTestProfiles(page, pageSize, search, sortOrder);
       },
-      handleError("Failed To Delete Profile")
+      handleError('Failed To Delete Profile')
     );
   }
 
 
   function handleError(msg) {
     return function (error) {
-      updateProgress({ showProgress : false });
+      updateProgress({ showProgress: false });
 
       enqueueSnackbar(`${msg} : ${error}`, {
-        variant : "error",
-        action : function Action(key) {
+        variant: 'error',
+        action: function Action(key) {
           return (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
               <CloseIcon />
             </IconButton>
           );
         },
-        autoHideDuration : 8000,
+        autoHideDuration: 8000,
       });
     };
   }
 
   return (
     <>
-      <div style={{ padding : "0.5rem" }}>
+      <div style={{ padding: '0.5rem' }}>
         <div
           style={{
-            margin : "2rem auto",
-            display : "flex",
-            justifyContent : "space-between",
-            paddingLeft : "1rem"
+            margin: '2rem auto',
+            display: 'flex',
+            justifyContent: 'space-between',
+            paddingLeft: '1rem'
           }}
         >
           {testProfiles.length > 0 && (
-            <div style={{ width : "fit-content", alignSelf : "flex-start" }}>
+            <div style={{ width: 'fit-content', alignSelf: 'flex-start' }}>
               <Button
                 aria-label="Add Performance Profile"
                 variant="contained"
@@ -198,11 +198,11 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               </Button>
             </div>
           )}
-          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingLeft : "1rem" }}>
+          <div style={{ justifySelf: 'flex-end', marginLeft: 'auto', paddingLeft: '1rem' }}>
             <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
         </div>
-        {viewType === "grid"
+        {viewType === 'grid'
           ? (
             <PerformanceProfileGrid
               profiles={testProfiles}
@@ -231,17 +231,17 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
             />
           )}
         {testProfiles.length == 0 && (
-          <Paper style={{ padding : "0.5rem" }}>
+          <Paper style={{ padding: '0.5rem' }}>
             <div
               style={{
-                padding : "2rem",
-                display : "flex",
-                justifyContent : "center",
-                alignItems : "center",
-                flexDirection : "column",
+                padding: '2rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
               }}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+              <Typography style={{ fontSize: '1.5rem', marginBottom: '2rem' }} align="center" color="textSecondary">
                 No Performance Profiles Found
               </Typography>
               <Button
@@ -261,7 +261,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
         <GenericModal
           open={!!profileForModal}
           Content={
-            <Paper style={{ margin : "auto", maxWidth : "90%", outline : "none" }}>
+            <Paper style={{ margin: 'auto', maxWidth: '90%', outline: 'none' }}>
               <MesheryPerformanceComponent
                 // @ts-ignore
                 loadAsPerformanceProfile
@@ -306,6 +306,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress: bindActionCreators(updateProgress, dispatch), });
 
 export default connect(null, mapDispatchToProps)(withSnackbar(PerformanceProfile));

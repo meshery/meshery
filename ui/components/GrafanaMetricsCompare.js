@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { MenuItem, NoSsr, TextField } from '@material-ui/core';
 import { connect } from 'react-redux';
 
-const grafanaStyles = () => ({ root : { width : '100%', }, });
+const grafanaStyles = () => ({ root: { width: '100%', }, });
 
 class GrafanaMetricsCompare extends Component {
   constructor(props) {
@@ -14,9 +14,9 @@ class GrafanaMetricsCompare extends Component {
     this.state = {
       chartCompare,
       panels,
-      panel : '',
-      selectedSeries : '',
-      series : [],
+      panel: '',
+      selectedSeries: '',
+      series: [],
     };
   }
 
@@ -46,7 +46,7 @@ class GrafanaMetricsCompare extends Component {
     }
     this.setState({ panel,
       series,
-      selectedSeries : series.length > 0
+      selectedSeries: series.length > 0
         ? series[0]
         : '', });
   }
@@ -63,11 +63,11 @@ class GrafanaMetricsCompare extends Component {
         }
         self.setState({ panel,
           series,
-          selectedSeries : series.length > 0
+          selectedSeries: series.length > 0
             ? series[0]
             : '', });
       } else if (name === 'series') {
-        self.setState({ selectedSeries : event.target.value });
+        self.setState({ selectedSeries: event.target.value });
       }
     };
   }
@@ -110,8 +110,8 @@ class GrafanaMetricsCompare extends Component {
   }
 }
 
-GrafanaMetricsCompare.propTypes = { classes : PropTypes.object.isRequired,
-  chartCompare : PropTypes.array.isRequired, };
+GrafanaMetricsCompare.propTypes = { classes: PropTypes.object.isRequired,
+  chartCompare: PropTypes.array.isRequired, };
 
 const mapDispatchToProps = () => ({});
 

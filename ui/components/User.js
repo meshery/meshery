@@ -15,7 +15,7 @@ import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 
 
-const styles = () => ({ popover : { color : 'black', }, });
+const styles = () => ({ popover: { color: 'black', }, });
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -27,22 +27,22 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.setAttribute('href', dataUri);
   linkElement.setAttribute('download', exportFileDefaultName);
   linkElement.click();
-  linkElement.remove()
+  linkElement.remove();
 }
 
 class User extends React.Component {
-  state = { user : null,
-    open : false, }
+  state = { user: null,
+    open: false, }
 
   handleToggle = () => {
-    this.setState((state) => ({ open : !state.open }));
+    this.setState((state) => ({ open: !state.open }));
   };
 
   handleClose = (event) => {
     if (this.anchorEl.contains(event.target)) {
       return;
     }
-    this.setState({ open : false });
+    this.setState({ open: false });
   }
 
   handleLogout = () => {
@@ -54,14 +54,14 @@ class User extends React.Component {
   };
 
   handleGetToken = () => {
-    dataFetch('/api/token', { credentials : 'same-origin' }, (data) => {
-      exportToJsonFile(data, "auth.json");
+    dataFetch('/api/token', { credentials: 'same-origin' }, (data) => {
+      exportToJsonFile(data, 'auth.json');
     }, (error) => ({ error, }));
   };
 
   componentDidMount() {
     // console.log("fetching user data");
-    dataFetch('/api/user', { credentials : 'same-origin' }, (user) => {
+    dataFetch('/api/user', { credentials: 'same-origin' }, (user) => {
       this.setState({ user });
       this.props.updateUser({ user });
     }, (error) => ({ error, }));
@@ -95,12 +95,12 @@ class User extends React.Component {
               <Avatar className={avatarClassName} src={avatar_url} />
             </IconButton>
           </div>
-          <Popper open={open} anchorEl={this.anchorEl} transition  style={{ zIndex : 10000 }} placement="top-end">
+          <Popper open={open} anchorEl={this.anchorEl} transition  style={{ zIndex: 10000 }} placement="top-end">
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
                 id="menu-list-grow"
-                style={{ transformOrigin : placement === 'bottom'
+                style={{ transformOrigin: placement === 'bottom'
                   ? 'left top'
                   : 'left bottom' }}
               >
@@ -122,7 +122,7 @@ class User extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateUser: bindActionCreators(updateUser, dispatch), });
 
 export default withStyles(styles)(connect(
   null,

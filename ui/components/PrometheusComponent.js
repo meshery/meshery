@@ -1,75 +1,75 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import { NoSsr, Typography, IconButton } from "@material-ui/core";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import CloseIcon from "@material-ui/icons/Close";
-import { withSnackbar } from "notistack";
-import dataFetch from "../lib/data-fetch";
-import PrometheusSelectionComponent from "./PrometheusSelectionComponent";
-import GrafanaDisplaySelection from "./GrafanaDisplaySelection";
-import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
-import GrafanaCustomCharts from "./GrafanaCustomCharts";
-import PrometheusConfigComponent from "./PrometheusConfigComponent";
-import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import { NoSsr, Typography, IconButton } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import CloseIcon from '@material-ui/icons/Close';
+import { withSnackbar } from 'notistack';
+import dataFetch from '../lib/data-fetch';
+import PrometheusSelectionComponent from './PrometheusSelectionComponent';
+import GrafanaDisplaySelection from './GrafanaDisplaySelection';
+import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from '../lib/store';
+import GrafanaCustomCharts from './GrafanaCustomCharts';
+import PrometheusConfigComponent from './PrometheusConfigComponent';
+import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 
 const promStyles = (theme) => ({
-  root : { padding : theme.spacing(5), },
-  buttons : { display : "flex",
+  root: { padding: theme.spacing(5), },
+  buttons: { display: 'flex',
     //   justifyContent: 'flex-end',
   },
-  button : { marginTop : theme.spacing(3),
+  button: { marginTop: theme.spacing(3),
     //   marginLeft: theme.spacing(1),
   },
-  margin : { margin : theme.spacing(1), },
-  chartTitle : { textAlign : "center", },
-  icon : { width : theme.spacing(2.5), },
-  alignRight : { textAlign : "right", },
-  formControl : { margin : theme.spacing(1),
-    minWidth : 180, },
-  panelChips : { display : "flex",
-    flexWrap : "wrap", },
-  panelChip : { margin : theme.spacing(0.25), },
-  chartTitle : { marginLeft : theme.spacing(3),
-    marginTop : theme.spacing(2), },
+  margin: { margin: theme.spacing(1), },
+  chartTitle: { textAlign: 'center', },
+  icon: { width: theme.spacing(2.5), },
+  alignRight: { textAlign: 'right', },
+  formControl: { margin: theme.spacing(1),
+    minWidth: 180, },
+  panelChips: { display: 'flex',
+    flexWrap: 'wrap', },
+  panelChip: { margin: theme.spacing(0.25), },
+  chartTitle: { marginLeft: theme.spacing(3),
+    marginTop: theme.spacing(2), },
 });
 
 export const submitPrometheusConfigure = (self, cb = () => {}) => {
   const { prometheusURL, selectedPrometheusBoardsConfigs } = self.state;
-  if (prometheusURL === "") {
+  if (prometheusURL === '') {
     return;
   }
   const data = { prometheusURL, };
   const params = Object.keys(data)
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
-    .join("&");
-  self.props.updateProgress({ showProgress : true });
+    .join('&');
+  self.props.updateProgress({ showProgress: true });
   dataFetch(
-    "/api/telemetry/metrics/config",
+    '/api/telemetry/metrics/config',
     {
-      credentials : "same-origin",
-      method : "POST",
-      credentials : "include",
-      headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
-      body : params,
+      credentials: 'same-origin',
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', },
+      body: params,
     },
     (result) => {
-      self.props.updateProgress({ showProgress : false });
-      if (typeof result !== "undefined") {
-        self.props.enqueueSnackbar("Prometheus was successfully configured!", { variant : "success",
-          autoHideDuration : 2000,
-          action : function Loader(key) {
+      self.props.updateProgress({ showProgress: false });
+      if (typeof result !== 'undefined') {
+        self.props.enqueueSnackbar('Prometheus was successfully configured!', { variant: 'success',
+          autoHideDuration: 2000,
+          action: function Loader(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             );
           }, });
-        self.setState({ prometheusConfigSuccess : true });
-        self.props.updatePrometheusConfig({ prometheus : { prometheusURL,
+        self.setState({ prometheusConfigSuccess: true });
+        self.props.updatePrometheusConfig({ prometheus: { prometheusURL,
           selectedPrometheusBoardsConfigs, }, });
-        cb()
+        cb();
       }
     },
     self.handleError
@@ -82,19 +82,19 @@ class PrometheusComponent extends Component {
     // const {selectedPrometheusBoardsConfigs} = props.grafana;
     const { prometheusURL, selectedPrometheusBoardsConfigs } = props.prometheus;
     let prometheusConfigSuccess = false;
-    if (prometheusURL !== "") {
+    if (prometheusURL !== '') {
       prometheusConfigSuccess = true;
     }
 
     this.state = {
-      urlError : false,
+      urlError: false,
 
       prometheusConfigSuccess,
-      selectedPrometheusBoardsConfigs : selectedPrometheusBoardsConfigs
+      selectedPrometheusBoardsConfigs: selectedPrometheusBoardsConfigs
         ?selectedPrometheusBoardsConfigs
         :[],
       prometheusURL,
-      ts : new Date(),
+      ts: new Date(),
     };
   }
 
@@ -103,35 +103,35 @@ class PrometheusComponent extends Component {
 
     if (self.props.isMeshConfigured)
       dataFetch(
-        "/api/telemetry/metrics/config",
+        '/api/telemetry/metrics/config',
         {
-          method : "GET",
-          credentials : "include",
-          headers : {
-            "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8",
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
           },
         },
         (result) => {
-          self.props.updateProgress({ showProgress : false });
-          if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL !="") {
+          self.props.updateProgress({ showProgress: false });
+          if (typeof result !== 'undefined' && result?.prometheusURL && result?.prometheusURL !='') {
             let selector = {
-              serviceMesh : "ALL_MESH",
+              serviceMesh: 'ALL_MESH',
             };
             fetchAvailableAddons(selector).subscribe({
-              next : (res) => {
+              next: (res) => {
                 res?.addonsState?.forEach((addon) => {
-                  if (addon.name === "prometheus" && self.state.prometheusURL === "") {
-                    self.setState({ prometheusURL : "http://" + addon.endpoint })
+                  if (addon.name === 'prometheus' && self.state.prometheusURL === '') {
+                    self.setState({ prometheusURL: 'http://' + addon.endpoint });
                     submitPrometheusConfigure(self);
                   }
                 });
               },
-              error : (err) => console.log("error registering Prometheus: " + err),
+              error: (err) => console.log('error registering Prometheus: ' + err),
             });
           }
         },
         self.handleError
-      )
+      );
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -141,27 +141,27 @@ class PrometheusComponent extends Component {
       return {
         prometheusURL,
         selectedPrometheusBoardsConfigs,
-        prometheusConfigSuccess : prometheusURL !== "",
-        ts : props.ts,
+        prometheusConfigSuccess: prometheusURL !== '',
+        ts: props.ts,
       };
     }
     return {};
   }
 
   handleChange = (name) => (value) => {
-    if (name === "prometheusURL" && value !== "") {
-      this.setState({ urlError : false });
+    if (name === 'prometheusURL' && value !== '') {
+      this.setState({ urlError: false });
     }
-    this.setState({ [name] : value });
+    this.setState({ [name]: value });
   };
 
   handlePrometheusConfigure = () => {
     const { prometheusURL } = this.state;
     if (
-      prometheusURL === "" ||
-      !(prometheusURL.toLowerCase().startsWith("http://") || prometheusURL.toLowerCase().startsWith("https://"))
+      prometheusURL === '' ||
+      !(prometheusURL.toLowerCase().startsWith('http://') || prometheusURL.toLowerCase().startsWith('https://'))
     ) {
-      this.setState({ urlError : true });
+      this.setState({ urlError: true });
       return;
     }
     submitPrometheusConfigure(this);
@@ -169,32 +169,32 @@ class PrometheusComponent extends Component {
 
   handleError = () => {
     const self = this;
-    this.props.updateProgress({ showProgress : false });
-    this.props.enqueueSnackbar("There was an error communicating with Prometheus", { variant : "error",
-      action : (key) => (
+    this.props.updateProgress({ showProgress: false });
+    this.props.enqueueSnackbar('There was an error communicating with Prometheus', { variant: 'error',
+      action: (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 8000, });
+      autoHideDuration: 8000, });
   };
 
   handlePrometheusChipDelete = () => {
     const self = this;
-    self.props.updateProgress({ showProgress : true });
+    self.props.updateProgress({ showProgress: true });
     dataFetch(
-      "/api/telemetry/metrics/config",
-      { credentials : "same-origin",
-        method : "DELETE",
-        credentials : "include", },
+      '/api/telemetry/metrics/config',
+      { credentials: 'same-origin',
+        method: 'DELETE',
+        credentials: 'include', },
       (result) => {
-        self.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          self.setState({ prometheusConfigSuccess : false,
-            prometheusURL : "",
-            selectedPrometheusBoardsConfigs : [], });
-          self.props.updatePrometheusConfig({ prometheus : { prometheusURL : "",
-            selectedPrometheusBoardsConfigs : [], }, });
+        self.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          self.setState({ prometheusConfigSuccess: false,
+            prometheusURL: '',
+            selectedPrometheusBoardsConfigs: [], });
+          self.props.updatePrometheusConfig({ prometheus: { prometheusURL: '',
+            selectedPrometheusBoardsConfigs: [], }, });
         }
       },
       self.handleError
@@ -202,18 +202,18 @@ class PrometheusComponent extends Component {
   };
 
   handlePrometheusClick = () => {
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/telemetry/metrics/ping",
-      { credentials : "same-origin",
-        credentials : "include", },
+      '/api/telemetry/metrics/ping',
+      { credentials: 'same-origin',
+        credentials: 'include', },
       (result) => {
-        self.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          self.props.enqueueSnackbar("Prometheus successfully pinged!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
+        self.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          self.props.enqueueSnackbar('Prometheus successfully pinged!', { variant: 'success',
+            autoHideDuration: 2000,
+            action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
@@ -229,7 +229,7 @@ class PrometheusComponent extends Component {
     if (boardsSelection && boardsSelection.panels && boardsSelection.panels.length) {
       selectedPrometheusBoardsConfigs.push(boardsSelection);
       this.setState({ selectedPrometheusBoardsConfigs });
-      this.props.updatePrometheusConfig({ prometheus : { prometheusURL,
+      this.props.updatePrometheusConfig({ prometheus: { prometheusURL,
         selectedPrometheusBoardsConfigs, }, });
     }
   };
@@ -241,7 +241,7 @@ class PrometheusComponent extends Component {
       selectedPrometheusBoardsConfigs.splice(indexes[i], 1);
     }
     this.setState({ selectedPrometheusBoardsConfigs });
-    this.props.updatePrometheusConfig({ prometheus : { prometheusURL,
+    this.props.updatePrometheusConfig({ prometheus: { prometheusURL,
       selectedPrometheusBoardsConfigs, }, });
   };
 
@@ -251,7 +251,7 @@ class PrometheusComponent extends Component {
       urlError, prometheusURL, prometheusConfigSuccess, selectedPrometheusBoardsConfigs
     } = this.state;
     if (prometheusConfigSuccess) {
-      let displaySelec = "";
+      let displaySelec = '';
       if (selectedPrometheusBoardsConfigs.length > 0) {
         displaySelec = (
           <React.Fragment>
@@ -289,8 +289,8 @@ class PrometheusComponent extends Component {
     return (
       <NoSsr>
         <PrometheusConfigComponent
-          prometheusURL={prometheusURL && { label : prometheusURL, value : prometheusURL }}
-          options={this.props.scannedPrometheus.map((url) => ({ label : url, value : url }))}
+          prometheusURL={prometheusURL && { label: prometheusURL, value: prometheusURL }}
+          options={this.props.scannedPrometheus.map((url) => ({ label: url, value: url }))}
           urlError={urlError}
           handleChange={this.handleChange}
           handlePrometheusConfigure={this.handlePrometheusConfigure}
@@ -300,15 +300,15 @@ class PrometheusComponent extends Component {
   }
 }
 
-PrometheusComponent.propTypes = { classes : PropTypes.object.isRequired,
-  scannedPrometheus : PropTypes.array.isRequired, };
+PrometheusComponent.propTypes = { classes: PropTypes.object.isRequired,
+  scannedPrometheus: PropTypes.array.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch), });
 const mapStateToProps = (st) => {
-  const grafana = st.get("grafana").toJS();
-  const prometheus = st.get("prometheus").toJS();
+  const grafana = st.get('grafana').toJS();
+  const prometheus = st.get('prometheus').toJS();
   return { grafana, prometheus };
 };
 

@@ -1,7 +1,7 @@
 // @ts-check
-import React from "react";
-import Switch from "./Switch";
-import RJSF from "./RJSF";
+import React from 'react';
+import Switch from './Switch';
+import RJSF from './RJSF';
 
 /**
  * componentType takes in json schema and returns the type
@@ -13,8 +13,8 @@ import RJSF from "./RJSF";
  * @return {"rjsf" | "switch"}
  */
 function componentType(jsonSchema) {
-  if (Object.keys(jsonSchema?.properties).length) return "rjsf";
-  return "switch";
+  if (Object.keys(jsonSchema?.properties).length) return 'rjsf';
+  return 'switch';
 }
 
 /**
@@ -35,12 +35,12 @@ function componentType(jsonSchema) {
 function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent }) {
   const ctype = componentType(jsonSchema);
 
-  if (ctype === "rjsf")
+  if (ctype === 'rjsf')
     return (
       <RJSF
         formData={formData}
-        hideSubmit={type === "trait"}
-        hideTitle={type === "workload"}
+        hideSubmit={type === 'trait'}
+        hideTitle={type === 'workload'}
         jsonSchema={jsonSchema}
         onChange={onChange}
         onSubmit={onSubmit}
@@ -49,7 +49,7 @@ function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDele
         RJSFFormChildComponent={RJSFFormChildComponent}
       />
     );
-  if (ctype === "switch")
+  if (ctype === 'switch')
     return (
       <Switch
         jsonSchema={jsonSchema}

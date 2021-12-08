@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
-import SvgIcon from "@material-ui/core/SvgIcon";
+import React from 'react';
+import SvgIcon from '@material-ui/core/SvgIcon';
 
 const ConsulIcon = ({ isActive }) => {
   return (
-    <SvgIcon style={{ width : "4rem", height : "auto", filter : isActive
+    <SvgIcon style={{ width: '4rem', height: 'auto', filter: isActive
       ?null
-      :"grayscale(1)" }} viewBox="0 0 85 85" >
+      :'grayscale(1)' }} viewBox="0 0 85 85" >
       <path
         fillRule="evenodd"
         clipRule="evenodd"

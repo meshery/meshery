@@ -1,11 +1,11 @@
-import React from "react";
-import MesheryPlayComponent from "../../components/MesheryPlayComponent";
-import { NoSsr } from "@material-ui/core";
-import Head from "next/head";
-import { updatepagepath } from "../../lib/store";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { getPath } from "../../lib/path";
+import React from 'react';
+import MesheryPlayComponent from '../../components/MesheryPlayComponent';
+import { NoSsr } from '@material-ui/core';
+import Head from 'next/head';
+import { updatepagepath } from '../../lib/store';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { getPath } from '../../lib/path';
 class Manage extends React.Component {
   static getInitialProps = ({ query }) => {
     return { query };
@@ -14,17 +14,17 @@ class Manage extends React.Component {
     super(props);
     if (!props.query.adapter) {
       const urlParams = new URLSearchParams(window.location.search);
-      this.props.query.adapter = urlParams.get("adapter");
+      this.props.query.adapter = urlParams.get('adapter');
     }
   }
   componentDidMount() {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
+    this.props.updatepagepath({ path: getPath() });
   }
 
   componentDidUpdate() {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
+    this.props.updatepagepath({ path: getPath() });
   }
 
   render() {
@@ -40,7 +40,7 @@ class Manage extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return { updatepagepath : bindActionCreators(updatepagepath, dispatch), };
+  return { updatepagepath: bindActionCreators(updatepagepath, dispatch), };
 };
 
 export default connect(null, mapDispatchToProps)(Manage);

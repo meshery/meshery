@@ -1,433 +1,433 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { withStyles } from "@material-ui/core/styles";
-import Divider from "@material-ui/core/Divider";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { withStyles } from '@material-ui/core/styles';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import Grow from '@material-ui/core/Grow';
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import NoSsr from "@material-ui/core/NoSsr";
-import RemoveIcon from "@material-ui/icons/Remove";
-import GitHubIcon from "@material-ui/icons/GitHub";
-import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
-import MailIcon from "@material-ui/icons/Mail";
-import Link from "next/link";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { withRouter } from "next/router";
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import NoSsr from '@material-ui/core/NoSsr';
+import RemoveIcon from '@material-ui/icons/Remove';
+import GitHubIcon from '@material-ui/icons/GitHub';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import MailIcon from '@material-ui/icons/Mail';
+import Link from 'next/link';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { withRouter } from 'next/router';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
-import OpenInNewIcon from "@material-ui/icons/OpenInNew";
+import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import { faChevronCircleLeft,
   faExternalLinkAlt,
-  faDigitalTachograph } from "@fortawesome/free-solid-svg-icons";
-import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { updatepagetitle, updatebetabadge } from "../lib/store";
-import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
-import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
-import dataFetch from "../lib/data-fetch";
-import { Collapse } from "@material-ui/core";
+  faDigitalTachograph } from '@fortawesome/free-solid-svg-icons';
+import { faSlack } from '@fortawesome/free-brands-svg-icons';
+import { updatepagetitle, updatebetabadge } from '../lib/store';
+import { ButtonGroup, IconButton, Tooltip } from '@material-ui/core';
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
+import dataFetch from '../lib/data-fetch';
+import { Collapse } from '@material-ui/core';
 
 const styles = (theme) => ({
-  categoryHeader : { paddingTop : 16,
-    paddingBottom : 16, },
-  categoryHeaderPrimary : { color : theme.palette.common.white, },
-  item : {
-    paddingTop : 4,
-    paddingBottom : 4,
-    color : "rgba(255, 255, 255, 0.7)",
-    fill : "#fff",
-    '&:hover' : { '& $expandMoreIcon' : { opacity : 1,
-      transition : "opacity 200ms ease-in", } }
+  categoryHeader: { paddingTop: 16,
+    paddingBottom: 16, },
+  categoryHeaderPrimary: { color: theme.palette.common.white, },
+  item: {
+    paddingTop: 4,
+    paddingBottom: 4,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fill: '#fff',
+    '&:hover': { '& $expandMoreIcon': { opacity: 1,
+      transition: 'opacity 200ms ease-in', } }
   },
-  itemCategory : {
-    backgroundColor : "#263238",
-    boxShadow : "0 -1px 0 #404854 inset",
-    paddingTop : 16,
-    paddingBottom : 16,
+  itemCategory: {
+    backgroundColor: '#263238',
+    boxShadow: '0 -1px 0 #404854 inset',
+    paddingTop: 16,
+    paddingBottom: 16,
   },
-  firebase : { top : 0,
-    position : "sticky",
-    zIndex : 5 },
-  link : {
-    display : "inline-flex",
-    width : "100%",
-    height : "30px",
-    alignItems : "self-end"
+  firebase: { top: 0,
+    position: 'sticky',
+    zIndex: 5 },
+  link: {
+    display: 'inline-flex',
+    width: '100%',
+    height: '30px',
+    alignItems: 'self-end'
   },
-  itemActionable : { "&:hover" : { backgroundColor : "rgba(255, 255, 255, 0.08)", }, },
-  itemActiveItem : { color : "#4fc3f7",
-    fill : "#4fc3f7" },
-  itemPrimary : { color : "inherit",
-    fontSize : theme.typography.fontSize,
-    "&$textDense" : { fontSize : theme.typography.fontSize, }, },
-  textDense : {},
-  divider : { marginTop : theme.spacing(1),
-    marginBottom : theme.spacing(1), },
-  mainLogo : {
-    marginRight : theme.spacing(1),
-    marginTop : theme.spacing(1),
-    marginLeft : theme.spacing(-1),
-    width : 40,
-    height : 40,
-    borderRadius : "unset",
+  itemActionable: { '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.08)', }, },
+  itemActiveItem: { color: '#4fc3f7',
+    fill: '#4fc3f7' },
+  itemPrimary: { color: 'inherit',
+    fontSize: theme.typography.fontSize,
+    '&$textDense': { fontSize: theme.typography.fontSize, }, },
+  textDense: {},
+  divider: { marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1), },
+  mainLogo: {
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(-1),
+    width: 40,
+    height: 40,
+    borderRadius: 'unset',
   },
-  mainLogoText : {
-    marginLeft : theme.spacing(0.5),
-    marginTop : theme.spacing(1),
-    width : 170,
-    borderRadius : "unset",
+  mainLogoText: {
+    marginLeft: theme.spacing(0.5),
+    marginTop: theme.spacing(1),
+    width: 170,
+    borderRadius: 'unset',
   },
-  mainLogoCollapsed : {
-    marginRight : theme.spacing(1),
-    marginTop : theme.spacing(1),
-    marginLeft : theme.spacing(-0.5),
-    width : 40,
-    height : 40,
-    borderRadius : "unset",
+  mainLogoCollapsed: {
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(-0.5),
+    width: 40,
+    height: 40,
+    borderRadius: 'unset',
   },
-  mainLogoTextCollapsed : {
-    marginLeft : theme.spacing(1),
-    marginTop : theme.spacing(1),
-    width : 170,
-    borderRadius : "unset",
+  mainLogoTextCollapsed: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    width: 170,
+    borderRadius: 'unset',
   },
-  settingsIcon : { marginLeft : theme.spacing(2), },
-  cursorPointer : { cursor : "pointer", },
-  listIcon : {
-    minWidth : theme.spacing(3.5),
-    paddingTop : theme.spacing(0.5),
-    textAlign : "center",
-    display : "inline-table",
-    paddingRight : theme.spacing(0.5),
-    marginLeft : theme.spacing(0.8),
+  settingsIcon: { marginLeft: theme.spacing(2), },
+  cursorPointer: { cursor: 'pointer', },
+  listIcon: {
+    minWidth: theme.spacing(3.5),
+    paddingTop: theme.spacing(0.5),
+    textAlign: 'center',
+    display: 'inline-table',
+    paddingRight: theme.spacing(0.5),
+    marginLeft: theme.spacing(0.8),
   },
-  listIcon1 : {
-    minWidth : theme.spacing(3.5),
-    paddingTop : theme.spacing(0.5),
-    textAlign : "center",
-    display : "inline-table",
-    paddingRight : theme.spacing(0.5),
-    opacity : 0.5,
+  listIcon1: {
+    minWidth: theme.spacing(3.5),
+    paddingTop: theme.spacing(0.5),
+    textAlign: 'center',
+    display: 'inline-table',
+    paddingRight: theme.spacing(0.5),
+    opacity: 0.5,
   },
-  listIconSlack : {
-    minWidth : theme.spacing(3.5),
-    paddingTop : theme.spacing(0.5),
-    textAlign : "center",
-    display : "inline-table",
-    marginLeft : theme.spacing(-0.1),
-    paddingRight : theme.spacing(0.5),
-    opacity : 0.5,
+  listIconSlack: {
+    minWidth: theme.spacing(3.5),
+    paddingTop: theme.spacing(0.5),
+    textAlign: 'center',
+    display: 'inline-table',
+    marginLeft: theme.spacing(-0.1),
+    paddingRight: theme.spacing(0.5),
+    opacity: 0.5,
   },
-  nested1 : { paddingLeft : theme.spacing(3), },
-  nested2 : { paddingLeft : theme.spacing(5), },
-  icon : { width : theme.spacing(2.5), },
-  istioIcon : { width : theme.spacing(1.8), },
-  isHidden : { opacity : 0,
-    transition : "opacity 200ms ease-in-out", },
-  isDisplayed : { opacity : 1,
-    transition : "opacity 200ms ease-in-out", },
-  sidebarCollapsed : { transition : theme.transitions.create("width", { easing : theme.transitions.easing.sharp,
-    duration : theme.transitions.duration.leavingScreen, }),
-  overflowX : "hidden",
-  width : theme.spacing(8) + 4, },
-  sidebarExpanded : { width : "256px",
-    overflowX : "hidden",
-    transition : theme.transitions.create("width", { easing : theme.transitions.easing.sharp,
-      duration : theme.transitions.duration.enteringScreen, }), },
-  fixedSidebarFooter : { display : "flex",
-    flexDirection : "column",
-    marginTop : "auto",
-    marginBottom : "0.5rem",
+  nested1: { paddingLeft: theme.spacing(3), },
+  nested2: { paddingLeft: theme.spacing(5), },
+  icon: { width: theme.spacing(2.5), },
+  istioIcon: { width: theme.spacing(1.8), },
+  isHidden: { opacity: 0,
+    transition: 'opacity 200ms ease-in-out', },
+  isDisplayed: { opacity: 1,
+    transition: 'opacity 200ms ease-in-out', },
+  sidebarCollapsed: { transition: theme.transitions.create('width', { easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen, }),
+  overflowX: 'hidden',
+  width: theme.spacing(8) + 4, },
+  sidebarExpanded: { width: '256px',
+    overflowX: 'hidden',
+    transition: theme.transitions.create('width', { easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen, }), },
+  fixedSidebarFooter: { display: 'flex',
+    flexDirection: 'column',
+    marginTop: 'auto',
+    marginBottom: '0.5rem',
   },
-  collapseButtonWrapper : {
-    position : "fixed",
-    cursor: "pointer",
-    bottom : "12%",
-    left : "235px",
-    zIndex : "1400",
-    width : "auto",
-    transition : "left 195ms",
-    "&:hover" : { opacity : 1,
-      background : "transparent", },
-    "&:focus" : { opacity : 1,
-      background : "transparent", },
+  collapseButtonWrapper: {
+    position: 'fixed',
+    cursor: 'pointer',
+    bottom: '12%',
+    left: '235px',
+    zIndex: '1400',
+    width: 'auto',
+    transition: 'left 195ms',
+    '&:hover': { opacity: 1,
+      background: 'transparent', },
+    '&:focus': { opacity: 1,
+      background: 'transparent', },
   },
-  collapseButtonWrapperRotated : {
-    position : "fixed",
-    cursor: "pointer",
-    bottom : "12%",
-    left : "45px",
-    zIndex : "1400",
-    width : "auto",
-    transition : "left 225ms",
-    transform : "rotate(180deg)",
-    "&:hover" : { opacity : 1,
-      background : "transparent", },
-    "&:focus" : { opacity : 1,
-      background : "transparent", },
+  collapseButtonWrapperRotated: {
+    position: 'fixed',
+    cursor: 'pointer',
+    bottom: '12%',
+    left: '45px',
+    zIndex: '1400',
+    width: 'auto',
+    transition: 'left 225ms',
+    transform: 'rotate(180deg)',
+    '&:hover': { opacity: 1,
+      background: 'transparent', },
+    '&:focus': { opacity: 1,
+      background: 'transparent', },
   },
-  noPadding : { paddingLeft : "16px",
-    paddingRight : "16px", },
-  drawerIcons : { height : "1.21rem",
-    width : "1.21rem",
-    fontSize : "1.21rem" },
-  avatarGroup : { '& .MuiAvatarGroup-avatar' : { border : 'none', } },
-  marginLeft : { marginLeft : 8,
-    "& .MuiListItem-gutters" : { paddingLeft : 8,
-      paddingRight : 8 } },
-  rightMargin : { marginRight : 8 },
-  btnGrpMarginRight : { marginRight : 4,
-    alignItems : 'center' },
-  helpIcon : {
-    color : '#fff',
-    opacity : "0.7",
-    transition : "opacity 200ms linear",
-    "&:hover" : { opacity : 1,
-      background : "transparent", },
-    "&:focus" : { opacity : 1,
-      background : "transparent", },
+  noPadding: { paddingLeft: '16px',
+    paddingRight: '16px', },
+  drawerIcons: { height: '1.21rem',
+    width: '1.21rem',
+    fontSize: '1.21rem' },
+  avatarGroup: { '& .MuiAvatarGroup-avatar': { border: 'none', } },
+  marginLeft: { marginLeft: 8,
+    '& .MuiListItem-gutters': { paddingLeft: 8,
+      paddingRight: 8 } },
+  rightMargin: { marginRight: 8 },
+  btnGrpMarginRight: { marginRight: 4,
+    alignItems: 'center' },
+  helpIcon: {
+    color: '#fff',
+    opacity: '0.7',
+    transition: 'opacity 200ms linear',
+    '&:hover': { opacity: 1,
+      background: 'transparent', },
+    '&:focus': { opacity: 1,
+      background: 'transparent', },
   },
-  extraPadding : { paddingTop : 4,
-    paddingBottom : 4 },
-  restrictPointer : { pointerEvents : 'none' },
-  expandMoreIcon : {
-    opacity : 0,
-    cursor : 'pointer',
-    transform : 'translateX(3px)',
-    '&:hover' : { color : "#4fc3f7", }
+  extraPadding: { paddingTop: 4,
+    paddingBottom: 4 },
+  restrictPointer: { pointerEvents: 'none' },
+  expandMoreIcon: {
+    opacity: 0,
+    cursor: 'pointer',
+    transform: 'translateX(3px)',
+    '&:hover': { color: '#4fc3f7', }
   },
-  collapsed : { transform : 'rotate(180deg) translateX(-0.8px)', },
-  collapsedHelpButton : { height : '1.45rem',
-    marginTop : '-4px',
-    transform : 'translateX(0px)' },
-  rightTranslate : { transform : 'translateX(0.5px)' }
+  collapsed: { transform: 'rotate(180deg) translateX(-0.8px)', },
+  collapsedHelpButton: { height: '1.45rem',
+    marginTop: '-4px',
+    transform: 'translateX(0px)' },
+  rightTranslate: { transform: 'translateX(0.5px)' }
 });
 
-const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
-const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
+const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem' };
+const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
 
 const categories = [
   {
-    id : "Dashboard",
-    icon : <DashboardIcon style={drawerIconsStyle} />,
-    href : "/",
-    title : "Dashboard",
-    show : true,
-    link : true,
+    id: 'Dashboard',
+    icon: <DashboardIcon style={drawerIconsStyle} />,
+    href: '/',
+    title: 'Dashboard',
+    show: true,
+    link: true,
   },
   {
-    id : "Lifecycle",
-    icon : <LifecycleIcon style={drawerIconsStyle} />,
-    href : "/management",
-    title : "Lifecycle",
-    show : true,
-    link : true,
-    children : [
+    id: 'Lifecycle',
+    icon: <LifecycleIcon style={drawerIconsStyle} />,
+    href: '/management',
+    title: 'Lifecycle',
+    show: true,
+    link: true,
+    children: [
       {
-        id : "App_Mesh",
-        href : "/management/app-mesh",
-        title : "AWS App Mesh",
-        link : true,
-        show : true,
+        id: 'App_Mesh',
+        href: '/management/app-mesh',
+        title: 'AWS App Mesh',
+        link: true,
+        show: true,
       },
       {
-        id : "Citrix_Service_Mesh",
-        href : "/management/citrix",
-        title : "Citrix Service Mesh",
-        link : true,
-        show : true,
+        id: 'Citrix_Service_Mesh',
+        href: '/management/citrix',
+        title: 'Citrix Service Mesh',
+        link: true,
+        show: true,
       },
       {
-        id : "Consul",
-        href : "/management/consul",
-        title : "Consul",
-        link : true,
-        show : true,
+        id: 'Consul',
+        href: '/management/consul',
+        title: 'Consul',
+        link: true,
+        show: true,
       },
       {
-        id : "Istio",
-        href : "/management/istio",
-        title : "Istio",
-        link : true,
-        show : true,
+        id: 'Istio',
+        href: '/management/istio',
+        title: 'Istio',
+        link: true,
+        show: true,
       },
       {
-        id : "Kuma",
-        href : "/management/kuma",
-        title : "Kuma",
-        link : true,
-        show : true,
+        id: 'Kuma',
+        href: '/management/kuma',
+        title: 'Kuma',
+        link: true,
+        show: true,
       },
       {
-        id : "Linkerd",
-        href : "/management/linkerd",
-        title : "Linkerd",
-        link : true,
-        show : true,
+        id: 'Linkerd',
+        href: '/management/linkerd',
+        title: 'Linkerd',
+        link: true,
+        show: true,
       },
       {
-        id : "Network_Service_Mesh",
-        href : "/management/nsm",
-        title : "Network Service Mesh",
-        link : true,
-        show : true,
+        id: 'Network_Service_Mesh',
+        href: '/management/nsm',
+        title: 'Network Service Mesh',
+        link: true,
+        show: true,
       },
       {
-        id : "NGINX_Service_Mesh",
+        id: 'NGINX_Service_Mesh',
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href : "/management/nginx",
-        title : "NGINX Service Mesh",
-        link : true,
-        show : true,
+        href: '/management/nginx',
+        title: 'NGINX Service Mesh',
+        link: true,
+        show: true,
       },
       {
-        id : "Octarine",
-        href : "/management/octarine",
-        title : "Octarine",
-        link : true,
-        show : true,
+        id: 'Octarine',
+        href: '/management/octarine',
+        title: 'Octarine',
+        link: true,
+        show: true,
       },
       {
-        id : "Open_Service_Mesh",
-        href : "/management/osm",
-        title : "Open Service Mesh",
-        link : true,
-        show : true,
+        id: 'Open_Service_Mesh',
+        href: '/management/osm',
+        title: 'Open Service Mesh',
+        link: true,
+        show: true,
       },
       {
-        id : "Traefik_Mesh",
-        href : "/management/traefik-mesh",
-        title : "Traefik Mesh",
-        link : true,
-        show : true,
+        id: 'Traefik_Mesh',
+        href: '/management/traefik-mesh',
+        title: 'Traefik Mesh',
+        link: true,
+        show: true,
       },
     ],
   },
   {
-    id : "Configuration",
-    icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
-    disabled : true,
-    href : "#",
-    title : "Configuration",
-    show : false,
-    link : true,
-    children : [
+    id: 'Configuration',
+    icon: <img src="/static/img/configuration_trans.svg" style={{ width: '1.21rem' }} />,
+    disabled: true,
+    href: '#',
+    title: 'Configuration',
+    show: false,
+    link: true,
+    children: [
       {
-        id : "Applications",
-        icon : <img src="/static/img/web-applications.svg" style={{ width : "1.21rem" }} />,
-        href : "/configuration/applications",
-        title : "Applications",
-        show : true,
-        link : true,
-        isBeta : true
+        id: 'Applications',
+        icon: <img src="/static/img/web-applications.svg" style={{ width: '1.21rem' }} />,
+        href: '/configuration/applications',
+        title: 'Applications',
+        show: true,
+        link: true,
+        isBeta: true
       },
       {
-        id : "Filters",
-        icon : <img src="/static/img/web-filters.svg" style={{ width : "1.21rem" }} />,
-        href : "/configuration/filters",
-        title : "Filters",
-        show : true,
-        link : true,
-        isBeta : true
+        id: 'Filters',
+        icon: <img src="/static/img/web-filters.svg" style={{ width: '1.21rem' }} />,
+        href: '/configuration/filters',
+        title: 'Filters',
+        show: true,
+        link: true,
+        isBeta: true
       },
       {
-        id : "Patterns",
-        icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
-        href : "/configuration/patterns",
-        title : "Patterns",
-        show : false,
-        link : true,
-        isBeta : true
-      },
-    ],
-  },
-  {
-    id : "Performance",
-    icon :
-      <PerformanceIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
-    href : "/performance",
-    title : "Performance",
-    show : true,
-    link : true,
-    children : [
-      {
-        id : "Profiles",
-        icon :
-          <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ verticalAlign : "top" }} />,
-        href : "/performance/profiles",
-        title : "Profiles",
-        show : true,
-        link : true,
+        id: 'Patterns',
+        icon: <img src="/static/img/pattern_trans.svg" style={{ width: '1.21rem' }} />,
+        href: '/configuration/patterns',
+        title: 'Patterns',
+        show: false,
+        link: true,
+        isBeta: true
       },
     ],
   },
   {
-    id : "Settings",
-    href : "/settings",
-    title : "Settings",
-    show : false,
-    link : true,
+    id: 'Performance',
+    icon:
+      <PerformanceIcon style={{ transform: 'scale(1.3)', ...drawerIconsStyle }} />,
+    href: '/performance',
+    title: 'Performance',
+    show: true,
+    link: true,
+    children: [
+      {
+        id: 'Profiles',
+        icon:
+          <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ verticalAlign: 'top' }} />,
+        href: '/performance/profiles',
+        title: 'Profiles',
+        show: true,
+        link: true,
+      },
+    ],
+  },
+  {
+    id: 'Settings',
+    href: '/settings',
+    title: 'Settings',
+    show: false,
+    link: true,
   }, // title is used for comparison in the Header.js file as well
   {
-    id : "Conformance",
-    icon : <ConformanceIcon style={drawerIconsStyle} />,
-    href : "/smi_results", //Temp
-    title : "Conformance",
-    show : true,
-    link : true,
-    children : [
+    id: 'Conformance',
+    icon: <ConformanceIcon style={drawerIconsStyle} />,
+    href: '/smi_results', //Temp
+    title: 'Conformance',
+    show: true,
+    link: true,
+    children: [
       {
-        id : "Service Mesh Interface",
-        icon : <SmiIcon style={drawerIconsStyle} />,
-        href : "/smi_results",
-        title : "Service Mesh Interface",
-        show : true,
-        link : true,
+        id: 'Service Mesh Interface',
+        icon: <SmiIcon style={drawerIconsStyle} />,
+        href: '/smi_results',
+        title: 'Service Mesh Interface',
+        show: true,
+        link: true,
       },
     ],
   },
 ];
 
-const ExternalLinkIcon = <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />
+const ExternalLinkIcon = <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />;
 
 const externlinks = [
   {
-    id : "doc",
-    href : "https://docs.meshery.io",
-    title : "Documentation",
-    icon : <DescriptionOutlinedIcon style={drawerIconsStyle} />,
-    external_icon : ExternalLinkIcon,
+    id: 'doc',
+    href: 'https://docs.meshery.io',
+    title: 'Documentation',
+    icon: <DescriptionOutlinedIcon style={drawerIconsStyle} />,
+    external_icon: ExternalLinkIcon,
   },
   {
-    id : "community",
-    href : "http://slack.layer5.io",
-    title : "Community",
-    icon : <FontAwesomeIcon style={{ marginBottom : 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
-    external_icon : ExternalLinkIcon,
+    id: 'community',
+    href: 'http://slack.layer5.io',
+    title: 'Community',
+    icon: <FontAwesomeIcon style={{ marginBottom: 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
+    external_icon: ExternalLinkIcon,
   },
   {
-    id : "mailinglist",
-    href : "https://meshery.io/subscribe",
-    title : "Mailing List",
-    icon : <MailIcon style={drawerIconsStyle} />,
-    external_icon : ExternalLinkIcon,
+    id: 'mailinglist',
+    href: 'https://meshery.io/subscribe',
+    title: 'Mailing List',
+    icon: <MailIcon style={drawerIconsStyle} />,
+    external_icon: ExternalLinkIcon,
   },
   {
-    id : "issues",
-    href : "https://github.com/meshery/meshery/issues/new/choose",
-    title : "Issues",
-    icon : <GitHubIcon style={drawerIconsStyle} />,
-    external_icon : ExternalLinkIcon,
+    id: 'issues',
+    href: 'https://github.com/meshery/meshery/issues/new/choose',
+    title: 'Issues',
+    icon: <GitHubIcon style={drawerIconsStyle} />,
+    external_icon: ExternalLinkIcon,
   },
 ];
 
@@ -436,57 +436,57 @@ class Navigator extends React.Component {
     super(props);
     const { meshAdapters } = props;
     this.state = {
-      path : "",
+      path: '',
       meshAdapters,
-      mts : new Date(),
+      mts: new Date(),
 
       // ExtensionPointSchemaValidator will return a navigator schema
       // decoder which in turn will return an empty array when there is no content
       // passed into it
-      navigator : ExtensionPointSchemaValidator("navigator")(),
-      showHelperButton : false,
-      capabilities : [],
-      openItems : [],
-      hoveredId : null,
-      versionDetail : {
-        build : "",
-        latest : "",
-        outdated : false,
-        commitsha : "",
-        release_channel : "NA",
+      navigator: ExtensionPointSchemaValidator('navigator')(),
+      showHelperButton: false,
+      capabilities: [],
+      openItems: [],
+      hoveredId: null,
+      versionDetail: {
+        build: '',
+        latest: '',
+        outdated: false,
+        commitsha: '',
+        release_channel: 'NA',
       },
     };
   }
 
   componentDidMount() {
     dataFetch(
-      "/api/system/version",
-      { credentials : "same-origin",
-        method : "GET",
-        credentials : "include", },
+      '/api/system/version',
+      { credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include', },
       (result) => {
-        if (typeof result !== "undefined") {
-          this.setState({ versionDetail : result });
+        if (typeof result !== 'undefined') {
+          this.setState({ versionDetail: result });
         } else {
-          this.setState({ versionDetail : {
-            build : "Unknown",
-            latest : "Unknown",
-            outdated : false,
-            commitsha : "Unknown",
+          this.setState({ versionDetail: {
+            build: 'Unknown',
+            latest: 'Unknown',
+            outdated: false,
+            commitsha: 'Unknown',
           }, });
         }
       },
       (err) => console.error(err)
     );
     dataFetch(
-      "/api/provider/capabilities",
-      { credentials : "same-origin",
-        method : "GET",
-        credentials : "include", },
+      '/api/provider/capabilities',
+      { credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include', },
       (result) => {
         if (result) {
-          this.setState({ navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
-            capabilities : result?.capabilities || [], });
+          this.setState({ navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
+            capabilities: result?.capabilities || [], });
         }
       },
       (err) => console.error(err)
@@ -507,8 +507,8 @@ class Navigator extends React.Component {
           {children.map(({
             id, onClickCallback, icon, href, title, children
           }) => {
-            if (typeof showc !== "undefined" && !showc) {
-              return "";
+            if (typeof showc !== 'undefined' && !showc) {
+              return '';
             }
             return (
               <React.Fragment key={id}>
@@ -539,12 +539,12 @@ class Navigator extends React.Component {
   onClickCallback(onClickCallback){
     switch (onClickCallback){
       case 0:
-        return this.toggleMiniDrawer(false)
+        return this.toggleMiniDrawer(false);
       case 1:
-        return this.toggleMiniDrawer(true)
+        return this.toggleMiniDrawer(true);
       default:
         // by default, nothing happened
-        return undefined
+        return undefined;
     }
   }
 
@@ -568,7 +568,7 @@ class Navigator extends React.Component {
           className={drawerCollapsed
             ? classes.isHidden
             : classes.isDisplayed}
-          classes={{ primary : classes.itemPrimary, }}
+          classes={{ primary: classes.itemPrimary, }}
         >
           {name}
         </ListItemText>
@@ -583,7 +583,7 @@ class Navigator extends React.Component {
   updateCategoriesMenus() {
     const self = this;
     categories.forEach((cat, ind) => {
-      if (cat.id === "Lifecycle") {
+      if (cat.id === 'Lifecycle') {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
           const icon = self.pickIcon(catc.id);
@@ -592,11 +592,11 @@ class Navigator extends React.Component {
         });
       }
 
-      if (cat.id === "Configuration") {
+      if (cat.id === 'Configuration') {
         let show = false;
         cat.children?.forEach((ch) => {
-          if (ch.id === "Patterns") {
-            const idx = self.state.capabilities.findIndex((cap) => cap.feature === "persist-meshery-patterns");
+          if (ch.id === 'Patterns') {
+            const idx = self.state.capabilities.findIndex((cap) => cap.feature === 'persist-meshery-patterns');
             if (idx != -1) {
               ch.show = true;
               show = true;
@@ -611,11 +611,11 @@ class Navigator extends React.Component {
 
   updateAdaptersLink() {
     categories.forEach((cat, ind) => {
-      if (cat.id === "Lifecycle") {
+      if (cat.id === 'Lifecycle') {
         cat.children.forEach((catc, ind1) => {
           if (
-            typeof categories[ind].children[ind1].children[0] !== "undefined" &&
-            typeof categories[ind].children[ind1].children[0].href !== "undefined"
+            typeof categories[ind].children[ind1].children[0] !== 'undefined' &&
+            typeof categories[ind].children[ind1].children[0].href !== 'undefined'
           ) {
             const val = true;
             const newhref = `${categories[ind].children[ind1].children[0].href}`;
@@ -670,17 +670,17 @@ class Navigator extends React.Component {
     meshAdapters.forEach((adapter) => {
       let aName = adapter.name.toLowerCase();
       // Manually changing adapter name so that it matches the internal name
-      if (aName === "osm") aName = "open service mesh";
+      if (aName === 'osm') aName = 'open service mesh';
       if (category !== aName) {
         return;
       }
       children.push({
-        id : adapter.adapter_location,
-        icon : <RemoveIcon />,
-        href : `/management?adapter=${adapter.adapter_location}`,
-        title : `Management - ${adapter.adapter_location}`,
-        link : true,
-        show : true,
+        id: adapter.adapter_location,
+        icon: <RemoveIcon />,
+        href: `/management?adapter=${adapter.adapter_location}`,
+        title: `Management - ${adapter.adapter_location}`,
+        link: true,
+        show: true,
       });
     });
     return children;
@@ -694,10 +694,10 @@ class Navigator extends React.Component {
   pickIcon(aName) {
     aName = aName.toLowerCase();
     const { classes } = this.props;
-    let image = "/static/img/meshery-logo.png";
+    let image = '/static/img/meshery-logo.png';
     let logoIcon = <img src={image} className={classes.icon} />;
     if (aName) {
-      image = "/static/img/" + aName + "-light.svg";
+      image = '/static/img/' + aName + '-light.svg';
       logoIcon = <img src={image} className={classes.icon} />;
     }
     return logoIcon;
@@ -707,7 +707,7 @@ class Navigator extends React.Component {
    * Changes the route to "/"
    */
   handleTitleClick() {
-    this.props.router.push("/");
+    this.props.router.push('/');
   }
 
   /**
@@ -718,7 +718,7 @@ class Navigator extends React.Component {
    */
   handleAdapterClick(id, link) {
     if (id != -1 && !link) {
-      this.props.router.push("/management");
+      this.props.router.push('/management');
     }
   }
 
@@ -729,13 +729,13 @@ class Navigator extends React.Component {
 
   toggleSpacing = () => {
     const { showHelperButton } = this.state;
-    this.setState({ showHelperButton : !showHelperButton });
+    this.setState({ showHelperButton: !showHelperButton });
 
   }
 
   toggleSpacing = () => {
     const { showHelperButton } = this.state;
-    this.setState({ showHelperButton : !showHelperButton });
+    this.setState({ showHelperButton: !showHelperButton });
 
   }
 
@@ -748,10 +748,10 @@ class Navigator extends React.Component {
   toggleItemCollapse(id) {
     const activeItems = [...this.state.openItems];
     if (this.state.openItems.includes(id)) {
-      this.setState({ openItems : activeItems.filter(item => item !== id) })
+      this.setState({ openItems: activeItems.filter(item => item !== id) });
     } else {
       activeItems.push(id);
-      this.setState({ openItems : activeItems })
+      this.setState({ openItems: activeItems });
     }
   }
 
@@ -768,14 +768,14 @@ class Navigator extends React.Component {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
 
-    if (idname != "Lifecycle" && children && children.length > 0) {
+    if (idname != 'Lifecycle' && children && children.length > 0) {
       return (
         <List disablePadding>
           {children.map(({
-            id : idc, title : titlec, icon : iconc, href : hrefc, show : showc, link : linkc, children : childrenc
+            id: idc, title: titlec, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc
           }) => {
-            if (typeof showc !== "undefined" && !showc) {
-              return "";
+            if (typeof showc !== 'undefined' && !showc) {
+              return '';
             }
             return (
               <React.Fragment key={idc}>
@@ -801,15 +801,15 @@ class Navigator extends React.Component {
         </List>
       );
     }
-    if (idname == "Lifecycle") {
+    if (idname == 'Lifecycle') {
       if (children && children.length > 1) {
         return (
           <List disablePadding>
             {children.map(({
-              id : idc, title : titlec, icon : iconc, href : hrefc, show : showc, link : linkc, children : childrenc
+              id: idc, title: titlec, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc
             }) => {
-              if (typeof showc !== "undefined" && !showc) {
-                return "";
+              if (typeof showc !== 'undefined' && !showc) {
+                return '';
               }
               return (
                 <React.Fragment key={idc}>
@@ -840,7 +840,7 @@ class Navigator extends React.Component {
         this.updateAdaptersLink();
       }
     }
-    return "";
+    return '';
   }
 
   /**
@@ -870,7 +870,7 @@ class Navigator extends React.Component {
           className={drawerCollapsed
             ? classes.isHidden
             : classes.isDisplayed}
-          classes={{ primary : classes.itemPrimary, }}
+          classes={{ primary: classes.itemPrimary, }}
         >
           {titlec}
         </ListItemText>
@@ -898,8 +898,8 @@ class Navigator extends React.Component {
     // release channel is, specify the build
     if (outdated) return `${release_channel}-${build}`;
 
-    if (release_channel === "edge") return `${release_channel}-latest`;
-    if (release_channel === "stable") return `${release_channel}-${build}`;
+    if (release_channel === 'edge') return `${release_channel}-latest`;
+    if (release_channel === 'stable') return `${release_channel}-${build}`;
 
     return `${build}`;
   }
@@ -916,23 +916,23 @@ class Navigator extends React.Component {
 
     if (outdated)
       return (
-        <span style = {{ marginLeft : '15px' }}>
-          {"Update available "}
+        <span style = {{ marginLeft: '15px' }}>
+          {'Update available '}
           <Link href={`https://docs.meshery.io/project/releases/${latest}`}>
             <Tooltip
               title={`Newer version of Meshery available: ${latest}`}
               placement="right">
-              <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
+              <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
             </Tooltip>
           </Link>
         </span>
       );
 
     return (
-      <span style = {{ marginLeft : '15px' }}>
+      <span style = {{ marginLeft: '15px' }}>
         Running latest
       </span>
-    )
+    );
   }
 
   /**
@@ -944,16 +944,16 @@ class Navigator extends React.Component {
   openReleaseNotesInNew() {
     const { release_channel, build } = this.state.versionDetail;
 
-    if (release_channel === "edge")
+    if (release_channel === 'edge')
       return (
         <Link href="https://docs.meshery.io/project/releases" target="_blank">
-          <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
+          <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
         </Link>
       );
 
     return (
       <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
-        <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
+        <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
       </Link>
     );
   }
@@ -991,14 +991,14 @@ class Navigator extends React.Component {
 
         {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
       </ListItem>
-    )
+    );
     const Menu = (
-      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-1.7rem" }}>
+      <List disablePadding style = {{ overflowY: 'scroll', overflowX: 'hidden', marginRight: '-1.7rem' }}>
         {categories.map(({
-          id : childId, title, icon, href, show, link, children
+          id: childId, title, icon, href, show, link, children
         }) => {
-          if (typeof show !== "undefined" && !show) {
-            return "";
+          if (typeof show !== 'undefined' && !show) {
+            return '';
           }
           return (
             <React.Fragment key={childId}>
@@ -1014,12 +1014,12 @@ class Navigator extends React.Component {
                   path === href && classes.itemActiveItem
                 )}
                 onClick={() => this.toggleItemCollapse(childId)}
-                onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
-                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }): null}
+                onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId: childId }) : null}
+                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId: null }): null}
               >
                 <Link href={link
                   ? href
-                  : ""}>
+                  : ''}>
                   <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
                     <Tooltip
                       title={childId}
@@ -1031,7 +1031,7 @@ class Navigator extends React.Component {
                       { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
                         <ExpandMoreIcon
                           onClick={() => this.toggleItemCollapse(childId)}
-                          className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "0.4rem" }}
+                          className={classNames({ [classes.collapsed]: this.state.openItems.includes(childId) })} style={{ marginLeft: '0.4rem' }}
                         /> :
                         <ListItemIcon className={classes.listIcon}>
                           {icon}
@@ -1042,7 +1042,7 @@ class Navigator extends React.Component {
                       className={isDrawerCollapsed
                         ? classes.isHidden
                         : classes.isDisplayed}
-                      classes={{ primary : classes.itemPrimary, }}
+                      classes={{ primary: classes.itemPrimary, }}
                     >
                       {title}
                     </ListItemText>
@@ -1050,13 +1050,13 @@ class Navigator extends React.Component {
                 </Link>
                 <ExpandMoreIcon
                   onClick={() => this.toggleItemCollapse(childId)}
-                  className={classNames(classes.expandMoreIcon, { [classes.collapsed] : this.state.openItems.includes(childId) })}
+                  className={classNames(classes.expandMoreIcon, { [classes.collapsed]: this.state.openItems.includes(childId) })}
                   style={isDrawerCollapsed || !children
-                    ? { opacity : 0 }
+                    ? { opacity: 0 }
                     : {}}
                 />
               </ListItem>
-              <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679", opacity : "100%" }}>
+              <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor: '#396679', opacity: '100%' }}>
                 {this.renderChildren(childId, children, 1)}
               </Collapse>
             </React.Fragment>
@@ -1072,7 +1072,7 @@ class Navigator extends React.Component {
           : null}
         <Divider className={classes.divider} />
       </List>
-    )
+    );
     const HelpIcons = (
       <ButtonGroup
         size="large"
@@ -1080,8 +1080,8 @@ class Navigator extends React.Component {
           ? classes.marginLeft
           : classes.btnGrpMarginRight}
         orientation={isDrawerCollapsed
-          ? "vertical"
-          : "horizontal"}
+          ? 'vertical'
+          : 'horizontal'}
       >
         {externlinks.map(({
           id, icon, title, href
@@ -1091,12 +1091,12 @@ class Navigator extends React.Component {
               key={id}
               className={classes.item}
               style={isDrawerCollapsed && !showHelperButton
-                ? { display : 'none' }
+                ? { display: 'none' }
                 : {}}
             >
               <Grow
                 in={showHelperButton || !isDrawerCollapsed }
-                timeout={{ enter : (600 - index * 200), exit : 100 * index }}
+                timeout={{ enter: (600 - index * 200), exit: 100 * index }}
               >
                 <a
                   href={href}
@@ -1104,12 +1104,12 @@ class Navigator extends React.Component {
                   rel="noreferrer"
                   className={classNames(classes.link, isDrawerCollapsed
                     ? classes.extraPadding
-                    : "")}>
+                    : '')}>
                   <Tooltip
                     title={title}
                     placement={isDrawerCollapsed
-                      ? "right"
-                      : "top"}
+                      ? 'right'
+                      : 'top'}
                   >
                     <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>{icon}</ListItemIcon>
                   </Tooltip>
@@ -1121,39 +1121,39 @@ class Navigator extends React.Component {
         <ListItem
           className={classes.rightMargin}
           style={!isDrawerCollapsed
-            ? { display : 'none' }
-            : { marginLeft : '4px' }}
+            ? { display: 'none' }
+            : { marginLeft: '4px' }}
         >
           <Tooltip
             title="Help"
             placement={isDrawerCollapsed
-              ? "right"
-              : "top"}
+              ? 'right'
+              : 'top'}
           >
             <IconButton className={isDrawerCollapsed
               ? classes.collapsedHelpButton
               : classes.rightTranslate} onClick={this.toggleSpacing}>
               <HelpIcon
                 className={classes.helpIcon}
-                style={{ fontSize : '1.45rem', }}
+                style={{ fontSize: '1.45rem', }}
               />
             </IconButton>
           </Tooltip>
         </ListItem>
       </ButtonGroup>
-    )
+    );
     const Version = (
       <ListItem style={{
-        position : "sticky",paddingLeft : 0, paddingRight : 0, color : "#eeeeee", fontSize : "0.75rem", }}>
+        position: 'sticky',paddingLeft: 0, paddingRight: 0, color: '#eeeeee', fontSize: '0.75rem', }}>
         {isDrawerCollapsed
-          ? <div style = {{ textAlign : "center" , width : "100%" }}>
+          ? <div style = {{ textAlign: 'center' , width: '100%' }}>
             {this.state.versionDetail.build}
           </div>
           :
           <Grow
             in={!isDrawerCollapsed }
-            timeout={{ enter : (800), exit : 100 }}
-            style = {{ textAlign : "center" , width : "100%" }}
+            timeout={{ enter: (800), exit: 100 }}
+            style = {{ textAlign: 'center' , width: '100%' }}
           >
             <span>
               {this.getMesheryVersionText()} {'  '}
@@ -1165,7 +1165,7 @@ class Navigator extends React.Component {
 
         }
       </ListItem>
-    )
+    );
     return (
       <NoSsr>
         <div className={classname}>
@@ -1184,10 +1184,10 @@ class Navigator extends React.Component {
           className={isDrawerCollapsed
             ? classes.sidebarCollapsed
             : classes.sidebarExpanded}
-          classes={{ paper : isDrawerCollapsed
+          classes={{ paper: isDrawerCollapsed
             ? classes.sidebarCollapsed
             : classes.sidebarExpanded, }}
-          style={{ width : "inherit" }}
+          style={{ width: 'inherit' }}
         >
           {Title}
           {Menu}
@@ -1201,16 +1201,16 @@ class Navigator extends React.Component {
   }
 }
 
-Navigator.propTypes = { classes : PropTypes.object.isRequired,
-  onCollapseDrawer : PropTypes.func.isRequired, };
+Navigator.propTypes = { classes: PropTypes.object.isRequired,
+  onCollapseDrawer: PropTypes.func.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({ updatepagetitle : bindActionCreators(updatepagetitle, dispatch), updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
+const mapDispatchToProps = (dispatch) => ({ updatepagetitle: bindActionCreators(updatepagetitle, dispatch), updatebetabadge: bindActionCreators(updatebetabadge, dispatch),
 });
 
 const mapStateToProps = (state) => {
-  const meshAdapters = state.get("meshAdapters").toJS();
-  const meshAdaptersts = state.get("meshAdaptersts");
-  const path = state.get("page").get("path");
+  const meshAdapters = state.get('meshAdapters').toJS();
+  const meshAdaptersts = state.get('meshAdaptersts');
+  const path = state.get('page').get('path');
   return { meshAdapters, meshAdaptersts, path };
 };
 

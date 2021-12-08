@@ -1,5 +1,5 @@
-import { graphql, requestSubscription } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { graphql, requestSubscription } from 'react-relay';
+import environment from '../../../lib/relayEnvironment';
 
 const meshSyncStatusSubscription = graphql`
 subscription MeshSyncStatusSubscription {
@@ -17,9 +17,9 @@ subscription MeshSyncStatusSubscription {
 
 export default function subscribeMeshSyncStatusEvents(dataCB) {
   return requestSubscription(environment, {
-    subscription : meshSyncStatusSubscription,
-    variables : {},
-    onNext : dataCB,
-    onError : (error) => console.log(`An error occured:`, error),
+    subscription: meshSyncStatusSubscription,
+    variables: {},
+    onNext: dataCB,
+    onError: (error) => console.log('An error occured:', error),
   });
 }

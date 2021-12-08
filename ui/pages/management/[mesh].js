@@ -1,7 +1,7 @@
-import React from "react";
-import { NoSsr } from "@material-ui/core";
-import Head from "next/head";
-import MesheryMeshInterface from "../../components/MesheryMeshInterface";
+import React from 'react';
+import { NoSsr } from '@material-ui/core';
+import Head from 'next/head';
+import MesheryMeshInterface from '../../components/MesheryMeshInterface';
 
 /**
  * getPath returns the current pathname
@@ -18,7 +18,7 @@ function getPath() {
  * @returns {string}
  */
 function extractComponentName(path) {
-  return path.substring(path.lastIndexOf("/") + 1);
+  return path.substring(path.lastIndexOf('/') + 1);
 }
 
 /**
@@ -32,8 +32,8 @@ function extractComponentName(path) {
  * @returns {string}
  */
 function capitalize(string) {
-  if (typeof string === "string") return string.charAt(0).toUpperCase() + string.slice(1);
-  return "";
+  if (typeof string === 'string') return string.charAt(0).toUpperCase() + string.slice(1);
+  return '';
 }
 
 function Mesh() {

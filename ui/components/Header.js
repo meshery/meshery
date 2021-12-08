@@ -20,46 +20,46 @@ import User from './User';
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
 const styles = (theme) => ({
-  secondaryBar : { zIndex : 0, },
-  menuButton : { marginLeft : -theme.spacing(1), },
-  iconButtonAvatar : { padding : 4, },
-  link : { textDecoration : 'none',
-    color : lightColor,
-    '&:hover' : { color : theme.palette.common.white, }, },
-  button : { borderColor : lightColor, },
-  notifications : { paddingLeft : theme.spacing(4),
-    paddingRight : theme.spacing(0),
-    marginLeft : theme.spacing(4), },
-  userContainer : { paddingLeft : 1,
-    display : 'flex', },
-  userSpan : { marginLeft : theme.spacing(1), },
-  pageTitleWrapper : { flexGrow : 1,
-    marginRight : 'auto', },
-  betaBadge : { color : '#EEEEEE', fontWeight : '300', fontSize : '13px' },
-  pageTitle : { paddingLeft : theme.spacing(2),
-    fontSize : '1.25rem',
-    [theme.breakpoints.up('sm')] : { fontSize : '1.65rem', }, },
-  appBarOnDrawerOpen : {
-    padding : theme.spacing(1.4),
-    backgroundColor : "#396679",
-    zIndex : theme.zIndex.drawer+1,
-    [theme.breakpoints.between(635,732)] : { padding : theme.spacing(0.75,1.4), },
-    [theme.breakpoints.between(600,635)] : { padding : theme.spacing(0.4,1.4), },
+  secondaryBar: { zIndex: 0, },
+  menuButton: { marginLeft: -theme.spacing(1), },
+  iconButtonAvatar: { padding: 4, },
+  link: { textDecoration: 'none',
+    color: lightColor,
+    '&:hover': { color: theme.palette.common.white, }, },
+  button: { borderColor: lightColor, },
+  notifications: { paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(0),
+    marginLeft: theme.spacing(4), },
+  userContainer: { paddingLeft: 1,
+    display: 'flex', },
+  userSpan: { marginLeft: theme.spacing(1), },
+  pageTitleWrapper: { flexGrow: 1,
+    marginRight: 'auto', },
+  betaBadge: { color: '#EEEEEE', fontWeight: '300', fontSize: '13px' },
+  pageTitle: { paddingLeft: theme.spacing(2),
+    fontSize: '1.25rem',
+    [theme.breakpoints.up('sm')]: { fontSize: '1.65rem', }, },
+  appBarOnDrawerOpen: {
+    padding: theme.spacing(1.4),
+    backgroundColor: '#396679',
+    zIndex: theme.zIndex.drawer+1,
+    [theme.breakpoints.between(635,732)]: { padding: theme.spacing(0.75,1.4), },
+    [theme.breakpoints.between(600,635)]: { padding: theme.spacing(0.4,1.4), },
   },
-  appBarOnDrawerClosed : { padding : theme.spacing(1.4),
-    backgroundColor : "#396679",
-    zIndex : theme.zIndex.drawer+1, },
-  toolbarOnDrawerClosed : { minHeight : 59,
-    paddingLeft : 24,
-    paddingRight : 24, },
-  toolbarOnDrawerOpen : {
-    minHeight : 58,
-    paddingLeft : 20,
-    paddingRight : 20,
-    [theme.breakpoints.between(620, 732)] : { minHeight : 68, paddingLeft : 20, paddingRight : 20 },
+  appBarOnDrawerClosed: { padding: theme.spacing(1.4),
+    backgroundColor: '#396679',
+    zIndex: theme.zIndex.drawer+1, },
+  toolbarOnDrawerClosed: { minHeight: 59,
+    paddingLeft: 24,
+    paddingRight: 24, },
+  toolbarOnDrawerOpen: {
+    minHeight: 58,
+    paddingLeft: 20,
+    paddingRight: 20,
+    [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
   },
-  itemActiveItem : { color : "#00B39F" },
-  headerIcons : { fontSize : "1.5rem", height : "1.5rem", width : "1.5rem" },
+  itemActiveItem: { color: '#00B39F' },
+  headerIcons: { fontSize: '1.5rem', height: '1.5rem', width: '1.5rem' },
 });
 
 class Header extends React.Component {
@@ -91,7 +91,7 @@ class Header extends React.Component {
                 </Hidden>
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
                   <Typography color="inherit" variant="h5" className={classes.pageTitle}>
-                    {title}{isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ""}
+                    {title}{isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ''}
                   </Typography>
                 </Grid>
 
@@ -126,7 +126,7 @@ class Header extends React.Component {
                   <div data-test="settings-button">
                     <IconButton color="inherit">
                       <Link href="/settings">
-                        <SettingsIcon className={classes.headerIcons +" "+(title === 'Settings'
+                        <SettingsIcon className={classes.headerIcons +' '+(title === 'Settings'
                           ? classes.itemActiveItem
                           : '')} />
                       </Link>
@@ -191,13 +191,13 @@ class Header extends React.Component {
   }
 }
 
-Header.propTypes = { classes : PropTypes.object.isRequired,
-  onDrawerToggle : PropTypes.func.isRequired, };
+Header.propTypes = { classes: PropTypes.object.isRequired,
+  onDrawerToggle: PropTypes.func.isRequired, };
 
 const mapStateToProps = (state) =>
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
   // console.log("state: " + JSON.stringify(state));
-  ({ title : state.get('page').get('title'), isBeta : state.get('page').get('isBeta') })
+  ({ title: state.get('page').get('title'), isBeta: state.get('page').get('isBeta') })
 ;
 
 // const mapDispatchToProps = dispatch => {

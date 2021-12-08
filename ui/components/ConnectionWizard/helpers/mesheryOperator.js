@@ -10,9 +10,9 @@ export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorIns
 */
 export const pingMesheryOperator = (fetchMesheryOperatorStatus, successcb, errorcb) => {
   fetchMesheryOperatorStatus()
-    .subscribe({ next : successcb,
-      error : errorcb, })
-}
+    .subscribe({ next: successcb,
+      error: errorcb, });
+};
 
 /**
   * Returns the connection status of Operator, Meshsync, and Broker (NATS)
@@ -26,39 +26,39 @@ export const pingMesheryOperator = (fetchMesheryOperatorStatus, successcb, error
 export const getOperatorStatusFromQueryResult = (res) => {
 
   var operatorInformation = {
-    operatorInstalled : false,
-    NATSInstalled : false,
-    meshSyncInstalled : false,
-    operatorSwitch : false,
-    operatorVersion : "N/A",
-    meshSyncVersion : "N/A",
-    NATSVersion : "N/A",
-  }
+    operatorInstalled: false,
+    NATSInstalled: false,
+    meshSyncInstalled: false,
+    operatorSwitch: false,
+    operatorVersion: 'N/A',
+    meshSyncVersion: 'N/A',
+    NATSVersion: 'N/A',
+  };
 
   if (res.operator?.error) {
-    console.log("Operator could not be reached", res.operator?.error?.description)
-    return [false, operatorInformation]
+    console.log('Operator could not be reached', res.operator?.error?.description);
+    return [false, operatorInformation];
   }
 
-  if (res.operator?.status === "ENABLED") {
+  if (res.operator?.status === 'ENABLED') {
     res.operator?.controllers?.forEach((controller) => {
-      if (controller.name === "broker" && controller.status == "ENABLED") {
+      if (controller.name === 'broker' && controller.status == 'ENABLED') {
         operatorInformation = { ...operatorInformation,
-          NATSInstalled : true,
-          NATSVersion : controller.version }
-      } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
+          NATSInstalled: true,
+          NATSVersion: controller.version };
+      } else if (controller.name === 'meshsync' && controller.status == 'ENABLED') {
         operatorInformation = { ...operatorInformation,
-          meshSyncInstalled : true,
-          meshSyncVersion : controller.version, }
+          meshSyncInstalled: true,
+          meshSyncVersion: controller.version, };
       }
     });
 
     operatorInformation = { ...operatorInformation,
-      operatorInstalled : true,
-      operatorVersion : res.operator?.version, }
+      operatorInstalled: true,
+      operatorVersion: res.operator?.version, };
 
-    return [true,operatorInformation]
+    return [true,operatorInformation];
   }
 
-  return [false, operatorInformation]
-}
+  return [false, operatorInformation];
+};

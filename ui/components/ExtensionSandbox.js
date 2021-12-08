@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { CircularProgress, Typography } from "@material-ui/core";
-import normalizeURI from "../utils/normalizeURI";
-import dataFetch from "../lib/data-fetch";
-import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
+import React, { useEffect, useState } from 'react';
+import { CircularProgress, Typography } from '@material-ui/core';
+import normalizeURI from '../utils/normalizeURI';
+import dataFetch from '../lib/data-fetch';
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 
 /**
  * getPath returns the current pathname
@@ -21,17 +21,17 @@ function getPath() {
  */
 export function getCapabilities(type, cb) {
   dataFetch(
-    "/api/provider/capabilities",
-    { credentials : "same-origin",
-      method : "GET",
-      credentials : "include", },
+    '/api/provider/capabilities',
+    { credentials: 'same-origin',
+      method: 'GET',
+      credentials: 'include', },
     (result) => {
       if (result) {
         cb(ExtensionPointSchemaValidator(type)(result?.extensions[type]));
       }
     },
     (err) => {
-      console.group("extension error");
+      console.group('extension error');
       console.error(err);
       console.groupEnd();
     }
@@ -52,7 +52,7 @@ function getComponentURIFromPathForNavigator(extensions, path) {
 
   if (Array.isArray(extensions)) {
     const fext = extensions.find((item) => item?.href === path);
-    if (fext) return fext.component || "";
+    if (fext) return fext.component || '';
 
     // If not found then start searching in the child of each extension
     for (const ext of extensions) {
@@ -61,7 +61,7 @@ function getComponentURIFromPathForNavigator(extensions, path) {
     }
   }
 
-  return "";
+  return '';
 }
 
 /**
@@ -78,7 +78,7 @@ export function getComponentTitleFromPathForNavigator(extensions, path) {
 
   if (Array.isArray(extensions)) {
     const fext = extensions.find((item) => item?.href === path);
-    if (fext) return fext.title || "";
+    if (fext) return fext.title || '';
 
     // If not found then start searching in the child of each extension
     for (const ext of extensions) {
@@ -87,7 +87,7 @@ export function getComponentTitleFromPathForNavigator(extensions, path) {
     }
   }
 
-  return "";
+  return '';
 }
 
 /**
@@ -99,10 +99,10 @@ export function getComponentTitleFromPathForNavigator(extensions, path) {
 function getComponentURIFromPathForUserPrefs(extensions) {
 
   if (Array.isArray(extensions)) {
-    return extensions.map(ext => ext.component)
+    return extensions.map(ext => ext.component);
   }
 
-  return []
+  return [];
 }
 
 /**
@@ -114,7 +114,7 @@ function getComponentURIFromPathForUserPrefs(extensions) {
  * @returns {string} url
  */
 function createPathForRemoteComponent(componentName) {
-  let prefix = "/api/provider/extension";
+  let prefix = '/api/provider/extension';
   return prefix + normalizeURI(componentName);
 }
 
@@ -138,7 +138,7 @@ function ExtensionSandbox({ type, Extension }) {
     });
   }, []);
 
-  if (type === "navigator") {
+  if (type === 'navigator') {
     return isLoading?
       <Typography align="center">
         <CircularProgress/>
@@ -148,19 +148,19 @@ function ExtensionSandbox({ type, Extension }) {
       );
   }
 
-  if (type === "user_prefs") {
+  if (type === 'user_prefs') {
     return isLoading
       ? <Typography align="center">
         <CircularProgress/>
       </Typography>
       : (
         getComponentURIFromPathForUserPrefs(extensions).map(uri => {
-          return <Extension url={createPathForRemoteComponent(uri)} />
+          return <Extension url={createPathForRemoteComponent(uri)} />;
         })
       );
   }
 
-  return null
+  return null;
 }
 
 export default ExtensionSandbox;

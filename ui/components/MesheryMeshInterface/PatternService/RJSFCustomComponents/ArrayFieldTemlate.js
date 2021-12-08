@@ -1,16 +1,16 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React from 'react';
 
-import { utils } from "@rjsf/core";
+import { utils } from '@rjsf/core';
 
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 
-import { Button, IconButton, Typography } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import SimpleAccordion from "./Accordion";
-import CustomDescriptionField from "./DescriptionField";
+import { Button, IconButton, Typography } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import SimpleAccordion from './Accordion';
+import CustomDescriptionField from './DescriptionField';
 const { isMultiSelect, getDefaultRegistry } = utils;
 
 const ArrayFieldTemplate = (props) => {
@@ -31,7 +31,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
 
   const id = `${idSchema.$id}__title`;
   // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
-  return <Typography variant="body1" style={{ fontWeight : "bold" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
+  return <Typography variant="body1" style={{ fontWeight: 'bold' }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
   // return <TitleField id={id} title={title} required={required} />;
 };
 
@@ -47,17 +47,17 @@ const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {
 // Used in the two templates
 const DefaultArrayItem = (props) => {
   const btnStyle = {
-    flex : 1,
-    paddingLeft : 6,
-    paddingRight : 6,
-    fontWeight : "bold",
-    minWidth : 0
+    flex: 1,
+    paddingLeft: 6,
+    paddingRight: 6,
+    fontWeight: 'bold',
+    minWidth: 0
   };
   return (
     <SimpleAccordion childProps={props}>
       <Grid container={true} key={props.key} alignItems="center">
         <Grid item={true} xs >
-          <Box mb={2} style={{ border : "0.5px solid black" }}>
+          <Box mb={2} style={{ border: '0.5px solid black' }}>
             <Paper elevation={0}>
               <Box p={2}>{props.children}</Box>
             </Paper>
@@ -72,7 +72,7 @@ const DefaultArrayItem = (props) => {
                 className="array-item-move-up"
                 tabIndex={-1}
                 style={btnStyle}
-                iconProps={{ fontSize : "small" }}
+                iconProps={{ fontSize: 'small' }}
                 disabled={props.disabled || props.readonly || !props.hasMoveUp}
                 onClick={props.onReorderClick(props.index, props.index - 1)}
               />
@@ -83,7 +83,7 @@ const DefaultArrayItem = (props) => {
                 icon="arrow-down"
                 tabIndex={-1}
                 style={btnStyle}
-                iconProps={{ fontSize : "small" }}
+                iconProps={{ fontSize: 'small' }}
                 disabled={
                   props.disabled || props.readonly || !props.hasMoveDown
                 }
@@ -104,16 +104,16 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         key={`array-field-title-${props.idSchema.$id}`}
         TitleField={props.TitleField}
         idSchema={props.idSchema}
-        title={props.uiSchema["ui:title"] || props.title}
+        title={props.uiSchema['ui:title'] || props.title}
         required={props.required}
       />
 
-      {(props.uiSchema["ui:description"] || props.schema.description) && (
+      {(props.uiSchema['ui:description'] || props.schema.description) && (
         <div
           className="field-description"
           key={`field-description-${props.idSchema.$id}`}
         >
-          {props.uiSchema["ui:description"] || props.schema.description}
+          {props.uiSchema['ui:description'] || props.schema.description}
         </div>
       )}
 
@@ -141,13 +141,13 @@ const DefaultNormalArrayFieldTemplate = (props) => {
   return (
     <Paper elevation={0}>
       <Box p={1}>
-        <Grid item container alignItems="center" xs={12} justify="space-between" style={{ marginBottom : "0.3rem" }}>
+        <Grid item container alignItems="center" xs={12} justify="space-between" style={{ marginBottom: '0.3rem' }}>
           <Grid item xs={4}>
             <ArrayFieldTitle
               key={`array-field-title-${props.idSchema.$id}`}
               TitleField={props.TitleField}
               idSchema={props.idSchema}
-              title={props.uiSchema["ui:title"] || props.title}
+              title={props.uiSchema['ui:title'] || props.title}
               required={props.required}
             />
           </Grid>
@@ -170,13 +170,13 @@ const DefaultNormalArrayFieldTemplate = (props) => {
           </Grid>
         </Grid>
 
-        {(props.uiSchema["ui:description"] || props.schema.description) && (
+        {(props.uiSchema['ui:description'] || props.schema.description) && (
           <ArrayFieldDescription
             key={`array-field-description-${props.idSchema.$id}`}
             DescriptionField={CustomDescriptionField}
             idSchema={props.idSchema}
             description={
-              props.uiSchema["ui:description"] || props.schema.description
+              props.uiSchema['ui:description'] || props.schema.description
             }
           />
         )}

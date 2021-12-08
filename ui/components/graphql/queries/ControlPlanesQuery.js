@@ -1,8 +1,8 @@
-import { graphql, fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { graphql, fetchQuery } from 'react-relay';
+import environment from '../../../lib/relayEnvironment';
 
 export default function fetchControlPlanes(variables) {
-  const vars = { filter : { "type" : variables.type } };
+  const vars = { filter: { 'type': variables.type } };
 
   const query = graphql`
     query ControlPlanesQuery($filter: ServiceMeshFilter) {

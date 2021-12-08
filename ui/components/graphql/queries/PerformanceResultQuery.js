@@ -1,9 +1,9 @@
-import { graphql, fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { graphql, fetchQuery } from 'react-relay';
+import environment from '../../../lib/relayEnvironment';
 
 export default function fetchPerformanceResults(variables) {
-  const vars = { selector : variables.selector,
-    profileID : variables.profileID }
+  const vars = { selector: variables.selector,
+    profileID: variables.profileID };
 
   const query = graphql`
         query PerformanceResultQuery($selector: PageFilter!, $profileID: String!) {
@@ -28,5 +28,5 @@ export default function fetchPerformanceResults(variables) {
             }
         `;
 
-  return fetchQuery(environment, query, vars)
+  return fetchQuery(environment, query, vars);
 }

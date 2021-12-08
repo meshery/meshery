@@ -52,11 +52,11 @@ class LoadTestTimerDialog extends React.Component {
           <MenuItem onClick={this.handleClose}>Logout</MenuItem> */}
 
         <div style={{
-          marginLeft : 'auto',
-          marginRight : 'auto',
-          width : '400px',
-          position : "relative",
-          zIndex : "0"
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          width: '400px',
+          position: 'relative',
+          zIndex: '0'
           // height: '400',
         }}
         >

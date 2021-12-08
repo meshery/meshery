@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 import {
   NoSsr,
   Button,
@@ -19,111 +19,111 @@ import {
   ListItem,
   ListItemText,
   CircularProgress,
-} from "@material-ui/core";
-import blue from "@material-ui/core/colors/blue";
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { withRouter } from "next/router";
-import { withSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
-import { updateK8SConfig, updateProgress } from "../lib/store";
-import dataFetch from "../lib/data-fetch";
-import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
-import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
-import changeOperatorState from "./graphql/mutations/OperatorStatusMutation";
-import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
-import NatsStatusQuery from "./graphql/queries/NatsStatusQuery";
-import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
-import PromptComponent from "./PromptComponent";
+} from '@material-ui/core';
+import blue from '@material-ui/core/colors/blue';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { withRouter } from 'next/router';
+import { withSnackbar } from 'notistack';
+import CloseIcon from '@material-ui/icons/Close';
+import { updateK8SConfig, updateProgress } from '../lib/store';
+import dataFetch from '../lib/data-fetch';
+import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
+import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
+import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
+import fetchMesheryOperatorStatus from './graphql/queries/OperatorStatusQuery';
+import NatsStatusQuery from './graphql/queries/NatsStatusQuery';
+import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
+import PromptComponent from './PromptComponent';
 
 const styles = (theme) => ({
-  root : { padding : theme.spacing(5), },
-  buttons : { display : "flex",
-    justifyContent : "flex-end", },
-  button : { marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1), },
-  buttonsCluster : { display : "flex",
-    justifyContent : "center", },
-  margin : { margin : theme.spacing(1), },
-  alreadyConfigured : { textAlign : "center",
-    padding : theme.spacing(20), },
-  colorSwitchBase : { color : blue[300],
-    "&$colorChecked" : { color : blue[500],
-      "& + $colorBar" : { backgroundColor : blue[500], }, }, },
-  colorBar : {},
-  colorChecked : {},
-  fileLabel : { width : "100%", },
-  fileLabelText : { cursor : "pointer",
-    "& *" : { cursor : "pointer", }, },
-  inClusterLabel : { paddingRight : theme.spacing(2), },
-  alignCenter : { textAlign : "center", },
-  alignLeft : { textAlign : "left",
-    marginBottom : theme.spacing(2), },
-  fileInputStyle : { display : "none", },
-  icon : { width : theme.spacing(2.5), },
-  configure : {
-    display : "inline-block",
-    width : "48%",
-    wordWrap : "break-word",
-    [theme.breakpoints.down(945)] : { width : "100%", },
+  root: { padding: theme.spacing(5), },
+  buttons: { display: 'flex',
+    justifyContent: 'flex-end', },
+  button: { marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1), },
+  buttonsCluster: { display: 'flex',
+    justifyContent: 'center', },
+  margin: { margin: theme.spacing(1), },
+  alreadyConfigured: { textAlign: 'center',
+    padding: theme.spacing(20), },
+  colorSwitchBase: { color: blue[300],
+    '&$colorChecked': { color: blue[500],
+      '& + $colorBar': { backgroundColor: blue[500], }, }, },
+  colorBar: {},
+  colorChecked: {},
+  fileLabel: { width: '100%', },
+  fileLabelText: { cursor: 'pointer',
+    '& *': { cursor: 'pointer', }, },
+  inClusterLabel: { paddingRight: theme.spacing(2), },
+  alignCenter: { textAlign: 'center', },
+  alignLeft: { textAlign: 'left',
+    marginBottom: theme.spacing(2), },
+  fileInputStyle: { display: 'none', },
+  icon: { width: theme.spacing(2.5), },
+  configure: {
+    display: 'inline-block',
+    width: '48%',
+    wordWrap: 'break-word',
+    [theme.breakpoints.down(945)]: { width: '100%', },
   },
-  vertical : {
-    display : "inline-block",
-    height : 150,
-    marginBottom : -60,
-    [theme.breakpoints.down(945)] : { display : "none", },
+  vertical: {
+    display: 'inline-block',
+    height: 150,
+    marginBottom: -60,
+    [theme.breakpoints.down(945)]: { display: 'none', },
   },
-  horizontal : { display : "none",
-    [theme.breakpoints.down(945)] : { display : "block", }, },
-  formconfig : {
-    display : "inline-block",
-    marginLeft : 30,
-    [theme.breakpoints.up(946)] : { width : "45%", },
-    [theme.breakpoints.down(945)] : { width : "100%",
-      marginLeft : 0, },
+  horizontal: { display: 'none',
+    [theme.breakpoints.down(945)]: { display: 'block', }, },
+  formconfig: {
+    display: 'inline-block',
+    marginLeft: 30,
+    [theme.breakpoints.up(946)]: { width: '45%', },
+    [theme.breakpoints.down(945)]: { width: '100%',
+      marginLeft: 0, },
   },
-  currentConfigHeading : {
-    display : "inline-block",
-    width : "48%",
-    textAlign : "center",
-    [theme.breakpoints.down(945)] : { width : "100%", },
+  currentConfigHeading: {
+    display: 'inline-block',
+    width: '48%',
+    textAlign: 'center',
+    [theme.breakpoints.down(945)]: { width: '100%', },
   },
-  changeConfigHeading : {
-    display : "inline-block",
-    width : "48%",
-    textAlign : "center",
-    [theme.breakpoints.down(945)] : { display : "none", },
+  changeConfigHeading: {
+    display: 'inline-block',
+    width: '48%',
+    textAlign: 'center',
+    [theme.breakpoints.down(945)]: { display: 'none', },
   },
-  operationButton : {
-    [theme.breakpoints.down(1180)] : {
-      marginRight : "25px",
+  operationButton: {
+    [theme.breakpoints.down(1180)]: {
+      marginRight: '25px',
     },
   },
-  contentContainer : {
-    [theme.breakpoints.down(1050)] : {
-      flexDirection : "column",
+  contentContainer: {
+    [theme.breakpoints.down(1050)]: {
+      flexDirection: 'column',
     },
   },
-  configBoxContainer : {
-    [theme.breakpoints.down(1050)] : {
-      flexGrow : 0,
-      maxWidth : '100%',
-      flexBasis : '100%',
+  configBoxContainer: {
+    [theme.breakpoints.down(1050)]: {
+      flexGrow: 0,
+      maxWidth: '100%',
+      flexBasis: '100%',
     },
   },
-  changeConfigHeadingOne : { display : "none",
-    [theme.breakpoints.down(945)] : { display : "inline-block",
-      width : "100%",
-      textAlign : "center", }, },
-  buttonconfig : { display : "inline-block",
-    width : "48%",
-    [theme.breakpoints.down(945)] : { width : "100%", }, },
-  paper : { padding : theme.spacing(2), },
-  heading : { textAlign : "center", },
-  grey : { background : "WhiteSmoke",
-    padding : theme.spacing(2),
-    borderRadius : "inherit", },
+  changeConfigHeadingOne: { display: 'none',
+    [theme.breakpoints.down(945)]: { display: 'inline-block',
+      width: '100%',
+      textAlign: 'center', }, },
+  buttonconfig: { display: 'inline-block',
+    width: '48%',
+    [theme.breakpoints.down(945)]: { width: '100%', }, },
+  paper: { padding: theme.spacing(2), },
+  heading: { textAlign: 'center', },
+  grey: { background: 'WhiteSmoke',
+    padding: theme.spacing(2),
+    borderRadius: 'inherit', },
 });
 
 class MeshConfigComponent extends React.Component {
@@ -134,30 +134,30 @@ class MeshConfigComponent extends React.Component {
     } = props;
     this.state = {
       inClusterConfig, // read from store
-      inClusterConfigForm : inClusterConfig,
+      inClusterConfigForm: inClusterConfig,
       k8sfile, // read from store
-      k8sfileElementVal : "",
+      k8sfileElementVal: '',
       contextName, // read from store
-      contextNameForForm : "",
-      contextsFromFile : [],
+      contextNameForForm: '',
+      contextsFromFile: [],
       clusterConfigured, // read from store
       configuredServer,
-      k8sfileError : false,
-      ts : new Date(),
+      k8sfileError: false,
+      ts: new Date(),
 
-      operatorInstalled : false,
-      operatorVersion : "N/A",
-      meshSyncInstalled : false,
-      meshSyncVersion : "N/A",
-      NATSState : "UNKNOWN",
-      NATSVersion : "N/A",
+      operatorInstalled: false,
+      operatorVersion: 'N/A',
+      meshSyncInstalled: false,
+      meshSyncVersion: 'N/A',
+      NATSState: 'UNKNOWN',
+      NATSVersion: 'N/A',
 
-      operatorSwitch : false,
-      operatorProcessing : false,
+      operatorSwitch: false,
+      operatorProcessing: false,
 
 
-      meshSyncStatusEventsSubscription : null,
-      operatorStatusEventsSubscription : null,
+      meshSyncStatusEventsSubscription: null,
+      operatorStatusEventsSubscription: null,
 
     };
     this.ref = React.createRef();
@@ -171,16 +171,16 @@ class MeshConfigComponent extends React.Component {
       let newState = {
         inClusterConfig,
         k8sfile,
-        k8sfileElementVal : "",
+        k8sfileElementVal: '',
         contextName,
         clusterConfigured,
         configuredServer,
-        ts : props.ts,
+        ts: props.ts,
       };
 
       // If contextsFromFile is empty then add the default value to it
       if (!state.contextsFromFile?.length)
-        newState = { ...newState, contextsFromFile : [{ contextName, currentContext : true }] };
+        newState = { ...newState, contextsFromFile: [{ contextName, currentContext: true }] };
       return newState;
     }
     return {};
@@ -192,7 +192,7 @@ class MeshConfigComponent extends React.Component {
     // Subscribe to the operator events
     let meshSyncStatusEventsSubscription = subscribeMeshSyncStatusEvents((res) => {
       if (res.meshsync?.error) {
-        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
+        self.handleError(res.meshsync?.error?.description || 'MeshSync could not be reached');
         return;
       }
     });
@@ -200,65 +200,65 @@ class MeshConfigComponent extends React.Component {
 
     let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState);
     fetchMesheryOperatorStatus().subscribe({
-      next : (res) => {
+      next: (res) => {
         self.setOperatorState(res);
       },
-      error : (err) => console.log("error at operator scan: " + err),
+      error: (err) => console.log('error at operator scan: ' + err),
     });
 
-    self.setState({ meshSyncStatusEventsSubscription, operatorStatusEventsSubscription })
+    self.setState({ meshSyncStatusEventsSubscription, operatorStatusEventsSubscription });
   }
 
 
   componentWillUnmount () {
-    this.state.meshSyncStatusEventsSubscription.dispose()
-    this.state.operatorStatusEventsSubscription.dispose()
+    this.state.meshSyncStatusEventsSubscription.dispose();
+    this.state.operatorStatusEventsSubscription.dispose();
   }
 
   setOperatorState = (res) => {
-    console.log("incoming change")
+    console.log('incoming change');
     const self = this;
     if (res.operator?.error) {
-      self.handleError("Operator could not be reached")(res.operator?.error?.description);
-      self.setState({ operatorProcessing : false })
+      self.handleError('Operator could not be reached')(res.operator?.error?.description);
+      self.setState({ operatorProcessing: false });
       return false;
     }
 
-    if (res.operator?.status === "ENABLED") {
-      self.setState({ operatorProcessing : false })
+    if (res.operator?.status === 'ENABLED') {
+      self.setState({ operatorProcessing: false });
       res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status == "CONNECTED") {
+        if (controller.name === 'broker' && controller.status == 'CONNECTED') {
           self.setState({
-            NATSState : controller.status,
-            NATSVersion : controller.version,
+            NATSState: controller.status,
+            NATSVersion: controller.version,
           });
-        } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
-          self.setState({ meshSyncInstalled : true,
-            meshSyncVersion : controller.version, });
+        } else if (controller.name === 'meshsync' && controller.status == 'ENABLED') {
+          self.setState({ meshSyncInstalled: true,
+            meshSyncVersion: controller.version, });
         }
       });
-      self.setState({ operatorInstalled : true,
-        operatorSwitch : true,
-        operatorVersion : res.operator?.version, });
+      self.setState({ operatorInstalled: true,
+        operatorSwitch: true,
+        operatorVersion: res.operator?.version, });
       return true;
     }
 
-    if (res.operator?.status === "DISABLED") self.setState({ operatorProcessing : false })
+    if (res.operator?.status === 'DISABLED') self.setState({ operatorProcessing: false });
 
-    if (res.operator?.status === "PROCESSING") {
-      console.log("setting to processing");
-      self.setState({ operatorProcessing : true });
+    if (res.operator?.status === 'PROCESSING') {
+      console.log('setting to processing');
+      self.setState({ operatorProcessing: true });
     }
 
 
     self.setState({
-      operatorInstalled : false,
-      NATSState : "UNKNOWN",
-      meshSyncInstalled : false,
-      operatorSwitch : false,
-      operatorVersion : "N/A",
-      meshSyncVersion : "N/A",
-      NATSVersion : "N/A",
+      operatorInstalled: false,
+      NATSState: 'UNKNOWN',
+      meshSyncInstalled: false,
+      operatorSwitch: false,
+      operatorVersion: 'N/A',
+      meshSyncVersion: 'N/A',
+      NATSVersion: 'N/A',
     });
 
     return false;
@@ -266,50 +266,50 @@ class MeshConfigComponent extends React.Component {
 
   handleOperatorSwitch = () => {
     const self = this;
-    const variables = { status : `${!self.state.operatorSwitch
-      ? "ENABLED"
-      : "DISABLED"}`, };
-    self.props.updateProgress({ showProgress : true });
+    const variables = { status: `${!self.state.operatorSwitch
+      ? 'ENABLED'
+      : 'DISABLED'}`, };
+    self.props.updateProgress({ showProgress: true });
 
     changeOperatorState((response, errors) => {
-      self.props.updateProgress({ showProgress : false });
+      self.props.updateProgress({ showProgress: false });
       if (errors !== undefined) {
-        self.handleError("Unable to install operator");
+        self.handleError('Unable to install operator');
       }
-      self.props.enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), { variant : "success",
-        autoHideDuration : 2000,
-        action : (key) => (
+      self.props.enqueueSnackbar('Operator ' + response.operatorStatus.toLowerCase(), { variant: 'success',
+        autoHideDuration: 2000,
+        action: (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
         ), });
-      self.setState((state) => ({ operatorSwitch : !state.operatorSwitch }));
+      self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }));
     }, variables);
   };
 
   handleChange = (name) => {
     const self = this;
     return (event) => {
-      if (name === "inClusterConfigForm") {
-        self.setState({ [name] : event.target.checked, ts : new Date() });
+      if (name === 'inClusterConfigForm') {
+        self.setState({ [name]: event.target.checked, ts: new Date() });
         return;
       }
-      if (name === "k8sfile") {
-        if (event.target.value !== "") {
-          self.setState({ k8sfileError : false });
+      if (name === 'k8sfile') {
+        if (event.target.value !== '') {
+          self.setState({ k8sfileError: false });
         }
-        self.setState({ k8sfileElementVal : event.target.value });
+        self.setState({ k8sfileElementVal: event.target.value });
         self.fetchContexts();
       }
-      self.setState({ [name] : event.target.value, ts : new Date() });
+      self.setState({ [name]: event.target.value, ts: new Date() });
       this.handleSubmit();
     };
   };
 
   handleSubmit = () => {
     const { inClusterConfigForm, k8sfile } = this.state;
-    if (!inClusterConfigForm && k8sfile === "") {
-      this.setState({ k8sfileError : true });
+    if (!inClusterConfigForm && k8sfile === '') {
+      this.setState({ k8sfileError: true });
       return;
     }
     this.submitConfig();
@@ -317,89 +317,89 @@ class MeshConfigComponent extends React.Component {
 
   fetchContexts = () => {
     const { inClusterConfigForm } = this.state;
-    const fileInput = document.querySelector("#k8sfile");
+    const fileInput = document.querySelector('#k8sfile');
     const formData = new FormData();
     if (inClusterConfigForm) {
       return;
     }
     if (fileInput.files.length == 0) {
-      this.setState({ contextsFromFile : [], contextNameForForm : "" });
+      this.setState({ contextsFromFile: [], contextNameForForm: '' });
       return;
     }
     // formData.append('contextName', contextName);
-    formData.append("k8sfile", fileInput.files[0]);
-    this.props.updateProgress({ showProgress : true });
+    formData.append('k8sfile', fileInput.files[0]);
+    this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/system/kubernetes/contexts",
+      '/api/system/kubernetes/contexts',
       {
-        credentials : "same-origin",
-        method : "POST",
-        credentials : "include",
-        body : formData,
+        credentials: 'same-origin',
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
       },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          let ctName = "";
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          let ctName = '';
           result.forEach(({ contextName, currentContext }) => {
             if (currentContext) {
               ctName = contextName;
             }
           });
-          self.setState({ contextsFromFile : result, contextNameForForm : ctName });
+          self.setState({ contextsFromFile: result, contextNameForForm: ctName });
           self.submitConfig();
         }
       },
-      self.handleError("Kubernetes config could not be validated")
+      self.handleError('Kubernetes config could not be validated')
     );
   };
 
   submitConfig = () => {
     const { inClusterConfigForm, k8sfile, contextNameForForm } = this.state;
-    const fileInput = document.querySelector("#k8sfile");
+    const fileInput = document.querySelector('#k8sfile');
     const formData = new FormData();
-    formData.append("inClusterConfig", inClusterConfigForm
-      ? "on"
-      : ""); // to simulate form behaviour of a checkbox
+    formData.append('inClusterConfig', inClusterConfigForm
+      ? 'on'
+      : ''); // to simulate form behaviour of a checkbox
     if (!inClusterConfigForm) {
-      formData.append("contextName", contextNameForForm);
-      formData.append("k8sfile", fileInput.files[0]);
+      formData.append('contextName', contextNameForForm);
+      formData.append('k8sfile', fileInput.files[0]);
     }
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/system/kubernetes",
+      '/api/system/kubernetes',
       {
-        credentials : "same-origin",
-        method : "POST",
-        credentials : "include",
-        body : formData,
+        credentials: 'same-origin',
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
       },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
           //prompt
           const modal = this.ref.current;
           const self = this;
           if (self.state.operatorSwitch) {
             setTimeout(async () => {
-              let response = await modal.show({ title : "Remove Meshery Operator from this cluster?",
-                subtitle :
-                  "Meshery is now disconnected from your Kubernetes cluster. Do you want to remove the Meshery Operator from your cluster as well?",
-                options : ["yes", "no"], });
-              if (response == "yes") {
-                const variables = { status : "DISABLED", };
-                self.props.updateProgress({ showProgress : true });
+              let response = await modal.show({ title: 'Remove Meshery Operator from this cluster?',
+                subtitle:
+                  'Meshery is now disconnected from your Kubernetes cluster. Do you want to remove the Meshery Operator from your cluster as well?',
+                options: ['yes', 'no'], });
+              if (response == 'yes') {
+                const variables = { status: 'DISABLED', };
+                self.props.updateProgress({ showProgress: true });
 
                 changeOperatorState((response, errors) => {
-                  self.props.updateProgress({ showProgress : false });
+                  self.props.updateProgress({ showProgress: false });
                   if (errors !== undefined) {
-                    self.handleError("Operator action failed");
+                    self.handleError('Operator action failed');
                   }
-                  self.props.enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), { variant : "success",
-                    autoHideDuration : 2000,
-                    action : (key) => (
+                  self.props.enqueueSnackbar('Operator ' + response.operatorStatus.toLowerCase(), { variant: 'success',
+                    autoHideDuration: 2000,
+                    action: (key) => (
                       <IconButton
                         key="close"
                         aria-label="Close"
@@ -409,49 +409,49 @@ class MeshConfigComponent extends React.Component {
                         <CloseIcon />
                       </IconButton>
                     ), });
-                  self.setState((state) => ({ operatorSwitch : !state.operatorSwitch }));
+                  self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }));
                 }, variables);
               }
             }, 100);
           }
-          this.setState({ clusterConfigured : true,
-            configuredServer : result.configuredServer,
-            contextName : result.contextName, });
-          this.props.enqueueSnackbar("Kubernetes config was successfully validated!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
+          this.setState({ clusterConfigured: true,
+            configuredServer: result.configuredServer,
+            contextName: result.contextName, });
+          this.props.enqueueSnackbar('Kubernetes config was successfully validated!', { variant: 'success',
+            autoHideDuration: 2000,
+            action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             ), });
-          this.props.updateK8SConfig({ k8sConfig : {
-            inClusterConfig : inClusterConfigForm,
+          this.props.updateK8SConfig({ k8sConfig: {
+            inClusterConfig: inClusterConfigForm,
             k8sfile,
-            contextName : result.contextName,
-            clusterConfigured : true,
-            configuredServer : result.configuredServer,
+            contextName: result.contextName,
+            clusterConfigured: true,
+            configuredServer: result.configuredServer,
           }, });
         }
       },
-      self.handleError("Kubernetes config could not be validated")
+      self.handleError('Kubernetes config could not be validated')
     );
   };
 
   handleKubernetesClick = () => {
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/system/kubernetes/ping",
-      { credentials : "same-origin",
-        credentials : "include", },
+      '/api/system/kubernetes/ping',
+      { credentials: 'same-origin',
+        credentials: 'include', },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Kubernetes was successfully pinged!", {
-            variant : "success",
-            "data-cy" : "k8sSuccessSnackbar",
-            autoHideDuration : 2000,
-            action : (key) => (
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          this.props.enqueueSnackbar('Kubernetes was successfully pinged!', {
+            variant: 'success',
+            'data-cy': 'k8sSuccessSnackbar',
+            autoHideDuration: 2000,
+            action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
@@ -459,45 +459,45 @@ class MeshConfigComponent extends React.Component {
           });
         }
       },
-      self.handleError("Kubernetes config could not be validated")
+      self.handleError('Kubernetes config could not be validated')
     );
   };
 
   handleOperatorClick = () => {
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
-    fetchMesheryOperatorStatus().subscribe({ next : (res) => {
+    fetchMesheryOperatorStatus().subscribe({ next: (res) => {
       console.log(res);
       let state = self.setOperatorState(res);
-      self.props.updateProgress({ showProgress : false });
+      self.props.updateProgress({ showProgress: false });
       if (state == true) {
-        this.props.enqueueSnackbar("Operator was successfully pinged!", { variant : "success",
-          autoHideDuration : 2000,
-          action : (key) => (
+        this.props.enqueueSnackbar('Operator was successfully pinged!', { variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
               <CloseIcon />
             </IconButton>
           ), });
       } else {
-        self.handleError("Operator could not be reached")("Operator is disabled");
+        self.handleError('Operator could not be reached')('Operator is disabled');
       }
     },
-    error : self.handleError("Operator could not be pinged"), });
+    error: self.handleError('Operator could not be pinged'), });
   };
 
 handleNATSClick = () => {
-  this.props.updateProgress({ showProgress : true });
+  this.props.updateProgress({ showProgress: true });
   const self = this;
 
   NatsStatusQuery().subscribe({
-    next : (res) => {
-      self.props.updateProgress({ showProgress : false });
+    next: (res) => {
+      self.props.updateProgress({ showProgress: false });
       self.setState({
-        NATSState : res.controller.status,
-        NATSVersion : res.controller.version,
+        NATSState: res.controller.status,
+        NATSVersion: res.controller.version,
       });
     },
-    error : self.handleError("NATS status could not be retrieved"), });
+    error: self.handleError('NATS status could not be retrieved'), });
 
   // connectToNats().subscribe({
   //   next : (res) => {
@@ -533,24 +533,24 @@ handleNATSClick = () => {
 };
 
   handleMeshSyncClick = () => {
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
 
-    MeshsyncStatusQuery().subscribe({ next : (res) => {
-      self.props.updateProgress({ showProgress : false });
-      if (res.controller.name === "meshsync" && res.controller.status == "ENABLED") {
+    MeshsyncStatusQuery().subscribe({ next: (res) => {
+      self.props.updateProgress({ showProgress: false });
+      if (res.controller.name === 'meshsync' && res.controller.status == 'ENABLED') {
         self.setState({
-          meshSyncInstalled : true,
-          meshSyncVersion : res.controller.version,
+          meshSyncInstalled: true,
+          meshSyncVersion: res.controller.version,
         });
       } else {
         self.setState({
-          meshSyncInstalled : false,
-          meshSyncVersion : "",
+          meshSyncInstalled: false,
+          meshSyncVersion: '',
         });
       }
     },
-    error : self.handleError("MeshSync status could not be retrieved"), });
+    error: self.handleError('MeshSync status could not be retrieved'), });
 
     // deployMeshSync().subscribe({
     //   next : (res) => {
@@ -573,48 +573,48 @@ handleNATSClick = () => {
   };
 
   handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
+    this.props.updateProgress({ showProgress: false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-      action : (key) => (
+    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant: 'error',
+      action: (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 7000, });
+      autoHideDuration: 7000, });
   };
 
   handleReconfigure = () => {
     const self = this;
     dataFetch(
-      "/api/system/kubernetes",
-      { credentials : "same-origin",
-        method : "DELETE",
-        credentials : "include", },
+      '/api/system/kubernetes',
+      { credentials: 'same-origin',
+        method: 'DELETE',
+        credentials: 'include', },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
           //prompt
           const modal = this.ref.current;
           const self = this;
           if (self.state.operatorSwitch) {
             setTimeout(async () => {
-              let response = await modal.show({ title : "Remove Meshery Operator from this cluster?",
-                subtitle :
-                  "Meshery is now disconnected from your Kubernetes cluster. Do you want to remove the Meshery Operator from your cluster as well?",
-                options : ["yes", "no"], });
-              if (response == "yes") {
-                const variables = { status : "DISABLED", };
-                self.props.updateProgress({ showProgress : true });
+              let response = await modal.show({ title: 'Remove Meshery Operator from this cluster?',
+                subtitle:
+                  'Meshery is now disconnected from your Kubernetes cluster. Do you want to remove the Meshery Operator from your cluster as well?',
+                options: ['yes', 'no'], });
+              if (response == 'yes') {
+                const variables = { status: 'DISABLED', };
+                self.props.updateProgress({ showProgress: true });
 
                 changeOperatorState((response, errors) => {
-                  self.props.updateProgress({ showProgress : false });
+                  self.props.updateProgress({ showProgress: false });
                   if (errors !== undefined) {
-                    self.handleError("Operator action failed");
+                    self.handleError('Operator action failed');
                   }
-                  self.props.enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), { variant : "success",
-                    autoHideDuration : 2000,
-                    action : (key) => (
+                  self.props.enqueueSnackbar('Operator ' + response.operatorStatus.toLowerCase(), { variant: 'success',
+                    autoHideDuration: 2000,
+                    action: (key) => (
                       <IconButton
                         key="close"
                         aria-label="Close"
@@ -624,37 +624,37 @@ handleNATSClick = () => {
                         <CloseIcon />
                       </IconButton>
                     ), });
-                  self.setState((state) => ({ operatorSwitch : !state.operatorSwitch }));
+                  self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }));
                 }, variables);
               }
             }, 100);
           }
           this.setState({
-            inClusterConfigForm : false,
-            inClusterConfig : false,
-            k8sfile : "",
-            k8sfileElementVal : "",
-            k8sfileError : false,
-            contextName : "",
-            contextNameForForm : "",
-            clusterConfigured : false,
+            inClusterConfigForm: false,
+            inClusterConfig: false,
+            k8sfile: '',
+            k8sfileElementVal: '',
+            k8sfileError: false,
+            contextName: '',
+            contextNameForForm: '',
+            clusterConfigured: false,
           });
-          this.props.updateK8SConfig({ k8sConfig : {
-            inClusterConfig : false,
-            k8sfile : "",
-            contextName : "",
-            clusterConfigured : false,
+          this.props.updateK8SConfig({ k8sConfig: {
+            inClusterConfig: false,
+            k8sfile: '',
+            contextName: '',
+            clusterConfigured: false,
           }, });
-          this.props.enqueueSnackbar("Kubernetes config was successfully removed!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
+          this.props.enqueueSnackbar('Kubernetes config was successfully removed!', { variant: 'success',
+            autoHideDuration: 2000,
+            action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             ), });
         }
       },
-      self.handleError("Kubernetes config could not be validated")
+      self.handleError('Kubernetes config could not be validated')
     );
   };
 
@@ -673,14 +673,14 @@ handleNATSClick = () => {
       NATSVersion,
       operatorSwitch,
     } = this.state;
-    let showConfigured = "";
+    let showConfigured = '';
     const self = this;
     if (clusterConfigured) {
       let chp = (
         <Chip
           // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
           label={inClusterConfig
-            ? "Using In Cluster Config"
+            ? 'Using In Cluster Config'
             : contextName}
           onDelete={self.handleReconfigure}
           onClick={self.handleKubernetesClick}
@@ -695,7 +695,7 @@ handleNATSClick = () => {
             <ListItemText
               primary="Context Name"
               secondary={inClusterConfig
-                ? "Using In Cluster Config"
+                ? 'Using In Cluster Config'
                 : contextName}
               data-cy="itemListContextName"
             />
@@ -704,8 +704,8 @@ handleNATSClick = () => {
             <ListItemText
               primary="Server Name"
               secondary={inClusterConfig
-                ? "In Cluster Server"
-                : configuredServer || ""}
+                ? 'In Cluster Server'
+                : configuredServer || ''}
               data-cy="itemListServerName"
             />
           </ListItem>
@@ -745,12 +745,12 @@ handleNATSClick = () => {
                   <Tooltip
                     title={operatorInstalled
                       ? `Version: ${operatorVersion}`
-                      : "Not Available"}
+                      : 'Not Available'}
                     aria-label="meshSync"
                   >
                     <Chip
                       // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
-                      label={"Operator"}
+                      label={'Operator'}
                       // onDelete={self.handleReconfigure}
                       onClick={self.handleOperatorClick}
                       icon={<img src="/static/img/meshery-operator.svg" className={classes.icon} />}
@@ -767,11 +767,11 @@ handleNATSClick = () => {
                 <List>
                   <ListItem>
                     <Tooltip
-                      title={meshSyncInstalled ? `Redeploy MeshSync` : "Not Available"}
+                      title={meshSyncInstalled ? 'Redeploy MeshSync' : 'Not Available'}
                       aria-label="meshSync"
                     >
                       <Chip
-                        label={"MeshSync"}
+                        label={'MeshSync'}
                         onClick={self.handleMeshSyncClick}
                         icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
                         variant="outlined"
@@ -785,11 +785,11 @@ handleNATSClick = () => {
                 <List>
                   <ListItem>
                     <Tooltip
-                      title={NATSState === "CONNECTED" ? `Reconnect NATS` : "Not Available"}
+                      title={NATSState === 'CONNECTED' ? 'Reconnect NATS' : 'Not Available'}
                       aria-label="nats"
                     >
                       <Chip
-                        label={"NATS"}
+                        label={'NATS'}
                         onClick={self.handleNATSClick}
                         icon={<img src="/static/img/nats-icon-color.svg" className={classes.icon} />}
                         variant="outlined"
@@ -807,8 +807,8 @@ handleNATSClick = () => {
               <List>
                 <ListItem>
                   <ListItemText primary="Operator State" secondary={operatorInstalled
-                    ? "Active"
-                    : "Disabled"} />
+                    ? 'Active'
+                    : 'Disabled'} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="Operator Version" secondary={operatorVersion} />
@@ -819,8 +819,8 @@ handleNATSClick = () => {
               <List>
                 <ListItem>
                   <ListItemText primary="MeshSync State" secondary={meshSyncInstalled
-                    ? "Active"
-                    : "Disabled"} />
+                    ? 'Active'
+                    : 'Disabled'} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
@@ -888,7 +888,7 @@ handleNATSClick = () => {
                       id="k8sfile"
                       type="file"
                       value={k8sfileElementVal}
-                      onChange={this.handleChange("k8sfile")}
+                      onChange={this.handleChange('k8sfile')}
                       className={classes.fileInputStyle}
                     />
                     <TextField
@@ -898,11 +898,11 @@ handleNATSClick = () => {
                       label="Upload kubeconfig"
                       variant="outlined"
                       fullWidth
-                      value={k8sfile.replace("C:\\fakepath\\", "")}
-                      onClick={() => document.querySelector("#k8sfile").click()}
+                      value={k8sfile.replace('C:\\fakepath\\', '')}
+                      onClick={() => document.querySelector('#k8sfile').click()}
                       margin="normal"
-                      InputProps={{ readOnly : true,
-                        endAdornment : (
+                      InputProps={{ readOnly: true,
+                        endAdornment: (
                           <InputAdornment position="end">
                             <CloudUploadIcon />
                           </InputAdornment>
@@ -919,15 +919,15 @@ handleNATSClick = () => {
                     margin="normal"
                     variant="outlined"
                     // disabled={inClusterConfigForm === true}
-                    onChange={this.handleChange("contextNameForForm")}
+                    onChange={this.handleChange('contextNameForForm')}
                   >
                     {contextsFromFile &&
                       contextsFromFile.map((ct) => (
                         <MenuItem key={`ct_---_${ct.contextName}`} value={ct.contextName}>
                           {ct.contextName}
                           {ct.currentContext
-                            ? " (default)"
-                            : ""}
+                            ? ' (default)'
+                            : ''}
                         </MenuItem>
                       ))}
                   </TextField>
@@ -996,12 +996,12 @@ handleNATSClick = () => {
   }
 }
 
-MeshConfigComponent.propTypes = { classes : PropTypes.object.isRequired, };
+MeshConfigComponent.propTypes = { classes: PropTypes.object.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({ updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch), });
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get("k8sConfig").toJS();
+  const k8sconfig = state.get('k8sConfig').toJS();
   return k8sconfig;
 };
 
