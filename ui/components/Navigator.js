@@ -963,7 +963,9 @@ class Navigator extends React.Component {
     const { path, showHelperButton } = this.state;
     this.updateCategoriesMenus();
     let classname;
-    if (isDrawerCollapsed) {
+    if (other.open == false) {
+      classname = classes.isHidden
+    } else if (isDrawerCollapsed) {
       classname = classes.collapseButtonWrapperRotated;
     } else {
       classname = classes.collapseButtonWrapper;
