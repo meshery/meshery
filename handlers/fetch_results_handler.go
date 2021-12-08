@@ -149,3 +149,27 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 	}
 	_, _ = w.Write(bdr)
 }
+
+// FetchSingleSmiResultHandler gets the result of single smi conformance test
+func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+	w.Header().Set("content-type", "application/json")
+	err := req.ParseForm()
+	if err != nil {
+		logrus.Error(ErrParseForm(err))
+		http.Error(w, ErrParseForm(err).Error(), http.StatusForbidden)
+	}
+	q := req.Form
+	id := mux.Vars(req)["id"]
+	key := uuid.FromStringOrNil(id)
+	if key == uuid.Nil {
+		logrus.Error(ErrQueryGet("key"))
+		http.Error(w, "please provide a valid result id", http.StatusBadRequest)
+		return
+	}
+	bdr, err := p.FetchSmiResult(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), key)
+	if err != nil {
+		logrus.Error(ErrFetchSMIResults(err))
+		http.Error(w, ErrFetchSMIResults(err).Error(), http.StatusInternalServerError)
+	}
+	_, _ = w.Write(bdr)
+}

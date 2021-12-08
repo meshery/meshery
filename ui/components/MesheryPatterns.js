@@ -20,6 +20,7 @@ import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
+import FILE_OPS from "../utils/configurationFileHandlersEnum"
 import { updateProgress } from "../lib/store";
 import { trueRandom } from "../lib/trueRandom";
 import PatternForm from "./configuratorComponents/patternConfigurator";
@@ -155,7 +156,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name, "update")}
+            onClick={() => onSubmit(yaml, pattern.id, pattern.name, FILE_OPS.UPDATE)}
           >
             <SaveIcon />
           </IconButton>
@@ -164,7 +165,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name, "delete")}
+            onClick={() => onSubmit(yaml, pattern.id, pattern.name,)}
           >
             <DeleteIcon />
           </IconButton>
@@ -266,6 +267,9 @@ function MesheryPatterns({
    */
   useEffect(() => {
     fetchPatterns(page, pageSize, search, sortOrder);
+    document.body.style.overflowX = "hidden"
+
+    return (() => document.body.style.overflowX = "auto")
   }, []);
 
   const handleDeploy = (pattern_file) => {
@@ -345,8 +349,8 @@ function MesheryPatterns({
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({ showProgress : true });
-    if (type === "delete") {
+    updateProgress({ showProgress : true })
+    if (type === FILE_OPS.DELETE) {
       dataFetch(
         `/api/pattern/${id}`,
         {
@@ -363,7 +367,7 @@ function MesheryPatterns({
       );
     }
 
-    if (type === "update") {
+    if (type === FILE_OPS.UPDATE) {
       dataFetch(
         `/api/pattern`,
         {
@@ -380,13 +384,13 @@ function MesheryPatterns({
       );
     }
 
-    if (type === "upload" || type === "urlupload") {
+    if (type === FILE_OPS.FILE_UPLOAD || type=== FILE_OPS.URL_UPLOAD) {
       let body;
-      if (type === "upload") {
-        body = JSON.stringify({ pattern_data : { pattern_file : data }, save : true });
+      if (type === FILE_OPS.FILE_UPLOAD) {
+        body = JSON.stringify({  pattern_data : { pattern_file : data }, save : true })
       }
-      if (type === "urlupload") {
-        body = JSON.stringify({ url : data, save : true });
+      if (type === FILE_OPS.URL_UPLOAD) {
+        body = JSON.stringify({ url : data, save : true })
       }
       dataFetch(
         `/api/pattern`,
@@ -416,14 +420,14 @@ function MesheryPatterns({
         event.target.result,
         "",
         file?.name || "meshery_" + Math.floor(trueRandom() * 100),
-        "upload",
+        FILE_OPS.URL_UPLOAD,
       );
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.URL_UPLOAD);
     // console.log(link, "valid");
   }
   const columns = [

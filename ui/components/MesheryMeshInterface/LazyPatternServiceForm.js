@@ -9,7 +9,11 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./PatternServiceForm";
-import { getPatternServiceName as getItemName, getPatternServiceID as getItemID, getPatternServiceType } from "./helpers";
+import { getPatternServiceName as getItemName,
+  getPatternServiceID as getItemID,
+  getPatternServiceType,
+  getHumanReadablePatternServiceName as getReadableItemName
+} from "./helpers";
 import { isEmptyObj } from "../../utils/utils";
 
 const useStyles = makeStyles((theme) => ({
@@ -105,7 +109,7 @@ export default function LazyPatternServiceForm(props) {
     <div className={classes.root}>
       <Accordion elevation={0} expanded={expanded} onChange={() => expand(!expanded)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>{getItemName(props?.schemaSet?.workload)}</Typography>
+          <Typography className={classes.heading}>{getReadableItemName(props?.schemaSet?.workload)}</Typography>
         </AccordionSummary>
         <LazyAccordionDetails expanded={expanded}>
           {isEmptyObj(schemaSet) ? <CircularProgress /> : <PatternServiceForm {...props}
@@ -120,6 +124,7 @@ export default function LazyPatternServiceForm(props) {
 function LazyAccordionDetails(props) {
   if (!props.expanded) return <AccordionDetails />;
 
-  // LEE: This behavior is more like what we need - https://codesandbox.io/s/upbeat-tesla-uchsb?file=/src/MyAccordion.js
-  return <AccordionDetails style={{ maxHeight : "75vh", overflow : "auto",scrollbarWidth : "none" }}>{props.children}</AccordionDetails>;
+  // @ts-ignore // LEE: This behavior is more like what we need - https://codesandbox.io/s/upbeat-tesla-uchsb?file=/src/MyAccordion.js
+  return <AccordionDetails>{props.children}</AccordionDetails>
 }
+

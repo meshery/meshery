@@ -3,7 +3,7 @@ package perf
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -45,13 +45,13 @@ var resultCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Example: `
 // List Test results (maximum 25 results)	
-mesheryctl perf result saturday profile 
+mesheryctl perf result saturday-profile 
 
 // View other set of performance results with --page (maximum 25 results)
-mesheryctl perf result saturday profile --page 2
+mesheryctl perf result saturday-profile --page 2 
 
 // View single performance result with detailed information
-mesheryctl perf result saturday profile --view
+mesheryctl perf result saturday-profile --view 
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
@@ -173,7 +173,7 @@ func fetchPerformanceProfileResults(url string) ([][]string, []resultStruct, []b
 		return nil, nil, nil, ErrFailReqStatus(resp.StatusCode)
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
 	}

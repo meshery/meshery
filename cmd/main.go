@@ -13,6 +13,7 @@ import (
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/internal/graphql"
+	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
@@ -72,7 +73,8 @@ func main() {
 	viper.SetDefault("OS", "meshery")
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
-	viper.SetDefault("SKIP_COMP_GEN", "FALSE")
+	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
+	viper.SetDefault("SKIP_COMP_GEN", false)
 	store.Initialize()
 
 	// Register local OAM traits and workloads
@@ -264,5 +266,14 @@ func main() {
 	<-c
 	logrus.Info("Doing seeded content cleanup...")
 	lProv.CleanupSeeded(seededUUIDs)
+
+	// only uninstalls meshery-operator using helm charts
+	// useful for dev deployments
+	logrus.Info("Uninstalling meshery-operator...")
+	err = model.Initialize(&kubeclient, true, adapterTracker)
+	if err != nil {
+		log.Error(err)
+	}
+
 	logrus.Info("Shutting down Meshery")
 }

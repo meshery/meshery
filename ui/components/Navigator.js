@@ -151,6 +151,7 @@ const styles = (theme) => ({
   },
   collapseButtonWrapper : {
     position : "fixed",
+    cursor: "pointer",
     bottom : "12%",
     left : "235px",
     zIndex : "1400",
@@ -163,6 +164,7 @@ const styles = (theme) => ({
   },
   collapseButtonWrapperRotated : {
     position : "fixed",
+    cursor: "pointer",
     bottom : "12%",
     left : "45px",
     zIndex : "1400",
@@ -991,7 +993,7 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Menu = (
-      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-0.7rem" }}>
+      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-1.7rem" }}>
         {categories.map(({
           id : childId, title, icon, href, show, link, children
         }) => {
