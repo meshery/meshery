@@ -26,8 +26,9 @@
     }
   },
   "lint-staged": {
-    "*.js": [
-      "npm run lint"
+    "*.{js,jsx,ts,tsx}": [
+      "npm run lint:fix ",
+      "git add ."
     ]
   },
   "keywords": [],
