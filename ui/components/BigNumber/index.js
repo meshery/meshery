@@ -1,14 +1,7 @@
 import * as React from "react";
 import { Grid, Box, Typography, Button, CardContent, CardActions, Card } from "@mui/material/";
 
-import PropTypes from "prop-types";
-
-BigNumber.propTypes = {
-  title: PropTypes.number,
-  description: PropTypes.description,
-  buttonText: PropTypes.buttonText,
-  handleClick: PropTypes.func,
-};
+// eslint-disable-next-line react/prop-types
 export default function BigNumber({ title, description, buttonText, handleClick }) {
   return (
     <Card sx={{ minWidth: 275, p: 1 }}>
