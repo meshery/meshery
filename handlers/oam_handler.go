@@ -85,7 +85,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	msg, err := _processPattern(
-		context.WithValue(r.Context(), models.KubeClustersKey, r.URL.Query()["contexts"]),
+		r.Context(),
 		provider,
 		patternFile,
 		prefObj,
@@ -402,8 +402,8 @@ func _processPattern(
 		return mergeMsgs(sap.accumulatedMsgs), sap.err
 	}
 
-	customK8scontexts, ok := ctx.Value("CustomK8sContexts").([]models.K8sContext)
-	if ok {
+	customK8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+	if ok && len(customK8scontexts) > 0 {
 		var wg sync.WaitGroup
 		var lock sync.Mutex
 		resp := []string{}
@@ -442,6 +442,11 @@ func _processPattern(
 		}
 
 		wg.Wait()
+
+		if len(errs) == 0 {
+			return mergeMsgs(resp), nil
+		}
+
 		return mergeMsgs(resp), fmt.Errorf(mergeMsgs(errs))
 	}
 

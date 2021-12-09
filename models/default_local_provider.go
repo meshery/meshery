@@ -176,6 +176,29 @@ func (l *DefaultLocalProvider) GetK8sContext(token, id string) (K8sContext, erro
 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
 }
 
+func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
+	page := 0
+	pageSize := 25
+	results := []*K8sContext{}
+
+	for {
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "")
+		if err != nil {
+			return results, err
+		}
+
+		results = append(results, res.Contexts...)
+
+		if page*pageSize >= res.TotalCount {
+			break
+		}
+
+		page += 1
+	}
+
+	return results, nil
+}
+
 func (l *DefaultLocalProvider) SetCurrentContext(token, id string) (K8sContext, error) {
 	if err := l.MesheryK8sContextPersister.SetMesheryK8sCurrentContext(id); err != nil {
 		return K8sContext{}, err

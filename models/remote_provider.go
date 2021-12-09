@@ -14,6 +14,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -459,6 +460,29 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	}
 	logrus.Errorf("error while fetching kubernetes contexts: %s", bdr)
 	return MesheryK8sContextPage{}, fmt.Errorf("error while fetching kubernetes contexts - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
+	page := 0
+	pageSize := 25
+	results := []*K8sContext{}
+
+	for {
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "")
+		if err != nil {
+			return results, err
+		}
+
+		results = append(results, res.Contexts...)
+
+		if (page+1)*pageSize >= res.TotalCount {
+			break
+		}
+
+		page += 1
+	}
+
+	return results, nil
 }
 
 func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) {

@@ -136,16 +136,31 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]
 		k8scontexts := []models.K8sContext{}
-		for _, kctxID := range k8sContextIDs {
-			kctx, err := provider.GetK8sContext(token, kctxID)
+
+		if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
+			contexts, err := provider.LoadAllK8sContext(token)
 			if err != nil {
-				logrus.Warn("invalid context ID found")
-				continue
+				logrus.Warn("failed to load all k8scontext")
 			}
 
-			k8scontexts = append(k8scontexts, kctx)
+			for _, c := range contexts {
+				if c != nil {
+					k8scontexts = append(k8scontexts, *c)
+				}
+			}
+		} else {
+			for _, kctxID := range k8sContextIDs {
+				kctx, err := provider.GetK8sContext(token, kctxID)
+				if err != nil {
+					logrus.Warn("invalid context ID found")
+					continue
+				}
+
+				k8scontexts = append(k8scontexts, kctx)
+			}
 		}
-		ctx = context.WithValue(ctx, "CustomK8sContexts", k8scontexts)
+
+		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
 
 		req1 := req.WithContext(ctx)
 

@@ -232,6 +232,7 @@ type Provider interface {
 	GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error)
 	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, id string) (K8sContext, error)
+	LoadAllK8sContext(token string) ([]*K8sContext, error)
 	SetCurrentContext(token, id string) (K8sContext, error)
 	GetCurrentContext(token string) (K8sContext, error)
 

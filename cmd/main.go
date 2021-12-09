@@ -147,7 +147,7 @@ func main() {
 	dbHandler, err := database.New(database.Options{
 		Filename: fmt.Sprintf("file:%s/mesherydb.sql?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
-		// Logger:   log,
+		Logger:   log,
 	})
 	if err != nil {
 		logrus.Fatal(err)
