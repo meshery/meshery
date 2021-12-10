@@ -1144,7 +1144,7 @@ class Navigator extends React.Component {
     )
     const Version = (
       <ListItem style={{
-        position : "sticky",paddingLeft : 0, paddingRight : 0, color : "#eeeeee", fontSize : "0.75rem", }}>
+        position : "sticky",paddingLeft : 0, paddingRight : 0, color : "#eeeeee", fontSize : "0.75rem", cursor : "pointer" }}>
         {isDrawerCollapsed
           ? <div style = {{ textAlign : "center" , width : "100%" }}>
             {this.state.versionDetail.build}
