@@ -196,6 +196,7 @@ type ComplexityRoot struct {
 		ListenToDataPlaneState    func(childComplexity int, filter *model.ServiceMeshFilter) int
 		ListenToMeshSyncEvents    func(childComplexity int) int
 		ListenToOperatorState     func(childComplexity int) int
+		SubscribeBrokerConnection func(childComplexity int) int
 		SubscribePerfProfile      func(childComplexity int, profileID string) int
 	}
 }
@@ -227,6 +228,7 @@ type SubscriptionResolver interface {
 	ListenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error)
 	ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error)
 	SubscribePerfProfile(ctx context.Context, profileID string) (<-chan *model.MesheryResult, error)
+	SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error)
 }
 
 type executableSchema struct {
@@ -1002,6 +1004,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.ListenToOperatorState(childComplexity), true
 
+	case "Subscription.subscribeBrokerConnection":
+		if e.complexity.Subscription.SubscribeBrokerConnection == nil {
+			break
+		}
+
+		return e.complexity.Subscription.SubscribeBrokerConnection(childComplexity), true
+
 	case "Subscription.subscribePerfProfile":
 		if e.complexity.Subscription.SubscribePerfProfile == nil {
 			break
@@ -1506,6 +1515,9 @@ type Subscription {
 
 	# Listen to changes in Performance Profile
 	subscribePerfProfile(profileID: String!): MesheryResult!
+
+	# Listen to changes in Broker (NATS) Connection
+	subscribeBrokerConnection: Boolean!
 
 }
 `, BuiltIn: false},
@@ -5394,6 +5406,51 @@ func (ec *executionContext) _Subscription_subscribePerfProfile(ctx context.Conte
 	}
 }
 
+func (ec *executionContext) _Subscription_subscribeBrokerConnection(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().SubscribeBrokerConnection(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan bool)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNBoolean2bool(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7579,6 +7636,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_listenToMeshSyncEvents(ctx, fields[0])
 	case "subscribePerfProfile":
 		return ec._Subscription_subscribePerfProfile(ctx, fields[0])
+	case "subscribeBrokerConnection":
+		return ec._Subscription_subscribeBrokerConnection(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
