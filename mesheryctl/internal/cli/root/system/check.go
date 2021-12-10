@@ -278,7 +278,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 		// else we're supposed to grab the error
 		return fmt.Errorf("ctlK8sClient1000: !! Your %s context is configured to run Meshery on Kubernetes using the %s token.\n"+
 			"The Kubernetes cluster is not accessible. Please confirm that your cluster is available and that the token is valid.\n"+
-			"See https://docs.meshery.io/installation/quick-start for additional instructions.", hc.mctlCfg.CurrentContext, hc.context.Token)
+			"See https://docs.meshery.io/installation/quick-start for additional instructions", hc.mctlCfg.CurrentContext, hc.context.Token)
 	}
 
 	if hc.Options.PrintLogs { // print logs if we're supposed to
