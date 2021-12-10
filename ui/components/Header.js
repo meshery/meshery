@@ -16,6 +16,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
+import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
+
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faHome } from '@fortawesome/free-solid-svg-icons';
 
@@ -69,18 +71,24 @@ class Header extends React.Component {
     super(props);
     this.state = {
       meshSyncStatusSubscription : null,
+      brokerStatusSubscription : null,
       meshSyncStatus : {
         name : "meshsync",
         status : "DISABLED",
         version : "v0.0.0",
         error : null,
       },
+      brokerStatus : false,
     }
   }
   componentDidMount(){
     this._isMounted = true;
     const meshSyncStatusSub = subscribeMeshSyncStatusEvents(data => this.setState({ meshSyncStatus : data?.listenToMeshSyncEvents }));
-    this.setState({ meshSyncStatusSubscription : meshSyncStatusSub })
+    const brokerStatusSub = subscribeBrokerStatusEvents(data => {
+      console.log({ brokerData : data })
+      this.setState({ brokerStatus : data?.subscribeBrokerConnection })
+    });
+    this.setState({ meshSyncStatusSubscription : meshSyncStatusSub, brokerStatusSubscription : brokerStatusSub })
   }
 
   componentWillUnmount = () => {
@@ -169,7 +177,11 @@ class Header extends React.Component {
                   </div>
 
                   <Tooltip title="MeshSync Status">
-                    <div style={{ height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.meshSyncStatus.status === "ENABLED" ? "green" : "red" }} />
+                    <div style={{ padding : "1rem", height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.meshSyncStatus.status === "ENABLED" ? "green" : "red" }} />
+                  </Tooltip>
+
+                  <Tooltip title="Broker Status">
+                    <div style={{ padding : "1rem", height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.brokerStatus ? "green" : "red" }} />
                   </Tooltip>
 
                   <span className={classes.userSpan}>
