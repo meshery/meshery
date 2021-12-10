@@ -363,7 +363,7 @@ const categories = [
       {
         id : "Profiles",
         icon :
-          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24 }} />,
+          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize : 24 }} />,
         href : "/performance/profiles",
         title : "Profiles",
         show : true,
@@ -963,13 +963,12 @@ class Navigator extends React.Component {
     const { path, showHelperButton } = this.state;
     this.updateCategoriesMenus();
     let classname;
-    if (other.open == false) {
-      classname = classes.isHidden
-    } else if (isDrawerCollapsed) {
+    if (isDrawerCollapsed) {
       classname = classes.collapseButtonWrapperRotated;
     } else {
       classname = classes.collapseButtonWrapper;
     }
+
     const Title = (
       <ListItem
         component="a"
@@ -1170,16 +1169,19 @@ class Navigator extends React.Component {
     )
     return (
       <NoSsr>
+        { (!("open" in other) || other.open) &&
         <div className={classname}>
           <FontAwesomeIcon
             icon={faChevronCircleLeft}
             fixedWidth
             color="#e7e7e7"
             size="2x"
+            visi
             alt="Sidebar collapse toggle icon"
             onClick={this.toggleMiniDrawer}
           />
         </div>
+        }
         <Drawer
           variant="permanent"
           {...other}
