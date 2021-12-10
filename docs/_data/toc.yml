@@ -6,7 +6,7 @@
   links:
     - title: Community
       url: project/community
-    - title: Contributing
+    - title: Contributing ↆ
       url: project/contributing
       children:
         - title: Design and Code Conventions
@@ -137,7 +137,7 @@
     - title: "REST & GraphQL APIs"
       url: extensibility/api
     - title: "UI Plugins"
-      url: extensibility/ui      
+      url: extensibility/ui
 - title: 📖 Reference
   url: reference
   links:
