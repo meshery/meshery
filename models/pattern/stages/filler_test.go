@@ -80,7 +80,7 @@ services:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Filler(tt.args.data, tt.args.err, tt.args.next)
+			Filler(true)(tt.args.data, tt.args.err, tt.args.next)
 		})
 	}
 }

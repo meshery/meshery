@@ -129,15 +129,6 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1015": {
-        "name": "ErrParseOAMConfigCode",
-        "code": "1015",
-        "severity": "Alert",
-        "long_description": "Could not generate application configuration from given json",
-        "short_description": "error parsing the configuration",
-        "probable_cause": "Invalid OAM config passed in MeshOps request",
-        "suggested_remediation": "Confirm that the request has valid OAM config"
-      },
       "1016": {
         "name": "ErrProcessOAMCode",
         "code": "1016",

@@ -2,7 +2,6 @@
 layout: default
 title: "GraphQL API Reference"
 permalink: reference/graphql-apis
-redirect_from: reference/graphql-apis/
 type: Reference
 abstract: 'Meshery GraphQL API Documentation and Reference'
 ---
@@ -243,6 +242,12 @@ Listen to changes in the list of available Namesapces in your cluster.
 Listen to changes in status of Meshery Operator in your cluster.
 
 ###### **Returns** [`OperatorStatus!`](#operatorstatus).
+
+### `Subscription.subscribeBrokerConnection`
+
+Listen to changes in Broker (NATS) Connection.
+
+###### **Returns** [`Boolean!`](#boolean).
 
 ### `Subscription.subscribePerfProfile`
 
