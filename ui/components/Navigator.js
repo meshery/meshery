@@ -363,7 +363,7 @@ const categories = [
       {
         id : "Profiles",
         icon :
-          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24 }} />,
+          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize : 24 }} />,
         href : "/performance/profiles",
         title : "Profiles",
         show : true,
@@ -968,6 +968,7 @@ class Navigator extends React.Component {
     } else {
       classname = classes.collapseButtonWrapper;
     }
+
     const Title = (
       <ListItem
         component="a"
@@ -1168,6 +1169,7 @@ class Navigator extends React.Component {
     )
     return (
       <NoSsr>
+        { (!("open" in other) || other.open) &&
         <div className={classname}>
           <FontAwesomeIcon
             icon={faChevronCircleLeft}
@@ -1178,6 +1180,7 @@ class Navigator extends React.Component {
             onClick={this.toggleMiniDrawer}
           />
         </div>
+        }
         <Drawer
           variant="permanent"
           {...other}
