@@ -86,7 +86,7 @@ mesheryctl perf apply Istio Performance Test
 You can also use flags to configure your performance test. For example:
 
 ```
-mesheryctl perf apply --profile istio-soak-test --concurrent-requests 1 --duration 15s --load-generator nighthawk --mesh istio --url http://localhost:2323
+mesheryctl perf apply istio-soak-test --concurrent-requests 1 --duration 15s --load-generator nighthawk --mesh istio --url http://localhost:2323
 ```
 
 mesheryctl also supports test configurations written in SMP compatible format as shown below:

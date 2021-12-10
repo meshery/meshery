@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -525,6 +526,58 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching smi results: %s", bdr)
+	return nil, ErrFetch(err, "SMI Result", resp.StatusCode)
+}
+
+// FetchSmiResult - fetches single result from provider backend with given id
+func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistSMIResult) {
+		logrus.Error("operation not available")
+		return []byte{}, ErrInvalidCapability("PersistSMIResult", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResult)
+
+	logrus.Infof("attempting to fetch smi result from cloud for id: %s", resultID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, resultID.String()))
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("page_size", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed smi result url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "SMI Result", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "SMI Result")
+	}
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("result successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching smi result: %s", bdr)
 	return nil, ErrFetch(err, "SMI Result", resp.StatusCode)
 }
 

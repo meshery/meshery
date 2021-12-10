@@ -233,7 +233,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 			}
 		}
 		prefObj.K8SConfig = kc
-		if viper.Get("SKIP_COMP_GEN") != "TRUE" {
+		if !viper.GetBool("SKIP_COMP_GEN") {
 			ctxID := "0" // To be replaced after multi-context support
 			go func(l logger.Handler, config []byte, ctx string) {
 				err := registerK8sComponents(h.log, prefObj.K8SConfig.Config, ctxID)

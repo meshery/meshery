@@ -1326,15 +1326,6 @@
         "probable_cause": "Sample content does not exist.\\nContent file format not supported.\\nUser doesn't have permission to read sample content.\\nContent file corrupt.",
         "suggested_remediation": "Try restarting Meshery.\\nTry fetching content again."
       },
-      "2154": {
-        "name": "ErrGetK8sComponentsCode",
-        "code": "2154",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Could not get K8s components for registration",
-        "probable_cause": "Invalid kubeconfig\nFilters passed incorrectly in config\nCould not fetch API resources from Kubernetes server",
-        "suggested_remediation": "Make sure that the configuration filters passed are in accordance with output from /openapi/v2"
-      },
       "2156": {
         "name": "ErrCreatePatternServiceCode",
         "code": "2156",

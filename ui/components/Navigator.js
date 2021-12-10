@@ -151,6 +151,7 @@ const styles = (theme) => ({
   },
   collapseButtonWrapper : {
     position : "fixed",
+    cursor : "pointer",
     bottom : "12%",
     left : "235px",
     zIndex : "1400",
@@ -163,6 +164,7 @@ const styles = (theme) => ({
   },
   collapseButtonWrapperRotated : {
     position : "fixed",
+    cursor : "pointer",
     bottom : "12%",
     left : "45px",
     zIndex : "1400",
@@ -361,7 +363,7 @@ const categories = [
       {
         id : "Profiles",
         icon :
-          <FontAwesomeIcon icon={faDigitalTachograph} transform="shrink-2" style={{ verticalAlign : "top" }} />,
+          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24 }} />,
         href : "/performance/profiles",
         title : "Profiles",
         show : true,
@@ -991,7 +993,7 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Menu = (
-      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-0.7rem" }}>
+      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-1.7rem" }}>
         {categories.map(({
           id : childId, title, icon, href, show, link, children
         }) => {

@@ -3,6 +3,7 @@ layout: page
 title: Documentación en Español 🇲🇽
 permalink: es
 display-title: "false"
+language: es
 ---
 
 {% assign sorted_pages = site.pages | where: "language", "es" | sort: "name" | alphabetical %}
@@ -17,13 +18,11 @@ display-title: "false"
     </p>
 </div>
 
-
-
 <div class = "wrapper">
 
   <!-- Contribuir Inicio-->
   <!-- QUICK START -->
-  
+
   <div>
     <a href="{{ site.baseurl }}/es/installation">
       <div class="overview">Inicio&nbsp;Rápido</div>
@@ -85,7 +84,7 @@ display-title: "false"
         {% endif %}
       {% endfor %}
       {% for adapter in site.adapters %}
-        {% if adapter.project_status and adapter.language =="es" %}
+        {% if adapter.project_status %}
           <li><img src="{{ adapter.image }}" style="width:20px" /> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
         {% endif -%}
       {% endfor %}
@@ -110,7 +109,7 @@ display-title: "false"
     <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Referencia</a></h6>
     <ul>
       {% for item in sorted_pages %}
-        {% if item.type=="Reference" and item.list!="exclude"  %}
+        {% if item.type=="Reference" and item.list!="exclude" %}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
         {% endif %}
       {% endfor %}
@@ -118,8 +117,3 @@ display-title: "false"
   </div>
 
 </div>
-
-
-  
-
-
