@@ -6,16 +6,16 @@ import { bindActionCreators } from "redux";
 import { updateLoadTestData } from "../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import MesheryPerformanceComponent from "./MesheryPerformance";
-import dataFetch from "../lib/data-fetch"
+import dataFetch from "../lib/data-fetch";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCore";
 import environment from "../lib/relayEnvironment";
-import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
+import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-function Extension({ grafana, updateLoadTestData, url }) {
+function Extension({ grafana, prometheus, updateLoadTestData, url }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
 
   if (loading) {
@@ -34,6 +34,7 @@ function Extension({ grafana, updateLoadTestData, url }) {
         PatternServiceForm,
         PatternServiceFormCore,
         grafana,
+        prometheus,
         MesheryPerformanceComponent,
         dataFetch,
         environment,
@@ -42,7 +43,7 @@ function Extension({ grafana, updateLoadTestData, url }) {
           mutation : {},
           subscription : {
             subscribeMeshSyncStatusEvents,
-          }
+          },
         },
       }}
     />
@@ -51,9 +52,10 @@ function Extension({ grafana, updateLoadTestData, url }) {
 
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
-  return { grafana };
+  const prometheus = st.get("prometheus").toJS();
+  return { grafana, prometheus };
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreators(updateLoadTestData, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreators(updateLoadTestData, dispatch) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Extension);
