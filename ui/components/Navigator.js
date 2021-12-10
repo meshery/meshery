@@ -1176,7 +1176,6 @@ class Navigator extends React.Component {
             fixedWidth
             color="#e7e7e7"
             size="2x"
-            visi
             alt="Sidebar collapse toggle icon"
             onClick={this.toggleMiniDrawer}
           />
