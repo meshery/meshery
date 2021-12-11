@@ -19,11 +19,10 @@ export const getStyles = (theme) => ({
   appBarOnDrawerOpen: {
     padding: theme.spacing(1.4),
     backgroundColor: "#396679",
-    zIndex: theme.zIndex.drawer + 1,
     [theme.breakpoints.between(635, undefined)]: { padding: theme.spacing(0.75, 1.4) },
     [theme.breakpoints.between(600, undefined)]: { padding: theme.spacing(0.4, 1.4) },
   },
-  appBarOnDrawerClosed: { padding: theme.spacing(1.4), backgroundColor: "#396679", zIndex: theme.zIndex.drawer + 1 },
+  appBarOnDrawerClosed: { padding: theme.spacing(1.4), backgroundColor: "#396679" },
   toolbarOnDrawerClosed: { minHeight: 59, paddingLeft: 24, paddingRight: 24 },
   toolbarOnDrawerOpen: {
     minHeight: 58,

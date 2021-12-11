@@ -21,12 +21,23 @@ import { useStyles } from "./Navbar.styles";
 import { getPath } from "@/utils/path";
 import Link from "next/link";
 import { externlinks } from "./constants";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCollapse }) => {
+const Navbar = ({
+  isDrawerCollapsed,
+  extensionsNavigator,
+  categories,
+  onDrawerCollapse,
+  isDrawerOpen,
+  setIsDrawerOpen,
+}) => {
   const classes = useStyles();
   const [hoveredId, setHoveredId] = useState(null);
   const [openItems, setOpenItems] = useState([]);
   const [showHelperButton, setShowHelperButton] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   let classname;
   if (isDrawerCollapsed) {
@@ -354,7 +365,9 @@ const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCo
   return (
     <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}>
       <Drawer
-        variant="permanent"
+        variant={isMobile ? "temporary" : "permanent"}
+        open={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
         className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
         classes={{ paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded }}
         style={{ width: "inherit" }}
