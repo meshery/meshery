@@ -77,6 +77,7 @@ mesheryctl perf result -o yaml
 func init() {
 	PerfCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "(required) Path to meshery auth config")
 	PerfCmd.PersistentFlags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
+	PerfCmd.PersistentFlags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 
 	availableSubcommands = []*cobra.Command{profileCmd, resultCmd, applyCmd}
 	PerfCmd.AddCommand(availableSubcommands...)

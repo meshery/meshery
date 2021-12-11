@@ -1,0 +1,183 @@
+# This workflow will be called/referenced in each of the adapters and runs in the context of adapter
+name: Adapter Integration - Core
+
+on:
+  workflow_call:
+    inputs:
+      expected_pods:
+        required: true
+        type: string
+      expected_pods_namespaces:
+        required: true
+        type: string
+      service_url:
+        required: true
+        type: string
+      deployment_url:
+        required: true
+        type: string
+      adapter_name:
+        required: true
+        type: string   
+      patternfile_name:
+        required: true
+        type: string   
+      provider: #default to local
+        required: false
+        type: string   
+    secrets:
+      token:
+        required: true
+
+jobs:
+  TestAdapter:
+    runs-on: ubuntu-latest
+    steps:  
+      - name: Setting up minikube
+        uses: manusa/actions-setup-minikube@v2.4.1
+        with:
+          minikube version: 'v1.23.2'
+          kubernetes version: 'v1.20.7'
+          driver: docker
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+
+      # Build the image by setting appropriate environmental variables in order to access the image from minikube
+      - name: Build the tagged Docker image
+        run: |
+          eval $(minikube -p minikube docker-env) 
+          docker build  -t test:test .
+
+      # Setup meshery config.yaml and auth.json
+      - name: Setup meshery config and infinite token for use
+        env:
+          provider_token: ${{ secrets.token }}
+        run: |
+            echo $provider_token 
+            mkdir ~/.meshery
+            config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
+            echo $config > ~/.meshery/config.yaml	
+            cat ~/.meshery/config.yaml
+            echo "Using provider: ${{ inputs.provider }}"
+            if  [ "${{ inputs.provider }}" = "Meshery" ] && [ "$provider_token" != "" ] ;then
+              echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$provider_token'"' > ~/.meshery/auth.json
+            else
+              echo '{ "meshery-provider": "None", "token": "" }'  > ~/.meshery/auth.json
+            fi
+            cat ~/.meshery/auth.json
+
+        
+      # Start meshery server (Assuming that this step will create the meshery namespace)
+      - name: Start meshery server using mesheryctl
+        run: |
+           curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
+           sleep 20s
+      
+      # Start the adapter using yamls
+      - name: Start adapter 
+        run: |
+          touch testimagedep.yaml
+          curl ${{ inputs.deployment_url }} > ./testimagedep.yaml
+          yq e -i '.spec.template.spec.containers[0].image="test:test"' ./testimagedep.yaml 
+          yq e -i '.spec.template.spec.containers[0].imagePullPolicy="Never"' ./testimagedep.yaml 
+          cat testimagedep.yaml
+          kubectl apply -f testimagedep.yaml --namespace=meshery
+          kubectl apply -f ${{ inputs.service_url }} --namespace=meshery
+      
+      # Start tunnelling to allocate external IP to LoadBalancer type service(meshery)(SO that we can access meshery from outside)
+      - name: Start tunelling
+        run: minikube tunnel &> /dev/null &
+      - name: wait 10 sec
+        run: sleep 10s
+
+      # Checking meshery server logs
+      - name: Check meshery pod logs
+        run: |
+          podName=$(kubectl get pods -o wide -n meshery | sed -n 2p | tr -s ' ' | cut -d " " -f 1)
+          kubectl logs pod/$podName -n meshery
+
+      # If external IP has not been allotted then server is unreachable, exit here in that case
+      - name: Check if meshery has been allotted external IP
+        run: |
+              svcstatus=$(kubectl get svc  -n meshery| grep meshery | tr -s ' ' | cut -d " " -f 4)
+              echo $svcstatus
+              if [ "$svcstatus" = "<pending>" ];then
+                 exit 1
+              fi
+
+      # Reset meshery's address to the external IP in config.yaml such that mesheryctl can reach it
+      - name: Reset meshery address
+        run: |
+          kubectl get svc -n meshery 
+          svcip="http://$(kubectl get svc -n meshery | grep "meshery " | tr -s ' ' | cut -d " " -f 3):9081"
+          echo "this is $svcip"
+          config='{"contexts":{"local":{"endpoint":'$svcip',"token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
+          echo $config  > ~/.meshery/config.yaml
+
+
+      - name: Download patternfile
+        uses: actions/download-artifact@v2
+        with:
+          name: patternfile
+      # This pattern will try to install  service mesh
+      - name: Pattern apply (Install service mesh)
+        run: |
+            mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
+
+      # Wait for sometime to get some logs
+      - name: Sleep for 30 sec
+        run: sleep 30s
+   
+      - name: Check adapter logs
+        run: |
+            podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
+            kubectl logs pod/$podname -n meshery
+      - name: Check meshery logs
+        run: |
+          podName=$(kubectl get pods -o wide -n meshery | sed -n 2p | tr -s ' ' | cut -d " " -f 1)
+          kubectl logs pod/$podName -n meshery
+
+      - name: Whole status for debugging
+        run: kubectl get all -A
+        # Check if all  pods are in a Running state
+      - name: Check if all expected pods have started
+        run: |
+          SECONDS=0
+          exitstatus=0
+          end=$((SECONDS+300))
+          podnames="${{ inputs.expected_pods }}"
+          nsnames="${{ inputs.expected_pods_namespaces}}"
+          set -f                      
+          pods=(${podnames//,/ })
+          ns=(${nsnames//,/ })
+          breakout=1
+
+          
+          while [ $SECONDS -lt $end ]; do
+              for i in "${!pods[@]}"
+              do
+                  podstatus=$(kubectl get pods  -n  ${ns[i]} | grep ${pods[i]} | tr -s ' ' | cut -d " " -f 3)
+                  if [ "$podstatus" != "Running" ];then
+                    breakout=0
+                  fi
+              done
+              if [ $breakout -eq 1 ];then
+                break
+              fi
+              breakout=1
+          done
+
+
+          for i in "${!pods[@]}"
+          do
+            podstatus=$(kubectl get pods  -n  ${ns[i]} | grep ${pods[i]} | tr -s ' ' | cut -d " " -f 3)
+            if [ "$podstatus" = "Running" ];then
+              echo "Pod ${pods[i]} started in namespace  ${ns[i]}"
+            else
+              echo "Pod ${pods[i]} did not start in namespace ${ns[i]} "
+              exitstatus=1
+            fi
+          done
+
+          exit $exitstatus
