@@ -20,6 +20,7 @@ import (
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 	provider := r.URL.Query().Get("provider")
 	for _, p := range h.config.Providers {
+		redirectUrl := "/user/login"
 		if provider == p.Name() {
 			http.SetCookie(w, &http.Cookie{
 				Name:     h.config.ProviderCookieName,
@@ -28,7 +29,12 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 				Path:     "/",
 				HttpOnly: true,
 			})
-			http.Redirect(w, r, "/", http.StatusFound)
+
+			if provider == "None" {
+				redirectUrl = "/"
+			}
+
+			http.Redirect(w, r, redirectUrl, http.StatusFound)
 			return
 		}
 	}
