@@ -51,7 +51,7 @@ const customMessages = [
   "Yikes. Things are a mesh here."
 ];
 
-function CustomErrorMessage({ errorMessage }){
+function CustomErrorMessage(){
   const classes = styles();
   const [customMessage, setCustomMessage] = useState(customMessages[0]);
 
@@ -70,7 +70,7 @@ function CustomErrorMessage({ errorMessage }){
           </Typography>
           <Typography variant="h5">
             <div className={classes.errMessage}>
-              {errorMessage}
+            Page does not exist.
             </div>
           </Typography>
         </div>
