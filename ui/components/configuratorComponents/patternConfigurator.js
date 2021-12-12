@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
 function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPattern }) {
   const { workloadTraitSet, meshWorkloads } = useContext(SchemaContext);
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState(workloadTraitSet);
-  const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
+  const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson());
   const [yaml, setYaml] = useState(pattern.pattern_file);
   const [selectedMeshType, setSelectedMeshType] = useState("core");
   const [selectedVersionMesh, setSelectedVersionMesh] = useState();
@@ -144,6 +144,11 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
     }
   }, [activeCR])
 
+  useEffect(() => {
+    const patternJson = jsYaml.load(yaml)
+    patternJson.name = patternName
+    setYaml(jsYaml.dump(patternJson))
+  }, [patternName])
 
   function groupWlByVersion() {
     const mfw = meshWorkloads[selectedMeshType];
@@ -154,7 +159,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   function getPatternJson() {
     const patternString = pattern.pattern_file;
     // @ts-ignore
-    return jsYaml.load(patternString).services;
+    return jsYaml.load(patternString).services || {};
   }
 
   function getPatternKey(cfg) {
@@ -226,7 +231,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 
   const handleCodeEditorYamlChange = (cfg) => {
     const deployConfig = {};
-    deployConfig.name = pattern.name;
+    deployConfig.name = patternName;
     deployConfig.services = cfg;
     const deployConfigYaml = jsYaml.dump(deployConfig);
     setYaml(deployConfigYaml);
@@ -513,6 +518,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
       <CustomBreadCrumb
         title={pattern.name}
         onBack={() => setSelectedPattern(resetSelectedPattern())}
+        titleChangeHandler={setPatternName}
       />
     </>
   );

@@ -17,8 +17,8 @@ const useStyles = makeStyles(() => ({
     marginTop : "1.1rem",
     padding : "0px 2px"
   },
-  formWrapper: {
-    width: "100%"
+  formWrapper : {
+    width : "100%"
   }
 }));
 
