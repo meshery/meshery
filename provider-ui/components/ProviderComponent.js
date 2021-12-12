@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { NoSsr, Typography, Button, ButtonGroup, Tooltip } from "@material-ui/core";
+import { NoSsr, Typography, Button, ButtonGroup, Tooltip, CircularProgress } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import MuiDialogContent from "@material-ui/core/DialogContent";
@@ -75,6 +75,10 @@ const styles = (theme) => ({
     display: "flex",
     flex: "auto"
   },
+  circularProgress: {
+    color: "white",
+    marginRight: 8
+  }
 });
 
 const DialogTitle = withStyles(styles)((props) => {
@@ -111,6 +115,7 @@ class ProviderComponent extends React.Component {
       selectedProvider: "",
       open: false,
       modalOpen: false,
+      isLoading: false
     };
     this.anchorRef = null;
   }
@@ -144,8 +149,10 @@ class ProviderComponent extends React.Component {
     this.loadProvidersFromServer();
   };
 
-  handleMenuItemClick = (index) => {
-    this.setState({ selectedProvider: index, open: false });
+  handleMenuItemClick = (e, provider) => {
+    e.preventDefault()
+    this.setState({ selectedProvider: provider, open: false, isLoading: true });
+    window.location.href = `/api/provider?provider=${encodeURIComponent(provider)}`;
   };
 
   handleToggle() {
@@ -181,8 +188,9 @@ class ProviderComponent extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { availableProviders, selectedProvider, open, modalOpen } = this.state;
+    const { availableProviders, selectedProvider, open, modalOpen, isLoading } = this.state;
     const self = this;
+
     return (
       <NoSsr>
         <div data-cy="root" className={classes.root}>
@@ -265,6 +273,7 @@ class ProviderComponent extends React.Component {
                       aria-haspopup="menu"
                       onClick={self.handleToggle()}
                     >
+                      {isLoading && <CircularProgress size={20} className={classes.circularProgress} />}
                       {selectedProvider !== "" ? selectedProvider : "Select Your Provider"}
                       <ArrowDropDownIcon />
                     </Button>
@@ -281,11 +290,8 @@ class ProviderComponent extends React.Component {
                           <ClickAwayListener onClickAway={self.handleClose()}>
                             <MenuList id="split-button-menu">
                               {Object.keys(availableProviders).map((key) => (
-                                <MenuItem key={key} onClick={() => self.handleMenuItemClick(key)}>
-                                  <a href={`/api/provider?provider=${encodeURIComponent(key)}`}
-                                    className={classes.providerLinkRef} >
-                                    {key}
-                                  </a>
+                                <MenuItem key={key} onClick={(e) => self.handleMenuItemClick(e, key)}>
+                                  {key}
                                 </MenuItem>
                               ))}
                               <Divider className={classes.providerDivider} />
