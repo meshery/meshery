@@ -69,12 +69,6 @@ const styles = (theme) => ({
     display: "flex",
     justifyContent: "space-between",
   },
-  providerLinkRef: {
-    textDecoration: "none",
-    color: "black",
-    display: "flex",
-    flex: "auto"
-  },
   circularProgress: {
     color: "white",
     marginRight: 8
