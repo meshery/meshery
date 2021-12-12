@@ -92,6 +92,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   const [activeForm, setActiveForm] = useState();
   const [viewType, setViewType] = useState("list");
   const [activeCR, setActiveCR] = useState({});
+  const [patternName, setPatternName] = useState(pattern.name)
   const classes = useStyles();
   const reference = useRef({});
 
@@ -201,9 +202,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   const handleSettingsChange = (schemaSet) => () => {
     const config = createPatternFromConfig({
       [getPatternServiceName(schemaSet)] : {
-        // @ts-ignore
         settings : reference.current?.getSettings(),
-        // @ts-ignore
         traits : reference.current?.getTraits()
       }
     }, "default", true);
