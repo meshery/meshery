@@ -398,10 +398,7 @@ function MesheryPatterns({
         body = JSON.stringify({ url : data, save : true })
       }
       if (type === FILE_OPS.GH_IMPORT) {
-        body = JSON.stringify({
-          url : "https://raw.github.com/owner/repo/branch",
-          save : false
-        })
+        body = JSON.stringify({ url : data, })
       }
       dataFetch(
         `/api/pattern`,

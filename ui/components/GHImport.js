@@ -1,12 +1,9 @@
 import React from 'react'
-import { Tooltip, IconButton, TextField, Button, Grid, Typography } from '@material-ui/core';
+import { Tooltip, IconButton, TextField, Button, Grid } from '@material-ui/core';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
 import GitHubIcon from '@material-ui/icons/GitHub';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import { URLValidator } from '../utils/URLValidator';
 
 const getMuiTheme = () => createTheme({
@@ -49,7 +46,8 @@ const styles = makeStyles((theme) => ({
     minWidth : 120,
   },
   ghGroups : {
-    padding : theme.spacing(0, 13, 0)
+    padding : theme.spacing(0, 5, 0),
+    display : 'flex'
   },
   optionImport : {
     textAlign : 'center'
@@ -63,6 +61,14 @@ const GHImport = ({ onSubmit }) => {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState('');
+  const [owner, setOwner] = React.useState('');
+  const [path, setPath] = React.useState('');
+  const [repository, setRepository] = React.useState('');
+  const [branch, setBranch] = React.useState('');
+  const recursive = false;
+  const finalURL = `https://github.com/${owner}/${repository}/${branch}/`;
+
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -77,7 +83,7 @@ const GHImport = ({ onSubmit }) => {
     console.log(input + ' is not valid a valid repository')
   }
   const handleSubmit = () => {
-    validURL(input) ? onSubmit(input) : handleError(input);
+    validURL(input) ? onSubmit(finalURL) : handleError(input);
     handleClose()
   }
 
@@ -108,32 +114,20 @@ const GHImport = ({ onSubmit }) => {
                   </Grid>
                   <div className={classes.ghGroups}>
                     <FormControl className={classes.formControl}>
-                      <InputLabel htmlFor="grouped-native-select">Repository</InputLabel>
-                      <Select defaultValue="" id="grouped-select">
-                        <MenuItem value="">
-                          <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={1}>service-mesh-patterns</MenuItem>
-                        <MenuItem value={2}>image-hub</MenuItem>
-                      </Select>
+                      <TextField id="outlined-basic" label="Github Id" variant="outlined" onChange={(e) => setOwner(e.target.value)} />
                     </FormControl>
                     <FormControl className={classes.formControl}>
-                      <InputLabel htmlFor="grouped-select">Branch</InputLabel>
-                      <Select defaultValue="" id="grouped-select">
-                        <MenuItem value="">
-                          <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={1}>master</MenuItem>
-                        <MenuItem value={2}>main</MenuItem>
-                      </Select>
+                      <TextField id="outlined-basic" label="Path" variant="outlined"  onChange={() => setPath(`${path}/${ recursive ? '**' : ''}`)}/>
                     </FormControl>
                   </div>
-                  <Grid
-                    item xs={12}
-                    className={classes.optionImport}
-                  >
-                    <Typography align="center">OR</Typography>
-                  </Grid>
+                  <div className={classes.ghGroups}>
+                    <FormControl className={classes.formControl}>
+                      <TextField id="outlined-basic" label="Repository" variant="outlined" onChange={(e) => setRepository(e.target.value)} />
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <TextField id="outlined-basic" label="Branch" variant="outlined" onChange={(e) => setBranch(e.target.value)} />
+                    </FormControl>
+                  </div>
                   <Grid
                     item xs={12}>
                     <TextField id="standard-basic" label="Paste URL here" fullWidth onChange={(e) => setInput(e.target.value)} />
