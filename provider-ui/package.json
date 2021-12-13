@@ -38,7 +38,7 @@
     "eslint": "^7.32.0",
     "eslint-config-next": "^11.1.2",
     "eslint-plugin-cypress": "^2.12.1",
-    "eslint-plugin-react": "^7.27.0",
+    "eslint-plugin-react": "^7.27.1",
     "http-proxy": "^1.18.1",
     "nodemon": "^2.0.15",
     "nyc": "^15.1.0",
