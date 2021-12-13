@@ -259,6 +259,17 @@ func (h *Handler) GetMesheryPatternsHandler(
 		return
 	}
 
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
+		return
+	}
+	mc := newContentModifier(token, provider, prefObj, user.UserID)
+	//acts like a middleware, modifying the bytes lazily just before sending them back
+	err = mc.addMetadataForPatterns(r.Context(), &resp)
+	if err != nil {
+		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
+	}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }

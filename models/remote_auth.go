@@ -9,12 +9,11 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/big"
 	"net/http"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 )
@@ -130,7 +129,7 @@ func (l *RemoteProvider) UpdateJWKs() error {
 		return ErrJWKsKeys(err)
 	}
 	defer SafeClose(resp.Body)
-	jsonDataFromHTTP, err := ioutil.ReadAll(resp.Body)
+	jsonDataFromHTTP, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return ErrDataRead(err, "Response Body")
 	}

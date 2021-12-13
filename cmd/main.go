@@ -80,6 +80,8 @@ func main() {
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
 
+	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
+	viper.SetDefault("SKIP_COMP_GEN", false)
 	store.Initialize()
 
 	// Register local OAM traits and workloads
@@ -271,5 +273,14 @@ func main() {
 	<-c
 	logrus.Info("Doing seeded content cleanup...")
 	lProv.CleanupSeeded(seededUUIDs)
+
+	// only uninstalls meshery-operator using helm charts
+	// useful for dev deployments
+	// logrus.Info("Uninstalling meshery-operator...")
+	// err = model.Initialize(&kubeclient, true, adapterTracker)
+	// if err != nil {
+	// 	log.Error(err)
+	// }
+
 	logrus.Info("Shutting down Meshery")
 }

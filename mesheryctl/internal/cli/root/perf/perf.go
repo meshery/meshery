@@ -40,13 +40,17 @@ var PerfCmd = &cobra.Command{
 	Long:  `Performance Management & Benchmarking`,
 	Example: `
 // Run performance test
-mesheryctl perf apply --profile test --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"
+mesheryctl perf apply --profile test --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
 	
 // List performance profiles
-mesheryctl perf profile
+mesheryctl perf profile sam-test
 
 // List performance results
-mesheryctl perf result
+mesheryctl perf result sam-test
+
+// Display Perf profile in JSON or YAML
+mesheryctl perf result -o json
+mesheryctl perf result -o yaml
 	`,
 	Args: cobra.MinimumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -73,6 +77,7 @@ mesheryctl perf result
 func init() {
 	PerfCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "(required) Path to meshery auth config")
 	PerfCmd.PersistentFlags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
+	PerfCmd.PersistentFlags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 
 	availableSubcommands = []*cobra.Command{profileCmd, resultCmd, applyCmd}
 	PerfCmd.AddCommand(availableSubcommands...)

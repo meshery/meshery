@@ -2,7 +2,6 @@ package system
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -100,7 +99,7 @@ func TestTokenCreateCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/token/" + tt.ExpectedResponseYaml
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -191,7 +190,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/token/" + tt.ExpectedResponseYaml
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -290,7 +289,7 @@ func TestTokenSetCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/token/" + tt.ExpectedResponseYaml
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}

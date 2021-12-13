@@ -10,7 +10,6 @@ import Grow from '@material-ui/core/Grow';
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import NoSsr from "@material-ui/core/NoSsr";
-import Avatar from "@material-ui/core/Avatar";
 import RemoveIcon from "@material-ui/icons/Remove";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
@@ -27,10 +26,10 @@ import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg'
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
-
+import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import { faChevronCircleLeft,
   faExternalLinkAlt,
-  faDigitalTachograph, } from "@fortawesome/free-solid-svg-icons";
+  faDigitalTachograph } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
 import { updatepagetitle, updatebetabadge } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
@@ -86,7 +85,6 @@ const styles = (theme) => ({
     marginLeft : theme.spacing(0.5),
     marginTop : theme.spacing(1),
     width : 170,
-    height : "100%",
     borderRadius : "unset",
   },
   mainLogoCollapsed : {
@@ -101,7 +99,6 @@ const styles = (theme) => ({
     marginLeft : theme.spacing(1),
     marginTop : theme.spacing(1),
     width : 170,
-    height : "100%",
     borderRadius : "unset",
   },
   settingsIcon : { marginLeft : theme.spacing(2), },
@@ -153,25 +150,27 @@ const styles = (theme) => ({
     marginBottom : "0.5rem",
   },
   collapseButtonWrapper : {
+    position : "fixed",
+    cursor : "pointer",
+    bottom : "12%",
+    left : "235px",
+    zIndex : "1400",
     width : "auto",
-    marginLeft : "auto",
-    opacity : "0.7",
-    transition : "opacity 200ms linear",
+    transition : "left 195ms",
     "&:hover" : { opacity : 1,
       background : "transparent", },
     "&:focus" : { opacity : 1,
       background : "transparent", },
   },
   collapseButtonWrapperRotated : {
+    position : "fixed",
+    cursor : "pointer",
+    bottom : "12%",
+    left : "45px",
+    zIndex : "1400",
     width : "auto",
-    marginLeft : "auto",
-    marginRight : theme.spacing(1),
-    opacity : "0.7",
-    transition : "opacity 200ms linear",
+    transition : "left 225ms",
     transform : "rotate(180deg)",
-    justifyContent : "center",
-    alignSelf : "baseline",
-    marginLeft : "3px",
     "&:hover" : { opacity : 1,
       background : "transparent", },
     "&:focus" : { opacity : 1,
@@ -214,7 +213,7 @@ const styles = (theme) => ({
   rightTranslate : { transform : 'translateX(0.5px)' }
 });
 
-const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.21rem" };
+const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
 const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
 const categories = [
@@ -449,10 +448,36 @@ class Navigator extends React.Component {
       capabilities : [],
       openItems : [],
       hoveredId : null,
+      versionDetail : {
+        build : "",
+        latest : "",
+        outdated : false,
+        commitsha : "",
+        release_channel : "NA",
+      },
     };
   }
 
   componentDidMount() {
+    dataFetch(
+      "/api/system/version",
+      { credentials : "same-origin",
+        method : "GET",
+        credentials : "include", },
+      (result) => {
+        if (typeof result !== "undefined") {
+          this.setState({ versionDetail : result });
+        } else {
+          this.setState({ versionDetail : {
+            build : "Unknown",
+            latest : "Unknown",
+            outdated : false,
+            commitsha : "Unknown",
+          }, });
+        }
+      },
+      (err) => console.error(err)
+    );
     dataFetch(
       "/api/provider/capabilities",
       { credentials : "same-origin",
@@ -631,6 +656,13 @@ class Navigator extends React.Component {
     return st;
   }
 
+  /**
+   * @param {String} category
+   *
+   * Format and return the meshadapters
+   *
+   * @returns {Array<{id : Number, icon : JSX.Element, href : String, title : String, link : Boolean, show : Boolean}>} children
+   */
   fetchChildren(category) {
     const { meshAdapters } = this.state;
     const children = [];
@@ -654,6 +686,11 @@ class Navigator extends React.Component {
     return children;
   }
 
+  /**
+   * @param {String} aName
+   *
+   * @returns {JSX.Element} image to display
+   */
   pickIcon(aName) {
     aName = aName.toLowerCase();
     const { classes } = this.props;
@@ -666,15 +703,24 @@ class Navigator extends React.Component {
     return logoIcon;
   }
 
-  handleTitleClick = () => {
+  /**
+   * Changes the route to "/"
+   */
+  handleTitleClick() {
     this.props.router.push("/");
-  };
+  }
 
-  handleAdapterClick = (id, link) => {
+  /**
+   * @param {number} id
+   * @param {Boolean link
+   *
+   * Changes the route to "/management"
+   */
+  handleAdapterClick(id, link) {
     if (id != -1 && !link) {
       this.props.router.push("/management");
     }
-  };
+  }
 
   toggleMiniDrawer = (open = null) => {
     const { onCollapseDrawer } = this.props;
@@ -687,7 +733,19 @@ class Navigator extends React.Component {
 
   }
 
-  toggleItemCollapse = (id) => {
+  toggleSpacing = () => {
+    const { showHelperButton } = this.state;
+    this.setState({ showHelperButton : !showHelperButton });
+
+  }
+
+  /**
+   * @param {number} id
+   *
+   * Removes id from openitems if present
+   * Adds id in openitems if not present already
+   */
+  toggleItemCollapse(id) {
     const activeItems = [...this.state.openItems];
     if (this.state.openItems.includes(id)) {
       this.setState({ openItems : activeItems.filter(item => item !== id) })
@@ -697,6 +755,15 @@ class Navigator extends React.Component {
     }
   }
 
+  /**
+   * @param {String} idname
+   * @param {Array<{id : Number, icon : JSX.Element, href : String, title : String, link : Boolean, show : Boolean}>} children
+   * @param {Number} depth
+   *
+   * Renders children of the menu
+   *
+   * @returns {JSX.Element}
+   */
   renderChildren(idname, children, depth) {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
@@ -776,6 +843,15 @@ class Navigator extends React.Component {
     return "";
   }
 
+  /**
+   * @param {JSX.Element} iconc
+   * @param {String} titlec
+   * @param {String} hrefc
+   * @param {Boolean} linkc
+   * @param {Boolean} drawerCollapsed
+   *
+   * @return {JSX.Element} content
+   */
   linkContent(iconc, titlec, hrefc, linkc, drawerCollapsed) {
     const { classes } = this.props;
 
@@ -806,6 +882,82 @@ class Navigator extends React.Component {
     return linkContent;
   }
 
+  /**
+   * getMesheryVersionText returs a well formatted version text
+   *
+   * If the meshery is running latest version then and is using "edge" channel
+   * then it will just show "edge-latest". However, if the meshery is on edge and
+   * is running an outdated version then it will return "edge-$version".
+   *
+   * If on stable channel, then it will always show "stable-$version"
+   */
+  getMesheryVersionText() {
+    const { build, outdated, release_channel } = this.state.versionDetail;
+
+    // If the version is outdated then no matter what the
+    // release channel is, specify the build
+    if (outdated) return `${release_channel}-${build}`;
+
+    if (release_channel === "edge") return `${release_channel}-latest`;
+    if (release_channel === "stable") return `${release_channel}-${build}`;
+
+    return `${build}`;
+  }
+
+  /**
+   * versionUpdateMsg returns the appropriate message
+   * based on the meshery's current running version and latest available
+   * version.
+   *
+   * @returns {React.ReactNode} react component to display
+   */
+  versionUpdateMsg() {
+    const { outdated, latest } = this.state.versionDetail;
+
+    if (outdated)
+      return (
+        <span style = {{ marginLeft : '15px' }}>
+          {"Update available "}
+          <Link href={`https://docs.meshery.io/project/releases/${latest}`}>
+            <Tooltip
+              title={`Newer version of Meshery available: ${latest}`}
+              placement="right">
+              <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
+            </Tooltip>
+          </Link>
+        </span>
+      );
+
+    return (
+      <span style = {{ marginLeft : '15px' }}>
+        Running latest
+      </span>
+    )
+  }
+
+  /**
+   * openReleaseNotesInNew returns the appropriate link to the release note
+   * based on the meshery's current running channel and version.
+   *
+   * @returns {React.ReactNode} react component to display
+   */
+  openReleaseNotesInNew() {
+    const { release_channel, build } = this.state.versionDetail;
+
+    if (release_channel === "edge")
+      return (
+        <Link href="https://docs.meshery.io/project/releases" target="_blank">
+          <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
+        </Link>
+      );
+
+    return (
+      <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
+        <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
+      </Link>
+    );
+  }
+
   render() {
     const { classes, isDrawerCollapsed, ...other } = this.props;
     const { path, showHelperButton } = this.state;
@@ -816,8 +968,216 @@ class Navigator extends React.Component {
     } else {
       classname = classes.collapseButtonWrapper;
     }
+    const Title = (
+      <ListItem
+        component="a"
+        onClick={this.handleTitleClick}
+        className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
+      >
+        <img
+          className={isDrawerCollapsed
+            ? classes.mainLogoCollapsed
+            : classes.mainLogo}
+          src="/static/img/meshery-logo.png"
+          onClick={this.handleTitleClick}
+        />
+        <img
+          className={isDrawerCollapsed
+            ? classes.mainLogoTextCollapsed
+            : classes.mainLogoText}
+          src="/static/img/meshery-logo-text.png"
+          onClick={this.handleTitleClick}
+        />
+
+        {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
+      </ListItem>
+    )
+    const Menu = (
+      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-1.7rem" }}>
+        {categories.map(({
+          id : childId, title, icon, href, show, link, children
+        }) => {
+          if (typeof show !== "undefined" && !show) {
+            return "";
+          }
+          return (
+            <React.Fragment key={childId}>
+              <ListItem
+                button={!!link}
+                dense
+                key={childId}
+                className={classNames(
+                  classes.item,
+                  link
+                    ? classes.itemActionable
+                    : '',
+                  path === href && classes.itemActiveItem
+                )}
+                onClick={() => this.toggleItemCollapse(childId)}
+                onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
+                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }): null}
+              >
+                <Link href={link
+                  ? href
+                  : ""}>
+                  <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
+                    <Tooltip
+                      title={childId}
+                      placement="right"
+                      disableFocusListener={!isDrawerCollapsed}
+                      disableHoverListener={!isDrawerCollapsed}
+                      disableTouchListener={!isDrawerCollapsed}
+                    >
+                      { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
+                        <ExpandMoreIcon
+                          onClick={() => this.toggleItemCollapse(childId)}
+                          className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "0.4rem" }}
+                        /> :
+                        <ListItemIcon className={classes.listIcon}>
+                          {icon}
+                        </ListItemIcon>
+                      }
+                    </Tooltip>
+                    <ListItemText
+                      className={isDrawerCollapsed
+                        ? classes.isHidden
+                        : classes.isDisplayed}
+                      classes={{ primary : classes.itemPrimary, }}
+                    >
+                      {title}
+                    </ListItemText>
+                  </div>
+                </Link>
+                <ExpandMoreIcon
+                  onClick={() => this.toggleItemCollapse(childId)}
+                  className={classNames(classes.expandMoreIcon, { [classes.collapsed] : this.state.openItems.includes(childId) })}
+                  style={isDrawerCollapsed || !children
+                    ? { opacity : 0 }
+                    : {}}
+                />
+              </ListItem>
+              <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679", opacity : "100%" }}>
+                {this.renderChildren(childId, children, 1)}
+              </Collapse>
+            </React.Fragment>
+          );
+        })}
+        {this.state.navigator && this.state.navigator.length
+          ? (
+            <React.Fragment>
+              <Divider className={classes.divider} />
+              {this.renderNavigatorExtensions(this.state.navigator, 1)}
+            </React.Fragment>
+          )
+          : null}
+        <Divider className={classes.divider} />
+      </List>
+    )
+    const HelpIcons = (
+      <ButtonGroup
+        size="large"
+        className={!isDrawerCollapsed
+          ? classes.marginLeft
+          : classes.btnGrpMarginRight}
+        orientation={isDrawerCollapsed
+          ? "vertical"
+          : "horizontal"}
+      >
+        {externlinks.map(({
+          id, icon, title, href
+        }, index) => {
+          return (
+            <ListItem
+              key={id}
+              className={classes.item}
+              style={isDrawerCollapsed && !showHelperButton
+                ? { display : 'none' }
+                : {}}
+            >
+              <Grow
+                in={showHelperButton || !isDrawerCollapsed }
+                timeout={{ enter : (600 - index * 200), exit : 100 * index }}
+              >
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={classNames(classes.link, isDrawerCollapsed
+                    ? classes.extraPadding
+                    : "")}>
+                  <Tooltip
+                    title={title}
+                    placement={isDrawerCollapsed
+                      ? "right"
+                      : "top"}
+                  >
+                    <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>{icon}</ListItemIcon>
+                  </Tooltip>
+                </a>
+              </Grow>
+            </ListItem>
+          );
+        })}
+        <ListItem
+          className={classes.rightMargin}
+          style={!isDrawerCollapsed
+            ? { display : 'none' }
+            : { marginLeft : '4px' }}
+        >
+          <Tooltip
+            title="Help"
+            placement={isDrawerCollapsed
+              ? "right"
+              : "top"}
+          >
+            <IconButton className={isDrawerCollapsed
+              ? classes.collapsedHelpButton
+              : classes.rightTranslate} onClick={this.toggleSpacing}>
+              <HelpIcon
+                className={classes.helpIcon}
+                style={{ fontSize : '1.45rem', }}
+              />
+            </IconButton>
+          </Tooltip>
+        </ListItem>
+      </ButtonGroup>
+    )
+    const Version = (
+      <ListItem style={{
+        position : "sticky",paddingLeft : 0, paddingRight : 0, color : "#eeeeee", fontSize : "0.75rem", }}>
+        {isDrawerCollapsed
+          ? <div style = {{ textAlign : "center" , width : "100%" }}>
+            {this.state.versionDetail.build}
+          </div>
+          :
+          <Grow
+            in={!isDrawerCollapsed }
+            timeout={{ enter : (800), exit : 100 }}
+            style = {{ textAlign : "center" , width : "100%" }}
+          >
+            <span>
+              {this.getMesheryVersionText()} {'  '}
+              {this.openReleaseNotesInNew()}
+              {this.versionUpdateMsg()}
+
+            </span>
+          </Grow>
+
+        }
+      </ListItem>
+    )
     return (
       <NoSsr>
+        <div className={classname}>
+          <FontAwesomeIcon
+            icon={faChevronCircleLeft}
+            fixedWidth
+            color="#e7e7e7"
+            size="2x"
+            alt="Sidebar collapse toggle icon"
+            onClick={this.toggleMiniDrawer}
+          />
+        </div>
         <Drawer
           variant="permanent"
           {...other}
@@ -829,186 +1189,11 @@ class Navigator extends React.Component {
             : classes.sidebarExpanded, }}
           style={{ width : "inherit" }}
         >
-          <List disablePadding>
-            <ListItem
-              component="a"
-              onClick={this.handleTitleClick}
-              className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
-            >
-              <Avatar
-                className={isDrawerCollapsed
-                  ? classes.mainLogoCollapsed
-                  : classes.mainLogo}
-                src="/static/img/meshery-logo.png"
-                onClick={this.handleTitleClick}
-              />
-              <Avatar
-                className={isDrawerCollapsed
-                  ? classes.mainLogoTextCollapsed
-                  : classes.mainLogoText}
-                src="/static/img/meshery-logo-text.png"
-                onClick={this.handleTitleClick}
-              />
-
-              {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
-            </ListItem>
-            {categories.map(({
-              id : childId, title, icon, href, show, link, children
-            }) => {
-              if (typeof show !== "undefined" && !show) {
-                return "";
-              }
-              return (
-                <React.Fragment key={childId}>
-                  <ListItem
-                    button={!!link}
-                    dense
-                    key={childId}
-                    className={classNames(
-                      classes.item,
-                      link
-                        ? classes.itemActionable
-                        : '',
-                      path === href && classes.itemActiveItem
-                    )}
-                    onClick={() => this.toggleItemCollapse(childId)}
-                    onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
-                    onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }): null}
-                  >
-                    <Link href={link
-                      ? href
-                      : ""}>
-                      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
-                        <Tooltip
-                          title={childId}
-                          placement="right"
-                          disableFocusListener={!isDrawerCollapsed}
-                          disableHoverListener={!isDrawerCollapsed}
-                          disableTouchListener={!isDrawerCollapsed}
-                        >
-                          { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
-                            <ExpandMoreIcon
-                              onClick={() => this.toggleItemCollapse(childId)}
-                              className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "0.4rem" }}
-                            /> :
-                            <ListItemIcon className={classes.listIcon}>
-                              {icon}
-                            </ListItemIcon>
-                          }
-                        </Tooltip>
-                        <ListItemText
-                          className={isDrawerCollapsed
-                            ? classes.isHidden
-                            : classes.isDisplayed}
-                          classes={{ primary : classes.itemPrimary, }}
-                        >
-                          {title}
-                        </ListItemText>
-                      </div>
-                    </Link>
-                    <ExpandMoreIcon
-                      onClick={() => this.toggleItemCollapse(childId)}
-                      className={classNames(classes.expandMoreIcon, { [classes.collapsed] : this.state.openItems.includes(childId) })}
-                      style={isDrawerCollapsed || !children
-                        ? { opacity : 0 }
-                        : {}}
-                    />
-                  </ListItem>
-                  <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679", opacity : "100%" }}>
-                    {this.renderChildren(childId, children, 1)}
-                  </Collapse>
-                </React.Fragment>
-              );
-            })}
-            {this.state.navigator && this.state.navigator.length
-              ? (
-                <React.Fragment>
-                  <Divider className={classes.divider} />
-                  {this.renderNavigatorExtensions(this.state.navigator, 1)}
-                </React.Fragment>
-              )
-              : null}
-            <Divider className={classes.divider} />
-
-          </List>
+          {Title}
+          {Menu}
           <div className={classes.fixedSidebarFooter}>
-
-            <ButtonGroup
-              size="large"
-              className={!isDrawerCollapsed
-                ? classes.marginLeft
-                : classes.btnGrpMarginRight}
-              orientation={isDrawerCollapsed
-                ? "vertical"
-                : "horizontal"}
-            >
-              {externlinks.map(({
-                id, icon, title, href
-              }, index) => {
-                return (
-                  <ListItem
-                    key={id}
-                    className={classes.item}
-                    style={isDrawerCollapsed && !showHelperButton
-                      ? { display : 'none' }
-                      : {}}
-                  >
-                    <Grow
-                      in={showHelperButton}
-                      timeout={{ enter : (600 - index * 200), exit : 100 * index }}
-                    >
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={classNames(classes.link, isDrawerCollapsed
-                          ? classes.extraPadding
-                          : "")}>
-                        <Tooltip
-                          title={title}
-                          placement={isDrawerCollapsed
-                            ? "right"
-                            : "top"}
-                        >
-                          <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>{icon}</ListItemIcon>
-                        </Tooltip>
-                      </a>
-                    </Grow>
-                  </ListItem>
-                );
-              })}
-              <ListItem
-                className={classes.rightMargin}
-              >
-                <Tooltip
-                  title="Help"
-                  placement={isDrawerCollapsed
-                    ? "right"
-                    : "top"}
-                >
-                  <IconButton className={isDrawerCollapsed
-                    ? classes.collapsedHelpButton
-                    : classes.rightTranslate} onClick={() => this.toggleSpacing()}>
-                    <HelpIcon
-                      className={classes.helpIcon}
-                      style={{ fontSize : '1.45rem', }}
-                    />
-                  </IconButton>
-                </Tooltip>
-              </ListItem>
-            </ButtonGroup>
-
-            <ListItem button className={classname} onClick={() => this.toggleMiniDrawer()}  style={{
-              position : "sticky", zIndex : "1", bottom : "0", right : "0"
-            }}>
-              <FontAwesomeIcon
-                icon={faChevronCircleLeft}
-                fixedWidth
-                color="#eeeeee"
-                size="lg"
-                alt="Sidebar collapse toggle icon"
-              />
-            </ListItem>
+            {HelpIcons}
+            {Version}
           </div>
         </Drawer>
       </NoSsr>

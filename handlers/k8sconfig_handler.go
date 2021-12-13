@@ -4,6 +4,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
@@ -12,6 +13,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/gofrs/uuid"
+
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
@@ -145,7 +147,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	defer func() {
 		_ = k8sfile.Close()
 	}()
-	k8sConfigBytes, err = ioutil.ReadAll(k8sfile)
+	k8sConfigBytes, err = io.ReadAll(k8sfile)
 	if err != nil {
 		logrus.Error(ErrReadConfig(err))
 		http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
@@ -258,6 +260,22 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 				_, _ = prov.SetCurrentContext(token, cc.ID) // Ignore the error
 			}
 
+			// Generate Kube Config
+			if !viper.GetBool("SKIP_COMP_GEN") {
+				ctxID := cc.ID
+				cfg, err := cc.GenerateKubeConfig()
+				if err != nil {
+					return cc, nil
+				}
+
+				go func(l logger.Handler, config []byte, ctx string) {
+					err := registerK8sComponents(h.log, config, ctxID)
+					if err != nil {
+						logrus.Error(err)
+					}
+				}(h.log, cfg, ctxID)
+			}
+
 			return cc, nil
 		}
 
@@ -277,16 +295,22 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 			}
 
 			if ctx.IsCurrentContext {
-				_, _ = prov.SetCurrentContext(token, cc.ID) // Ignore the error
+				_, _ = prov.SetCurrentContext(token, ctx.ID) // Ignore the error
 
-				// [UTKARSH] TODO: FIX WHAT YOU HAVE MESSED UP
-				ctxID := "0" // To be replaced after multi-context support
-				go func(l logger.Handler, config []byte, ctx string) {
-					err := registerK8sComponents(h.log, config, ctxID)
+				if !viper.GetBool("SKIP_COMP_GEN") {
+					ctxID := cc.ID
+					cfg, err := cc.GenerateKubeConfig()
 					if err != nil {
-						logrus.Error(err)
+						return &ctx, nil
 					}
-				}(h.log, []byte{}, ctxID)
+
+					go func(l logger.Handler, config []byte, ctx string) {
+						err := registerK8sComponents(h.log, config, ctxID)
+						if err != nil {
+							logrus.Error(err)
+						}
+					}(h.log, cfg, ctxID)
+				}
 
 				return &ctx, nil
 			}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -248,7 +248,8 @@ func GetWorkloadsByK8sAPIVersionKind(apiVersion, kind string) (w []WorkloadCapab
 	wcs := GetWorkloads()
 
 	for _, wc := range wcs {
-		if wc.OAMDefinition.Spec.Metadata["k8sAPIVersion"] == apiVersion && wc.OAMDefinition.Spec.Metadata["k8sKind"] == kind {
+		aversion := wc.OAMDefinition.Spec.Metadata["k8sAPIVersion"]
+		if (aversion == apiVersion || aversion == "/"+apiVersion) && wc.OAMDefinition.Spec.Metadata["k8sKind"] == kind {
 			w = append(w, wc)
 		}
 	}
@@ -265,7 +266,8 @@ func GetTraitsByK8sAPIVersionKind(apiVersion, kind string) (t []TraitCapability)
 	tcs := GetTraits()
 
 	for _, tc := range tcs {
-		if tc.OAMDefinition.Spec.Metadata["k8sAPIVersion"] == apiVersion && tc.OAMDefinition.Spec.Metadata["k8sKind"] == kind {
+		aversion := tc.OAMDefinition.Spec.Metadata["k8sAPIVersion"]
+		if (aversion == apiVersion || aversion == "/"+apiVersion) && tc.OAMDefinition.Spec.Metadata["k8sKind"] == kind {
 			t = append(t, tc)
 		}
 	}
@@ -282,7 +284,8 @@ func GetScopesByK8sAPIVersionKind(apiVersion, kind string) (s []ScopeCapability)
 	scs := GetScopes()
 
 	for _, sc := range scs {
-		if sc.OAMDefinition.Spec.Metadata["k8sAPIVersion"] == apiVersion && sc.OAMDefinition.Spec.Metadata["k8sKind"] == kind {
+		aversion := sc.OAMDefinition.Spec.Metadata["k8sAPIVersion"]
+		if (aversion == apiVersion || aversion == "/"+apiVersion) && sc.OAMDefinition.Spec.Metadata["k8sKind"] == kind {
 			s = append(s, sc)
 		}
 	}
@@ -360,7 +363,7 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 
 		// Read the file definition file
 		defpath := fmt.Sprintf("%s_definition.json", path)
-		defFile, err := ioutil.ReadFile(defpath)
+		defFile, err := os.ReadFile(defpath)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue
@@ -375,7 +378,7 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 
 		// Read the schema file
 		schemapath := fmt.Sprintf("%s.meshery.layer5.io.schema.json", path)
-		schemaFile, err := ioutil.ReadFile(schemapath)
+		schemaFile, err := os.ReadFile(schemapath)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue

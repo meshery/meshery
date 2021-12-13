@@ -2,7 +2,9 @@ package resolver
 
 import (
 	"context"
+	"time"
 
+	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
@@ -12,7 +14,14 @@ import (
 )
 
 var (
-	meshsyncYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
+	MeshSyncSubscriptionError = model.Error{
+		Description: "Failed to get MeshSync data",
+		Code:        ErrMeshsyncSubscriptionCode,
+	}
+	MeshSyncMesheryClientMissingError = model.Error{
+		Code:        ErrMeshsyncSubscriptionCode,
+		Description: "Cannot find Meshery Client",
+	}
 )
 
 func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.Provider) (<-chan *model.OperatorControllerStatus, error) {
@@ -20,17 +29,67 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 	if r.brokerChannel == nil {
 		r.brokerChannel = make(chan *broker.Message)
 	}
+	prevStatus := r.getMeshSyncStatus(ctx)
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("Initializing MeshSync subscription")
+
 		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.controlPlaneSyncChannel, r.meshsyncLivenessChannel, r.Broadcast)
 
 		// signal to install operator when initialized
 		r.MeshSyncChannel <- struct{}{}
 		// extension to notify other channel when data comes in
+		for {
+			status := r.getMeshSyncStatus(ctx)
+
+			ch <- &status
+			if status != prevStatus {
+				prevStatus = status
+			}
+
+			time.Sleep(10 * time.Second)
+		}
 	}(channel)
 
 	return channel, nil
+}
+
+func (r *Resolver) getMeshSyncStatus(ctx context.Context) model.OperatorControllerStatus {
+	var status model.OperatorControllerStatus
+
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok {
+		r.Log.Error(ErrNilClient)
+		return model.OperatorControllerStatus{
+			Name:    "",
+			Version: "",
+			Status:  model.StatusDisabled,
+			Error:   &MeshSyncMesheryClientMissingError,
+		}
+	}
+
+	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
+	if err != nil {
+		return model.OperatorControllerStatus{
+			Name:    "",
+			Version: "",
+			Status:  model.StatusDisabled,
+			Error:   &MeshSyncMesheryClientMissingError,
+		}
+	}
+
+	status, err = model.GetMeshSyncInfo(mesheryclient, r.meshsyncLivenessChannel)
+
+	if err != nil {
+		return model.OperatorControllerStatus{
+			Name:    "",
+			Version: "",
+			Status:  model.StatusDisabled,
+			Error:   &MeshSyncSubscriptionError,
+		}
+	}
+
+	return status
 }
 
 func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions) (model.Status, error) {
@@ -119,28 +178,12 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 }
 
 func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider) (model.Status, error) {
-	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok {
-		return model.StatusProcessing, ErrMesheryClient(nil)
-	}
-
-	err := model.RunMeshSync(kubeclient, false)
-	r.Log.Info("Installing Meshsync")
+	//err := model.RunMeshSync(r.Config.KubeClient, false)
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
 		Source: broadcast.OperatorSyncChannel,
 		Data:   true,
 		Type:   "health",
 	})
-
-	if err != nil {
-		r.Log.Error(err)
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data:   err,
-			Type:   "error",
-		})
-		return model.StatusDisabled, err
-	}
 
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
 		Source: broadcast.OperatorSyncChannel,

@@ -80,6 +80,20 @@ func (s *SMIResultsPersister) DeleteResult(key uuid.UUID) error {
 	return s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).Delete(&SmiResultWithID{}).Error
 }
 
+func (s *SMIResultsPersister) GetResult(page, pageSize uint64, key uuid.UUID) ([]byte, error) {
+	if s.DB == nil {
+		return nil, ErrDBConnection
+	}
+	var result SmiResult
+	err := s.DB.First(&result, key).Error
+	if err != nil {
+		return nil, err
+	}
+	bd, _ := json.Marshal(result)
+
+	return bd, nil
+}
+
 func (s *SMIResultsPersister) UpdateResult(key uuid.UUID, res SmiResultWithID) error {
 	return s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).UpdateColumns(res).Error
 }
