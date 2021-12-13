@@ -79,6 +79,7 @@ const (
 	ErrCreateDirCode            = "2150"
 	ErrInvalidRequestObjectCode = "2151"
 	ErrChangeK8sContextCode     = "2152"
+	ErrSavingUserPreferenceCode = "some_code"
 )
 
 var (
@@ -321,4 +322,8 @@ func ErrInvalidRequestObject(fields ...string) error {
 
 func ErrChangeK8sContext(err error) error {
 	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
+}
+
+func ErrSavingUserPreference(err error) error {
+	return errors.New(ErrSavingUserPreferenceCode, errors.Alert, []string{"Error saving user preference."}, []string{err.Error()}, []string{"Invalid data passed", "Unable to connect with provider"}, []string{"Pass valid values for preferences", "Make sure provider supports saving user preferences", "Make sure you're connected with provider", "Make sure extension provides these preferences"})
 }
