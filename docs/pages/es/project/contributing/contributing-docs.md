@@ -1,36 +1,37 @@
 ---
 layout: page
 title: Contributing to Meshery Docs
-permalink: project/contributing-docs
+permalink: es/project/contributing/contributing-docs
 description: How to contribute to Meshery Docs.
-language: en
+language: es
 type: project
 category: contributing
 ---
 
-Before contributing, please review the [Documentation Contribution Flow](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). In the following steps you will set up your development environment, fork and clone the repository, run the site locally, and finally commit, sign-off, and push any changes made for review.
+Antes de contribuir, revise el [Documentation Contribution Flow](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). En los siguientes pasos, configurará su entorno de desarrollo, bifurcará y clonará el repositorio, ejecutará el sitio localmente y, finalmente, confirmará, aprobará y enviará los cambios realizados para su revisión.
 
-{% include alert.html type="info" title="Meshery Documentation Design Specification" content="See the <a href='https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit#'>Meshery Documentation Design Specification</a> which serves to provide an overview of the tooling and approach used to create Meshery’s documentation and it information architecture." %}
+{% include alert.html type="info" title="Meshery Documentation Design Specification" content="Ver el <a href='https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit#'>Especificación de diseño de documentación de Meshery </a>, que sirve para proporcionar una descripción general de las herramientas y el enfoque utilizado para crear la documentación de Meshery y la arquitectura de información de ti." %}
 
-## Documentation Framework
+## Marco de documentación
 
-Meshery documentation is made of these components:
+La documentación de Meshery se compone de estos componentes:
 
-- Framework - Jekyll
-- Theme - https://github.com/vsoch/docsy-jekyll
+- Marco de referencia - Jekyll
+- MarcoTema - https://github.com/vsoch/docsy-jekyll
 - Repo - https://github.com/layer5io/meshery/tree/master/docs
 - DNS - https://meshery.layer5.io/docs
-- AWS API GW - an instance is configured to redirect from docs.meshery.io to meshery.layer5.io, because of the repo location of where the docs currently reside.
+- AWS API GW - una instancia está configurada para redirigir de docs.meshery.io a meshery.layer5.io, debido a la ubicación del repositorio donde residen actualmente los documentos.
 
-## Set up your development environment
+## Configura tu entorno de desarrollo
 
-{% include alert.html type="info" title="Jekyll" content="The Meshery Docs site is built using Jekyll - a simple static site generator. Jekyll can be installed on different platforms like Windows, Linux, and MacOS by the following steps " %}
+{% include alert.html type="info" title="Jekyll" content="El sitio de Meshery Docs se construye con Jekyll, un generador de sitios estático simple. Jekyll se puede instalar en diferentes plataformas como Windows, Linux y MacOS siguiendo los siguientes pasos " %}
 
-### For Windows
+### Para Windows
 
-**Note:** Windows users can run Jekyll by following the [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) and also installing Ruby Version Manager [RVM](https://rvm.io). RVM is a command-line tool which allows you to work with multiple Ruby environments on your local machine. Alternatively, if you're running Windows 10 version 1903 Build 18362 or higher, you can upgrade to Windows Subsystem for Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and run Jekyll in Linux instead.
+**Note:** Los usuarios de Windows pueden ejecutar Jekyll siguiendo el [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) y también instalando Ruby Version Manager [RVM](https://rvm.io). RVM es una herramienta de línea de comandos que le permite trabajar con múltiples entornos Ruby en su máquina local. Alternativamente, si está ejecutando Windows 10 versión 1903 Build 18362 o superior, puede actualizar al Subsistema de Windows para Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) y ejecute Jekyll en Linux en su lugar.
 
-- Fire up your WSL VM and install the ruby version manager (RVM): 
+- Inicie su VM WSL e instale el administrador de versiones de ruby (RVM):
+
 ```bash
   sudo apt update
   sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
@@ -39,21 +40,24 @@ Meshery documentation is made of these components:
     	libreadline-dev libssl-dev
   sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
   curl -sSL https://get.rvm.io | sudo bash -s stable
-  sudo usermod -a -G rvm `whoami` 
+  sudo usermod -a -G rvm `whoami`
 ```
 
-  
-  If `gpg --keyserver` gives an error, you can use:
-  ```bash
-    sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-  ```
-  or
-  ```bash
-    sudo gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-  ```
-  Restart your WSL VM before moving forward.
+Si `gpg --keyserver` da un error, puede usar:
 
-- For installing Ruby, run:
+```bash
+  sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+```
+
+o
+
+```bash
+  sudo gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+```
+
+Reinicie su VM WSL antes de seguir adelante.
+
+- Para instalar Ruby, ejecute:
   ```bash
     rvm install ruby
     rvm --default use ruby 2.7.1
@@ -61,21 +65,21 @@ Meshery documentation is made of these components:
     gem install jekyll bundler
   ```
 
-### For Linux
+### Para Linux
 
-- Prerequisites
+- Prerrequisitos
   ```bash
     sudo apt-get update
     sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
   ```
 
-#### Installing rbenv
+#### Instalación de rbenv
 
-- Cloning the rbenv repository
+- Clonación del repositorio rbenv
   ```bash
-    git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    clon de git https://github.com/rbenv/rbenv.git ~/.rbenv
   ```
-- Setting the path
+- Marcando el camino
   ```bash
     echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
   ```
@@ -83,170 +87,185 @@ Meshery documentation is made of these components:
   ```bash
     echo 'eval "$(rbenv init -)"' >> ~/.bashrc
   ```
-- Reload your bashrc
+- Recarga tu bashrc
   ```bash
     source ~/.bashrc
   ```
-  <strong>Note:</strong> Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
-  
-- Check installation
+  <strong>Nota:</strong> Cambie bashrc con el archivo rc específico de su shell, por ejemplo: si está usando zsh, el nombre del archivo es zshrc.
+- Verificar instalación
   ```bash
     type rbenv
   ```
 
-#### Install Ruby
+#### Instalar Ruby
 
-- rbenv install version
+- versión de instalación de rbenv
+
 ```bash
   rbenv install 2.5.1
 ```
-- To list all the versions that can be installed
+
+- Para enumerar todas las versiones que se pueden instalar
+
 ```bash
   rbenv install --list-all
 ```
-- Set which Ruby version you want to use
+
+- Establezca qué versión de Ruby desea usar
+
 ```bash
   rbenv global version
 ```
-- Check Ruby installation
+
+- Compruebe la instalación de Ruby
+
 ```bash
   ruby -v
 ```
 
-### For MacOS
+### Para MacOS
 
-- Use docs here [Jekyll installation](https://jekyllrb.com/docs/installation/macos/)
+- Utilice los documentos aquí [Instalación de Jekyll](https://jekyllrb.com/docs/installation/macos/)
 
-### Get the code
+### Obtener el codigo
 
-- Fork and then clone the [Meshery repository](https://github.com/layer5io/meshery)
+- Bifurcar y luego clonar el [repositorio de Meshery](https://github.com/layer5io/meshery)
   ```bash
   $ git clone https://github.com/YOUR-USERNAME/meshery
   ```
-- Change to the docs directory
+- Cambiar al directorio de documentos
   ```bash
   $ cd docs
   ```
-- Install any Ruby dependencies
+- Instale las dependencias de Ruby
+
   ```bash
   $ gem install bundler
   $ bundle install
   ```
 
-  <strong>Note:</strong> If you are a Mac user you do not need to install the Ruby dependencies, after moving on to the docs directory, you can serve the site.
+<strong> Nota: </strong> si es un usuario de Mac, no necesita instalar las dependencias de Ruby; después de pasar al directorio de documentos, puede servir el sitio.
 
-### Serve the site
+### Sirva el sitio
 
-- Serve the code locally
+- Sirve el código localmente
   ```bash
   $ make site
   ```
-- If that gives an error run:
+- Si eso da un error, ejecute:
+
   ```bash
     $ bundle exec jekyll serve
   ```
 
-  _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
+\_Nota: Desde Makefile, este comando en realidad está ejecutando `$ bundle exec jekyll serve --drafts --livereload`. Hay dos configuraciones de Jekyll, `jekyll serve` para desarrollo local y` jekyll build` cuando necesita generar los artefactos del sitio para la producción.
 
-### Using Docker
-If you've Docker and `make` installed in your system, then you can serve the site locally
-  ```
-  $ make docker-docs
-  ```
+### Uso de Docker
 
-This doesn't require the need for installing Jekyll and Ruby in your system
+Si tiene Docker y `make` instalados en su sistema, entonces puede servir el sitio localmente
 
-**But, you need to make sure that GNU make is working in your system (might not work in Windows)** 
-#### Note
-While performing the above step, if you're facing errors with a message like below...
+```
+$ make docker-docs
+```
+
+Esto no requiere la necesidad de instalar Jekyll y Ruby en su sistema.
+
+** Pero, debe asegurarse de que GNU make funcione en su sistema (puede que no funcione en Windows) **
+
+#### Nota
+
+Mientras realiza el paso anterior, si enfrenta errores con un mensaje como el siguiente ...
 
 `Your ruby version is x.x.x but your Gemfile specified 2.7.x`
 
-This is because Jekyll always considers the exact version of Ruby unlike JavaScript.
+Esto se debe a que Jekyll siempre considera la versión exacta de Ruby a diferencia de JavaScript.
 
-So, you need to follow either of the three steps to resolve this problem;
-  - Install the required Ruby version by using `rvm` or by any means given above
-  - Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes
-  - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below (not recommended! Do only if above two steps fail):
-  ```
-  source "https://rubygems.org" 
-  ruby '2.7.1' //to any version you have installed
-  ```
-  Automatically the `Gemfile.lock` will update once the `make site` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
+Por lo tanto, debe seguir cualquiera de los tres pasos para resolver este problema;
 
+- Instale la versión de Ruby requerida usando `rvm` o por cualquier medio dado arriba
+- Alternativamente, si tiene Docker instalado, escriba `make docker-docs` para ver los cambios
+- Si no puede instalar la versión de Ruby requerida, configure manualmente el `Gemfile` como se muestra a continuación (¡no se recomienda! Hágalo solo si fallan los dos pasos anteriores):
 
-**WARNING: If you have followed the third step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
+```
+source "https://rubygems.org"
+ruby '2.7.1' //to any version you have installed
+```
 
-### Create a Pull Request
+Automáticamente el `Gemfile.lock` se actualizará una vez que se proporcione el` make site` (para Windows, ejecute `bundle exec jekyll serve` si WSL2 no está presente)
 
-- After making changes, don't forget to commit with the sign-off flag (-s)!
+** ADVERTENCIA: Si ha seguido el tercer paso, no confirme los cambios realizados en `Gemfile` y` Gemfile.lock` en su rama para preservar la integridad; de lo contrario, la acción de CI no generará la vista previa del sitio durante las relaciones públicas. **.
+
+### Crear una solicitud de extracción
+
+- Después de realizar cambios, no olvide comprometerse con el sign-off bandera (-s)!
   ```bash
   $ commit -s -m “my commit message w/signoff”
   ```
-- Once all changes have been committed, push the changes.
+- Una vez que se hayan confirmado todos los cambios, insértelos.
   ```bash
   $ git push origin <branch-name>
   ```
-- Then on Github, navigate to the [Meshery repository](https://github.com/layer5io/meshery) and create a pull request from your recently pushed changes!
+- Luego, en Github, navega hasta el [repositorio de Meshery](https://github.com/layer5io/meshery) y crea una solicitud de extracción a partir de los cambios introducidos recientemente!
 
 ---
 
-- _See the [Meshery Documentation Google Doc](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit) for additional reference._
+- _Ver el[Meshery Documentation Google Doc](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit) para referencia adicional._
 
-## Using the features of Meshery Docs
+## Uso de las funciones de Meshery Docs
 
-### Clipboard Feature
+### Función de portapapeles
 
-Most popular clipboard plugins like Clipboard JS require the manual creation of a new ID for each code snippet. A different approach is used here. For code snippets, we either use html tags or markdown in the following manner:
+Los complementos de portapapeles más populares, como Clipboard JS, requieren la creación manual de una nueva ID para cada fragmento de código. Aquí se utiliza un enfoque diferente. Para los fragmentos de código, usamos etiquetas html o rebajas de la siguiente manera:
 
 ```
    <pre class="codeblock-pre"><div class="codeblock">
    <code class="clipboardjs">
      code snippet
    </code></div></pre>
-``` 
- **<pre></pre>** _tags are optional unless the code snippet is in a paragraph format and also gives a terminal like effect to the code_
+```
 
-**A full block:**
+**<pre></pre>** _tags son opcionales a menos que el fragmento de código esté en un formato de párrafo y también le dé un efecto de terminal al código_
+
+**Un bloque completo:**
 
 ````
 ```code snippet```
 ````
 
-Inline formatting: 
+Formateo en línea:
 
 \`code snippet\`: `code snippet`
 
-**Language specific:**
+**Específico del idioma:**
 
 ````
 ```(language name)
-  code snippet  
+  code snippet
 ```
 ````
 
 Whenever the code tags are detected, the clipboard javascript file is automatically loaded. Each code element is given a custom id and a clipboard-copy icon to copy the content.
 
-## Documentation Contribution Flow Summary
+## Resumen del flujo de contribución a la documentación
 
-The following is a concise summary of the steps to contribute to Meshery documentation.
+El siguiente es un resumen conciso de los pasos para contribuir a la documentación de Meshery.
 
-1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
-1. In the local copy of your fork, navigate to the docs folder.
+1. Cree una bifurcación, si aún no lo ha hecho, siguiendo los pasos descritos [aquí] (CONTRIBUTING-gitflow.md)
+1. En la copia local de su bifurcación, navegue hasta la carpeta de documentos.
    `cd docs`
-1. Create and checkout a new branch to make changes within
-   `git checkout -b <my-changes>`
-1. Edit/add documentation.
-   `vi <specific page>.md`
-1. Run site locally to preview changes.
-   `make site`
-1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
-   `git push origin <my-changes>`
-1. Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.
+1. Cree y verifique una nueva rama para realizar cambios dentro de
+   `git checkout -b <mis-cambios>`
+1. Edite / agregue documentación.
+   `vi <página específica> .md`
+1. Ejecute el sitio localmente para obtener una vista previa de los cambios.
+   `hacer sitio`
+1. Confirme, [sign-off] (# commit-signing) y envíe los cambios a su sucursal remota.
+   `git push origin <mis-cambios>`
+1. Abra una solicitud de extracción (en su navegador web) contra el repositorio: https://github.com/layer5io/meshery.
 
-###  Table of Contents in Sidebar (toc)
+### Tabla de contenido en la barra lateral (toc)
 
-Sidebars use toc to create a table of contents. It is written in the following manner:
+Las barras laterales usan toc para crear una tabla de contenido. Está escrito de la siguiente manera:
 
 ```
     toc:
@@ -260,7 +279,7 @@ Sidebars use toc to create a table of contents. It is written in the following m
         url: /thing3.html
 ```
 
-The output of the code snippet would be:
+La salida del fragmento de código sería:
 
 ```
     Group 1
@@ -269,9 +288,9 @@ The output of the code snippet would be:
       Thing 3
 ```
 
-### `if` condititional
+### `if` condicional
 
-This executes the block of code only if the given condition is true. It is executed in the following manner:
+Esto ejecuta el bloque de código solo si la condición dada es verdadera. Se ejecuta de la siguiente manera:
 
 ```
     {{ "{% if product.title == 'Awesome Shoes' " }}%}
@@ -279,7 +298,7 @@ This executes the block of code only if the given condition is true. It is execu
     {{ "{% endif " }}%}
 ```
 
-If the condition is true, the output would be:
+Si la condición es verdadera, la salida sería:
 
 ```
     How are you?
@@ -287,7 +306,7 @@ If the condition is true, the output would be:
 
 ### `for` loop
 
-The for statement executes a block of code repeatedly. It is wriiten in the following manner:
+La instrucción for ejecuta un bloque de código repetidamente. Está escrito de la siguiente manera:
 
 ```
     {{ "{% for names in collection.names " }}%}
@@ -295,41 +314,30 @@ The for statement executes a block of code repeatedly. It is wriiten in the foll
     {{ "{% endfor " }}%}
 ```
 
-The output produced by the above code snippet:
+El resultado producido por el fragmento de código anterior:
 
 ```
     Sam Ham Ethan
 ```
 
-### Comment
+### Comentario
 
-Comments allow to leave a block of code unattended, any statements between opening and closing comment would not be executed. 
+Los comentarios permiten dejar un bloque de código desatendido, no se ejecutará ninguna declaración entre el comentario de apertura y el de cierre.
 
+### Incluir
 
-### Include
+La etiqueta anterior se utiliza para insertar un archivo ya renderizado dentro de la plantilla actual. Está escrito de la siguiente manera:
 
-The above tag is used to insert a already rendered file within the current template. It is written in the following manner:
 ```
     {{ "{% include file.html " }}%}
 ```
 
-### Assign
+### Asignar
 
-The assign tag is used to create a new variable. It is written in the following manner:
+La etiqueta de asignación se utiliza para crear una nueva variable. Está escrito de la siguiente manera:
 
 ```
     {{ "{% assign variable1 = true " }}%}
 ```
 
-# Suggested Reading
-
-{% assign sorted_reading = site.pages | sort: page.title | reverse %}
-
-<ul>
-  {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+{% include suggested-reading.html diffName ="false" language = "es" %}
