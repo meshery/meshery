@@ -1158,7 +1158,7 @@ class Navigator extends React.Component {
           >
             <span>
               {this.getMesheryVersionText()} {'  '}
-              {this.openReleaseNotesInNew()}
+              <span style={{ cursor : "pointer" }}>{this.openReleaseNotesInNew()}</span>
               {this.versionUpdateMsg()}
 
             </span>
