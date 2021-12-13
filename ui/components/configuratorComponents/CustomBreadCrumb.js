@@ -46,6 +46,10 @@ export default function CustomBreadCrumb({ title, onBack, titleChangeHandler }) 
     return () => clearTimeout(timer)
   }, [name])
 
+  useEffect(() => {
+    setName(title)
+  }, [title])
+
   const handleInputChange = event => {
     setName(event.target.value)
   }
@@ -76,7 +80,7 @@ export default function CustomBreadCrumb({ title, onBack, titleChangeHandler }) 
         : <span
           className={classes.span}
           onClick={() => setEditing(true)}
-        >{name}</span>
+        >{title}</span>
       }
     </div>
   )

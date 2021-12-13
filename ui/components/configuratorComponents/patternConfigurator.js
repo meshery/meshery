@@ -246,7 +246,10 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   const ns = "default";
 
   function saveCodeEditorChanges(data) {
-    setYaml(data.valueOf().getValue());
+    const yamlString = data.valueOf().getValue();
+    const jsonString = jsYaml.load(yamlString);
+    setPatternName(jsonString.name);
+    setYaml(yamlString);
   }
 
   function insertPattern(workload) {
@@ -516,7 +519,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
         </Grid>
       </Grid>
       <CustomBreadCrumb
-        title={pattern.name}
+        title={patternName}
         onBack={() => setSelectedPattern(resetSelectedPattern())}
         titleChangeHandler={setPatternName}
       />
