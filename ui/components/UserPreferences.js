@@ -151,14 +151,21 @@ class UserPreference extends React.Component {
         : "Start on Zoom was disabled";
     }
 
-    const params = `${encodeURIComponent(name)}=${encodeURIComponent(!val)}`;
+    const requestBody = JSON.stringify({
+      "anonymousUsageStats" : anonymousStats,
+      "anonymousPerfResults" : perfResultStats,
+      "usersExtensionPreferences" : {
+        "showOnZoom" : startOnZoom
+      }
+    });
+
     this.props.updateProgress({ showProgress : true });
     dataFetch('/api/user/prefs', {
       credentials : 'same-origin',
       method : 'POST',
       credentials : 'include',
-      headers : { 'Content-Type' : 'application/x-www-form-urlencoded;charset=UTF-8', },
-      body : params,
+      headers : { 'Content-Type' : 'application/json;charset=UTF-8', },
+      body : requestBody,
     }, (result) => {
       this.props.updateProgress({ showProgress : false });
       if (typeof result !== 'undefined') {
