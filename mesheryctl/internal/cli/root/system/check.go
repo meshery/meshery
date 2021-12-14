@@ -17,7 +17,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
-	meshkiterrors "github.com/layer5io/meshkit/errors"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -277,15 +276,9 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			return nil
 		}
 		// else we're supposed to grab the error
-		sdescription := []string{"The Kubernetes cluster is not accessible."}
-		ldescription := []string{fmt.Sprintf("Your %s context is configured to run Meshery on Kubernetes using the %s token", hc.mctlCfg.CurrentContext, hc.context.Token),
-			"The Kubernetes cluster is not accessible",
-			"Please confirm that your cluster is available and that the token is valid",
-			"See https://docs.meshery.io/installation/quick-start for additional instructions",
-		}
-		probablecause := []string{"Kubernetes cluster is unavailable and that the token is invalid"}
-		remedy := []string{"Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"}
-		return meshkiterrors.New(ErrK8sQueryCode, meshkiterrors.Critical, sdescription, ldescription, probablecause, remedy)
+		errMsg := fmt.Errorf("%s. Your %s context is configured to run Meshery on Kubernetes using the %s token",
+			err.Error(), hc.mctlCfg.CurrentContext, hc.context.Token)
+		return ErrK8sConfig(errMsg)
 	}
 
 	if hc.Options.PrintLogs { // print logs if we're supposed to
@@ -303,7 +296,9 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			log.Warn("!! cannot query the Kubernetes API")
 			return nil
 		}
-		return ErrK8SQuery(err)
+		errMsg := fmt.Errorf("%s. Your %s context is configured to run Meshery on Kubernetes using the %s token",
+			err.Error(), hc.mctlCfg.CurrentContext, hc.context.Token)
+		return ErrK8SQuery(errMsg)
 	}
 
 	if hc.Options.PrintLogs { // log incase we're supposed to
