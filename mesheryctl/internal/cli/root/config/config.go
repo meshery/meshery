@@ -55,8 +55,8 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	return c, err
 }
 
-// SetMesheryCtl sets the mesheryctl configuration object
-func SetContext(v *viper.Viper, context *Context, name string) error {
+// UpdateContextToConfig write the given context in meshconfig
+func UpdateContextToConfig(v *viper.Viper, context *Context, name string) error {
 	viper.Set("contexts."+name, context)
 	err := viper.WriteConfig()
 	if err != nil {
@@ -395,7 +395,7 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 		return err
 	}
 	context.Token = tokenName
-	err = SetContext(viper.GetViper(), context, ctxName)
+	err = UpdateContextToConfig(viper.GetViper(), context, ctxName)
 	if err != nil {
 		return err
 	}
@@ -436,35 +436,6 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	viper.Set("contexts", mctlCfg.Contexts)
 	viper.Set("current-context", mctlCfg.CurrentContext)
 	viper.Set("tokens", mctlCfg.Tokens)
-
-	err = viper.WriteConfig()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// UpdateContextToConfig updates the given context in meshconfig
-func UpdateContextToConfig(currCtx string, ctx *Context, configPath string) error {
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return err
-	}
-
-	viper.SetConfigFile(configPath)
-	err := viper.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	meshConfig := &MesheryCtlConfig{}
-	err = viper.Unmarshal(&meshConfig)
-	if err != nil {
-		return err
-	}
-
-	meshConfig.Contexts[currCtx] = *ctx
-	viper.Set("contexts."+currCtx, ctx)
 
 	err = viper.WriteConfig()
 	if err != nil {
