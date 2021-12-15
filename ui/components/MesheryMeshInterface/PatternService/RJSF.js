@@ -3,11 +3,12 @@ import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
 import { TextField, Typography } from "@material-ui/core";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
-import { Tooltip, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { rjsfTheme } from "../../../themes";
 import { camelCaseToCapitalize } from "../helpers";
+import EnlargedTextTooltip from "./EnlargedTextTooltip";
 
 const Form = withTheme(MaterialUITheme);
 
@@ -111,11 +112,11 @@ const CustomInputField = (props) => {
     <div key={props.id}>
       <Typography variant="body1" style={{ fontWeight : "bold" }}>{prettifiedName}
         {props.schema?.help && (
-          <Tooltip title={props.schema?.help}>
+          <EnlargedTextTooltip title={props.schema?.help}>
             <IconButton component="span" size="small">
               <HelpOutlineIcon style={{ fontSize : 17 }} />
             </IconButton>
-          </Tooltip>
+          </EnlargedTextTooltip>
         )}
       </Typography>
       <TextField variant="outlined" size="small" style={{ margin : '10px 0 ' }} autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`}/>
