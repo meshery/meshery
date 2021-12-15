@@ -60,7 +60,10 @@ function formatString(text){
   if (!text) return null
 
   // format string for prettified camelCase
-  return text.replaceAll("IP", "Ip");
+  let formattedText = text.replaceAll("IP", "Ip");
+  formattedText = camelCaseToCapitalize(formattedText),
+  formattedText = formattedText.replaceAll("Ip", "IP")
+  return formattedText
 }
 
 function addTitleToPropertiesJSONSchema(jsonSchema) {
@@ -87,7 +90,7 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
         }
         newProperties[key] = {
           ...newProperties[key],
-          title : camelCaseToCapitalize(formatString(key)),
+          title : formatString(key),
           default : defaultValue
         }
         // if (typeof newProperties[key] === 'object' && Object.prototype.hasOwnProperty.call(newProperties[key], 'properties')){
@@ -107,7 +110,7 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
 
 const CustomInputField = (props) => {
   const name = props?.name || props?.idSchema['$id']?.split('_')[1]
-  const prettifiedName = camelCaseToCapitalize(formatString(name)) || 'Input'
+  const prettifiedName = formatString(name) || 'Input'
   return (
     <div key={props.id}>
       <Typography variant="body1" style={{ fontWeight : "bold" }}>{prettifiedName}
