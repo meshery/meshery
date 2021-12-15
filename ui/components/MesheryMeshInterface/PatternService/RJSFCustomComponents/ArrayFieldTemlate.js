@@ -11,6 +11,8 @@ import { Button, IconButton, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
 import CustomDescriptionField from "./DescriptionField";
+import EnlargedTextTooltip from "../EnlargedTextTooltip";
+import HelpOutlineIcon from "../HelpOutlineIcon";
 const { isMultiSelect, getDefaultRegistry } = utils;
 
 const ArrayFieldTemplate = (props) => {
@@ -31,7 +33,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
 
   const id = `${idSchema.$id}__title`;
   // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
-  return <Typography variant="body1" style={{ fontWeight : "bold" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
+  return <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
   // return <TitleField id={id} title={title} required={required} />;
 };
 
@@ -150,6 +152,14 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               title={props.uiSchema["ui:title"] || props.title}
               required={props.required}
             />
+
+            {
+              (props.uiSchema["ui:description"] || props.schema.description) &&
+              <EnlargedTextTooltip title={props.uiSchema["ui:description"] || props.schema.description}>
+                <HelpOutlineIcon style={{ marginLeft : '4px' }} />
+              </EnlargedTextTooltip>
+            }
+
           </Grid>
           <Grid item xs={4}>
             {props.canAdd && (
@@ -170,7 +180,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
           </Grid>
         </Grid>
 
-        {(props.uiSchema["ui:description"] || props.schema.description) && (
+        {/* {(props.uiSchema["ui:description"] || props.schema.description) && (
           <ArrayFieldDescription
             key={`array-field-description-${props.idSchema.$id}`}
             DescriptionField={CustomDescriptionField}
@@ -179,7 +189,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               props.uiSchema["ui:description"] || props.schema.description
             }
           />
-        )}
+        )} */}
 
         <Grid container={true} key={`array-item-list-${props.idSchema.$id}`}>
           {props.items && props.items.map((p) => DefaultArrayItem(p))}
