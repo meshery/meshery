@@ -95,7 +95,7 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 	}
 
 	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-
+	// logrus.Debug(remoteProviderURL.String())
 	// If not token is provided then make a simple GET request
 	if token == "" {
 		c := &http.Client{}
@@ -124,6 +124,7 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 	if err := decoder.Decode(&l.ProviderProperties); err != nil {
 		logrus.Errorf("[Initialize]: Failed to decode provider properties %s", err)
 	}
+	l.ProviderProperties.PackageVersion = version;
 }
 
 // downloadProviderExtensionPackage will download the remote provider extensions
