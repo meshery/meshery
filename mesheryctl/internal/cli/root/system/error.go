@@ -23,7 +23,7 @@ const (
 	ErrProcessingMctlConfigCode     = "1025"
 	ErrRestartMesheryCode           = "1026"
 	ErrK8sQueryCode                 = "1041"
-	ErrK8sUnavailableCode           = "1045" // please check this error code
+	ErrK8sConfigCode                = "1045" // please check this error code
 )
 
 func ErrHealthCheckFailed(err error) error {
@@ -91,5 +91,5 @@ func ErrK8SQuery(err error) error {
 }
 
 func ErrK8sConfig(err error) error {
-	return errors.New(ErrK8sQueryCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), " The Kubernetes cluster is not accessible", " Please confirm that the token is valid", " See https://docs.meshery.io/installation/quick-start for additional instructions"}, []string{"Kubernetes cluster is unavailable and that the token is invalid"}, []string{"Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"})
+	return errors.New(ErrK8sConfigCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), " The Kubernetes cluster is not accessible", " Please confirm that the token is valid", " See https://docs.meshery.io/installation/quick-start for additional instructions"}, []string{"Kubernetes cluster is unavailable and that the token is invalid"}, []string{"Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"})
 }
