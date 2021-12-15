@@ -16,7 +16,43 @@ function deleteTitleFromJSONSchema(jsonSchema) {
 }
 
 function deleteDescriptionFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, description : "" };
+  return { ...jsonSchema, description : "" }
+}
+
+/**
+ * Replace description properties of each items inside
+ * form with "help" key
+ *
+ * @param {Object.<String, Object>} jsonSchema
+ * @returns
+ */
+function deleteInternalDescriptionAndAddHelpDesc(jsonSchema) {
+  Object.keys(jsonSchema.properties).forEach(key => {
+    // Create a new object-field to store the description inside tooltip
+    if (!jsonSchema.properties[key]['help']) {
+      jsonSchema.properties[key]['help'] = jsonSchema.properties[key]['description']
+    }
+
+    delete jsonSchema.properties[key]['description']
+  })
+  return jsonSchema
+}
+
+/**
+ * remove top-level title, top-level description and
+ * replace internal description with "help" key for
+ * tooltip description
+ *
+ * @param {Object.<String, Object>} jsonSchema
+ * @returns
+ */
+function getRefinedJsonSchema(jsonSchema, hideTitle = true) {
+  let refinedSchema;
+  refinedSchema =  hideTitle ?  deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
+  refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
+  refinedSchema = addTitleToPropertiesJSONSchema(refinedSchema)
+  refinedSchema = deleteInternalDescriptionAndAddHelpDesc(refinedSchema)
+  return refinedSchema
 }
 
 function formatString(text){
@@ -25,8 +61,6 @@ function formatString(text){
   // format string for prettified camelCase
   return text.replaceAll("IP", "Ip");
 }
-
-
 
 function addTitleToPropertiesJSONSchema(jsonSchema) {
   const newProperties = jsonSchema?.properties
@@ -76,8 +110,8 @@ const CustomInputField = (props) => {
   return (
     <div key={props.id}>
       <Typography variant="body1" style={{ fontWeight : "bold" }}>{prettifiedName}
-        {props.schema?.description && (
-          <Tooltip title={props.schema?.description}>
+        {props.schema?.help && (
+          <Tooltip title={props.schema?.help}>
             <IconButton component="span" size="small">
               <HelpOutlineIcon style={{ fontSize : 17 }} />
             </IconButton>
@@ -130,7 +164,7 @@ function RJSF(props) {
     <RJSFWrapperComponent {...{ ...props, RJSFWrapperComponent : null, RJSFFormChildComponent : null } }>
       <MuiThemeProvider theme={rjsfTheme}>
         <Form
-          schema={hideTitle ? deleteTitleFromJSONSchema(deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))) : deleteDescriptionFromJSONSchema(addTitleToPropertiesJSONSchema(jsonSchema))}
+          schema={getRefinedJsonSchema(jsonSchema, hideTitle)}
           idPrefix={jsonSchema?.title}
           onChange={(e) => {
             setData(e.formData)
