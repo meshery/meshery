@@ -296,9 +296,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			log.Warn("!! cannot query the Kubernetes API")
 			return nil
 		}
-		errMsg := fmt.Errorf("%s. Your %s context is configured to run Meshery on Kubernetes using the %s token",
-			err.Error(), hc.mctlCfg.CurrentContext, hc.context.Token)
-		return ErrK8SQuery(errMsg)
+		return ErrK8SQuery(err)
 	}
 
 	if hc.Options.PrintLogs { // log incase we're supposed to
