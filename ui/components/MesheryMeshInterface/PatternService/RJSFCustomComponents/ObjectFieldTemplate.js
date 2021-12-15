@@ -96,7 +96,6 @@ const ObjectFieldTemplate = ({
                 key={index}
                 style={{ marginBottom : "10px" }}>
                 {element.content}
-                {console.log("element:", element.content)}
               </Grid>
             )
           );
