@@ -1,5 +1,5 @@
-import { makeStyles } from "@material-ui/core"
-import React from "react"
+import { ClickAwayListener, makeStyles } from "@material-ui/core"
+import React, { useEffect, useState } from "react"
 
 const useStyles = makeStyles(() => ({
   root : {
@@ -20,16 +20,42 @@ const useStyles = makeStyles(() => ({
       cursor : "pointer",
       textDecoration : "underline"
     }
+  },
+  input : {
+    background : "transparent",
+    border : "none",
+    color : "#fff",
+    textDecoration : "underline",
+    '&:focus' : {
+      outline : "none",
+      border : "none"
+    }
   }
 }))
 
-export default function CustomBreadCrumb({ title, onBack }) {
+export default function CustomBreadCrumb({ title, onBack, titleChangeHandler }) {
   const classes = useStyles()
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(title);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      titleChangeHandler(name.trim())
+    }, 400);
+
+    return () => clearTimeout(timer)
+  }, [name])
+
+  useEffect(() => {
+    setName(title)
+  }, [title])
+
+  const handleInputChange = event => {
+    setName(event.target.value)
+  }
 
   return (
-    <div
-      className={classes.root}
-    >
+    <div className={classes.root}>
       {"> "}
       <span
         className={classes.span}
@@ -38,9 +64,24 @@ export default function CustomBreadCrumb({ title, onBack }) {
         Patterns
       </span>
       {" > "}
-      <span
-        className={classes.span}
-      >{title}</span>
+
+      {editing
+        ?
+        <ClickAwayListener
+          onClickAway={() => setEditing(false)}
+        >
+          <input
+            className={classes.input}
+            value={name}
+            onChange={handleInputChange}
+            autoFocus
+          />
+        </ClickAwayListener>
+        : <span
+          className={classes.span}
+          onClick={() => setEditing(true)}
+        >{title}</span>
+      }
     </div>
   )
 }

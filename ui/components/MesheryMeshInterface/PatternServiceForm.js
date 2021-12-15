@@ -16,6 +16,9 @@ const useStyles = makeStyles(() => ({
   tabPanel : {
     marginTop : "1.1rem",
     padding : "0px 2px"
+  },
+  formWrapper : {
+    width : "100%"
   }
 }));
 
@@ -76,7 +79,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
     >
       {(SettingsForm, TraitsForm) => {
         return (
-          <div>
+          <div className={classes.formWrapper}>
             <AppBar className={classes.appBar}>
               <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service" >
                 <Tab label="Settings" {...a11yProps(0)} />
