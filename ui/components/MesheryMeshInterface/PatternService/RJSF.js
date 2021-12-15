@@ -9,6 +9,8 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { rjsfTheme } from "../../../themes";
 import { camelCaseToCapitalize } from "../helpers";
 import EnlargedTextTooltip from "./EnlargedTextTooltip";
+import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
+import CustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate"
 
 const Form = withTheme(MaterialUITheme);
 
@@ -175,6 +177,8 @@ function RJSF(props) {
           }}
           formData={data}
           fields={fields}
+          ArrayFieldTemplate={ArrayFieldTemplate}
+          ObjectFieldTemplate={CustomObjFieldTemplate}
           additionalMetaSchemas={[JS4]}
         >
           {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
