@@ -233,3 +233,20 @@ export function camelCaseToCapitalize(text){
 
   return result.charAt(0).toUpperCase() + result.slice(1);
 }
+
+/**
+ * Formats text for prettified view
+ *
+ * @param {String} text
+ * @returns
+ */
+export function formatString(text){
+  if (!text) return null
+
+  // format string for prettified camelCase
+  // @ts-ignore
+  let formattedText = text.replaceAll("IP", "Ip");
+  formattedText = camelCaseToCapitalize(formattedText),
+  formattedText = formattedText.replaceAll("Ip", "IP")
+  return formattedText
+}
