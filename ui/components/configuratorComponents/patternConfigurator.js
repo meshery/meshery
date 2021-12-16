@@ -1,6 +1,6 @@
 
 import {
-  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select,  TextField, Toolbar, Tooltip, Typography,
+  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select, TextField, Toolbar, Tooltip, Typography,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -77,6 +77,13 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor : "#fcfcfc",
     padding : 8,
     height : "100%",
+  },
+  wrapper : {
+    width : '100%'
+  },
+  heading : {
+    fontSize : theme.typography.pxToRem(15),
+    fontWeight : theme.typography.fontWeightRegular,
   },
 }));
 
@@ -182,7 +189,8 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
         return {
           name,
           icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} />,
-          readableName : getHumanReadablePatternServiceName(mwl?.workload) };
+          readableName : getHumanReadablePatternServiceName(mwl?.workload)
+        };
       });
     }
     return selectedVersionMesh
@@ -193,7 +201,8 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
         return {
           name,
           icon : <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} />,
-          readableName : getHumanReadablePatternServiceName(item?.workload) };
+          readableName : getHumanReadablePatternServiceName(item?.workload)
+        };
       });
   }
 
@@ -491,31 +500,39 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                         reference={reference}
                       />
                     </div>))}
-                <Accordion elevation={0} style={{ width : '100%' }}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6">
-                      Configure Addons
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
-                      ?.filter((s) => s.type === "addon")
-                      .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
-                      .map((s, i) => (
-                        <Grid item key={`svc-form-addons-${i}`}>
-                          <LazyPatternServiceForm
-                            formData={deployServiceConfig[s.workload?.title]}
-                            onSettingsChange={handleSettingsChange(s.workload)}
-                            schemaSet={s}
-                            onSubmit={handleSubmit}
-                            onDelete={handleDelete}
-                            namespace={ns}
-                            reference={reference}
-                          />
-                        </Grid>
-                      ))}
-                  </AccordionDetails>
-                </Accordion>
+                {
+                  selectedVersionMesh && selectedVersionMesh?.[selectedVersion] &&
+                  selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
+                    ?.filter((s) => s.type === "addon").length > 0 && (
+                    <div className={classes.wrapper}>
+                      <Accordion elevation={0} style={{ width : '100%' }}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                          <Typography className={classes.heading}>
+                            Configure Addons
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          {selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
+                            ?.filter((s) => s.type === "addon")
+                            .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
+                            .map((s, i) => (
+                              <Grid item key={`svc-form-addons-${i}`}>
+                                <LazyPatternServiceForm
+                                  formData={deployServiceConfig[s.workload?.title]}
+                                  onSettingsChange={handleSettingsChange(s.workload)}
+                                  schemaSet={s}
+                                  onSubmit={handleSubmit}
+                                  onDelete={handleDelete}
+                                  namespace={ns}
+                                  reference={reference}
+                                />
+                              </Grid>
+                            ))}
+                        </AccordionDetails>
+                      </Accordion>
+                    </div>
+                  )
+                }
               </Grid>)
         }
         <Grid item xs={12} md={6} >
