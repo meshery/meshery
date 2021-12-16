@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "nvm": "^0.0.4",
+    "react-calendar": "^3.5.0"
+  }
+}
