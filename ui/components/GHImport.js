@@ -4,6 +4,8 @@ import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FormControl from '@material-ui/core/FormControl';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { URLValidator } from '../utils/URLValidator';
 
 const getMuiTheme = () => createTheme({
@@ -65,6 +67,13 @@ const GHImport = ({ onSubmit }) => {
   const [path, setPath] = React.useState('');
   const [repository, setRepository] = React.useState('');
   const [branch, setBranch] = React.useState('');
+  const [check, setCheck] = React.useState({
+    checked1 : true,
+  });
+  const handleCheckCall = (event) => {
+    `${ recursive ? '**' : ''}`
+    setCheck({ ...check, [event.target.name] : event.target.checked });
+  }
   const recursive = false;
   const finalURL = `https://github.com/${owner}/${repository}/${branch}/`;
 
@@ -118,6 +127,12 @@ const GHImport = ({ onSubmit }) => {
                     </FormControl>
                     <FormControl className={classes.formControl}>
                       <TextField id="outlined-basic" label="Path" variant="outlined"  onChange={() => setPath(`${path}/${ recursive ? '**' : ''}`)}/>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                      <FormControlLabel
+                        control={<Checkbox checked={check.checked1} onChange={handleCheckCall} name="checked1" color = "inherit" />}
+                        label="Recursive check"
+                      />
                     </FormControl>
                   </div>
                   <div className={classes.ghGroups}>
