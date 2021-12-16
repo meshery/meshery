@@ -205,12 +205,16 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   };
 
   const handleSettingsChange = (schemaSet) => () => {
-    const config = createPatternFromConfig({
-      [getPatternServiceName(schemaSet)] : {
+    const cfg = {
+      [(Math.random() + 1).toString(36).substring(2)] : {
         settings : reference.current?.getSettings(),
-        traits : reference.current?.getTraits()
+        traits : reference.current?.getTraits(),
+        type : schemaSet?.oam_definition?.metadata?.name || "NA",
+        name : "<Name-Of-Component>",
       }
-    }, "default", true);
+    }
+
+    const config = createPatternFromConfig(cfg, "default", true);
 
     handleChangeData(config, "");
   };
