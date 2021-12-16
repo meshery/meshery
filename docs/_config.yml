@@ -87,7 +87,7 @@ collections:
   compatibility:
     output: true
     permalink: /project/:collection/:path
-    name: compatibility    
+    name: compatibility   
   guides:
     output: true
     permalink: /:collection/:path
