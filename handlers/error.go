@@ -79,6 +79,22 @@ const (
 	ErrCreateDirCode            = "2150"
 	ErrInvalidRequestObjectCode = "2151"
 	ErrChangeK8sContextCode     = "2152"
+	ErrGetFilterCode            = "replace_1"
+	ErrSaveFilterCode           = "replace_2"
+	ErrDecodeFilterCode         = "replace_3"
+	ErrEncodeFilterCode         = "replace_4"
+	ErrImportFilterCode         = "replace_5"
+	ErrFetchFilterCode          = "replace_6"
+	ErrDeleteFilterCode         = "replace_7"
+	ErrSavePatternCode          = "replace_8"
+	ErrGetPatternCode           = "replace_9"
+	ErrDeletePatternCode        = "replace_10"
+	ErrFetchPatternCode         = "replace_11"
+	ErrImportPatternCode        = "replace_12"
+	ErrEncodePatternCode        = "replace_13"
+	ErrDecodePatternCode        = "replace_14"
+	ErrParsePatternCode         = "replace_15"
+	ErrConvertPatternCode       = "replace_16"
 )
 
 var (
@@ -321,4 +337,68 @@ func ErrInvalidRequestObject(fields ...string) error {
 
 func ErrChangeK8sContext(err error) error {
 	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
+}
+
+func ErrGetFilter(err error) error {
+	return errors.New(ErrGetFilterCode, errors.Alert, []string{"Error failed to get filter"}, []string{err.Error()}, []string{"Cannot get the filter with the given Filter ID"}, []string{"Check if the given Filter ID is correct"})
+}
+
+func ErrSaveFilter(err error) error {
+	return errors.New(ErrSaveFilterCode, errors.Alert, []string{"Error failed to save filter"}, []string{err.Error()}, []string{"Cannot save the Filter due to wrong path or URL"}, []string{"Check if the given path or URL of the filter is correct"})
+}
+
+func ErrDecodeFilter(err error) error {
+	return errors.New(ErrDecodeFilterCode, errors.Alert, []string{"Error failed to decode filters data into go slice"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrEncodeFilter(err error) error {
+	return errors.New(ErrEncodeFilterCode, errors.Alert, []string{"Error failed to encode filter"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrImportFilter(err error) error {
+	return errors.New(ErrImportFilterCode, errors.Alert, []string{"Error failed to import filter"}, []string{err.Error()}, []string{"Cannot save the Filter due to wrong path or URL"}, []string{"Check if the given path or URL of the Filter is correct"})
+}
+
+func ErrFetchFilter(err error) error {
+	return errors.New(ErrFetchFilterCode, errors.Alert, []string{"Error failed to fetch filter"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Filters"}, []string{})
+}
+
+func ErrDeleteFilter(err error) error {
+	return errors.New(ErrDeleteFilterCode, errors.Alert, []string{"Error failed to delete filter"}, []string{err.Error()}, []string{"Failed to delete Filter with the given ID"}, []string{"Check if the Filter ID is correct"})
+}
+
+func ErrSavePattern(err error) error {
+	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save pattern"}, []string{err.Error()}, []string{"Cannot save the Pattern due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
+}
+
+func ErrGetPattern(err error) error {
+	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get pattern"}, []string{err.Error()}, []string{"Cannot get the Pattern with the given Pattern ID"}, []string{"Check if the given Pattern ID is correct"})
+}
+
+func ErrDeletePattern(err error) error {
+	return errors.New(ErrDeletePatternCode, errors.Alert, []string{"Error failed to delete pattern"}, []string{err.Error()}, []string{"Failed to delete Pattern with the given ID"}, []string{"Check if the Pattern ID is correct"})
+}
+
+func ErrFetchPattern(err error) error {
+	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch pattern"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Patterns"}, []string{})
+}
+
+func ErrImportPattern(err error) error {
+	return errors.New(ErrImportPatternCode, errors.Alert, []string{"Error failed to import pattern"}, []string{err.Error()}, []string{"Cannot save the Pattern due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
+}
+
+func ErrEncodePattern(err error) error {
+	return errors.New(ErrEncodePatternCode, errors.Alert, []string{"Error failed to encode pattern"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDecodePattern(err error) error {
+	return errors.New(ErrDecodePatternCode, errors.Alert, []string{"Error failed to decode patterns data into go slice"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrParsePattern(err error) error {
+	return errors.New(ErrParsePatternCode, errors.Alert, []string{"Error failed to parse pattern file"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrConvertPattern(err error) error {
+	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert PatternFile to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
 }
