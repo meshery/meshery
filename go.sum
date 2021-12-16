@@ -47,8 +47,8 @@ cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 fortio.org/fortio v1.3.1/go.mod h1:Go0fRqoPJ1xy5JOWcS23jyF58byVZxFyEePYsGmCR0k=
 fortio.org/fortio v1.6.8/go.mod h1:sbKl3MB8+XZTZ4HvLcBPUvFYPmMKG5zKsoCmgbo/YR8=
-fortio.org/fortio v1.17.0 h1:gw1lGpgpz4WqH49kEp4sXX73Abh4wQU2CcTSyTJW3MA=
-fortio.org/fortio v1.17.0/go.mod h1:radJAQIynw4V5XXPOQSHlE1V4MxvUkWpd0PW5vbVF2M=
+fortio.org/fortio v1.19.0 h1:4q1XargOar7LOhhQ28cRE11U/nznBMLXCH3fh2mtygg=
+fortio.org/fortio v1.19.0/go.mod h1:radJAQIynw4V5XXPOQSHlE1V4MxvUkWpd0PW5vbVF2M=
 gioui.org v0.0.0-20210308172011-57750fc8a0a6/go.mod h1:RSH6KIUZ0p2xy5zHDxgAM4zumjgTw83q2ge/PI+yyw8=
 github.com/99designs/gqlgen v0.14.0 h1:Wg8aNYQUjMR/4v+W3xD+7SizOy6lSvVeQ06AobNQAXI=
 github.com/99designs/gqlgen v0.14.0/go.mod h1:S7z4boV+Nx4VvzMUpVrY/YuHjFX4n7rDyuTqvAkuoRE=
