@@ -1,12 +1,12 @@
 ---
 layout: default
-title: Meshery Adapter for Cilium
-name: Meshery Adapter for Cilium
+title: Meshery Adapter for Cilium Service Mesh
+name: Meshery Adapter for Cilium Service Mesh
 mesh_name: Ciluim
 earliest_version: v1.10.6
 port: 10012/tcp
 project_status: beta
-adapter_version: v0.0.0
+adapter_version: v0.1.0
 lab: cilium-meshery-adapter
 github_link: https://github.com/meshery/meshery-cilium
 image: /assets/img/service-meshes/cilium.svg
