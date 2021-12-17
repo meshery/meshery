@@ -398,7 +398,7 @@ function MesheryPatterns({
         body = JSON.stringify({ url : data, save : true })
       }
       if (type === FILE_OPS.GH_IMPORT) {
-        body = JSON.stringify({ url : data, })
+        body = JSON.stringify(data)
       }
       dataFetch(
         `/api/pattern`,
@@ -440,6 +440,7 @@ function MesheryPatterns({
   }
 
   function ghImportHandler(gh) {
+    console.log("Hey");
     handleSubmit(gh, "",  "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.GH_IMPORT);
   }
   const columns = [

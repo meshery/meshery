@@ -67,15 +67,7 @@ const GHImport = ({ onSubmit }) => {
   const [path, setPath] = React.useState('');
   const [repository, setRepository] = React.useState('');
   const [branch, setBranch] = React.useState('');
-  const [check, setCheck] = React.useState({
-    checked1 : true,
-  });
-  const handleCheckCall = (event) => {
-    `${ recursive ? '**' : ''}`
-    setCheck({ ...check, [event.target.name] : event.target.checked });
-  }
-  const recursive = false;
-  const finalURL = `https://github.com/${owner}/${repository}/${branch}/`;
+  const [check, setCheck] = React.useState(true);
 
 
   const handleOpen = () => {
@@ -92,9 +84,12 @@ const GHImport = ({ onSubmit }) => {
     console.log(input + ' is not valid a valid repository')
   }
   const handleSubmit = () => {
-    validURL(input) ? onSubmit(finalURL) : handleError(input);
+    console.log("github import called");
+    const finalURL = input ? input:`https://github.com/${owner}/${repository}/${branch}`;
+    validURL(finalURL) ? onSubmit({ "url" : finalURL, "path" : `${path}/${ check ? '**' : ''}`, "save" : false }) : handleError(finalURL);
     handleClose()
   }
+
 
   return (
     <React.Fragment>
@@ -126,11 +121,11 @@ const GHImport = ({ onSubmit }) => {
                       <TextField id="outlined-basic" label="Github Id" variant="outlined" onChange={(e) => setOwner(e.target.value)} />
                     </FormControl>
                     <FormControl className={classes.formControl}>
-                      <TextField id="outlined-basic" label="Path" variant="outlined"  onChange={() => setPath(`${path}/${ recursive ? '**' : ''}`)}/>
+                      <TextField id="outlined-basic" label="Path" variant="outlined" onChange={(e) => setPath(e.target.value)} />
                     </FormControl>
                     <FormControl className={classes.formControl}>
                       <FormControlLabel
-                        control={<Checkbox checked={check.checked1} onChange={handleCheckCall} name="checked1" color = "inherit" />}
+                        control={<Checkbox checked={check} onChange={event => setCheck(event.target.checked)} color="inherit" />}
                         label="Recursive check"
                       />
                     </FormControl>
