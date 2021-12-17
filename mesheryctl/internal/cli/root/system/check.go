@@ -276,7 +276,9 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			return nil
 		}
 		// else we're supposed to grab the error
-		return errors.New("ctlK8sClient1000: !! cannot initialize a Kubernetes client. See https://docs.meshery.io/reference/error-codes")
+		errMsg := fmt.Errorf("%s. Your %s context is configured to run Meshery on Kubernetes using the %s token",
+			err.Error(), hc.mctlCfg.CurrentContext, hc.context.Token)
+		return ErrK8sConfig(errMsg)
 	}
 
 	if hc.Options.PrintLogs { // print logs if we're supposed to
