@@ -34,6 +34,7 @@ function componentType(jsonSchema) {
  */
 function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent }) {
   const ctype = componentType(jsonSchema);
+  console.log("new one", { formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent, ctype })
 
   if (ctype === "rjsf")
     return (

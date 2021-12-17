@@ -293,7 +293,6 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 
   async function setActivePatternWithRefinedSchema(schema) {
     const refinedSchema = await getWorkloadTraitAndType(schema);
-    console.log("refined Schema", refinedSchema)
     setActiveForm(refinedSchema);
   }
 
@@ -547,6 +546,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
     </>
   );
 }
+
 
 export default PatternConfiguratorComponent;
 

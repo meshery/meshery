@@ -78,7 +78,7 @@ export async function createWorkloadTraitSets(adapter) {
 
   const sets = [];
   workloads?.forEach((w) => {
-    const item = { workload : w, traits : [], type : getPatternServiceType(w?.metadata) };
+    const item = { workload : w, traits : [], type : getPatternServiceType(w) };
 
     item.traits = traits?.filter((t) => {
       if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
@@ -141,7 +141,8 @@ export function getPatternServiceID(item) {
  * @returns {string | undefined} service name
  */
 export function getPatternServiceType(item) {
-  return item?.metadata?.["ui.meshery.io/category"];
+  const type = item?.metadata?.["ui.meshery.io/category"];
+  return type;
 }
 
 /**

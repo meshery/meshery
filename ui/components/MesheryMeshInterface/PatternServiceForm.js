@@ -78,6 +78,13 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       scroll={scroll}
     >
       {(SettingsForm, TraitsForm) => {
+
+        // For rendering addons without tabs
+        if (schemaSet?.type === "addon") {
+          return <SettingsForm />
+        }
+
+        // for rendering normal rjsf forms
         return (
           <div className={classes.formWrapper}>
             <AppBar className={classes.appBar}>
