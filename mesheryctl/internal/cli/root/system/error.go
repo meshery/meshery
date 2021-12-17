@@ -23,7 +23,7 @@ const (
 	ErrProcessingMctlConfigCode     = "1025"
 	ErrRestartMesheryCode           = "1026"
 	ErrK8sQueryCode                 = "1041"
-	ErrK8sConfigCode                = "not set"
+	ErrK8sConfigCode                = "1042"
 )
 
 func ErrHealthCheckFailed(err error) error {
