@@ -440,7 +440,7 @@ function MesheryPatterns({
   }
 
   function ghImportHandler(gh) {
-    console.log("Hey");
+    // console.log("github-import-handler");
     handleSubmit(gh, "",  "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.GH_IMPORT);
   }
   const columns = [

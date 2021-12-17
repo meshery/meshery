@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tooltip, IconButton, TextField, Button, Grid } from '@material-ui/core';
+import { Tooltip, IconButton, TextField, Button, Grid, Typography } from '@material-ui/core';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
 import GitHubIcon from '@material-ui/icons/GitHub';
@@ -53,7 +53,7 @@ const styles = makeStyles((theme) => ({
   },
   optionImport : {
     textAlign : 'center'
-  }
+  },
 
 }));
 import GenericModal from "./GenericModal";
@@ -85,7 +85,7 @@ const GHImport = ({ onSubmit }) => {
   }
   const handleSubmit = () => {
     console.log("github import called");
-    const finalURL = input ? input:`https://github.com/${owner}/${repository}/${branch}`;
+    const finalURL = input ? input:`https://github.com/${owner}/${repository}/${branch}`; //string interpolation
     validURL(finalURL) ? onSubmit({ "url" : finalURL, "path" : `${path}/${ check ? '**' : ''}`, "save" : false }) : handleError(finalURL);
     handleClose()
   }
@@ -126,7 +126,7 @@ const GHImport = ({ onSubmit }) => {
                     <FormControl className={classes.formControl}>
                       <FormControlLabel
                         control={<Checkbox checked={check} onChange={event => setCheck(event.target.checked)} color="inherit" />}
-                        label="Recursive check"
+                        label="Recursive search"
                       />
                     </FormControl>
                   </div>
@@ -138,6 +138,10 @@ const GHImport = ({ onSubmit }) => {
                       <TextField id="outlined-basic" label="Branch" variant="outlined" onChange={(e) => setBranch(e.target.value)} />
                     </FormControl>
                   </div>
+                  <Grid
+                    item xs={12} sm={12}>
+                    <Typography className={classes.optionImport}>Or</Typography>
+                  </Grid>
                   <Grid
                     item xs={12}>
                     <TextField id="standard-basic" label="Paste URL here" fullWidth onChange={(e) => setInput(e.target.value)} />
