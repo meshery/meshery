@@ -59,10 +59,10 @@ jobs:
 
 
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
-      # - name: Build the tagged Docker image
-      #   run: |
-      #     eval $(minikube -p minikube docker-env) 
-      #     docker build  -t test:test .
+      - name: Build the tagged Docker image
+        run: |
+          eval $(minikube -p minikube docker-env) 
+          docker build  -t test:test .
       - name: What is kube config
         run:  cat ~/.kube/config     
       # Setup meshery config.yaml and auth.json
@@ -94,8 +94,8 @@ jobs:
         run: |
           touch testimagedep.yaml
           curl ${{ inputs.deployment_url }} > ./testimagedep.yaml
-          # yq e -i '.spec.template.spec.containers[0].image="test:test"' ./testimagedep.yaml 
-          # yq e -i '.spec.template.spec.containers[0].imagePullPolicy="Never"' ./testimagedep.yaml 
+          yq e -i '.spec.template.spec.containers[0].image="test:test"' ./testimagedep.yaml 
+          yq e -i '.spec.template.spec.containers[0].imagePullPolicy="Never"' ./testimagedep.yaml 
           cat testimagedep.yaml
           kubectl apply -f testimagedep.yaml --namespace=meshery
           kubectl apply -f ${{ inputs.service_url }} --namespace=meshery
