@@ -9,7 +9,9 @@ import { GrafanaChip, MetricsContainer, PrometheusChip } from "@/features/mesher
 import SettingsIcon from "@mui/icons-material/Settings";
 import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { MetricsButton } from "@/components/Button"
+import { MetricsButton } from "@/components/Button";
+import { PerformanceCalendar } from "@/components/Calendar";
+
 
 export default function Dashboard() {
   const theme = useTheme();
@@ -34,6 +36,18 @@ export default function Dashboard() {
         </KuberenetesClusterContainer>
 
         <AdaptersListContainer>{(props) => <AdaptersChipList {...props} />}</AdaptersListContainer>
+        <PerformanceCalendar 
+           title="Performance Calendar"
+          // events={[
+          //   {
+          //     start: moment().toDate(),
+          //     end: moment()
+          //       .add(1, "days")
+          //       .toDate(),
+          //     title: "Some title"
+          //   }
+          // ]}
+          ></PerformanceCalendar>
         <MetricsContainer>
           {({ grafanas, prometheus, onGrafanaClick, onPrometheusClick }) => {
             return (

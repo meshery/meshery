@@ -1,17 +1,35 @@
-import React, { useState } from "react";
-import Calendar from "react-calendar";
+import React from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import PropTypes from "prop-types";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
-export function PerformanceCalendar() {
-  const [value, onChange] = useState(new Date());
+const localizer = momentLocalizer(moment);
 
+PerformanceCalendar.propTypes = {
+  title: PropTypes.string.isRequired,
+  events: PropTypes.array.isRequired,
+  defaultDate: PropTypes.instanceOf(Date),
+  defaultView: PropTypes.string,
+};
+
+PerformanceCalendar.defaultProps = {
+  defaultDate: moment().toDate(),
+  defaultView: "month",
+};
+
+export const PerformanceCalendar = ({ title, events, defaultDate, defaultView }) => {
   return (
     <div>
-      <header>
-        <h1>Performance Calendar</h1>
-      </header>
-      <div>
-        <Calendar onChange={onChange} showWeekNumbers value={value} />
-      </div>
+      <h1>{title}</h1>
+
+      <Calendar
+        localizer={localizer}
+        defaultDate={defaultDate}
+        defaultView={defaultView}
+        events={events}
+        style={{ height: "100vh" }}
+      />
     </div>
   );
-}
+};
