@@ -84,7 +84,7 @@ jobs:
             cat ~/.meshery/auth.json
         
       # Start Meshery server (Assuming that this step will create the meshery namespace)
-      - name: Start Meshery server using mesheryctl
+      - name: Start Meshery Server using mesheryctl
         run: |
               curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
       
@@ -111,7 +111,7 @@ jobs:
           podName=$(kubectl get pods -o wide -n meshery | sed -n 2p | tr -s ' ' | cut -d " " -f 1)
           kubectl logs pod/$podName -n meshery
       # If external IP has not been allotted then server is unreachable, exit here in that case
-      - name: Check if meshery has been allotted external IP
+      - name: Check if Meshery has been allotted external IP
         run: |
               svcstatus=$(kubectl get svc  -n meshery| grep meshery | tr -s ' ' | cut -d " " -f 4)
               echo $svcstatus
@@ -136,8 +136,8 @@ jobs:
             cat ./${{ inputs.patternfile_name }}
             mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
       # Wait for sometime to get some logs
-      - name: Sleep for 30 sec
-        run: sleep 30s
+      - name: Sleep for 10 sec
+        run: sleep 10s
    
       - name: Check adapter logs
         run: |
