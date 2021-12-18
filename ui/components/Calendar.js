@@ -11,6 +11,7 @@ MesheryCalendar.propTypes = {
   events: PropTypes.array.isRequired,
   defaultDate: PropTypes.instanceOf(Date),
   defaultView: PropTypes.string,
+  style: PropTypes.object.isRequired,
 };
 
 MesheryCalendar.defaultProps = {
@@ -18,7 +19,7 @@ MesheryCalendar.defaultProps = {
   defaultView: "month",
 };
 
-export const MesheryCalendar = ({ title, events, defaultDate, defaultView }) => {
+export const MesheryCalendar = ({ title, events, defaultDate, defaultView, style }) => {
   return (
     <div>
       <h1>{title}</h1>
@@ -28,7 +29,7 @@ export const MesheryCalendar = ({ title, events, defaultDate, defaultView }) => 
         defaultDate={defaultDate}
         defaultView={defaultView}
         events={events}
-        style={{ height: "100vh" }}
+        style={style}
       />
     </div>
   );
