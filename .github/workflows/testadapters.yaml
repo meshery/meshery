@@ -87,7 +87,6 @@ jobs:
       - name: Start meshery server using mesheryctl
         run: |
               curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
-              sleep 20s
       
       # Start the adapter using yamls
       - name: Start adapter 
