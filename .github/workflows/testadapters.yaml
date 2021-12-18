@@ -102,8 +102,7 @@ jobs:
       # Start tunnelling to allocate external IP to LoadBalancer type service(meshery)(SO that we can access meshery from outside)
       - name: Start tunelling
         run: minikube tunnel &> /dev/null &
-      - name: wait 10 sec
-        run: sleep 10s
+
 
       # Checking meshery server logs
       - name: Check Meshery pod logs
@@ -135,15 +134,12 @@ jobs:
         run: |
             cat ./${{ inputs.patternfile_name }}
             mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
-      # Wait for sometime to get some logs
-      - name: Sleep for 10 sec
-        run: sleep 10s
-   
+
       - name: Check adapter logs
         run: |
             podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
             kubectl logs pod/$podname -n meshery
-      - name: Check meshery logs
+      - name: Check Meshery logs
         run: |
           podName=$(kubectl get pods -o wide -n meshery | sed -n 2p | tr -s ' ' | cut -d " " -f 1)
           kubectl logs pod/$podName -n meshery
