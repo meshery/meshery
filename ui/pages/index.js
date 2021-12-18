@@ -9,8 +9,7 @@ import { GrafanaChip, MetricsContainer, PrometheusChip } from "@/features/mesher
 import SettingsIcon from "@mui/icons-material/Settings";
 import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { MetricsButton } from "@/components/Button";
-
+import { MetricsButton } from "@/components/Button"
 
 export default function Dashboard() {
   const theme = useTheme();
