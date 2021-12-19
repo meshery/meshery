@@ -63,7 +63,7 @@ jobs:
         run: |
           eval $(minikube -p minikube docker-env) 
           docker build  -t test:test .
-      - name: Retrieve Kubeconfig
+      - name: Retrieve kubeconfig
         run:  cat ~/.kube/config     
       # Setup meshery config.yaml and auth.json
       - name: Setup meshery config and infinite token for use
@@ -83,7 +83,7 @@ jobs:
             fi
             cat ~/.meshery/auth.json
         
-      # Start Meshery server (Assuming that this step will create the meshery namespace)
+      # Start Meshery Server (Assuming that this step will create the meshery namespace)
       - name: Start Meshery Server using mesheryctl
         run: |
               curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
@@ -107,6 +107,14 @@ jobs:
       # Checking meshery server logs
       - name: Check Meshery pod logs
         run: |
+          SECONDS=0
+          end=$((SECONDS+150))
+          while [ $SECONDS -lt $end ]; do
+              status=$(kubectl get pods -n meshery | sed -n 2p | tr -s ' ' | cut -d " " -f 3)
+              if [ "$status" = "Running" ];then
+                break
+              fi
+          done
           podName=$(kubectl get pods -o wide -n meshery | sed -n 2p | tr -s ' ' | cut -d " " -f 1)
           kubectl logs pod/$podName -n meshery
       # If external IP has not been allotted then server is unreachable, exit here in that case
@@ -135,6 +143,7 @@ jobs:
             cat ./${{ inputs.patternfile_name }}
             mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
 
+   
       - name: Check adapter logs
         run: |
             podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
