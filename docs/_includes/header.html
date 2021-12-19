@@ -2,9 +2,8 @@
   <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
     <a class="navbar-brand" href="{{ site.baseurl }}/{{linkUrlSelected}}">
       <div class="navbar-logo">
-        {% include meshery-logo-text.svg %}<span class="font-weight-bold" style="vertical-align: bottom"
-          >{{ site.title }}</span
-        >
+        {% include meshery-logo-text.svg %}<span class="font-weight-bold"
+          style="vertical-align: bottom">{{ site.title }}</span>
       </div>
     </a>
     <div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
@@ -15,14 +14,11 @@
       </li>{% endif %}  -->
 
         <!-- Internal links -->
-        {% for link in site.data.navigation %} 
-            <li class="nav-item mr-4 mb-2 mb-lg-0">
-              <a
-                class="nav-link"
-                href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}"
-                ><span>{{ link.title }}</span></a
-              >
-            </li>
+        {% for link in site.data.navigation %}
+        <li class="nav-item mr-4 mb-2 mb-lg-0">
+          <a class="nav-link"
+            href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}"><span>{{ link.title }}</span></a>
+        </li>
         {% endfor %}
       </ul>
     </div>
@@ -44,24 +40,3 @@
 meshery-custom-end -->
   </nav>
 </header>
-
-<!-- meshery-custom-begin
-
-<script>
-$(document).ready(function() {
-  var url = "https://api.github.com/search/repositories?q={{ site.github_user }}/{{ site.github_repo }}";
-  fetch(url, { 
-      headers: {"Accept":"application/vnd.github.preview"}
-  }).then(function(e) {
-    return e.json()
-  }).then(function(r) {
-     console.log(r.items[0])
-     stars = r.items[0]['stargazers_count']
-     forks = r.items[0]['forks_count']
-     $('#stars').text(stars + " Stars")
-     $('#forks').text(forks + " Forks")
-  });
-});
-</script>
-
-meshery-custom-end -->
