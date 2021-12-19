@@ -662,7 +662,7 @@ func GetPods(client *meshkitkube.Client, namespace string) (*v1core.PodList, err
 
 // GetMesheryService gets the "meshery" service in the MesheryNamespace
 func GetMesheryService(client *meshkitkube.Client, namespace string) (*v1core.Service, error) {
-	mesherySvc, err := client.KubeClient.CoreV1().Services(namespace).Get(context.Background(), MesheryNamespace, v1.GetOptions{})
+	mesherySvc, err := client.KubeClient.CoreV1().Services(namespace).Get(context.Background(), "meshery", v1.GetOptions{})
 
 	if err != nil {
 		return nil, err
