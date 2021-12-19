@@ -660,6 +660,16 @@ func GetPods(client *meshkitkube.Client, namespace string) (*v1core.PodList, err
 	return podList, nil
 }
 
+// GetMesheryService gets the "meshery" service in the MesheryNamespace
+func GetMesheryService(client *meshkitkube.Client, namespace string) (*v1core.Service, error) {
+	mesherySvc, err := client.KubeClient.CoreV1().Services(namespace).Get(context.Background(), MesheryNamespace, v1.GetOptions{})
+
+	if err != nil {
+		return nil, err
+	}
+	return mesherySvc, nil
+}
+
 // GetRequiredPods checks if the pods specified by the user is valid returns a list of the required pods
 func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]string, error) {
 	var requiredPods []string

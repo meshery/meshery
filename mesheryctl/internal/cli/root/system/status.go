@@ -178,7 +178,16 @@ var statusCmd = &cobra.Command{
 			// Print the data to a table for readability
 			utils.PrintToTable([]string{"Name", "Ready", "Status", "Restarts", "Age"}, data)
 
+			mesherySvc, err := utils.GetMesheryService(client, utils.MesheryNamespace)
+			if err != nil {
+				return err
+			}
 			log.Info("\nMeshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
+			if len(mesherySvc.Status.LoadBalancer.Ingress) != 0 {
+				log.Info("\nLoadbalancer IP for Meshery: ", mesherySvc.Status.LoadBalancer.Ingress[0].IP)
+				return nil
+			}
+			log.Warn("\nLoadbalancer IP not allocated for Meshery. You cannot connect to Meshery from outside the cluster. Make sure your ingress/loadbalancer is running.")
 		}
 		return nil
 	},
