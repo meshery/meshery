@@ -30,7 +30,7 @@ scoop install mesheryctl
 
 You're ready to run Meshery. To do so, execute the following command.
 
-<pre class="codeblock-pre"><div class="codeblsock">
+<pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
 mesheryctl system start
 
