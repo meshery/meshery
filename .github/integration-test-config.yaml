@@ -4,7 +4,7 @@ test:
   smp_version: v0.0.1
   
   # The name of the test
-  name: Sample Performance Test
+  name: Performance Profile for Meshery's Nightly Integration Testing
   labels: {}
   
   # Test configuration to be defined here
