@@ -110,26 +110,6 @@ meshery-custom-end -->
 </nav>
 </header>
 
-<!-- meshery-custom-begin
-
-<script>
-$(document).ready(function() {
-  var url = "https://api.github.com/search/repositories?q=layer5io/meshery";
-  fetch(url, { 
-      headers: {"Accept":"application/vnd.github.preview"}
-  }).then(function(e) {
-    return e.json()
-  }).then(function(r) {
-     console.log(r.items[0])
-     stars = r.items[0]['stargazers_count']
-     forks = r.items[0]['forks_count']
-     $('#stars').text(stars + " Stars")
-     $('#forks').text(forks + " Forks")
-  });
-});
-</script>
-
-meshery-custom-end -->
 
     <div class="container-fluid td-outer">
       <div class="td-main">
