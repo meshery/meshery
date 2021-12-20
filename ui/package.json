@@ -52,7 +52,6 @@
     "redux-observable": "^2.0.0",
     "relay-runtime": "^11.0.2",
     "rxjs": "^7.3.0",
-    "starwars-names": "^1.6.0",
     "styled-jsx": "^4.0.1",
     "subscriptions-transport-ws": "^0.9.19"
   },

@@ -10,7 +10,6 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { MetricsButton } from "@/components/Button"
-import { AutoComplete } from "@/components/AutoComplete";
 
 export default function Dashboard() {
   const theme = useTheme();
@@ -35,7 +34,6 @@ export default function Dashboard() {
         </KuberenetesClusterContainer>
 
         <AdaptersListContainer>{(props) => <AdaptersChipList {...props} />}</AdaptersListContainer>
-        <AutoComplete>Hi from AutoComplete</AutoComplete>
         <MetricsContainer>
           {({ grafanas, prometheus, onGrafanaClick, onPrometheusClick }) => {
             return (
