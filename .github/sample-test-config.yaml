@@ -19,7 +19,7 @@ test:
       body: ''
       content_type: ''
       endpoint_urls:
-        - 'https://www.cncf.io/'
+        - 'https://meshery.io'
   duration: 2s
 
 # Service mesh under test in Service Mesh Performance Spec format
