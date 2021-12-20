@@ -214,17 +214,32 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   };
 
   const handleSettingsChange = (schemaSet) => () => {
-    const cfg = {
-      [(Math.random() + 1).toString(36).substring(2)] : {
-        settings : reference.current?.getSettings(),
-        traits : reference.current?.getTraits(),
-        type : schemaSet?.oam_definition?.metadata?.name || "NA",
-        name : "<Name-Of-Component>",
+    let cfg;
+    if (schemaSet?.metadata?.["ui.meshery.io/category"] === "addon") { // addons
+      const serviceKey = getPatternServiceName(schemaSet)
+      cfg = {
+        [serviceKey] : {
+          settings : reference.current?.getSettings(),
+          type : schemaSet?.oam_definition?.metadata?.name || "NA",
+        }
+      }
+
+      if (!cfg?.[serviceKey]?.settings) { // return when switch is toggled OFF
+        handleAddonsOff(serviceKey)
+        return;
+      }
+    } else { // normal rjsf
+      cfg = {
+        [(Math.random() + 1).toString(36).substring(2)] : {
+          settings : reference.current?.getSettings(),
+          traits : reference.current?.getTraits(),
+          type : schemaSet?.oam_definition?.metadata?.name || "NA",
+          name : "<Name-Of-Component>",
+        }
       }
     }
 
     const config = createPatternFromConfig(cfg, "default", true);
-
     handleChangeData(config, "");
   };
 
@@ -235,6 +250,13 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
   };
+
+  const handleAddonsOff =(key) => {
+    const dConfig = { ...deployServiceConfig }
+    delete dConfig?.[key]
+    handleCodeEditorYamlChange(dConfig)
+    setDeployServiceConfig(dConfig)
+  }
 
   const handleDelete = (cfg, patternName) => {
     console.log("deleted", cfg);
@@ -269,7 +291,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
     const attrName = getPatternServiceName(workload);
     var returnValue = {};
     Object.keys(deployServiceConfig).find(key => {
-      if (deployServiceConfig[key]['type'] === attrName) {
+      if (deployServiceConfig[key]?.['type'] === attrName) {
         returnValue = deployServiceConfig[key];
         return true;
       }
@@ -516,8 +538,11 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                             .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
                             .map((s, i) => (
                               <Grid item key={`svc-form-addons-${i}`}>
+                                {
+                                  console.log("f", deployServiceConfig?.[getPatternServiceName(s.workload)], getPatternServiceName(s.workload))
+                                }
                                 <LazyPatternServiceForm
-                                  formData={deployServiceConfig[s.workload?.title]}
+                                  formData={{ settings : deployServiceConfig?.[getPatternServiceName(s.workload)] }}
                                   onSettingsChange={handleSettingsChange(s.workload)}
                                   schemaSet={s}
                                   onSubmit={handleSubmit}

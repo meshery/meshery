@@ -2,6 +2,7 @@
 import React from "react";
 import Switch from "./Switch";
 import RJSF from "./RJSF";
+import { isEmptyObj } from "../../../utils/utils";
 
 /**
  * componentType takes in json schema and returns the type
@@ -34,7 +35,6 @@ function componentType(jsonSchema) {
  */
 function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent }) {
   const ctype = componentType(jsonSchema);
-  console.log("new one", { formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent, ctype })
 
   if (ctype === "rjsf")
     return (
@@ -53,6 +53,7 @@ function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDele
   if (ctype === "switch")
     return (
       <Switch
+        intialState={!isEmptyObj(formData)}
         jsonSchema={jsonSchema}
         onChange={onChange}
         onSubmit={onSubmit}

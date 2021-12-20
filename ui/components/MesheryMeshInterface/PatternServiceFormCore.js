@@ -20,9 +20,10 @@ import { scrollToTop } from "../../utils/utils";
  *  reference?: Record<any, any>;
  * 	children?: Function;
  *  scroll?: Boolean; // If the window should be scrolled to zero after re-rendering
+ *  tab?:Number
  * }} param0 props for the component
  */
-function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, children, scroll = false }) {
+function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, children, scroll = false, tab }) {
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {}, onSettingsChange);
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {}, onTraitsChange);
   const [update, forceUpdate] = useState(0)
@@ -35,7 +36,7 @@ function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, refer
       forceUpdate(update + 1) // updating the state for simulating re-rendering of changed children
       scroll && scrollToTop()
     }
-  }, [schemaSet])
+  }, [schemaSet, tab])
 
   const child = React.useRef(null);
 
@@ -91,6 +92,7 @@ function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, refer
   if (child.current) return child.current;
 
   if (schemaSet.type === "addon") {
+    console.log("chalo shuru karte hai", settings)
     return child.current = children(
       function (props = {}) {
         return (
