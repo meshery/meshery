@@ -108,8 +108,8 @@ jobs:
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
-          profile_name: sample-e2e-workflow
-          profile_filename: sample-test-config.yaml
+          profile_name: integration-e2e-workflow
+          profile_filename: integration-test-config.yaml
           test_name: '${{ steps.date.outputs.date }}'
       
       - name: Deploy Service Mesh
