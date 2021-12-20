@@ -141,8 +141,7 @@ export function getPatternServiceID(item) {
  * @returns {string | undefined} service name
  */
 export function getPatternServiceType(item) {
-  const type = item?.metadata?.["ui.meshery.io/category"];
-  return type;
+  return item?.metadata?.["ui.meshery.io/category"];
 }
 
 /**

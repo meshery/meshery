@@ -44,6 +44,12 @@ const styles = (theme) => ({
   iconPatt : {
     width : "24px",
     height : "24px",
+  },
+  createButton : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    margin : "1rem"
   }
 });
 
@@ -385,10 +391,10 @@ function MesheryPatterns({
       );
     }
 
-    if (type === FILE_OPS.FILE_UPLOAD || type=== FILE_OPS.URL_UPLOAD) {
+    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body;
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({  pattern_data : { pattern_file : data }, save : true })
+        body = JSON.stringify({ pattern_data : { pattern_file : data }, save : true })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ url : data, save : true })
@@ -670,7 +676,7 @@ function MesheryPatterns({
           />
         </MuiThemeProvider>
       }
-      {!selectedPattern.show && <div style={{ display : "flex", justifyContent : "center", alignItems : "center", margin : "1rem" }}>
+      {!selectedPattern.show && <div className={classes.createButton}>
         <Button
           aria-label="Add Pattern"
           variant="contained"

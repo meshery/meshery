@@ -92,7 +92,6 @@ function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, refer
   if (child.current) return child.current;
 
   if (schemaSet.type === "addon") {
-    console.log("chalo shuru karte hai", settings)
     return child.current = children(
       function (props = {}) {
         return (
