@@ -1,6 +1,6 @@
 // @ts-check
 import {
-  Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
   TableCell, Tooltip, Typography
 } from "@material-ui/core";
 import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
@@ -14,6 +14,7 @@ import UploadIcon from "@material-ui/icons/Publish";
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
+import AddIcon from "@material-ui/icons/Add";
 import React, { useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import Moment from "react-moment";
@@ -43,6 +44,12 @@ const styles = (theme) => ({
   iconPatt : {
     width : "24px",
     height : "24px",
+  },
+  createButton : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    margin : "1rem"
   }
 });
 
@@ -384,10 +391,10 @@ function MesheryPatterns({
       );
     }
 
-    if (type === FILE_OPS.FILE_UPLOAD || type=== FILE_OPS.URL_UPLOAD) {
+    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body;
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({  pattern_data : { pattern_file : data }, save : true })
+        body = JSON.stringify({ pattern_data : { pattern_file : data }, save : true })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ url : data, save : true })
@@ -669,6 +676,22 @@ function MesheryPatterns({
           />
         </MuiThemeProvider>
       }
+      {!selectedPattern.show && <div className={classes.createButton}>
+        <Button
+          aria-label="Add Pattern"
+          variant="contained"
+          color="primary"
+          size="large"
+          // @ts-ignore
+          onClick={() => setSelectedPattern({
+            pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+            show : true,
+          })}
+        >
+          <AddIcon />
+          Create Pattern
+        </Button>
+      </div>}
       <PromptComponent ref={modalRef} />
     </NoSsr>
   );
