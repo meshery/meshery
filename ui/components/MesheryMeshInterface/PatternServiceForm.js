@@ -76,8 +76,16 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       onSettingsChange={onSettingsChange}
       onTraitsChange={onTraitsChange}
       scroll={scroll}
+      tab={tab}
     >
       {(SettingsForm, TraitsForm) => {
+
+        // For rendering addons without tabs
+        if (schemaSet?.type === "addon") {
+          return <SettingsForm />
+        }
+
+        // for rendering normal rjsf forms
         return (
           <div className={classes.formWrapper}>
             <AppBar className={classes.appBar}>
@@ -93,7 +101,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
             <TabPanel value={tab} index={0} className={classes.tabPanel}>
               <SettingsForm RJSFFormChildComponent={RJSFFormChildComponent}  />
             </TabPanel>
-            <TabPanel value={tab} index={0} className={classes.tabPanel}>
+            <TabPanel value={tab} index={1} className={classes.tabPanel}>
               <TraitsForm />
             </TabPanel>
           </div>

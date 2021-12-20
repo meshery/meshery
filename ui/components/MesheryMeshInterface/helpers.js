@@ -3,7 +3,6 @@
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
-import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
 
 /**
  * @typedef {Object} OAMDefinition
@@ -79,7 +78,7 @@ export async function createWorkloadTraitSets(adapter) {
 
   const sets = [];
   workloads?.forEach((w) => {
-    const item = { workload : w, traits : [], type : getPatternServiceType(w?.metadata) };
+    const item = { workload : w, traits : [], type : getPatternServiceType(w) };
 
     item.traits = traits?.filter((t) => {
       if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
@@ -198,17 +197,15 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
     name : `pattern-${trueRandom().toString(36).substr(2, 5)}`,
     services : {},
   };
-
   partialClean ? recursiveCleanObjectExceptEmptyArray(config) : recursiveCleanObject(config);
 
   Object.keys(config).forEach((key) => {
     // Add it only if the settings are non empty or "true"
     if (config[key].settings) {
-      const name = PascalCaseToKebab(key);
-      pattern.services[name] = config[key];
+      // const name = PascalCaseToKebab(key);
+      pattern.services[key] = config[key];
 
-      pattern.services[name].type = key;
-      pattern.services[name].namespace = namespace;
+      pattern.services[key].namespace = namespace;
     }
   });
 
