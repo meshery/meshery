@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useEffect } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
@@ -79,11 +79,11 @@ export default function LazyPatternServiceForm(props) {
   const [expanded, setExpanded] = React.useState(false);
   const [schemaSet, setSchemaSet] = React.useState({});
 
-  useEffect(() => {
-    if (props?.schemaSet?.type === "addon") {
-      expand(true)
-    }
-  },[])
+  // useEffect(() => {
+  //   if (props?.schemaSet?.type === "addon") {
+  //     expand(true)
+  //   }
+  // },[])
 
   const classes = useStyles();
 
@@ -111,14 +111,14 @@ export default function LazyPatternServiceForm(props) {
     }
   }
 
-  if (props?.schemaSet?.type === "addon") {
-    if (isEmptyObj(schemaSet)) {
-      return <CircularProgress />
-    } else {
-      // @ts-ignore
-      return <PatternServiceForm {...props} schemaSet={schemaSet} />
-    }
-  }
+  // if (props?.schemaSet?.type === "addon") {
+  //   if (isEmptyObj(schemaSet)) {
+  //     return <CircularProgress />
+  //   } else {
+  //     // @ts-ignore
+  //     return <PatternServiceForm {...props} schemaSet={schemaSet} />
+  //   }
+  // }
 
   return (
     <div className={classes.root}>

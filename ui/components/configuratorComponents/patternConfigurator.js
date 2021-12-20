@@ -510,7 +510,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                             Configure Addons
                           </Typography>
                         </AccordionSummary>
-                        <AccordionDetails>
+                        <AccordionDetails style={{ flexDirection : "column" }}>
                           {selectedVersionMesh && selectedVersionMesh?.[selectedVersion]
                             ?.filter((s) => s.type === "addon")
                             .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
