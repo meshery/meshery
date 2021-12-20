@@ -16,7 +16,7 @@ on:
         required: false
   # scheduled to run at the 43rd minute of every 12th hour
   schedule:
-    - cron: '43 */12 * * *'
+    - cron: '43 */24 * * *'
 
 jobs:
   manual-test:
