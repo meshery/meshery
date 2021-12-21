@@ -3,9 +3,11 @@ layout: default
 title: Compatibility Matrix
 permalink: project/compatibility-matrix
 redirect_from: project/compatibility-matrix/
+description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"
 list: exclude
+type: "project"
 ---
 
 # Meshery Compatibility Matrix
