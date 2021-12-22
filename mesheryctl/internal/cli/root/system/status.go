@@ -178,7 +178,7 @@ var statusCmd = &cobra.Command{
 			// Print the data to a table for readability
 			utils.PrintToTable([]string{"Name", "Ready", "Status", "Restarts", "Age"}, data)
 
-			log.Info("\nMeshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
+			log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
 		}
 		return nil
 	},
