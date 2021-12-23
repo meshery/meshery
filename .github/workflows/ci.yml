@@ -107,6 +107,9 @@ jobs:
     - name: build provider-ui
       run: |
         make build-provider-ui
+# -----------------
+# INTEGRATION TESTS
+# -----------------
   tests-ui:
     needs: [build-ui]
     name: UI integration tests
@@ -131,15 +134,18 @@ jobs:
           !~/cache/exclude
           **/node_modules
           /home/runner/.cache
-        key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
     - name: Install Cypress Binary
-      run: npx cypress install
+      run: |
+      run: npm i cypress
+      npx cypress install
     - name: cache cypress
       id: cypress-cache
       uses: actions/cache@v2
       with: 
         path: |
             /home/runner/.cache/Cypress
+        key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
     - name: Run tests
       run: |
         cd ui
