@@ -14,7 +14,7 @@ This project is community-built and welcomes collaboration. Contributors are exp
 
 # Contributing Guides
 
-{% include suggested-reading.html diffName ="true" %}
+{% include suggested-reading.html diffName ="true" language = "en" %}
 
 ## Not sure where to start?
 

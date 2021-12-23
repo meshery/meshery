@@ -28,7 +28,7 @@ export function groupWorkloadByType(workloads) {
 export function groupWorkloadByVersion(meshfilteredWorkloads) {
   let versionedFilteredWorkloads = {};
   meshfilteredWorkloads.map(wtSet => {
-    const version = wtSet.workload?.oam_definition?.spec?.metadata?.meshVersion;
+    const version = wtSet.workload?.oam_definition?.spec?.metadata?.meshVersion || "Meshery";
     if (version) {
       let versionedFilteredMesh = versionedFilteredWorkloads[version] || [];
       versionedFilteredMesh.push(wtSet);
