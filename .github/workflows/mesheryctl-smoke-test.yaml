@@ -49,7 +49,7 @@ jobs:
           echo "Mismatch, Failed Test"
           exit 1
         fi
-    - name: Test mesheryctl Manually
+    - name: Test mesheryctl Automatically
       if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
       run: |
         if ./mesheryctl/mesheryctl -h | grep -q 'Available'; then
