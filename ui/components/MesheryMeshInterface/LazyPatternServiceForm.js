@@ -16,6 +16,7 @@ import {
   getHumanReadablePatternServiceName as getReadableItemName
 } from "./helpers";
 import { isEmptyObj } from "../../utils/utils";
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
   root : {
@@ -78,13 +79,7 @@ export async function getWorkloadTraitAndType(schemaSet) {
 export default function LazyPatternServiceForm(props) {
   const [expanded, setExpanded] = React.useState(false);
   const [schemaSet, setSchemaSet] = React.useState({});
-
-  // useEffect(() => {
-  //   if (props?.schemaSet?.type === "addon") {
-  //     expand(true)
-  //   }
-  // },[])
-
+  const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
   async function expand(state) {
@@ -107,18 +102,10 @@ export default function LazyPatternServiceForm(props) {
         });
       }
     } catch (error) {
-      console.error(error);
+      console.error("error getting schema:", {error})      
+      enqueueSnackbar(`error getting schema: ${error?.message}`, {variant: "error"})
     }
   }
-
-  // if (props?.schemaSet?.type === "addon") {
-  //   if (isEmptyObj(schemaSet)) {
-  //     return <CircularProgress />
-  //   } else {
-  //     // @ts-ignore
-  //     return <PatternServiceForm {...props} schemaSet={schemaSet} />
-  //   }
-  // }
 
   return (
     <div className={classes.root}>
