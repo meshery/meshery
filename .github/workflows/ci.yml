@@ -87,6 +87,7 @@ jobs:
         path: |
           ~/cache
           ~/.cache
+          /home/runner/.cache
           !~/cache/exclude
           **/node_modules
           /home/runner/.cache/Cypress
@@ -129,13 +130,21 @@ jobs:
           ~/.cache
           !~/cache/exclude
           **/node_modules
+          /home/runner/.cache
         key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
     - name: Install Cypress Binary
-      run: npx cypress install --force
+      run: npx cypress install
+    - name: cache cypress
+      id: cypress-cache
+      uses: actions/cache@v2
+      with: 
+        path: |
+            /home/runner/.cache/Cypress
     - name: Run tests
       run: |
         cd ui
         npm i
+        npx cypress install
         npm run ci-test-integration
         cd ..
         cd provider-ui
@@ -183,6 +192,7 @@ jobs:
           path: |
             ~/cache
             ~/.cache
+            /home/runner/.cache
             !~/cache/exclude
             **/node_modules
             /home/runner/.cache/Cypress
@@ -216,7 +226,7 @@ jobs:
           chmod +x ./main
           ./main &
       - name: Install Cypress Binary
-        run: npx cypress install --force
+        run: npx cypress install
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
