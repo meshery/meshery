@@ -107,9 +107,6 @@ jobs:
     - name: build provider-ui
       run: |
         make build-provider-ui
-# -----------------
-# INTEGRATION TESTS
-# -----------------
   tests-ui:
     needs: [build-ui]
     name: UI integration tests
