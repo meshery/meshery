@@ -89,6 +89,7 @@ jobs:
           ~/.cache
           !~/cache/exclude
           **/node_modules
+          /home/runner/.cache/Cypress
         key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
         restore-keys: |
           ${{ runner.os }}-node-
@@ -184,6 +185,7 @@ jobs:
             ~/.cache
             !~/cache/exclude
             **/node_modules
+            /home/runner/.cache/Cypress
           key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
           restore-keys: |
             ${{ runner.os }}-node-
