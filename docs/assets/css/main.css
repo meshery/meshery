@@ -18678,12 +18678,36 @@ footer {
       transition: color .25s;
 }
 .social__link--mail:hover {
-    color: black;
+    color: #3bb3a0;
 }
-
-.social__link--slack:hover {
-    color: #4A154B;
+.social__link--slack {
+    fill: white;
 }
+.social__link--slack:hover .first{
+    fill: #e91e63;
+    color: black
+  }
+.social__link--slack:hover .second{
+    fill: #e91e63;
+  }
+.social__link--slack:hover .third{
+    fill: #00bcd4;
+  }
+.social__link--slack:hover .fourth{
+    fill: #00bcd4;
+  }
+.social__link--slack:hover .fifth{
+    fill: #4caf50;
+  }
+.social__link--slack:hover .sixth{
+    fill: #4caf50;
+  }
+.social__link--slack:hover .seventh{
+    fill: #ff9800;
+  }
+.social__link--slack:hover .eigth{
+    fill: #ff9800;
+  }
 
 .social__link--twitter:hover {
     color: #1da1f2;
@@ -18699,6 +18723,14 @@ footer {
 
 .social__link--docker:hover {
     color: #2496ed;
+}
+
+.social__link--calender {
+    fill: #fff;
+}
+
+.social__link--calender:hover {
+    fill: #0073cf;
 }
 
 #compatibility-table{
