@@ -994,7 +994,7 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Menu = (
-      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden" }}>
+      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-1.2rem" }}>
         {categories.map(({
           id : childId, title, icon, href, show, link, children
         }) => {
