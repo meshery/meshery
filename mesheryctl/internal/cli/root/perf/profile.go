@@ -121,11 +121,11 @@ mesheryctl perf profile test --view
 }
 
 // Fetch performance profiles
-func fetchPerformanceProfiles(baseUrl, searchString string, pageSize, pageNumber int) ([]models.PerformanceProfile, []byte, error) {
+func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]models.PerformanceProfile, []byte, error) {
 	client := &http.Client{}
 	var response *models.PerformanceProfilesAPIResponse
 
-	url := baseUrl + "/api/user/performance/profiles"
+	url := baseURL + "/api/user/performance/profiles"
 
 	// update the url
 	url = fmt.Sprintf("%s?page_size=%d&page=%d", url, pageSize, pageNumber)

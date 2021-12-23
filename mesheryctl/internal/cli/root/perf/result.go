@@ -153,11 +153,11 @@ mesheryctl perf result saturday-profile --view
 }
 
 // Fetch results for a specific profile
-func fetchPerformanceProfileResults(baseUrl, profileID string, pageSize, pageNumber int) ([]models.PerformanceResult, []byte, error) {
+func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNumber int) ([]models.PerformanceResult, []byte, error) {
 	client := &http.Client{}
 	var response *models.PerformanceResultsAPIResponse
 
-	url := baseUrl + "/api/user/performance/profiles/" + profileID + "/results"
+	url := baseURL + "/api/user/performance/profiles/" + profileID + "/results"
 
 	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, pageSize, pageNumber)
 
