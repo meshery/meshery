@@ -1,0 +1,43 @@
+name: mesheryctl Smoke Test
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'mesheryctl/**'
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'mesheryctl/**'
+  workflow_dispatch:
+    inputs:
+      command:
+        description: command to run with mesheryctl
+        required: false
+        default: ''
+jobs:
+  smoke-test:
+    name: mesheryctl Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+
+    - name: Build mesheryctl
+      run: make
+      with:
+        working-directory: mesheryctl
+    
+    - name: Test mesheryctl Manually
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: ./mesheryctl ${{ github.event.inputs.command }}
+
+    - name: Test mesheryctl Manually
+      if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+      run: ./mesheryctl -h
