@@ -129,6 +129,8 @@ jobs:
           !~/cache/exclude
           **/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+    - name: Install Cypress Binary
+      run: npx cypress install --force
     - name: Run tests
       run: |
         cd ui
@@ -211,6 +213,8 @@ jobs:
         run: |
           chmod +x ./main
           ./main &
+      - name: Install Cypress Binary
+        run: npx cypress install --force
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
