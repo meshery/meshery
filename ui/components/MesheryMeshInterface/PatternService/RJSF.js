@@ -9,6 +9,7 @@ import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import MemoizedCustomInputField from "./RJSFCustomComponents/CustomInputField";
 import CustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import { isEqualArr } from "../../../utils/utils"
+import handleError from '../../ErrorHandling';
 
 const Form = withTheme(MaterialUITheme);
 
@@ -30,9 +31,13 @@ function deleteDescriptionFromJSONSchema(jsonSchema) {
  */
 function getRefinedJsonSchema(jsonSchema, hideTitle = true) {
   let refinedSchema;
-  refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
-  refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
-  refinedSchema = addTitleToPropertiesJSONSchema(refinedSchema)
+  try {
+    refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
+    refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
+    refinedSchema = addTitleToPropertiesJSONSchema(refinedSchema)
+  } catch (e) {
+    handleError(e, "schema parsing problem", "fatal")
+  }
   return refinedSchema
 }
 
