@@ -1,5 +1,5 @@
 ---
-timestamp: "Thu Dec 23 16:41:15 UTC 2021"
+timestamp: "Thu Dec 23 16:43:51 UTC 2021"
 meshery-component: meshery-istio
 meshery-component-version: edge
 meshery-server-version: "v0.6.0-rc-2"
@@ -11,5 +11,7 @@ tests:
   istiod: "Running"
   istio-egressgateway: "Running"
   istio-ingressgateway:  "Running"
+  grafana-addon: "Running"
+  prometheus-addon: "Running"
 overall-status: "passing"
 ---
