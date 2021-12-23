@@ -3,10 +3,10 @@ import { Cancel } from "@material-ui/icons";
 import { useSnackbar } from "notistack";
 
 /**
- * 
- * @param {Object} err 
- * @param {string} prefixMessage 
- * @param {("normal"|"fatal")} severity 
+ *
+ * @param {Object} err
+ * @param {string} prefixMessage
+ * @param {("normal"|"fatal")} severity
  */
 function handleError(err, prefixMessage, severity = "normal") {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
@@ -19,15 +19,15 @@ function handleError(err, prefixMessage, severity = "normal") {
   return enqueueSnackbar(
     `${severity}: ${prefixMessage}: ${err?.message}`,
     {
-      variant: "error",
-      autoHideDuration: 8000,
-      preventDuplicate: true,
-      action: (key) => (
+      variant : "error",
+      autoHideDuration : 8000,
+      preventDuplicate : true,
+      action : (key) => (
         <IconButton
           onClick={() => closeSnackbar(key)}
           color="secondary"
         >
-          <Cancel /> 
+          <Cancel />
         </IconButton>
       )
     })

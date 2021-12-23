@@ -14,11 +14,11 @@ import handleError from '../../ErrorHandling';
 const Form = withTheme(MaterialUITheme);
 
 function deleteTitleFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, title: "" };
+  return { ...jsonSchema, title : "" };
 }
 
 function deleteDescriptionFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, description: "" }
+  return { ...jsonSchema, description : "" }
 }
 
 /**
@@ -51,7 +51,7 @@ function uiSchema(jsonSchema) {
     ) {
       console.log("into")
       uiJsonSchema[key] = {
-        'ui:description': ' '
+        'ui:description' : ' '
       }
     }
   })
@@ -83,8 +83,8 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
         }
         newProperties[key] = {
           ...newProperties[key],
-          title: formatString(key),
-          default: defaultValue
+          title : formatString(key),
+          default : defaultValue
         }
         // if (typeof newProperties[key] === 'object' && Object.prototype.hasOwnProperty.call(newProperties[key], 'properties')){
         //   newProperties[key] = {
@@ -96,7 +96,7 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
 
     })
 
-    return { ...jsonSchema, properties: newProperties };
+    return { ...jsonSchema, properties : newProperties };
   }
   return undefined
 }
@@ -122,7 +122,7 @@ function RJSF(props) {
 
   // define new string field
   const fields = {
-    StringField: ({ idSchema, formData, ...props }) => <MemoizedCustomInputField id={idSchema['$id']} value={formData} idSchema={idSchema} {...props} />
+    StringField : ({ idSchema, formData, ...props }) => <MemoizedCustomInputField id={idSchema['$id']} value={formData} idSchema={idSchema} {...props} />
   }
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
@@ -137,7 +137,7 @@ function RJSF(props) {
   }, [data]);
 
   return (
-    <RJSFWrapperComponent {...{ ...props, RJSFWrapperComponent: null, RJSFFormChildComponent: null }}>
+    <RJSFWrapperComponent {...{ ...props, RJSFWrapperComponent : null, RJSFFormChildComponent : null }}>
       <MuiThemeProvider theme={rjsfTheme}>
         <Form
           schema={getRefinedJsonSchema(jsonSchema, hideTitle)}

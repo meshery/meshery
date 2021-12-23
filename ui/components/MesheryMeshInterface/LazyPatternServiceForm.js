@@ -102,8 +102,8 @@ export default function LazyPatternServiceForm(props) {
         });
       }
     } catch (error) {
-      console.error("error getting schema:", {error})      
-      enqueueSnackbar(`error getting schema: ${error?.message}`, {variant: "error"})
+      console.error("error getting schema:", { error })
+      enqueueSnackbar(`error getting schema: ${error?.message}`, { variant : "error" })
     }
   }
 
