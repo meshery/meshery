@@ -146,8 +146,8 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		}
 
 		// handles spaces in args if quoted args passed
-		for i, _ := range args {
-			args[i] = strings.ReplaceAll(args[i], " ", "%20")
+		for i, arg := range args {
+			args[i] = strings.ReplaceAll(arg, " ", "%20")
 		}
 		// join all args to form profile name
 		profileName = strings.Join(args, "%20")

@@ -75,8 +75,8 @@ mesheryctl perf result saturday-profile --view
 		}
 
 		// handles spaces in args if quoted args passed
-		for i, _ := range args {
-			args[i] = strings.ReplaceAll(args[i], " ", "%20")
+		for i, arg := range args {
+			args[i] = strings.ReplaceAll(arg, " ", "%20")
 		}
 		// Merge args to get result-name
 		searchString = strings.Join(args, "%20")
