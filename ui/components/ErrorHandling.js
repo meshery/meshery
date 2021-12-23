@@ -3,6 +3,8 @@ import { Cancel } from "@material-ui/icons";
 import { useSnackbar } from "notistack";
 
 /**
+ *  Show Snackbar when error occurs. Can be used in catch blocks
+ *  of functions.
  *
  * @param {Object} err
  * @param {string} prefixMessage

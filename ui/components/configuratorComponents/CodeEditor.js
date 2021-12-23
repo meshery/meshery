@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     right : "24px",
     bottom : "30px",
     color : "#fff",
-    zIndex : 999,
+    zIndex : 11,
     backgroundColor : 'rgb(255,255,255,0.05)'
   }
 }));
