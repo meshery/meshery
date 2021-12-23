@@ -9,7 +9,8 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./PatternServiceForm";
-import { getPatternServiceName as getItemName,
+import {
+  getPatternServiceName as getItemName,
   getPatternServiceID as getItemID,
   getPatternServiceType,
   getHumanReadablePatternServiceName as getReadableItemName
@@ -78,6 +79,12 @@ export default function LazyPatternServiceForm(props) {
   const [expanded, setExpanded] = React.useState(false);
   const [schemaSet, setSchemaSet] = React.useState({});
 
+  // useEffect(() => {
+  //   if (props?.schemaSet?.type === "addon") {
+  //     expand(true)
+  //   }
+  // },[])
+
   const classes = useStyles();
 
   async function expand(state) {
@@ -93,7 +100,6 @@ export default function LazyPatternServiceForm(props) {
       if (isEmptyObj(schemaSet)) {
         // Get the schema sets consisting the workloads, traits and type
         const { workload, traits, type } = await getWorkloadTraitAndType(props?.schemaSet);
-
         setSchemaSet({
           workload,
           traits,
@@ -104,6 +110,15 @@ export default function LazyPatternServiceForm(props) {
       console.error(error);
     }
   }
+
+  // if (props?.schemaSet?.type === "addon") {
+  //   if (isEmptyObj(schemaSet)) {
+  //     return <CircularProgress />
+  //   } else {
+  //     // @ts-ignore
+  //     return <PatternServiceForm {...props} schemaSet={schemaSet} />
+  //   }
+  // }
 
   return (
     <div className={classes.root}>

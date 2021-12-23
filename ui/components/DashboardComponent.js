@@ -36,14 +36,12 @@ import dataFetch from "../lib/data-fetch";
 import subscribeDataPlaneEvents from "./graphql/subscriptions/DataPlanesSubscription";
 import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
 import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
-import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import { podNameMapper, versionMapper } from "../utils/nameMapper";
-import { subscriptionClient } from "../lib/relayEnvironment";
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
@@ -128,6 +126,11 @@ class DashboardComponent extends React.Component {
       isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured,
       controlPlaneState : "",
       dataPlaneState : "",
+
+      // subscriptions disposable
+      dataPlaneSubscription : null,
+      controlPlaneSubscription : null,
+      operatorStatusSubscription : null,
     };
   }
 
@@ -155,6 +158,18 @@ class DashboardComponent extends React.Component {
     return st;
   }
 
+  disposeSubscriptions = () => {
+    if (this.state.operatorStatusSubscription) {
+      this.state.operatorStatusSubscription.dispose()
+    }
+    if (this.state.dataPlaneSubscription) {
+      this.state.dataPlaneSubscription.dispose()
+    }
+    if (this.state.controlPlaneSubscription) {
+      this.state.controlPlaneSubscription.dispose()
+    }
+  }
+
   initMeshSyncControlPlaneSubscription = () => {
     /**
      * ALL_MESH indicates that we are interested in control plane
@@ -165,24 +180,20 @@ class DashboardComponent extends React.Component {
     const self = this;
 
     if (self._isMounted){
-      subscribeMeshSyncStatusEvents((res) => {
-        if (res.meshsync?.error) {
-          self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
-          return;
-        }
-      });
-      subscribeOperatorStatusEvents(self.setOperatorState);
+      const opSub = subscribeOperatorStatusEvents(self.setOperatorState);
       // subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH, this.state, e => this.setState({ ...e }));
-      subscribeControlPlaneEvents((res) => {
+      const cpSub = subscribeControlPlaneEvents((res) => {
         if (res?.controlPlanesState !== undefined){
           this.setState({ controlPlaneState : res })
         }
       }, ALL_MESH)
-      subscribeDataPlaneEvents((res) => {
+      const dpSub = subscribeDataPlaneEvents((res) => {
         if (res?.dataPlanesState !== undefined){
           this.setState({ dataPlaneState : res })
         }
       }, ALL_MESH)
+      this.disposeSubscriptions()
+      this.setState({ operatorStatusSubscription : opSub, dataPlaneSubscription : dpSub, controlPlaneSubscription : cpSub })
       fetchControlPlanes(ALL_MESH).subscribe({
         next : (controlPlaneRes) => {
           this.setState({ controlPlaneState : controlPlaneRes })
@@ -203,7 +214,7 @@ class DashboardComponent extends React.Component {
 
   componentWillUnmount = () => {
     this._isMounted = false
-    subscriptionClient.close()
+    this.disposeSubscriptions()
   }
 
   componentDidMount = () => {

@@ -6,6 +6,7 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
+// import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
@@ -14,6 +15,9 @@ import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
+import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
+import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
+
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faHome } from '@fortawesome/free-solid-svg-icons';
 
@@ -63,6 +67,41 @@ const styles = (theme) => ({
 });
 
 class Header extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      meshSyncStatusSubscription : null,
+      brokerStatusSubscription : null,
+      meshSyncStatus : {
+        name : "meshsync",
+        status : "DISABLED",
+        version : "v0.0.0",
+        error : null,
+      },
+      brokerStatus : false,
+    }
+  }
+  componentDidMount(){
+    this._isMounted = true;
+    const meshSyncStatusSub = subscribeMeshSyncStatusEvents(data => this.setState({ meshSyncStatus : data?.listenToMeshSyncEvents }));
+    const brokerStatusSub = subscribeBrokerStatusEvents(data => {
+      console.log({ brokerData : data })
+      this.setState({ brokerStatus : data?.subscribeBrokerConnection })
+    });
+    this.setState({ meshSyncStatusSubscription : meshSyncStatusSub, brokerStatusSubscription : brokerStatusSub })
+  }
+
+  componentWillUnmount = () => {
+    this._isMounted = false;
+    this.disposeSubscriptions()
+  }
+
+  disposeSubscriptions = () => {
+    if (this.state.meshSyncStatusSubscription) {
+      this.state.meshSyncStatusSubscription.dispose();
+    }
+  }
+
   render() {
     const {
       classes, title, onDrawerToggle ,onDrawerCollapse ,isBeta
@@ -136,6 +175,15 @@ class Header extends React.Component {
                   <div data-test="notification-button">
                     <MesheryNotification />
                   </div>
+
+                  {/* <Tooltip title="MeshSync Status">
+                    <div style={{ padding : "1rem", height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.meshSyncStatus.status === "ENABLED" ? "green" : "red" }} />
+                  </Tooltip>
+
+                  <Tooltip title="Broker Status">
+                    <div style={{ padding : "1rem", height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.brokerStatus ? "green" : "red" }} />
+                  </Tooltip> */}
+
                   <span className={classes.userSpan}>
                     <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
                   </span>

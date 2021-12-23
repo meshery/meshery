@@ -206,6 +206,11 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, tokenPath string, name st
 		return ErrNoAdapters
 	}
 
+	if len(adapterNames) == 1 {
+		adapterURL = adapterNames[0]
+		return nil
+	}
+
 	prompt := promptui.Select{
 		Label: "Select an Adapter from the list",
 		Items: adapterNames,
