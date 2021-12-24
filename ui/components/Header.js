@@ -6,7 +6,7 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
-// import Tooltip from '@material-ui/core/Tooltip';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
@@ -176,9 +176,17 @@ class Header extends React.Component {
                     <MesheryNotification />
                   </div>
 
-                  <IconButton>
-                    <img className={classes.headerIcons} src={this.state.meshSyncStatus.status === "ENABLED" ? "/static/img/meshsync.svg" : "/static/img/meshsync-white.svg"} />
-                  </IconButton>
+                  <Tooltip title={this.state.meshSyncStatus.status === "ENABLED" ? "Active" : "Inactive" }>
+                    <IconButton>
+                      <Link href="/settings#environment">
+                        <img className={classes.headerIcons} src={this.state.meshSyncStatus.status === "ENABLED" ? "/static/img/meshsync.svg" : "/static/img/meshsync-white.svg"} />
+                      </Link>
+                    </IconButton>
+                  </Tooltip>
+
+                  {/* <Tooltip title="Broker Status">
+                    <div style={{ padding : "1rem", height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.brokerStatus ? "green" : "red" }} />
+                  </Tooltip>  */}
 
                   <span className={classes.userSpan}>
                     <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
