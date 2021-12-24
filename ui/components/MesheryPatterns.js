@@ -94,7 +94,7 @@ function CustomToolbar(onClick, urlOnClick) {
         <label htmlFor="upload-button">
           <Tooltip title="Upload Pattern">
             <IconButton aria-label="Upload Button" component="span">
-              <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
+              <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" data-cy="file-upload-button" />
               <UploadIcon />
             </IconButton>
           </Tooltip>
@@ -548,7 +548,7 @@ function MesheryPatterns({
                 title="Deploy"
                 onClick={() => handleDeploy(rowData.pattern_file)}
               >
-                <PlayArrowIcon />
+                <PlayArrowIcon data-cy="deploy-button" />
               </IconButton>
             </>
           );
@@ -690,6 +690,16 @@ function MesheryPatterns({
           break;
       }
     },
+    setRowProps : (row, dataIndex, rowIndex) => {
+      return {
+        "data-cy" : `config-row-${rowIndex}`
+      }
+    },
+    setTableProps : () => {
+      return {
+        "data-cy" : "filters-grid"
+      }
+    }
   };
 
   return (

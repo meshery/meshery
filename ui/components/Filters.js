@@ -457,6 +457,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   aria-label="deploy"
                   color="inherit"
                   onClick={() => handleDeploy(rowData.filter_file)} //deploy endpoint to be called here
+                  data-cy="deploy-button"
                 />
               </IconButton>
             </>
@@ -583,7 +584,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     },
     setRowProps : (row, dataIndex, rowIndex) => {
       return {
-        "data-cy" : `filter-row-${rowIndex}`
+        "data-cy" : `config-row-${rowIndex}`
       }
     },
     setTableProps : () => {
