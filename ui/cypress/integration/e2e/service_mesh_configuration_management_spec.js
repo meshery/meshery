@@ -3,12 +3,12 @@ const filtersAndApplicationsExpect = (body, itemType) => expect(body).to.have.ne
 
 // Test Data
 const configurationTests = [
-  // {
-  //   itemType : "filter",
-  //   testFilePath : "configuration/wasm-filters-v0.1.2/http-auth-envoy.yaml",
-  //   expectedUploadConfigItemName : "Test Filter",
-  //   expectUploadRequestBody : filtersAndApplicationsExpect
-  // },
+  {
+    itemType : "filter",
+    testFilePath : "configuration/wasm-filters-v0.1.2/http-auth-envoy.yaml",
+    expectedUploadConfigItemName : "Test Filter",
+    expectUploadRequestBody : filtersAndApplicationsExpect
+  },
   { // below test returns this error locally:
     // Failed to upload pattern file: failed to import pattern: parse "name: ImageHubRateLimit... file content ...
     // ... dependsOn:\r\n      - generic-istio-filter": net/url: invalid control character in URL"
@@ -17,13 +17,13 @@ const configurationTests = [
     expectedUploadConfigItemName : "IstioFilterPattern-commit-b23b219.yaml",
     expectUploadRequestBody : filtersAndApplicationsExpect
   },
-  // { // below test is returning this error locally:
+  { // below test is returning this error locally:
   //   // "Failed to deploy application file: rpc error: code = Unknown desc = no matches for kind "VirtualService" in version "networking.istio.io/v1alpha3"
-  //   itemType : "application",
-  //   testFilePath : "configuration/service-mesh-patterns-samples/bookInfoPattern-commit-5eb2369.yaml",
-  //   expectedUploadConfigItemName : "MesheryGeneratedPatternFile",
-  //   expectUploadRequestBody : filtersAndApplicationsExpect
-  // },
+    itemType : "application",
+    testFilePath : "configuration/service-mesh-patterns-samples/bookInfoPattern-commit-5eb2369.yaml",
+    expectedUploadConfigItemName : "MesheryGeneratedPatternFile",
+    expectUploadRequestBody : filtersAndApplicationsExpect
+  },
 ];
 
 // Test Template
