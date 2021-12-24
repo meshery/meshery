@@ -176,13 +176,9 @@ class Header extends React.Component {
                     <MesheryNotification />
                   </div>
 
-                  {/* <Tooltip title="MeshSync Status">
-                    <div style={{ padding : "1rem", height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.meshSyncStatus.status === "ENABLED" ? "green" : "red" }} />
-                  </Tooltip>
-
-                  <Tooltip title="Broker Status">
-                    <div style={{ padding : "1rem", height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.brokerStatus ? "green" : "red" }} />
-                  </Tooltip> */}
+                  <IconButton>
+                    <img className={classes.headerIcons} src={this.state.meshSyncStatus.status === "ENABLED" ? "/static/img/meshsync.svg" : "/static/img/meshsync-white.svg"} />
+                  </IconButton>
 
                   <span className={classes.userSpan}>
                     <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
