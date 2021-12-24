@@ -99,7 +99,7 @@ function CustomToolbar(onClick, urlOnClick) {
     return (
       <>
         <label htmlFor="upload-button">
-          <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
+          <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" data-cy="file-upload-button" />
           <Tooltip title="Upload Application">
             <IconButton aria-label="Upload" component="span">
               <UploadIcon />
@@ -536,6 +536,7 @@ function MesheryApplications({
                     aria-label="deploy"
                     color="inherit"
                     onClick={() => handleDeploy(rowData.application_file)} //deploy endpoint to be called here
+                    data-cy="deploy-button"
                   />
                 </IconButton>
               </Tooltip>
@@ -665,6 +666,16 @@ function MesheryApplications({
           break;
       }
     },
+    setRowProps : (row, dataIndex, rowIndex) => {
+      return {
+        "data-cy" : `config-row-${rowIndex}`
+      }
+    },
+    setTableProps : () => {
+      return {
+        "data-cy" : "filters-grid"
+      }
+    }
   };
 
   return (
