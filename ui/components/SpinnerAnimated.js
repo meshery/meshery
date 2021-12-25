@@ -1,22 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useStyles } from "./SpinnerAnimated.styles";
 import classNames from "classnames";
 
-export const SpinnerAnimated = () => {
-  const [active, setActive] = useState("");
-
+// eslint-disable-next-line react/prop-types
+export const SpinnerAnimated = ({ viewBox, width, height }) => {
+  const [active, setActive] = useState(false);
   const classes = useStyles();
+
+  useEffect(() => {
+    const interval1 = setInterval(() => {
+      if (active) setActive(false);
+    }, 5000);
+    const interval2 = setInterval(() => {
+      if (!active) setActive(true);
+    }, 300);
+    return () => clearInterval(interval1, interval2);
+  });
 
   return (
     <div>
       <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          id="Layer_1"
           data-name="Layer 1"
-          viewBox="0 0 134.95 135.02"
-          width="134.9499969482422"
-          height="135.02000427246094"
+          viewBox={viewBox}
+          width={width}
+          height={height}
           className={active}
         >
           <title>color-logo-only</title>
@@ -172,10 +181,6 @@ export const SpinnerAnimated = () => {
           ></polygon>
         </svg>
       </div>
-
-      <button className="btn-draw" onClick={() => setActive("active")}>
-        Draw
-      </button>
     </div>
   );
 };
