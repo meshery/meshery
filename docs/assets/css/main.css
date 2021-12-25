@@ -101,7 +101,7 @@ excluded_in_search: true
 .toggle-button:hover {
     background-color:  rgb(44, 164, 243);
   }
-  
+
 
 
 /*!* Bootstrap v4.1.3 (https://getbootstrap.com/)
@@ -18630,7 +18630,7 @@ footer {
     height: 100%;
     margin: 0px;
     padding: 0px;
-    overflow-x: hidden; 
+    overflow-x: hidden;
 }
 }
 .footer-icons-list{
@@ -18671,65 +18671,22 @@ footer {
     visibility: visible;
 }
 
-
 .social__link {
       display: block;
       color: white;
       transition: color .25s;
-}
-.social__link--mail:hover {
-    color: #3bb3a0;
-}
-.social__link--slack {
-    fill: white;
-}
-.social__link--slack:hover .first{
-    fill: #e91e63;
-    color: black
-  }
-.social__link--slack:hover .second{
-    fill: #e91e63;
-  }
-.social__link--slack:hover .third{
-    fill: #00bcd4;
-  }
-.social__link--slack:hover .fourth{
-    fill: #00bcd4;
-  }
-.social__link--slack:hover .fifth{
-    fill: #4caf50;
-  }
-.social__link--slack:hover .sixth{
-    fill: #4caf50;
-  }
-.social__link--slack:hover .seventh{
-    fill: #ff9800;
-  }
-.social__link--slack:hover .eigth{
-    fill: #ff9800;
-  }
-
-.social__link--twitter:hover {
-    color: #1da1f2;
+      filter: grayscale(1) invert(0.25);
 }
 
-.social__link--github:hover {
-    color: #24292e;
+.social__link:hover {
+    filter: grayscale(0) invert(0);
 }
 
-.social__link--youtube:hover {
-    color: #ff0000;
+.social__link--calendar {
+    fill: grey;
 }
 
-.social__link--docker:hover {
-    color: #2496ed;
-}
-
-.social__link--calender {
-    fill: #fff;
-}
-
-.social__link--calender:hover {
+.social__link--calendar:hover {
     fill: #0073cf;
 }
 
@@ -18741,11 +18698,11 @@ footer {
     border: 1px solid #ddd;
     padding: 8px;
   }
-  
+
   #compatibility-table tr:nth-child(even){background-color: #f2f2f2;}
-  
+
   #compatibility-table tr:hover {background-color: #ddd;}
-  
+
   #compatibility-table th {
     padding-top: 12px;
     padding-bottom: 12px;
@@ -18782,27 +18739,27 @@ footer {
 }
 
 /*image-thumbnail-grid*/
-  
+
 .row {
     display: flex;
   }
-  
+
 .column {
     flex: 25.00%;
     padding: 5px;
   }
 
-/*thumbnail image*/  
+/*thumbnail image*/
 .img-thumbnail {
     border: 1px solid #ddd;
     padding: 5px;
-    max-width:calc(25.00% - 20px); 
+    max-width:calc(25.00% - 20px);
     min-height: 150px;
     vertical-align: top;
     display: inline-block;
     text-align: center;
   }
-  
+
 .img-thumbnail:hover {
     box-shadow: 0 0 2px 1px rgba(71, 126, 150, 0.5);
   }
