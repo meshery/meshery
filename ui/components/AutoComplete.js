@@ -2,56 +2,43 @@
 import * as React from "react";
 import Downshift from "downshift";
 
-
-export const AutoComplete = ({items}) => {
-    return (
-      <div>
-        <Downshift
-          onChange={(selection) => alert(selection ? `You selected ${selection.value}` : "Selection Cleared")}
-          itemToString={(item) => (item ? item.value : "")}
-        >
-          {({
-            getInputProps,
-            getItemProps,
-            isOpen,
-            inputValue,
-            highlightedIndex,
-            selectedItem,
-            getRootProps,
-          }) => (
-            <div>
-              <h2> Auto Complete Component</h2>
-              <div>
-                <label>Enter a fruit</label>
-              </div>
-              <div style={{ display: "inline-block" }} {...getRootProps({}, { suppressRefError: true })}>
-                <input {...getInputProps()} />
-              </div>
-              <ul>
-                {isOpen
-                  ? items
-                      .filter((item) => !inputValue || item.value.includes(inputValue))
-                      .map((item, index) => (
-                        // eslint-disable-next-line react/jsx-key
-                        <li
-                          {...getItemProps({
-                            key: item.value,
-                            index,
-                            item,
-                            style: {
-                              backgroundColor: highlightedIndex === index ? "lightgray" : "white",
-                              fontWeight: selectedItem === item ? "bold" : "normal",
-                            },
-                          })}
-                        >
-                          {item.value}
-                        </li>
-                      ))
-                  : null}
-              </ul>
+export const AutoComplete = ({ items }) => {
+  return (
+    <div>
+      <Downshift
+        onChange={(selection) => alert(selection ? `You selected ${selection.value}` : "Selection Cleared")}
+        itemToString={(item) => (item ? item.value : "")}
+      >
+        {({ getInputProps, getItemProps, isOpen, inputValue, highlightedIndex, selectedItem, getRootProps }) => (
+          <div>
+            <div style={{ display: "inline-block" }} {...getRootProps({}, { suppressRefError: true })}>
+              <input {...getInputProps()} />
             </div>
-          )}
-        </Downshift>
-      </div>
-    );
-}
+            <ul>
+              {isOpen
+                ? items
+                    .filter((item) => !inputValue || item.value.includes(inputValue))
+                    .map((item, index) => (
+                      // eslint-disable-next-line react/jsx-key
+                      <li
+                        {...getItemProps({
+                          key: item.value,
+                          index,
+                          item,
+                          style: {
+                            backgroundColor: highlightedIndex === index ? "lightgray" : "white",
+                            fontWeight: selectedItem === item ? "bold" : "normal",
+                          },
+                        })}
+                      >
+                        {item.value}
+                      </li>
+                    ))
+                : null}
+            </ul>
+          </div>
+        )}
+      </Downshift>
+    </div>
+  );
+};
