@@ -2,13 +2,10 @@
 import * as React from "react";
 import Downshift from "downshift";
 
-export const AutoComplete = ({ items }) => {
+export const AutoComplete = ({ items, handleSelectionChange }) => {
   return (
     <div>
-      <Downshift
-        onChange={(selection) => alert(selection ? `You selected ${selection.value}` : "Selection Cleared")}
-        itemToString={(item) => (item ? item.value : "")}
-      >
+      <Downshift onChange={handleSelectionChange} itemToString={(item) => (item ? item.value : "")}>
         {({ getInputProps, getItemProps, isOpen, inputValue, highlightedIndex, selectedItem, getRootProps }) => (
           <div>
             <div style={{ display: "inline-block" }} {...getRootProps({}, { suppressRefError: true })}>
