@@ -424,8 +424,8 @@ function MesheryPatterns({
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
       handleSubmit(
-        event.target.result,
         "",
+        event.target.result,
         file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         FILE_OPS.URL_UPLOAD,
       );
