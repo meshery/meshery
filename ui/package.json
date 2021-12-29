@@ -104,7 +104,7 @@
     "@babel/types": "^7.16.0",
     "@types/react-relay": "^11.0.2",
     "babel-eslint": "^10.1.0",
-    "cypress": "^8.1.0",
+    "cypress": "^9.2.0",
     "eslint": "^7.31.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-google": "^0.14.0",

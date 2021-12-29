@@ -415,18 +415,18 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
 		}
 
-		res, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
+		isOutdated, _, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
 		if err != nil {
 			return err
 		}
 		if hc.Options.PrintLogs { // log if we're supposed to
-			if res.Latest {
+			if !*isOutdated {
 				log.Infof("✓ Meshery Server is up-to-date (stable-%s)", serverVersion.GetBuild())
 			} else {
 				log.Info("!! Meshery Server is not up-to-date")
 			}
 		} else { // else we grab the error
-			if !res.Latest {
+			if !*isOutdated {
 				return errors.New("!! Meshery Server is not up-to-date")
 			}
 		}

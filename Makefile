@@ -182,7 +182,7 @@ setup-wrk2:
 	cd cmd; git clone https://github.com/layer5io/wrk2.git; cd wrk2; make; cd ..
 
 setup-nighthawk:
-	cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd wrk2; make setup; cd ..
+	cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
 #Incorporating Make docs commands from the Docs Makefile
 jekyll=bundle exec jekyll

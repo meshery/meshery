@@ -1,6 +1,6 @@
 
 import {
-  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select, TextField, Toolbar, Tooltip, Typography,
+  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider,  FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select, TextField, Toolbar, Tooltip, Typography,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -15,7 +15,7 @@ import { SchemaContext } from "../../utils/context/schemaSet";
 import { getMeshProperties } from "../../utils/nameMapper";
 import { isEmptyObj } from "../../utils/utils";
 import { groupWorkloadByVersion } from "../../utils/workloadFilter";
-import { createPatternFromConfig, getHumanReadablePatternServiceName, getPatternServiceName } from "../MesheryMeshInterface/helpers";
+import { createPatternFromConfig, getHumanReadablePatternServiceName, getPatternServiceName, recursiveCleanObject } from "../MesheryMeshInterface/helpers";
 import LazyPatternServiceForm, { getWorkloadTraitAndType } from "../MesheryMeshInterface/LazyPatternServiceForm";
 import PatternServiceForm from "../MesheryMeshInterface/PatternServiceForm";
 import CodeEditor from "./CodeEditor";
@@ -318,6 +318,13 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
     setActiveForm(refinedSchema);
   }
 
+  function cleanPattern() {
+    const cfg = { ...deployServiceConfig }
+    recursiveCleanObject(cfg);
+    setDeployServiceConfig(cfg)
+    handleCodeEditorYamlChange(cfg)
+  }
+
   function toggleView() {
     if (viewType == "list") {
       if (isEmptyObj(activeForm)) {
@@ -560,7 +567,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
               </Grid>)
         }
         <Grid item xs={12} md={6} >
-          <CodeEditor yaml={yaml} saveCodeEditorChanges={saveCodeEditorChanges} />
+          <CodeEditor yaml={yaml} saveCodeEditorChanges={saveCodeEditorChanges} cleanHandler={() => cleanPattern()} />
         </Grid>
       </Grid>
       <CustomBreadCrumb
@@ -574,4 +581,3 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 
 
 export default PatternConfiguratorComponent;
-
