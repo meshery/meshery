@@ -4,7 +4,7 @@ title: Citrix Service Mesh (CPX)
 name: Meshery Adapter for Citrix Service Mesh
 mesh_name: Citrix
 earliest_version: "1.0"
-port: 10008/tcp
+port: 10008/gRPC
 project_status: beta
 github_link: https://github.com/meshery/meshery-cpx
 image: /assets/img/service-meshes/citrix.svg
