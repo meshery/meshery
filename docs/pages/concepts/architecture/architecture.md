@@ -94,7 +94,7 @@ concerned with a long-lived configuration, while others have no state at all.
 | :---------------- | :----------- | :-------------------------------------------------------------------- |
 | mesheryctl        | stateless    | command line interface that has a configuration file                  |
 | Meshery Adapters  | stateless    | interface with service meshes on a transactional basis                |
-| Meshery Server    | caches state | Running lo        |
+| Meshery Server    | caches state | application cache is stored in `$HOME/.meshery/` folder               |
 | Meshery Providers | stateful     | location of persistent user preferences, environment, tests and so on |
 | Meshery Operator  | stateless    | operator of Meshery custom controllers, notably MeshSync              |
 | MeshSync          | stateless    | Kubernetes custom controller, continuously running discovery          |
