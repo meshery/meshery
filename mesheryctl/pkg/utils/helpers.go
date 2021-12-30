@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"mime/multipart"
 	"net/http"
@@ -124,6 +123,8 @@ var (
 	// Paths to kubeconfig files
 	ConfigPath string
 	KubeConfig string
+	// KeepNamespace indicates if the namespace should be kept when Meshery is uninstalled
+	KeepNamespace bool
 )
 
 var CfgFile string
@@ -227,7 +228,7 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 	if err != nil {
 		return nil, err
 	}
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
@@ -348,7 +349,7 @@ func ValidateURL(URL string) error {
 
 // ReadToken returns a map of the token passed in
 func ReadToken(filepath string) (map[string]string, error) {
-	file, err := ioutil.ReadFile(filepath)
+	file, err := os.ReadFile(filepath)
 	if err != nil {
 		err = errors.Wrap(err, "could not read token:")
 		return nil, err
@@ -527,7 +528,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -803,6 +804,9 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 			"enabled": false,
 		},
 		"meshery-cpx": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},
 	}

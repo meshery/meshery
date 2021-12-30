@@ -31,7 +31,7 @@ updates:
     interval: monthly
   open-pull-requests-limit: 6
   reviewers:
-  - dhruv0000
+  - Abhishek-kumar09
   labels:
   - kind/chore
   - pr/dependencies

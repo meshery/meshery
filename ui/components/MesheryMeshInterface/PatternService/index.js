@@ -2,6 +2,7 @@
 import React from "react";
 import Switch from "./Switch";
 import RJSF from "./RJSF";
+import { isEmptyObj } from "../../../utils/utils";
 
 /**
  * componentType takes in json schema and returns the type
@@ -26,12 +27,13 @@ function componentType(jsonSchema) {
  *  onDelete?: Function;
  *  type: "trait" | "workload"
  *  formData: Record<string, any>;
- *  renderAsTooltip: boolean;
+ *  RJSFWrapperComponent?: any;
+ *  RJSFFormChildComponent?: any;
  * }} props
  *
  * @returns
  */
-function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, renderAsTooltip }) {
+function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent }) {
   const ctype = componentType(jsonSchema);
 
   if (ctype === "rjsf")
@@ -44,12 +46,14 @@ function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDele
         onChange={onChange}
         onSubmit={onSubmit}
         onDelete={onDelete}
-        renderAsTooltip={renderAsTooltip}
+        RJSFWrapperComponent={RJSFWrapperComponent}
+        RJSFFormChildComponent={RJSFFormChildComponent}
       />
     );
   if (ctype === "switch")
     return (
       <Switch
+        intialState={!isEmptyObj(formData)}
         jsonSchema={jsonSchema}
         onChange={onChange}
         onSubmit={onSubmit}

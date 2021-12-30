@@ -4,15 +4,14 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 	"path"
 
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"k8s.io/client-go/tools/clientcmd"
-
-	"os"
 
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
@@ -23,6 +22,7 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -75,7 +75,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		defer func() {
 			_ = k8sfile.Close()
 		}()
-		k8sConfigBytes, err := ioutil.ReadAll(k8sfile)
+		k8sConfigBytes, err := io.ReadAll(k8sfile)
 		if err != nil {
 			logrus.Error(ErrReadConfig(err))
 			http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
@@ -152,7 +152,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	defer func() {
 		_ = k8sfile.Close()
 	}()
-	k8sConfigBytes, err = ioutil.ReadAll(k8sfile)
+	k8sConfigBytes, err = io.ReadAll(k8sfile)
 	if err != nil {
 		logrus.Error(ErrReadConfig(err))
 		http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
@@ -233,13 +233,15 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 			}
 		}
 		prefObj.K8SConfig = kc
-		ctxID := "0" // To be replaced after multi-context support
-		go func(l logger.Handler, config []byte, ctx string) {
-			err := registerK8sComponents(h.log, prefObj.K8SConfig.Config, ctxID)
-			if err != nil {
-				logrus.Error(err)
-			}
-		}(h.log, prefObj.K8SConfig.Config, ctxID)
+		if !viper.GetBool("SKIP_COMP_GEN") {
+			ctxID := "0" // To be replaced after multi-context support
+			go func(l logger.Handler, config []byte, ctx string) {
+				err := registerK8sComponents(h.log, prefObj.K8SConfig.Config, ctxID)
+				if err != nil {
+					logrus.Error(err)
+				}
+			}(h.log, prefObj.K8SConfig.Config, ctxID)
+		}
 		err = provider.RecordPreferences(req, user.UserID, prefObj)
 		if err != nil {
 			logrus.Error(ErrRecordPreferences(err))

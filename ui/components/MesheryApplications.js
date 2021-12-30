@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import {  createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -42,17 +42,21 @@ import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { Button } from "@material-ui/core";
 import jsYaml from "js-yaml";
 import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppsIcon from "./ConnectionWizard/icons/apps";
+import FILE_OPS from "../utils/configurationFileHandlersEnum"
 import { trueRandom } from "../lib/trueRandom";
 
-const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
-  tableHeader : { fontWeight : "bolder",
-    fontSize : 18, },
+const styles = (theme) => ({
+  grid : { padding : theme.spacing(2), },
+  tableHeader : {
+    fontWeight : "bolder",
+    fontSize : 18,
+  },
   muiRow : {
     '& .MuiTableRow-root' : {
       cursor : 'pointer'
@@ -88,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
       height : '100%',
     }
   },
-}))
+}));
 
 
 function CustomToolbar(onClick, urlOnClick) {
@@ -117,7 +121,7 @@ function TooltipIcon({ children, onClick, title }) {
         {children}
       </IconButton>
     </Tooltip>
-  )
+  );
 }
 
 function YAMLEditor({ application, onClose, onSubmit }) {
@@ -127,7 +131,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
-  }
+  };
 
   return (
     <Dialog onClose={onClose} aria-labelledby="application-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
@@ -166,7 +170,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit(yaml, application.id, application.name, "update")}
+            onClick={() => onSubmit(yaml, application.id, application.name, FILE_OPS.UPDATE)}
           >
             <SaveIcon />
           </IconButton>
@@ -175,7 +179,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, application.id, application.name, "delete")}
+            onClick={() => onSubmit(yaml, application.id, application.name, FILE_OPS.DELETE)}
           >
             <DeleteIcon />
           </IconButton>
@@ -213,7 +217,7 @@ function MesheryApplications({
       },
       MUIDataTableSearch : {
         searchIcon : {
-          color : "#607d8b" ,
+          color : "#607d8b",
           marginTop : "7px",
           marginRight : "8px",
         },
@@ -241,20 +245,30 @@ function MesheryApplications({
         },
       }
     }
-  })
+  });
 
   const ACTION_TYPES = {
-    FETCH_APPLICATIONS : { name : "FETCH_APPLICATION" ,
-      error_msg : "Failed to fetch application" },
-    UPDATE_APPLICATIONS : { name : "UPDATEAPPLICATION",
-      error_msg : "Failed to update application file" },
-    DELETE_APPLICATIONS : { name : "DELETEAPPLICATION",
-      error_msg : "Failed to delete application file" },
-    DEPLOY_APPLICATIONS : { name : "DEPLOY_APPLICATION",
-      error_msg : "Failed to deploy application file" },
-    UPLOAD_APPLICATION : { name : "UPLOAD_APPLICATION",
-      error_msg : "Failed to upload application file" },
-  }
+    FETCH_APPLICATIONS : {
+      name : "FETCH_APPLICATION",
+      error_msg : "Failed to fetch application"
+    },
+    UPDATE_APPLICATIONS : {
+      name : "UPDATEAPPLICATION",
+      error_msg : "Failed to update application file"
+    },
+    DELETE_APPLICATIONS : {
+      name : "DELETEAPPLICATION",
+      error_msg : "Failed to delete application file"
+    },
+    DEPLOY_APPLICATIONS : {
+      name : "DEPLOY_APPLICATION",
+      error_msg : "Failed to deploy application file"
+    },
+    UPLOAD_APPLICATION : {
+      name : "UPLOAD_APPLICATION",
+      error_msg : "Failed to upload application file"
+    },
+  };
 
 
   const searchTimeout = useRef(null);
@@ -278,18 +292,20 @@ function MesheryApplications({
   const handleDeploy = (application_file) => {
     dataFetch(
       DEPLOY_URL,
-      { credentials : "include",
+      {
+        credentials : "include",
         method : "POST",
-        body : application_file, },() => {
+        body : application_file,
+      }, () => {
         console.log("ApplicationFile Deploy API", `/api/application/deploy`);
         // },(e) => {
         //   console.error(e)
         // })
-        updateProgress({ showProgress : false })
+        updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
-    )
-  }
+    );
+  };
 
   function fetchApplications(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -308,7 +324,7 @@ function MesheryApplications({
         console.log("ApplicationFile API", `/api/application${query}`);
         updateProgress({ showProgress : false });
         if (result) {
-          setApplications(result.applications|| []);
+          setApplications(result.applications || []);
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
@@ -320,10 +336,11 @@ function MesheryApplications({
   }
 
   // function handleError(error) {
-  const handleError = (action) => (error) =>  {
+  const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
 
-    enqueueSnackbar(`${action.error_msg}: ${error}`, { variant : "error",
+    enqueueSnackbar(`${action.error_msg}: ${error}`, {
+      variant : "error",
       action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -331,8 +348,9 @@ function MesheryApplications({
           </IconButton>
         );
       },
-      autoHideDuration : 8000, });
-  }
+      autoHideDuration : 8000,
+    });
+  };
 
   function resetSelectedRowData() {
     return () => {
@@ -342,28 +360,32 @@ function MesheryApplications({
 
   function handleSubmit(data, id, name, type) {
     updateProgress({ showProgress : true })
-    if (type === "delete") {
+    if (type === FILE_OPS.DELETE) {
       dataFetch(
         `/api/application/${id}`,
-        { credentials : "include",
-          method : "DELETE", },
+        {
+          credentials : "include",
+          method : "DELETE",
+        },
         () => {
           console.log("ApplicationFile API", `/api/application/${id}`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
-          resetSelectedRowData()()
+          resetSelectedRowData()();
         },
         // handleError
         handleError(ACTION_TYPES.DELETE_APPLICATIONS)
       );
     }
 
-    if (type === "update") {
+    if (type === FILE_OPS.UPDATE) {
       dataFetch(
         `/api/application`,
-        { credentials : "include",
+        {
+          credentials : "include",
           method : "POST",
-          body : JSON.stringify({ application_data : { id, application_file : data }, save : true }), },
+          body : JSON.stringify({ application_data : { id, application_file : data }, save : true }),
+        },
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
@@ -374,20 +396,22 @@ function MesheryApplications({
       );
     }
 
-    if (type === "upload" || type === "urlupload") {
+    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
-      if (type === "upload") {
+      if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({ ...body,   application_data : { application_file : data }
         })
       }
-      if (type === "urlupload") {
+      if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
         `/api/application`,
-        { credentials : "include",
+        {
+          credentials : "include",
           method : "POST",
-          body },
+          body
+        },
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
@@ -411,19 +435,20 @@ function MesheryApplications({
         event.target.result,
         "",
         file?.name || "meshery_" + Math.floor(trueRandom() * 100),
-        "upload",
+        FILE_OPS.FILE_UPLOAD,
       );
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.URL_UPLOAD);
     // console.log(link, "valid");
   }
 
   const columns = [
-    { name : "name",
+    {
+      name : "name",
       label : "Application Name",
       options : {
         filter : false,
@@ -438,8 +463,10 @@ function MesheryApplications({
             </TableCell>
           );
         },
-      }, },
-    { name : "created_at",
+      },
+    },
+    {
+      name : "created_at",
       label : "Upload Timestamp",
       options : {
         filter : false,
@@ -457,8 +484,10 @@ function MesheryApplications({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
-    { name : "updated_at",
+      },
+    },
+    {
+      name : "updated_at",
       label : "Update Timestamp",
       options : {
         filter : false,
@@ -476,8 +505,10 @@ function MesheryApplications({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
-    { name : "Actions",
+      },
+    },
+    {
+      name : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -490,11 +521,11 @@ function MesheryApplications({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const rowData = applications[tableMeta.rowIndex]
+          const rowData = applications[tableMeta.rowIndex];
           return (
             <>
               <Tooltip
-                title = "configure">
+                title="configure">
                 <IconButton onClick={() => setShowForm({ application : applications[tableMeta.rowIndex], show : true })}>
                   <AppsIcon />
                 </IconButton>
@@ -510,7 +541,8 @@ function MesheryApplications({
             </>
           );
         },
-      }, },
+      },
+    },
   ];
 
   columns.forEach((column, idx) => {
@@ -520,9 +552,11 @@ function MesheryApplications({
   });
 
   async function showModal(count) {
-    let response = await modalRef.current.show({ title : `Delete ${count ? count : ""} Application${count > 1 ? "s" : '' }?`,
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} application${count > 1 ? "s" : '' }?`,
-      options : ["Yes", "No"], })
+    let response = await modalRef.current.show({
+      title : `Delete ${count ? count : ""} Application${count > 1 ? "s" : ''}?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'} ${count ? count : ""} application${count > 1 ? "s" : ''}?`,
+      options : ["Yes", "No"],
+    });
     return response;
   }
 
@@ -578,11 +612,11 @@ function MesheryApplications({
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showModal(Object.keys(row.lookup).length)
-      console.log(response)
+      let response = await showModal(Object.keys(row.lookup).length);
+      console.log(response);
       if (response === "Yes") {
-        const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id)
-        fid.forEach(fid => deleteApplication(fid))
+        const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id);
+        fid.forEach(fid => deleteApplication(fid));
       }
       if (response === "No")
         fetchApplications(page, pageSize, search, sortOrder);
@@ -686,8 +720,6 @@ function PatternForm({ application, onSubmit, show }) {
       const workloads = await promisifiedDataFetch("/api/oam/workload");
       const traits = await promisifiedDataFetch("/api/oam/trait");
 
-      console.log({ workloads, traits });
-
       const workloadTraitSets = createWorkloadTraitSets(workloads, traits);
 
       return workloadTraitSets;
@@ -752,27 +784,27 @@ function PatternForm({ application, onSubmit, show }) {
   }
 
   const handleSubmit = (cfg, patternName) => {
-    console.log("submitted", { cfg, patternName })
+    console.log("submitted", { cfg, patternName });
     const key = getPatternKey(cfg);
     handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-    handleExpansion(patternName)
-  }
+    handleExpansion(patternName);
+  };
 
   const handleChangeData = (cfg, patternName) => {
-    console.log("Ran Changed", { cfg, patternName })
+    console.log("Ran Changed", { cfg, patternName });
     const key = getPatternKey(cfg);
     handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
     if (key)
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-  }
+  };
 
   const handleDelete = (cfg, patternName) => {
     console.log("deleted", cfg);
-    const newCfg = schemaSet.filter(schema => schema.workload.title !== patternName)
+    const newCfg = schemaSet.filter(schema => schema.workload.title !== patternName);
     setSchemaSet(newCfg);
-  }
+  };
 
   const handleDeploy = (cfg) => {
     const deployConfig = {};
@@ -780,7 +812,7 @@ function PatternForm({ application, onSubmit, show }) {
     deployConfig.services = cfg;
     const deployConfigYaml = jsYaml.dump(deployConfig);
     setYaml(deployConfigYaml);
-  }
+  };
 
   const handleExpansion = (item) => {
     let expandedItems = [...expanded];
@@ -790,7 +822,7 @@ function PatternForm({ application, onSubmit, show }) {
       expandedItems.push(item);
     }
     setExpanded(expandedItems);
-  }
+  };
 
   function handleSubmitFinalPattern(yaml, id, name, action) {
     onSubmit(yaml, id, name, action);
@@ -800,7 +832,7 @@ function PatternForm({ application, onSubmit, show }) {
   const ns = "default";
 
   function saveCodeEditorChanges(data) {
-    setYaml(data.valueOf().getValue())
+    setYaml(data.valueOf().getValue());
   }
 
   useEffect(() => {
@@ -808,7 +840,7 @@ function PatternForm({ application, onSubmit, show }) {
   }, []);
 
   if (!schemaSet) {
-    return <CircularProgress />
+    return <CircularProgress />;
   }
 
   return (
@@ -917,13 +949,13 @@ function PatternForm({ application, onSubmit, show }) {
               }}
               onBlur={(a) => saveCodeEditorChanges(a)}
             />
-            <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, "upload")} />
+            <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, FILE_OPS.FILE_UPLOAD)} />
             <CardActions style={{ justifyContent : "flex-end" }}>
               <Tooltip title="Update Application">
                 <IconButton
                   aria-label="Update"
                   color="primary"
-                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, "update")}
+                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, FILE_OPS.UPDATE)}
                 >
                   <SaveIcon />
                 </IconButton>
@@ -932,7 +964,7 @@ function PatternForm({ application, onSubmit, show }) {
                 <IconButton
                   aria-label="Delete"
                   color="primary"
-                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, "delete")}
+                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, FILE_OPS.DELETE)}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -941,6 +973,6 @@ function PatternForm({ application, onSubmit, show }) {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 }

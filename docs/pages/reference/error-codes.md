@@ -3,12 +3,13 @@ layout: default
 title: Error Code Reference
 abstract: "Meshery Error Code Reference"
 permalink: reference/error-codes
+redirect_from: reference/error-codes/
 type: Reference
 ---
 <style>
 
-.title::first-letter {
-  text-transform:capitalize;
+.title {
+  text-transform: capitalize;
 }
 </style>
 ## Error Codes and Troubleshooting
@@ -30,10 +31,17 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
       {% for component in eachFile  %}
           {% comment %} <tr><td colspan="2">{{component}}</td></tr> {% endcomment %}
            {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
-            {% if thecycle == 'even' %}
+            {% if thecycle == 'even' %} 
+            {% if component[1].component_type == 'adapter' %}
+              {% capture link %}meshery-adapter-for-{{component[1].component_name}}{% endcapture %}
+            {% elsif component[1].component_type == 'component' %}
+               {% capture link %}meshery-server{% endcapture %}
+            {% else %}
+              {% capture link %}{{ component[1].component_name  | camelcase }}-{{ component[1].component_type }}{% endcapture %}      
+            {% endif %}
             <tr>
               <td align="right">{{ component[1].component_type }}</td>
-              <td class="title"><a href="#{{ component[1].component_name  | camelcase }}-{{ component[1].component_type }}">{{ component[1].component_name }}</a></td>
+              <td class="title"><a href="#{{ link}}">{{ component[1].component_name }}</a></td>
             </tr>
         {% endif %}
       {% endfor %}
@@ -71,7 +79,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
               {% endcapture %}
             {% endif %}
 
-<h2> {{ heading }} </h2>
+<h2 class = "title"> {{ heading }} </h2>
   <table>
   <thead>
     <tr>

@@ -1,25 +1,30 @@
 package models
 
 import (
+	"archive/tar"
 	"bytes"
+	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/models/walker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/layer5io/meshkit/utils/walker"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
@@ -235,6 +240,19 @@ func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize
 	return l.SmiResultPersister.GetResults(pg, pgs)
 }
 
+// FetchSmiResults - fetches results from provider backend
+func (l *DefaultLocalProvider) FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error) {
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, ErrPageNumber(err)
+	}
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		return nil, ErrPageSize(err)
+	}
+	return l.SmiResultPersister.GetResult(pg, pgs, resultID)
+}
+
 // PublishSmiResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	key, _ := uuid.NewV4()
@@ -266,7 +284,7 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Warnf("unable to read response body: %v", err)
 		return "", nil
@@ -314,7 +332,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Warnf("unable to read response body: %v", err)
 		return nil
@@ -841,70 +859,80 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
 }
 
+// SeedContent- to seed various contents with local provider-like patterns, filters, and applications
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
-	var seededUUIDs []uuid.UUID
-	names, content, err := getSeededComponents("Pattern", log)
-	if err != nil {
-		log.Error(ErrGettingSeededComponents(err, "Patterns"))
-	} else {
-		log.Info("Starting to seed patterns")
-		for i, name := range names {
-			id, _ := uuid.NewV4()
-			var pattern = &MesheryPattern{
-				PatternFile: content[i],
-				Name:        name,
-				ID:          &id,
-			}
-			log.Info("[SEEDING] ", "Saving pattern- ", name)
-			_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
+	seededUUIDs := make([]uuid.UUID, 0)
+	seedContents := []string{"Pattern", "Application", "Filter"}
+	var wg sync.WaitGroup
+	for _, seedContent := range seedContents {
+		wg.Add(1)
+		go func(comp string, log logger.Handler, seededUUIDs *[]uuid.UUID) {
+			defer wg.Done()
+			names, content, err := getSeededComponents(comp, log)
 			if err != nil {
-				log.Error(ErrGettingSeededComponents(err, "Patterns"))
-			}
-			seededUUIDs = append(seededUUIDs, id)
-		}
-	}
-	names, content, err = getSeededComponents("Filter", log)
-	if err != nil {
-		log.Error(ErrGettingSeededComponents(err, "Filters"))
-	} else {
-		log.Info("Starting to seed filters")
-		for i, name := range names {
-			id, _ := uuid.NewV4()
-			var filter = &MesheryFilter{
-				FilterFile: content[i],
-				Name:       name,
-				ID:         &id,
-			}
-			log.Info("[SEEDING] ", "Saving filter- ", name)
-			_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
-			if err != nil {
-				log.Error(ErrGettingSeededComponents(err, "Filters"))
-			}
-			seededUUIDs = append(seededUUIDs, id)
-		}
-	}
-	names, content, err = getSeededComponents("Application", log)
-	if err != nil {
-		log.Error(ErrGettingSeededComponents(err, "Applications"))
-	} else {
-		log.Info("Starting to seed applications")
+				log.Error(ErrGettingSeededComponents(err, comp))
+			} else {
+				log.Info("starting to seed ", comp)
+				switch comp {
+				case "Pattern":
+					for i, name := range names {
+						id, _ := uuid.NewV4()
+						var pattern = &MesheryPattern{
+							PatternFile: content[i],
+							Name:        name,
+							ID:          &id,
+						}
+						log.Info("saving "+comp+"- ", name)
+						switch comp {
 
-		for i, name := range names {
-			id, _ := uuid.NewV4()
-			var app = &MesheryApplication{
-				ApplicationFile: content[i],
-				Name:            name,
-				ID:              &id,
-			}
-			log.Info("[SEEDING] ", "Saving application- ", name)
-			_, err := l.MesheryApplicationPersister.SaveMesheryApplication(app)
-			if err != nil {
-				log.Error(ErrGettingSeededComponents(err, "Applications"))
-			}
-			seededUUIDs = append(seededUUIDs, id)
-		}
-	}
+						}
+						_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
+						if err != nil {
+							log.Error(ErrGettingSeededComponents(err, comp+"s"))
+						}
+						*seededUUIDs = append(*seededUUIDs, id)
+					}
+				case "Filter":
+					for i, name := range names {
+						id, _ := uuid.NewV4()
+						var filter = &MesheryFilter{
+							FilterFile: content[i],
+							Name:       name,
+							ID:         &id,
+						}
+						log.Info("saving "+comp+"- ", name)
+						switch comp {
 
+						}
+						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
+						if err != nil {
+							log.Error(ErrGettingSeededComponents(err, comp+"s"))
+						}
+						*seededUUIDs = append(*seededUUIDs, id)
+					}
+				case "Application":
+					for i, name := range names {
+						id, _ := uuid.NewV4()
+						var app = &MesheryApplication{
+							ApplicationFile: content[i],
+							Name:            name,
+							ID:              &id,
+						}
+						log.Info("saving "+comp+"- ", name)
+						switch comp {
+
+						}
+						_, err := l.MesheryApplicationPersister.SaveMesheryApplication(app)
+						if err != nil {
+							log.Error(ErrGettingSeededComponents(err, comp+"s"))
+						}
+						*seededUUIDs = append(*seededUUIDs, id)
+					}
+				}
+			}
+		}(seedContent, log, &seededUUIDs)
+	}
+	wg.Wait()
 	return seededUUIDs
 }
 func (l *DefaultLocalProvider) CleanupSeeded(seededUUIDs []uuid.UUID) {
@@ -1085,7 +1113,7 @@ func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 
 	defer SafeClose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -1121,7 +1149,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 
 	defer SafeClose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -1157,7 +1185,7 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 
 	defer SafeClose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -1183,21 +1211,38 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 }
 
 // getSeededComponents reads the directory recursively looking for seed content
+//Note- This function does not throw meshkit errors because the only method that calls it,"SeedContent" wraps the errors in meshkit errors.
+// If this function is reused somewhere else, make sure to wrap its errors in appropriate meshkit errors, otherwise it can cause can a panic.
 func getSeededComponents(comp string, log logger.Handler) ([]string, []string, error) {
 	wd := utils.GetHome()
 	switch comp {
 	case "Pattern":
-		wd = filepath.Join(wd, ".meshery", "seed_content", "patterns")
+		wd = filepath.Join(wd, ".meshery", "content", "patterns")
 	case "Filter":
-		wd = filepath.Join(wd, ".meshery", "seed_content", "filters", "binaries")
+		wd = filepath.Join(wd, ".meshery", "content", "filters", "binaries")
 	case "Application":
-		wd = filepath.Join(wd, ".meshery", "seed_content", "applications")
+		wd = filepath.Join(wd, ".meshery", "content", "applications")
 	}
-
-	log.Info("[SEEDING] ", "Extracting "+comp+"s from ", wd)
+	_, err := os.Stat(wd)
+	if err != nil && !os.IsNotExist(err) {
+		return nil, nil, err
+	} else if os.IsNotExist(err) {
+		log.Info("creating directories for seeding... ", wd)
+		er := os.MkdirAll(wd, 0777)
+		if er != nil {
+			return nil, nil, er
+		}
+	}
+	if !viper.GetBool("SKIP_DOWNLOAD_CONTENT") {
+		err = downloadContent(comp, wd, log)
+		if err != nil {
+			log.Error(ErrDownloadingSeededComponents(err, comp))
+		}
+	}
+	log.Info("extracting "+comp+"s from ", wd)
 	var names []string
 	var contents []string
-	err := filepath.WalkDir(wd,
+	err = filepath.WalkDir(wd,
 		func(path string, d os.DirEntry, err error) error {
 			if err != nil {
 				return err
@@ -1207,7 +1252,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 				if err != nil {
 					return err
 				}
-				content, err := ioutil.ReadAll(file)
+				content, err := io.ReadAll(file)
 				if err != nil {
 					return err
 				}
@@ -1220,4 +1265,174 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 		return nil, nil, err
 	}
 	return names, contents, nil
+}
+
+// Below helper functions are for downloading seed content and can be re used in future as the way of extracting them changes, like endpoint changes or so. That is why, they are encapsulated into general functions
+func downloadContent(comp string, downloadpath string, log logger.Handler) error {
+	switch comp {
+	case "Pattern":
+		walk := walker.NewGit()
+		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/").Branch("master").RegisterFileInterceptor(func(f walker.File) error {
+			path := filepath.Join(downloadpath, f.Name)
+			file, err := os.Create(path)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+			fmt.Fprintf(file, "%s", f.Content)
+			return nil
+		}).Walk()
+	case "Filter":
+		return getFiltersFromWasmFiltersRepo(downloadpath)
+	case "Application":
+		var path string
+		path = os.Getenv("APP_PATH")
+		if path == "" {
+			wd, err := os.Getwd()
+			if err != nil {
+				return err
+			}
+			path = filepath.Join(wd, "../install/apps.json")
+		}
+		applicationsAndURLS, err := getSeededAppLocation(path)
+		if err != nil {
+			return err
+		}
+		for app, URLs := range applicationsAndURLS {
+			yamlFile := filepath.Join(downloadpath, app)
+			f, err := os.Create(yamlFile)
+			if err != nil {
+				return err
+			}
+			defer f.Close()
+			err = downloadYAMLSintoSingleFile(f, URLs)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func downloadApplicationsFromURL(downloadpath string, appname string, url string) error {
+	path := filepath.Join(downloadpath, appname)
+	res, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	content, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	fmt.Fprintf(f, "%s", content)
+	return nil
+}
+
+//takes a slice of URL's which each returns a YAML body on get request. Then combines all the yamls into one yaml
+func downloadYAMLSintoSingleFile(f io.Writer, URLs []string) error {
+	for _, url := range URLs {
+		res, err := http.Get(url)
+		if err != nil {
+			return err
+		}
+		content, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		fmt.Fprintf(f, "%s\n---\n", string(content))
+	}
+	return nil
+}
+
+func getFiltersFromWasmFiltersRepo(downloadPath string) error {
+	// releaseName, err := getLatestStableReleaseTag()
+	// if err != nil {
+	// 	return err
+	// }
+	//Temporary hardcoding until https://github.com/layer5io/wasm-filters/issues/38 is resolved
+	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
+	res, err := http.Get(downloadURL)
+	if err != nil {
+		return err
+	}
+	gzipStream := res.Body
+	return extractTarGz(gzipStream, downloadPath)
+}
+func extractTarGz(gzipStream io.Reader, downloadPath string) error {
+	uncompressedStream, err := gzip.NewReader(gzipStream)
+	if err != nil {
+		return err
+	}
+
+	tarReader := tar.NewReader(uncompressedStream)
+
+	for true {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		switch header.Typeflag {
+		case tar.TypeReg:
+			if strings.HasSuffix(header.Name, ".wasm") {
+				outFile, err := os.Create(filepath.Join(downloadPath, header.Name))
+				if err != nil {
+					return err
+				}
+				if _, err := io.Copy(outFile, tarReader); err != nil {
+					return err
+				}
+				outFile.Close()
+			}
+		}
+	}
+	return nil
+}
+
+func getSeededAppLocation(path string) (map[string][]string, error) {
+	var applicationsAndURLS map[string][]string
+	f, err := os.Open(path)
+	if err != nil {
+		return applicationsAndURLS, err
+	}
+	content, err := ioutil.ReadAll(f)
+	if err != nil {
+		return applicationsAndURLS, err
+	}
+	err = json.Unmarshal(content, &applicationsAndURLS)
+	if err != nil {
+		return applicationsAndURLS, err
+	}
+	return applicationsAndURLS, nil
+}
+
+// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
+func getLatestStableReleaseTag() (string, error) {
+	url := "https://github.com/layer5io/wasm-filters/releases/latest"
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", errors.New("failed to get latest stable release tag")
+	}
+	defer SafeClose(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New("failed to get latest stable release tag")
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", errors.New("failed to get latest stable release tag")
+	}
+	re := regexp.MustCompile("/releases/tag/(.*?)\"")
+	releases := re.FindAllString(string(body), -1)
+	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
+	latest = strings.ReplaceAll(latest, "\"", "")
+	return latest, nil
 }

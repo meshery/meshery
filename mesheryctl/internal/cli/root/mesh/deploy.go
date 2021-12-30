@@ -1,7 +1,7 @@
 package mesh
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -126,7 +126,7 @@ func sendDeployRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bo
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return "", err
 	}
@@ -204,6 +204,11 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, tokenPath string, name st
 
 	if len(adapterNames) == 0 {
 		return ErrNoAdapters
+	}
+
+	if len(adapterNames) == 1 {
+		adapterURL = adapterNames[0]
+		return nil
 	}
 
 	prompt := promptui.Select{

@@ -60,6 +60,8 @@
 - title: ⚙️ Functionality
   url: functionality
   links:
+    - title: Application Management
+      url: functionality/application-management
     - title: Lifecycle Management
       url: functionality/lifecycle-management
     - title: Pattern Management
@@ -126,7 +128,7 @@
 - title: 🛠 Extensibility
   url: extensibility
   links:
-    - title: "Service Mesh Adapters"
+    - title: "Adapters"
       url: extensibility/adapters
     - title: "Load Generators"
       url: extensibility/load-generators
@@ -134,6 +136,8 @@
       url: extensibility/providers
     - title: "REST & GraphQL APIs"
       url: extensibility/api
+    - title: "UI Plugins"
+      url: extensibility/ui      
 - title: 📖 Reference
   url: reference
   links:

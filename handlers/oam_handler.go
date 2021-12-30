@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -54,7 +54,7 @@ func (h *Handler) PatternFileHandler(
 	provider models.Provider,
 ) {
 	// Read the PatternFile
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -111,7 +111,8 @@ func (h *Handler) PatternFileHandler(
 		h.config.KubeClient,
 		user.UserID,
 		isDel,
-		r.URL.Query().Get("dryRun") == "true",
+		r.URL.Query().Get("verify") == "true",
+		false,
 	)
 
 	if err != nil {
@@ -238,7 +239,7 @@ func (h *Handler) OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.
 // POSTOAMRegisterHandler handles registering OMA objects
 func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	// Get the body
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
@@ -342,7 +343,8 @@ func _processPattern(
 	kubeClient *meshkube.Client,
 	userID string,
 	isDelete bool,
-	dryRun bool,
+	verify bool,
+	skipPrintLogs bool,
 ) (string, error) {
 	sip := &serviceInfoProvider{
 		token:      token,
@@ -350,13 +352,13 @@ func _processPattern(
 		opIsDelete: isDelete,
 	}
 	sap := &serviceActionProvider{
-		token:      token,
-		provider:   provider,
-		prefObj:    prefObj,
-		kubeClient: kubeClient,
-		opIsDelete: isDelete,
-		userID:     userID,
-
+		token:           token,
+		provider:        provider,
+		prefObj:         prefObj,
+		kubeClient:      kubeClient,
+		opIsDelete:      isDelete,
+		userID:          userID,
+		skipPrintLogs:   skipPrintLogs,
 		accumulatedMsgs: []string{},
 		err:             nil,
 	}
@@ -364,10 +366,10 @@ func _processPattern(
 	chain := stages.CreateChain()
 	chain.
 		Add(stages.ServiceIdentifier(sip, sap)).
-		Add(stages.Filler).
+		Add(stages.Filler(sap.skipPrintLogs)).
 		Add(stages.Validator(sip, sap))
 
-	if !dryRun {
+	if !verify {
 		chain.
 			Add(stages.Provision(sip, sap)).
 			Add(stages.Persist(sip, sap))
@@ -430,19 +432,21 @@ func (sip *serviceInfoProvider) IsDelete() bool {
 }
 
 type serviceActionProvider struct {
-	token      string
-	provider   models.Provider
-	prefObj    *models.Preference
-	kubeClient *meshkube.Client
-	opIsDelete bool
-	userID     string
-
+	token           string
+	provider        models.Provider
+	prefObj         *models.Preference
+	kubeClient      *meshkube.Client
+	opIsDelete      bool
+	userID          string
+	skipPrintLogs   bool
 	accumulatedMsgs []string
 	err             error
 }
 
 func (sap *serviceActionProvider) Terminate(err error) {
-	logrus.Error(err)
+	if !sap.skipPrintLogs {
+		logrus.Error(err)
+	}
 	sap.err = err
 }
 

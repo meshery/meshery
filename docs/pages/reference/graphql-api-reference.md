@@ -243,6 +243,12 @@ Listen to changes in status of Meshery Operator in your cluster.
 
 ###### **Returns** [`OperatorStatus!`](#operatorstatus).
 
+### `Subscription.subscribeBrokerConnection`
+
+Listen to changes in Broker (NATS) Connection.
+
+###### **Returns** [`Boolean!`](#boolean).
+
 ### `Subscription.subscribePerfProfile`
 
 Listen to changes in Performance Profile.

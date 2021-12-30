@@ -3,7 +3,6 @@
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
-import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
 
 /**
  * @typedef {Object} OAMDefinition
@@ -79,7 +78,7 @@ export async function createWorkloadTraitSets(adapter) {
 
   const sets = [];
   workloads?.forEach((w) => {
-    const item = { workload : w, traits : [], type : getPatternServiceType(w?.metadata) };
+    const item = { workload : w, traits : [], type : getPatternServiceType(w) };
 
     item.traits = traits?.filter((t) => {
       if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
@@ -97,14 +96,32 @@ export async function createWorkloadTraitSets(adapter) {
 /**
  * getPatternServiceName takes in the pattern service metadata and returns
  * the name of the service
+ *
  * @param {*} item pattern service component
  * @param {boolean} includeDisplayName if set to true, display name is checked first
  * @returns {string} service name
  */
 export function getPatternServiceName(item, includeDisplayName = true) {
-  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || "NA";
+  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || getPatternAttributeName(item) || "NA";
 
   return item?.oam_definition?.metadata?.name || "NA";
+}
+
+/**
+ * getHumanReadablePatternServiceName takes in the pattern service metadata and returns
+ * the readable name of the service
+ *
+ * @param {*} item pattern service component
+ * @returns {string} service name
+ */
+export function getHumanReadablePatternServiceName(item) {
+  const name = item?.oam_definition?.spec?.metadata?.k8sKind
+    || item?.metadata?.["display.ui.meshery.io/name"]
+    || item?.oam_definition?.metadata?.name
+    || getPatternAttributeName(item)
+    || "NA";
+
+  return camelCaseToCapitalize(name);
 }
 
 /**
@@ -124,7 +141,7 @@ export function getPatternServiceID(item) {
  * @returns {string | undefined} service name
  */
 export function getPatternServiceType(item) {
-  return item?.metadata?.["ui.meshery.io/category"]
+  return item?.metadata?.["ui.meshery.io/category"];
 }
 
 /**
@@ -180,17 +197,15 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
     name : `pattern-${trueRandom().toString(36).substr(2, 5)}`,
     services : {},
   };
-
   partialClean ? recursiveCleanObjectExceptEmptyArray(config) : recursiveCleanObject(config);
 
   Object.keys(config).forEach((key) => {
     // Add it only if the settings are non empty or "true"
     if (config[key].settings) {
-      const name = PascalCaseToKebab(key);
-      pattern.services[name] = config[key];
+      // const name = PascalCaseToKebab(key);
+      pattern.services[key] = config[key];
 
-      pattern.services[name].type = key;
-      pattern.services[name].namespace = namespace;
+      pattern.services[key].namespace = namespace;
     }
   });
 
@@ -200,4 +215,35 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
   });
 
   return pattern;
+}
+
+/**
+ * Capitalises camelcase-string
+ *
+ * @param {String} text
+ * @returns
+ */
+export function camelCaseToCapitalize(text){
+  if (!text) return null
+
+  const result = text.replace(/([A-Z])/g, " $1");
+
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
+/**
+ * Formats text for prettified view
+ *
+ * @param {String} text
+ * @returns
+ */
+export function formatString(text){
+  if (!text) return null
+
+  // format string for prettified camelCase
+  // @ts-ignore
+  let formattedText = text.replaceAll("IP", "Ip");
+  formattedText = camelCaseToCapitalize(formattedText),
+  formattedText = formattedText.replaceAll("Ip", "IP")
+  return formattedText
 }
