@@ -16,7 +16,6 @@ package system
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -84,13 +83,6 @@ var viewCmd = &cobra.Command{
 
 //check release channel version string supplied by user for validity. This func does not set anything.(Just for checks)
 func validVersionCheck(c string) (bool, error) {
-	stableRegx := regexp.MustCompile(`^stable-v[0-9]+\.[0-9]+\.[0-9]+$`)
-	edgeRegx := regexp.MustCompile(`^edge-v[0-9]+\.[0-9]+\.[0-9]+$`)
-
-	if !(stableRegx.MatchString(c) || edgeRegx.MatchString(c)) {
-		return false, fmt.Errorf("misformatted release channel or version")
-	}
-
 	// get mesheryctl config
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -102,23 +94,10 @@ func validVersionCheck(c string) (bool, error) {
 		return false, fmt.Errorf("error fetching current context %+v", err)
 	}
 
-	verCurrent := ctxCurrent.GetVersion() //store current version
-
-	incomingVersion := strings.SplitN(c, "-", 2)[1] //get incoming version
-
-	ctxCurrent.SetVersion(incomingVersion) // temporarily set incoming version as current
-	//validate incoming version
-	err = ctxCurrent.ValidateVersion()
-	//return false if its invalid and true if it is valid and either way ,set back context version to original
-	if err != nil {
-		ctxCurrent.SetVersion(verCurrent)
-		return false, err
-	}
-	ctxCurrent.SetVersion(verCurrent)
-	return true, nil
+	return ctxCurrent.ValidateChannel(c)
 }
 
-//func to validate CLI argument
+// func to validate CLI argument
 func checkChannelArg(n int) cobra.PositionalArgs {
 	return func(cmd *cobra.Command, args []string) error {
 		if len(args) != n {
