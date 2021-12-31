@@ -49,7 +49,6 @@ function uiSchema(jsonSchema) {
       isEqualArr(jsonSchema.properties[key].type, ["string", "null"], false)
       || isEqualArr(jsonSchema.properties[key].type, ["integer", "null"], false)
     ) {
-      console.log("into")
       uiJsonSchema[key] = {
         'ui:description' : ' '
       }
