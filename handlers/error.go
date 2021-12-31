@@ -323,6 +323,10 @@ func ErrVersionCompare(err error) error {
 	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to compare latest and current version of Meshery"}, []string{err.Error()}, []string{}, []string{})
 }
 
+func ErrGetLatestVersion(err error) error {
+	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to get latest version of Meshery"}, []string{err.Error()}, []string{}, []string{})
+}
+
 func ErrSaveSession(err error) error {
 	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session"}, []string{err.Error()}, []string{"User session could be expired"}, []string{"Re-initiate login"})
 }
