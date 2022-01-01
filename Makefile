@@ -1,6 +1,6 @@
-ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10005 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009 meshery-nginx-sm:10010"
+ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10008 localhost:10009 meshery-nginx-sm:10010"
 
-MESHERY_CLOUD_LOCAL="http://mesherylocal.layer5.io:9876"
+MESHERY_CLOUD_LOCAL="http://localhost:9876"
 MESHERY_CLOUD_DEV="http://localhost:9876"
 MESHERY_CLOUD_PROD="https://meshery.layer5.io"
 MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
