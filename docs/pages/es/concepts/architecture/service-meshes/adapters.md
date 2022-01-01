@@ -43,3 +43,4 @@ Ver la documentación de [extensibilidad]({{site.baseurl}}/extensibility) para o
 La configuración predeterminada de una implementación de Meshery incluye una instancia de cada uno de los adaptadores de Meshery (que han alcanzado un estado de versión estable). Puede optar por ejecutar varias instancias del mismo tipo de adaptador Meshery; p.ej. dos instancias del adaptador `meshery-istio`. Para hacerlo, modifique el archivo ~/.meshery/meshery.yaml para incluir varias copias del adaptador dado.
 
 Ver la guía "[Adaptadores múltiples]({{site.baseurl}}/guides/multiple-adapters)" para obtener más información.
+

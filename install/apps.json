@@ -1,0 +1,12 @@
+{
+        "bookinfo.yaml":["https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml"],
+        "httpbin.yaml":["https://raw.githubusercontent.com/istio/istio/master/samples/httpbin/httpbin.yaml"],
+       "imagehub.yaml":["https://raw.githubusercontent.com/layer5io/image-hub/master/deployment.yaml"],
+        "emojivoto.yaml":[
+                "https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/emoji.yml",
+                "https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/vote-bot.yml",
+                "https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/voting.yml",
+                "https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/web.yml"
+        ]   
+}
+

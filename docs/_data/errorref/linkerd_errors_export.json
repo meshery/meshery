@@ -1,6 +1,6 @@
 {
   "errors_export": {
-    "component_name": "linkerd",
+    "component_name": "meshery-linkerd",
     "component_type": "adapter",
     "errors": {
       "1000": {
@@ -100,7 +100,7 @@
         "long_description": "Error occurred while applying custom manifest to the cluster",
         "short_description": "Error with custom operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
-        "suggested_remediation": "Make sure to apply a valid kubernetes manifest"
+        "suggested_remediation": "Make sure to apply a valid Kubernetes manifest"
       },
       "1013": {
         "name": "ErrOpInvalidCode",
@@ -108,33 +108,6 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Invalid operation",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "1014": {
-        "name": "ErrInvalidOAMComponentTypeCode",
-        "code": "1014",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "invalid OAM component name: ",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "1015": {
-        "name": "ErrLinkerdCoreComponentFailCode",
-        "code": "1015",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "error in linkerd core component",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "1016": {
-        "name": "ErrProcessOAMCode",
-        "code": "1016",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "error performing OAM operations",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -155,15 +128,6 @@
         "short_description": "error parsing the component",
         "probable_cause": "Invalid OAM component passed in OAM request",
         "suggested_remediation": "Check if your request has vaild OAM components"
-      },
-      "1019": {
-        "name": "ErrParseOAMConfigCode",
-        "code": "1019",
-        "severity": "Alert",
-        "long_description": "Error occurred while prasing component config in the OAM request made",
-        "short_description": "error parsing the configuration",
-        "probable_cause": "Invalid OAM config passed in OAM request",
-        "suggested_remediation": "Check if your request has vaild OAM config"
       },
       "1020": {
         "name": "ErrApplyHelmChartCode",

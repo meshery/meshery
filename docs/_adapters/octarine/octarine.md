@@ -4,7 +4,7 @@ title: Octarine
 name: Meshery Adapter for Octarine
 mesh_name: Octarine
 earliest_version: v1.0
-port: 10003/tcp
+port: 10003/gRPC
 project_status: retiring
 github_link: https://github.com/meshery/meshery-octarine
 image: /assets/img/service-meshes/octarine.svg

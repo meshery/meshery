@@ -1,6 +1,6 @@
 // @ts-check
 import {
-  Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
   TableCell, Tooltip, Typography
 } from "@material-ui/core";
 import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
@@ -14,12 +14,14 @@ import UploadIcon from "@material-ui/icons/Publish";
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
+import AddIcon from "@material-ui/icons/Add";
 import React, { useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
+import FILE_OPS from "../utils/configurationFileHandlersEnum"
 import { updateProgress } from "../lib/store";
 import { trueRandom } from "../lib/trueRandom";
 import PatternForm from "./configuratorComponents/patternConfigurator";
@@ -42,6 +44,12 @@ const styles = (theme) => ({
   iconPatt : {
     width : "24px",
     height : "24px",
+  },
+  createButton : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    margin : "1rem"
   }
 });
 
@@ -155,7 +163,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name, "update")}
+            onClick={() => onSubmit(yaml, pattern.id, pattern.name, FILE_OPS.UPDATE)}
           >
             <SaveIcon />
           </IconButton>
@@ -164,7 +172,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name, "delete")}
+            onClick={() => onSubmit(yaml, pattern.id, pattern.name,)}
           >
             <DeleteIcon />
           </IconButton>
@@ -348,8 +356,8 @@ function MesheryPatterns({
   }
 
   function handleSubmit(data, id, name, type) {
-    updateProgress({ showProgress : true });
-    if (type === "delete") {
+    updateProgress({ showProgress : true })
+    if (type === FILE_OPS.DELETE) {
       dataFetch(
         `/api/pattern/${id}`,
         {
@@ -366,7 +374,7 @@ function MesheryPatterns({
       );
     }
 
-    if (type === "update") {
+    if (type === FILE_OPS.UPDATE) {
       dataFetch(
         `/api/pattern`,
         {
@@ -383,13 +391,13 @@ function MesheryPatterns({
       );
     }
 
-    if (type === "upload" || type === "urlupload") {
+    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body;
-      if (type === "upload") {
-        body = JSON.stringify({ pattern_data : { pattern_file : data }, save : true });
+      if (type === FILE_OPS.FILE_UPLOAD) {
+        body = JSON.stringify({ pattern_data : { pattern_file : data }, save : true })
       }
-      if (type === "urlupload") {
-        body = JSON.stringify({ url : data, save : true });
+      if (type === FILE_OPS.URL_UPLOAD) {
+        body = JSON.stringify({ url : data, save : true })
       }
       dataFetch(
         `/api/pattern`,
@@ -416,17 +424,17 @@ function MesheryPatterns({
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
       handleSubmit(
-        event.target.result,
         "",
+        event.target.result,
         file?.name || "meshery_" + Math.floor(trueRandom() * 100),
-        "upload",
+        FILE_OPS.URL_UPLOAD,
       );
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), "urlupload");
+    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.URL_UPLOAD);
     // console.log(link, "valid");
   }
   const columns = [
@@ -668,6 +676,22 @@ function MesheryPatterns({
           />
         </MuiThemeProvider>
       }
+      {!selectedPattern.show && <div className={classes.createButton}>
+        <Button
+          aria-label="Add Pattern"
+          variant="contained"
+          color="primary"
+          size="large"
+          // @ts-ignore
+          onClick={() => setSelectedPattern({
+            pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+            show : true,
+          })}
+        >
+          <AddIcon />
+          Create Pattern
+        </Button>
+      </div>}
       <PromptComponent ref={modalRef} />
     </NoSsr>
   );

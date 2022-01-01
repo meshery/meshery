@@ -56,6 +56,96 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Helm charts lint (helm)
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
 
+## Tests for adapters
+All Meshery adapters use a central workflow that is referenced in each of their test workflows which get triggered every time a pull request is made. These
+tests in adapters are end-to-end tests and use patternfile. The reusable workflow is present in .github/workflows in Meshery repository with the workflow name "Test for Meshery adapters using patternfile"
+
+
+
+### The pre-requisite of referencing this workflow is -
+1. Using actions/upload-artifact@v2 a patternfile has to be uploaded as an artifact with the name as "patternfile".
+2. The name of the uploaded patterfile should be passed in
+
+---
+      ...
+      with:
+          patternfile_name: < name of the patternfile which is uploaded >
+
+
+3. Note: This Job is pre-run to the actual test. This is done in order to create patternfiles dynamically and use them. Therefore name of this jobs has to be passed as
+
+---
+      ...
+      needs: 
+         < Name of the pre-requisite job >
+
+
+4. There should be an infinite token passed in: (Or else local provider will be used)
+
+---
+      ...
+      secrets:
+        token: ${{ secrets.PROVIDER_TOKEN }}
+
+
+### The central workflow functionally does -
+1. Checks out the code of the repository(on the ref of latest commit of branch which made the PR) in which it is referenced.
+2. Starts a minikube cluster
+3. Builds a docker image of the adapter and sets minikube to use docker's registry.
+4. Starts the adapter and meshery server (The url to deployment and service yaml of adapter are configurable).
+ NOTE: The service mesh name( whose adapter we are testing ) has to passed in:
+
+ ---
+      ...
+      with:
+         adapter_name: < NAME OF THE SERVICE MESH >
+
+5. The uploaded patternfile is deployed.
+6. Workflow sleeps for some time.
+7. Then the assertion is made that the pods passed in-
+
+---
+      ...
+      with:
+         expected_pods: < pod1,pod2,pod3 >  #comma separated pod names that will be expected to be present after patternfile is deployed
+8. And these pods are present in their respective namespaces passed in-
+
+--- 
+      ...
+      with:
+         expected_pods_namespaces: < pod1ns, pod2ns , pod3ns >
+
+
+### Expected inputs of this workflow 
+
+---
+    inputs:
+      expected_pods:
+        required: true
+        type: string
+      expected_pods_namespaces:
+        required: true
+        type: string
+      service_url:
+        required: true
+        type: string
+      deployment_url:
+        required: true
+        type: string
+      adapter_name:
+        required: true
+        type: string   
+      patternfile_name:
+        required: true
+        type: string   
+      provider: 
+        required: false
+        type: string   
+    secrets:
+      token:
+
+### Expected outputs of this workflow
+ The pods passed in “expected_pods” are running in the subsequent namespaces passed in “expected_pods_namespaces”. If not, the workflow fails
 ## Automated Builds
 
 All Meshery GitHub repositories are configured with GitHub Actions. Everytime a pull request is submitted against the master branch of any repository, that repository’s GitHub Actions will be invoked (whether the PR is merged or not). Workflows defined in Meshery repository will generally (but not always) perform the following actions:
@@ -216,3 +306,43 @@ Project focuses on functionality, quality and adoption, while retaining the flex
 Once a 1.0 release has been made, Around once a month or so, the project maintainers will take one of these daily builds and run it through a number of additional qualification tests and tag the build as a Stable release. Around once a quarter or so, the project maintainers take one of these Stable releases, run through a bunch more tests and tag the build as a Long Term Support (LTS) release. Finally, if we find something wrong with an LTS release, we issue patches.
 
 The different types (Daily, Stable, LTS) represent different product quality levels and different levels of support from the Meshery team. In this context, support means that we will produce patch releases for critical issues and offer technical assistance. 
+
+## Versioning Documentation 
+### For new major release
+
+The structure which the docs follow right now is, The main `docs` folder has the most recent version of documentation, while there are sub-folders for previous versions, v0.x (x being the last major release).
+On release of a new major version, the static html files for the most recent version is generated and is renamed as the release version (v0.x). 
+
+##### Steps:
+After cloning the Meshery repository
+1. `cd docs` > `bundle install` > `make site`
+1. On executing `make site` a `_site` folder is created which has static html files. 
+1. The `_site` folder is renamed to `v0.x`. 
+1. This `v0.x` folder is now the latest version of docs. 
+
+##### _In the `v0.x` folder_
+1. Search and replace all the instances where there is a direct path is defined to include the version name in the path, i.e, all paths to intra-page links and images should start with `/v0.x/`.
+- Look for `href="/` and replace with `href="/0.x/`
+- Look for `src="/`and replace with `src="/0.x/` <br/><br/>
+<a href="{{ site.baseurl }}/assets/img/versioning-guide/search-and-replace.png">
+  <img src="{{ site.baseurl }}/assets/img/versioning-guide/search-and-replace.png" />
+</a>
+
+
+### For old release
+
+For older releases we have to travel back in time. Using the `Tags` in github we go to a previous release, `v0.X.x`, the `.x` here should be the latest version of the archived docs. 
+
+##### Steps: 
+1. Copy the commit ID for that release. <br/><br/>
+<a href="{{ site.baseurl }}/assets/img/versioning-guide/commit-ID.png">
+  <img src="{{ site.baseurl }}/assets/img/versioning-guide/commit-ID.png" />
+</a>
+
+1. `git checkout <commit ID>` > `cd docs` > `bundle install` > `make site`
+1.  On executing `make site` a `_site` folder is created which has static html files. 
+1.  The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version. 
+
+The above [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed. 
+
+
