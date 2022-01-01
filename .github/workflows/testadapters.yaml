@@ -150,7 +150,7 @@ jobs:
             kubectl logs pod/$podname -n meshery
       - name: Check Meshery logs
         run: |
-          podName=$(kubectl get pods -o wide -n meshery | sed -n 2p | tr -s ' ' | cut -d " " -f 1)
+          podName=$(mesheryctl system  status -v | sed -n 2p | sed -e "s/[[:space:]]\+/ /g" |  cut -d " " -f 6)
           kubectl logs pod/$podName -n meshery
       - name: Whole status for debugging
         run: kubectl get all -A
