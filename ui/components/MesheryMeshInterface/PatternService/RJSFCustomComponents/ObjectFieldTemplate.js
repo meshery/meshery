@@ -94,7 +94,7 @@ const ObjectFieldTemplate = ({
                 item={true}
                 xs={element.name === "name" || element.name === "namespace" ? 6 : 12}
                 key={index}
-                style={{ marginBottom : "10px" }}>
+              >
                 {element.content}
               </Grid>
             )

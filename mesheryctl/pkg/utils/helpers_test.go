@@ -526,6 +526,9 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 			mesheryImageVersion: "",
 			want: map[string]interface{}{
+				"meshery-app-mesh": map[string]interface{}{
+					"enabled": false,
+				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": false,
 				},
@@ -566,6 +569,9 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 			mesheryImageVersion: "testImageVersion",
 			want: map[string]interface{}{
+				"meshery-app-mesh": map[string]interface{}{
+					"enabled": false,
+				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": true,
 				},
@@ -607,6 +613,9 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 			mesheryImageVersion: "testImageVersion",
 			want: map[string]interface{}{
+				"meshery-app-mesh": map[string]interface{}{
+					"enabled": false,
+				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": true,
 				},

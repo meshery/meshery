@@ -1,6 +1,6 @@
 {
   "errors_export": {
-    "component_name": "linkerd",
+    "component_name": "meshery-linkerd",
     "component_type": "adapter",
     "errors": {
       "1000": {
@@ -100,7 +100,7 @@
         "long_description": "Error occurred while applying custom manifest to the cluster",
         "short_description": "Error with custom operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
-        "suggested_remediation": "Make sure to apply a valid kubernetes manifest"
+        "suggested_remediation": "Make sure to apply a valid Kubernetes manifest"
       },
       "1013": {
         "name": "ErrOpInvalidCode",
