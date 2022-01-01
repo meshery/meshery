@@ -141,7 +141,7 @@
 - title: 📖 Reference
   url: reference
   links:
-    - title: mesheryctl Commands
+    - title: Mesheryctl Commands
       url: reference/mesheryctl
     - title: Error Codes
       url: reference/error-codes
