@@ -511,7 +511,7 @@ class Navigator extends React.Component {
               return "";
             }
             return (
-              <React.Fragment key={id}>
+              <div key={id}>
                 <ListItem
                   button
                   key={id}
@@ -524,11 +524,12 @@ class Navigator extends React.Component {
                     path === href && classes.itemActiveItem,
                     isDrawerCollapsed && classes.noPadding
                   )}
+                  data-cy={title}
                 >
                   {this.extensionPointContent(icon, href, title, isDrawerCollapsed, onClickCallback)}
                 </ListItem>
                 {this.renderNavigatorExtensions(children, depth + 1)}
-              </React.Fragment>
+              </div>
             );
           })}
         </List>

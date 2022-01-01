@@ -3,7 +3,8 @@
   "projectId": "gpe84y",
   "env": {
     "codeCoverage": {
-      "url": "/api/__coverage__"
+      "url": "/api/__coverage__",
+      "token": ""
     }
   }
 }
