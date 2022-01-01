@@ -141,7 +141,7 @@
 - title: 📖 Reference
   url: reference
   links:
-    - title: Mesheryctl Commands
+    - title: Meshery CLI
       url: reference/mesheryctl
     - title: Error Codes
       url: reference/error-codes
