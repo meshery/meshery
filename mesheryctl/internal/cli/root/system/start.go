@@ -388,11 +388,7 @@ func start() error {
 	}
 
 	// execute dashboard command to fetch and navigate to Meshery UI
-	if err = dashboardCmd.RunE(nil, nil); err != nil {
-		return err
-	}
-
-	return nil
+	return dashboardCmd.RunE(nil, nil)
 }
 
 func init() {

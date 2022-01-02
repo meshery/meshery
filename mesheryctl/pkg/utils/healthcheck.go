@@ -249,8 +249,5 @@ func WaitForMesheryRunning(c *meshkitkube.Client, timeout int) error {
 		return errors.New("meshery pod not found")
 	}
 
-	if err := waitForMesheryRunning(c, MesheryNamespace, mesheryPodName, time.Duration(timeout)*time.Second); err != nil {
-		return err
-	}
-	return nil
+	return waitForMesheryRunning(c, MesheryNamespace, mesheryPodName, time.Duration(timeout)*time.Second)
 }
