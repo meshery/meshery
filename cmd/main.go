@@ -267,6 +267,7 @@ func main() {
 	//Close existing database instance
 
 	//Get the db instance/connection pool
+	logrus.Info("Closing database instance...")
 	db, err := dbHandler.DB.DB()
 	if err != nil {
 		logrus.Error("Could not close database connection. Could not get database instance. ", err.Error())
