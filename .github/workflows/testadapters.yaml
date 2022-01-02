@@ -145,7 +145,8 @@ jobs:
    
       - name: Check adapter logs
         run: |
-            mesheryctl system logs meshery-nginx
+            podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
+            kubectl logs pod/$podname -n meshery
       - name: Check Meshery logs
         run: |
             mesheryctl system  logs meshery
