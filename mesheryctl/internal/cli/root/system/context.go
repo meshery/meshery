@@ -307,10 +307,19 @@ var viewContextCmd = &cobra.Command{
 
 // switchContextCmd represents the switch command
 var switchContextCmd = &cobra.Command{
-	Use:          "switch context-name",
-	Short:        "switch context",
-	Long:         `Configure mesheryctl to actively use one one context vs. the another context`,
-	Args:         cobra.ExactArgs(1),
+	Use:   "switch context-name",
+	Short: "switch context",
+	Long:  `Configure mesheryctl to actively use one one context vs. the another context`,
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl system context switch [context name]
+Example: mesheryctl system context switch k8s-sample
+Description: It configures mesheryctl to actively use one one context vs. the another context`
+
+		if len(args) != 1 {
+			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
+		}
+		return nil
+	},
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
