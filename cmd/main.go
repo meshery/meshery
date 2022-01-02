@@ -264,6 +264,19 @@ func main() {
 		}
 	}()
 	<-c
+	//Close existing database instance
+
+	//Get the db instance/connection pool
+	db, err := dbHandler.DB.DB()
+	if err != nil {
+		logrus.Error("Could not close database connection. Could not get database instance. ", err.Error())
+	} else {
+		err := db.Close() //It ensures that all writes have completed and the database is not corrupted.
+		if err != nil {
+			logrus.Error("Could not close database connection.", err.Error())
+		}
+	}
+
 	logrus.Info("Doing seeded content cleanup...")
 	lProv.CleanupSeeded(seededUUIDs)
 
