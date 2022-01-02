@@ -110,12 +110,12 @@ jobs:
           SECONDS=0
           end=$((SECONDS+300))
           while [ $SECONDS -lt $end ]; do
-              status=$(kubectl get pods -o wide -n meshery | grep meshery | sed -n 1p | tr -s ' ' | cut -d " " -f 3)
+              status=$(mesheryctl system  status -v | sed -n 2p | sed -e "s/[[:space:]]\+/ /g" |  cut -d " " -f 3)
               if [ "$status" = "Running" ];then
                 break
               fi
           done
-          podName=$(kubectl get pods -o wide -n meshery | grep meshery | sed -n 1p | tr -s ' ' | cut -d " " -f 1)
+          podName=$(mesheryctl system  status -v | sed -n 2p | sed -e "s/[[:space:]]\+/ /g" |  cut -d " " -f 6)
           kubectl logs pod/$podName -n meshery
       # If external IP has not been allotted then server is unreachable, exit here in that case
       - name: Check if Meshery has been allotted external IP
@@ -150,7 +150,7 @@ jobs:
             kubectl logs pod/$podname -n meshery
       - name: Check Meshery logs
         run: |
-          podName=$(kubectl get pods -o wide -n meshery | sed -n 2p | tr -s ' ' | cut -d " " -f 1)
+          podName=$(mesheryctl system  status -v | sed -n 2p | sed -e "s/[[:space:]]\+/ /g" |  cut -d " " -f 6)
           kubectl logs pod/$podName -n meshery
       - name: Whole status for debugging
         run: kubectl get all -A

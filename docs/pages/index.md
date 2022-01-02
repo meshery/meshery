@@ -9,8 +9,8 @@ display-title: "false"
 
 <div style="display: block; text-align: center; margin-bottom: 30px;">
     <a href="https://layer5.io/meshery">
-    <img style="width: calc(100% / 3.2); " 
-         src="/assets/img/meshery/meshery-logo-light-text.svg" />
+    <img style="width: calc(100% / 2.5); " 
+         src="/assets/img/meshery/meshery-logo-light-text-side.svg" />
     </a>
 </div>
 <p style="margin:auto;padding:1rem;font-size: 1.25rem;">Meshery is the open source, service mesh management plane that enables the adoption, operation, and management of any service mesh and their workloads.</p>
@@ -18,7 +18,7 @@ display-title: "false"
 <div class="wrapper" style="text-align: left;">
 
   <!-- QUICK START -->
-  <div>
+  <div class="section">
     <a href="{{ site.baseurl }}/installation/quick-start">
         <div class="overview">Quick&nbsp;Start</div>
     </a>
@@ -40,7 +40,7 @@ display-title: "false"
   </div>
   
   <!-- CONCEPTS -->
-  <div>
+  <div class="section">
     <a href="{{ site.baseurl }}/concepts">
         <div class="overview">Concepts</div>
     </a>
@@ -59,7 +59,7 @@ display-title: "false"
 <div class="wrapper" style="text-align: left;">
 
   <!-- FUNCTIONALITY -->
-  <div>
+  <div class="section">
     <a href="{{ site.baseurl }}/functionality">
         <div class="overview">Functionality</div>
     </a>
@@ -89,9 +89,9 @@ display-title: "false"
   </div>
 
   <!-- GUIDES -->
-  <div>
+  <div class="section">
     <a href="{{ site.baseurl }}/guides">
-        <div class="overview">Guides and Reference</div>
+        <div class="overview">Guides</div>
     </a>
     <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6>
     <ul>
