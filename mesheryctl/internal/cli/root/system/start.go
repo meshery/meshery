@@ -447,21 +447,6 @@ func start() error {
 		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.GetPlatform(), utils.MesheryFolder)
 	}
 
-	hcOptions := &HealthCheckOptions{
-		PrintLogs:           false,
-		IsPreRunE:           false,
-		Subcommand:          "",
-		RunKubernetesChecks: true,
-	}
-	hc, err := NewHealthChecker(hcOptions)
-	if err != nil {
-		return ErrHealthCheckFailed(err)
-	}
-	// If k8s is available in case of platform docker than we deploy operator
-	if err = hc.Run(); err != nil {
-		return ErrHealthCheckFailed(err)
-	}
-
 	// Check for Meshery status before opening it in browser
 	client := &http.Client{}
 	url := currCtx.GetEndpoint()
