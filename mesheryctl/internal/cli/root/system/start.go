@@ -379,9 +379,9 @@ func start() error {
 		if !ready {
 			log.Info("\nFew Meshery pods have not come up yet.\nPlease check the status of the pods by executing “mesheryctl system status” and Meshery-UI endpoint with “mesheryctl system dashboard” before using meshery.")
 			return nil
-		} else {
-			log.Info("Meshery is starting...")
 		}
+		log.Info("Meshery is starting...")
+
 		// switch to default case if the platform specified is not supported
 	default:
 		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.GetPlatform(), utils.MesheryFolder)
