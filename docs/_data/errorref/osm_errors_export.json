@@ -1,6 +1,6 @@
 {
   "errors_export": {
-    "component_name": "osm",
+    "component_name": "meshery-osm",
     "component_type": "adapter",
     "errors": {
       "1000": {

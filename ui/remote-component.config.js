@@ -115,6 +115,7 @@ module.exports = { resolve : {
   "@material-ui/icons/Undo" : require("@material-ui/icons/Undo"),
   "@material-ui/icons/Redo" : require("@material-ui/icons/Redo"),
   "@material-ui/icons/Settings" : require("@material-ui/icons/Settings"),
+  "@material-ui/core/Badge" : require("@material-ui/core/Badge"),
   "@material-ui/lab/Alert" : require("@material-ui/lab/Alert"),
   "@material-ui/core/Menu" : require("@material-ui/core/Menu"),
   "@material-ui/icons/Edit" : require("@material-ui/icons/Edit"),

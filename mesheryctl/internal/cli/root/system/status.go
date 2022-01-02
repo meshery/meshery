@@ -31,6 +31,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var verboseStatus bool
+
 // statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:   "status",
@@ -139,7 +141,7 @@ var statusCmd = &cobra.Command{
 			}
 
 			var data [][]string
-
+			columnNames := []string{"Name", "Ready", "Status", "Restarts", "Age"}
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
 			for _, pod := range podList.Items {
 				// Calculate the age of the pod
@@ -148,7 +150,6 @@ var statusCmd = &cobra.Command{
 
 				// Get the status of each of the pods
 				podStatus := pod.Status
-
 				var containerRestarts int32
 				var containerReady int
 				var totalContainers int
@@ -170,16 +171,28 @@ var statusCmd = &cobra.Command{
 				status := fmt.Sprintf("%v", podStatus.Phase)
 				restarts := fmt.Sprintf("%v", containerRestarts)
 				ageS := age.String()
+				row := []string{name, ready, status, restarts, ageS}
 
 				// Append this to data to be printed in a table
-				data = append(data, []string{name, ready, status, restarts, ageS})
+				if verboseStatus {
+					row = append(row, pod.Name)
+					row = append(row, podStatus.PodIP)
+				}
+				data = append(data, row)
 			}
-
+			if verboseStatus {
+				columnNames = append(columnNames, "Pod-Names")
+				columnNames = append(columnNames, "Pod-IP")
+			}
 			// Print the data to a table for readability
-			utils.PrintToTable([]string{"Name", "Ready", "Status", "Restarts", "Age"}, data)
+			utils.PrintToTable(columnNames, data)
 
-			log.Info("\nMeshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
+			log.Info("\nMeshery endpoint is " + currCtx.GetEndpoint())
 		}
 		return nil
 	},
+}
+
+func init() {
+	statusCmd.Flags().BoolVarP(&verboseStatus, "verbose", "v", false, "(optional) Extra data in status table")
 }

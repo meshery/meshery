@@ -1203,9 +1203,9 @@
       "2138": {
         "name": "ErrVersionCompareCode",
         "code": "2138",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "failed to compare latest and current version of Meshery",
+        "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -1326,12 +1326,138 @@
         "probable_cause": "Sample content does not exist.\\nContent file format not supported.\\nUser doesn't have permission to read sample content.\\nContent file corrupt.",
         "suggested_remediation": "Try restarting Meshery.\\nTry fetching content again."
       },
-      "2156": {
-        "name": "ErrCreatePatternServiceCode",
-        "code": "2156",
-        "severity": "",
+      "2157": {
+        "name": "ErrSaveFilterCode",
+        "code": "2157",
+        "severity": "Alert",
         "long_description": "",
-        "short_description": "",
+        "short_description": "Error failed to save filter",
+        "probable_cause": "Cannot save the Filter due to wrong path or URL",
+        "suggested_remediation": "Check if the given path or URL of the filter is correct"
+      },
+      "2158": {
+        "name": "ErrDecodeFilterCode",
+        "code": "2158",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to decode filters data into go slice",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2159": {
+        "name": "ErrEncodeFilterCode",
+        "code": "2159",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to encode filter",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2160": {
+        "name": "ErrImportFilterCode",
+        "code": "2160",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to import filter",
+        "probable_cause": "Cannot save the Filter due to wrong path or URL",
+        "suggested_remediation": "Check if the given path or URL of the Filter is correct"
+      },
+      "2161": {
+        "name": "ErrFetchFilterCode",
+        "code": "2161",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to fetch filter",
+        "probable_cause": "Failed to retrieve the list of all the Filters",
+        "suggested_remediation": ""
+      },
+      "2162": {
+        "name": "ErrDeleteFilterCode",
+        "code": "2162",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to delete filter",
+        "probable_cause": "Failed to delete Filter with the given ID",
+        "suggested_remediation": "Check if the Filter ID is correct"
+      },
+      "2163": {
+        "name": "ErrSavePatternCode",
+        "code": "2163",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to save pattern",
+        "probable_cause": "Cannot save the Pattern due to wrong path or URL",
+        "suggested_remediation": "Check if the given path or URL of the Pattern is correct"
+      },
+      "2164": {
+        "name": "ErrGetPatternCode",
+        "code": "2164",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to get pattern",
+        "probable_cause": "Cannot get the Pattern with the given Pattern ID",
+        "suggested_remediation": "Check if the given Pattern ID is correct"
+      },
+      "2165": {
+        "name": "ErrDeletePatternCode",
+        "code": "2165",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to delete pattern",
+        "probable_cause": "Failed to delete Pattern with the given ID",
+        "suggested_remediation": "Check if the Pattern ID is correct"
+      },
+      "2166": {
+        "name": "ErrFetchPatternCode",
+        "code": "2166",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to fetch pattern",
+        "probable_cause": "Failed to retrieve the list of all the Patterns",
+        "suggested_remediation": ""
+      },
+      "2167": {
+        "name": "ErrImportPatternCode",
+        "code": "2167",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to import pattern",
+        "probable_cause": "Cannot save the Pattern due to wrong path or URL",
+        "suggested_remediation": "Check if the given path or URL of the Pattern is correct"
+      },
+      "2168": {
+        "name": "ErrEncodePatternCode",
+        "code": "2168",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to encode pattern",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2169": {
+        "name": "ErrDecodePatternCode",
+        "code": "2169",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to decode patterns data into go slice",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2170": {
+        "name": "ErrParsePatternCode",
+        "code": "2170",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to parse pattern file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2171": {
+        "name": "ErrConvertPatternCode",
+        "code": "2171",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to convert PatternFile to Cytoscape object",
         "probable_cause": "",
         "suggested_remediation": ""
       }

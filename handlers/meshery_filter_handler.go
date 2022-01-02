@@ -36,7 +36,8 @@ func (h *Handler) GetMesheryFilterFileHandler(
 
 	resp, err := provider.GetMesheryFilterFile(r, filterID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get the filter: %s", err), http.StatusNotFound)
+		h.log.Error(ErrGetFilter(err))
+		http.Error(rw, ErrGetFilter(err).Error(), http.StatusNotFound)
 		return
 	}
 
@@ -91,14 +92,17 @@ func (h *Handler) handleFilterPOST(
 
 	var parsedBody *MesheryFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrGetFilter(err).Error(), http.StatusBadRequest)
+		// rw.WriteHeader(http.StatusBadRequest)
+		// fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
 	}
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -126,7 +130,8 @@ func (h *Handler) handleFilterPOST(
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryFilter(token, mesheryFilter)
 			if err != nil {
-				http.Error(rw, fmt.Sprintf("failed to save the filter: %s", err), http.StatusInternalServerError)
+				h.log.Error(ErrSaveFilter(err))
+				http.Error(rw, ErrSaveFilter(err).Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -136,7 +141,8 @@ func (h *Handler) handleFilterPOST(
 
 		byt, err := json.Marshal([]models.MesheryFilter{*mesheryFilter})
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to encode filter: %s", err), http.StatusInternalServerError)
+			h.log.Error(ErrEncodeFilter(err))
+			http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -148,7 +154,8 @@ func (h *Handler) handleFilterPOST(
 		resp, err := provider.RemoteFilterFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
 
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to import filter: %s", err), http.StatusInternalServerError)
+			h.log.Error(ErrImportFilter(err))
+			http.Error(rw, ErrImportFilter(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -169,7 +176,8 @@ func (h *Handler) GetMesheryFiltersHandler(
 
 	resp, err := provider.GetMesheryFilters(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to fetch the filters: %s", err), http.StatusInternalServerError)
+		h.log.Error(ErrFetchFilter(err))
+		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -196,7 +204,8 @@ func (h *Handler) DeleteMesheryFilterHandler(
 
 	resp, err := provider.DeleteMesheryFilter(r, filterID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to delete the filter: %s", err), http.StatusInternalServerError)
+		h.log.Error(ErrDeleteFilter(err))
+		http.Error(rw, ErrDeleteFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -223,7 +232,8 @@ func (h *Handler) GetMesheryFilterHandler(
 
 	resp, err := provider.GetMesheryFilter(r, filterID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get the filter: %s", err), http.StatusNotFound)
+		h.log.Error(ErrGetFilter(err))
+		http.Error(rw, ErrGetFilter(err).Error(), http.StatusNotFound)
 		return
 	}
 
@@ -235,8 +245,9 @@ func formatFilterOutput(rw http.ResponseWriter, content []byte, format string) {
 	contentMesheryFilterSlice := make([]models.MesheryFilter, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryFilterSlice); err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to decode filters data into go slice: %s", err)
+		http.Error(rw, ErrDecodeFilter(err).Error(), http.StatusInternalServerError)
+		// rw.WriteHeader(http.StatusInternalServerError)
+		// fmt.Fprintf(rw, "failed to decode filters data into go slice: %s", err)
 		return
 	}
 
@@ -244,8 +255,10 @@ func formatFilterOutput(rw http.ResponseWriter, content []byte, format string) {
 
 	data, err := json.Marshal(&result)
 	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to marshal filter file: %s", err)
+		obj := "filter file"
+		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		// rw.WriteHeader(http.StatusInternalServerError)
+		// fmt.Fprintf(rw, "failed to marshal filter file: %s", err)
 		return
 	}
 

@@ -4,7 +4,7 @@ title: Meshery Adapter for Linkerd
 name: Meshery Adapter for Linkerd
 mesh_name: Linkerd
 earliest_version: v2.10.2
-port: 10001/tcp
+port: 10001/gRPC
 project_status: stable
 adapter_version: v0.5.2
 lab: linkerd-meshery-adapter

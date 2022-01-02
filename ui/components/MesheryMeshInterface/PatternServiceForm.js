@@ -16,6 +16,9 @@ const useStyles = makeStyles(() => ({
   tabPanel : {
     marginTop : "1.1rem",
     padding : "0px 2px"
+  },
+  formWrapper : {
+    width : "100%"
   }
 }));
 
@@ -73,10 +76,18 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       onSettingsChange={onSettingsChange}
       onTraitsChange={onTraitsChange}
       scroll={scroll}
+      tab={tab}
     >
       {(SettingsForm, TraitsForm) => {
+
+        // For rendering addons without tabs
+        if (schemaSet?.type === "addon") {
+          return <SettingsForm />
+        }
+
+        // for rendering normal rjsf forms
         return (
-          <div>
+          <div className={classes.formWrapper}>
             <AppBar className={classes.appBar}>
               <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service" >
                 <Tab label="Settings" {...a11yProps(0)} />
@@ -90,7 +101,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
             <TabPanel value={tab} index={0} className={classes.tabPanel}>
               <SettingsForm RJSFFormChildComponent={RJSFFormChildComponent}  />
             </TabPanel>
-            <TabPanel value={tab} index={0} className={classes.tabPanel}>
+            <TabPanel value={tab} index={1} className={classes.tabPanel}>
               <TraitsForm />
             </TabPanel>
           </div>

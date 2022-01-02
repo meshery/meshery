@@ -994,7 +994,7 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Menu = (
-      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-1.7rem" }}>
+      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-1.2rem" }}>
         {categories.map(({
           id : childId, title, icon, href, show, link, children
         }) => {
@@ -1167,20 +1167,21 @@ class Navigator extends React.Component {
         }
       </ListItem>
     )
+    const Chevron = (
+      <div className={classname}>
+        <FontAwesomeIcon
+          icon={faChevronCircleLeft}
+          fixedWidth
+          color="#e7e7e7"
+          size="2x"
+          alt="Sidebar collapse toggle icon"
+          onClick={this.toggleMiniDrawer}
+        />
+      </div>
+
+    )
     return (
       <NoSsr>
-        { (!("open" in other) || other.open) &&
-        <div className={classname}>
-          <FontAwesomeIcon
-            icon={faChevronCircleLeft}
-            fixedWidth
-            color="#e7e7e7"
-            size="2x"
-            alt="Sidebar collapse toggle icon"
-            onClick={this.toggleMiniDrawer}
-          />
-        </div>
-        }
         <Drawer
           variant="permanent"
           {...other}
@@ -1195,6 +1196,7 @@ class Navigator extends React.Component {
           {Title}
           {Menu}
           <div className={classes.fixedSidebarFooter}>
+            {Chevron}
             {HelpIcons}
             {Version}
           </div>

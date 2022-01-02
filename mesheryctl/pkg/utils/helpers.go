@@ -804,6 +804,9 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 		"meshery-cpx": map[string]interface{}{
 			"enabled": false,
 		},
+		"meshery-app-mesh": map[string]interface{}{
+			"enabled": false,
+		},
 	}
 
 	// set the "enabled" field to true only for the adapters listed in the context

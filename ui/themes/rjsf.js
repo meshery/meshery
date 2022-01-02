@@ -58,12 +58,17 @@ export const rjsfTheme = createTheme({
         color : "#565656"
       },
     },
+    MuiInputBase : {
+      root : {
+        fontSize : "0.8rem" // same as title
+      }
+    },
     MuiGrid : {
       root : {
         "& > *" : {
           border : 'none !important'
         },
-        marginTop : '0.2rem !important',
+        marginTop : '0.1rem !important',
       },
     },
     MuiPaper : {

@@ -51,7 +51,7 @@ jobs:
         with:
           go-version: ${{ secrets.GO_VERSION }}
       - name: goreleaser with tag
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v2.8.0
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
