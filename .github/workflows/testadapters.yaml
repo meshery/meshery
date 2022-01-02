@@ -115,8 +115,7 @@ jobs:
                 break
               fi
           done
-          podName=$(mesheryctl system  status -v | sed -n 2p | sed -e "s/[[:space:]]\+/ /g" |  cut -d " " -f 6)
-          kubectl logs pod/$podName -n meshery
+          mesheryctl system  logs meshery
       # If external IP has not been allotted then server is unreachable, exit here in that case
       - name: Check if Meshery has been allotted external IP
         run: |
@@ -146,12 +145,10 @@ jobs:
    
       - name: Check adapter logs
         run: |
-            podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
-            kubectl logs pod/$podname -n meshery
+            mesheryctl system logs meshery-nginx
       - name: Check Meshery logs
         run: |
-          podName=$(mesheryctl system  status -v | sed -n 2p | sed -e "s/[[:space:]]\+/ /g" |  cut -d " " -f 6)
-          kubectl logs pod/$podName -n meshery
+            mesheryctl system  logs meshery
       - name: Whole status for debugging
         run: kubectl get all -A
         # Check if all  pods are in a Running state
