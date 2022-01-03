@@ -32,7 +32,7 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.11.2
 	github.com/grafana-tools/sdk v0.0.0-20210630212345-db1192e93802
-	github.com/jarcoal/httpmock v1.0.8
+	github.com/jarcoal/httpmock v1.1.0
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.5.1
@@ -55,13 +55,13 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/pflag v1.0.5
-	github.com/spf13/viper v1.10.0
+	github.com/spf13/viper v1.10.1
 	github.com/vektah/gqlparser/v2 v2.2.0
 	github.com/vmihailenco/taskq/v3 v3.2.7
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
 	gonum.org/v1/gonum v0.9.3
-	google.golang.org/grpc v1.42.0
+	google.golang.org/grpc v1.43.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.22.2
