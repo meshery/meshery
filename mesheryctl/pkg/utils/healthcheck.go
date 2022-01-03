@@ -204,7 +204,7 @@ func AreAllPodsRunning() (bool, error) {
 
 // return a condition function that indicates whether the given pod is
 // currently running
-func isMesheryRunning(c *meshkitkube.Client, podName, namespace string) wait.ConditionFunc {
+func isPodRunning(c *meshkitkube.Client, podName, namespace string) wait.ConditionFunc {
 	return func() (bool, error) {
 		pod, err := c.KubeClient.CoreV1().Pods(namespace).Get(context.TODO(), podName, metav1.GetOptions{})
 		if err != nil {
@@ -215,7 +215,7 @@ func isMesheryRunning(c *meshkitkube.Client, podName, namespace string) wait.Con
 		case v1.PodRunning:
 			return true, nil
 		case v1.PodFailed, v1.PodSucceeded:
-			return false, errors.New("meshery pod failed")
+			return false, fmt.Errorf("%s failed to start or never reached Running state", podName)
 		}
 		return false, nil
 	}
@@ -223,31 +223,31 @@ func isMesheryRunning(c *meshkitkube.Client, podName, namespace string) wait.Con
 
 // Poll up to timeout seconds for pod to enter running state.
 // Returns an error if the pod never enters the running state.
-func waitForMesheryRunning(c *meshkitkube.Client, namespace, podName string, timeout time.Duration) error {
-	return wait.PollImmediate(time.Second, timeout, isMesheryRunning(c, podName, namespace))
+func pollForPodRunning(c *meshkitkube.Client, namespace, podName string, timeout time.Duration) error {
+	return wait.PollImmediate(time.Second, timeout, isPodRunning(c, podName, namespace))
 }
 
-// Wait up to timeout seconds for Meshery pod in 'namespace' to enter running state.
+// Wait up to timeout seconds for pod in 'namespace' to enter running state.
 // Returns an error if no pods are found or not all discovered pods enter running state.
-func WaitForMesheryRunning(c *meshkitkube.Client, timeout int) error {
-	podList, err := GetPodList(c, MesheryNamespace)
+func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, timeout int) error {
+	podList, err := GetPodList(c, namespace)
 	if err != nil {
 		return err
 	}
 	if len(podList.Items) == 0 {
-		return fmt.Errorf("no pods in %s", MesheryNamespace)
+		return fmt.Errorf("no pods in %s", namespace)
 	}
-	var mesheryPodName string
+	var desiredPodName string
 	for _, pod := range podList.Items {
-		if GetCleanPodName(pod.Name) == "meshery" {
-			mesheryPodName = pod.Name
+		if GetCleanPodName(pod.Name) == desiredPod {
+			desiredPodName = pod.Name
 			break
 		}
 	}
 
-	if mesheryPodName == "" {
-		return errors.New("meshery pod not found")
+	if desiredPodName == "" {
+		return fmt.Errorf("%s pod not found", desiredPod)
 	}
 
-	return waitForMesheryRunning(c, MesheryNamespace, mesheryPodName, time.Duration(timeout)*time.Second)
+	return pollForPodRunning(c, namespace, desiredPodName, time.Duration(timeout)*time.Second)
 }

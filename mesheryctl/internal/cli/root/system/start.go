@@ -371,7 +371,7 @@ func start() error {
 		time.Sleep(10 * time.Second) // sleeping 10 seconds to countermeasure time to apply helm charts
 		ready, err := mesheryReadinessHealthCheck()
 		if err != nil {
-			return err
+			log.Info(err)
 		}
 
 		spinner.Stop()

@@ -589,7 +589,7 @@ func mesheryReadinessHealthCheck() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if err := utils.WaitForMesheryRunning(kubeClient, 300); err != nil {
+	if err := utils.WaitForPodRunning(kubeClient, "meshery", utils.MesheryNamespace, 300); err != nil {
 		return false, err
 	}
 
