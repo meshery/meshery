@@ -309,7 +309,7 @@ var viewContextCmd = &cobra.Command{
 var switchContextCmd = &cobra.Command{
 	Use:   "switch context-name",
 	Short: "switch context",
-	Long:  `Configure mesheryctl to actively use one one context vs. the another context`,
+	Long:  `Configure mesheryctl to actively use one one context vs. another context`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system context switch [context name]
 Example: mesheryctl system context switch k8s-sample
