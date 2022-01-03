@@ -246,7 +246,7 @@ func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, time
 	}
 
 	if desiredPodName == "" {
-		return fmt.Errorf("%s pod not found", desiredPod)
+		return fmt.Errorf("`%s` pod not found", desiredPod)
 	}
 
 	return pollForPodRunning(c, namespace, desiredPodName, time.Duration(timeout)*time.Second)
