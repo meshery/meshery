@@ -30,7 +30,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
-	github.com/gosimple/slug v1.11.2
+	github.com/gosimple/slug v1.12.0
 	github.com/grafana-tools/sdk v0.0.0-20210630212345-db1192e93802
 	github.com/jarcoal/httpmock v1.1.0
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
