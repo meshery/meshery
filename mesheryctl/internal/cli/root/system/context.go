@@ -313,7 +313,7 @@ var switchContextCmd = &cobra.Command{
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system context switch [context name]
 Example: mesheryctl system context switch k8s-sample
-Description: It configures mesheryctl to actively use one one context vs. the another context`
+Description: Configures mesheryctl to actively use one one context vs. the another context`
 
 		if len(args) != 1 {
 			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
