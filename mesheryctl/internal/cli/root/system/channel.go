@@ -81,7 +81,7 @@ var viewCmd = &cobra.Command{
 	},
 }
 
-//check release channel version string supplied by user for validity. This func does not set anything.(Just for checks)
+// check release channel version string supplied by user for validity. This func does not set anything.(Just for checks)
 func validVersionCheck(c string) (bool, error) {
 	// get mesheryctl config
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -93,7 +93,6 @@ func validVersionCheck(c string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("error fetching current context %+v", err)
 	}
-
 	return ctxCurrent.ValidateChannel(c)
 }
 
