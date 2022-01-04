@@ -1,11 +1,25 @@
 package utils
 
 import (
-	"io/ioutil"
 	"testing"
-
-	"k8s.io/apimachinery/pkg/version"
 )
+
+var versionCheck = []struct {
+	version  string // input
+	expected [3]int // expected output
+}{
+	{"1.12.0", [3]int{1, 12, 0}},
+	{"1.12.1", [3]int{1, 12, 1}},
+	{"1.12.2", [3]int{1, 12, 2}},
+	{"1.12.3", [3]int{1, 12, 3}},
+	{"1.12.4", [3]int{1, 12, 4}},
+	{"1.12.5", [3]int{1, 12, 5}},
+	{"1.12.6", [3]int{1, 12, 6}},
+	{"1.12.7", [3]int{1, 12, 7}},
+	{"1.12.8", [3]int{1, 12, 8}},
+	{"1.12.9", [3]int{1, 12, 9}},
+	{"1.12.10", [3]int{1, 12, 10}},
+}
 
 func TestGetK8sVersionInfoIntegration(t *testing.T) {
 	if testing.Short() {
@@ -13,21 +27,20 @@ func TestGetK8sVersionInfoIntegration(t *testing.T) {
 	}
 	vers, err := GetK8sVersionInfo()
 	if err != nil {
-		t.Errorln(err)
+		t.Errorf("Error getting k8s version Info: %v", err)
 	}
-	
+
 	err = CheckK8sVersion(vers)
 	if err != nil {
-		t.Errorln(err)
+		t.Errorf("Error checking k8s version: %v", err)
 	}
 }
 
-func TestgetK8sVersion(t *testing.T) {
+func TestGetK8sVersion(t *testing.T) {
 	for _, tt := range versionCheck {
 		t.Run(tt.version, func(t *testing.T) {
-			_, err := getK8sVersion(tt.version)
-			if err != nil {
-				t.Errorf("Error checking k8s version: %v", err)
+			if got, _ := getK8sVersion(tt.version); got != tt.expected {
+				t.Errorf("getK8sVersion() = %v, want %v", got, tt.expected)
 			}
 		})
 	}
