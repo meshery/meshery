@@ -24,17 +24,33 @@ type Provider struct {
 	ProviderName string `json:"provider_name,omitempty"`
 }
 
-// AddAuthDetails Adds authentication cookies to the request
-func AddAuthDetails(req *http.Request, filepath string) error {
-	file, err := os.ReadFile(filepath)
+func getTokenForCurrentContext() (map[string]string, error) {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		err = errors.Wrap(err, "could not read token:")
-		return err
+		return nil, errors.Wrap(err, "error processing config")
+	}
+	token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
+	if err != nil {
+		return nil, errors.Wrap(err, "token not found for current context")
 	}
 	var tokenObj map[string]string
-	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid:")
-		return err
+	tokenObj, err = ReadToken(token.GetLocation())
+	if err != nil || len(tokenObj) == 0 {
+		return nil, errors.Wrap(err, "could not read token")
+	}
+	return tokenObj, nil
+}
+
+// AddAuthDetails Adds authentication cookies to the request
+func AddAuthDetails(req *http.Request, filepath string) error {
+	var tokenObj map[string]string
+	tokenObj, err := ReadToken(filepath)
+	if err != nil || len(tokenObj) == 0 {
+		// check if the mesheryctl is already authenticated with meshery server
+		tokenObj, err = getTokenForCurrentContext()
+		if err != nil || len(tokenObj) == 0 {
+			return errors.Wrap(err, "error reading token, run `mesheryctl system login` first and retry")
+		}
 	}
 	req.AddCookie(&http.Cookie{
 		Name:     tokenName,
