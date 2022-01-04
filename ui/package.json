@@ -91,7 +91,7 @@
     "react-slick": "^0.28.1",
     "redux": "^4.1.0",
     "redux-devtools-extension": "^2.13.9",
-    "redux-thunk": "^2.4.0",
+    "redux-thunk": "^2.4.1",
     "relay-runtime": "^11.0.0",
     "set-value": "^4.0.1",
     "styled-jsx": "latest",
