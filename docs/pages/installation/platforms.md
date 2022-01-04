@@ -15,6 +15,10 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
 
 ## Platform Compatibility Matrix
 
+
+
+{% include alert.html type="info" title="Complete Compatibility Matrix and Testing Dashboard" content="For a complete compatibility matrix and project test status dashboard, see Meshery <a href='/project/compatibility-matrix'>Compatibility Matrix</a>" %}
+
 Find installation instructions for the Supported Platforms in the compatibility table.
 
 | Platform                                                                                                                                              |        Version        |

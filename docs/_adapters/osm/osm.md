@@ -3,7 +3,7 @@ layout: default
 title: Meshery Adapter for Open Service Mesh
 name: Meshery Adapter for Open Service Mesh
 mesh_name: Open Service Mesh
-port: 10009/tcp
+port: 10009/gRPC
 project_status: stable
 lab: osm-meshery-adapter
 github_link: https://github.com/meshery/meshery-osm

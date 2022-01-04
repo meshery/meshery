@@ -62,14 +62,17 @@ func (h *Handler) handlePatternPOST(
 
 	var parsedBody *MesheryPatternRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		// rw.WriteHeader(http.StatusBadRequest)
+		// fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
 	}
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -79,7 +82,8 @@ func (h *Handler) handlePatternPOST(
 	if parsedBody.PatternData != nil {
 		patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to save the pattern: %s", err), http.StatusBadRequest)
+			h.log.Error(ErrSavePattern(err))
+			http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -102,7 +106,8 @@ func (h *Handler) handlePatternPOST(
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
-				http.Error(rw, fmt.Sprintf("failed to save the pattern: %s", err), http.StatusInternalServerError)
+				h.log.Error(ErrSavePattern(err))
+				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -112,7 +117,8 @@ func (h *Handler) handlePatternPOST(
 
 		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to encode pattern: %s", err), http.StatusInternalServerError)
+			h.log.Error(ErrEncodePattern(err))
+			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -124,7 +130,8 @@ func (h *Handler) handlePatternPOST(
 		resp, err := provider.RemotePatternFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
 
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to import pattern: %s", err), http.StatusInternalServerError)
+			h.log.Error(ErrImportPattern(err))
+			http.Error(rw, ErrImportPattern(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -149,7 +156,8 @@ func (h *Handler) handlePatternPOST(
 
 		patternName, err := models.GetPatternName(string(pfByt))
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to get the pattern name: %s", err), http.StatusBadRequest)
+			h.log.Error(ErrGetPattern(err))
+			http.Error(rw, ErrGetPattern(err).Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -166,7 +174,8 @@ func (h *Handler) handlePatternPOST(
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
-				http.Error(rw, fmt.Sprintf("failed to save the pattern: %s", err), http.StatusInternalServerError)
+				h.log.Error(ErrSavePattern(err))
+				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -176,7 +185,8 @@ func (h *Handler) handlePatternPOST(
 
 		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to encode pattern: %s", err), http.StatusInternalServerError)
+			h.log.Error(ErrEncodePattern(err))
+			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -255,7 +265,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 
 	resp, err := provider.GetMesheryPatterns(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to fetch the patterns: %s", err), http.StatusInternalServerError)
+		h.log.Error(ErrFetchPattern(err))
+		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -293,7 +304,8 @@ func (h *Handler) DeleteMesheryPatternHandler(
 
 	resp, err := provider.DeleteMesheryPattern(r, patternID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to delete the pattern: %s", err), http.StatusInternalServerError)
+		h.log.Error(ErrDeletePattern(err))
+		http.Error(rw, ErrDeletePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -320,7 +332,8 @@ func (h *Handler) GetMesheryPatternHandler(
 
 	resp, err := provider.GetMesheryPattern(r, patternID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get the pattern: %s", err), http.StatusNotFound)
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
 		return
 	}
 
@@ -332,8 +345,9 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 	contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryPatternSlice); err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to decode patterns data into go slice: %s", err)
+		http.Error(rw, ErrDecodePattern(err).Error(), http.StatusInternalServerError)
+		// rw.WriteHeader(http.StatusInternalServerError)
+		// fmt.Fprintf(rw, "failed to decode patterns data into go slice: %s", err)
 		return
 	}
 
@@ -343,8 +357,9 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 		if format == "cytoscape" {
 			patternFile, err := pCore.NewPatternFile([]byte(content.PatternFile))
 			if err != nil {
-				rw.WriteHeader(http.StatusBadRequest)
-				fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
+				http.Error(rw, ErrParsePattern(err).Error(), http.StatusBadRequest)
+				// rw.WriteHeader(http.StatusBadRequest)
+				// fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
 				return
 			}
 
@@ -352,8 +367,9 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 
 			bytes, err := json.Marshal(&cyjs)
 			if err != nil {
-				rw.WriteHeader(http.StatusInternalServerError)
-				fmt.Fprintf(rw, "failed to convert PatternFile to Cytoscape object: %s", err)
+				http.Error(rw, ErrConvertPattern(err).Error(), http.StatusInternalServerError)
+				// rw.WriteHeader(http.StatusInternalServerError)
+				// fmt.Fprintf(rw, "failed to convert PatternFile to Cytoscape object: %s", err)
 				return
 			}
 
@@ -366,8 +382,10 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 
 	data, err := json.Marshal(&result)
 	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to marshal pattern file: %s", err)
+		obj := "pattern file"
+		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		// rw.WriteHeader(http.StatusInternalServerError)
+		// fmt.Fprintf(rw, "failed to marshal pattern file: %s", err)
 		return
 	}
 

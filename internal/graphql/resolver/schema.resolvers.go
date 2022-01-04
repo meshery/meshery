@@ -152,6 +152,10 @@ func (r *subscriptionResolver) SubscribePerfProfile(ctx context.Context, profile
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error) {
+	return r.subscribeBrokerConnection(ctx)
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 

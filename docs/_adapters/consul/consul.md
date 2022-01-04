@@ -4,7 +4,7 @@ title: Meshery Adapter for Consul
 name: Meshery Adapter for Consul
 mesh_name: Consul
 earliest_version: v1.8.4
-port: 10002/tcp
+port: 10002/gRPC
 project_status: stable
 adapter_version: v0.5.2
 lab: consul-meshery-adapter

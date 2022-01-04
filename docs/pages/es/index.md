@@ -31,6 +31,7 @@ language: es
     <ul>
       <li><a href="{{ site.baseurl }}/es/overview">Introducción a Meshery</a></li>
       <li><a href="{{ site.baseurl }}/es/project">Proyecto y Comunidad</a></li>
+      <li><a href="{{ site.baseurl }}/es/project/contributing">Contribuir</a></li>
     </ul>
     <b><a href="{{ site.baseurl }}/es/installation/platforms" class="text-black">Plataformas Soportadas</a></b>
     <ul>
