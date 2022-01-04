@@ -90,7 +90,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	}
 
 	loadGen := prefObj.LoadTestPreferences.LoadGenerator
-	loadGenSupoorted := false
+	loadGenSupported := false
 	for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
 		if lg.Name() == loadGen {
 			loadGenSupoorted = true
