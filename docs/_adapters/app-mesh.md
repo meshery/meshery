@@ -4,7 +4,7 @@ title: Meshery Adapter for App Mesh
 name: Meshery Adapter for App Mesh
 mesh_name: App Mesh
 earliest_version: v1.4.1
-port: 10005/tcp
+port: 10005/gRPC
 project_status: beta
 github_link: https://github.com/meshery/meshery-app-mesh
 image: /assets/img/service-meshes/app-mesh.svg
