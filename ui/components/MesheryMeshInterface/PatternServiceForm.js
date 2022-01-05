@@ -31,6 +31,10 @@ const useStyles = makeStyles(() => ({
     '&.Mui-disabled' : {
       width : 0,
     },
+  },
+  setIcon : {
+    verticalAlign : 'middle',
+    transform : "scale(0.8)"
   }
 }));
 
@@ -106,7 +110,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                   display : "none",
                 },
               }}  aria-label="Pattern Service" >
-                <Tab label={<div> <SettingsIcon style={{ verticalAlign : 'middle', transform : "scale(0.8)" }} />Settings</div>} {...a11yProps(0)} />
+                <Tab label={<div> <SettingsIcon className={classes.setIcon} />Settings</div>} {...a11yProps(0)} />
                 {
                   renderTraits()
                     ? <Tab label="Traits" {...a11yProps(1)} />
