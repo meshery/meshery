@@ -83,7 +83,7 @@ var viewCmd = &cobra.Command{
 
 // check release channel version string supplied by user for validity. This func does not set anything.(Just for checks)
 func validVersionCheck(c string) (bool, error) {
-	// get mesheryctl config
+	// get mesheryctl config.
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return false, fmt.Errorf("error processing config %+v", err)
@@ -102,6 +102,7 @@ func checkChannelArg(n int) cobra.PositionalArgs {
 		if len(args) != n {
 			return fmt.Errorf("release channel is a required argument in command, accepts %d arg(s), received %d", n, len(args))
 		}
+
 		if IsBetaOrStable(args[0]) {
 			return nil
 		} else if ok, err := validVersionCheck(args[0]); !ok {

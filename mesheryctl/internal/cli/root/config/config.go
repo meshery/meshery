@@ -257,7 +257,7 @@ func (ctx *Context) ValidateVersion() error {
 	return nil
 }
 
-func (ctx *Context) ValidateChannel(c string) (bool, error){
+func (ctx *Context) ValidateChannel(c string) (bool, error) {
 	stableRegx := regexp.MustCompile(`^stable-v[0-9]+\.[0-9]+\.[0-9]+$`)
 	edgeRegx := regexp.MustCompile(`^edge-v[0-9]+\.[0-9]+\.[0-9]+$`)
 
@@ -265,14 +265,14 @@ func (ctx *Context) ValidateChannel(c string) (bool, error){
 		return false, fmt.Errorf("misformatted release channel or version")
 	}
 
-	verCurrent := ctx.GetVersion() //store current version
+	verCurrent := ctx.GetVersion() // store current version
 
-	incomingVersion := strings.SplitN(c, "-", 2)[1] //get incoming version
+	incomingVersion := strings.SplitN(c, "-", 2)[1] // get incoming version
 
 	ctx.SetVersion(incomingVersion) // temporarily set incoming version as current
-	//validate incoming version
+	// validate incoming version.
 	err := ctx.ValidateVersion()
-	//return false if its invalid and true if it is valid and either way ,set back context version to original
+	// return false if its invalid and true if it is valid and either way ,set back context version to original
 	if err != nil {
 		ctx.SetVersion(verCurrent)
 		return false, err
