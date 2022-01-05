@@ -210,7 +210,15 @@ const styles = (theme) => ({
   collapsedHelpButton : { height : '1.45rem',
     marginTop : '-4px',
     transform : 'translateX(0px)' },
-  rightTranslate : { transform : 'translateX(0.5px)' }
+  rightTranslate : { transform : 'translateX(0.5px)' },
+  hideScrollbar : {
+    overflow : "hidden auto",
+    "scrollbar-width" : "none",
+    "-ms-overflow-style" : "none",
+    "&::-webkit-scrollbar" : {
+      display : "none"
+    }
+  }
 });
 
 const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
@@ -994,7 +1002,7 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Menu = (
-      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-1.2rem" }}>
+      <List disablePadding className={classes.hideScrollbar}>
         {categories.map(({
           id : childId, title, icon, href, show, link, children
         }) => {

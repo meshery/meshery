@@ -89,7 +89,7 @@ On demand, the {{page.name}} will parse all of Istio's configuration and compare
 
 ### Custom service mesh configuration
 
-Meshery allows you to apply configuration to your service mesh deployment. You can paste (or type in) any Kubernetes manifest that you would like to have applied to your service mesh, in fact, you can apply any configuration that you you would like to your Kubernetes cluster. This configuration may be VirtualServices, DestinationRules or any other custom Istio resource.
+Meshery allows you to apply configuration to your service mesh deployment. You can paste (or type in) any Kubernetes manifest that you would like to have applied to your service mesh, in fact, you can apply any configuration that you would like to your Kubernetes cluster. This configuration may be VirtualServices, DestinationRules or any other custom Istio resource.
 
 <a href="{{ site.baseurl }}istio-adapter-custom-configuration.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter-custom-configuration.png" />
