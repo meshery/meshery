@@ -6,6 +6,7 @@ permalink: guides/meshery-metrics
 language: en
 type: Guides
 category: performance
+language: en
 ---
 
 ## Connect and use metrics in Meshery
