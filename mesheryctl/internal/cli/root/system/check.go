@@ -568,6 +568,34 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 	return nil
 }
 
+func (hc *HealthChecker) runMesheryReadinessHealthChecks() error {
+	ready, err := mesheryReadinessHealthCheck()
+	if err != nil || !ready {
+		if hc.Options.PrintLogs { // incase we're printing logs
+			log.Infof("!! Meshery failed to reach Running state")
+		} else { // or we're supposed to grab the errors
+			return fmt.Errorf("!! Meshery failed to reach Running state. %s", err)
+		}
+	}
+	if hc.Options.PrintLogs { // incase we're printing logs
+		log.Infof("✓ Meshery is in Running state")
+	}
+	return nil
+}
+
+// mesheryReadinessHealthCheck is waiting for Meshery to start, returns (ready, error)
+func mesheryReadinessHealthCheck() (bool, error) {
+	kubeClient, err := meshkitkube.New([]byte(""))
+	if err != nil {
+		return false, err
+	}
+	if err := utils.WaitForPodRunning(kubeClient, "meshery", utils.MesheryNamespace, 300); err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 func init() {
 	checkCmd.Flags().BoolVarP(&preflight, "preflight", "", false, "Verify environment readiness to deploy Meshery")
 	checkCmd.Flags().BoolVarP(&pre, "pre", "", false, "Verify environment readiness to deploy Meshery")

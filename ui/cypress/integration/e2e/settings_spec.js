@@ -45,13 +45,13 @@ describe('Settings', () => {
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
 
       cy.get('[data-cy=chipAdapterLocation]')
-        .contains('.MuiChip-label', 'mesherylocal.layer5.io:10002')
+        .contains('.MuiChip-label', 'localhost:10002')
         .click();
 
       cy.wait('@getAdapterPing');
 
       cy.get('.MuiInputBase-input')
-        .type('mesherylocal.layer5.io:10002{enter}');
+        .type('localhost:10002{enter}');
 
       cy.get('[data-cy=btnSubmitMeshAdapter]')
         .click();
