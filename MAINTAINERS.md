@@ -37,10 +37,11 @@
 
 ### Docs Maintainers
 
-| Name            | GitHub          | Affiliation |
-| --------------- | --------------- | ----------- |
-| Adithya Krishna | adithyaakrishna | Red Hat     |
-| Lee Calcote     | leecalcote      | Layer5      |
+| Name              | GitHub          | Affiliation |
+| ----------------- | --------------- | ----------- |
+| Adithya Krishna   | adithyaakrishna | Red Hat     |
+| Lee Calcote       | leecalcote      | Layer5      |
+| Aditya Chatterjee | warunicorn19    | Layer5      |
 
 ### Core Maintainers
 
