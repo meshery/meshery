@@ -10,7 +10,7 @@
 
 | Name             | GitHub             | Affiliation |
 | ---------------- | ------------------ | ----------- |
-| Abhisek Kumar    | Abhishek-kumar09   | Layer5      |
+| Abhishek Kumar   | Abhishek-kumar09   | Layer5      |
 | Lee Calcote      | leecalcote         | Layer5      |
 | Nikhil Ladha     | Nikhil-Ladha       | Red Hat     |
 | Nithish Karthik  | sudo-NithishKarthik | Layer5 |
