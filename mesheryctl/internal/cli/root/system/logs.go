@@ -155,7 +155,7 @@ It also shows the logs of a specific component.`,
 			}
 
 			// List the pods in the MesheryNamespace
-			podList, err := utils.GetPods(client, utils.MesheryNamespace)
+			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
 			availablePods := podList.Items
 
 			if err != nil {

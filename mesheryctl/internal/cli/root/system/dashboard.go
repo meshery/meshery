@@ -45,6 +45,7 @@ var dashboardCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		log.Debug("fetching Meshery-UI endpoint")
 
 		switch currCtx.GetPlatform() {
 		case "docker":
