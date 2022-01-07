@@ -6,5 +6,5 @@ const getConfigurationGridItem = (itemNumber) => {
 
 export const getConfigurationGridItemName = (itemNumber) => {
   const itemNameColIndex = '0'
-  return getConfigurationGridItem(itemNumber).get(`[data-colindex="${itemNameColIndex}"]`)
+  return getConfigurationGridItem(itemNumber).find(`[data-colindex="${itemNameColIndex}"]`)
 }

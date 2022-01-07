@@ -1,8 +1,9 @@
-import getConfigurationGridItemName from '../../helpers/configurationActions'
+import { getConfigurationGridItemName } from '../../actionHelpers/configuration'
 
 describe('Configuration Management', () => {
   beforeEach(() => {
     // Prepare Stub Interception for Initial Filters
+    cy.selectProviderNone();
     cy.intercept('GET', '/api/filter**', { fixture : 'configuration/filter-stubs/initial-filters.json' }).as('getInitialFilters');
   })
 
