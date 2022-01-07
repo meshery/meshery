@@ -1,3 +1,5 @@
+import getConfigurationGridItemName from '../../helpers/configurationActions'
+
 describe('Configuration Management', () => {
   beforeEach(() => {
     // Prepare Stub Interception for Initial Filters
@@ -56,7 +58,7 @@ describe('Configuration Management', () => {
         })
 
         cy.wait('@getPostUploadFilters')
-        cy.get('[data-cy="filter-row-0"] [data-colindex="0"]').should('have.text', expectedUploadedFilterName)
+        getConfigurationGridItemName(1).should('have.text', expectedUploadedFilterName)
       })
     })
   });
