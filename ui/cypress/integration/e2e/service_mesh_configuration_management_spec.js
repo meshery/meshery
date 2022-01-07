@@ -1,3 +1,5 @@
+import { getConfigurationGridItemName } from '../../actionHelpers/service-mesh-configuration-management'
+
 // Shared Expect
 const filtersAndApplicationsExpect = (body, itemType) => expect(body).to.have.nested.property(`${itemType}_data.${itemType}_file`)
 
@@ -74,7 +76,7 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
           });
         });
 
-        cy.get('[data-cy="config-row-0"] [data-colindex="0"]').should("have.text", expectedUploadConfigItemName);
+        getConfigurationGridItemName(1).should("have.text", expectedUploadConfigItemName);
 
         cy.get('[data-cy="config-row-0"] [data-cy="deploy-button"]').click();
 
