@@ -1,46 +1,52 @@
-import ProgressBarStyle from "./ProgressBarStyle";
+import "./ProgressBarStyle.css";
 
-const ProgressDisplay = ({stepNumber}) => {
+const ProgressDisplay = ({stepNumber,content,totalStep}) => {
+  let progress = [];
+  for (let index = 0; index < totalStep; index++) {
+    if(stepNumber===index){
+      progress.push(
+        <li className="li active">
+          <div className="status">
+            {content}
+          </div>
+        </li>
+      )
+    }
+    else if(stepNumber>index){
+      progress.push(
+        <li className="li complete">
+          <div className="status">
+            {content}
+          </div>
+        </li>
+      )
+    }
+    else{
+      progress.push(
+        <li className="li">
+          <div className="status">
+            {content}
+          </div>
+        </li>
+      )
+    } 
+  }
     return (
       <ul className="timeline" id="timeline">
-
-        <li className={stepNumber === 0 ? ("li active") : stepNumber > 0 ? ("li complete") : ("li")}>
-          <div className="status">
-          </div>
-        </li>
-        <li className={stepNumber === 1 ? ("li active") : stepNumber > 1 ? ("li complete") : ("li")}>
-          <div className="status">
-          </div>
-        </li>
-        <li className={stepNumber === 2 ? ("li active") : stepNumber > 2 ? ("li complete") : ("li")}>
-          <div className="status">
-          </div>
-        </li>
-        <li className={stepNumber === 3 ? ("li active") : stepNumber > 3 ? ("li complete") : ("li")}>
-          <div className="status">
-          </div>
-        </li>
-        <li className={stepNumber === 4 ? 
-            ("li active") : stepNumber > 4 ? ("li complete") : ("li")}>
-            <div className="status">
-            </div>
-        </li>
-        
+        {progress}
       </ul>
     );
   };
 const ProgressBar = ({stepNumber}) =>{
     return (
-      <ProgressBarStyle>
+
     <div>
-      <ProgressDisplay stepNumber={stepNumber} />
+      <ProgressDisplay totalStep={5} stepNumber={stepNumber} content={""} />
     </div>
-    </ProgressBarStyle>
+
     );
 }
 
-
-export default ProgressBar
 
 
 // Example of main.js where we are calling the progress bar coponent

@@ -1,7 +1,3 @@
-import styled from "styled-components";
-
-const ProgressBarStyle = styled.div`
-  
   .timeline {
     list-style-type: none;
     display: flex;
@@ -73,10 +69,4 @@ const ProgressBarStyle = styled.div`
     }
   }
  
-    
 
-   
-    }
-`;
-
-export default ProgressBarStyle;
