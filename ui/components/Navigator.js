@@ -714,7 +714,7 @@ class Navigator extends React.Component {
   /**
    * Changes the route to "/"
    */
-  handleTitleClick() {
+  handleTitleClick = () => {
     this.props.router.push("/");
   }
 
