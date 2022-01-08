@@ -926,13 +926,13 @@ class Navigator extends React.Component {
       return (
         <span style = {{ marginLeft : '15px' }}>
           {"Update available "}
-          <Link href={`https://docs.meshery.io/project/releases/${latest}`}>
+          <a href={`https://docs.meshery.io/project/releases/${latest}`} target="_blank" rel="noreferrer" style={{ color : "white" }}>
             <Tooltip
               title={`Newer version of Meshery available: ${latest}`}
               placement="right">
               <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
             </Tooltip>
-          </Link>
+          </a>
         </span>
       );
 
@@ -954,15 +954,15 @@ class Navigator extends React.Component {
 
     if (release_channel === "edge")
       return (
-        <Link href="https://docs.meshery.io/project/releases" target="_blank">
+        <a href="https://docs.meshery.io/project/releases" target="_blank" rel="noreferrer" style={{ color : "white" }}>
           <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
-        </Link>
+        </a>
       );
 
     return (
-      <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
+      <a href={`https://docs.meshery.io/project/releases/${build}`} target="_blank" rel="noreferrer" style={{ color : "white" }}>
         <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
-      </Link>
+      </a>
     );
   }
 
