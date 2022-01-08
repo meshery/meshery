@@ -519,10 +519,10 @@ func TestSetOverrideValues(t *testing.T) {
 		want                map[string]interface{}
 	}{
 		{
-			name: "Context contains no adapters and no meshery image version",
+			name: "Context contains no components and no meshery image version",
 			ctx: &config.Context{
-				Adapters: nil,
-				Channel:  testChannel,
+				Components: nil,
+				Channel:    testChannel,
 			},
 			mesheryImageVersion: "",
 			want: map[string]interface{}{
@@ -562,10 +562,10 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 		},
 		{
-			name: "Context contains part of all available adapters and meshery image version",
+			name: "Context contains part of all available components and meshery image version",
 			ctx: &config.Context{
-				Adapters: []string{"meshery-istio", "meshery-osm", "meshery-nsm"},
-				Channel:  testChannel,
+				Components: []string{"meshery-istio", "meshery-osm", "meshery-nsm"},
+				Channel:    testChannel,
 			},
 			mesheryImageVersion: "testImageVersion",
 			want: map[string]interface{}{
@@ -605,9 +605,9 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 		},
 		{
-			name: "Context contains all available adapters and meshery image version",
+			name: "Context contains all available components and meshery image version",
 			ctx: &config.Context{
-				Adapters: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-kuma",
+				Components: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-kuma",
 					"meshery-osm", "meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cpx"},
 				Channel: testChannel,
 			},

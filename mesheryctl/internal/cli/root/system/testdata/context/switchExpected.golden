@@ -1,6 +1,6 @@
 contexts:
   local:
-    adapters:
+    components:
     - meshery-istio
     channel: stable
     endpoint: http://localhost:9081
@@ -8,7 +8,7 @@ contexts:
     token: Default
     version: latest
   local2:
-    adapters:
+    components:
     - meshery-istio
     channel: stable
     endpoint: http://localhost:32242

@@ -36,12 +36,12 @@ type Token struct {
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint string   `mapstructure:"endpoint,omitempty"`
-	Token    string   `mapstructure:"token,omitempty"`
-	Platform string   `mapstructure:"platform"`
-	Adapters []string `mapstructure:"adapters,omitempty"`
-	Channel  string   `mapstructure:"channel,omitempty"`
-	Version  string   `mapstructure:"version,omitempty"`
+	Endpoint   string   `mapstructure:"endpoint,omitempty"`
+	Token      string   `mapstructure:"token,omitempty"`
+	Platform   string   `mapstructure:"platform"`
+	Components []string `mapstructure:"Components,omitempty"`
+	Channel    string   `mapstructure:"channel,omitempty"`
+	Version    string   `mapstructure:"version,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
@@ -187,9 +187,9 @@ func (ctx *Context) SetPlatform(platform string) {
 	ctx.Platform = platform
 }
 
-// GetAdapters returns the adapters in the current context
-func (ctx *Context) GetAdapters() []string {
-	return ctx.Adapters
+// GetComponents returns the components in the current context
+func (ctx *Context) GetComponents() []string {
+	return ctx.Components
 }
 
 // GetChannel returns the channel of the current context
