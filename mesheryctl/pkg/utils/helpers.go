@@ -259,7 +259,7 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 		return nil, err
 	}
 
-	request, err := http.NewRequest("POST", uri, body)
+	request, err := NewRequest("POST", uri, body)
 	if err != nil {
 		return nil, err
 	}
@@ -512,12 +512,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
 	client := &http.Client{}
-	req, err := http.NewRequest(method, path, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	err = AddAuthDetails(req, tokenPath)
+	req, err := NewRequest(method, path, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -826,4 +821,16 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 	}
 
 	return valueOverrides
+}
+
+// CheckFileExists checks if the given file exists in system or not
+func CheckFileExists(name string) (bool, error) {
+	_, err := os.Stat(name)
+	if err == nil {
+		return true, nil
+	}
+	if errors.Is(err, os.ErrNotExist) {
+		return false, fmt.Errorf("%s does not exist", name)
+	}
+	return false, errors.Wrap(err, fmt.Sprintf("%s does not exist", name))
 }

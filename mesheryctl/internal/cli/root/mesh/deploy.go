@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	smp "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/manifoldco/promptui"
@@ -38,11 +37,6 @@ mesheryctl mesh deploy --adapter meshery-linkerd --watch`,
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				log.Fatalln(err)
-			}
-
-			// set default tokenpath for command.
-			if tokenPath == "" {
-				tokenPath = constants.GetCurrentAuthToken()
 			}
 
 			if len(args) < 1 {
@@ -109,16 +103,11 @@ func sendDeployRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bo
 	payload := strings.NewReader(data.Encode())
 
 	client := &http.Client{}
-	req, err := http.NewRequest(method, path, payload)
+	req, err := utils.NewRequest(method, path, payload)
 	if err != nil {
 		return "", ErrCreatingDeployRequest(err)
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
-
-	err = utils.AddAuthDetails(req, tokenPath)
-	if err != nil {
-		return "", ErrAddingAuthDetails(err)
-	}
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -137,14 +126,9 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_deploy"
 	method := "GET"
 	client := &http.Client{}
-	req, err := http.NewRequest(method, path, nil)
+	req, err := utils.NewRequest(method, path, nil)
 	if err != nil {
-		return "", ErrCreatingDeployResponseRequest(err)
-	}
-
-	err = utils.AddAuthDetails(req, tokenPath)
-	if err != nil {
-		return "", ErrAddingAuthDetails(err)
+		return "", ErrCreatingDeployRequest(err)
 	}
 
 	res, err := client.Do(req)

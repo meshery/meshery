@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -29,7 +30,7 @@ var AppCmd = &cobra.Command{
 }
 
 func init() {
-	AppCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file default from current context")
+	AppCmd.PersistentFlags().StringVarP(&constants.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
 	availableSubcommands = []*cobra.Command{onboardCmd, viewCmd, offboardCmd, listCmd}
 	AppCmd.AddCommand(availableSubcommands...)

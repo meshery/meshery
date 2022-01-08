@@ -11,8 +11,11 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -24,33 +27,94 @@ type Provider struct {
 	ProviderName string `json:"provider_name,omitempty"`
 }
 
-func getTokenForCurrentContext() (map[string]string, error) {
+// NewRequest creates *http.Request and handles adding authentication for Meshery itself
+func NewRequest(method string, url string, body io.Reader) (*http.Request, error) {
+	// create new request
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	// Grab token from the flag --token
+	tokenPath := constants.TokenFlag
+	if tokenPath == "" { // token was not passed with the flag
+		tokenPath, err = GetCurrentAuthToken()
+		if err != nil {
+			return nil, err
+		}
+	}
+	// make sure if token-file exists
+	exist, err := CheckFileExists(tokenPath)
+	if err != nil || !exist {
+		return nil, ErrAttachAuthToken(err)
+	}
+
+	// add token to request
+	err = AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return nil, ErrAttachAuthToken(err)
+	}
+
+	return req, nil
+}
+
+// Function checks the location of token and returns appropriate location of the token
+func GetTokenLocation(token config.Token) (string, error) {
+	// Find home directory.
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", errors.Wrap(err, "failed to get users home directory")
+	}
+
+	location := token.Location
+	// if location contains /home/nectar in path we return exact location
+	ok := strings.Contains(location, home)
+	if ok {
+		return location, nil
+	}
+
+	// else we add the home directory with the path
+	return filepath.Join(MesheryFolder, location), nil
+}
+
+// GetCurrentAuthToken returns location of current context token
+func GetCurrentAuthToken() (string, error) {
+	// get config.yaml struct
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return nil, errors.Wrap(err, "error processing config")
+		log.Fatal(err)
 	}
-	token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
+	// Get token of current-context
+	token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
 	if err != nil {
-		return nil, errors.Wrap(err, "token not found for current context")
+		// Attempt to create token if it doesn't already exists
+		token.Location = AuthConfigFile
+
+		// Write new entry in the config
+		if err := config.AddTokenToConfig(token, DefaultConfigPath); err != nil {
+			return "", err
+		}
 	}
-	var tokenObj map[string]string
-	tokenObj, err = ReadToken(token.GetLocation())
-	if err != nil || len(tokenObj) == 0 {
-		return nil, errors.Wrap(err, "could not read token")
+	// grab actual token location with home directory
+	TokenLocation, err := GetTokenLocation(token)
+	if err != nil {
+		return "", err
 	}
-	return tokenObj, nil
+
+	return TokenLocation, nil
 }
 
 // AddAuthDetails Adds authentication cookies to the request
 func AddAuthDetails(req *http.Request, filepath string) error {
+	file, err := os.ReadFile(filepath)
+	if err != nil {
+		err = errors.Wrap(err, "could not read token:")
+		return err
+	}
 	var tokenObj map[string]string
-	tokenObj, err := ReadToken(filepath)
-	if err != nil || len(tokenObj) == 0 {
-		// check if the mesheryctl is already authenticated with meshery server
-		tokenObj, err = getTokenForCurrentContext()
-		if err != nil || len(tokenObj) == 0 {
-			return errors.Wrap(err, "error reading token, run `mesheryctl system login` first and retry")
-		}
+	if err := json.Unmarshal(file, &tokenObj); err != nil {
+		err = errors.Wrap(err, "token file invalid:")
+		return err
 	}
 	req.AddCookie(&http.Cookie{
 		Name:     tokenName,
