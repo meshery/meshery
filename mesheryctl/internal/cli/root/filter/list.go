@@ -93,7 +93,7 @@ var listCmd = &cobra.Command{
 			return nil
 		}
 
-		// Check if messhery provider is set
+		// Check if meshery provider is set
 		if provider == "None" {
 			for _, v := range response.Filters {
 				FilterName := strings.Trim(v.Name, filepath.Ext(v.Name))
