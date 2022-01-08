@@ -3,7 +3,6 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -347,21 +346,6 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
-// ReadToken returns a map of the token passed in
-func ReadToken(filepath string) (map[string]string, error) {
-	file, err := os.ReadFile(filepath)
-	if err != nil {
-		err = errors.Wrap(err, "could not read token:")
-		return nil, err
-	}
-	var tokenObj map[string]string
-	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid:")
-		return nil, err
-	}
-	return tokenObj, nil
-}
-
 // TruncateID shortens an id to 8 characters
 func TruncateID(id string) string {
 	ShortenedID := id[0:8]
@@ -508,7 +492,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	return s
 }
 
-func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models.Preference, error) {
+func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
 	client := &http.Client{}

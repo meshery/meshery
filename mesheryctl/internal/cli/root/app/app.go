@@ -12,7 +12,6 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
-	tokenPath            string
 )
 
 // AppCmd represents the root command for app commands

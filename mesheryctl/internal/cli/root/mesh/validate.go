@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -27,7 +28,6 @@ type Operation struct {
 var spec string
 var adapterURL string
 var namespace string
-var tokenPath string
 var watch bool
 var err error
 
@@ -44,16 +44,8 @@ var validateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
-		// set default tokenpath for command.
-		if tokenPath == "" {
-			activeToken, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
-			if err != nil {
-				log.Fatalln(err)
-			}
-			tokenPath = activeToken.GetLocation()
-		}
 
-		prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
+		prefs, err := utils.GetSessionData(mctlCfg)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -66,7 +58,7 @@ var validateCmd = &cobra.Command{
 			}
 		}
 		//sync with available adapters
-		if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
+		if err = validateAdapter(mctlCfg, meshName); err != nil {
 			log.Fatalln(err)
 		}
 		log.Info("verified prerequisites")
@@ -101,7 +93,7 @@ func init() {
 	_ = validateCmd.MarkFlagRequired("spec")
 	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
-	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
+	validateCmd.Flags().StringVarP(&constants.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
@@ -69,7 +70,7 @@ func TestPatternList(t *testing.T) {
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
 			// set token
-			tokenPath = tt.Token
+			constants.TokenFlag = tt.Token
 
 			// mock response
 			httpmock.RegisterResponder("GET", tt.URL,

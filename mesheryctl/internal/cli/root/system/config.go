@@ -36,7 +36,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func getContexts(configFile, tokenPath string) ([]string, error) {
+func getContexts(configFile string) ([]string, error) {
 	client := &http.Client{}
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -74,7 +74,7 @@ func getContexts(configFile, tokenPath string) ([]string, error) {
 	return contexts, nil
 }
 
-func setContext(configFile, cname, tokenPath string) error {
+func setContext(configFile, cname string) error {
 	client := &http.Client{}
 	extraParams1 := map[string]string{
 		"contextName": cname,
@@ -325,8 +325,8 @@ func init() {
 
 // Given the token path, get the context and set the token in the chosen context
 func setToken() {
-	log.Debugf("Token path: %s", tokenPath)
-	contexts, err := getContexts(utils.ConfigPath, tokenPath)
+	log.Debugf("Token path: %s", constants.TokenFlag)
+	contexts, err := getContexts(utils.ConfigPath)
 	if err != nil || contexts == nil || len(contexts) < 1 {
 		log.Fatalf("Error getting context: %s", err.Error())
 	}
@@ -347,7 +347,7 @@ func setToken() {
 	}
 
 	log.Debugf("Chosen context : %s", choosenCtx)
-	err = setContext(utils.ConfigPath, choosenCtx, tokenPath)
+	err = setContext(utils.ConfigPath, choosenCtx)
 	if err != nil {
 		log.Fatalf("Error setting context: %s", err.Error())
 	}

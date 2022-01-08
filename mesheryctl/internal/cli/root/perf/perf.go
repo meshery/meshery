@@ -29,7 +29,6 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	outputFormatFlag     string
-	tokenPath            string
 	// setting up for error formatting
 	cmdUsed string
 )

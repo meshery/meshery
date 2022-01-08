@@ -42,6 +42,8 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 		if err != nil {
 			return nil, err
 		}
+		// set TokenFlag value equals tokenPath
+		constants.TokenFlag = tokenPath
 	}
 	// make sure if token-file exists
 	exist, err := CheckFileExists(tokenPath)
@@ -166,6 +168,21 @@ func UpdateAuthDetails(filepath string) error {
 	}
 
 	return os.WriteFile(filepath, data, os.ModePerm)
+}
+
+// ReadToken returns a map of the token passed in
+func ReadToken(filepath string) (map[string]string, error) {
+	file, err := os.ReadFile(filepath)
+	if err != nil {
+		err = errors.Wrap(err, "could not read token:")
+		return nil, err
+	}
+	var tokenObj map[string]string
+	if err := json.Unmarshal(file, &tokenObj); err != nil {
+		err = errors.Wrap(err, "token file invalid:")
+		return nil, err
+	}
+	return tokenObj, nil
 }
 
 // CreateTempAuthServer creates a temporary http server

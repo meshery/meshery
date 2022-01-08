@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
@@ -127,7 +128,7 @@ func TestApplyCmd(t *testing.T) {
 					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
 			}
 
-			tokenPath = tt.Token
+			constants.TokenFlag = tt.Token
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 			b := utils.SetupLogrusGrabTesting(t)
 

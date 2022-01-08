@@ -12,7 +12,6 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
-	tokenPath            string
 )
 
 // PatternCmd represents the root command for pattern commands

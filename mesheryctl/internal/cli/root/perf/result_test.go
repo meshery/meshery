@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
@@ -104,7 +105,7 @@ func TestResultCmd(t *testing.T) {
 	// Run tests in list format
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			tokenPath = tt.Token
+			constants.TokenFlag = tt.Token
 
 			for _, mock := range tt.URLs {
 				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
@@ -154,7 +155,7 @@ func TestResultCmd(t *testing.T) {
 	// Run tests in list format
 	for _, tt := range testsforLogrusOutputs {
 		t.Run(tt.Name, func(t *testing.T) {
-			tokenPath = tt.Token
+			constants.TokenFlag = tt.Token
 
 			for _, mock := range tt.URLs {
 				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()

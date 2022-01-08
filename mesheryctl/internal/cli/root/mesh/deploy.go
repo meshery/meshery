@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	smp "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/manifoldco/promptui"
@@ -40,15 +41,15 @@ mesheryctl mesh deploy --adapter meshery-linkerd --watch`,
 			}
 
 			if len(args) < 1 {
-				meshName, err = validateMesh(mctlCfg, tokenPath, "")
+				meshName, err = validateMesh(mctlCfg, "")
 			} else {
-				meshName, err = validateMesh(mctlCfg, tokenPath, args[0])
+				meshName, err = validateMesh(mctlCfg, args[0])
 			}
 			if err != nil {
 				log.Fatalln(err)
 			}
 
-			if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
+			if err = validateAdapter(mctlCfg, meshName); err != nil {
 				// ErrValidatingAdapter
 				log.Fatalln(err)
 			}
@@ -81,7 +82,7 @@ mesheryctl mesh deploy --adapter meshery-linkerd --watch`,
 func init() {
 	deployCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-istio:10000", "Adapter to use for installation")
 	deployCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
-	deployCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
+	deployCmd.Flags().StringVarP(&constants.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	deployCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 
@@ -170,8 +171,8 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	return "", nil
 }
 
-func validateAdapter(mctlCfg *config.MesheryCtlConfig, tokenPath string, name string) error {
-	prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
+func validateAdapter(mctlCfg *config.MesheryCtlConfig, name string) error {
+	prefs, err := utils.GetSessionData(mctlCfg)
 	if err != nil {
 		return ErrGettingSessionData(err)
 	}
@@ -209,7 +210,7 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, tokenPath string, name st
 	return nil
 }
 
-func validateMesh(mctlCfg *config.MesheryCtlConfig, tokenPath string, name string) (string, error) {
+func validateMesh(mctlCfg *config.MesheryCtlConfig, name string) (string, error) {
 	if name != "" {
 		if _, ok := smp.ServiceMesh_Type_value[name]; ok {
 			return strings.ToLower(name), nil
@@ -219,7 +220,7 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, tokenPath string, name strin
 		}
 	}
 
-	prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
+	prefs, err := utils.GetSessionData(mctlCfg)
 	if err != nil {
 		// ErrGettingSessionData
 		return "", ErrGettingSessionData(err)
