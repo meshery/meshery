@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 )
 
 func getFixturesDirectory() string {
@@ -91,12 +92,13 @@ func TestNavigateToBrowser(t *testing.T) {
 func TestUploadFileWithParams(t *testing.T) {
 	fixtureFileName := "listmanifest.api.response.golden" // any arbitrary fixture file
 	uploadFilePath := filepath.Join(fixturesDir, "platform", fixtureFileName)
-
+	// set token
+	constants.TokenFlag = filepath.Join(fixturesDir, "auth.json")
 	// returns *http.Request
 	_, err := UploadFileWithParams("https://www.layer5.io", nil, "meshery", uploadFilePath)
 
 	if err != nil {
-		t.Errorf("UploadFileWithParams error = %v", err)
+		t.Errorf("TestUploadFileWithParams error = %v", err)
 	}
 }
 
