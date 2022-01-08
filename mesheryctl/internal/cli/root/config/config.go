@@ -39,7 +39,7 @@ type Context struct {
 	Endpoint   string   `mapstructure:"endpoint,omitempty"`
 	Token      string   `mapstructure:"token,omitempty"`
 	Platform   string   `mapstructure:"platform"`
-	Components []string `mapstructure:"Components,omitempty"`
+	Components []string `mapstructure:"components,omitempty"`
 	Channel    string   `mapstructure:"channel,omitempty"`
 	Version    string   `mapstructure:"version,omitempty"`
 }
