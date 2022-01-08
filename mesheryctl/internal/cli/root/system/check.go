@@ -276,7 +276,9 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 			return nil
 		}
 		// else we're supposed to grab the error
-		return errors.New("ctlK8sClient1000: !! cannot initialize a Kubernetes client. See https://docs.meshery.io/reference/error-codes")
+		errMsg := fmt.Errorf("%s. Your %s context is configured to run Meshery on Kubernetes using the %s token",
+			err.Error(), hc.mctlCfg.CurrentContext, hc.context.Token)
+		return ErrK8sConfig(errMsg)
 	}
 
 	if hc.Options.PrintLogs { // print logs if we're supposed to
@@ -413,18 +415,18 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
 		}
 
-		res, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
+		isOutdated, _, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
 		if err != nil {
 			return err
 		}
 		if hc.Options.PrintLogs { // log if we're supposed to
-			if res.Latest {
+			if !*isOutdated {
 				log.Infof("✓ Meshery Server is up-to-date (stable-%s)", serverVersion.GetBuild())
 			} else {
 				log.Info("!! Meshery Server is not up-to-date")
 			}
 		} else { // else we grab the error
-			if !res.Latest {
+			if !*isOutdated {
 				return errors.New("!! Meshery Server is not up-to-date")
 			}
 		}
@@ -564,6 +566,34 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 func (hc *HealthChecker) runOperatorHealthChecks() error {
 	//TODO
 	return nil
+}
+
+func (hc *HealthChecker) runMesheryReadinessHealthChecks() error {
+	ready, err := mesheryReadinessHealthCheck()
+	if err != nil || !ready {
+		if hc.Options.PrintLogs { // incase we're printing logs
+			log.Infof("!! Meshery failed to reach Running state")
+		} else { // or we're supposed to grab the errors
+			return fmt.Errorf("!! Meshery failed to reach Running state. %s", err)
+		}
+	}
+	if hc.Options.PrintLogs { // incase we're printing logs
+		log.Infof("✓ Meshery is in Running state")
+	}
+	return nil
+}
+
+// mesheryReadinessHealthCheck is waiting for Meshery to start, returns (ready, error)
+func mesheryReadinessHealthCheck() (bool, error) {
+	kubeClient, err := meshkitkube.New([]byte(""))
+	if err != nil {
+		return false, err
+	}
+	if err := utils.WaitForPodRunning(kubeClient, "meshery", utils.MesheryNamespace, 300); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func init() {

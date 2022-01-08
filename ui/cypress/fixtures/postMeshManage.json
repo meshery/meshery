@@ -1,6 +1,6 @@
 [
 	{
-		"adapter_location": "mesherylocal.layer5.io:10000",
+		"adapter_location": "localhost:10000",
 		"name": "istio",
 		"ops": [
 			{

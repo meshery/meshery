@@ -326,15 +326,6 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
-      },
-      "1042": {
-        "name": "ErrInvalidTestConfigFileCode",
-        "code": "1042",
-        "severity": "Alert",
-        "long_description": "invalid test conffigration file",
-        "short_description": "",
-        "probable_cause": "the test configuration is outdated or incorrect",
-        "suggested_remediation": "see https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl for a valid configuration file"
       }
     }
   }

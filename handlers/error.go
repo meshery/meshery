@@ -80,6 +80,22 @@ const (
 	ErrInvalidRequestObjectCode = "2151"
 	ErrChangeK8sContextCode     = "2152"
 	ErrSavingUserPreferenceCode = "some_code"
+	ErrGetFilterCode            = "2156"
+	ErrSaveFilterCode           = "2157"
+	ErrDecodeFilterCode         = "2158"
+	ErrEncodeFilterCode         = "2159"
+	ErrImportFilterCode         = "2160"
+	ErrFetchFilterCode          = "2161"
+	ErrDeleteFilterCode         = "2162"
+	ErrSavePatternCode          = "2163"
+	ErrGetPatternCode           = "2164"
+	ErrDeletePatternCode        = "2165"
+	ErrFetchPatternCode         = "2166"
+	ErrImportPatternCode        = "2167"
+	ErrEncodePatternCode        = "2168"
+	ErrDecodePatternCode        = "2169"
+	ErrParsePatternCode         = "2170"
+	ErrConvertPatternCode       = "2171"
 )
 
 var (
@@ -308,6 +324,10 @@ func ErrVersionCompare(err error) error {
 	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to compare latest and current version of Meshery"}, []string{err.Error()}, []string{}, []string{})
 }
 
+func ErrGetLatestVersion(err error) error {
+	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to get latest version of Meshery"}, []string{err.Error()}, []string{}, []string{})
+}
+
 func ErrSaveSession(err error) error {
 	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session"}, []string{err.Error()}, []string{"User session could be expired"}, []string{"Re-initiate login"})
 }
@@ -326,4 +346,68 @@ func ErrChangeK8sContext(err error) error {
 
 func ErrSavingUserPreference(err error) error {
 	return errors.New(ErrSavingUserPreferenceCode, errors.Alert, []string{"Error saving user preference."}, []string{err.Error()}, []string{"Invalid data passed", "Unable to connect with provider"}, []string{"Pass valid values for preferences", "Make sure provider supports saving user preferences", "Make sure you're connected with provider", "Make sure extension provides these preferences"})
+}
+
+func ErrGetFilter(err error) error {
+	return errors.New(ErrGetFilterCode, errors.Alert, []string{"Error failed to get filter"}, []string{err.Error()}, []string{"Cannot get the filter with the given Filter ID"}, []string{"Check if the given Filter ID is correct"})
+}
+
+func ErrSaveFilter(err error) error {
+	return errors.New(ErrSaveFilterCode, errors.Alert, []string{"Error failed to save filter"}, []string{err.Error()}, []string{"Cannot save the Filter due to wrong path or URL"}, []string{"Check if the given path or URL of the filter is correct"})
+}
+
+func ErrDecodeFilter(err error) error {
+	return errors.New(ErrDecodeFilterCode, errors.Alert, []string{"Error failed to decode filters data into go slice"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrEncodeFilter(err error) error {
+	return errors.New(ErrEncodeFilterCode, errors.Alert, []string{"Error failed to encode filter"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrImportFilter(err error) error {
+	return errors.New(ErrImportFilterCode, errors.Alert, []string{"Error failed to import filter"}, []string{err.Error()}, []string{"Cannot save the Filter due to wrong path or URL"}, []string{"Check if the given path or URL of the Filter is correct"})
+}
+
+func ErrFetchFilter(err error) error {
+	return errors.New(ErrFetchFilterCode, errors.Alert, []string{"Error failed to fetch filter"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Filters"}, []string{})
+}
+
+func ErrDeleteFilter(err error) error {
+	return errors.New(ErrDeleteFilterCode, errors.Alert, []string{"Error failed to delete filter"}, []string{err.Error()}, []string{"Failed to delete Filter with the given ID"}, []string{"Check if the Filter ID is correct"})
+}
+
+func ErrSavePattern(err error) error {
+	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save pattern"}, []string{err.Error()}, []string{"Cannot save the Pattern due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
+}
+
+func ErrGetPattern(err error) error {
+	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get pattern"}, []string{err.Error()}, []string{"Cannot get the Pattern with the given Pattern ID"}, []string{"Check if the given Pattern ID is correct"})
+}
+
+func ErrDeletePattern(err error) error {
+	return errors.New(ErrDeletePatternCode, errors.Alert, []string{"Error failed to delete pattern"}, []string{err.Error()}, []string{"Failed to delete Pattern with the given ID"}, []string{"Check if the Pattern ID is correct"})
+}
+
+func ErrFetchPattern(err error) error {
+	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch pattern"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Patterns"}, []string{})
+}
+
+func ErrImportPattern(err error) error {
+	return errors.New(ErrImportPatternCode, errors.Alert, []string{"Error failed to import pattern"}, []string{err.Error()}, []string{"Cannot save the Pattern due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
+}
+
+func ErrEncodePattern(err error) error {
+	return errors.New(ErrEncodePatternCode, errors.Alert, []string{"Error failed to encode pattern"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDecodePattern(err error) error {
+	return errors.New(ErrDecodePatternCode, errors.Alert, []string{"Error failed to decode patterns data into go slice"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrParsePattern(err error) error {
+	return errors.New(ErrParsePatternCode, errors.Alert, []string{"Error failed to parse pattern file"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrConvertPattern(err error) error {
+	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert PatternFile to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
 }

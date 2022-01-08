@@ -210,7 +210,15 @@ const styles = (theme) => ({
   collapsedHelpButton : { height : '1.45rem',
     marginTop : '-4px',
     transform : 'translateX(0px)' },
-  rightTranslate : { transform : 'translateX(0.5px)' }
+  rightTranslate : { transform : 'translateX(0.5px)' },
+  hideScrollbar : {
+    overflow : "hidden auto",
+    "scrollbar-width" : "none",
+    "-ms-overflow-style" : "none",
+    "&::-webkit-scrollbar" : {
+      display : "none"
+    }
+  }
 });
 
 const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
@@ -706,7 +714,7 @@ class Navigator extends React.Component {
   /**
    * Changes the route to "/"
    */
-  handleTitleClick() {
+  handleTitleClick = () => {
     this.props.router.push("/");
   }
 
@@ -918,13 +926,13 @@ class Navigator extends React.Component {
       return (
         <span style = {{ marginLeft : '15px' }}>
           {"Update available "}
-          <Link href={`https://docs.meshery.io/project/releases/${latest}`}>
+          <a href={`https://docs.meshery.io/project/releases/${latest}`} target="_blank" rel="noreferrer" style={{ color : "white" }}>
             <Tooltip
               title={`Newer version of Meshery available: ${latest}`}
               placement="right">
               <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
             </Tooltip>
-          </Link>
+          </a>
         </span>
       );
 
@@ -946,15 +954,15 @@ class Navigator extends React.Component {
 
     if (release_channel === "edge")
       return (
-        <Link href="https://docs.meshery.io/project/releases" target="_blank">
+        <a href="https://docs.meshery.io/project/releases" target="_blank" rel="noreferrer" style={{ color : "white" }}>
           <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
-        </Link>
+        </a>
       );
 
     return (
-      <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
+      <a href={`https://docs.meshery.io/project/releases/${build}`} target="_blank" rel="noreferrer" style={{ color : "white" }}>
         <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
-      </Link>
+      </a>
     );
   }
 
@@ -994,7 +1002,7 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Menu = (
-      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-1.7rem" }}>
+      <List disablePadding className={classes.hideScrollbar}>
         {categories.map(({
           id : childId, title, icon, href, show, link, children
         }) => {
@@ -1167,20 +1175,21 @@ class Navigator extends React.Component {
         }
       </ListItem>
     )
+    const Chevron = (
+      <div className={classname}>
+        <FontAwesomeIcon
+          icon={faChevronCircleLeft}
+          fixedWidth
+          color="#e7e7e7"
+          size="2x"
+          alt="Sidebar collapse toggle icon"
+          onClick={this.toggleMiniDrawer}
+        />
+      </div>
+
+    )
     return (
       <NoSsr>
-        { (!("open" in other) || other.open) &&
-        <div className={classname}>
-          <FontAwesomeIcon
-            icon={faChevronCircleLeft}
-            fixedWidth
-            color="#e7e7e7"
-            size="2x"
-            alt="Sidebar collapse toggle icon"
-            onClick={this.toggleMiniDrawer}
-          />
-        </div>
-        }
         <Drawer
           variant="permanent"
           {...other}
@@ -1195,6 +1204,7 @@ class Navigator extends React.Component {
           {Title}
           {Menu}
           <div className={classes.fixedSidebarFooter}>
+            {Chevron}
             {HelpIcons}
             {Version}
           </div>

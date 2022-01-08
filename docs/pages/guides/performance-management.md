@@ -5,6 +5,7 @@ description: This guide is to help users get a better overview of running and ma
 permalink: guides/performance-management
 type: Guides
 command: perf
+language: en
 ---
 
 This guide walks through running performance benchmarks using Meshery. Users can either use the Meshery UI, the CLI, mesheryctl or run performance tests in their CI/CD pipelines using the Meshery GitHub Action.

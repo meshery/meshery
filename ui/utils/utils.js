@@ -8,8 +8,8 @@
 export function isEmptyObj(obj) {
   return !obj
     || obj
-      && Object.keys(obj).length === 0
-      && Object.getPrototypeOf(obj) === Object.prototype;
+    && Object.keys(obj).length === 0
+    && Object.getPrototypeOf(obj) === Object.prototype;
 }
 
 /**
@@ -20,6 +20,30 @@ export function isEmptyObj(obj) {
  */
 export function isEmptyArr(arr) {
   return arr && arr.length === 0;
+}
+
+/**
+ * Check if two arrays are equal
+ *
+ * @param {Array} arr1
+ * @param {Array} arr2
+ * @param {Boolean} orderMatters
+ * @returns
+ */
+export function isEqualArr(arr1, arr2, orderMatters = true) {
+  if (arr1 === arr2) return true;
+  if (arr1 == null || arr2 == null) return false;
+  if (arr1.length !== arr2.length) return false;
+
+  if (!orderMatters) {
+    arr1.sort()
+    arr2.sort()
+  }
+
+  for (var i = 0; i < arr1.length; ++i) {
+    if (arr1[i] !== arr2[i]) return false;
+  }
+  return true;
 }
 
 /**
@@ -34,7 +58,7 @@ export function isEmptyArr(arr) {
  * |"unset"
  * )} behavior : scroll-behaviour, see https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior
  */
-export function scrollToTop(behavior="smooth") {
+export function scrollToTop(behavior = "smooth") {
   setTimeout(() => {
     window.scrollTo({
       top : 0,

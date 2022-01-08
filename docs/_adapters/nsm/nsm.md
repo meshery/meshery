@@ -4,7 +4,7 @@ title: Meshery Adapter for Network Service Mesh
 name: Meshery Adapter for Network Service Mesh
 mesh_name: Network Service Mesh
 earliest_version: v0.2.1
-port: 10004/tcp
+port: 10004/gRPC
 project_status: stable
 lab: nsm-meshery-adapter
 github_link: https://github.com/meshery/meshery-nsm
@@ -18,7 +18,7 @@ permalink: service-meshes/adapters/nsm
 
 ## Lifecycle management of {{ page.name }}
 
-The {{page.name}} can install {{page.version}} of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}} service mesh. A number of sample applications can be installed using the {{page.name}}.
 
 ### Install {{ page.mesh_name }}
 
@@ -28,7 +28,7 @@ The {{page.name}} can install {{page.version}} of {{page.mesh_name}}. A number o
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png" />
 </a>
 
-Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
+Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png" />

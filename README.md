@@ -13,6 +13,8 @@
 <img src="https://img.shields.io/website/https/layer5.io/meshery.svg" /></a>
 <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+" alt="GitHub issues by-label">
 <img src="https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg" /></a>
+<a href="https://discuss.layer5.io" alt="Discuss Users">
+<img src="https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscuss.layer5.io" /></a>
 <a href="https://slack.layer5.io" alt="Join Slack">
 <img src="https://img.shields.io/badge/Slack-@layer5.svg?logo=slack"></a>
 <a href="https://twitter.com/intent/follow?screen_name=mesheryio" alt="Twitter Follow">
@@ -32,7 +34,6 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 <img src="docs/assets/img/readme/cncf-horizontal-color.svg" width="30%" align="center" />
 </p>
 
-
 <h2><a name="running"></a>Get Started with Meshery</h2>
 <p style="clear:both;">
 <img alt="Layer5 Service Mesh Management" src="docs/assets/img/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/>
@@ -47,7 +48,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 <details>
   <summary><strong>See all supported platforms</strong></summary>
 
-  See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
+See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
 
 | Platform                                                                                                                                                                                                                        | Supported?  |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------: |
@@ -154,11 +155,16 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
         </tr>
         <tr><td colspan="2" class="beta-adapters"></td></tr>
         <tr>
-          <td rowspan="2" class="alpha-adapters">alpha</td>
+          <td rowspan="3" class="alpha-adapters">alpha</td>
         </tr>
         <tr>
           <td><a href="https://github.com/meshery/meshery-tanzu-sm">
             <img src='https://docs.meshery.io/assets/img/service-meshes/tanzu.svg' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Tanzu SM</a>
+          </td>
+        </tr>
+           <tr>
+          <td><a href="https://github.com/meshery/meshery-cilium">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/cilium.svg' alt='Cilium Service mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery Adapter for Cilium Service Mesh</a>
           </td>
         </tr>
         <tr><td colspan="2" class="alpha-adapters"></td></tr>
