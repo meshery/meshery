@@ -18,7 +18,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -52,7 +51,7 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 		return nil, ErrAttachAuthToken(err)
 	}
 
-	logrus.Debug("token path is" + tokenPath)
+	log.Debug("token path is" + tokenPath)
 
 	// add token to request
 	err = AddAuthDetails(req, tokenPath)
