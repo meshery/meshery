@@ -86,25 +86,22 @@ Meshery keeps the implementation of Remote Providers separate so that they are b
 
 Interwoven into Meshery’s web-based, user interface are a variety of extension points. Each extension point is carefully carved out to afford a seamless user experience. Each extension point is identified by a name and type. The following Meshery UI extension points are available:
 
-- **Name:** navigator 
-   **Type:** Menu Items
+- **Name:** navigator   
+   **Type:** Menu Items  
   **Description:** This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.
 
-**Name:** user_prefs 
-**Type:** Single Component
+- **Name:** user_prefs  
+**Type:** Single Component  
 **Description:** This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.
 
-**Name:** /extension/<your name here>
-**Type:** Full Page
-Description: 
-
-The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.
+- **Name:** /extension/\<your name here>  
+**Type:** Full Page  
+**Description:** The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.  
 
 Remote Providers must fulfill the following endpoints:
-
-1. `/login` - return valid token
-1. `/logout` - invalidating token
-1. `/capabilities` - return capabilities.json
+  1. `/login` - return valid token
+  1. `/logout` - invalidating token
+  1. `/capabilities` - return capabilities.json
 
 ## UI Extension Points
 
@@ -121,7 +118,7 @@ The Navigator extension point loads a set of menu items to be displayed in the m
 
 ## Capabilities Endpoint Example
 
-Meshery Seerver will proxy all requests to remote provider endpoints. Endpoints are dynamically determined and identified in the "capabilities" section of the `/capabilities` endpoint. Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
+Meshery Server will proxy all requests to remote provider endpoints. Endpoints are dynamically determined and identified in the "capabilities" section of the `/capabilities` endpoint. Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
 
 ```json
 {
