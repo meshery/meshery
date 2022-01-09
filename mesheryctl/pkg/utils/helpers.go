@@ -816,5 +816,5 @@ func CheckFileExists(name string) (bool, error) {
 	if errors.Is(err, os.ErrNotExist) {
 		return false, fmt.Errorf("%s does not exist", name)
 	}
-	return false, errors.Wrap(err, fmt.Sprintf("%s does not exist", name))
+	return false, errors.Wrap(err, fmt.Sprintf("Failed to read/fetch the file %s", name))
 }
