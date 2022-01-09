@@ -288,7 +288,8 @@ function MesheryTestProfiles({
         case "search":
           if (searchTimeout.current) clearTimeout(searchTimeout.current);
           searchTimeout.current = setTimeout(() => {
-            if (search !== tableState.searchText && tableState.searchText !== null) setSearch(tableState.searchText);
+            const regexp = /^\S/ //search should not start with space
+            if (search !== tableState.searchText && regexp.test(tableState.searchText)) setSearch(tableState.searchText);
           }, 500);
           break;
         case "sort":
