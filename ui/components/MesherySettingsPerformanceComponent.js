@@ -101,12 +101,13 @@ class MesherySettingsPerformanceComponent extends React.Component {
       qps, c, t, gen,
     } = this.state;
 
-    const requestBody = JSON.stringify({
+    const loadTestPrefs = {
       qps,
       c,
       t,
       gen,
-    });
+    };
+    const requestBody = JSON.stringify({"loadTestPrefs": loadTestPrefs});
 
     this.setState({ blockRunTest: true }); // to block the button
     this.props.updateProgress({ showProgress: true });
