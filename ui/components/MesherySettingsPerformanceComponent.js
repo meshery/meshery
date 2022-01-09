@@ -60,7 +60,11 @@ class MesherySettingsPerformanceComponent extends React.Component {
   }
 
   handleChange = (name) => (event) => {
+    if (name === 'qps' || name === 'c'){
+      this.setState({ [name]: parseInt(event.target.value) });
+    }else{
     this.setState({ [name]: event.target.value });
+    }
   }
 
   handleDurationChange = (event, newValue) => {

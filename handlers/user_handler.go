@@ -103,8 +103,6 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		return
 	}
 
-	prefObj.AnonymousUsageStats = true
-
 	if err := provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
 		err := fmt.Errorf("unable to save user preferences: %v", err)
 		h.log.Error(ErrSavingUserPreference(err))
