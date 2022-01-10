@@ -148,6 +148,10 @@ meshery-operator:
   enabled: true
   fullnameOverride: meshery-operator
 
+meshery-cilium:
+  enabled: false
+  fullnameOverride: meshery-cilium
+
 # If there need the test cases set it as true.
 #
 testCase:
