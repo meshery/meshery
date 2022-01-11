@@ -1,7 +1,7 @@
 ---
 title: News
 permalink: /news/
-redirect_from: /news//
+redirect_from: /news/
 excluded_in_search: true
 ---
 
