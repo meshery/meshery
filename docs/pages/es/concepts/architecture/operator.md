@@ -4,7 +4,6 @@ title: Operador
 permalink: es/concepts/architecture/operator
 redirect_from: es/concepts/architecture/operator/
 type: concepts
-redirect_from: architecture/operator
 abstract: "Meshery Operator controla y administra el ciclo de vida de componentes desplegados dentro de un clúster de Kubernetes"
 language: es
 display-title: "false"
