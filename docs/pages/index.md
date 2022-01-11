@@ -2,7 +2,6 @@
 layout: page
 title: Meshery Documentation
 permalink: /
-redirect_from: //
 display-title: "false"
 ---
 
