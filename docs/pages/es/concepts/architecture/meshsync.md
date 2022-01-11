@@ -2,6 +2,7 @@
 layout: default
 title: MeshSync
 permalink: es/concepts/architecture/meshsync
+redirect_from: es/concepts/architecture/meshsync/
 type: concepts
 redirect_from: architecture/meshsync
 abstract: "Meshery ofrece soporte para la sincronización de estado de clúster/service mesh de Kubernetes con la ayuda de MeshSync."

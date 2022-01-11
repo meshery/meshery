@@ -2,6 +2,7 @@
 layout: default
 title: Referencia
 permalink: es/reference
+redirect_from: es/reference/
 language: es
 list: exclude
 ---

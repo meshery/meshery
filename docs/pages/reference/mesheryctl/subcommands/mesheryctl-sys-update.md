@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl system update
 permalink: reference/mesheryctl/system/update
+redirect_from: reference/mesheryctl/system/update/
 type: reference
 display-title: "false"
 language: en

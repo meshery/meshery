@@ -2,6 +2,7 @@
 layout: page
 title: FAQ
 permalink: project/faq
+redirect_from: project/faq/
 description: General commonly asked questions and answers about Meshery.
 language: en
 type: project

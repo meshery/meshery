@@ -2,6 +2,7 @@
 layout: default
 title: Releases
 permalink: project/releases
+redirect_from: project/releases/
 description: List of released Meshery versions and their release notes.
 redirect_from: project/releases/
 language: en

@@ -2,6 +2,7 @@
 layout: page
 title: GKE
 permalink: es/installation/platforms/gke
+redirect_from: es/installation/platforms/gke/
 language: es
 type: installation
 ---

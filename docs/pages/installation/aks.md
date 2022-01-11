@@ -2,6 +2,7 @@
 layout: page
 title: AKS
 permalink: installation/platforms/aks
+redirect_from: installation/platforms/aks/
 type: installation
 display-title: "false"
 language: en

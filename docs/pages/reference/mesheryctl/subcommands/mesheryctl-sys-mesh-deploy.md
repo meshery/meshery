@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl system mesh deploy
 permalink: reference/mesheryctl/mesh/deploy
+redirect_from: reference/mesheryctl/mesh/deploy/
 type: reference
 display-title: "false"
 language: en

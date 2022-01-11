@@ -3,6 +3,7 @@ layout: default
 title: Interpretación de los resultados de la prueba de rendimiento
 description: Esta guía tiene como objetivo ayudar a los usuarios a obtener información sobre cómo deberían verse los resultados de las pruebas de rendimiento.
 permalink: es/guides/interpreting-performance-test-results
+redirect_from: es/guides/interpreting-performance-test-results/
 type: guides
 language: es
 ---

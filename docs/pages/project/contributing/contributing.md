@@ -2,6 +2,7 @@
 layout: page
 title: Contributing
 permalink: project/contributing
+redirect_from: project/contributing/
 description: How to contribute to the Meshery project.
 language: en
 type: project

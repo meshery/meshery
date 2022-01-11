@@ -2,6 +2,7 @@
 layout: default
 title: Build & Release (CI)
 permalink: project/build-and-release
+redirect_from: project/build-and-release/
 description: Details of Meshery's build and release strategy.
 language: en
 type: project

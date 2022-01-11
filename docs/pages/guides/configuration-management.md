@@ -3,6 +3,7 @@ layout: default
 title: Configuring your Deployment with Patterns, Filters and Applications
 description: Learn how to configure your deployments and service meshes
 permalink: guides/configuration-management
+redirect_from: guides/configuration-management/
 type: Guides
 language: en
 ---

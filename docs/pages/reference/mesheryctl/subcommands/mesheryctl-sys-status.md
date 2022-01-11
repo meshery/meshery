@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl system status
 permalink: reference/mesheryctl/system/status
+redirect_from: reference/mesheryctl/system/status/
 type: reference
 display-title: "false"
 language: en

@@ -2,6 +2,7 @@
 layout: page
 title: Docker
 permalink: es/installation/platforms/docker
+redirect_from: es/installation/platforms/docker/
 language: es
 type: installation
 ---

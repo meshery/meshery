@@ -3,6 +3,7 @@ layout: default
 title: Referencia del Comando mesheryctl
 abstract: "Una Guía para la CLI de Meshery: mesheryctl"
 permalink: es/reference/mesheryctl
+redirect_from: es/reference/mesheryctl/
 language: es
 redirect_from:
   - es/guides/mesheryctl

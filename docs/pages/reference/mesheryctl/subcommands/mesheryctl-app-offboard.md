@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl app offboard --file
 permalink: reference/mesheryctl/apps/offboard
+redirect_from: reference/mesheryctl/apps/offboard/
 type: reference
 display-title: "false"
 language: en

@@ -2,6 +2,7 @@
 layout: default
 title: Database
 permalink: es/concepts/architecture/database
+redirect_from: es/concepts/architecture/database/
 type: concepts
 redirect_from: architecture/database
 abstract: "Meshery ofrece soporte para el almacenamiento en caché interno con la ayuda de base de datos de archivos. Esto se ha implementado con varias bibliotecas que admiten diferentes tipos de formatos de datos."

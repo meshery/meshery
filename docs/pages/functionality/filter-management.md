@@ -2,6 +2,7 @@
 layout: default
 title: Filter Management
 permalink: functionality/filter-management
+redirect_from: functionality/filter-management/
 type: functionality
 language: en
 list: include

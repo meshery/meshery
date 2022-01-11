@@ -2,6 +2,7 @@
 layout: default
 title: Usar varios adaptadores
 permalink: es/guides/multiple-adapters
+redirect_from: es/guides/multiple-adapters/
 language: es
 type: Guides
 ---

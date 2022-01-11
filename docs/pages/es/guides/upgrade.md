@@ -3,6 +3,7 @@ layout: default
 title: Actualizar `mesheryctl` y Meshery
 description: Cómo Meshery y todos sus componentes
 permalink: es/guides/upgrade
+redirect_from: es/guides/upgrade/
 language: es
 display-title: "false"
 type: Guides

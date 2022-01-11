@@ -2,6 +2,7 @@
 layout: page
 title: Contribuir Flujo
 permalink: es/project/contributing-flow
+redirect_from: es/project/contributing-flow/
 language: es
 type: project
 ---

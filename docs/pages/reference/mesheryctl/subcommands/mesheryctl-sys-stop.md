@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl system stop
 permalink: reference/mesheryctl/system/stop
+redirect_from: reference/mesheryctl/system/stop/
 type: reference
 display-title: "false"
 language: en

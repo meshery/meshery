@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl system logout
 permalink: reference/mesheryctl/system/logout
+redirect_from: reference/mesheryctl/system/logout/
 type: reference
 display-title: "false"
 language: en

@@ -3,6 +3,7 @@ layout: default
 title: subcommands
 description: Meshery CLI Subcommands
 permalink: /reference/mesheryctl/commands/subcommands/index.html
+redirect_from: /reference/mesheryctl/commands/subcommands/index.html/
 ---
 
 

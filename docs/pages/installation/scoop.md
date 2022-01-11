@@ -2,6 +2,7 @@
 layout: default
 title: Scoop
 permalink: installation/platforms/scoop
+redirect_from: installation/platforms/scoop/
 type: installation
 display-title: "false"
 language: en

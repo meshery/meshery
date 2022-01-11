@@ -2,6 +2,7 @@
 layout: default
 title: Broker
 permalink: /es/concepts/architecture/broker
+redirect_from: /es/concepts/architecture/broker/
 type: concepts
 redirect_from: architecture/broker
 abstract: "El componente broker de Meshery facilita la transmisión de datos entre los componentes del clúster de Kubernetes y el mundo exterior."

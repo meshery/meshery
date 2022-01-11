@@ -2,6 +2,7 @@
 layout: page
 title: Capacidad de cumplimiento de SMI
 permalink: es/functionality/smi-conformance
+redirect_from: es/functionality/smi-conformance/
 type: functionality
 language: es
 ---

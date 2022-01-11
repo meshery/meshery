@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl pattern list
 permalink: reference/mesheryctl/pattern/list
+redirect_from: reference/mesheryctl/pattern/list/
 type: reference
 display-title: "false"
 language: en

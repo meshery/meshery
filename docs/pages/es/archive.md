@@ -2,6 +2,7 @@
 layout: page
 title: Artículos
 permalink: es/archive/
+redirect_from: es/archive//
 language: es
 excluded_in_search: true
 ---

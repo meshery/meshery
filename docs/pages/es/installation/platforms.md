@@ -2,6 +2,7 @@
 layout: page
 title: Supported Platforms
 permalink: es/installation/platforms
+redirect_from: es/installation/platforms/
 language: es
 type: installation
 language: en

@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl app list
 permalink: reference/mesheryctl/apps/list
+redirect_from: reference/mesheryctl/apps/list/
 type: reference
 display-title: "false"
 language: en

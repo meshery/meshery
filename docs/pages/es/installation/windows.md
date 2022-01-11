@@ -2,6 +2,7 @@
 layout: page
 title: Windows
 permalink: es/installation/platforms/windows
+redirect_from: es/installation/platforms/windows/
 language: es
 type: installation
 ---

@@ -2,6 +2,7 @@
 layout: default
 title: Configuring Autocompletion for `mesheryctl`
 permalink: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
+redirect_from: guides/mesheryctl/configuring-autocompletion-for-mesheryctl/
 language: en
 type: Guides
 category: mesheryctl

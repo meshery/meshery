@@ -3,6 +3,7 @@ layout: default
 title: Performance Management with Meshery
 description: This guide is to help users get a better overview of running and managing performance tests in Meshery
 permalink: guides/performance-management
+redirect_from: guides/performance-management/
 type: Guides
 command: perf
 language: en

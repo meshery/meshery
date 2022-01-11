@@ -2,6 +2,7 @@
 layout: default
 title: "Extensibility: UI"
 permalink: extensibility/ui
+redirect_from: extensibility/ui/
 type: Extensibility
 abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery UI has a number of extension points that allow for users to customize their experience with third-party plugins."
 language: en

@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl app onboard --file
 permalink: reference/mesheryctl/apps/onboard
+redirect_from: reference/mesheryctl/apps/onboard/
 type: reference
 display-title: "false"
 language: en

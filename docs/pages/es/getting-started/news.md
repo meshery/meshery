@@ -1,6 +1,7 @@
 ---
 title: Noticias
 permalink: es/news/
+redirect_from: es/news//
 language: es
 excluded_in_search: true
 ---
