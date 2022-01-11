@@ -23,6 +23,12 @@ import Link from "next/link";
 import { externlinks } from "./constants";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
+import { MesheryServerVersionContainer } from "@/features/mesheryComponents";
+import { Grid } from "@mui/material";
+import { faChevronCircleLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Navbar = ({
   isDrawerCollapsed,
@@ -36,6 +42,7 @@ const Navbar = ({
   const [hoveredId, setHoveredId] = useState(null);
   const [openItems, setOpenItems] = useState([]);
   const [showHelperButton, setShowHelperButton] = useState(false);
+  // const [versionDetail, setVersionDetail] = useState({build : "", latest : "", outdated : false, commitsha : "", release_channel : "NA",});
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -238,6 +245,42 @@ const Navbar = ({
     });
   };
 
+  const version = (
+    <MesheryServerVersionContainer>
+      {({ serverVersion }) => (
+        <div className={classNames(classes.version)}>
+          <Grid>
+            {getMesheryVersionText(serverVersion)}
+            <Link
+              href={`https://docs.meshery.io/project/releases${
+                serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
+              }`}
+              target="_blank"
+            >
+              <OpenInNewIcon sx={{ fontSize: theme.spacing(1.7) }} />
+            </Link>
+          </Grid>
+          <Grid>
+            {serverVersion.outdated ? (
+              <>
+                <Link
+                  href={`https://docs.meshery.io/project/releases${
+                    serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
+                  }`}
+                  target="_blank"
+                >
+                  {serverVersion.latest}
+                </Link>
+              </>
+            ) : (
+              "Running latest"
+            )}
+          </Grid>
+        </div>
+      )}
+    </MesheryServerVersionContainer>
+  );
+
   //---------------------------------  ExtensionsNavigatorHelpers  -----------------------------------
 
   /**
@@ -318,7 +361,10 @@ const Navbar = ({
                 className={classes.item}
                 style={isDrawerCollapsed && !showHelperButton ? { display: "none" } : {}}
               >
-                <Grow in={showHelperButton} timeout={{ enter: 600 - index * 200, exit: 100 * index }}>
+                <Grow
+                  in={showHelperButton || !isDrawerCollapsed}
+                  timeout={{ enter: 600 - index * 200, exit: 100 * index }}
+                >
                   <a
                     href={href}
                     target="_blank"
@@ -333,35 +379,24 @@ const Navbar = ({
               </ListItem>
             );
           })}
-          <ListItem className={classes.rightMargin}>
+          <ListItem
+            className={classes.rightMargin}
+            style={!isDrawerCollapsed ? { display: "none" } : { marginLeft: "4px" }}
+          >
             <Tooltip title="Help" placement={isDrawerCollapsed ? "right" : "top"}>
               <IconButton
                 className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate}
                 onClick={toggleSpacing}
-                size="large"
               >
                 <HelpIcon className={classes.helpIcon} style={{ fontSize: "1.45rem" }} />
               </IconButton>
             </Tooltip>
           </ListItem>
         </ButtonGroup>
-
-        <ListItem
-          button
-          className={classname}
-          onClick={() => toggleMiniDrawer()}
-          style={{
-            position: "sticky",
-            zIndex: "1",
-            bottom: "0",
-            right: "0",
-          }}
-        >
-          <HelpIcon className={classes.helpIcon} style={{ fontSize: "1.45rem" }} />
-        </ListItem>
       </div>
     );
   };
+
   return (
     <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}>
       <Drawer
@@ -372,7 +407,17 @@ const Navbar = ({
         classes={{ paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded }}
         style={{ width: "inherit" }}
       >
-        <List disablePadding>
+        <List disablePadding className={classNames(classes.hideScrollbar)}>
+          <div className={classname}>
+            <FontAwesomeIcon
+              icon={faChevronCircleLeft}
+              fixedWidth
+              color="#e7e7e7"
+              size="2x"
+              onClick={() => toggleMiniDrawer()}
+              alt="Sidebar collapse toggle icon"
+            />
+          </div>
           <ListItem
             component="a"
             onClick={handleTitleClick}
@@ -397,6 +442,7 @@ const Navbar = ({
           <Divider className={classes.divider} />
         </List>
         {renderExternalLinkItems()}
+        {version}
       </Drawer>
     </nav>
   );

@@ -135,11 +135,7 @@ export const useStyles = makeStyles((theme) => ({
     borderRadius: "unset",
   },
   mainLogoTextCollapsed: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    width: 170,
-    height: "100%",
-    borderRadius: "unset",
+    display: "none",
   },
   settingsIcon: {
     marginLeft: theme.spacing(2),
@@ -195,7 +191,7 @@ export const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: "hidden",
-    width: theme.spacing(8),
+    width: theme.spacing(9),
   },
   sidebarExpanded: {
     width: "256px",
@@ -215,9 +211,13 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   collapseButtonWrapper: {
+    position: "fixed",
+    cursor: "pointer",
+    bottom: "12%",
+    left: "225px",
     width: "auto",
     "margin-left": "auto",
-    opacity: "0.7",
+    opacity: "0.8",
     transition: "opacity 200ms linear",
     "&:hover": {
       opacity: 1,
@@ -229,15 +229,19 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   collapseButtonWrapperRotated: {
+    position: "fixed",
+    cursor: "pointer",
     width: "auto",
     "margin-left": "auto",
     marginRight: theme.spacing(1),
-    opacity: "0.7",
+    opacity: "0.8",
     transition: "opacity 200ms linear",
     transform: "rotate(180deg)",
     justifyContent: "center",
     alignSelf: "baseline",
-    marginLeft: "3px",
+    bottom: "12%",
+    left: "40px",
+    zIndex: "1400",
     "&:hover": {
       opacity: 1,
       background: "transparent",
@@ -313,6 +317,21 @@ export const useStyles = makeStyles((theme) => ({
   },
   rightTranslate: {
     transform: "translateX(0.5px)",
+  },
+  hideScrollbar: {
+    overflow: "hidden auto",
+    "scrollbar-width": "none",
+    "-ms-overflow-style": "none",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
+  version: {
+    color: "#FFFFFF",
+    display: "flex",
+    justifyContent: "space-evenly",
+    fontSize: "0.8rem",
+    paddingBottom: "1rem",
   },
 }));
 
