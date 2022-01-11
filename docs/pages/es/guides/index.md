@@ -2,7 +2,6 @@
 layout: default
 title: Guías de Operación
 permalink: es/guides
-redirect_from: es/guides/
 language: es
 list: exclude
 ---
