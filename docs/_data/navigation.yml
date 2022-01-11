@@ -5,7 +5,7 @@
 - title: Discuss
   external_url: https://discuss.layer5.io
 - title: Slack
-  url: "https://slack.layer5.io"
+  external_url: "https://slack.layer5.io"
 - title: GitHub
   external_url: https://github.com/meshery/meshery
 - title: "🇲🇽 Español"
