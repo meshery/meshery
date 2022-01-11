@@ -66,6 +66,7 @@ const URLUploader = ({ onSubmit }) => {
   };
 
   const handleSubmit = () => {
+    onSubmit(input)
     handleClose()
   }
 
