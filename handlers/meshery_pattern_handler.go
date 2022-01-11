@@ -80,17 +80,17 @@ func (h *Handler) handlePatternPOST(
 
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.PatternData != nil {
-		patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
-		if err != nil {
-			h.log.Error(ErrSavePattern(err))
-			http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
-			return
-		}
-
 		// Assign a name if no name is provided
 		if parsedBody.PatternData.Name == "" {
+			patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
+			if err != nil {
+				h.log.Error(ErrSavePattern(err))
+				http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
+				return
+			}
 			parsedBody.PatternData.Name = patternName
 		}
+
 		// Assign a location if no location is specified
 		if parsedBody.PatternData.Location == nil {
 			parsedBody.PatternData.Location = map[string]interface{}{
