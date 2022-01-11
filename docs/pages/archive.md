@@ -2,7 +2,7 @@
 layout: page
 title: Articles
 permalink: /archive/
-redirect_from: /archive//
+redirect_from: /archive/
 excluded_in_search: true
 ---
 # News Archive
