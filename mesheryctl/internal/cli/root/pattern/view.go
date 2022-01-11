@@ -60,12 +60,7 @@ var viewCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}

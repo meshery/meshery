@@ -17,7 +17,6 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -69,11 +68,6 @@ mesheryctl perf profile test --view
 		}
 
 		profileURL := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles"
-
-		// set default tokenpath for command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
 
 		if len(args) > 0 {
 			// Merge args to get profile-name
@@ -147,11 +141,9 @@ func fetchPerformanceProfiles(url, searchString string) ([][]string, []profileSt
 		tempURL = tempURL + "&search=" + searchString
 	}
 
-	req, _ := http.NewRequest("GET", tempURL, nil)
-
-	err := utils.AddAuthDetails(req, tokenPath)
+	req, err := utils.NewRequest("GET", tempURL, nil)
 	if err != nil {
-		return nil, nil, nil, ErrAttachAuthToken(err)
+		return nil, nil, nil, err
 	}
 
 	resp, err := client.Do(req)

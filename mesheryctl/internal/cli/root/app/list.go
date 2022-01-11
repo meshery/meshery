@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -35,20 +34,14 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		// set default tokenpath for perf apply command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
+
 		var response *models.ApplicationsAPIResponse
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/application", nil)
+		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/application", nil)
 		if err != nil {
 			return err
 		}
-		err = utils.AddAuthDetails(req, tokenPath)
-		if err != nil {
-			return err
-		}
+
 		res, err := client.Do(req)
 		if err != nil {
 			return err
@@ -62,7 +55,7 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		tokenObj, err := utils.ReadToken(tokenPath)
+		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
 			return err
 		}
@@ -100,7 +93,7 @@ var listCmd = &cobra.Command{
 			return nil
 		}
 
-		// Check if messhery provider is set
+		// Check if meshery provider is set
 		if provider == "None" {
 			for _, v := range response.Applications {
 				AppName := strings.Trim(v.Name, filepath.Ext(v.Name))
