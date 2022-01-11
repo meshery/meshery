@@ -124,6 +124,8 @@ var (
 	KubeConfig string
 	// KeepNamespace indicates if the namespace should be kept when Meshery is uninstalled
 	KeepNamespace bool
+	// TokenFlag sets token location passed by user with --token
+	TokenFlag = "Not Set"
 )
 
 var CfgFile string

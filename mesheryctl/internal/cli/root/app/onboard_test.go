@@ -9,7 +9,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
@@ -91,7 +90,7 @@ func TestOnboardCmd(t *testing.T) {
 			}
 
 			// set token
-			constants.TokenFlag = tt.Token
+			utils.TokenFlag = tt.Token
 
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")

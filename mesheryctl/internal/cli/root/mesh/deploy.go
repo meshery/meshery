@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	smp "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/manifoldco/promptui"
@@ -82,7 +81,7 @@ mesheryctl mesh deploy --adapter meshery-linkerd --watch`,
 func init() {
 	deployCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-istio:10000", "Adapter to use for installation")
 	deployCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
-	deployCmd.Flags().StringVarP(&constants.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	deployCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	deployCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 

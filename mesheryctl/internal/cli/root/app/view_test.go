@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
@@ -93,7 +92,7 @@ func TestAppView(t *testing.T) {
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
 			// set token
-			constants.TokenFlag = tt.Token
+			utils.TokenFlag = tt.Token
 
 			// mock response
 			httpmock.RegisterResponder("GET", tt.URL,

@@ -15,7 +15,6 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -36,14 +35,14 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	}
 
 	// Grab token from the flag --token
-	tokenPath := constants.TokenFlag
+	tokenPath := TokenFlag
 	if tokenPath == "" { // token was not passed with the flag
 		tokenPath, err = GetCurrentAuthToken()
 		if err != nil {
 			return nil, err
 		}
 		// set TokenFlag value equals tokenPath
-		constants.TokenFlag = tokenPath
+		TokenFlag = tokenPath
 	}
 	// make sure if token-file exists
 	exist, err := CheckFileExists(tokenPath)

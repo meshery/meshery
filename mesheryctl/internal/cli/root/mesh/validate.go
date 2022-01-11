@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -93,7 +92,7 @@ func init() {
 	_ = validateCmd.MarkFlagRequired("spec")
 	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
-	validateCmd.Flags().StringVarP(&constants.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	validateCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 

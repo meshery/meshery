@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -53,7 +52,7 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		tokenObj, err := utils.ReadToken(constants.TokenFlag)
+		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
 			return err
 		}

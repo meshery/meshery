@@ -23,7 +23,6 @@ import (
 	"os/exec"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -315,17 +314,17 @@ func init() {
 		minikubeConfigCmd,
 	}
 
-	aksConfigCmd.Flags().StringVarP(&constants.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
-	eksConfigCmd.Flags().StringVarP(&constants.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
-	gkeConfigCmd.Flags().StringVarP(&constants.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
-	minikubeConfigCmd.Flags().StringVarP(&constants.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	aksConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	eksConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	gkeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	minikubeConfigCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 
 	configCmd.AddCommand(availableSubcommands...)
 }
 
 // Given the token path, get the context and set the token in the chosen context
 func setToken() {
-	log.Debugf("Token path: %s", constants.TokenFlag)
+	log.Debugf("Token path: %s", utils.TokenFlag)
 	contexts, err := getContexts(utils.ConfigPath)
 	if err != nil || contexts == nil || len(contexts) < 1 {
 		log.Fatalf("Error getting context: %s", err.Error())
