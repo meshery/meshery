@@ -262,8 +262,9 @@ func (h *Handler) GetMesheryPatternsHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
+	tokenString := r.Context().Value("token").(string)
 
-	resp, err := provider.GetMesheryPatterns(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -275,9 +276,9 @@ func (h *Handler) GetMesheryPatternsHandler(
 		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
 		return
 	}
-	mc := newContentModifier(token, provider, prefObj, user.UserID)
+	mc := NewContentModifier(token, provider, prefObj, user.UserID)
 	//acts like a middleware, modifying the bytes lazily just before sending them back
-	err = mc.addMetadataForPatterns(&resp)
+	err = mc.AddMetadataForPatterns(&resp)
 	if err != nil {
 		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}
