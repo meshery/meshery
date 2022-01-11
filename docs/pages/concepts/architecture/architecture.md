@@ -18,7 +18,7 @@ Meshery and its components are written using the following languages and technol
 | Meshery Server                                                       | Golang, gRPC, GraphQL, [SMP](https://smp-spec.io)                                 |
 | [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/), [SMI](https://smi-spec.io), [OAM](https://oam.dev)  |
 | [Meshery WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
-| Meshery UI                                                           | ReactJS, NextJS, BillboardJS                                                      |
+| Meshery UI                                                          | ReactJS, NextJS, BillboardJS                                                      |
 | Meshery Provider UI                                                  | ReactJS, NextJS                                                                   |
 | [Meshery Remote Providers](/extensibility/providers)                 | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility) |
 | [Meshery Operator](/concepts/architecture/operator)                  | Golang                                                                            |
@@ -92,12 +92,12 @@ concerned with a long-lived configuration, while others have no state at all.
 
 | Components        | Persistence  | Description                                                           |
 | :---------------- | :----------- | :-------------------------------------------------------------------- |
-| mesheryctl        | stateless    | command line interface that has a configuration file                  |
-| Meshery Adapters  | stateless    | interface with service meshes on a transactional basis                |
+| [mesheryctl]((/guides/mesheryctl/working-with-mesheryctl))        | stateless    | command line interface that has a configuration file                  |
+| [Meshery Adapters](/concepts/architecture/adapters)  | stateless    | interface with service meshes on a transactional basis                |
 | Meshery Server    | caches state | application cache is stored in `$HOME/.meshery/` folder               |
-| Meshery Providers | stateful     | location of persistent user preferences, environment, tests and so on |
-| Meshery Operator  | stateless    | operator of Meshery custom controllers, notably MeshSync              |
-| MeshSync          | stateless    | Kubernetes custom controller, continuously running discovery          |
+| [Meshery Providers](/extensibility/providers) | stateful     | location of persistent user preferences, environment, tests and so on |
+| [Meshery Operator](/concepts/architecture/operator)  | stateless    | operator of Meshery custom controllers, notably MeshSync              |
+| [MeshSync](/concepts/architecture/meshsync)          | stateless    | Kubernetes custom controller, continuously running discovery          |
 
 ### **Network Ports**
 
@@ -113,15 +113,15 @@ Meshery uses the following list of network ports to interface with its various c
 
 | Component                |   Port   | Purpose                                         |
 | :----------------------- | :------: | :-----------------------------------------------|
-| Meshery Server           | 9081/tcp | UI, ReST and GraphQL APIs                           |
-| Meshery Broker           | 4222/tcp | Client communication with Meshery Server        |
-| Meshery Broker           | 8222/tcp | HTTP management port for monitoring Meshery Broker. Available as of Meshery v0.5.0 |
-| Meshery Broker           | 6222/tcp | Routing port for Broker clustering. Unused as of Meshery v0.6.0-rc-2             |
-| Meshery Broker           | 7422/tcp | Incoming/outgoing leaf node connections. Unused as of Meshery v0.6.0-rc-2 |
-| Meshery Broker           | 7522/tcp | Gateway to gateway communication. Unused as of Meshery v0.6.0-rc-2 |
-| Meshery Broker           | 7777/tcp | used for Prometheus NATS Exporter. Unused as of Meshery v0.6.0-rc-2 |
+| Meshery Server          | 9081/tcp | UI, ReST and GraphQL APIs                           |
+| [Meshery Broker](/concepts/architecture/broker)           | 4222/tcp | Client communication with Meshery Server        |
+| [Meshery Broker](/concepts/architecture/broker)            | 8222/tcp | HTTP management port for monitoring Meshery Broker. Available as of Meshery v0.5.0 |
+| [Meshery Broker](/concepts/architecture/broker)            | 6222/tcp | Routing port for Broker clustering. Unused as of Meshery v0.6.0-rc-2             |
+| [Meshery Broker](/concepts/architecture/broker)            | 7422/tcp | Incoming/outgoing leaf node connections. Unused as of Meshery v0.6.0-rc-2 |
+| [Meshery Broker](/concepts/architecture/broker)            | 7522/tcp | Gateway to gateway communication. Unused as of Meshery v0.6.0-rc-2 |
+| [Meshery Broker](/concepts/architecture/broker)            | 7777/tcp | used for Prometheus NATS Exporter. Unused as of Meshery v0.6.0-rc-2 |
 | Learn Layer5 Application | 10011/tcp  | SMI conformance testing                        |
-| Meshery Remote Providers | 443/tcp    | e.g. Meshery Cloud                             |
+| [Meshery Remote Providers]((/extensibility/providers)) | 443/tcp    | e.g. Meshery Cloud                             |
 {% for adapter in site.adapters -%}
 {% if adapter.port -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | Communication with Meshery Server |
