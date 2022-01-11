@@ -4,7 +4,6 @@ title: Adaptadores
 permalink: es/concepts/architecture/adapters
 redirect_from: es/concepts/architecture/adapters/
 type: concepts
-redirect_from: es/architecture/adapters
 abstract: "Meshery ofrece soporte para más adaptadores que cualquier otro proyecto o producto en el mundo. Meshery utiliza adaptadores para gestionar las distintas mallas de servicio."
 language: es
 list: include
