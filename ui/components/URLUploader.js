@@ -95,7 +95,13 @@ const URLUploader = ({ onSubmit }) => {
                   </Grid>
                   <Grid
                     item xs={12}>
-                    <TextField error={isError} helperText={isError && "Invalid URL"} variant="outlined" label="Paste URL here" fullWidth onChange={(e) => setInput(e.target.value)} />
+                    <TextField
+                      error={isError}
+                      helperText={isError && "Invalid URL"}
+                      variant="outlined"
+                      label="Paste URL here"
+                      fullWidth
+                      onChange={(e) => setInput(e.target.value)} />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Button fullWidth variant="contained" onClick={handleClose}>Cancel</Button>
