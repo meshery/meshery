@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	ErrAttachAuthTokenCode = "not set"
+	ErrAttachAuthTokenCode = "1043"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
