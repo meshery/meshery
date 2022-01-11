@@ -2,7 +2,6 @@
 layout: default
 title: Malla de Servicios
 permalink: es/service-meshes
-redirect_from: es/service-meshes/
 type: service-mesh
 list: exclude
 language: es
