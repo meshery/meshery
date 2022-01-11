@@ -2,7 +2,6 @@
 layout: page
 title: Funcionalidad
 permalink: es/functionality
-redirect_from: es/functionality/
 type: functionality
 language: es
 list: exclude
