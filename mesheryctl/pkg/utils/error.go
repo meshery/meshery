@@ -1,6 +1,14 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/layer5io/meshkit/errors"
+)
+
+var (
+	ErrAttachAuthTokenCode = "not set"
+)
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
 // in addition to the error message
@@ -38,4 +46,9 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUsageURL)
 	}
 	return fmt.Sprintf("%s\n", msg)
+}
+
+func ErrAttachAuthToken(err error) error {
+	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
+		[]string{"authentication token not found. please supply a valid user token with the --token (or -t) flag. or login with `mesheryctl system login`"}, []string{}, []string{})
 }

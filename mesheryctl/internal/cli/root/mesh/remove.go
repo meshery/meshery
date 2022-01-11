@@ -25,15 +25,15 @@ var (
 			}
 
 			if len(args) < 1 {
-				meshName, err = validateMesh(mctlCfg, tokenPath, "")
+				meshName, err = validateMesh(mctlCfg, "")
 			} else {
-				meshName, err = validateMesh(mctlCfg, tokenPath, args[0])
+				meshName, err = validateMesh(mctlCfg, args[0])
 			}
 			if err != nil {
 				return errors.Wrap(err, "error validating request")
 			}
 
-			if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
+			if err = validateAdapter(mctlCfg, meshName); err != nil {
 				return errors.Wrap(err, "adapter not valid")
 			}
 			return nil
@@ -68,6 +68,5 @@ var (
 func init() {
 	removeCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-istio:10000", "Adapter to use for installation")
 	removeCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
-	removeCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
-	_ = removeCmd.MarkFlagRequired("tokenPath")
+	removeCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 }

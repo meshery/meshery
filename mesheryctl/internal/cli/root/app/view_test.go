@@ -92,7 +92,7 @@ func TestAppView(t *testing.T) {
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
 			// set token
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			// mock response
 			httpmock.RegisterResponder("GET", tt.URL,

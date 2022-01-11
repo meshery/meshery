@@ -14,7 +14,6 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
@@ -76,11 +75,6 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return ErrMesheryConfig(err)
-		}
-
-		// set default tokenpath for command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
 		}
 
 		// Importing SMP Configuration from the file
@@ -151,11 +145,9 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		// Check if the profile name is valid, if not prompt the user to create a new one
 		log.Debug("Fetching performance profile")
 
-		req, _ = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles?search="+profileName, nil)
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles?search="+profileName, nil)
 		if err != nil {
-			return ErrAttachAuthToken(err)
+			return err
 		}
 
 		resp, err := client.Do(req)
@@ -236,7 +228,10 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 			return ErrNotValidURL()
 		}
 
-		req, _ = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
+		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
+		if err != nil {
+			return err
+		}
 
 		q := req.URL.Query()
 
@@ -257,11 +252,6 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		req.URL.RawQuery = q.Encode()
 
 		log.Info("Initiating Performance test ...")
-
-		err = utils.AddAuthDetails(req, tokenPath)
-		if err != nil {
-			return ErrAttachAuthToken(err)
-		}
 
 		resp, err = client.Do(req)
 		if err != nil {
@@ -391,11 +381,9 @@ func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlCon
 	if err != nil {
 		return "", "", ErrFailMarshal(err)
 	}
-	req, _ = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
-
-	err = utils.AddAuthDetails(req, tokenPath)
+	req, err = utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
 	if err != nil {
-		return "", "", ErrAttachAuthToken(err)
+		return "", "", err
 	}
 
 	resp, err := client.Do(req)
