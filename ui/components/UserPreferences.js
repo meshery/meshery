@@ -102,14 +102,12 @@ class UserPreference extends React.Component {
   handleToggle = (name) => () => {
     const self = this;
     if (name == 'anonymousUsageStats') {
-      self.setState((state) => ({ anonymousStats : !state.anonymousStats }));
+      self.setState((state) => ({ anonymousStats : !state.anonymousStats }), () => this.handleChange(name));
     } else if (name == 'anonymousPerfResults') {
-      self.setState((state) => ({ perfResultStats : !state.perfResultStats }));
+      self.setState((state) => ({ perfResultStats : !state.perfResultStats }), () => this.handleChange(name));
     } else {
-      self.setState((state) => ({ startOnZoom : !state.startOnZoom }));
+      self.setState((state) => ({ startOnZoom : !state.startOnZoom }), () => this.handleChange(name));
     }
-
-    this.handleChange(name);
   }
 
   handleError = (msg) => () => {
@@ -135,34 +133,43 @@ class UserPreference extends React.Component {
     let val, msg;
     if (name == 'anonymousUsageStats') {
       val = anonymousStats;
-      msg = !val
+      msg = val
         ? "Sending anonymous usage statistics was enabled"
         : "Sending anonymous usage statistics was disabled";
 
     } else if (name == 'anonymousPerfResults') {
       val = perfResultStats;
-      msg = !val
+      msg = val
         ? "Sending anonymous performance results was enabled"
         : "Sending anonymous performance results was disabled";
     } else {
       val = startOnZoom;
-      msg = !val
+      msg = val
         ? "Start on Zoom was enabled"
         : "Start on Zoom was disabled";
     }
 
-    const params = `${encodeURIComponent(name)}=${encodeURIComponent(!val)}`;
+    const requestBody = JSON.stringify({
+      "anonymousUsageStats" : anonymousStats,
+      "anonymousPerfResults" : perfResultStats,
+      "usersExtensionPreferences" : {
+        "showOnZoom" : startOnZoom
+      }
+    });
+
+    console.log(requestBody,anonymousStats,perfResultStats);
+
     this.props.updateProgress({ showProgress : true });
     dataFetch('/api/user/prefs', {
       credentials : 'same-origin',
       method : 'POST',
       credentials : 'include',
-      headers : { 'Content-Type' : 'application/x-www-form-urlencoded;charset=UTF-8', },
-      body : params,
+      headers : { 'Content-Type' : 'application/json;charset=UTF-8', },
+      body : requestBody,
     }, (result) => {
       this.props.updateProgress({ showProgress : false });
       if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar(msg, { variant : !val
+        this.props.enqueueSnackbar(msg, { variant : val
           ? 'success'
           : 'info',
         autoHideDuration : 4000,
