@@ -4996,6 +4996,11 @@ paths:
                 type: string
                 format: date-time
                 x-go-name: UpdatedAt
+              usersExtensionPreferences:
+                type: object
+                additionalProperties:
+                  type: object
+                x-go-name: UsersExtensionPreferences
             x-go-package: github.com/layer5io/meshery/models
   /api/system/version:
     get:
@@ -8943,6 +8948,11 @@ paths:
                 type: string
                 format: date-time
                 x-go-name: UpdatedAt
+              usersExtensionPreferences:
+                type: object
+                additionalProperties:
+                  type: object
+                x-go-name: UsersExtensionPreferences
             x-go-package: github.com/layer5io/meshery/models
     post:
       description: Updates User Load Test Preferences
@@ -10666,6 +10676,11 @@ paths:
                 type: string
                 format: date-time
                 x-go-name: UpdatedAt
+              usersExtensionPreferences:
+                type: object
+                additionalProperties:
+                  type: object
+                x-go-name: UsersExtensionPreferences
             x-go-package: github.com/layer5io/meshery/models
   /api/user/prefs/perf:
     get:
@@ -19456,6 +19471,11 @@ definitions:
         type: string
         format: date-time
         x-go-name: UpdatedAt
+      usersExtensionPreferences:
+        type: object
+        additionalProperties:
+          type: object
+        x-go-name: UsersExtensionPreferences
     x-go-package: github.com/layer5io/meshery/models
   PreferenceParams:
     description: Parameters to updates Anonymous stats
@@ -24784,6 +24804,11 @@ responses:
           type: string
           format: date-time
           x-go-name: UpdatedAt
+        usersExtensionPreferences:
+          type: object
+          additionalProperties:
+            type: object
+          x-go-name: UsersExtensionPreferences
       x-go-package: github.com/layer5io/meshery/models
   performanceProfileResponseWrapper:
     description: Returns a single performance profile
@@ -27155,6 +27180,11 @@ responses:
           type: string
           format: date-time
           x-go-name: UpdatedAt
+        usersExtensionPreferences:
+          type: object
+          additionalProperties:
+            type: object
+          x-go-name: UsersExtensionPreferences
       x-go-package: github.com/layer5io/meshery/models
   v1ServicesMapResponseWrapper:
     description: Returns a map for v1 services
