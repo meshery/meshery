@@ -3,7 +3,6 @@ package resolver
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/internal/graphql/model"
@@ -25,7 +24,7 @@ func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, 
 	mc := handlers.NewContentModifier(tokenString, provider, prefObj, user.UserID)
 	err = mc.AddMetadataForPatterns(&resp)
 	if err != nil {
-		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
+		r.Log.Error(ErrFetchingPatterns(err))
 	}
 
 	patterns := &model.PatternPageResult{}
