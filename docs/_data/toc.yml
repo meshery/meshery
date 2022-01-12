@@ -31,7 +31,7 @@
       url: project/security-vulnerabilities
     - title: FAQ
       url: project/faq
-    - title: Supported Platforms
+    - title: Supported Platforms ↆ
       url: installation/platforms
       children:
         - title: AKS
@@ -110,7 +110,7 @@
       url: guides/troubleshooting
     - title: Upgrading Meshery
       url: guides/upgrade
-    - title: Using mesheryctl
+    - title: Using mesheryctl ↆ
       url: guides/mesheryctl
       children:
         - title: Using mesheryctl
