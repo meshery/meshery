@@ -4,7 +4,7 @@ title: Meshery Adapter for Consul
 name: Meshery Adapter for Consul
 mesh_name: Consul
 earliest_version: v1.8.4
-port: 10002/tcp
+port: 10002/gRPC
 project_status: stable
 adapter_version: v0.5.2
 lab: consul-meshery-adapter
@@ -20,7 +20,7 @@ permalink: service-meshes/adapters/consul
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.mesh_name}} service mesh.
 
 ### Install {{ page.mesh_name }}
 
@@ -30,7 +30,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-adapter.png" />
 </a>
 
-##### Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
+##### Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png" />

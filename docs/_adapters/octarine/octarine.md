@@ -4,7 +4,7 @@ title: Octarine
 name: Meshery Adapter for Octarine
 mesh_name: Octarine
 earliest_version: v1.0
-port: 10003/tcp
+port: 10003/gRPC
 project_status: retiring
 github_link: https://github.com/meshery/meshery-octarine
 image: /assets/img/service-meshes/octarine.svg
@@ -14,7 +14,7 @@ permalink: service-meshes/adapters/octarine
 
 ## Lifecycle Management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
 
 ### Install {{ page.mesh_name }}
 
@@ -24,7 +24,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-adapter.png" />
 </a>
 
-##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
+##### **Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.**
 
 <a href="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png" />

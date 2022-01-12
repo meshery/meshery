@@ -467,21 +467,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 	client := &http.Client{}
 
 	// Request to grab running adapters and ports
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters", url), nil)
-	if err != nil {
-		return err
-	}
-
-	// Add authentication token
-	token, err := hc.mctlCfg.GetTokenForContext(hc.mctlCfg.CurrentContext)
-	if err != nil {
-		return err
-	}
-	tokenPath, err = constants.GetTokenLocation(token)
-	if err != nil {
-		return err
-	}
-	err = utils.AddAuthDetails(req, tokenPath)
+	req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters", url), nil)
 	if err != nil {
 		if hc.Options.PrintLogs {
 			log.Info("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
@@ -526,7 +512,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 			}
 			continue
 		}
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, adapter.Name), nil)
+		req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, adapter.Name), nil)
 		if err != nil {
 			return err
 		}
@@ -566,6 +552,34 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 func (hc *HealthChecker) runOperatorHealthChecks() error {
 	//TODO
 	return nil
+}
+
+func (hc *HealthChecker) runMesheryReadinessHealthChecks() error {
+	ready, err := mesheryReadinessHealthCheck()
+	if err != nil || !ready {
+		if hc.Options.PrintLogs { // incase we're printing logs
+			log.Infof("!! Meshery failed to reach Running state")
+		} else { // or we're supposed to grab the errors
+			return fmt.Errorf("!! Meshery failed to reach Running state. %s", err)
+		}
+	}
+	if hc.Options.PrintLogs { // incase we're printing logs
+		log.Infof("✓ Meshery is in Running state")
+	}
+	return nil
+}
+
+// mesheryReadinessHealthCheck is waiting for Meshery to start, returns (ready, error)
+func mesheryReadinessHealthCheck() (bool, error) {
+	kubeClient, err := meshkitkube.New([]byte(""))
+	if err != nil {
+		return false, err
+	}
+	if err := utils.WaitForPodRunning(kubeClient, "meshery", utils.MesheryNamespace, 300); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func init() {

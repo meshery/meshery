@@ -4,7 +4,7 @@ title: Meshery Adapter for Traefik Mesh
 name: Meshery Adapter for Traefik Mesh
 mesh_name: Traefik Mesh
 earliest_version: v1.0
-port: 10006/tcp
+port: 10006/gRPC
 project_status: stable
 adapter_version: v0.5.2
 lab: traefik-meshery-adapter
@@ -19,7 +19,7 @@ permalink: service-meshes/adapters/traefik-mesh
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}} service mesh. A number of sample applications can be installed using the {{page.name}}.
 
 The {{ page.name }} is currently under construction ({{ page.project_status }} state), which means that the adapter is not functional and cannot be interacted with through the <a href="{{ site.baseurl }}installation#6-you-will-now-be-directed-to-the-meshery-ui"> Meshery UI </a>at the moment. Check back here to see updates.
 

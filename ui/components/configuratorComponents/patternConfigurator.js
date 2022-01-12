@@ -10,17 +10,17 @@ import SaveIcon from '@material-ui/icons/Save';
 import { Autocomplete } from '@material-ui/lab';
 import jsYaml from "js-yaml";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { trueRandom } from "../../lib/trueRandom";
 import { SchemaContext } from "../../utils/context/schemaSet";
 import { getMeshProperties } from "../../utils/nameMapper";
 import { isEmptyObj } from "../../utils/utils";
 import { groupWorkloadByVersion } from "../../utils/workloadFilter";
-import { createPatternFromConfig, getHumanReadablePatternServiceName, getPatternServiceName } from "../MesheryMeshInterface/helpers";
+import { createPatternFromConfig, getHumanReadablePatternServiceName, getPatternServiceName, recursiveCleanObject } from "../MesheryMeshInterface/helpers";
 import LazyPatternServiceForm, { getWorkloadTraitAndType } from "../MesheryMeshInterface/LazyPatternServiceForm";
 import PatternServiceForm from "../MesheryMeshInterface/PatternServiceForm";
 import CodeEditor from "./CodeEditor";
 import NameToIcon from "./NameToIcon";
 import CustomBreadCrumb from "./CustomBreadCrumb";
+import { randomPatternNameGenerator as getRandomName } from "../../utils/utils"
 
 const useStyles = makeStyles((theme) => ({
   backButton : {
@@ -251,7 +251,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
   };
 
-  const handleAddonsOff =(key) => {
+  const handleAddonsOff = (key) => {
     const dConfig = { ...deployServiceConfig }
     delete dConfig?.[key]
     handleCodeEditorYamlChange(dConfig)
@@ -274,7 +274,12 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 
   function handleSubmitFinalPattern(yaml, id, name, action) {
     console.log("submitting a new pattern", yaml)
-    onSubmit(yaml, id, name, action);
+    onSubmit({
+      data : yaml,
+      id : id,
+      name : name,
+      type : action
+    });
     setSelectedPattern(resetSelectedPattern()); // Remove selected pattern
   }
 
@@ -316,6 +321,13 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   async function setActivePatternWithRefinedSchema(schema) {
     const refinedSchema = await getWorkloadTraitAndType(schema);
     setActiveForm(refinedSchema);
+  }
+
+  function cleanPattern() {
+    const cfg = { ...deployServiceConfig }
+    recursiveCleanObject(cfg);
+    setDeployServiceConfig(cfg)
+    handleCodeEditorYamlChange(cfg)
   }
 
   function toggleView() {
@@ -436,7 +448,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
             <IconButton
               aria-label="Save"
               color="primary"
-              onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, "upload")}
+              onClick={() => handleSubmitFinalPattern(yaml, "", getRandomName(), "upload")}
             >
               <FileCopyIcon />
             </IconButton>
@@ -560,7 +572,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
               </Grid>)
         }
         <Grid item xs={12} md={6} >
-          <CodeEditor yaml={yaml} saveCodeEditorChanges={saveCodeEditorChanges} />
+          <CodeEditor yaml={yaml} saveCodeEditorChanges={saveCodeEditorChanges} cleanHandler={() => cleanPattern()} />
         </Grid>
       </Grid>
       <CustomBreadCrumb
@@ -574,4 +586,3 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 
 
 export default PatternConfiguratorComponent;
-

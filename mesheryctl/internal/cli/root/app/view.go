@@ -9,7 +9,6 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -43,10 +42,7 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		// set default tokenpath for app offboard command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
+
 		application := ""
 		isID := false
 		applicationID := ""
@@ -82,12 +78,7 @@ var viewCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err = http.NewRequest("GET", url, nil)
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err = utils.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}

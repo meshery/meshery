@@ -222,19 +222,13 @@ If you want to run Meshery from IDE like Goland, VSCode. set below environment v
 PROVIDER_BASE_URLS="https://meshery.layer5.io"
 PORT=9081
 DEBUG=true
-ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10005 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009
+ADAPTER_URLS=localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10008 localhost:10009
 ```
 
 go tool argument
 
 ```shell
 -tags draft
-```
-
-update /etc/hosts
-
-```shell
-127.0.0.1 mesherylocal.layer5.io
 ```
 
 ### UI Lint Rules

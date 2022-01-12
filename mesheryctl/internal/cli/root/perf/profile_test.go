@@ -116,7 +116,7 @@ func TestProfileCmd(t *testing.T) {
 	// Run tests in list format
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			for _, mock := range tt.URLs {
 				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
@@ -166,7 +166,7 @@ func TestProfileCmd(t *testing.T) {
 	// Run tests in list format
 	for _, tt := range testsforLogrusOutputs {
 		t.Run(tt.Name, func(t *testing.T) {
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			for _, mock := range tt.URLs {
 				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
