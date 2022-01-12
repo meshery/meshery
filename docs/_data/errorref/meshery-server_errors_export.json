@@ -21,6 +21,15 @@
         "probable_cause": "The table in the database might not exist",
         "suggested_remediation": ""
       },
+      "1015": {
+        "name": "ErrFetchingPatternsCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Cannot fetch patterns",
+        "probable_cause": "There might be something wrong with the Meshery or Meshery Cloud",
+        "suggested_remediation": "Try again, if still exist, please post an issue on Meshery repository"
+      },
       "2000": {
         "name": "ErrInvalidK8SConfigCode",
         "code": "2000",
