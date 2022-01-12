@@ -824,8 +824,7 @@ class DashboardComponent extends React.Component {
                       .toLowerCase()
                       .split(" ")
                       .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")} adapter version ${adapterVersion} on port ${aa.label.split(":")[1]}`
-                }
+                      .join(" ")} - port: ${aa.label.split(":")[1] }, adapter version: ${adapterVersion}`}
               >
                 <Chip
                   label={aa.label.split(":")[0]}
