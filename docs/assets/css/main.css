@@ -18676,18 +18676,28 @@ footer {
       color: white;
       transition: color .25s;
       filter: grayscale(1) invert(0.25);
+      padding: 10px;
 }
 
 .social__link:hover {
     filter: grayscale(0) invert(0);
 }
 
+.github:hover {
+    filter: brightness(0) invert(1);
+}
+
 .social__link--calendar {
     fill: grey;
+    padding: 10px;
 }
 
 .social__link--calendar:hover {
     fill: #0073cf;
+}
+
+.footer {
+    background-color: #222222;
 }
 
 #compatibility-table{
