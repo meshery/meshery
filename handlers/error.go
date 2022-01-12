@@ -79,7 +79,7 @@ const (
 	ErrCreateDirCode            = "2150"
 	ErrInvalidRequestObjectCode = "2151"
 	ErrChangeK8sContextCode     = "2152"
-	ErrSavingUserPreferenceCode = "some_code"
+	ErrSavingUserPreferenceCode = "2172"
 	ErrGetFilterCode            = "2156"
 	ErrSaveFilterCode           = "2157"
 	ErrDecodeFilterCode         = "2158"

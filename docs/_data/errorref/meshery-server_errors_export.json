@@ -1469,6 +1469,15 @@
         "short_description": "Error failed to convert PatternFile to Cytoscape object",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "2172": {
+        "name": "ErrSavingUserPreferenceCode",
+        "code": "2172",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error saving user preference.",
+        "probable_cause": "Invalid data passed\nUnable to connect with provider",
+        "suggested_remediation": "Pass valid values for preferences\nMake sure provider supports saving user preferences\nMake sure you're connected with provider\nMake sure extension provides these preferences"
       }
     }
   }
