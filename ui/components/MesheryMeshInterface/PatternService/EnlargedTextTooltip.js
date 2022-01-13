@@ -3,10 +3,13 @@ import { Tooltip } from "@material-ui/core";
 
 const EnlargedTextTooltip = withStyles((theme) => ({
   tooltip : {
-    backgroundColor : '#f5f5f9',
-    color : 'rgba(0, 0, 0, 0.87)',
-    fontSize : theme.typography.pxToRem(15),
+    backgroundColor : ' #fcfcfc',
+    color : '#1E2117',
+    fontSize : theme.typography.pxToRem(12),
     border : '1px solid #dadde9',
+    borderRadius : "15px",
+    padding : "10px",
+
   },
 }))(Tooltip);
 
