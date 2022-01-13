@@ -457,10 +457,7 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 	if hc.Options.PrintLogs {
 		log.Info("\nMeshery Components \n--------------")
 	}
-	if err := hc.runAdapterHealthChecks(); err != nil {
-		return err
-	}
-	return nil
+	return hc.runAdapterHealthChecks()
 }
 
 // runAdapterHealthChecks executes health-checks for Adapters
