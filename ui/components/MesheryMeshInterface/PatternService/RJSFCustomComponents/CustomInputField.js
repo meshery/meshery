@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, TextField } from "@material-ui/core";
+import { IconButton, InputAdornment, TextField } from "@material-ui/core";
 import HelpOutlineIcon from "../HelpOutlineIcon";
 import EnlargedTextTooltip from "../EnlargedTextTooltip";
 import { formatString } from "../../helpers"
@@ -14,23 +14,25 @@ const CustomInputField = (props) => {
   }
   return (
     <div key={props.id} style={style}>
-      <TextField inputProps={{ style : { padding : "18px 17px 11px 20px" } }}
-        InputLabelProps={{ style : { pointerEvents : "auto", overflow : "hidden",
-          textOverflow : "ellipsis" } }}
+      <TextField
+        InputLabelProps={{ style : { pointerEvents : "auto", padding : "3px" } }}
         variant="outlined"
         size="small" autoFocus
         key={props.id}
         value={props.value}
         id={props.id}
         onChange={e => props?.onChange(e.target.value)}
-        label={<span>{prettifiedName}
-          {props.schema?.description && (
-            <EnlargedTextTooltip title={props.schema?.description}>
-              <IconButton component="span" size="small">
-                <HelpOutlineIcon />
-              </IconButton>
-            </EnlargedTextTooltip>
-          )}</span>}/>
+        label={`${prettifiedName}`}
+        InputProps={{ style : { padding : "4px 0px 5px 17px" },
+          endAdornment : (<InputAdornment position="start">
+            {props.schema?.description && (
+              <EnlargedTextTooltip title={props.schema?.description}>
+                <IconButton component="span" size="small">
+                  <HelpOutlineIcon />
+                </IconButton>
+              </EnlargedTextTooltip>
+            )}
+          </InputAdornment>),  }}/>
     </div>
   )
 }

@@ -7,8 +7,8 @@ const EnlargedTextTooltip = withStyles((theme) => ({
     color : '#1E2117',
     fontSize : theme.typography.pxToRem(12),
     border : '1px solid #dadde9',
-    borderRadius : "15px",
-    padding : "10px",
+    borderRadius : "0.9375rem",
+    padding : "0.625rem",
 
   },
 }))(Tooltip);
