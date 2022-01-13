@@ -10,6 +10,7 @@ import MemoizedCustomInputField from "./RJSFCustomComponents/CustomInputField";
 import CustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import { isEqualArr } from "../../../utils/utils"
 import handleError from '../../ErrorHandling';
+import { omitTitleFields } from "./RJSFCustomComponents/CustomInputField"
 
 const Form = withTheme(MaterialUITheme);
 
@@ -54,6 +55,14 @@ function uiSchema(jsonSchema) {
       }
     }
   })
+
+  // remove description from special fields
+  omitTitleFields.forEach(elem => {
+    uiJsonSchema[elem] = { "ui:description" : " " }
+  })
+
+  // Schema Order
+  uiJsonSchema["ui:order"] = ["name", "namespace", "*"]
 
   return uiJsonSchema
 }

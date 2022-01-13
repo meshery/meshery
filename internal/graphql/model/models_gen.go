@@ -115,6 +115,32 @@ type PageFilter struct {
 	To       *string `json:"to"`
 }
 
+type PatternLocation struct {
+	Branch *string `json:"branch"`
+	Host   *string `json:"host"`
+	Path   *string `json:"path"`
+	Type   *string `json:"type"`
+}
+
+type PatternPageResult struct {
+	Page       int              `json:"page"`
+	PageSize   int              `json:"page_size"`
+	TotalCount int              `json:"total_count"`
+	Patterns   []*PatternResult `json:"patterns"`
+}
+
+type PatternResult struct {
+	ID          string           `json:"id"`
+	Name        string           `json:"name"`
+	UserID      string           `json:"user_id"`
+	Location    *PatternLocation `json:"location"`
+	PatternFile string           `json:"pattern_file"`
+	CanSupport  bool             `json:"canSupport"`
+	Errmsg      *string          `json:"errmsg"`
+	CreatedAt   *string          `json:"created_at"`
+	UpdatedAt   *string          `json:"updated_at"`
+}
+
 type PerfPageProfiles struct {
 	Page       int            `json:"page"`
 	PageSize   int            `json:"page_size"`

@@ -20,13 +20,12 @@ Mesherylinkerd chart for deploying meshery-linkerd.
 | annotations | object | `{}` |  |
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
+| image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"layer5/meshery-linkerd:stable-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |
-| ingress.hosts[0].host | string | `"chart-example.local"` |  |
-| ingress.hosts[0].paths | list | `[]` |  |
+| ingress.hosts | list | `[{"host":"chart-example.local","paths":[]}]` |  kubernetes.io/tls-acme: "true" |
 | ingress.tls | list | `[]` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
@@ -39,8 +38,9 @@ Mesherylinkerd chart for deploying meshery-linkerd.
 | service.annotations | object | `{}` |  |
 | service.port | int | `10001` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-adapter-linkerd"` |  |
+| serviceAccount.create | bool | `false` |  |
+| serviceAccount.name | string | `""` |  If not set and create is true, a name is generated using the fullname template |
+| serviceAccountNameOverride | string | `""` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

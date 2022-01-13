@@ -80,17 +80,17 @@ func (h *Handler) handlePatternPOST(
 
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.PatternData != nil {
-		patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
-		if err != nil {
-			h.log.Error(ErrSavePattern(err))
-			http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
-			return
-		}
-
 		// Assign a name if no name is provided
 		if parsedBody.PatternData.Name == "" {
+			patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
+			if err != nil {
+				h.log.Error(ErrSavePattern(err))
+				http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
+				return
+			}
 			parsedBody.PatternData.Name = patternName
 		}
+
 		// Assign a location if no location is specified
 		if parsedBody.PatternData.Location == nil {
 			parsedBody.PatternData.Location = map[string]interface{}{
@@ -262,8 +262,9 @@ func (h *Handler) GetMesheryPatternsHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
+	tokenString := r.Context().Value("token").(string)
 
-	resp, err := provider.GetMesheryPatterns(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -275,9 +276,9 @@ func (h *Handler) GetMesheryPatternsHandler(
 		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
 		return
 	}
-	mc := newContentModifier(token, provider, prefObj, user.UserID)
+	mc := NewContentModifier(token, provider, prefObj, user.UserID)
 	//acts like a middleware, modifying the bytes lazily just before sending them back
-	err = mc.addMetadataForPatterns(&resp)
+	err = mc.AddMetadataForPatterns(&resp)
 	if err != nil {
 		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}

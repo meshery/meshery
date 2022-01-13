@@ -467,21 +467,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 	client := &http.Client{}
 
 	// Request to grab running adapters and ports
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters", url), nil)
-	if err != nil {
-		return err
-	}
-
-	// Add authentication token
-	token, err := hc.mctlCfg.GetTokenForContext(hc.mctlCfg.CurrentContext)
-	if err != nil {
-		return err
-	}
-	tokenPath, err = constants.GetTokenLocation(token)
-	if err != nil {
-		return err
-	}
-	err = utils.AddAuthDetails(req, tokenPath)
+	req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters", url), nil)
 	if err != nil {
 		if hc.Options.PrintLogs {
 			log.Info("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
@@ -526,7 +512,7 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 			}
 			continue
 		}
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, adapter.Name), nil)
+		req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, adapter.Name), nil)
 		if err != nil {
 			return err
 		}

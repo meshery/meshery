@@ -109,6 +109,11 @@ func (r *queryResolver) FetchAllResults(ctx context.Context, selector model.Page
 	return r.fetchAllResults(ctx, provider, selector)
 }
 
+func (r *queryResolver) FetchPatterns(ctx context.Context, selector model.PageFilter) (*model.PatternPageResult, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.fetchPatterns(ctx, provider, selector)
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if selector != nil {

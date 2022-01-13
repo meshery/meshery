@@ -1029,7 +1029,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *RemoteProvider) GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
@@ -1056,12 +1056,6 @@ func (l *RemoteProvider) GetMesheryPatterns(req *http.Request, page, pageSize, s
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed patterns url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		logrus.Errorf("unable to get patterns: %v", err)
-		return nil, err
-	}
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {

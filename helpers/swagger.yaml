@@ -2693,6 +2693,11 @@ definitions:
         format: date-time
         type: string
         x-go-name: UpdatedAt
+      usersExtensionPreferences:
+        additionalProperties:
+          type: object
+        type: object
+        x-go-name: UsersExtensionPreferences
     type: object
     x-go-package: github.com/layer5io/meshery/models
   PreferenceParams:

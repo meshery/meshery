@@ -19,6 +19,7 @@ Meshery Operator chart.
 |  | meshery | 2.1.2 |
 |  | meshery-app-mesh | 2.1.2 |
 |  | meshery-broker | 0.1.0 |
+|  | meshery-cilium | 0.1.0 |
 |  | meshery-consul | 2.1.2 |
 |  | meshery-cpx | 2.1.2 |
 |  | meshery-istio | 2.1.2 |
@@ -55,6 +56,8 @@ Meshery Operator chart.
 | meshery-broker.enabled | bool | `true` |  |
 | meshery-broker.fullnameOverride | string | `"meshery-broker"` |  |
 | meshery-broker.serviceAccountNameOverride | string | `"meshery-server"` |  |
+| meshery-cilium.enabled | bool | `false` |  |
+| meshery-cilium.fullnameOverride | string | `"meshery-cilium"` |  |
 | meshery-consul.enabled | bool | `true` |  |
 | meshery-consul.fullnameOverride | string | `"meshery-consul"` |  |
 | meshery-consul.serviceAccountNameOverride | string | `"meshery-server"` |  |
