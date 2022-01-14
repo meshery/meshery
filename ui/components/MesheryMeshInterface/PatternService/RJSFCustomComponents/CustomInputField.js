@@ -33,7 +33,7 @@ const CustomInputField = (props) => {
         id={props.id}
         onChange={e => props?.onChange(e.target.value)}
         label={`${prettifiedName}`}
-        InputProps={{ style : { padding : "4px 0px 5px 17px" },
+        InputProps={{ style : { padding : "2px 0px 0px 0px" },
           endAdornment : (<InputAdornment position="start">
             {props.schema?.description && (
               <EnlargedTextTooltip title={props.schema?.description}>
