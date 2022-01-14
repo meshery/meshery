@@ -11,13 +11,17 @@ list: exclude
 
 Guides to using Meshery's various features and components.
 
-{% capture tag %}
-<li><a href="{{ site.baseurl }}/guides/mesheryctl/working-with-mesheryctl">Using mesheryctl</a></li>
-<li><a href="{{ site.baseurl }}/guides/mesheryctl/configuring-autocompletion-for-mesheryctl">Configure autocompletion for mesheryctl</a></li>
-<li><a href="{{ site.baseurl }}/guides/mesheryctl/authenticate-with-meshery-via-cli">Authenticate via Meshery CLI</a></li>
-<li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
-<li><a href="{{ site.baseurl }}/guides/mesheryctl/running-system-checks-using-mesheryctl">Running system checks using Meshery CLI</a></li>
-{% endcapture %}
+{% assign sorted_guides = site.pages | sort: "type" | reverse %}
+<ul>
+  {% for item in sorted_guides %}
+  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" and item.language=="en" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+    <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
+</ul>
+
 
 {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
 
