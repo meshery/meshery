@@ -1163,6 +1163,55 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// DeleteMesheryPatterns deletes meshery patterns with the given ids and names
+func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
+	}
+
+	var reqBodyBuffer bytes.Buffer
+	if err := json.NewEncoder(&reqBodyBuffer).Encode(patterns); err != nil {
+		logrus.Error("unable to encode json: ", err)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
+
+	// Create remote provider-url
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, "delete"))
+	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), &reqBodyBuffer)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get patterns: %v", err)
+		return nil, err
+	}
+
+	// make request
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get patterns: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("pattern successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching pattern: %s", bdr)
+	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", 200, bdr)
+}
+
 func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")

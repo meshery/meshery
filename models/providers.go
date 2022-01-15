@@ -233,6 +233,7 @@ type Provider interface {
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
 	GetMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
+	DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)

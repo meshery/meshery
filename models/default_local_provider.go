@@ -498,6 +498,11 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID
 	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
+// DeleteMesheryPattern deletes a meshery pattern with the given id
+func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
+}
+
 // RemotePatternFile takes in the
 func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)

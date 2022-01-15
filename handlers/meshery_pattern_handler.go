@@ -3,12 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshery/models"
 	pCore "github.com/layer5io/meshery/models/pattern/core"
+	"github.com/sirupsen/logrus"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -307,6 +309,41 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	if err != nil {
 		h.log.Error(ErrDeletePattern(err))
 		http.Error(rw, ErrDeletePattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
+// swagger:route DELETE /api/patterns PatternsAPI idDeleteMesheryPattern
+// Handle Delete for multiple Meshery Patterns
+//
+// DeleteMultiMesheryPatternsHandler deletes patterns with the given ids
+func (h *Handler) DeleteMultiMesheryPatternsHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logrus.Error(rw, "err deleting pattern, converting bytes: ", err)
+	}
+
+	var patterns models.MesheryPatternDeleteRequestBody
+	err = json.Unmarshal([]byte(body), &patterns)
+	if err != nil {
+		logrus.Error("error marshaling patterns json: ", err)
+	}
+
+	logrus.Debugf("patterns to be deleted: %+v", patterns)
+
+	resp, err := provider.DeleteMesheryPatterns(r, patterns)
+
+	if err != nil {
+		http.Error(rw, fmt.Sprintf("failed to delete the pattern: %s", err), http.StatusInternalServerError)
 		return
 	}
 
