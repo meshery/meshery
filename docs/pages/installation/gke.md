@@ -2,6 +2,7 @@
 layout: default
 title: GKE
 permalink: installation/platforms/gke
+redirect_from: installation/platforms/gke/
 type: installation
 display-title: "false"
 language: en

@@ -2,6 +2,7 @@
 layout: page
 title: Contributing to Meshery using git
 permalink: project/contributing/contributing-gitflow
+redirect_from: project/contributing/contributing-gitflow/
 description: How to contribute to Meshery using git
 language: en
 type: project

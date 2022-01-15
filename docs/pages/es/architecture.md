@@ -2,6 +2,7 @@
 layout: page
 title: Arquitectura de Meshery 
 permalink: es/architecture
+redirect_from: es/architecture/
 language: es
 ---
 

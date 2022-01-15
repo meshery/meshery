@@ -2,6 +2,7 @@
 layout: default
 title: Vista General
 permalink: es/overview
+redirect_from: es/overview/
 language: es
 ---
 

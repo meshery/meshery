@@ -2,6 +2,7 @@
 layout: default
 title: Construcción y Lanzamiento (CI)
 permalink: es/project/build-and-release
+redirect_from: es/project/build-and-release/
 language: es
 ---
 

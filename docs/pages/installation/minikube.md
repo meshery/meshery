@@ -2,6 +2,7 @@
 layout: default
 title: Minikube
 permalink: installation/platforms/minikube
+redirect_from: installation/platforms/minikube/
 type: installation
 display-title: "false"
 language: en

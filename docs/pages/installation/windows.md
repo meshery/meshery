@@ -2,6 +2,7 @@
 layout: default
 title: Windows
 permalink: installation/platforms/windows
+redirect_from: installation/platforms/windows/
 type: installation
 display-title: "false"
 language: en

@@ -2,6 +2,7 @@
 layout: page
 title: Documentación en Español 🇲🇽
 permalink: es
+redirect_from: es/
 display-title: "false"
 language: es
 ---

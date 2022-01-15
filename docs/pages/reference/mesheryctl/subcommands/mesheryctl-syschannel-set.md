@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl system channel set
 permalink: reference/mesheryctl/system/channel/set
+redirect_from: reference/mesheryctl/system/channel/set/
 type: reference
 display-title: "false"
 language: en

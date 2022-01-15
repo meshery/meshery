@@ -2,6 +2,7 @@
 layout: page
 title: Minikube
 permalink: es/installation/platforms/minikube
+redirect_from: es/installation/platforms/minikube/
 language: es
 type: installation
 ---

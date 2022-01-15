@@ -2,6 +2,7 @@
 layout: default
 title: EKS
 permalink: installation/platforms/eks
+redirect_from: installation/platforms/eks/
 type: installation
 display-title: "false"
 language: en

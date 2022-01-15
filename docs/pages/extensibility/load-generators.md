@@ -2,6 +2,7 @@
 layout: default
 title: "Extensibility: Load Generators"
 permalink: extensibility/load-generators
+redirect_from: extensibility/load-generators/
 type: Extensibility
 #redirect_from: architecture/adapters
 abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."

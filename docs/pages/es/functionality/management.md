@@ -2,6 +2,7 @@
 layout: page
 title: Gestión del ciclo de vida
 permalink: es/functionality/lifecycle-management
+redirect_from: es/functionality/lifecycle-management/
 type: functionality
 language: es
 ---

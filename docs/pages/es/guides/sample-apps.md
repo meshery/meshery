@@ -3,6 +3,7 @@ layout: default
 title: Implementación de aplicaciones de muestra
 description: Esta guía tiene como objetivo ayudar a los usuarios a comprender mejor las aplicaciones de muestra.
 permalink: es/guides/sample-apps
+redirect_from: es/guides/sample-apps/
 language: es
 type: Guides
 ---

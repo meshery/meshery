@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl version
 permalink: reference/mesheryctl/mesheryctl/version
+redirect_from: reference/mesheryctl/mesheryctl/version/
 type: reference
 display-title: "false"
 language: en

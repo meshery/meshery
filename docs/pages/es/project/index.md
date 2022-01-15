@@ -2,6 +2,7 @@
 layout: page
 title: Proyecto
 permalink: es/project
+redirect_from: es/project/
 description: Proyecto Meshery
 language: es
 type: project

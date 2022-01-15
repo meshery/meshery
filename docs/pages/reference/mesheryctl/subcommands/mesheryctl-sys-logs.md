@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl system logs
 permalink: reference/mesheryctl/system/logs
+redirect_from: reference/mesheryctl/system/logs/
 type: reference
 display-title: "false"
 language: en

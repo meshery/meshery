@@ -2,6 +2,7 @@
 layout: default
 title: Authenticating with Meshery via CLI
 permalink: guides/mesheryctl/authenticate-with-meshery-via-cli
+redirect_from: guides/mesheryctl/authenticate-with-meshery-via-cli/
 language: en
 type: Guides
 category: mesheryctl

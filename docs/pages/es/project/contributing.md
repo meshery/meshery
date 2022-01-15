@@ -2,6 +2,7 @@
 layout: page
 title: Contribuir
 permalink: es/project/contributing
+redirect_from: es/project/contributing/
 language: es
 type: project
 ---

@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl system mesh validate
 permalink: reference/mesheryctl/mesh/validate
+redirect_from: reference/mesheryctl/mesh/validate/
 type: reference
 display-title: "false"
 language: en

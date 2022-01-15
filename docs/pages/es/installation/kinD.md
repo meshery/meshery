@@ -2,6 +2,7 @@
 layout: page
 title: KinD
 permalink: es/installation/platforms/kind
+redirect_from: es/installation/platforms/kind/
 language: es
 type: installation
 ---

@@ -2,6 +2,7 @@
 layout: page
 title: Installation Guide
 permalink: es/installation
+redirect_from: es/installation/
 language: es
 type: installation
 language: en

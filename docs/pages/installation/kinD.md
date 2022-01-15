@@ -2,6 +2,7 @@
 layout: default
 title: KinD
 permalink: installation/platforms/kind
+redirect_from: installation/platforms/kind/
 type: installation
 display-title: "false"
 language: en

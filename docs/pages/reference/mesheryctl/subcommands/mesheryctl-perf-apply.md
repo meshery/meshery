@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl perf apply
 permalink: reference/mesheryctl/perf/apply
+redirect_from: reference/mesheryctl/perf/apply/
 type: reference
 display-title: "false"
 language: en

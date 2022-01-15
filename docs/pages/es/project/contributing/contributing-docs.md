@@ -2,6 +2,7 @@
 layout: page
 title: Contributing to Meshery Docs
 permalink: es/project/contributing/contributing-docs
+redirect_from: es/project/contributing/contributing-docs/
 description: How to contribute to Meshery Docs.
 language: es
 type: project

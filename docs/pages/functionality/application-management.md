@@ -2,6 +2,7 @@
 layout: default
 title: Application Management
 permalink: functionality/application-management
+redirect_from: functionality/application-management/
 type: functionality
 language: en
 list: include

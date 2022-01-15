@@ -2,6 +2,7 @@
 layout: default
 title: Running system checks using Meshery CLI
 permalink: guides/mesheryctl/running-system-checks-using-cli
+redirect_from: guides/mesheryctl/running-system-checks-using-cli/
 language: en
 type: Guides
 category: mesheryctl

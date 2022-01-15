@@ -2,6 +2,7 @@
 layout: default
 title: Docker
 permalink: installation/platforms/docker
+redirect_from: installation/platforms/docker/
 type: installation
 display-title: "false"
 language: en

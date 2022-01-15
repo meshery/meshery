@@ -2,6 +2,7 @@
 layout: default
 title: Performance Management
 permalink: functionality/performance-management
+redirect_from: functionality/performance-management/
 type: functionality
 language: en
 list: include

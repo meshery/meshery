@@ -2,6 +2,7 @@
 layout: default
 title: "GraphQL API Reference"
 permalink: reference/graphql-apis
+redirect_from: reference/graphql-apis/
 type: Reference
 abstract: 'Meshery GraphQL API Documentation and Reference'
 ---

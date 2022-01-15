@@ -2,6 +2,7 @@
 layout: page
 title: Lanzamientos
 permalink: es/project/releases
+redirect_from: es/project/releases/
 language: es
 type: project
 ---

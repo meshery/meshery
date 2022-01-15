@@ -3,6 +3,7 @@ layout: default
 title: Using mesheryctl
 description: How to use mesheryctl
 permalink: guides/mesheryctl/using-mesheryctl
+redirect_from: guides/mesheryctl/using-mesheryctl/
 language: en
 type: Guides
 category: mesheryctl

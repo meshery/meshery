@@ -2,6 +2,7 @@
 layout: default
 title: Meshery and Service Mesh Interface (SMI)
 permalink: functionality/service-mesh-interface
+redirect_from: functionality/service-mesh-interface/
 type: functionality
 ---
 {% include alert.html type="info" title="Validating SMI Conformance with Meshery" content="<p>Meshery is SMI's 

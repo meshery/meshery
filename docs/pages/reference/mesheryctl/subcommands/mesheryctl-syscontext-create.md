@@ -2,6 +2,7 @@
 layout: default
 title: mesheryctl system context view
 permalink: reference/mesheryctl/system/context/create
+redirect_from: reference/mesheryctl/system/context/create/
 type: reference
 display-title: "false"
 language: en

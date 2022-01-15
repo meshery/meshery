@@ -3,6 +3,7 @@ layout: default
 title: Troubleshooting Meshery Installations
 description: Troubleshoot Meshery installation and deployment
 permalink: guides/troubleshooting/installation
+redirect_from: guides/troubleshooting/installation/
 type: Guides
 category: troubleshooting
 language: en

@@ -2,6 +2,7 @@
 layout: page
 title: FAQ
 permalink: es/project/faq
+redirect_from: es/project/faq/
 language: es
 ---
 

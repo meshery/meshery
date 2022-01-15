@@ -2,6 +2,7 @@
 layout: default
 title: Extensibilidad
 permalink: es/extensibility
+redirect_from: es/extensibility/
 type: extensibility
 abstract: 'La arquitectura Meshery es extensible. Meshery proporciona varios puntos de extensión para trabajar con diferentes mallas de servicio a través de <a href="extensibility#adapters">adaptadores</a>, <a href="extensibility#load-generators">generadores de carga</a> and <a href="extensibility#providers">providers</a>.'
 redirect_from: es/reference/extensibility

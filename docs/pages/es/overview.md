@@ -2,6 +2,7 @@
 layout: page
 title: Descripción General
 permalink: es/overview
+redirect_from: es/overview/
 language: es
 ---
 

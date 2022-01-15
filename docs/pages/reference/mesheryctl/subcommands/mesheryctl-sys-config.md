@@ -2,6 +2,7 @@
 layout: default
 title: meshery system config
 permalink: reference/mesheryctl/system/config
+redirect_from: reference/mesheryctl/system/config/
 type: reference
 display-title: "false"
 language: en
