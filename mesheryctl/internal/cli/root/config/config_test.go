@@ -86,10 +86,10 @@ func TestGetChannel(t *testing.T) {
 	}
 }
 
-func TestGetAdapters(t *testing.T) {
+func TestGetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
 	context := Context{"", "", "", dummy, "", ""}
-	got := context.GetAdapters()
+	got := context.GetComponents()
 	want := dummy
 	for i, j := range got {
 		if j != want[i] {
@@ -226,10 +226,10 @@ func TestSetVersion(t *testing.T) {
 	}
 }
 
-func TestSetAdapters(t *testing.T) {
+func TestSetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
 	context := Context{"", "", "", dummy, "", ""}
-	got := context.GetAdapters()
+	got := context.GetComponents()
 	want := dummy
 	for i, j := range got {
 		if j != want[i] {
