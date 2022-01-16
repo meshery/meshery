@@ -21,6 +21,15 @@
         "probable_cause": "The table in the database might not exist",
         "suggested_remediation": ""
       },
+      "1015": {
+        "name": "ErrFetchingPatternsCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Cannot fetch patterns",
+        "probable_cause": "There might be something wrong with the Meshery or Meshery Cloud",
+        "suggested_remediation": "Try again, if still exist, please post an issue on Meshery repository"
+      },
       "2000": {
         "name": "ErrInvalidK8SConfigCode",
         "code": "2000",
@@ -1460,6 +1469,15 @@
         "short_description": "Error failed to convert PatternFile to Cytoscape object",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "2172": {
+        "name": "ErrSavingUserPreferenceCode",
+        "code": "2172",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error saving user preference.",
+        "probable_cause": "Invalid data passed\nUnable to connect with provider",
+        "suggested_remediation": "Pass valid values for preferences\nMake sure provider supports saving user preferences\nMake sure you're connected with provider\nMake sure extension provides these preferences"
       }
     }
   }

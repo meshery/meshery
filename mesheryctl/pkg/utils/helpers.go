@@ -130,17 +130,19 @@ var (
 
 var CfgFile string
 
-// ListOfAdapters returns the list of adapters available
-var ListOfAdapters = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
+// TODO: add "meshery-perf" as a component
+
+// ListOfComponents returns the list of components available
+var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
-	Endpoint: EndpointProtocol + "://localhost:9081",
-	Token:    "Default",
-	Platform: "kubernetes",
-	Adapters: ListOfAdapters,
-	Channel:  "stable",
-	Version:  "latest",
+	Endpoint:   EndpointProtocol + "://localhost:9081",
+	Token:      "Default",
+	Platform:   "kubernetes",
+	Components: ListOfComponents,
+	Channel:    "stable",
+	Version:    "latest",
 }
 
 // TemplateToken is the template token provided when creating a config file
@@ -757,8 +759,8 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 
 // SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
 func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
-	// first initialize all the adapters' "enabled" field to false
-	// this matches to the adapters listed in install/kubernetes/helm/meshery/values.yaml
+	// first initialize all the components' "enabled" field to false
+	// this matches to the components listed in install/kubernetes/helm/meshery/values.yaml
 	valueOverrides := map[string]interface{}{
 		"meshery-istio": map[string]interface{}{
 			"enabled": false,
@@ -792,10 +794,10 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 		},
 	}
 
-	// set the "enabled" field to true only for the adapters listed in the context
-	for _, adapter := range ctx.GetAdapters() {
-		if _, ok := valueOverrides[adapter]; ok {
-			valueOverrides[adapter] = map[string]interface{}{
+	// set the "enabled" field to true only for the components listed in the context
+	for _, component := range ctx.GetComponents() {
+		if _, ok := valueOverrides[component]; ok {
+			valueOverrides[component] = map[string]interface{}{
 				"enabled": true,
 			}
 		}

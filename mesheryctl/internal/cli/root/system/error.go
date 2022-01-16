@@ -8,7 +8,7 @@ import (
 
 const (
 	ErrHealthCheckFailedCode        = "1000"
-	ErrInvalidAdapterCode           = "1001"
+	ErrInvalidComponentCode         = "1001"
 	ErrDownloadFileCode             = "1002"
 	ErrStopMesheryCode              = "1003"
 	ErrResetMeshconfigCode          = "1004"
@@ -30,8 +30,8 @@ func ErrHealthCheckFailed(err error) error {
 	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{"Health checks execution failed"}, []string{"Health checks execution should passed to start Meshery server successfully"})
 }
 
-func ErrInvalidAdapter(err error, obj string) error {
-	return errors.New(ErrInvalidAdapterCode, errors.Alert, []string{"Invalid adapter ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
+func ErrInvalidComponent(err error, obj string) error {
+	return errors.New(ErrInvalidComponentCode, errors.Alert, []string{"Invalid component ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDownloadFile(err error, obj string) error {

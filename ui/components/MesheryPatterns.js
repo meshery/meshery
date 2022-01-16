@@ -570,30 +570,38 @@ function MesheryPatterns({
     return response;
   }
 
-  function deletePattern(id) {
-    dataFetch(
-      `/api/pattern/${id}`,
-      {
-        method : "DELETE",
-        credentials : "include",
-      },
-      () => {
-        updateProgress({ showProgress : false });
+  async function deletePatterns(patterns) {
+    const jsonPatterns = JSON.stringify(patterns)
 
-        enqueueSnackbar("Pattern deleted.", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-        });
+
+    updateProgress({ showProgress : true })
+    dataFetch("/api/patterns/delete", {
+      method : "POST",
+      credentials : "include",
+      body : jsonPatterns
+    },
+    () => {
+      console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
+      updateProgress({ showProgress : false });
+      setTimeout(() => {
+        enqueueSnackbar(`${patterns.patterns.length} Patterns Deleted`,
+          {
+            variant : "success",
+            autoHideDuration : 2000,
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            }
+          }
+        )
         fetchPatterns(page, pageSize, search, sortOrder);
-      },
-      handleError("Failed to delete pattern")
+        resetSelectedRowData()()
+      }, 1200);
+    },
+    handleError(ACTION_TYPES.DELETE_PATTERN)
     );
   }
 
@@ -622,13 +630,17 @@ function MesheryPatterns({
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showModal(Object.keys(row.lookup).length);
-      console.log(response);
-      if (response === "Yes") {
-        const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id);
-        fid.forEach(fid => deletePattern(fid));
+      const toBeDeleted = Object.keys(row.lookup).map(idx => (
+        {
+          id : patterns[idx]?.id,
+          name : patterns[idx]?.name,
+        }
+      ))
+      let response = await showModal(toBeDeleted.length)
+      if (response.toLowerCase() === "yes") {
+        deletePatterns({ patterns : toBeDeleted })
       }
-      if (response === "No")
+      if (response.toLowerCase() === "no")
         fetchPatterns(page, pageSize, search, sortOrder);
     },
 

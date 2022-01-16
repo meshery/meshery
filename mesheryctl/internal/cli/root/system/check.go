@@ -27,11 +27,10 @@ import (
 )
 
 var (
-	preflight bool
-	pre       bool
-	adapter   bool
-	operator  bool
-	failure   int
+	preflight      bool
+	pre            bool
+	componentsFlag bool
+	failure        int
 )
 
 type HealthCheckOptions struct {
@@ -46,12 +45,10 @@ type HealthCheckOptions struct {
 	RunDockerChecks bool
 	// if RunKubernetesChecks is true we run k8s checks
 	RunKubernetesChecks bool
-	// if RunOperatorChecks is true we run operator checks
-	RunOperatorChecks bool
 	// if RunVersionChecks is true we run version checks
 	RunVersionChecks bool
-	// if RunAdapterChecks is true we run adapter checks
-	RunAdapterChecks bool
+	// if RunComponentChecks is true we run component checks
+	RunComponentChecks bool
 }
 
 type HealthChecker struct {
@@ -124,18 +121,15 @@ var checkCmd = &cobra.Command{
 				log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
 			}
 			return nil
-		} else if adapter { // if --adapter has been passed we run checks related to adapters
-			return hc.runAdapterHealthChecks()
-		} else if operator { // if --operator has been passed we run checks related to operator
-			return hc.runOperatorHealthChecks()
+		} else if componentsFlag { // if --components has been passed we run checks related to components
+			return hc.runComponentsHealthChecks()
 		}
 
 		// if no flags passed we run complete system check
-		hc.Options.RunAdapterChecks = true
+		hc.Options.RunComponentChecks = true
 		hc.Options.RunDockerChecks = true
 		hc.Options.RunKubernetesChecks = true
 		hc.Options.RunVersionChecks = true
-		hc.Options.RunOperatorChecks = true
 		return hc.Run()
 	},
 }
@@ -160,9 +154,9 @@ func (hc *HealthChecker) Run() error {
 			return err
 		}
 	}
-	// Run meshery adapter health checks
-	if hc.Options.RunAdapterChecks {
-		if err := hc.runAdapterHealthChecks(); err != nil {
+	// Run meshery component health checks
+	if hc.Options.RunComponentChecks {
+		if err := hc.runComponentsHealthChecks(); err != nil {
 			return err
 		}
 	}
@@ -458,11 +452,16 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	return nil
 }
 
-func (hc *HealthChecker) runAdapterHealthChecks() error {
+// runComponentsHealthChecks runs health checks for Adapters, Operator, and all deployments in meshery ecosystem
+func (hc *HealthChecker) runComponentsHealthChecks() error {
 	if hc.Options.PrintLogs {
-		log.Info("\nMeshery Adapters \n--------------")
+		log.Info("\nMeshery Components \n--------------")
 	}
+	return hc.runAdapterHealthChecks()
+}
 
+// runAdapterHealthChecks executes health-checks for Adapters
+func (hc *HealthChecker) runAdapterHealthChecks() error {
 	url := hc.mctlCfg.GetBaseMesheryURL()
 	client := &http.Client{}
 
@@ -585,6 +584,5 @@ func mesheryReadinessHealthCheck() (bool, error) {
 func init() {
 	checkCmd.Flags().BoolVarP(&preflight, "preflight", "", false, "Verify environment readiness to deploy Meshery")
 	checkCmd.Flags().BoolVarP(&pre, "pre", "", false, "Verify environment readiness to deploy Meshery")
-	checkCmd.Flags().BoolVarP(&adapter, "adapter", "", false, "Check status of Meshery adapters")
-	checkCmd.Flags().BoolVarP(&operator, "operator", "", false, "Check status of Meshery operators")
+	checkCmd.Flags().BoolVarP(&componentsFlag, "components", "", false, "Check status of Meshery components")
 }
