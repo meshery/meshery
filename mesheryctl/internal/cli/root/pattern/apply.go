@@ -13,7 +13,6 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -44,11 +43,6 @@ var applyCmd = &cobra.Command{
 		var err error
 		client := &http.Client{}
 
-		// set default tokenpath for command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -65,14 +59,9 @@ var applyCmd = &cobra.Command{
 			// search and fetch patterns with pattern-name
 			log.Debug("Fetching patterns")
 
-			req, err = http.NewRequest("GET", patternURL+"?search="+patternName, nil)
+			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
 				return err
-			}
-
-			err = utils.AddAuthDetails(req, tokenPath)
-			if err != nil {
-				return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
 			}
 
 			resp, err := client.Do(req)
@@ -125,14 +114,11 @@ var applyCmd = &cobra.Command{
 					if err != nil {
 						return err
 					}
-					req, err = http.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+					req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
 						return err
 					}
-					err = utils.AddAuthDetails(req, tokenPath)
-					if err != nil {
-						return err
-					}
+
 					resp, err := client.Do(req)
 					if err != nil {
 						return err
@@ -195,14 +181,11 @@ var applyCmd = &cobra.Command{
 						})
 					}
 				}
-				req, err = http.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+				req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
 					return err
 				}
-				err = utils.AddAuthDetails(req, tokenPath)
-				if err != nil {
-					return err
-				}
+
 				resp, err := client.Do(req)
 				if err != nil {
 					return err
@@ -229,12 +212,7 @@ var applyCmd = &cobra.Command{
 			}
 		}
 
-		req, err = http.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
 			return err
 		}

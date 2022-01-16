@@ -9,6 +9,8 @@ import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import MemoizedCustomInputField from "./RJSFCustomComponents/CustomInputField";
 import CustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import { isEqualArr } from "../../../utils/utils"
+import handleError from '../../ErrorHandling';
+import { omitTitleFields } from "./RJSFCustomComponents/CustomInputField"
 
 const Form = withTheme(MaterialUITheme);
 
@@ -30,9 +32,13 @@ function deleteDescriptionFromJSONSchema(jsonSchema) {
  */
 function getRefinedJsonSchema(jsonSchema, hideTitle = true) {
   let refinedSchema;
-  refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
-  refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
-  refinedSchema = addTitleToPropertiesJSONSchema(refinedSchema)
+  try {
+    refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
+    refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
+    refinedSchema = addTitleToPropertiesJSONSchema(refinedSchema)
+  } catch (e) {
+    handleError(e, "schema parsing problem", "fatal")
+  }
   return refinedSchema
 }
 
@@ -44,12 +50,19 @@ function uiSchema(jsonSchema) {
       isEqualArr(jsonSchema.properties[key].type, ["string", "null"], false)
       || isEqualArr(jsonSchema.properties[key].type, ["integer", "null"], false)
     ) {
-      console.log("into")
       uiJsonSchema[key] = {
         'ui:description' : ' '
       }
     }
   })
+
+  // remove description from special fields
+  omitTitleFields.forEach(elem => {
+    uiJsonSchema[elem] = { "ui:description" : " " }
+  })
+
+  // Schema Order
+  uiJsonSchema["ui:order"] = ["name", "namespace", "*"]
 
   return uiJsonSchema
 }

@@ -13,7 +13,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -65,10 +64,6 @@ mesheryctl perf result saturday-profile --view
 			return ErrMesheryConfig(err)
 		}
 
-		// set default tokenpath for command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
 		// Throw error if a profile name is not provided
 		if len(args) == 0 {
 			return ErrNoProfileName()
@@ -78,7 +73,7 @@ mesheryctl perf result saturday-profile --view
 		for i, arg := range args {
 			args[i] = strings.ReplaceAll(arg, " ", "%20")
 		}
-		// Merge args to get result-name
+		// Merge args to get profile-name
 		searchString = strings.Join(args, "%20")
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
@@ -161,11 +156,9 @@ func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNum
 
 	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, pageSize, pageNumber)
 
-	req, _ := http.NewRequest("GET", tempURL, nil)
-
-	err := utils.AddAuthDetails(req, tokenPath)
+	req, err := utils.NewRequest("GET", tempURL, nil)
 	if err != nil {
-		return nil, nil, ErrAttachAuthToken(err)
+		return nil, nil, err
 	}
 	resp, err := client.Do(req)
 	if err != nil {

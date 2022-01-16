@@ -127,7 +127,7 @@ func TestApplyCmd(t *testing.T) {
 					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
 			}
 
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 			b := utils.SetupLogrusGrabTesting(t)
 

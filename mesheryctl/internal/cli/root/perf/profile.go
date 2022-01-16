@@ -14,7 +14,6 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -51,11 +50,6 @@ mesheryctl perf profile test --view
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return ErrMesheryConfig(err)
-		}
-
-		// set default tokenpath for command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
 		}
 
 		// handles spaces in args if quoted args passed
@@ -135,11 +129,9 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 
 	log.Debug(url)
 
-	req, _ := http.NewRequest("GET", url, nil)
-
-	err := utils.AddAuthDetails(req, tokenPath)
+	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, nil, ErrAttachAuthToken(err)
+		return nil, nil, err
 	}
 
 	resp, err := client.Do(req)

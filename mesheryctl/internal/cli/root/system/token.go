@@ -13,8 +13,12 @@ import (
 	"github.com/spf13/viper"
 )
 
-var ctx string
-var viewAllTokens bool
+var (
+	tokenPath     string
+	ctx           string
+	viewAllTokens bool
+)
+
 var tokenCmd = &cobra.Command{
 	Use:   "token",
 	Short: "Manage Meshery user tokens",

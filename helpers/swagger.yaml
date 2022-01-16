@@ -2693,6 +2693,11 @@ definitions:
         format: date-time
         type: string
         x-go-name: UpdatedAt
+      usersExtensionPreferences:
+        additionalProperties:
+          type: object
+        type: object
+        x-go-name: UsersExtensionPreferences
     type: object
     x-go-package: github.com/layer5io/meshery/models
   PreferenceParams:
@@ -4263,7 +4268,8 @@ paths:
       - PatternsAPI
   /api/pattern/{id}:
     delete:
-      description: 'Deletes a meshery pattern with ID: id'
+      description: DeleteMultiMesheryPatternsHandler deletes patterns with the given
+        ids
       operationId: idDeleteMesheryPattern
       parameters:
       - description: id for a specific
@@ -4276,7 +4282,7 @@ paths:
       responses:
         "200":
           $ref: '#/responses/noContentWrapper'
-      summary: Handle Delete for a Meshery Pattern
+      summary: Handle Delete for multiple Meshery Patterns
       tags:
       - PatternsAPI
     get:
@@ -4318,6 +4324,25 @@ paths:
         "200":
           description: ""
       summary: Handle POST request for Pattern Deploy
+      tags:
+      - PatternsAPI
+  /api/patterns:
+    delete:
+      description: DeleteMultiMesheryPatternsHandler deletes patterns with the given
+        ids
+      operationId: idDeleteMesheryPattern
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/noContentWrapper'
+      summary: Handle Delete for multiple Meshery Patterns
       tags:
       - PatternsAPI
   /api/perf/profile:

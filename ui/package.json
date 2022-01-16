@@ -27,8 +27,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "npm run lint:fix ",
-      "git add ."
+      "eslint --fix"
     ]
   },
   "keywords": [],
@@ -104,7 +103,7 @@
     "@babel/types": "^7.16.0",
     "@types/react-relay": "^11.0.2",
     "babel-eslint": "^10.1.0",
-    "cypress": "^8.1.0",
+    "cypress": "^9.2.0",
     "eslint": "^7.31.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-google": "^0.14.0",
@@ -115,7 +114,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "http-proxy": "^1.18.1",
     "husky": "^7.0.2",
-    "lint-staged": "^11.1.1",
+    "lint-staged": "^12.1.5",
     "nodemon": "^2.0.12",
     "nyc": "^15.1.0",
     "start-server-and-test": "^1.13.1"

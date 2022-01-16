@@ -21,6 +21,7 @@ const (
 	ErrDataPlaneSubscriptionCode    = "1013"
 	ErrBrokerNotConnectedCode       = "2151"
 	ErrGettingNamespaceCode         = "1014"
+	ErrFetchingPatternsCode         = "1015"
 )
 
 var (
@@ -71,4 +72,7 @@ func ErrMesheryClient(err error) error {
 }
 func ErrGettingNamespace(err error) error {
 	return errors.New(ErrGettingNamespaceCode, errors.Alert, []string{"Cannot get available namespaces"}, []string{err.Error()}, []string{"The table in the database might not exist"}, []string{})
+}
+func ErrFetchingPatterns(err error) error {
+	return errors.New(ErrFetchingPatternsCode, errors.Alert, []string{"Cannot fetch patterns"}, []string{err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Try again, if still exist, please post an issue on Meshery repository"})
 }

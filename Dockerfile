@@ -24,7 +24,7 @@ RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
-FROM alpine:3.14.3 as seed_content
+FROM alpine:3.15 as seed_content
 RUN apk add --no-cache curl
 WORKDIR /
 # bundling filters (temporary hardcoding done below, to be removed after https://github.com/layer5io/wasm-filters/issues/38 is resolved)
@@ -58,7 +58,7 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
-FROM alpine:3.14.3 as jsonschema-util
+FROM alpine:3.15 as jsonschema-util
 RUN apk add --no-cache curl
 WORKDIR /
 RUN UTIL_VERSION=$(curl -L -s https://api.github.com/repos/layer5io/kubeopenapi-jsonschema/releases/latest | \

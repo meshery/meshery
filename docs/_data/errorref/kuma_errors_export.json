@@ -46,7 +46,7 @@
         "long_description": "Error getting MeshSpecKey config from in-memory configuration",
         "short_description": "Error configuration mesh",
         "probable_cause": "",
-        "suggested_remediation": "Reconnect the adaptor to the meshkit server"
+        "suggested_remediation": "Reconnect the adapter to the Meshery Server"
       },
       "1005": {
         "name": "ErrFetchManifestCode",
@@ -91,7 +91,7 @@
         "long_description": "Error occured while trying to install a sample application using manifests",
         "short_description": "Error with sample app operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
-        "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
+        "suggested_remediation": "Reconnect your adapter to Meshery Server to refresh the kubeclient"
       },
       "1010": {
         "name": "ErrGetKumactlCode",
@@ -161,9 +161,9 @@
         "code": "1017",
         "severity": "Alert",
         "long_description": "Kubernetes client is nil",
-        "short_description": "kubernetes client not initialized",
-        "probable_cause": "kubernetes client not initialized",
-        "suggested_remediation": "Reconnect the adaptor to Meshery server"
+        "short_description": "Kubernetes client not initialized",
+        "probable_cause": "Kubernetes client not initialized",
+        "suggested_remediation": "Reconnect the adapter to Meshery Server"
       },
       "1018": {
         "name": "ErrApplyHelmChartCode",
