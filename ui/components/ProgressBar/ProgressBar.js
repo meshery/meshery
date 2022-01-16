@@ -1,12 +1,13 @@
-import "./ProgressBarStyle.css";
-
-const ProgressDisplay = ({stepNumber,content,totalStep}) => {
+import {useStyles} from "./prgressbar-syle";
+import React from 'react'
+const ProgressDisplay = ({ stepNumber , content, totalStep}) => {
+  const classes = useStyles();
   let progress = [];
   for (let index = 0; index < totalStep; index++) {
     if(stepNumber===index){
       progress.push(
-        <li className="li active">
-          <div className="status">
+        <li className={`${classes.li} ${classes.active}`}>
+          <div className={classes.status}>
             {content}
           </div>
         </li>
@@ -14,17 +15,18 @@ const ProgressDisplay = ({stepNumber,content,totalStep}) => {
     }
     else if(stepNumber>index){
       progress.push(
-        <li className="li complete">
-          <div className="status">
+        <li className={`${classes.li} ${classes.complete}`}>
+          <div className={classes.status}>
             {content}
-          </div>
+          </div> 
         </li>
       )
     }
+    
     else{
       progress.push(
-        <li className="li">
-          <div className="status">
+        <li className={classes.li}>
+          <div className={classes.status}>
             {content}
           </div>
         </li>
@@ -32,7 +34,7 @@ const ProgressDisplay = ({stepNumber,content,totalStep}) => {
     } 
   }
     return (
-      <ul className="timeline" id="timeline">
+      <ul className={classes.timeline} id="timeline">
         {progress}
       </ul>
     );
@@ -41,12 +43,14 @@ const ProgressBar = ({stepNumber}) =>{
     return (
 
     <div>
-      <ProgressDisplay totalStep={5} stepNumber={stepNumber} content={""} />
+      <ProgressDisplay totalStep={7} stepNumber={stepNumber} content={""} />
     </div>
 
     );
 }
 
+
+export default ProgressBar
 
 
 // Example of main.js where we are calling the progress bar coponent
