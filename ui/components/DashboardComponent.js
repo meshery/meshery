@@ -549,6 +549,7 @@ class DashboardComponent extends React.Component {
   handleKubernetesClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const { configuredServer } = this.state;
     dataFetch(
       "/api/system/kubernetes/ping",
       { credentials : "same-origin",
@@ -556,7 +557,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Kubernetes connected at " + this, { variant : "success",
+          this.props.enqueueSnackbar("Kubernetes connected at "  + `${configuredServer}` , { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
