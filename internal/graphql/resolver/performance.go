@@ -104,6 +104,40 @@ func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, s
 // 	return r.Config.PerformanceChannels[profileID], nil
 // }
 
+func (r *Resolver) subscribePerfProfiles(ctx context.Context, provider models.Provider, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) { 
+	// if r.performanceProfilesChannel == nil {
+		performanceProfilesChannel := make(chan *model.PerfPageProfiles)
+	// }
+
+	if r.Config.PerformanceChannel == nil {
+		r.Config.PerformanceChannel = make(chan struct{})
+	}
+	r.Log.Info(r.Config.PerformanceChannel)
+
+	go func() {
+		r.Log.Info("PerformanceProfiles subscription started")
+
+		for {
+			select {
+			case <-r.Config.PerformanceChannel:
+				r.Log.Info("Performa")
+				profiles, err := r.getPerformanceProfiles(ctx, provider, selector)
+				r.Log.Info(profiles)
+				if err != nil {
+					r.Log.Error(ErrPerformanceProfilesSubscription(err))
+					break
+				}
+				performanceProfilesChannel <- profiles
+			case <-ctx.Done():
+				r.Log.Info("PerformanceProfiles subscription stopped")
+				return
+			}
+		}
+	}()
+
+	return performanceProfilesChannel, nil
+}
+
 func (r *Resolver) getPerformanceProfiles(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PerfPageProfiles, error) {
 	tokenString := ctx.Value("token").(string)
 

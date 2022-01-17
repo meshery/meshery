@@ -151,10 +151,9 @@ func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-ch
 	return r.listenToMeshSyncEvents(ctx, provider)
 }
 
-func (r *subscriptionResolver) SubscribePerfProfile(ctx context.Context, profileID string) (<-chan *model.MesheryResult, error) {
-	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	// return r.listenToPerformanceResult(ctx, provider, profileID)
-	panic(fmt.Errorf("not implemented"))
+func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribePerfProfiles(ctx, provider, selector)
 }
 
 func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error) {

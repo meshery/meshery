@@ -18,6 +18,7 @@ import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
+import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 
@@ -73,6 +74,26 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
    */
   useEffect(() => {
     fetchTestProfiles(page, pageSize, search, sortOrder);
+    subscribePerformanceProfiles( (res) => {
+      // @ts-ignore
+      console.log(res);
+      let result = res?.getPerformanceProfiles;
+      updateProgress({ showProgress : false });
+      if (typeof result !== "undefined") {
+        if (result) {
+          setCount(result.total_count || 0);
+          setPageSize(result.page_size || 0);
+          setTestProfiles(result.profiles || []);
+          setPage(result.page || 0);
+        }
+      }
+    },{
+      selector : {
+        pageSize : `${pageSize}`,
+        page : `${page}`,
+        search : `${encodeURIComponent(search)}`,
+        order : `${encodeURIComponent(sortOrder)}`,
+      } })
   }, [page, pageSize, search, sortOrder]);
 
   /**

@@ -471,6 +471,11 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		Result: result,
 	}
 
+	if h.config.PerformanceChannel != nil {
+		h.log.Debug("Added after data")
+		h.config.PerformanceChannel <- struct{}{}
+	}
+
 	// publish result to graphql subscription
 	// startTime := fmt.Sprintf("%v", result.TestStartTime)
 	// serverBoardConfig := fmt.Sprintf("%v", result.ServerBoardConfig)
