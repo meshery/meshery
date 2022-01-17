@@ -171,5 +171,6 @@ func resetVariables() {
 	loadGenerator = "fortio"
 	filePath = ""
 	outputFormatFlag = ""
-	expand = false
+	viewSingleProfile = false
+	viewSingleResult = false
 }

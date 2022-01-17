@@ -1,10 +1,8 @@
 package perf
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -140,38 +138,23 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		if len(args) == 0 {
 			return ErrNoProfileName()
 		}
+
+		// handles spaces in args if quoted args passed
+		for i, arg := range args {
+			args[i] = strings.ReplaceAll(arg, " ", "%20")
+		}
+		// join all args to form profile name
 		profileName = strings.Join(args, "%20")
 
 		// Check if the profile name is valid, if not prompt the user to create a new one
 		log.Debug("Fetching performance profile")
-
-		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles?search="+profileName, nil)
+		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), profileName, pageSize, pageNumber-1)
 		if err != nil {
 			return err
 		}
 
-		resp, err := client.Do(req)
-		if err != nil {
-			return ErrFailRequest(err)
-		}
-
-		var response *models.PerformanceProfilesAPIResponse
-		// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-		if resp.StatusCode != 200 {
-			return ErrFailReqStatus(resp.StatusCode)
-		}
-		defer resp.Body.Close()
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return errors.Wrap(err, utils.PerfError("failed to read response body"))
-		}
-		err = json.Unmarshal(body, &response)
-		if err != nil {
-			return ErrFailUnmarshal(err)
-		}
-
 		index := 0
-		if len(response.Profiles) == 0 {
+		if len(profiles) == 0 {
 			// if the provided performance profile does not exist, prompt the user to create a new one
 
 			// skip asking confirmation if -y flag used
@@ -191,28 +174,31 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 				return ErrNoProfileFound()
 			}
 		} else {
-			if len(response.Profiles) == 1 {
-				profileID = response.Profiles[0].ID.String()
-			} else {
-				// Multiple profiles with same name
-				index = multipleProfileConfirmation(response.Profiles)
-				profileID = response.Profiles[index].ID.String()
+			if len(profiles) == 1 { // if single performance profile found set profileID
+				profileID = profiles[0].ID.String()
+			} else { // multiple profiles found with matching name ask for profile index
+				data := profilesToStringArrays(profiles)
+				index, err = userPrompt("profile", "Enter index of the profile", data)
+				if err != nil {
+					return err
+				}
+				profileID = profiles[index].ID.String()
 			}
 			// what if user passed profile-name but didn't passed the url
 			// we use url from performance profile
 			if testURL == "" {
-				testURL = response.Profiles[index].Endpoints[0]
+				testURL = profiles[index].Endpoints[0]
 			}
 
 			// reset profile name without %20
 			// pull test configuration from the profile only if a test configuration is not provided
 			if filePath == "" {
-				profileName = response.Profiles[index].Name
-				loadGenerator = response.Profiles[index].LoadGenerators[0]
-				concurrentRequests = strconv.Itoa(response.Profiles[index].ConcurrentRequest)
-				qps = strconv.Itoa(response.Profiles[index].QPS)
-				testDuration = response.Profiles[index].Duration
-				testMesh = response.Profiles[index].ServiceMesh
+				profileName = profiles[index].Name
+				loadGenerator = profiles[index].LoadGenerators[0]
+				concurrentRequests = strconv.Itoa(profiles[index].ConcurrentRequest)
+				qps = strconv.Itoa(profiles[index].QPS)
+				testDuration = profiles[index].Duration
+				testMesh = profiles[index].ServiceMesh
 			}
 		}
 
@@ -253,7 +239,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 		log.Info("Initiating Performance test ...")
 
-		resp, err = client.Do(req)
+		resp, err := client.Do(req)
 		if err != nil {
 			return ErrFailRequest(err)
 		}
@@ -274,37 +260,6 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		log.Info("Test Completed Successfully!")
 		return nil
 	},
-}
-
-func multipleProfileConfirmation(profiles []models.PerformanceProfile) int {
-	reader := bufio.NewReader(os.Stdin)
-
-	for index, a := range profiles {
-		fmt.Printf("Index: %v\n", index)
-		fmt.Printf("Name: %v\n", a.Name)
-		fmt.Printf("ID: %s\n", a.ID.String())
-		fmt.Printf("Endpoint: %v\n", a.Endpoints[0])
-		fmt.Printf("Load Generators: %v\n", a.LoadGenerators[0])
-		fmt.Println("---------------------")
-	}
-
-	for {
-		fmt.Printf("Enter the index of profile: ")
-		response, err := reader.ReadString('\n')
-		if err != nil {
-			log.Fatal(err)
-		}
-		response = strings.ToLower(strings.TrimSpace(response))
-		index, err := strconv.Atoi(response)
-		if err != nil {
-			log.Info(err)
-		}
-		if index < 0 || index >= len(profiles) {
-			log.Info("Invalid index")
-		} else {
-			return index
-		}
-	}
 }
 
 func init() {
