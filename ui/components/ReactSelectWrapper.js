@@ -15,7 +15,6 @@ import CancelIcon from '@material-ui/icons/Cancel';
 const styles = () => ({ input : { display : 'flex', },
   valueContainer : {
     display : 'flex',
-    flexWrap : 'wrap',
     flex : 1,
     alignItems : 'center',
     overflow : 'hidden',
