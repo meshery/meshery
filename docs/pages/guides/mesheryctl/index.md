@@ -11,7 +11,7 @@ list: exclude
 
 Guides to using Meshery's various features and components.
 
-{% assign sorted_guides = site.pages | sort: "type" | reverse %}
+{% assign sorted_guides = site.pages | sort: "name" %}
 <ul>
   {% for item in sorted_guides %}
   {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" and item.language=="en" -%}
