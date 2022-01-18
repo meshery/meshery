@@ -61,12 +61,9 @@ const useStyles = makeStyles((theme) => ({
     marginLeft : 16,
     marginRight : "auto",
     padding : 0,
-    // "& .MuiAutocomplete-inputRoot" : {
-    //   padding : 0
-    // },
-    // '& .MuiInputBase-input' : {
-
-    // }
+    "& .MuiAutocomplete-inputRoot" : {
+      padding : 0
+    },
   },
   btngroup : {
     marginLeft : "auto",
@@ -408,7 +405,6 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                 <TextField
                   {...params}
                   variant="outlined"
-                  label="Configure"
                   placeholder={selectedMeshType}
                 />
               )}

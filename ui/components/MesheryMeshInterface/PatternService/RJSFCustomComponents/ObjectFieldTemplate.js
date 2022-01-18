@@ -15,9 +15,6 @@ const { canExpand } = utils;
 const useStyles = makeStyles({
   root : {
     marginTop : 10,
-    // paddingLeft: "0.6rem",
-    padding : "0.6rem",
-    border : '1px solid rgba(0, 0, 0, .125)',
   },
 });
 

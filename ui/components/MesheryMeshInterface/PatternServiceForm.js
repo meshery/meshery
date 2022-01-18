@@ -15,7 +15,6 @@ const useStyles = makeStyles(() => ({
     position : "sticky",
   },
   tabPanel : {
-    marginTop : "1.1rem",
     padding : "0px 2px"
   },
   formWrapper : {
