@@ -75,6 +75,22 @@ func TestSystemCmdIntegration(t *testing.T) {
 			ExpectError:     false,
 			TimeoutRequired: 0,
 		},
+		// start and skip opening of meshery in browser
+		{
+			Name:            "Start Meshery with Docker platform with open flag",
+			Action:          "start",
+			Args:            []string{"start", "-p", "docker", "-y", "-s"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
+		},
+		//stop
+		{
+			Name:            "Stop Meshery with Docker platform",
+			Action:          "stop",
+			Args:            []string{"stop", "-y"},
+			ExpectError:     false,
+			TimeoutRequired: 0,
+		},
 
 		// Kubernetes platform testing
 		//start
@@ -116,6 +132,22 @@ func TestSystemCmdIntegration(t *testing.T) {
 			Args:            []string{"logs"},
 			ExpectError:     false,
 			TimeoutRequired: 0,
+		},
+		//stop
+		{
+			Name:            "Stop Meshery with Kubernetes platform",
+			Action:          "stop",
+			Args:            []string{"stop", "-y"},
+			ExpectError:     false,
+			TimeoutRequired: 0,
+		},
+		//start and skip opening of meshery in browser
+		{
+			Name:            "Start Meshery with Kubernetes platform with open flag",
+			Action:          "start",
+			Args:            []string{"start", "-p", "kubernetes", "-y", "-s"},
+			ExpectError:     false,
+			TimeoutRequired: 1,
 		},
 		//stop
 		{
