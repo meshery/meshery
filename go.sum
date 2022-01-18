@@ -831,8 +831,6 @@ github.com/layer5io/meshery-operator v0.5.1/go.mod h1:fw/DI7AAHIxo2xkOmNQ9imVJDy
 github.com/layer5io/meshkit v0.2.7/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
 github.com/layer5io/meshkit v0.2.34/go.mod h1:2o6I6N7XmupMvJRb1gqlRBIf51GIUqwCzPCGarZxIRU=
 github.com/layer5io/meshkit v0.2.36/go.mod h1:2o6I6N7XmupMvJRb1gqlRBIf51GIUqwCzPCGarZxIRU=
-github.com/layer5io/meshkit v0.5.0 h1:In1ewidWd+BoTDl445D2Qla1Ypi1RkEhUUA8N9uJNrs=
-github.com/layer5io/meshkit v0.5.0/go.mod h1:2o6I6N7XmupMvJRb1gqlRBIf51GIUqwCzPCGarZxIRU=
 github.com/layer5io/meshkit v0.5.1 h1:zF4PvtxpWhq7Lw3/ysqya03hMtu3cEqWejgBFyd0tWY=
 github.com/layer5io/meshkit v0.5.1/go.mod h1:2o6I6N7XmupMvJRb1gqlRBIf51GIUqwCzPCGarZxIRU=
 github.com/layer5io/meshsync v0.1.30 h1:cREg27MlKrDFehX2d5ekZ2zUMy9WMwOpRrupb+kfcSA=

@@ -93,6 +93,12 @@ func (h *Handler) PatternFileHandler(
 
 	// If DynamicKubeClient hasn't been created yet then create one
 	if h.config.KubeClient.DynamicKubeClient == nil {
+		if prefObj.K8SConfig == nil {
+			h.log.Error(ErrInvalidK8SConfig)
+			http.Error(rw, ErrInvalidK8SConfig.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		kc, err := meshkube.New(prefObj.K8SConfig.Config)
 		if err != nil {
 			h.log.Error(ErrInvalidPattern(err))
