@@ -573,6 +573,7 @@ class DashboardComponent extends React.Component {
   handleGrafanaClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const { grafanaUrl } = this.state;
     dataFetch(
       "/api/telemetry/metrics/grafana/ping",
       { credentials : "same-origin",
@@ -580,7 +581,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Grafana connected at" + this, { variant : "success",
+          this.props.enqueueSnackbar("Grafana connected at "  + `${grafanaUrl}`, { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
