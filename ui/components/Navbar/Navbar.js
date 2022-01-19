@@ -248,34 +248,42 @@ const Navbar = ({
   const version = (
     <MesheryServerVersionContainer>
       {({ serverVersion }) => (
-        <div className={classNames(classes.version)}>
-          <Grid>
-            {getMesheryVersionText(serverVersion)}
-            <Link
-              href={`https://docs.meshery.io/project/releases${
-                serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
-              }`}
-              target="_blank"
-            >
-              <OpenInNewIcon sx={{ fontSize: theme.spacing(1.7) }} />
-            </Link>
-          </Grid>
-          <Grid>
-            {serverVersion.outdated ? (
-              <>
+        <div>
+          {isDrawerCollapsed ? (
+            <div style={{ color: "white", fontSize: "0.7rem", textAlign: "center", paddingBottom: "0.5rem" }}>
+              {serverVersion}{" "}
+            </div>
+          ) : (
+            <div className={classNames(classes.version)}>
+              <Grid>
+                {getMesheryVersionText(serverVersion)}
                 <Link
                   href={`https://docs.meshery.io/project/releases${
                     serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
                   }`}
                   target="_blank"
                 >
-                  {serverVersion.latest}
+                  <OpenInNewIcon sx={{ fontSize: theme.spacing(1.7) }} />
                 </Link>
-              </>
-            ) : (
-              "Running latest"
-            )}
-          </Grid>
+              </Grid>
+              <Grid>
+                {serverVersion.outdated ? (
+                  <>
+                    <Link
+                      href={`https://docs.meshery.io/project/releases${
+                        serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
+                      }`}
+                      target="_blank"
+                    >
+                      {serverVersion.latest}
+                    </Link>
+                  </>
+                ) : (
+                  "Running latest"
+                )}
+              </Grid>
+            </div>
+          )}
         </div>
       )}
     </MesheryServerVersionContainer>
