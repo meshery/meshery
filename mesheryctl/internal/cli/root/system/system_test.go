@@ -77,7 +77,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 		},
 		// start and skip opening of meshery in browser
 		{
-			Name:            "Start Meshery with Docker platform with open flag",
+			Name:            "Start Meshery with Docker platform with skip flag",
 			Action:          "start",
 			Args:            []string{"start", "-p", "docker", "-y", "-s"},
 			ExpectError:     false,
@@ -143,7 +143,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 		},
 		//start and skip opening of meshery in browser
 		{
-			Name:            "Start Meshery with Kubernetes platform with open flag",
+			Name:            "Start Meshery with Kubernetes platform with skip flag",
 			Action:          "start",
 			Args:            []string{"start", "-p", "kubernetes", "-y", "-s"},
 			ExpectError:     false,
