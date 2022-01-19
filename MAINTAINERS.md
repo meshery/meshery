@@ -50,3 +50,10 @@
 | ------------------ | ----------- | ----------- |
 | Lee Calcote        | leecalcote  | Layer5      |
 | Utkarsh Srivastava | utkarsh-pro | Layer5      |
+
+### Site Maintainers
+
+| Name                    | GitHub       | Affiliation |
+| ----------------------  | -----------  | ----------- |
+| Aditya Chatterjee       | warunicorn19 | Layer5      |
+| Debopriya Bhattacharjee | debo19       | Layer5      |
