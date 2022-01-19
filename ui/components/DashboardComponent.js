@@ -835,8 +835,8 @@ class DashboardComponent extends React.Component {
                     isDisabled
                       ? aa.label.split(":")[0] + ":" + aa.label.split(":")[1]
                       : adapterType.toLowerCase()
-                        .split(" ")
-                        .map((s) => s.charAt(0).toUpperCase() + s.substring(1))}
+                        .split("_")
+                        .map((s) => s.charAt(0).toUpperCase() + s.substring(1) + " ")}
                   onClick={self.handleAdapterClick(aa.value)}
                   icon={logoIcon}
                   className={classes.chip}

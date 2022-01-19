@@ -20,6 +20,6 @@ export default function subscribeControlPlaneEvents(dataCB, variables) {
     subscription : controlPlaneSubscription,
     variables : { filter : variables },
     onNext : dataCB,
-    onError : (error) => console.log(`An error occured:`, error),
+    onError : (error) => console.log(`ControlPlane Subscription error:`, error),
   });
 }
