@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -27,10 +26,6 @@ var deleteCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		// set default tokenpath for pattern delete command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
 
 		// Read file
 		fileReader, err := os.Open(file)
@@ -39,12 +34,7 @@ var deleteCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/pattern/deploy", fileReader)
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err := utils.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/pattern/deploy", fileReader)
 		if err != nil {
 			return err
 		}

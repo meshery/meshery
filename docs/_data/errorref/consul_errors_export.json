@@ -1,6 +1,6 @@
 {
   "errors_export": {
-    "component_name": "consul",
+    "component_name": "meshery-consul",
     "component_type": "adapter",
     "errors": {
       "1000": {

@@ -38,7 +38,7 @@ var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Check Meshery status",
 	Args:  cobra.NoArgs,
-	Long:  `Check status of Meshery and Meshery adapters.`,
+	Long:  `Check status of Meshery and Meshery components.`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -134,7 +134,7 @@ var statusCmd = &cobra.Command{
 			}
 
 			// List the pods in the MesheryNamespace
-			podList, err := utils.GetPods(client, utils.MesheryNamespace)
+			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
 
 			if err != nil {
 				return err
@@ -166,7 +166,7 @@ var statusCmd = &cobra.Command{
 				}
 
 				// Get the values from the pod status
-				name := utils.CleanPodNames(pod.GetName())
+				name := utils.GetCleanPodName(pod.GetName())
 				ready := fmt.Sprintf("%v/%v", containerReady, containerReady)
 				status := fmt.Sprintf("%v", podStatus.Phase)
 				restarts := fmt.Sprintf("%v", containerRestarts)

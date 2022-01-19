@@ -139,6 +139,32 @@ type ComplexityRoot struct {
 		Version     func(childComplexity int) int
 	}
 
+	PatternLocation struct {
+		Branch func(childComplexity int) int
+		Host   func(childComplexity int) int
+		Path   func(childComplexity int) int
+		Type   func(childComplexity int) int
+	}
+
+	PatternPageResult struct {
+		Page       func(childComplexity int) int
+		PageSize   func(childComplexity int) int
+		Patterns   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	PatternResult struct {
+		CanSupport  func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		Errmsg      func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Location    func(childComplexity int) int
+		Name        func(childComplexity int) int
+		PatternFile func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		UserID      func(childComplexity int) int
+	}
+
 	PerfPageProfiles struct {
 		Page       func(childComplexity int) int
 		PageSize   func(childComplexity int) int
@@ -177,6 +203,7 @@ type ComplexityRoot struct {
 		ConnectToNats          func(childComplexity int) int
 		DeployMeshsync         func(childComplexity int) int
 		FetchAllResults        func(childComplexity int, selector model.PageFilter) int
+		FetchPatterns          func(childComplexity int, selector model.PageFilter) int
 		FetchResults           func(childComplexity int, selector model.PageFilter, profileID string) int
 		GetAvailableAddons     func(childComplexity int, selector *model.MeshType) int
 		GetAvailableNamespaces func(childComplexity int) int
@@ -220,6 +247,7 @@ type QueryResolver interface {
 	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error)
 	GetPerformanceProfiles(ctx context.Context, selector model.PageFilter) (*model.PerfPageProfiles, error)
 	FetchAllResults(ctx context.Context, selector model.PageFilter) (*model.PerfPageResult, error)
+	FetchPatterns(ctx context.Context, selector model.PageFilter) (*model.PatternPageResult, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
@@ -641,6 +669,125 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OperatorStatus.Version(childComplexity), true
 
+	case "PatternLocation.branch":
+		if e.complexity.PatternLocation.Branch == nil {
+			break
+		}
+
+		return e.complexity.PatternLocation.Branch(childComplexity), true
+
+	case "PatternLocation.host":
+		if e.complexity.PatternLocation.Host == nil {
+			break
+		}
+
+		return e.complexity.PatternLocation.Host(childComplexity), true
+
+	case "PatternLocation.path":
+		if e.complexity.PatternLocation.Path == nil {
+			break
+		}
+
+		return e.complexity.PatternLocation.Path(childComplexity), true
+
+	case "PatternLocation.type":
+		if e.complexity.PatternLocation.Type == nil {
+			break
+		}
+
+		return e.complexity.PatternLocation.Type(childComplexity), true
+
+	case "PatternPageResult.page":
+		if e.complexity.PatternPageResult.Page == nil {
+			break
+		}
+
+		return e.complexity.PatternPageResult.Page(childComplexity), true
+
+	case "PatternPageResult.page_size":
+		if e.complexity.PatternPageResult.PageSize == nil {
+			break
+		}
+
+		return e.complexity.PatternPageResult.PageSize(childComplexity), true
+
+	case "PatternPageResult.patterns":
+		if e.complexity.PatternPageResult.Patterns == nil {
+			break
+		}
+
+		return e.complexity.PatternPageResult.Patterns(childComplexity), true
+
+	case "PatternPageResult.total_count":
+		if e.complexity.PatternPageResult.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PatternPageResult.TotalCount(childComplexity), true
+
+	case "PatternResult.canSupport":
+		if e.complexity.PatternResult.CanSupport == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.CanSupport(childComplexity), true
+
+	case "PatternResult.created_at":
+		if e.complexity.PatternResult.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.CreatedAt(childComplexity), true
+
+	case "PatternResult.errmsg":
+		if e.complexity.PatternResult.Errmsg == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.Errmsg(childComplexity), true
+
+	case "PatternResult.id":
+		if e.complexity.PatternResult.ID == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.ID(childComplexity), true
+
+	case "PatternResult.location":
+		if e.complexity.PatternResult.Location == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.Location(childComplexity), true
+
+	case "PatternResult.name":
+		if e.complexity.PatternResult.Name == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.Name(childComplexity), true
+
+	case "PatternResult.pattern_file":
+		if e.complexity.PatternResult.PatternFile == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.PatternFile(childComplexity), true
+
+	case "PatternResult.updated_at":
+		if e.complexity.PatternResult.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.UpdatedAt(childComplexity), true
+
+	case "PatternResult.user_id":
+		if e.complexity.PatternResult.UserID == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.UserID(childComplexity), true
+
 	case "PerfPageProfiles.page":
 		if e.complexity.PerfPageProfiles.Page == nil {
 			break
@@ -841,6 +988,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.FetchAllResults(childComplexity, args["selector"].(model.PageFilter)), true
+
+	case "Query.fetchPatterns":
+		if e.complexity.Query.FetchPatterns == nil {
+			break
+		}
+
+		args, err := ec.field_Query_fetchPatterns_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FetchPatterns(childComplexity, args["selector"].(model.PageFilter)), true
 
 	case "Query.fetchResults":
 		if e.complexity.Query.FetchResults == nil {
@@ -1347,6 +1506,35 @@ type NameSpace {
 	namespace: String!
 }
 
+# ============== Patterns =================================
+
+type PatternPageResult {
+	page: Int!
+	page_size: Int!
+	total_count: Int!
+
+	patterns: [PatternResult]
+}
+
+type PatternResult {
+	id: ID!
+	name: String!
+	user_id: String!
+	location: PatternLocation!
+	pattern_file: String!
+	canSupport: Boolean!
+	errmsg: String
+	created_at: String
+	updated_at: String
+}
+
+type PatternLocation {
+	branch: String
+	host: String
+	path: String
+	type: String
+}
+
 # ============== Perf =================================
 
 type PerfPageResult {
@@ -1473,6 +1661,9 @@ type Query {
 
 	# Query for fetching all results for profile ID
 	fetchAllResults(selector: PageFilter!): PerfPageResult!
+
+	# Query for fetching all patterns with selector
+	fetchPatterns(selector: PageFilter!): PatternPageResult!
 }
 
 # 
@@ -1574,6 +1765,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 }
 
 func (ec *executionContext) field_Query_fetchAllResults_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.PageFilter
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_fetchPatterns_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.PageFilter
@@ -3667,6 +3873,577 @@ func (ec *executionContext) _OperatorStatus_error(ctx context.Context, field gra
 	return ec.marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐError(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PatternLocation_branch(ctx context.Context, field graphql.CollectedField, obj *model.PatternLocation) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternLocation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Branch, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternLocation_host(ctx context.Context, field graphql.CollectedField, obj *model.PatternLocation) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternLocation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Host, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternLocation_path(ctx context.Context, field graphql.CollectedField, obj *model.PatternLocation) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternLocation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Path, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternLocation_type(ctx context.Context, field graphql.CollectedField, obj *model.PatternLocation) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternLocation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternPageResult_page(ctx context.Context, field graphql.CollectedField, obj *model.PatternPageResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternPageResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Page, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternPageResult_page_size(ctx context.Context, field graphql.CollectedField, obj *model.PatternPageResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternPageResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageSize, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternPageResult_total_count(ctx context.Context, field graphql.CollectedField, obj *model.PatternPageResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternPageResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternPageResult_patterns(ctx context.Context, field graphql.CollectedField, obj *model.PatternPageResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternPageResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Patterns, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.PatternResult)
+	fc.Result = res
+	return ec.marshalOPatternResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternResult_id(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternResult_name(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternResult_location(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Location, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.PatternLocation)
+	fc.Result = res
+	return ec.marshalNPatternLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternLocation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternResult_pattern_file(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PatternFile, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternResult_canSupport(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CanSupport, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternResult_errmsg(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Errmsg, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternResult_created_at(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PatternResult_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _PerfPageProfiles_page(ctx context.Context, field graphql.CollectedField, obj *model.PerfPageProfiles) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -5035,6 +5812,48 @@ func (ec *executionContext) _Query_fetchAllResults(ctx context.Context, field gr
 	res := resTmp.(*model.PerfPageResult)
 	fc.Result = res
 	return ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_fetchPatterns(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_fetchPatterns_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FetchPatterns(rctx, args["selector"].(model.PageFilter))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.PatternPageResult)
+	fc.Result = res
+	return ec.marshalNPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -7245,6 +8064,133 @@ func (ec *executionContext) _OperatorStatus(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var patternLocationImplementors = []string{"PatternLocation"}
+
+func (ec *executionContext) _PatternLocation(ctx context.Context, sel ast.SelectionSet, obj *model.PatternLocation) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, patternLocationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PatternLocation")
+		case "branch":
+			out.Values[i] = ec._PatternLocation_branch(ctx, field, obj)
+		case "host":
+			out.Values[i] = ec._PatternLocation_host(ctx, field, obj)
+		case "path":
+			out.Values[i] = ec._PatternLocation_path(ctx, field, obj)
+		case "type":
+			out.Values[i] = ec._PatternLocation_type(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var patternPageResultImplementors = []string{"PatternPageResult"}
+
+func (ec *executionContext) _PatternPageResult(ctx context.Context, sel ast.SelectionSet, obj *model.PatternPageResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, patternPageResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PatternPageResult")
+		case "page":
+			out.Values[i] = ec._PatternPageResult_page(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "page_size":
+			out.Values[i] = ec._PatternPageResult_page_size(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "total_count":
+			out.Values[i] = ec._PatternPageResult_total_count(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "patterns":
+			out.Values[i] = ec._PatternPageResult_patterns(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var patternResultImplementors = []string{"PatternResult"}
+
+func (ec *executionContext) _PatternResult(ctx context.Context, sel ast.SelectionSet, obj *model.PatternResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, patternResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PatternResult")
+		case "id":
+			out.Values[i] = ec._PatternResult_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._PatternResult_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user_id":
+			out.Values[i] = ec._PatternResult_user_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "location":
+			out.Values[i] = ec._PatternResult_location(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pattern_file":
+			out.Values[i] = ec._PatternResult_pattern_file(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "canSupport":
+			out.Values[i] = ec._PatternResult_canSupport(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "errmsg":
+			out.Values[i] = ec._PatternResult_errmsg(ctx, field, obj)
+		case "created_at":
+			out.Values[i] = ec._PatternResult_created_at(ctx, field, obj)
+		case "updated_at":
+			out.Values[i] = ec._PatternResult_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var perfPageProfilesImplementors = []string{"PerfPageProfiles"}
 
 func (ec *executionContext) _PerfPageProfiles(ctx context.Context, sel ast.SelectionSet, obj *model.PerfPageProfiles) graphql.Marshaler {
@@ -7591,6 +8537,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_fetchAllResults(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "fetchPatterns":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_fetchPatterns(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -8353,6 +9313,30 @@ func (ec *executionContext) unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmeshe
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNPatternLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternLocation(ctx context.Context, sel ast.SelectionSet, v *model.PatternLocation) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PatternLocation(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPatternPageResult2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx context.Context, sel ast.SelectionSet, v model.PatternPageResult) graphql.Marshaler {
+	return ec._PatternPageResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx context.Context, sel ast.SelectionSet, v *model.PatternPageResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PatternPageResult(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNPerfPageProfiles2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx context.Context, sel ast.SelectionSet, v model.PerfPageProfiles) graphql.Marshaler {
 	return ec._PerfPageProfiles(ctx, sel, &v)
 }
@@ -8926,6 +9910,54 @@ func (ec *executionContext) unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlaye
 	}
 	res, err := ec.unmarshalInputOperatorStatusInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOPatternResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx context.Context, sel ast.SelectionSet, v []*model.PatternResult) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOPatternResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOPatternResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx context.Context, sel ast.SelectionSet, v *model.PatternResult) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PatternResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOPerfProfile2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx context.Context, sel ast.SelectionSet, v []*model.PerfProfile) graphql.Marshaler {
