@@ -4,7 +4,7 @@ const { parse } = require("url");
 const next = require("next");
 const detect = require('detect-port');
 
-var port = parseInt(process.env.PORT, 10) || 4000
+var port = parseInt(process.env.PORT, 10) || 4001
 detect(port, (err, _port) => {
   while (port !== _port) {
     port = port + 1;
