@@ -156,6 +156,11 @@ func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, select
 	return r.subscribePerfProfiles(ctx, provider, selector)
 }
 
+func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribePerfResults(ctx, provider, selector, profileID)
+}
+
 func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error) {
 	return r.subscribeBrokerConnection(ctx)
 }
@@ -179,6 +184,6 @@ type subscriptionResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector *model.PageFilter) (<-chan *model.PerfPageResult, error) {
+func (r *subscriptionResolver) SubscribePerfResult(ctx context.Context, id string) (<-chan *model.MesheryResult, error) {
 	panic(fmt.Errorf("not implemented"))
 }

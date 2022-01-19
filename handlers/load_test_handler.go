@@ -472,8 +472,11 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 	}
 
 	if h.config.PerformanceChannel != nil {
-		h.log.Debug("Added after data")
 		h.config.PerformanceChannel <- struct{}{}
+	}
+
+	if h.config.PerformanceResultChannel != nil {
+		h.config.PerformanceResultChannel <- struct{}{}
 	}
 
 	// publish result to graphql subscription

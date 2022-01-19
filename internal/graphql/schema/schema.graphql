@@ -442,6 +442,9 @@ type Subscription {
 	# Listen to changes in Performance Profiles
 	subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
 
+	# Listen to all results for profile ID
+	subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
+
 	# Listen to changes in Broker (NATS) Connection
 	subscribeBrokerConnection: Boolean!
 

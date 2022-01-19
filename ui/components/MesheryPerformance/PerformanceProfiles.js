@@ -74,11 +74,10 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
    */
   useEffect(() => {
     fetchTestProfiles(page, pageSize, search, sortOrder);
-    subscribePerformanceProfiles( (res) => {
+    const subscription = subscribePerformanceProfiles( (res) => {
       // @ts-ignore
       console.log(res);
-      let result = res?.getPerformanceProfiles;
-      updateProgress({ showProgress : false });
+      let result = res?.subscribePerfProfiles;
       if (typeof result !== "undefined") {
         if (result) {
           setCount(result.total_count || 0);
@@ -94,6 +93,9 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
         search : `${encodeURIComponent(search)}`,
         order : `${encodeURIComponent(sortOrder)}`,
       } })
+    return () => {
+      subscription.dispose();
+    };
   }, [page, pageSize, search, sortOrder]);
 
   /**
@@ -316,7 +318,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
             </Paper>
           }
           handleClose={() => {
-            fetchTestProfiles(page, pageSize, search, sortOrder);
             setProfileForModal(undefined);
           }}
         />

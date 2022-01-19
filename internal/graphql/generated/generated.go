@@ -225,6 +225,7 @@ type ComplexityRoot struct {
 		ListenToOperatorState     func(childComplexity int) int
 		SubscribeBrokerConnection func(childComplexity int) int
 		SubscribePerfProfiles     func(childComplexity int, selector model.PageFilter) int
+		SubscribePerfResults      func(childComplexity int, selector model.PageFilter, profileID string) int
 	}
 }
 
@@ -256,6 +257,7 @@ type SubscriptionResolver interface {
 	ListenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error)
 	ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error)
 	SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error)
+	SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error)
 	SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error)
 }
 
@@ -1182,6 +1184,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.SubscribePerfProfiles(childComplexity, args["selector"].(model.PageFilter)), true
 
+	case "Subscription.subscribePerfResults":
+		if e.complexity.Subscription.SubscribePerfResults == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_subscribePerfResults_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.SubscribePerfResults(childComplexity, args["selector"].(model.PageFilter), args["profileID"].(string)), true
+
 	}
 	return 0, false
 }
@@ -1707,6 +1721,9 @@ type Subscription {
 	# Listen to changes in Performance Profiles
 	subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
 
+	# Listen to all results for profile ID
+	subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
+
 	# Listen to changes in Broker (NATS) Connection
 	subscribeBrokerConnection: Boolean!
 
@@ -1965,6 +1982,30 @@ func (ec *executionContext) field_Subscription_subscribePerfProfiles_args(ctx co
 		}
 	}
 	args["selector"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_subscribePerfResults_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.PageFilter
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["profileID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileID"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["profileID"] = arg1
 	return args, nil
 }
 
@@ -6225,6 +6266,58 @@ func (ec *executionContext) _Subscription_subscribePerfProfiles(ctx context.Cont
 	}
 }
 
+func (ec *executionContext) _Subscription_subscribePerfResults(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Subscription_subscribePerfResults_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().SubscribePerfResults(rctx, args["selector"].(model.PageFilter), args["profileID"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *model.PerfPageResult)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
 func (ec *executionContext) _Subscription_subscribeBrokerConnection(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8596,6 +8689,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_listenToMeshSyncEvents(ctx, fields[0])
 	case "subscribePerfProfiles":
 		return ec._Subscription_subscribePerfProfiles(ctx, fields[0])
+	case "subscribePerfResults":
+		return ec._Subscription_subscribePerfResults(ctx, fields[0])
 	case "subscribeBrokerConnection":
 		return ec._Subscription_subscribeBrokerConnection(ctx, fields[0])
 	default:

@@ -30,7 +30,7 @@ subscription PerformanceProfilesSubscription($selector: PageFilter!) {
 }
 `;
 export default function subscribePerformanceProfiles(dataCB, variables) {
-  requestSubscription(environment, {
+  return requestSubscription(environment, {
     subscription : performanceProfilesSubscription,
     variables : variables,
     onNext : dataCB,
