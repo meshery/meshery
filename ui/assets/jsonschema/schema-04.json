@@ -90,7 +90,7 @@
         "required": { "$ref": "#/definitions/stringArray" },
         "additionalProperties": {
             "anyOf": [
-                { "type": "string" },
+                { "type": "boolean" },
                 { "$ref": "#" }
             ],
             "default": {}
