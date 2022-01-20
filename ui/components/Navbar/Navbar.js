@@ -417,7 +417,7 @@ const Navbar = ({
         <List disablePadding className={classNames(classes.hideScrollbar)}>
           <div className={classname}>
             <ArrowLeftIcon
-              style={{ verticalAlign: "middle", margin: "0.5rem 0", color: "#263238", fontSize: "1.4rem" }}
+              style={{ verticalAlign: "middle", margin: "0.5rem 0", fontSize: "1.4rem" }}
               onClick={() => toggleMiniDrawer()}
               alt="Sidebar collapse toggle icon"
             />

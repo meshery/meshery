@@ -215,11 +215,13 @@ export const useStyles = makeStyles((theme) => ({
       "0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)",
     borderRadius: "0 5px 5px 0",
     backgroundColor: "#FFFFFF",
+    color: "#263238",
     position: "fixed",
     cursor: "pointer",
     bottom: "12%",
     left: "16rem",
     width: "auto",
+
     transition: theme.transitions.create("left", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -235,7 +237,8 @@ export const useStyles = makeStyles((theme) => ({
     boxShadow:
       "-2px 0px 0px -1px rgb(0 0 0 / 20%), 2px 0px 0px 0px rgb(0 0 0 / 14%), -1px 0px 0px 0px rgb(0 0 0 / 12%)",
     borderRadius: "5px 0 0 5px",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#263238",
+    color: "#ffffff",
     position: "fixed",
     cursor: "pointer",
     width: "auto",
@@ -244,8 +247,8 @@ export const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     transform: "rotate(180deg)",
-    bottom: "12%",
-    left: "4.5rem",
+    bottom: "6%",
+    left: "1.5rem",
     zIndex: "1400",
     "&:hover": {
       opacity: 1,
@@ -281,6 +284,7 @@ export const useStyles = makeStyles((theme) => ({
   btnGrpMarginRight: {
     marginRight: 4,
     alignItems: "center",
+    marginBottom: "3.5rem",
   },
   helpIcon: {
     color: "#fff",
