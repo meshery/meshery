@@ -213,7 +213,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               </Button>
             </div>
           )}
-          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingLeft : "1rem" }}>
+          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingLeft : "1rem" }} onClick={() => setSearch("") }>
             <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
         </div>

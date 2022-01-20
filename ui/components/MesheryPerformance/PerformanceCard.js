@@ -123,7 +123,7 @@ function PerformanceCard({
       {/* BACK PART */}
       <>
         <Grid
-          style={{ marginBottom : "0.25rem" }}
+          style={{ marginBottom : "0.25rem", minHeight : "6rem" }}
           container
           spacing={1}
           alignContent="space-between"
