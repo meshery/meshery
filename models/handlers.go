@@ -141,7 +141,7 @@ type HandlerConfig struct {
 
 	BrokerEndpointURL *string
 
-	PerformanceChannel chan struct{}
+	PerformanceChannel       chan struct{}
 	PerformanceResultChannel chan struct{}
 }
 

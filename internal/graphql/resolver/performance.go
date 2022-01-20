@@ -105,11 +105,10 @@ func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, s
 // }
 
 func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Provider, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error) {
-
 	if r.Config.PerformanceResultChannel == nil {
 		r.Config.PerformanceResultChannel = make(chan struct{})
 	}
-	
+
 	perfResultChannel := make(chan *model.PerfPageResult)
 
 	go func() {
@@ -125,7 +124,7 @@ func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Pro
 					break
 				}
 				perfResultChannel <- results
-			
+
 			case <-ctx.Done():
 				r.Log.Info("Performance Result subscription stopped")
 				return
@@ -134,10 +133,9 @@ func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Pro
 	}()
 
 	return perfResultChannel, nil
-
 }
 
-func (r *Resolver) subscribePerfProfiles(ctx context.Context, provider models.Provider, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) { 
+func (r *Resolver) subscribePerfProfiles(ctx context.Context, provider models.Provider, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {
 	performanceProfilesChannel := make(chan *model.PerfPageProfiles)
 
 	if r.Config.PerformanceChannel == nil {
