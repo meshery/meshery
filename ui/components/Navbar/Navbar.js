@@ -27,8 +27,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
 import { MesheryServerVersionContainer } from "@/features/mesheryComponents";
 import { Grid } from "@mui/material";
-import { faChevronCircleLeft } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 
 const Navbar = ({
   isDrawerCollapsed,
@@ -417,11 +416,8 @@ const Navbar = ({
       >
         <List disablePadding className={classNames(classes.hideScrollbar)}>
           <div className={classname}>
-            <FontAwesomeIcon
-              icon={faChevronCircleLeft}
-              fixedWidth
-              color="#e7e7e7"
-              size="2x"
+            <ArrowLeftIcon
+              style={{ verticalAlign: "middle", margin: "0.5rem 0", color: "#263238", fontSize: "1.4rem" }}
               onClick={() => toggleMiniDrawer()}
               alt="Sidebar collapse toggle icon"
             />

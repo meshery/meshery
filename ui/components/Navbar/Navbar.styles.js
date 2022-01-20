@@ -211,44 +211,47 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   collapseButtonWrapper: {
+    boxShadow:
+      "0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)",
+    borderRadius: "0 5px 5px 0",
+    backgroundColor: "#FFFFFF",
     position: "fixed",
     cursor: "pointer",
     bottom: "12%",
-    left: "225px",
+    left: "16rem",
     width: "auto",
-    "margin-left": "auto",
-    opacity: "0.8",
-    transition: "opacity 200ms linear",
+    transition: theme.transitions.create("left", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
     "&:hover": {
       opacity: 1,
-      background: "transparent",
     },
     "&:focus": {
       opacity: 1,
-      background: "transparent",
     },
   },
   collapseButtonWrapperRotated: {
+    boxShadow:
+      "-2px 0px 0px -1px rgb(0 0 0 / 20%), 2px 0px 0px 0px rgb(0 0 0 / 14%), -1px 0px 0px 0px rgb(0 0 0 / 12%)",
+    borderRadius: "5px 0 0 5px",
+    backgroundColor: "#FFFFFF",
     position: "fixed",
     cursor: "pointer",
     width: "auto",
-    "margin-left": "auto",
-    marginRight: theme.spacing(1),
-    opacity: "0.8",
-    transition: "opacity 200ms linear",
+    transition: theme.transitions.create("left", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
     transform: "rotate(180deg)",
-    justifyContent: "center",
-    alignSelf: "baseline",
     bottom: "12%",
-    left: "40px",
+    left: "4.5rem",
     zIndex: "1400",
     "&:hover": {
       opacity: 1,
-      background: "transparent",
     },
     "&:focus": {
       opacity: 1,
-      background: "transparent",
     },
   },
   noPadding: {
