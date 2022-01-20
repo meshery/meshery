@@ -327,17 +327,15 @@ function MesheryTestProfiles({
 
   return (
     <NoSsr>
-      {testProfiles?.length ? (
-        <MuiThemeProvider theme={getMuiTheme()}>
-          <MUIDataTable
-            title={<div className={classes.tableHeader}>Profiles</div>}
-            data={testProfiles}
-            columns={columns}
-            // @ts-ignore
-            options={options}
-          />
-        </MuiThemeProvider>
-      ) : null}
+      <MuiThemeProvider theme={getMuiTheme()}>
+        <MUIDataTable
+          title={<div className={classes.tableHeader}>Profiles</div>}
+          data={testProfiles}
+          columns={columns}
+          // @ts-ignore
+          options={options}
+        />
+      </MuiThemeProvider>
     </NoSsr>
   );
 }

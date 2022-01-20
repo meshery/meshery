@@ -103,7 +103,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
         // @ts-ignore
         let result = res?.getPerformanceProfiles;
         updateProgress({ showProgress : false });
-        if (typeof result !== "undefined" && result.profiles.length !== 0) {
+        if (typeof result !== "undefined" ) {
           if (result) {
             setCount(result.total_count || 0);
             setPageSize(result.page_size || 0);
@@ -183,6 +183,21 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
             paddingLeft : "1rem"
           }}
         >
+          {testProfiles.length == 0 && viewType === "table" &&(
+            <div style={{ width : "fit-content", alignSelf : "flex-start" }}>
+              <Button
+                aria-label="Add Performance Profile"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={() => setProfileForModal({})}
+              >
+                <AddIcon />
+            Add Performance Profile
+              </Button>
+            </div>
+          )}
           {testProfiles.length > 0 && (
             <div style={{ width : "fit-content", alignSelf : "flex-start" }}>
               <Button
@@ -230,7 +245,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               fetchTestProfiles={fetchTestProfiles}
             />
           )}
-        {testProfiles.length == 0 && (
+        {testProfiles.length == 0 && viewType === "grid" &&(
           <Paper style={{ padding : "0.5rem" }}>
             <div
               style={{
