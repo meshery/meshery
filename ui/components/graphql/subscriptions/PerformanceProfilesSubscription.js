@@ -34,6 +34,6 @@ export default function subscribePerformanceProfiles(dataCB, variables) {
     subscription : performanceProfilesSubscription,
     variables : variables,
     onNext : dataCB,
-    onError : (error) => console.log(`An error occured:`, error),
+    onError : (error) => console.log(`requestSubscription error:`, error),
   });
 }
