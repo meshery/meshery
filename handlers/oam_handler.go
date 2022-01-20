@@ -130,6 +130,26 @@ func (h *Handler) PatternFileHandler(
 	fmt.Fprintf(rw, "%s", msg)
 }
 
+// swagger:route GET /api/experimental/oam/{type} PatternsAPI idGetOAMRegister
+// Handles GET requests for list of OAM objects
+//
+// Returns a list of workloads/traits/scopes by given type in the URL
+//
+// {type} being of either trait, scope, workload; registration of adapter capabilities.
+//
+// responses:
+// 	200:
+
+// swagger:route POST /api/experimental/oam/{type} PatternsAPI idPostOAMRegister
+// Handles POST requests for adding OAM objects
+//
+// Adding a workloads/traits/scopes by given type in the URL
+//
+// {type} being of either trait, scope, workload; registration of adapter capabilities.
+//
+// responses:
+// 	200:
+
 // OAMRegisterHandler handles OAM registry related operations
 //
 // These operations can be:
@@ -156,6 +176,16 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 		h.GETOAMRegisterHandler(typ, rw, r.URL.Query().Get("trim") == "true")
 	}
 }
+
+// swagger:route GET /api/oam/{type}/{name} PatternsAPI idOAMComponentDetails
+// Handles GET requests for component details for OAM objects
+//
+// Returns component details of a workload/trait/scope by given name in the URL
+//
+// {type} being of either trait, scope, workload; registration of adapter capabilities.
+//
+// responses:
+// 	200:
 
 func (h *Handler) OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request) {
 	typ := mux.Vars(r)["type"]
@@ -196,6 +226,16 @@ func (h *Handler) OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Req
 	}
 }
 
+// swagger:route GET /api/oam/{type}/{name}/{id} PatternsAPI idOAMComponentDetailByID
+// Handles GET requests for component details for OAM objects
+//
+// Returns details of a workload/trait/scope by given name and id in the URL
+//
+// {type} being of either trait, scope, workload; registration of adapter capabilities.
+//
+// responses:
+// 	200:
+
 func (h *Handler) OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request) {
 	typ := mux.Vars(r)["type"]
 
@@ -232,7 +272,7 @@ func (h *Handler) OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.
 	}
 }
 
-// swagger:route POST /api/oam/{type} PatternsAPI idPOSTOAMMesheryPattern
+// swagger:route POST /api/oam/{type} PatternsAPI idPOSTOAMRegister
 // Handles registering OMA objects
 //
 // Adding a workload/trait/scope
