@@ -1,6 +1,6 @@
 // @ts-check
 import {
-  Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
   TableCell, Tooltip, Typography
 } from "@material-ui/core";
 import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
@@ -87,10 +87,24 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function CustomToolbar(onClick, urlOnClick) {
+function CustomToolbar(onClick, urlOnClick, setSelectedPattern) {
   return function Toolbar() {
     return (
       <>
+        <label htmlFor="create-pattern">
+          <Tooltip title="Create Pattern">
+            <IconButton
+              aria-label="Create Pattern"
+              component="span"
+              onClick={() => setSelectedPattern({
+                pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                show : true,
+              })}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        </label>
         <label htmlFor="upload-button">
           <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
           <Tooltip title="Upload Pattern">
@@ -625,7 +639,7 @@ function MesheryPatterns({
         text : "pattern(s) selected"
       }
     },
-    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
+    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler, setSelectedPattern),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
@@ -708,22 +722,6 @@ function MesheryPatterns({
           />
         </MuiThemeProvider>
       }
-      {!selectedPattern.show && <div className={classes.createButton}>
-        <Button
-          aria-label="Add Pattern"
-          variant="contained"
-          color="primary"
-          size="large"
-          // @ts-ignore
-          onClick={() => setSelectedPattern({
-            pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-            show : true,
-          })}
-        >
-          <AddIcon />
-          Create Pattern
-        </Button>
-      </div>}
       <PromptComponent ref={modalRef} />
     </NoSsr>
   );
