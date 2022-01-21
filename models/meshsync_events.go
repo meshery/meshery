@@ -31,7 +31,6 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 }
 
 func (mh *MeshsyncDataHandler) Run() error {
-
 	storeSubscriptionStatusChan := make(chan bool)
 
 	go mh.subsribeToStoreUpdates(storeSubscriptionStatusChan)
@@ -70,9 +69,7 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 			mh.log.Error(err)
 			continue
 		}
-
 	}
-
 }
 
 func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
@@ -88,7 +85,6 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 	statusChan <- true
 
 	for storeUpdate := range storeChan {
-
 		if storeUpdate.EventType == broker.ErrorEvent {
 			mh.log.Error(storeUpdate.Object.(error))
 			continue
@@ -111,13 +107,11 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 				continue
 			}
 		}
-
 	}
 }
 
 // derives the state of the cluster from the events and persists it in the database
 func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) error {
-
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 
@@ -153,7 +147,6 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 }
 
 func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Object) error {
-
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 
