@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/internal/graphql"
@@ -22,6 +23,7 @@ import (
 	"github.com/layer5io/meshkit/utils/broadcast"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/sirupsen/logrus"
 
@@ -38,7 +40,9 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL = "https://meshery.layer5.io"
+	DefaultProviderURL           = "https://meshery.layer5.io"
+	MesherySeverBrokerConnection = "meshery-server"
+	MesheryNamespace             = "meshery"
 )
 
 func main() {
@@ -259,7 +263,46 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	go func() {
-		logrus.Infof("Meshery Server listening on: %d", port)
+		kclient, err := mesherykube.New(nil)
+		if err != nil {
+			log.Error(err)
+		}
+		mesheryclient, err := operatorClient.New(&kclient.RestConfig)
+		if err != nil {
+			if mesheryclient == nil {
+				log.Error(model.ErrMesheryClient(nil))
+			}
+			log.Error(model.ErrMesheryClient(err))
+		}
+		broker, err := mesheryclient.CoreV1Alpha1().Brokers(MesheryNamespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
+		if err != nil || broker.Status.Endpoint.External == "" {
+			log.Error(err)
+		}
+		brokerEndpoint := helpers.GetBrokerEndpoint(kclient, broker)
+		// This connection is unique to meshery server.
+		// We use different conections for graphql subscriptions and
+		// other use cases
+		brkrConn, err := nats.New(nats.Options{
+			URLS:           []string{brokerEndpoint},
+			ConnectionName: MesherySeverBrokerConnection,
+			Username:       "",
+			Password:       "",
+			ReconnectWait:  2 * time.Second,
+			MaxReconnect:   60,
+		})
+		if err != nil {
+			log.Error(err)
+		}
+		log.Info("Connected to broker at: ", brokerEndpoint)
+		meshsyncDataHandler := models.NewMeshsyncDataHandler(brkrConn, dbHandler, log)
+		err = meshsyncDataHandler.Run()
+		if err != nil {
+			log.Error(err)
+		}
+	}()
+
+	go func() {
+		logrus.Infof("Starting Server listening on :%d", port)
 		if err := r.Run(); err != nil {
 			logrus.Fatalf("ListenAndServe Error: %v", err)
 		}
