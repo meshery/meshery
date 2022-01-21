@@ -11,6 +11,7 @@ import (
 
 const (
 	MeshsyncStoreUpdatesSubject = "meshery-server.meshsync.store"
+	MeshsyncRequestSubject      = "meshery.meshsync.request"
 )
 
 // TODO: Create proper error codes for the functionalities this struct implements
@@ -31,15 +32,19 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 
 func (mh *MeshsyncDataHandler) Run() error {
 
+	storeSubscriptionStatusChan := make(chan bool)
+
+	go mh.subsribeToStoreUpdates(storeSubscriptionStatusChan)
+	go mh.subscribeToMeshsyncEvents()
 	err := mh.removeStaleObjects()
 	if err != nil {
 		return err
 	}
-	go mh.subsribeToStoreUpdates()
-	go mh.subscribeToMeshsyncEvents()
-	err = mh.requestMeshsyncStore()
-	if err != nil {
-		return err
+	if <-storeSubscriptionStatusChan {
+		err = mh.requestMeshsyncStore()
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -70,14 +75,17 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 
 }
 
-func (mh *MeshsyncDataHandler) subsribeToStoreUpdates() {
+func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 	storeChan := make(chan *broker.Message)
 	mh.log.Info("subscribing to store updates from meshsync on NATS subject: ", MeshsyncStoreUpdatesSubject)
 	err := mh.broker.SubscribeWithChannel(MeshsyncStoreUpdatesSubject, "", storeChan)
 	if err != nil {
 		mh.log.Error(err)
+		statusChan <- false
 		return
 	}
+
+	statusChan <- true
 
 	for storeUpdate := range storeChan {
 
@@ -195,11 +203,11 @@ func (mh *MeshsyncDataHandler) removeStaleObjects() error {
 }
 
 func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
-	err := mh.broker.Publish("meshery.meshsync.request", &broker.Message{
+	err := mh.broker.Publish(MeshsyncRequestSubject, &broker.Message{
 		Request: &broker.RequestObject{
 			Entity: "informer-store",
 			// TODO: Name of the Reply subject should be taken from some sort of configuration
-			Payload: struct{ Reply string }{Reply: "meshery-server.meshsync.store"},
+			Payload: struct{ Reply string }{Reply: MeshsyncStoreUpdatesSubject},
 		}})
 	if err != nil {
 		return err
