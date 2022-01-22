@@ -92,30 +92,28 @@ function CustomToolbar(onClick, urlOnClick, setSelectedPattern) {
     return (
       <>
         <label htmlFor="upload-button">
-          <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
           <Tooltip title="Upload Pattern">
-            <IconButton aria-label="Upload" component="span">
+            <IconButton aria-label="Upload Button" component="span">
+              <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
               <UploadIcon />
             </IconButton>
           </Tooltip>
         </label>
-        <label htmlFor="url-upload-button">
-          <URLUploader onSubmit={urlOnClick} />
-        </label>
-        <label htmlFor="create-pattern">
-          <Tooltip title="Create Pattern">
-            <IconButton
-              aria-label="Create Pattern"
-              component="span"
-              onClick={() => setSelectedPattern({
-                pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-                show : true,
-              })}
-            >
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
-        </label>
+
+        <URLUploader aria-label="URL upload button" onSubmit={urlOnClick} />
+
+        <Tooltip title="Create Pattern">
+          <IconButton
+            aria-label="Create Pattern"
+            component="span"
+            onClick={() => setSelectedPattern({
+              pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+              show : true,
+            })}
+          >
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
       </>
     );
   };
