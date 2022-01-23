@@ -1,6 +1,6 @@
 // @ts-check
 import {
-  Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
   TableCell, Tooltip, Typography
 } from "@material-ui/core";
 import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
@@ -47,7 +47,7 @@ const styles = (theme) => ({
   },
   createButton : {
     display : "flex",
-    justifyContent : "center",
+    justifyContent : "flex-start",
     alignItems : "center",
     margin : "1rem"
   }
@@ -87,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function CustomToolbar(onClick, urlOnClick, setSelectedPattern) {
+function CustomToolbar(onClick, urlOnClick) {
   return function Toolbar() {
     return (
       <>
@@ -101,19 +101,6 @@ function CustomToolbar(onClick, urlOnClick, setSelectedPattern) {
         </label>
 
         <URLUploader aria-label="URL upload button" onSubmit={urlOnClick} />
-
-        <Tooltip title="Create Pattern">
-          <IconButton
-            aria-label="Create Pattern"
-            component="span"
-            onClick={() => setSelectedPattern({
-              pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-              show : true,
-            })}
-          >
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
       </>
     );
   };
@@ -637,7 +624,7 @@ function MesheryPatterns({
         text : "pattern(s) selected"
       }
     },
-    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler, setSelectedPattern),
+    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
@@ -708,6 +695,22 @@ function MesheryPatterns({
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
+      {!selectedPattern.show && <div className={classes.createButton}>
+        <Button
+          aria-label="Add Pattern"
+          variant="contained"
+          color="primary"
+          size="large"
+          // @ts-ignore
+          onClick={() => setSelectedPattern({
+            pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+            show : true,
+          })}
+        >
+          <AddIcon />
+           Create Pattern
+        </Button>
+      </div>}
       {
         !selectedPattern.show && <MuiThemeProvider theme={getMuiTheme()}>
           <MUIDataTable
