@@ -61,24 +61,6 @@ class MesherySMIResults extends Component {
       ))
     }
 
-    // handleError = (error) => {
-    //   this.props.updateProgress({ showProgress : false });
-    //   // console.log(`error fetching results: ${error}`);
-    //   const self = this;
-    //   this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, { variant : 'error',
-    //     action : (key) => (
-    //       <IconButton
-    //         key="close"
-    //         aria-label="Close"
-    //         color="inherit"
-    //         onClick={() => self.props.closeSnackbar(key)}
-    //       >
-    //         <CloseIcon />
-    //       </IconButton>
-    //     ),
-    //     autoHideDuration : 8000, });
-    // }
-
     resetSelectedRowData() {
       const self = this;
       return () => {

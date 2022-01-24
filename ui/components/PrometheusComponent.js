@@ -168,18 +168,6 @@ class PrometheusComponent extends Component {
     submitPrometheusConfigure(this);
   };
 
-  // handleError = () => {
-  //   const self = this;
-  //   this.props.updateProgress({ showProgress : false });
-  //   this.props.enqueueSnackbar("There was an error communicating with Prometheus", { variant : "error",
-  //     action : (key) => (
-  //       <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-  //         <CloseIcon />
-  //       </IconButton>
-  //     ),
-  //     autoHideDuration : 8000, });
-  // };
-
   handlePrometheusChipDelete = () => {
     const self = this;
     self.props.updateProgress({ showProgress : true });

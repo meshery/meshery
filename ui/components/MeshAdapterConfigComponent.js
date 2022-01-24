@@ -67,7 +67,6 @@ class MeshAdapterConfigComponent extends React.Component {
   }
 
   fetchAvailableAdapters = () => {
-    // const self = this;
     this.props.updateProgress({ showProgress : true });
     dataFetch(
       "/api/system/adapters",
