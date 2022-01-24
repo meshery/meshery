@@ -45,6 +45,7 @@ import LoadTestTimerDialog from "../load-test-timer-dialog";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import { durationOptions } from "../../lib/prePopulatedOptions";
 import fetchControlPlanes from "../graphql/queries/ControlPlanesQuery";
+import handleError from "../../utils/errorUtil";
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -449,9 +450,9 @@ class MesheryPerformanceComponent extends React.Component {
     this.closeEventStream();
     this.eventStream = new EventSource(url);
     this.eventStream.onmessage = this.handleEvents();
-    this.eventStream.onerror = this.handleError(
-      "Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few."
-    );
+    this.eventStream.onerror = handleError(
+      "Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few.",
+      this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress);
     this.props.enqueueSnackbar("Load test has been successfully submitted", {
       variant : "info",
       autoHideDuration : 1000,
@@ -485,7 +486,7 @@ class MesheryPerformanceComponent extends React.Component {
           }
           break;
         case "error":
-          self.handleError("Load test did not run successfully with msg")(data.message);
+          handleError("Load test did not run successfully with msg", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)(data.message);
           break;
         case "success":
           self.handleSuccess()(data.result);
@@ -559,7 +560,7 @@ class MesheryPerformanceComponent extends React.Component {
           self.setState({ staticPrometheusBoardConfig : result });
         }
       },
-      self.handleError("unable to fetch pre-configured boards")
+      handleError("unable to fetch pre-configured boards", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -613,34 +614,13 @@ class MesheryPerformanceComponent extends React.Component {
           self.setState({ availableSMPMeshes : result.available_meshes.sort((m1, m2) => m1.localeCompare(m2)) });
         }
       },
-      self.handleError("unable to fetch SMP meshes")
+      handleError("unable to fetch SMP meshes", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
   generateUUID() {
     const { v4 : uuid } = require("uuid");
     return uuid();
-  }
-
-  handleError(msg) {
-    const self = this;
-    return (error) => {
-      self.setState({ blockRunTest : false, timerDialogOpen : false });
-      self.closeEventStream();
-      let finalMsg = msg;
-      if (typeof error === "string") {
-        finalMsg = `${msg}: ${error}`;
-      }
-      self.props.enqueueSnackbar(finalMsg, {
-        variant : "error",
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration : 4000,
-      });
-    };
   }
 
   handleTimerDialogClose = () => {

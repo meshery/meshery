@@ -33,6 +33,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import FILE_OPS from "../utils/configurationFileHandlersEnum"
 import { trueRandom } from "../lib/trueRandom";
+import handleError from "../utils/errorUtil";
 
 const styles = (theme) => ({
   grid : {
@@ -254,7 +255,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
         updateProgress({ showProgress : false });
       },
-      handleError(ACTION_TYPES.DEPLOY_FILTERS)
+      handleError(ACTION_TYPES.DEPLOY_FILTERS.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
     );
   };
 
@@ -282,27 +283,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         }
       },
       // handleError
-      handleError(ACTION_TYPES.FETCH_FILTERS)
+      handleError(ACTION_TYPES.FETCH_FILTERS.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
     );
   }
-
-  // function handleError(error) {
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress : false });
-
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
-  };
-
   function resetSelectedRowData() {
     return () => {
       setSelectedRowData(null);
@@ -322,7 +305,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           resetSelectedRowData()();
         },
         // handleError
-        handleError(ACTION_TYPES.DELETE_FILTERS)
+        handleError(ACTION_TYPES.DELETE_FILTERS.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
       );
     }
 
@@ -343,7 +326,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           fetchFilters(page, pageSize, search, sortOrder);
         },
         // handleError
-        handleError(ACTION_TYPES.UPLOAD_FILTERS)
+        handleError(ACTION_TYPES.UPLOAD_FILTERS.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
       );
     }
   }
@@ -505,7 +488,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
         fetchFilters(page, pageSize, search, sortOrder);
       },
-      handleError("Failed To Delete Filter")
+      handleError("Failed To Delete Filter", enqueueSnackbar, closeSnackbar, updateProgress)
     );
   }
 

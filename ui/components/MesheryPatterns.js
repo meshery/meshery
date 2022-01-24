@@ -27,6 +27,7 @@ import PatternForm from "./configuratorComponents/patternConfigurator";
 import PromptComponent from "./PromptComponent";
 import URLUploader from "./URLUploader";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils"
+import handleError from "../utils/errorUtil";
 
 const styles = (theme) => ({
   grid : {
@@ -308,8 +309,7 @@ function MesheryPatterns({
           autoHideDuration : 2000,
         });
       },
-      handleError(ACTION_TYPES.DEPLOY_PATTERN),
-    );
+      handleError(ACTION_TYPES.DEPLOY_PATTERN.error_msg, enqueueSnackbar, closeSnackbar, updateProgress))
   };
 
   function fetchPatterns(page, pageSize, search, sortOrder) {
@@ -335,25 +335,9 @@ function MesheryPatterns({
           setCount(result.total_count || 0);
         }
       },
-      handleError(ACTION_TYPES.FETCH_PATTERNS)
+      handleError(ACTION_TYPES.FETCH_PATTERNS.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
     );
   }
-
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress : false });
-
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
-  };
 
   function resetSelectedRowData() {
     return () => {
@@ -376,7 +360,7 @@ function MesheryPatterns({
           fetchPatterns(page, pageSize, search, sortOrder);
           resetSelectedRowData()();
         },
-        handleError(ACTION_TYPES.DELETE_PATTERN)
+        handleError(ACTION_TYPES.DELETE_PATTERN.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
       );
     }
 
@@ -393,7 +377,7 @@ function MesheryPatterns({
           updateProgress({ showProgress : false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
-        handleError(ACTION_TYPES.UPDATE_PATTERN)
+        handleError(ACTION_TYPES.UPDATE_PATTERN.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
       );
     }
 
@@ -423,7 +407,7 @@ function MesheryPatterns({
           updateProgress({ showProgress : false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
-        handleError(ACTION_TYPES.UPLOAD_PATTERN)
+        handleError(ACTION_TYPES.UPLOAD_PATTERN.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
       );
     }
   }
@@ -601,7 +585,7 @@ function MesheryPatterns({
         resetSelectedRowData()()
       }, 1200);
     },
-    handleError(ACTION_TYPES.DELETE_PATTERN)
+    handleError(ACTION_TYPES.DELETE_PATTERN.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
     );
   }
 

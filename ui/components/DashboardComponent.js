@@ -42,6 +42,7 @@ import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import { versionMapper } from "../utils/nameMapper";
+import handleError from "../utils/errorUtil";
 // podNameMapper,
 //import MesheryMetrics from "./MesheryMetrics";
 
@@ -275,7 +276,7 @@ class DashboardComponent extends React.Component {
           error : (err) => console.log("error registering prometheus: " + err), });
         }
       },
-      self.handleError("Error getting prometheus config")
+      handleError("Error getting prometheus config", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
 
     dataFetch(
@@ -301,7 +302,7 @@ class DashboardComponent extends React.Component {
           error : (err) => console.log("error registering grafana: " + err), });
         }
       },
-      self.handleError("There was an error communicating with grafana config")
+      handleError("There was an error communicating with grafana config", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
 
     let selector = { serviceMesh : "ALL_MESH", };
@@ -324,7 +325,6 @@ class DashboardComponent extends React.Component {
   };
 
   fetchAvailableAdapters = () => {
-    const self = this;
     this.props.updateProgress({ showProgress : true });
     dataFetch(
       "/api/system/adapters",
@@ -339,14 +339,14 @@ class DashboardComponent extends React.Component {
           this.setState({ availableAdapters : options });
         }
       },
-      self.handleError("Unable to fetch list of adapters.")
+      handleError("Unable to fetch list of adapters.", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
   setOperatorState = (res) => {
     const self = this;
     if (res.operator?.error) {
-      self.handleError("Operator could not be reached")(res.operator?.error?.description);
+      handleError("Operator could not be reached", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)(res.operator?.error?.description);
       return false;
     }
 
@@ -460,18 +460,6 @@ class DashboardComponent extends React.Component {
     return `v${matchResult[0]}`;
   };
 
-  handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
-    const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000, });
-  };
-
   /**
    * redirectErrorToConsole returns a function which redirects
    * ther error to the console under the group labelled by the "msg"
@@ -566,7 +554,7 @@ class DashboardComponent extends React.Component {
             ), });
         }
       },
-      self.handleError("Could not connect to Kubernetes")
+      handleError("Could not connect to Kubernetes", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -590,7 +578,7 @@ class DashboardComponent extends React.Component {
             ), });
         }
       },
-      self.handleError("Could not connect to Grafana")
+      handleError("Could not connect to Grafana", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -736,7 +724,7 @@ class DashboardComponent extends React.Component {
             ), });
         }
       },
-      self.handleError("Could not connect to Prometheus")
+      handleError("Could not connect to Prometheus", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 

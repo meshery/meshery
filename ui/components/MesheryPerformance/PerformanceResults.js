@@ -8,7 +8,6 @@ import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
 import { updateResultsSelection, clearResultsSelection, updateProgress } from "../../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 // import dataFetch from "../../lib/data-fetch";
@@ -18,6 +17,7 @@ import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import GenericModal from "../GenericModal";
 import BarChartIcon from '@material-ui/icons/BarChart';
 import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
+import handleError from "../../utils/errorUtil";
 
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
@@ -317,21 +317,7 @@ function MesheryResults({
         }
       }
     },
-    error : handleError, });
-  }
-
-  function handleError(error) {
-    updateProgress({ showProgress : false });
-
-    enqueueSnackbar(`There was an error fetching results: ${error}`, { variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000, });
+    error : handleError("There was an error fetching results", enqueueSnackbar, closeSnackbar, updateProgress), });
   }
 
   const columns = generateColumnsForDisplay(sortOrder, (idx) => setSelectedRowData(results[idx]));

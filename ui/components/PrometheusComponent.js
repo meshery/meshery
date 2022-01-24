@@ -13,6 +13,7 @@ import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import PrometheusConfigComponent from "./PrometheusConfigComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
+import handleError from "../utils/errorUtil";
 
 const promStyles = (theme) => ({
   root : { padding : theme.spacing(5), },
@@ -72,7 +73,7 @@ export const submitPrometheusConfigure = (self, cb = () => {}) => {
         cb()
       }
     },
-    self.handleError
+    handleError("There was an error communicating with Prometheus", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
   );
 };
 
@@ -130,7 +131,7 @@ class PrometheusComponent extends Component {
             });
           }
         },
-        self.handleError
+        handleError("There was an error communicating with Prometheus", self.props.enqueueSnackbar, self.props.closeSnackbar, this.props.updateProgress)
       )
   }
 
@@ -167,17 +168,17 @@ class PrometheusComponent extends Component {
     submitPrometheusConfigure(this);
   };
 
-  handleError = () => {
-    const self = this;
-    this.props.updateProgress({ showProgress : false });
-    this.props.enqueueSnackbar("There was an error communicating with Prometheus", { variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 8000, });
-  };
+  // handleError = () => {
+  //   const self = this;
+  //   this.props.updateProgress({ showProgress : false });
+  //   this.props.enqueueSnackbar("There was an error communicating with Prometheus", { variant : "error",
+  //     action : (key) => (
+  //       <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+  //         <CloseIcon />
+  //       </IconButton>
+  //     ),
+  //     autoHideDuration : 8000, });
+  // };
 
   handlePrometheusChipDelete = () => {
     const self = this;
@@ -197,7 +198,7 @@ class PrometheusComponent extends Component {
             selectedPrometheusBoardsConfigs : [], }, });
         }
       },
-      self.handleError
+      handleError("There was an error communicating with Prometheus", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -220,7 +221,7 @@ class PrometheusComponent extends Component {
             ), });
         }
       },
-      self.handleError
+      handleError("There was an error communicating with Prometheus", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -279,7 +280,7 @@ class PrometheusComponent extends Component {
               handlePrometheusChipDelete={this.handlePrometheusChipDelete}
               addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
               handlePrometheusClick={this.handlePrometheusClick}
-              handleError={this.handleError}
+              handleError={handleError}
             />
             {displaySelec}
           </React.Fragment>

@@ -14,6 +14,7 @@ import GrafanaDisplaySelection from "./GrafanaDisplaySelection";
 import { updateGrafanaConfig, updateProgress } from "../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
+import handleError from "../utils/errorUtil";
 
 const grafanaStyles = (theme) => ({
   root : { padding : theme.spacing(5), },
@@ -63,7 +64,7 @@ const getGrafanaBoards = (self, cb = () => {}) => {
         cb()
       }
     },
-    self.handleError("There was an error communicating with Grafana")
+    handleError("There was an error communicating with Grafana", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
   );
 };
 
@@ -113,7 +114,7 @@ export const submitGrafanaConfigure = (self, cb) => {
         getGrafanaBoards(self, cb);
       }
     },
-    self.handleError("There was an error communicating with Grafana")
+    handleError("There was an error communicating with Grafana", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
   );
 };
 
@@ -185,7 +186,7 @@ class GrafanaComponent extends Component {
             });
           }
         },
-        self.handleError("There was an error communicating with grafana config")
+        handleError("There was an error communicating with grafana config", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
       )
   }
 
@@ -217,19 +218,6 @@ class GrafanaComponent extends Component {
     submitGrafanaConfigure(this);
   };
 
-  handleError = (msg) => () => {
-    const self = this;
-    // this.setState({timerDialogOpen: false });
-    this.props.updateProgress({ showProgress : false });
-    this.props.enqueueSnackbar(msg, { variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 8000, });
-  };
-
   handleGrafanaChipDelete = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
@@ -258,7 +246,7 @@ class GrafanaComponent extends Component {
           }, });
         }
       },
-      self.handleError("There was an error communicating with Grafana")
+      handleError("There was an error communicating with Grafana", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -281,7 +269,7 @@ class GrafanaComponent extends Component {
             ), });
         }
       },
-      self.handleError("Could not ping Grafana.")
+      handleError("Could not ping Grafana.", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -338,7 +326,7 @@ class GrafanaComponent extends Component {
             ), });
         }
       },
-      self.handleError("There was an error persisting the board selection")
+      handleError("There was an error persisting the board selection", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   }
 
@@ -391,7 +379,7 @@ class GrafanaComponent extends Component {
               handleGrafanaChipDelete={this.handleGrafanaChipDelete}
               handleGrafanaClick={this.handleGrafanaClick}
               addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
-              handleError={this.handleError("There was an error communicating with Grafana")}
+              handleError={handleError("There was an error communicating with Grafana", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)}
             />
             {displaySelec}
           </React.Fragment>

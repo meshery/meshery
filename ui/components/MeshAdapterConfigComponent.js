@@ -13,6 +13,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
+import handleError from "../utils/errorUtil";
 
 const styles = (theme) => ({
   root : { padding : theme.spacing(5), },
@@ -66,7 +67,7 @@ class MeshAdapterConfigComponent extends React.Component {
   }
 
   fetchAvailableAdapters = () => {
-    const self = this;
+    // const self = this;
     this.props.updateProgress({ showProgress : true });
     dataFetch(
       "/api/system/adapters",
@@ -81,7 +82,7 @@ class MeshAdapterConfigComponent extends React.Component {
           this.setState({ availableAdapters : options });
         }
       },
-      self.handleError("Unable to fetch available adapters")
+      handleError("Unable to fetch available adapters", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -150,7 +151,7 @@ class MeshAdapterConfigComponent extends React.Component {
           self.fetchAvailableAdapters();
         }
       },
-      self.handleError("Adapter was not configured due to an error")
+      handleError("Adapter was not configured due to an error", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -179,7 +180,7 @@ class MeshAdapterConfigComponent extends React.Component {
           this.props.updateAdaptersInfo({ meshAdapters : result });
         }
       },
-      self.handleError("Adapter was not removed due to an error")
+      handleError("Adapter was not removed due to an error", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -203,20 +204,8 @@ class MeshAdapterConfigComponent extends React.Component {
             ), });
         }
       },
-      self.handleError("error")
+      handleError("error", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
-  };
-
-  handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
-    const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 8000, });
   };
 
   configureTemplate = () => {

@@ -9,7 +9,6 @@ import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
 import { withSnackbar } from 'notistack';
-import CloseIcon from '@material-ui/icons/Close';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { updateResultsSelection, clearResultsSelection, updateProgress, } from '../lib/store';
 import TableSortLabel from '@material-ui/core/TableSortLabel'
@@ -18,6 +17,7 @@ import CustomToolbarSelect from './CustomToolbarSelect';
 import MesheryChart from './MesheryChart';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 import MesheryResultDialog from './MesheryResultDialog';
+import handleError from '../utils/errorUtil';
 
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
@@ -91,25 +91,7 @@ class MesheryResults extends Component {
             count : result.total_count,
           });
         }
-      }, self.handleError);
-    }
-
-    handleError = (error) => {
-      this.props.updateProgress({ showProgress : false });
-      // console.log(`error fetching results: ${error}`);
-      const self = this;
-      this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, { variant : 'error',
-        action : (key) => (
-          <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => self.props.closeSnackbar(key)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration : 8000, });
+      }, handleError("", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress));
     }
 
     resetSelectedRowData() {

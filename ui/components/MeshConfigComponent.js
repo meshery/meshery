@@ -36,6 +36,7 @@ import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 import NatsStatusQuery from "./graphql/queries/NatsStatusQuery";
 import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
 import PromptComponent from "./PromptComponent";
+import handleError from "../utils/errorUtil";
 
 const styles = (theme) => ({
   root : { padding : theme.spacing(5), },
@@ -192,7 +193,7 @@ class MeshConfigComponent extends React.Component {
     // Subscribe to the operator events
     let meshSyncStatusEventsSubscription = subscribeMeshSyncStatusEvents((res) => {
       if (res.meshsync?.error) {
-        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
+        handleError(res.meshsync?.error?.description || "MeshSync could not be reached", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress);
         return;
       }
     });
@@ -219,7 +220,7 @@ class MeshConfigComponent extends React.Component {
     console.log("incoming change")
     const self = this;
     if (res.operator?.error) {
-      self.handleError("Operator could not be reached")(res.operator?.error?.description);
+      handleError("Operator could not be reached",this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)(res.operator?.error?.description);
       self.setState({ operatorProcessing : false })
       return false;
     }
@@ -274,7 +275,7 @@ class MeshConfigComponent extends React.Component {
     changeOperatorState((response, errors) => {
       self.props.updateProgress({ showProgress : false });
       if (errors !== undefined) {
-        self.handleError("Unable to install operator");
+        handleError("Unable to install operator", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress);
       }
       self.props.enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), { variant : "success",
         autoHideDuration : 2000,
@@ -351,7 +352,7 @@ class MeshConfigComponent extends React.Component {
           self.submitConfig();
         }
       },
-      self.handleError("Kubernetes config could not be validated")
+      handleError("Kubernetes config could not be validated", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -367,7 +368,6 @@ class MeshConfigComponent extends React.Component {
       formData.append("k8sfile", fileInput.files[0]);
     }
     this.props.updateProgress({ showProgress : true });
-    const self = this;
     dataFetch(
       "/api/system/kubernetes",
       {
@@ -395,7 +395,7 @@ class MeshConfigComponent extends React.Component {
                 changeOperatorState((response, errors) => {
                   self.props.updateProgress({ showProgress : false });
                   if (errors !== undefined) {
-                    self.handleError("Operator action failed");
+                    handleError("Operator action failed", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress);
                   }
                   self.props.enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), { variant : "success",
                     autoHideDuration : 2000,
@@ -433,7 +433,7 @@ class MeshConfigComponent extends React.Component {
           }, });
         }
       },
-      self.handleError("Kubernetes config could not be validated")
+      handleError("Kubernetes config could not be validated", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -459,7 +459,7 @@ class MeshConfigComponent extends React.Component {
           });
         }
       },
-      self.handleError("Kubernetes config could not be validated")
+      handleError("Kubernetes config could not be validated", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 
@@ -479,10 +479,10 @@ class MeshConfigComponent extends React.Component {
             </IconButton>
           ), });
       } else {
-        self.handleError("Operator could not be reached")("Operator is disabled");
+        handleError("Operator could not be reached", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)("Operator is disabled");
       }
     },
-    error : self.handleError("Operator could not be pinged"), });
+    error : handleError("Operator could not be pinged", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress), });
   };
 
 handleNATSClick = () => {
@@ -497,7 +497,7 @@ handleNATSClick = () => {
         NATSVersion : res.controller.version,
       });
     },
-    error : self.handleError("NATS status could not be retrieved"), });
+    error : handleError("NATS status could not be retrieved", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress), });
 
   // connectToNats().subscribe({
   //   next : (res) => {
@@ -550,7 +550,7 @@ handleNATSClick = () => {
         });
       }
     },
-    error : self.handleError("MeshSync status could not be retrieved"), });
+    error : handleError("MeshSync status could not be retrieved", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress), });
 
     // deployMeshSync().subscribe({
     //   next : (res) => {
@@ -572,20 +572,7 @@ handleNATSClick = () => {
     // });
   };
 
-  handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
-    const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000, });
-  };
-
   handleReconfigure = () => {
-    const self = this;
     dataFetch(
       "/api/system/kubernetes",
       { credentials : "same-origin",
@@ -610,7 +597,7 @@ handleNATSClick = () => {
                 changeOperatorState((response, errors) => {
                   self.props.updateProgress({ showProgress : false });
                   if (errors !== undefined) {
-                    self.handleError("Operator action failed");
+                    handleError("Operator action failed", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress);
                   }
                   self.props.enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), { variant : "success",
                     autoHideDuration : 2000,
@@ -654,7 +641,7 @@ handleNATSClick = () => {
             ), });
         }
       },
-      self.handleError("Kubernetes config could not be validated")
+      handleError("Kubernetes config could not be validated", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     );
   };
 

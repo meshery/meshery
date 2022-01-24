@@ -7,10 +7,8 @@ import { bindActionCreators } from "redux";
 import {
   Button, Grid, Paper, Typography
 } from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import CloseIcon from "@material-ui/icons/Close";
 import { withRouter } from "next/router";
 import MesheryMetrics from "../MesheryMetrics";
 import PerformanceCalendar from "./PerformanceCalendar";
@@ -18,6 +16,7 @@ import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
+import handleError from "../../utils/errorUtil";
 
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
@@ -105,7 +104,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
           }
         }
       },
-      error : handleError("Failed to Fetch Profiles"),
+      error : handleError("Failed to Fetch Profiles", enqueueSnackbar, closeSnackbar, updateProgress),
     });
   }
 
@@ -134,24 +133,8 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
           }
         }
       },
-      error : handleError("Failed to Fetch Results"),
+      error : handleError("Failed to Fetch Results", enqueueSnackbar, closeSnackbar, updateProgress),
     });
-  }
-
-  function handleError(msg) {
-    return function (error) {
-      updateProgress({ showProgress : false });
-
-      enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-        action : function Action(key) {
-          return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          );
-        },
-        autoHideDuration : 8000, });
-    };
   }
 
   return (

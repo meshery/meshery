@@ -8,9 +8,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import {
-  AppBar, Paper, Tooltip, IconButton
+  AppBar, Paper, Tooltip
 } from '@material-ui/core';
-import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faCloud, faPoll } from '@fortawesome/free-solid-svg-icons';
 // import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
@@ -24,6 +23,7 @@ import PrometheusComponent from './PrometheusComponent';
 import dataFetch from '../lib/data-fetch';
 import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
+import handleError from '../utils/errorUtil';
 
 const styles = (theme) => ({
   root : { flexGrow : 1,
@@ -158,7 +158,7 @@ class MesherySettings extends React.Component {
           self.setState(state => ({ scannedGrafana : [...state.scannedGrafana, ...urls] }));
         }
       },
-      self.handleError("Unable to fetch prometheus and grafana scan data")
+      handleError("Unable to fetch prometheus and grafana scan data", this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress)
     )
   }
 
@@ -207,18 +207,6 @@ class MesherySettings extends React.Component {
 
     return result
   }
-
-  handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
-    const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000, });
-  };
 
   handleChange = (val) => {
     const self = this;

@@ -22,6 +22,7 @@ import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidato
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceComponent';
+import handleError from '../utils/errorUtil';
 
 
 const styles = (theme) => ({
@@ -110,23 +111,6 @@ class UserPreference extends React.Component {
     }
   }
 
-  handleError = (msg) => () => {
-    const self = this;
-    this.props.updateProgress({ showProgress : false });
-    this.props.enqueueSnackbar(msg, { variant : 'error',
-      action : (key) => (
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={() => self.props.closeSnackbar(key)}
-        >
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 8000, });
-  }
-
   handleChange = (name) => {
     const self = this;
     const { anonymousStats, perfResultStats, startOnZoom } = this.state;
@@ -184,7 +168,7 @@ class UserPreference extends React.Component {
           </IconButton>
         ), });
       }
-    }, self.handleError('There was an error sending your preference'));
+    }, handleError('There was an error sending your preference', this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress));
   }
 
   handleTabValChange = (event, newVal) => {

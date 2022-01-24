@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  TableRow, TableCell, IconButton, Table, TableBody, TableHead, Tooltip
+  TableRow, TableCell, Table, TableBody, TableHead, Tooltip
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
 import { withSnackbar } from 'notistack';
-import CloseIcon from '@material-ui/icons/Close';
 import { updateProgress, } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
+import handleError from '../utils/errorUtil';
 
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
@@ -57,26 +57,27 @@ class MesherySMIResults extends Component {
         if (typeof result !== 'undefined' && result.results) {
           self.setState({ smi_results : result });
         }
-      }, console.log('Could not fetch SMI results.'));
+      }, handleError("There was an error fetching results", self.props.enqueueSnackbar, self.props.closeSnackbar, self.props.updateProgress
+      ))
     }
 
-    handleError = (error) => {
-      this.props.updateProgress({ showProgress : false });
-      // console.log(`error fetching results: ${error}`);
-      const self = this;
-      this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, { variant : 'error',
-        action : (key) => (
-          <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => self.props.closeSnackbar(key)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration : 8000, });
-    }
+    // handleError = (error) => {
+    //   this.props.updateProgress({ showProgress : false });
+    //   // console.log(`error fetching results: ${error}`);
+    //   const self = this;
+    //   this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, { variant : 'error',
+    //     action : (key) => (
+    //       <IconButton
+    //         key="close"
+    //         aria-label="Close"
+    //         color="inherit"
+    //         onClick={() => self.props.closeSnackbar(key)}
+    //       >
+    //         <CloseIcon />
+    //       </IconButton>
+    //     ),
+    //     autoHideDuration : 8000, });
+    // }
 
     resetSelectedRowData() {
       const self = this;

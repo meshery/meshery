@@ -18,6 +18,7 @@ import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
+import handleError from "../../utils/errorUtil";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 
@@ -112,7 +113,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
           }
         }
       },
-      error : handleError("Failed to Fetch Profiles"),
+      error : handleError("Failed to Fetch Profiles", enqueueSnackbar, closeSnackbar, updateProgress),
     });
   }
 
@@ -149,27 +150,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
 
         fetchTestProfiles(page, pageSize, search, sortOrder);
       },
-      handleError("Failed To Delete Profile")
+      handleError("Failed To Delete Profile", enqueueSnackbar, closeSnackbar, updateProgress)
     );
-  }
-
-
-  function handleError(msg) {
-    return function (error) {
-      updateProgress({ showProgress : false });
-
-      enqueueSnackbar(`${msg} : ${error}`, {
-        variant : "error",
-        action : function Action(key) {
-          return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          );
-        },
-        autoHideDuration : 8000,
-      });
-    };
   }
 
   return (

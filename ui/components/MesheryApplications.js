@@ -50,6 +50,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppsIcon from "./ConnectionWizard/icons/apps";
 import FILE_OPS from "../utils/configurationFileHandlersEnum"
 import { trueRandom } from "../lib/trueRandom";
+import handleError from "../utils/errorUtil";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -303,7 +304,7 @@ function MesheryApplications({
         // })
         updateProgress({ showProgress : false });
       },
-      handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
+      handleError(ACTION_TYPES.DEPLOY_APPLICATIONS.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
     );
   };
 
@@ -331,26 +332,9 @@ function MesheryApplications({
         }
       },
       // handleError
-      handleError(ACTION_TYPES.FETCH_APPLICATIONS)
+      handleError(ACTION_TYPES.FETCH_APPLICATIONS.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
     );
   }
-
-  // function handleError(error) {
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress : false });
-
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
-  };
 
   function resetSelectedRowData() {
     return () => {
@@ -374,7 +358,7 @@ function MesheryApplications({
           resetSelectedRowData()();
         },
         // handleError
-        handleError(ACTION_TYPES.DELETE_APPLICATIONS)
+        handleError(ACTION_TYPES.DELETE_APPLICATIONS.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
       );
     }
 
@@ -392,7 +376,7 @@ function MesheryApplications({
           fetchApplications(page, pageSize, search, sortOrder);
         },
         // handleError
-        handleError(ACTION_TYPES.UPDATE_APPLICATIONS)
+        handleError(ACTION_TYPES.UPDATE_APPLICATIONS.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
       );
     }
 
@@ -418,7 +402,7 @@ function MesheryApplications({
           fetchApplications(page, pageSize, search, sortOrder);
         },
         // handleError
-        handleError(ACTION_TYPES.UPLOAD_APPLICATION)
+        handleError(ACTION_TYPES.UPLOAD_APPLICATION.error_msg, enqueueSnackbar, closeSnackbar, updateProgress)
       );
     }
   }
@@ -575,7 +559,7 @@ function MesheryApplications({
           autoHideDuration : 2000,
           action : function Action(key) {
             return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar, updateProgress(key)}>
                 <CloseIcon />
               </IconButton>
             );
@@ -583,7 +567,7 @@ function MesheryApplications({
         });
         fetchApplications(page, pageSize, search, sortOrder);
       },
-      handleError("Failed to delete application")
+      handleError("Failed to delete application", enqueueSnackbar, closeSnackbar, updateProgress)
     );
   }
 

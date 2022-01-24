@@ -17,7 +17,7 @@ import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import { updateLoadTestPref, updateProgress } from '../lib/store';
 import { durationOptions } from '../lib/prePopulatedOptions';
-
+import handleError from "../utils/errorUtil";
 
 const loadGenerators = [
   'fortio',
@@ -151,7 +151,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
         });
         this.setState({ blockRunTest: false });
       }
-    }, self.handleError('There was an error saving your preferences'));
+    }, handleError('There was an error saving your preferences', this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress));
   }
 
   componentDidMount() {
@@ -173,32 +173,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
             gen: result.loadTestPrefs.gen,
           });
       }
-    }, () => { (!qps || !t || !c) ? self.handleError('There was an error fetching your preferences') : {} });
-  }
-
-  handleError = (msg) => {
-    const self = this;
-    return (error) => {
-      self.setState({ blockRunTest: false });
-      let finalMsg = msg;
-      if (typeof error === 'string') {
-        finalMsg = `${msg}: ${error}`;
-      }
-      self.props.enqueueSnackbar(finalMsg, {
-        variant: 'error',
-        action: (key) => (
-          <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => self.props.closeSnackbar(key)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration: 4000,
-      });
-    };
+    }, () => { (!qps || !t || !c) ? handleError('There was an error fetching your preferences', this.props.enqueueSnackbar, this.props.closeSnackbar, this.props.updateProgress) : {} });
   }
 
   render() {
