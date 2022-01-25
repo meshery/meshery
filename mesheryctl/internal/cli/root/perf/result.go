@@ -161,6 +161,12 @@ func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNum
 		return nil, nil, err
 	}
 	resp, err := client.Do(req)
+
+	// failsafe for having an expired token
+	if resp.StatusCode == 302 {
+		return nil, nil, ErrExpired()
+	}
+
 	if err != nil {
 		return nil, nil, ErrFailRequest(err)
 	}
