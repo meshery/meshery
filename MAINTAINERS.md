@@ -49,7 +49,7 @@
 | Name               | GitHub      | Affiliation |
 | ------------------ | ----------- | ----------- |
 | Lee Calcote        | leecalcote  | Layer5      |
-| Utkarsh Srivastava | utkarsh-pro | Layer5      |
+| Utkarsh Srivastava | utkarsh-pro | Red Hat     |
 
 ### Site Maintainers
 
