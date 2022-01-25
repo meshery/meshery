@@ -35,6 +35,7 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
 
 func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider models.Provider) error {
 	mx.Lock()
+	defer mx.Unlock()
 	packagePath := ""
 	if len(provider.GetProviderProperties().Extensions.GraphQL) > 0 {
 		packagePath = provider.GetProviderProperties().Extensions.GraphQL[0].Path
@@ -42,14 +43,12 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 
 	plug, err := plugin.Open(path.Join(provider.PackageLocation(), packagePath))
 	if err != nil {
-		mx.Unlock()
 		return ErrPluginOpen(err)
 	}
 
 	// Run function
 	symRun, err := plug.Lookup("Run")
 	if err != nil {
-		mx.Unlock()
 		return ErrPluginLookup(err)
 	}
 	runFunction := symRun.(func(*models.ExtensionInput) (*models.ExtensionOutput, error))
@@ -61,7 +60,6 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 		Logger:          h.log,
 	})
 	if err != nil {
-		mx.Unlock()
 		return ErrPluginRun(err)
 	}
 
@@ -69,7 +67,6 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 	if output.Router != nil {
 		extendedEndpoints[output.Router.Path] = output.Router
 	}
-	mx.Unlock()
 
 	return nil
 }
