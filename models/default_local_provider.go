@@ -53,7 +53,7 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderDescription = []string{
 		"Ephemeral sessions",
 		"Environment setup not saved",
-		"No performance test result history",
+		"No performance or conformance test result history",
 		"Free Use",
 	}
 	l.ProviderType = LocalProviderType
