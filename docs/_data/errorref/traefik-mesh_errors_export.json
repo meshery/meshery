@@ -19,7 +19,7 @@
         "long_description": "Kubernetes client is nil",
         "short_description": "kubernetes client not initialized",
         "probable_cause": "kubernetes client not initialized",
-        "suggested_remediation": "Reconnect the adaptor to Meshery server"
+        "suggested_remediation": "Reconnect the adapter to Meshery server"
       },
       "1014": {
         "name": "ErrInvalidOAMComponentTypeCode",

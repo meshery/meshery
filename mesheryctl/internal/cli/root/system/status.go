@@ -38,7 +38,7 @@ var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Check Meshery status",
 	Args:  cobra.NoArgs,
-	Long:  `Check status of Meshery and Meshery adapters.`,
+	Long:  `Check status of Meshery and Meshery components.`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{

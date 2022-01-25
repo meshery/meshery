@@ -13,7 +13,7 @@ import NoSsr from "@material-ui/core/NoSsr";
 import RemoveIcon from "@material-ui/icons/Remove";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
-import MailIcon from "@material-ui/icons/Mail";
+// import MailIcon from "@material-ui/icons/Mail";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -26,6 +26,7 @@ import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg'
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
+import DiscussIcon from '../public/static/img/drawer-icons/discuss_forum_svg.js';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import { faChevronCircleLeft,
   faExternalLinkAlt,
@@ -418,16 +419,16 @@ const externlinks = [
   },
   {
     id : "community",
-    href : "http://slack.layer5.io",
+    href : "https://slack.layer5.io",
     title : "Community",
     icon : <FontAwesomeIcon style={{ marginBottom : 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
     external_icon : ExternalLinkIcon,
   },
   {
-    id : "mailinglist",
-    href : "https://meshery.io/subscribe",
-    title : "Mailing List",
-    icon : <MailIcon style={drawerIconsStyle} />,
+    id : "forum",
+    href : "https://discuss.layer5.io",
+    title : "Discussion Forum",
+    icon : <DiscussIcon style={drawerIconsStyle} />,
     external_icon : ExternalLinkIcon,
   },
   {
@@ -714,7 +715,7 @@ class Navigator extends React.Component {
   /**
    * Changes the route to "/"
    */
-  handleTitleClick() {
+  handleTitleClick = () => {
     this.props.router.push("/");
   }
 
@@ -926,13 +927,13 @@ class Navigator extends React.Component {
       return (
         <span style = {{ marginLeft : '15px' }}>
           {"Update available "}
-          <Link href={`https://docs.meshery.io/project/releases/${latest}`}>
+          <a href={`https://docs.meshery.io/project/releases/${latest}`} target="_blank" rel="noreferrer" style={{ color : "white" }}>
             <Tooltip
               title={`Newer version of Meshery available: ${latest}`}
               placement="right">
               <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
             </Tooltip>
-          </Link>
+          </a>
         </span>
       );
 
@@ -954,15 +955,15 @@ class Navigator extends React.Component {
 
     if (release_channel === "edge")
       return (
-        <Link href="https://docs.meshery.io/project/releases" target="_blank">
+        <a href="https://docs.meshery.io/project/releases" target="_blank" rel="noreferrer" style={{ color : "white" }}>
           <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
-        </Link>
+        </a>
       );
 
     return (
-      <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
+      <a href={`https://docs.meshery.io/project/releases/${build}`} target="_blank" rel="noreferrer" style={{ color : "white" }}>
         <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
-      </Link>
+      </a>
     );
   }
 

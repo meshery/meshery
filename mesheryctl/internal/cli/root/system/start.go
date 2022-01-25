@@ -42,14 +42,15 @@ import (
 )
 
 var (
-	skipUpdateFlag bool
+	skipUpdateFlag  bool
+	skipBrowserFlag bool
 )
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
-	Long:  `Start Meshery and each of its service mesh adapters.`,
+	Long:  `Start Meshery and each of its service mesh components.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -178,14 +179,14 @@ func start() error {
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
-		for _, v := range currCtx.GetAdapters() {
+		for _, v := range currCtx.GetComponents() {
 			if services[v].Image == "" {
-				log.Fatalf("Invalid adapter specified %s", v)
+				log.Fatalf("Invalid component specified %s", v)
 			}
 
 			temp, ok := services[v]
 			if !ok {
-				return errors.New("unable to extract adapter version")
+				return errors.New("unable to extract component version")
 			}
 
 			spliter := strings.Split(temp.Image, ":")
@@ -388,11 +389,15 @@ func start() error {
 	}
 
 	// execute dashboard command to fetch and navigate to Meshery UI
-	return dashboardCmd.RunE(nil, nil)
+	if !skipBrowserFlag {
+		return dashboardCmd.RunE(nil, nil)
+	}
+	return nil
 }
 
 func init() {
 	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
+	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "s", false, "(optional) skip opening of MesheryUI in browser.")
 }

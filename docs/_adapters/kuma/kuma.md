@@ -19,7 +19,7 @@ permalink: service-meshes/adapters/kuma
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}} service mesh. A number of sample applications can be installed using the {{page.name}}.
 
 ### Install {{ page.mesh_name }}
 
@@ -29,7 +29,7 @@ Choose the Meshery Adapter for {{ page.mesh_name }}.
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-adapter.png" />
 </a>
 
-Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
+Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-install.png" />

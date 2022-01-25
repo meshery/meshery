@@ -109,6 +109,11 @@ func (r *queryResolver) FetchAllResults(ctx context.Context, selector model.Page
 	return r.fetchAllResults(ctx, provider, selector)
 }
 
+func (r *queryResolver) FetchPatterns(ctx context.Context, selector model.PageFilter) (*model.PatternPageResult, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.fetchPatterns(ctx, provider, selector)
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if selector != nil {
@@ -146,10 +151,14 @@ func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-ch
 	return r.listenToMeshSyncEvents(ctx, provider)
 }
 
-func (r *subscriptionResolver) SubscribePerfProfile(ctx context.Context, profileID string) (<-chan *model.MesheryResult, error) {
-	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	// return r.listenToPerformanceResult(ctx, provider, profileID)
-	panic(fmt.Errorf("not implemented"))
+func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribePerfProfiles(ctx, provider, selector)
+}
+
+func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribePerfResults(ctx, provider, selector, profileID)
 }
 
 func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error) {
@@ -175,6 +184,6 @@ type subscriptionResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector *model.PageFilter) (<-chan *model.PerfPageResult, error) {
+func (r *subscriptionResolver) SubscribePerfResult(ctx context.Context, id string) (<-chan *model.MesheryResult, error) {
 	panic(fmt.Errorf("not implemented"))
 }
