@@ -49,7 +49,7 @@ const styles = (theme) => ({
     display : "flex",
     justifyContent : "flex-start",
     alignItems : "center",
-    margin : "1rem"
+    margin : "1rem auto 2rem auto"
   }
 });
 
