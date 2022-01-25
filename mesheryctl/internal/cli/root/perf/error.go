@@ -63,12 +63,17 @@ func ErrAttachAuthToken(err error) error {
 
 func ErrFailRequest(err error) error {
 	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"failed to make a request", err.Error(), formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Failed to make a request", err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrUnauthenticated() error {
 	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Invalid/expired authetication token", formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Authentication token is invalid. Please supply a valid user token. Login with `mesheryctl system login`", formatErrorWithReference()}, []string{}, []string{})
+}
+
+func ErrExpired() error {
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
+		[]string{"Authentication token is expired. Please login with `mesheryctl system login` to generate a new token", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailReqStatus(statusCode int) error {

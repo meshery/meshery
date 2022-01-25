@@ -240,6 +240,11 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		log.Info("Initiating Performance test ...")
 
 		resp, err := client.Do(req)
+
+		// failsafe for having an expired token
+		if resp.StatusCode == 302 {
+			return ErrExpired()
+		}
 		if err != nil {
 			return ErrFailRequest(err)
 		}
@@ -342,6 +347,12 @@ func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlCon
 	}
 
 	resp, err := client.Do(req)
+
+	// failsafe for having an expired token
+	if resp.StatusCode == 302 {
+		return "", "", ErrExpired()
+	}
+
 	if err != nil {
 		return "", "", ErrFailRequest(err)
 	}
