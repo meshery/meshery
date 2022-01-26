@@ -25,6 +25,29 @@ Each of the API endpoints are exposed through [server.go](https://github.com/lay
 
 Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 
+### How to get your token
+
+There are two ways to get your token:
+1. Meshery UI
+2. Meshery CLI
+
+- What are tokens?
+Tokens allow a user to authenticate with cloud apps and bypass two step verification and SSO, retrieve data from the instance through REST APIS
+An authentication token (security token) is a “trusted device” used to access an electronically restricted resource (usually an application or a corporate network). It can be seen as an electronic key that enables a user to authenticate and prove his identity by storing some sort of personal information.
+
+
+- Firstly, lets discuss how to get the token using Meshery-UI
+1. Login/Signup to the dashboard of Meshery-UI
+2. Click on Get token from the dropdown of profile section, 
+3. You can download your token from there
+
+- Secondly, you can download your token using Meshery-CLI
+
+- mesheryctl system config --token [path-to-file]
+
+Using this command, you can get your tokens easily
+  
+
 #### GraphQL
 
 Meshery provides its GraphQl API at `hostname:9081/api/graphql/query`. A GraphQL request can be made as a POST request to the endpoint with the query as the payload.
