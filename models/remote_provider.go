@@ -364,7 +364,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		ck.Path = "/"
 		http.SetCookie(w, ck)
 	}
-	http.Redirect(w, req, "/user/login", http.StatusFound)
+	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
 // FetchResults - fetches results for profile id from provider backend
