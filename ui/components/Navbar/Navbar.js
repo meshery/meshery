@@ -27,7 +27,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
 import { MesheryServerVersionContainer } from "@/features/mesheryComponents";
 import { Grid } from "@mui/material";
-import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const Navbar = ({
   isDrawerCollapsed,
@@ -416,8 +416,8 @@ const Navbar = ({
       >
         <List disablePadding className={classNames(classes.hideScrollbar)}>
           <div className={classname}>
-            <ArrowLeftIcon
-              style={{ verticalAlign: "middle", margin: "0.5rem 0", fontSize: "1.4rem" }}
+            <ArrowBackIosIcon
+              style={{ verticalAlign: "middle", margin: "0.7rem -0.1rem 0.7rem 0.3rem", fontSize: "0.9rem" }}
               onClick={() => toggleMiniDrawer()}
               alt="Sidebar collapse toggle icon"
             />

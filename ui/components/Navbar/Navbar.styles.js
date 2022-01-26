@@ -192,6 +192,7 @@ export const useStyles = makeStyles((theme) => ({
     }),
     overflowX: "hidden",
     width: theme.spacing(9),
+    boxShadow: "1px -1px 3px 0px rgb(0 0 0 / 20%), 2px 1px 10px 0px rgb(0 0 0 / 14%), 2px 1px 3px 1px rgb(0 0 0 / 12%)",
   },
   sidebarExpanded: {
     width: "256px",
@@ -234,10 +235,8 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   collapseButtonWrapperRotated: {
-    boxShadow:
-      "-2px 0px 0px -1px rgb(0 0 0 / 20%), 2px 0px 0px 0px rgb(0 0 0 / 14%), -1px 0px 0px 0px rgb(0 0 0 / 12%)",
-    borderRadius: "5px 0 0 5px",
-    backgroundColor: "#263238",
+    borderRadius: "0 5px 5px 0",
+    backgroundColor: "#515b60",
     color: "#ffffff",
     position: "fixed",
     cursor: "pointer",
@@ -247,8 +246,8 @@ export const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     transform: "rotate(180deg)",
-    bottom: "6%",
-    left: "1.5rem",
+    bottom: "7%",
+    left: "3.4rem",
     zIndex: "1400",
     "&:hover": {
       opacity: 1,
