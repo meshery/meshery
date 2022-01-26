@@ -3,6 +3,8 @@ import { Grid } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import PerformanceCard from "./PerformanceCard";
+import { makeStyles } from "@material-ui/core/styles";
+
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -36,7 +38,14 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal })
     </Grid>
   );
 }
-
+const useStyles = makeStyles(() => ({
+  pagination : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    marginTop : "2rem"
+  }
+}))
 /**
  * PerformanceProfileGrid is the react component for rendering grid
  * @param {{
@@ -56,9 +65,12 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal })
  *  setPage: (page: number) => void
  * }} props props
  */
+
+
 function PerformanceProfileGrid({
   profiles = [], deleteHandler, setProfileForModal, pages = 1, setPage
 }) {
+  const classes = useStyles()
   return (
     <div>
       <Grid container spacing={2} style={{ padding : "1rem" }}>
@@ -73,9 +85,7 @@ function PerformanceProfileGrid({
       </Grid>
       {profiles.length
         ? (
-          <div style={{
-            display : "flex", justifyContent : "center", alignItems : "center", marginTop : "2rem"
-          }}>
+          <div className={classes.pagination} >
             <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
           </div>
         )

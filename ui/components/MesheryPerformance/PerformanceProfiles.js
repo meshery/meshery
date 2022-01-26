@@ -18,9 +18,49 @@ import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
+import { makeStyles } from "@material-ui/core/styles";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 
+const useStyles = makeStyles(() => ({
+  topToolbar : {
+    margin : "2rem auto",
+    display : "flex",
+    justifyContent : "space-between",
+    paddingLeft : "1rem"
+  },
+  addButton : {
+    width : "fit-content",
+    alignSelf : "flex-start"
+  },
+  viewSwitchButton : {
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem"
+  },
+  pageContainer : {
+    padding : "0.5rem"
+  },
+  noProfileContainer : {
+    padding : "2rem",
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "column",
+  },
+  noProfilePaper : {
+    padding : "0.5rem"
+  },
+  noProfileText : {
+    fontSize : "1.5rem",
+    marginBottom : "2rem",
+  },
+  addProfileModal : {
+    margin : "auto",
+    maxWidth : "90%",
+    outline : "none"
+  }
+}));
 /**
  * Type Definition for View Type
  * @typedef {"grid" | "table"} TypeView
@@ -53,6 +93,7 @@ function ViewSwitch({ view, changeView }) {
 
 
 function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) {
+  const classes = useStyles();
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -103,7 +144,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
         // @ts-ignore
         let result = res?.getPerformanceProfiles;
         updateProgress({ showProgress : false });
-        if (typeof result !== "undefined" ) {
+        if (typeof result !== "undefined") {
           if (result) {
             setCount(result.total_count || 0);
             setPageSize(result.page_size || 0);
@@ -174,32 +215,10 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
 
   return (
     <>
-      <div style={{ padding : "0.5rem" }}>
-        <div
-          style={{
-            margin : "2rem auto",
-            display : "flex",
-            justifyContent : "space-between",
-            paddingLeft : "1rem"
-          }}
-        >
-          {testProfiles.length == 0 && viewType === "table" &&(
-            <div style={{ width : "fit-content", alignSelf : "flex-start" }}>
-              <Button
-                aria-label="Add Performance Profile"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={() => setProfileForModal({})}
-              >
-                <AddIcon />
-            Add Performance Profile
-              </Button>
-            </div>
-          )}
+      <div className={classes.pageContainer}>
+        <div className={classes.topToolbar}>
           {testProfiles.length > 0 && (
-            <div style={{ width : "fit-content", alignSelf : "flex-start" }}>
+            <div className={classes.addButton}>
               <Button
                 aria-label="Add Performance Profile"
                 variant="contained"
@@ -213,7 +232,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               </Button>
             </div>
           )}
-          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingLeft : "1rem" }} onClick={() => setSearch("") }>
+          <div className={classes.viewSwitchButton}>
             <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
         </div>
@@ -245,18 +264,10 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               fetchTestProfiles={fetchTestProfiles}
             />
           )}
-        {testProfiles.length == 0 && viewType === "grid" &&(
-          <Paper style={{ padding : "0.5rem" }}>
-            <div
-              style={{
-                padding : "2rem",
-                display : "flex",
-                justifyContent : "center",
-                alignItems : "center",
-                flexDirection : "column",
-              }}
-            >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+        {testProfiles.length == 0 && (
+          <Paper className={classes.noProfilePaper} >
+            <div className={classes.noProfileContainer}>
+              <Typography className={classes.noProfileText} align="center" color="textSecondary">
                 No Performance Profiles Found
               </Typography>
               <Button
@@ -276,7 +287,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
         <GenericModal
           open={!!profileForModal}
           Content={
-            <Paper style={{ margin : "auto", maxWidth : "90%", outline : "none" }}>
+            <Paper className={classes.addProfileModal} >
               <MesheryPerformanceComponent
                 // @ts-ignore
                 loadAsPerformanceProfile
