@@ -263,20 +263,27 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	go func() {
+		// TODO: Extend this implementation to be a component that
+		// ensures the availability of Meshery Operator at startup
+		// and other startup health checks
 		kclient, err := mesherykube.New(nil)
 		if err != nil {
 			log.Error(err)
+			return
 		}
 		mesheryclient, err := operatorClient.New(&kclient.RestConfig)
 		if err != nil {
 			if mesheryclient == nil {
 				log.Error(model.ErrMesheryClient(nil))
+				return
 			}
 			log.Error(model.ErrMesheryClient(err))
+			return
 		}
-		broker, err := mesheryclient.CoreV1Alpha1().Brokers(MesheryNamespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
+		broker, err := mesheryclient.CoreV1Alpha1().Brokers(MesheryNamespace).Get(ctx, "meshery-broker", metav1.GetOptions{})
 		if err != nil || broker.Status.Endpoint.External == "" {
 			log.Error(err)
+			return
 		}
 		brokerEndpoint := helpers.GetBrokerEndpoint(kclient, broker)
 		// This connection is unique to meshery server.
@@ -292,6 +299,7 @@ func main() {
 		})
 		if err != nil {
 			log.Error(err)
+			return
 		}
 		log.Info("Connected to broker at: ", brokerEndpoint)
 		meshsyncDataHandler := models.NewMeshsyncDataHandler(brkrConn, dbHandler, log)

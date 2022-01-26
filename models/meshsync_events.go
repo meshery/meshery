@@ -33,18 +33,21 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
 
-	go mh.subsribeToStoreUpdates(storeSubscriptionStatusChan)
+	// this subscription is independent of whether or not the database has been synced
 	go mh.subscribeToMeshsyncEvents()
-	err := mh.removeStaleObjects()
-	if err != nil {
-		return err
-	}
+
+	go mh.subsribeToStoreUpdates(storeSubscriptionStatusChan)
 	if <-storeSubscriptionStatusChan {
+		err := mh.removeStaleObjects()
+		if err != nil {
+			return err
+		}
 		err = mh.requestMeshsyncStore()
 		if err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
