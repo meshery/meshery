@@ -371,7 +371,7 @@ type mesheryFiltersResponseWrapper struct {
 
 // Returns the response of the Filter files
 // swagger:response FilterFilesResponseWrapper
-type FilterFilesResponseWrapper struct {
+type filterFilesResponseWrapper struct {
 	// in: body
 	Body *models.MesheryFilter
 }

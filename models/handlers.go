@@ -141,6 +141,9 @@ type HandlerConfig struct {
 	ProviderCookieDuration time.Duration
 
 	BrokerEndpointURL *string
+
+	PerformanceChannel       chan struct{}
+	PerformanceResultChannel chan struct{}
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics
