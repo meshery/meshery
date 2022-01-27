@@ -121,6 +121,8 @@ module.exports = { resolve : {
   "@material-ui/icons/Edit" : require("@material-ui/icons/Edit"),
   "@material-ui/core/MenuList" : require("@material-ui/core/MenuList"),
   "@material-ui/core/CircularProgress" : require("@material-ui/core/CircularProgress"),
+  "@material-ui/icons/Keyboard" : require("@material-ui/icons/Keyboard"),
+  "@material-ui/icons/Tune" : require("@material-ui/icons/Tune"),
   "mui-datatables" : require("mui-datatables"),
   notistack : require("notistack"),
   "react-dom/server" : require("react-dom/server"),
