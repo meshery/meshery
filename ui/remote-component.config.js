@@ -122,6 +122,7 @@ module.exports = { resolve : {
   "@material-ui/core/MenuList" : require("@material-ui/core/MenuList"),
   "@material-ui/core/CircularProgress" : require("@material-ui/core/CircularProgress"),
   "@material-ui/icons/Keyboard" : require("@material-ui/icons/Keyboard"),
+  "@material-ui/core/Switch" : require("@material-ui/core/Switch"),
   "@material-ui/icons/Tune" : require("@material-ui/icons/Tune"),
   "mui-datatables" : require("mui-datatables"),
   notistack : require("notistack"),
