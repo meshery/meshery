@@ -40,9 +40,6 @@ var onboardCmd = &cobra.Command{
 		var err error
 		client := &http.Client{}
 
-		// get logger instance
-		log, _ := utils.MeshkitLogger()
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -57,7 +54,7 @@ var onboardCmd = &cobra.Command{
 			appName := strings.Join(args, "%20")
 
 			// search and fetch apps with app-name
-			log.Debug("Fetching apps")
+			utils.Log.Debug("Fetching apps")
 
 			req, err = utils.NewRequest("GET", appURL+"?search="+appName, nil)
 			if err != nil {
@@ -123,7 +120,7 @@ var onboardCmd = &cobra.Command{
 					if err != nil {
 						return err
 					}
-					log.Debug("saved app file")
+					utils.Log.Debug("saved app file")
 					var response []*models.MesheryApplication
 					// failsafe (bad api call)
 					if resp.StatusCode != 200 {
@@ -150,8 +147,8 @@ var onboardCmd = &cobra.Command{
 					return err
 				}
 
-				log.Debug(url)
-				log.Debug(path)
+				utils.Log.Debug(url)
+				utils.Log.Debug(path)
 
 				// save the app with Github URL
 				if !skipSave {
@@ -190,7 +187,7 @@ var onboardCmd = &cobra.Command{
 				if err != nil {
 					return err
 				}
-				log.Debug("remote hosted app request success")
+				utils.Log.Debug("remote hosted app request success")
 				var response []*models.MesheryApplication
 				// failsafe (bad api call)
 				if resp.StatusCode != 200 {
@@ -229,17 +226,14 @@ var onboardCmd = &cobra.Command{
 		}
 
 		if res.StatusCode == 200 {
-			log.Info("app successfully onboarded")
+			utils.Log.Info("app successfully onboarded")
 		}
-		log.Info(string(body))
+		utils.Log.Info(string(body))
 		return nil
 	},
 }
 
 func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int {
-	// get logger instance
-	log, _ := utils.MeshkitLogger()
-
 	reader := bufio.NewReader(os.Stdin)
 
 	for index, a := range profiles {
@@ -260,10 +254,10 @@ func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int 
 		response = strings.ToLower(strings.TrimSpace(response))
 		index, err := strconv.Atoi(response)
 		if err != nil {
-			log.Info(err)
+			utils.Log.Info(err)
 		}
 		if index < 0 || index >= len(profiles) {
-			log.Info("Invalid index")
+			utils.Log.Info("Invalid index")
 		} else {
 			return index
 		}

@@ -37,9 +37,6 @@ var viewCmd = &cobra.Command{
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// get logger instance
-		log, _ := utils.MeshkitLogger()
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -129,14 +126,14 @@ var viewCmd = &cobra.Command{
 					return err
 				}
 				if outFormatFlag == "json" {
-					log.Info(string(body))
+					utils.Log.Info(string(body))
 					continue
 				}
 				if outFormatFlag == "yaml" {
 					if body, err = yaml.JSONToYAML(body); err != nil {
 						return errors.Wrap(err, "failed to convert json to yaml")
 					}
-					log.Info(string(body))
+					utils.Log.Info(string(body))
 					continue
 				}
 			}
@@ -150,7 +147,7 @@ var viewCmd = &cobra.Command{
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
 		if viewAllFlag || isID {
-			log.Info(string(body))
+			utils.Log.Info(string(body))
 		}
 		return nil
 	},

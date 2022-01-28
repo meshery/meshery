@@ -36,9 +36,6 @@ var applyCmd = &cobra.Command{
 		var err error
 		client := &http.Client{}
 
-		// get logger instance
-		log, _ := utils.MeshkitLogger()
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -232,9 +229,6 @@ var applyCmd = &cobra.Command{
 }
 
 func multipleFiltersConfirmation(profiles []models.MesheryFilter) int {
-	// get logger instance
-	logger, _ := utils.MeshkitLogger()
-
 	reader := bufio.NewReader(os.Stdin)
 
 	for index, a := range profiles {
@@ -255,10 +249,10 @@ func multipleFiltersConfirmation(profiles []models.MesheryFilter) int {
 		response = strings.ToLower(strings.TrimSpace(response))
 		index, err := strconv.Atoi(response)
 		if err != nil {
-			logger.Info(err)
+			utils.Log.Info(err)
 		}
 		if index < 0 || index >= len(profiles) {
-			logger.Info("Invalid index")
+			utils.Log.Info("Invalid index")
 		} else {
 			return index
 		}

@@ -23,13 +23,13 @@ func SetupLogrusFormatter() {
 }
 
 // Initialize Meshkit Logger instance
-func MeshkitLogger() (logger.Handler, error) {
+func SetupMeshkitLogger() {
 	logger, err := logger.New("mesheryctl", logger.Options{
-		Format: logger.SyslogLogFormat,
+		Format: logger.TerminalLogFormat,
 	})
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-	return logger, nil
+	Log = logger
 }

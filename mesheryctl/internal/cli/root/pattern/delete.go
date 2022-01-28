@@ -19,9 +19,6 @@ var deleteCmd = &cobra.Command{
 	Long:  `delete pattern file will trigger deletion of the pattern file`,
 	Args:  cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// get logger instance
-		log, _ := utils.MeshkitLogger()
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -50,7 +47,7 @@ var deleteCmd = &cobra.Command{
 			return err
 		}
 
-		log.Info(string(body))
+		utils.Log.Info(string(body))
 
 		return nil
 	},

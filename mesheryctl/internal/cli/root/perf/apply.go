@@ -67,9 +67,6 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		client := &http.Client{}
 		userResponse := false
 
-		// get logger instance
-		logger, _ := utils.MeshkitLogger()
-
 		// setting up for error formatting
 		cmdUsed = "apply"
 
@@ -132,9 +129,9 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 		// Run test based on flags
 		if testName == "" {
-			logger.Debug("Test Name not provided")
+			utils.Log.Debug("Test Name not provided")
 			testName = utils.StringWithCharset(8)
-			logger.Debug("Using random test name: ", testName)
+			utils.Log.Debug("Using random test name: ", testName)
 		}
 
 		// Throw error if a profile name is not provided
@@ -240,7 +237,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		}
 		req.URL.RawQuery = q.Encode()
 
-		logger.Info("Initiating Performance test ...")
+		utils.Log.Info("Initiating Performance test ...")
 
 		resp, err := client.Do(req)
 		if err != nil {
@@ -258,9 +255,9 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		if err != nil {
 			return errors.Wrap(err, utils.PerfError("failed to read response body"))
 		}
-		logger.Debug(string(data))
+		utils.Log.Debug(string(data))
 
-		logger.Info("Test Completed Successfully!")
+		utils.Log.Info("Test Completed Successfully!")
 		return nil
 	},
 }
@@ -277,10 +274,7 @@ func init() {
 }
 
 func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlConfig) (string, string, error) {
-	// get logger instance
-	logger, _ := utils.MeshkitLogger()
-
-	logger.Debug("Creating new performance profile inside function")
+	utils.Log.Debug("Creating new performance profile inside function")
 
 	if profileName == "" {
 		return "", "", ErrNoProfileName()
@@ -369,6 +363,6 @@ func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlCon
 	profileID = response.ID.String()
 	profileName = response.Name
 
-	logger.Debug("New profile created")
+	utils.Log.Debug("New profile created")
 	return profileID, profileName, nil
 }

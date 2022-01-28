@@ -65,6 +65,7 @@ var RootCmd = &cobra.Command{
 func Execute() {
 	//log formatter for improved UX
 	utils.SetupLogrusFormatter()
+	utils.SetupMeshkitLogger()
 	_ = RootCmd.Execute()
 }
 

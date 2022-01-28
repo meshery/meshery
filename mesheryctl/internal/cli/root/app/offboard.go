@@ -23,9 +23,6 @@ var offboardCmd = &cobra.Command{
 	mesheryctl app offboard -f <filepath>
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// get logger instance
-		log, _ := utils.MeshkitLogger()
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -54,7 +51,7 @@ var offboardCmd = &cobra.Command{
 			return err
 		}
 
-		log.Info(string(body))
+		utils.Log.Info(string(body))
 
 		return nil
 	},

@@ -17,10 +17,7 @@ var (
 		Args:  cobra.MinimumNArgs(0),
 		Long:  `remove service mesh in the connected kubernetes cluster`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			// get logger instance
-			log, _ := utils.MeshkitLogger()
-
-			log.Info("Verifying prerequisites...")
+			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				return errors.Wrap(err, "error processing config")

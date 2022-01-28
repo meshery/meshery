@@ -41,9 +41,6 @@ mesheryctl perf profile test 2
 mesheryctl perf profile test --view
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// get logger instance
-		log, _ := utils.MeshkitLogger()
-
 		// used for searching performance profile
 		var searchString string
 		// setting up for error formatting
@@ -67,7 +64,7 @@ mesheryctl perf profile test --view
 		}
 
 		if len(profiles) == 0 {
-			log.Info("No Performance Profiles to display")
+			utils.Log.Info("No Performance Profiles to display")
 			return nil
 		}
 
@@ -82,7 +79,7 @@ mesheryctl perf profile test --view
 			} else if outputFormatFlag != "json" {
 				return ErrInvalidOutputChoice()
 			}
-			log.Info(string(body))
+			utils.Log.Info(string(body))
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
 		} else { // print single profile
@@ -129,7 +126,7 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 		url = url + "&search=" + searchString
 	}
 
-	log.Debug(url)
+	utils.Log.Debug(url)
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
