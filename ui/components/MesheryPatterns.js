@@ -246,7 +246,12 @@ function MesheryPatterns({
             color : "#607d8b"
           }
         },
-      }
+      },
+      MUIDataTableBodyCell : {
+        root : {
+          cursor : "pointer"
+        },
+      },
     }
   });
 
