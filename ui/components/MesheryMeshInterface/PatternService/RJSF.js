@@ -159,6 +159,10 @@ function RJSF(props) {
           ObjectFieldTemplate={CustomObjFieldTemplate}
           additionalMetaSchemas={[JS4]}
           uiSchema={uiSchema(jsonSchema)}
+          liveValidate
+          showErrorList={false}
+          noHtml5Validate
+
         >
           {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
         {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
