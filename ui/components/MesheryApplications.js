@@ -47,7 +47,6 @@ import { Button } from "@material-ui/core";
 import jsYaml from "js-yaml";
 import PascalCaseToKebab from "../utils/PascalCaseToKebab";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import AppsIcon from "./ConnectionWizard/icons/apps";
 import FILE_OPS from "../utils/configurationFileHandlersEnum"
 import { trueRandom } from "../lib/trueRandom";
 
@@ -525,19 +524,16 @@ function MesheryApplications({
           return (
             <>
               <Tooltip
-                title="configure">
-                <IconButton onClick={() => setShowForm({ application : applications[tableMeta.rowIndex], show : true })}>
-                  <AppsIcon />
+                title="Deploy Application">
+                <IconButton>
+                  <PlayArrowIcon
+                    title="Deploy"
+                    aria-label="deploy"
+                    color="inherit"
+                    onClick={() => handleDeploy(rowData.application_file)} //deploy endpoint to be called here
+                  />
                 </IconButton>
               </Tooltip>
-              <IconButton>
-                <PlayArrowIcon
-                  title="Deploy"
-                  aria-label="deploy"
-                  color="inherit"
-                  onClick={() => handleDeploy(rowData.application_file)} //deploy endpoint to be called here
-                />
-              </IconButton>
             </>
           );
         },
