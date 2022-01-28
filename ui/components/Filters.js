@@ -206,11 +206,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
         },
       },
-      MUIDataTableBodyCell : {
-        root : {
-          cursor : "pointer"
-        },
-      },
     }
   })
 
