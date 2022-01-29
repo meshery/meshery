@@ -27,7 +27,7 @@ const CustomInputField = (props) => {
       <TextField
         InputLabelProps={{ style : { pointerEvents : "auto", padding : "2px" } }}
         variant="outlined"
-        style={{ width : "15rem" }}
+        // style={{ width : "15rem" }}
         size="small" autoFocus
         key={props.id}
         value={props.value}
@@ -35,11 +35,11 @@ const CustomInputField = (props) => {
         onChange={e => props?.onChange(e.target.value)}
         label={`${prettifiedName}`}
         InputProps={{ style : { padding : "2px 0px 0px 0px" },
-          inputProps : {
-            type : 'number',
-            max : 100,
-            min : 0
-          },
+          // inputProps : {
+          //   type : 'number',
+          //   max : 100,
+          //   min : 0
+          // },
           endAdornment : (<InputAdornment position="start">
             {props.schema?.description && (
               <EnlargedTextTooltip title={props.schema?.description}>
