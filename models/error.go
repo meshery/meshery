@@ -81,6 +81,7 @@ const (
 	ErrContextIDCode                   = "2155"
 	ErrMesheryInstanceIDCode           = "2156"
 	ErrMesheryNotInClusterCode         = "2157"
+	ErrBrokerNotFoundCode              = "2173"
 )
 
 var (
@@ -109,6 +110,10 @@ var (
 	ErrMesheryInstanceID    = errors.New(ErrMesheryInstanceIDCode, errors.Alert, []string{"Error: Meshery Instance ID is empty or is invalid"}, []string{}, []string{}, []string{})
 	ErrMesheryNotInCluster  = errors.New(ErrMesheryNotInClusterCode, errors.Alert, []string{"Error: Meshery is not running inside a cluster"}, []string{}, []string{}, []string{})
 )
+
+func ErrBrokerNotFound(err error) error {
+	return errors.New(ErrBrokerNotFoundCode, errors.Alert, []string{"Meshery broker not found"}, []string{"Unable to find meshery broker in the cluster", err.Error()}, []string{"Invalid Grafana Endpoint or API-Key"}, []string{"Update your Grafana URL and API-Key from the settings page in the UI"})
+}
 
 func ErrGrafanaClient(err error) error {
 	return errors.New(ErrGrafanaClientCode, errors.Alert, []string{"Unable to initialize Grafana Client"}, []string{"Unable to initializes client for interacting with an instance of Grafana server", err.Error()}, []string{"Invalid Grafana Endpoint or API-Key"}, []string{"Update your Grafana URL and API-Key from the settings page in the UI"})

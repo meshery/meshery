@@ -274,7 +274,7 @@ func main() {
 		// and other startup health checks
 		kclient, err := mesherykube.New(nil)
 		if err != nil {
-			log.Error(err)
+			log.Error(handlers.ErrKubeClient(err))
 			return
 		}
 		mesheryclient, err := operatorClient.New(&kclient.RestConfig)
@@ -288,7 +288,7 @@ func main() {
 		}
 		broker, err := mesheryclient.CoreV1Alpha1().Brokers(MesheryNamespace).Get(ctx, "meshery-broker", metav1.GetOptions{})
 		if err != nil || broker.Status.Endpoint.External == "" {
-			log.Error(err)
+			log.Error(models.ErrBrokerNotFound(err))
 			return
 		}
 		brokerEndpoint := helpers.GetBrokerEndpoint(kclient, broker)
@@ -311,7 +311,7 @@ func main() {
 		meshsyncDataHandler := models.NewMeshsyncDataHandler(brkrConn, dbHandler, log)
 		err = meshsyncDataHandler.Run()
 		if err != nil {
-			log.Error(err)
+			log.Info(err.Error())
 		}
 	}()
 

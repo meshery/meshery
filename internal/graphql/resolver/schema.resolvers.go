@@ -147,8 +147,9 @@ func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context) (<-cha
 }
 
 func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.listenToMeshSyncEvents(ctx, provider)
+	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	// return r.listenToMeshSyncEvents(ctx, provider)
+	return nil, nil
 }
 
 func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {
