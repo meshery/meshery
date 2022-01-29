@@ -69,7 +69,7 @@ func fill(p *core.Pattern, flatSvc map[string]interface{}) error {
 
 func fillDependsOn(svc *core.Service, flatSvc map[string]interface{}) error {
 	for i, d := range svc.DependsOn {
-		k, ok := matchPattern(d)
+		k, ok := matchFillerPattern(d)
 		if !ok {
 			continue
 		}
@@ -91,7 +91,7 @@ func fillDependsOn(svc *core.Service, flatSvc map[string]interface{}) error {
 }
 
 func fillNamespace(svc *core.Service, flatSvc map[string]interface{}) error {
-	nsKey, ok := matchPattern(svc.Namespace)
+	nsKey, ok := matchFillerPattern(svc.Namespace)
 	if !ok {
 		return nil
 	}
@@ -111,7 +111,7 @@ func fillNamespace(svc *core.Service, flatSvc map[string]interface{}) error {
 }
 
 func fillType(svc *core.Service, flatSvc map[string]interface{}) error {
-	tKey, ok := matchPattern(svc.Type)
+	tKey, ok := matchFillerPattern(svc.Type)
 	if !ok {
 		return nil
 	}
@@ -196,7 +196,7 @@ func fillMap(mp map[string]interface{}, flatSvc map[string]interface{}) (map[str
 }
 
 func fillMapString(str string, flatSvc map[string]interface{}) (string, bool, error) {
-	res, ok := matchPattern(str)
+	res, ok := matchFillerPattern(str)
 	if !ok {
 		return "", false, nil
 	}
@@ -217,7 +217,7 @@ func fillMapString(str string, flatSvc map[string]interface{}) (string, bool, er
 // matchPattern takes in a string and tests it against the pattern
 // if match is successful it returns the string after removing the pattern
 // specific details from it
-func matchPattern(str string) (string, bool) {
+func matchFillerPattern(str string) (string, bool) {
 	res := FillerRegex.FindString(str)
 	if res == "" {
 		return res, false
