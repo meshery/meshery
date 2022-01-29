@@ -153,10 +153,10 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
         </tr>
         <tr id="{{component[1].component_name}}-{{err_code[1]["name"]}}-more-info" class="tbl-hidden-row">
           {% if err_code[1]["probable_cause"] != "" %}
-            <td colspan="2" style=""><div><i><b>Probable cause:</b></i></div>{{ err_code[1]["probable_cause"] | xml_escape }}</td>
+            <td colspan="2" style=""><div><i><b>Probable Cause:</b></i></div>{{ err_code[1]["probable_cause"] | xml_escape }}</td>
           {% endif %}
           {% if err_code[1]["suggested_remediation"] != "" %}
-            <td colspan="2" style=""><div><i><b>suggested remediation:</b></i></div>{{ err_code[1]["suggested_remediation"] }}</td>
+            <td colspan="2" style=""><div><i><b>Suggested Remediation:</b></i></div>{{ err_code[1]["suggested_remediation"] }}</td>
             {% if err_code[1]["probable_cause"] == ""%}
             <td colspan="2" style=""></td>
             {% endif %}
