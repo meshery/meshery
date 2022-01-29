@@ -4136,6 +4136,31 @@ paths:
       summary: Handle POST request for Application File Deploy
       tags:
       - ApplicationsAPI
+  /api/experimental/oam/{type}:
+    get:
+      description: |-
+        Returns a list of workloads/traits/scopes by given type in the URL
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      operationId: idGetOAMRegister
+      responses:
+        "200":
+          description: ""
+      summary: Handles GET requests for list of OAM objects
+      tags:
+      - PatternsAPI
+    post:
+      description: |-
+        Adding a workloads/traits/scopes by given type in the URL
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      operationId: idPostOAMRegister
+      responses:
+        "200":
+          description: ""
+      summary: Handles POST requests for adding OAM objects
+      tags:
+      - PatternsAPI
   /api/filter:
     get:
       description: Returns all the Meshery Filters saved by the current user
@@ -4238,11 +4263,37 @@ paths:
         Adding a workload/trait/scope
 
         {type} being of either trait, scope, workload; registration of adapter capabilities.
-      operationId: idPOSTOAMMesheryPattern
+      operationId: idPOSTOAMRegister
       responses:
         "200":
           description: ""
       summary: Handles registering OMA objects
+      tags:
+      - PatternsAPI
+  /api/oam/{type}/{name}:
+    get:
+      description: |-
+        Returns component details of a workload/trait/scope by given name in the URL
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      operationId: idOAMComponentDetails
+      responses:
+        "200":
+          description: ""
+      summary: Handles GET requests for component details for OAM objects
+      tags:
+      - PatternsAPI
+  /api/oam/{type}/{name}/{id}:
+    get:
+      description: |-
+        Returns details of a workload/trait/scope by given name and id in the URL
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      operationId: idOAMComponentDetailByID
+      responses:
+        "200":
+          description: ""
+      summary: Handles GET requests for component details for OAM objects
       tags:
       - PatternsAPI
   /api/pattern:

@@ -770,18 +770,18 @@ class GrafanaCustomChart extends Component {
           </div>
         );
       }
-      if (this.state.sparkline){
-        return (
-          <NoSsr>
-            {loadingBar}
-            <div className={classes.sparklineCardContent}>
-              <div>{panel.title}</div>
-              <div>{mainChart}</div>
-              <div>{iconComponent}</div>
-            </div>
-          </NoSsr>
-        )
-      }
+      // if (this.state.sparkline){
+      //   return (
+      //     <NoSsr>
+      //       {loadingBar}
+      //       <div className={classes.sparklineCardContent}>
+      //         <div>{panel.title}</div>
+      //         <div>{mainChart}</div>
+      //         <div>{iconComponent}</div>
+      //       </div>
+      //     </NoSsr>
+      //   )
+      // }
       return (
         <NoSsr>
           {loadingBar}

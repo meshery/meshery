@@ -25,7 +25,7 @@ const CustomInputField = (props) => {
   return (
     <div key={props.id} style={style}>
       <TextField
-        InputLabelProps={{ style : { pointerEvents : "auto", padding : "3px" } }}
+        InputLabelProps={{ style : { pointerEvents : "auto", padding : "2px" } }}
         variant="outlined"
         style={{ width : "15rem" }}
         size="small" autoFocus

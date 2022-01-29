@@ -463,7 +463,7 @@ class DashboardComponent extends React.Component {
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
@@ -573,6 +573,7 @@ class DashboardComponent extends React.Component {
   handleGrafanaClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const { grafanaUrl } = this.state;
     dataFetch(
       "/api/telemetry/metrics/grafana/ping",
       { credentials : "same-origin",
@@ -580,7 +581,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Grafana connected at" + this, { variant : "success",
+          this.props.enqueueSnackbar("Grafana connected at "  + `${grafanaUrl}`, { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -718,6 +719,7 @@ class DashboardComponent extends React.Component {
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const { prometheusUrl } = this.state;
     dataFetch(
       "/api/telemetry/metrics/ping",
       { credentials : "same-origin",
@@ -725,7 +727,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Prometheus connected.", { variant : "success",
+          this.props.enqueueSnackbar("Prometheus connected at" + ` ${prometheusUrl}`, { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -834,8 +836,8 @@ class DashboardComponent extends React.Component {
                     isDisabled
                       ? aa.label.split(":")[0] + ":" + aa.label.split(":")[1]
                       : adapterType.toLowerCase()
-                        .split(" ")
-                        .map((s) => s.charAt(0).toUpperCase() + s.substring(1))}
+                        .split("_")
+                        .map((s) => s.charAt(0).toUpperCase() + s.substring(1) + " ")}
                   onClick={self.handleAdapterClick(aa.value)}
                   icon={logoIcon}
                   className={classes.chip}
