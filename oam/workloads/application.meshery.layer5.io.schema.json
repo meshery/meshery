@@ -5,7 +5,9 @@
   "type": "object",
   "properties": {
     "replicas": {
-      "type": "integer"
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
     },
     "advanced": {
       "type": "object",
@@ -17,16 +19,20 @@
         },
         "labels": {
           "type": "object",
-          "additionalProperties": {
-            "format": "string",
-            "type": "string"
-          }    
+          "properties": {
+            "additionalProperties" : {
+              "format": "string",
+              "type": "string"
+            }
+          }
         },
         "annotations": {
-          "type": "object",
-          "additionalProperties": {
-            "format": "string",
-            "type": "string"
+          "type": "object",   
+          "properties": {
+            "additionalProperties" : {
+              "format": "string",
+              "type": "string"
+            }
           }
         }
       }
@@ -58,7 +64,9 @@
                   "default": "http"
                 },
                 "containerPort": {
-                  "type": "integer"
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
                 }
               },
               "minItems": 1,
