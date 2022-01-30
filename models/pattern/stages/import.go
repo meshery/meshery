@@ -27,7 +27,8 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 			return
 		}
 		data.Lock.Lock()
-		err = expandImportOnServices(data.Pattern)
+		imported := make(map[string]bool, 0)
+		err = expandImportOnServices(data.Pattern, imported)
 		if err != nil {
 			act.Terminate(err)
 			return
@@ -40,13 +41,16 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 	}
 }
 
-func expandImportOnServices(pattern *core.Pattern) error {
+func expandImportOnServices(pattern *core.Pattern, parentimported map[string]bool) error {
 	for key, svc := range pattern.Services {
+		imported := make(map[string]bool)
+		for k := range parentimported {
+			imported[k] = true
+		}
 		loc, ok := matchImportPattern(svc.Type)
 		if !ok {
 			continue
 		}
-		imported := make(map[string]bool)
 		var svcs map[string]*core.Service
 		var err error
 		if pattern.Vars == nil {
@@ -65,7 +69,8 @@ func expandImportOnServices(pattern *core.Pattern) error {
 }
 func expandImportedPatternToServices(name string, svc *core.Service, loc string, vars map[string]interface{}, imported map[string]bool) (map[string]*core.Service, map[string]interface{}, error) {
 	if imported[loc] {
-		return nil, nil, errors.New("Circular Import detected for URL " + loc)
+		fmt.Println("TRUE ", loc)
+		return nil, nil, errors.New("[Service " + svc.Name + "]Circular Import detected for URL " + loc)
 	}
 
 	pattern, err := getPatternFromLocation(loc)
@@ -73,12 +78,13 @@ func expandImportedPatternToServices(name string, svc *core.Service, loc string,
 		return nil, nil, err
 	}
 	imported[loc] = true
+	fmt.Println("LOC as true", loc)
 	for _, svc := range pattern.Services {
 		svc.Name = strings.ToLower(pattern.Name) + svc.Name + getHash(5)
 
 	}
 
-	err = expandImportOnServices(&pattern)
+	err = expandImportOnServices(&pattern, imported)
 	if err != nil {
 		return nil, nil, err
 	}
