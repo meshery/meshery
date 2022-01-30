@@ -20,6 +20,7 @@ const ImportPattern = `\$\(#use\s.+\)`
 
 var ImportRegex *regexp.Regexp
 
+var dependencies = make(map[string][]string) //key is the service name and value is the array of all services that depends on it
 func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		if err != nil {
@@ -27,14 +28,31 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 			return
 		}
 		data.Lock.Lock()
+		//maintain an auxilliary list of dependencies
+		for _, svc := range data.Pattern.Services {
+			for _, dsvc := range svc.DependsOn {
+				dependencies[dsvc] = append(dependencies[dsvc], svc.Name)
+			}
+		}
+
 		imported := make(map[string]bool, 0)
 		err = expandImportOnServices(data.Pattern, imported)
 		if err != nil {
 			act.Terminate(err)
 			return
 		}
+		for _, s := range data.Pattern.Services {
+			s.DependsOn = nil
+		}
+		//refill the dependencies
+		for d, dep := range dependencies {
+			for _, y := range dep {
+				data.Pattern.Services[y].DependsOn = append(data.Pattern.Services[y].DependsOn, d)
+			}
+		}
 		data.Lock.Unlock()
-
+		b, _ := yaml.Marshal(data.Pattern)
+		fmt.Println("AFTER FIRST STAGE: \n", string(b))
 		if next != nil {
 			next(data, nil)
 		}
@@ -51,6 +69,8 @@ func expandImportOnServices(pattern *core.Pattern, parentimported map[string]boo
 		if !ok {
 			continue
 		}
+		dep := dependencies[svc.Name]
+		delete(dependencies, svc.Name)
 		var svcs map[string]*core.Service
 		var err error
 		if pattern.Vars == nil {
@@ -62,6 +82,7 @@ func expandImportOnServices(pattern *core.Pattern, parentimported map[string]boo
 		}
 		delete(pattern.Services, key)
 		for name, s := range svcs {
+			dependencies[name] = dep
 			pattern.Services[name] = s
 		}
 	}
@@ -69,7 +90,6 @@ func expandImportOnServices(pattern *core.Pattern, parentimported map[string]boo
 }
 func expandImportedPatternToServices(name string, svc *core.Service, loc string, vars map[string]interface{}, imported map[string]bool) (map[string]*core.Service, map[string]interface{}, error) {
 	if imported[loc] {
-		fmt.Println("TRUE ", loc)
 		return nil, nil, errors.New("[Service " + svc.Name + "]Circular Import detected for URL " + loc)
 	}
 
@@ -78,10 +98,11 @@ func expandImportedPatternToServices(name string, svc *core.Service, loc string,
 		return nil, nil, err
 	}
 	imported[loc] = true
-	fmt.Println("LOC as true", loc)
-	for _, svc := range pattern.Services {
-		svc.Name = strings.ToLower(pattern.Name) + svc.Name + getHash(5)
-
+	for oldName, svc := range pattern.Services {
+		name := strings.ToLower(pattern.Name) + svc.Name + getHash(5)
+		svc.Name = name
+		pattern.Services[name] = svc
+		delete(pattern.Services, oldName)
 	}
 
 	err = expandImportOnServices(&pattern, imported)
