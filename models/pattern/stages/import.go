@@ -1,16 +1,15 @@
 package stages
 
 import (
+	"crypto/sha1"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"log"
-	"math/rand"
 	"net/http"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/layer5io/meshery/models/pattern/core"
 	"gopkg.in/yaml.v2"
@@ -47,7 +46,9 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 		//refill the dependencies
 		for d, dep := range dependencies {
 			for _, y := range dep {
-				data.Pattern.Services[y].DependsOn = append(data.Pattern.Services[y].DependsOn, d)
+				if data.Pattern.Services[y] != nil {
+					data.Pattern.Services[y].DependsOn = append(data.Pattern.Services[y].DependsOn, d)
+				}
 			}
 		}
 		data.Lock.Unlock()
@@ -99,7 +100,7 @@ func expandImportedPatternToServices(name string, svc *core.Service, loc string,
 	}
 	imported[loc] = true
 	for oldName, svc := range pattern.Services {
-		name := strings.ToLower(pattern.Name) + svc.Name + getHash(5)
+		name := strings.ToLower(pattern.Name) + svc.Name + getHash(svc)
 		svc.Name = name
 		pattern.Services[name] = svc
 		delete(pattern.Services, oldName)
@@ -134,13 +135,13 @@ func getPatternFromLocation(loc string) (p core.Pattern, err error) {
 	return p, nil
 }
 
-func getHash(length int) string {
-	b := make([]byte, length)
-	charset := "abcdefghijklmnopqrstuvwxyz"
-	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
-	}
-	return string(b)
+func getHash(s *core.Service) string {
+	b, _ := yaml.Marshal(s)
+	h := sha1.New()
+	h.Write(b)
+	bs := h.Sum(nil)
+	str := string(fmt.Sprintf("%x\n", bs))
+	return str[0:8]
 }
 
 // matchPattern takes in a string and tests it against the pattern
@@ -154,9 +155,6 @@ func matchImportPattern(str string) (string, bool) {
 
 	return strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(res, "$(#use"), ")")), true
 }
-
-var seededRand *rand.Rand = rand.New(
-	rand.NewSource(time.Now().UnixNano()))
 
 func init() {
 	var err error
