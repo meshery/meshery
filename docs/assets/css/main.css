@@ -18688,12 +18688,14 @@ footer {
 }
 
 .social__link--calendar {
-    fill: grey;
+    fill: gray;
+    stroke: gray;
     padding: 10px;
 }
 
 .social__link--calendar:hover {
     fill: #0073cf;
+    stroke: #0073cf;
 }
 
 .footer {
