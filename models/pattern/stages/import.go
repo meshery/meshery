@@ -29,9 +29,8 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 		//---
 
 		imported := make(map[string]bool, 0)
-		dependencies := make(map[string][]string) //key is the service name and value is the array of all services that depends on it
 		replacedBy := make(map[string]string, 0)
-		err = expandImportOnServices(data.Pattern, imported, dependencies, replacedBy)
+		err = expandImportOnServices(data.Pattern, imported, replacedBy)
 		if err != nil {
 			act.Terminate(err)
 			return
@@ -46,11 +45,15 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 	}
 }
 
-func expandImportOnServices(pattern *core.Pattern, parentimported map[string]bool, dependencies map[string][]string, replacedBy map[string]string) error {
+func expandImportOnServices(pattern *core.Pattern, parentimported map[string]bool, replacedBy map[string]string) error {
+	servicenodes := map[string]*node{}
 	for key, svc := range pattern.Services {
 		imported := make(map[string]bool)
 		for k := range parentimported {
 			imported[k] = true
+		}
+		servicenodes[key] = &node{
+			name: key,
 		}
 		loc, ok := matchImportPattern(svc.Type)
 		if !ok {
@@ -61,28 +64,31 @@ func expandImportOnServices(pattern *core.Pattern, parentimported map[string]boo
 		if pattern.Vars == nil {
 			pattern.Vars = make(map[string]interface{})
 		}
-		svcs, err = expandImportedPatternToServices(key, svc, loc, pattern.Vars, imported, dependencies, replacedBy)
+		svcs, err = expandImportedPatternToServices(key, svc, loc, pattern.Vars, imported, replacedBy)
 		if err != nil {
 			return err
 		}
 		delete(pattern.Services, key)
 		for name, s := range svcs {
+			nod := servicenodes[key]
+			nod.imports = append(nod.imports, node{name: name})
+			servicenodes[key] = nod
+			fmt.Println(servicenodes[key].imports)
 			pattern.Services[name] = s
 		}
 	}
-	for _, svc := range pattern.Services {
-		svc.DependsOn = nil
-	}
-	for _, svc := range pattern.Services {
-		for i, d := range svc.DependsOn {
-			if replacedBy[d] != "" {
-				svc.DependsOn[i] = replacedBy[d]
+	for _, s := range pattern.Services {
+		for k, n := range servicenodes {
+			i := contains(s.DependsOn, k)
+			if i != -1 {
+				n.updateDependency(&s.DependsOn, i)
 			}
 		}
+
 	}
 	return nil
 }
-func expandImportedPatternToServices(name string, svc *core.Service, loc string, vars map[string]interface{}, imported map[string]bool, dependencies map[string][]string, replacedBy map[string]string) (map[string]*core.Service, error) {
+func expandImportedPatternToServices(name string, svc *core.Service, loc string, vars map[string]interface{}, imported map[string]bool, replacedBy map[string]string) (map[string]*core.Service, error) {
 	if imported[loc] {
 		return nil, errors.New("[Service " + svc.Name + "]Circular Import detected for URL " + loc)
 	}
@@ -100,7 +106,7 @@ func expandImportedPatternToServices(name string, svc *core.Service, loc string,
 		replacedBy[oldName] = newname
 		delete(pattern.Services, oldName)
 	}
-	err = expandImportOnServices(&pattern, imported, dependencies, replacedBy)
+	err = expandImportOnServices(&pattern, imported, replacedBy)
 	if err != nil {
 		return nil, err
 	}
@@ -158,31 +164,41 @@ func init() {
 	}
 }
 
-func dependenciesToDependsOn(dependencies map[string][]string, svc map[string]*core.Service) {
-	for d, dep := range dependencies {
-		for _, y := range dep {
-			if svc[y] != nil {
-				svc[y].DependsOn = append(svc[y].DependsOn, d)
-			}
-		}
-	}
+//As the name of services can change, we need a way to ensure that the depends-on constraint is not broken
+// So during the start of evaluation of each pattern file intializes slice of this below data structure. Where each node is a service.
+// Normal services are nodes which point to null.
+// The service which imports another service points to slice of nodes, and recursively so on and so forth.
+// Just after returning all services from patterns, we will use this data structure to resolve depends-on field with the following logic:
+// For each service: For each depends on svc: We start from the Node[svc]. We go to each of its children and run UpdateDepency by passing depends-on
+// Update dependency work the following way: If this node point to no further nodes- append the svc name in depends-on,otherwise recursively call UpdateDependency
+
+type node struct {
+	name    string
+	imports []node
 }
 
-func dependsOnToDependencies(dependencies map[string][]string, svcs map[string]*core.Service) {
-	for _, svc := range svcs {
-		for _, dsvc := range svc.DependsOn {
-			dependencies[dsvc] = append(dependencies[dsvc], svc.Name)
-		}
+func (n *node) updateDependency(dependson *[]string, i int) {
+	fmt.Println("name is ", n.name, " and import is ", n.imports)
+	if len(n.imports) == 0 { //base case
+		fmt.Println("ADDING IN DEPENDS ON: ", n.name)
+		*dependson = append(*dependson, n.name)
+		return
+	}
+	fmt.Println("WILL BE REMOVING ", (*dependson)[i])
+	*dependson = append((*dependson)[:i], (*dependson)[i+1:]...)
+	fmt.Println("AFTER DELETION ", *dependson)
+	fmt.Println("n.imports is ", n.imports)
+	for _, n := range n.imports {
+		fmt.Println("WILL EXECUTE ON NODE ", n.name, " WITH DEPENDS ON AS ", *dependson)
+		n.updateDependency(dependson, i)
 	}
 }
-
-func replaceDependsOnInAllSvcsWithNewSvcName(old, new string, svcs map[string]*core.Service) {
-	for _, svc := range svcs {
-		for i, d := range svc.DependsOn {
-			if d == old {
-				fmt.Println("old=", old, " new=", new)
-				svc.DependsOn[i] = new
-			}
+func contains(s []string, str string) int {
+	for i, v := range s {
+		if v == str {
+			return i
 		}
 	}
+
+	return -1
 }
