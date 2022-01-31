@@ -28,8 +28,10 @@ type: Reference
   background-color:#FFFFFF;
 }
 
-.tbl .tbl-body .tbl-body-row:hover{
+
+.tbl .tbl-body .tbl-body-row.hover-effect:hover{
   background-color:#ccfff9;
+  cursor:pointer;
 }
 
 .tbl-body-row .error-name-code{
@@ -140,14 +142,28 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
     </tr>
   </thead>
   <tbody class="tbl-body">
-    {% for err_code in component[1].errors %}    
-        <tr class="tbl-body-row" onclick="toggle_visibility('{{component[1].component_name}}-{{err_code[1]["name"]}}-more-info');">
+    {% for err_code in component[1].errors %}
+        {% if err_code[1]["severity"] == "Fatal" %}
+          {% assign severity = "background-color: #FF0000; color: white;"%} 
+        {% elsif err_code[1]["severity"] == "Alert" %}
+          {% assign severity = "background-color: #FEA501; color: white;"%}
+        {% else %}
+          {% assign severity = "background-color: #FFF; color: black;"%}
+        {% endif %}   
+        {% if err_code[1]["probable_cause"] != "" %}
+          {% assign hover_class = "hover-effect"%}
+        {% elsif err_code[1]["probable_cause"] != "" %}
+          {% assign hover_class = "hover-effect" %}
+        {% else %}
+          {% assign hover_class = "" %}
+        {% endif %}
+        <tr class="tbl-body-row {{hover_class}}" onclick="toggle_visibility('{{component[1].component_name}}-{{err_code[1]["name"]}}-more-info');">
           <td class="error-name-code">
             <span><a id="{{component[1].component_name}}-{{err_code[1]["name"]}}">
             {{ err_code[1]["name"] | xml_escape }}
             </a></span> <span>{{ err_code[1]["code"] }}</span> 
           </td>
-          <td >{{ err_code[1]["severity"]}}</td>
+          <td style="{{severity}}">{{ err_code[1]["severity"]}}</td>
           <td style="word-break:break-word">{{ err_code[1]["short_description"] | xml_escape}}</td>
           <td style="">{{ err_code[1]["long_description"] | xml_escape }}</td>
         </tr>
