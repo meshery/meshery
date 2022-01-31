@@ -152,7 +152,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
         {% endif %}   
         {% if err_code[1]["probable_cause"] != "" %}
           {% assign hover_class = "hover-effect"%}
-        {% elsif err_code[1]["probable_cause"] != "" %}
+        {% elsif err_code[1]["suggested_remediation"] != "" %}
           {% assign hover_class = "hover-effect" %}
         {% else %}
           {% assign hover_class = "" %}
