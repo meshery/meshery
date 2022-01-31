@@ -283,7 +283,7 @@ function jsonSchemaBuilder(schema, obj) {
   }
 
   if (schema.type === 'number' || schema.type === 'integer') {
-    obj["ui:widget"] = "updown";
+    obj["ui:widget"] = "range";
   }
 }
 

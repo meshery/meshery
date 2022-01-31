@@ -55,7 +55,7 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
         }
         if (types.includes('null')) {
           defaultValue = null
-        } else if (types.includes('integer')) {
+        } else if (types.includes('integer') || types.includes('number')) {
           defaultValue = 0
         } else if (types.includes('string')) {
           defaultValue = ''
