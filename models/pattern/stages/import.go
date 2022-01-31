@@ -2,7 +2,6 @@ package stages
 
 import (
 	"crypto/sha1"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -19,7 +18,6 @@ const ImportPattern = `\$\(#use\s.+\)`
 
 var ImportRegex *regexp.Regexp
 
-var dependencies = make(map[string][]string) //key is the service name and value is the array of all services that depends on it
 func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		if err != nil {
@@ -28,29 +26,17 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 		}
 		data.Lock.Lock()
 		//maintain an auxilliary list of dependencies
-		for _, svc := range data.Pattern.Services {
-			for _, dsvc := range svc.DependsOn {
-				dependencies[dsvc] = append(dependencies[dsvc], svc.Name)
-			}
-		}
+		//---
 
 		imported := make(map[string]bool, 0)
-		err = expandImportOnServices(data.Pattern, imported)
+		dependencies := make(map[string][]string) //key is the service name and value is the array of all services that depends on it
+		replacedBy := make(map[string]string, 0)
+		err = expandImportOnServices(data.Pattern, imported, dependencies, replacedBy)
 		if err != nil {
 			act.Terminate(err)
 			return
 		}
-		for _, s := range data.Pattern.Services {
-			s.DependsOn = nil
-		}
-		//refill the dependencies
-		for d, dep := range dependencies {
-			for _, y := range dep {
-				if data.Pattern.Services[y] != nil {
-					data.Pattern.Services[y].DependsOn = append(data.Pattern.Services[y].DependsOn, d)
-				}
-			}
-		}
+		data.Other["replacedBy"] = replacedBy
 		data.Lock.Unlock()
 		b, _ := yaml.Marshal(data.Pattern)
 		fmt.Println("AFTER FIRST STAGE: \n", string(b))
@@ -60,7 +46,7 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 	}
 }
 
-func expandImportOnServices(pattern *core.Pattern, parentimported map[string]bool) error {
+func expandImportOnServices(pattern *core.Pattern, parentimported map[string]bool, dependencies map[string][]string, replacedBy map[string]string) error {
 	for key, svc := range pattern.Services {
 		imported := make(map[string]bool)
 		for k := range parentimported {
@@ -70,45 +56,53 @@ func expandImportOnServices(pattern *core.Pattern, parentimported map[string]boo
 		if !ok {
 			continue
 		}
-		dep := dependencies[svc.Name]
-		delete(dependencies, svc.Name)
 		var svcs map[string]*core.Service
 		var err error
 		if pattern.Vars == nil {
 			pattern.Vars = make(map[string]interface{})
 		}
-		svcs, _, err = expandImportedPatternToServices(key, svc, loc, pattern.Vars, imported)
+		svcs, err = expandImportedPatternToServices(key, svc, loc, pattern.Vars, imported, dependencies, replacedBy)
 		if err != nil {
 			return err
 		}
 		delete(pattern.Services, key)
 		for name, s := range svcs {
-			dependencies[name] = dep
 			pattern.Services[name] = s
+		}
+	}
+	for _, svc := range pattern.Services {
+		svc.DependsOn = nil
+	}
+	for _, svc := range pattern.Services {
+		for i, d := range svc.DependsOn {
+			if replacedBy[d] != "" {
+				svc.DependsOn[i] = replacedBy[d]
+			}
 		}
 	}
 	return nil
 }
-func expandImportedPatternToServices(name string, svc *core.Service, loc string, vars map[string]interface{}, imported map[string]bool) (map[string]*core.Service, map[string]interface{}, error) {
+func expandImportedPatternToServices(name string, svc *core.Service, loc string, vars map[string]interface{}, imported map[string]bool, dependencies map[string][]string, replacedBy map[string]string) (map[string]*core.Service, error) {
 	if imported[loc] {
-		return nil, nil, errors.New("[Service " + svc.Name + "]Circular Import detected for URL " + loc)
+		return nil, errors.New("[Service " + svc.Name + "]Circular Import detected for URL " + loc)
 	}
 
 	pattern, err := getPatternFromLocation(loc)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	imported[loc] = true
-	for oldName, svc := range pattern.Services {
-		name := strings.ToLower(pattern.Name) + svc.Name + getHash(svc)
-		svc.Name = name
-		pattern.Services[name] = svc
+	for oldName, oldsvc := range pattern.Services { //change the names of the services for uniqueness
+		newname := strings.ToLower(pattern.Name) + getHash(oldsvc)
+		oldsvc.Name = newname
+		oldsvc.DependsOn = svc.DependsOn
+		pattern.Services[newname] = oldsvc
+		replacedBy[oldName] = newname
 		delete(pattern.Services, oldName)
 	}
-
-	err = expandImportOnServices(&pattern, imported)
+	err = expandImportOnServices(&pattern, imported, dependencies, replacedBy)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	for k, v := range pattern.Vars {
 		if svc.Settings[k] != nil {
@@ -117,7 +111,7 @@ func expandImportedPatternToServices(name string, svc *core.Service, loc string,
 			vars[k] = v
 		}
 	}
-	return pattern.Services, vars, nil
+	return pattern.Services, nil
 }
 
 func getPatternFromLocation(loc string) (p core.Pattern, err error) {
@@ -164,29 +158,31 @@ func init() {
 	}
 }
 
-func tryToMarshalAndFAILTHENYAML(i interface{}) {
-	b, err := json.Marshal(i)
-	if err != nil {
-		fmt.Println("FAILED ", err.Error())
-		b, err := yaml.Marshal(i)
-		if err != nil {
-
+func dependenciesToDependsOn(dependencies map[string][]string, svc map[string]*core.Service) {
+	for d, dep := range dependencies {
+		for _, y := range dep {
+			if svc[y] != nil {
+				svc[y].DependsOn = append(svc[y].DependsOn, d)
+			}
 		}
-		fmt.Println("YAML\n ", string(b))
 	}
-	fmt.Println("JSON\n", string(b))
 }
-func convert(m map[interface{}]interface{}) map[string]interface{} {
-	res := map[string]interface{}{}
-	for k, v := range m {
-		switch v2 := v.(type) {
-		case map[interface{}]interface{}:
-			fmt.Println("THIS MOFOOO ", k, "=", v)
-			res[fmt.Sprint(k)] = convert(v2)
-		default:
-			res[fmt.Sprint(k)] = v
+
+func dependsOnToDependencies(dependencies map[string][]string, svcs map[string]*core.Service) {
+	for _, svc := range svcs {
+		for _, dsvc := range svc.DependsOn {
+			dependencies[dsvc] = append(dependencies[dsvc], svc.Name)
 		}
 	}
-	tryToMarshalAndFAILTHENYAML(res)
-	return res
+}
+
+func replaceDependsOnInAllSvcsWithNewSvcName(old, new string, svcs map[string]*core.Service) {
+	for _, svc := range svcs {
+		for i, d := range svc.DependsOn {
+			if d == old {
+				fmt.Println("old=", old, " new=", new)
+				svc.DependsOn[i] = new
+			}
+		}
+	}
 }
