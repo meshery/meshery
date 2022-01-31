@@ -126,7 +126,6 @@ export const useStyles = makeStyles((theme) => ({
     width: 170,
     height: "100%",
     borderRadius: "unset",
-    backgroundColor: JungleGreen,
   },
   mainLogoCollapsed: {
     marginRight: theme.spacing(1),
@@ -135,7 +134,6 @@ export const useStyles = makeStyles((theme) => ({
     width: 40,
     height: 40,
     borderRadius: "unset",
-    backgroundColor: JungleGreen,
   },
   mainLogoTextCollapsed: {
     display: "none",
@@ -145,7 +143,6 @@ export const useStyles = makeStyles((theme) => ({
   },
   cursorPointer: {
     cursor: "pointer",
-    backgroundColor: JungleGreen,
   },
   listIcon: {
     minWidth: theme.spacing(3.5),
