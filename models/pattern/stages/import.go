@@ -99,7 +99,7 @@ func expandImportedPatternToServices(name string, svc *core.Service, loc string,
 	}
 	imported[loc] = true
 	for oldName, oldsvc := range pattern.Services { //change the names of the services for uniqueness
-		newname := strings.ToLower(pattern.Name) + getHash(oldsvc)
+		newname := strings.ToLower(oldName) + getHash(oldsvc)
 		oldsvc.Name = newname
 		oldsvc.DependsOn = svc.DependsOn
 		pattern.Services[newname] = oldsvc
