@@ -550,9 +550,6 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                             .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
                             .map((s, i) => (
                               <Grid item key={`svc-form-addons-${i}`}>
-                                {
-                                  console.log("f", deployServiceConfig?.[getPatternServiceName(s.workload)], getPatternServiceName(s.workload))
-                                }
                                 <LazyPatternServiceForm
                                   formData={{ settings : deployServiceConfig?.[getPatternServiceName(s.workload)] }}
                                   onSettingsChange={handleSettingsChange(s.workload)}
