@@ -217,7 +217,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     <>
       <div className={classes.pageContainer}>
         <div className={classes.topToolbar}>
-          {testProfiles.length > 0 && (
+          {(testProfiles.length > 0 || viewType == "table")  && (
             <div className={classes.addButton}>
               <Button
                 aria-label="Add Performance Profile"
@@ -264,7 +264,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               fetchTestProfiles={fetchTestProfiles}
             />
           )}
-        {testProfiles.length == 0 && (
+        {testProfiles.length == 0 && viewType == "grid" && (
           <Paper className={classes.noProfilePaper} >
             <div className={classes.noProfileContainer}>
               <Typography className={classes.noProfileText} align="center" color="textSecondary">
