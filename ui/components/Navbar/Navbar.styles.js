@@ -1,4 +1,5 @@
 import makeStyles from "@mui/styles/makeStyles";
+import JungleGreen from "../../styles/colors";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,7 +75,7 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   itemCategory: {
-    backgroundColor: "#263238",
+    backgroundColor: JungleGreen,
     boxShadow: "0 -1px 0 #404854 inset",
     paddingTop: 16,
     paddingBottom: 16,
@@ -125,6 +126,7 @@ export const useStyles = makeStyles((theme) => ({
     width: 170,
     height: "100%",
     borderRadius: "unset",
+    backgroundColor: JungleGreen,
   },
   mainLogoCollapsed: {
     marginRight: theme.spacing(1),
@@ -133,6 +135,7 @@ export const useStyles = makeStyles((theme) => ({
     width: 40,
     height: 40,
     borderRadius: "unset",
+    backgroundColor: JungleGreen,
   },
   mainLogoTextCollapsed: {
     display: "none",
@@ -142,6 +145,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   cursorPointer: {
     cursor: "pointer",
+    backgroundColor: JungleGreen,
   },
   listIcon: {
     minWidth: theme.spacing(3.5),
@@ -216,7 +220,7 @@ export const useStyles = makeStyles((theme) => ({
       "0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)",
     borderRadius: "0 5px 5px 0",
     backgroundColor: "#FFFFFF",
-    color: "#263238",
+    color: JungleGreen,
     position: "fixed",
     cursor: "pointer",
     bottom: "12%",
@@ -246,7 +250,7 @@ export const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     transform: "rotate(180deg)",
-    bottom: "7%",
+    bottom: "12%",
     left: "3.4rem",
     zIndex: "1400",
     "&:hover": {
@@ -283,7 +287,7 @@ export const useStyles = makeStyles((theme) => ({
   btnGrpMarginRight: {
     marginRight: 4,
     alignItems: "center",
-    marginBottom: "3.5rem",
+    marginBottom: "0.5rem",
   },
   helpIcon: {
     color: "#fff",
@@ -323,14 +327,6 @@ export const useStyles = makeStyles((theme) => ({
   },
   rightTranslate: {
     transform: "translateX(0.5px)",
-  },
-  hideScrollbar: {
-    overflow: "hidden auto",
-    "scrollbar-width": "none",
-    "-ms-overflow-style": "none",
-    "&::-webkit-scrollbar": {
-      display: "none",
-    },
   },
   version: {
     color: "#FFFFFF",

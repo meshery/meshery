@@ -18,6 +18,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import classNames from "classnames";
 import HelpIcon from "@mui/icons-material/Help";
 import { useStyles } from "./Navbar.styles";
+import { HiddenscrollbarStyle } from "./HiddenSidebar";
 import { getPath } from "@/utils/path";
 import Link from "next/link";
 import { externlinks } from "./constants";
@@ -244,50 +245,6 @@ const Navbar = ({
     });
   };
 
-  const version = (
-    <MesheryServerVersionContainer>
-      {({ serverVersion }) => (
-        <div>
-          {isDrawerCollapsed ? (
-            <div style={{ color: "white", fontSize: "0.7rem", textAlign: "center", paddingBottom: "0.5rem" }}>
-              {serverVersion}{" "}
-            </div>
-          ) : (
-            <div className={classNames(classes.version)}>
-              <Grid>
-                {getMesheryVersionText(serverVersion)}
-                <Link
-                  href={`https://docs.meshery.io/project/releases${
-                    serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
-                  }`}
-                  target="_blank"
-                >
-                  <OpenInNewIcon sx={{ fontSize: theme.spacing(1.7) }} />
-                </Link>
-              </Grid>
-              <Grid>
-                {serverVersion.outdated ? (
-                  <>
-                    <Link
-                      href={`https://docs.meshery.io/project/releases${
-                        serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
-                      }`}
-                      target="_blank"
-                    >
-                      {serverVersion.latest}
-                    </Link>
-                  </>
-                ) : (
-                  "Running latest"
-                )}
-              </Grid>
-            </div>
-          )}
-        </div>
-      )}
-    </MesheryServerVersionContainer>
-  );
-
   //---------------------------------  ExtensionsNavigatorHelpers  -----------------------------------
 
   /**
@@ -414,39 +371,83 @@ const Navbar = ({
         classes={{ paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded }}
         style={{ width: "inherit" }}
       >
-        <List disablePadding className={classNames(classes.hideScrollbar)}>
-          <div className={classname}>
-            <ArrowBackIosIcon
-              style={{ verticalAlign: "middle", margin: "0.7rem -0.1rem 0.7rem 0.3rem", fontSize: "0.9rem" }}
-              onClick={() => toggleMiniDrawer()}
-              alt="Sidebar collapse toggle icon"
-            />
-          </div>
-          <ListItem
-            component="a"
-            onClick={handleTitleClick}
-            className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
-          >
-            <Avatar
-              className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo}
-              src="/static/img/meshery-logo.png"
-            />
-            <Avatar
-              className={isDrawerCollapsed ? classes.mainLogoTextCollapsed : classes.mainLogoText}
-              src="/static/img/meshery-logo-text.png"
-            />
-          </ListItem>
-          {renderNavItems(categories)}
-          {extensionsNavigator && extensionsNavigator.length ? (
-            <React.Fragment>
-              <Divider className={classes.divider} />
-              {renderNavigatorExtensions(extensionsNavigator, 1)}
-            </React.Fragment>
-          ) : null}
-          <Divider className={classes.divider} />
-        </List>
+        <HiddenscrollbarStyle>
+          <List disablePadding>
+            <div className={classname}>
+              <ArrowBackIosIcon
+                style={{ verticalAlign: "middle", margin: "0.7rem -0.1rem 0.7rem 0.3rem", fontSize: "0.9rem" }}
+                onClick={() => toggleMiniDrawer()}
+                alt="Sidebar collapse toggle icon"
+              />
+            </div>
+            <ListItem
+              component="a"
+              onClick={handleTitleClick}
+              className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
+            >
+              <Avatar
+                className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo}
+                src="/static/img/meshery-logo.png"
+              />
+              <Avatar
+                className={isDrawerCollapsed ? classes.mainLogoTextCollapsed : classes.mainLogoText}
+                src="/static/img/meshery-logo-text.png"
+              />
+            </ListItem>
+            {renderNavItems(categories)}
+            {extensionsNavigator && extensionsNavigator.length ? (
+              <React.Fragment>
+                <Divider className={classes.divider} />
+                {renderNavigatorExtensions(extensionsNavigator, 1)}
+              </React.Fragment>
+            ) : null}
+            <Divider className={classes.divider} />
+          </List>
+        </HiddenscrollbarStyle>
         {renderExternalLinkItems()}
-        {version}
+        {
+          <MesheryServerVersionContainer>
+            {({ serverVersion }) => (
+              <div>
+                {isDrawerCollapsed ? (
+                  <div style={{ color: "white", fontSize: "0.7rem", textAlign: "center", paddingBottom: "0.5rem" }}>
+                    {serverVersion}{" "}
+                  </div>
+                ) : (
+                  <div className={classNames(classes.version)}>
+                    <Grid>
+                      {getMesheryVersionText(serverVersion)}
+                      <Link
+                        href={`https://docs.meshery.io/project/releases${
+                          serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
+                        }`}
+                        target="_blank"
+                      >
+                        <OpenInNewIcon sx={{ fontSize: theme.spacing(1.7) }} />
+                      </Link>
+                    </Grid>
+                    <Grid>
+                      {serverVersion.outdated ? (
+                        <>
+                          <Link
+                            href={`https://docs.meshery.io/project/releases${
+                              serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
+                            }`}
+                            target="_blank"
+                          >
+                            {serverVersion.latest}
+                          </Link>
+                        </>
+                      ) : (
+                        "Running latest"
+                      )}
+                    </Grid>
+                  </div>
+                )}
+              </div>
+            )}
+          </MesheryServerVersionContainer>
+        }
       </Drawer>
     </nav>
   );
