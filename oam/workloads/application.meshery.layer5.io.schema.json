@@ -64,9 +64,7 @@
                   "default": "http"
                 },
                 "containerPort": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 100
+                  "type": "integer"
                 }
               },
               "minItems": 1,
