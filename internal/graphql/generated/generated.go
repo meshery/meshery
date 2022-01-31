@@ -224,7 +224,8 @@ type ComplexityRoot struct {
 		ListenToMeshSyncEvents    func(childComplexity int) int
 		ListenToOperatorState     func(childComplexity int) int
 		SubscribeBrokerConnection func(childComplexity int) int
-		SubscribePerfProfile      func(childComplexity int, profileID string) int
+		SubscribePerfProfiles     func(childComplexity int, selector model.PageFilter) int
+		SubscribePerfResults      func(childComplexity int, selector model.PageFilter, profileID string) int
 	}
 }
 
@@ -255,7 +256,8 @@ type SubscriptionResolver interface {
 	ListenToDataPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error)
 	ListenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error)
 	ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error)
-	SubscribePerfProfile(ctx context.Context, profileID string) (<-chan *model.MesheryResult, error)
+	SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error)
+	SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error)
 	SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error)
 }
 
@@ -1170,17 +1172,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.SubscribeBrokerConnection(childComplexity), true
 
-	case "Subscription.subscribePerfProfile":
-		if e.complexity.Subscription.SubscribePerfProfile == nil {
+	case "Subscription.subscribePerfProfiles":
+		if e.complexity.Subscription.SubscribePerfProfiles == nil {
 			break
 		}
 
-		args, err := ec.field_Subscription_subscribePerfProfile_args(context.TODO(), rawArgs)
+		args, err := ec.field_Subscription_subscribePerfProfiles_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Subscription.SubscribePerfProfile(childComplexity, args["profileID"].(string)), true
+		return e.complexity.Subscription.SubscribePerfProfiles(childComplexity, args["selector"].(model.PageFilter)), true
+
+	case "Subscription.subscribePerfResults":
+		if e.complexity.Subscription.SubscribePerfResults == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_subscribePerfResults_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.SubscribePerfResults(childComplexity, args["selector"].(model.PageFilter), args["profileID"].(string)), true
 
 	}
 	return 0, false
@@ -1704,8 +1718,11 @@ type Subscription {
 	# Listen to changes in the list of available Namesapces in your cluster
     listenToMeshSyncEvents: OperatorControllerStatus!
 
-	# Listen to changes in Performance Profile
-	subscribePerfProfile(profileID: String!): MesheryResult!
+	# Listen to changes in Performance Profiles
+	subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
+
+	# Listen to all results for profile ID
+	subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
 
 	# Listen to changes in Broker (NATS) Connection
 	subscribeBrokerConnection: Boolean!
@@ -1953,18 +1970,42 @@ func (ec *executionContext) field_Subscription_listenToDataPlaneState_args(ctx c
 	return args, nil
 }
 
-func (ec *executionContext) field_Subscription_subscribePerfProfile_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Subscription_subscribePerfProfiles_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["profileID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileID"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg0 model.PageFilter
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["profileID"] = arg0
+	args["selector"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_subscribePerfResults_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.PageFilter
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["profileID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileID"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["profileID"] = arg1
 	return args, nil
 }
 
@@ -6173,7 +6214,7 @@ func (ec *executionContext) _Subscription_listenToMeshSyncEvents(ctx context.Con
 	}
 }
 
-func (ec *executionContext) _Subscription_subscribePerfProfile(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_subscribePerfProfiles(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6190,7 +6231,7 @@ func (ec *executionContext) _Subscription_subscribePerfProfile(ctx context.Conte
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Subscription_subscribePerfProfile_args(ctx, rawArgs)
+	args, err := ec.field_Subscription_subscribePerfProfiles_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return nil
@@ -6198,7 +6239,7 @@ func (ec *executionContext) _Subscription_subscribePerfProfile(ctx context.Conte
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().SubscribePerfProfile(rctx, args["profileID"].(string))
+		return ec.resolvers.Subscription().SubscribePerfProfiles(rctx, args["selector"].(model.PageFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6211,7 +6252,7 @@ func (ec *executionContext) _Subscription_subscribePerfProfile(ctx context.Conte
 		return nil
 	}
 	return func() graphql.Marshaler {
-		res, ok := <-resTmp.(<-chan *model.MesheryResult)
+		res, ok := <-resTmp.(<-chan *model.PerfPageProfiles)
 		if !ok {
 			return nil
 		}
@@ -6219,7 +6260,59 @@ func (ec *executionContext) _Subscription_subscribePerfProfile(ctx context.Conte
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
+func (ec *executionContext) _Subscription_subscribePerfResults(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Subscription_subscribePerfResults_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().SubscribePerfResults(rctx, args["selector"].(model.PageFilter), args["profileID"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *model.PerfPageResult)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -8594,8 +8687,10 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_listenToOperatorState(ctx, fields[0])
 	case "listenToMeshSyncEvents":
 		return ec._Subscription_listenToMeshSyncEvents(ctx, fields[0])
-	case "subscribePerfProfile":
-		return ec._Subscription_subscribePerfProfile(ctx, fields[0])
+	case "subscribePerfProfiles":
+		return ec._Subscription_subscribePerfProfiles(ctx, fields[0])
+	case "subscribePerfResults":
+		return ec._Subscription_subscribePerfResults(ctx, fields[0])
 	case "subscribeBrokerConnection":
 		return ec._Subscription_subscribeBrokerConnection(ctx, fields[0])
 	default:
@@ -9166,20 +9261,6 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) marshalNMesheryResult2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx context.Context, sel ast.SelectionSet, v model.MesheryResult) graphql.Marshaler {
-	return ec._MesheryResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx context.Context, sel ast.SelectionSet, v *model.MesheryResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._MesheryResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.NameSpace) graphql.Marshaler {

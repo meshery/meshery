@@ -240,6 +240,11 @@ class ProviderComponent extends React.Component {
                   <li>Academic research and advanced studies by Ph.D. researchers</li>
                   <li>Used by school of Electrical and Computer Engineering (ECE)</li>
                 </ul>
+                <p className={classes.providerTitle}>Cloud Native Computing Foundation Infrastructure Lab</p>
+                <ul>
+                  <li>Performance and compatibility-centric research and validation</li>
+                  <li>Used by various service meshes and by the Service Mesh Performance project</li>
+                </ul>
               </Typography>
             </DialogContent>
             <DialogActions>
@@ -294,6 +299,9 @@ class ProviderComponent extends React.Component {
                               </MenuItem>
                               <MenuItem disabled={true} key="UT Austin" className={classes.providerDisabled}>
                                 The University of Texas at Austin{'\u00A0'}<span>Disabled</span>
+                              </MenuItem>
+                              <MenuItem disabled={true} key="CNCF Cluster" className={classes.providerDisabled}>
+                                CNCF Cluster{'\u00A0'}<span>Disabled</span>
                               </MenuItem>
                             </MenuList>
                           </ClickAwayListener>

@@ -7,7 +7,6 @@ import (
 
 	"github.com/layer5io/meshery/models/pattern/patterns/application"
 	"github.com/layer5io/meshery/models/pattern/patterns/k8s"
-	"github.com/layer5io/meshery/models/pattern/patterns/k8s/service"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
@@ -42,20 +41,6 @@ func ProcessOAM(kubeClient *meshkube.Client, oamComps []string, oamConfig string
 				msgs = append(msgs, "successfully deployed application "+comp.Name)
 			} else {
 				msgs = append(msgs, "successfully deleted application "+comp.Name)
-			}
-
-			continue
-		}
-
-		if comp.Spec.Type == "Service.K8s" {
-			if err := service.Deploy(kubeClient, comp, config, isDel); err != nil {
-				errs = append(errs, err)
-			}
-
-			if !isDel {
-				msgs = append(msgs, "successfully deployed service "+comp.Name)
-			} else {
-				msgs = append(msgs, "successfully deleted service "+comp.Name)
 			}
 
 			continue

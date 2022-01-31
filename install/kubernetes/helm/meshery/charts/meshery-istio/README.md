@@ -35,6 +35,7 @@ Meshery Adapter for Istio chart.
 | resources | object | `{}` |  |
 | securityContext | object | `{}` |  |
 | service.annotations | object | `{}` |  |
+| ports.http | int | `10000` |  |
 | service.port | int | `10000` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `false` |  |

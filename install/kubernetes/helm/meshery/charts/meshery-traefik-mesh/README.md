@@ -31,6 +31,7 @@ Meshery Adapter for Traefik Mesh chart.
 | podSecurityContext | object | `{}` |  |
 | probe.livenessProbe.enabled | bool | `false` |  |
 | probe.readinessProbe.enabled | bool | `false` |  |
+| ports.http | int | `10006` |  |
 | replicaCount | int | `1` |  |
 | resources | object | `{}` |  |
 | securityContext | object | `{}` |  |
