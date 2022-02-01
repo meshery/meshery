@@ -251,3 +251,32 @@ func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, time
 
 	return pollForPodRunning(c, namespace, desiredPodName, time.Duration(timeout)*time.Second)
 }
+
+// Returns condition function to indicate that the `namespace` does not exist anymore.
+func isNamespaceDeleted(c *meshkitkube.Client, namespace string) wait.ConditionFunc {
+	return func() (bool, error) {
+		namespaces, err := c.KubeClient.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			return false, err
+		}
+
+		// Check if namespace exists in namespaces list
+		for _, ns := range namespaces.Items {
+			if ns.Name == namespace {
+				return false, nil
+			}
+		}
+
+		return true, nil
+	}
+}
+
+// Poll up to timeout seconds until the namespace no more exists.
+func pollForNamespaceDelete(c *meshkitkube.Client, namespace string, timeout time.Duration) error {
+	return wait.PollImmediate(time.Second, timeout, isNamespaceDeleted(c, namespace))
+}
+
+// Wait up to timeout seconds for `namespace` to be deleted.
+func WaitForNamespaceDelete(c *meshkitkube.Client, namespace string, timeout int) error {
+	return pollForNamespaceDelete(c, namespace, time.Duration(timeout)*time.Second)
+}

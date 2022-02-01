@@ -168,8 +168,17 @@ func stop() error {
 			}
 		}
 	}
-
-	log.Info("Meshery is stopped.")
+	// Wait for meshery to stop
+	done, err := mesheryStopCheck()
+	if err != nil {
+		log.Info(err)
+	}
+	// If stop is not done until timeout, display info
+	if !done {
+		log.Info("Meshery has not stopped yet.\nPlease check the status of the pods by executing “mesheryctl system status” and Meshery-UI endpoint with “mesheryctl system dashboard”.")
+	} else {
+		log.Info("Meshery is stopped.")
+	}
 
 	// Reset Meshery config file to default settings
 	if utils.ResetFlag {
