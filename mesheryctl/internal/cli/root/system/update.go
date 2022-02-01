@@ -150,7 +150,7 @@ var updateCmd = &cobra.Command{
 				return ErrHealthCheckFailed(err)
 			}
 
-			running, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+			running, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 			if err != nil {
 				return err
 			}

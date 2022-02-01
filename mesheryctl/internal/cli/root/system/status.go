@@ -80,7 +80,7 @@ var statusCmd = &cobra.Command{
 
 		currPlatform := currCtx.GetPlatform()
 
-		ok, err := utils.IsMesheryRunning(currPlatform)
+		ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 		if err != nil {
 			return err
 		}

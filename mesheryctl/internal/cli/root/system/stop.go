@@ -81,7 +81,7 @@ func stop() error {
 		return err
 	}
 
-	ok, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+	ok, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 	if err != nil {
 		return err
 	}

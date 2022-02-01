@@ -119,8 +119,8 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 	return getK8sVersion(versionString)
 }
 
-// IsMesheryRunning checks if the meshery server containers are up and running
-func IsMesheryRunning(currPlatform string) (bool, error) {
+// AreMesheryComponentsRunning checks if the meshery containers are up and running
+func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 	// Get viper instance used for context to extract the endpoint from config file
 	mctlCfg, _ := config.GetMesheryCtl(viper.GetViper())
 
@@ -164,7 +164,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 				return false, err
 			}
 			for _, deployment := range deploymentList.Items {
-				if deployment.GetName() == "meshery" {
+				if strings.Contains(string(deployment.GetName()), "meshery") {
 					return true, nil
 				}
 			}
