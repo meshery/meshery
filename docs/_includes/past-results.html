@@ -11,19 +11,75 @@
             e.style.visibility = 'visible';
             }
     }
+    function handleEdgeCheckboxChange(){
+        // hide all row that habe stable version
+        let e = document.getElementsByClassName("edge")
+        let edge_box = document.getElementById("checkbox_edge")
+        for(let i = 0; i <e.length;i++){
+            console.log(e[i].classList)
+            if(e[i].classList.contains("edge_visible") ){
+                e[i].classList.remove("edge_visible")
+                
+        }
+        else{
+          console.log("stable")
+                e[i].classList.add("edge_visible")
+        }
+        }
+       
+    }
+    function handleStableCheckboxChange(){
+        let e = document.getElementsByClassName("stable")
+        let edge_box = document.getElementById("checkbox_edge")
+        for(let i = 0; i <e.length;i++){
+            console.log(typeof(e[i].classList["1"]))
+            if(e[i].classList.contains("stable_visible")){
+                e[i].classList.remove("stable_visible")
+        }
+        else{
+          console.log("stable")
+                e[i].classList.add("stable_visible")
+        }
+        }
+        
+    }
 </script>
     
 <style>  
     td:hover, tr:hover {
     background-color: #ccfff9;
+    cursor: pointer;
     }
     td.details {
     background-color: #fafafa;
+    cursor:text;
+    }
+    .edge_visible{
+        display: table-row !important;
+        visibility: visible !important;
+    }
+    .stable_visible{
+        display: table-row !important;
+        visibility: visible !important;
+    }
+    .checkbox{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
     }
 </style>
-    
+
 {% assign sorted_tests_istio = site.compatibility | sort: "timestamp" | reverse | where: "meshery-component",{{page.service-mesh}} %}
-     
+
+<div class="checkbox">
+    <div>
+    <input onchange="handleEdgeCheckboxChange();" type="checkbox" id="checkbox_edge" value="Edge Tests">
+    <label for="checkbox_edge">Edge Tests</label>
+    </div>
+    <input onchange="handleStableCheckboxChange();" type="checkbox" id="checkbox_stable" value="Stable Tests">
+    <label for="checkbox_stable">Stable Tests</label>
+</div>
+
 <table>
     <th>Status</th>
     <th>Meshery Component</th>
@@ -42,7 +98,11 @@
         {% else %}
             {% assign overall-status = "" %}
         {% endif %}
-        <tr onclick="toggle_visibility('{{forloop.index}}');"> 
+        {% if item.meshery-component-version == "edge" %}
+            <tr style= "visibility: hidden; display: none;" class="test-details edge" onclick="toggle_visibility('{{forloop.index}}');">
+        {% else %}
+            <tr style= "visibility: hidden; display: none;" class="test-details stable" onclick="toggle_visibility('{{forloop.index}}');">
+        {% endif %}    
             <td style="{{overall-status}}" >{{ item.timestamp }}</td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             {% if item.meshery-component-version == "edge" %}

@@ -37,9 +37,11 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
   
   td:hover, tr:hover {
     background-color: #ccfff9;
+    cursor:pointer;
    }
   td.details {
     background-color: #fafafa;
+    cursor:text;
   }
 </style>
 <!-- %a %b %d %k:%M:%S %Z %Y -->
@@ -100,6 +102,49 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               <a href = "{{site.baseurl}}/{{item.meshery-component}}/past-results">To see past results click here </a>
             </td>
           </tr>
+        {% else %}
+          {% if items[1].overall-status == "passing" %}
+            {% assign overall-status = "background-color: #83B71E; color: white;" %}
+          {% elsif items[1].overall-status == "partial" %}
+            {% assign overall-status = "background-color: #EBC017; color: white;" %}
+          {% elsif items[1].overall-status == "failing" %}
+            {% assign overall-status = "background-color: #B32700; color: white;" %}
+          {% else %}
+            {% assign overall-status = "" %}
+          {% endif %}
+          <tr onclick="toggle_visibility('{{items[1].meshery-component}}');"> 
+            <td style="{{ overall-status }}">{{ items[1].timestamp }}</td>
+            <td><a href="{{ site.repo }}-{{ items[1].service-mesh }}">{{ items[1].meshery-component }}</a></td>
+            {% if items[1].meshery-component-version == "edge" %}
+              <td><a href="{{ site.repo }}-{{ items[1].service-mesh }}/releases">{{ items[1].meshery-component-version }}</a></td>
+            {% else %}
+              <td><a href="{{ site.repo }}-{{ items[1].service-mesh }}/releases/tag/{{ items[1].meshery-component-version }}">{{ items[1].meshery-component-version }}</a></td>
+            {% endif %}
+            {% if items[1].meshery-server-version == "edge" %}
+              <td><a href="{{ site.repo }}/releases{{ items[1].meshery-server-version }}">{{ items[1].meshery-server-version }}</a></td>
+            {% else %}
+              <td><a href="{{ site.repo }}/releases/tag/{{ items[1].meshery-server-version }}">{{ items[1].meshery-server-version }}</a></td>
+            {% endif %}
+            <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{items[1].service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ items[1].service-mesh }}">{{ items[1].service-mesh }}</a></td>
+            <td>{{ items[1].service-mesh-version }}</td>
+          </tr>
+          <tr id="{{items[1].meshery-component}}" style="visibility:hidden; display:none;">
+            <td colspan="2" class="details">
+              <i>Platform:</i>
+              <li><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/kubernetes-icon-color.svg" />  {{items[1].k8s-distro}}  {{items[1].k8s-version}}</li>
+            </td>
+            <td colspan="3" class="details">
+              <i>Test results:</i>
+              <ol>
+              {% for test in items[1].tests %}
+                <li>{{ test[0] }}: {{test[1] }}</li>
+              {% endfor %}      
+              </ol>      
+            </td>
+            <td>
+              <a href = "{{site.baseurl}}/{{items[1].meshery-component}}/past-results">To see past results click here </a>
+            </td>
+          </tr>        
         {% endif %}  
       {% endfor %}
     {% endfor %}
