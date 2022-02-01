@@ -12,17 +12,14 @@
             }
     }
     function handleEdgeCheckboxChange(){
-        // hide all row that habe stable version
         let e = document.getElementsByClassName("edge")
         let edge_box = document.getElementById("checkbox_edge")
         for(let i = 0; i <e.length;i++){
             console.log(e[i].classList)
             if(e[i].classList.contains("edge_visible") ){
-                e[i].classList.remove("edge_visible")
-                
+                e[i].classList.remove("edge_visible")       
         }
         else{
-          console.log("stable")
                 e[i].classList.add("edge_visible")
         }
         }
@@ -76,8 +73,10 @@
     <input onchange="handleEdgeCheckboxChange();" type="checkbox" id="checkbox_edge" value="Edge Tests">
     <label for="checkbox_edge">Edge Tests</label>
     </div>
+    <div>
     <input onchange="handleStableCheckboxChange();" type="checkbox" id="checkbox_stable" value="Stable Tests">
     <label for="checkbox_stable">Stable Tests</label>
+    </div>
 </div>
 
 <table>
