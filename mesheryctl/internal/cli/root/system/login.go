@@ -50,7 +50,7 @@ The authentication mode is web-based browser flow`,
 			return err
 		}
 
-		isRunning, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
+		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
 			log.Error("failed to check Meshery Server status: ", err)
 			return nil

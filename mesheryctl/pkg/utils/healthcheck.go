@@ -119,8 +119,8 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 	return getK8sVersion(versionString)
 }
 
-// AreMesheryComponentsRunning checks if the meshery containers are up and running
-func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
+// IsMesheryRunning checks if the meshery server containers are up and running
+func IsMesheryRunning(currPlatform string) (bool, error) {
 	// Get viper instance used for context to extract the endpoint from config file
 	mctlCfg, _ := config.GetMesheryCtl(viper.GetViper())
 
@@ -137,6 +137,47 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 		return true, nil
 	}
 
+	//If not, use the platforms to check if Meshery is running or not
+	switch currPlatform {
+	case "docker":
+		{
+			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
+			if err != nil {
+				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
+			}
+			return strings.Contains(string(op), "meshery"), nil
+		}
+	case "kubernetes":
+		{
+			client, err := meshkitkube.New([]byte(""))
+
+			if err != nil {
+				return false, errors.Wrap(err, "failed to create new client")
+			}
+
+			//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
+			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+			//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+
+			if err != nil {
+				return false, err
+			}
+			for _, deployment := range deploymentList.Items {
+				if deployment.GetName() == "meshery" {
+					return true, nil
+				}
+			}
+
+			return false, err
+		}
+	}
+
+	return false, nil
+}
+
+// AreMesheryComponentsRunning checks if the meshery containers are up and running
+func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 	//If not, use the platforms to check if Meshery is running or not
 	switch currPlatform {
 	case "docker":
