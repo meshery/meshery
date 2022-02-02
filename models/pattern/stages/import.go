@@ -57,6 +57,17 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 			return
 		}
 		data.Lock.Lock()
+		//If no imports are there, completely bypass this stage
+		for _, svc := range data.Pattern.Services {
+			if _, ok := matchImportPattern(svc.Type); ok { //If we found any service with imports
+				goto START
+			}
+		}
+		data.Lock.Unlock() //This code will only be executed if we didn't goto START. And we would not got to start if there is no service that imports a pattern
+		if next != nil {
+			next(data, nil)
+		}
+	START:
 		nonImportingServiceStack := &servicestack{sws: nil}
 		importingServiceStack := &servicestack{}
 		vars := map[string]interface{}{}
@@ -76,7 +87,13 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 		}
 		data.Pattern.Services = stackToServices(nonImportingServiceStack)
 		data.Pattern.Vars = vars
-		patternYaml, _ := yaml.Marshal(data.Pattern)
+		patternYaml, err := yaml.Marshal(data.Pattern)
+		if err != nil {
+			if err != nil {
+				act.Terminate(err)
+				return
+			}
+		}
 		*data.Pattern, err = core.NewPatternFile(patternYaml)
 		if err != nil {
 			act.Terminate(err)
