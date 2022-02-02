@@ -23,8 +23,9 @@ type MesheryApplicationRequestBody struct {
 	ApplicationData *models.MesheryApplication `json:"application_data,omitempty"`
 }
 
+//Supported formats other than pattern
 const (
-	K8S_FORMAT = "K8s"
+	k8sFormat = "K8s"
 )
 
 // swagger:route POST /api/application/deploy ApplicationsAPI idPostDeployApplicationFile
@@ -300,7 +301,7 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 //If an empty or invalid format is passed in header, it will fallback to be treated as a pattern
 func convertApplicationToPattern(r *io.ReadCloser, format string) error {
 	switch format {
-	case K8S_FORMAT:
+	case k8sFormat:
 		data, err := ioutil.ReadAll(*r)
 		if err != nil {
 			return err
