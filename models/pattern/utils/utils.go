@@ -86,7 +86,6 @@ func FlattenMap(prefix string, src map[string]interface{}, dest map[string]inter
 func ToMapStringInterface(mp interface{}) map[string]interface{} {
 	byt, err := json.Marshal(mp)
 	if err != nil {
-		fmt.Println("BHENCHOD ,", err.Error())
 		return map[string]interface{}{}
 	}
 
