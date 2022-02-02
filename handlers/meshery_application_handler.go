@@ -51,7 +51,7 @@ func (h *Handler) ApplicationFileHandler(
 ) {
 	// Applications can be- pattern, k8s manifests,etc. By default if no "format" is present in headers, it will be treated as a pattern file.
 	format := r.Header.Get("format")
-	err := convertApplicationToPattern(r.Body, format)
+	err := convertApplicationToPattern(&r.Body, format)
 	if err != nil {
 		h.log.Error(ErrApplicationConversion(err))
 		http.Error(rw, err.Error(), http.StatusBadRequest)
@@ -298,10 +298,10 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 }
 
 //If an empty or invalid format is passed in header, it will fallback to be treated as a pattern
-func convertApplicationToPattern(r io.ReadCloser, format string) error {
+func convertApplicationToPattern(r *io.ReadCloser, format string) error {
 	switch format {
 	case K8S_FORMAT:
-		data, err := ioutil.ReadAll(r)
+		data, err := ioutil.ReadAll(*r)
 		if err != nil {
 			return err
 		}
@@ -313,7 +313,7 @@ func convertApplicationToPattern(r io.ReadCloser, format string) error {
 		if err != nil {
 			return err
 		}
-		r = ioutil.NopCloser(strings.NewReader(string(pyaml)))
+		*r = ioutil.NopCloser(strings.NewReader(string(pyaml)))
 	}
 	return nil
 }

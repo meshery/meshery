@@ -63,7 +63,7 @@ func (h *Handler) PatternFileHandler(
 		fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
 	}
-
+	fmt.Println("THIS IS IT ", string(body))
 	if r.Header.Get("Content-Type") == "application/json" {
 		body, err = yaml.JSONToYAML(body)
 		if err != nil {
