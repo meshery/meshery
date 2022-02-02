@@ -3,10 +3,15 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/models/pattern/core"
+	"gopkg.in/yaml.v2"
 )
 
 // MesheryApplicationRequestBody refers to the type of request body that
@@ -17,6 +22,10 @@ type MesheryApplicationRequestBody struct {
 	Save            bool                       `json:"save,omitempty"`
 	ApplicationData *models.MesheryApplication `json:"application_data,omitempty"`
 }
+
+const (
+	K8S_FORMAT = "K8s"
+)
 
 // swagger:route POST /api/application/deploy ApplicationsAPI idPostDeployApplicationFile
 // Handle POST request for Application File Deploy
@@ -40,7 +49,14 @@ func (h *Handler) ApplicationFileHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	// Application files are just pattern files
+	// Applications can be- pattern, k8s manifests,etc. By default if no "format" is present in headers, it will be treated as a pattern file.
+	format := r.Header.Get("format")
+	err := convertApplicationToPattern(r.Body, format)
+	if err != nil {
+		h.log.Error(ErrApplicationConversion(err))
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
 }
 
@@ -279,4 +295,25 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
+}
+
+//If an empty or invalid format is passed in header, it will fallback to be treated as a pattern
+func convertApplicationToPattern(r io.ReadCloser, format string) error {
+	switch format {
+	case K8S_FORMAT:
+		data, err := ioutil.ReadAll(r)
+		if err != nil {
+			return err
+		}
+		p, err := core.NewPatternFileFromK8sManifest(string(data), false)
+		if err != nil {
+			return err
+		}
+		pyaml, err := yaml.Marshal(p)
+		if err != nil {
+			return err
+		}
+		r = ioutil.NopCloser(strings.NewReader(string(pyaml)))
+	}
+	return nil
 }
