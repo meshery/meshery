@@ -264,6 +264,14 @@ func main() {
 		}
 	}()
 	<-c
+	//Close existing database instance
+
+	//Get the db instance/connection pool
+	logrus.Info("Closing database instance...")
+	err = dbHandler.DBClose()
+	if err != nil {
+		log.Error(err)
+	}
 	logrus.Info("Doing seeded content cleanup...")
 	lProv.CleanupSeeded(seededUUIDs)
 

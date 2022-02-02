@@ -11,7 +11,6 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
-	tokenPath            string
 )
 
 // PatternCmd represents the root command for pattern commands
@@ -29,7 +28,7 @@ var PatternCmd = &cobra.Command{
 }
 
 func init() {
-	PatternCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file default from current context")
+	PatternCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
 	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd}
 	PatternCmd.AddCommand(availableSubcommands...)

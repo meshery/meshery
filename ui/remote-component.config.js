@@ -121,6 +121,11 @@ module.exports = { resolve : {
   "@material-ui/icons/Edit" : require("@material-ui/icons/Edit"),
   "@material-ui/core/MenuList" : require("@material-ui/core/MenuList"),
   "@material-ui/core/CircularProgress" : require("@material-ui/core/CircularProgress"),
+  "@material-ui/icons/Keyboard" : require("@material-ui/icons/Keyboard"),
+  "@material-ui/core/Switch" : require("@material-ui/core/Switch"),
+  "@material-ui/icons/Tune" : require("@material-ui/icons/Tune"),
+  "@material-ui/core/Popper" : require("@material-ui/core/Popper"),
+  "@material-ui/core/ClickAwayListener" : require("@material-ui/core/ClickAwayListener"),
   "mui-datatables" : require("mui-datatables"),
   notistack : require("notistack"),
   "react-dom/server" : require("react-dom/server"),
@@ -131,4 +136,5 @@ module.exports = { resolve : {
   "@material-ui/core/AccordionSummary" : require("@material-ui/core/AccordionSummary"),
   "@material-ui/core/AccordionDetails" : require("@material-ui/core/AccordionDetails"),
   "@material-ui/icons" : require("@material-ui/icons"),
+  "@material-ui/core/InputAdornment" : require("@material-ui/core/InputAdornment")
 }, };

@@ -1,6 +1,6 @@
 
 import {
-  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider,  FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select, TextField, Toolbar, Tooltip, Typography,
+  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select, TextField, Toolbar, Tooltip, Typography,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -10,7 +10,6 @@ import SaveIcon from '@material-ui/icons/Save';
 import { Autocomplete } from '@material-ui/lab';
 import jsYaml from "js-yaml";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { trueRandom } from "../../lib/trueRandom";
 import { SchemaContext } from "../../utils/context/schemaSet";
 import { getMeshProperties } from "../../utils/nameMapper";
 import { isEmptyObj } from "../../utils/utils";
@@ -21,6 +20,7 @@ import PatternServiceForm from "../MesheryMeshInterface/PatternServiceForm";
 import CodeEditor from "./CodeEditor";
 import NameToIcon from "./NameToIcon";
 import CustomBreadCrumb from "./CustomBreadCrumb";
+import { randomPatternNameGenerator as getRandomName } from "../../utils/utils"
 
 const useStyles = makeStyles((theme) => ({
   backButton : {
@@ -251,7 +251,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
       setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
   };
 
-  const handleAddonsOff =(key) => {
+  const handleAddonsOff = (key) => {
     const dConfig = { ...deployServiceConfig }
     delete dConfig?.[key]
     handleCodeEditorYamlChange(dConfig)
@@ -274,7 +274,12 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 
   function handleSubmitFinalPattern(yaml, id, name, action) {
     console.log("submitting a new pattern", yaml)
-    onSubmit(yaml, id, name, action);
+    onSubmit({
+      data : yaml,
+      id : id,
+      name : name,
+      type : action
+    });
     setSelectedPattern(resetSelectedPattern()); // Remove selected pattern
   }
 
@@ -443,7 +448,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
             <IconButton
               aria-label="Save"
               color="primary"
-              onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, "upload")}
+              onClick={() => handleSubmitFinalPattern(yaml, "", getRandomName(), "upload")}
             >
               <FileCopyIcon />
             </IconButton>
@@ -545,9 +550,6 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                             .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
                             .map((s, i) => (
                               <Grid item key={`svc-form-addons-${i}`}>
-                                {
-                                  console.log("f", deployServiceConfig?.[getPatternServiceName(s.workload)], getPatternServiceName(s.workload))
-                                }
                                 <LazyPatternServiceForm
                                   formData={{ settings : deployServiceConfig?.[getPatternServiceName(s.workload)] }}
                                   onSettingsChange={handleSettingsChange(s.workload)}

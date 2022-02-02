@@ -18,6 +18,7 @@ import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import GenericModal from "../GenericModal";
 import BarChartIcon from '@material-ui/icons/BarChart';
 import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
+import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
 
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
@@ -287,6 +288,33 @@ function MesheryResults({
 
   useEffect(() => {
     fetchResults(page, pageSize, search, sortOrder);
+
+    const subscription = subscribePerformanceProfiles((res) => {
+      // @ts-ignore
+      console.log(res);
+      let result = res?.subscribePerfResults
+      if (typeof result !== "undefined") {
+        updateProgress({ showProgress : false })
+
+        if (result) {
+          setCount(result.total_count);
+          setPageSize(result.page_size);
+          setSortOrder(sortOrder);
+          setSearch(search);
+          setResults(result.results);
+          setPageSize(result.page_size);
+        }
+      }
+    },{ selector : {
+      pageSize : `${pageSize}`,
+      page : `${page}`,
+      search : `${encodeURIComponent(search)}`,
+      order : `${encodeURIComponent(sortOrder)}`
+    },
+    profileID : endpoint.split("/")[endpoint.split("/").length - 2] })
+    return () => {
+      subscription.dispose();
+    };
   }, [page, pageSize, search, sortOrder]);
 
   function fetchResults(page, pageSize, search, sortOrder) {

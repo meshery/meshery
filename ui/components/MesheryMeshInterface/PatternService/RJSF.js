@@ -4,11 +4,10 @@ import { Theme as MaterialUITheme } from "@rjsf/material-ui";
 import React from "react";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import { rjsfTheme } from "../../../themes";
-import { formatString } from "../helpers";
+import { formatString, buildUiSchema } from "../helpers";
 import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import MemoizedCustomInputField from "./RJSFCustomComponents/CustomInputField";
 import CustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
-import { isEqualArr } from "../../../utils/utils"
 import handleError from '../../ErrorHandling';
 
 const Form = withTheme(MaterialUITheme);
@@ -39,23 +38,6 @@ function getRefinedJsonSchema(jsonSchema, hideTitle = true) {
     handleError(e, "schema parsing problem", "fatal")
   }
   return refinedSchema
-}
-
-function uiSchema(jsonSchema) {
-  let uiJsonSchema = {}
-  // TODO: needs to do recursively for deep fields
-  Object.keys(jsonSchema.properties).map(key => {
-    if (
-      isEqualArr(jsonSchema.properties[key].type, ["string", "null"], false)
-      || isEqualArr(jsonSchema.properties[key].type, ["integer", "null"], false)
-    ) {
-      uiJsonSchema[key] = {
-        'ui:description' : ' '
-      }
-    }
-  })
-
-  return uiJsonSchema
 }
 
 function addTitleToPropertiesJSONSchema(jsonSchema) {
@@ -125,6 +107,7 @@ function RJSF(props) {
   }
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
+  const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
 
   React.useEffect(() => {
     // Apply debouncing mechanism for the state propagation
@@ -135,11 +118,17 @@ function RJSF(props) {
     return () => clearTimeout(timer);
   }, [data]);
 
+  React.useEffect(() => {
+    const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle)
+    const uiSchema = buildUiSchema(rjsfSchema)
+    setSchema({ rjsfSchema, uiSchema })
+  }, [jsonSchema]) // to reduce heavy lifting on every react render
+
   return (
     <RJSFWrapperComponent {...{ ...props, RJSFWrapperComponent : null, RJSFFormChildComponent : null }}>
       <MuiThemeProvider theme={rjsfTheme}>
         <Form
-          schema={getRefinedJsonSchema(jsonSchema, hideTitle)}
+          schema={schema.rjsfSchema}
           idPrefix={jsonSchema?.title}
           onChange={(e) => {
             setData(e.formData)
@@ -149,7 +138,11 @@ function RJSF(props) {
           ArrayFieldTemplate={ArrayFieldTemplate}
           ObjectFieldTemplate={CustomObjFieldTemplate}
           additionalMetaSchemas={[JS4]}
-          uiSchema={uiSchema(jsonSchema)}
+          uiSchema={schema.uiSchema}
+          liveValidate
+          showErrorList={false}
+          noHtml5Validate
+
         >
           {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
         {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}

@@ -13,7 +13,6 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -41,11 +40,6 @@ var onboardCmd = &cobra.Command{
 		var err error
 		client := &http.Client{}
 
-		// set default tokenpath for app onboard command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -62,14 +56,9 @@ var onboardCmd = &cobra.Command{
 			// search and fetch apps with app-name
 			log.Debug("Fetching apps")
 
-			req, err = http.NewRequest("GET", appURL+"?search="+appName, nil)
+			req, err = utils.NewRequest("GET", appURL+"?search="+appName, nil)
 			if err != nil {
 				return err
-			}
-
-			err = utils.AddAuthDetails(req, tokenPath)
-			if err != nil {
-				return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
 			}
 
 			resp, err := client.Do(req)
@@ -122,14 +111,11 @@ var onboardCmd = &cobra.Command{
 					if err != nil {
 						return err
 					}
-					req, err = http.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
+					req, err = utils.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
 						return err
 					}
-					err = utils.AddAuthDetails(req, tokenPath)
-					if err != nil {
-						return err
-					}
+
 					resp, err := client.Do(req)
 					if err != nil {
 						return err
@@ -192,14 +178,11 @@ var onboardCmd = &cobra.Command{
 						})
 					}
 				}
-				req, err = http.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
+				req, err = utils.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
 					return err
 				}
-				err = utils.AddAuthDetails(req, tokenPath)
-				if err != nil {
-					return err
-				}
+
 				resp, err := client.Do(req)
 				if err != nil {
 					return err
@@ -226,12 +209,7 @@ var onboardCmd = &cobra.Command{
 			}
 		}
 
-		req, err = http.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
 		if err != nil {
 			return err
 		}

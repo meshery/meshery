@@ -231,16 +231,16 @@ func CanUseCachedManifests(currCtx *(config.Context)) error {
 
 	switch currCtx.GetPlatform() {
 	case "kubernetes":
-		// check if adapter manifests are present
-		for _, adapter := range currCtx.GetAdapters() {
-			serviceFile := filepath.Join(MesheryFolder, ManifestsFolder, adapter+"-service.yaml")
+		// check if component manifests are present
+		for _, component := range currCtx.GetComponents() {
+			serviceFile := filepath.Join(MesheryFolder, ManifestsFolder, component+"-service.yaml")
 			if _, err := os.Stat(serviceFile); os.IsNotExist(err) {
 				return errors.New("service file does not exist")
 			}
 
-			adapterDeploymentFile := filepath.Join(MesheryFolder, ManifestsFolder, adapter+"-deployment.yaml")
-			if _, err := os.Stat(adapterDeploymentFile); os.IsNotExist(err) {
-				return errors.New("adapter deployment file does not exist")
+			componentDeploymentFile := filepath.Join(MesheryFolder, ManifestsFolder, component+"-deployment.yaml")
+			if _, err := os.Stat(componentDeploymentFile); os.IsNotExist(err) {
+				return errors.New("component deployment file does not exist")
 			}
 		}
 	}
@@ -311,10 +311,10 @@ func GetLatestStableReleaseTag() (string, error) {
 	return latest, nil
 }
 
-// IsAdapterValid checks if the adapter mentioned by the user is a valid adapter
-func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
+// IsAdapterValid checks if the component mentioned by the user is a valid component
+func IsAdapterValid(manifestArr []Manifest, componentManifest string) bool {
 	for _, v := range manifestArr {
-		if v.Path == adapterManifest {
+		if v.Path == componentManifest {
 			return true
 		}
 	}
@@ -382,7 +382,7 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 	manifestFiles := filepath.Join(MesheryFolder, ManifestsFolder)
 
 	// read the manifest files as strings
-	// other than the adapters, meshery-deployment.yaml, meshery-service.yaml and service-account.yaml should be applied
+	// other than the components, meshery-deployment.yaml, meshery-service.yaml and service-account.yaml should be applied
 	MesheryDeploymentManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryDeployment))
 	if err != nil {
 		return errors.Wrap(err, "failed to read manifest files")
@@ -424,24 +424,24 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		return err
 	}
 
-	// loop through the required adapters as specified in the config.yaml file and apply/update/delete each
-	for _, adapter := range requestedAdapters {
-		// for each adapter, there is a meshery-adapterName-deployment.yaml and meshery-adapterName-service.yaml
+	// loop through the required components as specified in the config.yaml file and apply/update/delete each
+	for _, component := range requestedAdapters {
+		// for each component, there is a meshery-componentName-deployment.yaml and meshery-componentName-service.yaml
 		// manifest file. See- https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
-		adapterFile := filepath.Join(manifestFiles, adapter)
-		adapterDeployment := adapterFile + "-deployment.yaml"
-		adapterService := adapterFile + "-service.yaml"
+		componentFile := filepath.Join(manifestFiles, component)
+		componentDeployment := componentFile + "-deployment.yaml"
+		componentService := componentFile + "-service.yaml"
 
-		if !IsAdapterValid(manifestArr, adapter+"-deployment.yaml") {
-			return fmt.Errorf("invalid adapter %s specified. Please check %s/config.yaml file", adapter, MesheryFolder)
+		if !IsAdapterValid(manifestArr, component+"-deployment.yaml") {
+			return fmt.Errorf("invalid component %s specified. Please check %s/config.yaml file", component, MesheryFolder)
 		}
 
 		// read manifest files as strings and apply/update/delete
-		manifestDepl, err := meshkitutils.ReadLocalFile(adapterDeployment)
+		manifestDepl, err := meshkitutils.ReadLocalFile(componentDeployment)
 		if err != nil {
 			return errors.Wrap(err, "failed to read manifest files")
 		}
-		manifestService, err := meshkitutils.ReadLocalFile(adapterService)
+		manifestService, err := meshkitutils.ReadLocalFile(componentService)
 		if err != nil {
 			return errors.Wrap(err, "failed to read manifest files")
 		}
@@ -575,7 +575,7 @@ func CreateManifestsFolder() error {
 }
 
 // GetPods lists all the available pods in the MesheryNamespace
-func GetPods(client *meshkitkube.Client, namespace string) (*v1core.PodList, error) {
+func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, error) {
 	// Create a pod interface for the given namespace
 	podInterface := client.KubeClient.CoreV1().Pods(namespace)
 
@@ -605,8 +605,8 @@ func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]stri
 	return requiredPods, nil
 }
 
-// CleanPodNames cleans the pod names in the MesheryNamespace to make it more readable
-func CleanPodNames(name string) string {
+// GetCleanPodName cleans the pod names in the MesheryNamespace to make it more readable
+func GetCleanPodName(name string) string {
 	// The pod names are of the form meshery-<component name>-dasd67qwe-jka244asd where the last characters are generated by kubernetes
 	// Only the first two splits contain useful information
 	split := strings.Split(name, "-")[:2]

@@ -1,25 +1,25 @@
 contexts:
   gke:
-    adapters:
-    - meshery-istio
     channel: stable
+    components:
+    - meshery-istio
     endpoint: http://localhost:9081
     platform: gke
     token: Default
     version: v0.4.2
   local:
-    endpoint: http://localhost:55555
-    token: Default
-    platform: docker
-    adapters:
-    - meshery-istio
     channel: stable
+    components:
+    - meshery-istio
+    endpoint: http://localhost:9081
+    platform: docker
+    token: Default
     version: v0.5.10
   local2:
     endpoint: http://localhost:44444
     token: Default
     platform: kubernetes
-    adapters:
+    components:
     - meshery-istio
     channel: stable
     version: v0.5.10

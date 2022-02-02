@@ -46,6 +46,7 @@ type CmdTestInput struct {
 	ExpectedResponse     string
 	ExpectedResponseYaml string
 	ExpectError          bool
+	ErrorStringContains  []string
 }
 
 type GoldenFile struct {
