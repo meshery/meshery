@@ -57,8 +57,6 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 			return
 		}
 		data.Lock.Lock()
-		//maintain an auxilliary list of dependencies
-		//---
 		nonImportingServiceStack := &servicestack{sws: nil}
 		importingServiceStack := &servicestack{}
 		vars := map[string]interface{}{}
@@ -70,6 +68,7 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 				imported:   map[string]bool{},
 			})
 		}
+		//At the end of this processing, importingServiceStack will be empty and nonImportingServiceStack will have all the services in it with proper dependson and references set
 		err = process(importingServiceStack, nonImportingServiceStack, vars)
 		if err != nil {
 			act.Terminate(err)
@@ -84,8 +83,6 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 			return
 		}
 		data.Lock.Unlock()
-		b, _ := yaml.Marshal(data.Pattern)
-		fmt.Println("AFTER FIRST STAGE: \n", string(b))
 		if next != nil {
 			next(data, nil)
 		}
@@ -95,7 +92,6 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 func stackToServices(s *servicestack) (services map[string]*core.Service) {
 	services = make(map[string]*core.Service)
 	if s.isEmpty() {
-		fmt.Println("FUCK")
 		return
 	}
 	for _, svcwrap := range s.sws {
@@ -109,11 +105,9 @@ func process(imp *servicestack, nonimp *servicestack, vars map[string]interface{
 		sw := imp.pop()
 		url, ok := matchImportPattern(sw.svc.Type)
 		if !ok {
-			fmt.Println("NOT GOING AHEAD FOR ", sw.name)
 			nonimp.push(sw)
 			continue
 		}
-		fmt.Println("GOING AHEAD FOR ", sw.name)
 		p, err := getPatternFromLocation(url)
 		if err != nil {
 			return err
@@ -151,7 +145,6 @@ func process(imp *servicestack, nonimp *servicestack, vars map[string]interface{
 }
 
 func changeReferenceInPattern(old string, new string, sw []*servicewrapper) error {
-	fmt.Println("replacing ", old, " with ", new)
 	for _, svcwrap := range sw {
 		s := svcwrap.svc
 		yamlp, err := yaml.Marshal(s)
@@ -181,7 +174,6 @@ func pushSvcToStack(sw []*servicewrapper, imst *servicestack, nonimst *servicest
 
 	for _, s := range sw {
 		if _, ok := matchImportPattern(s.svc.Type); !ok {
-			fmt.Println("PUSHING HERE ", s.name)
 			nonimst.push(s)
 			continue
 		}
@@ -194,80 +186,6 @@ func replaceInDependsOn(old string, new string, do *[]string) {
 			(*do)[i] = new
 		}
 	}
-}
-func expandImportOnServices(pattern *core.Pattern, parentimported map[string]bool, replacedBy map[string]string) error {
-	servicenodes := map[string]*node{}
-	for key, svc := range pattern.Services {
-		imported := make(map[string]bool)
-		for k := range parentimported {
-			imported[k] = true
-		}
-		servicenodes[key] = &node{
-			name: key,
-		}
-		loc, ok := matchImportPattern(svc.Type)
-		if !ok {
-			continue
-		}
-		var svcs map[string]*core.Service
-		var err error
-		if pattern.Vars == nil {
-			pattern.Vars = make(map[string]interface{})
-		}
-		svcs, err = expandImportedPatternToServices(key, svc, loc, pattern.Vars, imported, replacedBy)
-		if err != nil {
-			return err
-		}
-		delete(pattern.Services, key)
-		for name, s := range svcs {
-			nod := servicenodes[key]
-			nod.imports = append(nod.imports, node{name: name})
-			servicenodes[key] = nod
-			fmt.Println(servicenodes[key].imports)
-			pattern.Services[name] = s
-		}
-	}
-	for _, s := range pattern.Services {
-		for k, n := range servicenodes {
-			i := contains(s.DependsOn, k)
-			if i != -1 {
-				n.updateDependency(&s.DependsOn, i)
-			}
-		}
-
-	}
-	return nil
-}
-func expandImportedPatternToServices(name string, svc *core.Service, loc string, vars map[string]interface{}, imported map[string]bool, replacedBy map[string]string) (map[string]*core.Service, error) {
-	if imported[loc] {
-		return nil, errors.New("[Service " + svc.Name + "]Circular Import detected for URL " + loc)
-	}
-
-	pattern, err := getPatternFromLocation(loc)
-	if err != nil {
-		return nil, err
-	}
-	imported[loc] = true
-	for oldName, oldsvc := range pattern.Services { //change the names of the services for uniqueness
-		newname := strings.ToLower(oldName) + getHash(oldsvc)
-		oldsvc.Name = newname
-		oldsvc.DependsOn = svc.DependsOn
-		pattern.Services[newname] = oldsvc
-		replacedBy[oldName] = newname
-		delete(pattern.Services, oldName)
-	}
-	err = expandImportOnServices(&pattern, imported, replacedBy)
-	if err != nil {
-		return nil, err
-	}
-	for k, v := range pattern.Vars {
-		if svc.Settings[k] != nil {
-			vars[k] = svc.Settings[k]
-		} else {
-			vars[k] = v
-		}
-	}
-	return pattern.Services, nil
 }
 
 func getPatternFromLocation(loc string) (p core.Pattern, err error) {
@@ -315,43 +233,4 @@ func init() {
 	if err != nil {
 		log.Fatal("failed to compile filler pattern regex")
 	}
-}
-
-//As the name of services can change, we need a way to ensure that the depends-on constraint is not broken
-// So during the start of evaluation of each pattern file intializes slice of this below data structure. Where each node is a service.
-// Normal services are nodes which point to null.
-// The service which imports another service points to slice of nodes, and recursively so on and so forth.
-// Just after returning all services from patterns, we will use this data structure to resolve depends-on field with the following logic:
-// For each service: For each depends on svc: We start from the Node[svc]. We go to each of its children and run UpdateDepency by passing depends-on
-// Update dependency work the following way: If this node point to no further nodes- append the svc name in depends-on,otherwise recursively call UpdateDependency
-
-type node struct {
-	name    string
-	imports []node
-}
-
-func (n *node) updateDependency(dependson *[]string, i int) {
-	fmt.Println("name is ", n.name, " and import is ", n.imports)
-	if len(n.imports) == 0 { //base case
-		fmt.Println("ADDING IN DEPENDS ON: ", n.name)
-		*dependson = append(*dependson, n.name)
-		return
-	}
-	fmt.Println("WILL BE REMOVING ", (*dependson)[i])
-	*dependson = append((*dependson)[:i], (*dependson)[i+1:]...)
-	fmt.Println("AFTER DELETION ", *dependson)
-	fmt.Println("n.imports is ", n.imports)
-	for _, n := range n.imports {
-		fmt.Println("WILL EXECUTE ON NODE ", n.name, " WITH DEPENDS ON AS ", *dependson)
-		n.updateDependency(dependson, i)
-	}
-}
-func contains(s []string, str string) int {
-	for i, v := range s {
-		if v == str {
-			return i
-		}
-	}
-
-	return -1
 }
