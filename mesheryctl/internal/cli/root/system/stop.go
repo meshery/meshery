@@ -37,7 +37,7 @@ import (
 )
 
 var (
-	// forceDelete used to clean-up meshery components forcefully
+	// forceDelete used to clean-up meshery resources forcefully
 	forceDelete bool
 )
 
@@ -257,5 +257,5 @@ func deleteNs(ns string, client *kubernetes.Clientset) error {
 func init() {
 	stopCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	stopCmd.Flags().BoolVar(&utils.KeepNamespace, "keep-namespace", false, "(optional) keep the Meshery namespace during uninstallation")
-	stopCmd.Flags().BoolVar(&forceDelete, "force", false, "(optional) uninstall Meshery components forcefully")
+	stopCmd.Flags().BoolVar(&forceDelete, "force", false, "(optional) uninstall Meshery resources forcefully")
 }
