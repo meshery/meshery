@@ -25,7 +25,6 @@ import (
 
 	v1core "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -653,7 +652,7 @@ func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, 
 	podInterface := client.KubeClient.CoreV1().Pods(namespace)
 
 	// List the pods in the given namespace
-	podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+	podList, err := podInterface.List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
 		return nil, err
