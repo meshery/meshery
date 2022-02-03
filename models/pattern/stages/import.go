@@ -136,7 +136,7 @@ func process(imp *servicestack, nonimp *servicestack, vars map[string]interface{
 			svcw := &servicewrapper{svc: svc}
 			svcw.name = svc.Name + getHash(svc)
 			for _, svco := range p.Services {
-				replaceInDependsOn(name, svcw.name, &svco.DependsOn) // adding resolving ref
+				replaceInDependsOn(name, svcw.name, &svco.DependsOn)
 			}
 			svcw.parentname = sw.name
 			svcw.imported = sw.imported
@@ -182,19 +182,34 @@ func changeReferenceInPattern(old string, new string, sw []*servicewrapper) erro
 func pushSvcToStack(sw []*servicewrapper, imst *servicestack, nonimst *servicestack) {
 	for _, s := range sw {
 		imst.runOnStack(func(svc *core.Service) {
-			replaceInDependsOn(s.parentname, s.name, &svc.DependsOn)
+			addInDependsOn(s.parentname, s.name, &svc.DependsOn)
 		})
 		nonimst.runOnStack(func(svc *core.Service) {
-			replaceInDependsOn(s.parentname, s.name, &svc.DependsOn)
+			addInDependsOn(s.parentname, s.name, &svc.DependsOn)
 		})
 	}
 
+	for _, s := range sw {
+		imst.runOnStack(func(svc *core.Service) {
+			removeInDependsOn(s.parentname, &svc.DependsOn)
+		})
+		nonimst.runOnStack(func(svc *core.Service) {
+			removeInDependsOn(s.parentname, &svc.DependsOn)
+		})
+	}
 	for _, s := range sw {
 		if _, ok := matchImportPattern(s.svc.Type); !ok {
 			nonimst.push(s)
 			continue
 		}
 		imst.push(s)
+	}
+}
+func addInDependsOn(old string, new string, do *[]string) {
+	for _, d := range *do {
+		if d == old {
+			(*do) = append((*do), new)
+		}
 	}
 }
 func replaceInDependsOn(old string, new string, do *[]string) {
@@ -204,7 +219,22 @@ func replaceInDependsOn(old string, new string, do *[]string) {
 		}
 	}
 }
-
+func removeInDependsOn(old string, do *[]string) {
+	for i, d := range *do {
+		if d == old {
+			(*do) = append((*do)[0:i], (*do)[i+1:]...)
+		}
+	}
+}
+func replaceParentInDependsOn(parent string, childrens []string, do *[]string) {
+	for i, d := range *do {
+		if d == parent {
+			(*do) = append((*do)[0:i], (*do)[i+1:]...)
+			(*do) = append((*do), childrens...)
+			break
+		}
+	}
+}
 func getPatternFromLocation(loc string) (p core.Pattern, err error) {
 	if strings.HasPrefix(loc, "https://") {
 		resp, err := http.Get(loc)
