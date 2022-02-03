@@ -42,7 +42,6 @@ const Navbar = ({
   const [hoveredId, setHoveredId] = useState(null);
   const [openItems, setOpenItems] = useState([]);
   const [showHelperButton, setShowHelperButton] = useState(false);
-  // const [versionDetail, setVersionDetail] = useState({build : "", latest : "", outdated : false, commitsha : "", release_channel : "NA",});
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
