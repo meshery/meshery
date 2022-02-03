@@ -196,9 +196,7 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 				return false, errors.Wrap(err, "failed to create new client")
 			}
 
-			//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
 			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-			//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
 
 			if err != nil {
