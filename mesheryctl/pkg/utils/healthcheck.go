@@ -176,6 +176,45 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	return false, nil
 }
 
+// AreMesheryComponentsRunning checks if the meshery containers are up and running
+func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
+	//If not, use the platforms to check if Meshery is running or not
+	switch currPlatform {
+	case "docker":
+		{
+			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
+			if err != nil {
+				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
+			}
+			return strings.Contains(string(op), "meshery"), nil
+		}
+	case "kubernetes":
+		{
+			client, err := meshkitkube.New([]byte(""))
+
+			if err != nil {
+				return false, errors.Wrap(err, "failed to create new client")
+			}
+
+			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+
+			if err != nil {
+				return false, err
+			}
+			for _, deployment := range deploymentList.Items {
+				if strings.Contains(string(deployment.GetName()), "meshery") {
+					return true, nil
+				}
+			}
+
+			return false, err
+		}
+	}
+
+	return false, nil
+}
+
 // AreAllPodsRunning checks if all the deployment pods under kubernetes are running
 func AreAllPodsRunning() (bool, error) {
 	// create an kubernetes client
