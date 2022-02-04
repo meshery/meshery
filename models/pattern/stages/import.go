@@ -18,6 +18,11 @@ const ImportPattern = `\$\(#use\s.+\)`
 
 var ImportRegex *regexp.Regexp
 
+/*
+Two stacks are created containing service wrappers. One stack holds all the services which have no further imports.
+We pop services from mixed stack, process it, expand it into n services(reset dependsOn using parentname) and push the services into one of the stacks. If the service has no imports, we push it onto nonimporting stack.
+Otherwise we push the service onto importingstack. This happens untill the importingstack is empty.
+*/
 type servicewrapper struct {
 	parentname string
 	svc        *core.Service
