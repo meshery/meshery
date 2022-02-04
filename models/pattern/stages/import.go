@@ -112,7 +112,6 @@ func stackToServices(s *servicestack) (services map[string]*core.Service) {
 	return
 }
 func process(imp *servicestack, nonimp *servicestack, vars map[string]interface{}) error {
-
 	for !imp.isEmpty() {
 		sw := imp.pop()
 		url, ok := matchImportPattern(sw.svc.Type)
@@ -127,7 +126,6 @@ func process(imp *servicestack, nonimp *servicestack, vars map[string]interface{
 		var svcws []*servicewrapper
 		var oldtonew = make(map[string]string)
 		for name, svc := range p.Services {
-			fmt.Println("FOR ", sw.name)
 			svcw := &servicewrapper{svc: svc}
 			svcw.name = svc.Name + getHash(svc)
 			for _, svco := range p.Services {
