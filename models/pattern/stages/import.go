@@ -2,7 +2,6 @@ package stages
 
 import (
 	"crypto/sha1"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -21,7 +20,7 @@ var ImportRegex *regexp.Regexp
 /*
 Two stacks are created containing service wrappers. One stack holds all the services which have no further imports.
 We pop services from mixed stack, process it, expand it into n services(reset dependsOn using parentname) and push the services into one of the stacks. If the service has no imports, we push it onto nonimporting stack.
-Otherwise we push the service onto importingstack. This happens untill the importingstack is empty.
+Otherwise we push the service onto importingstack. This happens until the importingstack is empty.
 */
 type servicewrapper struct {
 	parentname string
@@ -240,7 +239,7 @@ func getPatternFromLocation(loc string) (p core.Pattern, err error) {
 			return p, err
 		}
 		if resp.StatusCode != http.StatusOK {
-			return p, errors.New(fmt.Sprintf("Got non ok response %d for URL: %s", resp.StatusCode, loc))
+			return p, fmt.Errorf("got non ok HTTP response %d for URL: %s", resp.StatusCode, loc)
 		}
 		pat, err := io.ReadAll(resp.Body)
 		if err != nil {
