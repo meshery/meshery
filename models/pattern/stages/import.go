@@ -95,8 +95,8 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 					act.Terminate(err)
 					return
 				}
+				break
 			}
-			break
 		}
 		data.Lock.Unlock()
 		if next != nil {
