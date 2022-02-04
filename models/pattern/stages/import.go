@@ -60,44 +60,39 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 		//If no imports are there, completely bypass this stage
 		for _, svc := range data.Pattern.Services {
 			if _, ok := matchImportPattern(svc.Type); ok { //If we found any service with imports
-				goto START
+				nonImportingServiceStack := &servicestack{sws: nil}
+				importingServiceStack := &servicestack{}
+				vars := map[string]interface{}{}
+				for _, svc := range data.Pattern.Services {
+					importingServiceStack.push(&servicewrapper{
+						parentname: "",
+						svc:        svc,
+						name:       svc.Name,
+						imported:   map[string]bool{},
+					})
+				}
+				//At the end of this processing, importingServiceStack will be empty and nonImportingServiceStack will have all the services in it with proper dependson and references set
+				err = process(importingServiceStack, nonImportingServiceStack, vars)
+				if err != nil {
+					act.Terminate(err)
+					return
+				}
+				data.Pattern.Services = stackToServices(nonImportingServiceStack)
+				data.Pattern.Vars = vars
+				patternYaml, err := yaml.Marshal(data.Pattern)
+				if err != nil {
+					if err != nil {
+						act.Terminate(err)
+						return
+					}
+				}
+				*data.Pattern, err = core.NewPatternFile(patternYaml)
+				if err != nil {
+					act.Terminate(err)
+					return
+				}
 			}
-		}
-		data.Lock.Unlock() //This code will only be executed if we didn't goto START. And we would not got to start if there is no service that imports a pattern
-		if next != nil {
-			next(data, nil)
-		}
-	START:
-		nonImportingServiceStack := &servicestack{sws: nil}
-		importingServiceStack := &servicestack{}
-		vars := map[string]interface{}{}
-		for _, svc := range data.Pattern.Services {
-			importingServiceStack.push(&servicewrapper{
-				parentname: "",
-				svc:        svc,
-				name:       svc.Name,
-				imported:   map[string]bool{},
-			})
-		}
-		//At the end of this processing, importingServiceStack will be empty and nonImportingServiceStack will have all the services in it with proper dependson and references set
-		err = process(importingServiceStack, nonImportingServiceStack, vars)
-		if err != nil {
-			act.Terminate(err)
-			return
-		}
-		data.Pattern.Services = stackToServices(nonImportingServiceStack)
-		data.Pattern.Vars = vars
-		patternYaml, err := yaml.Marshal(data.Pattern)
-		if err != nil {
-			if err != nil {
-				act.Terminate(err)
-				return
-			}
-		}
-		*data.Pattern, err = core.NewPatternFile(patternYaml)
-		if err != nil {
-			act.Terminate(err)
-			return
+			break
 		}
 		data.Lock.Unlock()
 		if next != nil {
