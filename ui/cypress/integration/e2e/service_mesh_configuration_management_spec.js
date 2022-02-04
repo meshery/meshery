@@ -86,6 +86,7 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
             expect(body).to.eq(expectedContent);
           });
           cy.wrap(interception.response).then((res) => {
+            expect(res.body).to.eq('')
             expect(res.statusCode).to.eq(200);
           });
         });
