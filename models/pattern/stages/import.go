@@ -90,7 +90,6 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 						return
 					}
 				}
-				fmt.Println("THIS IS THE PATTERN ", string(patternYaml))
 				*data.Pattern, err = core.NewPatternFile(patternYaml)
 				if err != nil {
 					act.Terminate(err)
