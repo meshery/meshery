@@ -263,9 +263,6 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	go func() {
-		// TODO: Extend this implementation to be a component that
-		// ensures the availability of Meshery Operator at startup
-		// and other startup health checks
 		kclient, err := mesherykube.New(nil)
 		if err != nil {
 			log.Error(handlers.ErrKubeClient(err))
@@ -302,11 +299,12 @@ func main() {
 			return
 		}
 		log.Info("Connected to broker at: ", brokerEndpoint)
-		meshsyncDataHandler := models.NewMeshsyncDataHandler(brkrConn, dbHandler, log)
+		meshsyncDataHandler := helpers.NewMeshsyncDataHandler(brkrConn, dbHandler, log)
 		err = meshsyncDataHandler.Run()
 		if err != nil {
 			log.Info(err.Error())
 		}
+
 	}()
 
 	go func() {

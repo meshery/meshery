@@ -1,4 +1,4 @@
-package models
+package helpers
 
 import (
 	"github.com/layer5io/meshkit/broker"
@@ -33,7 +33,7 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
 
-	// this subscription is independent of whether or not the database has been synced
+	// this subscription is independent of whether or not the stale data in the database have been cleaned up
 	go mh.subscribeToMeshsyncEvents()
 
 	go mh.subsribeToStoreUpdates(storeSubscriptionStatusChan)
