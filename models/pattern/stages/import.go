@@ -90,6 +90,7 @@ func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 						return
 					}
 				}
+				fmt.Println("THIS IS THE PATTERN ", string(patternYaml))
 				*data.Pattern, err = core.NewPatternFile(patternYaml)
 				if err != nil {
 					act.Terminate(err)
@@ -131,7 +132,7 @@ func process(imp *servicestack, nonimp *servicestack, vars map[string]interface{
 		var oldtonew = make(map[string]string)
 		for name, svc := range p.Services {
 			svcw := &servicewrapper{svc: svc}
-			svcw.name = svc.Name + getHash(svc)
+			svcw.name = svc.Name + getHashOfService(svc)
 			for _, svco := range p.Services {
 				replaceInDependsOn(name, svcw.name, &svco.DependsOn)
 			}
@@ -150,7 +151,12 @@ func process(imp *servicestack, nonimp *servicestack, vars map[string]interface{
 			}
 		}
 		for k, v := range sw.svc.Settings {
-			vars[k] = v
+			hashedKey := k + getHashOfPattern(&p) //change variable names to avoid exported variable name conflicts during import
+			err := changeVarsInPattern(k, hashedKey, svcws)
+			if err != nil {
+				return fmt.Errorf("could not import variables from imported pattern")
+			}
+			vars[hashedKey] = v
 		}
 		pushSvcToStack(svcws, imp, nonimp)
 	}
@@ -168,6 +174,24 @@ func changeReferenceInPattern(old string, new string, sw []*servicewrapper) erro
 		yamls := string(yamlp)
 		newsvc := core.Service{}
 		yamls = strings.ReplaceAll(yamls, "$(#ref.services."+old+".", "$(#ref.services."+new+".")
+		err = yaml.Unmarshal([]byte(yamls), &newsvc)
+		if err != nil {
+			return err
+		}
+		svcwrap.svc = &newsvc
+	}
+	return nil
+}
+func changeVarsInPattern(old string, new string, sw []*servicewrapper) error {
+	for _, svcwrap := range sw {
+		s := svcwrap.svc
+		yamlp, err := yaml.Marshal(s)
+		if err != nil {
+			return err
+		}
+		yamls := string(yamlp)
+		newsvc := core.Service{}
+		yamls = strings.ReplaceAll(yamls, "$(#ref.vars."+old+")", "$(#ref.vars."+new+")")
 		err = yaml.Unmarshal([]byte(yamls), &newsvc)
 		if err != nil {
 			return err
@@ -250,7 +274,16 @@ func getPatternFromLocation(loc string) (p core.Pattern, err error) {
 	return p, nil
 }
 
-func getHash(s *core.Service) string {
+func getHashOfService(s *core.Service) string {
+	b, _ := yaml.Marshal(s)
+	h := sha1.New()
+	h.Write(b)
+	bs := h.Sum(nil)
+	str := string(fmt.Sprintf("%x\n", bs))
+	return str[0:8]
+}
+
+func getHashOfPattern(s *core.Pattern) string {
 	b, _ := yaml.Marshal(s)
 	h := sha1.New()
 	h.Write(b)
