@@ -2,7 +2,6 @@
 layout: default
 title: Compatibility Matrix
 permalink: project/compatibility-matrix
-
 description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"
@@ -102,7 +101,8 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               <a href = "{{site.baseurl}}/{{item.meshery-component}}/past-results">To see past results click here </a>
             </td>
           </tr>
-        {% else %}
+        <!-- if the latest test is stable as we require edge test to show too. -->
+        {% else %} 
           {% if items[1].overall-status == "passing" %}
             {% assign overall-status = "background-color: #83B71E; color: white;" %}
           {% elsif items[1].overall-status == "partial" %}
