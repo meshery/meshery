@@ -153,7 +153,7 @@ func TestGetCurrentContextName(t *testing.T) {
 func TestSetContext(t *testing.T) {
 	for _, test := range tests {
 		mesherycltconfig := MesheryCtlConfig{nil, test, nil}
-		err := UpdateContextToConfig(nil, nil, test)
+		err := UpdateContextInConfig(nil, nil, test)
 		if err != nil {
 			fmt.Print("Fail") //Internal:need to be fixed
 		}
@@ -297,8 +297,8 @@ func TestSetComponents(t *testing.T) {
 
 // 			currCtx.SetPlatform(tt.args.platform)
 
-// 			if err := UpdateContextToConfig(tt.args.contextName, currCtx, testConfigPath); err != nil && !tt.wantErr {
-// 				t.Errorf("UpdateContextToConfig() error = %v, wantErr %v", err, tt.wantErr)
+// 			if err := UpdateContextInConfig(tt.args.contextName, currCtx, testConfigPath); err != nil && !tt.wantErr {
+// 				t.Errorf("UpdateContextInConfig() error = %v, wantErr %v", err, tt.wantErr)
 // 			}
 
 // 			// Actual file contents
@@ -376,8 +376,8 @@ func TestSetComponents(t *testing.T) {
 
 // 			currCtx.SetEndpoint(tt.endpointAddress)
 
-// 			if err := UpdateContextToConfig(tt.ctxName, currCtx, testConfigPath); (err != nil) != tt.wantErr {
-// 				t.Errorf("UpdateContextToConfig() error = %v, wantErr %v", err, tt.wantErr)
+// 			if err := UpdateContextInConfig(tt.ctxName, currCtx, testConfigPath); (err != nil) != tt.wantErr {
+// 				t.Errorf("UpdateContextInConfig() error = %v, wantErr %v", err, tt.wantErr)
 // 			}
 
 // 			// Actual file contents

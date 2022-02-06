@@ -91,7 +91,7 @@ var dashboardCmd = &cobra.Command{
 			}
 
 			if err == nil {
-				err = config.UpdateContextToConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+				err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
 				if err != nil {
 					return err
 				}
