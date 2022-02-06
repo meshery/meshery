@@ -180,7 +180,7 @@ func stop() error {
 		}
 	}
 	// Wait for meshery to stop
-	done, err := mesheryStopCheck()
+	done, err := mesheryStopCheck(utils.KeepNamespace)
 	if err != nil {
 		log.Info(err)
 	}

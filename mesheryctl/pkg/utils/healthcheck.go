@@ -291,6 +291,70 @@ func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, time
 	return pollForPodRunning(c, namespace, desiredPodName, time.Duration(timeout)*time.Second)
 }
 
+// Returns condition function to indicate that all the components are deleted.
+// A component in terminating state is not considered deleted
+func areMesheryComponentsDeleted(c *meshkitkube.Client, namespace, componentType string) wait.ConditionFunc {
+	return func() (bool, error) {
+		switch componentType {
+		case "pod":
+			{
+				pods, err := c.KubeClient.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{})
+				if err != nil {
+					return false, err
+				}
+				return len(pods.Items) == 0, nil
+			}
+
+		case "replicaset":
+			{
+				replicasets, err := c.KubeClient.AppsV1().ReplicaSets(namespace).List(context.TODO(), metav1.ListOptions{})
+				if err != nil {
+					return false, err
+				}
+				return len(replicasets.Items) == 0, nil
+			}
+
+		case "rolebinding":
+			{
+				rolebindings, err := c.KubeClient.RbacV1().RoleBindings(namespace).List(context.TODO(), metav1.ListOptions{})
+				if err != nil {
+					return false, err
+				}
+				return len(rolebindings.Items) == 0, nil
+			}
+
+		case "role":
+			{
+				roles, err := c.KubeClient.RbacV1().Roles(namespace).List(context.TODO(), metav1.ListOptions{})
+				if err != nil {
+					return false, err
+				}
+				return len(roles.Items) == 0, nil
+			}
+
+		case "statefulset":
+			{
+				statefulsets, err := c.KubeClient.AppsV1().StatefulSets(namespace).List(context.TODO(), metav1.ListOptions{})
+				if err != nil {
+					return false, err
+				}
+				return len(statefulsets.Items) == 0, nil
+			}
+
+		case "service":
+			{
+				services, err := c.KubeClient.CoreV1().Services(namespace).List(context.TODO(), metav1.ListOptions{})
+				if err != nil {
+					return false, err
+				}
+				return len(services.Items) == 0, nil
+			}
+		}
+
+		return true, nil
+	}
+}
+
 // Returns condition function to indicate that the `namespace` does not exist anymore.
 func isNamespaceDeleted(c *meshkitkube.Client, namespace string) wait.ConditionFunc {
 	return func() (bool, error) {
@@ -310,12 +374,54 @@ func isNamespaceDeleted(c *meshkitkube.Client, namespace string) wait.ConditionF
 	}
 }
 
+// Poll up to timeout seconds until all the components have been deleted
+func pollForMesheryComponentsDeleted(c *meshkitkube.Client, namespace string, timeout time.Duration) error {
+	// Wait for pods to delete
+	err := wait.PollImmediate(time.Second, timeout, areMesheryComponentsDeleted(c, namespace, "pod"))
+	if err != nil {
+		return err
+	}
+	// Wait for replica sets to delete
+	err = wait.PollImmediate(time.Second, timeout, areMesheryComponentsDeleted(c, namespace, "replicaset"))
+	if err != nil {
+		return err
+	}
+	// Wait for role bindings to delete
+	err = wait.PollImmediate(time.Second, timeout, areMesheryComponentsDeleted(c, namespace, "rolebinding"))
+	if err != nil {
+		return err
+	}
+	// Wait for roles to delete
+	err = wait.PollImmediate(time.Second, timeout, areMesheryComponentsDeleted(c, namespace, "role"))
+	if err != nil {
+		return err
+	}
+	// Wait for stateful sets to delete
+	err = wait.PollImmediate(time.Second, timeout, areMesheryComponentsDeleted(c, namespace, "statefulset"))
+	if err != nil {
+		return err
+	}
+	// Wait for services to delete
+	err = wait.PollImmediate(time.Second, timeout, areMesheryComponentsDeleted(c, namespace, "service"))
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
 // Poll up to timeout seconds until the namespace no more exists.
-func pollForNamespaceDelete(c *meshkitkube.Client, namespace string, timeout time.Duration) error {
+func pollForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout time.Duration) error {
 	return wait.PollImmediate(time.Second, timeout, isNamespaceDeleted(c, namespace))
 }
 
+// Wait up to timeout seconds for meshery components to be deleted.
+func WaitForMesheryComponentsDeleted(c *meshkitkube.Client, namespace string, timeout int) error {
+	return pollForMesheryComponentsDeleted(c, namespace, time.Duration(timeout)*time.Second)
+}
+
 // Wait up to timeout seconds for `namespace` to be deleted.
-func WaitForNamespaceDelete(c *meshkitkube.Client, namespace string, timeout int) error {
-	return pollForNamespaceDelete(c, namespace, time.Duration(timeout)*time.Second)
+func WaitForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout int) error {
+	return pollForNamespaceDeleted(c, namespace, time.Duration(timeout)*time.Second)
 }
