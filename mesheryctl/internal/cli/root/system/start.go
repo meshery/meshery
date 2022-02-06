@@ -252,7 +252,7 @@ func start() error {
 			endpoint.Address = utils.EndpointProtocol + "://localhost"
 			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
 
-			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}

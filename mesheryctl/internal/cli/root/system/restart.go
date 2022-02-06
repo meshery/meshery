@@ -78,7 +78,7 @@ func restart() error {
 
 	currPlatform := currCtx.GetPlatform()
 
-	running, err := utils.IsMesheryRunning(currPlatform)
+	running, err := utils.AreMesheryComponentsRunning(currPlatform)
 	if err != nil {
 		return err
 	}
