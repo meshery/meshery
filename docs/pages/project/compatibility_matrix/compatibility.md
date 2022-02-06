@@ -98,7 +98,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               </ol>      
             </td>
             <td>
-              <a href = "{{site.baseurl}}/{{item.meshery-component}}/past-results">To see past results click here </a>
+              <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
             </td>
           </tr>
         <!-- if the latest test is stable as we require edge test to show too. -->
@@ -142,7 +142,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               </ol>      
             </td>
             <td>
-              <a href = "{{site.baseurl}}/{{items[1].meshery-component}}/past-results">To see past results click here </a>
+              <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
             </td>
           </tr>        
         {% endif %}  
@@ -192,7 +192,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               </ol>      
             </td>
             <td>
-              <a href = "{{site.baseurl}}/{{item.meshery-component}}/past-results">To see past results click here </a>
+              <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
             </td>
           </tr>
         {% endif %}  

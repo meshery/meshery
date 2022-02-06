@@ -1,7 +1,7 @@
 ---
 layout: default
-title: istio-Compatibility-Matrix
-permalink: /meshery-kuma/past-results
+title: Meshery-Kuma Past Results
+permalink: project/compatibility-matrix/meshery-kuma-past-results
 description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"

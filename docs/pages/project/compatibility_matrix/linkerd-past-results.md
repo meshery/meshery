@@ -1,7 +1,7 @@
 ---
 layout: default
-title: istio-Compatibility-Matrix
-permalink: /meshery-linkerd/past-results
+title: Meshery-Linkerd Pasr Results
+permalink: project/compatibility-matrix/meshery-linkerd-past-results
 description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"

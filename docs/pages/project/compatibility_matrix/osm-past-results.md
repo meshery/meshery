@@ -1,7 +1,7 @@
 ---
 layout: default
-title: istio-Compatibility-Matrix
-permalink: /meshery-osm/past-results
+title: Meshery-OSM Past Results
+permalink: project/compatibility-matrix/meshery-osm-past-results
 description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"

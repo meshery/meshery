@@ -1,7 +1,7 @@
 ---
 layout: default
-title: istio-Compatibility-Matrix
-permalink: /meshery-traefik-mesh/past-results
+title: Meshery-Traefik-Mesh Past Results
+permalink: project/compatibility-matrix/meshery-traefik-mesh-past-results
 description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"
