@@ -133,6 +133,12 @@ func start() error {
 	if utils.PlatformFlag != "" {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
 			currCtx.SetPlatform(utils.PlatformFlag)
+
+			// update the context to config
+			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			if err != nil {
+				return err
+			}
 		} else {
 			return ErrUnsupportedPlatform(utils.PlatformFlag, utils.CfgFile)
 		}
