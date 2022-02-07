@@ -411,6 +411,7 @@ func _processPattern(
 
 	chain := stages.CreateChain()
 	chain.
+		Add(stages.Import(sip, sap)).
 		Add(stages.ServiceIdentifier(sip, sap)).
 		Add(stages.Filler(sap.skipPrintLogs)).
 		Add(stages.Validator(sip, sap))
