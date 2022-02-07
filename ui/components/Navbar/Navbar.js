@@ -14,7 +14,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import React, { useState } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import classNames from "classnames";
 import HelpIcon from "@mui/icons-material/Help";
 import { useStyles } from "./Navbar.styles";
@@ -211,7 +212,7 @@ const Navbar = ({
                     disableTouchListener={!isDrawerCollapsed}
                   >
                     {isDrawerCollapsed && children && (hoveredId === childId || openItems.includes(childId)) ? (
-                      <ExpandMoreIcon
+                      <ArrowDropDownIcon
                         onClick={() => toggleItemCollapse(childId)}
                         className={classNames({ [classes.collapsed]: openItems.includes(childId) })}
                       />
@@ -227,7 +228,7 @@ const Navbar = ({
                   </ListItemText>
                 </div>
               </Link>
-              <ExpandMoreIcon
+              <ArrowDropDownIcon
                 onClick={() => toggleItemCollapse(childId)}
                 className={classNames(classes.expandMoreIcon, {
                   [classes.collapsed]: openItems.includes(childId),

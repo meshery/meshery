@@ -93,7 +93,8 @@ export const useStyles = makeStyles((theme) => ({
   },
   itemActionable: {
     "&:hover": {
-      backgroundColor: "rgba(255, 255, 255, 0.08)",
+      backgroundColor: "rgb(0, 187, 166, 0.5)",
+      color: "#fff",
     },
   },
   itemActiveItem: {
