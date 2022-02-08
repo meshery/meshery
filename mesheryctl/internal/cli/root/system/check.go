@@ -581,22 +581,15 @@ func mesheryReadinessHealthCheck() (bool, error) {
 	return true, nil
 }
 
-// mesheryStopCheck waits for Meshery components to be deleted, returns (done, error)
-// Also waits for namespace to be deleted if required
-func mesheryStopCheck(keepNamespace bool) (bool, error) {
+// mesheryNsDeleteCheck waits for Meshery namespace to be deleted, returns (done, error)
+func mesheryNsDeleteCheck() (bool, error) {
 	kubeClient, err := meshkitkube.New([]byte(""))
 	if err != nil {
 		return false, err
 	}
-	// Wait for meshery components to be deleted
-	if err := utils.WaitForMesheryComponentsDeleted(kubeClient, utils.MesheryNamespace, 300); err != nil {
+
+	if err := utils.WaitForNamespaceDeleted(kubeClient, utils.MesheryNamespace, 300); err != nil {
 		return false, err
-	}
-	// If not keeping namespace, wait for namespace to be deleted
-	if !keepNamespace {
-		if err := utils.WaitForNamespaceDeleted(kubeClient, utils.MesheryNamespace, 300); err != nil {
-			return false, err
-		}
 	}
 
 	return true, nil

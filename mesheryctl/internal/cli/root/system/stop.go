@@ -122,6 +122,7 @@ func stop() error {
 		if err := stop.Run(); err != nil {
 			return ErrStopMeshery(err)
 		}
+		log.Info("Meshery is stopped.")
 	case "kubernetes":
 		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
@@ -177,18 +178,18 @@ func stop() error {
 			if err = deleteNs(utils.MesheryNamespace, client.KubeClient); err != nil {
 				return err
 			}
+			// Wait for the namespace to be deleted
+			done, err := mesheryNsDeleteCheck()
+			if err != nil {
+				log.Info(err)
+			} else if !done {
+				log.Info("Meshery is taking too long to stop.\nPlease check the status of the pods by executing “mesheryctl system status”.")
+			} else {
+				log.Info("Meshery is stopped.")
+			}
+		} else {
+			log.Info("Meshery is stopped.")
 		}
-	}
-	// Wait for meshery to stop
-	done, err := mesheryStopCheck(utils.KeepNamespace)
-	if err != nil {
-		log.Info(err)
-	}
-	// If stop is not done until timeout, display info
-	if !done {
-		log.Info("Meshery has not stopped yet.\nPlease check the status of the pods by executing “mesheryctl system status” and Meshery-UI endpoint with “mesheryctl system dashboard”.")
-	} else {
-		log.Info("Meshery is stopped.")
 	}
 
 	// Reset Meshery config file to default settings
