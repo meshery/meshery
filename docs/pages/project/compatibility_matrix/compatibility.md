@@ -16,7 +16,6 @@ type: "project"
 As a key aspect of Meshery, its integrations with other systems are routinely tested. Unit, integration testing occurs before and after every pull request (before code is to be merged into the project and after code is merged into the project). Regression tests are run nightly.
 
 <script type="text/javascript">
-<!--
     function toggle_visibility(id) {
        var e = document.getElementById(id);
        if(e.style.visibility == 'visible') {
@@ -29,7 +28,6 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           e.style.visibility = 'visible';
           }
     }
-//-->
 </script>
 
 <style>
