@@ -43,7 +43,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
     cursor:text;
   }
 </style>
-<!-- %a %b %d %k:%M:%S %Z %Y -->
+
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
 
 <table>
@@ -101,7 +101,9 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
             </td>
           </tr>
-        <!-- if the latest test is stable as we require edge test to show too. -->
+
+        <!-- if the latest test is stable as we require edge test to show too and since sorted through timestamp second element will always be an edge tests. -->
+
         {% else %} 
           {% if items[1].overall-status == "passing" %}
             {% assign overall-status = "background-color: #83B71E; color: white;" %}
@@ -148,6 +150,8 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
         {% endif %}  
       {% endfor %}
     {% endfor %}
+    
+    <!-- display tests from the stable channel -->
 
     {% for group in sorted_tests_group %}
       {% assign items = group.items | sort: "meshery-component-version" | reverse %}
@@ -165,16 +169,8 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           <tr onclick="toggle_visibility('{{item.meshery-component}}-stable');"> 
             <td style="{{ overall-status }}">{{ item.timestamp }}</td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
-            {% if item.meshery-component-version == "edge" %}
-              <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases">{{ item.meshery-component-version }}</a></td>
-            {% else %}
-              <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
-            {% endif %}
-            {% if item.meshery-server-version == "edge" %}
-              <td><a href="{{ site.repo }}/releases{{ item.meshery-server-version }}">{{ item.meshery-server-version }}</a></td>
-            {% else %}
-              <td><a href="{{ site.repo }}/releases/tag/{{ item.meshery-server-version }}">{{ item.meshery-server-version }}</a></td>
-            {% endif %}
+            <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
+            <td><a href="{{ site.repo }}/releases/tag/{{ item.meshery-server-version }}">{{ item.meshery-server-version }}</a></td>
             <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
           </tr>

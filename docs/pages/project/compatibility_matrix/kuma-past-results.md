@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: past-results-layout
 title: Meshery-Kuma Past Results
 permalink: project/compatibility-matrix/meshery-kuma-past-results
 description: a complete compatibility matrix and project test status dashboard.
@@ -8,12 +8,5 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-kuma"
+subheading: Meshery-Kuma
 ---
-
-# Meshery Compatibility Matrix
-
-## Meshery-Kuma Integration Tests
-
-This page shows all the integration test run on Meshery-Kuma in the past.
-
-{% include past-results.html %}

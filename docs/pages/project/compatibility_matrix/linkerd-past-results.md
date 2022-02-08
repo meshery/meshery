@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: past-results-layout
 title: Meshery-Linkerd Pasr Results
 permalink: project/compatibility-matrix/meshery-linkerd-past-results
 description: a complete compatibility matrix and project test status dashboard.
@@ -8,12 +8,5 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-linkerd"
+subheading: Meshery-Linkerd
 ---
-
-# Meshery Compatibility Matrix
-
-## Meshery-Linkerd Integration Tests
-
-This page shows all the integration test run on Meshery-Linkerd in the past.
-
-{% include past-results.html %}

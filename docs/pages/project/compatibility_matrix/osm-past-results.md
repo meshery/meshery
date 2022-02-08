@@ -8,12 +8,5 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-osm"
+subheading: Meshery-OSM
 ---
-
-# Meshery Compatibility Matrix
-
-## Meshery-OSM Integration Tests
-
-This page shows all the integration test run on Meshery-OSM in the past.
-
-{% include past-results.html %}

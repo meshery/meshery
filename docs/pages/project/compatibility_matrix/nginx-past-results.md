@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: past-results-layout
 title: Meshery-Nginx Past Results
 permalink: project/compatibility-matrix/meshery-nginx-sm-past-results
 description: a complete compatibility matrix and project test status dashboard.
@@ -8,12 +8,5 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-nginx-sm"
+subheading: Meshery-Nginx
 ---
-
-# Meshery Compatibility Matrix
-
-## Meshery-Nginx Integration Tests
-
-This page shows all the integration test run on Meshery-Nginx in the past.
-
-{% include past-results.html %}
