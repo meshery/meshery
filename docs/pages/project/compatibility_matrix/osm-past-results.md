@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: past-results-layout
 title: Meshery-OSM Past Results
 permalink: project/compatibility-matrix/meshery-osm-past-results
 description: a complete compatibility matrix and project test status dashboard.
