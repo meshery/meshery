@@ -1304,7 +1304,47 @@ paths:
                         x-go-package: github.com/layer5io/meshery/models
                       x-go-package: github.com/layer5io/meshery/models
                     navigator:
-                      $ref: '#/definitions/NavigatorExtensions'
+                      description: NavigatorExtensions is a collection of NavigatorExtension
+                      type: array
+                      items:
+                        description: NavigatorExtension describes the Navigator extension
+                          point in the UI
+                        type: object
+                        properties:
+                          children:
+                            $ref: '#/definitions/NavigatorExtensions'
+                          component:
+                            type: string
+                            x-go-name: Component
+                          href:
+                            description: Href describes a link along with its type
+                            type: object
+                            properties:
+                              external:
+                                type: boolean
+                                x-go-name: External
+                              uri:
+                                type: string
+                                x-go-name: URI
+                            x-go-package: github.com/layer5io/meshery/models
+                          icon:
+                            type: string
+                            x-go-name: Icon
+                          link:
+                            type: boolean
+                            x-go-name: Link
+                          on_click_callback:
+                            type: integer
+                            format: int64
+                            x-go-name: OnClickCallback
+                          show:
+                            type: boolean
+                            x-go-name: Show
+                          title:
+                            type: string
+                            x-go-name: Title
+                        x-go-package: github.com/layer5io/meshery/models
+                      x-go-package: github.com/layer5io/meshery/models
                     user_prefs:
                       description: UserPrefsExtensions is a collection of UserPrefsExtension
                       type: array
@@ -26770,47 +26810,7 @@ definitions:
     type: object
     properties:
       children:
-        description: NavigatorExtensions is a collection of NavigatorExtension
-        type: array
-        items:
-          description: NavigatorExtension describes the Navigator extension point
-            in the UI
-          type: object
-          properties:
-            children:
-              $ref: '#/definitions/NavigatorExtensions'
-            component:
-              type: string
-              x-go-name: Component
-            href:
-              description: Href describes a link along with its type
-              type: object
-              properties:
-                external:
-                  type: boolean
-                  x-go-name: External
-                uri:
-                  type: string
-                  x-go-name: URI
-              x-go-package: github.com/layer5io/meshery/models
-            icon:
-              type: string
-              x-go-name: Icon
-            link:
-              type: boolean
-              x-go-name: Link
-            on_click_callback:
-              type: integer
-              format: int64
-              x-go-name: OnClickCallback
-            show:
-              type: boolean
-              x-go-name: Show
-            title:
-              type: string
-              x-go-name: Title
-          x-go-package: github.com/layer5io/meshery/models
-        x-go-package: github.com/layer5io/meshery/models
+        $ref: '#/definitions/NavigatorExtensions'
       component:
         type: string
         x-go-name: Component
@@ -26851,47 +26851,7 @@ definitions:
       type: object
       properties:
         children:
-          description: NavigatorExtensions is a collection of NavigatorExtension
-          type: array
-          items:
-            description: NavigatorExtension describes the Navigator extension point
-              in the UI
-            type: object
-            properties:
-              children:
-                $ref: '#/definitions/NavigatorExtensions'
-              component:
-                type: string
-                x-go-name: Component
-              href:
-                description: Href describes a link along with its type
-                type: object
-                properties:
-                  external:
-                    type: boolean
-                    x-go-name: External
-                  uri:
-                    type: string
-                    x-go-name: URI
-                x-go-package: github.com/layer5io/meshery/models
-              icon:
-                type: string
-                x-go-name: Icon
-              link:
-                type: boolean
-                x-go-name: Link
-              on_click_callback:
-                type: integer
-                format: int64
-                x-go-name: OnClickCallback
-              show:
-                type: boolean
-                x-go-name: Show
-              title:
-                type: string
-                x-go-name: Title
-            x-go-package: github.com/layer5io/meshery/models
-          x-go-package: github.com/layer5io/meshery/models
+          $ref: '#/definitions/NavigatorExtensions'
         component:
           type: string
           x-go-name: Component
@@ -34735,7 +34695,47 @@ definitions:
               x-go-package: github.com/layer5io/meshery/models
             x-go-package: github.com/layer5io/meshery/models
           navigator:
-            $ref: '#/definitions/NavigatorExtensions'
+            description: NavigatorExtensions is a collection of NavigatorExtension
+            type: array
+            items:
+              description: NavigatorExtension describes the Navigator extension point
+                in the UI
+              type: object
+              properties:
+                children:
+                  $ref: '#/definitions/NavigatorExtensions'
+                component:
+                  type: string
+                  x-go-name: Component
+                href:
+                  description: Href describes a link along with its type
+                  type: object
+                  properties:
+                    external:
+                      type: boolean
+                      x-go-name: External
+                    uri:
+                      type: string
+                      x-go-name: URI
+                  x-go-package: github.com/layer5io/meshery/models
+                icon:
+                  type: string
+                  x-go-name: Icon
+                link:
+                  type: boolean
+                  x-go-name: Link
+                on_click_callback:
+                  type: integer
+                  format: int64
+                  x-go-name: OnClickCallback
+                show:
+                  type: boolean
+                  x-go-name: Show
+                title:
+                  type: string
+                  x-go-name: Title
+              x-go-package: github.com/layer5io/meshery/models
+            x-go-package: github.com/layer5io/meshery/models
           user_prefs:
             description: UserPrefsExtensions is a collection of UserPrefsExtension
             type: array
@@ -41743,7 +41743,47 @@ responses:
                   x-go-package: github.com/layer5io/meshery/models
                 x-go-package: github.com/layer5io/meshery/models
               navigator:
-                $ref: '#/definitions/NavigatorExtensions'
+                description: NavigatorExtensions is a collection of NavigatorExtension
+                type: array
+                items:
+                  description: NavigatorExtension describes the Navigator extension
+                    point in the UI
+                  type: object
+                  properties:
+                    children:
+                      $ref: '#/definitions/NavigatorExtensions'
+                    component:
+                      type: string
+                      x-go-name: Component
+                    href:
+                      description: Href describes a link along with its type
+                      type: object
+                      properties:
+                        external:
+                          type: boolean
+                          x-go-name: External
+                        uri:
+                          type: string
+                          x-go-name: URI
+                      x-go-package: github.com/layer5io/meshery/models
+                    icon:
+                      type: string
+                      x-go-name: Icon
+                    link:
+                      type: boolean
+                      x-go-name: Link
+                    on_click_callback:
+                      type: integer
+                      format: int64
+                      x-go-name: OnClickCallback
+                    show:
+                      type: boolean
+                      x-go-name: Show
+                    title:
+                      type: string
+                      x-go-name: Title
+                  x-go-package: github.com/layer5io/meshery/models
+                x-go-package: github.com/layer5io/meshery/models
               user_prefs:
                 description: UserPrefsExtensions is a collection of UserPrefsExtension
                 type: array
