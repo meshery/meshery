@@ -463,7 +463,7 @@ class DashboardComponent extends React.Component {
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />

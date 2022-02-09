@@ -47,9 +47,9 @@ const styles = (theme) => ({
   },
   createButton : {
     display : "flex",
-    justifyContent : "center",
+    justifyContent : "flex-start",
     alignItems : "center",
-    margin : "1rem"
+    margin : "1rem auto 2rem auto"
   }
 });
 
@@ -92,16 +92,15 @@ function CustomToolbar(onClick, urlOnClick) {
     return (
       <>
         <label htmlFor="upload-button">
-          <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
           <Tooltip title="Upload Pattern">
-            <IconButton aria-label="Upload" component="span">
+            <IconButton aria-label="Upload Button" component="span">
+              <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
               <UploadIcon />
             </IconButton>
           </Tooltip>
         </label>
-        <label htmlFor="url-upload-button">
-          <URLUploader onSubmit={urlOnClick} />
-        </label>
+
+        <URLUploader aria-label="URL upload button" onSubmit={urlOnClick} />
       </>
     );
   };
@@ -247,7 +246,12 @@ function MesheryPatterns({
             color : "#607d8b"
           }
         },
-      }
+      },
+      MUIDataTableBodyCell : {
+        root : {
+          cursor : "pointer"
+        },
+      },
     }
   });
 
@@ -696,18 +700,6 @@ function MesheryPatterns({
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
-      {
-        !selectedPattern.show && <MuiThemeProvider theme={getMuiTheme()}>
-          <MUIDataTable
-            title={<div className={classes.tableHeader}>Patterns</div>}
-            data={patterns}
-            columns={columns}
-            // @ts-ignore
-            options={options}
-            className={classes.muiRow}
-          />
-        </MuiThemeProvider>
-      }
       {!selectedPattern.show && <div className={classes.createButton}>
         <Button
           aria-label="Add Pattern"
@@ -721,9 +713,21 @@ function MesheryPatterns({
           })}
         >
           <AddIcon />
-          Create Pattern
+           Create Pattern
         </Button>
       </div>}
+      {
+        !selectedPattern.show && <MuiThemeProvider theme={getMuiTheme()}>
+          <MUIDataTable
+            title={<div className={classes.tableHeader}>Patterns</div>}
+            data={patterns}
+            columns={columns}
+            // @ts-ignore
+            options={options}
+            className={classes.muiRow}
+          />
+        </MuiThemeProvider>
+      }
       <PromptComponent ref={modalRef} />
     </NoSsr>
   );

@@ -1,0 +1,29 @@
+div .td-sidebar__search {
+  padding-top: 2.5rem;
+}
+
+main nav .breadcrumb {
+  padding-top: 1.5rem;
+}
+
+div .td-toc {
+  padding-top: 2rem;
+}
+
+@media (min-width: 768px) {
+  .td-navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding-top: 1.35rem;
+    padding-bottom: 1.35rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .td-sidebar-nav {
+    max-height: -webkit-calc(100vh - 11.5rem);
+    max-height: calc(100vh - 11.5rem);
+    overflow-y: auto;
+  }
+}
