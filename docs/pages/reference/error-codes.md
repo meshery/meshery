@@ -135,50 +135,39 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
   <table class="tbl">
   <thead>
     <tr class="tbl-head-row">
-      <th class="error-name-code"><span style="">Error Name</span> <span style="width:2.4rem;word-break:break-word;">Error Code</span></th>
-      <th>Severity</th>
-      <th style="width:40%">Short Description</th>
-      <th style="width:40%">Long Description</th>
+      <th class="error-name-code"><span style="">Error Name</span> <span style="width:2.4rem;word-break:break-all;">Error Code</span></th>
+      <th style="width:15%">Severity</th>
+      <th style="width:85%">Short Description</th>
     </tr>
   </thead>
   <tbody class="tbl-body">
     {% for err_code in component[1].errors %}
         {% if err_code[1]["severity"] == "Fatal" %}
-          {% assign severity = "background-color: #FF0000; color: white;"%} 
+          {% assign severity = "background-color: #FF0101; color: white;"%} 
         {% elsif err_code[1]["severity"] == "Alert" %}
-          {% assign severity = "background-color: #FEA501; color: white;"%}
+          {% assign severity = "background-color: #FEA400; color: white;"%}
         {% else %}
-          {% assign severity = "background-color: #FFF; color: black;"%}
+          {% assign severity = "background-color: transparent; color: black;"%}
         {% endif %}   
-        {% if err_code[1]["probable_cause"] != "" %}
-          {% assign hover_class = "hover-effect"%}
-        {% elsif err_code[1]["suggested_remediation"] != "" %}
-          {% assign hover_class = "hover-effect" %}
-        {% else %}
-          {% assign hover_class = "" %}
-        {% endif %}
-        <tr class="tbl-body-row {{hover_class}}" onclick="toggle_visibility('{{component[1].component_name}}-{{err_code[1]["name"]}}-more-info');">
+        <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{component[1].component_name}}-{{err_code[1]["name"]}}-more-info');">
           <td class="error-name-code">
             <span><a id="{{component[1].component_name}}-{{err_code[1]["name"]}}">
             {{ err_code[1]["name"] | xml_escape }}
             </a></span> <span>{{ err_code[1]["code"] }}</span> 
           </td>
           <td style="{{severity}}">{{ err_code[1]["severity"]}}</td>
-          <td style="word-break:break-word">{{ err_code[1]["short_description"] | xml_escape}}</td>
-          <td style="">{{ err_code[1]["long_description"] | xml_escape }}</td>
+          <td>{{ err_code[1]["short_description"] | xml_escape}}</td>
         </tr>
         <tr id="{{component[1].component_name}}-{{err_code[1]["name"]}}-more-info" class="tbl-hidden-row">
-          {% if err_code[1]["probable_cause"] != "" %}
-            <td colspan="2" style=""><div><i><b>Probable Cause:</b></i></div>{{ err_code[1]["probable_cause"] | xml_escape }}</td>
-          {% endif %}
-          {% if err_code[1]["suggested_remediation"] != "" %}
-            <td colspan="2" style=""><div><i><b>Suggested Remediation:</b></i></div>{{ err_code[1]["suggested_remediation"] }}</td>
-            {% if err_code[1]["probable_cause"] == ""%}
-            <td colspan="2" style=""></td>
-            {% endif %}
-          {% elsif err_code[1]["probable_cause"] != "" %}
-            <td colspan="2" style=""></td>
-          {% endif %}
+          <td style="word-break:break-all;">
+              <div><i><b>Probable Cause:</b></i></div>{{ err_code[1]["probable_cause"] | xml_escape }}
+          </td>
+          <td>
+            <div><i><b>Suggested Remediation:</b></i></div>{{ err_code[1]["suggested_remediation"] }}
+          </td>
+          <td>
+          <div><i><b>Long Description:</b></i></div>
+          {{ err_code[1]["long_description"] | xml_escape }}</td>
         </tr>
     {% endfor %}
   </tbody>
