@@ -241,6 +241,20 @@ func AreAllPodsRunning() (bool, error) {
 	return true, nil
 }
 
+// CheckMesheryNsDelete waits for Meshery namespace to be deleted, returns (done, error)
+func CheckMesheryNsDelete() (bool, error) {
+	kubeClient, err := meshkitkube.New([]byte(""))
+	if err != nil {
+		return false, err
+	}
+
+	if err := WaitForNamespaceDeleted(kubeClient, MesheryNamespace, 300); err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 // return a condition function that indicates whether the given pod is
 // currently running
 func isPodRunning(c *meshkitkube.Client, podName, namespace string) wait.ConditionFunc {
@@ -312,7 +326,7 @@ func isNamespaceDeleted(c *meshkitkube.Client, namespace string) wait.ConditionF
 
 // Poll up to timeout seconds every 5 seconds until the namespace no more exists.
 func pollForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout time.Duration) error {
-	return wait.PollImmediate(5*time.Second, timeout, isNamespaceDeleted(c, namespace))
+	return wait.Poll(5*time.Second, timeout, isNamespaceDeleted(c, namespace))
 }
 
 // Wait up to timeout seconds for `namespace` to be deleted.

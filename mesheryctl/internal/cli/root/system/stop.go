@@ -179,10 +179,8 @@ func stop() error {
 				return err
 			}
 			// Wait for the namespace to be deleted
-			done, err := mesheryNsDeleteCheck()
+			_, err := utils.CheckMesheryNsDelete()
 			if err != nil {
-				log.Info(err)
-			} else if !done {
 				log.Info("Meshery is taking too long to stop.\nPlease check the status of the pods by executing “mesheryctl system status”.")
 			} else {
 				log.Info("Meshery is stopped.")

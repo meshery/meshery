@@ -581,20 +581,6 @@ func mesheryReadinessHealthCheck() (bool, error) {
 	return true, nil
 }
 
-// mesheryNsDeleteCheck waits for Meshery namespace to be deleted, returns (done, error)
-func mesheryNsDeleteCheck() (bool, error) {
-	kubeClient, err := meshkitkube.New([]byte(""))
-	if err != nil {
-		return false, err
-	}
-
-	if err := utils.WaitForNamespaceDeleted(kubeClient, utils.MesheryNamespace, 300); err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
 func init() {
 	checkCmd.Flags().BoolVarP(&preflight, "preflight", "", false, "Verify environment readiness to deploy Meshery")
 	checkCmd.Flags().BoolVarP(&pre, "pre", "", false, "Verify environment readiness to deploy Meshery")
