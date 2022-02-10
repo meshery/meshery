@@ -78,6 +78,9 @@ message EventsResponse {
     string summary = 2;
     string details = 3;
     string operation_id = 4;
+    string cause = 5;
+    string errcode = 6;
+    string remedy = 7;
 }
 
 message ProcessOAMRequest {
