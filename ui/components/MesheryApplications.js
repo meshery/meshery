@@ -220,9 +220,6 @@ function MesheryApplications({
               body : pfile,
             }, () => {
               console.log("ApplicationFile Deploy API", `/api/application/deploy`);
-              // },(e) => {
-              //   console.error(e)
-              // })
               updateProgress({ showProgress : false });
             },
             handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
