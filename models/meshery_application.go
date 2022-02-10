@@ -22,7 +22,6 @@ type MesheryApplication struct {
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
 	UserID   *string `json:"user_id" gorm:"-"`
-	Format   string  `json:"format"` //Can be both k8s as well as pattern (decided and used by UI)
 	Location sql.Map `json:"location"`
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
