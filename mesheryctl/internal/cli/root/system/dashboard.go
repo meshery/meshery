@@ -3,9 +3,11 @@ package system
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -98,12 +100,22 @@ var dashboardCmd = &cobra.Command{
 				}
 				log.Info("Starting Port-forwarding for Meshery UI")
 
-				go func() {
-					<-signals
-					portforward.Stop()
-				}()
-
 				mesheryURL := portforward.URLFor("")
+
+				// ticker for keeping connection alive with pod each 10 seconds
+				ticker := time.NewTicker(10 * time.Second)
+				go func() {
+					for {
+						select {
+						case <-signals:
+							portforward.Stop()
+							ticker.Stop()
+							return
+						case <-ticker.C:
+							keepConnectionAlive(mesheryURL)
+						}
+					}
+				}()
 
 				log.Info("Meshery UI available at: ", mesheryURL)
 				log.Info("Opening Meshery UI in the default browser.")
@@ -168,6 +180,15 @@ var dashboardCmd = &cobra.Command{
 
 		return nil
 	},
+}
+
+// keepConnectionAlive to stop being timed out with port forwarding
+func keepConnectionAlive(url string) {
+	_, err := http.Get(url)
+	if err != nil {
+		log.Debugf("connection request failed %v", err)
+	}
+	log.Debugf("connection request success")
 }
 
 func init() {
