@@ -243,12 +243,12 @@ func AreAllPodsRunning() (bool, error) {
 
 // CheckMesheryNsDelete waits for Meshery namespace to be deleted, returns (done, error)
 func CheckMesheryNsDelete() (bool, error) {
-	kubeClient, err := meshkitkube.New([]byte(""))
+	client, err := meshkitkube.New([]byte(""))
 	if err != nil {
 		return false, err
 	}
 
-	if err := WaitForNamespaceDeleted(kubeClient, MesheryNamespace, 300); err != nil {
+	if err := WaitForNamespaceDeleted(client, MesheryNamespace, 300); err != nil {
 		return false, err
 	}
 
