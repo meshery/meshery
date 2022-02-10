@@ -8,6 +8,11 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const (
+	ApplicationK8sFormat     = "k8s"
+	ApplicationPatternFormat = "pattern"
+)
+
 // MesheryApplication represents the applications that needs to be saved
 type MesheryApplication struct {
 	ID *uuid.UUID `json:"id,omitempty"`
