@@ -1076,7 +1076,6 @@ func githubRepoApplicationScan(
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-
 				af := MesheryApplication{
 					Name:            strings.TrimSuffix(f.Name, ext),
 					ApplicationFile: string(f.Content),
