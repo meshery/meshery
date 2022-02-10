@@ -76,7 +76,6 @@ func newPortForward(
 	host string, localPort, remotePort int,
 	emitLogs bool,
 ) (*PortForward, error) {
-
 	restClient := client.KubeClient.CoreV1().RESTClient()
 
 	req := restClient.Post().
@@ -162,7 +161,7 @@ func (pf *PortForward) Init() error {
 	// 2) Return an err, causing a receive `<-failure`
 	select {
 	case <-pf.readyCh:
-		log.Debug("Port forward initialised")
+		log.Debug("Port forward initialized")
 	case err := <-failure:
 		log.Debugf("Port forward failed: %v", err)
 		return err

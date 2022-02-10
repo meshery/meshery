@@ -90,13 +90,13 @@ var dashboardCmd = &cobra.Command{
 					false,
 				)
 				if err != nil {
-					return errors.New(fmt.Sprintf("Failed to initialize port-forward: %s\n", err))
+					return fmt.Errorf("failed to initialize port-forward: %s\n", err)
 
 				}
 
 				if err = portforward.Init(); err != nil {
 					// TODO: consider falling back to an ephemeral port if defaultPort is taken
-					return errors.New(fmt.Sprintf("Error running port-forward: %s\n", err))
+					return fmt.Errorf("error running port-forward: %s\n", err)
 				}
 				log.Info("Starting Port-forwarding for Meshery UI")
 
