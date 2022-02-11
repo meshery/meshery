@@ -750,22 +750,6 @@ func ForceCleanupCluster() error {
 		}
 	}
 
-	replicaSetInterface := client.KubeClient.AppsV1().ReplicaSets(MesheryNamespace)
-	replicaSetList, err := replicaSetInterface.List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, replicaSet := range replicaSetList.Items {
-		if strings.Contains(string(replicaSet.GetName()), "meshery") {
-			if err := replicaSetInterface.Delete(context.TODO(), replicaSet.GetName(), metav1.DeleteOptions{
-				PropagationPolicy: &deletePolicy,
-			}); err != nil {
-				log.Debug(err)
-			}
-		}
-	}
-
 	statefulSetInterface := client.KubeClient.AppsV1().StatefulSets(MesheryNamespace)
 	statefulSetList, err := statefulSetInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
