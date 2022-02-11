@@ -30,7 +30,6 @@ type dashboardOptions struct {
 	host    string
 	port    int
 	podPort int
-	wait    time.Duration
 }
 
 // newDashboardOptions initializes dashboard options with default
@@ -44,7 +43,6 @@ func newDashboardOptions() *dashboardOptions {
 		host:    "localhost",
 		port:    9081,
 		podPort: 8080,
-		wait:    300 * time.Second,
 	}
 }
 
