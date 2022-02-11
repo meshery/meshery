@@ -22,15 +22,31 @@ import (
 var (
 	// runPortForward is used for port-forwarding Meshery UI via `system dashboard`
 	runPortForward bool
-
-	// defaultHost is the default host used for port-forwarding via `system dashboard`
-	defaultHost = "localhost"
-
-	// defaultPort is for port-forwarding via `system dashboard`
-	defaultPort = 9081
-
-	podPort = 8080
 )
+
+// dashboardOptions holds values for command line flags that apply to the dashboard
+// command.
+type dashboardOptions struct {
+	host    string
+	port    int
+	podPort int
+	wait    time.Duration
+}
+
+// newDashboardOptions initializes dashboard options with default
+// values for host, port, and which dashboard to show. Also, set
+// max wait time duration for 300 seconds for the dashboard to
+// become available
+//
+// These options may be overridden on the CLI at run-time
+func newDashboardOptions() *dashboardOptions {
+	return &dashboardOptions{
+		host:    "localhost",
+		port:    9081,
+		podPort: 8080,
+		wait:    300 * time.Second,
+	}
+}
 
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
@@ -75,6 +91,8 @@ var dashboardCmd = &cobra.Command{
 
 			// Run port forwarding for accessing Meshery UI
 			if runPortForward {
+				options := newDashboardOptions()
+
 				signals := make(chan os.Signal, 1)
 				signal.Notify(signals, os.Interrupt)
 				defer signal.Stop(signals)
@@ -84,9 +102,9 @@ var dashboardCmd = &cobra.Command{
 					client,
 					utils.MesheryNamespace,
 					"meshery",
-					defaultHost,
-					defaultPort,
-					podPort,
+					options.host,
+					options.port,
+					options.podPort,
 					false,
 				)
 				if err != nil {
