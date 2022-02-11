@@ -33,7 +33,6 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 		// Flatten the service map to perform queries
 		flatSvc := map[string]interface{}{}
 		utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flatSvc)
-
 		if !skipPrintLogs {
 			fmt.Printf("%+#v\n", flatSvc)
 		}

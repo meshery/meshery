@@ -101,7 +101,7 @@ It also shows the logs of a specific component.`,
 		// switch statement for multiple platform
 		switch currPlatform {
 		case "docker":
-			ok, err := utils.IsMesheryRunning(currPlatform)
+			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
 				return err
 			}
@@ -138,7 +138,7 @@ It also shows the logs of a specific component.`,
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
 
-			ok, err := utils.IsMesheryRunning(currPlatform)
+			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
 				return err
 			}
@@ -155,7 +155,7 @@ It also shows the logs of a specific component.`,
 			}
 
 			// List the pods in the MesheryNamespace
-			podList, err := utils.GetPods(client, utils.MesheryNamespace)
+			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
 			availablePods := podList.Items
 
 			if err != nil {

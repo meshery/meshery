@@ -11,18 +11,18 @@ import (
 )
 
 //To be used while adding metadata to patterns,filters and applicationss
-type contentModifier struct {
+type ContentModifier struct {
 	token    string
 	provider models.Provider
 	prefObj  *models.Preference
 	userID   string
 }
 
-func newContentModifier(token string,
+func NewContentModifier(token string,
 	provider models.Provider,
 	prefObj *models.Preference,
-	userID string) *contentModifier {
-	return &contentModifier{
+	userID string) *ContentModifier {
+	return &ContentModifier{
 		token:    token,
 		provider: provider,
 		prefObj:  prefObj,
@@ -32,7 +32,7 @@ func newContentModifier(token string,
 
 //TODO: Similar mechanisms for filters and applications
 //Takes in response bytes, and add metadata to it based on some checks
-func (mc *contentModifier) addMetadataForPatterns(ctx context.Context, contentBytes *[]byte) error {
+func (mc *ContentModifier) AddMetadataForPatterns(ctx context.Context, contentBytes *[]byte) error {
 	var patternsPage models.MesheryPatternPage
 	err := json.Unmarshal(*contentBytes, &patternsPage)
 	if err != nil {
@@ -78,7 +78,7 @@ func (mc *contentModifier) addMetadataForPatterns(ctx context.Context, contentBy
 }
 
 //takes a patternfile and returns the status of its current support by using dry run
-func (mc *contentModifier) isPatternSupported(ctx context.Context, patternfile string) (msg string, ok bool) {
+func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternfile string) (msg string, ok bool) {
 	var pattern map[string]interface{}
 	err := yaml.Unmarshal([]byte(patternfile), &pattern)
 	if err != nil {

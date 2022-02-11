@@ -4,7 +4,6 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -55,7 +54,7 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderDescription = []string{
 		"Ephemeral sessions",
 		"Environment setup not saved",
-		"No performance test result history",
+		"No performance or conformance test result history",
 		"Free Use",
 	}
 	l.ProviderType = LocalProviderType
@@ -535,7 +534,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *M
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -568,6 +567,11 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID
 	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
+// DeleteMesheryPattern deletes a meshery pattern with the given id
+func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
+}
+
 // RemotePatternFile takes in the
 func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
@@ -581,13 +585,19 @@ func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL,
 		if len(parsedPath) < 3 {
 			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
 		}
+		if len(parsedPath) >= 4 && parsedPath[3] == "tree" {
+			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
+		}
 
 		owner := parsedPath[1]
 		repo := parsedPath[2]
-		branch := "main"
+		branch := "master"
 
 		if len(parsedPath) == 4 {
 			branch = parsedPath[3]
+		}
+		if path == "" && len(parsedPath) > 4 {
+			path = strings.Join(parsedPath[4:], "/")
 		}
 
 		pfs, err := githubRepoPatternScan(owner, repo, path, branch)
@@ -669,18 +679,23 @@ func (l *DefaultLocalProvider) RemoteFilterFile(req *http.Request, resourceURL, 
 	// Check if hostname is github
 	if parsedURL.Host == "github.com" {
 		parsedPath := strings.Split(parsedURL.Path, "/")
+		if parsedPath[3] == "tree" {
+			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
+		}
 		if len(parsedPath) < 3 {
 			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
 		}
 
 		owner := parsedPath[1]
 		repo := parsedPath[2]
-		branch := "main"
+		branch := "master"
 
 		if len(parsedPath) == 4 {
 			branch = parsedPath[3]
 		}
-
+		if path == "" && len(parsedPath) > 4 {
+			path = strings.Join(parsedPath[4:], "/")
+		}
 		ffs, err := githubRepoFilterScan(owner, repo, path, branch)
 		if err != nil {
 			return nil, err
@@ -754,16 +769,22 @@ func (l *DefaultLocalProvider) RemoteApplicationFile(req *http.Request, resource
 	// Check if hostname is github
 	if parsedURL.Host == "github.com" {
 		parsedPath := strings.Split(parsedURL.Path, "/")
+		if parsedPath[3] == "tree" {
+			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
+		}
 		if len(parsedPath) < 3 {
 			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
 		}
 
 		owner := parsedPath[1]
 		repo := parsedPath[2]
-		branch := "main"
+		branch := "master"
 
 		if len(parsedPath) == 4 {
 			branch = parsedPath[3]
+		}
+		if path == "" && len(parsedPath) > 4 {
+			path = strings.Join(parsedPath[4:], "/")
 		}
 
 		pfs, err := githubRepoApplicationScan(owner, repo, path, branch)
@@ -1025,34 +1046,27 @@ func githubRepoPatternScan(
 	branch string,
 ) ([]MesheryPattern, error) {
 	var mu sync.Mutex
-	ghWalker := walker.NewGithub()
+	ghWalker := walker.NewGit()
 	result := make([]MesheryPattern, 0)
-
-	err := ghWalker.
-		Owner(owner).
+	err := ghWalker.Owner(owner).
 		Repo(repo).
 		Branch(branch).
 		Root(path).
-		RegisterFileInterceptor(func(data walker.GithubContentAPI) error {
-			ext := filepath.Ext(data.Name)
+		RegisterFileInterceptor(func(f walker.File) error {
+			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				decodedContent, err := base64.StdEncoding.DecodeString(data.Content)
-				if err != nil {
-					return err
-				}
-
-				name, err := GetPatternName(string(decodedContent))
+				name, err := GetPatternName(string(f.Content))
 				if err != nil {
 					return err
 				}
 
 				pf := MesheryPattern{
 					Name:        name,
-					PatternFile: string(decodedContent),
+					PatternFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   data.Path,
+						"path":   f.Path,
 						"branch": branch,
 					},
 				}
@@ -1063,9 +1077,7 @@ func githubRepoPatternScan(
 			}
 
 			return nil
-		}).
-		Walk()
-
+		}).Walk()
 	return result, err
 }
 
@@ -1076,7 +1088,7 @@ func githubRepoFilterScan(
 	branch string,
 ) ([]MesheryFilter, error) {
 	var mu sync.Mutex
-	ghWalker := walker.NewGithub()
+	ghWalker := walker.NewGit()
 	result := make([]MesheryFilter, 0)
 
 	err := ghWalker.
@@ -1084,26 +1096,21 @@ func githubRepoFilterScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
-		RegisterFileInterceptor(func(data walker.GithubContentAPI) error {
-			ext := filepath.Ext(data.Name)
+		RegisterFileInterceptor(func(f walker.File) error {
+			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				decodedContent, err := base64.StdEncoding.DecodeString(data.Content)
-				if err != nil {
-					return err
-				}
-
-				name, err := GetFilterName(string(decodedContent))
+				name, err := GetFilterName(string(f.Content))
 				if err != nil {
 					return err
 				}
 
 				ff := MesheryFilter{
 					Name:       name,
-					FilterFile: string(decodedContent),
+					FilterFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   data.Path,
+						"path":   f.Path,
 						"branch": branch,
 					},
 				}
@@ -1127,7 +1134,7 @@ func githubRepoApplicationScan(
 	branch string,
 ) ([]MesheryApplication, error) {
 	var mu sync.Mutex
-	ghWalker := walker.NewGithub()
+	ghWalker := walker.NewGit()
 	result := make([]MesheryApplication, 0)
 
 	err := ghWalker.
@@ -1135,26 +1142,21 @@ func githubRepoApplicationScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
-		RegisterFileInterceptor(func(data walker.GithubContentAPI) error {
-			ext := filepath.Ext(data.Name)
+		RegisterFileInterceptor(func(f walker.File) error {
+			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				decodedContent, err := base64.StdEncoding.DecodeString(data.Content)
-				if err != nil {
-					return err
-				}
-
-				name, err := GetApplicationName(string(decodedContent))
+				name, err := GetApplicationName(string(f.Content))
 				if err != nil {
 					return err
 				}
 
 				af := MesheryApplication{
 					Name:            name,
-					ApplicationFile: string(decodedContent),
+					ApplicationFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   data.Path,
+						"path":   f.Path,
 						"branch": branch,
 					},
 				}

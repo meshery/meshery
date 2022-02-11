@@ -5,12 +5,15 @@ import (
 	"net/http"
 	"path"
 	"plugin"
+	"sync"
 
 	"github.com/layer5io/meshery/models"
 )
 
 var (
+	//USE WITH CAUTION: Wherever read/write is performed, use this in a thread safe way, using the global mutex
 	extendedEndpoints = make(map[string]*models.Router)
+	mx                sync.Mutex
 )
 
 // Defines the version metadata for the extension
@@ -19,7 +22,10 @@ type ExtensionVersion struct {
 }
 
 func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if val, ok := extendedEndpoints[req.URL.Path]; ok {
+	mx.Lock()
+	val, ok := extendedEndpoints[req.URL.Path]
+	mx.Unlock()
+	if ok {
 		val.HTTPHandler.ServeHTTP(w, req)
 		return
 	}
@@ -28,6 +34,8 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
 }
 
 func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider models.Provider) error {
+	mx.Lock()
+	defer mx.Unlock()
 	packagePath := ""
 	if len(provider.GetProviderProperties().Extensions.GraphQL) > 0 {
 		packagePath = provider.GetProviderProperties().Extensions.GraphQL[0].Path

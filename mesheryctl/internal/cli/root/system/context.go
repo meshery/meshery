@@ -33,7 +33,7 @@ var (
 	configuration     *config.MesheryCtlConfig
 	tempCntxt         = "local"
 	set               = false
-	adapters          = []string{}
+	components        = []string{}
 	platform          = ""
 	serverURL         = ""
 	newContext        = ""
@@ -47,7 +47,7 @@ type contextWithLocation struct {
 	Token         string   `mapstructure:"token,omitempty"`
 	Tokenlocation string   `mapstructure:"token,omitempty" yaml:"token-location,omitempty"`
 	Platform      string   `mapstructure:"platform"`
-	Adapters      []string `mapstructure:"adapters,omitempty"`
+	Components    []string `mapstructure:"components,omitempty"`
 	Channel       string   `mapstructure:"channel,omitempty"`
 	Version       string   `mapstructure:"version,omitempty"`
 }
@@ -61,8 +61,8 @@ var createContextCmd = &cobra.Command{
 	Create new context
 	mesheryctl system context create context-name
 
-	Create new context and provide list of adapters, platform & URL
-	mesheryctl system context create context-name --adapters meshery-osm --platform docker --url http://localhost:9081 --set --yes
+	Create new context and provide list of components, platform & URL
+	mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -82,8 +82,8 @@ var createContextCmd = &cobra.Command{
 			tempCntxt.Platform = platform
 		}
 
-		if len(adapters) >= 1 {
-			tempCntxt.Adapters = adapters
+		if len(components) >= 1 {
+			tempCntxt.Components = components
 		}
 
 		err := config.AddContextToConfig(args[0], tempCntxt, viper.ConfigFileUsed(), set)
@@ -307,10 +307,19 @@ var viewContextCmd = &cobra.Command{
 
 // switchContextCmd represents the switch command
 var switchContextCmd = &cobra.Command{
-	Use:          "switch context-name",
-	Short:        "switch context",
-	Long:         `Configure mesheryctl to actively use one one context vs. the another context`,
-	Args:         cobra.ExactArgs(1),
+	Use:   "switch context-name",
+	Short: "switch context",
+	Long:  `Configure mesheryctl to actively use one one context vs. another context`,
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl system context switch [context name]
+Example: mesheryctl system context switch k8s-sample
+Description: Configures mesheryctl to actively use one one context vs. the another context`
+
+		if len(args) != 1 {
+			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
+		}
+		return nil
+	},
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
@@ -333,7 +342,7 @@ var switchContextCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		isRunning, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
+		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 		//if meshery running stop meshery before context switch
 		if isRunning {
 			if err := stop(); err != nil {
@@ -357,7 +366,7 @@ var switchContextCmd = &cobra.Command{
 var ContextCmd = &cobra.Command{
 	Use:   "context [command]",
 	Short: "Configure your Meshery deployment(s)",
-	Long:  `Configure and switch between different named Meshery server and adapter versions and deployments.`,
+	Long:  `Configure and switch between different named Meshery server and component versions and deployments.`,
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
@@ -387,7 +396,7 @@ func init() {
 	}
 	createContextCmd.Flags().StringVarP(&serverURL, "url", "u", "", "Meshery Server URL with Port")
 	createContextCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current context")
-	createContextCmd.Flags().StringArrayVarP(&adapters, "adapters", "a", []string{}, "List of adapters")
+	createContextCmd.Flags().StringArrayVarP(&components, "components", "a", []string{}, "List of components")
 	createContextCmd.Flags().StringVarP(&platform, "platform", "p", "", "Platform to deploy Meshery")
 	deleteContextCmd.Flags().StringVarP(&newContext, "set", "s", "", "New context to deploy Meshery")
 	viewContextCmd.Flags().StringVarP(&currContext, "context", "c", "", "Show config for the context")
@@ -408,7 +417,7 @@ func getContextWithTokenLocation(c *config.Context) (*contextWithLocation, bool)
 		Token:         c.Token,
 		Tokenlocation: tokenNameLocation[c.Token],
 		Platform:      c.Platform,
-		Adapters:      c.Adapters,
+		Components:    c.Components,
 		Channel:       c.Channel,
 		Version:       c.Version,
 	}

@@ -36,6 +36,11 @@ import (
 	"github.com/layer5io/meshery-operator/api/v1alpha1"
 )
 
+var (
+	// forceDelete used to clean-up meshery resources forcefully
+	forceDelete bool
+)
+
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
@@ -81,7 +86,7 @@ func stop() error {
 		return err
 	}
 
-	ok, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+	ok, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 	if err != nil {
 		return err
 	}
@@ -117,6 +122,7 @@ func stop() error {
 		if err := stop.Run(); err != nil {
 			return ErrStopMeshery(err)
 		}
+		log.Info("Meshery is stopped.")
 	case "kubernetes":
 		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
@@ -144,16 +150,22 @@ func stop() error {
 			return err
 		}
 
-		// Delete the helm release
-		if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-			Namespace: utils.MesheryNamespace,
-			ChartLocation: meshkitkube.HelmChartLocation{
-				Repository: utils.HelmChartURL,
-				Chart:      utils.HelmChartName,
-			},
-			Action: meshkitkube.UNINSTALL,
-		}); err != nil {
-			return errors.Wrap(err, "cannot stop Meshery")
+		if forceDelete {
+			if err = utils.ForceCleanupCluster(); err != nil {
+				return err
+			}
+		} else {
+			// Delete the helm release
+			if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+				Namespace: utils.MesheryNamespace,
+				ChartLocation: meshkitkube.HelmChartLocation{
+					Repository: utils.HelmChartURL,
+					Chart:      utils.HelmChartName,
+				},
+				Action: meshkitkube.UNINSTALL,
+			}); err != nil {
+				return errors.Wrap(err, "cannot stop Meshery")
+			}
 		}
 
 		// Delete the CRDs for brokers and meshsyncs
@@ -166,10 +178,17 @@ func stop() error {
 			if err = deleteNs(utils.MesheryNamespace, client.KubeClient); err != nil {
 				return err
 			}
+			// Wait for the namespace to be deleted
+			deleted, err := utils.CheckMesheryNsDelete()
+			if err != nil || !deleted {
+				log.Info("Meshery is taking too long to stop.\nPlease check the status of the pods by executing “mesheryctl system status”.")
+			} else {
+				log.Info("Meshery is stopped.")
+			}
+		} else {
+			log.Info("Meshery is stopped.")
 		}
 	}
-
-	log.Info("Meshery is stopped.")
 
 	// Reset Meshery config file to default settings
 	if utils.ResetFlag {
@@ -246,4 +265,5 @@ func deleteNs(ns string, client *kubernetes.Clientset) error {
 func init() {
 	stopCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	stopCmd.Flags().BoolVar(&utils.KeepNamespace, "keep-namespace", false, "(optional) keep the Meshery namespace during uninstallation")
+	stopCmd.Flags().BoolVar(&forceDelete, "force", false, "(optional) uninstall Meshery resources forcefully")
 }

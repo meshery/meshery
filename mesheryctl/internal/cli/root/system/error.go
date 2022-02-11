@@ -8,7 +8,7 @@ import (
 
 const (
 	ErrHealthCheckFailedCode        = "1000"
-	ErrInvalidAdapterCode           = "1001"
+	ErrInvalidComponentCode         = "1001"
 	ErrDownloadFileCode             = "1002"
 	ErrStopMesheryCode              = "1003"
 	ErrResetMeshconfigCode          = "1004"
@@ -23,14 +23,15 @@ const (
 	ErrProcessingMctlConfigCode     = "1025"
 	ErrRestartMesheryCode           = "1026"
 	ErrK8sQueryCode                 = "1041"
+	ErrK8sConfigCode                = "1042"
 )
 
 func ErrHealthCheckFailed(err error) error {
 	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{"Health checks execution failed"}, []string{"Health checks execution should passed to start Meshery server successfully"})
 }
 
-func ErrInvalidAdapter(err error, obj string) error {
-	return errors.New(ErrInvalidAdapterCode, errors.Alert, []string{"Invalid adapter ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
+func ErrInvalidComponent(err error, obj string) error {
+	return errors.New(ErrInvalidComponentCode, errors.Alert, []string{"Invalid component ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDownloadFile(err error, obj string) error {
@@ -86,5 +87,9 @@ func ErrRestartMeshery(err error) error {
 }
 
 func ErrK8SQuery(err error) error {
-	return errors.New(ErrK8sQueryCode, errors.Alert, []string{err.Error()}, []string{"!! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes"}, []string{"Kubernetes cluster isn't running or inaccessible"}, []string{"Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates"})
+	return errors.New(ErrK8sQueryCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), " The Kubernetes cluster is not accessible", " Please confirm that the cluster is running", " See https://docs.meshery.io/installation/quick-start for additional instructions"}, []string{"Kubernetes cluster isn't running or inaccessible"}, []string{"Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates"})
+}
+
+func ErrK8sConfig(err error) error {
+	return errors.New(ErrK8sConfigCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), " The Kubernetes cluster is not accessible", " Please confirm that the token is valid", " See https://docs.meshery.io/installation/quick-start for additional instructions"}, []string{"Kubernetes cluster is unavailable and that the token is invalid"}, []string{"Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"})
 }

@@ -69,7 +69,7 @@ func TestOffboardCmd(t *testing.T) {
 			}
 
 			// set token
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")

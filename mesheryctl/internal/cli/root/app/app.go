@@ -11,7 +11,6 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
-	tokenPath            string
 )
 
 // AppCmd represents the root command for app commands
@@ -29,7 +28,7 @@ var AppCmd = &cobra.Command{
 }
 
 func init() {
-	AppCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file default from current context")
+	AppCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
 	availableSubcommands = []*cobra.Command{onboardCmd, viewCmd, offboardCmd, listCmd}
 	AppCmd.AddCommand(availableSubcommands...)

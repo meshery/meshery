@@ -93,6 +93,7 @@ type HandlerInterface interface {
 	OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request)
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteMultiMesheryPatternsHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	FilterFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -144,6 +145,9 @@ type HandlerConfig struct {
 	ProviderCookieDuration time.Duration
 
 	BrokerEndpointURL *string
+
+	PerformanceChannel       chan struct{}
+	PerformanceResultChannel chan struct{}
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics
