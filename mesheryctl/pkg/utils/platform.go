@@ -729,7 +729,7 @@ func ForceCleanupCluster() error {
 			if err := deploymentInterface.Delete(context.TODO(), deployment.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
-				return err
+				log.Debug(err)
 			}
 		}
 	}
@@ -745,23 +745,7 @@ func ForceCleanupCluster() error {
 			if err := serviceInterface.Delete(context.TODO(), service.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
-				return err
-			}
-		}
-	}
-
-	replicaSetInterface := client.KubeClient.AppsV1().ReplicaSets(MesheryNamespace)
-	replicaSetList, err := replicaSetInterface.List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, replicaSet := range replicaSetList.Items {
-		if strings.Contains(string(replicaSet.GetName()), "meshery") {
-			if err := replicaSetInterface.Delete(context.TODO(), replicaSet.GetName(), metav1.DeleteOptions{
-				PropagationPolicy: &deletePolicy,
-			}); err != nil {
-				return err
+				log.Debug(err)
 			}
 		}
 	}
@@ -777,7 +761,7 @@ func ForceCleanupCluster() error {
 			if err := statefulSetInterface.Delete(context.TODO(), statefulSet.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
-				return err
+				log.Debug(err)
 			}
 		}
 	}
@@ -793,7 +777,7 @@ func ForceCleanupCluster() error {
 			if err := clusterRoleBindingInterface.Delete(context.TODO(), clusterRoleBinding.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
-				return err
+				log.Debug(err)
 			}
 		}
 	}
@@ -809,7 +793,7 @@ func ForceCleanupCluster() error {
 			if err := clusterRoleInterface.Delete(context.TODO(), clusterRole.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
-				return err
+				log.Debug(err)
 			}
 		}
 	}
