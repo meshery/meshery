@@ -15,7 +15,7 @@ import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/M
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-function Extension({ grafana, prometheus, updateLoadTestData, url }) {
+function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
 
   if (loading) {
@@ -39,6 +39,7 @@ function Extension({ grafana, prometheus, updateLoadTestData, url }) {
         dataFetch,
         environment,
         subscriptionClient,
+        isDrawerCollapsed,
         resolver : {
           query : {},
           mutation : {},
@@ -54,7 +55,8 @@ function Extension({ grafana, prometheus, updateLoadTestData, url }) {
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
   const prometheus = st.get("prometheus").toJS();
-  return { grafana, prometheus };
+  const isDrawerCollapsed = st.get("isDrawerCollapsed");
+  return { grafana, prometheus, isDrawerCollapsed };
 };
 
 const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreators(updateLoadTestData, dispatch) });
