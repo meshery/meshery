@@ -838,8 +838,6 @@ class Navigator extends React.Component {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
 
-    console.log({ isDrawerCollapsed })
-
     if (idname != "Lifecycle" && children && children.length > 0) {
       return (
         <List disablePadding>
