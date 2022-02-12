@@ -1,6 +1,7 @@
 package mesh
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -16,12 +17,22 @@ import (
 	"github.com/spf13/viper"
 )
 
+// checkArgs checks whether the user has supplied an adapter(-a) argument
+func checkArgs(n int) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) < n || args[0] == "" {
+			return fmt.Errorf("the '-a' (Adapter to use for installation) argument is required in the mesh command")
+		}
+		return nil
+	}
+}
+
 var (
 	meshName  string
 	deployCmd = &cobra.Command{
 		Use:   "deploy",
 		Short: "Deploy a service mesh to the Kubernetes cluster",
-		Args:  cobra.MinimumNArgs(0),
+		Args:  checkArgs(1),
 		Long:  `Deploy a service mesh to the connected Kubernetes cluster`,
 		Example: `
 // Deploy a service mesh from an interactive on the default namespace
@@ -236,7 +247,7 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, name string) (string, error)
 	if len(meshNames) == 0 {
 		return "", ErrNoAdapters
 	}
-
+	println("About to prompt for mesh")
 	prompt := promptui.Select{
 		Label: "Select a Service Mesh from the list",
 		Items: meshNames,
