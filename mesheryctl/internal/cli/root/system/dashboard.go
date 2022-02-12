@@ -40,8 +40,8 @@ type dashboardOptions struct {
 // These options may be overridden on the CLI at run-time
 func newDashboardOptions() *dashboardOptions {
 	return &dashboardOptions{
-		host:    "localhost",
-		port:    9081,
+		host:    utils.MesheryDefaultHost,
+		port:    utils.MesheryDefaultPort,
 		podPort: 8080,
 	}
 }
@@ -106,13 +106,13 @@ var dashboardCmd = &cobra.Command{
 					false,
 				)
 				if err != nil {
-					return fmt.Errorf("failed to initialize port-forward: %s", err)
+					return ErrInitPortForward(err)
 
 				}
 
 				if err = portforward.Init(); err != nil {
 					// TODO: consider falling back to an ephemeral port if defaultPort is taken
-					return fmt.Errorf("error running port-forward: %s", err)
+					return ErrRunPortForward(err)
 				}
 				log.Info("Starting Port-forwarding for Meshery UI")
 
