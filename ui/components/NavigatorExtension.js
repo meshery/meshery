@@ -1,5 +1,5 @@
 import React from "react";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
 import { createUseRemoteComponent, getDependencies, createRequires } from "@paciolan/remote-component";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { bindActionCreators } from "redux";
