@@ -247,7 +247,6 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, name string) (string, error)
 	if len(meshNames) == 0 {
 		return "", ErrNoAdapters
 	}
-	println("About to prompt for mesh")
 	prompt := promptui.Select{
 		Label: "Select a Service Mesh from the list",
 		Items: meshNames,
