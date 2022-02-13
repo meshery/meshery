@@ -298,8 +298,8 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 				_, _ = prov.SetCurrentContext(token, ctx.ID) // Ignore the error
 
 				if !viper.GetBool("SKIP_COMP_GEN") {
-					ctxID := cc.ID
-					cfg, err := cc.GenerateKubeConfig()
+					ctxID := ctx.ID
+					cfg, err := ctx.GenerateKubeConfig()
 					if err != nil {
 						return &ctx, nil
 					}
