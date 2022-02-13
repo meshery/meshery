@@ -395,7 +395,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		var kc K8sContext
 		if err := json.NewDecoder(resp.Body).Decode(&kc); err != nil {
 			return k8sContext, ErrUnmarshal(err, "kubernetes context")
@@ -404,7 +404,6 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 		logrus.Infof("kubernetes context successfully sent to remote provider: %+v", kc)
 		return kc, nil
 	}
-
 	return k8sContext, ErrPost(fmt.Errorf("failed to save kubernetes context"), fmt.Sprint(resp.Body), resp.StatusCode)
 }
 
