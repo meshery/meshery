@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import { createUseRemoteComponent, getDependencies, createRequires } from "@paciolan/remote-component";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import { bindActionCreators } from "redux";
 import { updateLoadTestData } from "../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
@@ -11,6 +10,7 @@ import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCore";
 import environment, { subscriptionClient } from "../lib/relayEnvironment";
 import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
+import LoadingScreen from "./LoadingComponents/LoadingComponent";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -19,7 +19,7 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
 
   if (loading) {
-    return <CircularProgress />;
+    return <LoadingScreen message="Loading Meshery Extension" />;
   }
 
   if (err != null) {
@@ -40,6 +40,7 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         environment,
         subscriptionClient,
         isDrawerCollapsed,
+        LoadingScreen,
         resolver : {
           query : {},
           mutation : {},

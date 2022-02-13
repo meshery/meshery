@@ -3,6 +3,7 @@ import { CircularProgress, Typography } from "@material-ui/core";
 import normalizeURI from "../utils/normalizeURI";
 import dataFetch from "../lib/data-fetch";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
+import LoadingScreen from "./LoadingComponents/LoadingComponent";
 
 /**
  * getPath returns the current pathname
@@ -140,9 +141,7 @@ function ExtensionSandbox({ type, Extension }) {
 
   if (type === "navigator") {
     return isLoading?
-      <Typography align="center">
-        <CircularProgress/>
-      </Typography>
+      <LoadingScreen message="Establishing Remote Connection" />
       : (
         <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extensions, getPath()))} />
       );
