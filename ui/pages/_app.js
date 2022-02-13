@@ -36,7 +36,7 @@ import './../public/static/style/index.css';
 import 'billboard.js/dist/billboard.min.css';
 
 import MesheryProgressBar from '../components/MesheryProgressBar';
-import dataFetch from '../lib/data-fetch';
+import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
 import theme, { styles } from "../themes"
 
 if (typeof window !== 'undefined') {
@@ -54,13 +54,20 @@ if (typeof window !== 'undefined') {
   }
 }
 
+async function fetchContexts(number = 10, search = "") {
+  return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pageSize=${number}&search=${encodeURIComponent(search)}`)
+}
 class MesheryApp extends App {
   constructor() {
     super();
     this.pageContext = getPageContext();
 
-    this.state = { mobileOpen : false,
-      isDrawerCollapsed : false };
+    this.state = {
+      mobileOpen : false,
+      isDrawerCollapsed : false,
+      k8sContexts : {},
+      activeK8sContexts : [],
+    };
   }
 
   handleDrawerToggle = () => {
@@ -79,6 +86,33 @@ class MesheryApp extends App {
       w.focus();
     }
   };
+
+  setActiveContexts = (id) => {
+    if (id === "all") {
+      this.setState(state => {
+        if (state.activeK8sContexts?.includes("all")) return { activeK8sContexts : [] };
+        return { activeK8sContexts : ["all"] };
+      });
+
+      return;
+    }
+
+    this.setState(state => {
+      const ids = [...(state.activeK8sContexts || [])];
+      if (ids.includes(id)) return { activeK8sContexts : ids.filter(cid => cid !== id) };
+      return { activeK8sContexts : [...ids, id] }
+    })
+  }
+
+  searchContexts = (search = "") => {
+    fetchContexts(10, search)
+      .then(ctx => {
+        this.setState({ k8sContexts : ctx })
+        const active = ctx?.contexts?.find(c => c.is_current_context === true);
+        if (active) this.setState({ activeK8sContexts : [active?.id] })
+      })
+      .catch(err => console.error(err))
+  }
 
   async loadConfigFromServer() {
     const { store } = this.props;
@@ -170,6 +204,14 @@ class MesheryApp extends App {
 
   componentDidMount(){
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
+
+    fetchContexts()
+      .then(ctx => {
+        this.setState({ k8sContexts : ctx })
+        const active = ctx?.contexts?.find(c => c.is_current_context === true);
+        if (active) this.setState({ activeK8sContexts : [active?.id] })
+      })
+      .catch(err => console.error(err))
   }
 
   render() {
@@ -225,10 +267,24 @@ class MesheryApp extends App {
                     maxSnack={10}
                   >
                     <MesheryProgressBar />
-                    <Header onDrawerToggle={this.handleDrawerToggle} onDrawerCollapse={isDrawerCollapsed}/>
+                    <Header
+                      onDrawerToggle={this.handleDrawerToggle}
+                      onDrawerCollapse={isDrawerCollapsed}
+                      contexts={this.state.k8sContexts}
+                      activeContexts={this.state.activeK8sContexts}
+                      setActiveContexts={this.setActiveContexts}
+                      searchContexts={this.searchContexts}
+                    />
                     <main className={classes.mainContent}>
                       <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <Component pageContext={this.pageContext} {...pageProps} />
+                        <Component
+                          pageContext={this.pageContext}
+                          contexts={this.state.k8sContexts}
+                          activeContexts={this.state.activeK8sContexts}
+                          setActiveContexts={this.setActiveContexts}
+                          searchContexts={this.searchContexts}
+                          {...pageProps}
+                        />
                       </MuiPickersUtilsProvider>
                     </main>
                   </SnackbarProvider>
