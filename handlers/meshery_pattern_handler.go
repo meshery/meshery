@@ -280,7 +280,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	}
 	mc := NewContentModifier(token, provider, prefObj, user.UserID)
 	//acts like a middleware, modifying the bytes lazily just before sending them back
-	err = mc.AddMetadataForPatterns(&resp)
+	err = mc.AddMetadataForPatterns(r.Context(), &resp)
 	if err != nil {
 		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}
