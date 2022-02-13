@@ -479,7 +479,7 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 			break
 		}
 
-		page += 1
+		page++
 	}
 
 	return results, nil

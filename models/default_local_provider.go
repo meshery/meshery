@@ -197,7 +197,7 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 			break
 		}
 
-		page += 1
+		page++
 	}
 
 	return results, nil
