@@ -404,8 +404,6 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 		logrus.Infof("kubernetes context successfully sent to remote provider: %+v", kc)
 		return kc, nil
 	}
-	this, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("body ", string(this), " code ", resp.StatusCode)
 	return k8sContext, ErrPost(fmt.Errorf("failed to save kubernetes context"), fmt.Sprint(resp.Body), resp.StatusCode)
 }
 
