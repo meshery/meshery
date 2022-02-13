@@ -1145,13 +1145,8 @@ func githubRepoApplicationScan(
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				name, err := GetApplicationName(string(f.Content))
-				if err != nil {
-					return err
-				}
-
 				af := MesheryApplication{
-					Name:            name,
+					Name:            strings.TrimSuffix(f.Name, ext),
 					ApplicationFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
@@ -1261,14 +1256,9 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 		return nil, err
 	}
 	result := string(body)
-
-	name, err := GetApplicationName(result)
-	if err != nil {
-		return nil, err
-	}
-
+	url := strings.Split(fileURL, "/")
 	af := MesheryApplication{
-		Name:            name,
+		Name:            url[len(url)-1],
 		ApplicationFile: result,
 		Location: map[string]interface{}{
 			"type":   "http",
