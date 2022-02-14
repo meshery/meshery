@@ -12,9 +12,14 @@ class Manage extends React.Component {
   };
   constructor(props) {
     super(props);
-    if (!props.query.adapter) {
+    this.state = {
+      adapter : null
+    }
+    if (!props.query?.adapter) {
       const urlParams = new URLSearchParams(window.location.search);
-      this.props.query.adapter = urlParams.get("adapter");
+      this.setState({ adapter : urlParams.get("adapter") })
+    } else {
+      this.setState({ adapter : props.query.adapter })
     }
   }
   componentDidMount() {
@@ -33,7 +38,7 @@ class Manage extends React.Component {
         <Head>
           <title>Management | Meshery </title>
         </Head>
-        <MesheryPlayComponent adapter={this.props.query.adapter} />
+        <MesheryPlayComponent adapter={this.state.adapter} />
       </NoSsr>
     );
   }
