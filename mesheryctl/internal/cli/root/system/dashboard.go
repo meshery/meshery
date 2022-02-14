@@ -112,3 +112,7 @@ var dashboardCmd = &cobra.Command{
 		return nil
 	},
 }
+
+func init() {
+	dashboardCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+}
