@@ -45,9 +45,7 @@ var dashboardCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if !skipBrowserFlag {
-			log.Debug("Fetching Meshery-UI endpoint")
-		}
+		log.Debug("Fetching Meshery-UI endpoint")
 
 		switch currCtx.GetPlatform() {
 		case "docker":
@@ -107,6 +105,8 @@ var dashboardCmd = &cobra.Command{
 			if err != nil {
 				log.Warn("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 			}
+		} else {
+			log.Info("Meshery UI available at: ", currCtx.GetEndpoint())
 		}
 
 		return nil
