@@ -58,7 +58,7 @@ func (r *Resolver) getMeshSyncStatus(ctx context.Context) model.OperatorControll
 	var status model.OperatorControllerStatus
 
 	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok {
+	if !ok || kubeclient == nil {
 		r.Log.Error(ErrNilClient)
 		return model.OperatorControllerStatus{
 			Name:    "",
@@ -137,7 +137,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider) error {
 	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok {
+	if !ok || kubeclient == nil {
 		r.Log.Error(ErrNilClient)
 		return ErrNilClient
 	}

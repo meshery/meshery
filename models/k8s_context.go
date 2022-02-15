@@ -303,8 +303,12 @@ func (kc K8sContext) PingTest() error {
 		return err
 	}
 
-	_, err = h.KubeClient.ServerVersion()
-	return err
+	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(context.TODO())
+	if res.Error() != nil {
+		return res.Error()
+	}
+
+	return nil
 }
 
 // AssignServerID will attempt to assign kubernetes

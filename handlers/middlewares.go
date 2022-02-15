@@ -124,8 +124,9 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			// Create mesherykube handler
 			client, err := kubernetes.New(cfg)
 			if err != nil {
-				http.Error(w, "failed to create kubeconfig handler for the user", http.StatusInternalServerError)
-				return
+				logrus.Warn("failed to create kubeconfig handler for the user")
+				// http.Error(w, "failed to create kubeconfig handler for the user", http.StatusInternalServerError)
+				// return
 			}
 
 			ctx = context.WithValue(ctx, models.KubeContextKey, k8scontext)

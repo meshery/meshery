@@ -110,6 +110,9 @@ func (h *Handler) PatternFileHandler(
 // Returns a list of workloads/traits/scopes by given type in the URL
 //
 // {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/experimental/oam/workload => Here {type} is "workload"
+//
+// deprecated: true
 //
 // responses:
 // 	200:
@@ -120,6 +123,9 @@ func (h *Handler) PatternFileHandler(
 // Adding a workloads/traits/scopes by given type in the URL
 //
 // {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/experimental/oam/workload => Here {type} is "workload"
+//
+// deprecated: true
 //
 // responses:
 // 	200:
@@ -157,6 +163,8 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 // Returns component details of a workload/trait/scope by given name in the URL
 //
 // {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/oam/workload/Application => Here {type} is "workload" and {name} is "Application"
+// it should be noted that both {type} and {name} should be valid
 //
 // responses:
 // 	200:
@@ -206,6 +214,9 @@ func (h *Handler) OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Req
 // Returns details of a workload/trait/scope by given name and id in the URL
 //
 // {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/oam/workload/Application/asdqe123sa275sasd => Here {type} is "workload"
+// {name} is "Application" and {id} is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
+// {name} and {id} must be valid
 //
 // responses:
 // 	200:
@@ -252,6 +263,7 @@ func (h *Handler) OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.
 // Adding a workload/trait/scope
 //
 // {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/oam/trait => Here {type} is "trait"
 //
 // responses:
 // 	200:
@@ -283,6 +295,7 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 // Getting list of workloads/traits/scopes
 //
 // {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/oam/workload => Here {type} is "workload"
 //
 // responses:
 // 	200:
