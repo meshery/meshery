@@ -305,12 +305,10 @@ func (kc K8sContext) PingTest() error {
 
 	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(context.TODO())
 	if res.Error() != nil {
-		println("FUCK YOU")
 		return res.Error()
 	}
 
-	_, err = h.KubeClient.ServerVersion()
-	return err
+	return nil
 }
 
 // AssignServerID will attempt to assign kubernetes
@@ -328,7 +326,6 @@ func (kc *K8sContext) AssignServerID() error {
 	}
 
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	println("FUCKED BUT TRYING")
 	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
 	if err != nil {
 		return err
