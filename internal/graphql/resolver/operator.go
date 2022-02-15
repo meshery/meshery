@@ -27,7 +27,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	}
 
 	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok {
+	if !ok || kubeclient == nil {
 		r.Log.Error(ErrNilClient)
 		return model.StatusUnknown, ErrNilClient
 	}
@@ -104,7 +104,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 	status := model.StatusUnknown
 	version := string(model.StatusUnknown)
 	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok {
+	if !ok || kubeclient == nil {
 		return nil, ErrMesheryClient(nil)
 	}
 
@@ -146,7 +146,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 
 func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider) (*model.OperatorControllerStatus, error) {
 	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok {
+	if !ok || kubeclient == nil {
 		return nil, ErrMesheryClient(nil)
 	}
 	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
@@ -163,7 +163,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 
 func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) (*model.OperatorControllerStatus, error) {
 	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok {
+	if !ok || kubeclient == nil {
 		return nil, ErrMesheryClient(nil)
 	}
 	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
@@ -204,7 +204,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 		status, err := r.getOperatorStatus(ctx, provider)
 		if err != nil {
 			r.Log.Error(ErrOperatorSubscription(err))
-			// return
+			return
 		}
 		if status.Status != model.StatusEnabled {
 			_, err = r.changeOperatorStatus(ctx, provider, model.StatusEnabled)

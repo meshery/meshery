@@ -189,7 +189,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 	}
 
 	kubeclient, ok := req.Context().Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok {
+	if !ok || kubeclient == nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "failed to get kube client for the user")
 		return
