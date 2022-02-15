@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 )
 
@@ -27,7 +28,6 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
-		//lint:ignore SA1029 we want to make sure that no two results of errors
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
@@ -95,23 +95,72 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		}
 
 		user, _ := provider.GetUserDetails(req)
-
 		prefObj, err := provider.ReadFromPersister(user.UserID)
 		if err != nil {
 			logrus.Warn("unable to read session from the session persister, starting with a new one")
 		}
 
-		err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
+		token := provider.UpdateToken(w, req)
+
+		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token)
+		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)
+		ctx = context.WithValue(ctx, models.UserCtxKey, user)
+		ctx = context.WithValue(ctx, models.BrokerURLCtxKey, h.config.BrokerEndpointURL) // nolint
+
+		k8scontext, err := h.GetCurrentContext(token, provider)
 		if err != nil {
-			logrus.Errorf("Unable to load default kubernetes config: %v", err)
+			logrus.Warn("failed to find kubernetes context")
+
+			// Set some defaults in the context so that the casting doesn't fails
+			ctx = context.WithValue(ctx, models.KubeContextKey, nil)
+			ctx = context.WithValue(ctx, models.KubeHanderKey, nil)
+			ctx = context.WithValue(ctx, models.KubeConfigKey, nil)
+		} else {
+			cfg, err := k8scontext.GenerateKubeConfig()
+			if err != nil {
+				logrus.Warn("failed to load kube config for the user: ", err)
+			}
+
+			// Create mesherykube handler
+			client, err := kubernetes.New(cfg)
+			if err != nil {
+				http.Error(w, "failed to create kubeconfig handler for the user", http.StatusInternalServerError)
+				return
+			}
+
+			ctx = context.WithValue(ctx, models.KubeContextKey, k8scontext)
+			ctx = context.WithValue(ctx, models.KubeHanderKey, client)
+			ctx = context.WithValue(ctx, models.KubeConfigKey, cfg)
 		}
 
-		token := provider.UpdateToken(w, req)
-		//lint:ignore SA1029 we want to make sure that no two results of errors
-		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token)               // nolint
-		ctx = context.WithValue(ctx, models.UserCtxKey, user)                            // nolint
-		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)                      // nolint
-		ctx = context.WithValue(ctx, models.BrokerURLCtxKey, h.config.BrokerEndpointURL) // nolint
+		// Identify custom contexts, if provided
+		k8sContextIDs := req.URL.Query()["contexts"]
+		k8scontexts := []models.K8sContext{}
+
+		if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
+			contexts, err := provider.LoadAllK8sContext(token)
+			if err != nil {
+				logrus.Warn("failed to load all k8scontext")
+			}
+
+			for _, c := range contexts {
+				if c != nil {
+					k8scontexts = append(k8scontexts, *c)
+				}
+			}
+		} else {
+			for _, kctxID := range k8sContextIDs {
+				kctx, err := provider.GetK8sContext(token, kctxID)
+				if err != nil {
+					logrus.Warn("invalid context ID found")
+					continue
+				}
+
+				k8scontexts = append(k8scontexts, kctx)
+			}
+		}
+
+		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
 
 		req1 := req.WithContext(ctx)
 

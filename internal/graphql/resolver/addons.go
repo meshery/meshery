@@ -5,6 +5,7 @@ import (
 
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 func (r *Resolver) changeAddonStatus(ctx context.Context, provider models.Provider) (model.Status, error) {
@@ -12,16 +13,20 @@ func (r *Resolver) changeAddonStatus(ctx context.Context, provider models.Provid
 }
 
 func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provider, selector *model.MeshType) ([]*model.AddonList, error) {
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok {
+		r.Log.Error(ErrNilClient)
+		return nil, ErrNilClient
+	}
+
 	selectors := make([]model.MeshType, 0)
 	if selector == nil || *selector == model.MeshTypeAllMesh {
-		for _, mesh := range model.AllMeshType {
-			selectors = append(selectors, mesh)
-		}
+		selectors = append(selectors, model.AllMeshType...)
 	} else {
 		selectors = append(selectors, *selector)
 	}
 
-	addonlist, err := model.GetAddonsState(selectors, r.Config.KubeClient, provider)
+	addonlist, err := model.GetAddonsState(selectors, kubeclient, provider)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err
@@ -37,7 +42,7 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 
 	go func() {
 		r.Log.Info("Addons subscription started")
-		err := r.connectToBroker(context.TODO(), provider)
+		err := r.connectToBroker(ctx, provider)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
 			return

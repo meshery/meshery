@@ -47,6 +47,18 @@ Query for fetching all results for profile ID.
 | ---- | ---- | ----------- |
 | <a id="queryfetchallresultsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
 
+### `Query.fetchPatterns`
+
+Query for fetching all patterns with selector.
+
+###### **Returns** [`PatternPageResult!`](#patternpageresult).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="queryfetchpatternsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
+
 ### `Query.fetchResults`
 
 Query for fetching all results for profile ID.
@@ -249,17 +261,30 @@ Listen to changes in Broker (NATS) Connection.
 
 ###### **Returns** [`Boolean!`](#boolean).
 
-### `Subscription.subscribePerfProfile`
+### `Subscription.subscribePerfProfiles`
 
-Listen to changes in Performance Profile.
+Listen to changes in Performance Profiles.
 
-###### **Returns** [`MesheryResult!`](#mesheryresult).
+###### **Returns** [`PerfPageProfiles!`](#perfpageprofiles).
 
 #### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="subscriptionsubscribeperfprofileprofileid"></a>`profileID` | [`String!`](#string) |  |
+| <a id="subscriptionsubscribeperfprofilesselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
+
+### `Subscription.subscribePerfResults`
+
+Listen to all results for profile ID.
+
+###### **Returns** [`PerfPageResult!`](#perfpageresult).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribeperfresultsprofileid"></a>`profileID` | [`String!`](#string) |  |
+| <a id="subscriptionsubscribeperfresultsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
 
 ## Object types
 
@@ -424,6 +449,44 @@ Status of Meshery Operator and its controllers.
 | <a id="operatorstatuserror"></a>`error` | [`Error`](#error) | Error Logs encountered by Meshery Operator. |
 | <a id="operatorstatusstatus"></a>`status` | [`Status!`](#status) | Status of Meshery Operator. |
 | <a id="operatorstatusversion"></a>`version` | [`String!`](#string) | Verion of Meshery Operator. |
+
+### `PatternLocation`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="patternlocationbranch"></a>`branch` | [`String`](#string) |  |
+| <a id="patternlocationhost"></a>`host` | [`String`](#string) |  |
+| <a id="patternlocationpath"></a>`path` | [`String`](#string) |  |
+| <a id="patternlocationtype"></a>`type` | [`String`](#string) |  |
+
+### `PatternPageResult`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="patternpageresultpage"></a>`page` | [`Int!`](#int) |  |
+| <a id="patternpageresultpage_size"></a>`page_size` | [`Int!`](#int) |  |
+| <a id="patternpageresultpatterns"></a>`patterns` | [`[PatternResult]`](#patternresult) |  |
+| <a id="patternpageresulttotal_count"></a>`total_count` | [`Int!`](#int) |  |
+
+### `PatternResult`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="patternresultcansupport"></a>`canSupport` | [`Boolean!`](#boolean) |  |
+| <a id="patternresultcreated_at"></a>`created_at` | [`String`](#string) |  |
+| <a id="patternresulterrmsg"></a>`errmsg` | [`String`](#string) |  |
+| <a id="patternresultid"></a>`id` | [`ID!`](#id) |  |
+| <a id="patternresultlocation"></a>`location` | [`PatternLocation!`](#patternlocation) |  |
+| <a id="patternresultname"></a>`name` | [`String!`](#string) |  |
+| <a id="patternresultpattern_file"></a>`pattern_file` | [`String!`](#string) |  |
+| <a id="patternresultupdated_at"></a>`updated_at` | [`String`](#string) |  |
+| <a id="patternresultuser_id"></a>`user_id` | [`String!`](#string) |  |
 
 ### `PerfPageProfiles`
 

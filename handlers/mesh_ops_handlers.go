@@ -80,13 +80,23 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
+	// Get the kubernetes context
+	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
 		h.log.Error(ErrInvalidK8SConfig)
 		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
-	mClient, err := meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshAdapters[aID].Location)
+	// Get the k8sconfig
+	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
+	if !ok || k8sconfig == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+		return
+	}
+
+	mClient, err := meshes.CreateClient(req.Context(), k8sconfig, mk8scontext.Name, meshAdapters[aID].Location)
 	if err != nil {
 		h.log.Error(ErrMeshClient)
 		http.Error(w, ErrMeshClient.Error(), http.StatusBadRequest)
@@ -137,7 +147,9 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 			return
 		}
 
-		if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
+		// Get the k8sconfig
+		k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
+		if !ok || k8sconfig == nil {
 			h.log.Error(ErrInvalidK8SConfig)
 			http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 			return
@@ -193,21 +205,30 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		h.log.Debug("Adapter already configured...")
 		return meshAdapters, nil
 	}
-	if prefObj.K8SConfig == nil {
+
+	// Get the kubernetes context
+	mk8scontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
 		h.log.Error(ErrInvalidK8SConfig)
 		return nil, ErrInvalidK8SConfig
 	}
 
-	kubeclient, err := mesherykube.New(prefObj.K8SConfig.Config)
-	if err != nil {
+	// Get the k8sconfig
+	k8sconfig, ok := ctx.Value(models.KubeConfigKey).([]byte)
+	if !ok || k8sconfig == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		return nil, ErrInvalidK8SConfig
+	}
+
+	// Get the kubehandler
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok || kubeclient == nil {
 		h.log.Error(ErrNilClient)
 		return nil, ErrNilClient
 	}
-	*h.config.KubeClient = *kubeclient
-	provider.SetKubeClient(h.config.KubeClient)
 
-	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshLocationURL)
-	if err != nil || prefObj.K8SConfig == nil {
+	mClient, err := meshes.CreateClient(ctx, k8sconfig, mk8scontext.Name, meshLocationURL)
+	if err != nil {
 		h.log.Error(ErrMeshClient)
 		// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return meshAdapters, ErrMeshClient
@@ -327,13 +348,23 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		namespace = "default"
 	}
 
-	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
+	// Get the kubernetes context
+	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
 		h.log.Error(ErrInvalidK8SConfig)
 		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
-	mClient, err := meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshAdapters[aID].Location)
+	// Get the k8sconfig
+	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
+	if !ok || k8sconfig == nil {
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+		return
+	}
+
+	mClient, err := meshes.CreateClient(req.Context(), k8sconfig, mk8scontext.Name, meshAdapters[aID].Location)
 	if err != nil {
 		//h.log.Error(ErrMeshClient)
 		http.Error(w, ErrMeshClient.Error(), http.StatusBadRequest)

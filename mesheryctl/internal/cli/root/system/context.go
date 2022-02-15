@@ -342,7 +342,7 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 		if err != nil {
 			return err
 		}
-		isRunning, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
+		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 		//if meshery running stop meshery before context switch
 		if isRunning {
 			if err := stop(); err != nil {

@@ -5,7 +5,6 @@ import (
 
 	"time"
 
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/vmihailenco/taskq/v3"
 )
 
@@ -32,6 +31,12 @@ type HandlerInterface interface {
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	GetAllContexts(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	SetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -125,7 +130,6 @@ type HandlerConfig struct {
 	Queue taskq.Queue
 
 	KubeConfigFolder string
-	KubeClient       *mesherykube.Client
 
 	GrafanaClient         *GrafanaClient
 	GrafanaClientForQuery *GrafanaClient
@@ -141,6 +145,9 @@ type HandlerConfig struct {
 	ProviderCookieDuration time.Duration
 
 	BrokerEndpointURL *string
+
+	PerformanceChannel       chan struct{}
+	PerformanceResultChannel chan struct{}
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics

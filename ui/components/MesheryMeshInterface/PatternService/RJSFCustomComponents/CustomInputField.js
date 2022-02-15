@@ -16,16 +16,10 @@ const CustomInputField = (props) => {
     justifyContent : "space-between"
   }
 
-  if (omitTitleFields.includes(name)) {
-    return <div key={props.id} style={style}>
-      <TextField label={prettifiedName} variant="outlined" size="small" autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`} />
-    </div>
-  }
-
   return (
     <div key={props.id} style={style}>
       <TextField
-        InputLabelProps={{ style : { pointerEvents : "auto", padding : "3px" } }}
+        InputLabelProps={{ style : { pointerEvents : "auto", padding : "2px" } }}
         variant="outlined"
         size="small" autoFocus
         key={props.id}
@@ -33,7 +27,7 @@ const CustomInputField = (props) => {
         id={props.id}
         onChange={e => props?.onChange(e.target.value)}
         label={`${prettifiedName}`}
-        InputProps={{ style : { padding : "2px 0px 0px 0px" },
+        InputProps={{ style : { padding : "2px 0px 3px 0px" },
           endAdornment : (<InputAdornment position="start">
             {props.schema?.description && (
               <EnlargedTextTooltip title={props.schema?.description}>

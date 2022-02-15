@@ -9,7 +9,7 @@ const useStyles = makeStyles(() => ({
     top : 80,
     // left: 0,
     backgroundColor : "#477E96",
-    zIndex : "9999",
+    zIndex : "1",
     marginLeft : "4px",
     padding : "4px 50px",
     transform : 'translateX(-40px)',

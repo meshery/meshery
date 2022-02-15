@@ -13,13 +13,15 @@ import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
+import Chip from '@material-ui/core/Chip';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
-
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faHome } from '@fortawesome/free-solid-svg-icons';
+import Popper from '@material-ui/core/Popper';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Input from '@material-ui/core/Input';
+import { Checkbox, Button } from '@material-ui/core';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -64,7 +66,144 @@ const styles = (theme) => ({
   },
   itemActiveItem : { color : "#00B39F" },
   headerIcons : { fontSize : "1.5rem", height : "1.5rem", width : "1.5rem" },
+  cbadge : {
+    fontSize : "0.65rem",
+    backgroundColor : "white",
+    borderRadius : "50%",
+    color : "black",
+    height : "1.35rem",
+    width : "1.35rem",
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    position : "absolute",
+    zIndex : -1,
+    right : "-0.85rem",
+    top : "-0.35rem"
+  },
+  cbadgeContainer : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    position : "relative"
+  },
+  icon : {
+    width : theme.spacing(2.5)
+  },
+  cMenuContainer : {
+    backgroundColor : "white",
+    borderRadius : "3px",
+    padding : "1rem",
+    zIndex : 1201,
+    marginTop : "0.8rem",
+    width : "12rem"
+  },
+  chip : {
+    margin : "0.25rem 0",
+  }
 });
+
+function K8sContextMenu({
+  classes = {},
+  contexts = {},
+  activeContexts = [],
+  setActiveContexts = () => {},
+  searchContexts = () => {}
+}) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  return (
+    <>
+      <IconButton
+        aria-label="contexts"
+        onClick={(event) => {
+          console.log(contexts);
+          setAnchorEl(event.target)
+        }}
+        style={{ marginRight : "1.25rem" }}
+      >
+        <div className={classes.cbadgeContainer}>
+          <img src="/static/img/kubernetes.svg" width="24px" height="24px"/>
+          <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
+        </div>
+      </IconButton>
+      <Popper
+        open={open}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical : 'bottom',
+          horizontal : 'center',
+        }}
+        transformOrigin={{
+          vertical : 'top',
+          horizontal : 'center',
+        }}
+        className={classes.cMenuContainer}
+      >
+        <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+          <div>
+            <div>
+              <Input
+                id="search-ctx"
+                label="Search"
+                placeholder="Search"
+                onChange={ev => searchContexts(ev.target.value)}
+                style={{ width : "100%", marginBottom : "0.25rem" }}
+              />
+            </div>
+            <div>
+              {
+                contexts?.total_count
+                  ?
+                  <>
+                    <Checkbox
+                      checked={activeContexts.includes("all")}
+                      onChange={() => setActiveContexts("all")}
+                      color="primary"
+                    />
+                    <span>Select All</span>
+                  </>
+                  :
+                  <Link href="/settings">
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      style={{ margin : "0.5rem auto" }}
+                    >
+                      Add Clusters
+                    </Button>
+                  </Link>
+              }
+              {contexts?.contexts?.map(ctx => (
+                <div id={ctx.id} className={classes.chip}>
+                  <Tooltip title={`Server: ${ctx.server}`}>
+                    <>
+                      <Checkbox
+                        checked={activeContexts.includes(ctx.id)}
+                        onChange={() => setActiveContexts(ctx.id)}
+                        color="primary"
+                      />
+                      <Chip
+                        label={ctx?.name}
+                        icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
+                        variant="outlined"
+                        data-cy="chipContextName"
+                      />
+                    </>
+                  </Tooltip>
+                </div>
+              ))}
+            </div>
+          </div>
+        </ClickAwayListener>
+      </Popper>
+    </>
+  )
+}
 
 class Header extends React.Component {
   constructor(props){
@@ -161,6 +300,15 @@ class Header extends React.Component {
                   {/* </Link>
                     </IconButton>
                   </div> */}
+                  <div>
+                    <K8sContextMenu
+                      classes={classes}
+                      contexts={this.props.contexts}
+                      activeContexts={this.props.activeContexts}
+                      setActiveContexts={this.props.setActiveContexts}
+                      searchContexts={this.props.searchContexts}
+                    />
+                  </div>
 
                   <div data-test="settings-button">
                     <IconButton color="inherit">

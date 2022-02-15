@@ -25,7 +25,7 @@
         "name": "ErrOpInvalidCode",
         "code": "1002",
         "severity": "Alert",
-        "long_description": "Istio adapter recived an invalid operation from the meshey server",
+        "long_description": "Kuma adapter recived an invalid operation from the meshey server",
         "short_description": "Invalid operation",
         "probable_cause": "The operation is not supported by the adapter\nInvalid operation name",
         "suggested_remediation": "Check if the operation name is valid and supported by the adapter"

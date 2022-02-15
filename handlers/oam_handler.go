@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/ghodss/yaml"
@@ -73,14 +74,6 @@ func (h *Handler) PatternFileHandler(
 		}
 	}
 
-	// Get the user token
-	token, err := provider.GetProviderToken(r)
-	if err != nil {
-		rw.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
-		return
-	}
-
 	isDel := r.Method == http.MethodDelete
 
 	// Generate the pattern file object
@@ -91,30 +84,11 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
-	// If DynamicKubeClient hasn't been created yet then create one
-	if h.config.KubeClient.DynamicKubeClient == nil {
-		if prefObj.K8SConfig == nil {
-			h.log.Error(ErrInvalidK8SConfig)
-			http.Error(rw, ErrInvalidK8SConfig.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		kc, err := meshkube.New(prefObj.K8SConfig.Config)
-		if err != nil {
-			h.log.Error(ErrInvalidPattern(err))
-			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
-			return
-		}
-
-		h.config.KubeClient = kc
-	}
-
 	msg, err := _processPattern(
-		token,
+		r.Context(),
 		provider,
 		patternFile,
 		prefObj,
-		h.config.KubeClient,
 		user.UserID,
 		isDel,
 		r.URL.Query().Get("verify") == "true",
@@ -395,66 +369,145 @@ func mergeMsgs(msgs []string) string {
 }
 
 func _processPattern(
-	token string,
+	ctx context.Context,
 	provider models.Provider,
 	pattern core.Pattern,
 	prefObj *models.Preference,
-	kubeClient *meshkube.Client,
 	userID string,
 	isDelete bool,
 	verify bool,
 	skipPrintLogs bool,
 ) (string, error) {
-	sip := &serviceInfoProvider{
-		token:      token,
-		provider:   provider,
-		opIsDelete: isDelete,
-	}
-	sap := &serviceActionProvider{
-		token:           token,
-		provider:        provider,
-		prefObj:         prefObj,
-		kubeClient:      kubeClient,
-		opIsDelete:      isDelete,
-		userID:          userID,
-		skipPrintLogs:   skipPrintLogs,
-		accumulatedMsgs: []string{},
-		err:             nil,
+	// Get the token from the context
+	token, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok {
+		return "", ErrRetrieveUserToken(fmt.Errorf("token not found in the context"))
 	}
 
-	chain := stages.CreateChain()
-	chain.
-		Add(stages.ServiceIdentifier(sip, sap)).
-		Add(stages.Filler(sap.skipPrintLogs)).
-		Add(stages.Validator(sip, sap))
+	// Get the kubehandler from the context
+	kubeClient, ok := ctx.Value(models.KubeHanderKey).(*meshkube.Client)
+	if !ok || kubeClient == nil {
+		return "", ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
+	}
 
-	if !verify {
+	// Get the kubernetes config from the context
+	kubecfg, ok := ctx.Value(models.KubeConfigKey).([]byte)
+	if !ok || kubecfg == nil {
+		return "", ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
+	}
+
+	// Get the kubernetes context from the context
+	mk8scontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
+		return "", ErrInvalidKubeContext(fmt.Errorf("failed to find k8s context"), "_processPattern couldn't find a valid k8s context")
+	}
+
+	internal := func(kubeClient *meshkube.Client, kubecfg []byte, mk8scontext *models.K8sContext) (string, error) {
+		sip := &serviceInfoProvider{
+			token:      token,
+			provider:   provider,
+			opIsDelete: isDelete,
+		}
+		sap := &serviceActionProvider{
+			token:         token,
+			provider:      provider,
+			prefObj:       prefObj,
+			kubeClient:    kubeClient,
+			opIsDelete:    isDelete,
+			userID:        userID,
+			kubeconfig:    kubecfg,
+			kubecontext:   mk8scontext,
+			skipPrintLogs: skipPrintLogs,
+
+			accumulatedMsgs: []string{},
+			err:             nil,
+		}
+
+		chain := stages.CreateChain()
 		chain.
-			Add(stages.Provision(sip, sap)).
-			Add(stages.Persist(sip, sap))
-	}
+			Add(stages.Import(sip, sap)).
+			Add(stages.ServiceIdentifier(sip, sap)).
+			Add(stages.Filler(skipPrintLogs)).
+			Add(stages.Validator(sip, sap))
 
-	chain.
-		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
-			data.Lock.Lock()
-			for k, v := range data.Other {
-				if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
-					msg, ok := v.(string)
-					if ok {
-						sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
+		if !verify {
+			chain.
+				Add(stages.Provision(sip, sap)).
+				Add(stages.Persist(sip, sap))
+		}
+
+		chain.
+			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
+				data.Lock.Lock()
+				for k, v := range data.Other {
+					if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
+						msg, ok := v.(string)
+						if ok {
+							sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
+						}
 					}
 				}
-			}
-			data.Lock.Unlock()
+				data.Lock.Unlock()
 
-			sap.err = err
-		}).
-		Process(&stages.Data{
-			Pattern: &pattern,
-			Other:   map[string]interface{}{},
-		})
+				sap.err = err
+			}).
+			Process(&stages.Data{
+				Pattern: &pattern,
+				Other:   map[string]interface{}{},
+			})
 
-	return mergeMsgs(sap.accumulatedMsgs), sap.err
+		return mergeMsgs(sap.accumulatedMsgs), sap.err
+	}
+
+	customK8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+	if ok && len(customK8scontexts) > 0 {
+		var wg sync.WaitGroup
+		var lock sync.Mutex
+		resp := []string{}
+		errs := []string{}
+
+		for _, c := range customK8scontexts {
+			wg.Add(1)
+			go func(c *models.K8sContext) {
+				defer wg.Done()
+
+				lock.Lock()
+				defer lock.Unlock()
+
+				// Generate Kube Handler
+				kh, err := c.GenerateKubeHandler()
+				if err != nil {
+					errs = append(errs, err.Error())
+					return
+				}
+
+				// Generate kube config
+				kcfg, err := c.GenerateKubeConfig()
+				if err != nil {
+					errs = append(errs, err.Error())
+					return
+				}
+
+				res, err := internal(kh, kcfg, c)
+				if err != nil {
+					errs = append(errs, err.Error())
+					return
+				}
+
+				resp = append(resp, res)
+			}(&c)
+		}
+
+		wg.Wait()
+
+		if len(errs) == 0 {
+			return mergeMsgs(resp), nil
+		}
+
+		return mergeMsgs(resp), fmt.Errorf(mergeMsgs(errs))
+	}
+
+	return internal(kubeClient, kubecfg, mk8scontext)
 }
 
 type serviceInfoProvider struct {
@@ -497,6 +550,8 @@ type serviceActionProvider struct {
 	kubeClient      *meshkube.Client
 	opIsDelete      bool
 	userID          string
+	kubeconfig      []byte
+	kubecontext     *models.K8sContext
 	skipPrintLogs   bool
 	accumulatedMsgs []string
 	err             error
@@ -529,12 +584,6 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 
 		logrus.Debugf("Adapter to execute operations on: %s", adapter)
 
-		if sap.prefObj.K8SConfig == nil ||
-			!sap.prefObj.K8SConfig.InClusterConfig &&
-				(sap.prefObj.K8SConfig.Config == nil || len(sap.prefObj.K8SConfig.Config) == 0) {
-			return "", fmt.Errorf("no valid kubernetes config found")
-		}
-
 		// Local call
 		if strings.HasPrefix(adapter, string(noneLocal)) {
 			resp, err := patterns.ProcessOAM(
@@ -550,8 +599,8 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		// Create mesh client
 		mClient, err := meshes.CreateClient(
 			context.TODO(),
-			sap.prefObj.K8SConfig.Config,
-			sap.prefObj.K8SConfig.ContextName,
+			sap.kubeconfig,
+			sap.kubecontext.Name,
 			adapter,
 		)
 		if err != nil {

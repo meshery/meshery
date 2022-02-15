@@ -22,7 +22,7 @@ func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, 
 	}
 
 	mc := handlers.NewContentModifier(tokenString, provider, prefObj, user.UserID)
-	err = mc.AddMetadataForPatterns(&resp)
+	err = mc.AddMetadataForPatterns(ctx, &resp)
 	if err != nil {
 		r.Log.Error(ErrFetchingPatterns(err))
 	}

@@ -915,101 +915,6 @@ definitions:
       or ints: 100 or "100"'
     type: object
     x-go-package: github.com/grafana-tools/sdk
-  K8SConfig:
-    description: K8SConfig represents all the k8s session config
-    properties:
-      clusterConfigured:
-        type: boolean
-        x-go-name: ClusterConfigured
-      config:
-        items:
-          format: uint8
-          type: integer
-        type: array
-        x-go-name: Config
-      configuredServer:
-        type: string
-        x-go-name: Server
-      contextName:
-        type: string
-        x-go-name: ContextName
-      contexts:
-        items:
-          $ref: '#/definitions/K8SContext'
-        type: array
-        x-go-name: Contexts
-      inClusterConfig:
-        type: boolean
-        x-go-name: InClusterConfig
-      k8sfile:
-        type: string
-        x-go-name: K8Sfile
-      nodes:
-        items:
-          $ref: '#/definitions/K8SNode'
-        type: array
-        x-go-name: Nodes
-      server_version:
-        type: string
-        x-go-name: ServerVersion
-    type: object
-    x-go-package: github.com/layer5io/meshery/models
-  K8SContext:
-    description: K8SContext is just used to send contexts to the UI
-    properties:
-      clusterName:
-        type: string
-        x-go-name: ClusterName
-      contextName:
-        type: string
-        x-go-name: ContextName
-      currentContext:
-        description: ContextDisplayName string `json:"context-display-name"`
-        type: boolean
-        x-go-name: IsCurrentContext
-    type: object
-    x-go-package: github.com/layer5io/meshery/models
-  K8SNode:
-    description: K8SNode - represents a kubernetes node
-    properties:
-      allocatable_cpu:
-        type: string
-        x-go-name: AllocatableCPU
-      allocatable_memory:
-        type: string
-        x-go-name: AllocatableMemory
-      architecture:
-        type: string
-        x-go-name: Architecture
-      capacity_cpu:
-        type: string
-        x-go-name: CapacityCPU
-      capacity_memory:
-        type: string
-        x-go-name: CapacityMemory
-      container_runtime_version:
-        type: string
-        x-go-name: ContainerRuntimeVersion
-      hostname:
-        type: string
-        x-go-name: HostName
-      internal_ip:
-        type: string
-        x-go-name: InternalIP
-      kubelet_version:
-        type: string
-        x-go-name: KubeletVersion
-      kubeproxy_version:
-        type: string
-        x-go-name: KubeProxyVersion
-      operating_system:
-        type: string
-        x-go-name: OperatingSystem
-      os_image:
-        type: string
-        x-go-name: OSImage
-    type: object
-    x-go-package: github.com/layer5io/meshery/models
   LatenciesMs:
     description: LatenciesMs - represents a collection of important latencies
     properties:
@@ -2678,8 +2583,6 @@ definitions:
         x-go-name: AnonymousUsageStats
       grafana:
         $ref: '#/definitions/Grafana'
-      k8sConfig:
-        $ref: '#/definitions/K8SConfig'
       loadTestPrefs:
         $ref: '#/definitions/LoadTestPreferences'
       meshAdapters:
@@ -5108,14 +5011,8 @@ responses:
       $ref: '#/definitions/Grafana'
   k8sConfigRespWrapper:
     description: Returns saved kubernetes config
-    schema:
-      $ref: '#/definitions/K8SConfig'
   k8sContextsRespWrapper:
     description: Returns kubernetes context list
-    schema:
-      items:
-        $ref: '#/definitions/K8SContext'
-      type: array
   listProvidersRespWrapper:
     description: Returns a list of available providers
     schema:

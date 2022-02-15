@@ -439,8 +439,11 @@ type Subscription {
 	# Listen to changes in the list of available Namesapces in your cluster
     listenToMeshSyncEvents: OperatorControllerStatus!
 
-	# Listen to changes in Performance Profile
-	subscribePerfProfile(profileID: String!): MesheryResult!
+	# Listen to changes in Performance Profiles
+	subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
+
+	# Listen to all results for profile ID
+	subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
 
 	# Listen to changes in Broker (NATS) Connection
 	subscribeBrokerConnection: Boolean!

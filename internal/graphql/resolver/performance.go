@@ -104,6 +104,67 @@ func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, s
 // 	return r.Config.PerformanceChannels[profileID], nil
 // }
 
+func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Provider, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error) {
+	if r.Config.PerformanceResultChannel == nil {
+		r.Config.PerformanceResultChannel = make(chan struct{})
+	}
+
+	perfResultChannel := make(chan *model.PerfPageResult)
+
+	go func() {
+		r.Log.Info("Performance Result subscription started")
+
+		for {
+			select {
+			case <-r.Config.PerformanceResultChannel:
+				r.Log.Info("resres")
+				results, err := r.fetchResults(ctx, provider, selector, profileID)
+				if err != nil {
+					r.Log.Error(ErrPerformanceResultSubscription(err))
+					break
+				}
+				perfResultChannel <- results
+
+			case <-ctx.Done():
+				r.Log.Info("Performance Result subscription stopped")
+				return
+			}
+		}
+	}()
+
+	return perfResultChannel, nil
+}
+
+func (r *Resolver) subscribePerfProfiles(ctx context.Context, provider models.Provider, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {
+	performanceProfilesChannel := make(chan *model.PerfPageProfiles)
+
+	if r.Config.PerformanceChannel == nil {
+		r.Config.PerformanceChannel = make(chan struct{})
+	}
+
+	go func() {
+		r.Log.Info("PerformanceProfiles subscription started")
+
+		for {
+			select {
+			case <-r.Config.PerformanceChannel:
+				profiles, err := r.getPerformanceProfiles(ctx, provider, selector)
+				if err != nil {
+					r.Log.Error(ErrPerformanceProfilesSubscription(err))
+					break
+				}
+				performanceProfilesChannel <- profiles
+
+			case <-ctx.Done():
+				r.Log.Info("PerformanceProfiles subscription stopped")
+				return
+			}
+		}
+	}()
+
+	return performanceProfilesChannel, nil
+}
+
 func (r *Resolver) getPerformanceProfiles(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PerfPageProfiles, error) {
 	tokenString := ctx.Value("token").(string)
 

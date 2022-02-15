@@ -24,7 +24,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	v1core "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -35,78 +35,6 @@ var (
 	ManifestsFolder = "manifests"
 	ReleaseTag      string
 )
-
-// ChangePlatform changes the platform specified in the current context to the specified platform
-func ChangePlatform(currCtx string, ctx config.Context) error {
-	ViperK8s.SetConfigFile(DefaultConfigPath)
-	err := ViperK8s.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	meshConfig := &config.MesheryCtlConfig{}
-	err = ViperK8s.Unmarshal(&meshConfig)
-	if err != nil {
-		return err
-	}
-
-	meshConfig.Contexts[currCtx] = ctx
-	ViperK8s.Set("contexts."+currCtx, ctx)
-
-	err = ViperK8s.WriteConfig()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// ChangeConfigEndpoint changes the endpoint of the current context in meshconfig, based on the platform
-func ChangeConfigEndpoint(currCtx string, ctx *config.Context) error {
-	if ctx.Platform == "kubernetes" {
-		ViperK8s.SetConfigFile(DefaultConfigPath)
-		err := ViperK8s.ReadInConfig()
-		if err != nil {
-			return err
-		}
-
-		kubeCompose := &config.MesheryCtlConfig{}
-		err = ViperK8s.Unmarshal(&kubeCompose)
-		if err != nil {
-			return err
-		}
-
-		kubeCompose.Contexts[currCtx] = *ctx
-		ViperK8s.Set("contexts."+currCtx, ctx)
-
-		err = ViperK8s.WriteConfig()
-		if err != nil {
-			return err
-		}
-	} else if ctx.Platform == "docker" {
-		ViperDocker.SetConfigFile(DefaultConfigPath)
-		err := ViperDocker.ReadInConfig()
-		if err != nil {
-			return err
-		}
-
-		dockerConfig := &config.MesheryCtlConfig{}
-		err = ViperDocker.Unmarshal(&dockerConfig)
-		if err != nil {
-			return err
-		}
-
-		dockerConfig.Contexts[currCtx] = *ctx
-		ViperDocker.Set("contexts."+currCtx, ctx)
-
-		err = ViperDocker.WriteConfig()
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
 
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
@@ -652,7 +580,7 @@ func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, 
 	podInterface := client.KubeClient.CoreV1().Pods(namespace)
 
 	// List the pods in the given namespace
-	podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+	podList, err := podInterface.List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
 		return nil, err
@@ -780,4 +708,95 @@ func SetKubeConfig() {
 		ConfigPath = filepath.Join(usr.HomeDir, ".meshery", KubeConfigYaml)
 		KubeConfig = filepath.Join(usr.HomeDir, ".kube", "config")
 	}
+}
+
+func ForceCleanupCluster() error {
+	client, err := meshkitkube.New([]byte(""))
+	if err != nil {
+		return errors.Wrap(err, "failed to create new client")
+	}
+
+	deletePolicy := metav1.DeletePropagationForeground
+
+	deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+	deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, deployment := range deploymentList.Items {
+		if strings.Contains(string(deployment.GetName()), "meshery") {
+			if err := deploymentInterface.Delete(context.TODO(), deployment.GetName(), metav1.DeleteOptions{
+				PropagationPolicy: &deletePolicy,
+			}); err != nil {
+				log.Debug(err)
+			}
+		}
+	}
+
+	serviceInterface := client.KubeClient.CoreV1().Services(MesheryNamespace)
+	serviceList, err := serviceInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, service := range serviceList.Items {
+		if strings.Contains(string(service.GetName()), "meshery") {
+			if err := serviceInterface.Delete(context.TODO(), service.GetName(), metav1.DeleteOptions{
+				PropagationPolicy: &deletePolicy,
+			}); err != nil {
+				log.Debug(err)
+			}
+		}
+	}
+
+	statefulSetInterface := client.KubeClient.AppsV1().StatefulSets(MesheryNamespace)
+	statefulSetList, err := statefulSetInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, statefulSet := range statefulSetList.Items {
+		if strings.Contains(string(statefulSet.GetName()), "meshery") {
+			if err := statefulSetInterface.Delete(context.TODO(), statefulSet.GetName(), metav1.DeleteOptions{
+				PropagationPolicy: &deletePolicy,
+			}); err != nil {
+				log.Debug(err)
+			}
+		}
+	}
+
+	clusterRoleBindingInterface := client.KubeClient.RbacV1().ClusterRoleBindings()
+	clusterRoleBindingList, err := clusterRoleBindingInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, clusterRoleBinding := range clusterRoleBindingList.Items {
+		if strings.Contains(string(clusterRoleBinding.GetName()), "meshery") {
+			if err := clusterRoleBindingInterface.Delete(context.TODO(), clusterRoleBinding.GetName(), metav1.DeleteOptions{
+				PropagationPolicy: &deletePolicy,
+			}); err != nil {
+				log.Debug(err)
+			}
+		}
+	}
+
+	clusterRoleInterface := client.KubeClient.RbacV1().ClusterRoles()
+	clusterRoleList, err := clusterRoleInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, clusterRole := range clusterRoleList.Items {
+		if strings.Contains(string(clusterRole.GetName()), "meshery") {
+			if err := clusterRoleInterface.Delete(context.TODO(), clusterRole.GetName(), metav1.DeleteOptions{
+				PropagationPolicy: &deletePolicy,
+			}); err != nil {
+				log.Debug(err)
+			}
+		}
+	}
+
+	return nil
 }

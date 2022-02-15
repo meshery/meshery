@@ -205,7 +205,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             color : "#607d8b"
           }
         },
-      }
+      },
     }
   })
 

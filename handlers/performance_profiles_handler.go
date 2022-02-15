@@ -57,6 +57,10 @@ func (h *Handler) SavePerformanceProfileHandler(
 		return
 	}
 
+	if h.config.PerformanceChannel != nil {
+		h.config.PerformanceChannel <- struct{}{}
+	}
+
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }

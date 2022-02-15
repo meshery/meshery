@@ -12,6 +12,9 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
+// ContextKey is a custom type for setting context key
+type ContextKey string
+
 // ExtensionInput - input for a plugin
 type ExtensionInput struct {
 	DBHandler       *database.Handler
@@ -140,16 +143,24 @@ const (
 	RemoteProviderType ProviderType = "remote"
 
 	// ProviderCtxKey is the context key for persisting provider to context
-	ProviderCtxKey = "provider"
+	ProviderCtxKey ContextKey = "provider"
 
 	// TokenCtxKey is the context key for persisting token to context
-	TokenCtxKey = "token"
+	TokenCtxKey ContextKey = "token"
 
 	// UserCtxKey is the context key for persisting user to context
-	UserCtxKey = "user"
+	UserCtxKey ContextKey = "user"
 
 	// UserPrefsCtxKey is the context key for persisting user preferences to context
-	PerfObjCtxKey = "perf_obj"
+	PerfObjCtxKey ContextKey = "perf_obj"
+
+	KubeHanderKey ContextKey = "kube_handler"
+
+	KubeConfigKey ContextKey = "kubeconfig"
+
+	KubeContextKey ContextKey = "kubecontext"
+
+	KubeClustersKey ContextKey = "kubeclusters"
 
 	// UserPrefsCtxKey is the context key for latest broker endpoint to context
 	BrokerURLCtxKey = "broker_endpoint"
@@ -217,6 +228,14 @@ type Provider interface {
 	PublishMetrics(tokenVal string, data *MesheryResult) error
 	GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
+
+	SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error)
+	GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error)
+	DeleteK8sContext(token, id string) (K8sContext, error)
+	GetK8sContext(token, id string) (K8sContext, error)
+	LoadAllK8sContext(token string) ([]*K8sContext, error)
+	SetCurrentContext(token, id string) (K8sContext, error)
+	GetCurrentContext(token string) (K8sContext, error)
 
 	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
 	SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error)
