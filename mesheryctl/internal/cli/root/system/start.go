@@ -395,15 +395,12 @@ func start() error {
 	}
 
 	// execute dashboard command to fetch and navigate to Meshery UI
-	if !skipBrowserFlag {
-		return dashboardCmd.RunE(nil, nil)
-	}
-	return nil
+	return dashboardCmd.RunE(nil, nil)
 }
 
 func init() {
 	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
-	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "s", false, "(optional) skip opening of MesheryUI in browser.")
+	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
 }

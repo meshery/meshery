@@ -16,12 +16,13 @@ describe('Settings', () => {
 
       cy.wait('@getConfigSync');
 
-      cy
-        .get('[data-cy="chipContextName"]')
-        .should('have.text', 'kind-kind-cluster')
-        .click();
+      // TODO: re-enable once we have chips for pinging the cluster
+      // cy
+      //   .get('[data-cy="chipContextName"]')
+      //   .should('have.text', 'kind-kind-cluster')
+      //   .click();
 
-      cy.wait('@getK8sConfigPing');
+      // cy.wait('@getK8sConfigPing');
 
       cy
         .get('[data-cy="itemListContextName"] > .MuiListItemText-secondary')
