@@ -136,25 +136,6 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 
 	resp, err := client.Do(req)
 
-	// failsafe for having an expired token
-	if resp.StatusCode == 302 {
-		return nil, nil, ErrExpired()
-	}
-
-	if err != nil {
-		return nil, nil, ErrFailRequest(err)
-	}
-
-	// failsafe for not being authenticated
-	if utils.ContentTypeIsHTML(resp) {
-		return nil, nil, ErrUnauthenticated()
-	}
-
-	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-	if resp.StatusCode != 200 {
-		return nil, nil, ErrFailReqStatus(resp.StatusCode)
-	}
-
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

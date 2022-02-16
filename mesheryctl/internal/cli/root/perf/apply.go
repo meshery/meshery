@@ -241,12 +241,12 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 		resp, err := client.Do(req)
 
+		if err != nil {
+			return ErrFailRequest(err)
+		}
 		// failsafe for having an expired token
 		if resp.StatusCode == 302 {
 			return ErrExpired()
-		}
-		if err != nil {
-			return ErrFailRequest(err)
 		}
 		if utils.ContentTypeIsHTML(resp) {
 			return ErrFailTestRun()
@@ -348,20 +348,8 @@ func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlCon
 
 	resp, err := client.Do(req)
 
-	// failsafe for having an expired token
-	if resp.StatusCode == 302 {
-		return "", "", ErrExpired()
-	}
-
-	if err != nil {
-		return "", "", ErrFailRequest(err)
-	}
-
 	var response *models.PerformanceProfile
-	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-	if resp.StatusCode != 200 {
-		return "", "", ErrFailReqStatus(resp.StatusCode)
-	}
+
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
