@@ -15,7 +15,19 @@ module.exports = compose([
       '/404' : { page : '/_error' },
     };
   }, },
-  { webpack : (config)  => {
+  { webpack : (config, defaultLoaders)  => {
+    config.module.rules.push({
+      test : /\.css$/,
+      use : [
+        defaultLoaders.babel,
+        {
+          loader : require('styles-jsx/webpack').loader,
+          options : {
+            type : 'scoped'
+          }
+        }
+      ]
+    })
     config.resolve.alias = { ...config.resolve.alias,
       "remote-component.config.js" : __dirname + "/remote-component.config.js" };
     return config;
