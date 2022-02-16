@@ -25,7 +25,6 @@ import AddIcon from '@material-ui/icons/Add';
 import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
-import { Backdrop } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
@@ -141,7 +140,6 @@ function K8sContextMenu({
           <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
         </div>
       </IconButton>
-      <Backdrop/>
       <Popper
         open={open}
         anchorEl={anchorEl}
@@ -164,7 +162,6 @@ function K8sContextMenu({
                 id="search-ctx"
                 placeholder="Search..."
                 onChange={ev => searchContexts(ev.target.value)}
-                onClickAway={ev => searchContexts(ev.target.reset())}
                 style={{ width : "100%" }}
                 InputProps={{ endAdornment :
                 (
