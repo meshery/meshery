@@ -130,7 +130,7 @@ excluded_in_search: true
     --warning: #ED6A5A;
     --danger: #ED6A5A;
     --light: #D3F3EE;
-    --dark: #403F4C;
+    --dark: red;
     --breakpoint-xs: 0;
     --breakpoint-sm: 576px;
     --breakpoint-md: 768px;
@@ -4814,7 +4814,8 @@ input[type=button].btn-block {
 
 .nav-link:hover,
 .nav-link:focus {
-    text-decoration: none
+    text-decoration: none;
+    color: #fff !important;
 }
 
 .nav-link.disabled {
@@ -17941,7 +17942,8 @@ a.text-dark:focus {
 }
 
 .td-navbar {
-    background: {{ site.color }};
+    background-image: linear-gradient(rgb(57, 80, 84) 0%, rgb(0, 211, 169) 100%);
+    background-size: 100% 1422px;
     min-height: 4rem;
     margin: 0;
     z-index: 32
@@ -17973,7 +17975,7 @@ a.text-dark:focus {
 
 .td-navbar .nav-link {
     text-transform: none;
-    font-weight: 700
+    font-weight: 400;
 }
 
 .td-navbar .td-search-input {

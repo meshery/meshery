@@ -109,18 +109,6 @@ func (h *Handler) handleApplicationPOST(
 
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.ApplicationData != nil {
-		applicationName, err := models.GetApplicationName(parsedBody.ApplicationData.ApplicationFile)
-		if err != nil {
-			obj := "save"
-			h.log.Error(ErrApplicationFailure(err, obj))
-			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusBadRequest)
-			return
-		}
-
-		// Assign a name if no name is provided
-		if parsedBody.ApplicationData.Name == "" {
-			parsedBody.ApplicationData.Name = applicationName
-		}
 		// Assign a location if no location is specified
 		if parsedBody.ApplicationData.Location == nil {
 			parsedBody.ApplicationData.Location = map[string]interface{}{
