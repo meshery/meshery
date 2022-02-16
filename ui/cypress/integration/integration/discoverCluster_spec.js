@@ -29,9 +29,12 @@ describe("Settings", () => {
       cy.get("[data-cy=btnDiscoverCluster]").click();
 
       cy.wait('@getConfigSync');
-      cy.get("[data-cy=chipContextName]").click();
-      cy.wait('@getK8sVersion');
-      cy.get("[data-cy=k8sSuccessSnackbar]").should("exist");
+      cy.get(`[data-cy="itemListContextName"] > .MuiListItemText-secondary`)
+      .should('have.text', 'kind-kind');
+      // TODO: re-enable once added chips for pinging the cluster
+      // cy.get("[data-cy=chipContextName]").click();
+      // cy.wait('@getK8sVersion');
+      // cy.get("[data-cy=k8sSuccessSnackbar]").should("exist");
     });
   });
 });

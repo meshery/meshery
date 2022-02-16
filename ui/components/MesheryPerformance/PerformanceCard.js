@@ -8,6 +8,44 @@ import EditIcon from "@material-ui/icons/Edit";
 import Moment from "react-moment";
 import PerformanceResults from "./PerformanceResults";
 import FlipCard from "../FlipCard";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles= makeStyles(() => ({
+  cardButtons : {
+    display : "flex",
+    justifyContent : "flex-end",
+    alignItems : "center"
+  },
+  testsButton : {
+    marginRight : "0.5rem"
+  },
+  perfResultsContainer : {
+    marginTop : "0.5rem"
+  },
+  backGrid : {
+    marginBottom : "0.25rem",
+    minHeight : "6rem"
+  },
+  deleteEditButton : {
+    width : "fit-content",
+    margin : "0 0 0 auto"
+  },
+  noOfResultsContainer : {
+    margin : "0 0 1rem",
+    '& div' : {
+      display : "flex",
+      alignItems : "center"
+    },
+  },
+  bottomPart : {
+    display : "flex",
+    justifyContent : "space-between",
+    alignItems : "center",
+  },
+  lastRunText : {
+    marginRight : "0.5rem"
+  }
+}))
 
 function PerformanceCard({
   id,
@@ -37,6 +75,7 @@ function PerformanceCard({
     ev.stopPropagation();
     fn();
   }
+  const classes=useStyles()
 
   return (
     <FlipCard
@@ -52,8 +91,8 @@ function PerformanceCard({
           <Typography variant="h6" component="div">
             {name}
           </Typography>
-          <div style={{ margin : "0 0 1rem" }}>
-            <div style={{ display : "flex", alignItems : "center" }}>
+          <div className={classes.noOfResultsContainer} >
+            <div >
               <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                 {(results).toLocaleString('en')}
               </Typography>
@@ -63,8 +102,8 @@ function PerformanceCard({
             </div>
           </div>
         </div>
-        <div style={{ display : "flex", justifyContent : "space-between", alignItems : "center" }}>
-          <div style={{ marginRight : "0.5rem" }}>
+        <div className={classes.bottomPart} >
+          <div className={classes.lastRunText} >
             <div>
               {lastRun
                 ? (
@@ -75,7 +114,7 @@ function PerformanceCard({
                 : null}
             </div>
           </div>
-          <div style={{ display : "flex", justifyContent : "flex-end", alignItems : "center" }}>
+          <div className={classes.cardButtons} >
             <Button
               variant="contained"
               onClick={(ev) =>
@@ -91,7 +130,7 @@ function PerformanceCard({
                   });
                 })
               }
-              style={{ marginRight : "0.5rem" }}
+              className={classes.testsButton}
             >
               {renderTable
                 ? "Hide"
@@ -107,7 +146,7 @@ function PerformanceCard({
           </div>
         </div>
         {renderTable ? (
-          <div onClick={(ev) => ev.stopPropagation()} style={{ marginTop : "0.5rem" }}>
+          <div onClick={(ev) => ev.stopPropagation()} className={classes.perfResultsContainer} >
             <PerformanceResults
               // @ts-ignore
               CustomHeader={<Typography variant="h6">Test Results</Typography>}
@@ -122,8 +161,7 @@ function PerformanceCard({
 
       {/* BACK PART */}
       <>
-        <Grid
-          style={{ marginBottom : "0.25rem" }}
+        <Grid className={classes.backGrid}
           container
           spacing={1}
           alignContent="space-between"
@@ -135,7 +173,7 @@ function PerformanceCard({
             </Typography>
           </Grid>
           <Grid item xs={4}>
-            <div style={{ width : "fit-content", margin : "0 0 0 auto" }}>
+            <div className={classes.deleteEditButton} >
               <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
                 <EditIcon color="primary" />
               </IconButton>

@@ -23,7 +23,7 @@ func (r *Resolver) getPerfResult(ctx context.Context, provider models.Provider, 
 		return nil, err
 	}
 
-	tokenString := ctx.Value("token").(string)
+	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
 	bdr, err := provider.GetResult(tokenString, resultID)
 
@@ -166,7 +166,7 @@ func (r *Resolver) subscribePerfProfiles(ctx context.Context, provider models.Pr
 }
 
 func (r *Resolver) getPerformanceProfiles(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PerfPageProfiles, error) {
-	tokenString := ctx.Value("token").(string)
+	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
 	bdr, err := provider.GetPerformanceProfiles(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
 
@@ -186,7 +186,7 @@ func (r *Resolver) getPerformanceProfiles(ctx context.Context, provider models.P
 }
 
 func (r *Resolver) fetchAllResults(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.PerfPageResult, error) {
-	tokenString := ctx.Value("token").(string)
+	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
 	bdr, err := provider.FetchAllResults(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, *selector.From, *selector.To)
 

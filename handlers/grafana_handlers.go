@@ -113,7 +113,9 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
+	// Get the k8sconfig
+	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
+	if !ok || k8sconfig == nil {
 		h.log.Error(ErrInvalidK8SConfig)
 		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
