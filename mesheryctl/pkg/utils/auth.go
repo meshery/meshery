@@ -28,6 +28,8 @@ type Provider struct {
 
 // NewRequest creates *http.Request and handles adding authentication for Meshery itself
 func NewRequest(method string, url string, body io.Reader) (*http.Request, error) {
+
+	client := &http.Client{}
 	// create new request
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -56,6 +58,28 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	err = AddAuthDetails(req, tokenPath)
 	if err != nil {
 		return nil, ErrAttachAuthToken(err)
+	}
+
+	// check status code from request, checks for issues with auth token
+	resp, err := client.Do(req)
+
+	if err != nil && resp == nil {
+		return req, ErrFailRequest(err)
+	}
+
+	// failsafe for having an expired token
+	if resp.StatusCode == 302 {
+		return req, InvalidToken()
+	}
+
+	// failsafe for not being authenticated
+	if ContentTypeIsHTML(resp) {
+		return req, ErrUnauthenticated()
+	}
+
+	// failsafe for bad api call
+	if resp.StatusCode != 200 {
+		return req, ErrFailReqStatus(resp.StatusCode)
 	}
 
 	return req, nil
