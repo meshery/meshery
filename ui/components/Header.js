@@ -20,8 +20,12 @@ import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatu
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Input from '@material-ui/core/Input';
 import { Checkbox, Button } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import { Search } from '@material-ui/icons';
+import { TextField } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
+import { Paper } from '@material-ui/core';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -48,6 +52,7 @@ const styles = (theme) => ({
   appBarOnDrawerOpen : {
     padding : theme.spacing(1.4),
     backgroundColor : "#396679",
+    shadowColor : " #808080",
     zIndex : theme.zIndex.drawer+1,
     [theme.breakpoints.between(635,732)] : { padding : theme.spacing(0.75,1.4), },
     [theme.breakpoints.between(600,635)] : { padding : theme.spacing(0.4,1.4), },
@@ -71,15 +76,15 @@ const styles = (theme) => ({
     backgroundColor : "white",
     borderRadius : "50%",
     color : "black",
-    height : "1.35rem",
-    width : "1.35rem",
+    height : "1.30rem",
+    width : "1.30rem",
     display : "flex",
     justifyContent : "center",
     alignItems : "center",
     position : "absolute",
     zIndex : -1,
-    right : "-0.85rem",
-    top : "-0.35rem"
+    right : "-0.75rem",
+    top : "-0.29rem"
   },
   cbadgeContainer : {
     display : "flex",
@@ -96,10 +101,17 @@ const styles = (theme) => ({
     padding : "1rem",
     zIndex : 1201,
     marginTop : "0.8rem",
-    width : "12rem"
+    boxShadow : "20px #979797"
   },
   chip : {
     margin : "0.25rem 0",
+  },
+  AddIcon : {
+    width : theme.spacing(2.5),
+    paddingRight : theme.spacing(0.5),
+  },
+  searchIcon : {
+    width : theme.spacing(3.5),
   }
 });
 
@@ -121,7 +133,7 @@ function K8sContextMenu({
           console.log(contexts);
           setAnchorEl(event.target)
         }}
-        style={{ marginRight : "1.25rem" }}
+        style={{ marginRight : "0.5rem" }}
       >
         <div className={classes.cbadgeContainer}>
           <img src="/static/img/kubernetes.svg" width="24px" height="24px"/>
@@ -132,6 +144,7 @@ function K8sContextMenu({
         open={open}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
+        style={{ zIndex : 10000 }}
         anchorOrigin={{
           vertical : 'bottom',
           horizontal : 'center',
@@ -140,17 +153,20 @@ function K8sContextMenu({
           vertical : 'top',
           horizontal : 'center',
         }}
-        className={classes.cMenuContainer}
+
       >
         <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
-          <div>
+          <Paper className={classes.cMenuContainer}>
             <div>
-              <Input
+              <TextField
                 id="search-ctx"
-                label="Search"
-                placeholder="Search"
+                placeholder="Search..."
                 onChange={ev => searchContexts(ev.target.value)}
-                style={{ width : "100%", marginBottom : "0.25rem" }}
+                style={{ width : "100%" }}
+                InputProps={{ endAdornment :
+                (
+                  <Search className={classes.searchIcon} />
+                ) }}
               />
             </div>
             <div>
@@ -172,9 +188,10 @@ function K8sContextMenu({
                       variant="contained"
                       color="primary"
                       size="large"
-                      style={{ margin : "0.5rem auto" }}
+                      style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
                     >
-                      Add Clusters
+                      <AddIcon className={classes.AddIcon}/>
+                      Connect Clusters
                     </Button>
                   </Link>
               }
@@ -189,7 +206,7 @@ function K8sContextMenu({
                       />
                       <Chip
                         label={ctx?.name}
-                        icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
+                        avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
                         variant="outlined"
                         data-cy="chipContextName"
                       />
@@ -198,7 +215,7 @@ function K8sContextMenu({
                 </div>
               ))}
             </div>
-          </div>
+          </Paper>
         </ClickAwayListener>
       </Popper>
     </>
@@ -248,7 +265,7 @@ class Header extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <AppBar color="primary" position="sticky" elevation={0} className={onDrawerCollapse
+          <AppBar color="primary" position="sticky" elevation={2} className={onDrawerCollapse
             ? classes.appBarOnDrawerClosed
             : classes.appBarOnDrawerOpen}>
             <Toolbar className={onDrawerCollapse
@@ -300,7 +317,7 @@ class Header extends React.Component {
                   {/* </Link>
                     </IconButton>
                   </div> */}
-                  <div>
+                  <div className={classes.userSpan} >
                     <K8sContextMenu
                       classes={classes}
                       contexts={this.props.contexts}

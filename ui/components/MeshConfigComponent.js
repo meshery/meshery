@@ -636,7 +636,7 @@ handleNATSClick = () => {
       );
       showConfigured = (
         <div>
-          {contexts.map(ctx => (
+          {contexts?.map(ctx => (
             <Tooltip title={`Server: ${ctx.server}`}>
               <Chip
                 label={ctx?.name}
