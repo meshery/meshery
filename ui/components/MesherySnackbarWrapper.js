@@ -61,11 +61,14 @@ const styles = (theme) => ({
     paddingRight : 4, },
   button : { padding : 0,
     textTransform : "none", },
+  link : {
+    textDecoration : 'underline',
+    color : '#000', },
 });
 
 function MesherySnackbarWrapper(props) {
   const {
-    classes, className, message, onClose, variant, details
+    classes, className, message, onClose, variant, details, cause, errcode, remedy
   } = props;
   const Icon = variantIcon[variant];
 
@@ -111,10 +114,26 @@ function MesherySnackbarWrapper(props) {
           </Grid>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit >
-          <Paper className={classes.collapse} square variant="outlined" elevation={0}>
+          <Paper className={classes.collapse} square elevation={0}>
             <Typography variant="subtitle2" gutterBottom>DETAILS</Typography>
-            {details}
+            <div style={{ marginLeft : '10px' }}>{details}</div>
           </Paper>
+          { variant == "error" &&
+            <React.Fragment>
+              <Paper className={classes.collapse} square elevation={0}>
+                <Typography variant="subtitle2" gutterBottom>PROBABLE CAUSE</Typography>
+                <div style={{ marginLeft : '10px' }}>{cause}</div>
+              </Paper>
+              <Paper className={classes.collapse} square elevation={0}>
+                <Typography variant="subtitle2" gutterBottom>SUGGESTED REMEDIATION</Typography>
+                <div style={{ marginLeft : '10px' }}>{remedy}</div>
+              </Paper>
+              <Paper className={classes.collapse} square elevation={0}>
+                <Typography variant="subtitle2" gutterBottom>ERROR CODE LOOKUP</Typography>
+                <div style={{ marginLeft : '10px' }}><a className={classes.link} href="https://docs.meshery.io/reference/error-codes" rel="noreferrer" target="_blank">{errcode}</a></div>
+              </Paper>
+            </React.Fragment>
+          }
         </Collapse>
       </Card>
     </SnackbarContent>

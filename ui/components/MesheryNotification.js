@@ -75,14 +75,18 @@ const styles = (theme) => ({
  *  event_type: number,
  *  summary: string,
  *  detail: string,
- *  operation_id: string
+ *  cause: string,
+ *  errcode: string,
+ *  remedy: string,
  * }[]} events
  *
  * @returns {{
  *  event_type: number,
  *  summary: string,
  *  details: string,
- *  operation_id: string
+ *  cause: string,
+ *  errcode: string,
+ *  remedy: string,
  * }[]}
  */
 function getNotifications(events, type) {
@@ -101,7 +105,9 @@ function getNotifications(events, type) {
  *  event_type: number,
  *  summary: string,
  *  details: string,
- *  operation_id: string
+ *  cause: string,
+ *  errcode: string,
+ *  remedy: string
  * }[]} events
  */
 function getNotificationCount(events) {
@@ -374,6 +380,9 @@ class MesheryNotification extends React.Component {
                     eventSummary={event.summary}
                     deleteEvent={self.deleteEvent(ind)}
                     eventDetails={event.details || "Details Unavailable"}
+                    eventCause={event.cause || "Cause Unavailable"}
+                    eventErrCode={event.errcode || "Error Code Unavailable"}
+                    eventRemedy={event.remedy || "Remedy Unavailable"}
                   />
                 ))}
               </div>
