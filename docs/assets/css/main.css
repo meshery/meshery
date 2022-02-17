@@ -9219,8 +9219,9 @@ button.bg-dark:focus {
     margin-top: 1.5rem!important
 }
 
-.mr-4,
-.mx-4 {
+
+.mx-4 ,
+.mr-4{
     margin-right: 1.5rem!important
 }
 
@@ -9288,7 +9289,8 @@ button.bg-dark:focus {
 
 .pt-1,
 .py-1 {
-    padding-top: .25rem!important
+    padding-top: .25rem!important;
+    
 }
 
 .pr-1,
@@ -9298,7 +9300,8 @@ button.bg-dark:focus {
 
 .pb-1,
 .py-1 {
-    padding-bottom: .25rem!important
+    padding-bottom: .25rem!important;
+   
 }
 
 .pl-1,
@@ -18780,6 +18783,10 @@ footer {
     display: block;
     font-weight: bold;
 }
+.version-selector{
+    border-radius: 0.3rem;
+}
+
 /* mobile responisness for video*/
 
 @media(min-width:1rem) and (max-width:19.9rem){
