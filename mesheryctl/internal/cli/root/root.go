@@ -65,7 +65,6 @@ var RootCmd = &cobra.Command{
 func Execute() {
 	//log formatter for improved UX
 	utils.SetupLogrusFormatter()
-	utils.SetupMeshkitLogger()
 	_ = RootCmd.Execute()
 }
 
@@ -77,6 +76,7 @@ func init() {
 
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
+	cobra.OnInitialize(setupLogger)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
 
@@ -187,4 +187,8 @@ func setVerbose() {
 	if verbose {
 		log.SetLevel(log.DebugLevel)
 	}
+}
+
+func setupLogger() {
+	utils.SetupMeshkitLogger(verbose, nil)
 }

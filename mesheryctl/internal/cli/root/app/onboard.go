@@ -16,7 +16,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -249,7 +248,7 @@ func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int 
 		fmt.Printf("Enter the index of app: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			logger.Fatal(err)
+			utils.Log.Info(err)
 		}
 		response = strings.ToLower(strings.TrimSpace(response))
 		index, err := strconv.Atoi(response)

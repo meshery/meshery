@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"io"
 	"os"
 
 	"github.com/layer5io/meshkit/logger"
@@ -23,9 +24,11 @@ func SetupLogrusFormatter() {
 }
 
 // Initialize Meshkit Logger instance
-func SetupMeshkitLogger() {
+func SetupMeshkitLogger(debugLevel bool, output io.Writer) {
 	logger, err := logger.New("mesheryctl", logger.Options{
-		Format: logger.TerminalLogFormat,
+		Format:     logger.TerminalLogFormat,
+		DebugLevel: debugLevel,
+		Output:     output,
 	})
 	if err != nil {
 		log.Error(err)

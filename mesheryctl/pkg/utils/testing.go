@@ -157,10 +157,17 @@ func SetupContextEnv(t *testing.T) {
 }
 
 // setup logrus formatter and return the buffer in which commands output is to be set.
-func SetupLogrusGrabTesting(t *testing.T) *bytes.Buffer {
+func SetupLogrusGrabTesting(t *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logrus.SetOutput(b)
 	SetupLogrusFormatter()
+	return b
+}
+
+// setup meshkit logger for testing and return the buffer in which commands output is to be set.
+func SetupMeshkitLoggerTesting(t *testing.T, verbose bool) *bytes.Buffer {
+	b := bytes.NewBufferString("")
+	SetupMeshkitLogger(verbose, b)
 	return b
 }
 

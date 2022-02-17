@@ -125,7 +125,7 @@ func TestProfileCmd(t *testing.T) {
 			}
 
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			// Grab console prints
 			rescueStdout := os.Stdout
 			r, w, _ := os.Pipe()
@@ -176,7 +176,7 @@ func TestProfileCmd(t *testing.T) {
 
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 			PerfCmd.SetArgs(tt.Args)
 			PerfCmd.SetOutput(b)
