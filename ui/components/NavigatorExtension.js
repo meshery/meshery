@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import { createUseRemoteComponent, getDependencies, createRequires } from "@paciolan/remote-component";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import { bindActionCreators } from "redux";
 import { updateLoadTestData } from "../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
@@ -11,15 +10,16 @@ import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCore";
 import environment, { subscriptionClient } from "../lib/relayEnvironment";
 import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
+import LoadingScreen from "./LoadingComponents/LoadingComponent";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-function Extension({ grafana, prometheus, updateLoadTestData, url }) {
+function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
 
   if (loading) {
-    return <CircularProgress />;
+    return <LoadingScreen message="Loading Meshery Extension" />;
   }
 
   if (err != null) {
@@ -39,6 +39,8 @@ function Extension({ grafana, prometheus, updateLoadTestData, url }) {
         dataFetch,
         environment,
         subscriptionClient,
+        isDrawerCollapsed,
+        LoadingScreen,
         resolver : {
           query : {},
           mutation : {},
@@ -54,7 +56,8 @@ function Extension({ grafana, prometheus, updateLoadTestData, url }) {
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
   const prometheus = st.get("prometheus").toJS();
-  return { grafana, prometheus };
+  const isDrawerCollapsed = st.get("isDrawerCollapsed");
+  return { grafana, prometheus, isDrawerCollapsed };
 };
 
 const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreators(updateLoadTestData, dispatch) });

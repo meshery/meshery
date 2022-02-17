@@ -175,8 +175,7 @@ func SetupMeshkitLoggerTesting(t *testing.T, verbose bool) *bytes.Buffer {
 func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	viper.Reset()
 	ViperCompose = viper.New()
-	ViperDocker = viper.New()
-	ViperK8s = viper.New()
+	ViperMeshconfig = viper.New()
 
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext

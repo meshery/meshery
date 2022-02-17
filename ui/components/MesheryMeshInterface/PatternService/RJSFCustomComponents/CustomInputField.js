@@ -16,12 +16,6 @@ const CustomInputField = (props) => {
     justifyContent : "space-between"
   }
 
-  if (omitTitleFields.includes(name)) {
-    return <div key={props.id} style={style}>
-      <TextField label={prettifiedName} variant="outlined" size="small" autoFocus key={props.id} value={props.value} id={props.id} onChange={e => props?.onChange(e.target.value)} placeholder={`${prettifiedName}`} />
-    </div>
-  }
-
   return (
     <div key={props.id} style={style}>
       <TextField

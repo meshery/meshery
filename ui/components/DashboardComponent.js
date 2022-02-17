@@ -463,7 +463,7 @@ class DashboardComponent extends React.Component {
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
@@ -787,10 +787,13 @@ class DashboardComponent extends React.Component {
 
       if (configuredServer) {
         chp = <Tooltip title={`Server: ${configuredServer}`}>{chp}</Tooltip>;
+      } else {
+        chp=showConfigured;
       }
 
       showConfigured = <div showConfigured>{chp}</div>;
     }
+
 
     let showAdapters = "No adapters configured.";
     if (availableAdapters.length > 0) {

@@ -21,6 +21,8 @@ import (
 type Pattern struct {
 	// Name is the human-readable, display-friendly descriptor of the pattern
 	Name string `yaml:"name,omitempty" json:"name,omitempty"`
+	//Vars will be used to configure the pattern when it is imported from other patterns.
+	Vars map[string]interface{} `yaml:"vars,omitempty" json:"vars,omitempty"`
 	// PatternID is the moniker use to uniquely identify any given pattern
 	// Convention: SMP-###-v#.#.#
 	PatternID string              `yaml:"patternID,omitempty" json:"patternID,omitempty"`
@@ -51,7 +53,9 @@ type Service struct {
 // NewPatternFile takes in raw yaml and encodes it into a construct
 func NewPatternFile(yml []byte) (af Pattern, err error) {
 	err = yaml.Unmarshal(yml, &af)
-
+	if err != nil {
+		return af, err
+	}
 	for svcName, svc := range af.Services {
 		// If an explicit name is not given to the service then use
 		// the service identifier as its name

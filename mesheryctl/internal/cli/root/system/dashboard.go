@@ -45,7 +45,7 @@ var dashboardCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		log.Debug("fetching Meshery-UI endpoint")
+		log.Debug("Fetching Meshery-UI endpoint")
 
 		switch currCtx.GetPlatform() {
 		case "docker":
@@ -91,7 +91,7 @@ var dashboardCmd = &cobra.Command{
 			}
 
 			if err == nil {
-				err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+				err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
 				if err != nil {
 					return err
 				}
@@ -99,12 +99,20 @@ var dashboardCmd = &cobra.Command{
 
 		}
 
-		log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
-		err = utils.NavigateToBrowser(currCtx.GetEndpoint())
-		if err != nil {
-			log.Warn("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+		if !skipBrowserFlag {
+			log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
+			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
+			if err != nil {
+				log.Warn("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+			}
+		} else {
+			log.Info("Meshery UI available at: ", currCtx.GetEndpoint())
 		}
 
 		return nil
 	},
+}
+
+func init() {
+	dashboardCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
 }
