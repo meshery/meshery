@@ -18786,7 +18786,9 @@ footer {
 .version-selector{
     border-radius: 0.3rem;
 }
-
+.version-selector:focus{
+    outline: none;
+}
 /* mobile responisness for video*/
 
 @media(min-width:1rem) and (max-width:19.9rem){
