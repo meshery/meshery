@@ -127,7 +127,7 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			utils.PrintToTable(header, rows)
 			utils.Log.Error(fmt.Errorf("\n  Unable to communicate with Meshery: %v", err))
-			utils.Log.Error(fmt.Errorf("  See https://docs.meshery.io for help getting started with Meshery."))
+			utils.Log.Error(fmt.Errorf("  See https://docs.meshery.io for help getting started with Meshery"))
 			return
 		}
 
