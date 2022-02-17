@@ -126,7 +126,7 @@ func (mkcp *MesheryK8sContextPersister) SetMesheryK8sCurrentContext(id string) e
 		}
 
 		// Set the specified context as active
-		return tx.Model(K8sContext{}).Update("is_current_context", true).Where("id = ?", id).Error
+		return tx.Model(K8sContext{}).Where("id = ?", id).Update("is_current_context", true).Error
 	})
 }
 
