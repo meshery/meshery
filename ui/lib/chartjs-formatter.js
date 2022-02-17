@@ -266,7 +266,7 @@ export function makeTitle (rawdata,res) {
   if(res.kubernetes){
     title.push(`Kubernetes server version: ${res.kubernetes.server_version}`);
     title.push("Nodes:");
-    res.kubernetes.nodes.forEach((node, ind) => {
+    res.kubernetes?.nodes?.forEach((node, ind) => {
       title.push(`Node ${ind+1} - \nHostname: ${node.hostname} \nCPU: ${node.allocatable_cpu} \nMemory: ${node.allocatable_memory} \nArch: ${node.architecture} \nOS: ${node.os_image}
                     \nKubelet version: ${node.kubelet_version} \nContainer runtime: ${node.container_runtime_version}`);
     });
