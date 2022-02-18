@@ -96,6 +96,9 @@ const styles = (theme) => ({
   icon : {
     width : theme.spacing(2.5)
   },
+  Chip : {
+    backgroundColor : "white"
+  },
   cMenuContainer : {
     backgroundColor : "#EEEEEE",
     borderRadius : "3px",
@@ -231,7 +234,7 @@ function K8sContextMenu({
                             label={ctx?.name}
                             avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
                             variant="filled"
-                            color="primary"
+                            className={classes.Chip}
                             data-cy="chipContextName"
                           />
                         </>
