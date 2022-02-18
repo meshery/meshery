@@ -37,7 +37,7 @@ func TestResetCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			// setting up log to grab logs
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()

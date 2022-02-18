@@ -66,7 +66,7 @@ func TestAppList(t *testing.T) {
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			// Grab console prints
 			rescueStdout := os.Stdout
 			r, w, _ := os.Pipe()

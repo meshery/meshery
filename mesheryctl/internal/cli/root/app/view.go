@@ -12,7 +12,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -127,14 +126,14 @@ var viewCmd = &cobra.Command{
 					return err
 				}
 				if outFormatFlag == "json" {
-					log.Info(string(body))
+					utils.Log.Info(string(body))
 					continue
 				}
 				if outFormatFlag == "yaml" {
 					if body, err = yaml.JSONToYAML(body); err != nil {
 						return errors.Wrap(err, "failed to convert json to yaml")
 					}
-					log.Info(string(body))
+					utils.Log.Info(string(body))
 					continue
 				}
 			}
@@ -148,7 +147,7 @@ var viewCmd = &cobra.Command{
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
 		if viewAllFlag || isID {
-			log.Info(string(body))
+			utils.Log.Info(string(body))
 		}
 		return nil
 	},

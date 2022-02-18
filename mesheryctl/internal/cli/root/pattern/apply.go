@@ -16,7 +16,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -57,7 +56,7 @@ var applyCmd = &cobra.Command{
 			patternName := strings.Join(args, "%20")
 
 			// search and fetch patterns with pattern-name
-			log.Debug("Fetching patterns")
+			utils.Log.Debug("Fetching patterns")
 
 			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
@@ -123,7 +122,7 @@ var applyCmd = &cobra.Command{
 					if err != nil {
 						return err
 					}
-					log.Debug("saved pattern file")
+					utils.Log.Debug("saved pattern file")
 					var response []*models.MesheryPattern
 					// failsafe (bad api call)
 					if resp.StatusCode != 200 {
@@ -150,8 +149,8 @@ var applyCmd = &cobra.Command{
 					return err
 				}
 
-				log.Debug(url)
-				log.Debug(path)
+				utils.Log.Debug(url)
+				utils.Log.Debug(path)
 
 				// save the pattern with Github URL
 				if !skipSave {
@@ -190,7 +189,7 @@ var applyCmd = &cobra.Command{
 				if err != nil {
 					return err
 				}
-				log.Debug("remote hosted pattern request success")
+				utils.Log.Debug("remote hosted pattern request success")
 				var response []*models.MesheryPattern
 				// failsafe (bad api call)
 				if resp.StatusCode != 200 {
@@ -229,9 +228,9 @@ var applyCmd = &cobra.Command{
 		}
 
 		if res.StatusCode == 200 {
-			log.Info("pattern successfully applied")
+			utils.Log.Info("pattern successfully applied")
 		}
-		log.Info(string(body))
+		utils.Log.Info(string(body))
 		return nil
 	},
 }
@@ -252,15 +251,15 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 		fmt.Printf("Enter the index of profile: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			log.Fatal(err)
+			utils.Log.Warn(err)
 		}
 		response = strings.ToLower(strings.TrimSpace(response))
 		index, err := strconv.Atoi(response)
 		if err != nil {
-			log.Info(err)
+			utils.Log.Info(err)
 		}
 		if index < 0 || index >= len(profiles) {
-			log.Info("Invalid index")
+			utils.Log.Info("Invalid index")
 		} else {
 			return index
 		}

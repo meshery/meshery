@@ -129,9 +129,9 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 		// Run test based on flags
 		if testName == "" {
-			log.Debug("Test Name not provided")
+			utils.Log.Debug("Test Name not provided")
 			testName = utils.StringWithCharset(8)
-			log.Debug("Using random test name: ", testName)
+			utils.Log.Debug("Using random test name: ", testName)
 		}
 
 		// Throw error if a profile name is not provided
@@ -237,7 +237,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		}
 		req.URL.RawQuery = q.Encode()
 
-		log.Info("Initiating Performance test ...")
+		utils.Log.Info("Initiating Performance test ...")
 
 		resp, err := client.Do(req)
 		if err != nil {
@@ -255,9 +255,9 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		if err != nil {
 			return errors.Wrap(err, utils.PerfError("failed to read response body"))
 		}
-		log.Debug(string(data))
+		utils.Log.Debug(string(data))
 
-		log.Info("Test Completed Successfully!")
+		utils.Log.Info("Test Completed Successfully!")
 		return nil
 	},
 }
@@ -274,7 +274,7 @@ func init() {
 }
 
 func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlConfig) (string, string, error) {
-	log.Debug("Creating new performance profile inside function")
+	utils.Log.Debug("Creating new performance profile inside function")
 
 	if profileName == "" {
 		return "", "", ErrNoProfileName()
@@ -363,6 +363,6 @@ func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlCon
 	profileID = response.ID.String()
 	profileName = response.Name
 
-	log.Debug("New profile created")
+	utils.Log.Debug("New profile created")
 	return profileID, profileName, nil
 }
