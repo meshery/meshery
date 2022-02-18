@@ -257,7 +257,6 @@ func (ctx *Context) ValidateVersion() error {
 }
 
 func (ctx *Context) ValidateChannel(c string) (bool, error) {
-
 	verCurrent := ctx.GetVersion() // store current version
 	var parts []string
 	if parts = strings.SplitN(c, "-", 2); len(parts) < 2 {
