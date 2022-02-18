@@ -26,6 +26,7 @@ import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import { Paper } from '@material-ui/core';
+import { Grow } from '@material-ui/core';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -95,13 +96,27 @@ const styles = (theme) => ({
   icon : {
     width : theme.spacing(2.5)
   },
+  Chip : {
+    backgroundColor : "white"
+  },
   cMenuContainer : {
-    backgroundColor : "white",
+    backgroundColor : "#EEEEEE",
     borderRadius : "3px",
     padding : "1rem",
     zIndex : 1201,
-    marginTop : "0.8rem",
-    boxShadow : "20px #979797"
+    marginTop : "1.8rem",
+    boxShadow : "20px #979797",
+    transition : "linear .2s",
+    transitionProperty : "height"
+  },
+  alertEnter : {
+    opacity : "0",
+    transform : "scale(0.9)",
+  },
+  alertEnterActive : {
+    opacity : "1",
+    transform : "translateX(0)",
+    transition : "opacity 300ms, transform 300ms"
   },
   chip : {
     margin : "0.25rem 0",
@@ -133,6 +148,10 @@ function K8sContextMenu({
           console.log(contexts);
           setAnchorEl(event.target)
         }}
+        aria-owns={open
+          ? 'menu-list-grow'
+          : undefined}
+        aria-haspopup="true"
         style={{ marginRight : "0.5rem" }}
       >
         <div className={classes.cbadgeContainer}>
@@ -153,71 +172,84 @@ function K8sContextMenu({
           vertical : 'top',
           horizontal : 'center',
         }}
-
+        transition
+        placement="bottom"
       >
-        <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
-          <Paper className={classes.cMenuContainer}>
-            <div>
-              <TextField
-                id="search-ctx"
-                placeholder="Search..."
-                onChange={ev => searchContexts(ev.target.value)}
-                style={{ width : "100%" }}
-                InputProps={{ endAdornment :
+        {({ TransitionProps, placement }) => (
+
+          <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+            <Grow in={open} {...TransitionProps}  timeout={300} id="menu-list-grow"     style={{ transformOrigin : placement === 'bottom'
+              ? 'left top'
+              : 'left bottom' }}
+            >
+              <Paper className={classes.cMenuContainer}>
+                <div>
+                  <TextField
+                    id="search-ctx"
+                    placeholder="search..."
+                    onChange={ev => searchContexts(ev.target.value)}
+                    style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
+                    InputProps={{ endAdornment :
                 (
                   <Search className={classes.searchIcon} />
                 ) }}
-              />
-            </div>
-            <div>
-              {
-                contexts?.total_count
-                  ?
-                  <>
-                    <Checkbox
-                      checked={activeContexts.includes("all")}
-                      onChange={() => setActiveContexts("all")}
-                      color="primary"
-                    />
-                    <span>Select All</span>
-                  </>
-                  :
-                  <Link href="/settings">
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                      style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
-                    >
-                      <AddIcon className={classes.AddIcon}/>
-                      Connect Clusters
-                    </Button>
-                  </Link>
-              }
-              {contexts?.contexts?.map(ctx => (
-                <div id={ctx.id} className={classes.chip}>
-                  <Tooltip title={`Server: ${ctx.server}`}>
-                    <>
-                      <Checkbox
-                        checked={activeContexts.includes(ctx.id)}
-                        onChange={() => setActiveContexts(ctx.id)}
-                        color="primary"
-                      />
-                      <Chip
-                        label={ctx?.name}
-                        avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
-                        variant="outlined"
-                        data-cy="chipContextName"
-                      />
-                    </>
-                  </Tooltip>
+                  />
                 </div>
-              ))}
-            </div>
-          </Paper>
-        </ClickAwayListener>
+                <div>
+                  {
+                    contexts?.total_count
+                      ?
+                      <>
+                        <Checkbox
+                          checked={activeContexts.includes(".all")}
+                          onChange={() => setActiveContexts(".all")}
+                          color="primary"
+                        />
+                        <span>Select All</span>
+                      </>
+                      :
+                      <Link href="/settings">
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          size="large"
+                          style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
+                        >
+                          <AddIcon className={classes.AddIcon}/>
+                      Connect Clusters
+                        </Button>
+                      </Link>
+                  }
+                  {contexts?.contexts?.map(ctx => (
+                    <div id={ctx.id} className={classes.chip}>
+                      <Tooltip title={`Server: ${ctx.server}`}>
+                        <>
+                          <Checkbox
+                            checked={activeContexts.includes(ctx.id)}
+                            onChange={() => setActiveContexts(ctx.id)}
+                            color="primary"
+                          />
+                          <Chip
+                            label={ctx?.name}
+                            avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
+                            variant="filled"
+                            className={classes.Chip}
+                            data-cy="chipContextName"
+                          />
+                        </>
+                      </Tooltip>
+                    </div>
+                  ))}
+                </div>
+
+              </Paper>
+            </Grow>
+          </ClickAwayListener>
+
+        )}
       </Popper>
+
     </>
   )
 }
