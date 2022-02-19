@@ -75,6 +75,7 @@ const styles = (theme) => ({
  *  event_type: number,
  *  summary: string,
  *  detail: string,
+ *  operation_id: string
  *  cause: string,
  *  errcode: string,
  *  remedy: string,
@@ -84,6 +85,7 @@ const styles = (theme) => ({
  *  event_type: number,
  *  summary: string,
  *  details: string,
+ *  operation_id: string
  *  cause: string,
  *  errcode: string,
  *  remedy: string,
@@ -105,6 +107,7 @@ function getNotifications(events, type) {
  *  event_type: number,
  *  summary: string,
  *  details: string,
+ *  operation_id: string
  *  cause: string,
  *  errcode: string,
  *  remedy: string
