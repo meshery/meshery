@@ -787,10 +787,13 @@ class DashboardComponent extends React.Component {
 
       if (configuredServer) {
         chp = <Tooltip title={`Server: ${configuredServer}`}>{chp}</Tooltip>;
+      } else {
+        chp=showConfigured;
       }
 
       showConfigured = <div showConfigured>{chp}</div>;
     }
+
 
     let showAdapters = "No adapters configured.";
     if (availableAdapters.length > 0) {

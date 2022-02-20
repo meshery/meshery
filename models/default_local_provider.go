@@ -43,6 +43,7 @@ type DefaultLocalProvider struct {
 	MesheryPatternResourcePersister *PatternResourcePersister
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
+	MesheryK8sContextPersister      *MesheryK8sContextPersister
 	GenericPersister                database.Handler
 	KubeClient                      *mesherykube.Client
 }
@@ -144,6 +145,74 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 // Logout - logout from provider backend
 func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/user/login", http.StatusFound)
+}
+
+func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+}
+
+func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return MesheryK8sContextPage{}, ErrPageNumber(err)
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		return MesheryK8sContextPage{}, ErrPageSize(err)
+	}
+
+	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+}
+
+func (l *DefaultLocalProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) GetK8sContext(token, id string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
+	page := 0
+	pageSize := 25
+	results := []*K8sContext{}
+
+	for {
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "")
+		if err != nil {
+			return results, err
+		}
+
+		results = append(results, res.Contexts...)
+
+		if page*pageSize >= res.TotalCount {
+			break
+		}
+
+		page++
+	}
+
+	return results, nil
+}
+
+func (l *DefaultLocalProvider) SetCurrentContext(token, id string) (K8sContext, error) {
+	if err := l.MesheryK8sContextPersister.SetMesheryK8sCurrentContext(id); err != nil {
+		return K8sContext{}, err
+	}
+
+	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) GetCurrentContext(token string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.GetMesheryK8sCurrentContext()
 }
 
 // FetchResults - fetches results from provider backend
@@ -1076,13 +1145,8 @@ func githubRepoApplicationScan(
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				name, err := GetApplicationName(string(f.Content))
-				if err != nil {
-					return err
-				}
-
 				af := MesheryApplication{
-					Name:            name,
+					Name:            strings.TrimSuffix(f.Name, ext),
 					ApplicationFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
@@ -1192,14 +1256,9 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 		return nil, err
 	}
 	result := string(body)
-
-	name, err := GetApplicationName(result)
-	if err != nil {
-		return nil, err
-	}
-
+	url := strings.Split(fileURL, "/")
 	af := MesheryApplication{
-		Name:            name,
+		Name:            url[len(url)-1],
 		ApplicationFile: result,
 		Location: map[string]interface{}{
 			"type":   "http",

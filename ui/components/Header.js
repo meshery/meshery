@@ -13,13 +13,20 @@ import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
+import Chip from '@material-ui/core/Chip';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
-
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faHome } from '@fortawesome/free-solid-svg-icons';
+import Popper from '@material-ui/core/Popper';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import { Checkbox, Button } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import { Search } from '@material-ui/icons';
+import { TextField } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
+import { Paper } from '@material-ui/core';
+import { Grow } from '@material-ui/core';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -46,6 +53,7 @@ const styles = (theme) => ({
   appBarOnDrawerOpen : {
     padding : theme.spacing(1.4),
     backgroundColor : "#396679",
+    shadowColor : " #808080",
     zIndex : theme.zIndex.drawer+1,
     [theme.breakpoints.between(635,732)] : { padding : theme.spacing(0.75,1.4), },
     [theme.breakpoints.between(600,635)] : { padding : theme.spacing(0.4,1.4), },
@@ -64,7 +72,187 @@ const styles = (theme) => ({
   },
   itemActiveItem : { color : "#00B39F" },
   headerIcons : { fontSize : "1.5rem", height : "1.5rem", width : "1.5rem" },
+  cbadge : {
+    fontSize : "0.65rem",
+    backgroundColor : "white",
+    borderRadius : "50%",
+    color : "black",
+    height : "1.30rem",
+    width : "1.30rem",
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    position : "absolute",
+    zIndex : -1,
+    right : "-0.75rem",
+    top : "-0.29rem"
+  },
+  cbadgeContainer : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    position : "relative"
+  },
+  icon : {
+    width : theme.spacing(2.5)
+  },
+  Chip : {
+    backgroundColor : "white"
+  },
+  cMenuContainer : {
+    backgroundColor : "#EEEEEE",
+    borderRadius : "3px",
+    padding : "1rem",
+    zIndex : 1201,
+    marginTop : "1.8rem",
+    boxShadow : "20px #979797",
+    transition : "linear .2s",
+    transitionProperty : "height"
+  },
+  alertEnter : {
+    opacity : "0",
+    transform : "scale(0.9)",
+  },
+  alertEnterActive : {
+    opacity : "1",
+    transform : "translateX(0)",
+    transition : "opacity 300ms, transform 300ms"
+  },
+  chip : {
+    margin : "0.25rem 0",
+  },
+  AddIcon : {
+    width : theme.spacing(2.5),
+    paddingRight : theme.spacing(0.5),
+  },
+  searchIcon : {
+    width : theme.spacing(3.5),
+  }
 });
+
+function K8sContextMenu({
+  classes = {},
+  contexts = {},
+  activeContexts = [],
+  setActiveContexts = () => {},
+  searchContexts = () => {}
+}) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  return (
+    <>
+      <IconButton
+        aria-label="contexts"
+        onClick={(event) => {
+          console.log(contexts);
+          setAnchorEl(event.target)
+        }}
+        aria-owns={open
+          ? 'menu-list-grow'
+          : undefined}
+        aria-haspopup="true"
+        style={{ marginRight : "0.5rem" }}
+      >
+        <div className={classes.cbadgeContainer}>
+          <img src="/static/img/kubernetes.svg" width="24px" height="24px"/>
+          <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
+        </div>
+      </IconButton>
+      <Popper
+        open={open}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        style={{ zIndex : 10000 }}
+        anchorOrigin={{
+          vertical : 'bottom',
+          horizontal : 'center',
+        }}
+        transformOrigin={{
+          vertical : 'top',
+          horizontal : 'center',
+        }}
+        transition
+        placement="bottom"
+      >
+        {({ TransitionProps, placement }) => (
+
+          <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+            <Grow in={open} {...TransitionProps}  timeout={300} id="menu-list-grow"     style={{ transformOrigin : placement === 'bottom'
+              ? 'left top'
+              : 'left bottom' }}
+            >
+              <Paper className={classes.cMenuContainer}>
+                <div>
+                  <TextField
+                    id="search-ctx"
+                    placeholder="search..."
+                    onChange={ev => searchContexts(ev.target.value)}
+                    style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
+                    InputProps={{ endAdornment :
+                (
+                  <Search className={classes.searchIcon} />
+                ) }}
+                  />
+                </div>
+                <div>
+                  {
+                    contexts?.total_count
+                      ?
+                      <>
+                        <Checkbox
+                          checked={activeContexts.includes(".all")}
+                          onChange={() => setActiveContexts(".all")}
+                          color="primary"
+                        />
+                        <span>Select All</span>
+                      </>
+                      :
+                      <Link href="/settings">
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          size="large"
+                          style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
+                        >
+                          <AddIcon className={classes.AddIcon}/>
+                      Connect Clusters
+                        </Button>
+                      </Link>
+                  }
+                  {contexts?.contexts?.map(ctx => (
+                    <div id={ctx.id} className={classes.chip}>
+                      <Tooltip title={`Server: ${ctx.server}`}>
+                        <>
+                          <Checkbox
+                            checked={activeContexts.includes(ctx.id)}
+                            onChange={() => setActiveContexts(ctx.id)}
+                            color="primary"
+                          />
+                          <Chip
+                            label={ctx?.name}
+                            avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
+                            variant="filled"
+                            className={classes.Chip}
+                            data-cy="chipContextName"
+                          />
+                        </>
+                      </Tooltip>
+                    </div>
+                  ))}
+                </div>
+
+              </Paper>
+            </Grow>
+          </ClickAwayListener>
+
+        )}
+      </Popper>
+
+    </>
+  )
+}
 
 class Header extends React.Component {
   constructor(props){
@@ -109,7 +297,7 @@ class Header extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <AppBar color="primary" position="sticky" elevation={0} className={onDrawerCollapse
+          <AppBar color="primary" position="sticky" elevation={2} className={onDrawerCollapse
             ? classes.appBarOnDrawerClosed
             : classes.appBarOnDrawerOpen}>
             <Toolbar className={onDrawerCollapse
@@ -161,6 +349,15 @@ class Header extends React.Component {
                   {/* </Link>
                     </IconButton>
                   </div> */}
+                  <div className={classes.userSpan} >
+                    <K8sContextMenu
+                      classes={classes}
+                      contexts={this.props.contexts}
+                      activeContexts={this.props.activeContexts}
+                      setActiveContexts={this.props.setActiveContexts}
+                      searchContexts={this.props.searchContexts}
+                    />
+                  </div>
 
                   <div data-test="settings-button">
                     <IconButton color="inherit">

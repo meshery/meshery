@@ -103,14 +103,12 @@ func TestAppView(t *testing.T) {
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			//Grab Logs
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 			AppCmd.SetOut(b)
-			t.Log(tt.Args)
 			AppCmd.SetArgs(tt.Args)
 			// AppCmd.SetOutput(rescueStdout)
 			err := AppCmd.Execute()
-			t.Log("Executed")
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {

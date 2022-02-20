@@ -19,6 +19,7 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
@@ -128,6 +129,8 @@ var (
 	KeepNamespace bool
 	// TokenFlag sets token location passed by user with --token
 	TokenFlag = "Not Set"
+	// global logger variable
+	Log logger.Handler
 )
 
 var CfgFile string

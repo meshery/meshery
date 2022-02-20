@@ -26,7 +26,13 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		delete = false
 	}
 
-	if r.Config.KubeClient.KubeClient == nil {
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok || kubeclient == nil {
+		r.Log.Error(ErrNilClient)
+		return model.StatusUnknown, ErrNilClient
+	}
+
+	if kubeclient.KubeClient == nil {
 		r.Log.Error(ErrNilClient)
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
 			Source: broadcast.OperatorSyncChannel,
@@ -89,7 +95,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			Data:   false,
 			Type:   "health",
 		})
-	}(delete, r.Config.KubeClient)
+	}(delete, kubeclient)
 
 	return model.StatusProcessing, nil
 }
@@ -97,11 +103,12 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provider) (*model.OperatorStatus, error) {
 	status := model.StatusUnknown
 	version := string(model.StatusUnknown)
-	if r.Config.KubeClient == nil {
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok || kubeclient == nil {
 		return nil, ErrMesheryClient(nil)
 	}
 
-	name, version, err := model.GetOperator(r.Config.KubeClient)
+	name, version, err := model.GetOperator(kubeclient)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -118,7 +125,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 		status = model.StatusEnabled
 	}
 
-	controllers, err := model.GetControllersInfo(r.Config.KubeClient, r.BrokerConn, r.meshsyncLivenessChannel)
+	controllers, err := model.GetControllersInfo(kubeclient, r.BrokerConn, r.meshsyncLivenessChannel)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -138,7 +145,11 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 }
 
 func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider) (*model.OperatorControllerStatus, error) {
-	mesheryclient, err := operatorClient.New(&r.Config.KubeClient.RestConfig)
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok || kubeclient == nil {
+		return nil, ErrMesheryClient(nil)
+	}
+	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +162,11 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 }
 
 func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) (*model.OperatorControllerStatus, error) {
-	mesheryclient, err := operatorClient.New(&r.Config.KubeClient.RestConfig)
+	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
+	if !ok || kubeclient == nil {
+		return nil, ErrMesheryClient(nil)
+	}
+	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +193,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 
 	go func() {
 		r.Log.Info("Operator subscription started")
-		err := r.connectToBroker(context.TODO(), provider)
+		err := r.connectToBroker(ctx, provider)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
 			// The subscription should remain live to send future messages and only die when context is done
@@ -189,7 +204,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 		status, err := r.getOperatorStatus(ctx, provider)
 		if err != nil {
 			r.Log.Error(ErrOperatorSubscription(err))
-			// return
+			return
 		}
 		if status.Status != model.StatusEnabled {
 			_, err = r.changeOperatorStatus(ctx, provider, model.StatusEnabled)
