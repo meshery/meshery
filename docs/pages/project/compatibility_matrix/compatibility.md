@@ -2,6 +2,7 @@
 layout: default
 title: Compatibility Matrix
 permalink: project/compatibility-matrix
+redirect_from: /
 description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"
