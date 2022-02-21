@@ -49,7 +49,7 @@ func TestViewContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -89,7 +89,7 @@ func TestListContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -130,7 +130,7 @@ func TestDeleteContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -196,7 +196,7 @@ func TestAddContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -272,7 +272,7 @@ func TestSwitchContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
