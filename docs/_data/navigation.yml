@@ -4,9 +4,5 @@
   external_url: https://meshery.io
 - title: Discuss
   external_url: https://discuss.layer5.io
-- title: Slack
-  external_url: "https://slack.layer5.io"
 - title: GitHub
   external_url: https://github.com/meshery/meshery
-- title: "🇲🇽 Español"
-  url: "es"

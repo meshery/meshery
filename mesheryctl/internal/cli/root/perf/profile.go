@@ -9,7 +9,6 @@ import (
 
 	"github.com/manifoldco/promptui"
 	termbox "github.com/nsf/termbox-go"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -31,11 +30,11 @@ var profileCmd = &cobra.Command{
 	Long:  `List all the available performance profiles`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-// List performance profiles (maximum 25 profiles)	
+// List performance profiles (maximum 25 profiles)
 mesheryctl perf profile
 
 // List performance profiles with search (maximum 25 profiles)
-mesheryctl perf profile test 2 
+mesheryctl perf profile test 2
 
 // View single performance profile with detailed information
 mesheryctl perf profile test --view
@@ -64,7 +63,7 @@ mesheryctl perf profile test --view
 		}
 
 		if len(profiles) == 0 {
-			log.Info("No Performance Profiles to display")
+			utils.Log.Info("No Performance Profiles to display")
 			return nil
 		}
 
@@ -79,7 +78,7 @@ mesheryctl perf profile test --view
 			} else if outputFormatFlag != "json" {
 				return ErrInvalidOutputChoice()
 			}
-			log.Info(string(body))
+			utils.Log.Info(string(body))
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
 		} else { // print single profile
@@ -126,7 +125,7 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 		url = url + "&search=" + searchString
 	}
 
-	log.Debug(url)
+	utils.Log.Debug(url)
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {

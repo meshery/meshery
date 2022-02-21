@@ -9,7 +9,6 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -43,14 +42,14 @@ var resultCmd = &cobra.Command{
 	Long:  `List all the available test results of a performance profile`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-// List Test results (maximum 25 results)	
-mesheryctl perf result saturday-profile 
+// List Test results (maximum 25 results)
+mesheryctl perf result saturday-profile
 
 // View other set of performance results with --page (maximum 25 results)
-mesheryctl perf result saturday-profile --page 2 
+mesheryctl perf result saturday-profile --page 2
 
 // View single performance result with detailed information
-mesheryctl perf result saturday-profile --view 
+mesheryctl perf result saturday-profile --view
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
@@ -81,7 +80,7 @@ mesheryctl perf result saturday-profile --view
 		}
 
 		if len(profiles) == 0 {
-			log.Info("No Performance Profiles found with the given name")
+			utils.Log.Info("No Performance Profiles found with the given name")
 			return nil
 		}
 
@@ -106,7 +105,7 @@ mesheryctl perf result saturday-profile --view
 		}
 
 		if len(data) == 0 {
-			log.Info("No Test Results to display")
+			utils.Log.Info("No Test Results to display")
 			return nil
 		}
 
@@ -119,7 +118,7 @@ mesheryctl perf result saturday-profile --view
 			} else if outputFormatFlag != "json" {
 				return ErrInvalidOutputChoice()
 			}
-			log.Info(string(body))
+			utils.Log.Info(string(body))
 		} else if !viewSingleResult { // print all results
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data)
 		} else {
