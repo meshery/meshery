@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"strconv"
 	"strings"
 
@@ -116,7 +115,7 @@ mesheryctl perf profile test --view
 
 // Fetch performance profiles
 func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]models.PerformanceProfile, []byte, error) {
-	client := &http.Client{}
+
 	var response *models.PerformanceProfilesAPIResponse
 
 	url := baseURL + "/api/user/performance/profiles"
@@ -134,8 +133,10 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 		return nil, nil, err
 	}
 
-	resp, err := client.Do(req)
-
+	resp, err := utils.NewResponse(req)
+	if err != nil {
+		return nil, nil, err
+	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

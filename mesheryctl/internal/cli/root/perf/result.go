@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"strings"
 	"time"
 
@@ -149,7 +148,6 @@ mesheryctl perf result saturday-profile --view
 
 // Fetch results for a specific profile
 func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNumber int) ([]models.PerformanceResult, []byte, error) {
-	client := &http.Client{}
 	var response *models.PerformanceResultsAPIResponse
 
 	url := baseURL + "/api/user/performance/profiles/" + profileID + "/results"
@@ -160,7 +158,11 @@ func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNum
 	if err != nil {
 		return nil, nil, err
 	}
-	resp, err := client.Do(req)
+
+	resp, err := utils.NewResponse(req)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
