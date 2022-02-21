@@ -28,14 +28,14 @@ function deleteDescriptionFromJSONSchema(jsonSchema) {
  * @param {Object.<String, Object>} jsonSchema
  * @returns
  */
-function getRefinedJsonSchema(jsonSchema, hideTitle = true) {
+function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) {
   let refinedSchema;
   try {
     refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
     refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
     refinedSchema = addTitleToPropertiesJSONSchema(refinedSchema)
   } catch (e) {
-    handleError(e, "schema parsing problem", "fatal")
+    handleError(e, "schema parsing problem")
   }
   return refinedSchema
 }
@@ -101,6 +101,8 @@ function RJSF(props) {
     //.. temporarily ignoring till handler is attached successfully
   } = props;
 
+  const errorHandler = handleError();
+
   // define new string field
   const fields = {
     StringField : ({ idSchema, formData, ...props }) => <MemoizedCustomInputField id={idSchema['$id']} value={formData} idSchema={idSchema} {...props} />
@@ -119,7 +121,7 @@ function RJSF(props) {
   }, [data]);
 
   React.useEffect(() => {
-    const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle)
+    const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle, errorHandler)
     const uiSchema = buildUiSchema(rjsfSchema)
     setSchema({ rjsfSchema, uiSchema })
   }, [jsonSchema]) // to reduce heavy lifting on every react render

@@ -6,33 +6,35 @@ import { useSnackbar } from "notistack";
  *  Show Snackbar when error occurs. Can be used in catch blocks
  *  of functions.
  *
- * @param {Object} err
- * @param {string} prefixMessage
- * @param {("normal"|"fatal")} severity
  */
-function handleError(err, prefixMessage, severity = "normal") {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-  if (severity.length > 0) {
-    severity = severity[0].toUpperCase() + severity.slice(1);
+function handleError() {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  /**
+    *
+    * @param {Object} err
+    * @param {string} prefixMessage
+    * @param {("error"|"warning")} variant
+    */
+  const errorH = (err, prefixMessage, variant) => {
+    console.error("an error occured with severity: ", variant, { err })
+    return enqueueSnackbar(
+      `${prefixMessage}: ${err?.message}`,
+      {
+        variant : variant || "error",
+        autoHideDuration : 8000,
+        preventDuplicate : true,
+        action : (key) => (
+          <IconButton
+            onClick={() => closeSnackbar(key)}
+            color="secondary"
+          >
+            <Cancel />
+          </IconButton>
+        )
+      })
   }
 
-  console.error("an error occured with severity: ", severity, { err })
-
-  return enqueueSnackbar(
-    `${severity}: ${prefixMessage}: ${err?.message}`,
-    {
-      variant : "error",
-      autoHideDuration : 8000,
-      preventDuplicate : true,
-      action : (key) => (
-        <IconButton
-          onClick={() => closeSnackbar(key)}
-          color="secondary"
-        >
-          <Cancel />
-        </IconButton>
-      )
-    })
+  return errorH
 }
 
 export default handleError
