@@ -68,6 +68,21 @@ func Execute() {
 	_ = RootCmd.Execute()
 }
 
+func TreePath() *cobra.Command {
+	availableSubcommands = []*cobra.Command{
+		versionCmd,
+		system.SystemCmd,
+		pattern.PatternCmd,
+		perf.PerfCmd,
+		mesh.MeshCmd,
+		app.AppCmd,
+		experimental.ExpCmd,
+	}
+
+	RootCmd.AddCommand(availableSubcommands...)
+	return RootCmd
+}
+
 func init() {
 	err := utils.SetFileLocation()
 	if err != nil {
