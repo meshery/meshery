@@ -18038,7 +18038,7 @@ html body .md-typeset .headerlink {
     }
     .td-navbar .td-navbar-nav-scroll {
         max-width: 100%;
-        height: 2.5rem;
+        height: 3.5rem;
         margin-top: .25rem;
         overflow: hidden;
         font-size: .875rem
@@ -18785,6 +18785,7 @@ footer {
 }
 .version-selector{
     border-radius: 0.3rem;
+    width: auto;
 }
 .version-selector:focus{
     outline: none;
