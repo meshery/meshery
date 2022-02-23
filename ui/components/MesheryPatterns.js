@@ -464,7 +464,7 @@ function MesheryPatterns({
   const columns = [
     {
       name : "name",
-      label : "Pattern Name",
+      label : "Name",
       options : {
         filter : false,
         sort : true,
@@ -713,13 +713,13 @@ function MesheryPatterns({
           })}
         >
           <AddIcon />
-           Create Pattern
+           Create Design
         </Button>
       </div>}
       {
         !selectedPattern.show && <MuiThemeProvider theme={getMuiTheme()}>
           <MUIDataTable
-            title={<div className={classes.tableHeader}>Patterns</div>}
+            title={<div className={classes.tableHeader}>Designs</div>}
             data={patterns}
             columns={columns}
             // @ts-ignore

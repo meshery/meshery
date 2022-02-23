@@ -404,10 +404,10 @@ const categories = [
         isBeta : true
       },
       {
-        id : "Patterns",
+        id : "Designs",
         icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/patterns",
-        title : "Patterns",
+        title : "Designs",
         show : false,
         link : true,
         isBeta : true
@@ -666,7 +666,7 @@ class Navigator extends React.Component {
       if (cat.id === "Configuration") {
         let show = false;
         cat.children?.forEach((ch) => {
-          if (ch.id === "Patterns") {
+          if (ch.id === "Designs") {
             const idx = self.state.capabilities.findIndex((cap) => cap.feature === "persist-meshery-patterns");
             if (idx != -1) {
               ch.show = true;
