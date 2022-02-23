@@ -8,6 +8,6 @@ then
   echo "[Husky] Please remove package-lock.json and use yarn for installing dependenies 🙌 "
   exit 2 
 else
-  cd ui && npx  lint-staged
+  cd ui && yarn lint-staged
 fi
 
