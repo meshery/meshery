@@ -51,7 +51,8 @@
     "relay-runtime": "^11.0.2",
     "rxjs": "^7.3.0",
     "styled-jsx": "^4.0.1",
-    "subscriptions-transport-ws": "^0.9.19"
+    "subscriptions-transport-ws": "^0.9.19",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.16.5",
