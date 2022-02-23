@@ -95,13 +95,19 @@ var dashboardCmd = &cobra.Command{
 				signal.Notify(signals, os.Interrupt)
 				defer signal.Stop(signals)
 
+				// get a free port number to bind port-forwarding
+				port, err := utils.GetEphemeralPort()
+				if err != nil {
+					return err
+				}
+
 				portforward, err := utils.NewPortForward(
 					cmd.Context(),
 					client,
 					utils.MesheryNamespace,
 					"meshery",
 					options.host,
-					options.port,
+					port,
 					options.podPort,
 					false,
 				)
