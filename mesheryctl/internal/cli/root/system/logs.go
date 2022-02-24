@@ -107,9 +107,8 @@ It also shows the logs of a specific component.`,
 			if !ok {
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
-			} else {
-				log.Info("Starting Meshery logging...")
 			}
+			log.Info("Starting Meshery logging...")
 
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
 				log.Errorf("%s does not exists", utils.DockerComposeFile)
@@ -146,9 +145,8 @@ It also shows the logs of a specific component.`,
 			if !ok {
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
-			} else {
-				log.Info("Starting Meshery logging...")
 			}
+			log.Info("Starting Meshery logging...")
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
