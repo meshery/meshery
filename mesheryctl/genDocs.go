@@ -34,6 +34,7 @@ display-title: false
 language: en
 command: %s
 ---
+
 `
 
 const markdownTemplateSubcommand = `---
@@ -47,20 +48,28 @@ language: en
 command: %s
 subcommand: %s
 ---
+
 `
 
-type cmdDoc struct {
-	name        string
-	description string
-	usage       string   `yaml:",omitempty"`
-	examples    []string `yaml:",omitempty"`
-}
-
 func prepender(filename string) string {
-	title := filepath.Base(filename)
+	file := strings.Split(filename, ".")
+	title := filepath.Base(file[0])
 	base := strings.TrimSuffix(title, path.Ext(title))
 	url := "reference/" + strings.ToLower(base) + "/"
-	return fmt.Sprintf(markdownTemplateCommand, title, url, url, "test")
+	words := strings.Split(title, "-")
+	if len(words) <= 1 {
+		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[0])
+	}
+	return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1])
+}
+
+func subprepender(filename string) string {
+	file := strings.Split(filename, ".")
+	title := filepath.Base(file[0])
+	base := strings.TrimSuffix(title, path.Ext(title))
+	url := "reference/" + strings.ToLower(base) + "/"
+	words := strings.Split(title, "-")
+	return fmt.Sprintf(markdownTemplateSubcommand, title, url, url, words[1], words[2])
 }
 
 func linkHandler(name string) string {
@@ -85,6 +94,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println("Generating yaml docs...")
+	err = GenYamlTreeCustom(cmd, markDownPath, nil, linkHandler)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Documentation generated at " + markDownPath)
 }
 
 // Custom function to generate markdown docs with '-' as separator
@@ -115,31 +132,29 @@ func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHa
 	return nil
 }
 
-/*
-func GenYaml(cmd *cobra.Command, w io.Writer) error {
-	return GenYamlCustom(cmd, w, func (s string) string  {
-		return s
-	})
-}
-
-func GenYamlCustom(cmd *cobra.Command, w io.Writer, linkHandler string) error {
-	yaml := cmdDoc{}
-	yaml.name = cmd.CommandPath()
-	yaml.description = forceMultiLine(cmd.Long)
-	yaml.usage = forceString(cmd.Use)
-	if len(cmd.Example) > 0 {
-		yaml.examples = strings.Split(cmd.Example, "\n")
+func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandler func(string) string) error {
+	for _, c := range cmd.Commands() {
+		if !c.IsAvailableCommand() || c.IsAdditionalHelpTopicCommand() {
+			continue
+		}
+		if err := GenYamlTreeCustom(c, dir, filePrepender, linkHandler); err != nil {
+			return err
+		}
 	}
 
-	final, err := yaml.Marshal(&yamlDoc)
+	basename := "cmds.yaml"
+	//filename := filepath.Join(dir, basename)
+	f, err := os.OpenFile(basename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
+	defer f.Close()
 
-	if _, err := w.Write(final); err != nil {
+	if _, err := io.WriteString(f, ""); err != nil {
+		return err
+	}
+	if err := doc.GenYamlCustom(cmd, f, linkHandler); err != nil {
 		return err
 	}
 	return nil
 }
-*/
