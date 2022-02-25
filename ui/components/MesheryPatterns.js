@@ -10,7 +10,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import UploadIcon from "@material-ui/icons/Publish";
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
@@ -25,7 +24,7 @@ import FILE_OPS from "../utils/configurationFileHandlersEnum"
 import { updateProgress } from "../lib/store";
 import PatternForm from "./configuratorComponents/patternConfigurator";
 import PromptComponent from "./PromptComponent";
-import URLUploader from "./URLUploader";
+import UploadImport from "./UploadImport";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils"
 
 const styles = (theme) => ({
@@ -49,7 +48,11 @@ const styles = (theme) => ({
     display : "flex",
     justifyContent : "flex-start",
     alignItems : "center",
+    whiteSpace : "nowrap",
     margin : "1rem auto 2rem auto"
+  },
+  UploadImport : {
+    paddingLeft : "1.5rem"
   }
 });
 
@@ -86,25 +89,6 @@ const useStyles = makeStyles((theme) => ({
     }
   }
 }));
-
-function CustomToolbar(onClick, urlOnClick) {
-  return function Toolbar() {
-    return (
-      <>
-        <label htmlFor="upload-button">
-          <Tooltip title="Upload Pattern">
-            <IconButton aria-label="Upload Button" component="span">
-              <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" data-cy="file-upload-button" />
-              <UploadIcon />
-            </IconButton>
-          </Tooltip>
-        </label>
-
-        <URLUploader aria-label="URL upload button" onSubmit={urlOnClick} />
-      </>
-    );
-  };
-}
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -629,7 +613,6 @@ function MesheryPatterns({
         text : "pattern(s) selected"
       }
     },
-    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
@@ -711,6 +694,8 @@ function MesheryPatterns({
         <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       {!selectedPattern.show && <div className={classes.createButton}>
+
+
         <Button
           aria-label="Add Pattern"
           variant="contained"
@@ -725,7 +710,15 @@ function MesheryPatterns({
           <AddIcon />
            Create Pattern
         </Button>
-      </div>}
+        <div className={classes.UploadImport}>
+          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler}  />
+        </div>
+
+      </div>
+
+
+
+      }
       {
         !selectedPattern.show && <MuiThemeProvider theme={getMuiTheme()}>
           <MUIDataTable
