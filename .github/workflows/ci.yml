@@ -78,7 +78,7 @@ jobs:
         fetch-depth: 1
     - uses: actions/setup-node@v1
       with:
-        node-version: '16.14.0'
+        node-version: ${{ secrets.NODE_VERSION }}
     - run: sudo npm i -g npm@7
     - name: Cache node modules
       id: node-cache
@@ -119,7 +119,7 @@ jobs:
         fetch-depth: 0
     - uses: actions/setup-node@v1
       with:
-        node-version: '16.14.0'
+        node-version: ${{ secrets.NODE_VERSION }}
     - run: sudo npm i -g npm@7
     - name: Cache node modules
       id: node-cache
@@ -175,7 +175,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: '16.14.0'
+          node-version: ${{ secrets.NODE_VERSION }}
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v2
