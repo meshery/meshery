@@ -78,7 +78,7 @@ jobs:
         fetch-depth: 1
     - uses: actions/setup-node@v1
       with:
-        node-version: ${{ secrets.NODE_VERSION }}
+        node-version: '16.14.0'
     - run: sudo npm i -g npm@7
     - name: Cache node modules
       id: node-cache
