@@ -19,6 +19,7 @@ import User from './User';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
 import Slide from '@material-ui/core/Slide';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Checkbox, Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { Search } from '@material-ui/icons';
@@ -149,7 +150,8 @@ function K8sContextMenu({
     <>
       <IconButton
         aria-label="contexts"
-        onClick={() => {
+        onClick={(e) => {
+          e.preventDefault();
           console.log(contexts);
           setShowFullContextMenu(prev => !prev);
         }}
@@ -177,70 +179,79 @@ function K8sContextMenu({
         </div>
       </IconButton>
 
-      <Slide direction="down" timeout={300} in={open} style={{ position : "absolute", left : "-6rem", zIndex : "-1", top : "-4rem", transform : showFullContextMenu ? "translateY(6rem)": "translateY(0)" }} mountOnEnter unmountOnExit>
 
-        <Paper className={classes.cMenuContainer}>
-          <div>
-            <TextField
-              id="search-ctx"
-              placeholder="search..."
-              onChange={ev => searchContexts(ev.target.value)}
-              style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
-              InputProps={{ endAdornment :
+      <Slide direction="down" timeout={300} in={open} style={{ position : "absolute", left : "-6rem", zIndex : "-1", top : "-4rem", transform : showFullContextMenu ? "translateY(6rem)": "translateY(0)" }} mountOnEnter unmountOnExit>
+        <div>
+          <ClickAwayListener onClickAway={(e) => {
+            if (e.path[3].getAttribute("aria-label") !== "contexts" && e.path[0].getAttribute("aria-label") !== "contexts") {
+              setAnchorEl(false)
+              setShowFullContextMenu(false)
+            }
+          }}>
+            <Paper className={classes.cMenuContainer}>
+              <div>
+                <TextField
+                  id="search-ctx"
+                  placeholder="search..."
+                  onChange={ev => searchContexts(ev.target.value)}
+                  style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
+                  InputProps={{ endAdornment :
                 (
                   <Search className={classes.searchIcon} />
                 ) }}
-            />
-          </div>
-          <div>
-            {
-              contexts?.total_count
-                ?
-                <>
-                  <Checkbox
-                    checked={activeContexts.includes(".all")}
-                    onChange={() => setActiveContexts(".all")}
-                    color="primary"
-                  />
-                  <span>Select All</span>
-                </>
-                :
-                <Link href="/settings">
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
-                  >
-                    <AddIcon className={classes.AddIcon}/>
-                      Connect Clusters
-                  </Button>
-                </Link>
-            }
-            {contexts?.contexts?.map(ctx => (
-              <div id={ctx.id} className={classes.chip}>
-                <Tooltip title={`Server: ${ctx.server}`}>
-                  <>
-                    <Checkbox
-                      checked={activeContexts.includes(ctx.id)}
-                      onChange={() => setActiveContexts(ctx.id)}
-                      color="primary"
-                    />
-                    <Chip
-                      label={ctx?.name}
-                      avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
-                      variant="filled"
-                      className={classes.Chip}
-                      data-cy="chipContextName"
-                    />
-                  </>
-                </Tooltip>
+                />
               </div>
-            ))}
-          </div>
-        </Paper>
+              <div>
+                {
+                  contexts?.total_count
+                    ?
+                    <>
+                      <Checkbox
+                        checked={activeContexts.includes(".all")}
+                        onChange={() => setActiveContexts(".all")}
+                        color="primary"
+                      />
+                      <span>Select All</span>
+                    </>
+                    :
+                    <Link href="/settings">
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
+                      >
+                        <AddIcon className={classes.AddIcon}/>
+                      Connect Clusters
+                      </Button>
+                    </Link>
+                }
+                {contexts?.contexts?.map(ctx => (
+                  <div id={ctx.id} className={classes.chip}>
+                    <Tooltip title={`Server: ${ctx.server}`}>
+                      <>
+                        <Checkbox
+                          checked={activeContexts.includes(ctx.id)}
+                          onChange={() => setActiveContexts(ctx.id)}
+                          color="primary"
+                        />
+                        <Chip
+                          label={ctx?.name}
+                          avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
+                          variant="filled"
+                          className={classes.Chip}
+                          data-cy="chipContextName"
+                        />
+                      </>
+                    </Tooltip>
+                  </div>
+                ))}
+              </div>
+            </Paper>
 
+          </ClickAwayListener>
+        </div>
       </Slide>
     </>
   )
