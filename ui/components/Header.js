@@ -18,15 +18,13 @@ import MesheryNotification from './MesheryNotification';
 import User from './User';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
-import Popper from '@material-ui/core/Popper';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Slide from '@material-ui/core/Slide';
 import { Checkbox, Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import { Paper } from '@material-ui/core';
-import { Grow } from '@material-ui/core';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -42,7 +40,7 @@ const styles = (theme) => ({
     paddingRight : theme.spacing(0),
     marginLeft : theme.spacing(4), },
   userContainer : { paddingLeft : 1,
-    display : 'flex', },
+    display : 'flex', backgroundColor : "#396679" },
   userSpan : { marginLeft : theme.spacing(1), },
   pageTitleWrapper : { flexGrow : 1,
     marginRight : 'auto', },
@@ -51,23 +49,26 @@ const styles = (theme) => ({
     fontSize : '1.25rem',
     [theme.breakpoints.up('sm')] : { fontSize : '1.65rem', }, },
   appBarOnDrawerOpen : {
-    padding : theme.spacing(1.4),
     backgroundColor : "#396679",
     shadowColor : " #808080",
     zIndex : theme.zIndex.drawer+1,
     [theme.breakpoints.between(635,732)] : { padding : theme.spacing(0.75,1.4), },
     [theme.breakpoints.between(600,635)] : { padding : theme.spacing(0.4,1.4), },
   },
-  appBarOnDrawerClosed : { padding : theme.spacing(1.4),
+  appBarOnDrawerClosed : {
     backgroundColor : "#396679",
     zIndex : theme.zIndex.drawer+1, },
   toolbarOnDrawerClosed : { minHeight : 59,
-    paddingLeft : 24,
-    paddingRight : 24, },
+    padding : theme.spacing(2.4),
+    paddingLeft : 34,
+    paddingRight : 34,
+    backgroundColor : "#396679" },
   toolbarOnDrawerOpen : {
     minHeight : 58,
-    paddingLeft : 20,
-    paddingRight : 20,
+    padding : theme.spacing(2.4),
+    paddingLeft : 34,
+    paddingRight : 34,
+    backgroundColor : "#396679",
     [theme.breakpoints.between(620, 732)] : { minHeight : 68, paddingLeft : 20, paddingRight : 20 },
   },
   itemActiveItem : { color : "#00B39F" },
@@ -83,7 +84,7 @@ const styles = (theme) => ({
     justifyContent : "center",
     alignItems : "center",
     position : "absolute",
-    zIndex : -1,
+    zIndex : 1,
     right : "-0.75rem",
     top : "-0.29rem"
   },
@@ -104,7 +105,7 @@ const styles = (theme) => ({
     borderRadius : "3px",
     padding : "1rem",
     zIndex : 1201,
-    marginTop : "1.8rem",
+    marginTop : "1.3rem",
     boxShadow : "20px #979797",
     transition : "linear .2s",
     transitionProperty : "height"
@@ -137,17 +138,33 @@ function K8sContextMenu({
   setActiveContexts = () => {},
   searchContexts = () => {}
 }) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+  const [anchorEl, setAnchorEl] = React.useState(false);
+  const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
+  let open = Boolean(anchorEl);
+  if (showFullContextMenu) {
+    open = showFullContextMenu;
+  }
 
   return (
     <>
       <IconButton
         aria-label="contexts"
-        onClick={(event) => {
+        onClick={() => {
           console.log(contexts);
-          setAnchorEl(event.target)
+          setShowFullContextMenu(prev => !prev);
         }}
+        onMouseOver={(e) => {
+          e.preventDefault();
+          console.log(contexts);
+          setAnchorEl(true);
+        }}
+
+        onMouseLeave={(e) => {
+          e.preventDefault();
+          console.log(contexts);
+          setAnchorEl(false)
+        }}
+
         aria-owns={open
           ? 'menu-list-grow'
           : undefined}
@@ -155,101 +172,76 @@ function K8sContextMenu({
         style={{ marginRight : "0.5rem" }}
       >
         <div className={classes.cbadgeContainer}>
-          <img src="/static/img/kubernetes.svg" width="24px" height="24px"/>
+          <img src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
           <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
         </div>
       </IconButton>
-      <Popper
-        open={open}
-        anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
-        style={{ zIndex : 10000 }}
-        anchorOrigin={{
-          vertical : 'bottom',
-          horizontal : 'center',
-        }}
-        transformOrigin={{
-          vertical : 'top',
-          horizontal : 'center',
-        }}
-        transition
-        placement="bottom"
-      >
-        {({ TransitionProps, placement }) => (
 
-          <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
-            <Grow in={open} {...TransitionProps}  timeout={300} id="menu-list-grow"     style={{ transformOrigin : placement === 'bottom'
-              ? 'left top'
-              : 'left bottom' }}
-            >
-              <Paper className={classes.cMenuContainer}>
-                <div>
-                  <TextField
-                    id="search-ctx"
-                    placeholder="search..."
-                    onChange={ev => searchContexts(ev.target.value)}
-                    style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
-                    InputProps={{ endAdornment :
+      <Slide direction="down" timeout={300} in={open} style={{ position : "absolute", left : "-6rem", zIndex : "-1", top : "-4rem", transform : showFullContextMenu ? "translateY(6rem)": "translateY(0)" }} mountOnEnter unmountOnExit>
+
+        <Paper className={classes.cMenuContainer}>
+          <div>
+            <TextField
+              id="search-ctx"
+              placeholder="search..."
+              onChange={ev => searchContexts(ev.target.value)}
+              style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
+              InputProps={{ endAdornment :
                 (
                   <Search className={classes.searchIcon} />
                 ) }}
+            />
+          </div>
+          <div>
+            {
+              contexts?.total_count
+                ?
+                <>
+                  <Checkbox
+                    checked={activeContexts.includes(".all")}
+                    onChange={() => setActiveContexts(".all")}
+                    color="primary"
                   />
-                </div>
-                <div>
-                  {
-                    contexts?.total_count
-                      ?
-                      <>
-                        <Checkbox
-                          checked={activeContexts.includes(".all")}
-                          onChange={() => setActiveContexts(".all")}
-                          color="primary"
-                        />
-                        <span>Select All</span>
-                      </>
-                      :
-                      <Link href="/settings">
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          size="large"
-                          style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
-                        >
-                          <AddIcon className={classes.AddIcon}/>
+                  <span>Select All</span>
+                </>
+                :
+                <Link href="/settings">
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
+                  >
+                    <AddIcon className={classes.AddIcon}/>
                       Connect Clusters
-                        </Button>
-                      </Link>
-                  }
-                  {contexts?.contexts?.map(ctx => (
-                    <div id={ctx.id} className={classes.chip}>
-                      <Tooltip title={`Server: ${ctx.server}`}>
-                        <>
-                          <Checkbox
-                            checked={activeContexts.includes(ctx.id)}
-                            onChange={() => setActiveContexts(ctx.id)}
-                            color="primary"
-                          />
-                          <Chip
-                            label={ctx?.name}
-                            avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
-                            variant="filled"
-                            className={classes.Chip}
-                            data-cy="chipContextName"
-                          />
-                        </>
-                      </Tooltip>
-                    </div>
-                  ))}
-                </div>
+                  </Button>
+                </Link>
+            }
+            {contexts?.contexts?.map(ctx => (
+              <div id={ctx.id} className={classes.chip}>
+                <Tooltip title={`Server: ${ctx.server}`}>
+                  <>
+                    <Checkbox
+                      checked={activeContexts.includes(ctx.id)}
+                      onChange={() => setActiveContexts(ctx.id)}
+                      color="primary"
+                    />
+                    <Chip
+                      label={ctx?.name}
+                      avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
+                      variant="filled"
+                      className={classes.Chip}
+                      data-cy="chipContextName"
+                    />
+                  </>
+                </Tooltip>
+              </div>
+            ))}
+          </div>
+        </Paper>
 
-              </Paper>
-            </Grow>
-          </ClickAwayListener>
-
-        )}
-      </Popper>
-
+      </Slide>
     </>
   )
 }
@@ -303,7 +295,7 @@ class Header extends React.Component {
             <Toolbar className={onDrawerCollapse
               ? classes.toolbarOnDrawerClosed
               : classes.toolbarOnDrawerOpen}>
-              <Grid container alignItems="center">
+              <Grid container alignItems="center" style={{ backgroundColor : "#396679" }}>
                 <Hidden smUp>
                   <Grid item>
                     <IconButton
@@ -349,7 +341,7 @@ class Header extends React.Component {
                   {/* </Link>
                     </IconButton>
                   </div> */}
-                  <div className={classes.userSpan} >
+                  <div className={classes.userSpan} style={{ position : "relative" }}>
                     <K8sContextMenu
                       classes={classes}
                       contexts={this.props.contexts}
