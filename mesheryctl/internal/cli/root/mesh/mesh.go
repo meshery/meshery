@@ -30,3 +30,7 @@ func init() {
 	availableSubcommands = []*cobra.Command{validateCmd, deployCmd, removeCmd}
 	MeshCmd.AddCommand(availableSubcommands...)
 }
+
+func TreeSingle() *cobra.Command {
+	return MeshCmd
+}

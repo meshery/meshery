@@ -75,3 +75,7 @@ func init() {
 	SystemCmd.PersistentFlags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 	SystemCmd.AddCommand(availableSubcommands...)
 }
+
+func TreeSingle() *cobra.Command {
+	return SystemCmd
+}

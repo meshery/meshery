@@ -81,3 +81,7 @@ func init() {
 	availableSubcommands = []*cobra.Command{profileCmd, resultCmd, applyCmd}
 	PerfCmd.AddCommand(availableSubcommands...)
 }
+
+func TreeSingle() *cobra.Command {
+	return PerfCmd
+}

@@ -33,3 +33,7 @@ func init() {
 	availableSubcommands = []*cobra.Command{onboardCmd, viewCmd, offboardCmd, listCmd}
 	AppCmd.AddCommand(availableSubcommands...)
 }
+
+func TreeSingle() *cobra.Command {
+	return AppCmd
+}

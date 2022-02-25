@@ -83,6 +83,15 @@ func TreePath() *cobra.Command {
 	return RootCmd
 }
 
+func TreeSingle() *cobra.Command {
+	availableSubcommands = []*cobra.Command{
+		versionCmd,
+	}
+
+	RootCmd.AddCommand(availableSubcommands...)
+	return RootCmd
+}
+
 func init() {
 	err := utils.SetFileLocation()
 	if err != nil {
