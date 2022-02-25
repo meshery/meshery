@@ -93,7 +93,7 @@
     "redux-thunk": "^2.4.0",
     "relay-runtime": "^11.0.0",
     "set-value": "^4.0.1",
-    "styled-jsx": "latest",
+    "styled-jsx": "^4.0.1",
     "subscriptions-transport-ws": "^0.9.19",
     "tar": "^6.1.11",
     "uuid": "^8.3.2"
