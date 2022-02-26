@@ -18210,8 +18210,7 @@ html body .md-typeset .headerlink {
         position: -webkit-sticky;
         position: sticky;
         top: 4rem;
-        height: -webkit-calc(100vh - 10rem);
-        height: calc(100vh - 10rem);
+        height: 100vh;
         overflow-y: auto
     }
 }
@@ -18234,6 +18233,7 @@ html body .md-typeset .headerlink {
 .td-toc .td-page-meta a {
     font-weight: 500
 }
+
 
 .td-toc #TableOfContents a {
     color: #888
