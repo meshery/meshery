@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/docker/pulls/layer5/meshery.svg" /></a>
 <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+" alt="GitHub issues by-label">
   <img src="https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg?color=informational" /></a>
-<a href="https://github.com/layer5io/meshery" alt="LICENSE">
+<a href="https://github.com/meshery/meshery" alt="LICENSE">
   <img src="https://img.shields.io/github/license/meshery/meshery?color=brightgreen" /></a>
 <a href="https://goreportcard.com/report/github.com/meshery/meshery" alt="Go Report Card">
   <img src="https://goreportcard.com/badge/github.com/meshery/meshery" /></a>
