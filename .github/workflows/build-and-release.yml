@@ -47,11 +47,11 @@ jobs:
         with:
             fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v2.2.0
         with:
           go-version: ${{ secrets.GO_VERSION }}
       - name: goreleaser with tag
-        uses: goreleaser/goreleaser-action@v2.8.0
+        uses: goreleaser/goreleaser-action@v2.8.1
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
