@@ -58,7 +58,7 @@ updates:
     interval: monthly
   open-pull-requests-limit: 6
   reviewers:
-  - ramrodo
+  - MarioArriaga92
   labels:
   - kind/chore
   - pr/dependencies
