@@ -58,7 +58,7 @@ func ErrFailMarshal(err error) error {
 
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
-		[]string{"authentication token not found. please supply a valid user token with the --token (or -t) flag. or login with `mesheryctl system login`", formatErrorWithReference()}, []string{}, []string{})
+		[]string{"authentication token not found. Run `mesheryctl system login` to generate a new token or supply a valid token with the `--token` flag.", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailRequest(err error) error {

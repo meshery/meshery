@@ -72,6 +72,7 @@ function CustomToolbar(onClick, urlOnClick) {
             accept=".yaml, .yml, .json"
             hidden
             onChange={onClick}
+            data-cy="file-upload-button"
             id="upload-button"
             name="upload-button"
           />
@@ -456,6 +457,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   aria-label="deploy"
                   color="inherit"
                   onClick={() => handleDeploy(rowData.filter_file)} //deploy endpoint to be called here
+                  data-cy="deploy-button"
                 />
               </IconButton>
             </>
@@ -580,6 +582,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           break;
       }
     },
+    setRowProps : (row, dataIndex, rowIndex) => {
+      return {
+        "data-cy" : `config-row-${rowIndex}`
+      }
+    },
+    setTableProps : () => {
+      return {
+        "data-cy" : "filters-grid"
+      }
+    }
   };
 
   return (
