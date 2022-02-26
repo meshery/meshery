@@ -5,7 +5,7 @@
 <img src="https://img.shields.io/docker/pulls/layer5/meshery.svg" /></a>
 <a href="https://goreportcard.com/report/github.com/meshery/meshery" alt="Go Report Card">
 <img src="https://goreportcard.com/badge/github.com/meshery/meshery" /></a>
-<a href="https://github.com/layer5io/meshery/actions" alt="Build Status">
+<a href="https://img.shields.io/github/workflow/status/meshery/meshery/Meshery%20Build%20and%20Releaser%20(edge)" alt="Build Status">
 <img src="https://github.com/layer5io/meshery/workflows/Meshery/badge.svg" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
 <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
