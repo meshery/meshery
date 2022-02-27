@@ -1,7 +1,6 @@
 package main
 
 import (
-	//"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -12,7 +11,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
-	//"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
@@ -37,19 +36,12 @@ command: %s
 
 `
 
-const markdownTemplateSubcommand = `---
-layout: default
-title: %s
-permalink: /%s
-redirect_from: /%s
-type: reference
-display-title: false
-language: en
-command: %s
-subcommand: %s
----
-
-`
+type cmdDoc struct {
+	Name        string `yaml:"name"`
+	Description string `yaml:"description"`
+	Usage       string `yaml:"usage"`
+	Example     string `yaml:"example"`
+}
 
 func prepender(filename string) string {
 	file := strings.Split(filename, ".")
@@ -64,12 +56,7 @@ func prepender(filename string) string {
 }
 
 func subprepender(filename string) string {
-	file := strings.Split(filename, ".")
-	title := filepath.Base(file[0])
-	base := strings.TrimSuffix(title, path.Ext(title))
-	url := "reference/" + strings.ToLower(base) + "/"
-	words := strings.Split(title, "-")
-	return fmt.Sprintf(markdownTemplateSubcommand, title, url, url, words[1], words[2])
+	return fmt.Sprintf("")
 }
 
 func linkHandler(name string) string {
@@ -106,31 +93,31 @@ func main() {
 
 	// For each commands
 	cmd = system.TreeSingle()
-	err = GenYamlTreeCustom(cmd, markDownPath, nil, linkHandler)
+	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	cmd = perf.TreeSingle()
-	err = GenYamlTreeCustom(cmd, markDownPath, nil, linkHandler)
+	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	cmd = mesh.TreeSingle()
-	err = GenYamlTreeCustom(cmd, markDownPath, nil, linkHandler)
+	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	cmd = pattern.TreeSingle()
-	err = GenYamlTreeCustom(cmd, markDownPath, nil, linkHandler)
+	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	cmd = app.TreeSingle()
-	err = GenYamlTreeCustom(cmd, markDownPath, nil, linkHandler)
+	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -157,10 +144,13 @@ func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHa
 	}
 	defer f.Close()
 
-	if _, err := io.WriteString(f, filePrepender(filename)); err != nil {
+	_, err = io.WriteString(f, filePrepender(filename))
+	if err != nil {
 		return err
 	}
-	if err := doc.GenMarkdownCustom(cmd, f, linkHandler); err != nil {
+
+	err = doc.GenMarkdownCustom(cmd, f, linkHandler)
+	if err != nil {
 		return err
 	}
 	return nil
@@ -176,19 +166,51 @@ func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandle
 		}
 	}
 
-	basename := "cmds.yaml"
-	//filename := filepath.Join(dir, basename)
+	basename := "cmds.yml"
+	filename := filepath.Join(dir, basename)
 	f, err := os.OpenFile(basename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	if _, err := io.WriteString(f, ""); err != nil {
+	_, err = io.WriteString(f, filePrepender(filename))
+	if err != nil {
 		return err
 	}
-	if err := doc.GenYamlCustom(cmd, f, linkHandler); err != nil {
+
+	err = GenYamlCustom(cmd, f, linkHandler)
+	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func GenYamlCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string) string) error {
+	cmd.InitDefaultHelpCmd()
+	cmd.InitDefaultHelpFlag()
+
+	yamlDoc := cmdDoc{}
+
+	yamlDoc.Name = cmd.CommandPath()
+	yamlDoc.Description = cmd.Short
+	yamlDoc.Usage = cmd.UseLine()
+	if len(cmd.Example) > 0 {
+		yamlDoc.Example = cmd.Example
+	}
+
+	fmt.Println(yamlDoc)
+	final, err := yaml.Marshal(&yamlDoc)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	_, err = w.Write(final)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
