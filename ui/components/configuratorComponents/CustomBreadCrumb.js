@@ -63,7 +63,7 @@ export default function CustomBreadCrumb({ title, onBack, titleChangeHandler }) 
         className={classes.span}
         onClick={onBack}
       >
-        Patterns
+        Designs
       </span>
       {" > "}
 

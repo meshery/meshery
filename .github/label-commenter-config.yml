@@ -34,10 +34,10 @@ labels:
   - name: component/ui
     labeled:
       issue:
-        body: This issue has been labeled with 'component/ui'. 🧰 Here are docs on [Contributing to Meshery UI](https://docs.meshery.io/project/contributing-ui). 🎨 Here is the [Meshery UI Figma File](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI?node-id=4%3A0) File.
+        body: This issue has been labeled with 'component/ui'. 🧰 Here are docs on [Contributing to Meshery UI](https://docs.meshery.io/project/contributing/contributing-ui). 🎨 Here is the [Meshery UI Figma File](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI?node-id=4%3A0) File.
         action: open
       pr:
-        body: This PR has been labeled with 'component/ui'. 🧰 Here are docs on [Contributing to Meshery UI](https://docs.meshery.io/project/contributing-ui). 🎨 Here is the [Meshery UI Figma File](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI?node-id=4%3A0) File.
+        body: This PR has been labeled with 'component/ui'. 🧰 Here are docs on [Contributing to Meshery UI](https://docs.meshery.io/project/contributing/contributing-ui). 🎨 Here is the [Meshery UI Figma File](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI?node-id=4%3A0) File.
         action: open
   - name: component/mesheryctl
     labeled:

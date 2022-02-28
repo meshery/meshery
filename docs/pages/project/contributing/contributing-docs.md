@@ -79,6 +79,7 @@ Restart your WSL VM before moving forward.
   ```bash
     git clone https://github.com/rbenv/rbenv.git ~/.rbenv
   ```
+    <strong>Note:</strong> Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
 - Setting the path
   ```bash
     echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
@@ -91,7 +92,6 @@ Restart your WSL VM before moving forward.
   ```bash
     source ~/.bashrc
   ```
-  <strong>Note:</strong> Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
 - Check installation
   ```bash
     type rbenv

@@ -2,6 +2,7 @@
 layout: default
 title: Compatibility Matrix
 permalink: project/compatibility-matrix
+redirect_from: project/compatibility-matrix/
 description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"
@@ -89,11 +90,11 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             </td>
             <td colspan="3" class="details">
               <i>Test results:</i>
-              <ol>
+              <table border="0">
               {% for test in item.tests %}
-                <li>{{ test[0] }}: {{test[1] }}</li>
+                  <tr><td>{{ test[1] }}</td><td>{{test[0] }}</td></tr>
               {% endfor %}      
-              </ol>      
+              </table>      
             </td>
             <td>
               <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>

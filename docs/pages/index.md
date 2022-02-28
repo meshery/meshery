@@ -13,7 +13,7 @@ display-title: "false"
          src="/assets/img/meshery/meshery-logo-light-text-side.svg" />
     </a>
 </div>
-<p style="margin:auto;padding:1rem;font-size: 1.25rem;">Meshery is the open source, service mesh management plane that enables the adoption, operation, and management of any service mesh and their workloads.</p>
+<p style="margin:auto;padding:1rem;font-size: 1.25rem;">Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.</p>
 
 <div class="wrapper" style="text-align: left;">
 
