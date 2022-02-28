@@ -239,7 +239,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 		utils.Log.Info("Initiating Performance test ...")
 
-		resp, err := utils.NewResponse(req)
+		resp, err := utils.MakeRequest(req)
 
 		if err != nil {
 			return err
@@ -337,7 +337,7 @@ func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlCon
 		return "", "", err
 	}
 
-	resp, err := utils.NewResponse(req)
+	resp, err := utils.MakeRequest(req)
 
 	if err != nil {
 		return "", "", err

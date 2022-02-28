@@ -64,30 +64,30 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 
 // Function returns a new http response given a http request
 // Function will test the response and return any errors associated with it
-func NewResponse(req *http.Request) (*http.Response, error) {
+func MakeRequest(req *http.Request) (*http.Response, error) {
 	client := &http.Client{}
 
 	// check status code from request, checks for issues with auth token
 	resp, err := client.Do(req)
 
 	if err != nil && resp == nil {
-		return resp, ErrFailRequest(err)
+		return nil, ErrFailRequest(err)
 	}
 
 	// If statuscode = 302, then we either have an expired or invalid token
 	// We return the response and correct error message
 	if resp.StatusCode == 302 {
-		return resp, InvalidToken()
+		return nil, InvalidToken()
 	}
 
 	// failsafe for not being authenticated
 	if ContentTypeIsHTML(resp) {
-		return resp, ErrUnauthenticated()
+		return nil, ErrUnauthenticated()
 	}
 
 	// failsafe for bad api call
 	if resp.StatusCode != 200 {
-		return resp, ErrFailReqStatus(resp.StatusCode)
+		return nil, ErrFailReqStatus(resp.StatusCode)
 	}
 
 	return resp, nil

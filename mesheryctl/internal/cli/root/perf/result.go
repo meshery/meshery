@@ -158,7 +158,7 @@ func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNum
 		return nil, nil, err
 	}
 
-	resp, err := utils.NewResponse(req)
+	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		return nil, nil, err
 	}
