@@ -9,18 +9,19 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/golangci/golangci-lint"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
+	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
 	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
+	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
+	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
+	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
+	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 )
 
 const markdownTemplateCommand = `---
@@ -85,38 +86,6 @@ func main() {
 	fmt.Println("Generating yaml docs...")
 
 	// Generates YAML for whole tree
-	//cmd = root.TreeSingle()
-	//err = GenYamlTreeCustom(cmd, markDownPath, nil, linkHandler)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-
-	// For each commands
-	cmd = system.TreeSingle()
-	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cmd = perf.TreeSingle()
-	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cmd = mesh.TreeSingle()
-	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cmd = pattern.TreeSingle()
-	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cmd = app.TreeSingle()
 	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
 	if err != nil {
 		log.Fatal(err)

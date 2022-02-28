@@ -1,0 +1,708 @@
+name: mesheryctl app list
+description: List applications
+usage: mesheryctl app list [flags]
+example: "\n\tList all the applications\n\tmesheryctl app list\n\t"
+name: mesheryctl app offboard
+description: Offboard application
+usage: mesheryctl app offboard [flags]
+example: "\n\tOffboard application by providing file path\n\tmesheryctl app offboard
+  -f <filepath>\n\t"
+name: mesheryctl app onboard
+description: Onboard application
+usage: mesheryctl app onboard [flags]
+example: "\n\tOnboard application by providing file path\n\tmesheryctl app onboard
+  -f <filepath>\n\t"
+name: mesheryctl app view
+description: Display application(s)
+usage: mesheryctl app view <application name> [flags]
+example: "\n\tView applictaions with name\n\tmesheryctl app view <app-name>\n\n\tView
+  applications with id\n\tmesheryctl app view <app-id>\n\n\tView all applications\n\tmesheryctl
+  app view --all\n\t"
+name: mesheryctl app
+description: Service Mesh Apps Management
+usage: mesheryctl app [flags]
+example: ""
+name: mesheryctl app list
+description: List applications
+usage: mesheryctl app list [flags]
+example: "\n\tList all the applications\n\tmesheryctl app list\n\t"
+name: mesheryctl app offboard
+description: Offboard application
+usage: mesheryctl app offboard [flags]
+example: "\n\tOffboard application by providing file path\n\tmesheryctl app offboard
+  -f <filepath>\n\t"
+name: mesheryctl app onboard
+description: Onboard application
+usage: mesheryctl app onboard [flags]
+example: "\n\tOnboard application by providing file path\n\tmesheryctl app onboard
+  -f <filepath>\n\t"
+name: mesheryctl app view
+description: Display application(s)
+usage: mesheryctl app view <application name> [flags]
+example: "\n\tView applictaions with name\n\tmesheryctl app view <app-name>\n\n\tView
+  applications with id\n\tmesheryctl app view <app-id>\n\n\tView all applications\n\tmesheryctl
+  app view --all\n\t"
+name: mesheryctl app
+description: Service Mesh Apps Management
+usage: mesheryctl app [flags]
+example: ""
+name: mesheryctl exp filter apply
+description: Apply filter file
+usage: mesheryctl exp filter apply [flags]
+example: ""
+name: mesheryctl exp filter delete
+description: Delete filter file
+usage: mesheryctl exp filter delete [flags]
+example: ""
+name: mesheryctl exp filter list
+description: List filters
+usage: mesheryctl exp filter list [flags]
+example: ""
+name: mesheryctl exp filter view
+description: Display filters(s)
+usage: mesheryctl exp filter view <filter name> [flags]
+example: ""
+name: mesheryctl exp filter
+description: Service Mesh Filter Management
+usage: mesheryctl exp filter [flags]
+example: ""
+name: mesheryctl mesh deploy
+description: Deploy a service mesh to the Kubernetes cluster
+usage: mesheryctl mesh deploy [flags]
+example: |2-
+
+  // Deploy a service mesh from an interactive on the default namespace
+  mesheryctl mesh deploy
+
+  // Deploy Linkerd mesh on a specific namespace
+  mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
+
+  // Deploy Linkerd mesh and wait for it to be deployed
+  mesheryctl mesh deploy --adapter meshery-linkerd --watch
+name: mesheryctl mesh remove
+description: remove a service mesh in the kubernetes cluster
+usage: mesheryctl mesh remove [flags]
+example: ""
+name: mesheryctl mesh validate
+description: Validate conformance to service mesh standards
+usage: mesheryctl mesh validate [flags]
+example: ""
+name: mesheryctl mesh
+description: Service Mesh Lifecycle Management
+usage: mesheryctl mesh [flags]
+example: ""
+name: mesheryctl exp
+description: Experimental commands for mesheryctl
+usage: mesheryctl exp [flags]
+example: ""
+name: mesheryctl exp filter apply
+description: Apply filter file
+usage: mesheryctl exp filter apply [flags]
+example: ""
+name: mesheryctl exp filter delete
+description: Delete filter file
+usage: mesheryctl exp filter delete [flags]
+example: ""
+name: mesheryctl exp filter list
+description: List filters
+usage: mesheryctl exp filter list [flags]
+example: ""
+name: mesheryctl exp filter view
+description: Display filters(s)
+usage: mesheryctl exp filter view <filter name> [flags]
+example: ""
+name: mesheryctl exp filter
+description: Service Mesh Filter Management
+usage: mesheryctl exp filter [flags]
+example: ""
+name: mesheryctl mesh deploy
+description: Deploy a service mesh to the Kubernetes cluster
+usage: mesheryctl mesh deploy [flags]
+example: |2-
+
+  // Deploy a service mesh from an interactive on the default namespace
+  mesheryctl mesh deploy
+
+  // Deploy Linkerd mesh on a specific namespace
+  mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
+
+  // Deploy Linkerd mesh and wait for it to be deployed
+  mesheryctl mesh deploy --adapter meshery-linkerd --watch
+name: mesheryctl mesh remove
+description: remove a service mesh in the kubernetes cluster
+usage: mesheryctl mesh remove [flags]
+example: ""
+name: mesheryctl mesh validate
+description: Validate conformance to service mesh standards
+usage: mesheryctl mesh validate [flags]
+example: ""
+name: mesheryctl mesh
+description: Service Mesh Lifecycle Management
+usage: mesheryctl mesh [flags]
+example: ""
+name: mesheryctl exp
+description: Experimental commands for mesheryctl
+usage: mesheryctl exp [flags]
+example: ""
+name: mesheryctl mesh deploy
+description: Deploy a service mesh to the Kubernetes cluster
+usage: mesheryctl mesh deploy [flags]
+example: |2-
+
+  // Deploy a service mesh from an interactive on the default namespace
+  mesheryctl mesh deploy
+
+  // Deploy Linkerd mesh on a specific namespace
+  mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
+
+  // Deploy Linkerd mesh and wait for it to be deployed
+  mesheryctl mesh deploy --adapter meshery-linkerd --watch
+name: mesheryctl mesh remove
+description: remove a service mesh in the kubernetes cluster
+usage: mesheryctl mesh remove [flags]
+example: ""
+name: mesheryctl mesh validate
+description: Validate conformance to service mesh standards
+usage: mesheryctl mesh validate [flags]
+example: ""
+name: mesheryctl mesh
+description: Service Mesh Lifecycle Management
+usage: mesheryctl mesh [flags]
+example: ""
+name: mesheryctl mesh deploy
+description: Deploy a service mesh to the Kubernetes cluster
+usage: mesheryctl mesh deploy [flags]
+example: |2-
+
+  // Deploy a service mesh from an interactive on the default namespace
+  mesheryctl mesh deploy
+
+  // Deploy Linkerd mesh on a specific namespace
+  mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
+
+  // Deploy Linkerd mesh and wait for it to be deployed
+  mesheryctl mesh deploy --adapter meshery-linkerd --watch
+name: mesheryctl mesh remove
+description: remove a service mesh in the kubernetes cluster
+usage: mesheryctl mesh remove [flags]
+example: ""
+name: mesheryctl mesh validate
+description: Validate conformance to service mesh standards
+usage: mesheryctl mesh validate [flags]
+example: ""
+name: mesheryctl mesh
+description: Service Mesh Lifecycle Management
+usage: mesheryctl mesh [flags]
+example: ""
+name: mesheryctl pattern apply
+description: Apply pattern file
+usage: mesheryctl pattern apply [flags]
+example: "\n\t// apply a pattern file\n\tmesheryctl pattern apply -f <file | URL>\n\n\t//
+  deploy a saved pattern\n\tmesheryctl pattern apply <pattern-name>\n\t"
+name: mesheryctl pattern delete
+description: Delete pattern file
+usage: mesheryctl pattern delete [flags]
+example: ""
+name: mesheryctl pattern list
+description: List patterns
+usage: mesheryctl pattern list [flags]
+example: ""
+name: mesheryctl pattern view
+description: Display pattern(s)
+usage: mesheryctl pattern view <pattern name> [flags]
+example: ""
+name: mesheryctl pattern
+description: Service Mesh Patterns Management
+usage: mesheryctl pattern [flags]
+example: ""
+name: mesheryctl pattern apply
+description: Apply pattern file
+usage: mesheryctl pattern apply [flags]
+example: "\n\t// apply a pattern file\n\tmesheryctl pattern apply -f <file | URL>\n\n\t//
+  deploy a saved pattern\n\tmesheryctl pattern apply <pattern-name>\n\t"
+name: mesheryctl pattern delete
+description: Delete pattern file
+usage: mesheryctl pattern delete [flags]
+example: ""
+name: mesheryctl pattern list
+description: List patterns
+usage: mesheryctl pattern list [flags]
+example: ""
+name: mesheryctl pattern view
+description: Display pattern(s)
+usage: mesheryctl pattern view <pattern name> [flags]
+example: ""
+name: mesheryctl pattern
+description: Service Mesh Patterns Management
+usage: mesheryctl pattern [flags]
+example: ""
+name: mesheryctl perf apply
+description: Run a Performance test
+usage: mesheryctl perf apply [profile-name | --file] --flags [flags]
+example: "\n// Execute a Performance test with the specified performance profile\nmesheryctl
+  perf apply meshery-profile --flags\n\n// Execute a Performance test with creating
+  a new performance profile\nmesheryctl perf apply meshery-profile-new --url \"https://google.com\"\n\n//
+  Run Performance test using SMP compatible test configuration\nmesheryctl perf apply
+  -f perf-config.yaml\n\n// Run performance test using SMP compatible test configuration
+  and override values with flags\nmesheryctl perf apply -f <filepath> --flags\n\n//
+  Choice of load generator - fortio or wrk2 (default: fortio)\nmesheryctl perf apply
+  meshery-test --load-generator wrk2\n\n// Execute a Performance test with specified
+  queries per second\nmesheryctl perf apply local-perf --url https://192.168.1.15/productpage
+  --qps 30\n\n// Execute a Performance test with specified service mesh\nmesheryctl
+  perf apply local-perf --url https://192.168.1.15/productpage --mesh istio\n\t"
+name: mesheryctl perf profile
+description: List performance profiles
+usage: mesheryctl perf profile [profile-name] [flags]
+example: |2
+
+  // List performance profiles (maximum 25 profiles)
+  mesheryctl perf profile
+
+  // List performance profiles with search (maximum 25 profiles)
+  mesheryctl perf profile test 2
+
+  // View single performance profile with detailed information
+  mesheryctl perf profile test --view
+name: mesheryctl perf result
+description: List performance test results
+usage: mesheryctl perf result profile-name [flags]
+example: |2
+
+  // List Test results (maximum 25 results)
+  mesheryctl perf result saturday-profile
+
+  // View other set of performance results with --page (maximum 25 results)
+  mesheryctl perf result saturday-profile --page 2
+
+  // View single performance result with detailed information
+  mesheryctl perf result saturday-profile --view
+name: mesheryctl perf
+description: Performance Management
+usage: mesheryctl perf [flags]
+example: "\n// Run performance test\nmesheryctl perf apply test-3 --name \"a quick
+  stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests
+  2 --duration 30s\n\t\n// List performance profiles\nmesheryctl perf profile sam-test\n\n//
+  List performance results\nmesheryctl perf result sam-test\n\n// Display Perf profile
+  in JSON or YAML\nmesheryctl perf result -o json\nmesheryctl perf result -o yaml\n\t"
+name: mesheryctl perf apply
+description: Run a Performance test
+usage: mesheryctl perf apply [profile-name | --file] --flags [flags]
+example: "\n// Execute a Performance test with the specified performance profile\nmesheryctl
+  perf apply meshery-profile --flags\n\n// Execute a Performance test with creating
+  a new performance profile\nmesheryctl perf apply meshery-profile-new --url \"https://google.com\"\n\n//
+  Run Performance test using SMP compatible test configuration\nmesheryctl perf apply
+  -f perf-config.yaml\n\n// Run performance test using SMP compatible test configuration
+  and override values with flags\nmesheryctl perf apply -f <filepath> --flags\n\n//
+  Choice of load generator - fortio or wrk2 (default: fortio)\nmesheryctl perf apply
+  meshery-test --load-generator wrk2\n\n// Execute a Performance test with specified
+  queries per second\nmesheryctl perf apply local-perf --url https://192.168.1.15/productpage
+  --qps 30\n\n// Execute a Performance test with specified service mesh\nmesheryctl
+  perf apply local-perf --url https://192.168.1.15/productpage --mesh istio\n\t"
+name: mesheryctl perf profile
+description: List performance profiles
+usage: mesheryctl perf profile [profile-name] [flags]
+example: |2
+
+  // List performance profiles (maximum 25 profiles)
+  mesheryctl perf profile
+
+  // List performance profiles with search (maximum 25 profiles)
+  mesheryctl perf profile test 2
+
+  // View single performance profile with detailed information
+  mesheryctl perf profile test --view
+name: mesheryctl perf result
+description: List performance test results
+usage: mesheryctl perf result profile-name [flags]
+example: |2
+
+  // List Test results (maximum 25 results)
+  mesheryctl perf result saturday-profile
+
+  // View other set of performance results with --page (maximum 25 results)
+  mesheryctl perf result saturday-profile --page 2
+
+  // View single performance result with detailed information
+  mesheryctl perf result saturday-profile --view
+name: mesheryctl perf
+description: Performance Management
+usage: mesheryctl perf [flags]
+example: "\n// Run performance test\nmesheryctl perf apply test-3 --name \"a quick
+  stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests
+  2 --duration 30s\n\t\n// List performance profiles\nmesheryctl perf profile sam-test\n\n//
+  List performance results\nmesheryctl perf result sam-test\n\n// Display Perf profile
+  in JSON or YAML\nmesheryctl perf result -o json\nmesheryctl perf result -o yaml\n\t"
+name: mesheryctl system channel set
+description: set release channel and version
+usage: mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
+example: ""
+name: mesheryctl system channel switch
+description: switch release channel and version
+usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]
+  [flags]
+example: ""
+name: mesheryctl system channel view
+description: view release channel and version
+usage: mesheryctl system channel view [flags]
+example: ""
+name: mesheryctl system channel
+description: Switch between release channels
+usage: mesheryctl system channel [flags]
+example: ""
+name: mesheryctl system check
+description: Meshery environment check
+usage: mesheryctl system check [flags]
+example: ""
+name: mesheryctl system completion
+description: Output shell completion code
+usage: mesheryctl system completion [bash|zsh|fish]
+example: |2-
+    # bash <= 3.2
+    source /dev/stdin <<< "$(mesheryctl system completion bash)"
+
+    # bash >= 4.0
+    source <(mesheryctl system completion bash)
+
+    # bash <= 3.2 on osx
+    brew install bash-completion # ensure you have bash-completion 1.3+
+    mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+
+    # bash >= 4.0 on osx
+    brew install bash-completion@2
+    mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+
+    # zsh
+
+    # If shell completion is not already enabled in your environment you will need
+    # to enable it.  You can execute the following once:
+    # Might need to start a new shell for this setup to take effect.
+    $ echo "autoload -U compinit; compinit" >> ~/.zshrc
+
+    source <(mesheryctl system completion zsh)
+
+    # zsh on osx / oh-my-zsh
+    mesheryctl system completion zsh > "${fpath[1]}/_mesheryctl"
+
+    # fish:
+    mesheryctl system completion fish | source
+    # To load fish shell completions for each session, execute once:
+    mesheryctl system completion fish > ~/.config/fish/completions/mesheryctl.fish
+name: mesheryctl system config aks
+description: Configure Meshery to use AKS cluster
+usage: mesheryctl system config aks [flags]
+example: "\n\tConfigure Meshery to connect to AKS cluster using auth token\n\tmesheryctl
+  system config aks --token auth.json\n\t"
+name: mesheryctl system config eks
+description: Configure Meshery to use EKS cluster
+usage: mesheryctl system config eks [flags]
+example: "\n\tConfigure Meshery to connect to EKS cluster using auth token\n\tmesheryctl
+  system config eks --token auth.json\n\t"
+name: mesheryctl system config gke
+description: Configure Meshery to use GKE cluster
+usage: mesheryctl system config gke [flags]
+example: "\n\tConfigure Meshery to connect to GKE cluster using auth token\n\tmesheryctl
+  system config gke --token auth.json\n\t"
+name: mesheryctl system config minikube
+description: Configure Meshery to use minikube cluster
+usage: mesheryctl system config minikube [flags]
+example: "\n\tConfigure Meshery to connect to minikube cluster using auth token\n\tmesheryctl
+  system config minikube --token auth.json\n\t"
+name: mesheryctl system config
+description: Configure Meshery
+usage: mesheryctl system config [flags]
+example: ""
+name: mesheryctl system context create
+description: Create a new context (a named Meshery deployment)
+usage: mesheryctl system context create context-name [flags]
+example: "\n\tCreate new context\n\tmesheryctl system context create context-name\n\n\tCreate
+  new context and provide list of components, platform & URL\n\tmesheryctl system
+  context create context-name --components meshery-osm --platform docker --url http://localhost:9081
+  --set --yes\n\t"
+name: mesheryctl system context delete
+description: delete context
+usage: mesheryctl system context delete context-name [flags]
+example: ""
+name: mesheryctl system context list
+description: list contexts
+usage: mesheryctl system context list [flags]
+example: ""
+name: mesheryctl system context switch
+description: switch context
+usage: mesheryctl system context switch context-name [flags]
+example: ""
+name: mesheryctl system context view
+description: view current context
+usage: mesheryctl system context view [context-name | --context context-name| --all]
+  --flags [flags]
+example: "\n\tView default context\n\tmesheryctl system context view\n\n\tView specified
+  context\n\tmesheryctl system context view context-name\n\n\tView specified context
+  with context flag\n\tmesheryctl system context view --context context-name\n\n\tView
+  config of all contexts\n\tmesheryctl system context view --all\n\t"
+name: mesheryctl system context
+description: Configure your Meshery deployment(s)
+usage: mesheryctl system context [command] [flags]
+example: ""
+name: mesheryctl system dashboard
+description: Open Meshery UI in browser.
+usage: mesheryctl system dashboard [flags]
+example: ""
+name: mesheryctl system login
+description: Authenticate to a Meshery Server
+usage: mesheryctl system login [flags]
+example: ""
+name: mesheryctl system logout
+description: Remove authentication for Meshery Server
+usage: mesheryctl system logout [flags]
+example: ""
+name: mesheryctl system logs
+description: Print logs
+usage: mesheryctl system logs [flags]
+example: ""
+name: mesheryctl system reset
+description: Reset Meshery's configuration
+usage: mesheryctl system reset [flags]
+example: ""
+name: mesheryctl system restart
+description: Stop, then start Meshery
+usage: mesheryctl system restart [flags]
+example: ""
+name: mesheryctl system start
+description: Start Meshery
+usage: mesheryctl system start [flags]
+example: ""
+name: mesheryctl system status
+description: Check Meshery status
+usage: mesheryctl system status [flags]
+example: ""
+name: mesheryctl system stop
+description: Stop Meshery
+usage: mesheryctl system stop [flags]
+example: ""
+name: mesheryctl system token create
+description: Create a token in your meshconfig
+usage: mesheryctl system token create [flags]
+example: "\n\tmesheryctl system token create <token-name> -f <token-path>\n\tmesheryctl
+  system token create <token-name> (default path is auth.json)\n\tmesheryctl system
+  token create <token-name> -f <token-path> --set\n\t"
+name: mesheryctl system token delete
+description: Delete a token from your meshconfig
+usage: mesheryctl system token delete [flags]
+example: "\n\tmesheryctl system token delete <token-name>\n\t"
+name: mesheryctl system token list
+description: List tokens
+usage: mesheryctl system token list [flags]
+example: "\n\tmesheryctl system token list\n\t"
+name: mesheryctl system token set
+description: Set token for context
+usage: mesheryctl system token set [flags]
+example: "\n\tmesheryctl system token set <token-name> \n\n\t"
+name: mesheryctl system token view
+description: View token
+usage: mesheryctl system token view [flags]
+example: "\n\tmesheryctl system token view <token-name>\n\tmesheryctl system token
+  view (show token of current context)\n\t"
+name: mesheryctl system token
+description: Manage Meshery user tokens
+usage: mesheryctl system token [flags]
+example: ""
+name: mesheryctl system update
+description: Pull new Meshery images/manifest files.
+usage: mesheryctl system update [flags]
+example: ""
+name: mesheryctl system
+description: Meshery Lifecycle Management
+usage: mesheryctl system [flags]
+example: ""
+name: mesheryctl system channel set
+description: set release channel and version
+usage: mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
+example: ""
+name: mesheryctl system channel switch
+description: switch release channel and version
+usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]
+  [flags]
+example: ""
+name: mesheryctl system channel view
+description: view release channel and version
+usage: mesheryctl system channel view [flags]
+example: ""
+name: mesheryctl system channel
+description: Switch between release channels
+usage: mesheryctl system channel [flags]
+example: ""
+name: mesheryctl system check
+description: Meshery environment check
+usage: mesheryctl system check [flags]
+example: ""
+name: mesheryctl system completion
+description: Output shell completion code
+usage: mesheryctl system completion [bash|zsh|fish]
+example: |2-
+    # bash <= 3.2
+    source /dev/stdin <<< "$(mesheryctl system completion bash)"
+
+    # bash >= 4.0
+    source <(mesheryctl system completion bash)
+
+    # bash <= 3.2 on osx
+    brew install bash-completion # ensure you have bash-completion 1.3+
+    mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+
+    # bash >= 4.0 on osx
+    brew install bash-completion@2
+    mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+
+    # zsh
+
+    # If shell completion is not already enabled in your environment you will need
+    # to enable it.  You can execute the following once:
+    # Might need to start a new shell for this setup to take effect.
+    $ echo "autoload -U compinit; compinit" >> ~/.zshrc
+
+    source <(mesheryctl system completion zsh)
+
+    # zsh on osx / oh-my-zsh
+    mesheryctl system completion zsh > "${fpath[1]}/_mesheryctl"
+
+    # fish:
+    mesheryctl system completion fish | source
+    # To load fish shell completions for each session, execute once:
+    mesheryctl system completion fish > ~/.config/fish/completions/mesheryctl.fish
+name: mesheryctl system config aks
+description: Configure Meshery to use AKS cluster
+usage: mesheryctl system config aks [flags]
+example: "\n\tConfigure Meshery to connect to AKS cluster using auth token\n\tmesheryctl
+  system config aks --token auth.json\n\t"
+name: mesheryctl system config eks
+description: Configure Meshery to use EKS cluster
+usage: mesheryctl system config eks [flags]
+example: "\n\tConfigure Meshery to connect to EKS cluster using auth token\n\tmesheryctl
+  system config eks --token auth.json\n\t"
+name: mesheryctl system config gke
+description: Configure Meshery to use GKE cluster
+usage: mesheryctl system config gke [flags]
+example: "\n\tConfigure Meshery to connect to GKE cluster using auth token\n\tmesheryctl
+  system config gke --token auth.json\n\t"
+name: mesheryctl system config minikube
+description: Configure Meshery to use minikube cluster
+usage: mesheryctl system config minikube [flags]
+example: "\n\tConfigure Meshery to connect to minikube cluster using auth token\n\tmesheryctl
+  system config minikube --token auth.json\n\t"
+name: mesheryctl system config
+description: Configure Meshery
+usage: mesheryctl system config [flags]
+example: ""
+name: mesheryctl system context create
+description: Create a new context (a named Meshery deployment)
+usage: mesheryctl system context create context-name [flags]
+example: "\n\tCreate new context\n\tmesheryctl system context create context-name\n\n\tCreate
+  new context and provide list of components, platform & URL\n\tmesheryctl system
+  context create context-name --components meshery-osm --platform docker --url http://localhost:9081
+  --set --yes\n\t"
+name: mesheryctl system context delete
+description: delete context
+usage: mesheryctl system context delete context-name [flags]
+example: ""
+name: mesheryctl system context list
+description: list contexts
+usage: mesheryctl system context list [flags]
+example: ""
+name: mesheryctl system context switch
+description: switch context
+usage: mesheryctl system context switch context-name [flags]
+example: ""
+name: mesheryctl system context view
+description: view current context
+usage: mesheryctl system context view [context-name | --context context-name| --all]
+  --flags [flags]
+example: "\n\tView default context\n\tmesheryctl system context view\n\n\tView specified
+  context\n\tmesheryctl system context view context-name\n\n\tView specified context
+  with context flag\n\tmesheryctl system context view --context context-name\n\n\tView
+  config of all contexts\n\tmesheryctl system context view --all\n\t"
+name: mesheryctl system context
+description: Configure your Meshery deployment(s)
+usage: mesheryctl system context [command] [flags]
+example: ""
+name: mesheryctl system dashboard
+description: Open Meshery UI in browser.
+usage: mesheryctl system dashboard [flags]
+example: ""
+name: mesheryctl system login
+description: Authenticate to a Meshery Server
+usage: mesheryctl system login [flags]
+example: ""
+name: mesheryctl system logout
+description: Remove authentication for Meshery Server
+usage: mesheryctl system logout [flags]
+example: ""
+name: mesheryctl system logs
+description: Print logs
+usage: mesheryctl system logs [flags]
+example: ""
+name: mesheryctl system reset
+description: Reset Meshery's configuration
+usage: mesheryctl system reset [flags]
+example: ""
+name: mesheryctl system restart
+description: Stop, then start Meshery
+usage: mesheryctl system restart [flags]
+example: ""
+name: mesheryctl system start
+description: Start Meshery
+usage: mesheryctl system start [flags]
+example: ""
+name: mesheryctl system status
+description: Check Meshery status
+usage: mesheryctl system status [flags]
+example: ""
+name: mesheryctl system stop
+description: Stop Meshery
+usage: mesheryctl system stop [flags]
+example: ""
+name: mesheryctl system token create
+description: Create a token in your meshconfig
+usage: mesheryctl system token create [flags]
+example: "\n\tmesheryctl system token create <token-name> -f <token-path>\n\tmesheryctl
+  system token create <token-name> (default path is auth.json)\n\tmesheryctl system
+  token create <token-name> -f <token-path> --set\n\t"
+name: mesheryctl system token delete
+description: Delete a token from your meshconfig
+usage: mesheryctl system token delete [flags]
+example: "\n\tmesheryctl system token delete <token-name>\n\t"
+name: mesheryctl system token list
+description: List tokens
+usage: mesheryctl system token list [flags]
+example: "\n\tmesheryctl system token list\n\t"
+name: mesheryctl system token set
+description: Set token for context
+usage: mesheryctl system token set [flags]
+example: "\n\tmesheryctl system token set <token-name> \n\n\t"
+name: mesheryctl system token view
+description: View token
+usage: mesheryctl system token view [flags]
+example: "\n\tmesheryctl system token view <token-name>\n\tmesheryctl system token
+  view (show token of current context)\n\t"
+name: mesheryctl system token
+description: Manage Meshery user tokens
+usage: mesheryctl system token [flags]
+example: ""
+name: mesheryctl system update
+description: Pull new Meshery images/manifest files.
+usage: mesheryctl system update [flags]
+example: ""
+name: mesheryctl system
+description: Meshery Lifecycle Management
+usage: mesheryctl system [flags]
+example: ""
+name: mesheryctl version
+description: Version of mesheryctl
+usage: mesheryctl version [flags]
+example: ""
+name: mesheryctl version
+description: Version of mesheryctl
+usage: mesheryctl version [flags]
+example: ""
+name: mesheryctl
+description: Meshery Command Line tool
+usage: mesheryctl [flags]
+example: ""
