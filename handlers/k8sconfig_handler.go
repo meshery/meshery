@@ -342,7 +342,7 @@ func (c *compCreation) cancelPreviousRun(ctx string) {
 	defer c.compCreationMutex.Unlock()
 	cancel := c.compCreationPerContext[ctx]
 	if cancel != nil {
-		fmt.Println("cancelling previous run for contextID ", ctx)
+		fmt.Println("canceling previous run for contextID ", ctx)
 		(*cancel)()
 		return
 	}
