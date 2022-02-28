@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/golangci/golangci-lint"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"gopkg.in/yaml.v2"
