@@ -210,11 +210,21 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 	)
 
 	if err := deleteCR(brokerResourceName, brokerInstanceName, client); err != nil {
-		return errors.Wrap(err, "cannot delete CR "+brokerInstanceName)
+		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CR "+brokerInstanceName))
+		if !forceDelete {
+			return err
+		}
+
+		log.Debug(err)
 	}
 
 	if err := deleteCR(meshsyncResourceName, meshsyncInstanceName, client); err != nil {
-		return errors.Wrap(err, "cannot delete CR "+meshsyncInstanceName)
+		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CR "+meshsyncInstanceName))
+		if !forceDelete {
+			return err
+		}
+
+		log.Debug(err)
 	}
 
 	return nil
@@ -239,15 +249,30 @@ func invokeDeleteCRDs() error {
 	cfg := controllerConfig.GetConfigOrDie()
 	client, err := apiextension.NewForConfig(cfg)
 	if err != nil {
-		return errors.Wrap(err, "cannot invoke delete CRDs")
+		err = ErrStopMeshery(errors.Wrap(err, "cannot invoke delete CRDs"))
+		if !forceDelete {
+			return err
+		}
+
+		log.Debug(err)
 	}
 
 	if err = deleteCRD(brokderCRDName, client); err != nil {
-		return errors.Wrap(err, "cannot delete CRD "+brokderCRDName)
+		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CRD "+brokderCRDName))
+		if !forceDelete {
+			return err
+		}
+
+		log.Debug(err)
 	}
 
 	if err = deleteCRD(meshsyncCRDName, client); err != nil {
-		return errors.Wrap(err, "cannot delete CRD "+meshsyncCRDName)
+		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CRD "+meshsyncCRDName))
+		if !forceDelete {
+			return err
+		}
+
+		log.Debug(err)
 	}
 
 	return nil

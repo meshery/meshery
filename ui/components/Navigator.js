@@ -1245,8 +1245,8 @@ class Navigator extends React.Component {
         <FontAwesomeIcon
           icon={faAngleLeft}
           fixedWidth
-          size="2x"
-          style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
+          size="1x"
+          style={{ margin : "0.45rem 0.2rem ", width : "0.8rem" }}
           alt="Sidebar collapse toggle icon"
           onClick={this.toggleMiniDrawer}
         />
