@@ -59,7 +59,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
       {% for item in items limit: 1 %}
         {% if item.meshery-component-version == "edge" %}
           {% if item.overall-status == "passing" %}
-            {% assign overall-status = "background-color: #0BDA51; color: white;" %}
+            {% assign overall-status = "background-color: #56B257; color: white;" %}
             {% assign result-state = "✅" %}
           {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
@@ -108,7 +108,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
 
         {% else %} 
           {% if items[1].overall-status == "passing" %}
-            {% assign overall-status = "background-color: #0BDA51; color: white;" %}
+            {% assign overall-status = "background-color: #56B257; color: white;" %}
             {% assign result-state = "✅" %}
           {% elsif items[1].overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
@@ -163,7 +163,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
       {% for item in items limit: 1 %}
         {% if item.meshery-component-version != "edge" %}
           {% if item.overall-status == "passing" %}
-            {% assign overall-status = "background-color: #0BDA51; color: white;" %}
+            {% assign overall-status = "background-color: #56B257; color: white;" %}
             {% assign result-state = "✅" %}
           {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
