@@ -346,7 +346,6 @@ func (c *compCreation) cancelPreviousRun(ctx string) {
 		(*cancel)()
 		return
 	}
-	fmt.Println("no cancel function for this id ", ctx)
 }
 func (c *compCreation) registerCancelFunc(ctx string, cancel context.CancelFunc) {
 	c.compCreationMutex.Lock()
