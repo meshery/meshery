@@ -360,10 +360,10 @@ var compCreationSingleton = compCreation{
 func registerK8sComponents(ctxt context.Context, config []byte, ctx string) error {
 	man, err := core.GetK8Components(ctxt, config, ctx)
 	if err != nil {
-		return ErrCreatingKubernetesComponents(err)
+		return ErrCreatingKubernetesComponents(err, ctx)
 	}
 	if man == nil {
-		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"))
+		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctx)
 	}
 	for i, def := range man.Definitions {
 		var ord core.WorkloadCapability
@@ -376,16 +376,16 @@ func registerK8sComponents(ctxt context.Context, config []byte, ctx string) erro
 		var definition v1alpha1.WorkloadDefinition
 		err := json.Unmarshal([]byte(def), &definition)
 		if err != nil {
-			return ErrCreatingKubernetesComponents(err)
+			return ErrCreatingKubernetesComponents(err, ctx)
 		}
 		ord.OAMDefinition = definition
 		content, err := json.Marshal(ord)
 		if err != nil {
-			return ErrCreatingKubernetesComponents(err)
+			return ErrCreatingKubernetesComponents(err, ctx)
 		}
 		err = core.RegisterWorkload(content)
 		if err != nil {
-			return ErrCreatingKubernetesComponents(err)
+			return ErrCreatingKubernetesComponents(err, ctx)
 		}
 	}
 	return nil
