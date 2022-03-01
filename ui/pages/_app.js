@@ -299,7 +299,7 @@ const MesheryAppWrapper = (props) => {
   return (
     <Provider store={props.store}>
       <Head>
-        <link rel="shortcut icon" href="/ui/public/static/img/meshery-logo/meshery-logo.svg" />
+        <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
         <title>Meshery</title>
       </Head>
       <MuiThemeProvider theme={theme}>
