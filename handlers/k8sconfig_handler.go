@@ -331,7 +331,7 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 	return &cc, nil
 }
 
-//manages creation of k8s components per context. Such that for each k8s context we have one componentcreation process running at a time
+//manages creation of k8s components per context. Such that for each k8s context we have one component creation process running at a time
 type compCreation struct {
 	compCreationPerContext map[string]*context.CancelFunc //For each contextID, we have a cancel function to cancel it's previous run.
 	compCreationMutex      sync.Mutex
