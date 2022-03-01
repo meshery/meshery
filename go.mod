@@ -19,7 +19,7 @@ require (
 	fortio.org/fortio v1.20.0
 	github.com/99designs/gqlgen v0.14.0
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
-	github.com/briandowns/spinner v1.18.0
+	github.com/briandowns/spinner v1.18.1
 	github.com/docker/docker v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/envoyproxy/go-control-plane v0.10.1
 	github.com/ghodss/yaml v1.0.0
@@ -38,7 +38,7 @@ require (
 	github.com/layer5io/meshery-operator v0.5.2
 	github.com/layer5io/meshkit v0.5.6
 	github.com/layer5io/meshsync v0.5.0
-	github.com/layer5io/nighthawk-go v0.5.0
+	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.3
 	github.com/lib/pq v1.10.4
 	github.com/manifoldco/promptui v0.9.0
