@@ -100,7 +100,7 @@
   },
   "devDependencies": {
     "@babel/traverse": "^7.16.0",
-    "@babel/types": "^7.16.0",
+    "@babel/types": "^7.17.0",
     "@types/react-relay": "^11.0.2",
     "babel-eslint": "^10.1.0",
     "cypress": "^9.2.0",
@@ -112,7 +112,7 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.27.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "http-proxy": "^1.18.1",
     "husky": "^7.0.2",
     "lint-staged": "^12.1.5",
