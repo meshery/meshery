@@ -95,8 +95,8 @@ func TestProfileCmd(t *testing.T) {
 			{Method: "GET", URL: profileURL, Response: profile1005, ResponseCode: 200},
 		}, profile1010output, testToken, true},
 		{"failing add authentication test", []string{"profile"}, []utils.MockURL{}, profile1011output, testToken + "invalid-path", true},
-		{"Server Error 500", []string{"profile"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1006, ResponseCode: 500},
+		{"Server Error 400", []string{"profile"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1006, ResponseCode: 400},
 		}, profile1009output, testToken, true},
 	}
 
