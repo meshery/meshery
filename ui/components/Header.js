@@ -104,16 +104,11 @@ const styles = (theme) => ({
     width : theme.spacing(2.5)
   },
   Chip : {
-    root : {
-      maxWidth : "200px",
-      whiteSpace : "nowrap",
-      textOverflow : "ellipsis"
-    },
     backgroundColor : "white",
     cursor : "pointer"
   },
   cMenuContainer : {
-    // backgroundColor : "#EEEEEE",
+    backgroundColor : "#EEEEEE",
     borderRadius : "3px",
     padding : "1rem",
     zIndex : 1201,
@@ -164,11 +159,8 @@ function K8sContextMenu({
   }
   const handleKubernetesDelete = () => {
     showProgress()
-
-    const handlerCb = () => resetKubernetesConfig()
-
     deleteKubernetesConfig(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed", handlerCb),
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed"),
       errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config")
     )
   }
@@ -225,12 +217,11 @@ function K8sContextMenu({
               <div>
                 <TextField
                   id="search-ctx"
-                  variant="outlined"
                   size="small"
                   placeholder="search..."
                   onChange={ev => searchContexts(ev.target.value)}
-                  style={{ width : "100%" }}
-                  InputProps={{ startAdornment :
+                  style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
+                  InputProps={{ endAdornment :
                 (
                   <Search className={classes.searchIcon} />
                 ) }}
