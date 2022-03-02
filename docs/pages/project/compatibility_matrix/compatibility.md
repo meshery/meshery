@@ -59,11 +59,14 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
       {% for item in items limit: 1 %}
         {% if item.meshery-component-version == "edge" %}
           {% if item.overall-status == "passing" %}
-            {% assign overall-status = "background-color: #83B71E; color: white;" %}
+            {% assign overall-status = "background-color: #56B257; color: white;" %}
+            {% assign result-state = "✅" %}
           {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
+            {% assign result-state = "⚠️" %} 
           {% elsif item.overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
+            {% assign result-state = "❌" %}
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
@@ -92,7 +95,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               <i>Test results:</i>
               <table border="0">
               {% for test in item.tests %}
-                  <tr><td>{{ test[1] }}</td><td>{{test[0] }}</td></tr>
+                  <tr><td>{{ result-state }}</td><td>{{test[0] }}</td></tr>
               {% endfor %}      
               </table>      
             </td>
@@ -105,11 +108,14 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
 
         {% else %} 
           {% if items[1].overall-status == "passing" %}
-            {% assign overall-status = "background-color: #83B71E; color: white;" %}
+            {% assign overall-status = "background-color: #56B257; color: white;" %}
+            {% assign result-state = "✅" %}
           {% elsif items[1].overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
+            {% assign result-state = "⚠️" %} \
           {% elsif items[1].overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
+            {% assign result-state = "❌" %}
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
@@ -136,11 +142,11 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             </td>
             <td colspan="3" class="details">
               <i>Test results:</i>
-              <ol>
-              {% for test in items[1].tests %}
-                <li>{{ test[0] }}: {{test[1] }}</li>
+              <table border="0">
+              {% for test in item.tests %}
+                  <tr><td>{{ result-state }}</td><td>{{test[0] }}</td></tr>
               {% endfor %}      
-              </ol>      
+              </table>       
             </td>
             <td>
               <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
@@ -157,11 +163,14 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
       {% for item in items limit: 1 %}
         {% if item.meshery-component-version != "edge" %}
           {% if item.overall-status == "passing" %}
-            {% assign overall-status = "background-color: #83B71E; color: white;" %}
+            {% assign overall-status = "background-color: #56B257; color: white;" %}
+            {% assign result-state = "✅" %}
           {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
+            {% assign result-state = "⚠️" %}           
           {% elsif item.overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
+            {% assign result-state = "❌" %}
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
@@ -180,11 +189,11 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             </td>
             <td colspan="3" class="details">
               <i>Test results:</i>
-              <ol>
+              <table border="0">
               {% for test in item.tests %}
-                <li>{{ test[0] }}: {{test[1] }}</li>
+                  <tr><td>{{ result-state }}</td><td>{{test[0] }}</td></tr>
               {% endfor %}      
-              </ol>      
+              </table>    
             </td>
             <td>
               <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
