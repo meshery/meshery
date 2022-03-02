@@ -2,12 +2,15 @@ package utils
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/layer5io/meshkit/errors"
 )
 
 var (
-	ErrAttachAuthTokenCode = "1043"
+	ErrFailRequestCode     = "not set"
+	ErrFailReqStatusCode   = "not set"
+	ErrAttachAuthTokenCode = "not set"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -50,5 +53,25 @@ func formatError(msg string, cmd cmdType) string {
 
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
-		[]string{"authentication token not found. please supply a valid user token with the --token (or -t) flag. or login with `mesheryctl system login`"}, []string{}, []string{})
+		[]string{"Authentication token not found. please supply a valid user token with the --token (or -t) flag. or login with `mesheryctl system login`"}, []string{}, []string{})
+}
+
+func ErrFailRequest(err error) error {
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
+		[]string{"Failed to make a request"}, []string{}, []string{})
+}
+
+func ErrUnauthenticated() error {
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
+		[]string{"Authentication token is invalid. Please supply a valid user token. Login with `mesheryctl system login`"}, []string{}, []string{})
+}
+
+func InvalidToken() error {
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
+		[]string{"Authentication token is expired/invalid. Please login with `mesheryctl system login` to generate a new token"}, []string{}, []string{})
+}
+
+func ErrFailReqStatus(statusCode int) error {
+	return errors.New(ErrFailReqStatusCode, errors.Alert, []string{},
+		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ", possible Server Error"}, []string{}, []string{})
 }
