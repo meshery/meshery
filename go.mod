@@ -60,7 +60,7 @@ require (
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
 	gonum.org/v1/gonum v0.9.3
-	google.golang.org/grpc v1.42.0
+	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.23.2
