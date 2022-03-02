@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	ErrFailRequestCode     = "not set"
-	ErrFailReqStatusCode   = "not set"
-	ErrAttachAuthTokenCode = "not set"
+	ErrFailRequestCode     = "1044"
+	ErrFailReqStatusCode   = "1045"
+	ErrAttachAuthTokenCode = "1046"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
