@@ -8,6 +8,9 @@ image:
   repository: layer5/meshery-perf:stable-latest
   pullPolicy: Always
 
+ports:
+  http: 10013
+
 env: {}
 
 probe:
