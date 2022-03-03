@@ -75,7 +75,6 @@ It also shows the logs of a specific component.`,
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("Starting Meshery logging...")
 
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -109,6 +108,7 @@ It also shows the logs of a specific component.`,
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
 			}
+			log.Info("Starting Meshery logging...")
 
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
 				log.Errorf("%s does not exists", utils.DockerComposeFile)
@@ -146,6 +146,7 @@ It also shows the logs of a specific component.`,
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
 			}
+			log.Info("Starting Meshery logging...")
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))

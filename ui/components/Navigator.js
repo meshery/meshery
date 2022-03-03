@@ -408,10 +408,10 @@ const categories = [
         isBeta : true
       },
       {
-        id : "Patterns",
+        id : "Designs",
         icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/patterns",
-        title : "Patterns",
+        title : "Designs",
         show : false,
         link : true,
         isBeta : true
@@ -670,7 +670,7 @@ class Navigator extends React.Component {
       if (cat.id === "Configuration") {
         let show = false;
         cat.availableServiceMesh?.forEach((ch) => {
-          if (ch.id === "Patterns") {
+          if (ch.id === "Designs") {
             const idx = self.state.capabilities.findIndex((cap) => cap.feature === "persist-meshery-patterns");
             if (idx != -1) {
               ch.show = true;
@@ -1255,8 +1255,8 @@ class Navigator extends React.Component {
         <FontAwesomeIcon
           icon={faAngleLeft}
           fixedWidth
-          size="2x"
-          style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
+          size="1x"
+          style={{ margin : "0.45rem 0.2rem ", width : "0.8rem" }}
           alt="Sidebar collapse toggle icon"
           onClick={this.toggleMiniDrawer}
         />
