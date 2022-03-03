@@ -98,7 +98,7 @@ var dashboardCmd = &cobra.Command{
 				// get a free port number to bind port-forwarding
 				port, err := utils.GetEphemeralPort()
 				if err != nil {
-					return err
+					return ErrFailedGetEphemeralPort(err)
 				}
 
 				portforward, err := utils.NewPortForward(
@@ -138,7 +138,7 @@ var dashboardCmd = &cobra.Command{
 						}
 					}
 				}()
-
+				log.Info(fmt.Sprintf("Forwarding ports %v -> %v", options.podPort, port))
 				log.Info("Meshery UI available at: ", mesheryURL)
 				log.Info("Opening Meshery UI in the default browser.")
 				err = utils.NavigateToBrowser(mesheryURL)

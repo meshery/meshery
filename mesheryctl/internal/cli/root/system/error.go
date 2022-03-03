@@ -26,6 +26,7 @@ const (
 	ErrK8sConfigCode                = "1042"
 	ErrInitPortForwardCode          = ""
 	ErrRunPortForwardCode           = ""
+	ErrFailedGetEphemeralPortCode   = ""
 )
 
 func ErrHealthCheckFailed(err error) error {
@@ -114,5 +115,15 @@ func ErrRunPortForward(err error) error {
 		[]string{"Meshery pod is not in running phase", "mesheryctl can't connect to kubernetes with client-go"},
 		[]string{"Make sure Meshery pod exists and is in running state",
 			"Check if mesheryctl is connected to kubernetes with `mesheryctl system check`"},
+	)
+}
+
+func ErrFailedGetEphemeralPort(err error) error {
+	return errors.New(
+		ErrFailedGetEphemeralPortCode,
+		errors.Fatal,
+		[]string{"Failed to get a free port"},
+		[]string{err.Error(), "Failed to start port-forwarding"},
+		nil, nil,
 	)
 }
