@@ -27,7 +27,8 @@ import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
 import DiscussIcon from '../public/static/img/drawer-icons/discuss_forum_svg.js';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
-import { faAngleLeft,faCaretDown,
+import {
+  faAngleLeft, faCaretDown,
   faExternalLinkAlt,
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
@@ -75,9 +76,12 @@ const styles = (theme) => ({
   },
 
   itemActionable : { "&:hover" : { backgroundColor : "rgb(0, 187, 166, 0.5)", }, },
-  itemActiveItem : { color : "#4fc3f7",
-    fill : "#4fc3f7" },
-  itemPrimary : { color : "inherit",
+  itemActiveItem : {
+    color : "#4fc3f7",
+    fill : "#4fc3f7"
+  },
+  itemPrimary : {
+    color : "inherit",
     fontSize : theme.typography.fontSize,
     "&$textDense" : { fontSize : theme.typography.fontSize, },
   },
@@ -295,7 +299,7 @@ const categories = [
     title : "Lifecycle",
     show : true,
     link : true,
-    children : [
+    availableServiceMesh : [
       {
         id : "App_Mesh",
         href : "/management/app-mesh",
@@ -655,17 +659,17 @@ class Navigator extends React.Component {
     const self = this;
     categories.forEach((cat, ind) => {
       if (cat.id === "Lifecycle") {
-        cat.children.forEach((catc, ind1) => {
+        cat.availableServiceMesh.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
           const icon = self.pickIcon(catc.id);
-          categories[ind].children[ind1].icon = icon;
-          categories[ind].children[ind1].children = cr;
+          categories[ind].availableServiceMesh[ind1].icon = icon;
+          categories[ind].availableServiceMesh[ind1].children = cr;
         });
       }
 
       if (cat.id === "Configuration") {
         let show = false;
-        cat.children?.forEach((ch) => {
+        cat.availableServiceMesh?.forEach((ch) => {
           if (ch.id === "Patterns") {
             const idx = self.state.capabilities.findIndex((cap) => cap.feature === "persist-meshery-patterns");
             if (idx != -1) {
@@ -683,15 +687,15 @@ class Navigator extends React.Component {
   updateAdaptersLink() {
     categories.forEach((cat, ind) => {
       if (cat.id === "Lifecycle") {
-        cat.children.forEach((catc, ind1) => {
+        cat.availableServiceMesh.forEach((catc, ind1) => {
           if (
-            typeof categories[ind].children[ind1].children[0] !== "undefined" &&
-            typeof categories[ind].children[ind1].children[0].href !== "undefined"
+            typeof categories[ind].availableServiceMesh[ind1].children[0] !== "undefined" &&
+            typeof categories[ind].availableServiceMesh[ind1].children[0].href !== "undefined"
           ) {
             const val = true;
-            const newhref = `${categories[ind].children[ind1].children[0].href}`;
-            categories[ind].children[ind1].link = val;
-            categories[ind].children[ind1].href = newhref;
+            const newhref = `${categories[ind].availableServiceMesh[ind1].children[0].href}`;
+            categories[ind].availableServiceMesh[ind1].link = val;
+            categories[ind].availableServiceMesh[ind1].href = newhref;
           }
         });
       }
@@ -720,7 +724,7 @@ class Navigator extends React.Component {
       }
     };
 
-    categories.forEach(({ title, href, children, isBeta }) => {
+    categories.forEach(({ title, href, availableServiceMesh : children, isBeta }) => {
       fetchNestedPathAndTitle(path, title, href, children, isBeta);
     });
     st.path = path;
@@ -847,7 +851,7 @@ class Navigator extends React.Component {
               return "";
             }
             return (
-              <React.Fragment key={idc}>
+              <div key={idc}>
                 <ListItem
                   button
                   key={idc}
@@ -864,7 +868,7 @@ class Navigator extends React.Component {
                   {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                 </ListItem>
                 {this.renderChildren(idname, childrenc, depth + 1)}
-              </React.Fragment>
+              </div>
             );
           })}
         </List>
@@ -881,8 +885,9 @@ class Navigator extends React.Component {
                 return "";
               }
               return (
-                <React.Fragment key={idc}>
+                <div key={idc}>
                   <ListItem
+                    data-cy={idc}
                     button
                     key={idc}
                     className={classNames(
@@ -899,7 +904,7 @@ class Navigator extends React.Component {
                     {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                   </ListItem>
                   {this.renderChildren(idname, childrenc, depth + 1)}
-                </React.Fragment>
+                </div>
               );
             })}
           </List>
@@ -1065,13 +1070,13 @@ class Navigator extends React.Component {
     const Menu = (
       <List disablePadding className={classes.hideScrollbar}>
         {categories.map(({
-          id : childId, title, icon, href, show, link, children
+          id : childId, title, icon, href, show, link, availableServiceMesh : children
         }) => {
           if (typeof show !== "undefined" && !show) {
             return "";
           }
           return (
-            <React.Fragment key={childId}>
+            <div key={childId}>
               <ListItem
                 button={!!link}
                 dense
@@ -1087,10 +1092,15 @@ class Navigator extends React.Component {
                 onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
                 onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }) : null}
               >
-                <Link href={link
-                  ? href
-                  : ""}>
-                  <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
+                <Link
+                  href={link
+                    ? href
+                    : ""}>
+                  <div
+                    data-cy={childId}
+                    className={classNames(classes.link)}
+                    onClick={() => this.onClickCallback(href)}
+                  >
                     <Tooltip
                       title={childId}
                       placement="right"
@@ -1099,9 +1109,9 @@ class Navigator extends React.Component {
                       disableTouchListener={!isDrawerCollapsed}
                     >
 
-                      { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
+                      {(isDrawerCollapsed && children && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
                         <FontAwesomeIcon
-                          icon= {faCaretDown}
+                          icon={faCaretDown}
                           onClick={() => this.toggleItemCollapse(childId)}
                           className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "40%", marginBottom : "0.4rem" }}
                         /> :
@@ -1132,7 +1142,7 @@ class Navigator extends React.Component {
               <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679", opacity : "100%" }}>
                 {this.renderChildren(childId, children, 1)}
               </Collapse>
-            </React.Fragment>
+            </div>
           );
         })}
         {this.state.navigator && this.state.navigator.length
