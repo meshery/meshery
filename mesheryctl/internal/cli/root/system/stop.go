@@ -45,7 +45,7 @@ var (
 var stopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop Meshery",
-	Long:  `Stop all Meshery containers / remove all Meshery pods.`,
+	Long:  `Stop all Meshery containers / remove all Meshery resources.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -90,8 +90,9 @@ func stop() error {
 	if err != nil {
 		return err
 	}
-	if !ok {
-		log.Info("Meshery is not running. Nothing to stop.")
+	// if --force passed possibly no deployments running but other stale resource present
+	if !ok && !forceDelete {
+		log.Info("Meshery resources are not running. Nothing to stop.")
 		return nil
 	}
 
@@ -104,7 +105,7 @@ func stop() error {
 			}
 		}
 
-		log.Info("Stopping Meshery...")
+		log.Info("Stopping Meshery resources...")
 
 		// Stop all Docker containers
 		stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
@@ -122,7 +123,7 @@ func stop() error {
 		if err := stop.Run(); err != nil {
 			return ErrStopMeshery(err)
 		}
-		log.Info("Meshery is stopped.")
+		log.Info("Meshery resources is stopped.")
 	case "kubernetes":
 		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
@@ -142,7 +143,7 @@ func stop() error {
 			return nil
 		}
 
-		log.Info("Stopping Meshery...")
+		log.Info("Stopping Meshery resources...")
 
 		// Delete the CR instances for brokers and meshsyncs
 		// this needs to be executed before deleting the helm release, or the CR instances cannot be found for some reason
@@ -183,10 +184,10 @@ func stop() error {
 			if err != nil || !deleted {
 				log.Info("Meshery is taking too long to stop.\nPlease check the status of the pods by executing “mesheryctl system status”.")
 			} else {
-				log.Info("Meshery is stopped.")
+				log.Info("Meshery resources are stopped.")
 			}
 		} else {
-			log.Info("Meshery is stopped.")
+			log.Info("Meshery resources are stopped.")
 		}
 	}
 

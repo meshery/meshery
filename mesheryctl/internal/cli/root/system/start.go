@@ -343,6 +343,15 @@ func start() error {
 		}
 
 		log.Info("Starting Meshery...")
+		// Dry run helm charts for possible execution of cleaning cluster
+		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, true); err != nil {
+			// Dry-run failed, executing force cleanup cluster
+			forceDelete = true
+			utils.SilentFlag = true
+			utils.Log.Info("Deleting stale Meshery resources...")
+			_ = stop()
+		}
+
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 		spinner.Start()
 
@@ -350,28 +359,9 @@ func start() error {
 			return err
 		}
 
-		// get value overrides to install the helm chart
-		overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
-
-		// install the helm charts with specified override values
-		var chartVersion string
-		if mesheryImageVersion != "latest" {
-			chartVersion = mesheryImageVersion
-		}
-		if err = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-			Namespace:       utils.MesheryNamespace,
-			CreateNamespace: true,
-			ChartLocation: meshkitkube.HelmChartLocation{
-				Repository: utils.HelmChartURL,
-				Chart:      utils.HelmChartName,
-				Version:    chartVersion,
-			},
-			OverrideValues: overrideValues,
-			Action:         meshkitkube.INSTALL,
-			// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-			DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
-		}); err != nil {
-			return errors.Wrap(err, "cannot start Meshery")
+		// Applying Meshery Helm charts for installing Meshery
+		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false); err != nil {
+			return err
 		}
 
 		// checking if Meshery is ready
@@ -403,4 +393,30 @@ func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+}
+
+// Apply Meshery helm charts
+func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool) error {
+	// get value overrides to install the helm chart
+	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
+
+	// install the helm charts with specified override values
+	var chartVersion string
+	if mesheryImageVersion != "latest" {
+		chartVersion = mesheryImageVersion
+	}
+	return kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+		Namespace:       utils.MesheryNamespace,
+		CreateNamespace: true,
+		ChartLocation: meshkitkube.HelmChartLocation{
+			Repository: utils.HelmChartURL,
+			Chart:      utils.HelmChartName,
+			Version:    chartVersion,
+		},
+		OverrideValues: overrideValues,
+		Action:         meshkitkube.INSTALL,
+		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+		DryRun:           dryRun,
+	})
 }
