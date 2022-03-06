@@ -63,6 +63,12 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		return
 	}
 
+	// if load test preferences is not provided initialize it by an empty struct.
+	// in order to recover nil pointer dereference
+	if prefObj.LoadTestPreferences == nil {
+		prefObj.LoadTestPreferences = &models.LoadTestPreferences{}
+	}
+
 	// validate load test data
 	qps := prefObj.LoadTestPreferences.QueriesPerSecond
 	if qps < 0 {
