@@ -1335,15 +1335,6 @@
         "probable_cause": "Sample content does not exist.\\nContent file format not supported.\\nUser doesn't have permission to read sample content.\\nContent file corrupt.",
         "suggested_remediation": "Try restarting Meshery.\\nTry fetching content again."
       },
-      "2157": {
-        "name": "ErrSaveFilterCode",
-        "code": "2157",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error failed to save filter",
-        "probable_cause": "Cannot save the Filter due to wrong path or URL",
-        "suggested_remediation": "Check if the given path or URL of the filter is correct"
-      },
       "2158": {
         "name": "ErrDecodeFilterCode",
         "code": "2158",
@@ -1478,6 +1469,51 @@
         "short_description": "Error saving user preference.",
         "probable_cause": "Invalid data passed\nUnable to connect with provider",
         "suggested_remediation": "Pass valid values for preferences\nMake sure provider supports saving user preferences\nMake sure you're connected with provider\nMake sure extension provides these preferences"
+      },
+      "2173": {
+        "name": "ErrMesheryInstanceIDCode",
+        "code": "2173",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2174": {
+        "name": "ErrInvalidKubeConfigCode",
+        "code": "2174",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Kube Config ",
+        "probable_cause": "Meshery handler failed to find a valid kubernetes config for the deployment",
+        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
+      },
+      "2175": {
+        "name": "ErrInvalidKubeHandlerCode",
+        "code": "2175",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Kube Handler",
+        "probable_cause": "Meshery handler failed to find a valid kubernetes handler for the deployment",
+        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
+      },
+      "2176": {
+        "name": "ErrInvalidKubeContextCode",
+        "code": "2176",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Kube Context",
+        "probable_cause": "Meshery handler failed to find a valid kubernetes context for the deployment",
+        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
+      },
+      "2177": {
+        "name": "ErrCreatingKubernetesComponentsCode",
+        "code": "2177",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "component generation was canceled due to deletion or reload of K8s context\nInvalid kubeconfig\nFilters passed incorrectly in config\nCould not fetch API resources from Kubernetes server",
+        "suggested_remediation": "If there is the log \\\"Starting to register ...\\\" for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.\nMake sure that the configuration filters passed are in accordance with output from /openapi/v2"
       }
     }
   }

@@ -33,8 +33,6 @@
 | Name                  | GitHub             | Affiliation |
 | --------------------- | ------------------ | ----------- |
 | Lee Calcote           | leecalcote         | Layer5      |
-| Rodolfo Martínez Vega | ramrodo            | Rackspace   |
-| Rudraksh Pareek       | DelusionalOptimist | Layer5      |
 
 ### Docs Maintainers
 

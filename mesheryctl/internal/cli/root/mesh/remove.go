@@ -6,7 +6,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -18,7 +17,7 @@ var (
 		Args:  cobra.MinimumNArgs(0),
 		Long:  `remove service mesh in the connected kubernetes cluster`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			log.Infof("Verifying prerequisites...")
+			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				return errors.Wrap(err, "error processing config")

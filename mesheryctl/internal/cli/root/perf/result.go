@@ -4,13 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"strings"
 	"time"
 
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -44,14 +42,14 @@ var resultCmd = &cobra.Command{
 	Long:  `List all the available test results of a performance profile`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-// List Test results (maximum 25 results)	
-mesheryctl perf result saturday-profile 
+// List Test results (maximum 25 results)
+mesheryctl perf result saturday-profile
 
 // View other set of performance results with --page (maximum 25 results)
-mesheryctl perf result saturday-profile --page 2 
+mesheryctl perf result saturday-profile --page 2
 
 // View single performance result with detailed information
-mesheryctl perf result saturday-profile --view 
+mesheryctl perf result saturday-profile --view
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
@@ -82,7 +80,7 @@ mesheryctl perf result saturday-profile --view
 		}
 
 		if len(profiles) == 0 {
-			log.Info("No Performance Profiles found with the given name")
+			utils.Log.Info("No Performance Profiles found with the given name")
 			return nil
 		}
 
@@ -107,7 +105,7 @@ mesheryctl perf result saturday-profile --view
 		}
 
 		if len(data) == 0 {
-			log.Info("No Test Results to display")
+			utils.Log.Info("No Test Results to display")
 			return nil
 		}
 
@@ -120,7 +118,7 @@ mesheryctl perf result saturday-profile --view
 			} else if outputFormatFlag != "json" {
 				return ErrInvalidOutputChoice()
 			}
-			log.Info(string(body))
+			utils.Log.Info(string(body))
 		} else if !viewSingleResult { // print all results
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data)
 		} else {
@@ -149,7 +147,6 @@ mesheryctl perf result saturday-profile --view
 
 // Fetch results for a specific profile
 func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNumber int) ([]models.PerformanceResult, []byte, error) {
-	client := &http.Client{}
 	var response *models.PerformanceResultsAPIResponse
 
 	url := baseURL + "/api/user/performance/profiles/" + profileID + "/results"
@@ -160,18 +157,12 @@ func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNum
 	if err != nil {
 		return nil, nil, err
 	}
-	resp, err := client.Do(req)
+
+	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, nil, ErrFailRequest(err)
+		return nil, nil, err
 	}
-	// failsafe for no authentication
-	if utils.ContentTypeIsHTML(resp) {
-		return nil, nil, ErrUnauthenticated()
-	}
-	// failsafe for bad api call
-	if resp.StatusCode != 200 {
-		return nil, nil, ErrFailReqStatus(resp.StatusCode)
-	}
+
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

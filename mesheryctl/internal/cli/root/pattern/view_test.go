@@ -1,12 +1,9 @@
 package pattern
 
 import (
-	"bytes"
 	"path/filepath"
 	"runtime"
 	"testing"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -68,11 +65,8 @@ func TestPatternView(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// setting up log to grab logs
-			var buf bytes.Buffer
-			log.SetOutput(&buf)
-			utils.SetupLogrusFormatter()
-
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			PatternCmd.SetOutput(b)
 			PatternCmd.SetArgs(tt.Args)
 			err := PatternCmd.Execute()
 			if err != nil {
@@ -91,7 +85,7 @@ func TestPatternView(t *testing.T) {
 			}
 
 			// response being printed in console
-			output := buf.String()
+			output := b.String()
 			actualResponse := output
 
 			// write it in file

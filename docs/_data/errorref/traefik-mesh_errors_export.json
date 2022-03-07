@@ -61,19 +61,19 @@
         "name": "ErrParseOAMComponentCode",
         "code": "1018",
         "severity": "Alert",
-        "long_description": "Error occured while prasing application component in the OAM request made",
+        "long_description": "Error occurred while parsing application component in the OAM request made by Meshery Server",
         "short_description": "error parsing the component",
-        "probable_cause": "Invalid OAM component passed in OAM request",
-        "suggested_remediation": "Check if your request has vaild OAM components"
+        "probable_cause": "Could not unmarshall configuration component received via ProcessOAM gRPC call into a valid Component struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid component for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, check if Meshery Server and adapters are referring to same component struct provided in MeshKit."
       },
       "1019": {
         "name": "ErrParseOAMConfigCode",
         "code": "1019",
         "severity": "Alert",
-        "long_description": "Error occured while prasing component config in the OAM request made",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
         "short_description": "error parsing the configuration",
-        "probable_cause": "Invalid OAM config passed in OAM request",
-        "suggested_remediation": "Check if your request has vaild OAM config"
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
       },
       "1020": {
         "name": "ErrGetLatestReleaseCode",

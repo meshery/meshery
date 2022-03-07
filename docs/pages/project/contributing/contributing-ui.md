@@ -127,18 +127,6 @@ make run-ui-dev
 
 #### Running Meshery from IDE
 
-If you want to run Meshery from IDE like Goland, VSCode.
-
-- Source these environment variables
-  ```
-  PROVIDER_BASE_URLS="https://meshery.layer5.io"
-  PORT=9081
-  DEBUG=true
-  ADAPTER_URLS=localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10008 localhost:10009
-  ```
-- `go tool` argument
-  ```shell
-  -tags draft
-  ```
+All of the above steps would get the Meshery's development server running for you to work on in any IDE of your choice.
 
 {% include suggested-reading.html %}

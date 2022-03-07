@@ -11,7 +11,59 @@ type: Reference
 .title {
   text-transform: capitalize;
 }
+
+.tbl-head-row{
+  background-color:#F2F2F2;
+}
+
+.tbl-head-row .error-name-code{
+  width:23rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  height:5rem;
+}
+
+.tbl .tbl-body .tbl-body-row{
+  background-color:#FFFFFF;
+}
+
+
+.tbl .tbl-body .tbl-body-row.hover-effect:hover{
+  background-color:#ccfff9;
+  cursor:pointer;
+}
+
+.tbl-body-row .error-name-code{
+  display:flex;
+  justify-content:space-between;
+}
+
+.tbl .tbl-body .tbl-hidden-row{
+  visibility:hidden; 
+  display:none;
+  background-color:#FAFAFA;
+  width:100%
+}
+
+
 </style>
+
+<script type="text/javascript">
+    function toggle_visibility(id) {
+       var e = document.getElementById(id);
+       if(e.style.visibility == 'visible') {
+          e.style.display = 'none';
+          e.style.visibility = 'hidden';
+      }
+       else {
+         
+          e.style.display = 'table-row';
+          e.style.visibility = 'visible';
+          }
+    }
+</script>
+
 ## Error Codes and Troubleshooting
 
 Meshery and it's components use a common framework (defined within MeshKit) to generate and document an error with a unique identifier - an error code. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
@@ -80,36 +132,44 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
             {% endif %}
 
 <h2 class = "title"> {{ heading }} </h2>
-  <table>
+  <table class="tbl">
   <thead>
-    <tr>
-      <th>Error Name</th>
-      <th>Error Code</th>
-      <th style="white-space:nowrap; transform-origin:30% 70%; transform: rotate(-90deg);padding:0px;">Severity</th>
-      <th>Short Description</th>
-      <th>Long Description</th>
-      <th>Probable Cause</th>
-      <th>Suggested Remediation</th>
+    <tr class="tbl-head-row">
+      <th class="error-name-code"><span style="">Error Name</span> <span style="width:2.4rem;word-break:break-all;">Error Code</span></th>
+      <th style="width:15%">Severity</th>
+      <th style="width:85%">Short Description</th>
     </tr>
   </thead>
-  <tbody>
-  
-    {% for err_code in component[1].errors %}    
-        <tr>
-          <td >
-            <a id="{{component[1].component_name}}-{{err_code[1]["name"]}}">
+  <tbody class="tbl-body">
+    {% for err_code in component[1].errors %}
+        {% if err_code[1]["severity"] == "Fatal" %}
+          {% assign severity = "background-color: #FF0101; color: white;"%} 
+        {% elsif err_code[1]["severity"] == "Alert" %}
+          {% assign severity = "background-color: #FEA400; color: white;"%}
+        {% else %}
+          {% assign severity = "background-color: transparent; color: black;"%}
+        {% endif %}   
+        <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{component[1].component_name}}-{{err_code[1]["name"]}}-more-info');">
+          <td class="error-name-code">
+            <span><a id="{{component[1].component_name}}-{{err_code[1]["name"]}}">
             {{ err_code[1]["name"] | xml_escape }}
-            </a>
+            </a></span> <span>{{ err_code[1]["code"] }}</span> 
           </td>
-          <td >{{ err_code[1]["code"] }}</td>
-          <td >{{ err_code[1]["severity"]}}</td>
-          <td style="max-width:125px;">{{ err_code[1]["short_description"] | xml_escape}}</td>
-          <td style="min-width:200px;">{{ err_code[1]["long_description"] | xml_escape }}</td>
-          <td style="min-width:200px;">{{ err_code[1]["probable_cause"] | xml_escape }}</td>
-          <td style="min-width:200px;">{{ err_code[1]["suggested_remediation"] }}</td>
+          <td style="{{severity}}">{{ err_code[1]["severity"]}}</td>
+          <td>{{ err_code[1]["short_description"] | xml_escape}}</td>
+        </tr>
+        <tr id="{{component[1].component_name}}-{{err_code[1]["name"]}}-more-info" class="tbl-hidden-row">
+          <td style="word-break:break-all;">
+              <div><i><b>Probable Cause:</b></i></div>{{ err_code[1]["probable_cause"] | xml_escape }}
+          </td>
+          <td>
+            <div><i><b>Suggested Remediation:</b></i></div>{{ err_code[1]["suggested_remediation"] }}
+          </td>
+          <td>
+          <div><i><b>Long Description:</b></i></div>
+          {{ err_code[1]["long_description"] | xml_escape }}</td>
         </tr>
     {% endfor %}
-
   </tbody>
   </table>
   <a href="#error-code-reference">Top</a>
@@ -119,3 +179,5 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
 {% endfor %}
 {% endfor %}
 {% endfor %}
+
+    

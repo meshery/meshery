@@ -19,6 +19,7 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
@@ -111,10 +112,8 @@ var (
 	KubeConfigYaml = "kubeconfig.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
-	// ViperDocker is an instance of viper for the meshconfig file when the platform is docker
-	ViperDocker = viper.New()
-	// ViperK8s is an instance of viper for the meshconfig file when the platform is kubernetes
-	ViperK8s = viper.New()
+	// ViperMeshconfig is an instance of viper for the meshconfig file
+	ViperMeshconfig = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
 	SilentFlag bool
 	// PlatformFlag sets the platform for the initial config file
@@ -126,6 +125,8 @@ var (
 	KeepNamespace bool
 	// TokenFlag sets token location passed by user with --token
 	TokenFlag = "Not Set"
+	// global logger variable
+	Log logger.Handler
 )
 
 var CfgFile string

@@ -4,13 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/manifoldco/promptui"
 	termbox "github.com/nsf/termbox-go"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -32,11 +30,11 @@ var profileCmd = &cobra.Command{
 	Long:  `List all the available performance profiles`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-// List performance profiles (maximum 25 profiles)	
+// List performance profiles (maximum 25 profiles)
 mesheryctl perf profile
 
 // List performance profiles with search (maximum 25 profiles)
-mesheryctl perf profile test 2 
+mesheryctl perf profile test 2
 
 // View single performance profile with detailed information
 mesheryctl perf profile test --view
@@ -65,7 +63,7 @@ mesheryctl perf profile test --view
 		}
 
 		if len(profiles) == 0 {
-			log.Info("No Performance Profiles to display")
+			utils.Log.Info("No Performance Profiles to display")
 			return nil
 		}
 
@@ -80,7 +78,7 @@ mesheryctl perf profile test --view
 			} else if outputFormatFlag != "json" {
 				return ErrInvalidOutputChoice()
 			}
-			log.Info(string(body))
+			utils.Log.Info(string(body))
 		} else if !viewSingleProfile { // print all profiles
 			utils.PrintToTable([]string{"Name", "ID", "RESULTS", "Load-Generator", "Last-Run"}, data)
 		} else { // print single profile
@@ -116,7 +114,6 @@ mesheryctl perf profile test --view
 
 // Fetch performance profiles
 func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]models.PerformanceProfile, []byte, error) {
-	client := &http.Client{}
 	var response *models.PerformanceProfilesAPIResponse
 
 	url := baseURL + "/api/user/performance/profiles"
@@ -127,27 +124,17 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 		url = url + "&search=" + searchString
 	}
 
-	log.Debug(url)
+	utils.Log.Debug(url)
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	resp, err := client.Do(req)
+	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, nil, ErrFailRequest(err)
+		return nil, nil, err
 	}
-
-	// failsafe for not being authenticated
-	if utils.ContentTypeIsHTML(resp) {
-		return nil, nil, ErrUnauthenticated()
-	}
-	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-	if resp.StatusCode != 200 {
-		return nil, nil, ErrFailReqStatus(resp.StatusCode)
-	}
-
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

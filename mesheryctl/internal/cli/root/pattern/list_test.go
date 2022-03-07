@@ -83,7 +83,7 @@ func TestPatternList(t *testing.T) {
 			rescueStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
-
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			PatternCmd.SetArgs(tt.Args)
 			PatternCmd.SetOutput(rescueStdout)
 			err := PatternCmd.Execute()
