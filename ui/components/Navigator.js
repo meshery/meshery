@@ -1241,12 +1241,12 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Chevron = (
-      <div className={classname}>
+      <div className={classname} style={{ display : "flex", justifyContent : "center" }}>
         <FontAwesomeIcon
           icon={faAngleLeft}
           fixedWidth
-          size="1x"
-          style={{ margin : "0.45rem 0.2rem ", width : "0.8rem" }}
+          size="1.5x"
+          style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
           alt="Sidebar collapse toggle icon"
           onClick={this.toggleMiniDrawer}
         />

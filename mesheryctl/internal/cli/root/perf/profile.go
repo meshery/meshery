@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"strconv"
 	"strings"
 
@@ -115,7 +114,6 @@ mesheryctl perf profile test --view
 
 // Fetch performance profiles
 func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]models.PerformanceProfile, []byte, error) {
-	client := &http.Client{}
 	var response *models.PerformanceProfilesAPIResponse
 
 	url := baseURL + "/api/user/performance/profiles"
@@ -133,20 +131,10 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 		return nil, nil, err
 	}
 
-	resp, err := client.Do(req)
+	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, nil, ErrFailRequest(err)
+		return nil, nil, err
 	}
-
-	// failsafe for not being authenticated
-	if utils.ContentTypeIsHTML(resp) {
-		return nil, nil, ErrUnauthenticated()
-	}
-	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-	if resp.StatusCode != 200 {
-		return nil, nil, ErrFailReqStatus(resp.StatusCode)
-	}
-
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

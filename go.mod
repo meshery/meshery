@@ -17,9 +17,9 @@ replace (
 
 require (
 	fortio.org/fortio v1.20.0
-	github.com/99designs/gqlgen v0.14.0
+	github.com/99designs/gqlgen v0.17.1
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
-	github.com/briandowns/spinner v1.18.0
+	github.com/briandowns/spinner v1.18.1
 	github.com/docker/docker v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/envoyproxy/go-control-plane v0.10.1
 	github.com/ghodss/yaml v1.0.0
@@ -36,7 +36,7 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.5.2
-	github.com/layer5io/meshkit v0.5.6
+	github.com/layer5io/meshkit v0.5.8
 	github.com/layer5io/meshsync v0.5.0
 	github.com/layer5io/nighthawk-go v0.5.0
 	github.com/layer5io/service-mesh-performance v0.3.3
@@ -55,7 +55,7 @@ require (
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.10.0
-	github.com/vektah/gqlparser/v2 v2.2.0
+	github.com/vektah/gqlparser/v2 v2.4.0
 	github.com/vmihailenco/taskq/v3 v3.2.7
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
@@ -63,7 +63,7 @@ require (
 	google.golang.org/grpc v1.42.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/gorm v1.22.2
+	gorm.io/gorm v1.23.2
 	helm.sh/helm/v3 v3.7.2 // indirect
 	k8s.io/api v0.22.4
 	k8s.io/apiextensions-apiserver v0.22.4

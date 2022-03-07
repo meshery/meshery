@@ -79,9 +79,9 @@ func TestResultCmd(t *testing.T) {
 			{Method: "GET", URL: resultURL, Response: result1005, ResponseCode: 200},
 		}, result1010output, testToken, true},
 		{"failing add authentication test", []string{"result", "abhishek"}, []utils.MockURL{}, result1011output, testToken + "invalid-path", true},
-		{"Server Error 500", []string{"result", "abhishek"}, []utils.MockURL{
+		{"Server Error 400", []string{"result", "abhishek"}, []utils.MockURL{
 			{Method: "GET", URL: profileURL, Response: result1000, ResponseCode: 200},
-			{Method: "GET", URL: resultURL, Response: result1006, ResponseCode: 500},
+			{Method: "GET", URL: resultURL, Response: result1006, ResponseCode: 400},
 		}, result1009output, testToken, true},
 		{"No profile passed", []string{"result"}, []utils.MockURL{}, result1012output, testToken, true},
 	}

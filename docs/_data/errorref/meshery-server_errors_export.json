@@ -1505,6 +1505,15 @@
         "short_description": "Invalid Kube Context",
         "probable_cause": "Meshery handler failed to find a valid kubernetes context for the deployment",
         "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
+      },
+      "2177": {
+        "name": "ErrCreatingKubernetesComponentsCode",
+        "code": "2177",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "component generation was canceled due to deletion or reload of K8s context\nInvalid kubeconfig\nFilters passed incorrectly in config\nCould not fetch API resources from Kubernetes server",
+        "suggested_remediation": "If there is the log \\\"Starting to register ...\\\" for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.\nMake sure that the configuration filters passed are in accordance with output from /openapi/v2"
       }
     }
   }

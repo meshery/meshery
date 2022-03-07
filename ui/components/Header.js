@@ -26,6 +26,11 @@ import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import { Paper } from '@material-ui/core';
+import { useSnackbar } from "notistack";
+import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
+import {
+  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction, showProgress, hideProgress
+} from './ConnectionWizard/helpers/common';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -99,7 +104,8 @@ const styles = (theme) => ({
     width : theme.spacing(2.5)
   },
   Chip : {
-    backgroundColor : "white"
+    backgroundColor : "white",
+    cursor : "pointer"
   },
   cMenuContainer : {
     backgroundColor : "#EEEEEE",
@@ -141,6 +147,25 @@ function K8sContextMenu({
 }) {
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const handleKubernetesClick = () => {
+    showProgress()
+    pingKubernetes(
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
+    )
+
+  }
+  const handleKubernetesDelete = () => {
+    showProgress()
+    deleteKubernetesConfig(
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed"),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config")
+    )
+  }
+
+
   let open = Boolean(anchorEl);
   if (showFullContextMenu) {
     open = showFullContextMenu;
@@ -192,6 +217,7 @@ function K8sContextMenu({
               <div>
                 <TextField
                   id="search-ctx"
+                  size="small"
                   placeholder="search..."
                   onChange={ev => searchContexts(ev.target.value)}
                   style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
@@ -230,7 +256,7 @@ function K8sContextMenu({
                 {contexts?.contexts?.map(ctx => (
                   <div id={ctx.id} className={classes.chip}>
                     <Tooltip title={`Server: ${ctx.server}`}>
-                      <>
+                      <div style={{ display : "flex", justifyContent : "center" }}>
                         <Checkbox
                           checked={activeContexts.includes(ctx.id)}
                           onChange={() => setActiveContexts(ctx.id)}
@@ -238,12 +264,14 @@ function K8sContextMenu({
                         />
                         <Chip
                           label={ctx?.name}
+                          onDelete={handleKubernetesDelete}
+                          onClick={handleKubernetesClick}
                           avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
                           variant="filled"
                           className={classes.Chip}
                           data-cy="chipContextName"
                         />
-                      </>
+                      </div>
                     </Tooltip>
                   </div>
                 ))}
