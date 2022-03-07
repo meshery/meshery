@@ -63,50 +63,47 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		return
 	}
 
-	// if load test preferences is not provided initialize it by an empty struct.
-	// in order to recover nil pointer dereference
-	if prefObj.LoadTestPreferences == nil {
-		prefObj.LoadTestPreferences = &models.LoadTestPreferences{}
-	}
-
-	// validate load test data
-	qps := prefObj.LoadTestPreferences.QueriesPerSecond
-	if qps < 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		err := fmt.Errorf("QPS value less than 0")
-		h.log.Error(ErrSavingUserPreference(err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	dur := prefObj.LoadTestPreferences.Duration
-	if _, err := time.ParseDuration(dur); err != nil {
-		err = errors.Wrap(err, "unable to parse test duration")
-		h.log.Error(ErrSavingUserPreference(err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	c := prefObj.LoadTestPreferences.ConcurrentRequests
-	if c < 0 {
-		err := fmt.Errorf("number of concurrent requests less than 0")
-		h.log.Error(ErrSavingUserPreference(err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	loadGen := prefObj.LoadTestPreferences.LoadGenerator
-	loadGenSupported := false
-	for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
-		if lg.Name() == loadGen {
-			loadGenSupported = true
+	// only validate load test data when LoadTestPreferences is send
+	if prefObj.LoadTestPreferences != nil {
+		// validate load test data
+		qps := prefObj.LoadTestPreferences.QueriesPerSecond
+		if qps < 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			err := fmt.Errorf("QPS value less than 0")
+			h.log.Error(ErrSavingUserPreference(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
-	}
-	if !loadGenSupported {
-		err := fmt.Errorf("invalid load generator: %s", loadGen)
-		h.log.Error(ErrSavingUserPreference(err))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+
+		dur := prefObj.LoadTestPreferences.Duration
+		if _, err := time.ParseDuration(dur); err != nil {
+			err = errors.Wrap(err, "unable to parse test duration")
+			h.log.Error(ErrSavingUserPreference(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		c := prefObj.LoadTestPreferences.ConcurrentRequests
+		if c < 0 {
+			err := fmt.Errorf("number of concurrent requests less than 0")
+			h.log.Error(ErrSavingUserPreference(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		loadGen := prefObj.LoadTestPreferences.LoadGenerator
+		loadGenSupported := false
+		for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
+			if lg.Name() == loadGen {
+				loadGenSupported = true
+			}
+		}
+		if !loadGenSupported {
+			err := fmt.Errorf("invalid load generator: %s", loadGen)
+			h.log.Error(ErrSavingUserPreference(err))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	if err := provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
