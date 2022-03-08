@@ -52,7 +52,7 @@
     "@zeit/next-css": "^1.0.1",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-relay": "^11.0.2",
-    "billboard.js": "=3.2.1",
+    "billboard.js": "=3.3.3",
     "caniuse-lite": "^1.0.30001279",
     "classnames": "^2.3.1",
     "codemirror": "^5.63.3",
@@ -115,7 +115,7 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "http-proxy": "^1.18.1",
     "husky": "^7.0.2",
-    "lint-staged": "^12.1.5",
+    "lint-staged": "^12.3.5",
     "nodemon": "^2.0.12",
     "nyc": "^15.1.0",
     "start-server-and-test": "^1.13.1"
