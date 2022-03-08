@@ -106,7 +106,7 @@
     "cypress": "^9.2.0",
     "cypress-file-upload": "^5.0.8",
     "eslint": "^7.31.0",
-    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb": "^19.0.4",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.23.4",
@@ -115,7 +115,7 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "http-proxy": "^1.18.1",
     "husky": "^7.0.2",
-    "lint-staged": "^12.1.5",
+    "lint-staged": "^12.3.5",
     "nodemon": "^2.0.12",
     "nyc": "^15.1.0",
     "start-server-and-test": "^1.13.1"
