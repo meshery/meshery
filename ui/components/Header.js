@@ -212,7 +212,6 @@ function K8sContextMenu({
             if (!e.target.className.includes("cbadge") && e.target.className !="k8s-image" && !e.target.className.includes("k8s-icon-button")) {
               setAnchorEl(false)
               setShowFullContextMenu(false)
-              console.log(e)
             }
           }}>
             <Paper className={classes.cMenuContainer}>
