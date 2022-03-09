@@ -24,9 +24,9 @@ const (
 	ErrRestartMesheryCode           = "1026"
 	ErrK8sQueryCode                 = "1041"
 	ErrK8sConfigCode                = "1042"
-	ErrInitPortForwardCode          = ""
-	ErrRunPortForwardCode           = ""
-	ErrFailedGetEphemeralPortCode   = ""
+	ErrInitPortForwardCode          = "1047"
+	ErrRunPortForwardCode           = "1048"
+	ErrFailedGetEphemeralPortCode   = "1049"
 )
 
 func ErrHealthCheckFailed(err error) error {
