@@ -158,7 +158,8 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 	overrides := SetOverrideValues(delete, adapterTracker)
 
 	err := client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
-		Namespace: "meshery",
+		Namespace:   "meshery",
+		ReleaseName: "meshery",
 		ChartLocation: mesherykube.HelmChartLocation{
 			Repository: chartRepo,
 			Chart:      chart,
@@ -191,6 +192,7 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 	}
 
 	overrideValues := map[string]interface{}{
+		"fullnameOverride": "meshery-operator",
 		"meshery": map[string]interface{}{
 			"enabled": false,
 		},

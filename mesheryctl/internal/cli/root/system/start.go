@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	controllerConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
@@ -33,12 +34,14 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var (
@@ -343,14 +346,6 @@ func start() error {
 		}
 
 		log.Info("Starting Meshery...")
-		// Dry run helm charts for possible execution of cleaning cluster
-		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, true); err != nil {
-			// Dry-run failed, executing force cleanup cluster
-			forceDelete = true
-			utils.SilentFlag = true
-			utils.Log.Info("Deleting stale Meshery resources...")
-			_ = stop()
-		}
 
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 		spinner.Start()
@@ -397,6 +392,11 @@ func init() {
 
 // Apply Meshery helm charts
 func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool) error {
+	// var act meshkitkube.HelmChartAction = meshkitkube.INSTALL
+	// ok, _ := utils.AreMesheryComponentsRunning(currContext)
+	// if ok {
+	// 	act = meshkitkube.UPGRADE
+	// }
 	// get value overrides to install the helm chart
 	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
 
@@ -407,6 +407,7 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 	}
 	return kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 		Namespace:       utils.MesheryNamespace,
+		ReleaseName:     "meshery",
 		CreateNamespace: true,
 		ChartLocation: meshkitkube.HelmChartLocation{
 			Repository: utils.HelmChartURL,
@@ -419,4 +420,28 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		DryRun:           dryRun,
 	})
+}
+
+// getCRDStatus returns if CRDs are running and available
+func getCRDStatus() (bool, error) {
+	const (
+		brokerCRDName   = "brokers.meshery.layer5.io"
+		meshsyncCRDName = "meshsyncs.meshery.layer5.io"
+	)
+	cfg := controllerConfig.GetConfigOrDie()
+	client, err := apiextension.NewForConfig(cfg)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = client.ApiextensionsV1().CustomResourceDefinitions().Get(context.TODO(), meshsyncCRDName, metav1.GetOptions{})
+	if err != nil {
+		return false, err
+	}
+	_, err = client.ApiextensionsV1().CustomResourceDefinitions().Get(context.TODO(), brokerCRDName, metav1.GetOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

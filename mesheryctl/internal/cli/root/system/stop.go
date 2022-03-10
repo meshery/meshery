@@ -243,7 +243,7 @@ func deleteCR(resourceName, instanceName string, client *meshkitkube.Client) err
 // invokeDeleteCRs is a wrapper of deleteCRD to delete CRDs (brokers and meshsyncs)
 func invokeDeleteCRDs() error {
 	const (
-		brokderCRDName  = "brokers.meshery.layer5.io"
+		brokerCRDName   = "brokers.meshery.layer5.io"
 		meshsyncCRDName = "meshsyncs.meshery.layer5.io"
 	)
 
@@ -258,8 +258,8 @@ func invokeDeleteCRDs() error {
 		log.Debug(err)
 	}
 
-	if err = deleteCRD(brokderCRDName, client); err != nil {
-		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CRD "+brokderCRDName))
+	if err = deleteCRD(brokerCRDName, client); err != nil {
+		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CRD "+brokerCRDName))
 		if !forceDelete {
 			return err
 		}
