@@ -58,6 +58,15 @@ type PreferenceParams struct {
 	AnonymousPerfResults bool `json:"anonymousPerfResults"`
 }
 
+type CanvasSettings struct {
+	SnapToGrid bool `json:"snapToGrid"`
+	HideGrid   bool  `json:"hideGrid"`
+}
+
+type MeshMapPreferences struct {
+	CanvasSettings  *CanvasSettings `json:"canvasSettings"`
+}
+
 // Preference represents the data stored in session / local DB
 type Preference struct {
 	MeshAdapters              []*Adapter             `json:"meshAdapters,omitempty"`
@@ -68,6 +77,7 @@ type Preference struct {
 	AnonymousPerfResults      bool                   `json:"anonymousPerfResults"`
 	UpdatedAt                 time.Time              `json:"updated_at,omitempty"`
 	UsersExtensionPreferences map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
+	MeshMapPreferences        *MeshMapPreferences    `json:"meshMapPreferences,omitempty"`
 }
 
 func init() {

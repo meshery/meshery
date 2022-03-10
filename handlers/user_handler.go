@@ -63,6 +63,8 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		return
 	}
 
+	fmt.Print(prefObj)
+
 	// only validate load test data when LoadTestPreferences is send
 	if prefObj.LoadTestPreferences != nil {
 		// validate load test data

@@ -93,6 +93,8 @@ class UserPreference extends React.Component {
       anonymousStats : props.anonymousStats,
       perfResultStats : props.perfResultStats,
       startOnZoom : props.startOnZoom,
+      snapToGrid : props.snapToGrid,
+      hideGrid : props.hideGrid,
       tabVal : 0,
       userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
       providerType : ''
@@ -105,6 +107,10 @@ class UserPreference extends React.Component {
       self.setState((state) => ({ anonymousStats : !state.anonymousStats }), () => this.handleChange(name));
     } else if (name == 'anonymousPerfResults') {
       self.setState((state) => ({ perfResultStats : !state.perfResultStats }), () => this.handleChange(name));
+    } else if (name == 'snapToGrid') {
+      self.setState((state) => ({ snapToGrid : !state.snapToGrid }), () => this.handleChange(name));
+    } else if (name == 'hideGrid') {
+      self.setState((state) => ({ hideGrid : !state.hideGrid }), () => this.handleChange(name));
     } else {
       self.setState((state) => ({ startOnZoom : !state.startOnZoom }), () => this.handleChange(name));
     }
@@ -129,7 +135,7 @@ class UserPreference extends React.Component {
 
   handleChange = (name) => {
     const self = this;
-    const { anonymousStats, perfResultStats, startOnZoom } = this.state;
+    const { anonymousStats, perfResultStats, startOnZoom, snapToGrid, hideGrid } = this.state;
     let val, msg;
     if (name == 'anonymousUsageStats') {
       val = anonymousStats;
@@ -142,6 +148,16 @@ class UserPreference extends React.Component {
       msg = val
         ? "Sending anonymous performance results was enabled"
         : "Sending anonymous performance results was disabled";
+    } else if (name == 'snapToGrid'){
+      val = snapToGrid;
+      msg = val
+        ? "Snap to Grid was enabled"
+        : "Snap to Grid was disabled";
+    } else if (name == 'hideGrid'){
+      val = snapToGrid;
+      msg = val
+        ? "Hide Grid was enabled"
+        : "Hide Grid was disabled";
     } else {
       val = startOnZoom;
       msg = val
@@ -154,10 +170,16 @@ class UserPreference extends React.Component {
       "anonymousPerfResults" : perfResultStats,
       "usersExtensionPreferences" : {
         "showOnZoom" : startOnZoom
+      },
+      "meshMapPreferences" : {
+        "canvasSettings" : {
+          "snapToGrid" : snapToGrid,
+          "hideGrid" : hideGrid
+        }
       }
     });
 
-    console.log(requestBody,anonymousStats,perfResultStats);
+    console.log(requestBody,anonymousStats,perfResultStats, snapToGrid, hideGrid);
 
     this.props.updateProgress({ showProgress : true });
     dataFetch('/api/user/prefs', {
