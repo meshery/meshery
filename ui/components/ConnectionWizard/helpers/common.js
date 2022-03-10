@@ -19,7 +19,7 @@ export const successHandlerGenerator = (snackbar, action, msg, cb) => (res) => {
     if (cb !== undefined) cb(res)
     snackbar(msg, { variant : "success",
       action,
-      autoHideDuration : 2000, })
+      autoHideDuration : 3000, })
   }
 }
 
@@ -28,5 +28,5 @@ export const errorHandlerGenerator = (snackbar, action,msg, cb) => (err) => {
   if (cb !== undefined) cb(err)
   snackbar(`${msg}: ${err}`, { variant : "error",
     action,
-    autoHideDuration : 2000, })
+    autoHideDuration : 3000, })
 }
