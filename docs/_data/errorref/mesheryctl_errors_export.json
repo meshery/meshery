@@ -276,7 +276,7 @@
       "1035": {
         "name": "ErrFailReqStatusCode",
         "code": "1035",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
         "short_description": "",
         "probable_cause": "",
@@ -327,9 +327,27 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1043": {
+      "1044": {
+        "name": "ErrFailRequestCode",
+        "code": "1044",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1045": {
+        "name": "ErrFailReqStatusCode",
+        "code": "1045",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1046": {
         "name": "ErrAttachAuthTokenCode",
-        "code": "1043",
+        "code": "1046",
         "severity": "",
         "long_description": "",
         "short_description": "",

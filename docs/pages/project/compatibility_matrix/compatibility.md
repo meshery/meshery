@@ -29,21 +29,84 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           e.style.visibility = 'visible';
           }
     }
+    function handleEdgeCheckboxChange(){
+        let e = document.getElementsByClassName("edge")
+        let stable = document.getElementsByClassName("stable")
+        let stable_box = document.getElementById("checkbox_stable")
+        for(let i = 0; i <e.length;i++){
+            console.log(e[i].classList)
+            if(e[i].classList.contains("edge_visible") ){
+                e[i].classList.remove("edge_visible")
+                if(!stable_box.checked){
+                    stable_box.checked=true;
+                    handleStableCheckboxChange();
+                }
+        }
+        else{
+                e[i].classList.add("edge_visible")
+        }
+        }
+    }
+    function handleStableCheckboxChange(){
+        let e = document.getElementsByClassName("stable")
+        let edge_box = document.getElementById("checkbox_edge")
+        for(let i = 0; i <e.length;i++){
+            console.log(typeof(e[i].classList["1"]))
+            if(e[i].classList.contains("stable_visible")){
+                e[i].classList.remove("stable_visible")
+                if(!edge_box.checked){
+                    edge_box.checked=true;
+                    handleEdgeCheckboxChange();
+                }
+        }
+        else{
+          console.log("stable")
+                e[i].classList.add("stable_visible")
+        }
+        }
+    }
 </script>
 
 <style>
-  
   td:hover, tr:hover {
     background-color: #ccfff9;
     cursor:pointer;
-   }
+  }
+  .edge_visible{
+    display: table-row !important;
+    visibility: visible !important;
+  }
+  .stable_visible{
+    display: table-row !important;
+    visibility: visible !important;
+  }
+  .checkbox{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: left;
+  }
   td.details {
     background-color: #fafafa;
     cursor:text;
   }
+  .edge_test_text{
+    margin-right: 20px;
+  }
 </style>
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
+
+<div class="checkbox">
+    <div>
+    <input onchange="handleEdgeCheckboxChange();" type="checkbox" id="checkbox_edge" value="Edge Tests" checked>
+    <label for="checkbox_edge" class="edge_test_text">Edge Channel</label>
+    </div>
+    <div>
+    <input onchange="handleStableCheckboxChange();" type="checkbox" id="checkbox_stable" value="Stable Tests" checked>
+    <label for="checkbox_stable">Stable Channel</label>
+    </div>
+</div>
 
 <table>
   <th>Status</th>
@@ -53,21 +116,23 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
   <th>Service Mesh</th>
   <th>Service Mesh Version</th>
 
-
     {% for group in sorted_tests_group %}
       {% assign items = group.items | sort: "timestamp" | reverse %}
       {% for item in items limit: 1 %}
         {% if item.meshery-component-version == "edge" %}
           {% if item.overall-status == "passing" %}
-            {% assign overall-status = "background-color: #83B71E; color: white;" %}
+            {% assign overall-status = "background-color: #56B257; color: white;" %}
+            {% assign result-state = "✅" %}
           {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
+            {% assign result-state = "⚠️" %}
           {% elsif item.overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
+            {% assign result-state = "❌" %}
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
-          <tr onclick="toggle_visibility('{{item.meshery-component}}');"> 
+          <tr style="visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{item.meshery-component}}');">
             <td style="{{ overall-status }}">{{ item.timestamp }}</td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             {% if item.meshery-component-version == "edge" %}
@@ -92,9 +157,9 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               <i>Test results:</i>
               <table border="0">
               {% for test in item.tests %}
-                  <tr><td>{{ test[1] }}</td><td>{{test[0] }}</td></tr>
-              {% endfor %}      
-              </table>      
+                  <tr><td>{{ result-state }}</td><td>{{test[0] }}</td></tr>
+              {% endfor %}
+              </table>
             </td>
             <td>
               <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
@@ -103,17 +168,20 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
 
         <!-- if the latest test is stable as we require edge test to show too and since sorted through timestamp second element will always be an edge tests. -->
 
-        {% else %} 
+        {% else %}
           {% if items[1].overall-status == "passing" %}
-            {% assign overall-status = "background-color: #83B71E; color: white;" %}
+            {% assign overall-status = "background-color: #56B257; color: white;" %}
+            {% assign result-state = "✅" %}
           {% elsif items[1].overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
+            {% assign result-state = "⚠️" %} \
           {% elsif items[1].overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
+            {% assign result-state = "❌" %}
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
-          <tr onclick="toggle_visibility('{{items[1].meshery-component}}');"> 
+          <tr style="visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{items[1].meshery-component}}');">
             <td style="{{ overall-status }}">{{ items[1].timestamp }}</td>
             <td><a href="{{ site.repo }}-{{ items[1].service-mesh }}">{{ items[1].meshery-component }}</a></td>
             {% if items[1].meshery-component-version == "edge" %}
@@ -136,20 +204,20 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             </td>
             <td colspan="3" class="details">
               <i>Test results:</i>
-              <ol>
-              {% for test in items[1].tests %}
-                <li>{{ test[0] }}: {{test[1] }}</li>
-              {% endfor %}      
-              </ol>      
+              <table border="0">
+              {% for test in item.tests %}
+                  <tr><td>{{ result-state }}</td><td>{{test[0] }}</td></tr>
+              {% endfor %}
+              </table>
             </td>
             <td>
               <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
             </td>
-          </tr>        
-        {% endif %}  
+          </tr>
+        {% endif %}
       {% endfor %}
     {% endfor %}
-    
+
     <!-- display tests from the stable channel -->
 
     {% for group in sorted_tests_group %}
@@ -157,15 +225,18 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
       {% for item in items limit: 1 %}
         {% if item.meshery-component-version != "edge" %}
           {% if item.overall-status == "passing" %}
-            {% assign overall-status = "background-color: #83B71E; color: white;" %}
+            {% assign overall-status = "background-color: #56B257; color: white;" %}
+            {% assign result-state = "✅" %}
           {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
+            {% assign result-state = "⚠️" %}
           {% elsif item.overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
+            {% assign result-state = "❌" %}
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
-          <tr onclick="toggle_visibility('{{item.meshery-component}}-stable');"> 
+          <tr style="visibility: hidden; display: none;" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.meshery-component}}-stable');">
             <td style="{{ overall-status }}">{{ item.timestamp }}</td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
@@ -180,17 +251,17 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             </td>
             <td colspan="3" class="details">
               <i>Test results:</i>
-              <ol>
+              <table border="0">
               {% for test in item.tests %}
-                <li>{{ test[0] }}: {{test[1] }}</li>
-              {% endfor %}      
-              </ol>      
+                  <tr><td>{{ result-state }}</td><td>{{test[0] }}</td></tr>
+              {% endfor %}
+              </table>
             </td>
             <td>
               <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
             </td>
           </tr>
-        {% endif %}  
+        {% endif %}
       {% endfor %}
     {% endfor %}
 
