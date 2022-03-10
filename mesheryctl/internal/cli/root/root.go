@@ -65,6 +65,8 @@ var RootCmd = &cobra.Command{
 func Execute() {
 	//log formatter for improved UX
 	utils.SetupLogrusFormatter()
+	// Removing printing command usage on error
+	RootCmd.SilenceUsage = true
 	_ = RootCmd.Execute()
 }
 

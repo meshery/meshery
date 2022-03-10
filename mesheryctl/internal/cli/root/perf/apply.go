@@ -239,15 +239,10 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 		utils.Log.Info("Initiating Performance test ...")
 
-		resp, err := client.Do(req)
+		resp, err := utils.MakeRequest(req)
+
 		if err != nil {
-			return ErrFailRequest(err)
-		}
-		if utils.ContentTypeIsHTML(resp) {
-			return ErrFailTestRun()
-		}
-		if resp.StatusCode != 200 {
-			return ErrFailTestRun()
+			return err
 		}
 
 		defer utils.SafeClose(resp.Body)
@@ -336,21 +331,20 @@ func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlCon
 	if err != nil {
 		return "", "", ErrFailMarshal(err)
 	}
-	req, err = utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
+	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
+
 	if err != nil {
 		return "", "", err
 	}
 
-	resp, err := client.Do(req)
+	resp, err := utils.MakeRequest(req)
+
 	if err != nil {
-		return "", "", ErrFailRequest(err)
+		return "", "", err
 	}
 
 	var response *models.PerformanceProfile
-	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-	if resp.StatusCode != 200 {
-		return "", "", ErrFailReqStatus(resp.StatusCode)
-	}
+
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
