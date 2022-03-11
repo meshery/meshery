@@ -616,7 +616,7 @@ function MesheryApplications({
       )}
       <div className={classes.createButton}>
         <div className={classes.UploadImport}>
-          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler}  />
+          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application" />
         </div>
       </div>
       <MuiThemeProvider theme={configurationTableTheme()}>

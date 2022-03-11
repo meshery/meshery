@@ -55,7 +55,7 @@ const styles = makeStyles(() => ({
 
 
 
-const UploadImport = ({ handleUpload, handleImport }) => {
+const UploadImport = ({ handleUpload, handleImport, configuration }) => {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
@@ -93,7 +93,7 @@ const UploadImport = ({ handleUpload, handleImport }) => {
           color="primary" className={classes.button}
           size="large" onClick={handleOpen}>
           <LinkIcon style={{ padding : "1px" }} />
-           Import Design
+           Import {configuration}
         </Button>
 
         <Dialog

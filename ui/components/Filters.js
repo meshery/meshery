@@ -579,7 +579,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       )}
       <div className={classes.createButton}>
         <div className={classes.UploadImport}>
-          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler}  />
+          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter" />
         </div>
       </div>
       <MuiThemeProvider theme={getMuiTheme()}>
