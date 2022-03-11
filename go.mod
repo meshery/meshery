@@ -36,7 +36,7 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.5.2
-	github.com/layer5io/meshkit v0.5.8
+	github.com/layer5io/meshkit v0.5.9
 	github.com/layer5io/meshsync v0.5.0
 	github.com/layer5io/nighthawk-go v0.5.0
 	github.com/layer5io/service-mesh-performance v0.3.3
@@ -61,15 +61,11 @@ require (
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.23.2
-	k8s.io/api v0.22.4
+	k8s.io/api v0.23.0-alpha.1
 	k8s.io/apiextensions-apiserver v0.22.4
-	k8s.io/apimachinery v0.22.4
-	k8s.io/client-go v0.22.4
+	k8s.io/apimachinery v0.23.0-alpha.1
+	k8s.io/client-go v0.23.0-alpha.1
 	sigs.k8s.io/controller-runtime v0.10.3
 )
 
-require (
-	github.com/nats-io/nats-server/v2 v2.7.2 // indirect; https://advisories.nats.io/CVE/CVE-2021-3127.txt
-	github.com/opencontainers/image-spec v1.0.2 // indirect
-	helm.sh/helm/v3 v3.7.2 // indirect
-)
+require github.com/opencontainers/image-spec v1.0.2 // indirect
