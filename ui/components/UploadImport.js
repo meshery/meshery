@@ -102,7 +102,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
 
           <MuiThemeProvider theme={getMuiTheme()}>
             <DialogTitle className={classes.title}>
-              <b id="simple-modal-title" style={{ textAlign : "center" }} >Import Design</b>
+              <b id="simple-modal-title" style={{ textAlign : "center" }} >Import {configuration}</b>
             </DialogTitle>
             <DialogContent className={classes.content}>
               <Grid container spacing={24}>
@@ -114,7 +114,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
                     error={isError}
                     helperText={isError && "Invalid URL"}
                     variant="outlined"
-                    label="URL to Design"
+                    label={"URL for "+configuration}
                     style={{ width : "100%" }}
                     onChange={(e) => setInput(e.target.value)} />
                 </Grid>
