@@ -60,11 +60,11 @@ type PreferenceParams struct {
 
 type CanvasSettings struct {
 	SnapToGrid bool `json:"snapToGrid"`
-	HideGrid   bool  `json:"hideGrid"`
+	HideGrid   bool `json:"hideGrid"`
 }
 
 type MeshMapPreferences struct {
-	CanvasSettings  *CanvasSettings `json:"canvasSettings"`
+	CanvasSettings *CanvasSettings `json:"canvasSettings"`
 }
 
 // Preference represents the data stored in session / local DB
