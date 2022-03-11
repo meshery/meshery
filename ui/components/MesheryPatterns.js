@@ -307,7 +307,7 @@ function MesheryPatterns({
     const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
-
+    console.log(query);
     updateProgress({ showProgress : true });
 
     dataFetch(
@@ -386,6 +386,7 @@ function MesheryPatterns({
     }
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
+      console.log(name);
       let body;
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
