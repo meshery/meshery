@@ -1,6 +1,6 @@
 module github.com/layer5io/meshery
 
-go 1.16
+go 1.17
 
 replace (
 	//golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
@@ -16,7 +16,7 @@ replace (
 )
 
 require (
-	fortio.org/fortio v1.20.0
+	fortio.org/fortio v1.21.0
 	github.com/99designs/gqlgen v0.17.1
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.18.1
@@ -36,16 +36,14 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.5.2
-	github.com/layer5io/meshkit v0.5.8
+	github.com/layer5io/meshkit v0.5.9
 	github.com/layer5io/meshsync v0.5.0
 	github.com/layer5io/nighthawk-go v0.5.0
 	github.com/layer5io/service-mesh-performance v0.3.3
 	github.com/lib/pq v1.10.4
 	github.com/manifoldco/promptui v0.9.0
-	github.com/nats-io/nats-server/v2 v2.7.2 // indirect; https://advisories.nats.io/CVE/CVE-2021-3127.txt
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.12.1
@@ -58,16 +56,16 @@ require (
 	github.com/vektah/gqlparser/v2 v2.4.0
 	github.com/vmihailenco/taskq/v3 v3.2.7
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
-	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
 	gonum.org/v1/gonum v0.9.3
-	google.golang.org/grpc v1.42.0
+	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.23.2
-	helm.sh/helm/v3 v3.7.2 // indirect
-	k8s.io/api v0.22.4
+	k8s.io/api v0.23.0-alpha.1
 	k8s.io/apiextensions-apiserver v0.22.4
-	k8s.io/apimachinery v0.22.4
-	k8s.io/client-go v0.22.4
+	k8s.io/apimachinery v0.23.0-alpha.1
+	k8s.io/client-go v0.23.0-alpha.1
 	sigs.k8s.io/controller-runtime v0.10.3
 )
+
+require github.com/opencontainers/image-spec v1.0.2 // indirect

@@ -180,9 +180,11 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 
 <h3 style="margin:auto;"><br /><br />
   <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
-  <br /><br />
+  <br /><br /><br />
 </h3>
 <p style="clear:both;">&nbsp;</p>
+
+<br /><br /><br /><br />
 
 ## <a name="functionality">Functionality</a>
 

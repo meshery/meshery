@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
@@ -147,6 +147,7 @@ function K8sContextMenu({
 }) {
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
+  const [transformProperty, setTransformProperty] = React.useState(75)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleKubernetesClick = () => {
@@ -171,10 +172,16 @@ function K8sContextMenu({
     open = showFullContextMenu;
   }
 
+
+  useEffect(() => {
+    setTransformProperty(prev => (prev + ( contexts.total_count ? contexts.total_count * 3.125 : 0 )))
+  }, [])
+
   return (
     <>
       <IconButton
         aria-label="contexts"
+        className="k8s-icon-button"
         onClick={(e) => {
           e.preventDefault();
           console.log(contexts);
@@ -199,16 +206,15 @@ function K8sContextMenu({
         style={{ marginRight : "0.5rem" }}
       >
         <div className={classes.cbadgeContainer}>
-          <img src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
+          <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
           <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
         </div>
       </IconButton>
 
-
-      <Slide direction="down" timeout={300} in={open} style={{ position : "absolute", left : "-6rem", zIndex : "-1", top : "-4rem", transform : showFullContextMenu ? "translateY(6rem)": "translateY(0)" }} mountOnEnter unmountOnExit>
+      <Slide direction="down" timeout={300} in={open} style={{ position : "absolute", left : "-5rem", zIndex : "-1", bottom : "-75%", transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)" }} mountOnEnter unmountOnExit>
         <div>
           <ClickAwayListener onClickAway={(e) => {
-            if (e.path[3].getAttribute("aria-label") !== "contexts" && e.path[0].getAttribute("aria-label") !== "contexts") {
+            if (!e.target.className.includes("cbadge") && e.target.className !="k8s-image" && !e.target.className.includes("k8s-icon-button")) {
               setAnchorEl(false)
               setShowFullContextMenu(false)
             }
