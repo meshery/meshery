@@ -43,6 +43,7 @@ describe('Configuration Management', () => {
           // Custom command 'attachFile' is provided by https://www.npmjs.com/package/cypress-file-upload#html5-file-input
           // It internally calls https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
           // with a Custom 'change' input event.
+          cy.contains('Import Filter').click();
           cy.get('[data-cy="file-upload-button"]').attachFile(testFilePath);
           cy.wait('@postFilter').then(interception => {
 
