@@ -143,6 +143,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [close, handleClose] = useState(true);
   const DEPLOY_URL = "/api/filter/deploy";
 
   const getMuiTheme = () => createTheme({
@@ -320,6 +321,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
+          handleClose(true);
           fetchFilters(page, pageSize, search, sortOrder);
         },
         // handleError
@@ -329,6 +331,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   function uploadHandler(ev) {
+    handleClose(false);
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -579,7 +582,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       )}
       <div className={classes.createButton}>
         <div className={classes.UploadImport}>
-          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter" />
+          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter" modalStatus={close} />
         </div>
       </div>
       <MuiThemeProvider theme={getMuiTheme()}>

@@ -55,7 +55,7 @@ const styles = makeStyles(() => ({
 
 
 
-const UploadImport = ({ handleUpload, handleImport, configuration }) => {
+const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }) => {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
@@ -67,6 +67,12 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
       setIsError(!URLValidator(input))
     }
   }, [input])
+
+  useEffect(() => {
+    if (modalStatus) {
+      handleClose()
+    }
+  }, [modalStatus])
 
   const handleOpen = () => {
     setOpen(true);
@@ -80,6 +86,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
     handleUpload(input)
     handleClose()
   }
+
   //   const handleUploader = () => {
   //     handleImport(input)
   //     handleClose()
@@ -135,7 +142,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
                   <label htmlFor="upload-button" className={classes.upload}>
 
                     <Button variant="contained" size="large"  color="primary" aria-label="Upload Button"  component="span" >
-                      <input id="upload-button" type="file"  accept=".yaml, .yml" hidden onChange={ handleImport }  name="upload-button" data-cy="file-upload-button" />
+                      <input id="upload-button" type="file"  accept=".yaml, .yml" hidden onChange={ handleImport } name="upload-button" data-cy="file-upload-button" />
                         Browse
                     </Button>
                   </label>

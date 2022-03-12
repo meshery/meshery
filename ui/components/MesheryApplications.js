@@ -186,6 +186,7 @@ function MesheryApplications({
   const [pageSize, setPageSize] = useState(10);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [close, handleClose] = useState(true);
   const DEPLOY_URL = '/api/application/deploy';
 
   const searchTimeout = useRef(null);
@@ -351,6 +352,7 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
+          handleClose(true);
           fetchApplications(page, pageSize, search, sortOrder);
         },
         // handleError
@@ -360,6 +362,7 @@ function MesheryApplications({
   }
 
   function uploadHandler(ev) {
+    handleClose(false);
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -616,7 +619,7 @@ function MesheryApplications({
       )}
       <div className={classes.createButton}>
         <div className={classes.UploadImport}>
-          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application" />
+          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application" modalStatus={close} />
         </div>
       </div>
       <MuiThemeProvider theme={configurationTableTheme()}>
