@@ -27,11 +27,13 @@ RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 FROM alpine:3.15 as seed_content
 RUN apk add --no-cache curl
 WORKDIR /
-RUN curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest \
-    | grep "browser_download_url.*wasm" \
-    | cut -d : -f 2,3 \
-    | tr -d \" \
-    | wget -P /seed_content/filters/binaries -qi -
+RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
+    && mkdir -p seed_content/filters/binaries \ 
+    && cd seed_content/filters/binaries  \
+    for line in $lines \
+    do \
+    curl -LO $line \
+    done 
 
 # bundling patterns
 RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
