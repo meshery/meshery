@@ -190,7 +190,7 @@ func (p *Pattern) ToYAML() ([]byte, error) {
 
 // NewPatternFileFromCytoscapeJSJSON takes in CytoscapeJS JSON
 // and creates a PatternFile from it
-func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
+func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error) {
 	// Unmarshal data into cytoscape struct
 	var cy cytoscapejs.GraphElem
 	if err := json.Unmarshal(byt, &cy); err != nil {
@@ -199,7 +199,7 @@ func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
 
 	// Convert cytoscape struct to patternfile
 	pf := Pattern{
-		Name:     "MesheryGeneratedPatternFile",
+		Name:     name,
 		Services: make(map[string]*Service),
 	}
 	for _, elem := range cy.Elements {
