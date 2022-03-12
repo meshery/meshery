@@ -659,7 +659,7 @@ class DashboardComponent extends React.Component {
                             Array.isArray(component?.data_planes) && component.data_planes.length > 0 ? (
                               component.data_planes.map((cont) => {
                                 return (
-                                  <div key={cont.name} style={{ color : '#ffff', paddingBottom : '10px', padding : '2vh' } }>
+                                  <div key={cont.name} style={{ fontSize : "15px", color : '#fff', paddingBottom : '10px', padding : '1vh' } }>
                                     <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
                                     <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
                                     {!cont?.status?.ready && (
