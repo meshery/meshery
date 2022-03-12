@@ -155,7 +155,7 @@ Restart your WSL VM before moving forward.
 - If that gives an error run:
 
   ```bash
-    $ bundle exec jekyll serve
+  $ bundle exec jekyll serve
   ```
 
   _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
@@ -199,7 +199,7 @@ Automatically the `Gemfile.lock` will update once the `make site` is given (for 
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
   ```bash
-  $ commit -s -m “my commit message w/signoff”
+  $ git commit -s -m “my commit message w/signoff”
   ```
 - Once all changes have been committed, push the changes.
   ```bash
