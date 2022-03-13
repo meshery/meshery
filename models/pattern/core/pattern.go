@@ -2,6 +2,7 @@ package core
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -196,7 +197,9 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	if err := json.Unmarshal(byt, &cy); err != nil {
 		return Pattern{}, err
 	}
-
+	if name == "" {
+		name = "MesheryGeneratedPattern"
+	}
 	// Convert cytoscape struct to patternfile
 	pf := Pattern{
 		Name:     name,
@@ -237,8 +240,8 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		if err := json.Unmarshal(svcByt, &svc); err != nil {
 			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
-
-		pf.Services[elem.Data.ID] = &svc
+		uid := base64.StdEncoding.EncodeToString(svcByt)
+		pf.Services[svc.Name+uid[:5]] = &svc
 	}
 
 	return pf, nil
