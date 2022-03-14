@@ -1,11 +1,10 @@
-import { NoSsr, withStyles } from "@material-ui/core";
+import { NoSsr, Paper, withStyles } from "@material-ui/core";
 import MesheryFilters from "../../components/Filters";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from "../../lib/path";
-import Wrapper from "../../components/ConfiguratorWrapper"
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
@@ -23,9 +22,9 @@ class NewFilters extends React.Component {
         <Head>
           <title>Filters | Meshery</title>
         </Head>
-        <Wrapper>
+        <Paper className={this.props.classes.paper}>
           <MesheryFilters />
-        </Wrapper>
+        </Paper>
       </NoSsr>
     );
   }
