@@ -410,10 +410,10 @@ class Header extends React.Component {
                     <MesheryNotification />
                   </div>
 
-                  <Tooltip title={this.state.meshSyncStatus.status === "ENABLED" ? "Active" : "Inactive" }>
+                  <Tooltip title={this.state?.meshSyncStatus?.status === "ENABLED" ? "Active" : "Inactive" }>
                     <IconButton>
                       <Link href="/settings#environment">
-                        <img className={classes.headerIcons} src={this.state.meshSyncStatus.status === "ENABLED" ? "/static/img/meshsync.svg" : "/static/img/meshsync-white.svg"} />
+                        <img className={classes.headerIcons} src={this.state?.meshSyncStatus?.status === "ENABLED" ? "/static/img/meshsync.svg" : "/static/img/meshsync-white.svg"} />
                       </Link>
                     </IconButton>
                   </Tooltip>
