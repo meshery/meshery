@@ -174,3 +174,8 @@ meshery-meshsync:
 meshery-cilium:
   enabled: false
   fullnameOverride: meshery-cilium
+
+meshery-perf:
+  enabled: false
+  fullnameOverride: meshery-perf
+  serviceAccountNameOverride: meshery-server
