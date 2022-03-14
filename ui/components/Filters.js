@@ -15,6 +15,7 @@ import {
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
+import UploadIcon from "@material-ui/icons/Publish";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
@@ -27,7 +28,7 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
-import UploadImport from "./UploadImport";
+import URLUploader from "./URLUploader";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import FILE_OPS from "../utils/configurationFileHandlersEnum"
@@ -40,13 +41,6 @@ const styles = (theme) => ({
   tableHeader : {
     fontWeight : "bolder",
     fontSize : 18,
-  },
-  createButton : {
-    display : "flex",
-    justifyContent : "flex-start",
-    alignItems : "center",
-    whiteSpace : "nowrap",
-    margin : "1rem auto 2rem auto"
   },
 });
 
@@ -67,6 +61,33 @@ const useStyles = makeStyles(() => ({
   },
 
 }))
+
+function CustomToolbar(onClick, urlOnClick) {
+  return function Toolbar() {
+    return (
+      <>
+        <label htmlFor="upload-button">
+          <input
+            type="file"
+            accept=".yaml, .yml, .json"
+            hidden
+            onChange={onClick}
+            data-cy="file-upload-button"
+            id="upload-button"
+            name="upload-button"
+          />
+          <Tooltip title="Upload Filter">
+            <IconButton aria-label="Upload" component="span">
+              <UploadIcon />
+            </IconButton>
+          </Tooltip>
+        </label>
+
+        <URLUploader onSubmit={urlOnClick} />
+      </>
+    );
+  };
+}
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -143,7 +164,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [close, handleClose] = useState(true);
   const DEPLOY_URL = "/api/filter/deploy";
 
   const getMuiTheme = () => createTheme({
@@ -321,7 +341,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
-          handleClose(true);
           fetchFilters(page, pageSize, search, sortOrder);
         },
         // handleError
@@ -331,7 +350,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   function uploadHandler(ev) {
-    handleClose(false);
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -513,6 +531,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         text : "filter(s) selected"
       }
     },
+    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onRowsDelete : async function handleDelete(row) {
       let response  = await showmodal(Object.keys(row.lookup).length)
@@ -580,11 +599,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
-      <div className={classes.createButton}>
-        <div className={classes.UploadImport}>
-          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter" modalStatus={close} />
-        </div>
-      </div>
       <MuiThemeProvider theme={getMuiTheme()}>
         <MUIDataTable
           title={<div className={classes.tableHeader}>Filters</div>}

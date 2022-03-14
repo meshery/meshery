@@ -55,7 +55,7 @@ const styles = makeStyles(() => ({
 
 
 
-const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }) => {
+const UploadImport = ({ handleUpload, handleImport }) => {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
@@ -67,12 +67,6 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
       setIsError(!URLValidator(input))
     }
   }, [input])
-
-  useEffect(() => {
-    if (modalStatus) {
-      handleClose()
-    }
-  }, [modalStatus])
 
   const handleOpen = () => {
     setOpen(true);
@@ -86,7 +80,6 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
     handleUpload(input)
     handleClose()
   }
-
   //   const handleUploader = () => {
   //     handleImport(input)
   //     handleClose()
@@ -100,7 +93,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
           color="primary" className={classes.button}
           size="large" onClick={handleOpen}>
           <LinkIcon style={{ padding : "1px" }} />
-           Import {configuration}
+           Import Design
         </Button>
 
         <Dialog
@@ -109,7 +102,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
 
           <MuiThemeProvider theme={getMuiTheme()}>
             <DialogTitle className={classes.title}>
-              <b id="simple-modal-title" style={{ textAlign : "center" }} >Import {configuration}</b>
+              <b id="simple-modal-title" style={{ textAlign : "center" }} >Import Design</b>
             </DialogTitle>
             <DialogContent className={classes.content}>
               <Grid container spacing={24}>
@@ -121,7 +114,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
                     error={isError}
                     helperText={isError && "Invalid URL"}
                     variant="outlined"
-                    label={"URL for "+configuration}
+                    label="URL to Design"
                     style={{ width : "100%" }}
                     onChange={(e) => setInput(e.target.value)} />
                 </Grid>
@@ -142,7 +135,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
                   <label htmlFor="upload-button" className={classes.upload}>
 
                     <Button variant="contained" size="large"  color="primary" aria-label="Upload Button"  component="span" >
-                      <input id="upload-button" type="file"  accept=".yaml, .yml" hidden onChange={ handleImport } name="upload-button" data-cy="file-upload-button" />
+                      <input id="upload-button" type="file"  accept=".yaml, .yml" hidden onChange={ handleImport }  name="upload-button" data-cy="file-upload-button" />
                         Browse
                     </Button>
                   </label>
