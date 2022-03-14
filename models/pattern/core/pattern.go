@@ -240,8 +240,8 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		if err := json.Unmarshal(svcByt, &svc); err != nil {
 			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
-		uid := base64.StdEncoding.EncodeToString(svcByt)
-		pf.Services[svc.Name+uid[:5]] = &svc
+		uid := svc.Name + base64.StdEncoding.EncodeToString(svcByt)[:5]
+		pf.Services[uid] = &svc
 	}
 
 	return pf, nil
