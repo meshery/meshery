@@ -16,6 +16,11 @@ const (
 	ErrCreatingValidateResponseRequestCode   = "1019"
 	ErrTimeoutWaitingForValidateResponseCode = "1020"
 	ErrSMIConformanceTestsFailedCode         = "1021"
+	ErrCreatingRemoveRequestCode             = "1022"
+	ErrCreatingRemoveResponseRequestCode     = "1023"
+	ErrCreatingRemoveResponseStreamCode      = "1024"
+	ErrTimeoutWaitingForRemoveResponseCode   = "1025"
+	ErrFailedRemovingMeshCode                = "1026"
 )
 
 var (
@@ -29,6 +34,10 @@ var (
 	ErrTimeoutWaitingForValidateResponse = errors.New(ErrTimeoutWaitingForValidateResponseCode, errors.Fatal, []string{"Timed out waiting for validate response"}, []string{"Timed out waiting for validate response"}, []string{""}, []string{"Check your environment and try again"})
 
 	ErrSMIConformanceTestsFailed = errors.New(ErrSMIConformanceTestsFailedCode, errors.Fatal, []string{"SMI conformance tests failed"}, []string{"SMI conformance tests failed"}, []string{}, []string{"Join https://layer5io.slack.com/archives/C010H0HE2E6"})
+
+	ErrTimeoutWaitingForRemoveResponse = errors.New(ErrTimeoutWaitingForRemoveResponseCode, errors.Fatal, []string{"Timed out waiting for remove event"}, []string{}, []string{}, []string{"Check your environment and try again"})
+
+	ErrFailedRemovingMesh = errors.New(ErrFailedRemovingMeshCode, errors.Fatal, []string{"Failed to remove the service mesh"}, []string{""}, []string{}, []string{"Check your environment and try again"})
 )
 
 // When unable to get release data
@@ -66,4 +75,16 @@ func ErrCreatingValidateResponseRequest(err error) error {
 
 func ErrCreatingValidateResponseStream(err error) error {
 	return errors.New(ErrCreatingDeployResponseStreamCode, errors.Fatal, []string{"Error creating validate event response stream"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrCreatingRemoveRequest(err error) error {
+	return errors.New(ErrCreatingRemoveRequestCode, errors.Fatal, []string{"Error sending remove request"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrCreatingRemoveResponseRequest(err error) error {
+	return errors.New(ErrCreatingRemoveResponseRequestCode, errors.Fatal, []string{"Error creating request for remove response"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrCreatingRemoveResponseStream(err error) error {
+	return errors.New(ErrCreatingRemoveResponseStreamCode, errors.Fatal, []string{"Error creating deploy event response stream"}, []string{err.Error()}, []string{}, []string{})
 }

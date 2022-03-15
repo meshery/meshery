@@ -2,10 +2,14 @@ package mesh
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
+	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -51,6 +55,14 @@ var (
 			}
 			s.Stop()
 
+			if watch {
+				log.Infof("Verifying Operation")
+				_, err = waitForRemoveResponse(mctlCfg, "mesh is now removed")
+				if err != nil {
+					log.Fatalln(err)
+				}
+			}
+
 			//log.Infof("Verifying Installation")
 			//s.Start()
 			//_, err = waitForDeployResponse(mctlCfg, meshName)
@@ -68,4 +80,54 @@ func init() {
 	removeCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-istio:10000", "Adapter to use for installation")
 	removeCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
 	removeCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	removeCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
+
+}
+
+func waitForRemoveResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_remove"
+	method := "GET"
+	client := &http.Client{}
+	req, err := utils.NewRequest(method, path, nil)
+	if err != nil {
+		return "", ErrCreatingRemoveRequest(err)
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return "", ErrCreatingRemoveResponseRequest(err)
+	}
+	defer res.Body.Close()
+
+	event, err := utils.ConvertRespToSSE(res)
+	if err != nil {
+		return "", ErrCreatingRemoveResponseStream(err)
+	}
+
+	timer := time.NewTimer(time.Duration(1200) * time.Second)
+	eventChan := make(chan string)
+
+	//Run a goroutine to wait for the response
+	go func() {
+		for i := range event {
+			if strings.Contains(i.Data.Details, query) {
+				eventChan <- "successful"
+				log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
+			} else if strings.Contains(i.Data.Details, "Error") {
+				eventChan <- "error"
+				log.Infof("%s\n", i.Data.Summary)
+			}
+		}
+	}()
+
+	select {
+	case <-timer.C:
+		return "", ErrTimeoutWaitingForRemoveResponse
+	case event := <-eventChan:
+		if event != "successful" {
+			return "", ErrFailedRemovingMesh
+		}
+	}
+
+	return "", nil
 }
