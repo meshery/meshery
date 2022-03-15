@@ -146,9 +146,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit({
-              data : yaml, id : pattern.id, name : pattern.name, action : FILE_OPS.UPDATE
-            })}
+            onClick={() => onSubmit(yaml, pattern.id, pattern.name, FILE_OPS.UPDATE)}
           >
             <SaveIcon />
           </IconButton>
@@ -157,11 +155,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit({
-              data : yaml,
-              id : pattern.id,
-              name : pattern.name,
-            })}
+            onClick={() => onSubmit(yaml, pattern.id, pattern.name, FILE_OPS.DELETE)}
           >
             <DeleteIcon />
           </IconButton>
@@ -349,7 +343,7 @@ function MesheryPatterns({
     };
   }
 
-  function handleSubmit({ data, id, name, type }) {
+  function handleSubmit( data, id, name, type ) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       dataFetch(
