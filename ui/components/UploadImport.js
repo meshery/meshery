@@ -96,7 +96,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
     <>
       <label htmlFor="url-upload-button">
 
-        <Button aria-label="URL-Upload"  variant="contained"
+        <Button aria-label="URL-Upload" data-cy="import-button" variant="contained"
           color="primary" className={classes.button}
           size="large" onClick={handleOpen}>
           <LinkIcon style={{ padding : "1px" }} />

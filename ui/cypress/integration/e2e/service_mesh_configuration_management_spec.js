@@ -57,7 +57,7 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
         // Custom command 'attachFile' is provided by https://www.npmjs.com/package/cypress-file-upload#html5-file-input
         // It internally calls https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
         // with a Custom 'change' input event.
-        cy.contains(`${expectedUploadConfigItemName}`).click();
+        cy.get('[data-cy="import-button"]').click();
         cy.get('[data-cy="file-upload-button"]').attachFile(testFilePath);
         cy.wait("@uploadConfigItem").then((interception) => {
           cy.wrap(interception.request).then((req) => {
