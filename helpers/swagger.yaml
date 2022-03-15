@@ -4039,14 +4039,14 @@ paths:
       summary: Handle POST request for Application File Deploy
       tags:
       - ApplicationsAPI
-  /api/experimental/oam/{type}:
+  /api/oam/{type}:
     get:
       deprecated: true
       description: |-
         Returns a list of workloads/traits/scopes by given type in the URL
 
         {type} being of either trait, scope, workload; registration of adapter capabilities.
-        Example: /api/experimental/oam/workload => Here {type} is "workload"
+        Example: /api/oam/workload => Here {type} is "workload"
       operationId: idGetOAMRegister
       responses:
         "200":
@@ -4060,7 +4060,7 @@ paths:
         Adding a workloads/traits/scopes by given type in the URL
 
         {type} being of either trait, scope, workload; registration of adapter capabilities.
-        Example: /api/experimental/oam/workload => Here {type} is "workload"
+        Example: /api/oam/workload => Here {type} is "workload"
       operationId: idPostOAMRegister
       responses:
         "200":
