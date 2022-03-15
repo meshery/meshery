@@ -32,6 +32,7 @@
 | Name                  | GitHub             | Affiliation |
 | --------------------- | ------------------ | ----------- |
 | Lee Calcote           | leecalcote         | Layer5      |
+| Mario Arriaga         | MarioArriaga92     | F5          |
 
 ### Docs Maintainers
 
