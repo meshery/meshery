@@ -7,7 +7,7 @@ const requires = createRequires(getDependencies);
 
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-const RemoteUserPref = ({ startOnZoom, handleToggle, url }) => {
+const RemoteUserPref = ({ startOnZoom, handleToggle, url, checkedGrid, checkedSnap }) => {
   const [loading, err, RemoteComponent] = useRemoteComponent(url.url);
   if (loading) {
     return (
@@ -21,7 +21,7 @@ const RemoteUserPref = ({ startOnZoom, handleToggle, url }) => {
   return (
     <div>
       <RemoteComponent
-        injectProps={{ startOnZoom, handleToggle }}
+        injectProps={{ startOnZoom, handleToggle, checkedGrid, checkedSnap }}
       />
     </div>
   );

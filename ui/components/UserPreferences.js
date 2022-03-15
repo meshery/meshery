@@ -93,6 +93,8 @@ class UserPreference extends React.Component {
       anonymousStats : props.anonymousStats,
       perfResultStats : props.perfResultStats,
       startOnZoom : props.startOnZoom,
+      checkedGrid : props.checkedGrid,
+      checkedSnap : props.checkedSnap,
       tabVal : 0,
       userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
       providerType : ''
@@ -105,6 +107,10 @@ class UserPreference extends React.Component {
       self.setState((state) => ({ anonymousStats : !state.anonymousStats }), () => this.handleChange(name));
     } else if (name == 'anonymousPerfResults') {
       self.setState((state) => ({ perfResultStats : !state.perfResultStats }), () => this.handleChange(name));
+    } else if (name == 'hideGrid') {
+      self.setState((state) => ({ checkedGrid : !state.checkedGrid }), () => this.handleChange(name));
+    } else if (name == 'snapToGrid') {
+      self.setState((state) => ({ checkedSnap : !state.checkedSnap }), () => this.handleChange(name));
     } else {
       self.setState((state) => ({ startOnZoom : !state.startOnZoom }), () => this.handleChange(name));
     }
@@ -129,19 +135,28 @@ class UserPreference extends React.Component {
 
   handleChange = (name) => {
     const self = this;
-    const { anonymousStats, perfResultStats, startOnZoom } = this.state;
+    const { anonymousStats, perfResultStats, startOnZoom, checkedGrid, checkedSnap } = this.state;
     let val, msg;
     if (name == 'anonymousUsageStats') {
       val = anonymousStats;
       msg = val
         ? "Sending anonymous usage statistics was enabled"
         : "Sending anonymous usage statistics was disabled";
-
     } else if (name == 'anonymousPerfResults') {
       val = perfResultStats;
       msg = val
         ? "Sending anonymous performance results was enabled"
         : "Sending anonymous performance results was disabled";
+    } else if (name == 'hideGrid') {
+      val = checkedGrid;
+      msg = val
+        ? "Hide grid was enabled"
+        : "Hide grid was disabled";
+    } else if (name == 'snapToGrid'){
+      val = checkedSnap;
+      msg = val
+        ? "Snap to grid was enabled"
+        : "Snap to grid was disabled";
     } else {
       val = startOnZoom;
       msg = val
@@ -153,11 +168,15 @@ class UserPreference extends React.Component {
       "anonymousUsageStats" : anonymousStats,
       "anonymousPerfResults" : perfResultStats,
       "usersExtensionPreferences" : {
-        "showOnZoom" : startOnZoom
+        "showOnZoom" : startOnZoom,
+        "canvasSettings" : {
+          "hideGrid" : checkedGrid,
+          "snapToGrid" : checkedSnap
+        }
       }
     });
 
-    console.log(requestBody,anonymousStats,perfResultStats);
+    console.log(requestBody,anonymousStats,perfResultStats,checkedGrid,checkedSnap);
 
     this.props.updateProgress({ showProgress : true });
     dataFetch('/api/user/prefs', {
@@ -211,12 +230,12 @@ class UserPreference extends React.Component {
 
   render() {
     const {
-      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs, providerType
+      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs, providerType, checkedGrid, checkedSnap
     } = this.state;
     const { classes } = this.props;
 
     const mainIconScale = 'grow-10';
-    const handleToggle = this.handleToggle('startOnZoom');
+    const handleToggle = (msg) => this.handleToggle(msg);
 
     return (
       <NoSsr>
@@ -307,7 +326,7 @@ class UserPreference extends React.Component {
             <MesherySettingsPerformanceComponent />
           }
           {tabVal == 2 && userPrefs && providerType != 'local' &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url, checkedGrid, checkedSnap })} />
           }
         </Paper>
       </NoSsr>
