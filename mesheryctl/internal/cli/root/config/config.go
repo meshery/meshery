@@ -37,12 +37,12 @@ type Token struct {
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint string   `mapstructure:"endpoint,omitempty"`
-	Token    string   `mapstructure:"token,omitempty"`
-	Platform string   `mapstructure:"platform"`
-	Adapters []string `mapstructure:"adapters,omitempty"`
-	Channel  string   `mapstructure:"channel,omitempty"`
-	Version  string   `mapstructure:"version,omitempty"`
+	Endpoint   string   `mapstructure:"endpoint,omitempty"`
+	Token      string   `mapstructure:"token,omitempty"`
+	Platform   string   `mapstructure:"platform"`
+	Components []string `mapstructure:"components,omitempty"`
+	Channel    string   `mapstructure:"channel,omitempty"`
+	Version    string   `mapstructure:"version,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
@@ -56,8 +56,8 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	return c, err
 }
 
-// SetMesheryCtl sets the mesheryctl configuration object
-func SetContext(v *viper.Viper, context *Context, name string) error {
+// UpdateContextInConfig write the given context in meshconfig
+func UpdateContextInConfig(v *viper.Viper, context *Context, name string) error {
 	viper.Set("contexts."+name, context)
 	err := viper.WriteConfig()
 	if err != nil {
@@ -188,9 +188,9 @@ func (ctx *Context) SetPlatform(platform string) {
 	ctx.Platform = platform
 }
 
-// GetAdapters returns the adapters in the current context
-func (ctx *Context) GetAdapters() []string {
-	return ctx.Adapters
+// GetComponents returns the components in the current context
+func (ctx *Context) GetComponents() []string {
+	return ctx.Components
 }
 
 // GetChannel returns the channel of the current context
@@ -416,7 +416,7 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 		return err
 	}
 	context.Token = tokenName
-	err = SetContext(viper.GetViper(), context, ctxName)
+	err = UpdateContextInConfig(viper.GetViper(), context, ctxName)
 	if err != nil {
 		return err
 	}

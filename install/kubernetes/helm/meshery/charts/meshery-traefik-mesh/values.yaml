@@ -44,6 +44,9 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+ports:
+  http: 10006
+
 service:
   type: ClusterIP
   port: 10006

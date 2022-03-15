@@ -5,6 +5,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // MeshClient represents a gRPC adapter client
@@ -22,7 +23,7 @@ func CreateClient(ctx context.Context, k8sConfigBytes []byte, contextName, meshL
 	// 	}
 	// 	opts = append(opts, grpc.WithTransportCredentials(creds))
 	// } else {
-	opts = append(opts, grpc.WithInsecure())
+	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	// }
 	conn, err := grpc.Dial(meshLocationURL, opts...)
 	if err != nil {

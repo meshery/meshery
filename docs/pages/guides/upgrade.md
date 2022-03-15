@@ -5,6 +5,7 @@ description: How to Meshery and all of its components
 permalink: guides/upgrade
 display-title: "false"
 type: Guides
+language: en
 ---
 # Upgrade Guide
 

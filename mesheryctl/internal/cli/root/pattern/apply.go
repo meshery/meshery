@@ -13,11 +13,9 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -44,11 +42,6 @@ var applyCmd = &cobra.Command{
 		var err error
 		client := &http.Client{}
 
-		// set default tokenpath for command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -63,16 +56,11 @@ var applyCmd = &cobra.Command{
 			patternName := strings.Join(args, "%20")
 
 			// search and fetch patterns with pattern-name
-			log.Debug("Fetching patterns")
+			utils.Log.Debug("Fetching patterns")
 
-			req, err = http.NewRequest("GET", patternURL+"?search="+patternName, nil)
+			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
 				return err
-			}
-
-			err = utils.AddAuthDetails(req, tokenPath)
-			if err != nil {
-				return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
 			}
 
 			resp, err := client.Do(req)
@@ -125,19 +113,16 @@ var applyCmd = &cobra.Command{
 					if err != nil {
 						return err
 					}
-					req, err = http.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+					req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
 						return err
 					}
-					err = utils.AddAuthDetails(req, tokenPath)
-					if err != nil {
-						return err
-					}
+
 					resp, err := client.Do(req)
 					if err != nil {
 						return err
 					}
-					log.Debug("saved pattern file")
+					utils.Log.Debug("saved pattern file")
 					var response []*models.MesheryPattern
 					// failsafe (bad api call)
 					if resp.StatusCode != 200 {
@@ -164,8 +149,8 @@ var applyCmd = &cobra.Command{
 					return err
 				}
 
-				log.Debug(url)
-				log.Debug(path)
+				utils.Log.Debug(url)
+				utils.Log.Debug(path)
 
 				// save the pattern with Github URL
 				if !skipSave {
@@ -195,19 +180,16 @@ var applyCmd = &cobra.Command{
 						})
 					}
 				}
-				req, err = http.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+				req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
 					return err
 				}
-				err = utils.AddAuthDetails(req, tokenPath)
-				if err != nil {
-					return err
-				}
+
 				resp, err := client.Do(req)
 				if err != nil {
 					return err
 				}
-				log.Debug("remote hosted pattern request success")
+				utils.Log.Debug("remote hosted pattern request success")
 				var response []*models.MesheryPattern
 				// failsafe (bad api call)
 				if resp.StatusCode != 200 {
@@ -229,12 +211,7 @@ var applyCmd = &cobra.Command{
 			}
 		}
 
-		req, err = http.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
 			return err
 		}
@@ -251,9 +228,9 @@ var applyCmd = &cobra.Command{
 		}
 
 		if res.StatusCode == 200 {
-			log.Info("pattern successfully applied")
+			utils.Log.Info("pattern successfully applied")
 		}
-		log.Info(string(body))
+		utils.Log.Info(string(body))
 		return nil
 	},
 }
@@ -274,15 +251,15 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 		fmt.Printf("Enter the index of profile: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			log.Fatal(err)
+			utils.Log.Warn(err)
 		}
 		response = strings.ToLower(strings.TrimSpace(response))
 		index, err := strconv.Atoi(response)
 		if err != nil {
-			log.Info(err)
+			utils.Log.Info(err)
 		}
 		if index < 0 || index >= len(profiles) {
-			log.Info("Invalid index")
+			utils.Log.Info("Invalid index")
 		} else {
 			return index
 		}

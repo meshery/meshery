@@ -127,9 +127,9 @@ func TestApplyCmd(t *testing.T) {
 					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
 			}
 
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 			PerfCmd.SetArgs(tt.Args)
 			PerfCmd.SetOutput(b)
@@ -171,5 +171,6 @@ func resetVariables() {
 	loadGenerator = "fortio"
 	filePath = ""
 	outputFormatFlag = ""
-	expand = false
+	viewSingleProfile = false
+	viewSingleResult = false
 }

@@ -14,8 +14,12 @@ import { isEmptyObj } from "../../../utils/utils";
  * @return {"rjsf" | "switch"}
  */
 function componentType(jsonSchema) {
-  if (Object.keys(jsonSchema?.properties).length) return "rjsf";
-  return "switch";
+  if (jsonSchema?.properties) {
+    if (Object.keys(jsonSchema?.properties).length)
+      return "rjsf";
+
+    return "switch";
+  }
 }
 
 /**

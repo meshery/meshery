@@ -258,8 +258,8 @@
       "1033": {
         "name": "ErrAttachAuthTokenCode",
         "code": "1033",
-        "severity": "Alert",
-        "long_description": "authentication token not found. please supply a valid user token with the --token (or -t) flag. or login with `mesheryctl system login`",
+        "severity": "",
+        "long_description": "",
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
@@ -276,7 +276,7 @@
       "1035": {
         "name": "ErrFailReqStatusCode",
         "code": "1035",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
         "short_description": "",
         "probable_cause": "",
@@ -321,6 +321,60 @@
       "1040": {
         "name": "ErrUnauthenticatedCode",
         "code": "1040",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1044": {
+        "name": "ErrFailRequestCode",
+        "code": "1044",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1045": {
+        "name": "ErrFailReqStatusCode",
+        "code": "1045",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1046": {
+        "name": "ErrAttachAuthTokenCode",
+        "code": "1046",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1047": {
+        "name": "ErrInitPortForwardCode",
+        "code": "1047",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1048": {
+        "name": "ErrRunPortForwardCode",
+        "code": "1048",
+        "severity": "Fatal",
+        "long_description": "Error running port-forward for Meshery",
+        "short_description": "Failed to run port-forward",
+        "probable_cause": "Meshery pod is not in running phase\nmesheryctl can't connect to kubernetes with client-go",
+        "suggested_remediation": "Make sure Meshery pod exists and is in running state\nCheck if mesheryctl is connected to kubernetes with `mesheryctl system check`"
+      },
+      "1049": {
+        "name": "ErrFailedGetEphemeralPortCode",
+        "code": "1049",
         "severity": "",
         "long_description": "",
         "short_description": "",

@@ -346,7 +346,7 @@ func RegisterMesheryOAMWorkloads() error {
 	// accordingly
 	rootPath, _ := filepath.Abs("../oam/workloads")
 
-	return registerMesheryServerOAM(rootPath, []string{"application", "service.k8s"}, RegisterWorkload)
+	return registerMesheryServerOAM(rootPath, []string{"application"}, RegisterWorkload)
 }
 
 // registerMesheryServerOAM will read the oam definition file and its corresponding schema file
@@ -415,7 +415,7 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 }
 
 // GetK8Components returns all the generated definitions and schemas for available api resources
-func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
+func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifests.Component, error) {
 	cli, err := kubernetes.New(config)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
@@ -435,7 +435,7 @@ func GetK8Components(config []byte, ctx string) (*manifests.Component, error) {
 		return nil, ErrGetK8sComponents(err)
 	}
 	manifest := string(content)
-	man, err := manifests.GenerateComponents(manifest, manifests.K8s, manifests.Config{
+	man, err := manifests.GenerateComponents(ctxt, manifest, manifests.K8s, manifests.Config{
 		Name: "Kubernetes",
 		Filter: manifests.CrdFilter{
 			IsJson:        true,

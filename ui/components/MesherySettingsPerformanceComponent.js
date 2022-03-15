@@ -60,7 +60,11 @@ class MesherySettingsPerformanceComponent extends React.Component {
   }
 
   handleChange = (name) => (event) => {
+    if (name === 'qps' || name === 'c'){
+      this.setState({ [name]: parseInt(event.target.value) });
+    }else{
     this.setState({ [name]: event.target.value });
+    }
   }
 
   handleDurationChange = (event, newValue) => {
@@ -101,13 +105,13 @@ class MesherySettingsPerformanceComponent extends React.Component {
       qps, c, t, gen,
     } = this.state;
 
-    const data = {
+    const loadTestPrefs = {
       qps,
       c,
       t,
       gen,
     };
-    const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
+    const requestBody = JSON.stringify({"loadTestPrefs": loadTestPrefs});
 
     this.setState({ blockRunTest: true }); // to block the button
     this.props.updateProgress({ showProgress: true });
@@ -117,9 +121,9 @@ class MesherySettingsPerformanceComponent extends React.Component {
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        'Content-Type': 'application/json;charset=UTF-8',
       },
-      body: params,
+      body: requestBody,
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {

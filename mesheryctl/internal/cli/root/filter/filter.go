@@ -11,7 +11,6 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
-	tokenPath            string
 )
 
 // FilterCmd represents the root command for filter commands
@@ -29,7 +28,7 @@ var FilterCmd = &cobra.Command{
 }
 
 func init() {
-	FilterCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file default from current context")
+	FilterCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
 	availableSubcommands = []*cobra.Command{applyCmd, viewCmd, deleteCmd, listCmd}
 	FilterCmd.AddCommand(availableSubcommands...)

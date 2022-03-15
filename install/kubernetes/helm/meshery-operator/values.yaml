@@ -169,8 +169,11 @@ meshery-meshsync:
   fullnameOverride: meshery-meshsync
   serviceAccountNameOverride: meshery-server
 
+meshery-cilium:
+  enabled: false
+  fullnameOverride: meshery-cilium
 
-# The operator has its own cluster role
-# meshery-operator:
-#   enabled: true
-#   fullnameOverride: meshery-operator
+meshery-perf:
+  enabled: false
+  fullnameOverride: meshery-perf
+  serviceAccountNameOverride: meshery-server

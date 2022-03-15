@@ -60,7 +60,7 @@ func TestPatternList(t *testing.T) {
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
 			// set token
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			// mock response
 			httpmock.RegisterResponder("GET", tt.URL,
@@ -74,7 +74,7 @@ func TestPatternList(t *testing.T) {
 			rescueStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
-
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			FilterCmd.SetArgs(tt.Args)
 			FilterCmd.SetOutput(rescueStdout)
 			err := FilterCmd.Execute()

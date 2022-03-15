@@ -9,11 +9,9 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -43,10 +41,7 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		// set default tokenpath for app offboard command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
+
 		application := ""
 		isID := false
 		applicationID := ""
@@ -82,12 +77,7 @@ var viewCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err = http.NewRequest("GET", url, nil)
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err = utils.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}
@@ -136,14 +126,14 @@ var viewCmd = &cobra.Command{
 					return err
 				}
 				if outFormatFlag == "json" {
-					log.Info(string(body))
+					utils.Log.Info(string(body))
 					continue
 				}
 				if outFormatFlag == "yaml" {
 					if body, err = yaml.JSONToYAML(body); err != nil {
 						return errors.Wrap(err, "failed to convert json to yaml")
 					}
-					log.Info(string(body))
+					utils.Log.Info(string(body))
 					continue
 				}
 			}
@@ -157,7 +147,7 @@ var viewCmd = &cobra.Command{
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
 		if viewAllFlag || isID {
-			log.Info(string(body))
+			utils.Log.Info(string(body))
 		}
 		return nil
 	},

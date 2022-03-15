@@ -1,12 +1,9 @@
 package app
 
 import (
-	"bytes"
 	"path/filepath"
 	"runtime"
 	"testing"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -90,18 +87,16 @@ func TestOnboardCmd(t *testing.T) {
 			}
 
 			// set token
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// setting up log to grab logs
-			var buf bytes.Buffer
-			log.SetOutput(&buf)
-			utils.SetupLogrusFormatter()
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 			AppCmd.SetArgs(tt.Args)
+			AppCmd.SetOutput(b)
 			err := AppCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
@@ -119,7 +114,7 @@ func TestOnboardCmd(t *testing.T) {
 			}
 
 			// response being printed in console
-			actualResponse := buf.String()
+			actualResponse := b.String()
 
 			// write it in file
 			if *update {

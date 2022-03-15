@@ -1,4 +1,4 @@
-ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10008 localhost:10009 meshery-nginx-sm:10010"
+ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10008 localhost:10009 localhost:10010"
 
 MESHERY_CLOUD_LOCAL="http://localhost:9876"
 MESHERY_CLOUD_DEV="http://localhost:9876"
@@ -81,7 +81,6 @@ run-fast:
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
-	SKIP_COMP_GEN=$(MESHERY_K8S_SKIP_COMP_GEN) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go;
 
@@ -198,9 +197,27 @@ docker-docs:
 	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0.0 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 .PHONY: chart-readme
-chart-readme:
-	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs 
+chart-readme: helm-lint
+
+
+.PHONY: chart-readme
+chart-readme: chart-readme-operator
+chart-readme: chart-readme-meshery
+chart-readme-operator:
+	GO111MODULE=on go install github.com/norwoodj/helm-docs/cmd/helm-docs 
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
+chart-readme-meshery:
+	GO111MODULE=on go install github.com/norwoodj/helm-docs/cmd/helm-docs 
+	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery
+
+.PHONY: helm-lint
+helm-lint: helm-lint-operator
+helm-lint: helm-lint-meshery
+helm-lint-operator:
+	helm lint install/kubernetes/helm/meshery-operator --with-subcharts
+helm-lint-meshery:
+	helm lint install/kubernetes/helm/meshery --with-subcharts
+
 
 swagger-spec:
 	swagger generate spec -o ./helpers/swagger.yaml --scan-models

@@ -41,7 +41,8 @@ import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
-import { podNameMapper, versionMapper } from "../utils/nameMapper";
+import { versionMapper } from "../utils/nameMapper";
+// podNameMapper,
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
@@ -274,7 +275,7 @@ class DashboardComponent extends React.Component {
           error : (err) => console.log("error registering prometheus: " + err), });
         }
       },
-      self.handleError("There was an error getting prometheus config")
+      self.handleError("Error getting prometheus config")
     );
 
     dataFetch(
@@ -309,7 +310,7 @@ class DashboardComponent extends React.Component {
       res?.addonsState?.forEach((addon) => {
         if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
           self.setState({ prometheusURL : "http://" + addon.endpoint })
-          submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+          submitPrometheusConfigure(self, () => console.log("Prometheus connected"));
         } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
           self.setState({ grafanaURL : "http://" + addon.endpoint })
           submitGrafanaConfigure(self, () => {
@@ -462,7 +463,7 @@ class DashboardComponent extends React.Component {
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
@@ -489,7 +490,7 @@ class DashboardComponent extends React.Component {
     this.props.updateProgress({ showProgress : false });
     const self = this;
     this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, { variant : "error",
-      autoHideDuration : 2000,
+      autoHideDuration : 3000,
       action : (key) => (
         <>
           <Button
@@ -528,7 +529,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Adapter successfully pinged!", { variant : "success",
+          this.props.enqueueSnackbar("Meshery Adapter connected at " + adapterLoc, { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -537,7 +538,7 @@ class DashboardComponent extends React.Component {
             ), });
         }
       },
-      self.handleAdapterPingError("Could not ping adapter.")
+      self.handleAdapterPingError("Could not connect to " + adapterLoc)
     );
   };
 
@@ -548,6 +549,7 @@ class DashboardComponent extends React.Component {
   handleKubernetesClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const { configuredServer } = this.state;
     dataFetch(
       "/api/system/kubernetes/ping",
       { credentials : "same-origin",
@@ -555,7 +557,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Kubernetes successfully pinged!", { variant : "success",
+          this.props.enqueueSnackbar("Kubernetes connected at "  + `${configuredServer}` , { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -564,13 +566,14 @@ class DashboardComponent extends React.Component {
             ), });
         }
       },
-      self.handleError("Could not ping Kubernetes.")
+      self.handleError("Could not connect to Kubernetes")
     );
   };
 
   handleGrafanaClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const { grafanaUrl } = this.state;
     dataFetch(
       "/api/telemetry/metrics/grafana/ping",
       { credentials : "same-origin",
@@ -578,7 +581,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Grafana successfully pinged!", { variant : "success",
+          this.props.enqueueSnackbar("Grafana connected at "  + `${grafanaUrl}`, { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -587,7 +590,7 @@ class DashboardComponent extends React.Component {
             ), });
         }
       },
-      self.handleError("Could not ping Grafana.")
+      self.handleError("Could not connect to Grafana")
     );
   };
 
@@ -625,10 +628,10 @@ class DashboardComponent extends React.Component {
             </Grid>
           </Grid>
           <TableContainer>
-            <Table aria-label="mesh details table">
+            <Table aria-label="Deployed service mesh details">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Control Plane</TableCell>
+                  {/* <TableCell align="center">Control Plane</TableCell> */}
                   <TableCell align="center">Component</TableCell>
                   <TableCell align="center">Version</TableCell>
                   <TableCell align="center">Proxy</TableCell>
@@ -647,7 +650,7 @@ class DashboardComponent extends React.Component {
                             </div>
                           </Tooltip>
                         </TableCell> */}
-                        <TableCell align="center">{podNameMapper(component.component, component.name)}</TableCell>
+                        {/* <TableCell align="center">{podNameMapper(component.component, component.name)}</TableCell> */}
                         <TableCell align="center">{component.component}</TableCell>
                         <TableCell align="center">{versionMapper(component.version)}</TableCell>
                         <Tooltip
@@ -656,7 +659,7 @@ class DashboardComponent extends React.Component {
                             Array.isArray(component?.data_planes) && component.data_planes.length > 0 ? (
                               component.data_planes.map((cont) => {
                                 return (
-                                  <div key={cont.name} style={{ color : '#ffff', paddingBottom : '10px', padding : '2vh' } }>
+                                  <div key={cont.name} style={{ fontSize : "15px", color : '#fff', paddingBottom : '10px', padding : '1vh' } }>
                                     <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
                                     <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
                                     {!cont?.status?.ready && (
@@ -697,7 +700,7 @@ class DashboardComponent extends React.Component {
                                   </div>
                                 )
                               })
-                            ) : "No data plane is running"}
+                            ) : "No proxy attached"}
                         >
                           <TableCell align="center">{component?.data_planes?.length || 0}</TableCell>
                         </Tooltip>
@@ -716,6 +719,7 @@ class DashboardComponent extends React.Component {
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const { prometheusUrl } = this.state;
     dataFetch(
       "/api/telemetry/metrics/ping",
       { credentials : "same-origin",
@@ -723,7 +727,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Prometheus successfully pinged!", { variant : "success",
+          this.props.enqueueSnackbar("Prometheus connected at" + ` ${prometheusUrl}`, { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -732,7 +736,7 @@ class DashboardComponent extends React.Component {
             ), });
         }
       },
-      self.handleError("Could not ping Prometheus.")
+      self.handleError("Could not connect to Prometheus")
     );
   };
 
@@ -783,10 +787,13 @@ class DashboardComponent extends React.Component {
 
       if (configuredServer) {
         chp = <Tooltip title={`Server: ${configuredServer}`}>{chp}</Tooltip>;
+      } else {
+        chp=showConfigured;
       }
 
       showConfigured = <div showConfigured>{chp}</div>;
     }
+
 
     let showAdapters = "No adapters configured.";
     if (availableAdapters.length > 0) {
@@ -819,16 +826,21 @@ class DashboardComponent extends React.Component {
                 key={`adapters-${ia}`}
                 title={
                   isDisabled
-                    ? "This adapter is inactive"
-                    : `${adapterType
+                    ? "Inactive Meshery Adapter"
+                    : `Meshery Adapter for 
+                      ${adapterType
                       .toLowerCase()
                       .split(" ")
                       .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")} adapter version ${adapterVersion} on port ${aa.label.split(":")[1]}`
-                }
+                      .join(" ")} on ${aa.label.split(":")[1] }/tcp (${adapterVersion})`}
               >
                 <Chip
-                  label={aa.label.split(":")[0]}
+                  label={
+                    isDisabled
+                      ? aa.label.split(":")[0] + ":" + aa.label.split(":")[1]
+                      : adapterType.toLowerCase()
+                        .split("_")
+                        .map((s) => s.charAt(0).toUpperCase() + s.substring(1) + " ")}
                   onClick={self.handleAdapterClick(aa.value)}
                   icon={logoIcon}
                   className={classes.chip}

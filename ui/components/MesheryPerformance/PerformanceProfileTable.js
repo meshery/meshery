@@ -288,7 +288,7 @@ function MesheryTestProfiles({
         case "search":
           if (searchTimeout.current) clearTimeout(searchTimeout.current);
           searchTimeout.current = setTimeout(() => {
-            if (search !== tableState.searchText && tableState.searchText !== null) setSearch(tableState.searchText);
+            if (search !== tableState.searchText) setSearch(tableState.searchText);
           }, 500);
           break;
         case "sort":
@@ -326,17 +326,15 @@ function MesheryTestProfiles({
 
   return (
     <NoSsr>
-      {testProfiles?.length ? (
-        <MuiThemeProvider theme={getMuiTheme()}>
-          <MUIDataTable
-            title={<div className={classes.tableHeader}>Profiles</div>}
-            data={testProfiles}
-            columns={columns}
-            // @ts-ignore
-            options={options}
-          />
-        </MuiThemeProvider>
-      ) : null}
+      <MuiThemeProvider theme={getMuiTheme()}>
+        <MUIDataTable
+          title={<div className={classes.tableHeader}>Profiles</div>}
+          data={testProfiles}
+          columns={columns}
+          // @ts-ignore
+          options={options}
+        />
+      </MuiThemeProvider>
     </NoSsr>
   );
 }

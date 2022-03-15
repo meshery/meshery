@@ -8,7 +8,7 @@ import (
 
 const (
 	ErrHealthCheckFailedCode        = "1000"
-	ErrInvalidAdapterCode           = "1001"
+	ErrInvalidComponentCode         = "1001"
 	ErrDownloadFileCode             = "1002"
 	ErrStopMesheryCode              = "1003"
 	ErrResetMeshconfigCode          = "1004"
@@ -24,14 +24,17 @@ const (
 	ErrRestartMesheryCode           = "1026"
 	ErrK8sQueryCode                 = "1041"
 	ErrK8sConfigCode                = "1042"
+	ErrInitPortForwardCode          = "1047"
+	ErrRunPortForwardCode           = "1048"
+	ErrFailedGetEphemeralPortCode   = "1049"
 )
 
 func ErrHealthCheckFailed(err error) error {
 	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{"Health checks execution failed"}, []string{"Health checks execution should passed to start Meshery server successfully"})
 }
 
-func ErrInvalidAdapter(err error, obj string) error {
-	return errors.New(ErrInvalidAdapterCode, errors.Alert, []string{"Invalid adapter ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
+func ErrInvalidComponent(err error, obj string) error {
+	return errors.New(ErrInvalidComponentCode, errors.Alert, []string{"Invalid component ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDownloadFile(err error, obj string) error {
@@ -92,4 +95,35 @@ func ErrK8SQuery(err error) error {
 
 func ErrK8sConfig(err error) error {
 	return errors.New(ErrK8sConfigCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), " The Kubernetes cluster is not accessible", " Please confirm that the token is valid", " See https://docs.meshery.io/installation/quick-start for additional instructions"}, []string{"Kubernetes cluster is unavailable and that the token is invalid"}, []string{"Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"})
+}
+
+func ErrInitPortForward(err error) error {
+	return errors.New(
+		ErrInitPortForwardCode,
+		errors.Alert, []string{"Failed to initialize port-forward"},
+		[]string{err.Error(), "Failed to create new Port Forward instance"},
+		nil, nil,
+	)
+}
+
+func ErrRunPortForward(err error) error {
+	return errors.New(
+		ErrRunPortForwardCode,
+		errors.Fatal,
+		[]string{"Failed to run port-forward"},
+		[]string{err.Error(), "Error running port-forward for Meshery"},
+		[]string{"Meshery pod is not in running phase", "mesheryctl can't connect to kubernetes with client-go"},
+		[]string{"Make sure Meshery pod exists and is in running state",
+			"Check if mesheryctl is connected to kubernetes with `mesheryctl system check`"},
+	)
+}
+
+func ErrFailedGetEphemeralPort(err error) error {
+	return errors.New(
+		ErrFailedGetEphemeralPortCode,
+		errors.Fatal,
+		[]string{"Failed to get a free port"},
+		[]string{err.Error(), "Failed to start port-forwarding"},
+		nil, nil,
+	)
 }

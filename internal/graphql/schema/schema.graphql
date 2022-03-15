@@ -241,6 +241,35 @@ type NameSpace {
 	namespace: String!
 }
 
+# ============== Patterns =================================
+
+type PatternPageResult {
+	page: Int!
+	page_size: Int!
+	total_count: Int!
+
+	patterns: [PatternResult]
+}
+
+type PatternResult {
+	id: ID!
+	name: String!
+	user_id: String!
+	location: PatternLocation!
+	pattern_file: String!
+	canSupport: Boolean!
+	errmsg: String
+	created_at: String
+	updated_at: String
+}
+
+type PatternLocation {
+	branch: String
+	host: String
+	path: String
+	type: String
+}
+
 # ============== Perf =================================
 
 type PerfPageResult {
@@ -367,6 +396,9 @@ type Query {
 
 	# Query for fetching all results for profile ID
 	fetchAllResults(selector: PageFilter!): PerfPageResult!
+
+	# Query for fetching all patterns with selector
+	fetchPatterns(selector: PageFilter!): PatternPageResult!
 }
 
 # 
@@ -407,8 +439,11 @@ type Subscription {
 	# Listen to changes in the list of available Namesapces in your cluster
     listenToMeshSyncEvents: OperatorControllerStatus!
 
-	# Listen to changes in Performance Profile
-	subscribePerfProfile(profileID: String!): MesheryResult!
+	# Listen to changes in Performance Profiles
+	subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
+
+	# Listen to all results for profile ID
+	subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
 
 	# Listen to changes in Broker (NATS) Connection
 	subscribeBrokerConnection: Boolean!

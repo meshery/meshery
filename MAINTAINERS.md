@@ -4,16 +4,16 @@
 | ----------------- | ----------------- | ----------- |
 | Hussaina Begum    | hexxdump          | VMware      |
 | Lee Calcote       | leecalcote        | Layer5      |
-| Navendu Pottekkat | navendu-pottekkat | Layer5      |
+| Piyush Singariya  | piyushsingariya   | HDFC Life   |
 
 ### UI Maintainers
 
-| Name         | GitHub       | Affiliation |
-| ------------ | ------------ | ----------- |
-| Dhruv Patel  | dhruv0000    | Layer5      |
-| Lee Calcote  | leecalcote   | Layer5      |
-| Nikhil Ladha | Nikhil-Ladha | Red Hat     |
-| Nithish Karthik  | sudo-NithishKarthik | Layer5 |
+| Name             | GitHub                 | Affiliation |
+| ---------------- | ---------------------- | ----------- |
+| Abhishek Kumar   | Abhishek-kumar09       | Layer5      |
+| Lee Calcote      | leecalcote             | Layer5      |
+| Nikhil Ladha     | Nikhil-Ladha           | Red Hat     |
+| Nithish Karthik  | sudo-NithishKarthik    | Layer5      |
 
 ### Adapter Maintainers
 
@@ -25,26 +25,26 @@
 | Hussaina Begum     | hexxdump    | VMware      |
 | Lee Calcote        | leecalcote  | Layer5      |
 | Michael Gfeller    | mgfeller    | Computas AS |
-| Utkarsh Srivastava | utkarsh-pro | Layer5      |
 
 ### CI / Build & Release Maintainers
 
 | Name                  | GitHub             | Affiliation |
 | --------------------- | ------------------ | ----------- |
 | Lee Calcote           | leecalcote         | Layer5      |
-| Rodolfo Martínez Vega | ramrodo            | Rackspace   |
-| Rudraksh Pareek       | DelusionalOptimist | Layer5      |
+| Mario Arriaga         | MarioArriaga92     | F5          |
 
 ### Docs Maintainers
 
-| Name            | GitHub          | Affiliation |
-| --------------- | --------------- | ----------- |
-| Adithya Krishna | adithyaakrishna | Red Hat     |
-| Lee Calcote     | leecalcote      | Layer5      |
+| Name              | GitHub          | Affiliation |
+| ----------------- | --------------- | ----------- |
+| Adithya Krishna   | adithyaakrishna | Red Hat     |
+| Lee Calcote       | leecalcote      | Layer5      |
+| Aditya Chatterjee | warunicorn19    | Layer5      |
 
-### Core Maintainers
 
-| Name               | GitHub      | Affiliation |
-| ------------------ | ----------- | ----------- |
-| Lee Calcote        | leecalcote  | Layer5      |
-| Utkarsh Srivastava | utkarsh-pro | Layer5      |
+### Site Maintainers
+
+| Name                    | GitHub       | Affiliation |
+| ----------------------  | -----------  | ----------- |
+| Aditya Chatterjee       | warunicorn19 | Layer5      |
+| Debopriya Bhattacharjee | debo19       | Layer5      |

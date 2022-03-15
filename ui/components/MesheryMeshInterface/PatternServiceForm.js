@@ -4,6 +4,7 @@ import React from "react";
 import { pSBCr } from "../../utils/lightenOrDarkenColor";
 import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";
+import SettingsIcon from '@material-ui/icons/Settings';
 
 const useStyles = makeStyles(() => ({
   appBar : {
@@ -19,6 +20,21 @@ const useStyles = makeStyles(() => ({
   },
   formWrapper : {
     width : "100%"
+  },
+  settingsIcon : {
+    color : "black"
+  },
+  appTabs : {
+    width : 128,
+    overflow : 'hidden',
+    transition : 'width 0.5s',
+    '&.Mui-disabled' : {
+      width : 0,
+    },
+  },
+  setIcon : {
+    verticalAlign : 'middle',
+    transform : "scale(0.8)"
   }
 }));
 
@@ -89,8 +105,12 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
         return (
           <div className={classes.formWrapper}>
             <AppBar className={classes.appBar}>
-              <Tabs value={tab} onChange={handleTabChange} aria-label="Pattern Service" >
-                <Tab label="Settings" {...a11yProps(0)} />
+              <Tabs className={classes.appTabs} value={tab} onChange={handleTabChange} TabIndicatorProps={{
+                style : {
+                  display : "none",
+                },
+              }}  aria-label="Pattern Service" >
+                <Tab label={<div> <SettingsIcon className={classes.setIcon} />Settings</div>} {...a11yProps(0)} />
                 {
                   renderTraits()
                     ? <Tab label="Traits" {...a11yProps(1)} />

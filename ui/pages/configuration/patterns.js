@@ -25,7 +25,7 @@ class Patterns extends React.Component {
     return (
       <NoSsr>
         <Head>
-          <title>Patterns | Meshery</title>
+          <title>Designs | Meshery</title>
         </Head>
         <Wrapper>
           <MesheryPatterns />

@@ -13,11 +13,9 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -41,11 +39,6 @@ var onboardCmd = &cobra.Command{
 		var err error
 		client := &http.Client{}
 
-		// set default tokenpath for app onboard command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -60,16 +53,11 @@ var onboardCmd = &cobra.Command{
 			appName := strings.Join(args, "%20")
 
 			// search and fetch apps with app-name
-			log.Debug("Fetching apps")
+			utils.Log.Debug("Fetching apps")
 
-			req, err = http.NewRequest("GET", appURL+"?search="+appName, nil)
+			req, err = utils.NewRequest("GET", appURL+"?search="+appName, nil)
 			if err != nil {
 				return err
-			}
-
-			err = utils.AddAuthDetails(req, tokenPath)
-			if err != nil {
-				return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
 			}
 
 			resp, err := client.Do(req)
@@ -122,19 +110,16 @@ var onboardCmd = &cobra.Command{
 					if err != nil {
 						return err
 					}
-					req, err = http.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
+					req, err = utils.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
 						return err
 					}
-					err = utils.AddAuthDetails(req, tokenPath)
-					if err != nil {
-						return err
-					}
+
 					resp, err := client.Do(req)
 					if err != nil {
 						return err
 					}
-					log.Debug("saved app file")
+					utils.Log.Debug("saved app file")
 					var response []*models.MesheryApplication
 					// failsafe (bad api call)
 					if resp.StatusCode != 200 {
@@ -161,8 +146,8 @@ var onboardCmd = &cobra.Command{
 					return err
 				}
 
-				log.Debug(url)
-				log.Debug(path)
+				utils.Log.Debug(url)
+				utils.Log.Debug(path)
 
 				// save the app with Github URL
 				if !skipSave {
@@ -192,19 +177,16 @@ var onboardCmd = &cobra.Command{
 						})
 					}
 				}
-				req, err = http.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
+				req, err = utils.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
 					return err
 				}
-				err = utils.AddAuthDetails(req, tokenPath)
-				if err != nil {
-					return err
-				}
+
 				resp, err := client.Do(req)
 				if err != nil {
 					return err
 				}
-				log.Debug("remote hosted app request success")
+				utils.Log.Debug("remote hosted app request success")
 				var response []*models.MesheryApplication
 				// failsafe (bad api call)
 				if resp.StatusCode != 200 {
@@ -226,12 +208,7 @@ var onboardCmd = &cobra.Command{
 			}
 		}
 
-		req, err = http.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
 		if err != nil {
 			return err
 		}
@@ -248,9 +225,9 @@ var onboardCmd = &cobra.Command{
 		}
 
 		if res.StatusCode == 200 {
-			log.Info("app successfully onboarded")
+			utils.Log.Info("app successfully onboarded")
 		}
-		log.Info(string(body))
+		utils.Log.Info(string(body))
 		return nil
 	},
 }
@@ -271,15 +248,15 @@ func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int 
 		fmt.Printf("Enter the index of app: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			log.Fatal(err)
+			utils.Log.Info(err)
 		}
 		response = strings.ToLower(strings.TrimSpace(response))
 		index, err := strconv.Atoi(response)
 		if err != nil {
-			log.Info(err)
+			utils.Log.Info(err)
 		}
 		if index < 0 || index >= len(profiles) {
-			log.Info("Invalid index")
+			utils.Log.Info("Invalid index")
 		} else {
 			return index
 		}

@@ -30,7 +30,7 @@ permalink: service-meshes/adapters/istio
 
 ### Lifecycle management
 
-The {{page.name}} can install {{page.version}} of the {{page.title}} service mesh. The SMI adapter for Istio can also be installed using Meshery.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.mesh_name}} service mesh. The SMI adapter for Istio can also be installed using Meshery.
 
 ### Install {{ page.mesh_name }}
 
@@ -40,7 +40,7 @@ In Meshery's UI, choose the Meshery Adapter for {{ page.mesh_name }}.
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter.png" />
 </a>
 
-Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
+Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png" />

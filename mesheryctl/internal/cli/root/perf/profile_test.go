@@ -95,8 +95,8 @@ func TestProfileCmd(t *testing.T) {
 			{Method: "GET", URL: profileURL, Response: profile1005, ResponseCode: 200},
 		}, profile1010output, testToken, true},
 		{"failing add authentication test", []string{"profile"}, []utils.MockURL{}, profile1011output, testToken + "invalid-path", true},
-		{"Server Error 500", []string{"profile"}, []utils.MockURL{
-			{Method: "GET", URL: profileURL, Response: profile1006, ResponseCode: 500},
+		{"Server Error 400", []string{"profile"}, []utils.MockURL{
+			{Method: "GET", URL: profileURL, Response: profile1006, ResponseCode: 400},
 		}, profile1009output, testToken, true},
 	}
 
@@ -116,7 +116,7 @@ func TestProfileCmd(t *testing.T) {
 	// Run tests in list format
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			for _, mock := range tt.URLs {
 				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
@@ -125,7 +125,7 @@ func TestProfileCmd(t *testing.T) {
 			}
 
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			// Grab console prints
 			rescueStdout := os.Stdout
 			r, w, _ := os.Pipe()
@@ -166,7 +166,7 @@ func TestProfileCmd(t *testing.T) {
 	// Run tests in list format
 	for _, tt := range testsforLogrusOutputs {
 		t.Run(tt.Name, func(t *testing.T) {
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			for _, mock := range tt.URLs {
 				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
@@ -176,7 +176,7 @@ func TestProfileCmd(t *testing.T) {
 
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 			PerfCmd.SetArgs(tt.Args)
 			PerfCmd.SetOutput(b)

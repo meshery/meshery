@@ -42,7 +42,7 @@ class GrafanaCustomCharts extends Component {
       startDate, from, endDate, to, liveTail, sparkline
     } = props;
     this.state = {
-      startDate : !!startDate,
+      startDate : startDate || newStartDate ,
       from : from && from !== null ? from
         : 'now-5m',
       endDate : endDate && endDate !== null ? endDate
@@ -202,11 +202,12 @@ class GrafanaCustomCharts extends Component {
                           ? config.title
                           : '')}</Typography>
                     </div>
-                    <div className={classes.column}>
-                      <Typography variant="subtitle2">{config.templateVars && config.templateVars.length > 0
-                        ? `Template variables: ${config.templateVars.join(' ')}`
-                        : ''}</Typography>
-                    </div>
+                    {(config.templateVars && config.templateVars.length > 0 ) && (
+                      <div className={classes.column}>
+                        <Typography variant="subtitle2">
+                          {`Template variables: ${config.templateVars.join(' ')}`}
+                        </Typography>
+                      </div>)}
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                     <Grid container spacing={3}>

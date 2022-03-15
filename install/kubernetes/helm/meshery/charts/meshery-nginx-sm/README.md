@@ -1,6 +1,6 @@
 # meshery-nginx-sm
 
-![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
+![Version: 2.1.2](https://img.shields.io/badge/Version-2.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
 Meshery Adapter for NGINX Service Mesh.
 
@@ -17,7 +17,8 @@ Meshery Adapter for NGINX Service Mesh.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
-| annotations | object | `{}` |  |
+| annotations."kompose.cmd" | string | `"kompose convert -f ../docker-compose.yaml"` |  |
+| annotations."kompose.version" | string | `"1.17.0 ()"` |  |
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
@@ -25,8 +26,7 @@ Meshery Adapter for NGINX Service Mesh.
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |
-| ingress.hosts[0].host | string | `"chart-example.local"` |  |
-| ingress.hosts[0].paths | list | `[]` |  |
+| ingress.hosts | list | `[{"host":"chart-example.local","paths":[]}]` |  kubernetes.io/tls-acme: "true" |
 | ingress.tls | list | `[]` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
@@ -41,8 +41,9 @@ Meshery Adapter for NGINX Service Mesh.
 | service.port | int | `10010` |  |
 | service.targetPort | int | `10010` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-adapter-nsm"` |  |
+| serviceAccount.create | bool | `false` |  |
+| serviceAccount.name | string | `""` |  If not set and create is true, a name is generated using the fullname template |
+| serviceAccountNameOverride | string | `""` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

@@ -2,6 +2,7 @@ package pattern
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"regexp"
@@ -10,7 +11,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -60,12 +60,7 @@ var viewCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}
@@ -103,7 +98,7 @@ var viewCmd = &cobra.Command{
 			// use the first match from the result when searching by pattern name
 			arr := dat["patterns"].([]interface{})
 			if len(arr) == 0 {
-				log.Infof("pattern with name: %s not found", pattern)
+				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found", pattern))
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
@@ -118,7 +113,7 @@ var viewCmd = &cobra.Command{
 		} else if outFormatFlag != "json" {
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
-		log.Info(string(body))
+		utils.Log.Info(string(body))
 		return nil
 	},
 }

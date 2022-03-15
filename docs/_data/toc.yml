@@ -6,7 +6,7 @@
   links:
     - title: Community
       url: project/community
-    - title: Contributing
+    - title: Contributing ↆ
       url: project/contributing
       children:
         - title: Design and Code Conventions
@@ -31,7 +31,7 @@
       url: project/security-vulnerabilities
     - title: FAQ
       url: project/faq
-    - title: Supported Platforms
+    - title: Supported Platforms ↆ
       url: installation/platforms
       children:
         - title: AKS
@@ -110,11 +110,11 @@
       url: guides/troubleshooting
     - title: Upgrading Meshery
       url: guides/upgrade
-    - title: Using mesheryctl
+    - title: Using mesheryctl ↆ
       url: guides/mesheryctl
       children:
         - title: Using mesheryctl
-          url: guides/mesheryctl/using-mesheryctl
+          url: guides/mesheryctl/working-with-mesheryctl
         - title: Configure autocompletion for mesheryctl
           url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
         - title: Authenticate via Meshery CLI
@@ -122,7 +122,7 @@
         - title: Upgrading Meshery CLI
           url: guides/upgrade#upgrading-meshery-cli
         - title: Running system checks using Meshery CLI
-          url: guides/mesheryctl/running-system-checks-using-cli
+          url: guides/mesheryctl/running-system-checks-using-mesheryctl
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
 - title: 🛠 Extensibility
@@ -137,7 +137,7 @@
     - title: "REST & GraphQL APIs"
       url: extensibility/api
     - title: "UI Plugins"
-      url: extensibility/ui      
+      url: extensibility/ui
 - title: 📖 Reference
   url: reference
   links:

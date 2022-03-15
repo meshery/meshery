@@ -14,7 +14,7 @@ image: /assets/img/service-meshes/citrix.svg
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.mesh_name}} service mesh.
 
 ### Install {{ page.mesh_name }}
 
@@ -24,7 +24,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}.
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-adapter.png">
 </a>
 
-##### Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
+##### Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-install.png">

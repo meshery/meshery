@@ -4,7 +4,6 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -44,6 +43,7 @@ type DefaultLocalProvider struct {
 	MesheryPatternResourcePersister *PatternResourcePersister
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
+	MesheryK8sContextPersister      *MesheryK8sContextPersister
 	GenericPersister                database.Handler
 	KubeClient                      *mesherykube.Client
 }
@@ -54,7 +54,7 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderDescription = []string{
 		"Ephemeral sessions",
 		"Environment setup not saved",
-		"No performance test result history",
+		"No performance or conformance test result history",
 		"Free Use",
 	}
 	l.ProviderType = LocalProviderType
@@ -145,6 +145,74 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 // Logout - logout from provider backend
 func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/user/login", http.StatusFound)
+}
+
+func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+}
+
+func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return MesheryK8sContextPage{}, ErrPageNumber(err)
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		return MesheryK8sContextPage{}, ErrPageSize(err)
+	}
+
+	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+}
+
+func (l *DefaultLocalProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) GetK8sContext(token, id string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
+	page := 0
+	pageSize := 25
+	results := []*K8sContext{}
+
+	for {
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "")
+		if err != nil {
+			return results, err
+		}
+
+		results = append(results, res.Contexts...)
+
+		if page*pageSize >= res.TotalCount {
+			break
+		}
+
+		page++
+	}
+
+	return results, nil
+}
+
+func (l *DefaultLocalProvider) SetCurrentContext(token, id string) (K8sContext, error) {
+	if err := l.MesheryK8sContextPersister.SetMesheryK8sCurrentContext(id); err != nil {
+		return K8sContext{}, err
+	}
+
+	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) GetCurrentContext(token string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.GetMesheryK8sCurrentContext()
 }
 
 // FetchResults - fetches results from provider backend
@@ -466,7 +534,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *M
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -499,6 +567,11 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID
 	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
+// DeleteMesheryPattern deletes a meshery pattern with the given id
+func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
+}
+
 // RemotePatternFile takes in the
 func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
@@ -512,13 +585,19 @@ func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL,
 		if len(parsedPath) < 3 {
 			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
 		}
+		if len(parsedPath) >= 4 && parsedPath[3] == "tree" {
+			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
+		}
 
 		owner := parsedPath[1]
 		repo := parsedPath[2]
-		branch := "main"
+		branch := "master"
 
 		if len(parsedPath) == 4 {
 			branch = parsedPath[3]
+		}
+		if path == "" && len(parsedPath) > 4 {
+			path = strings.Join(parsedPath[4:], "/")
 		}
 
 		pfs, err := githubRepoPatternScan(owner, repo, path, branch)
@@ -600,18 +679,23 @@ func (l *DefaultLocalProvider) RemoteFilterFile(req *http.Request, resourceURL, 
 	// Check if hostname is github
 	if parsedURL.Host == "github.com" {
 		parsedPath := strings.Split(parsedURL.Path, "/")
+		if parsedPath[3] == "tree" {
+			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
+		}
 		if len(parsedPath) < 3 {
 			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
 		}
 
 		owner := parsedPath[1]
 		repo := parsedPath[2]
-		branch := "main"
+		branch := "master"
 
 		if len(parsedPath) == 4 {
 			branch = parsedPath[3]
 		}
-
+		if path == "" && len(parsedPath) > 4 {
+			path = strings.Join(parsedPath[4:], "/")
+		}
 		ffs, err := githubRepoFilterScan(owner, repo, path, branch)
 		if err != nil {
 			return nil, err
@@ -685,16 +769,22 @@ func (l *DefaultLocalProvider) RemoteApplicationFile(req *http.Request, resource
 	// Check if hostname is github
 	if parsedURL.Host == "github.com" {
 		parsedPath := strings.Split(parsedURL.Path, "/")
+		if parsedPath[3] == "tree" {
+			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
+		}
 		if len(parsedPath) < 3 {
 			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
 		}
 
 		owner := parsedPath[1]
 		repo := parsedPath[2]
-		branch := "main"
+		branch := "master"
 
 		if len(parsedPath) == 4 {
 			branch = parsedPath[3]
+		}
+		if path == "" && len(parsedPath) > 4 {
+			path = strings.Join(parsedPath[4:], "/")
 		}
 
 		pfs, err := githubRepoApplicationScan(owner, repo, path, branch)
@@ -956,34 +1046,27 @@ func githubRepoPatternScan(
 	branch string,
 ) ([]MesheryPattern, error) {
 	var mu sync.Mutex
-	ghWalker := walker.NewGithub()
+	ghWalker := walker.NewGit()
 	result := make([]MesheryPattern, 0)
-
-	err := ghWalker.
-		Owner(owner).
+	err := ghWalker.Owner(owner).
 		Repo(repo).
 		Branch(branch).
 		Root(path).
-		RegisterFileInterceptor(func(data walker.GithubContentAPI) error {
-			ext := filepath.Ext(data.Name)
+		RegisterFileInterceptor(func(f walker.File) error {
+			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				decodedContent, err := base64.StdEncoding.DecodeString(data.Content)
-				if err != nil {
-					return err
-				}
-
-				name, err := GetPatternName(string(decodedContent))
+				name, err := GetPatternName(string(f.Content))
 				if err != nil {
 					return err
 				}
 
 				pf := MesheryPattern{
 					Name:        name,
-					PatternFile: string(decodedContent),
+					PatternFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   data.Path,
+						"path":   f.Path,
 						"branch": branch,
 					},
 				}
@@ -994,9 +1077,7 @@ func githubRepoPatternScan(
 			}
 
 			return nil
-		}).
-		Walk()
-
+		}).Walk()
 	return result, err
 }
 
@@ -1007,7 +1088,7 @@ func githubRepoFilterScan(
 	branch string,
 ) ([]MesheryFilter, error) {
 	var mu sync.Mutex
-	ghWalker := walker.NewGithub()
+	ghWalker := walker.NewGit()
 	result := make([]MesheryFilter, 0)
 
 	err := ghWalker.
@@ -1015,26 +1096,21 @@ func githubRepoFilterScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
-		RegisterFileInterceptor(func(data walker.GithubContentAPI) error {
-			ext := filepath.Ext(data.Name)
+		RegisterFileInterceptor(func(f walker.File) error {
+			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				decodedContent, err := base64.StdEncoding.DecodeString(data.Content)
-				if err != nil {
-					return err
-				}
-
-				name, err := GetFilterName(string(decodedContent))
+				name, err := GetFilterName(string(f.Content))
 				if err != nil {
 					return err
 				}
 
 				ff := MesheryFilter{
 					Name:       name,
-					FilterFile: string(decodedContent),
+					FilterFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   data.Path,
+						"path":   f.Path,
 						"branch": branch,
 					},
 				}
@@ -1058,7 +1134,7 @@ func githubRepoApplicationScan(
 	branch string,
 ) ([]MesheryApplication, error) {
 	var mu sync.Mutex
-	ghWalker := walker.NewGithub()
+	ghWalker := walker.NewGit()
 	result := make([]MesheryApplication, 0)
 
 	err := ghWalker.
@@ -1066,26 +1142,16 @@ func githubRepoApplicationScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
-		RegisterFileInterceptor(func(data walker.GithubContentAPI) error {
-			ext := filepath.Ext(data.Name)
+		RegisterFileInterceptor(func(f walker.File) error {
+			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				decodedContent, err := base64.StdEncoding.DecodeString(data.Content)
-				if err != nil {
-					return err
-				}
-
-				name, err := GetApplicationName(string(decodedContent))
-				if err != nil {
-					return err
-				}
-
 				af := MesheryApplication{
-					Name:            name,
-					ApplicationFile: string(decodedContent),
+					Name:            strings.TrimSuffix(f.Name, ext),
+					ApplicationFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   data.Path,
+						"path":   f.Path,
 						"branch": branch,
 					},
 				}
@@ -1190,14 +1256,9 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 		return nil, err
 	}
 	result := string(body)
-
-	name, err := GetApplicationName(result)
-	if err != nil {
-		return nil, err
-	}
-
+	url := strings.Split(fileURL, "/")
 	af := MesheryApplication{
-		Name:            name,
+		Name:            url[len(url)-1],
 		ApplicationFile: result,
 		Location: map[string]interface{}{
 			"type":   "http",

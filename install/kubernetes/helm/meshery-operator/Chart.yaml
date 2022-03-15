@@ -19,6 +19,7 @@ keywords:
   - meshery-server
   - meshery-broker
   - meshery-meshsync
+  - meshery-perf
 deprecated: false
 
 # A chart can be either an 'application' or a 'library' chart.
@@ -80,6 +81,13 @@ dependencies:
 - name: meshery-meshsync
   version: 0.1.0
   condition: meshery-meshsync.enabled
+- name: meshery-cilium
+  version: 0.1.0
+  condition: meshery-cilium.enabled
+- name: meshery-perf
+  version: 0.1.0
+  condition: meshery-perf.enabled
+
 
 maintainers:
   - name: Layer5 Authors

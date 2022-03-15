@@ -3,7 +3,6 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -20,6 +19,7 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
@@ -74,8 +74,12 @@ var (
 	ResetFlag bool
 	// SkipResetFlag indicates if fetching the updated manifest files is required
 	SkipResetFlag bool
+	// MesheryDefaultHost is the default host on which Meshery is exposed
+	MesheryDefaultHost = "localhost"
+	// MesheryDefaultPort is the default port on which Meshery is exposed
+	MesheryDefaultPort = 9081
 	// MesheryEndpoint is the default URL in which Meshery is exposed
-	MesheryEndpoint = "http://localhost:9081"
+	MesheryEndpoint = fmt.Sprintf("http://%s:%v", MesheryDefaultHost, MesheryDefaultPort)
 	// MesheryFolder is the default relative location of the meshery config
 	// related configuration files.
 	MesheryFolder = ".meshery"
@@ -112,10 +116,8 @@ var (
 	KubeConfigYaml = "kubeconfig.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
-	// ViperDocker is an instance of viper for the meshconfig file when the platform is docker
-	ViperDocker = viper.New()
-	// ViperK8s is an instance of viper for the meshconfig file when the platform is kubernetes
-	ViperK8s = viper.New()
+	// ViperMeshconfig is an instance of viper for the meshconfig file
+	ViperMeshconfig = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
 	SilentFlag bool
 	// PlatformFlag sets the platform for the initial config file
@@ -125,21 +127,27 @@ var (
 	KubeConfig string
 	// KeepNamespace indicates if the namespace should be kept when Meshery is uninstalled
 	KeepNamespace bool
+	// TokenFlag sets token location passed by user with --token
+	TokenFlag = "Not Set"
+	// global logger variable
+	Log logger.Handler
 )
 
 var CfgFile string
 
-// ListOfAdapters returns the list of adapters available
-var ListOfAdapters = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
+// TODO: add "meshery-perf" as a component
+
+// ListOfComponents returns the list of components available
+var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
-	Endpoint: EndpointProtocol + "://localhost:9081",
-	Token:    "Default",
-	Platform: "kubernetes",
-	Adapters: ListOfAdapters,
-	Channel:  "stable",
-	Version:  "latest",
+	Endpoint:   EndpointProtocol + "://localhost:9081",
+	Token:      "Default",
+	Platform:   "kubernetes",
+	Components: ListOfComponents,
+	Channel:    "stable",
+	Version:    "latest",
 }
 
 // TemplateToken is the template token provided when creating a config file
@@ -259,7 +267,7 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 		return nil, err
 	}
 
-	request, err := http.NewRequest("POST", uri, body)
+	request, err := NewRequest("POST", uri, body)
 	if err != nil {
 		return nil, err
 	}
@@ -345,21 +353,6 @@ func ValidateURL(URL string) error {
 		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
 	}
 	return nil
-}
-
-// ReadToken returns a map of the token passed in
-func ReadToken(filepath string) (map[string]string, error) {
-	file, err := os.ReadFile(filepath)
-	if err != nil {
-		err = errors.Wrap(err, "could not read token:")
-		return nil, err
-	}
-	var tokenObj map[string]string
-	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid:")
-		return nil, err
-	}
-	return tokenObj, nil
 }
 
 // TruncateID shortens an id to 8 characters
@@ -508,16 +501,11 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	return s
 }
 
-func GetSessionData(mctlCfg *config.MesheryCtlConfig, tokenPath string) (*models.Preference, error) {
+func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
 	client := &http.Client{}
-	req, err := http.NewRequest(method, path, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	err = AddAuthDetails(req, tokenPath)
+	req, err := NewRequest(method, path, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -776,8 +764,8 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 
 // SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
 func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
-	// first initialize all the adapters' "enabled" field to false
-	// this matches to the adapters listed in install/kubernetes/helm/meshery/values.yaml
+	// first initialize all the components' "enabled" field to false
+	// this matches to the components listed in install/kubernetes/helm/meshery/values.yaml
 	valueOverrides := map[string]interface{}{
 		"meshery-istio": map[string]interface{}{
 			"enabled": false,
@@ -811,10 +799,10 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 		},
 	}
 
-	// set the "enabled" field to true only for the adapters listed in the context
-	for _, adapter := range ctx.GetAdapters() {
-		if _, ok := valueOverrides[adapter]; ok {
-			valueOverrides[adapter] = map[string]interface{}{
+	// set the "enabled" field to true only for the components listed in the context
+	for _, component := range ctx.GetComponents() {
+		if _, ok := valueOverrides[component]; ok {
+			valueOverrides[component] = map[string]interface{}{
 				"enabled": true,
 			}
 		}
@@ -826,4 +814,16 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 	}
 
 	return valueOverrides
+}
+
+// CheckFileExists checks if the given file exists in system or not
+func CheckFileExists(name string) (bool, error) {
+	_, err := os.Stat(name)
+	if err == nil {
+		return true, nil
+	}
+	if errors.Is(err, os.ErrNotExist) {
+		return false, fmt.Errorf("%s does not exist", name)
+	}
+	return false, errors.Wrap(err, fmt.Sprintf("Failed to read/fetch the file %s", name))
 }

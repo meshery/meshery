@@ -362,7 +362,20 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 
 	resultsMap["load-generator"] = loadTestOptions.LoadGenerator
 
-	if prefObj.K8SConfig != nil {
+	// Get the context
+	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || mk8scontext == nil {
+		h.log.Error(ErrLoadTest(err, "unable to perform: failed to identify kubernetes context"))
+		respChan <- &models.LoadTestResponse{
+			Status:  models.LoadTestError,
+			Message: "unable to perform: failed to identify kubernetes context",
+		}
+		return
+	}
+
+	// Get the k8sconfig
+	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
+	if ok && k8sconfig != nil {
 		nodesChan := make(chan []*models.K8SNode)
 		versionChan := make(chan string)
 		installedMeshesChan := make(chan map[string][]corev1.Pod)
@@ -370,50 +383,46 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		go func() {
 			var nodes []*models.K8SNode
 			var err error
-			if len(prefObj.K8SConfig.Nodes) == 0 {
-				nodes, err = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
-				if err != nil {
-					err = errors.Wrap(err, "unable to ping kubernetes")
-					// logrus.Error(err)
-					h.log.Warn(ErrFetchKubernetes(err))
-					// return
-				}
+			nodes, err = helpers.FetchKubernetesNodes(k8sconfig, mk8scontext.Name)
+			if err != nil {
+				err = errors.Wrap(err, "unable to ping kubernetes")
+				h.log.Warn(ErrFetchKubernetes(err))
 			}
+
 			nodesChan <- nodes
 		}()
 		go func() {
 			var serverVersion string
 			var err error
-			if prefObj.K8SConfig.ServerVersion == "" {
-				serverVersion, err = helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
-				if err != nil {
-					h.log.Error(ErrFetchKubernetes(err))
-				}
+			serverVersion, err = helpers.FetchKubernetesVersion(k8sconfig, mk8scontext.Name)
+			if err != nil {
+				h.log.Error(ErrFetchKubernetes(err))
 			}
+
 			versionChan <- serverVersion
 		}()
 		go func() {
-			installedMeshes, err := helpers.ScanKubernetes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
+			installedMeshes, err := helpers.ScanKubernetes(k8sconfig, mk8scontext.Name)
 			if err != nil {
 				h.log.Warn(ErrFetchKubernetes(err))
 			}
 			installedMeshesChan <- installedMeshes
 		}()
 
-		prefObj.K8SConfig.Nodes = <-nodesChan
-		prefObj.K8SConfig.ServerVersion = <-versionChan
+		serverVersion := <-versionChan
+		nodes := <-nodesChan
 
-		if prefObj.K8SConfig.ServerVersion != "" && len(prefObj.K8SConfig.Nodes) > 0 {
-			resultsMap["kubernetes"] = map[string]interface{}{
-				"server_version": prefObj.K8SConfig.ServerVersion,
-				"nodes":          prefObj.K8SConfig.Nodes,
-			}
+		resultsMap["kubernetes"] = map[string]interface{}{
+			"server_version": serverVersion,
+			"nodes":          nodes,
 		}
+
 		installedMeshes := <-installedMeshesChan
 		if len(installedMeshes) > 0 {
 			resultsMap["detected-meshes"] = installedMeshes
 		}
 	}
+
 	respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
 		Message: "Obtained the needed metadatas, attempting to persist the result",
@@ -469,6 +478,14 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 	respChan <- &models.LoadTestResponse{
 		Status: models.LoadTestSuccess,
 		Result: result,
+	}
+
+	if h.config.PerformanceChannel != nil {
+		h.config.PerformanceChannel <- struct{}{}
+	}
+
+	if h.config.PerformanceResultChannel != nil {
+		h.config.PerformanceResultChannel <- struct{}{}
 	}
 
 	// publish result to graphql subscription

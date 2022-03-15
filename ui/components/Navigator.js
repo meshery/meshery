@@ -13,12 +13,11 @@ import NoSsr from "@material-ui/core/NoSsr";
 import RemoveIcon from "@material-ui/icons/Remove";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
-import MailIcon from "@material-ui/icons/Mail";
+// import MailIcon from "@material-ui/icons/Mail";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -26,28 +25,36 @@ import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg'
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
+import DiscussIcon from '../public/static/img/drawer-icons/discuss_forum_svg.js';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
-import { faChevronCircleLeft,
+import { faAngleLeft,faCaretDown,
   faExternalLinkAlt,
-  faDigitalTachograph } from "@fortawesome/free-solid-svg-icons";
+  faDigitalTachograph
+} from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { updatepagetitle, updatebetabadge } from "../lib/store";
+import { updatepagetitle, updatebetabadge, toggleDrawer } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 
 const styles = (theme) => ({
-  categoryHeader : { paddingTop : 16,
-    paddingBottom : 16, },
+  categoryHeader : {
+    paddingTop : 16,
+    paddingBottom : 16,
+  },
   categoryHeaderPrimary : { color : theme.palette.common.white, },
   item : {
     paddingTop : 4,
     paddingBottom : 4,
     color : "rgba(255, 255, 255, 0.7)",
     fill : "#fff",
-    '&:hover' : { '& $expandMoreIcon' : { opacity : 1,
-      transition : "opacity 200ms ease-in", } }
+    '&:hover' : {
+      '& $expandMoreIcon' : {
+        opacity : 1,
+        transition : "opacity 200ms ease-in",
+      }
+    }
   },
   itemCategory : {
     backgroundColor : "#263238",
@@ -55,24 +62,30 @@ const styles = (theme) => ({
     paddingTop : 16,
     paddingBottom : 16,
   },
-  firebase : { top : 0,
+  firebase : {
+    top : 0,
     position : "sticky",
-    zIndex : 5 },
+    zIndex : 5
+  },
   link : {
     display : "inline-flex",
     width : "100%",
     height : "30px",
     alignItems : "self-end"
   },
-  itemActionable : { "&:hover" : { backgroundColor : "rgba(255, 255, 255, 0.08)", }, },
+
+  itemActionable : { "&:hover" : { backgroundColor : "rgb(0, 187, 166, 0.5)", }, },
   itemActiveItem : { color : "#4fc3f7",
     fill : "#4fc3f7" },
   itemPrimary : { color : "inherit",
     fontSize : theme.typography.fontSize,
-    "&$textDense" : { fontSize : theme.typography.fontSize, }, },
+    "&$textDense" : { fontSize : theme.typography.fontSize, },
+  },
   textDense : {},
-  divider : { marginTop : theme.spacing(1),
-    marginBottom : theme.spacing(1), },
+  divider : {
+    marginTop : theme.spacing(1),
+    marginBottom : theme.spacing(1),
+  },
   mainLogo : {
     marginRight : theme.spacing(1),
     marginTop : theme.spacing(1),
@@ -132,73 +145,113 @@ const styles = (theme) => ({
   nested2 : { paddingLeft : theme.spacing(5), },
   icon : { width : theme.spacing(2.5), },
   istioIcon : { width : theme.spacing(1.8), },
-  isHidden : { opacity : 0,
-    transition : "opacity 200ms ease-in-out", },
-  isDisplayed : { opacity : 1,
-    transition : "opacity 200ms ease-in-out", },
-  sidebarCollapsed : { transition : theme.transitions.create("width", { easing : theme.transitions.easing.sharp,
-    duration : theme.transitions.duration.leavingScreen, }),
-  overflowX : "hidden",
-  width : theme.spacing(8) + 4, },
-  sidebarExpanded : { width : "256px",
+  isHidden : {
+    opacity : 0,
+    transition : "opacity 200ms ease-in-out",
+  },
+  isDisplayed : {
+    opacity : 1,
+    transition : "opacity 200ms ease-in-out",
+  },
+  sidebarCollapsed : {
+    transition : theme.transitions.create("width", {
+      easing : theme.transitions.easing.sharp,
+      duration : theme.transitions.duration.leavingScreen,
+    }),
     overflowX : "hidden",
-    transition : theme.transitions.create("width", { easing : theme.transitions.easing.sharp,
-      duration : theme.transitions.duration.enteringScreen, }), },
-  fixedSidebarFooter : { display : "flex",
+    width : theme.spacing(8) + 4,
+  },
+  sidebarExpanded : {
+    width : "256px",
+    overflowX : "hidden",
+    transition : theme.transitions.create("width", {
+      easing : theme.transitions.easing.sharp,
+      duration : theme.transitions.duration.enteringScreen,
+    }),
+  },
+  fixedSidebarFooter : {
+    display : "flex",
     flexDirection : "column",
     marginTop : "auto",
     marginBottom : "0.5rem",
   },
   collapseButtonWrapper : {
+    boxShadow :
+      "0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)",
+    borderRadius : "0 5px 5px 0",
     position : "fixed",
     cursor : "pointer",
+    backgroundColor : "#fff",
+
     bottom : "12%",
-    left : "235px",
+    left : "257px",
     zIndex : "1400",
     width : "auto",
     transition : "left 195ms",
-    "&:hover" : { opacity : 1,
-      background : "transparent", },
-    "&:focus" : { opacity : 1,
-      background : "transparent", },
+    "&:hover" : {
+      opacity : 1,
+      background : "transparent",
+    },
+    "&:focus" : {
+      opacity : 1,
+      background : "transparent",
+    },
   },
   collapseButtonWrapperRotated : {
+    backgroundColor : "#515b60",
+    color : "#ffffff",
     position : "fixed",
+    borderRadius : "0 5px 5px 0",
     cursor : "pointer",
     bottom : "12%",
-    left : "45px",
+    left : "49px",
     zIndex : "1400",
     width : "auto",
     transition : "left 225ms",
     transform : "rotate(180deg)",
-    "&:hover" : { opacity : 1,
-      background : "transparent", },
-    "&:focus" : { opacity : 1,
-      background : "transparent", },
+
+    "&:hover" : { opacity : 1 },
+    "&:focus" : { opacity : 1 },
   },
-  noPadding : { paddingLeft : "16px",
-    paddingRight : "16px", },
-  drawerIcons : { height : "1.21rem",
+  noPadding : {
+    paddingLeft : "16px",
+    paddingRight : "16px",
+  },
+  drawerIcons : {
+    height : "1.21rem",
     width : "1.21rem",
-    fontSize : "1.21rem" },
+    fontSize : "1.21rem"
+  },
   avatarGroup : { '& .MuiAvatarGroup-avatar' : { border : 'none', } },
-  marginLeft : { marginLeft : 8,
-    "& .MuiListItem-gutters" : { paddingLeft : 8,
-      paddingRight : 8 } },
+  marginLeft : {
+    marginLeft : 8,
+    "& .MuiListItem-gutters" : {
+      paddingLeft : 8,
+      paddingRight : 8
+    }
+  },
   rightMargin : { marginRight : 8 },
-  btnGrpMarginRight : { marginRight : 4,
-    alignItems : 'center' },
+  btnGrpMarginRight : {
+    marginRight : 4,
+    alignItems : 'center'
+  },
   helpIcon : {
     color : '#fff',
     opacity : "0.7",
     transition : "opacity 200ms linear",
-    "&:hover" : { opacity : 1,
-      background : "transparent", },
-    "&:focus" : { opacity : 1,
-      background : "transparent", },
+    "&:hover" : {
+      opacity : 1,
+      background : "transparent",
+    },
+    "&:focus" : {
+      opacity : 1,
+      background : "transparent",
+    },
   },
-  extraPadding : { paddingTop : 4,
-    paddingBottom : 4 },
+  extraPadding : {
+    paddingTop : 4,
+    paddingBottom : 4
+  },
   restrictPointer : { pointerEvents : 'none' },
   expandMoreIcon : {
     opacity : 0,
@@ -207,10 +260,20 @@ const styles = (theme) => ({
     '&:hover' : { color : "#4fc3f7", }
   },
   collapsed : { transform : 'rotate(180deg) translateX(-0.8px)', },
-  collapsedHelpButton : { height : '1.45rem',
+  collapsedHelpButton : {
+    height : '1.45rem',
     marginTop : '-4px',
-    transform : 'translateX(0px)' },
-  rightTranslate : { transform : 'translateX(0.5px)' }
+    transform : 'translateX(0px)'
+  },
+  rightTranslate : { transform : 'translateX(0.5px)' },
+  hideScrollbar : {
+    overflow : "hidden auto",
+    "scrollbar-width" : "none",
+    "-ms-overflow-style" : "none",
+    "&::-webkit-scrollbar" : {
+      display : "none"
+    }
+  }
 });
 
 const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
@@ -341,10 +404,10 @@ const categories = [
         isBeta : true
       },
       {
-        id : "Patterns",
+        id : "Designs",
         icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/patterns",
-        title : "Patterns",
+        title : "Designs",
         show : false,
         link : true,
         isBeta : true
@@ -410,16 +473,16 @@ const externlinks = [
   },
   {
     id : "community",
-    href : "http://slack.layer5.io",
+    href : "https://slack.layer5.io",
     title : "Community",
     icon : <FontAwesomeIcon style={{ marginBottom : 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
     external_icon : ExternalLinkIcon,
   },
   {
-    id : "mailinglist",
-    href : "https://meshery.io/subscribe",
-    title : "Mailing List",
-    icon : <MailIcon style={drawerIconsStyle} />,
+    id : "forum",
+    href : "https://discuss.layer5.io",
+    title : "Discussion Forum",
+    icon : <DiscussIcon style={drawerIconsStyle} />,
     external_icon : ExternalLinkIcon,
   },
   {
@@ -461,32 +524,40 @@ class Navigator extends React.Component {
   componentDidMount() {
     dataFetch(
       "/api/system/version",
-      { credentials : "same-origin",
+      {
+        credentials : "same-origin",
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         if (typeof result !== "undefined") {
           this.setState({ versionDetail : result });
         } else {
-          this.setState({ versionDetail : {
-            build : "Unknown",
-            latest : "Unknown",
-            outdated : false,
-            commitsha : "Unknown",
-          }, });
+          this.setState({
+            versionDetail : {
+              build : "Unknown",
+              latest : "Unknown",
+              outdated : false,
+              commitsha : "Unknown",
+            },
+          });
         }
       },
       (err) => console.error(err)
     );
     dataFetch(
       "/api/provider/capabilities",
-      { credentials : "same-origin",
+      {
+        credentials : "same-origin",
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         if (result) {
-          this.setState({ navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
-            capabilities : result?.capabilities || [], });
+          this.setState({
+            navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
+            capabilities : result?.capabilities || [],
+          });
         }
       },
       (err) => console.error(err)
@@ -536,8 +607,8 @@ class Navigator extends React.Component {
     }
   }
 
-  onClickCallback(onClickCallback){
-    switch (onClickCallback){
+  onClickCallback(onClickCallback) {
+    switch (onClickCallback) {
       case 0:
         return this.toggleMiniDrawer(false)
       case 1:
@@ -595,7 +666,7 @@ class Navigator extends React.Component {
       if (cat.id === "Configuration") {
         let show = false;
         cat.children?.forEach((ch) => {
-          if (ch.id === "Patterns") {
+          if (ch.id === "Designs") {
             const idx = self.state.capabilities.findIndex((cap) => cap.feature === "persist-meshery-patterns");
             if (idx != -1) {
               ch.show = true;
@@ -706,7 +777,7 @@ class Navigator extends React.Component {
   /**
    * Changes the route to "/"
    */
-  handleTitleClick() {
+  handleTitleClick = () => {
     this.props.router.push("/");
   }
 
@@ -722,21 +793,19 @@ class Navigator extends React.Component {
     }
   }
 
-  toggleMiniDrawer = (open = null) => {
-    const { onCollapseDrawer } = this.props;
-    onCollapseDrawer(open);
+  toggleMiniDrawer = () => {
+    const { toggleDrawer, isDrawerCollapsed } = this.props;
+    toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
   };
 
   toggleSpacing = () => {
     const { showHelperButton } = this.state;
     this.setState({ showHelperButton : !showHelperButton });
-
   }
 
   toggleSpacing = () => {
     const { showHelperButton } = this.state;
     this.setState({ showHelperButton : !showHelperButton });
-
   }
 
   /**
@@ -916,20 +985,20 @@ class Navigator extends React.Component {
 
     if (outdated)
       return (
-        <span style = {{ marginLeft : '15px' }}>
+        <span style={{ marginLeft : '15px' }}>
           {"Update available "}
-          <Link href={`https://docs.meshery.io/project/releases/${latest}`}>
+          <a href={`https://docs.meshery.io/project/releases/${latest}`} target="_blank" rel="noreferrer" style={{ color : "white" }}>
             <Tooltip
               title={`Newer version of Meshery available: ${latest}`}
               placement="right">
               <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
             </Tooltip>
-          </Link>
+          </a>
         </span>
       );
 
     return (
-      <span style = {{ marginLeft : '15px' }}>
+      <span style={{ marginLeft : '15px' }}>
         Running latest
       </span>
     )
@@ -946,15 +1015,15 @@ class Navigator extends React.Component {
 
     if (release_channel === "edge")
       return (
-        <Link href="https://docs.meshery.io/project/releases" target="_blank">
+        <a href="https://docs.meshery.io/project/releases" target="_blank" rel="noreferrer" style={{ color : "white" }}>
           <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
-        </Link>
+        </a>
       );
 
     return (
-      <Link href={`https://docs.meshery.io/project/releases/${build}`} target="_blank">
+      <a href={`https://docs.meshery.io/project/releases/${build}`} target="_blank" rel="noreferrer" style={{ color : "white" }}>
         <OpenInNewIcon style={{ width : "0.85rem", verticalAlign : "middle" }} />
-      </Link>
+      </a>
     );
   }
 
@@ -994,7 +1063,7 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Menu = (
-      <List disablePadding style = {{ overflowY : "scroll", overflowX : "hidden", marginRight : "-1.2rem" }}>
+      <List disablePadding className={classes.hideScrollbar}>
         {categories.map(({
           id : childId, title, icon, href, show, link, children
         }) => {
@@ -1016,7 +1085,7 @@ class Navigator extends React.Component {
                 )}
                 onClick={() => this.toggleItemCollapse(childId)}
                 onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
-                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }): null}
+                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }) : null}
               >
                 <Link href={link
                   ? href
@@ -1029,10 +1098,12 @@ class Navigator extends React.Component {
                       disableHoverListener={!isDrawerCollapsed}
                       disableTouchListener={!isDrawerCollapsed}
                     >
+
                       { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
-                        <ExpandMoreIcon
+                        <FontAwesomeIcon
+                          icon= {faCaretDown}
                           onClick={() => this.toggleItemCollapse(childId)}
-                          className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "0.4rem" }}
+                          className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "40%", marginBottom : "0.4rem" }}
                         /> :
                         <ListItemIcon className={classes.listIcon}>
                           {icon}
@@ -1049,7 +1120,8 @@ class Navigator extends React.Component {
                     </ListItemText>
                   </div>
                 </Link>
-                <ExpandMoreIcon
+                <FontAwesomeIcon
+                  icon={faCaretDown}
                   onClick={() => this.toggleItemCollapse(childId)}
                   className={classNames(classes.expandMoreIcon, { [classes.collapsed] : this.state.openItems.includes(childId) })}
                   style={isDrawerCollapsed || !children
@@ -1096,7 +1168,7 @@ class Navigator extends React.Component {
                 : {}}
             >
               <Grow
-                in={showHelperButton || !isDrawerCollapsed }
+                in={showHelperButton || !isDrawerCollapsed}
                 timeout={{ enter : (600 - index * 200), exit : 100 * index }}
               >
                 <a
@@ -1145,16 +1217,17 @@ class Navigator extends React.Component {
     )
     const Version = (
       <ListItem style={{
-        position : "sticky",paddingLeft : 0, paddingRight : 0, color : "#eeeeee", fontSize : "0.75rem", }}>
+        position : "sticky", paddingLeft : 0, paddingRight : 0, color : "#eeeeee", fontSize : "0.75rem",
+      }}>
         {isDrawerCollapsed
-          ? <div style = {{ textAlign : "center" , width : "100%" }}>
+          ? <div style={{ textAlign : "center", width : "100%" }}>
             {this.state.versionDetail.build}
           </div>
           :
           <Grow
-            in={!isDrawerCollapsed }
+            in={!isDrawerCollapsed}
             timeout={{ enter : (800), exit : 100 }}
-            style = {{ textAlign : "center" , width : "100%" }}
+            style={{ textAlign : "center", width : "100%" }}
           >
             <span>
               {this.getMesheryVersionText()} {'  '}
@@ -1168,12 +1241,12 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Chevron = (
-      <div className={classname}>
+      <div className={classname} style={{ display : "flex", justifyContent : "center" }}>
         <FontAwesomeIcon
-          icon={faChevronCircleLeft}
+          icon={faAngleLeft}
           fixedWidth
-          color="#e7e7e7"
-          size="2x"
+          size="1.5x"
+          style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
           alt="Sidebar collapse toggle icon"
           onClick={this.toggleMiniDrawer}
         />
@@ -1188,9 +1261,11 @@ class Navigator extends React.Component {
           className={isDrawerCollapsed
             ? classes.sidebarCollapsed
             : classes.sidebarExpanded}
-          classes={{ paper : isDrawerCollapsed
-            ? classes.sidebarCollapsed
-            : classes.sidebarExpanded, }}
+          classes={{
+            paper : isDrawerCollapsed
+              ? classes.sidebarCollapsed
+              : classes.sidebarExpanded,
+          }}
           style={{ width : "inherit" }}
         >
           {Title}
@@ -1206,17 +1281,23 @@ class Navigator extends React.Component {
   }
 }
 
-Navigator.propTypes = { classes : PropTypes.object.isRequired,
-  onCollapseDrawer : PropTypes.func.isRequired, };
+Navigator.propTypes = {
+  classes : PropTypes.object.isRequired,
+  onCollapseDrawer : PropTypes.func.isRequired,
+};
 
-const mapDispatchToProps = (dispatch) => ({ updatepagetitle : bindActionCreators(updatepagetitle, dispatch), updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
+const mapDispatchToProps = (dispatch) => ({
+  updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
+  updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
+  toggleDrawer : bindActionCreators(toggleDrawer, dispatch),
 });
 
 const mapStateToProps = (state) => {
   const meshAdapters = state.get("meshAdapters").toJS();
   const meshAdaptersts = state.get("meshAdaptersts");
   const path = state.get("page").get("path");
-  return { meshAdapters, meshAdaptersts, path };
+  const isDrawerCollapsed = state.get("isDrawerCollapsed")
+  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed };
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator)));

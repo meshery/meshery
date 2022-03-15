@@ -7,109 +7,116 @@ import (
 )
 
 const (
-	ErrInvalidK8SConfigCode     = "2000"
-	ErrNilClientCode            = "2001"
-	ErrPrometheusScanCode       = "2002"
-	ErrGrafanaScanCode          = "2003"
-	ErrRecordPreferencesCode    = "2004"
-	ErrGrafanaConfigCode        = "2005"
-	ErrPrometheusConfigCode     = "2006"
-	ErrGrafanaQueryCode         = "2007"
-	ErrPrometheusQueryCode      = "2008"
-	ErrGrafanaBoardsCode        = "2009"
-	ErrPrometheusBoardsCode     = "2010"
-	ErrStaticBoardsCode         = "2011"
-	ErrRequestBodyCode          = "2012"
-	ErrMarshalCode              = "2013"
-	ErrUnmarshalCode            = "2014"
-	ErrEncodingCode             = "2015"
-	ErrParseBoolCode            = "2016"
-	ErrStreamEventsCode         = "2017"
-	ErrStreamClientCode         = "2018"
-	ErrUnmarshalEventCode       = "2019"
-	ErrPublishSmiResultsCode    = "2020"
-	ErrMarshalEventCode         = "2021"
-	ErrPluginOpenCode           = "2022"
-	ErrPluginLookupCode         = "2023"
-	ErrPluginRunCode            = "2024"
-	ErrParseFormCode            = "2025"
-	ErrQueryGetCode             = "2026"
-	ErrGetResultCode            = "2027"
-	ErrConvertToSpecCode        = "2028"
-	ErrFetchSMIResultsCode      = "2029"
-	ErrFormFileCode             = "2030"
-	ErrReadConfigCode           = "2031"
-	ErrLoadConfigCode           = "2032"
-	ErrOpenFileCode             = "2033"
-	ErrKubeVersionCode          = "2034"
-	ErrAddAdapterCode           = "2035"
-	ErrRetrieveDataCode         = "2036"
-	ErrValidAdapterCode         = "2037"
-	ErrOperationIDCode          = "2038"
-	ErrMeshClientCode           = "2039"
-	ErrApplyChangeCode          = "2040"
-	ErrRetrieveMeshDataCode     = "2041"
-	ErrApplicationFailureCode   = "2042"
-	ErrDecodingCode             = "2043"
-	ErrRetrieveUserTokenCode    = "2044"
-	ErrFailToSaveCode           = "2045"
-	ErrFailToDeleteCode         = "2046"
-	ErrWriteResponseCode        = "2052"
-	ErrTestConfigsCode          = "2053"
-	ErrInvalidGenValueCode      = "2054"
-	ErrFailToLoadExtensionsCode = "2047"
-	ErrConversionCode           = "2048"
-	ErrParseDurationCode        = "2049"
-	ErrLoadTestCode             = "2050"
-	ErrFetchKubernetesCode      = "2051"
-	ErrPanicRecoveryCode        = "2052"
-	ErrBlankNameCode            = "2053"
-	ErrInvalidLTURLCode         = "2053"
-	ErrDataSendCode             = "2137"
-	ErrVersionCompareCode       = "2138"
-	ErrSaveSessionCode          = "2136"
-	ErrKubeClientCode           = "2139"
-	ErrWorkloadDefinitionCode   = "2140"
-	ErrTraitDefinitionCode      = "2141"
-	ErrScopeDefinitionCode      = "2142"
-	ErrPatternFileCode          = "2143"
-	ErrExecutionPlanCode        = "2144"
-	ErrInvalidPatternCode       = "2145"
-	ErrCompConfigPairsCode      = "2146"
-	ErrCreateDirCode            = "2150"
-	ErrInvalidRequestObjectCode = "2151"
-	ErrChangeK8sContextCode     = "2152"
-	ErrGetFilterCode            = "2156"
-	ErrSaveFilterCode           = "2157"
-	ErrDecodeFilterCode         = "2158"
-	ErrEncodeFilterCode         = "2159"
-	ErrImportFilterCode         = "2160"
-	ErrFetchFilterCode          = "2161"
-	ErrDeleteFilterCode         = "2162"
-	ErrSavePatternCode          = "2163"
-	ErrGetPatternCode           = "2164"
-	ErrDeletePatternCode        = "2165"
-	ErrFetchPatternCode         = "2166"
-	ErrImportPatternCode        = "2167"
-	ErrEncodePatternCode        = "2168"
-	ErrDecodePatternCode        = "2169"
-	ErrParsePatternCode         = "2170"
-	ErrConvertPatternCode       = "2171"
+	ErrInvalidK8SConfigCode             = "2000"
+	ErrNilClientCode                    = "2001"
+	ErrPrometheusScanCode               = "2002"
+	ErrGrafanaScanCode                  = "2003"
+	ErrRecordPreferencesCode            = "2004"
+	ErrGrafanaConfigCode                = "2005"
+	ErrPrometheusConfigCode             = "2006"
+	ErrGrafanaQueryCode                 = "2007"
+	ErrPrometheusQueryCode              = "2008"
+	ErrGrafanaBoardsCode                = "2009"
+	ErrPrometheusBoardsCode             = "2010"
+	ErrStaticBoardsCode                 = "2011"
+	ErrRequestBodyCode                  = "2012"
+	ErrMarshalCode                      = "2013"
+	ErrUnmarshalCode                    = "2014"
+	ErrEncodingCode                     = "2015"
+	ErrParseBoolCode                    = "2016"
+	ErrStreamEventsCode                 = "2017"
+	ErrStreamClientCode                 = "2018"
+	ErrUnmarshalEventCode               = "2019"
+	ErrPublishSmiResultsCode            = "2020"
+	ErrMarshalEventCode                 = "2021"
+	ErrPluginOpenCode                   = "2022"
+	ErrPluginLookupCode                 = "2023"
+	ErrPluginRunCode                    = "2024"
+	ErrParseFormCode                    = "2025"
+	ErrQueryGetCode                     = "2026"
+	ErrGetResultCode                    = "2027"
+	ErrConvertToSpecCode                = "2028"
+	ErrFetchSMIResultsCode              = "2029"
+	ErrFormFileCode                     = "2030"
+	ErrReadConfigCode                   = "2031"
+	ErrLoadConfigCode                   = "2032"
+	ErrOpenFileCode                     = "2033"
+	ErrKubeVersionCode                  = "2034"
+	ErrAddAdapterCode                   = "2035"
+	ErrRetrieveDataCode                 = "2036"
+	ErrValidAdapterCode                 = "2037"
+	ErrOperationIDCode                  = "2038"
+	ErrMeshClientCode                   = "2039"
+	ErrApplyChangeCode                  = "2040"
+	ErrRetrieveMeshDataCode             = "2041"
+	ErrApplicationFailureCode           = "2042"
+	ErrDecodingCode                     = "2043"
+	ErrRetrieveUserTokenCode            = "2044"
+	ErrFailToSaveCode                   = "2045"
+	ErrFailToDeleteCode                 = "2046"
+	ErrWriteResponseCode                = "2052"
+	ErrTestConfigsCode                  = "2053"
+	ErrInvalidGenValueCode              = "2054"
+	ErrFailToLoadExtensionsCode         = "2047"
+	ErrConversionCode                   = "2048"
+	ErrParseDurationCode                = "2049"
+	ErrLoadTestCode                     = "2050"
+	ErrFetchKubernetesCode              = "2051"
+	ErrPanicRecoveryCode                = "2052"
+	ErrBlankNameCode                    = "2053"
+	ErrInvalidLTURLCode                 = "2053"
+	ErrDataSendCode                     = "2137"
+	ErrVersionCompareCode               = "2138"
+	ErrSaveSessionCode                  = "2136"
+	ErrKubeClientCode                   = "2139"
+	ErrWorkloadDefinitionCode           = "2140"
+	ErrTraitDefinitionCode              = "2141"
+	ErrScopeDefinitionCode              = "2142"
+	ErrPatternFileCode                  = "2143"
+	ErrExecutionPlanCode                = "2144"
+	ErrInvalidPatternCode               = "2145"
+	ErrCompConfigPairsCode              = "2146"
+	ErrCreateDirCode                    = "2150"
+	ErrInvalidRequestObjectCode         = "2151"
+	ErrChangeK8sContextCode             = "2152"
+	ErrSavingUserPreferenceCode         = "2172"
+	ErrGetFilterCode                    = "2156"
+	ErrSaveFilterCode                   = "2157"
+	ErrDecodeFilterCode                 = "2158"
+	ErrEncodeFilterCode                 = "2159"
+	ErrImportFilterCode                 = "2160"
+	ErrFetchFilterCode                  = "2161"
+	ErrDeleteFilterCode                 = "2162"
+	ErrSavePatternCode                  = "2163"
+	ErrGetPatternCode                   = "2164"
+	ErrDeletePatternCode                = "2165"
+	ErrFetchPatternCode                 = "2166"
+	ErrImportPatternCode                = "2167"
+	ErrEncodePatternCode                = "2168"
+	ErrDecodePatternCode                = "2169"
+	ErrParsePatternCode                 = "2170"
+	ErrConvertPatternCode               = "2171"
+	ErrMesheryInstanceIDCode            = "2173"
+	ErrInvalidKubeConfigCode            = "2174"
+	ErrInvalidKubeHandlerCode           = "2175"
+	ErrInvalidKubeContextCode           = "2176"
+	ErrCreatingKubernetesComponentsCode = "2177"
 )
 
 var (
-	ErrInvalidK8SConfig = errors.New(ErrInvalidK8SConfigCode, errors.Alert, []string{"No valid kubernetes config found"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-	ErrNilClient        = errors.New(ErrNilClientCode, errors.Alert, []string{"Kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-	ErrPrometheusConfig = errors.New(ErrPrometheusConfigCode, errors.Alert, []string{"Prometheus endpoint not configured"}, []string{"Cannot find valid Prometheus endpoint in user pref"}, []string{"Prometheus endpoint might not be reachable from meshery"}, []string{"Setup your Prometheus Endpoint via the settings dashboard"})
-	ErrGrafanaConfig    = errors.New(ErrGrafanaConfigCode, errors.Alert, []string{"Grafana endpoint not configured"}, []string{"Cannot find valid grafana endpoint in user pref"}, []string{"Grafana endpoint might not be reachable from meshery"}, []string{"Setup your Grafana Endpoint via the settings dashboard"})
-	ErrStaticBoards     = errors.New(ErrStaticBoardsCode, errors.Alert, []string{"unable to get static board"}, []string{"unable to get static board"}, []string{"No boards could be available in grafana"}, []string{})
-	ErrValidAdapter     = errors.New(ErrValidAdapterCode, errors.Alert, []string{"Unable to find valid Adapter URL"}, []string{"unable to find a valid adapter for the given adapter URL"}, []string{"Given adapter URL is not valid"}, []string{"Please provide a valid Adapter URL"})
-	ErrAddAdapter       = errors.New(ErrAddAdapterCode, errors.Alert, []string{"meshLocationURL is empty"}, []string{"meshLocationURL is empty to add an adapter"}, []string{"meshLocationURL cannot be empty to add an adapter"}, []string{"please provide the meshLocationURL"})
-	ErrMeshClient       = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
-	ErrWriteResponse    = errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{}, []string{}, []string{})
-	ErrTestConfigs      = errors.New(ErrTestConfigsCode, errors.Alert, []string{"Error fetching test configs"}, []string{}, []string{}, []string{})
-	ErrInvalidGenValue  = errors.New(ErrInvalidGenValueCode, errors.Alert, []string{"Invalid value for gen"}, []string{}, []string{}, []string{"please provide a valid value for gen (load generator)"})
-	ErrParseDuration    = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{"The format of the duration passed could be incorrect"}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+	ErrInvalidK8SConfig  = errors.New(ErrInvalidK8SConfigCode, errors.Alert, []string{"No valid kubernetes config found"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+	ErrNilClient         = errors.New(ErrNilClientCode, errors.Alert, []string{"Kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+	ErrPrometheusConfig  = errors.New(ErrPrometheusConfigCode, errors.Alert, []string{"Prometheus endpoint not configured"}, []string{"Cannot find valid Prometheus endpoint in user pref"}, []string{"Prometheus endpoint might not be reachable from meshery"}, []string{"Setup your Prometheus Endpoint via the settings dashboard"})
+	ErrGrafanaConfig     = errors.New(ErrGrafanaConfigCode, errors.Alert, []string{"Grafana endpoint not configured"}, []string{"Cannot find valid grafana endpoint in user pref"}, []string{"Grafana endpoint might not be reachable from meshery"}, []string{"Setup your Grafana Endpoint via the settings dashboard"})
+	ErrStaticBoards      = errors.New(ErrStaticBoardsCode, errors.Alert, []string{"unable to get static board"}, []string{"unable to get static board"}, []string{"No boards could be available in grafana"}, []string{})
+	ErrValidAdapter      = errors.New(ErrValidAdapterCode, errors.Alert, []string{"Unable to find valid Adapter URL"}, []string{"unable to find a valid adapter for the given adapter URL"}, []string{"Given adapter URL is not valid"}, []string{"Please provide a valid Adapter URL"})
+	ErrAddAdapter        = errors.New(ErrAddAdapterCode, errors.Alert, []string{"meshLocationURL is empty"}, []string{"meshLocationURL is empty to add an adapter"}, []string{"meshLocationURL cannot be empty to add an adapter"}, []string{"please provide the meshLocationURL"})
+	ErrMeshClient        = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
+	ErrWriteResponse     = errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{}, []string{}, []string{})
+	ErrTestConfigs       = errors.New(ErrTestConfigsCode, errors.Alert, []string{"Error fetching test configs"}, []string{}, []string{}, []string{})
+	ErrInvalidGenValue   = errors.New(ErrInvalidGenValueCode, errors.Alert, []string{"Invalid value for gen"}, []string{}, []string{}, []string{"please provide a valid value for gen (load generator)"})
+	ErrParseDuration     = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{"The format of the duration passed could be incorrect"}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+	ErrMesheryInstanceID = errors.New(ErrMesheryInstanceIDCode, errors.Alert, []string{"Error: Meshery Instance ID is empty or is invalid"}, []string{}, []string{}, []string{})
 )
 
 func ErrPrometheusScan(err error) error {
@@ -343,6 +350,22 @@ func ErrChangeK8sContext(err error) error {
 	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
 }
 
+func ErrInvalidKubeConfig(err error, content string) error {
+	return errors.New(ErrInvalidKubeConfigCode, errors.Alert, []string{"Invalid Kube Config ", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid kubernetes config for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"})
+}
+
+func ErrInvalidKubeHandler(err error, content string) error {
+	return errors.New(ErrInvalidKubeHandlerCode, errors.Alert, []string{"Invalid Kube Handler", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid kubernetes handler for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"})
+}
+
+func ErrInvalidKubeContext(err error, content string) error {
+	return errors.New(ErrInvalidKubeContextCode, errors.Alert, []string{"Invalid Kube Context", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid kubernetes context for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"})
+}
+
+func ErrSavingUserPreference(err error) error {
+	return errors.New(ErrSavingUserPreferenceCode, errors.Alert, []string{"Error saving user preference."}, []string{err.Error()}, []string{"Invalid data passed", "Unable to connect with provider"}, []string{"Pass valid values for preferences", "Make sure provider supports saving user preferences", "Make sure you're connected with provider", "Make sure extension provides these preferences"})
+}
+
 func ErrGetFilter(err error) error {
 	return errors.New(ErrGetFilterCode, errors.Alert, []string{"Error failed to get filter"}, []string{err.Error()}, []string{"Cannot get the filter with the given Filter ID"}, []string{"Check if the given Filter ID is correct"})
 }
@@ -405,4 +428,8 @@ func ErrParsePattern(err error) error {
 
 func ErrConvertPattern(err error) error {
 	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert PatternFile to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrCreatingKubernetesComponents(err error, ctxID string) error {
+	return errors.New(ErrCreatingKubernetesComponentsCode, errors.Alert, []string{"failed to register/create kubernetes components for contextID " + ctxID}, []string{err.Error()}, []string{"component generation was canceled due to deletion or reload of K8s context", "Invalid kubeconfig", "Filters passed incorrectly in config", "Could not fetch API resources from Kubernetes server"}, []string{"If there is the log \"Starting to register ...\" for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.", "Make sure that the configuration filters passed are in accordance with output from /openapi/v2"})
 }

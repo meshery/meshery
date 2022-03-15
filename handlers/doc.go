@@ -263,14 +263,14 @@ type adapterParamsWrapper struct {
 // swagger:response k8sConfigRespWrapper
 type k8sConfigRespWrapper struct {
 	// in: body
-	Body *models.K8SConfig
+	// Body *models.K8SConfig
 }
 
 // Returns kubernetes context list
 // swagger:response k8sContextsRespWrapper
 type k8sContextsRespWrapper struct {
 	// in: body
-	Body []*models.K8SContext
+	// Body []*models.K8SContext
 }
 
 // Parameters for updating provider choice
@@ -371,7 +371,7 @@ type mesheryFiltersResponseWrapper struct {
 
 // Returns the response of the Filter files
 // swagger:response FilterFilesResponseWrapper
-type FilterFilesResponseWrapper struct {
+type filterFilesResponseWrapper struct {
 	// in: body
 	Body *models.MesheryFilter
 }

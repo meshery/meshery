@@ -33,11 +33,6 @@ func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.P
 
 	go func() {
 		r.Log.Info("Initializing DataPlane subscription")
-		err := r.connectToBroker(context.TODO(), provider)
-		if err != nil && err != ErrNoMeshSync {
-			r.Log.Error(err)
-			return
-		}
 
 		for {
 			select {

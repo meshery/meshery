@@ -4,6 +4,7 @@ title: Configuring your Deployment with Patterns, Filters and Applications
 description: Learn how to configure your deployments and service meshes
 permalink: guides/configuration-management
 type: Guides
+language: en
 ---
 
 Meshery now comes with built in support for service mesh patterns, WASM filters and application workloads. Users can use Meshery to manage these artifacts and use them with their service mesh deployment.

@@ -17,7 +17,7 @@ The {{ page.name }} is currently under construction ({{ page.project_status }} s
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}} service mesh. A number of sample applications can be installed using the {{page.name}}.
 
 ### Features
 

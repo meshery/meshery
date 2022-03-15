@@ -1,3 +1,5 @@
+import { trueRandom } from "../lib/trueRandom";
+
 /**
  * Check if an object is empty
  *
@@ -66,4 +68,11 @@ export function scrollToTop(behavior = "smooth") {
       behavior,
     })
   }, 0);
+}
+
+/**
+ * Generates random Pattern Name with the prefix meshery_
+ */
+export function randomPatternNameGenerator() {
+  return "meshery_" + Math.floor(trueRandom() * 100)
 }

@@ -9,7 +9,7 @@ visibility: hidden
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
 
 ### Suggested Topics
 

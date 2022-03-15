@@ -3,12 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshery/models"
 	pCore "github.com/layer5io/meshery/models/pattern/core"
+	"github.com/sirupsen/logrus"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -80,17 +82,17 @@ func (h *Handler) handlePatternPOST(
 
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.PatternData != nil {
-		patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
-		if err != nil {
-			h.log.Error(ErrSavePattern(err))
-			http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
-			return
-		}
-
 		// Assign a name if no name is provided
 		if parsedBody.PatternData.Name == "" {
+			patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
+			if err != nil {
+				h.log.Error(ErrSavePattern(err))
+				http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
+				return
+			}
 			parsedBody.PatternData.Name = patternName
 		}
+
 		// Assign a location if no location is specified
 		if parsedBody.PatternData.Location == nil {
 			parsedBody.PatternData.Location = map[string]interface{}{
@@ -262,8 +264,9 @@ func (h *Handler) GetMesheryPatternsHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryPatterns(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -275,9 +278,9 @@ func (h *Handler) GetMesheryPatternsHandler(
 		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
 		return
 	}
-	mc := newContentModifier(token, provider, prefObj, user.UserID)
+	mc := NewContentModifier(token, provider, prefObj, user.UserID)
 	//acts like a middleware, modifying the bytes lazily just before sending them back
-	err = mc.addMetadataForPatterns(&resp)
+	err = mc.AddMetadataForPatterns(r.Context(), &resp)
 	if err != nil {
 		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}
@@ -306,6 +309,41 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	if err != nil {
 		h.log.Error(ErrDeletePattern(err))
 		http.Error(rw, ErrDeletePattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
+// swagger:route DELETE /api/patterns PatternsAPI idDeleteMesheryPattern
+// Handle Delete for multiple Meshery Patterns
+//
+// DeleteMultiMesheryPatternsHandler deletes patterns with the given ids
+func (h *Handler) DeleteMultiMesheryPatternsHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logrus.Error(rw, "err deleting pattern, converting bytes: ", err)
+	}
+
+	var patterns models.MesheryPatternDeleteRequestBody
+	err = json.Unmarshal([]byte(body), &patterns)
+	if err != nil {
+		logrus.Error("error marshaling patterns json: ", err)
+	}
+
+	logrus.Debugf("patterns to be deleted: %+v", patterns)
+
+	resp, err := provider.DeleteMesheryPatterns(r, patterns)
+
+	if err != nil {
+		http.Error(rw, fmt.Sprintf("failed to delete the pattern: %s", err), http.StatusInternalServerError)
 		return
 	}
 

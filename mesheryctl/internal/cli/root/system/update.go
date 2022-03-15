@@ -102,7 +102,7 @@ var updateCmd = &cobra.Command{
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
 			}
 
-			err = config.SetContext(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
 
 			if err != nil {
 				return err
@@ -150,7 +150,7 @@ var updateCmd = &cobra.Command{
 				return ErrHealthCheckFailed(err)
 			}
 
-			running, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+			running, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 			if err != nil {
 				return err
 			}
@@ -162,7 +162,7 @@ var updateCmd = &cobra.Command{
 			}
 
 			currCtx.SetVersion("latest")
-			err = config.SetContext(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}
