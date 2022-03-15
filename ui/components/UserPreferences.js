@@ -168,7 +168,7 @@ class UserPreference extends React.Component {
       "anonymousUsageStats" : anonymousStats,
       "anonymousPerfResults" : perfResultStats,
       "usersExtensionPreferences" : {
-        "showOnZoom" : startOnZoom,
+        "startOnZoom" : startOnZoom,
         "canvasSettings" : {
           "hideGrid" : checkedGrid,
           "snapToGrid" : checkedSnap
