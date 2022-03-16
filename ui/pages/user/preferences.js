@@ -31,9 +31,6 @@ class UserPref extends React.Component {
           this.setState({
             anonymousStats : result.anonymousUsageStats||false,
             perfResultStats : result.anonymousPerfResults||false,
-            startOnZoom : result.usersExtensionPreferences.startOnZoom||false,
-            checkedGrid : result.usersExtensionPreferences.canvasSettings.hideGrid||false,
-            checkedSnap : result.usersExtensionPreferences.canvasSettings.snapToGrid||false
           });
         }
       },
@@ -44,7 +41,7 @@ class UserPref extends React.Component {
   }
 
   render () {
-    const { anonymousStats, perfResultStats, startOnZoom, checkedGrid, checkedSnap }=this.state;
+    const { anonymousStats, perfResultStats }=this.state;
     console.log(this.state)
     if (anonymousStats==undefined){
       // Skip rendering till data is not loaded
@@ -57,7 +54,7 @@ class UserPref extends React.Component {
         </Head>
         <Paper className={this.props.classes.paper}>
           {/* {should meshmap specific user preferences be placed along with general preferences or from the remote provider} */}
-          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} startOnZoom={startOnZoom} checkedGrid={checkedGrid} checkedSnap={checkedSnap}/>
+          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
         </Paper>
       </NoSsr>
     );
