@@ -262,7 +262,7 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 		// if this fails then immediately fail the process and return an error
 		castedScratch, ok := elem.Scratch.(map[string]interface{})
 		if !ok {
-			return fmt.Errorf("empty scratch field is not allowed, must containe \"_data\" field holding metadata")
+			return fmt.Errorf("empty scratch field is not allowed, must contain \"_data\" field holding metadata")
 		}
 
 		data, ok := castedScratch["_data"]
