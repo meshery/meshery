@@ -468,8 +468,8 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 			delete(prop, "status")
 			schema["properties"] = prop
 			schema["$schema"] = "http://json-schema.org/draft-04/schema"
-			if k8s.Prettify {
-				k8s.Prettify.Prettify(schema)
+			if k8s.Format {
+				k8s.Format.Prettify(schema)
 			}
 			b, err := json.Marshal(schema)
 			if err != nil {

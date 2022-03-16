@@ -11,7 +11,7 @@ import (
 )
 
 //In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
-const Prettify prettifier = true
+const Format prettifier = true
 
 func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v1alpha1.Configuration, isDel bool) error {
 	resource := createK8sResourceStructure(oamComp)
@@ -51,8 +51,8 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 
 		component[k] = v
 	}
-	if Prettify {
-		Prettify.DePrettify(component)
+	if Format {
+		Format.DePrettify(component)
 	}
 	return component
 }
