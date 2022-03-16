@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/internal/store"
+	"github.com/layer5io/meshery/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
@@ -467,6 +468,9 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 			delete(prop, "status")
 			schema["properties"] = prop
 			schema["$schema"] = "http://json-schema.org/draft-04/schema"
+			if k8s.Format {
+				k8s.Format.Prettify(schema)
+			}
 			b, err := json.Marshal(schema)
 			if err != nil {
 				return
