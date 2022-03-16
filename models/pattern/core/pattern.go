@@ -2,6 +2,7 @@ package core
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -190,16 +191,18 @@ func (p *Pattern) ToYAML() ([]byte, error) {
 
 // NewPatternFileFromCytoscapeJSJSON takes in CytoscapeJS JSON
 // and creates a PatternFile from it
-func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
+func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error) {
 	// Unmarshal data into cytoscape struct
 	var cy cytoscapejs.GraphElem
 	if err := json.Unmarshal(byt, &cy); err != nil {
 		return Pattern{}, err
 	}
-
+	if name == "" {
+		name = "MesheryGeneratedPattern"
+	}
 	// Convert cytoscape struct to patternfile
 	pf := Pattern{
-		Name:     "MesheryGeneratedPatternFile",
+		Name:     name,
 		Services: make(map[string]*Service),
 	}
 	for _, elem := range cy.Elements {
@@ -237,8 +240,8 @@ func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
 		if err := json.Unmarshal(svcByt, &svc); err != nil {
 			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
-
-		pf.Services[elem.Data.ID] = &svc
+		uid := svc.Name + base64.StdEncoding.EncodeToString(svcByt)[:5]
+		pf.Services[uid] = &svc
 	}
 
 	return pf, nil

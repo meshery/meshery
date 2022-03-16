@@ -1,12 +1,17 @@
 package k8s
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+	man "github.com/layer5io/meshkit/utils/manifests"
 	"gopkg.in/yaml.v2"
 )
+
+//In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
+const Format prettifier = true
 
 func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v1alpha1.Configuration, isDel bool) error {
 	resource := createK8sResourceStructure(oamComp)
@@ -46,6 +51,9 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 
 		component[k] = v
 	}
+	if Format {
+		Format.DePrettify(component)
+	}
 	return component
 }
 
@@ -57,4 +65,66 @@ func getKindFromComponent(comp v1alpha1.Component) string {
 	kind := strings.TrimPrefix(comp.Annotations["pattern.meshery.io.k8s.k8sKind"], "/")
 
 	return kind
+}
+
+type prettifier bool
+
+func (p prettifier) Prettify(m map[string]interface{}) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(m, true)
+	out, ok := res.(map[string]interface{})
+	if !ok {
+		fmt.Println("failed to cast")
+	}
+
+	return out
+}
+func (p prettifier) DePrettify(m map[string]interface{}) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(m, false)
+	out, ok := res.(map[string]interface{})
+	if !ok {
+		fmt.Println("failed to cast")
+	}
+
+	return out
+}
+
+// ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
+//
+// It will also convert []interface{} => []string
+func ConvertMapInterfaceMapString(v interface{}, prettify bool) interface{} {
+	switch x := v.(type) {
+	case map[interface{}]interface{}:
+		m := map[string]interface{}{}
+		for k, v2 := range x {
+			switch k2 := k.(type) {
+			case string:
+				delete(m, k2)
+				if prettify {
+					m[man.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify)
+				} else {
+					m[strings.ReplaceAll(k2, " ", "")] = ConvertMapInterfaceMapString(v2, prettify)
+				}
+			default:
+				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify)
+			}
+		}
+		v = m
+
+	case []interface{}:
+		for i, v2 := range x {
+			x[i] = ConvertMapInterfaceMapString(v2, prettify)
+		}
+
+	case map[string]interface{}:
+		for k, v2 := range x {
+			delete(x, k)
+			if prettify {
+				x[man.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify)
+			} else {
+				x[strings.ReplaceAll(k, " ", "")] = ConvertMapInterfaceMapString(v2, prettify)
+			}
+		}
+	}
+
+	return v
 }
