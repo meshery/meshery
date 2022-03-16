@@ -71,7 +71,6 @@ describe("Test Lifecycle Paths With None Provider", () => {
     cy.get('[data-cy="Lifecycle"]').click();
     cy.get('[data-cy="Consul"]').click();
     doGeneralConsulLifecycleChecks(cy);
-    
   })
 
 });
