@@ -318,6 +318,13 @@ const categories = [
         show : true,
       },
       {
+        id : "Cilium",
+        href : "/management/cilium",
+        title : "Cilium",
+        link : true,
+        show : true,
+      },
+      {
         id : "Istio",
         href : "/management/istio",
         title : "Istio",
