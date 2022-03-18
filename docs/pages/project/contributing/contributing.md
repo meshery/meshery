@@ -57,7 +57,7 @@ In most cases, you can add this signoff to your commit automatically with the
 address (sorry, no pseudonyms or anonymous contributions). An example of signing off on a commit:
 
 ```
-$ commit -s -m “my commit message w/signoff”
+$ git commit -s -m “my commit message w/signoff”
 ```
 
 To ensure all your commits are signed, you may choose to add this alias to your global `.gitconfig`:
