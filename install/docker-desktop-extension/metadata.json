@@ -1,0 +1,32 @@
+{
+  "name": "meshery-extension",
+  "provider": "Docker Inc.",
+  "icon": "docker.svg",
+  "vm": {
+    "composefile": "docker-compose.yaml",
+    "exposes": {
+      "socket": "extension-meshery-extension.sock"
+    }
+  },
+  "ui": {
+    "dashboard-tab": {
+      "title": "Meshery-Extension",
+      "src": "index.html",
+      "root": "/app/ui/out",
+      "backend": {
+        "socket": "extension-meshery-extension.sock"
+      }
+    }
+  },
+  "host": {
+    "binaries": [
+      {
+        "darwin": [
+          {
+            "path": "darwin/mesheryctl"
+          }
+        ]
+      }
+    ]
+  }
+}
