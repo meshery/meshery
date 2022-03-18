@@ -1,17 +1,19 @@
 name: Meshery Build and Push Docker Extension
-# TODO :- Figure out a policy to build and push extension image to DockerHub
 on:
+  # TODO :- Figure out a policy to build and push extension image to DockerHub
   push:
     branches:
-      - 'dde'
-#     paths-ignore:
-#       - 'docs/**'
-#       - '.github/**'
+      - 'master'
+    paths-ignore:
+      - 'docs/**'
+      - '.github/**'
+  workflow_dispatch:
+
 
 jobs:
   build:
     name: Docker build and push
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'hershd23/meshery'
     env:
       RELEASE_CHANNEL: "edge"
     runs-on: ubuntu-latest
@@ -20,30 +22,23 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
+      - name: Delete default files present at project root
+        run: |
+          rm Dockerfile
+          rm .dockerignore
+      - name: Move files from ./install/docker-desktop-extension to project root
+        run: |
+          mv ./install/docker-desktop-extension/* ./
       - name: Docker login
         uses: azure/docker-login@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Dummy commands
+      - name: Docker edge build & tag
         run: |
-          pwd
-          ls
-
-      # Step to delete files
-
-      # Step to replace the deleted files
-
-      # Step to build the extension
-
-      # Step to push the extension (Happens later)
-
-
-      # - name: Docker edge build & tag
-      #   run: |
-      #     DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="edge-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-      #     docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
-      # - name: Docker edge push
-      #   run: |
-      #     docker push ${{ secrets.IMAGE_NAME }}:edge-latest
-      #     docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="edge-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+      - name: Docker edge push
+        run: |
+          docker push ${{ secrets.IMAGE_NAME }}:edge-latest
+          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}

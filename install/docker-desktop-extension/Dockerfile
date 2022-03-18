@@ -71,10 +71,11 @@ RUN UTIL_VERSION=$(curl -L -s https://api.github.com/repos/layer5io/kubeopenapi-
 	&& chmod +x /kubeopenapi-jsonschema
 
 FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
-LABEL org.opencontainers.image.title="Meshery-extension" \
-    org.opencontainers.image.description="Test extension for Meshery" \
+LABEL org.opencontainers.image.title="Meshery" \
+    org.opencontainers.image.description="Meshery extension for Docker Desktop" \
     org.opencontainers.image.vendor="Layer5" \
     com.docker.desktop.extension.api.version=">= 0.2.0"
+    com.docker.desktop.plugin.icon="meshery-logo-light.svg"
 #RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
 RUN update-ca-certificates

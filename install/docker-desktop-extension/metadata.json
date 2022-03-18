@@ -1,5 +1,5 @@
 {
-  "name": "meshery-extension",
+  "name": "meshery-docker-extension",
   "provider": "Docker Inc.",
   "icon": "docker.svg",
   "vm": {
@@ -10,7 +10,7 @@
   },
   "ui": {
     "dashboard-tab": {
-      "title": "Meshery-Extension",
+      "title": "Meshery",
       "src": "index.html",
       "root": "/app/ui/out",
       "backend": {
