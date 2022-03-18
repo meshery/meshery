@@ -75,7 +75,8 @@ LABEL org.opencontainers.image.title="Meshery" \
     org.opencontainers.image.description="Meshery extension for Docker Desktop" \
     org.opencontainers.image.vendor="Layer5" \
     com.docker.desktop.extension.api.version=">= 0.2.0"
-    com.docker.desktop.plugin.icon="meshery-logo-light.svg"
+    # com.docker.desktop.plugin.icon="meshery-logo-light.svg"
+# NOTE (hershd23) : Commenting out the above line because of an error, will fix that
 #RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
 RUN update-ca-certificates
