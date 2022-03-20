@@ -36,9 +36,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker edge build & tag
         run: |
-          DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="edge-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-          docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          DOCKER_BUILDKIT=1 docker build --no-cache -t meshery/meshery-docker-desktop-extension:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="edge-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          docker tag meshery/meshery-docker-desktop-extension:edge-latest meshery/meshery-docker-desktop-extension:edge-${GITHUB_SHA::8}
       - name: Docker edge push
         run: |
-          docker push ${{ secrets.IMAGE_NAME }}:edge-latest
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          docker push meshery/meshery-docker-desktop-extension:edge-latest
+          docker push meshery/meshery-docker-desktop-extension:edge-${GITHUB_SHA::8}
