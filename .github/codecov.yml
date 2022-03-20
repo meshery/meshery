@@ -37,7 +37,7 @@ flags:
       - "*/cmd/**"
       - "*/handlers/**"
       - "*/helpers/**"
-      - "*/internal/**
+      - "*/internal/**"
       - "*/mesheryctl/**" 
       - "*/meshes/**"
       - "*/models/**"
