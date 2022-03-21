@@ -1,7 +1,7 @@
 {
   "name": "meshery-docker-extension",
-  "provider": "Docker Inc.",
-  "icon": "docker.svg",
+  "provider": "Layer5, Inc.",
+  "icon": "ui/src/img/meshery-logo/meshery-logo-light-white-text-side.svg",
   "vm": {
     "composefile": "docker-compose.yaml",
     "exposes": {
