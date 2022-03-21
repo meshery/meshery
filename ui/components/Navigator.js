@@ -749,6 +749,8 @@ class Navigator extends React.Component {
       let aName = adapter.name.toLowerCase();
       // Manually changing adapter name so that it matches the internal name
       if (aName === "osm") aName = "open service mesh";
+      if (aName === "cilium") aName = "cilium service mesh";
+      if (aName === "nginx") aName = "nginx service mesh";
       if (category !== aName) {
         return;
       }
