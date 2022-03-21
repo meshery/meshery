@@ -6,29 +6,33 @@ import {
     Switch,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import consul from "../../img/service-meshes/consul.png";
-import istio from "../../img/service-meshes/istio.png";
-import kuma from "../../img/service-meshes/kuma.png";
-import linkerd from "../../img/service-meshes/linkerd.png";
-// import nginx from "../../img/service-meshes/nginx.svg";
+import { CustomTypography } from "../CustomTypography";
+import ConsulIcon from "../../img/SVGs/consulIcon";
+import IstioIcon from "../../img/SVGs/IstioIcon";
+import KumaIcon from "../../img/SVGs/kumaIcon";
+import LinkerdIcon from "../../img/SVGs/linkerdIcon";
+import NginxIcon from "../../img/SVGs/nginxIcon";
+
+
 
 const styles = (theme) => ({
     main: {
         width: "50%",
         float: "left",
-        paddingBottom: theme.spacing(3)
+        paddingBottom: theme.spacing(9),
+        backgroundColor:"#393F49",
+        borderBottomRightRadius: "20px"
     },
     sm: {
-        width: "25%",
-        float: "left"
+        width: "20%",
+        float: "left",
+        flexDirection: "row"
     },
     img: {
         width: "auto",
         height: "50px"
     },
     offConfig: {
-        width: "auto",
-        height: "50px",
         filter: "grayscale(1) invert(0.35)"
     }
 });
@@ -86,129 +90,59 @@ class Configuration extends React.Component {
 
         return (
             <NoSsr>
-                <Container className={classes.main}>
-                    <Typography Style="margin-bottom:2rem">Service Mesh</Typography>
-                    <Container>
-                        <Container className={classes.sm}>
-                            {
-                                consulChecked &&
-                                <img
-                                 src={consul}
-                                 className={classes.img}
-                                 alt="consul"
-                                />
-                            }
-                            {
-                                !consulChecked &&
-                                <img
-                                 src={consul}
-                                 className={classes.offConfig}
-                                 alt="consul"
-                                />
-                            }
-                            <Container>
-                                <Switch
+                <div className={classes.main}>
+                    <CustomTypography Style="margin-bottom:2rem">Service Mesh</CustomTypography>
+                        <div className={classes.sm}>
+                           <div className={consulChecked ? null : classes.offConfig}><ConsulIcon width={40} height={40} /></div>                               
+                           <Switch
                                 checked={consulChecked}
                                 color="primary"
                                 onChange={this.handleToggle("consul")}
                                 inputProps={{ 'aria-label': 'controlled' }}
                                 />
-                            </Container>
-                        </Container>
-                        <Container className={classes.sm}>
-                            { istioChecked &&
-                                <img
-                                 src={istio}
-                                 className={classes.img}
-                                 alt="istio"
-                                />
-                            }
-                            {
-                                !istioChecked && 
-                                <img
-                                 src={istio}
-                                 className={classes.offConfig}
-                                 alt="istio"
-                                />
-                            }
-                            <Container>
+                           
+                       </div>
+                       <div className={classes.sm}>
+                           <div className={istioChecked ? null : classes.offConfig}><IstioIcon width={40} height={40} /></div>                               
+                          
                                 <Switch
                                 checked={istioChecked}
                                 color="primary"
                                 onChange={this.handleToggle("istio")}
                                 inputProps={{ 'aria-label': 'controlled' }}
                                 />
-                            </Container>
-                        </Container>
-                        <Container className={classes.sm}>
-                            {
-                                linkerdChecked && 
-                                <img
-                                 src={linkerd}
-                                 className={classes.img}
-                                 alt="linkerd"
-                                />
-                            }
-                            {
-                                !linkerdChecked &&
-                                <img
-                                 src={linkerd}
-                                 className={classes.offConfig}
-                                 alt="linkerd"
-                                />
-                            }
-                            <Container>
+                          </div>
+                          <div className={classes.sm}>
+                          <div className={linkerdChecked ? null : classes.offConfig}><LinkerdIcon width={40} height={40} /></div>                               
+                        
                                 <Switch
                                 checked={linkerdChecked}
                                 color="primary"
                                 onChange={this.handleToggle("linkerd")}
                                 inputProps={{ 'aria-label': 'controlled' }}
                                 />
-                            </Container>
-
-                        </Container>
-                        {/* <Container className={classes.img}>
-                            <img
-                             src={nginx}
-                             className={classes.img}
-                             alt="nginx"
-                            />
+                        </div>
+                        <div className={classes.sm}>
+                        <div className={nginxChecked ? null : classes.offConfig}><NginxIcon width={38} height={40} /></div>                               
                             <Switch
                              checked={nginxChecked}
                              color="primary"
                              onChange={this.handleToggle("nginx")}
                              inputProps={{ 'aria-label': 'controlled' }}
                             />
-                        </Container> */}
-                        <Container className={classes.sm}>
-                            {
-                                kumaChecked &&
-                                <img
-                                 src={kuma}
-                                 className={classes.img}
-                                 alt="kuma"
-                                />
-                            }
-                            {
-                                !kumaChecked && 
-                                <img
-                                 src={kuma}
-                                 className={classes.offConfig}
-                                 alt="kuma"
-                                />
-                            }
+                            </div>
+                     <div className={classes.sm}>
+                    <div className={kumaChecked ? null : classes.offConfig}><KumaIcon width={40} height={40} /></div>                               
 
-                            <Container>
+                         
                                 <Switch
                                 checked={kumaChecked}
                                 color="primary"
                                 onChange={this.handleToggle("kuma")}
                                 inputProps={{ 'aria-label': 'controlled' }}
                                 />
-                            </Container>
-                        </Container>
-                    </Container>
-                </Container>
+                          </div>
+                </div>
             </NoSsr>
         );
     }

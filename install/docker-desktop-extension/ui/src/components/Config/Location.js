@@ -8,23 +8,23 @@ import {
 import { withStyles } from "@material-ui/core/styles";
 import docker from "../../img/location/docker.png"
 import k8s from "../../img/location/kubernetes.png"
+import { CustomTypography } from "../CustomTypography";
+import DockerIcon from "../../img/SVGs/dockerIcon";
+import KubernetesIcon from "../../img/SVGs/kubernetesIcon";
 
 const styles = (theme) => ({
     main: {
         width: "50%",
-        float: "left"
+        float: "left",
+        paddingBottom: theme.spacing(6),
+        backgroundColor:"#393F49",
+        borderBottomLeftRadius: "20px"
     },
     loc: {
         width: "50%",
         float: "left" 
     },
-    img: {
-        width: "auto",
-        height: "50px",
-    },
     offConfig: {
-        width: "auto",
-        height: "50px",
         filter: "grayscale(1) invert(0.35)"
     }
 });
@@ -63,63 +63,31 @@ class Location extends React.Component {
         return (
             <NoSsr>
                 <Container className={classes.main}>
-                    <Typography Style="margin-bottom:2rem">Location</Typography>
-                    <Container>
-                        <Container className={classes.loc}>
-                            {
-                                dockerChecked &&
-                                <img
-                                src={docker}
-                                className={classes.img}
-                                alt="docker"
-                                />
-                            }{
-                                !dockerChecked && 
-                                <img
-                                src={docker}
-                                className={classes.offConfig}
-                                alt="docker"
-                                /> 
-                            }
-                            <Container>
-                                <Switch
+                    <CustomTypography Style="margin-bottom:2rem">Location</CustomTypography>
+                
+                        <div className={classes.loc}>
+                        <div className={dockerChecked  ? null : classes.offConfig}><DockerIcon width={57} height={40} /></div>                               
+                         
+                                  <Switch
                                  checked={dockerChecked}
                                  color="primary"
                                  onChange={this.handleToggle("docker")}
                                  inputProps={{ 'aria-label': 'controlled' }}
                                 />
-                                <Typography>Out of Cluster</Typography>
-                            </Container>
-                        </Container>
+                                <CustomTypography>Out of Cluster</CustomTypography>
                             
-                        <Container className={classes.loc}>
-                            {
-                                k8sChecked && 
-                                <img
-                                src={k8s}
-                                className={classes.img}
-                                alt="k8s"
-                                />
-                            }
-                            {
-                                !k8sChecked &&
-                                <img
-                                src={k8s}
-                                className={classes.offConfig}
-                                alt="k8s"
-                                />
-                            }
-                            <Container>
+                        </div>
+                            
+                        <div className={classes.loc}>
+                        <div className={k8sChecked ? null : classes.offConfig}><KubernetesIcon width={40} height={40} /></div>                               
                                 <Switch
                                 checked={k8sChecked}
                                 color="primary"
                                 onChange={this.handleToggle("k8s")}
                                 inputProps={{ 'aria-label': 'controlled' }}
                                 />
-                                <Typography>In Cluster</Typography>
-                            </Container>
-                        </Container>
-                    </Container>
+                                <CustomTypography>In Cluster</CustomTypography>
+                        </div>
                 </Container>
             </NoSsr>
         );
