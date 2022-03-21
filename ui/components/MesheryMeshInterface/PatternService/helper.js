@@ -40,10 +40,12 @@ export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) 
 function handleExceptionalFields(schema) {
   const xKubernetesIntOrString = 'x-kubernetes-int-or-string';
   const xKubernetesPreserveUnknownFields = 'x-kubernetes-preserve-unknown-fields';
+  const additionalProperties = 'additionalProperties';
 
   const exceptionalFieldToTypeMap = {
     [xKubernetesIntOrString] : ['string'], // string can hold integers too
-    [xKubernetesPreserveUnknownFields] : [schema?.type || 'object']
+    [xKubernetesPreserveUnknownFields] : [schema?.type || 'object'],
+    [additionalProperties] : ['string']
   }
 
   let returnedType;
@@ -76,6 +78,7 @@ function getDefaults(types) {
 
 function addTitleToPropertiesJSONSchema(jsonSchema) {
   const newProperties = jsonSchema?.properties
+
 
   if (newProperties && typeof newProperties === 'object') {
     Object.keys(newProperties).map(key => {
@@ -115,6 +118,7 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
     })
 
     return { ...jsonSchema, properties : newProperties };
+
   }
   return undefined
 }

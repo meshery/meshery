@@ -75,12 +75,12 @@ services:
      - "com.centurylinklabs.watchtower.enable=true"
    ports:
      - "10010:10010"
-  meshery-cilium:
+  meshery-cilium: 
     image: layer5/meshery-cilium:stable-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
-      - "10011:10011"
+      - "10012:10012"
   # nighthawk-lg:
   #   image: envoyproxy/nighthawk-dev:latest
   watchtower:
