@@ -9,13 +9,13 @@ on:
 jobs:
   build:
     name: Docker build and push
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
     env:
       RELEASE_CHANNEL: "edge"
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Docker login

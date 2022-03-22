@@ -533,6 +533,9 @@ func TestSetOverrideValues(t *testing.T) {
 				"meshery-istio": map[string]interface{}{
 					"enabled": false,
 				},
+				"meshery-cilium": map[string]interface{}{
+					"enabled": false,
+				},
 				"meshery-linkerd": map[string]interface{}{
 					"enabled": false,
 				},
