@@ -117,7 +117,7 @@ curl -L ${URL} -o ${PWD}/meshery.zip
 
 validFile=`file ${PWD}/meshery.zip | grep 'Zip archive data'`
 if [ -z "$validFile" ] ; then
-  printf "Unable to get latest meshery install package. Set MESHERY_VERSION env var and re-run. For example: export MESHERY_VERSION=v0.1.6\n"
+  printf "Unable to download meshery.zip file from ${URL}"
   exit;
 fi
 
