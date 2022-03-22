@@ -11,15 +11,15 @@ on:
 
 
 jobs:
-  build:
-    name: Docker build and push
-    if: github.repository == 'meshery/meshery'
+  edge-build:
+    name: Docker build and push (edge release)
+    if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/') != true && success()
     env:
       RELEASE_CHANNEL: "edge"
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Delete default files present at project root
@@ -42,3 +42,36 @@ jobs:
         run: |
           docker push meshery/meshery-docker-desktop-extension:edge-latest
           docker push meshery/meshery-docker-desktop-extension:edge-${GITHUB_SHA::8}
+  stable-build:
+    name: Docker build and push (edge release)
+    if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+    env:
+      RELEASE_CHANNEL: "stable"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Delete default files present at project root
+        run: |
+          rm Dockerfile
+          rm .dockerignore
+      - name: Move files from ./install/docker-desktop-extension to project root
+        run: |
+          mv ./install/docker-desktop-extension/* ./
+      - name: Docker login
+        uses: azure/docker-login@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker stable build & tag
+        run: |
+          DOCKER_BUILDKIT=1 docker build --no-cache -t meshery/meshery-docker-desktop-extension:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="stable-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          docker tag meshery/meshery-docker-desktop-extension:stable-latest meshery/meshery-docker-desktop-extension:stable-${GITHUB_SHA::8}
+      - name: Docker stable push
+        run: |
+          docker push meshery/meshery-docker-desktop-extension:stable-latest
+          docker push meshery/meshery-docker-desktop-extension:stable-${GITHUB_SHA::8}
+
+
