@@ -206,13 +206,14 @@ fi
 # nginx
 # tanzu
 # app
+# cilium
 
 ## Any adapter other than above would be ignored
 if [ ! -z "$ADAPTERS" ]; then
     adpaterString=
     for adapter in $ADAPTERS; do
         case $adapter in
-            cpx|consul|istio|linkerd|nsm|kuma|cpx|osm)
+            cpx|consul|istio|linkerd|nsm|kuma|cpx|osm|cilium)
                 adapterString="$adapterString -a meshery-$adapter "
             ;;
             nginx|tanzu)
