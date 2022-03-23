@@ -1,24 +1,36 @@
-FROM node:16 as ui
-ADD ui-dde ui
-RUN cd ui; npm install --only=production; npm run build && npm run build; mv build /
+FROM golang:1.17-alpine AS builder
+ENV CGO_ENABLED=0
+RUN apk add --update make
+WORKDIR /backend
+COPY go.* .
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    go mod download
+COPY . .
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    make bin
 
-# FROM node:16 as provider-ui
-# ADD provider-ui provider-ui
-# RUN cd provider-ui; https://jira.fkinternal.com/projects/IAAS/issues/IAAS-42624?filter=myopenissues; npm run build && npm run export; mv out /
+FROM node:14.17-alpine3.13 AS client-builder
+WORKDIR /ui
+# cache packages in layer
+COPY ui/package.json /ui/package.json
+COPY ui/package-lock.json /ui/package-lock.json
+RUN --mount=type=cache,target=/usr/src/app/.npm \
+    npm set cache /usr/src/app/.npm && \
+    npm ci
+# install
+COPY ui /ui
+RUN npm run build
 
-FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
-LABEL org.opencontainers.image.title="Meshery" \
-    org.opencontainers.image.description="Meshery extension for Docker Desktop" \
-    org.opencontainers.image.vendor="Layer5" \
+FROM alpine
+LABEL org.opencontainers.image.title="meshery" \
+    org.opencontainers.image.description="Meshery" \
+    org.opencontainers.image.vendor="Layer5, Inc." \
     com.docker.desktop.extension.api.version=">= 0.2.0"
-    # com.docker.desktop.plugin.icon="meshery-logo-light.svg"
-# NOTE (hershd23) : Commenting out the above line because of an error, will fix that
-#RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
-RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
-RUN update-ca-certificates
+COPY --from=builder /backend/bin/service /
+COPY docker-compose.yaml .
 COPY metadata.json .
 COPY meshery-logo-light.svg .
-COPY docker-compose.yaml .
-COPY darwin /darwin
-COPY ./oam /app/oam
-COPY --from=ui /build /app/ui/out
+COPY --from=client-builder /ui/build ui
+CMD /service -socket /run/guest-services/extension-meshery.sock
