@@ -13,8 +13,7 @@ on:
 jobs:
   edge-build:
     name: Docker build and push (edge release)
-    #if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/') != true && success()
-    if: github.repository == 'hershd23/meshery'
+    if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/') != true && success()
     env:
       RELEASE_CHANNEL: "edge"
     runs-on: ubuntu-latest
