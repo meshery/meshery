@@ -17,7 +17,7 @@ LABEL org.opencontainers.image.title="Meshery" \
 RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
 RUN update-ca-certificates
 COPY metadata.json .
-COPY docker.svg .
+COPY meshery-logo-light.svg .
 COPY docker-compose.yaml .
 COPY darwin /darwin
 COPY ./oam /app/oam

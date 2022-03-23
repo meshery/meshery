@@ -43,7 +43,7 @@ jobs:
           docker push meshery/meshery-docker-desktop-extension:edge-latest
           docker push meshery/meshery-docker-desktop-extension:edge-${GITHUB_SHA::8}
   stable-build:
-    name: Docker build and push (edge release)
+    name: Docker build and push (stable release)
     if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
     env:
       RELEASE_CHANNEL: "stable"
