@@ -1,4 +1,4 @@
-ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10008 localhost:10009 localhost:10010"
+ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10008 localhost:10009 localhost:10010 localhost:10012"
 
 MESHERY_CLOUD_LOCAL="http://localhost:9876"
 MESHERY_CLOUD_DEV="http://localhost:9876"
@@ -105,15 +105,6 @@ run-fast-no-content:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
 	go run main.go;
-
-run-16-fast:
-	cd cmd; go1.16.4 mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	go1.16.4 run main.go;
 
 run-fast-cloud: error
 	cd cmd; go mod tidy; \
