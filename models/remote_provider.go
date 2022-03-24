@@ -301,7 +301,8 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 		_ = l.WriteToPersister(up.UserID, up.Preferences)
 	}
 
-	logrus.Infof("retrieved user: %v", up.User)
+	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
+	// logrus.Debugf("retrieved user: %v", up.User)
 	return &up.User, nil
 }
 
