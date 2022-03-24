@@ -41,9 +41,9 @@ jobs:
             latest=false
             prefix=${{env.RELEASE_CHANNEL}}-
           tags: |
-            type=sha
-            type=ref,event=tag
-            
+            type=raw,value=${{env.RELEASE_CHANNEL}}-{{sha}}
+            type=raw,value=${{env.RELEASE_CHANNEL}}-{{tag}}
+            type=raw,value=${{env.RELEASE_CHANNEL}}-latest
 
       -
         name: Login to DockerHub
