@@ -14,13 +14,13 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 FROM node:14.17-alpine3.13 AS client-builder
 WORKDIR /ui
 # cache packages in layer
-COPY ui-dde/package.json /ui/package.json
-COPY ui-dde/package-lock.json /ui/package-lock.json
+COPY ui/package.json /ui/package.json
+COPY ui/package-lock.json /ui/package-lock.json
 RUN --mount=type=cache,target=/usr/src/app/.npm \
     npm set cache /usr/src/app/.npm && \
     npm ci
 # install
-COPY ui-dde /ui
+COPY ui /ui
 RUN npm run build
 
 FROM alpine
