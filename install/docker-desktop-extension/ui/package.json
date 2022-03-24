@@ -1,6 +1,7 @@
 {
   "name": "ui",
   "version": "1.0.0",
+  "homepage": "./",
   "description": "the service mesh management plane",
   "main": "index.js",
   "dependencies": {
