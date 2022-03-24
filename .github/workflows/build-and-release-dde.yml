@@ -14,7 +14,17 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    
     steps:
+      - name: (Edge) Determine Release Channel
+        if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/') != true && success()
+        env: 
+          RELEASE_CHANNEL: "edge"
+          
+      - name: (Stable) Determine Release Channel
+        if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        env: 
+          RELEASE_CHANNEL: "stable"
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -35,7 +45,7 @@ jobs:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
           tags: |
-            meshery/meshery-docker-desktop-extension:latest
+            ${{env.IMAGE_NAME}}:${RELEASE_CHANNEL}-latest
 
 
 
