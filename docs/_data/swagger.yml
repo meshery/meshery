@@ -295,13 +295,13 @@ paths:
       responses:
         "200":
           description: ""
-  /api/experimental/oam/{type}:
+  /api/oam/{type}:
     get:
       description: |-
         Returns a list of workloads/traits/scopes by given type in the URL
 
         {type} being of either trait, scope, workload; registration of adapter capabilities.
-        Example: /api/experimental/oam/workload => Here {type} is "workload"
+        Example: /api/oam/workload => Here {type} is "workload"
       tags:
       - PatternsAPI
       summary: Handles GET requests for list of OAM objects
@@ -315,7 +315,7 @@ paths:
         Adding a workloads/traits/scopes by given type in the URL
 
         {type} being of either trait, scope, workload; registration of adapter capabilities.
-        Example: /api/experimental/oam/workload => Here {type} is "workload"
+        Example: /api/oam/workload => Here {type} is "workload"
       tags:
       - PatternsAPI
       summary: Handles POST requests for adding OAM objects
