@@ -37,7 +37,10 @@ jobs:
         with:
           images: meshery/meshery-docker-desktop-extension
         tags: |
-          prefix=${{env.RELEASE_CHANNEL}}
+          type=sha,prefix=${{env.RELEASE_CHANNEL}}
+          type=ref,event=tag,prefix=${{env.RELEASE_CHANNEL}}
+          type=raw,value=${{env.RELEASE_CHANNEL}}-latest
+
       -
         name: Login to DockerHub
         uses: docker/login-action@v1 
@@ -53,9 +56,7 @@ jobs:
         with:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
-          tags: |
-            ${{env.RELEASE_CHANNEL}}-latest
-            ${{env.RELEASE_CHANNEL}}-${{GITHUB_SHA::8}}
+          tags: ${{ steps.meta.outputs.tags }}
       - 
         name: (Stable) Build and Push 
         if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
@@ -65,10 +66,7 @@ jobs:
         with:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
-          tags: |
-            ${{env.RELEASE_CHANNEL}}-latest
-            ${{env.RELEASE_CHANNEL}}-${{GITHUB_SHA::8}}
-            ${{env.RELEASE_CHANNEL}}-${{GITHUB_REF/refs\/tags\//}}
+          tags: ${{ steps.meta.outputs.tags }}
 
 
 
