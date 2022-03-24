@@ -1,6 +1,8 @@
-name: Meshery Build and Push Docker Extension
+name: Docker Desktop Extension for Meshery
+  # TODO 
+  ##   1) Incorporate mesheryctl binaries into each DDE image
+
 on:
-  # TODO :- Figure out a policy to build and push extension image to DockerHub
   push:
     branches:
       - 'master'
@@ -9,69 +11,40 @@ on:
       - '.github/**'
   workflow_dispatch:
 
-
 jobs:
-  edge-build:
-    name: Docker build and push (edge release)
-    if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/') != true && success()
-    env:
-      RELEASE_CHANNEL: "edge"
+  build-push:
+    name: Release Docker Desktop Extension for Meshery
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Delete default files present at project root
-        run: |
-          rm Dockerfile
-          rm .dockerignore
-      - name: Move files from ./install/docker-desktop-extension to project root
-        run: |
-          mv ./install/docker-desktop-extension/* ./
-      - name: Docker login
+      # Log into Docker Hub
+      - name: Docker Hub Login
         uses: azure/docker-login@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Docker edge build & tag
-        run: |
-          DOCKER_BUILDKIT=1 docker build --no-cache -t meshery/meshery-docker-desktop-extension:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="edge-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-          docker tag meshery/meshery-docker-desktop-extension:edge-latest meshery/meshery-docker-desktop-extension:edge-${GITHUB_SHA::8}
-      - name: Docker edge push
-        run: |
-          docker push meshery/meshery-docker-desktop-extension:edge-latest
-          docker push meshery/meshery-docker-desktop-extension:edge-${GITHUB_SHA::8}
-  stable-build:
-    name: Docker build and push (stable release)
-    if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
-    env:
-      RELEASE_CHANNEL: "stable"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Delete default files present at project root
-        run: |
-          rm Dockerfile
-          rm .dockerignore
-      - name: Move files from ./install/docker-desktop-extension to project root
-        run: |
-          mv ./install/docker-desktop-extension/* ./
-      - name: Docker login
-        uses: azure/docker-login@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Docker stable build & tag
-        run: |
-          DOCKER_BUILDKIT=1 docker build --no-cache -t meshery/meshery-docker-desktop-extension:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="stable-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-          docker tag meshery/meshery-docker-desktop-extension:stable-latest meshery/meshery-docker-desktop-extension:stable-${GITHUB_SHA::8}
-      - name: Docker stable push
-        run: |
-          docker push meshery/meshery-docker-desktop-extension:stable-latest
-          docker push meshery/meshery-docker-desktop-extension:stable-${GITHUB_SHA::8}
 
+      # Edge release channel
+      - name: (Edge) Docker Desktop Extension - Build and Tag
+        if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/') != true && success()
+        env:
+          RELEASE_CHANNEL: "edge"
+        run: |
+          DOCKER_BUILDKIT=1 docker build --no-cache -t meshery/meshery-docker-desktop-extension:${RELEASE_CHANNEL}-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="${RELEASE_CHANNEL}-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          docker tag meshery/meshery-docker-desktop-extension:${RELEASE_CHANNEL}-latest meshery/meshery-docker-desktop-extension:edge-${GITHUB_SHA::8}
 
+      # Stable release channel
+      - name: (Stable) Docker Desktop Extension - Build and Tag
+        if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        env:
+          RELEASE_CHANNEL: "stable"
+      - name: Build and Tag Docker Desktop Extension
+        run: |
+          DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:${RELEASE_CHANNEL}-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          docker tag ${{ secrets.IMAGE_NAME }}:${RELEASE_CHANNEL}-latest ${{ secrets.IMAGE_NAME }}:${RELEASE_CHANNEL}-${GITHUB_REF/refs\/tags\//}
+          docker tag ${{ secrets.IMAGE_NAME }}:${RELEASE_CHANNEL}-latest ${{ secrets.IMAGE_NAME }}:${RELEASE_CHANNEL}-${GITHUB_SHA::8}        
+
+      # Push image for either release channel
+      - name: Push Docker Desktop Extension for Meshery to Docker Hub
+        run: |
+          docker push meshery/meshery-docker-desktop-extension:${RELEASE_CHANNEL}-latest
+          docker push meshery/meshery-docker-desktop-extension:${RELEASE_CHANNEL}-${GITHUB_SHA::8}
