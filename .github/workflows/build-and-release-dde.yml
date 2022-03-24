@@ -24,6 +24,7 @@ jobs:
           else
               echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV
           fi
+          echo "Release channel determined to be $RELEASE_CHANNEL"
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
