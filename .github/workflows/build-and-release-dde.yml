@@ -44,7 +44,7 @@ jobs:
           push: true
           tags: |
             ${{env.RELEASE_CHANNEL}}-latest
-            ${{env.RELEASE_CHANNEL}}-${GITHUB_SHA::8}
+            ${{env.RELEASE_CHANNEL}}-${{GITHUB_SHA::8}}
       - 
         name: (Stable) Build and Push 
         if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
@@ -56,8 +56,8 @@ jobs:
           push: true
           tags: |
             ${{env.RELEASE_CHANNEL}}-latest
-            ${{env.RELEASE_CHANNEL}}-${GITHUB_SHA::8}
-            ${{env.RELEASE_CHANNEL}}-${GITHUB_REF/refs\/tags\//}
+            ${{env.RELEASE_CHANNEL}}-${{GITHUB_SHA::8}}
+            ${{env.RELEASE_CHANNEL}}-${{GITHUB_REF/refs\/tags\//}}
 
 
 
