@@ -105,7 +105,7 @@
     "babel-eslint": "^10.1.0",
     "cypress": "^9.2.0",
     "cypress-file-upload": "^5.0.8",
-    "eslint": "^7.31.0",
+    "eslint": "^8.11.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-cypress": "^2.12.1",
