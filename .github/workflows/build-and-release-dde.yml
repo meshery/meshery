@@ -36,10 +36,10 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: meshery/meshery-docker-desktop-extension
-        tags: |
-          type=sha,prefix=${{env.RELEASE_CHANNEL}}
-          type=ref,event=tag,prefix=${{env.RELEASE_CHANNEL}}
-          type=raw,value=${{env.RELEASE_CHANNEL}}-latest
+          tags: |
+            type=sha,prefix=${{env.RELEASE_CHANNEL}}
+            type=ref,event=tag,prefix=${{env.RELEASE_CHANNEL}}
+            type=raw,value=${{env.RELEASE_CHANNEL}}-latest
 
       -
         name: Login to DockerHub
