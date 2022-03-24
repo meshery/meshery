@@ -21,7 +21,7 @@ const CustomInputField = (props) => {
       <TextField
         InputLabelProps={{ style : { pointerEvents : "auto", padding : "2px" } }}
         variant="outlined"
-        size="small" autoFocus
+        size="small"
         key={props.id}
         value={props.value}
         id={props.id}
