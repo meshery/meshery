@@ -43,8 +43,8 @@ jobs:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
           tags: |
-            ${RELEASE_CHANNEL}-latest
-            ${RELEASE_CHANNEL}-{{sha}}
+            ${{env.RELEASE_CHANNEL}}-latest
+            ${{env.RELEASE_CHANNEL}}-{{sha}}
       - 
         name: (Stable) Build and Push 
         if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
@@ -55,9 +55,9 @@ jobs:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
           tags: |
-            ${RELEASE_CHANNEL}-latest
-            ${RELEASE_CHANNEL}-{{sha}}
-            ${RELEASE_CHANNEL}-{{tag}}
+            ${{env.RELEASE_CHANNEL}}-latest
+            ${{env.RELEASE_CHANNEL}}-{{sha}}
+            ${{env.RELEASE_CHANNEL}}-{{tag}}
 
 
 
