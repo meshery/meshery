@@ -14,8 +14,6 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
-    env:
-      IMAGE_NAME: "meshery/meshery-docker-desktop-extension"
     steps:
       -
         name: Set up QEMU
@@ -37,7 +35,7 @@ jobs:
           build-contexts: dde=/install/docker-desktop-extension
           push: true
           tags: |
-            ${IMAGE_NAME}:latest
+            meshery/meshery-docker-desktop-extension:latest
 
 
 
