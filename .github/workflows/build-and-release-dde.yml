@@ -16,6 +16,10 @@ jobs:
     name: Release Docker Desktop Extension for Meshery
     runs-on: ubuntu-latest
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       # Log into Docker Hub
       - name: Docker Hub Login
         uses: azure/docker-login@v1
