@@ -51,26 +51,34 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
       - 
-        name: (Edge) Build and Push 
-        if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/') != true && success()
-        env: 
-          RELEASE_CHANNEL: "edge"
+        name: Build and Push 
         uses: docker/build-push-action@v2
         with:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-      - 
-        name: (Stable) Build and Push 
-        if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
-        env: 
-          RELEASE_CHANNEL: "stable"
-        uses: docker/build-push-action@v2
-        with:
-          context: "{{defaultContext}}:install/docker-desktop-extension"
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}          
+      # - 
+      #   name: (Edge) Build and Push 
+      #   if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/') != true && success()
+      #   env: 
+      #     RELEASE_CHANNEL: "edge"
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: "{{defaultContext}}:install/docker-desktop-extension"
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
+      # - 
+      #   name: (Stable) Build and Push 
+      #   if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      #   env: 
+      #     RELEASE_CHANNEL: "stable"
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: "{{defaultContext}}:install/docker-desktop-extension"
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
 
 
 

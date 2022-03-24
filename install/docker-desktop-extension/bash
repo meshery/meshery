@@ -1,0 +1,4 @@
+#!/bin/bash
+n="refs/tags/v1.2.3"
+[[ $n = refs/tags* ]] && echo "yes" || echo "no"
+
