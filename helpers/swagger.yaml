@@ -4039,35 +4039,6 @@ paths:
       summary: Handle POST request for Application File Deploy
       tags:
       - ApplicationsAPI
-  /api/oam/{type}:
-    get:
-      deprecated: true
-      description: |-
-        Returns a list of workloads/traits/scopes by given type in the URL
-
-        {type} being of either trait, scope, workload; registration of adapter capabilities.
-        Example: /api/oam/workload => Here {type} is "workload"
-      operationId: idGetOAMRegister
-      responses:
-        "200":
-          description: ""
-      summary: Handles GET requests for list of OAM objects
-      tags:
-      - PatternsAPI
-    post:
-      deprecated: true
-      description: |-
-        Adding a workloads/traits/scopes by given type in the URL
-
-        {type} being of either trait, scope, workload; registration of adapter capabilities.
-        Example: /api/oam/workload => Here {type} is "workload"
-      operationId: idPostOAMRegister
-      responses:
-        "200":
-          description: ""
-      summary: Handles POST requests for adding OAM objects
-      tags:
-      - PatternsAPI
   /api/filter:
     get:
       description: Returns all the Meshery Filters saved by the current user
