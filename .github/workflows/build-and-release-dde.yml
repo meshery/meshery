@@ -39,7 +39,7 @@ jobs:
           images: meshery/meshery-docker-desktop-extension
           flavor: |
             latest=false
-            prefix="${{env.RELEASE_CHANNEL}}-"
+            prefix=${{env.RELEASE_CHANNEL}}-
           tags: |
             type=sha
             type=ref,event=tag
