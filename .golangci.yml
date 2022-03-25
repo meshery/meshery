@@ -1,5 +1,3 @@
-run:
-  go: '1.18'
 linters-settings:
   depguard:
     list-type: blacklist
@@ -113,7 +111,7 @@ linters:
     - staticcheck
     # - structcheck
     - stylecheck
-    # - typecheck
+    - typecheck
     # - unconvert
     # - unparam
     # - unused
