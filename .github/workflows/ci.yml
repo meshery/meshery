@@ -28,6 +28,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3.0.0
       - uses: actions/setup-go@v2
+        with: 
+          check-latest: 'true'
+          go-version: '1.17'
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3.1.0
         with:
