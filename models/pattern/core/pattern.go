@@ -239,7 +239,9 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		childSvc := eleToSvc[child]
 		if childSvc != "" {
 			for _, parent := range parents {
-				pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
+				if eleToSvc[parent] != "" {
+					pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
+				}
 			}
 		}
 	}
