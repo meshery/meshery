@@ -199,6 +199,9 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 		"meshery-istio": map[string]interface{}{
 			"enabled": false,
 		},
+		"meshery-cilium": map[string]interface{}{
+			"enabled": false,
+		},
 		"meshery-linkerd": map[string]interface{}{
 			"enabled": false,
 		},
