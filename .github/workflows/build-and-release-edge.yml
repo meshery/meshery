@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - 'docs/**'
       - '.github/**'
+      - 'install/**'
 jobs:
   build:
     name: Docker build and push
