@@ -1,5 +1,5 @@
 run:
-  go: '1.17'
+  go: '1.18'
 linters-settings:
   depguard:
     list-type: blacklist
