@@ -389,7 +389,7 @@ const categories = [
     disabled : true,
     href : "#",
     title : "Configuration",
-    show : false,
+    show : true,
     link : true,
     children : [
       {
@@ -1093,8 +1093,7 @@ class Navigator extends React.Component {
                   path === href && classes.itemActiveItem
                 )}
                 onClick={() => this.toggleItemCollapse(childId)}
-                onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
-                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }) : null}
+
               >
                 <Link href={link
                   ? href
