@@ -42,7 +42,11 @@ linters-settings:
     settings:
       mnd:
         # don't include the "operation" and "assign"
-        checks: argument,case,condition,return
+        checks: 
+          - argument
+          - case
+          - condition
+          - return
   gosec:
     settings:
       exclude: -G204
@@ -107,7 +111,7 @@ linters:
     - staticcheck
     # - structcheck
     - stylecheck
-    - typecheck
+    # - typecheck
     # - unconvert
     # - unparam
     # - unused
