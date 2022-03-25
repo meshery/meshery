@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect } from "react";
 
 import { utils } from "@rjsf/core";
 
@@ -10,10 +10,24 @@ import Paper from "@material-ui/core/Paper";
 import { Button, IconButton, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
-import CustomDescriptionField from "./DescriptionField";
 import EnlargedTextTooltip from "../EnlargedTextTooltip";
 import HelpOutlineIcon from "../HelpOutlineIcon";
 const { isMultiSelect, getDefaultRegistry } = utils;
+
+function getTitleForItem(props) {
+  const title = getTitle(props);
+  if (title.endsWith("s")) {
+    return title.substring(0, title.length - 1);
+  }
+  return title;
+}
+
+function getTitle(props) {
+  if (!props) {
+    return "Unknown"
+  }
+  return props.uiSchema["ui:title"] || props.title
+}
 
 const ArrayFieldTemplate = (props) => {
   const { schema, registry = getDefaultRegistry() } = props;
@@ -55,8 +69,9 @@ const DefaultArrayItem = (props) => {
     fontWeight : "bold",
     minWidth : 0
   };
+
   return (
-    <SimpleAccordion childProps={props}>
+    <SimpleAccordion heading={props.heading} childProps={props}>
       <Grid container={true} key={props.key} alignItems="center">
         <Grid item={true} xs >
           <Box mb={2} style={{ border : "0.5px solid black" }}>
@@ -106,7 +121,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         key={`array-field-title-${props.idSchema.$id}`}
         TitleField={props.TitleField}
         idSchema={props.idSchema}
-        title={props.uiSchema["ui:title"] || props.title}
+        title={getTitle(props)}
         required={props.required}
       />
 
@@ -123,7 +138,9 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         className="row array-item-list"
         key={`array-item-list-${props.idSchema.$id}`}
       >
-        {props.items && props.items.map(DefaultArrayItem)}
+        {props.items && props.items.map((item, idx) => {
+          return <DefaultArrayItem heading={`${getTitleForItem(props)} (${idx})`} {...item} />
+        })}
       </div>
 
       {props.canAdd && (
@@ -149,7 +166,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               key={`array-field-title-${props.idSchema.$id}`}
               TitleField={props.TitleField}
               idSchema={props.idSchema}
-              title={props.uiSchema["ui:title"] || props.title}
+              title={getTitle(props)}
               required={props.required}
             />
 
@@ -192,7 +209,9 @@ const DefaultNormalArrayFieldTemplate = (props) => {
         )} */}
 
         <Grid container={true} key={`array-item-list-${props.idSchema.$id}`}>
-          {props.items && props.items.map((p) => DefaultArrayItem(p))}
+          {props.items && props.items.map((item, idx) => {
+            return <DefaultArrayItem heading={`${getTitleForItem(props)} (${idx})`} {...item} />
+          })}
 
 
         </Grid>

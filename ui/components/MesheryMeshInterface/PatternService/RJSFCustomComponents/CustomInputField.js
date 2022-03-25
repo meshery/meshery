@@ -4,12 +4,9 @@ import HelpOutlineIcon from "../HelpOutlineIcon";
 import EnlargedTextTooltip from "../EnlargedTextTooltip";
 import { formatString } from "../../helpers"
 
-// The special input fields
-export const omitTitleFields = ["name", "namespace"]
-
 const CustomInputField = (props) => {
-  const name = props?.name || props?.idSchema['$id']?.split('_')[1].trim()
-  const prettifiedName = formatString(name) || 'Input'
+  const name = props.label // || props.id?.split('_')[-1].trim()
+  const prettifiedName = formatString(name) || 'Enter a value'
   const style = {
     display : "flex",
     alignItems : "center",
@@ -19,7 +16,6 @@ const CustomInputField = (props) => {
   return (
     <div key={props.id} style={style}>
       <TextField
-        InputLabelProps={{ style : { pointerEvents : "auto", padding : "2px" } }}
         variant="outlined"
         size="small"
         key={props.id}
@@ -41,6 +37,4 @@ const CustomInputField = (props) => {
   )
 }
 
-const MemoizedCustomInputField = React.memo(CustomInputField)
-
-export default MemoizedCustomInputField;
+export default CustomInputField;
