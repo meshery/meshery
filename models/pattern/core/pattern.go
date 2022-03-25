@@ -225,7 +225,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		//set appropriate unique service name
 		nameFromSettings, ok := svc.Settings["name"].(string)
 		if ok {
-			svc.Name = nameFromSettings
+			svc.Name = strings.ToLower(nameFromSettings)
 		}
 
 		svc.Name += "-" + getRandomAlphabetsOfDigit(5)
