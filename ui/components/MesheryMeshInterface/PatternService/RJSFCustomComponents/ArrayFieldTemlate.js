@@ -16,9 +16,15 @@ const { isMultiSelect, getDefaultRegistry } = utils;
 
 function getTitleForItem(props) {
   const title = getTitle(props);
+
+  // remove plurals
+  if (title.endsWith("es")) {
+    return title.substring(0, title.length - 2);
+  }
   if (title.endsWith("s")) {
     return title.substring(0, title.length - 1);
   }
+
   return title;
 }
 
@@ -139,7 +145,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         key={`array-item-list-${props.idSchema.$id}`}
       >
         {props.items && props.items.map((item, idx) => {
-          return <DefaultArrayItem heading={`${getTitleForItem(props)} (${idx})`} {...item} />
+          return <DefaultArrayItem key={`${getTitle(props)}-${idx}`} heading={`${getTitleForItem(props)} (${idx})`} {...item} />
         })}
       </div>
 
@@ -210,7 +216,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
 
         <Grid container={true} key={`array-item-list-${props.idSchema.$id}`}>
           {props.items && props.items.map((item, idx) => {
-            return <DefaultArrayItem heading={`${getTitleForItem(props)} (${idx})`} {...item} />
+            return <DefaultArrayItem key={`${getTitle(props)}-${idx}`} heading={`${getTitleForItem(props)} (${idx})`} {...item} />
           })}
 
 

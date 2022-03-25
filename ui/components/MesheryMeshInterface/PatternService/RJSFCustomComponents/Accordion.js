@@ -68,6 +68,7 @@ export default function SimpleAccordion(props) {
   const accordionDetailsRef = React.useRef(null);
 
   useEffect(() => {
+    // for managing focus
     if (accordionDetailsRef.current) {
       accordionDetailsRef.current.scrollIntoView({
         behavior : "smooth",
@@ -87,7 +88,7 @@ export default function SimpleAccordion(props) {
           style={{ backgroundColor : "F7F7F7" }}
         >
 
-          <Typography className={classes.heading}>{props.heading || "kutta"}</Typography>
+          <Typography className={classes.heading}>{props.heading}</Typography>
 
           {props.childProps.hasRemove && (
 
