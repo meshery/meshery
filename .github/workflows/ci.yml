@@ -38,7 +38,7 @@ jobs:
           # working-directory: somedir
 
           # Optional: golangci-lint command line arguments.
-          args: -D typecheck
+          args: --disable-all -E revive -E gosec -E errcheck -E nilerr -E govet -E gofmt -E goimports -E staticcheck
 
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true
