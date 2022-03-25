@@ -114,6 +114,18 @@ func (r *queryResolver) FetchPatterns(ctx context.Context, selector model.PageFi
 	return r.fetchPatterns(ctx, provider, selector)
 }
 
+func (r *queryResolver) GetWorkloads(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error) {
+	return r.getWorkloads(ctx, name, id, trim)
+}
+
+func (r *queryResolver) GetTraits(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error) {
+	return r.getTraits(ctx, name, id, trim)
+}
+
+func (r *queryResolver) GetScopes(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error) {
+	return r.getScopes(ctx, name, id, trim)
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if selector != nil {
