@@ -26,7 +26,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	controllerConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
@@ -40,8 +39,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	apiextension "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var (
@@ -420,28 +417,4 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		DryRun:           dryRun,
 	})
-}
-
-// getCRDStatus returns if CRDs are running and available
-func getCRDStatus() (bool, error) {
-	const (
-		brokerCRDName   = "brokers.meshery.layer5.io"
-		meshsyncCRDName = "meshsyncs.meshery.layer5.io"
-	)
-	cfg := controllerConfig.GetConfigOrDie()
-	client, err := apiextension.NewForConfig(cfg)
-	if err != nil {
-		return false, err
-	}
-
-	_, err = client.ApiextensionsV1().CustomResourceDefinitions().Get(context.TODO(), meshsyncCRDName, metav1.GetOptions{})
-	if err != nil {
-		return false, err
-	}
-	_, err = client.ApiextensionsV1().CustomResourceDefinitions().Get(context.TODO(), brokerCRDName, metav1.GetOptions{})
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
 }
