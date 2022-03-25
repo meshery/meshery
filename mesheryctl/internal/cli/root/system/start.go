@@ -389,11 +389,6 @@ func init() {
 
 // Apply Meshery helm charts
 func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool) error {
-	// var act meshkitkube.HelmChartAction = meshkitkube.INSTALL
-	// ok, _ := utils.AreMesheryComponentsRunning(currContext)
-	// if ok {
-	// 	act = meshkitkube.UPGRADE
-	// }
 	// get value overrides to install the helm chart
 	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
 
