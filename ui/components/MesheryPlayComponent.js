@@ -9,6 +9,8 @@ import PropTypes from "prop-types";
 import { withRouter } from "next/router";
 import SettingsIcon from "@material-ui/icons/Settings";
 import MesheryAdapterPlayComponent from "./MesheryAdapterPlayComponent";
+import { bindActionCreators } from "redux";
+import { setAdapter } from "../lib/store";
 
 const styles = (theme) => ({
   icon : { fontSize : 20, },
@@ -120,10 +122,12 @@ class MesheryPlayComponent extends React.Component {
     const self = this;
     return (event) => {
       const { meshAdapters } = self.state;
+      const { setAdapter, } = self.props;
       if (event.target.value !== "") {
         const selectedAdapter = meshAdapters.filter(({ adapter_location }) => adapter_location === event.target.value);
         if (typeof selectedAdapter !== "undefined" && selectedAdapter.length === 1) {
           self.setState({ adapter : selectedAdapter[0] });
+          setAdapter({ selectedAdapter : selectedAdapter[0].name });
         }
       }
     };
@@ -232,7 +236,9 @@ class MesheryPlayComponent extends React.Component {
 
 MesheryPlayComponent.propTypes = { classes : PropTypes.object.isRequired, };
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = (dispatch) => ({
+  setAdapter : bindActionCreators(setAdapter, dispatch)
+});
 
 const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig").toJS();
