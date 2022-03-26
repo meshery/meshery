@@ -71,13 +71,20 @@ class MesheryPlayComponent extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    let { meshAdapters, meshAdaptersts, k8sconfig } = props;
+    let { meshAdapters, meshAdaptersts, k8sconfig, selectedAdapter } = props;
+    let adapter  = state.adapter;
+    let aName = selectedAdapter.toLowerCase()
+    if (meshAdapters && meshAdapters.length > 0) {
+      adapter = meshAdapters.filter((meshadapters) => {
+        return aName ===  meshadapters.name.toLowerCase()
+      });
+    }
     const st = {};
     if (meshAdaptersts > state.mts) {
       st.meshAdapters = meshAdapters;
       st.mts = meshAdaptersts;
       if (meshAdapters && meshAdapters.length > 0) {
-        st.adapter = meshAdapters[0];
+        st.adapter = adapter[0];
       }
     }
     if (k8sconfig.ts > state.kts) {
@@ -88,7 +95,9 @@ class MesheryPlayComponent extends React.Component {
       st.configuredServer = k8sconfig.configuredServer;
       st.kts = props.ts;
     }
-
+    if (adapter.length > 0) {
+      st.adapter = adapter[0];
+    }
     return st;
   }
 
@@ -229,7 +238,8 @@ const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig").toJS();
   const meshAdapters = state.get("meshAdapters").toJS();
   const meshAdaptersts = state.get("meshAdaptersts");
-  return { k8sconfig, meshAdapters, meshAdaptersts };
+  const selectedAdapter = state.get("selectedAdapter");
+  return { k8sconfig, meshAdapters, meshAdaptersts, selectedAdapter };
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(MesheryPlayComponent)));
