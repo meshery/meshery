@@ -1249,18 +1249,23 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Chevron = (
-      <div className={classname} style={{ display : "flex", justifyContent : "center" }}>
+      <div id="slideButton" className={classname} style={{ display : "flex", justifyContent : "center" }}>
         <FontAwesomeIcon
           icon={faAngleLeft}
           fixedWidth
           size="1.5x"
           style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
           alt="Sidebar collapse toggle icon"
-          onClick={this.toggleMiniDrawer}
         />
+
       </div>
 
     )
+    var SlideButton = document.getElementById('slideButton');
+    if (SlideButton){
+      SlideButton.addEventListener('click', this.toggleMiniDrawer);
+    }
+
     return (
       <NoSsr>
         <Drawer
@@ -1307,5 +1312,8 @@ const mapStateToProps = (state) => {
   const isDrawerCollapsed = state.get("isDrawerCollapsed")
   return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed };
 };
+
+
+
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator)));
