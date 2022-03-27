@@ -203,7 +203,9 @@ function K8sContextMenu({
           ? 'menu-list-grow'
           : undefined}
         aria-haspopup="true"
-        style={{ marginRight : "0.5rem" }}
+        style={{ marginRight : "0.7rem",
+          marginTop : "3px"
+        }}
       >
         <div className={classes.cbadgeContainer}>
           <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
