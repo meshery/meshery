@@ -161,7 +161,7 @@ func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
 	// Set up the nodes
 	for name, svc := range p.Services {
 		elemData := cytoscapejs.ElemData{
-			ID: getCytoscapeElementId(name, svc),
+			ID: getCytoscapeElementID(name, svc),
 		}
 
 		elemPosition, err := getCytoscapeJSPosition(svc)
@@ -481,8 +481,8 @@ func coreK8sAPIVersions() []string {
 	return []string{"v1", "apps/v1", "apps/v1beta1"}
 }
 
-// getCytoscapeElementId returns the element id for a given service
-func getCytoscapeElementId(name string, svc *Service) string {
+// getCytoscapeElementID returns the element id for a given service
+func getCytoscapeElementID(name string, svc *Service) string {
 	mpi, ok := svc.Traits["meshmap"] // check if service has meshmap as trait
 	if !ok {
 		return name // Assuming that the service names are unique
@@ -494,13 +494,13 @@ func getCytoscapeElementId(name string, svc *Service) string {
 		return name // Assuming that the service names are unique
 	}
 
-	mpId, ok := mpStrInterface["id"].(string)
+	mpID, ok := mpStrInterface["id"].(string)
 	if !ok {
 		logrus.Debugf("Meshmap id not present in Meshmap interface")
 		return name // Assuming that the service names are unique
 	}
 
-	return mpId
+	return mpID
 }
 
 func getCytoscapeJSPosition(svc *Service) (cytoscapejs.Position, error) {

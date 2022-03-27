@@ -143,12 +143,12 @@ func GetCurrentAuthToken() (string, error) {
 func AddAuthDetails(req *http.Request, filepath string) error {
 	file, err := os.ReadFile(filepath)
 	if err != nil {
-		err = errors.Wrap(err, "could not read token:")
+		err = errors.Wrap(err, "could not read token: ")
 		return err
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid:")
+		err = errors.Wrap(err, "token file invalid: ")
 		return err
 	}
 	req.AddCookie(&http.Cookie{
@@ -174,7 +174,7 @@ func UpdateAuthDetails(filepath string) error {
 	// TODO: get this from the global config
 	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/token", bytes.NewBuffer([]byte("")))
 	if err != nil {
-		err = errors.Wrap(err, "error Creating the request :")
+		err = errors.Wrap(err, "error Creating the request: ")
 		return err
 	}
 	if err := AddAuthDetails(req, filepath); err != nil {
