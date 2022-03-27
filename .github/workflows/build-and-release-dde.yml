@@ -4,6 +4,8 @@ name: Docker Desktop Extension for Meshery
 
 on:
   push:
+    tags:
+      - 'v*'  
     branches:
       - 'master'
     paths-ignore:
