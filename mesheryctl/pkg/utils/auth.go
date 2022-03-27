@@ -186,13 +186,13 @@ func UpdateAuthDetails(filepath string) error {
 	defer SafeClose(resp.Body)
 
 	if err != nil {
-		err = errors.Wrap(err, "error dispatching there request :")
+		err = errors.Wrap(err, "error dispatching there request: ")
 		return err
 	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		err = errors.Wrap(err, "error reading body :")
+		err = errors.Wrap(err, "error reading body: ")
 		return err
 	}
 
@@ -207,12 +207,12 @@ func UpdateAuthDetails(filepath string) error {
 func ReadToken(filepath string) (map[string]string, error) {
 	file, err := os.ReadFile(filepath)
 	if err != nil {
-		err = errors.Wrap(err, "could not read token:")
+		err = errors.Wrap(err, "could not read token: ")
 		return nil, err
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid:")
+		err = errors.Wrap(err, "token file invalid: ")
 		return nil, err
 	}
 	return tokenObj, nil
