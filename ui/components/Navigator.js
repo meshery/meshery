@@ -32,7 +32,7 @@ import { faAngleLeft,faCaretDown,
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { updatepagetitle, updatebetabadge, toggleDrawer } from "../lib/store";
+import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
@@ -318,7 +318,7 @@ const categories = [
         show : true,
       },
       {
-        id : "Cilium",
+        id : "Cilium_Service_Mesh",
         href : "/management/cilium",
         title : "Cilium",
         link : true,
@@ -747,10 +747,6 @@ class Navigator extends React.Component {
     category = category.toLowerCase();
     meshAdapters.forEach((adapter) => {
       let aName = adapter.name.toLowerCase();
-      // Manually changing adapter name so that it matches the internal name
-      if (aName === "osm") aName = "open service mesh";
-      if (aName === "cilium") aName = "cilium service mesh";
-      if (aName === "nginx") aName = "nginx service mesh";
       if (category !== aName) {
         return;
       }
@@ -797,6 +793,8 @@ class Navigator extends React.Component {
    * Changes the route to "/management"
    */
   handleAdapterClick(id, link) {
+    const { setAdapter } = this.props;
+    setAdapter({ selectedAdapter : id });
     if (id != -1 && !link) {
       this.props.router.push("/management");
     }
@@ -1298,6 +1296,7 @@ const mapDispatchToProps = (dispatch) => ({
   updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
   updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
   toggleDrawer : bindActionCreators(toggleDrawer, dispatch),
+  setAdapter : bindActionCreators(setAdapter, dispatch),
 });
 
 const mapStateToProps = (state) => {
