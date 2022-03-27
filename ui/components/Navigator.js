@@ -1249,7 +1249,9 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Chevron = (
-      <div id="slideButton" className={classname} style={{ display : "flex", justifyContent : "center" }}>
+      <div  className={classname} style={{ display : "flex", justifyContent : "center" }}
+        onClick ={this.toggleMiniDrawer}
+      >
         <FontAwesomeIcon
           icon={faAngleLeft}
           fixedWidth
@@ -1261,10 +1263,8 @@ class Navigator extends React.Component {
       </div>
 
     )
-    var SlideButton = document.getElementById('slideButton');
-    if (SlideButton){
-      SlideButton.addEventListener('click', this.toggleMiniDrawer);
-    }
+
+
 
     return (
       <NoSsr>
