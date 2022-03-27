@@ -29,7 +29,7 @@ Meshery is a Cloud Native Computing Foundation project.
 
 # Docker Desktop Extension for Meshery
 
-The ocker Desktop Extension for Meshery extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure: service meshes. Service mesh or not, though, Meshery offers a visual topology for designing Docker-Compose applications, operating Kubernetes, service meshes, and their workloads. Meshery brings deep support of 10 different service meshes to the fingertips of Docker Desktop developers in connection with Docker Desktop’s ability to deliver Kubernetes locally.
+The Docker Desktop Extension for Meshery extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure: service meshes. Service mesh or not, though, Meshery offers a visual topology for designing Docker-Compose applications, operating Kubernetes, service meshes, and their workloads. Meshery brings deep support of 10 different service meshes to the fingertips of Docker Desktop developers in connection with Docker Desktop’s ability to deliver Kubernetes locally.
 
 <h2><a name="running"></a>Get Started with Docker Desktop Extension for Meshery</h2>
 <p style="clear:both;">
