@@ -59,6 +59,7 @@ const initialState = fromJS({
   anonymousPerfResults : true,
   showProgress : false,
   isDrawerCollapsed: false,
+  selectedAdapter : '',
 });
 
 export const actionTypes = {
@@ -81,6 +82,7 @@ export const actionTypes = {
   UPDATE_ANONYMOUS_PERFORMANCE_RESULTS : 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
   UPDATE_PROGRESS : 'UPDATE_PROGRESS',
   TOOGLE_DRAWER : 'TOOGLE_DRAWER',
+  SET_ADAPTER : 'SET_ADAPTER',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
 };
 
@@ -170,6 +172,8 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.TOOGLE_DRAWER:
       return state.mergeDeep({ isDrawerCollapsed : action.isDrawerCollapsed });
 
+    case actionTypes.SET_ADAPTER:
+      return state.mergeDeep({ selectedAdapter : action.selectedAdapter });   
       // case actionTypes.UPDATE_SMI_RESULT:
       //   console.log(`received an action to update smi result`,action.smi_result);
       //   if(action.smi_result!==undefined)
@@ -253,6 +257,10 @@ export const updateStaticPrometheusBoardConfig = ({ staticPrometheusBoardConfig 
 
 export const toggleDrawer = ({isDrawerCollapsed}) => dispatch => {
   return dispatch({ type : actionTypes.TOOGLE_DRAWER, isDrawerCollapsed });
+}
+
+export const setAdapter = ({selectedAdapter}) => dispatch => {
+  return dispatch({ type : actionTypes.SET_ADAPTER, selectedAdapter });
 }
 // export const updateSMIResults = ({smi_result}) => dispatch => {
 //   console.log("invoking the updateSMIResults action creator. . .",smi_result);

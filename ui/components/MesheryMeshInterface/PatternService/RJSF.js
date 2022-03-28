@@ -7,9 +7,9 @@ import { rjsfTheme } from "../../../themes";
 import handleError from '../../ErrorHandling';
 import { buildUiSchema } from "../helpers";
 import { getRefinedJsonSchema } from "./helper";
-import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
-import MemoizedCustomInputField from "./RJSFCustomComponents/CustomInputField";
-import CustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
+import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
+import CustomInputField from "./RJSFCustomComponents/CustomInputField";
+import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 
 const Form = withTheme(MaterialUITheme);
 
@@ -34,11 +34,6 @@ function RJSF(props) {
 
   const errorHandler = handleError();
 
-  // define new string field
-  const fields = {
-    StringField : ({ idSchema, formData, ...props }) => <MemoizedCustomInputField id={idSchema['$id']} value={formData} idSchema={idSchema} {...props} />
-  }
-
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
   const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
 
@@ -58,33 +53,64 @@ function RJSF(props) {
   }, [jsonSchema]) // to reduce heavy lifting on every react render
 
   return (
-    <RJSFWrapperComponent {...{ ...props, RJSFWrapperComponent : null, RJSFFormChildComponent : null }}>
-      <MuiThemeProvider theme={rjsfTheme}>
-        <Form
-          schema={schema.rjsfSchema}
-          idPrefix={jsonSchema?.title}
-          onChange={(e) => {
-            setData(e.formData)
-          }}
-          formData={data}
-          fields={fields}
-          ArrayFieldTemplate={ArrayFieldTemplate}
-          ObjectFieldTemplate={CustomObjFieldTemplate}
-          additionalMetaSchemas={[JS4]}
-          uiSchema={schema.uiSchema}
-          liveValidate
-          showErrorList={false}
-          noHtml5Validate
-
-        >
-          {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
-        {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
-          {/* <RJSFFormChildComponent /> */}
-          <></> {/* temporary change for functionality */}
-        </Form>
-      </MuiThemeProvider>
+    <RJSFWrapperComponent {...props}>
+      <RJSFForm
+        schema={schema}
+        data={data}
+        onChange={(e) => {
+          setData(e.formData)
+        }}
+        jsonSchema={jsonSchema}
+      />
     </RJSFWrapperComponent>
   );
 }
 
 export default RJSF;
+
+/**
+ * The Custom RJSF Form that accepts custom fields from the extension
+ * or seed it's own default
+ * Adding a new custom component:
+ * 1. Pass the new prop from the Meshery Extension
+ * 2. Extract from props in the RJSFForm Component
+ * @param {*} props
+ * @returns
+ */
+function RJSFForm(props) {
+  const {
+    schema,
+    jsonSchema,
+    data,
+    onChange,
+    ArrayFieldTemplate = MesheryArrayFieldTemplate,
+    ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+  } = props;
+
+  return (
+    <MuiThemeProvider theme={rjsfTheme}>
+      <Form
+        schema={schema.rjsfSchema}
+        idPrefix={jsonSchema?.title}
+        onChange={onChange}
+        formData={data}
+        ArrayFieldTemplate={ArrayFieldTemplate}
+        ObjectFieldTemplate={ObjectFieldTemplate}
+        additionalMetaSchemas={[JS4]}
+        uiSchema={schema.uiSchema}
+        widgets={{
+          TextWidget : CustomInputField
+        }}
+        liveValidate
+        showErrorList={false}
+        noHtml5Validate
+      >
+        {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
+{hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
+        {/* <RJSFFormChildComponent /> */}
+        <></> {/* temporary change for functionality */}
+      </Form>
+
+    </MuiThemeProvider>
+  )
+}

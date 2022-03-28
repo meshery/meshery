@@ -74,8 +74,12 @@ var (
 	ResetFlag bool
 	// SkipResetFlag indicates if fetching the updated manifest files is required
 	SkipResetFlag bool
+	// MesheryDefaultHost is the default host on which Meshery is exposed
+	MesheryDefaultHost = "localhost"
+	// MesheryDefaultPort is the default port on which Meshery is exposed
+	MesheryDefaultPort = 9081
 	// MesheryEndpoint is the default URL in which Meshery is exposed
-	MesheryEndpoint = "http://localhost:9081"
+	MesheryEndpoint = fmt.Sprintf("http://%s:%v", MesheryDefaultHost, MesheryDefaultPort)
 	// MesheryFolder is the default relative location of the meshery config
 	// related configuration files.
 	MesheryFolder = ".meshery"
@@ -134,7 +138,7 @@ var CfgFile string
 // TODO: add "meshery-perf" as a component
 
 // ListOfComponents returns the list of components available
-var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
+var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm", "meshery-cilium"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
@@ -764,6 +768,9 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 	// this matches to the components listed in install/kubernetes/helm/meshery/values.yaml
 	valueOverrides := map[string]interface{}{
 		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cilium": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-linkerd": map[string]interface{}{
