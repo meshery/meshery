@@ -60,4 +60,12 @@ jobs:
         with:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
-          tags: ${{ steps.meta.outputs.tags }}          
+          tags: ${{ steps.meta.outputs.tags }}     
+          
+      - 
+        name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: meshery/meshery-docker-desktop-extension   
