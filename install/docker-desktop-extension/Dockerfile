@@ -18,8 +18,8 @@ WORKDIR /ui
 COPY ui/package.json /ui/package.json
 COPY ui/package-lock.json /ui/package-lock.json
 ARG TARGETARCH
-RUN --mount=type=cache,target=/usr/src/app/.npm \
-    npm set cache /usr/src/app/.npm && \
+RUN --mount=type=cache,target=/usr/src/app/.npm-${TARGETARCH} \
+    npm set cache /usr/src/app/.npm-${TARGETARCH} && \
     npm ci
 # install
 COPY ui /ui
