@@ -84,4 +84,4 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: meshery/meshery-docker-desktop-extension  
-          readme-filepath: install/docker-desktop-extension/README.md 
+          readme-filepath: /install/docker-desktop-extension/README.md 
