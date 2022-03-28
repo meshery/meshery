@@ -82,6 +82,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#7794AB",
     color: "#FFFFFF",
   },
+  link: {
+    textDecoration: "none"
+  },
   Icon: {
     width: theme.spacing(2.5),
     paddingRight: theme.spacing(0.5),
@@ -125,7 +128,7 @@ const ExtensionsComponent = props => {
         <div className={classes.OAuth}>
           <div className={classes.account}>
             <CustomTypography Style="margin-bottom:2rem">Account</CustomTypography>
-            <div><a href="http://localhost:9081"><Button className={classes.mesheryConfig} variant="contained">
+            <div><a className={classes.link} href="http://localhost:9081"><Button className={classes.mesheryConfig} variant="contained">
               Open Meshery
             </Button></a></div>
           </div>
