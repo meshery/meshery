@@ -46,6 +46,7 @@ jobs:
             type=raw,value={{sha}}
             type=raw,value={{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=latest
+            type=semver
 
       -
         name: Login to DockerHub
@@ -61,7 +62,7 @@ jobs:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
           tags: ${{ steps.meta.outputs.tags }}     
-          
+
       - 
         name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v3
