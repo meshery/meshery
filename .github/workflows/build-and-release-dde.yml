@@ -46,7 +46,7 @@ jobs:
             type=raw,value={{sha}}
             type=raw,value={{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=latest
-            type=semver
+            type=semver,pattern={{version}}
 
       -
         name: Login to DockerHub
@@ -61,6 +61,7 @@ jobs:
         with:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}     
 
       - 
