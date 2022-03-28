@@ -56,6 +56,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - 
+        name: Move cache
+        run:
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+      - 
         name: Build and Push 
         uses: docker/build-push-action@v2
         with:
