@@ -39,7 +39,7 @@ The Docker Desktop Extension for Meshery extends Docker Desktop’s position as 
 <p>Navigate to the Extensions area of Docker Desktop.</p>
 
 
-<h3>Using <pre>docker</pre></h3>
+<h3>Using <code>docker</code></h3>
 <p>Meshery runs as a set of containers inside your Docker Desktop virtual machine.</p>
 <pre>docker extension install meshery/meshery-docker-desktop-extension</pre>
 <p>See the <a href="https://docs.meshery.io/installation/quick-start">quick start</a> guide.</p>
