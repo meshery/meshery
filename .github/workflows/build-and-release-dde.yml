@@ -61,6 +61,7 @@ jobs:
         with:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
+          build-args: GIT_VERSION=${GITHUB_REF/refs\/tags\//}
           tags: ${{ steps.meta.outputs.tags }}     
 
       - 
