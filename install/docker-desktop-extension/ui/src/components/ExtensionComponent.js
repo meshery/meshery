@@ -94,7 +94,6 @@ const ExtensionsComponent = props => {
   const [linkerdChecked, isLinkerdChecked] = useState(false);
   const [nginxChecked, isNginxChecked] = useState(false);
   const [kumaChecked, isKumaChecked] = useState(false);
-  const buttonEnabled = usePingServer("/api/providers", { host: "localhost", port: "9081" })
   const classes = useStyles();
 
   // Wrote separate functions since we need these functions to provision the adapters as well
@@ -127,7 +126,7 @@ const ExtensionsComponent = props => {
         <div className={classes.OAuth}>
           <div className={classes.account}>
             <CustomTypography Style="margin-bottom:2rem">Account</CustomTypography>
-            <div><a href="http://localhost:9081"><Button className={classes.mesheryConfig} disabled={!buttonEnabled} variant="contained">
+            <div><a href="http://localhost:9081"><Button className={classes.mesheryConfig} variant="contained">
               Open Meshery
             </Button></a></div>
           </div>
