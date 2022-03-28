@@ -6,13 +6,21 @@ on:
   push:
     tags:
       - 'v*'  
-    branches:
-      - 'master'
+    # branches:
+    #   - 'master'
     paths-ignore:
       - 'docs/**'
       # - '.github/**'
   workflow_dispatch:
-
+    inputs:
+      release-ver:
+          description: 'Stable Release Version'     
+          required: true
+          default: 'v'
+      stripped-release-ver:
+          description: 'Stripped Stable Release Version'     
+          required: true
+          default: ''
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -62,7 +70,7 @@ jobs:
         with:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
-          build-args: GIT_STRIPPED_VERSION=${{env.GIT_STRIPPED_VERSION}}, GIT_VERSION={{github.ref}}
+          build-args: GIT_STRIPPED_VERSION=${{github.event.inputs.stripped-release-ver}}, GIT_VERSION=${{github.event.inputs.release-ver}}
           tags: ${{ steps.meta.outputs.tags }}     
 
       - 
