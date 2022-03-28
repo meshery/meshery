@@ -61,6 +61,7 @@ jobs:
         with:
           platforms: linux/amd64
           context: "{{defaultContext}}:install/docker-desktop-extension"
+          file: /install/docker-desktop-extension/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}     
 
