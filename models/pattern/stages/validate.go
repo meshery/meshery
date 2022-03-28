@@ -7,6 +7,7 @@ import (
 
 	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/models/pattern/jsonschema"
+	"github.com/layer5io/meshery/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/models/pattern/resource/selector"
 )
 
@@ -28,7 +29,9 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				act.Terminate(fmt.Errorf("invalid workload of type: %s", svc.Type))
 				return
 			}
-
+			if k8s.Format {
+				k8s.Format.DePrettify(svc.Settings)
+			}
 			// Validate workload definition
 			if err := validateWorkload(svc.Settings, wc); err != nil {
 				act.Terminate(fmt.Errorf("invalid workload definition: %s", err))

@@ -14,4 +14,4 @@ func TestClose(t *testing.T) {
 	//if err != nil {
 	//	t.Errorf("Close() failed with error: %s", err)
 	//}
-} 
+}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import MuiAccordion from "@material-ui/core/Accordion";
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
@@ -48,10 +48,10 @@ const AccordionSummary = withStyles({
     },
   },
   content : {
-    justifyContent : "flex-end",
+    justifyContent : "space-between",
     '&$expanded' : {
       margin : '12px 0',
-      justifyContent : "flex-end",
+      justifyContent : "space-between",
     },
   },
   expanded : {},
@@ -65,6 +65,18 @@ const AccordionDetails = withStyles((theme) => ({
 
 export default function SimpleAccordion(props) {
   const classes = useStyles();
+  const accordionDetailsRef = React.useRef(null);
+
+  useEffect(() => {
+    // for managing focus
+    if (accordionDetailsRef.current) {
+      accordionDetailsRef.current.scrollIntoView({
+        behavior : "smooth",
+        block : "nearest",
+      });
+    }
+
+  }, [accordionDetailsRef.current]);
 
   return (
     <div className={classes.root}>
@@ -92,7 +104,7 @@ export default function SimpleAccordion(props) {
             </IconButton>
           )}
         </AccordionSummary>
-        <AccordionDetails >{props.children}</AccordionDetails>
+        <AccordionDetails ref={accordionDetailsRef} >{props.children}</AccordionDetails>
 
       </Accordion>
     </div>
