@@ -1,90 +1,105 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { NoSsr, Typography } from "@material-ui/core";
+import { NoSsr, Typography, Grid, Link } from "@material-ui/core";
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import MesheryLogo from "./MesheryLogo";
-import Configuration from "./Config/Configuration";
-import { CustomTypography } from "./CustomTypography";
+import MesheryLogo from "../img/meshery-logo/meshery-logo.svg";
+import { makeStyles } from "@material-ui/core/styles";
 import {
-Container, 
-Button
+  Container,
+  Button, Paper
 } from "@material-ui/core";
+import TwitterIcon from '@material-ui/icons/Twitter';
+import GitHubIcon from '@material-ui/icons/GitHub';
+import LinkedInIcon from '@material-ui/icons/LinkedIn';
+import GoogleIcon from "../img/SVGs/googleIcon";
+import MesheryIcon from "../img/meshery-logo/CustomMesheryLogo";
 
-const styles = (theme) => ({
+
+const useStyles = makeStyles((theme) => ({
   root: {
     textAlign: "center",
     backgroundColor: "#222C32",
-    padding: "1rem",
+    padding: "5rem",
     minHeight: "100vh"
   },
-  container: {
-    width: "60%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginTop: theme.spacing(2),
+  main: {
+    margin: theme.spacing(5),
+    backgroundColor: "#393F49",
+    borderRadius: "5px ",
+    padding: "1rem"
   },
-  footerText: {
-    cursor: 'pointer',
-    display: 'inline',
-    verticalAlign: 'middle',
-    color: "#CCCCCC",
+  paper: {
+    padding: theme.spacing(1.5),
+    textAlign: "center",
+    color: "#ffffff",
+    width: "240px",
+    height: "45px"
   },
-  footerIcon: {
-    display: 'inline',
-    verticalAlign: 'top',
+  OAuth: {
+    padding: "2rem",
+
   },
-  mesheryConfig1: {
-    margin: theme.spacing(6),
-    backgroundColor: "#5AA9F1"
-}, mesheryConfig: {
-  margin: theme.spacing(6),
+  button: {
+    padding: "0.5rem"
+  },
 
-}
-});
+  Icon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
+  },
+}));
 
-class ExtensionComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
-  }
+const ExtensionsComponent = props => {
 
-  handleL5CommunityClick = () => {
-    if (typeof window !== 'undefined') {
-      const w = window.open('https://layer5.io', '_blank');
-      w.focus();
-    }
-  }
+  const classes = useStyles();
 
+  return (
+    <div className={classes.root}>
 
-  render() {
-    const { classes } = this.props;
+      <div className={classes.main}>
+        <MesheryIcon />
 
-    return (
-      <NoSsr>
-        <div className={classes.root}>
-          <MesheryLogo />
-          <Configuration />
-          <Container>
-                        <Button className={classes.mesheryConfig1} variant="contained">DEPLOY MESHERY</Button>
-                        <Button className={classes.mesheryConfig} variant="contained">OPEN MESHERY</Button>
-                    </Container>
-                    <div className={classes.footer} >
-          <Typography variant="body2" align="center" component="p">
-                <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                  Built with {' '} <FavoriteIcon className={classes.footerIcon} /> {' '} by the Layer5 Community
-                </span>
-          </Typography>
-          </div>
+        <div className={classes.OAuth}>
+          <Grid justify="center">
+            <Grid >
+              <div className={classes.button}>
+                <Button style={{ backgroundColor: "#55acee" }}
+                  className={classes.paper}>
+                  <TwitterIcon className={classes.Icon} />
+                  SIGN IN WITH TWITTER
+                </Button>
+              </div>
+            </Grid>
+            <Grid >
+              <div className={classes.button}>
+                <Button style={{ backgroundColor: "#444" }} className={classes.paper}>
+                  <GitHubIcon className={classes.Icon} />
+                  SIGN IN WITH GITHUB
+                </Button>
+              </div>
+            </Grid>
+            <Grid item xs>
+              <div className={classes.button}>
+                <Button style={{ backgroundColor: "#DD4B39" }} className={classes.paper}>
+                  <div className={classes.Icon}> <GoogleIcon width={18} height={22} /></div>
+                  SIGN IN WITH GOOGLE
+                </Button>
+              </div>
+            </Grid>
+            <Grid item xs>
+              <div className={classes.button}>
+                <Button style={{ backgroundColor: "#007bb6" }} className={classes.paper}>
+                  <LinkedInIcon className={classes.Icon} />
+                  SIGN IN WITH LINKEDIN
+                </Button>
+              </div>
+            </Grid>
+          </Grid>
         </div>
-      </NoSsr>
-    );
-  }
+      </div>
+    </div>
+  );
 }
 
-ExtensionComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(styles)(ExtensionComponent);
+export default ExtensionsComponent;

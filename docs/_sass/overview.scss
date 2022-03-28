@@ -20,7 +20,20 @@ div.overview {
     justify-content: space-evenly;
     align-content: stretch;
 }
-
+h3[id]:before {
+    display: block;
+    content: " ";
+    margin-top: -4em;
+    height: 5.5rem;
+    visibility: hidden;
+}
+h2[id]:before, h4[id]:before, h5[id]:before {
+    display: block;
+    content: " ";
+    margin-top: -4em;
+    height: 6rem;
+    visibility: hidden;
+}
 div.wrapper {
     width: 100%;
     text-align: justify;

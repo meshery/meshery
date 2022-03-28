@@ -1,32 +1,21 @@
 {
-  "name": "meshery-docker-extension",
+  "name": "Meshery",
   "provider": "Layer5, Inc.",
-  "icon": "ui/src/img/meshery-logo/meshery-logo-light-white-text-side.svg",
+  "icon": "meshery-logo-light.svg",
   "vm": {
     "composefile": "docker-compose.yaml",
     "exposes": {
-      "socket": "extension-meshery-extension.sock"
+      "socket": "extension-meshery.sock"
     }
   },
   "ui": {
     "dashboard-tab": {
       "title": "Meshery",
-      "src": "index.html",
-      "root": "/app/ui/out",
+      "src": "/index.html",
+      "root": "/ui",
       "backend": {
-        "socket": "extension-meshery-extension.sock"
+        "socket": "extension-meshery.sock"
       }
     }
-  },
-  "host": {
-    "binaries": [
-      {
-        "darwin": [
-          {
-            "path": "darwin/mesheryctl"
-          }
-        ]
-      }
-    ]
   }
 }

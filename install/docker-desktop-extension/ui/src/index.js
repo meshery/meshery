@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ExtensionComponent from './components/ExtensionComponent';
 import "./styles.css";
+
 ReactDOM.render(
   <React.StrictMode>
     <ExtensionComponent />

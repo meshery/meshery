@@ -161,7 +161,7 @@ func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
 	// Set up the nodes
 	for name, svc := range p.Services {
 		elemData := cytoscapejs.ElemData{
-			ID: name, // Assuming that the service names are unique
+			ID: getCytoscapeElementID(name, svc),
 		}
 
 		elemPosition, err := getCytoscapeJSPosition(svc)
@@ -225,7 +225,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		//set appropriate unique service name
 		nameFromSettings, ok := svc.Settings["name"].(string)
 		if ok {
-			svc.Name = nameFromSettings
+			svc.Name = strings.ToLower(nameFromSettings)
 		}
 
 		svc.Name += "-" + getRandomAlphabetsOfDigit(5)
@@ -239,7 +239,9 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		childSvc := eleToSvc[child]
 		if childSvc != "" {
 			for _, parent := range parents {
-				pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
+				if eleToSvc[parent] != "" {
+					pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
+				}
 			}
 		}
 	}
@@ -479,6 +481,28 @@ func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (strin
 // coreK8sAPIVersions returns list of core K8s API versions
 func coreK8sAPIVersions() []string {
 	return []string{"v1", "apps/v1", "apps/v1beta1"}
+}
+
+// getCytoscapeElementID returns the element id for a given service
+func getCytoscapeElementID(name string, svc *Service) string {
+	mpi, ok := svc.Traits["meshmap"] // check if service has meshmap as trait
+	if !ok {
+		return name // Assuming that the service names are unique
+	}
+
+	mpStrInterface, ok := mpi.(map[string]interface{})
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (MPI): %+#v", mpi)
+		return name // Assuming that the service names are unique
+	}
+
+	mpID, ok := mpStrInterface["id"].(string)
+	if !ok {
+		logrus.Debugf("Meshmap id not present in Meshmap interface")
+		return name // Assuming that the service names are unique
+	}
+
+	return mpID
 }
 
 func getCytoscapeJSPosition(svc *Service) (cytoscapejs.Position, error) {
