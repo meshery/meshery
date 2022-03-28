@@ -17,5 +17,26 @@
         "socket": "extension-meshery.sock"
       }
     }
+  },
+  "host": {
+    "binaries": [
+      {
+        "darwin": [
+          {
+            "path": "/mesheryctl/darwin/mesheryctl"
+          }
+        ],
+        "windows": [
+          {
+            "path": "/mesheryctl/windows/mesheryctl.exe"
+          }
+        ],
+        "linux": [
+          {
+            "path": "/mesheryctl/linux/mesheryctl"
+          }
+        ]
+      }
+    ]
   }
 }
