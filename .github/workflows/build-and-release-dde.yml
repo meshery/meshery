@@ -59,9 +59,7 @@ jobs:
         name: Build and Push 
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64
-          context: ./install/docker-desktop-extension
-          file: ./install/docker-desktop-extension/Dockerfile
+          context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
           tags: ${{ steps.meta.outputs.tags }}     
 
