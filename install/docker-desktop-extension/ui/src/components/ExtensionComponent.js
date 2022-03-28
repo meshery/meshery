@@ -119,9 +119,8 @@ const ExtensionsComponent = props => {
       <MesheryIcon />
       <CustomTypography className={classes.headText}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
       <div className={classes.main}>
-
         <CustomTypography variant="h6" className={classes.subText}>
-          CONFIGURE YOUR MESHERY DEPLOYMENT
+                        CONFIGURE YOUR MESHERY DEPLOYMENT
         </CustomTypography>
         <div className={classes.OAuth}>
           <div className={classes.account}>
