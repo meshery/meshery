@@ -7,16 +7,16 @@ import (
 )
 
 func TestStatus(t *testing.T) {
-	if(testing.Short()) {
+	if testing.Short() {
 		t.Skip("skipping unit test")
 	}
 	utils.SetupContextEnv(t)
 	utils.StartMockery(t)
 	tests := []utils.CmdTestInput{
 		{
-			Name:             "Run status",
-			Args:             []string{"status"},
-			ExpectError: 	true,
+			Name:        "Run status",
+			Args:        []string{"status"},
+			ExpectError: true,
 		},
 	}
 

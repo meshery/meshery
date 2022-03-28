@@ -7,7 +7,7 @@ import (
 )
 
 func TestLogin(t *testing.T) {
-	if(testing.Short()) {
+	if testing.Short() {
 		t.Skip("skipping unit test")
 	}
 	utils.SetupContextEnv(t)
