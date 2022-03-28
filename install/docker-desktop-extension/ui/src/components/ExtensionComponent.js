@@ -5,6 +5,7 @@ import { NoSsr, Typography, Grid, Link } from "@material-ui/core";
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import MesheryLogo from "../img/meshery-logo/meshery-logo.svg";
 import { makeStyles } from "@material-ui/core/styles";
+import { usePingServer } from "../hooks/usePingServer"
 import {
   Container,
   Button, Paper, Switch
@@ -93,6 +94,7 @@ const ExtensionsComponent = props => {
   const [linkerdChecked, isLinkerdChecked] = useState(false);
   const [nginxChecked, isNginxChecked] = useState(false);
   const [kumaChecked, isKumaChecked] = useState(false);
+  const buttonEnabled = usePingServer("/api/providers", { host: "localhost", port: "9081" })
   const classes = useStyles();
 
   // Wrote separate functions since we need these functions to provision the adapters as well
@@ -125,7 +127,9 @@ const ExtensionsComponent = props => {
         <div className={classes.OAuth}>
           <div className={classes.account}>
             <CustomTypography Style="margin-bottom:2rem">Account</CustomTypography>
-            <div><Button className={classes.mesheryConfig} variant="contained">Open Meshery</Button></div>
+            <div><a href="http://localhost:9081"><Button className={classes.mesheryConfig} disabled={!buttonEnabled} variant="contained">
+              Open Meshery
+            </Button></a></div>
           </div>
           <Grid justify="center">
             <div className={classes.serviceMeshAdapters}>
