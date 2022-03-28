@@ -27,8 +27,7 @@ jobs:
               echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV
           fi
           echo "Release channel determined to be $RELEASE_CHANNEL"
-          export "GIT_VERSION=git describe --tags `git rev-list --tags --max-count=1`" >> $GITHUB_ENV
-          echo "GIT_STRIPPED_VERSION=git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-" >> $GITHUB_ENV
+          echo "GIT_STRIPPED_VERSION=`echo ${{github.ref}} | cut -c 2-`" >> $GITHUB_ENV
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -63,7 +62,7 @@ jobs:
         with:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
-          build-args: GIT_VERSION=${{env.GIT_VERSION}}
+          build-args: GIT_STRIPPED_VERSION=${{env.GIT_STRIPPED_VERSION}}, GIT_VERSION={{github.ref}}
           tags: ${{ steps.meta.outputs.tags }}     
 
       - 
