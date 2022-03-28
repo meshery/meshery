@@ -32,12 +32,9 @@ Meshery is a Cloud Native Computing Foundation project.
 The Docker Desktop Extension for Meshery extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure: service meshes. Service mesh or not, though, Meshery offers a visual topology for designing Docker-Compose applications, operating Kubernetes, service meshes, and their workloads. Meshery brings deep support of 10 different service meshes to the fingertips of Docker Desktop developers in connection with Docker Desktop’s ability to deliver Kubernetes locally.
 
 <h2><a name="running"></a>Get Started with Docker Desktop Extension for Meshery</h2>
-<p style="clear:both;">
-<img alt="Control service meshes with mesheryctl" src="docs/assets/img/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/>
 
 <h3>Using Docker Desktop</h3>
 <p>Navigate to the Extensions area of Docker Desktop.</p>
-
 
 <h3>Using <code>docker</code></h3>
 <p>Meshery runs as a set of containers inside your Docker Desktop virtual machine.</p>
@@ -47,8 +44,10 @@ The Docker Desktop Extension for Meshery extends Docker Desktop’s position as 
 
 ## Using the Docker Desktop Extension for Meshery
 
-1. Checkbox to install any service mesh.
+1. Install any service mesh with the check of a box.
 1. Import your Docker Compose apps for visual design and deployment to Kubernetes and service meshes.
+
+<p align="center"><a href="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-desktop-extension/Docker Desktop Extension for Meshery.png"><img src="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-desktop-extension/Docker Desktop Extension for Meshery.png" width="90%" align="center" /></a></p>
 
 ## Docker Desktop Extension for Meshery Architecture
 
