@@ -56,8 +56,8 @@ jobs:
             type=raw,value={{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=latest
             type=semver,pattern=${{github.event.inputs.release-ver}}
-            
-            # type=semver,pattern={{version}}
+
+# type=semver,pattern={{version}}
 
       -
         name: Login to DockerHub
