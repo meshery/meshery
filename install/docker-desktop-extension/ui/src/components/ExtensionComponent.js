@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { NoSsr, Typography, Grid, Link } from "@material-ui/core";
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     backgroundColor: "#222C32",
     padding: "5rem",
-    minHeight: "100vh"
+    maxHeight: "100vh"
   },
   main: {
     margin: theme.spacing(5),
@@ -115,40 +115,40 @@ const ExtensionsComponent = props => {
 
   return (
     <div className={classes.root}>
-    <MesheryIcon />
-    <CustomTypography className={classes.headText}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
+      <MesheryIcon />
+      <CustomTypography className={classes.headText}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
       <div className={classes.main}>
-    
-      <CustomTypography variant="h6" className={classes.subText}>
-                        CONFIGURE YOUR MESHERY DEPLOYMENT
-                    </CustomTypography>
+
+        <CustomTypography variant="h6" className={classes.subText}>
+          CONFIGURE YOUR MESHERY DEPLOYMENT
+        </CustomTypography>
         <div className={classes.OAuth}>
           <div className={classes.account}>
-          <CustomTypography Style="margin-bottom:2rem">Account</CustomTypography>
-          <div><Button className={classes.mesheryConfig} variant="contained">Open Meshery</Button></div>
+            <CustomTypography Style="margin-bottom:2rem">Account</CustomTypography>
+            <div><Button className={classes.mesheryConfig} variant="contained">Open Meshery</Button></div>
           </div>
           <Grid justify="center">
-            <div className={classes.serviceMeshAdapters}> 
-            <CustomTypography Style="margin-bottom:2rem">Deploy a Service Mesh</CustomTypography>
-            <div className={classes.sm}>
-            <div className={consulChecked ?   null : classes.inactiveAdapter }>
-              
-        <ConsulIcon width={40} height={40}  /> </div>
-          <Switch onChange={handleConsul} color="primary" defaultChecked></Switch>
-          </div>
-          <div className={classes.sm}>
-          <div className={istioChecked ? null : classes.inactiveAdapter }>
-            <IstioIcon width={40} height={40} /></div>
-          <Switch onChange={handleIstio} color="primary"></Switch></div>
-           
-            <div className={classes.sm}>
-            <div className={linkerdChecked ? null : classes.inactiveAdapter }><LinkerdIcon width={40} height={40} /></div>
-              <Switch onChange={handleLinkerd} color="primary"></Switch></div>
+            <div className={classes.serviceMeshAdapters}>
+              <CustomTypography Style="margin-bottom:2rem">Deploy a Service Mesh</CustomTypography>
               <div className={classes.sm}>
-            <div className={nginxChecked ? null : classes.inactiveAdapter }><NginxIcon width={38} height={40} /></div><Switch onChange={handleNginx} color="primary"></Switch></div>
-            <div className={classes.sm}>
-            <div className={kumaChecked ? null : classes.inactiveAdapter }><KumaIcon width={40} height={40} /></div><Switch onChange={handleKuma} color="primary"></Switch></div>
-             </div> 
+                <div className={consulChecked ? null : classes.inactiveAdapter}>
+
+                  <ConsulIcon width={40} height={40} /> </div>
+                <Switch onChange={handleConsul} color="primary" defaultChecked></Switch>
+              </div>
+              <div className={classes.sm}>
+                <div className={istioChecked ? null : classes.inactiveAdapter}>
+                  <IstioIcon width={40} height={40} /></div>
+                <Switch onChange={handleIstio} color="primary"></Switch></div>
+
+              <div className={classes.sm}>
+                <div className={linkerdChecked ? null : classes.inactiveAdapter}><LinkerdIcon width={40} height={40} /></div>
+                <Switch onChange={handleLinkerd} color="primary"></Switch></div>
+              <div className={classes.sm}>
+                <div className={nginxChecked ? null : classes.inactiveAdapter}><NginxIcon width={38} height={40} /></div><Switch onChange={handleNginx} color="primary"></Switch></div>
+              <div className={classes.sm}>
+                <div className={kumaChecked ? null : classes.inactiveAdapter}><KumaIcon width={40} height={40} /></div><Switch onChange={handleKuma} color="primary"></Switch></div>
+            </div>
           </Grid>
         </div>
       </div>
