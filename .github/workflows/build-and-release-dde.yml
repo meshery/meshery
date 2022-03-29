@@ -6,13 +6,21 @@ on:
   push:
     tags:
       - 'v*'  
-    branches:
-      - 'master'
+    # branches:
+    #   - 'master'
     paths-ignore:
       - 'docs/**'
-      - '.github/**'
+      # - '.github/**'
   workflow_dispatch:
-
+    inputs:
+      release-ver:
+          description: 'Stable Release Version'     
+          required: true
+          default: 'v'
+      stripped-release-ver:
+          description: 'Stripped Stable Release Version'     
+          required: true
+          default: ''
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -27,6 +35,7 @@ jobs:
               echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV
           fi
           echo "Release channel determined to be $RELEASE_CHANNEL"
+          echo "GIT_STRIPPED_VERSION=`echo ${{github.ref}} | cut -c 2-`" >> $GITHUB_ENV
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -44,10 +53,11 @@ jobs:
             prefix=${{env.RELEASE_CHANNEL}}-
           tags: |
             type=raw,value={{sha}}
+            type=semver,pattern={{version}},value=${{github.event.inputs.release-ver}}
+            type=raw,value=${{github.event.inputs.release-ver}}
             type=raw,value={{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=latest
-            type=semver,pattern={{version}}
-
+          
       -
         name: Login to DockerHub
         uses: docker/login-action@v1 
@@ -59,15 +69,18 @@ jobs:
         name: Build and Push 
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
+          build-args: |
+            GIT_STRIPPED_VERSION=${{github.event.inputs.stripped-release-ver}}
+            GIT_VERSION=${{github.event.inputs.release-ver}}
           tags: ${{ steps.meta.outputs.tags }}     
 
-      - 
-        name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: meshery/meshery-docker-desktop-extension   
+      # - 
+      #   name: Docker Hub Description
+      #   uses: peter-evans/dockerhub-description@v3
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      #     repository: meshery/meshery-docker-desktop-extension  
+      #     readme-filepath: /install/docker-desktop-extension/README.md 
