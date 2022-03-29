@@ -92,7 +92,7 @@ server-local-run:
 
 run-fast: server-run
 ## Buiild and run Meshery Server on your local machine.
-server-fast-run:
+server-run:
 	cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
