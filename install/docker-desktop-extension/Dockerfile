@@ -5,12 +5,12 @@ WORKDIR /backend
 COPY go.* .
 ARG TARGETARCH
 RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
-    go mod download
+  --mount=type=cache,target=/root/.cache/go-build \
+  go mod download
 COPY . .
 RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
-    make bin
+  --mount=type=cache,target=/root/.cache/go-build \
+  make bin
 
 FROM node:14.17-alpine3.13 AS client-builder
 WORKDIR /ui
