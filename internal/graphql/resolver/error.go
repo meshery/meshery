@@ -22,7 +22,7 @@ const (
 	ErrBrokerNotConnectedCode       = "2151"
 	ErrGettingNamespaceCode         = "1014"
 	ErrFetchingPatternsCode         = "1015"
-	ErrInvalidOAMTypeCode           = "not set"
+	ErrInvalidOAMTypeCode           = "2173"
 )
 
 var (
