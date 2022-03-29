@@ -25,6 +25,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -44,7 +46,7 @@ var versionCmd = &cobra.Command{
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			// get the currCtx
-			utils.Log.Error(fmt.Errorf("error processing config: %v", err))
+			log.Error(fmt.Errorf("error processing config: %v", err))
 			userResponse := false
 			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
 			if userResponse {
@@ -52,29 +54,29 @@ var versionCmd = &cobra.Command{
 				// Create config file if not present in meshery folder
 				err = utils.CreateConfigFile()
 				if err != nil {
-					utils.Log.Error(fmt.Errorf("unable to create config file"))
+					log.Error(fmt.Errorf("unable to create config file"))
 				}
 
 				// Add Token to context file
 				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 				if err != nil {
-					utils.Log.Error(fmt.Errorf("unable to add token to config"))
+					log.Error(fmt.Errorf("unable to add token to config"))
 				}
 
 				// Add Context to context file
 				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
 				if err != nil {
-					utils.Log.Error(fmt.Errorf("unable to add context to config"))
+					log.Error(fmt.Errorf("unable to add context to config"))
 				}
 
-				utils.Log.Info(
+				log.Info(
 					fmt.Sprintf("Default config file created at %s",
 						utils.DefaultConfigPath,
 					))
 
 				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 				if err != nil {
-					utils.Log.Error(errors.New("error unmarshalling config file"))
+					log.Error(errors.New("error unmarshalling config file"))
 				}
 				currCtx, err := mctlCfg.GetCurrentContext()
 				if err != nil {
@@ -116,7 +118,7 @@ var versionCmd = &cobra.Command{
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(fmt.Errorf("\nUnable to get request context: %v", err))
+			log.Error(fmt.Errorf("\nUnable to get request context: %v", err))
 			return
 		}
 
@@ -126,8 +128,8 @@ var versionCmd = &cobra.Command{
 
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(fmt.Errorf("\n  Unable to communicate with Meshery: %v", err))
-			utils.Log.Error(fmt.Errorf("  See https://docs.meshery.io for help getting started with Meshery"))
+			fmt.Printf("\n  Unable to communicate with Meshery: %v", err)
+			fmt.Printf("  See https://docs.meshery.io for help getting started with Meshery")
 			return
 		}
 
@@ -136,14 +138,14 @@ var versionCmd = &cobra.Command{
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(fmt.Errorf("\n  Invalid response: %v", err))
+			log.Error(fmt.Errorf("\n  Invalid response: %v", err))
 			return
 		}
 
 		err = json.Unmarshal(data, &version)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(fmt.Errorf("\n  Unable to unmarshal data: %v", err))
+			log.Error(fmt.Errorf("\n  Unable to unmarshal data: %v", err))
 			return
 		}
 		rows[1][1] = version.GetBuild()
@@ -153,18 +155,18 @@ var versionCmd = &cobra.Command{
 }
 
 func checkMesheryctlClientVersion(build string) {
-	utils.Log.Info("\nChecking for latest version of mesheryctl...")
+	log.Info("\nChecking for latest version of mesheryctl...")
 
 	// Inform user of the latest release version
 	res, err := utils.GetLatestStableReleaseTag()
 	if err != nil {
-		utils.Log.Warn(fmt.Errorf("\n  Unable to check for latest version of mesheryctl. %s", err))
+		log.Warn(fmt.Errorf("\n  Unable to check for latest version of mesheryctl. %s", err))
 		return
 	}
 	// If user is running an outdated release, let them know.
 	if res != build {
-		utils.Log.Info("\n  ", build, " is not the latest release. Update to ", res, ".")
+		log.Info("\n  ", build, " is not the latest release. Update to ", res, ".")
 	} else { // If user is running the latest release, let them know.
-		utils.Log.Info("\n  ", res, " is the latest release.")
+		log.Info("\n  ", res, " is the latest release.")
 	}
 }
