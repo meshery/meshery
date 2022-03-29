@@ -1091,7 +1091,8 @@ class Navigator extends React.Component {
                   path === href && classes.itemActiveItem
                 )}
                 onClick={() => this.toggleItemCollapse(childId)}
-
+                onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
+                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }) : null}
               >
                 <Link href={link
                   ? href
@@ -1101,7 +1102,7 @@ class Navigator extends React.Component {
                       title={childId}
                       placement="right"
                       disableFocusListener={!isDrawerCollapsed}
-                      disableHoverListener={!isDrawerCollapsed}
+                      disableHoverListener={true}
                       disableTouchListener={!isDrawerCollapsed}
                     >
 
