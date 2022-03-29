@@ -96,6 +96,10 @@ const ExtensionsComponent = props => {
   const [kumaChecked, isKumaChecked] = useState(false);
   const classes = useStyles();
 
+  useEffect(() => {
+    window.ddClient.extension.vm.service.get("/ping").then(console.log);
+  }, [])
+
   // Wrote separate functions since we need these functions to provision the adapters as well
   const handleConsul = () => {
     isConsulChecked(prev => !prev);

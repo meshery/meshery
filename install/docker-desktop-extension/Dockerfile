@@ -5,12 +5,12 @@ WORKDIR /backend
 COPY go.* .
 ARG TARGETARCH
 RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
-    go mod download
+  --mount=type=cache,target=/root/.cache/go-build \
+  go mod download
 COPY . .
 RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
-    make bin
+  --mount=type=cache,target=/root/.cache/go-build \
+  make bin
 
 FROM node:14.17-alpine3.13 AS client-builder
 WORKDIR /ui
@@ -19,8 +19,8 @@ COPY ui/package.json /ui/package.json
 COPY ui/package-lock.json /ui/package-lock.json
 ARG TARGETARCH
 RUN --mount=type=cache,target=/usr/src/app/.npm \
-    npm set cache /usr/src/app/.npm && \
-    npm ci
+  npm set cache /usr/src/app/.npm && \
+  npm ci
 # install
 COPY ui /ui
 RUN npm run build
@@ -29,9 +29,9 @@ FROM alpine
 ARG GIT_VERSION
 ARG GIT_STRIPPED_VERSION
 LABEL org.opencontainers.image.title="meshery" \
-    org.opencontainers.image.description="Meshery" \
-    org.opencontainers.image.vendor="Layer5, Inc." \
-    com.docker.desktop.extension.api.version=">= 0.2.0"
+  org.opencontainers.image.description="Meshery" \
+  org.opencontainers.image.vendor="Layer5, Inc." \
+  com.docker.desktop.extension.api.version=">= 0.2.0"
 COPY --from=builder /backend/bin/service /
 COPY docker-compose.yaml .
 COPY metadata.json .
