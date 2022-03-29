@@ -1,7 +1,7 @@
 {
   "name": "Meshery",
   "provider": "Layer5, Inc.",
-  "icon": "meshery-logo-light.svg",
+  "icon": "meshery-logo-white.svg",
   "vm": {
     "composefile": "docker-compose.yaml",
     "exposes": {

@@ -45,10 +45,10 @@ services:
     image: layer5/meshery-osm:stable-latest
     ports:
       - "10009:10009"
-  meshery-nginx-sm:
-   image: layer5/meshery-nginx-sm:stable-latest
-   ports:
-     - "10010:10010"
+#  meshery-nginx-sm:
+#   image: layer5/meshery-nginx-sm:stable-latest
+#   ports:
+#     - "10010:10010"
   meshery-cilium: 
     image: layer5/meshery-cilium:stable-latest
     ports:

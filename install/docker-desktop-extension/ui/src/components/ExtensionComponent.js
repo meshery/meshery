@@ -82,6 +82,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#7794AB",
     color: "#FFFFFF",
   },
+  link: {
+    textDecoration: "none"
+  },
   Icon: {
     width: theme.spacing(2.5),
     paddingRight: theme.spacing(0.5),
@@ -123,14 +126,13 @@ const ExtensionsComponent = props => {
       <MesheryIcon />
       <CustomTypography className={classes.headText}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
       <div className={classes.main}>
-
         <CustomTypography variant="h6" className={classes.subText}>
-          CONFIGURE YOUR MESHERY DEPLOYMENT
+                        CONFIGURE YOUR MESHERY DEPLOYMENT
         </CustomTypography>
         <div className={classes.OAuth}>
           <div className={classes.account}>
             <CustomTypography Style="margin-bottom:2rem">Account</CustomTypography>
-            <div><a href="http://localhost:9081"><Button className={classes.mesheryConfig} variant="contained">
+            <div><a className={classes.link} href="http://localhost:9081"><Button className={classes.mesheryConfig} variant="contained">
               Open Meshery
             </Button></a></div>
           </div>
