@@ -44,7 +44,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
       -
         name: Docker Meta
-        id: metaedge-${GITHUB_SHA::8}
+        id: meta
         uses: docker/metadata-action@v3
         with:
           images: meshery/meshery-docker-desktop-extension
