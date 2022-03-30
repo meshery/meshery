@@ -70,6 +70,25 @@ class MesheryPlayComponent extends React.Component {
     };
   }
 
+  handleRouteChange =  () => {
+    const queryParam = this.props?.router?.query?.adapter;
+    if (queryParam) {
+      const selectedAdapter = this.state.meshAdapters.find(({ adapter_location }) => adapter_location === queryParam);
+      if (selectedAdapter) {
+        this.setState({ adapter : selectedAdapter })
+      }
+    }
+  }
+
+  componentDidMount() {
+    const { router } = this.props;
+    router.events.on('routeChangeComplete', this.handleRouteChange)
+  }
+
+  componentWillUnmount() {
+    this.props.router.events.off('routeChangeComplete', this.handleRouteChange)
+  }
+
   static getDerivedStateFromProps(props, state) {
     let { meshAdapters, meshAdaptersts, k8sconfig } = props;
     const st = {};

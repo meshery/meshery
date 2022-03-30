@@ -1,7 +1,6 @@
 import React from "react";
-import { NoSsr } from "@material-ui/core";
+import { Container, makeStyles, NoSsr, Typography } from "@material-ui/core";
 import Head from "next/head";
-import MesheryMeshInterface from "../../components/MesheryMeshInterface";
 
 /**
  * getPath returns the current pathname
@@ -36,8 +35,21 @@ function capitalize(string) {
   return "";
 }
 
+const useStyles = makeStyles(() => ({
+  container : {
+    textAlign : "center",
+    transform : "translateY(-20%)"
+  },
+  wrapper : {
+    display : "flex",
+    alignItems : "center",
+    height : "100%"
+  }
+}))
+
 function Mesh() {
   const name = extractComponentName(getPath());
+  const classes =  useStyles()
 
   return (
     <NoSsr>
@@ -45,7 +57,18 @@ function Mesh() {
         <title>{capitalize(name)} Management</title>
       </Head>
       <NoSsr>
-        <MesheryMeshInterface adapter={name}/>
+        <div className={classes.wrapper}>
+          <Container className={classes.container}>
+            <img src="/static/img/broken-link.png" alt="broken link freePik" height="150px" />
+            <Typography variant="h4">
+            Broken Adapter
+            </Typography>
+            <Typography>
+            Your Adapter is not available
+            </Typography>
+          </Container>
+        </div>
+        {/* <MesheryMeshInterface adapter={name}/> */}
       </NoSsr>
     </NoSsr>
   );
