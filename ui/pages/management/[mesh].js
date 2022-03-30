@@ -1,6 +1,8 @@
-import React from "react";
-import { Container, makeStyles, NoSsr, Typography } from "@material-ui/core";
+import { Button, makeStyles, NoSsr } from "@material-ui/core";
+import SettingsIcon from "@material-ui/icons/Settings";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import React from "react";
 
 /**
  * getPath returns the current pathname
@@ -35,21 +37,21 @@ function capitalize(string) {
   return "";
 }
 
-const useStyles = makeStyles(() => ({
-  container : {
+const useStyles = makeStyles((theme) => ({
+  alreadyConfigured : {
     textAlign : "center",
-    transform : "translateY(-20%)"
-  },
-  wrapper : {
-    display : "flex",
-    alignItems : "center",
-    height : "100%"
+    padding : theme.spacing(20),
   }
 }))
 
 function Mesh() {
   const name = extractComponentName(getPath());
-  const classes =  useStyles()
+  const classes = useStyles()
+  const router = useRouter();
+
+  const handleConfigure = () => {
+    router.push("/settings#service-mesh");
+  }
 
   return (
     <NoSsr>
@@ -57,18 +59,12 @@ function Mesh() {
         <title>{capitalize(name)} Management</title>
       </Head>
       <NoSsr>
-        <div className={classes.wrapper}>
-          <Container className={classes.container}>
-            <img src="/static/img/broken-link.png" alt="broken link freePik" height="150px" />
-            <Typography variant="h4">
-            Broken Adapter
-            </Typography>
-            <Typography>
-            Your Adapter is not available
-            </Typography>
-          </Container>
+        <div className={classes.alreadyConfigured}>
+          <Button variant="contained" color="primary" size="large" onClick={handleConfigure}>
+            <SettingsIcon className={classes.icon} />
+            Configure Settings
+          </Button>
         </div>
-        {/* <MesheryMeshInterface adapter={name}/> */}
       </NoSsr>
     </NoSsr>
   );
