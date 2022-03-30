@@ -6,8 +6,8 @@ on:
   push:
     tags:
       - 'v*'  
-    # branches:
-    #   - 'master'
+    branches:
+      - 'master'
     paths-ignore:
       - 'docs/**'
       # - '.github/**'
@@ -44,7 +44,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
       -
         name: Docker Meta
-        id: meta
+        id: metaedge-${GITHUB_SHA::8}
         uses: docker/metadata-action@v3
         with:
           images: meshery/meshery-docker-desktop-extension
@@ -53,8 +53,8 @@ jobs:
             prefix=${{env.RELEASE_CHANNEL}}-
           tags: |
             type=raw,value={{sha}}
-            type=semver,pattern={{version}},value=${{github.event.inputs.release-ver}}
-            type=raw,value=${{github.event.inputs.release-ver}}
+            type=semver,pattern={{version}},value=v${{GIT_STRIPPED_VERSION}}
+            type=raw,value=v${{env.GIT_STRIPPED_VERSION}}
             type=raw,value={{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=latest
           
