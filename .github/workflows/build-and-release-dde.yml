@@ -75,6 +75,7 @@ jobs:
             GIT_STRIPPED_VERSION=${{github.event.inputs.stripped-release-ver}}
             GIT_VERSION=${{github.event.inputs.release-ver}}
           tags: ${{ steps.meta.outputs.tags }}     
+          platforms: linux/amd64,linux/arm64
 
       # - 
       #   name: Docker Hub Description
