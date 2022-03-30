@@ -1,4 +1,4 @@
-import { Button, makeStyles, NoSsr } from "@material-ui/core";
+import { Button, makeStyles, NoSsr, Container, Typography } from "@material-ui/core";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -41,6 +41,18 @@ const useStyles = makeStyles((theme) => ({
   alreadyConfigured : {
     textAlign : "center",
     padding : theme.spacing(20),
+  },
+  container : {
+    textAlign : "center",
+    transform : "translateY(-20%)"
+  },
+  wrapper : {
+    display : "flex",
+    alignItems : "center",
+    height : "100%"
+  },
+  btn : {
+    marginBottom : theme.spacing(2),
   }
 }))
 
@@ -59,11 +71,25 @@ function Mesh() {
         <title>{capitalize(name)} Management</title>
       </Head>
       <NoSsr>
-        <div className={classes.alreadyConfigured}>
-          <Button variant="contained" color="primary" size="large" onClick={handleConfigure}>
-            <SettingsIcon className={classes.icon} />
-            Configure Settings
-          </Button>
+        <div className={classes.wrapper}>
+          <Container className={classes.container}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={handleConfigure}
+              className={classes.btn}
+            >
+              <SettingsIcon className={classes.icon} />
+              Configure Settings
+            </Button>
+            <Typography variant="h6">
+              Broken Adapter
+            </Typography>
+            <Typography variant="subtitle">
+              Your Adapter is not available
+            </Typography>
+          </Container>
         </div>
       </NoSsr>
     </NoSsr>
