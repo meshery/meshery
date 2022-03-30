@@ -1,96 +1,22 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import { NoSsr, Typography, Grid, Link } from "@material-ui/core";
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import MesheryLogo from "../img/meshery-logo/meshery-logo.svg";
-import { makeStyles } from "@material-ui/core/styles";
-import { usePingServer } from "../hooks/usePingServer"
+import React, { useState, useEffect } from "react";
+import { makeStyles } from "@mui/styles";
 import {
-  Container,
-  Button, Paper, Switch
-} from "@material-ui/core";
-import ConsulIcon from "../img/SVGs/consulIcon";
-import IstioIcon from "../img/SVGs/IstioIcon";
-import KumaIcon from "../img/SVGs/kumaIcon";
-import LinkerdIcon from "../img/SVGs/linkerdIcon";
-import NginxIcon from "../img/SVGs/nginxIcon";
-import MesheryIcon from "../img/meshery-logo/CustomMesheryLogo";
-import { CustomTypography } from "./CustomTypography";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    textAlign: "center",
-    backgroundColor: "#222C32",
-    padding: "5rem",
-    maxHeight: "100vh"
-  },
-  main: {
-    margin: theme.spacing(5),
-    backgroundColor: "#393F49",
-    borderRadius: "20px ",
-    padding: "1rem",
-    height: "300px",
-    [theme.breakpoints.down("xs")]: {
-      height: "400px",
-    },
-  },
-  paper: {
-    padding: theme.spacing(1.5),
-    textAlign: "center",
-    color: "#ffffff",
-    width: "240px",
-    height: "45px"
-  },
-  OAuth: {
-    padding: "2rem",
-
-  },
-  serviceMeshAdapters: {
-    width: "50%",
-    float: "right",
-    [theme.breakpoints.down("xs")]: {
-      width: "100%"
-    }
-  },
-  account: {
-    width: "50%",
-    float: "left",
-  },
-  sm: {
-    width: "16%",
-    float: "left",
-    flexDirection: "row",
-    padding: "0.3rem"
-  },
-  subText: {
-    color: "#AAAAAA",
-    padding: "0.7rem"
-  },
-  headText: {
-    maxWidth: "60%",
-    margin: "auto",
-    padding: "1rem"
-  },
-  button: {
-    padding: "0.5rem"
-  },
-  inactiveAdapter: {
-    filter: "grayscale(1) invert(0.35)"
-  },
-  mesheryConfig: {
-    backgroundColor: "#7794AB",
-    color: "#FFFFFF",
-  },
-  link: {
-    textDecoration: "none"
-  },
-  Icon: {
-    width: theme.spacing(2.5),
-    paddingRight: theme.spacing(0.5),
-  },
-}));
-
+  Grid,
+  Button, Switch
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { useTheme } from "@mui/system";
+import ConsulIcon from "../../img/SVGs/consulIcon";
+import IstioIcon from "../../img/SVGs/IstioIcon";
+import KumaIcon from "../../img/SVGs/kumaIcon";
+import LinkerdIcon from "../../img/SVGs/linkerdIcon";
+import NginxIcon from "../../img/SVGs/nginxIcon";
+import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
+import { CustomTypography } from "../CustomTypography";
+import {useStyles} from "./ExtensionComponent.styles";
+import { createTheme, ThemeProvider } from "@mui/material";
+import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
+import CssBaseline from '@mui/material/CssBaseline';
 const ExtensionsComponent = props => {
   const [consulChecked, isConsulChecked] = useState(true);
   const [istioChecked, isIstioChecked] = useState(false);
@@ -98,6 +24,8 @@ const ExtensionsComponent = props => {
   const [nginxChecked, isNginxChecked] = useState(false);
   const [kumaChecked, isKumaChecked] = useState(false);
   const classes = useStyles();
+
+  const theme = createTheme();
 
   useEffect(() => {
     window.ddClient.extension.vm.service.get("/ping").then(console.log);
@@ -122,6 +50,8 @@ const ExtensionsComponent = props => {
 
 
   return (
+    <DockerMuiThemeProvider theme={theme}>
+      <CssBaseline />
     <div className={classes.root}>
       <MesheryIcon />
       <CustomTypography className={classes.headText}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
@@ -131,14 +61,14 @@ const ExtensionsComponent = props => {
         </CustomTypography>
         <div className={classes.OAuth}>
           <div className={classes.account}>
-            <CustomTypography Style="margin-bottom:2rem">Account</CustomTypography>
+            <CustomTypography style="margin-bottom:2rem">Account</CustomTypography>
             <div><a className={classes.link} href="http://localhost:9081"><Button className={classes.mesheryConfig} variant="contained">
               Open Meshery
             </Button></a></div>
           </div>
           <Grid justify="center">
             <div className={classes.serviceMeshAdapters}>
-              <CustomTypography Style="margin-bottom:2rem">Deploy a Service Mesh</CustomTypography>
+              <CustomTypography style="margin-bottom:2rem">Deploy a Service Mesh</CustomTypography>
               <div className={classes.sm}>
                 <div className={consulChecked ? null : classes.inactiveAdapter}>
 
@@ -162,6 +92,7 @@ const ExtensionsComponent = props => {
         </div>
       </div>
     </div>
+    </DockerMuiThemeProvider>
   );
 }
 
