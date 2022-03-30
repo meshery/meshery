@@ -282,50 +282,6 @@ function K8sContextMenu({
                     </Tooltip>
                   </div>
                 ))}
-                {contexts?.contexts?.map(ctx => (
-                  <div id={ctx.id} className={classes.chip}>
-                    <Tooltip title={`Server: ${ctx.server}`}>
-                      <div style={{ display : "flex", justifyContent : "center", alignItems : "center" }}>
-                        <Checkbox
-                          checked={activeContexts.includes(ctx.id)}
-                          onChange={() => setActiveContexts(ctx.id)}
-                          color="primary"
-                        />
-                        <Chip
-                          label={ctx?.name}
-                          onDelete={handleKubernetesDelete}
-                          onClick={handleKubernetesClick}
-                          avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
-                          variant="filled"
-                          className={classes.Chip}
-                          data-cy="chipContextName"
-                        />
-                      </div>
-                    </Tooltip>
-                  </div>
-                ))}
-                {contexts?.contexts?.map(ctx => (
-                  <div id={ctx.id} className={classes.chip}>
-                    <Tooltip title={`Server: ${ctx.server}`}>
-                      <div style={{ display : "flex", justifyContent : "center", alignItems : "center" }}>
-                        <Checkbox
-                          checked={activeContexts.includes(ctx.id)}
-                          onChange={() => setActiveContexts(ctx.id)}
-                          color="primary"
-                        />
-                        <Chip
-                          label={ctx?.name}
-                          onDelete={handleKubernetesDelete}
-                          onClick={handleKubernetesClick}
-                          avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
-                          variant="filled"
-                          className={classes.Chip}
-                          data-cy="chipContextName"
-                        />
-                      </div>
-                    </Tooltip>
-                  </div>
-                ))}
 
               </div>
             </Paper>
