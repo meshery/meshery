@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@mui/styles";
 import {
   Grid,
   Button, Switch
@@ -12,20 +11,26 @@ import KumaIcon from "../../img/SVGs/kumaIcon";
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
 import NginxIcon from "../../img/SVGs/nginxIcon";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
-import { CustomTypography } from "../CustomTypography";
-import {useStyles} from "./ExtensionComponent.styles";
+import CustomTypography from "../CustomTypography"
 import { createTheme, ThemeProvider } from "@mui/material";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
+import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper } from "./styledComponents";
+
+
 const ExtensionsComponent = props => {
   const [consulChecked, isConsulChecked] = useState(true);
   const [istioChecked, isIstioChecked] = useState(false);
   const [linkerdChecked, isLinkerdChecked] = useState(false);
   const [nginxChecked, isNginxChecked] = useState(false);
   const [kumaChecked, isKumaChecked] = useState(false);
-  const classes = useStyles();
 
-  const theme = createTheme();
+
+  const theme = {   
+  textAlign: "center",
+  backgroundColor: "#222C32",
+  padding: "5rem",
+  maxHeight: "100vh"};
 
   useEffect(() => {
     window.ddClient.extension.vm.service.get("/ping").then(console.log);
@@ -52,46 +57,44 @@ const ExtensionsComponent = props => {
   return (
     <DockerMuiThemeProvider theme={theme}>
       <CssBaseline />
-    <div className={classes.root}>
       <MesheryIcon />
-      <CustomTypography className={classes.headText}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
-      <div className={classes.main}>
-        <CustomTypography variant="h6" className={classes.subText}>
+      <CustomTypography sx={{maxWidth: "60%", margin: "auto", padding: "1rem"}}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
+    <ExtensionWrapper>
+        <CustomTypography variant="h6" sx={{ color: "#AAAAAA", padding: "0.7rem"}}>
                         CONFIGURE YOUR MESHERY DEPLOYMENT
         </CustomTypography>
-        <div className={classes.OAuth}>
-          <div className={classes.account}>
+        <div style={{padding: "2rem"}}>
+          <AccountDiv>
             <CustomTypography style="margin-bottom:2rem">Account</CustomTypography>
-            <div><a className={classes.link} href="http://localhost:9081"><Button className={classes.mesheryConfig} variant="contained">
+            <div><a style={{ textDecoration: "none"}} href="http://localhost:9081"><Button sx={{ backgroundColor: "#7794AB", color: "#FFFFFF",}} variant="contained">
               Open Meshery
             </Button></a></div>
-          </div>
+          </AccountDiv>
           <Grid justify="center">
-            <div className={classes.serviceMeshAdapters}>
+           <ServiceMeshAdapters>
               <CustomTypography style="margin-bottom:2rem">Deploy a Service Mesh</CustomTypography>
-              <div className={classes.sm}>
+              <StyledDiv>
                 <div className={consulChecked ? null : classes.inactiveAdapter}>
 
                   <ConsulIcon width={40} height={40} /> </div>
                 <Switch onChange={handleConsul} color="primary" defaultChecked></Switch>
-              </div>
-              <div className={classes.sm}>
+              </StyledDiv>
+              <StyledDiv>
                 <div className={istioChecked ? null : classes.inactiveAdapter}>
                   <IstioIcon width={40} height={40} /></div>
-                <Switch onChange={handleIstio} color="primary"></Switch></div>
+                <Switch onChange={handleIstio} color="primary"></Switch> </StyledDiv>
 
-              <div className={classes.sm}>
+                <StyledDiv>
                 <div className={linkerdChecked ? null : classes.inactiveAdapter}><LinkerdIcon width={40} height={40} /></div>
-                <Switch onChange={handleLinkerd} color="primary"></Switch></div>
-              <div className={classes.sm}>
-                <div className={nginxChecked ? null : classes.inactiveAdapter}><NginxIcon width={38} height={40} /></div><Switch onChange={handleNginx} color="primary"></Switch></div>
-              <div className={classes.sm}>
-                <div className={kumaChecked ? null : classes.inactiveAdapter}><KumaIcon width={40} height={40} /></div><Switch onChange={handleKuma} color="primary"></Switch></div>
-            </div>
+                <Switch onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
+                <StyledDiv>
+                <div className={nginxChecked ? null : classes.inactiveAdapter}><NginxIcon width={38} height={40} /></div><Switch onChange={handleNginx} color="primary"></Switch> </StyledDiv>
+                <StyledDiv>
+                <div className={kumaChecked ? null : classes.inactiveAdapter}><KumaIcon width={40} height={40} /></div><Switch onChange={handleKuma} color="primary"></Switch> </StyledDiv>
+            </ServiceMeshAdapters>
           </Grid>
         </div>
-      </div>
-    </div>
+      </ExtensionWrapper>
     </DockerMuiThemeProvider>
   );
 }
