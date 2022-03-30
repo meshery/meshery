@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ExtensionComponent from './components/ExtensionComponent';
+import ExtensionComponent from './components/ExtensionComponent/ExtensionComponent';
 import "./styles.css";
 
 ReactDOM.render(
