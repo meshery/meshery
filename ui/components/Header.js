@@ -33,7 +33,6 @@ import {
 } from './ConnectionWizard/helpers/common';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
-
 const styles = (theme) => ({
   secondaryBar : { zIndex : 0, },
   menuButton : { marginLeft : -theme.spacing(1), },
@@ -147,7 +146,7 @@ function K8sContextMenu({
 }) {
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
-  const [transformProperty, setTransformProperty] = React.useState(75)
+  const [transformProperty, setTransformProperty] = React.useState(100)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleKubernetesClick = () => {
@@ -211,20 +210,22 @@ function K8sContextMenu({
         </div>
       </IconButton>
 
-      <Slide direction="down" timeout={300} in={open} style={{ position : "absolute", left : "-5rem", zIndex : "-1", bottom : "-75%", transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)" }} mountOnEnter unmountOnExit>
+      <Slide direction="down"  timeout={400} in={open} style={{ position : "absolute", left : "-5rem", zIndex : "-1", bottom : "-100%", transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)" }} mountOnEnter unmountOnExit>
         <div>
           <ClickAwayListener onClickAway={(e) => {
+
             if (!e.target.className.includes("cbadge") && e.target.className !="k8s-image" && !e.target.className.includes("k8s-icon-button")) {
               setAnchorEl(false)
               setShowFullContextMenu(false)
             }
           }}>
-            <Paper className={classes.cMenuContainer}>
+            <Paper style={{ marginTop : "-2rem", }} className={classes.cMenuContainer}>
               <div>
                 <TextField
                   id="search-ctx"
+                  label="Search"
                   size="small"
-                  placeholder="search..."
+                  variant="outlined"
                   onChange={ev => searchContexts(ev.target.value)}
                   style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
                   InputProps={{ endAdornment :
@@ -262,7 +263,7 @@ function K8sContextMenu({
                 {contexts?.contexts?.map(ctx => (
                   <div id={ctx.id} className={classes.chip}>
                     <Tooltip title={`Server: ${ctx.server}`}>
-                      <div style={{ display : "flex", justifyContent : "center" }}>
+                      <div style={{ display : "flex", justifyContent : "center", alignItems : "center" }}>
                         <Checkbox
                           checked={activeContexts.includes(ctx.id)}
                           onChange={() => setActiveContexts(ctx.id)}
@@ -281,6 +282,51 @@ function K8sContextMenu({
                     </Tooltip>
                   </div>
                 ))}
+                {contexts?.contexts?.map(ctx => (
+                  <div id={ctx.id} className={classes.chip}>
+                    <Tooltip title={`Server: ${ctx.server}`}>
+                      <div style={{ display : "flex", justifyContent : "center", alignItems : "center" }}>
+                        <Checkbox
+                          checked={activeContexts.includes(ctx.id)}
+                          onChange={() => setActiveContexts(ctx.id)}
+                          color="primary"
+                        />
+                        <Chip
+                          label={ctx?.name}
+                          onDelete={handleKubernetesDelete}
+                          onClick={handleKubernetesClick}
+                          avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
+                          variant="filled"
+                          className={classes.Chip}
+                          data-cy="chipContextName"
+                        />
+                      </div>
+                    </Tooltip>
+                  </div>
+                ))}
+                {contexts?.contexts?.map(ctx => (
+                  <div id={ctx.id} className={classes.chip}>
+                    <Tooltip title={`Server: ${ctx.server}`}>
+                      <div style={{ display : "flex", justifyContent : "center", alignItems : "center" }}>
+                        <Checkbox
+                          checked={activeContexts.includes(ctx.id)}
+                          onChange={() => setActiveContexts(ctx.id)}
+                          color="primary"
+                        />
+                        <Chip
+                          label={ctx?.name}
+                          onDelete={handleKubernetesDelete}
+                          onClick={handleKubernetesClick}
+                          avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
+                          variant="filled"
+                          className={classes.Chip}
+                          data-cy="chipContextName"
+                        />
+                      </div>
+                    </Tooltip>
+                  </div>
+                ))}
+
               </div>
             </Paper>
 
