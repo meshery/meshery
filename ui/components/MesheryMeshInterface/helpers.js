@@ -308,7 +308,6 @@ export function buildUiSchema(schema) {
   const uiSchemaObj = {};
   // 1. Build ui schema
   jsonSchemaBuilder(schema, uiSchemaObj);
-  console.log("ioSchema", schema)
 
   // 2. Set the ordering of the components
   uiSchemaObj["ui:order"] = ["name", "namespace", "*"]
