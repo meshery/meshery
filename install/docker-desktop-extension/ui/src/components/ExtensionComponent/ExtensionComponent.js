@@ -13,7 +13,7 @@ import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import CustomTypography from "../CustomTypography"
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
-import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv } from "./styledComponents";
+import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper } from "./styledComponents";
 
 
 const ExtensionsComponent = props => {
@@ -55,6 +55,7 @@ const ExtensionsComponent = props => {
 
   return (
     <DockerMuiThemeProvider theme={theme}>
+      <ComponentWrapper>
       <CssBaseline />
       <MesheryIcon />
       <CustomTypography sx={{ maxWidth: "60%", margin: "auto", padding: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
@@ -65,7 +66,7 @@ const ExtensionsComponent = props => {
         <div style={{ padding: "2rem" }}>
           <AccountDiv>
             <CustomTypography sx={{ marginBottom: "2rem" }}>Account</CustomTypography>
-            <div><a sx={{ textDecoration: "none" }} href="http://localhost:9081"><Button sx={{ backgroundColor: "#7794AB", color: "#FFFFFF", }} variant="contained">
+            <div><a style={{ textDecoration: "none" }} href="http://localhost:9081"><Button sx={{ backgroundColor: "#7794AB", color: "#FFFFFF", }} variant="contained">
               Open Meshery
             </Button></a></div>
           </AccountDiv>
@@ -93,6 +94,7 @@ const ExtensionsComponent = props => {
           </Grid>
         </div>
       </ExtensionWrapper>
+      </ComponentWrapper>
     </DockerMuiThemeProvider>
   );
 }

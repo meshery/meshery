@@ -1,7 +1,5 @@
 import { styled } from "@mui/material/styles";
-//     inactiveAdapter: {
-//       filter: "grayscale(1) invert(0.35)"
-//     },
+
 export const StyledDiv = styled('div')(() => ({
   width: "16%",
   float: "left",
@@ -37,3 +35,10 @@ export const ExtensionWrapper = styled('div')(({ theme }) => ({
     height: "400px",
   }
 }));
+
+export const ComponentWrapper = styled('div')(({theme }) => ({
+  textAlign: "center",
+    backgroundColor: "#222C32",
+    padding: "5rem",
+    maxHeight: "100vh"
+}))
