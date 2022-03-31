@@ -199,11 +199,11 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 			//If preRunExecution and the current platform is docker then we trigger docker installation
 			//No auto installation of docker for windows
 			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", hc.Options.Subcommand)
+				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
 			}
 			err = utils.Startdockerdaemon(hc.Options.Subcommand)
 			if err != nil {
-				return errors.Wrapf(err, "failed to start Docker.")
+				return errors.Wrapf(err, "failed to start Docker ")
 			}
 		} else if hc.Options.PrintLogs { // warn incase of printing logs
 			log.Warn("!! Docker is not running")
@@ -228,11 +228,11 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 			log.Warn("!! docker-compose is not available")
 			//No auto installation of Docker-compose for windows
 			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", hc.Options.Subcommand)
+				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed ", hc.Options.Subcommand)
 			}
 			err = utils.InstallprereqDocker()
 			if err != nil {
-				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", hc.Options.Subcommand)
+				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed ", hc.Options.Subcommand)
 			}
 		} else if hc.Options.PrintLogs { // warn incase of printing logs
 			log.Warn("!! docker-compose is not available")

@@ -88,6 +88,15 @@ type NameSpace struct {
 	Namespace string `json:"namespace"`
 }
 
+type OAMCapability struct {
+	OamDefinition interface{} `json:"oam_definition"`
+	ID            *string     `json:"id"`
+	OamRefSchema  *string     `json:"oam_ref_schema"`
+	Host          *string     `json:"host"`
+	Restricted    *bool       `json:"restricted"`
+	Metadata      interface{} `json:"metadata"`
+}
+
 type OperatorControllerStatus struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
