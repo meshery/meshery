@@ -6,10 +6,11 @@ on:
     paths-ignore:
       - 'docs/**'
       - '.github/**'
+      - 'install/**'
 jobs:
   build:
     name: Docker build and push
-    if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+    if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
     env:
       RELEASE_CHANNEL: "edge"
     runs-on: ubuntu-latest

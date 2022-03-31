@@ -1,9 +1,10 @@
 
-import { withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
+import { styled } from "@mui/material/styles";
 
- export const CustomTypography = withStyles({
-    root: {
-      color: "#FFFFFF"
-    }
-  })(Typography);
+const CustomTypography = styled(Typography)(()=>({  
+  root: {
+  color: "#FFFFFF"
+}})) 
+  
+export default CustomTypography;

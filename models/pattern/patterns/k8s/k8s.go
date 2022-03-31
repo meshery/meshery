@@ -51,9 +51,6 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 
 		component[k] = v
 	}
-	if Format {
-		Format.DePrettify(component)
-	}
 	return component
 }
 

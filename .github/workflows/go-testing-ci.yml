@@ -8,6 +8,7 @@ on:
       - "ui/**"
       - "provider-ui/**"
       - ".github/**"
+      - "install/**"
   pull_request:
     branches:
       - "master"
@@ -31,7 +32,7 @@ jobs:
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3.0.0
         with:
           go-version: "1.17"
       - name: Run coverage
