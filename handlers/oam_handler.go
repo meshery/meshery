@@ -104,26 +104,26 @@ func (h *Handler) PatternFileHandler(
 	fmt.Fprintf(rw, "%s", msg)
 }
 
-// swagger:route GET /api/experimental/oam/{type} PatternsAPI idGetOAMRegister
+// swagger:route GET /api/oam/{type} PatternsAPI idGetOAMRegister
 // Handles GET requests for list of OAM objects
 //
 // Returns a list of workloads/traits/scopes by given type in the URL
 //
 // {type} being of either trait, scope, workload; registration of adapter capabilities.
-// Example: /api/experimental/oam/workload => Here {type} is "workload"
+// Example: /api/oam/workload => Here {type} is "workload"
 //
 // deprecated: true
 //
 // responses:
 // 	200:
 
-// swagger:route POST /api/experimental/oam/{type} PatternsAPI idPostOAMRegister
+// swagger:route POST /api/oam/{type} PatternsAPI idPostOAMRegister
 // Handles POST requests for adding OAM objects
 //
 // Adding a workloads/traits/scopes by given type in the URL
 //
 // {type} being of either trait, scope, workload; registration of adapter capabilities.
-// Example: /api/experimental/oam/workload => Here {type} is "workload"
+// Example: /api/oam/workload => Here {type} is "workload"
 //
 // deprecated: true
 //

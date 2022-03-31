@@ -16,6 +16,7 @@ import (
 // MesheryPatternRequestBody refers to the type of request body that
 // SaveMesheryPattern would receive
 type MesheryPatternRequestBody struct {
+	Name          string                 `json:"name,omitempty"`
 	URL           string                 `json:"url,omitempty"`
 	Path          string                 `json:"path,omitempty"`
 	Save          bool                   `json:"save,omitempty"`
@@ -142,7 +143,7 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	if parsedBody.CytoscapeJSON != "" {
-		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON([]byte(parsedBody.CytoscapeJSON))
+		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
 		if err != nil {
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "%s", err)

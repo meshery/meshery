@@ -32,7 +32,7 @@ import { faAngleLeft,faCaretDown,
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { updatepagetitle, updatebetabadge, toggleDrawer } from "../lib/store";
+import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
@@ -318,6 +318,13 @@ const categories = [
         show : true,
       },
       {
+        id : "Cilium_Service_Mesh",
+        href : "/management/cilium",
+        title : "Cilium",
+        link : true,
+        show : true,
+      },
+      {
         id : "Istio",
         href : "/management/istio",
         title : "Istio",
@@ -382,7 +389,7 @@ const categories = [
     disabled : true,
     href : "#",
     title : "Configuration",
-    show : false,
+    show : true,
     link : true,
     children : [
       {
@@ -740,8 +747,6 @@ class Navigator extends React.Component {
     category = category.toLowerCase();
     meshAdapters.forEach((adapter) => {
       let aName = adapter.name.toLowerCase();
-      // Manually changing adapter name so that it matches the internal name
-      if (aName === "osm") aName = "open service mesh";
       if (category !== aName) {
         return;
       }
@@ -788,6 +793,8 @@ class Navigator extends React.Component {
    * Changes the route to "/management"
    */
   handleAdapterClick(id, link) {
+    const { setAdapter } = this.props;
+    setAdapter({ selectedAdapter : id });
     if (id != -1 && !link) {
       this.props.router.push("/management");
     }
@@ -1084,8 +1091,7 @@ class Navigator extends React.Component {
                   path === href && classes.itemActiveItem
                 )}
                 onClick={() => this.toggleItemCollapse(childId)}
-                onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
-                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }) : null}
+
               >
                 <Link href={link
                   ? href
@@ -1241,18 +1247,23 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Chevron = (
-      <div className={classname} style={{ display : "flex", justifyContent : "center" }}>
+      <div  className={classname} style={{ display : "flex", justifyContent : "center" }}
+        onClick ={this.toggleMiniDrawer}
+      >
         <FontAwesomeIcon
           icon={faAngleLeft}
           fixedWidth
           size="1.5x"
           style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
           alt="Sidebar collapse toggle icon"
-          onClick={this.toggleMiniDrawer}
         />
+
       </div>
 
     )
+
+
+
     return (
       <NoSsr>
         <Drawer
@@ -1290,6 +1301,7 @@ const mapDispatchToProps = (dispatch) => ({
   updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
   updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
   toggleDrawer : bindActionCreators(toggleDrawer, dispatch),
+  setAdapter : bindActionCreators(setAdapter, dispatch),
 });
 
 const mapStateToProps = (state) => {
@@ -1299,5 +1311,8 @@ const mapStateToProps = (state) => {
   const isDrawerCollapsed = state.get("isDrawerCollapsed")
   return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed };
 };
+
+
+
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator)));
