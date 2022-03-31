@@ -1,14 +1,14 @@
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import React from "react";
+import React, { useEffect } from "react";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import { rjsfTheme } from "../../../themes";
 import handleError from '../../ErrorHandling';
 import { buildUiSchema } from "../helpers";
 import { getRefinedJsonSchema } from "./helper";
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
-import MemoizedCustomInputField from "./RJSFCustomComponents/CustomInputField";
+import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 
 const Form = withTheme(MaterialUITheme);
@@ -33,11 +33,6 @@ function RJSF(props) {
   } = props;
 
   const errorHandler = handleError();
-
-  // define new string field
-  const fields = {
-    StringField : ({ idSchema, formData, ...props }) => <MemoizedCustomInputField id={idSchema['$id']} value={formData} idSchema={idSchema} {...props} />
-  }
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
   const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
@@ -66,7 +61,6 @@ function RJSF(props) {
           setData(e.formData)
         }}
         jsonSchema={jsonSchema}
-        fields={fields}
       />
     </RJSFWrapperComponent>
   );
@@ -89,10 +83,17 @@ function RJSFForm(props) {
     jsonSchema,
     data,
     onChange,
-    fields,
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
   } = props;
+
+  useEffect(() => {
+    const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
+    if (extensionTooltipPortal) {
+      rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
+    }
+    rjsfTheme.zIndex.modal = 99999;
+  }, [])
 
   return (
     <MuiThemeProvider theme={rjsfTheme}>
@@ -101,11 +102,13 @@ function RJSFForm(props) {
         idPrefix={jsonSchema?.title}
         onChange={onChange}
         formData={data}
-        fields={fields}
         ArrayFieldTemplate={ArrayFieldTemplate}
         ObjectFieldTemplate={ObjectFieldTemplate}
         additionalMetaSchemas={[JS4]}
         uiSchema={schema.uiSchema}
+        widgets={{
+          TextWidget : CustomInputField
+        }}
         liveValidate
         showErrorList={false}
         noHtml5Validate

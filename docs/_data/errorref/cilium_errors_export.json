@@ -64,7 +64,7 @@
         "long_description": "Error occured while trying to install a sample application using manifests",
         "short_description": "Error with sample app operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
-        "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
+        "suggested_remediation": "Reconnect your adapter to Meshery Server to refresh the kubeclient"
       },
       "1007": {
         "name": "ErrCustomOperationCode",
@@ -73,7 +73,7 @@
         "long_description": "Error occured while applying custom manifest to the cluster",
         "short_description": "Error with custom operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
-        "suggested_remediation": "Reupload the kubconfig in the Meshery Server and reconnect the adapter"
+        "suggested_remediation": "Upload the kubconfig in the Meshery Server and reconnect the adapter"
       },
       "1008": {
         "name": "ErrCreatingNSCode",
@@ -82,7 +82,7 @@
         "long_description": "Error occured while applying manifest to create a namespace",
         "short_description": "Error creating namespace",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
-        "suggested_remediation": "Reupload the kubeconfig in the Meshery Server and reconnect the adapter"
+        "suggested_remediation": "Upload the kubeconfig in the Meshery Server and reconnect the adapter"
       },
       "1009": {
         "name": "ErrRunExecutableCode",
@@ -218,6 +218,24 @@
         "short_description": "Failed to extract release names",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1024": {
+        "name": "ErrGetManifestNamesCode",
+        "code": "1024",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch manifest names from github",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1026": {
+        "name": "ErrLoadNamespaceCode",
+        "code": "1026",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occured while applying namespace ",
+        "probable_cause": "Trying to access a namespace which is not available",
+        "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
       }
     }
   }

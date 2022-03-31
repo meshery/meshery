@@ -6,6 +6,8 @@ STATIC_FLAGS=CGO_ENABLED=0
 LDFLAGS="-s -w"
 GO_BUILD=$(STATIC_FLAGS) go build -trimpath -ldflags=$(LDFLAGS)
 
+GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 INFO_COLOR = \033[0;36m
 NO_COLOR   = \033[m
 
@@ -14,7 +16,7 @@ bin: ## Build the binary for the current platform
 	$(GO_BUILD) -o bin/service ./vm
 
 extension: ## Build service image to be deployed as a desktop extension
-	docker build --tag=$(IMAGE) .
+	docker build --tag=$(IMAGE) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg GIT_STRIPPED_VERSION=$(GIT_STRIPPED_VERSION) .
 
 prepare-buildx: ## Create buildx builder for multi-arch build, if not exists
 	docker buildx inspect $(BUILDER) || docker buildx create --name=$(BUILDER) --driver=docker-container --driver-opt=network=host
