@@ -96,8 +96,8 @@ For bugs use
 <li><h3>Activate your new branch.</h3></li>
 <br>
 
-`git checkout BRANCH`
-(Use the name of the branch you created instead of 'BRANCH'.)
+`git checkout feature/jdoe/567`
+(Use the name of the branch you created instead of 'feature/jdoe/567'.)
 <br>
 
 Now you may start hacking and make any changes you desire.🚀
@@ -131,7 +131,7 @@ If any commits to the upstream master branch have been made during the period yo
 
 <li><h3>If there were any new commits, rebase your development branch</h3></li>
 
-`git checkout BRANCH`<br>
+`git checkout feature/jdoe/567`<br>
 `git rebase master`
 
 Now, it may be desirable to squash some of your smaller commits down into a small number of larger more cohesive commits. You can do this with an interactive rebase:
