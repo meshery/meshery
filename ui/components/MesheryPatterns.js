@@ -161,6 +161,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
               data : yaml,
               id : pattern.id,
               name : pattern.name,
+              action: FILE_OPS.DELETE
             })}
           >
             <DeleteIcon />
