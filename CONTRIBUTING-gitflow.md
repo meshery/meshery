@@ -29,10 +29,10 @@
 
 <li><h3>Add 'upstream' repo to list of remotes</h3></li><br>
 Keeping Your Fork Updated
-While it's not required, if you plan on making anything more than a fast patch, you'll want to keep your fork up to date by tracking the original "upstream" source you forked previously. You'll need to add a remote to accomplish this:<br>
+While it's not required, if you plan on making anything more than a fast patch, you'll want to keep your fork up to date by tracking the original "upstream" source you forked previously. You'll need to add a remote to accomplish this:<br><br>
 
-`git remote add upstream https://github.com/meshery/meshery.git`
-<br>
+`git remote add upstream https:/github.com/meshery/meshery.git`
+<br><br>
 ("meshery" is used as the example repo. Be sure to reference the _actual_ repo you're contributing to e.g. "meshery-linkerd").
 <br>
 
@@ -60,9 +60,9 @@ You'll need to fetch the upstream repo's branches and newest commits to bring th
 Now, checkout your master branch and merge it with the master branch of the upstream repo:
 <br>
 
-`git checkout master`
+`git checkout master`<br>
 `git merge upstream/master`
-<br>
+<br><br>
 If the local master branch has no unique commits, git will simply execute a fast-forward. However, if you've been making modifications to master (which, in the vast majority of circumstances, you shouldn't be - see the next section), you may run into issues. Always keep in mind the changes made upstream when doing so.
 <br>
 Your local master branch is now up to date with everything that has been changed upstream.
@@ -81,11 +81,13 @@ Follow the steps below to establish a new branch and begin working on it.
 
 <li><h3>Create a new branch</h3></li> (Give your branch a simple, informative name.)
 <br>
-For enhancements use 
+For enhancements use
+
 `feature/your_username/issue#` or `feature/your_username/name_of_feature`
 <br>
 For bugs use
- `bug/your_username/issue#` or `bug/your_username/name_of_bug`
+
+`bug/your_username/issue#` or `bug/your_username/name_of_bug`
 <br>
 
 `git branch feature/jdoe/567`
@@ -104,12 +106,13 @@ Now you may start hacking and make any changes you desire.🚀
 <li><h3>Stage the Changes</h3></li>
 
 `git add .`
+<br>
 (This will stage all the changes you have made.)
 <br>
 
 <li><h3>Commit Changes</h3></li>
 
-`git commit -m "MESSAGE"`
+`git commit -m "MESSAGE"`<br>
 (Instead of 'MESSAGE,' include a commit message so the maintainer can see what you've done.)
 <br>
 
@@ -122,24 +125,25 @@ If any commits to the upstream master branch have been made during the period yo
 
 <li><h3>Fetch upstream master and merge with your repo's master branch</h3></li>
 
-`git fetch upstream`
-`git checkout master`
-`git merge upstream/master`
+`git fetch upstream`<br>
+`git checkout master`<br>
+`git merge upstream/master`<br>
 
 <li><h3>If there were any new commits, rebase your development branch</h3></li>
 
-`git checkout BRANCH`
+`git checkout BRANCH`<br>
 `git rebase master`
 
 Now, it may be desirable to squash some of your smaller commits down into a small number of larger more cohesive commits. You can do this with an interactive rebase:
 
 <li><h3>Rebase all commits on your development branch</li></h3>
 
-`git checkout`
+`git checkout`<br>
 `git rebase -i master`
 
 This will open up a text editor where you can specify which commits to squash.
 
 <li><h3>Submit the Changes</h3></li>
-Once you've committed and pushed all of your changes to GitHub, go to the page for your fork on GitHub, select your development branch, and click the pull request button. If you need to make any adjustments to your pull request, just push the updates to GitHub. 
-Your pull request will automatically track the changes in your development branch and update it.
+Go to the page for your fork on GitHub, select your development branch, then click the pull request button once you've committed and submitted all of your changes. Simply upload the changes to GitHub if you need to make any changes to your pull request.
+
+Your pull request will track and update changes in your development branch automatically.🌸
