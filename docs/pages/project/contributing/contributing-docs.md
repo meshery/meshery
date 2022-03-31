@@ -155,10 +155,10 @@ Restart your WSL VM before moving forward.
 - If that gives an error run:
 
   ```bash
-    $ bundle exec jekyll serve
+  $ bundle exec jekyll serve --drafts --config _config_dev.yml
   ```
 
-  _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
+  _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command causes errors try running the server without Livereload with this command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Just keep in mind you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artefacts for production._
 
 ### Using Docker
 
@@ -199,7 +199,7 @@ Automatically the `Gemfile.lock` will update once the `make site` is given (for 
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
   ```bash
-  $ commit -s -m “my commit message w/signoff”
+  $ git commit -s -m “my commit message w/signoff”
   ```
 - Once all changes have been committed, push the changes.
   ```bash

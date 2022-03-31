@@ -716,7 +716,20 @@ func ForceCleanupCluster() error {
 		return errors.Wrap(err, "failed to create new client")
 	}
 
+	// deletePolicy to delete related resources
 	deletePolicy := metav1.DeletePropagationForeground
+
+	// Deleting resources via kube-client
+	// Deployments
+	// Services
+	// StatefulSets
+	// ClusterRoleBindings
+	// ClusterRoles
+	// ServiceAccount
+	// Secrets
+	// ConfigMaps
+	// Roles
+	// RoleBindings
 
 	deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
 	deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
@@ -725,12 +738,10 @@ func ForceCleanupCluster() error {
 	}
 
 	for _, deployment := range deploymentList.Items {
-		if strings.Contains(string(deployment.GetName()), "meshery") {
-			if err := deploymentInterface.Delete(context.TODO(), deployment.GetName(), metav1.DeleteOptions{
-				PropagationPolicy: &deletePolicy,
-			}); err != nil {
-				log.Debug(err)
-			}
+		if err := deploymentInterface.Delete(context.TODO(), deployment.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
 		}
 	}
 
@@ -741,12 +752,10 @@ func ForceCleanupCluster() error {
 	}
 
 	for _, service := range serviceList.Items {
-		if strings.Contains(string(service.GetName()), "meshery") {
-			if err := serviceInterface.Delete(context.TODO(), service.GetName(), metav1.DeleteOptions{
-				PropagationPolicy: &deletePolicy,
-			}); err != nil {
-				log.Debug(err)
-			}
+		if err := serviceInterface.Delete(context.TODO(), service.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
 		}
 	}
 
@@ -757,12 +766,10 @@ func ForceCleanupCluster() error {
 	}
 
 	for _, statefulSet := range statefulSetList.Items {
-		if strings.Contains(string(statefulSet.GetName()), "meshery") {
-			if err := statefulSetInterface.Delete(context.TODO(), statefulSet.GetName(), metav1.DeleteOptions{
-				PropagationPolicy: &deletePolicy,
-			}); err != nil {
-				log.Debug(err)
-			}
+		if err := statefulSetInterface.Delete(context.TODO(), statefulSet.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
 		}
 	}
 
@@ -773,6 +780,8 @@ func ForceCleanupCluster() error {
 	}
 
 	for _, clusterRoleBinding := range clusterRoleBindingList.Items {
+		// clusterrolebindings aren't namespaced so gotta
+		// check if "meshery" is present in the name or not
 		if strings.Contains(string(clusterRoleBinding.GetName()), "meshery") {
 			if err := clusterRoleBindingInterface.Delete(context.TODO(), clusterRoleBinding.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
@@ -789,12 +798,84 @@ func ForceCleanupCluster() error {
 	}
 
 	for _, clusterRole := range clusterRoleList.Items {
+		// clusterroles aren't namespaced so gotta
+		// check if "meshery" is present in the name or not
 		if strings.Contains(string(clusterRole.GetName()), "meshery") {
 			if err := clusterRoleInterface.Delete(context.TODO(), clusterRole.GetName(), metav1.DeleteOptions{
 				PropagationPolicy: &deletePolicy,
 			}); err != nil {
 				log.Debug(err)
 			}
+		}
+	}
+
+	serviceAccountInterface := client.KubeClient.CoreV1().ServiceAccounts(MesheryNamespace)
+	serviceAccountList, err := serviceAccountInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, serviceAccount := range serviceAccountList.Items {
+		if err := serviceAccountInterface.Delete(context.TODO(), serviceAccount.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	secretsInterface := client.KubeClient.CoreV1().Secrets(MesheryNamespace)
+	secretsList, err := secretsInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, secrets := range secretsList.Items {
+		if err := secretsInterface.Delete(context.TODO(), secrets.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	configMapsInterface := client.KubeClient.CoreV1().ConfigMaps(MesheryNamespace)
+	configMapsList, err := configMapsInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, configMap := range configMapsList.Items {
+		if err := configMapsInterface.Delete(context.TODO(), configMap.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	rolesInterface := client.KubeClient.RbacV1().Roles(MesheryNamespace)
+	rolesList, err := rolesInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, role := range rolesList.Items {
+		if err := rolesInterface.Delete(context.TODO(), role.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	roleBindingsInterface := client.KubeClient.RbacV1().RoleBindings(MesheryNamespace)
+	roleBindingsList, err := roleBindingsInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, roleBinding := range roleBindingsList.Items {
+		if err := roleBindingsInterface.Delete(context.TODO(), roleBinding.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
 		}
 	}
 

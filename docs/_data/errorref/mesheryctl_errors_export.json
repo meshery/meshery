@@ -353,6 +353,114 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1047": {
+        "name": "ErrInitPortForwardCode",
+        "code": "1047",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1048": {
+        "name": "ErrRunPortForwardCode",
+        "code": "1048",
+        "severity": "Fatal",
+        "long_description": "Error running port-forward for Meshery",
+        "short_description": "Failed to run port-forward",
+        "probable_cause": "Meshery pod is not in running phase\nmesheryctl can't connect to kubernetes with client-go",
+        "suggested_remediation": "Make sure Meshery pod exists and is in running state\nCheck if mesheryctl is connected to kubernetes with `mesheryctl system check`"
+      },
+      "1049": {
+        "name": "ErrFailedGetEphemeralPortCode",
+        "code": "1049",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1050": {
+        "name": "ErrProcessingConfigCode",
+        "code": "1050",
+        "severity": "Alert",
+        "long_description": "Error processing config",
+        "short_description": "Error processing config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1051": {
+        "name": "ErrCreatingConfigFileCode",
+        "code": "1051",
+        "severity": "Alert",
+        "long_description": "Unable to create config file",
+        "short_description": "Unable to create config file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1052": {
+        "name": "ErrAddingTokenToConfigCode",
+        "code": "1052",
+        "severity": "Alert",
+        "long_description": "Unable to add token to config",
+        "short_description": "Unable to add token to config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1053": {
+        "name": "ErrAddingContextToConfigCode",
+        "code": "1053",
+        "severity": "Alert",
+        "long_description": "Unable to add context to config",
+        "short_description": "Unable to add context to config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1054": {
+        "name": "ErrUnmarshallingConfigFileCode",
+        "code": "1054",
+        "severity": "Alert",
+        "long_description": "Error unmarshalling config file",
+        "short_description": "Error unmarshalling config file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1055": {
+        "name": "ErrGettingRequestContextCode",
+        "code": "1055",
+        "severity": "Fatal",
+        "long_description": "Unable to add token to config",
+        "short_description": "Unable to add token to config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1056": {
+        "name": "ErrInvalidAPIResponseCode",
+        "code": "1056",
+        "severity": "Fatal",
+        "long_description": "Invalid API response",
+        "short_description": "Invalid API response",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1057": {
+        "name": "ErrUnmarshallingAPIDataCode",
+        "code": "1057",
+        "severity": "Fatal",
+        "long_description": "Error unmarshalling API data",
+        "short_description": "Error unmarshalling API data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1058": {
+        "name": "ErrConnectingToServerCode",
+        "code": "1058",
+        "severity": "Fatal",
+        "long_description": "Unable to communicate with Meshery server\nSee https://docs.meshery.io for help getting started with Meshery",
+        "short_description": "Unable to communicate with Meshery server",
+        "probable_cause": "",
+        "suggested_remediation": "See https://docs.meshery.io for help getting started with Meshery"
       }
     }
   }
