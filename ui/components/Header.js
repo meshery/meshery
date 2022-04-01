@@ -214,7 +214,7 @@ function K8sContextMenu({
       <Slide direction="down" timeout={300} in={open} style={{ position : "absolute", left : "-5rem", zIndex : "-1", bottom : "-75%", transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)" }} mountOnEnter unmountOnExit>
         <div>
           <ClickAwayListener onClickAway={(e) => {
-            if (!e.target.className.includes("cbadge") && e.target.className !="k8s-image" && !e.target.className.includes("k8s-icon-button")) {
+            if (!e.target.classList.contains("cbadge") && e.target.className !="k8s-image" && !e.target.classList.contains("k8s-icon-button"))  {
               setAnchorEl(false)
               setShowFullContextMenu(false)
             }
