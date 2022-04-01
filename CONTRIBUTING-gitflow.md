@@ -107,7 +107,7 @@ Now you may start hacking and make any changes you desire.🚀
 <li><h3>Commit Changes</h3></li>
 
 `git commit -m "MESSAGE"`<br>
-(Instead of 'MESSAGE,' include a commit message so the maintainer can see what you've done.)
+(Instead of 'MESSAGE,' include a commit message so the maintainer can see what you've done.<br>Also make sure to get the DCO signed.)
 <br>
 
 <li><h3>Creating Pull Request on Github</h3></li>
