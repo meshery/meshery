@@ -20,16 +20,16 @@
 
 <li><h3>Run Command</h3></li>
 
-`git clone link`
+`git clone <insert-link>`
 
-(In Place of link paste the link you copied)
+(In Place of insert-link paste the link you copied)
 
 <h3>Project Cloned in System</h3>
 <br><br>
 
 <li><h3>Add 'upstream' repo to list of remotes</h3></li><br>
 Keeping Your Fork Updated
-While it's not required, if you plan on making anything more than a fast patch, you'll want to keep your fork up to date by tracking the original "upstream" source you forked previously. You'll need to add a remote to accomplish this:<br><br>
+In order to get the latest updates from the development trunk do a one-time setup to establish the main GitHub repo as a remote by entering:<br><br>
 
 `git remote add upstream https:/github.com/meshery/meshery.git`
 <br><br>
@@ -48,12 +48,6 @@ You'll need to fetch the upstream repo's branches and newest commits to bring th
 
 `git fetch upstream`
 <br><br>
-
-<li><h3>View all branches, including those from upstream</h3></li>
-<br>
-
-`git branch -va`
-<br>
 
 <li><h3>Checkout your master branch and merge upstream</h3></li>
 <br>
@@ -81,9 +75,9 @@ Follow the steps below to establish a new branch and begin working on it.
 
 <li><h3>Create a new branch</h3></li> (Give your branch a simple, informative name.)
 <br>
-For enhancements use
+For continuous integration changes use
 
-`feature/your_username/issue#` or `feature/your_username/name_of_feature`
+`ci/your_username/issue#` or `feature/your_username/name_of_feature`
 <br>
 For bugs use
 
@@ -93,7 +87,7 @@ For bugs use
 `git branch feature/jdoe/567`
 <br><br>
 
-<li><h3>Activate your new branch.</h3></li>
+<li><h3>Switch to your new branch</h3></li>
 <br>
 
 `git checkout feature/jdoe/567`
@@ -105,7 +99,7 @@ Now you may start hacking and make any changes you desire.🚀
 
 <li><h3>Stage the Changes</h3></li>
 
-`git add .`
+`git add [files-changed]`
 <br>
 (This will stage all the changes you have made.)
 <br>
@@ -142,6 +136,10 @@ Now, it may be desirable to squash some of your smaller commits down into a smal
 `git rebase -i master`
 
 This will open up a text editor where you can specify which commits to squash.
+<li><h3>References</h3></li>
+<a href="https://git-scm.com/docs">Git Reference Docs</a>
+<br>
+<a href="https://git-scm.com/docs/git-rebase#_interactive_mode">git-rebase / Interactive Mode</a>
 
 <li><h3>Submit the Changes</h3></li>
 Go to the page for your fork on GitHub, select your development branch, then click the pull request button once you've committed and submitted all of your changes. Simply upload the changes to GitHub if you need to make any changes to your pull request.
