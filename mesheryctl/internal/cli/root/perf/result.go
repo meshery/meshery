@@ -14,6 +14,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -111,6 +112,9 @@ mesheryctl perf result saturday-profile --view
 
 		// get performance results in format of string arrays and resultStruct
 		data, expandedData := performanceResultsToStringArrays(results)
+		if len(expandedData) == 0 {
+			logrus.Fatal("No Test Results to display in given profile")
+		}
 		if outputFormatFlag != "" {
 			body, _ := json.Marshal(results)
 			if outputFormatFlag == "yaml" {
