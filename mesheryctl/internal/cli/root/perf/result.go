@@ -212,8 +212,18 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 
 		// append data for extended output
 		name := "None"
+		userid := uuid.Nil
+		mesheryid := uuid.Nil
 		url := "None"
 		loadGenerator := "None"
+
+		if result.UserID != nil {
+			userid = *result.UserID
+		}
+
+		if result.MesheryID != nil {
+			mesheryid = *result.MesheryID
+		}
 
 		if result.Name != "" {
 			name = result.Name
@@ -229,7 +239,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 
 		a := resultStruct{
 			Name:     name,
-			UserID:   result.UserID,
+			UserID:   (*uuid.UUID)(userid.Bytes()),
 			URL:      url,
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,
@@ -242,7 +252,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 				P99:     P99,
 			},
 			StartTime:     result.TestStartTime,
-			MesheryID:     result.MesheryID,
+			MesheryID:     (*uuid.UUID)(mesheryid.Bytes()),
 			LoadGenerator: loadGenerator,
 		}
 
