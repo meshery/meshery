@@ -14,7 +14,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -113,8 +112,10 @@ mesheryctl perf result saturday-profile --view
 		// get performance results in format of string arrays and resultStruct
 		data, expandedData := performanceResultsToStringArrays(results)
 		if len(expandedData) == 0 {
-			logrus.Fatal("No Test Results to display in given profile")
+			utils.Log.Info("No Test Results to display")
+			return nil
 		}
+
 		if outputFormatFlag != "" {
 			body, _ := json.Marshal(results)
 			if outputFormatFlag == "yaml" {
@@ -210,10 +211,26 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 		}
 
 		// append data for extended output
+		name := "None"
+		url := "None"
+		loadGenerator := "None"
+
+		if result.Name != "" {
+			name = result.Name
+		}
+
+		if result.RunnerResults.URL != "" {
+			url = result.RunnerResults.URL
+		}
+
+		if result.RunnerResults.LoadGenerator != "" {
+			loadGenerator = result.RunnerResults.LoadGenerator
+		}
+
 		a := resultStruct{
-			Name:     result.Name,
+			Name:     name,
 			UserID:   result.UserID,
-			URL:      result.RunnerResults.URL,
+			URL:      url,
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,
 			LatenciesMs: &models.LatenciesMs{
@@ -226,7 +243,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 			},
 			StartTime:     result.TestStartTime,
 			MesheryID:     result.MesheryID,
-			LoadGenerator: result.RunnerResults.LoadGenerator,
+			LoadGenerator: loadGenerator,
 		}
 
 		expendedData = append(expendedData, a)
