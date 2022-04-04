@@ -112,7 +112,7 @@ mesheryctl perf result saturday-profile --view
 		// get performance results in format of string arrays and resultStruct
 		data, expandedData := performanceResultsToStringArrays(results)
 		if len(expandedData) == 0 {
-			utils.Log.Info("No Test Results to display")
+			utils.Log.Info("No test results to display")
 			return nil
 		}
 
