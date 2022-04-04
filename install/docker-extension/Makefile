@@ -1,4 +1,4 @@
-IMAGE?=meshery/meshery-docker-desktop-extension
+IMAGE?=meshery/docker-extension-meshery
 
 BUILDER=buildx-multi-arch
 
@@ -15,7 +15,7 @@ bin: ## Build the binary for the current platform
 	@echo "$(INFO_COLOR)Building...$(NO_COLOR)"
 	$(GO_BUILD) -o bin/service ./vm
 
-extension: ## Build service image to be deployed as a desktop extension
+extension: ## Build service image to be deployed as a Docker extension
 	docker build --tag=$(IMAGE) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg GIT_STRIPPED_VERSION=$(GIT_STRIPPED_VERSION) .
 
 prepare-buildx: ## Create buildx builder for multi-arch build, if not exists
