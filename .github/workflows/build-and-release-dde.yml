@@ -21,6 +21,11 @@ on:
           description: 'Stripped Stable Release Version'     
           required: true
           default: ''
+
+env:
+  GIT_VERSION: ${{github.event.inputs.release-ver}}
+  GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}
+
 jobs:
   docker:
     runs-on: ubuntu-latest
