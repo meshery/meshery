@@ -38,9 +38,10 @@ jobs:
               echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
           else
               echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV
+              echo "GIT_VERSION=$(cd ../../ && git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
+              echo "GIT_STRIPPED_VERSION=`echo $GIT_VERSION= | cut -c 2-`" >> $GITHUB_ENV
           fi
           echo "Release channel determined to be $RELEASE_CHANNEL"
-          echo "GIT_STRIPPED_VERSION=`echo ${{github.ref}} | cut -c 2-`" >> $GITHUB_ENV
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
