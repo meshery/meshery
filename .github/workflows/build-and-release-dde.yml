@@ -53,8 +53,8 @@ jobs:
             prefix=${{env.RELEASE_CHANNEL}}-
           tags: |
             type=raw,value={{sha}}
-            type=semver,pattern={{version}},value=v${{env.GIT_STRIPPED_VERSION}}
-            type=raw,value=v${{env.GIT_STRIPPED_VERSION}}
+            type=semver,pattern={{version}},value=v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }} 
             type=raw,value={{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=latest
           
