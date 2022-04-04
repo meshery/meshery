@@ -41,7 +41,7 @@ In order to get the latest updates from the development trunk do a one-time setu
 `git remote -v`
 <br>
 
-<li><h3>Fetch from upstream remote</h3</li>
+<li><h3>Fetch from upstream remote</h3></li>
 <br>
 You'll need to fetch the upstream repo's branches and newest commits to bring them into your repository whenever you wish to update your fork with the latest upstream changes:
 <br>
