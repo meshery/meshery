@@ -14,7 +14,7 @@ export const AccountDiv = styled('div')(() => ({
 }));
 
 export const ServiceMeshAdapters = styled('div')(({ theme }) => ({
-  width: "50%",
+  width: "40%",
   float: "right",
   [theme.breakpoints.down("xs")]: {
     width: "100%"
@@ -30,7 +30,7 @@ export const ExtensionWrapper = styled('div')(({ theme }) => ({
   backgroundColor: "#393F49",
   borderRadius: "20px ",
   padding: "1rem",
-  height: "300px",
+  height: "350px",
   [theme.breakpoints.down("xs")]: {
     height: "400px",
   }
