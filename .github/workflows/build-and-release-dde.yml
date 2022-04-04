@@ -30,6 +30,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - name: Determine Release Channel
       - uses: actions/checkout@v3
       - run: |
           if [[ ${{ github.ref }} = refs/tags* ]]
@@ -37,7 +38,7 @@ jobs:
               echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
           else
               echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV
-              echo "GIT_VERSION=$(cd ../../ && git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
+              echo "GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
               echo "GIT_STRIPPED_VERSION=`echo $GIT_VERSION= | cut -c 2-`" >> $GITHUB_ENV
           fi
           echo "Release channel determined to be $RELEASE_CHANNEL"
