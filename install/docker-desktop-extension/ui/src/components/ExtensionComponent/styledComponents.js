@@ -14,7 +14,7 @@ export const AccountDiv = styled('div')(() => ({
 }));
 
 export const ServiceMeshAdapters = styled('div')(({ theme }) => ({
-  width: "40%",
+  width: "50%",
   float: "right",
   [theme.breakpoints.down("xs")]: {
     width: "100%"
