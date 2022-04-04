@@ -30,7 +30,6 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Determine Release Channel
       - uses: actions/checkout@v3
       - run: |
           if [[ ${{ github.ref }} = refs/tags* ]]
