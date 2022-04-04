@@ -66,10 +66,19 @@ const ExtensionsComponent = props => {
         <div style={{ padding: "2rem" }}>
           <AccountDiv>
             <CustomTypography sx={{ marginBottom: "2rem" }}>Account</CustomTypography>
-            <div><a style={{ textDecoration: "none" }} href="http://localhost:9081"><Button sx={{ backgroundColor: "#7794AB", color: "#FFFFFF", }} variant="contained">
+            <div style={{ paddingBottom: "2rem" }}><a style={{ textDecoration: "none" }} href="http://localhost:9081"><Button sx={{ color: "#FFFFFF", whiteSpace: "nowrap" }} variant="contained">
               Open Meshery
             </Button></a></div>
+            <div ><CustomTypography sx={{ marginBottom: "1.5rem", whiteSpace: " nowrap" }}>Import Compose App</CustomTypography>
+          <label htmlFor="upload-button" >
+
+<Button sx={{ backgroundColor: "#7794AB"}} variant="contained" size="large"  color="primary" aria-label="Upload Button"  component="span" >
+  <input id="upload-button" type="file"  accept=".yaml, .yml" hidden name="upload-button"  />
+    Browse...
+</Button>
+</label></div>
           </AccountDiv>
+  
           <Grid justify="center">
             <ServiceMeshAdapters>
               <CustomTypography sx={{ marginBottom: "2rem" }}>Deploy a Service Mesh</CustomTypography>
