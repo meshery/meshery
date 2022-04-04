@@ -1,4 +1,4 @@
-name: Docker Desktop Extension for Meshery
+name: Docker Extension for Meshery
   # TODO 
   ##   1) Incorporate mesheryctl binaries into each DDE image
 
@@ -58,7 +58,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: meshery/meshery-docker-desktop-extension
+          images: meshery/docker-extension-meshery
           flavor: |
             latest=false
             prefix=${{env.RELEASE_CHANNEL}}-
@@ -80,7 +80,7 @@ jobs:
         name: Build and Push 
         uses: docker/build-push-action@v2
         with:
-          context: "{{defaultContext}}:install/docker-desktop-extension"
+          context: "{{defaultContext}}:install/docker-extension"
           push: true
           build-args: |
             GIT_STRIPPED_VERSION=${{env.GIT_STRIPPED_VERSION}}
@@ -94,5 +94,5 @@ jobs:
       #   with:
       #     username: ${{ secrets.DOCKER_USERNAME }}
       #     password: ${{ secrets.DOCKER_PASSWORD }}
-      #     repository: meshery/meshery-docker-desktop-extension  
-      #     readme-filepath: /install/docker-desktop-extension/README.md 
+      #     repository: meshery/meshery-docker-extension  
+      #     readme-filepath: /install/docker-extension/README.md 
