@@ -30,8 +30,13 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: |
+      - 
+        name: Checkout repo
+        uses: actions/checkout@v3
+      -
+        name: Determin Release Channel
+        id: release-channel
+        run: |
           if [[ ${{ github.ref }} = refs/tags* ]]
           then
               echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
