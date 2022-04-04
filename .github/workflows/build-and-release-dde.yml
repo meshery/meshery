@@ -72,8 +72,8 @@ jobs:
           context: "{{defaultContext}}:install/docker-desktop-extension"
           push: true
           build-args: |
-            GIT_STRIPPED_VERSION=${{github.event.inputs.stripped-release-ver}}
-            GIT_VERSION=${{github.event.inputs.release-ver}}
+            GIT_STRIPPED_VERSION=${{env.GIT_STRIPPED_VERSION}}
+            GIT_VERSION=${{env.GIT_VERSION}}
           tags: ${{ steps.meta.outputs.tags }}     
           platforms: linux/amd64,linux/arm64
 
