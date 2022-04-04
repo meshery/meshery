@@ -8,11 +8,11 @@
 <ul>
 <li><h3> Fork the Repository of Project</h3></li><br>
 
-<p><img src="fork.png" align="center"></p>
+<p><img src="/.github/assets/images/fork.png" align="center"></p>
 
 ( You will see this on Top Right of Github Repository !)<br><br>
 <li><h3>Clone your fork to your local machine</h3></li><br>
-<img width="50%" align="center"  src="clone.png"><br>
+<img width="50%" align="center"  src="/.github/assets/images/clone.png"><br>
 ( Click on the Green Code button and Copy the link `https://github.com/........` )<br><br>
 <li><h3>Open Git bash where you want to clone the project ( Avoid On Desktop )</h3></li>
 
