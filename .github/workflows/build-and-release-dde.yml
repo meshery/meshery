@@ -33,10 +33,17 @@ jobs:
       - 
         name: Run pwd
         run: |
-          chmod 755 install/latest_release.sh
-          ./install/latest_release.sh
-          pwd
-          ls .github
+          GIT_REF=`git symbolic-ref HEAD`
+          if [[ $GIT_REF = refs/tags* ]]
+          then
+            RELEASE_CHANNEL="stable"
+            # export RELEASE_CHANNEL="stable"
+          else
+            RELEASE_CHANNEL="edge"
+            # export RELEASE_CHANNEL="edge"
+          fi
+          # echo "Release channel determined to be $RELEASE_CHANNEL"
+          LATEST_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
         shell: bash
       # -
       #   name: Determine Stable Release Channel
