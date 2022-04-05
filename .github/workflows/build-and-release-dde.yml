@@ -44,6 +44,10 @@ jobs:
           fi
           # echo "Release channel determined to be $RELEASE_CHANNEL"
           LATEST_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+          GIT_VERSION=$LATEST_VERSION
+          GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
+          
+          env
         shell: bash
       # -
       #   name: Determine Stable Release Channel
