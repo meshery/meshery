@@ -30,9 +30,10 @@ jobs:
       - 
         name: Checkout repo
         uses: actions/checkout@v3
-      # - name: Run build script
-      #   run: ./install/docker-extension/make release_channel
-      #   shell: bash
+      - 
+        name: Run build script
+        run: /install/docker-extension/make release_channel
+        shell: bash
       -
         name: Determine Stable Release Channel
         run: |

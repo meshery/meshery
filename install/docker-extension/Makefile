@@ -14,6 +14,12 @@ GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-coun
 GIT_REF=$(shell git symbolic-ref HEAD)
 RELEASE_CHANNEL=$(shell ./release_channel.sh)
 
+release-channel:
+	GIT_VERSION=$(GIT_VERSION)
+	GIT_STRIPPED_VERSION=$(GIT_STRIPPED_VERSION)
+	GIT_REF=$(GIT_REF)
+	RELEASE_CHANNEL=$(RELEASE_CHANNEL)
+
 ## Build the binary for the current platform
 bin: 
 	@echo "$(INFO_COLOR)Building...$(NO_COLOR)"
