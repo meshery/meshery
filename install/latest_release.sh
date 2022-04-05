@@ -1,5 +1,6 @@
 #!/bin/bash
-GIT_REF=`cd / && git symbolic-ref HEAD`
+echo `pwd`
+GIT_REF=`cd ../ && git symbolic-ref HEAD`
 if [[ $GIT_REF = refs/tags* ]]
 then
 	RELEASE_CHANNEL="stable"
@@ -9,4 +10,4 @@ else
  	# export RELEASE_CHANNEL="edge"
  fi
 # echo "Release channel determined to be $RELEASE_CHANNEL"
-LATEST_VERSION=$(cd / && git describe --tags `git rev-list --tags --max-count=1`)
+LATEST_VERSION=$(cd ../ && git describe --tags `git rev-list --tags --max-count=1`)
