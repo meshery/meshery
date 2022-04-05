@@ -26,8 +26,9 @@ COPY ui /ui
 RUN npm run build
 
 FROM alpine
-ARG GIT_VERSION
 ARG GIT_STRIPPED_VERSION
+ARG GIT_VERSION
+ARG RELEASE_CHANNEL
 LABEL org.opencontainers.image.title="meshery" \
     org.opencontainers.image.description="Design and operate your cloud native deployments with the extensible management plane, Meshery." \
     org.opencontainers.image.vendor="Layer5, Inc." \

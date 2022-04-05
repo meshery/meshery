@@ -1,37 +1,39 @@
+
+# include ../Makefile.core.mk
+# include ../Makefile.show-help.mk
+
 IMAGE?=meshery/docker-extension-meshery
 
 BUILDER=buildx-multi-arch
-
 STATIC_FLAGS=CGO_ENABLED=0
 LDFLAGS="-s -w"
 GO_BUILD=$(STATIC_FLAGS) go build -trimpath -ldflags=$(LDFLAGS)
 
-INFO_COLOR = \033[0;36m
-NO_COLOR   = \033[m
+GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
+GIT_REF=$(shell git symbolic-ref HEAD)
+RELEASE_CHANNEL=$(shell ./release_channel.sh)
 
-	GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
-	GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
-	GIT_REF=$(shell git symbolic-ref HEAD)
-#	R=$(shell if [[ ${GIT_REF} == *"tag"* ]] \
-#		then \
-#		echo "hi")
-	RELEASE_CHANNEL="edge"
-
-bin: ## Build the binary for the current platform
+## Build the binary for the current platform
+bin: 
 	@echo "$(INFO_COLOR)Building...$(NO_COLOR)"
 	$(GO_BUILD) -o bin/service ./vm
 
-extension: release_channel ## Build service image to be deployed as a Docker extension
+## Build service image to be deployed as a Docker extension
+extension: 
 	docker build --tag=$(IMAGE) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg GIT_STRIPPED_VERSION=$(GIT_STRIPPED_VERSION) .
 
-prepare-buildx: release_channel ## Create buildx builder for multi-arch build, if not exists
+## Create buildx builder for multi-arch build.
+prepare-buildx: 
 	docker buildx inspect $(BUILDER) || docker buildx create --name=$(BUILDER) --driver=docker-container --driver-opt=network=host
 
-push-extension: release_channel prepare-buildx ## Build & Upload extension image to hub. Do not push if tag already exists: make push-extension tag=0.1
-	docker pull $(IMAGE):$(tag) && echo "Failure: Tag already exists" || docker buildx build --push --builder=$(BUILDER) --platform=linux/amd64,linux/arm64 --build-arg TAG=${tag)} --tag=$(IMAGE):$(tag) .
+## Build & Upload extension image to hub. Do not push if tag already exists.
+push-extension: prepare-buildx
+	docker pull $(IMAGE):$(RELEASE_CHANNEL)-$(GIT_VERSION) && echo "Failure: Tag already exists" || docker buildx build --push \
+	--builder=$(BUILDER) --platform=linux/amd64,linux/arm64 \
+	--build-arg tag=$(IMAGE):$(RELEASE_CHANNEL)-$(GIT_VERSION) \
+	--build-arg GIT_VERSION=$(GIT_VERSION) \
+	--build-arg GIT_STRIPPED_VERSION=$(GIT_STRIPPED_VERSION) \
+	--tag=$(IMAGE):$(RELEASE_CHANNEL) .
 
-help: ## Show this help
-	@echo Please specify a build target. The choices are:
-	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "$(INFO_COLOR)%-30s$(NO_COLOR) %s\n", $$1, $$2}'
-
-.PHONY: bin extension push-extension help release_channel
+.PHONY: prepare-buildx push-extension
