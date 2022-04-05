@@ -35,7 +35,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 		r.Log.Info("Initializing MeshSync subscription")
 
 		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.controlPlaneSyncChannel, r.meshsyncLivenessChannel, r.Broadcast)
-
+		go model.PersistClusterName(ctx, r.Log, provider.GetGenericPersister(), provider)
 		// signal to install operator when initialized
 		r.MeshSyncChannel <- struct{}{}
 		// extension to notify other channel when data comes in
