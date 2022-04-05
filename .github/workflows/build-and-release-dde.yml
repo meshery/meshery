@@ -31,8 +31,9 @@ jobs:
         name: Checkout repo
         uses: actions/checkout@v3
       - 
-        name: Run build script
-        run: /install/latest_release.sh
+        name: Run pwd
+        run: |
+          pwd
         shell: bash
       # -
       #   name: Determine Stable Release Channel
