@@ -38,7 +38,7 @@ jobs:
         run: |
           if [ ${{ github.ref }} = refs/tags* ]
               echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
-              echo "Release channel determined to be " $RELEASE_CHANNEL
+              echo "Release channel determined to be $RELEASE_CHANNEL"
           fi
       -
         name: Determine Edge Release Channel
@@ -49,7 +49,7 @@ jobs:
             echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
             GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
             echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
-            echo "Release channel determined to be " $RELEASE_CHANNEL
+            echo "Release channel determined to be $RELEASE_CHANNEL"
           fi
       -
         name: Set up QEMU
