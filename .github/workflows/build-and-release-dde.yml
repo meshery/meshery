@@ -34,7 +34,7 @@ jobs:
         name: Checkout repo
         uses: actions/checkout@v3
       -
-        name: Determin Release Channel
+        name: Determine Release Channel
         id: release-channel
         run: |
           if [[ ${{ github.ref }} = refs/tags* ]]
@@ -44,7 +44,8 @@ jobs:
               echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV
               GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
               echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
-              echo "GIT_STRIPPED_VERSION=`echo $GIT_VERSION= | cut -c 2-`" >> $GITHUB_ENV
+              GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
+              echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
           fi
           echo "Release channel determined to be $RELEASE_CHANNEL"
       -
@@ -61,13 +62,14 @@ jobs:
           images: meshery/docker-extension-meshery
           flavor: |
             latest=false
-            prefix=${{env.RELEASE_CHANNEL}}-
+           
           tags: |
-            type=raw,value={{sha}}
-            type=semver,pattern={{version}},value=v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=${{env.RELEASE_CHANNEL}}-{{sha}}
+            type=semver,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }} 
             type=raw,value={{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=latest
+            type=semver,pattern={{version}},value=-v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
           
       -
         name: Login to DockerHub
