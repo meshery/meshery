@@ -17,7 +17,7 @@ import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDi
 import dataFetch from "../../lib/data-fetch";
 
 const ExtensionsComponent = props => {
-  const {meshLocationURL, meshLocationURLError} = props;
+  const {meshLocationURL, availableAdapters} = props;
   const [consulChecked, isConsulChecked] = useState(true);
   const [istioChecked, isIstioChecked] = useState(false);
   const [linkerdChecked, isLinkerdChecked] = useState(false);
@@ -49,12 +49,35 @@ const ExtensionsComponent = props => {
       headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
       body : params,
     },
-    () => {
-      console.log("PattrnFile Deploy API", `/api/experimental/pattern/deploy`);
+    (result) => {
+      if (typeof result !== "undefined"){ 
+        meshLocationURL("");
+      }
+      console.log("provisioned");
+      update
     },(e) => { 
       console.error(e) 
     })
   }
+
+  const fetchAvailableAdapters = () => {
+    dataFetch(
+      "/api/system/adapters",
+      { credentials : "same-origin",
+        method : "GET",
+        credentials : "include", },
+      (result) => {
+        this.props.updateProgress({ showProgress : false });
+        if (typeof result !== "undefined") {
+          const options = result.map((res) => ({ value : res.adapter_location,
+            label : res.adapter_location, }));
+           availableAdapters (options);
+        }
+      },
+      console.log("Unable to fetch available adapters")
+    );
+  };
+
   // Wrote separate functions since we need these functions to provision the adapters as well
   const handleConsul = () => {
 
