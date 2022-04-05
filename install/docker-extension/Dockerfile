@@ -43,6 +43,6 @@ ADD https://github.com/meshery/meshery/releases/download/${GIT_VERSION}/mesheryc
 RUN unzip /mesheryctl/darwin/mesheryctl_${GIT_STRIPPED_VERSION}_Darwin_x86_64.zip -d /mesheryctl/darwin/
 RUN unzip /mesheryctl/windows/mesheryctl_${GIT_STRIPPED_VERSION}_Windows_x86_64.zip -d /mesheryctl/windows/
 RUN unzip /mesheryctl/linux/mesheryctl_${GIT_STRIPPED_VERSION}_Linux_x86_64.zip -d /mesheryctl/linux/
-COPY meshery-logo-white.svg .
+COPY meshery-logo-light.svg .
 COPY --from=client-builder /ui/build ui
 CMD /service -socket /run/guest-services/extension-meshery.sock
