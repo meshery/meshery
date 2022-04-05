@@ -23,8 +23,6 @@ import (
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	// meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
-	// "github.com/layer5io/meshkit/database"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
