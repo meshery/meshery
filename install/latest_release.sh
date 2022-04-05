@@ -1,5 +1,4 @@
 #!/bin/bash
-echo `pwd`
 GIT_REF=`cd ../ && git symbolic-ref HEAD`
 if [[ $GIT_REF = refs/tags* ]]
 then
