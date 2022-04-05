@@ -1,5 +1,5 @@
 #!/bin/bash
-GIT_REF=`git symbolic-ref HEAD`
+GIT_REF=`cd ../../ && git symbolic-ref HEAD`
 if [[ $GIT_REF = refs/tags* ]]
 then
 	RELEASE_CHANNEL="stable"
