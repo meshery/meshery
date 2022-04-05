@@ -34,7 +34,7 @@ jobs:
         name: Determine Release Channel
         id: release-channel
         run: |
-          if [[ ${{ github.ref }} = refs/tags* ]]
+          if [ ${{ github.ref }} = refs/tags* ]
           then
               echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
           else
