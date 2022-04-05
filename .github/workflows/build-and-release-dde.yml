@@ -1,4 +1,4 @@
-name: Docker Desktop Extension for Meshery
+name: Docker Extension for Meshery
   # TODO 
   ##   1) Incorporate mesheryctl binaries into each DDE image
 
@@ -21,11 +21,20 @@ on:
           description: 'Stripped Stable Release Version'     
           required: true
           default: ''
+
+env:
+  GIT_VERSION: ${{github.event.inputs.release-ver}}
+  GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}
+
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Determine Release Channel
+      - 
+        name: Checkout repo
+        uses: actions/checkout@v3
+      -
+        name: Determin Release Channel
         id: release-channel
         run: |
           if [[ ${{ github.ref }} = refs/tags* ]]
@@ -33,9 +42,11 @@ jobs:
               echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
           else
               echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV
+              GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
+              echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
+              echo "GIT_STRIPPED_VERSION=`echo $GIT_VERSION= | cut -c 2-`" >> $GITHUB_ENV
           fi
           echo "Release channel determined to be $RELEASE_CHANNEL"
-          echo "GIT_STRIPPED_VERSION=`echo ${{github.ref}} | cut -c 2-`" >> $GITHUB_ENV
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -47,14 +58,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: meshery/meshery-docker-desktop-extension
+          images: meshery/docker-extension-meshery
           flavor: |
             latest=false
             prefix=${{env.RELEASE_CHANNEL}}-
           tags: |
             type=raw,value={{sha}}
-            type=semver,pattern={{version}},value=v${{env.GIT_STRIPPED_VERSION}}
-            type=raw,value=v${{env.GIT_STRIPPED_VERSION}}
+            type=semver,pattern={{version}},value=v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }} 
             type=raw,value={{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=latest
           
@@ -69,11 +80,11 @@ jobs:
         name: Build and Push 
         uses: docker/build-push-action@v2
         with:
-          context: "{{defaultContext}}:install/docker-desktop-extension"
+          context: "{{defaultContext}}:install/docker-extension"
           push: true
           build-args: |
-            GIT_STRIPPED_VERSION=${{github.event.inputs.stripped-release-ver}}
-            GIT_VERSION=${{github.event.inputs.release-ver}}
+            GIT_STRIPPED_VERSION=${{env.GIT_STRIPPED_VERSION}}
+            GIT_VERSION=${{env.GIT_VERSION}}
           tags: ${{ steps.meta.outputs.tags }}     
           platforms: linux/amd64,linux/arm64
 
@@ -83,5 +94,5 @@ jobs:
       #   with:
       #     username: ${{ secrets.DOCKER_USERNAME }}
       #     password: ${{ secrets.DOCKER_PASSWORD }}
-      #     repository: meshery/meshery-docker-desktop-extension  
-      #     readme-filepath: /install/docker-desktop-extension/README.md 
+      #     repository: meshery/meshery-docker-extension  
+      #     readme-filepath: /install/docker-extension/README.md 

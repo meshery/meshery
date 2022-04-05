@@ -13,7 +13,7 @@ import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import CustomTypography from "../CustomTypography"
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
-import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper } from "./styledComponents";
+import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
 
 
 const ExtensionsComponent = props => {
@@ -56,23 +56,45 @@ const ExtensionsComponent = props => {
   return (
     <DockerMuiThemeProvider theme={theme}>
       <ComponentWrapper>
-      <CssBaseline />
-      <MesheryIcon />
-      <CustomTypography sx={{ maxWidth: "60%", margin: "auto", padding: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
-      <ExtensionWrapper>
-        <CustomTypography variant="h6" sx={{ color: "#AAAAAA", padding: "0.7rem" }}>
-          CONFIGURE YOUR MESHERY DEPLOYMENT
-        </CustomTypography>
-        <div style={{ padding: "2rem" }}>
-          <AccountDiv>
-            <CustomTypography sx={{ marginBottom: "2rem" }}>Account</CustomTypography>
-            <div><a style={{ textDecoration: "none" }} href="http://localhost:9081"><Button sx={{ backgroundColor: "#7794AB", color: "#FFFFFF", }} variant="contained">
-              Open Meshery
-            </Button></a></div>
-          </AccountDiv>
-          <Grid justify="center">
+        <CssBaseline />
+        <MesheryIcon />
+        <CustomTypography sx={{ maxWidth: "60%", margin: "auto", padding: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
+
+        <SectionWrapper>
+        <ExtensionWrapper>
+          
+            <AccountDiv>
+              <CustomTypography sx={{ marginBottom: "2rem" }}>
+                Account
+              </CustomTypography>
+              <div style={{ paddingBottom: "2rem" }}>
+                <a style={{ textDecoration: "none" }} href="http://localhost:9081">
+                  <Button sx={{ color: "#FFFFFF", whiteSpace: "nowrap" }}       variant="contained">
+                    Open Meshery
+                  </Button>
+                </a>
+              </div>
+            </AccountDiv>
+          
+        </ExtensionWrapper>
+
+        <ExtensionWrapper>
+          <div >
+            <CustomTypography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</CustomTypography>
+            <label htmlFor="upload-button" >
+              <Button sx={{ backgroundColor: "#7794AB" }} variant="contained" size="large" color="primary" aria-label="Upload Button" component="span" >
+                <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" />
+                Browse...
+              </Button>
+            </label>
+          </div>
+          </ExtensionWrapper>
+          <ExtensionWrapper>
+            <div>
+          <CustomTypography sx={{ marginBottom: "2rem" }}>Deploy a Service Mesh</CustomTypography>
+          <Grid style = {{display: "flex", justifyContent: 'center', alignItems: 'center' }}>
             <ServiceMeshAdapters>
-              <CustomTypography sx={{ marginBottom: "2rem" }}>Deploy a Service Mesh</CustomTypography>
+             
               <StyledDiv>
                 <AdapterDiv inactiveAdapter={!consulChecked}>
                   <ConsulIcon width={40} height={40} /> </AdapterDiv>
@@ -92,10 +114,11 @@ const ExtensionsComponent = props => {
                 <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv><Switch onChange={handleKuma} color="primary"></Switch> </StyledDiv>
             </ServiceMeshAdapters>
           </Grid>
-        </div>
+          </div>
       </ExtensionWrapper>
-      </ComponentWrapper>
-    </DockerMuiThemeProvider>
+      </SectionWrapper>
+    </ComponentWrapper>
+    </DockerMuiThemeProvider >
   );
 }
 
