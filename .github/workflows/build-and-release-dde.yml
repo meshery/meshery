@@ -7,7 +7,7 @@ on:
       - 'master'
     paths-ignore:
       - 'docs/**'
-      - '.github/**'
+      #- '.github/**'
   workflow_dispatch:
     inputs:
       release-ver:
