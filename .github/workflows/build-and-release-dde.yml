@@ -24,7 +24,7 @@ env:
   GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}
 
 jobs:
-  docker:
+  docker-extension:
     runs-on: ubuntu-latest
     steps:
       - 
