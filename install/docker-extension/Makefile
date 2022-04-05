@@ -9,21 +9,13 @@ GO_BUILD=$(STATIC_FLAGS) go build -trimpath -ldflags=$(LDFLAGS)
 INFO_COLOR = \033[0;36m
 NO_COLOR   = \033[m
 
-release_channel:
-GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
-GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
-
-if [[ git show-ref= refs/tags* ]]
-then
-	echo "RELEASE_CHANNEL=stable"
-	echo "Release channel determined to be " $RELEASE_CHANNEL
-else
-	echo "RELEASE_CHANNEL=edge"
-	GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-	"GIT_VERSION=$GIT_VERSION"
-	GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
-	$GIT_STRIPPED_VERSION
-fi
+	GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+	GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
+	GIT_REF=$(shell git symbolic-ref HEAD)
+#	R=$(shell if [[ ${GIT_REF} == *"tag"* ]] \
+#		then \
+#		echo "hi")
+	RELEASE_CHANNEL="edge"
 
 bin: ## Build the binary for the current platform
 	@echo "$(INFO_COLOR)Building...$(NO_COLOR)"
