@@ -1,7 +1,4 @@
 name: Docker Extension for Meshery
-  # TODO 
-  ##   1) Incorporate mesheryctl binaries into each DDE image
-
 on:
   push:
     tags:
@@ -10,7 +7,7 @@ on:
       - 'master'
     paths-ignore:
       - 'docs/**'
-      # - '.github/**'
+      - '.github/**'
   workflow_dispatch:
     inputs:
       release-ver:
@@ -33,20 +30,26 @@ jobs:
       - 
         name: Checkout repo
         uses: actions/checkout@v3
+      # - name: Run build script
+      #   run: ./install/docker-extension/make release_channel
+      #   shell: bash
       -
-        name: Determin Release Channel
-        id: release-channel
+        name: Determine Stable Release Channel
         run: |
           if [[ ${{ github.ref }} = refs/tags* ]]
-          then
               echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
-          else
-              echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV
-              GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
-              echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
-              echo "GIT_STRIPPED_VERSION=`echo $GIT_VERSION= | cut -c 2-`" >> $GITHUB_ENV
-          fi
-          echo "Release channel determined to be $RELEASE_CHANNEL"
+              echo "Release channel determined to be $RELEASE_CHANNEL"
+      -
+        name: Determine Edge Release Channel
+        run: |
+          if [[ ${{ github.ref }} != refs/tags* ]]
+            echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV 
+            GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+            echo $GIT_VERSION >> $GITHUB_ENV
+            GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
+            echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
+            echo "Release channel determined to be $RELEASE_CHANNEL"
+
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -61,13 +64,14 @@ jobs:
           images: meshery/docker-extension-meshery
           flavor: |
             latest=false
-            prefix=${{env.RELEASE_CHANNEL}}-
+           
           tags: |
-            type=raw,value={{sha}}
-            type=semver,pattern={{version}},value=v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=${{env.RELEASE_CHANNEL}}-{{sha}}
+            type=semver,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }} 
             type=raw,value={{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=latest
+            type=semver,pattern={{version}},value=-v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
           
       -
         name: Login to DockerHub
