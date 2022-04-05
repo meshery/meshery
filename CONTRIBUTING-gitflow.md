@@ -1,95 +1,143 @@
-# Working by Forking
-Just head over to the GitHub page and click the "Fork" button. It's just that simple. Once you've done that, you can use your favorite git client to clone your repo or just head straight to the command line:
+<p align="center">
+<img src="https://img.shields.io/badge/open%20source-%E2%9D%A4%EF%B8%8F-violetgreen">
+<img src="https://img.shields.io/badge/PRs-welcome-green">
+</p>
 
-## Clone your fork to your local machine
-```
-git clone git@github.com:USERNAME/FORKED-PROJECT.git
-```
-Keeping Your Fork Up to Date
-While this isn't a necessary step, if you plan on doing anything more than a tiny quick fix, you'll want to make sure you keep your fork up to date by tracking the original "upstream" repo that you forked earlier. To do this, you'll need to add a remote:
+## Setting Project on Local System :-
 
-## Add 'upstream' repo to list of remotes
-```
-git remote add upstream https://github.com/meshery/meshery.git
-``` 
+<ul>
+<li><h3> Fork the Repository of Project</h3></li><br>
+
+<p><img src="/.github/assets/images/fork.png" align="center"></p>
+
+( You will see this on Top Right of Github Repository !)<br><br>
+<li><h3>Clone your fork to your local machine</h3></li><br>
+<img width="50%" align="center"  src="/.github/assets/images/clone.png"><br>
+( Click on the Green Code button and Copy the link `https://github.com/........` )<br><br>
+<li><h3>Open Git bash where you want to clone the project ( Avoid On Desktop )</h3></li>
+
+<li><h3>Run Command</h3></li><br>
+
+`git clone <insert-link>`
+<br>
+```(NOTE: In Place of insert-link paste the link you copied)```
+<br>
+<h3>Project Cloned in System🌟</h3>
+<br><br>
+
+<li><h3>Add 'upstream' repo to list of remotes</h3></li><br>
+Keeping Your Fork Updated
+In order to get the latest updates from the development trunk do a one-time setup to establish the main GitHub repo as a remote by entering:<br><br>
+
+`git remote add upstream https:/github.com/meshery/meshery.git`
+<br><br>
 ("meshery" is used as the example repo. Be sure to reference the _actual_ repo you're contributing to e.g. "meshery-linkerd").
+<br><br>
 
-## Verify the new remote named 'upstream'
-```
-git remote -v
-```
-Whenever you want to update your fork with the latest upstream changes, you'll need to first fetch the upstream repo's branches and latest commits to bring them into your repository:
+<li><h3>Verify the new remote named 'upstream'</h3></li><br>
 
-## Fetch from upstream remote
-```
-git fetch upstream
-```
+`git remote -v`
+<br><br>
+<li><h3>Fetch from upstream remote</h3></li><br>
+You'll need to fetch the upstream repo's branches and newest commits to bring them into your repository whenever you wish to update your fork with the latest upstream changes:<br><br>
 
-## View all branches, including those from upstream
-```
-git branch -va
-```
-Now, checkout your master branch and merge the upstream repo's master branch:
+`git fetch upstream`
+<br><br>
+<li><h3>Checkout your master branch and merge upstream</h3></li>
+<br>
+Now, checkout your master branch and merge it with the master branch of the upstream repo:<br><br>
 
-## Checkout your master branch and merge upstream
-```
-git checkout master
-git merge upstream/master
-```
-If there are no unique commits on the local master branch, git will simply perform a fast-forward. However, if you have been making changes on master (in the vast majority of cases you probably shouldn't be - see the next section, you may have to deal with conflicts. When doing so, be careful to respect the changes made upstream.
+`git checkout master`<br>
+`git merge upstream/master`
+<br><br>
+If the local master branch has no unique commits, git will simply execute a fast-forward. However, if you've been making modifications to master (which, in the vast majority of circumstances, you shouldn't be - see the next section), you may run into issues. Always keep in mind the changes made upstream when doing so.
+<br>
+Your local master branch is now up to date with everything that has been changed upstream.<br><br>
+<li><h3>Create a Branch (to avoid conflicts)</h3></li>
+<br>
+It's essential to create a new branch whenever you start working on a new feature or bugfix. Not only is it a standard git workflow, but it also organises and separates your modifications from the main branch, allowing you to simply submit and manage several pull requests for each task you finish.
+<br>
+Follow the steps below to establish a new branch and begin working on it.
+<br><br>
+<li><h3>Check out the master branch; from which your new branch will be derived.</h3></li><br>
 
-Now, your local master branch is up-to-date with everything modified upstream.
+`git checkout master`
+<br><br>
+<li><h3>Create a new branch</h3></li> (Give your branch a simple, informative name.)
+<br>
+For continuous integration changes use<br><br>
 
-**Create a Branch** (doing your work)
-Whenever you begin work on a new feature or bugfix, it's important that you create a new branch. Not only is it proper git workflow, but it also keeps your changes organized and separated from the master branch so that you can easily submit and manage multiple pull requests for every task you complete.
+`ci/your_username/issue#`  <br>OR<br>
+ `feature/your_username/name_of_feature`
+<br><br>
+For bugs use
 
-To create a new branch and start working on it, perform the following flow.
+`bug/your_username/issue#` 
+ <br>OR<br>
+ `bug/your_username/name_of_bug`
+<br>
 
-## Check out the master branch - you want your new branch to come from the master
-```
-git checkout master
-```
+`git branch feature/jdoe/567`
+<br><br><li><h3>Switch to your new branch</h3></li><br>
 
-## Create a new branch (give your branch its own simple informative name)
-For enhancements use `feature/your_username/issue#` or `feature/your_username/name_of_feature`
+`git checkout feature/jdoe/567`<br>
+```(NOTE: Use the name of the branch you created instead of 'feature/jdoe/567'.)```
+<br><br>
+Now you may start hacking and make any changes you desire.🚀
+<br><br>
 
-For bugs use `bug/your_username/issue#` or `bug/your_username/name_of_bug`
+<li><h3>Stage the Changes</h3></li><br>
 
-```
-git branch feature/jdoe/567
-```
+`git add [files-changed]`
+<br>
+```(NOTE: This will stage all the changes you have made.)```
+<br><br>
 
-## Switch to your new branch
-```
-git checkout feature/jdoe/567
-```
-Now, go to town hacking away and making whatever changes you want to.
+<li><h3>Commit Changes</h3></li><br>
 
-## Submitting your changes (a Pull Request)
-Before submitting your pull request, you might want to do a few things to clean up your branch and make it as simple as possible for the original repo's maintainer to test, accept, and merge your work.
+`git commit -m "MESSAGE"`
+<br>
+```(NOTE: Instead of 'MESSAGE,' include a commit message so the maintainer can see what you've done.Also make sure to get the DCO signed.)```
+<br><br>
 
-In the time that you've been working on your changes, if any commits have been made to the upstream master branch, you will need to rebase your development branch so that merging it will be a simple fast-forward that won't require any conflict resolution work.
+<li><h3>Creating Pull Request on Github</h3></li>
+<br>
+Before submitting your pull request, you should clean up your branch and make it as easy as possible for the maintainer of the original repository to test, accept, and integrate your work.
+<br><br>
+If any commits to the upstream master branch have been made during the period you've been working on your changes, you'll need to rebase your development branch so that merging it will be a simple fast-forward with no conflict resolution work.
+<br><br>
 
-## Fetch upstream master and merge with your repo's master branch
-```
-git fetch upstream
-git checkout master
-git merge upstream/master
-```
+<li><h3>Fetch upstream master and merge with your repo's master branch</h3></li><br>
 
-## If there were any new commits, rebase your development branch
-```
-git checkout feature/jdoe/567
-git rebase master
-```
+`git fetch upstream`
+<br>
+`git checkout master`
+<br>
+`git merge upstream/master`
+<br><br>
+
+<li><h3>If there were any new commits, rebase your development branch</h3></li><br>
+
+`git checkout feature/jdoe/567`<br>
+`git rebase master`
+<br><br>
 Now, it may be desirable to squash some of your smaller commits down into a small number of larger more cohesive commits. You can do this with an interactive rebase:
+<br><br>
+<li><h3>Rebase all commits on your development branch</li></h3>
+<br>
 
-## Rebase all commits on your development branch
-```
-git checkout
-git rebase -i master
-```
+`git checkout`<br>
+`git rebase -i master`
+<br>
+
 This will open up a text editor where you can specify which commits to squash.
+<br><br>
+<li><h3>References</h3></li>
+<a href="https://git-scm.com/docs">Git Reference Docs</a>
+<br>
+<a href="https://git-scm.com/docs/git-rebase#_interactive_mode">git-rebase / Interactive Mode</a>
+<br><br>
+<li><h3>Submit the Changes</h3></li>
+Go to the page for your fork on GitHub, select your development branch, then click the pull request button once you've committed and submitted all of your changes. Simply upload the changes to GitHub if you need to make any changes to your pull request.
 
-## Submitting
-Once you've committed and pushed all of your changes to GitHub, go to the page for your fork on GitHub, select your development branch, and click the pull request button. If you need to make any adjustments to your pull request, just push the updates to GitHub. Your pull request will automatically track the changes in your development branch and update it.
+Your pull request will track and update changes in your development branch automatically.🌸
