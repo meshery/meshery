@@ -33,8 +33,8 @@ jobs:
       - 
         name: Run pwd
         run: |
-          chmod 755
-          install/latest_release.sh
+          chmod 755 install/latest_release.sh
+          ./install/latest_release.sh
           pwd
           ls .github
         shell: bash
