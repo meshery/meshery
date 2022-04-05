@@ -14,9 +14,10 @@ import CustomTypography from "../CustomTypography"
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper } from "./styledComponents";
-
+import dataFetch from "../../lib/data-fetch";
 
 const ExtensionsComponent = props => {
+  const {meshLocationURL, meshLocationURLError} = props;
   const [consulChecked, isConsulChecked] = useState(true);
   const [istioChecked, isIstioChecked] = useState(false);
   const [linkerdChecked, isLinkerdChecked] = useState(false);
@@ -34,10 +35,35 @@ const ExtensionsComponent = props => {
   useEffect(() => {
     // window.ddClient.extension.vm.service.get("/ping").then(console.log);
   }, [])
-
+  
+  const submitConfig = () => {
+    const data = { meshLocationURL : meshLocationURL.value };
+    const params = Object.keys(data)
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
+    .join("&");
+    dataFetch("/api/system/adapter/manage",
+    {
+      credentials : "same-origin",
+      method : "POST",
+      credentials : "include",
+      headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
+      body : params,
+    },
+    () => {
+      console.log("PattrnFile Deploy API", `/api/experimental/pattern/deploy`);
+    },(e) => { 
+      console.error(e) 
+    })
+  }
   // Wrote separate functions since we need these functions to provision the adapters as well
   const handleConsul = () => {
-    isConsulChecked(prev => !prev);
+
+   if (!meshLocationURL || !meshLocationURL.value || meshLocationURL.value === ""){
+     meshLocationURLError('true')
+     return;
+   }
+   submitConfig();
+    isConsulChecked(prev => !prev)
   }
   const handleIstio = () => {
     isIstioChecked(prev => !prev);
