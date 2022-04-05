@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v3
       - 
         name: Run build script
-        run: /install/docker-extension/make release_channel
+        run: install/docker-extension/make release-channel
         shell: bash
       # -
       #   name: Determine Stable Release Channel
