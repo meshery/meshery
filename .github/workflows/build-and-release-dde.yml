@@ -34,22 +34,22 @@ jobs:
         name: Run build script
         run: /install/docker-extension/make release_channel
         shell: bash
-      -
-        name: Determine Stable Release Channel
-        run: |
-          if [[ ${{ github.ref }} = refs/tags* ]]
-              echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
-              echo "Release channel determined to be $RELEASE_CHANNEL"
-      -
-        name: Determine Edge Release Channel
-        run: |
-          if [[ ${{ github.ref }} != refs/tags* ]]
-            echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV 
-            GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-            echo $GIT_VERSION >> $GITHUB_ENV
-            GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
-            echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
-            echo "Release channel determined to be $RELEASE_CHANNEL"
+      # -
+      #   name: Determine Stable Release Channel
+      #   run: |
+      #     if [[ ${{ github.ref }} = refs/tags* ]]
+      #         echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
+      #         echo "Release channel determined to be $RELEASE_CHANNEL"
+      # -
+      #   name: Determine Edge Release Channel
+      #   run: |
+      #     if [[ ${{ github.ref }} != refs/tags* ]]
+      #       echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV 
+      #       GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+      #       echo $GIT_VERSION >> $GITHUB_ENV
+      #       GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
+      #       echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
+      #       echo "Release channel determined to be $RELEASE_CHANNEL"
 
       -
         name: Set up QEMU
