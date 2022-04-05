@@ -34,10 +34,9 @@ jobs:
         name: Run pwd
         run: |
           pwd
-          cd /
+          install/latest_release.sh
           pwd
-          cd .github
-          ls
+          ls .github
         shell: bash
       # -
       #   name: Determine Stable Release Channel
