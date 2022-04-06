@@ -27,7 +27,7 @@ docker-build:
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
-docker-local-cloud-run:
+docker-local-cloud:
 	
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
@@ -40,7 +40,7 @@ docker-local-cloud-run:
 
 ## Runs Meshery in a container locally and points to remote
 ## Remote Provider for user authentication.
-docker-cloud-run:
+docker-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -64,7 +64,7 @@ wrk2-setup:
 nighthawk-setup:
 	cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
-run-local: server-local-run error
+run-local: server-local error
 ## Build and run Meshery Server on your local machine
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
 ## for user authentication.
@@ -79,7 +79,6 @@ server-local:
 	./meshery; \
 	cd ..
 
-## "DEPRECATED: This target is deprecated. Use 'make server
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
@@ -94,9 +93,8 @@ server:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go$(GOVERSION) run main.go;
 
-run-fast-skip-compgen: server-fast-skip-compgen-run
 ## Build and run Meshery Server with no Kubernetes components on your local machine.
-server-fast-skip-compgen-run:
+server-skip-compgen:
 	cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -108,7 +106,7 @@ server-fast-skip-compgen-run:
 	go run main.go;
 		
 ## Build and run Meshery Server with no seed content.
-server-fast-no-content-run:
+server-no-content:
 	cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -120,7 +118,7 @@ server-fast-no-content-run:
 	go run main.go;
 
 ## Lint check Meshery Server.
-golangci-run: error
+golangci: error
 	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2;
 	$(GOPATH)/bin/golangci-lint run
 
@@ -137,7 +135,7 @@ proto-build:
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: setup-ui-libs ui-setup ui-run
+.PHONY: setup-ui-libs ui-setup ui
 setup-ui-libs: ui-setup
 ## Install dependencies for building Meshery UI.
 ui-setup:
@@ -190,10 +188,10 @@ ui-provider-build:
 #Incorporating Make docs commands from the Docs Makefile
 jekyll=bundle exec jekyll
 
-site: docs-run
+site: docs
 
 ## Run Meshery Docs. Listen for changes.
-docs-run:
+docs:
 	cd docs; bundle install; $(jekyll) serve --drafts --livereload --config _config_dev.yml
 
 ## Build Meshery Docs on your local machine.
@@ -239,7 +237,7 @@ swagger-build:
 	swagger generate spec -o ./helpers/swagger.yaml --scan-models
 
 ## Generate and serve Meshery REST API specifications
-swagger-run: swagger-build
+swagger: swagger-build
 	swagger serve ./helpers/swagger.yaml
 
 ## Build Meshery REST API documentation
