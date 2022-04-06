@@ -84,7 +84,7 @@ run-fast:
 
 ## Buiild and run Meshery Server on your local machine.
 server:
-	cd cmd; go$(GOVERSION) mod tidy; \
+	cd cmd; go$(GOVERSION) mod tidy -compat=1.17; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
