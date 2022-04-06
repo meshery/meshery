@@ -13,15 +13,20 @@ on:
       release-ver:
           description: 'Stable Release Version'     
           required: true
-          default: 'v'
+          default: 'v0.6.0-rc-'
       stripped-release-ver:
           description: 'Stripped Stable Release Version'     
           required: true
-          default: ''
+          default: '0.6.0-rc-'
+      release-channel:
+          description: 'Release Channel'     
+          required: true
+          default: 'edge'
 
 env:
   GIT_VERSION: ${{github.event.inputs.release-ver}}
   GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}
+  RELEASE_CHANNEL: ${{github.event.inputs.release-channel}}
 
 jobs:
   docker-extension:
@@ -30,23 +35,23 @@ jobs:
       - 
         name: Checkout repo
         uses: actions/checkout@v3
-      - 
-        name: Run pwd
-        run: |
-          GIT_REF=`git symbolic-ref HEAD`
-          if [[ $GIT_REF = refs/tags* ]]
-          then
-          RELEASE_CHANNEL="stable"
-          # export RELEASE_CHANNEL="stable"
-          else
-          RELEASE_CHANNEL="edge"
-          # export RELEASE_CHANNEL="edge"
-          fi
-          echo "Release channel determined to be $RELEASE_CHANNEL"
-          echo LATEST_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-          echo GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-          echo GIT_STRIPPED_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always | cut -c 2-)
-        shell: bash
+      # - 
+      #   name: Identify Release Values
+      #   run: |
+      #     GIT_REF=`git symbolic-ref HEAD`
+      #     if [[ $GIT_REF = refs/tags* ]]
+      #     then
+      #     RELEASE_CHANNEL="stable"
+      #     # export RELEASE_CHANNEL="stable"
+      #     else
+      #     RELEASE_CHANNEL="edge" 
+      #     # export RELEASE_CHANNEL="edge"
+      #     fi
+      #     echo "Release channel determined to be $RELEASE_CHANNEL"
+      #     echo LATEST_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+      #     echo GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+      #     echo GIT_STRIPPED_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always | cut -c 2-)
+      #   shell: bash
       # -
       #   name: Determine Stable Release Channel
       #   run: |
