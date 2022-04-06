@@ -30,6 +30,7 @@ contexts:
     - meshery-osm
     - meshery-traefik-mesh
     - meshery-nginx-sm
+    - meshery-cilium
     channel: stable
     version: latest
 current-context: local

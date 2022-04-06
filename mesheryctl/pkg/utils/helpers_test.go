@@ -579,6 +579,9 @@ func TestSetOverrideValues(t *testing.T) {
 				"meshery-istio": map[string]interface{}{
 					"enabled": true,
 				},
+				"meshery-cilium": map[string]interface{}{
+					"enabled": false,
+				},
 				"meshery-linkerd": map[string]interface{}{
 					"enabled": false,
 				},
@@ -612,7 +615,7 @@ func TestSetOverrideValues(t *testing.T) {
 			name: "Context contains all available components and meshery image version",
 			ctx: &config.Context{
 				Components: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-kuma",
-					"meshery-osm", "meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cpx"},
+					"meshery-osm", "meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cpx", "meshery-cilium"},
 				Channel: testChannel,
 			},
 			mesheryImageVersion: "testImageVersion",
@@ -621,6 +624,9 @@ func TestSetOverrideValues(t *testing.T) {
 					"enabled": false,
 				},
 				"meshery-istio": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-cilium": map[string]interface{}{
 					"enabled": true,
 				},
 				"meshery-linkerd": map[string]interface{}{
@@ -658,7 +664,7 @@ func TestSetOverrideValues(t *testing.T) {
 		got := SetOverrideValues(tt.ctx, tt.mesheryImageVersion)
 		eq := reflect.DeepEqual(got, tt.want)
 		if !eq {
-			t.Errorf("ReadToken got = %v want = %v", got, tt.want)
+			t.Errorf("SetOverrideValues %s got = %v want = %v", tt.name, got, tt.want)
 		}
 	}
 }

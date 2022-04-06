@@ -1,7 +1,7 @@
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import React from "react";
+import React, { useEffect } from "react";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import { rjsfTheme } from "../../../themes";
 import handleError from '../../ErrorHandling';
@@ -86,6 +86,14 @@ function RJSFForm(props) {
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
   } = props;
+
+  useEffect(() => {
+    const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
+    if (extensionTooltipPortal) {
+      rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
+    }
+    rjsfTheme.zIndex.modal = 99999;
+  }, [])
 
   return (
     <MuiThemeProvider theme={rjsfTheme}>

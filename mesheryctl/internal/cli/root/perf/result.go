@@ -111,6 +111,11 @@ mesheryctl perf result saturday-profile --view
 
 		// get performance results in format of string arrays and resultStruct
 		data, expandedData := performanceResultsToStringArrays(results)
+		if len(expandedData) == 0 {
+			utils.Log.Info("No test results to display")
+			return nil
+		}
+
 		if outputFormatFlag != "" {
 			body, _ := json.Marshal(results)
 			if outputFormatFlag == "yaml" {
@@ -206,10 +211,36 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 		}
 
 		// append data for extended output
+		name := "None"
+		userid := uuid.Nil
+		mesheryid := uuid.Nil
+		url := "None"
+		loadGenerator := "None"
+
+		if result.UserID != nil {
+			userid = *result.UserID
+		}
+
+		if result.MesheryID != nil {
+			mesheryid = *result.MesheryID
+		}
+
+		if result.Name != "" {
+			name = result.Name
+		}
+
+		if result.RunnerResults.URL != "" {
+			url = result.RunnerResults.URL
+		}
+
+		if result.RunnerResults.LoadGenerator != "" {
+			loadGenerator = result.RunnerResults.LoadGenerator
+		}
+
 		a := resultStruct{
-			Name:     result.Name,
-			UserID:   result.UserID,
-			URL:      result.RunnerResults.URL,
+			Name:     name,
+			UserID:   (*uuid.UUID)(userid.Bytes()),
+			URL:      url,
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,
 			LatenciesMs: &models.LatenciesMs{
@@ -221,8 +252,8 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 				P99:     P99,
 			},
 			StartTime:     result.TestStartTime,
-			MesheryID:     result.MesheryID,
-			LoadGenerator: result.RunnerResults.LoadGenerator,
+			MesheryID:     (*uuid.UUID)(mesheryid.Bytes()),
+			LoadGenerator: loadGenerator,
 		}
 
 		expendedData = append(expendedData, a)
