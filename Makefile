@@ -54,6 +54,7 @@ docker-cloud-run:
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
+.PHONY: server
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
@@ -90,9 +91,12 @@ server-local-run:
 	./meshery; \
 	cd ..
 
-run-fast: server-run
+run-fast: 
+	DEPRECATED: make `run-fast` is deprecated. use `make server`.
+	server
+
 ## Buiild and run Meshery Server on your local machine.
-server-run:
+server:
 	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -145,20 +149,21 @@ proto-build:
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds
 #-----------------------------------------------------------------------------
+.PHONY: setup-ui-libs ui-setup ui-run
 setup-ui-libs: ui-setup
 ## Install dependencies for building Meshery UI.
 ui-setup:
 	cd ui; npm i; cd ..
 	cd provider-ui; npm i; cd ..
 
-run-ui-dev: ui-run
+run-ui-dev: ui
 ## Run Meshery UI on your local machine. Listen for changes.
-ui-run:
+ui:
 	cd ui; npm run dev; cd ..
 
-run-provider-ui-dev: ui-provider-run
+run-provider-ui-dev: ui-provider
 ## Run Meshery Provider UI  on your local machine. Listen for changes.
-ui-provider-run:
+ui-provider:
 	cd provider-ui; npm run dev; cd ..
 
 lint-ui: ui-lint
@@ -214,7 +219,7 @@ docs-docker:
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
-.PHONY: helm-docs
+.PHONY: helm-docs server lint-helm
 ## Generate all Meshery Helm Chart documentation in markdown format.
 helm-docs: helm-operator-docs helm-meshery-docs
 
@@ -228,7 +233,6 @@ helm-meshery-docs:
 	GO111MODULE=on go install github.com/norwoodj/helm-docs/cmd/helm-docs 
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery
 
-.PHONY: lint-helm
 ## Lint all of Meshery's Helm Charts
 helm-lint: helm-operator-lint helm-meshery-lint
 
