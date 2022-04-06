@@ -2,20 +2,24 @@ import { styled } from "@mui/material/styles";
 
 export const StyledDiv = styled('div')(() => ({
   width: "16%",
-  float: "left",
-  flexDirection: "row",
+  flexDirection: "column",
+  display: "flex",
   padding: "0.3rem"
 }));
 
 
 export const AccountDiv = styled('div')(() => ({
   width: "50%",
-  float: "left",
+  
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: 'center', alignItems: 'center' ,
 }));
 
 export const ServiceMeshAdapters = styled('div')(({ theme }) => ({
-  width: "50%",
-  float: "right",
+  display: "flex",
+  justifyContent: 'center', alignItems: 'center',
+  alignContent: 'space-between',
   [theme.breakpoints.down("xs")]: {
     width: "100%"
   },
@@ -26,13 +30,17 @@ export const AdapterDiv = styled("div")(({ theme, inactiveAdapter }) => ({
 }))
 
 export const ExtensionWrapper = styled('div')(({ theme }) => ({
-  margin: theme.spacing(5),
+  margin: theme.spacing(2),
+  display: "flex",
+  justifyContent: 'center', alignItems: 'center',
+  
+  minHeight:"12rem",
   backgroundColor: "#393F49",
   borderRadius: "20px ",
-  padding: "1rem",
-  height: "300px",
+  padding: "2rem",
+  textAlign: "center",
   [theme.breakpoints.down("xs")]: {
-    height: "400px",
+    width: "100%",
   }
 }));
 
@@ -41,4 +49,9 @@ export const ComponentWrapper = styled('div')(({theme }) => ({
     backgroundColor: "#222C32",
     padding: "5rem",
     maxHeight: "100vh"
+}))
+
+export const SectionWrapper = styled('div')(({theme }) => ({
+  padding: "2rem", display: "flex", flexDirection: 'row',
+  justifyContent: 'center', alignItems: 'center' 
 }))

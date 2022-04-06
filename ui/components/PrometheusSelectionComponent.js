@@ -33,7 +33,7 @@ const promStyles = (theme) => ({
 const dummyBoard = `
 {
   "id": null,
-  "uid": "cdsafedwewgew",
+  "uid": "1234-exam-ple",
   "title": "Dashboard",
   "tags": [],
   "timezone": "browser",
@@ -279,7 +279,7 @@ class PrometheusSelectionComponent extends Component {
                 <Grid item xs={12}>
                   <div style={{ padding : '20px', display : 'flex' }}>
                     <CodeIcon style={{ marginRight : '6px' }} />
-                  Please paste Board&apos;s JSON below
+                  Paste your custom boaard JSON below.
                   </div>
 
                   <CodeMirror

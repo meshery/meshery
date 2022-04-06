@@ -93,14 +93,14 @@ server-local-run:
 run-fast: server-run
 ## Buiild and run Meshery Server on your local machine.
 server-run:
-	cd cmd; go mod tidy; \
+	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go run main.go;
+	go$(GOVERSION) run main.go;
 
 run-fast-skip-compgen: server-fast-skip-compgen-run
 ## Build and run Meshery Server with no Kubernetes components on your local machine.
