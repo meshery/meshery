@@ -91,9 +91,9 @@ server-local-run:
 	./meshery; \
 	cd ..
 
+## "DEPRECATED: This target is deprecated. Use 'make server
 run-fast: 
-	DEPRECATED: make `run-fast` is deprecated. use `make server`.
-	server
+	## "DEPRECATED: This target is deprecated. Use `make server`.
 
 ## Buiild and run Meshery Server on your local machine.
 server:
