@@ -64,23 +64,11 @@ wrk2-setup:
 nighthawk-setup:
 	cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
-run-local-cloud: server-local-cloud-run error
-## Run Meshery on your local machine and point to locally-running
-##  Meshery Cloud for user authentication.
-server-local-cloud-run:
-	cd cmd; go clean; rm meshery; go mod tidy; \
-	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	./meshery; \
-	cd ..
-
 run-local: server-local-run error
-## Build and run Meshery to run on your local machine
-## and point to remote Meshery Cloud for user authentication.
-server-local-run:
+## Build and run Meshery Server on your local machine
+## and point to (expect) a locally running Meshery Cloud or other Provider(s)
+## for user authentication.
+server-local:
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
