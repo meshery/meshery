@@ -39,7 +39,7 @@ jobs:
   #       echo "RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
   #       echo "GIT_VERSION: ${{env.GIT_VERSION}}"
   #       echo "GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
-  docker-extension:
+  identify-release:
     runs-on: ubuntu-latest
     steps:
       - 
@@ -65,6 +65,9 @@ jobs:
           echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
           echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
         shell: bash
+  docker-extension:
+    runs-on: ubuntu-latest
+    steps:
       # -
       #   name: Determine Stable Release Channel
       #   run: |
