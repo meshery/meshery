@@ -38,9 +38,9 @@ _Popular Installers:_
 - _[Scoop user](https://github.com/meshery/scoop-bucket)._ 
 
 
-#### Question: What is the difference between `make run-local` and `mesheryctl system start`? Do they both run Meshery on my local machine?
+#### Question: What is the difference between `make server` and `mesheryctl system start`? Do they both run Meshery on my local machine?
 
-  **Answer:** _Yes, both of them do run Meshery on your local machine. `make run local` builds Meshery from source and runs it on your local OS, while `mesheryctl system start` runs Meshery as a set of containers in Docker or in Kubernetes on your local machine._ 
+  **Answer:** _Yes, both of them do run Meshery on your local machine. `make server` builds Meshery from source and runs it on your local OS, while `mesheryctl system start` runs Meshery as a set of containers in Docker or in Kubernetes on your local machine._ 
 
 #### Question: What systems is Meshery compatible with?
 

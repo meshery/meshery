@@ -146,7 +146,9 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name, FILE_OPS.UPDATE)}
+            onClick={() =>
+              onSubmit( { data : yaml, id : pattern.id, name : pattern.name, action : FILE_OPS.UPDATE } )
+            }
           >
             <SaveIcon />
           </IconButton>
@@ -155,7 +157,12 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name, FILE_OPS.DELETE)}
+            onClick={() => onSubmit({
+              data : yaml,
+              id : pattern.id,
+              name : pattern.name,
+              action : FILE_OPS.DELETE
+            })}
           >
             <DeleteIcon />
           </IconButton>
@@ -343,7 +350,7 @@ function MesheryPatterns({
     };
   }
 
-  function handleSubmit( data, id, name, type ) {
+  function handleSubmit( { data, id, name, type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       dataFetch(
@@ -391,7 +398,7 @@ function MesheryPatterns({
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url : data, save : true })
+        body = JSON.stringify({ url : data, name, save : true })
       }
       dataFetch(
         `/api/pattern`,
@@ -415,13 +422,10 @@ function MesheryPatterns({
     handleClose(false);
     if (!ev.target.files?.length) return;
 
-    console.log("top level event", ev)
-
     const file = ev.target.files[0];
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      console.log("Bottom level event", event)
       // @ts-ignore
       handleSubmit({
         data : event.target.result,

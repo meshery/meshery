@@ -3,8 +3,6 @@ module github.com/layer5io/meshery
 go 1.17
 
 replace (
-	//golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
-	github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/go-openapi/runtime => github.com/go-openapi/runtime v0.19.31
 	github.com/go-openapi/strfmt => github.com/go-openapi/strfmt v0.20.2
 	github.com/go-redis/redis/v8 => github.com/go-redis/redis/v8 v8.11.4
@@ -17,7 +15,7 @@ replace (
 
 require (
 	fortio.org/fortio v1.21.0
-	github.com/99designs/gqlgen v0.17.1
+	github.com/99designs/gqlgen v0.17.2
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.18.1
 	github.com/docker/docker v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
@@ -36,7 +34,7 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.5.2
-	github.com/layer5io/meshkit v0.5.11
+	github.com/layer5io/meshkit v0.5.12
 	github.com/layer5io/meshsync v0.5.0
 	github.com/layer5io/nighthawk-go v0.5.0
 	github.com/layer5io/service-mesh-performance v0.3.4
@@ -53,14 +51,14 @@ require (
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.10.0
-	github.com/vektah/gqlparser/v2 v2.4.0
+	github.com/vektah/gqlparser/v2 v2.4.1
 	github.com/vmihailenco/taskq/v3 v3.2.7
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
-	gonum.org/v1/gonum v0.9.3
-	google.golang.org/grpc v1.44.0
+	gonum.org/v1/gonum v0.11.0
+	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/gorm v1.23.2
+	gorm.io/gorm v1.23.3
 	k8s.io/api v0.23.0-alpha.1
 	k8s.io/apiextensions-apiserver v0.22.4
 	k8s.io/apimachinery v0.23.0-alpha.1
@@ -78,7 +76,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
 	github.com/Masterminds/squirrel v1.5.2 // indirect
 	github.com/Microsoft/go-winio v0.4.17 // indirect
-	github.com/Microsoft/hcsshim v0.8.21 // indirect
+	github.com/Microsoft/hcsshim v0.8.23 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
@@ -91,7 +89,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/cncf/xds/go v0.0.0-20211130200136-a8f946100490 // indirect
-	github.com/containerd/containerd v1.5.7 // indirect
+	github.com/containerd/containerd v1.5.9 // indirect
 	github.com/containerd/continuity v0.1.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -128,7 +126,7 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/btree v1.0.1 // indirect
-	github.com/google/go-cmp v0.5.6 // indirect
+	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.3.0 // indirect

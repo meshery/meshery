@@ -88,7 +88,7 @@ function RJSFForm(props) {
   } = props;
 
   useEffect(() => {
-    const extensionTooltipPortal = document.getElementById("meshmap-tooltip-portal");
+    const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
     if (extensionTooltipPortal) {
       rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
     }
