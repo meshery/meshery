@@ -58,7 +58,7 @@ const ExtensionsComponent = props => {
       <ComponentWrapper>
         <CssBaseline />
         <MesheryIcon />
-        <CustomTypography sx={{ maxWidth: "60%", margin: "auto", padding: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
+        <CustomTypography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
 
         <SectionWrapper>
         <ExtensionWrapper>
@@ -79,15 +79,17 @@ const ExtensionsComponent = props => {
         </ExtensionWrapper>
 
         <ExtensionWrapper>
-          <div >
+          <AccountDiv>
             <CustomTypography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</CustomTypography>
+            <div style={{ paddingBottom: "2rem" }}>
             <label htmlFor="upload-button" >
-              <Button sx={{ backgroundColor: "#7794AB" }} variant="contained" size="large" color="primary" aria-label="Upload Button" component="span" >
+              <Button sx={{ backgroundColor: "#7794AB" }} variant="contained" color="primary" aria-label="Upload Button" component="span" >
                 <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" />
                 Browse...
               </Button>
             </label>
-          </div>
+            </div>
+            </AccountDiv>
           </ExtensionWrapper>
           <ExtensionWrapper>
             <div>
