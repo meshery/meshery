@@ -91,7 +91,7 @@ server:
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go$(GOVERSION) run main.go;
+	go run main.go;
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine.
 server-skip-compgen:
