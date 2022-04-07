@@ -17,9 +17,9 @@ For purposes of actively developing Meshery UI, you first need to ensure you hav
 
     > **NOTE:** Its strongly recommended to use  either [Node Version Manager](https://github.com/nvm-sh/nvm#node-version-manager---)) in linux/mac os systems or [NVM for Windows](https://github.com/coreybutler/nvm-windows#nvm-for-windows) on Windows systems so single `nvm use` / `nvm install` simplifies installing and using correct node version locallly **(v14.8.0)**, see [NVM Intro](https://github.com/nvm-sh/nvm#intro) for details. Otherwise, you might experience issues during local `npm i` similar to [4674](https://github.com/meshery/meshery/issues/4674) due to how optional dependencies are resolved in npm v6.
     
-1. **`make run-local`** - Alternatively, build all of Meshery UI's components upfront before serving the UI. Do this in two steps:
- - Execute `make build-ui` to build and export all Meshery UI components.
- - Execute `make run-local` to serve the prebuilt components. 
+1. **`make server`** - Alternatively, build all of Meshery UI's components upfront before serving the UI. Do this in two steps:
+ - Execute `make ui-setup` to iniatilize your environment and then `make ui-build` to build and export all Meshery UI components.
+ - Execute `make server` to serve the prebuilt components. 
 This method doesn't provide a live reload server. You will have to build Meshery UI after making changes to the code and rerun these steps again in order to see those subsequent code changes reflected in the UI.
     > **NOTE:** If you are using this method, make sure you don't have Meshery already running on 9081 port, using `mesheryctl`.
 

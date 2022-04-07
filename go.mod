@@ -3,8 +3,6 @@ module github.com/layer5io/meshery
 go 1.17
 
 replace (
-	//golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
-	github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/go-openapi/runtime => github.com/go-openapi/runtime v0.19.31
 	github.com/go-openapi/strfmt => github.com/go-openapi/strfmt v0.20.2
 	github.com/go-redis/redis/v8 => github.com/go-redis/redis/v8 v8.11.4
@@ -17,7 +15,7 @@ replace (
 
 require (
 	fortio.org/fortio v1.21.0
-	github.com/99designs/gqlgen v0.17.1
+	github.com/99designs/gqlgen v0.17.2
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.18.1
 	github.com/docker/docker v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible

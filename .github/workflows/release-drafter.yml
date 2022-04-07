@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - master
-
+    paths-ignore:
+      - '.github/**'
 jobs:
   update_release_draft:
     if: github.repository == 'meshery/meshery'
