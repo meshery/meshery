@@ -58,7 +58,7 @@ jobs:
           # export RELEASE_CHANNEL="edge"
           fi
           echo "Release channel determined to be $RELEASE_CHANNEL"
-          echo LATEST_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+          echo LATEST_VERSION=$(git ls-remote --tags https://github.com/layer5labs/meshery-extensions-packages | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
           echo GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
           echo GIT_STRIPPED_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always | cut -c 2-)
         shell: bash
