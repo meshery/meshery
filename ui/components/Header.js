@@ -220,7 +220,7 @@ function K8sContextMenu({
             }
           }}>
 
-            <Paper style={{ marginTop : "-1.55rem", }} className={classes.cMenuContainer}>
+            <Paper style={{ marginTop : "-1.5rem", }} className={classes.cMenuContainer}>
               <div>
                 <TextField
                   id="search-ctx"
