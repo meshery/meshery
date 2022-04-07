@@ -59,9 +59,9 @@ jobs:
           GIT_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
           # GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always) 
           GIT_STRIPPED_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g' | cut -c2-)
-          echo $LATEST_VERSION >> $GITHUB_ENV
-          echo $GIT_VERSION >> $GITHUB_ENV
-          echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
+          echo "GIT_LATEST=$LATEST_VERSION" >> $GITHUB_ENV
+          echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
+          echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
         shell: bash
       # -
       #   name: Determine Stable Release Channel
