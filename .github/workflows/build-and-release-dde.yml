@@ -24,18 +24,21 @@ on:
           default: 'edge'
 
 env:
-  GIT_VERSION: ${{github.events.input.release-ver}}
-  GIT_STRIPPED_VERSION: ${{github.events.input.stripped-release-ver}}
-  RELEASE_CHANNEL: ${{github.events.input.release-channel}}
+  GIT_VERSION: ${{github.event.inputs.release-ver}}
+  GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}
+  RELEASE_CHANNEL: ${{github.event.inputs.release-channel}}
 
 jobs:
   print-inputs:
     runs-on: ubuntu-latest
     steps:
     - run: |
-        echo "GIT_VERSION: ${{github.events.input.release-ver}}"
-        echo "GIT_STRIPPED_VERSION: ${{github.events.input.stripped-release-ver}}"
-        echo "RELEASE_CHANNEL: ${{github.events.input.release-channel}}"
+        echo "GIT_VERSION: ${{github.event.inputs.release-ver}}"
+        echo "GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
+        echo "RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
+        echo "GIT_VERSION: ${{env.GIT_VERSION}}"
+        echo "GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
+        
   docker-extension:
     runs-on: ubuntu-latest
     steps:
