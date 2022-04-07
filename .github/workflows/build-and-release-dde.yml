@@ -58,8 +58,9 @@ jobs:
           fi
           echo "Release channel determined to be $RELEASE_CHANNEL"
           echo LATEST_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
-          echo GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-          echo GIT_STRIPPED_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always | cut -c 2-)
+          echo GIT_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
+          # echo GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+          echo GIT_STRIPPED_VERSION=$(git ls-remote --tags | tail -1 | cut -c 2- | sed 's/refs\/tags\///g')
         shell: bash
       # -
       #   name: Determine Stable Release Channel
