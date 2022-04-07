@@ -13,11 +13,11 @@ on:
       release-ver:
           description: 'Stable Release Version'     
           required: true
-          default: 'v0.6.0-rc-'
+          default: 'v'
       stripped-release-ver:
           description: 'Stripped Stable Release Version'     
           required: true
-          default: '0.6.0-rc-'
+          default: ''
       release-channel:
           description: 'Release Channel'     
           required: true
@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v3
       - 
         name: Identify Release Values
-        if: github.env.GIT_VERSION != ''
+        if: github.event.inputs.release-ver != 'v'
         run: |
           GIT_REF=`git symbolic-ref HEAD`
           if [[ $GIT_REF = refs/tags* ]]
@@ -66,22 +66,6 @@ jobs:
           echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
           echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
         shell: bash
-      # -
-      #   name: Determine Stable Release Channel
-      #   run: |
-      #     if [[ ${{ github.ref }} = refs/tags* ]]
-      #         echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
-      #         echo "Release channel determined to be $RELEASE_CHANNEL"
-      # -
-      #   name: Determine Edge Release Channel
-      #   run: |
-      #     if [[ ${{ github.ref }} != refs/tags* ]]
-      #       echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV 
-      #       GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-      #       echo $GIT_VERSION >> $GITHUB_ENV
-      #       GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
-      #       echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
-      #       echo "Release channel determined to be $RELEASE_CHANNEL"
 
       -
         name: Set up QEMU
@@ -104,14 +88,12 @@ jobs:
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=${{env.RELEASE_CHANNEL}}-latest
             type=semver,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-
       -
         name: Login to DockerHub
         uses: docker/login-action@v1 
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - 
         name: Build and Push 
         uses: docker/build-push-action@v2
