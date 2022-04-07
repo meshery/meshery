@@ -29,6 +29,13 @@ env:
   RELEASE_CHANNEL: ${{github.events.input.release-channel}}
 
 jobs:
+  printInputs:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+      echo "GIT_VERSION: ${{github.events.input.release-ver}}"
+      echo "GIT_STRIPPED_VERSION: ${{github.events.input.stripped-release-ver}}"
+      echo "RELEASE_CHANNEL: ${{github.events.input.release-channel}}"
   docker-extension:
     runs-on: ubuntu-latest
     steps:
