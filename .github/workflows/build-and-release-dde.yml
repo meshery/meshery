@@ -24,9 +24,9 @@ on:
           default: 'edge'
 
 env:
-  GIT_VERSION: ${{github.event.inputs.release-ver}}
-  GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}
-  RELEASE_CHANNEL: ${{github.event.inputs.release-channel}}
+  GIT_VERSION: ${{github.events.input.release-ver}}
+  GIT_STRIPPED_VERSION: ${{github.events.input.stripped-release-ver}}
+  RELEASE_CHANNEL: ${{github.events.input.release-channel}}
 
 jobs:
   docker-extension:
@@ -90,6 +90,12 @@ jobs:
             type=raw,value={{tag}},enable=${{github.event.inputs.release-channel}}-${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=${{github.event.inputs.release-channel}}-latest
             type=semver,pattern={{version}},value=-v${{github.event.inputs.stripped-release-ver}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+        type=raw,value=${{github.event.inputs.release-channel}}-{{sha}}
+        type=semver,pattern={{version}},value=${{github.event.inputs.release-ver}}
+        type=raw,pattern={{version}},value=${{github.event.inputs.release-channel}}-${{github.event.inputs.release-ver}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+        type=raw,value={{tag}},enable=${{github.event.inputs.release-channel}}-${{ startsWith(github.ref, 'refs/tags/v') }}
+        type=raw,value=${{github.event.inputs.release-channel}}-latest
+        type=semver,pattern={{version}},value=-v${{github.event.inputs.stripped-release-ver}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
           
       -
         name: Login to DockerHub
