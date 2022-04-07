@@ -50,17 +50,17 @@ jobs:
           GIT_REF=`git symbolic-ref HEAD`
           if [[ $GIT_REF = refs/tags* ]]
           then
-            RELEASE_CHANNEL="stable"
+            echo RELEASE_CHANNEL=stable
           # export RELEASE_CHANNEL="stable"
           else
-            RELEASE_CHANNEL="edge" 
+            echo RELEASE_CHANNEL=edge
           # export RELEASE_CHANNEL="edge"
           fi
           echo "Release channel determined to be $RELEASE_CHANNEL"
           echo LATEST_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
           echo GIT_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
           # echo GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-          echo GIT_STRIPPED_VERSION=$(git ls-remote --tags | tail -1 | cut -c 2- | sed 's/refs\/tags\///g')
+          echo GIT_STRIPPED_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g' | cut -c2-)
         shell: bash
       # -
       #   name: Determine Stable Release Channel
@@ -117,6 +117,7 @@ jobs:
           build-args: |
             GIT_STRIPPED_VERSION=${{env.GIT_STRIPPED_VERSION}}
             GIT_VERSION=${{env.GIT_VERSION}}
+            RELEASE_CHANNEL=${{env.RELEASE_CHANNEL}}
           tags: ${{ steps.meta.outputs.tags }}     
           platforms: linux/amd64,linux/arm64
 
