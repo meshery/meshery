@@ -45,39 +45,39 @@ jobs:
       - 
         name: Checkout repo
         uses: actions/checkout@v3
-      # - 
-      #   name: Identify Release Values
-      #   run: |
-      #     GIT_REF=`git symbolic-ref HEAD`
-      #     if [[ $GIT_REF = refs/tags* ]]
-      #     then
-      #     RELEASE_CHANNEL="stable"
-      #     # export RELEASE_CHANNEL="stable"
-      #     else
-      #     RELEASE_CHANNEL="edge" 
-      #     # export RELEASE_CHANNEL="edge"
-      #     fi
-      #     echo "Release channel determined to be $RELEASE_CHANNEL"
-      #     echo LATEST_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-      #     echo GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-      #     echo GIT_STRIPPED_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always | cut -c 2-)
-      #   shell: bash
-      # -
-      #   name: Determine Stable Release Channel
-      #   run: |
-      #     if [[ ${{ github.ref }} = refs/tags* ]]
-      #         echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
-      #         echo "Release channel determined to be $RELEASE_CHANNEL"
-      # -
-      #   name: Determine Edge Release Channel
-      #   run: |
-      #     if [[ ${{ github.ref }} != refs/tags* ]]
-      #       echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV 
-      #       GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-      #       echo $GIT_VERSION >> $GITHUB_ENV
-      #       GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
-      #       echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
-      #       echo "Release channel determined to be $RELEASE_CHANNEL"
+      - 
+        name: Identify Release Values
+        run: |
+          GIT_REF=`git symbolic-ref HEAD`
+          if [[ $GIT_REF = refs/tags* ]]
+          then
+          RELEASE_CHANNEL="stable"
+          # export RELEASE_CHANNEL="stable"
+          else
+          RELEASE_CHANNEL="edge" 
+          # export RELEASE_CHANNEL="edge"
+          fi
+          echo "Release channel determined to be $RELEASE_CHANNEL"
+          echo LATEST_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+          echo GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+          echo GIT_STRIPPED_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always | cut -c 2-)
+        shell: bash
+      -
+        name: Determine Stable Release Channel
+        run: |
+          if [[ ${{ github.ref }} = refs/tags* ]]
+              echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
+              echo "Release channel determined to be $RELEASE_CHANNEL"
+      -
+        name: Determine Edge Release Channel
+        run: |
+          if [[ ${{ github.ref }} != refs/tags* ]]
+            echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV 
+            GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+            echo $GIT_VERSION >> $GITHUB_ENV
+            GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
+            echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
+            echo "Release channel determined to be $RELEASE_CHANNEL"
 
       -
         name: Set up QEMU
