@@ -62,22 +62,22 @@ jobs:
           echo GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
           echo GIT_STRIPPED_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always | cut -c 2-)
         shell: bash
-      -
-        name: Determine Stable Release Channel
-        run: |
-          if [[ ${{ github.ref }} = refs/tags* ]]
-              echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
-              echo "Release channel determined to be $RELEASE_CHANNEL"
-      -
-        name: Determine Edge Release Channel
-        run: |
-          if [[ ${{ github.ref }} != refs/tags* ]]
-            echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV 
-            GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-            echo $GIT_VERSION >> $GITHUB_ENV
-            GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
-            echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
-            echo "Release channel determined to be $RELEASE_CHANNEL"
+      # -
+      #   name: Determine Stable Release Channel
+      #   run: |
+      #     if [[ ${{ github.ref }} = refs/tags* ]]
+      #         echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
+      #         echo "Release channel determined to be $RELEASE_CHANNEL"
+      # -
+      #   name: Determine Edge Release Channel
+      #   run: |
+      #     if [[ ${{ github.ref }} != refs/tags* ]]
+      #       echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV 
+      #       GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
+      #       echo $GIT_VERSION >> $GITHUB_ENV
+      #       GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
+      #       echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
+      #       echo "Release channel determined to be $RELEASE_CHANNEL"
 
       -
         name: Set up QEMU
@@ -99,7 +99,7 @@ jobs:
             type=raw,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}}
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=${{env.RELEASE_CHANNEL}}-latest
-            type=semver,pattern={{version}},value=-v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=semver,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
 
       -
         name: Login to DockerHub
