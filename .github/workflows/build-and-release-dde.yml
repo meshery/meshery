@@ -50,9 +50,9 @@ jobs:
           GIT_REF=`git symbolic-ref HEAD`
           if [[ $GIT_REF = refs/tags* ]]
           then
-            echo RELEASE_CHANNEL="stable"
+            echo RELEASE_CHANNEL=$(stable)
           else
-            echo RELEASE_CHANNEL="edge"
+            echo RELEASE_CHANNEL=$(edge)
           fi
           echo "Release channel determined to be $RELEASE_CHANNEL"
           echo LATEST_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
