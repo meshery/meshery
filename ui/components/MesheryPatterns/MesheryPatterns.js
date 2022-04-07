@@ -728,7 +728,7 @@ function MesheryPatterns({
     }
   };
 
-  console.log(patterns)
+  // console.log(patterns)
   return (
     <>
 
