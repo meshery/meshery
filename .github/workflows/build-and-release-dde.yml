@@ -96,8 +96,8 @@ jobs:
           tags: |
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{sha}}
             type=semver,pattern={{version}},value=${{env.GIT_VERSION}}
-            type=raw,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-            type=raw,value={{tag}},enable=${{env.RELEASE_CHANNEL}}-${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}}
+            type=raw,value=${{env.RELEASE_CHANNEL}}-{{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=${{env.RELEASE_CHANNEL}}-latest
             type=semver,pattern={{version}},value=-v${{env.GIT_STRIPPED_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
 
