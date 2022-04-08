@@ -29,7 +29,7 @@
 Keeping Your Fork Updated
 In order to get the latest updates from the development trunk do a one-time setup to establish the main GitHub repo as a remote by entering:<br><br>
 
-`git remote add upstream https:/github.com/meshery/meshery.git`
+`git remote add upstream https://github.com/meshery/meshery.git`
 <br><br>
 ("meshery" is used as the example repo. Be sure to reference the _actual_ repo you're contributing to e.g. "meshery-linkerd").
 <br><br>
