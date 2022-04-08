@@ -88,16 +88,6 @@ func persistData(msg broker.Message,
 
 		// persist the object
 		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
-		// if object.ObjectMeta.Name == "docker-desktop" {
-		// 	fmt.Println("msg: ", msg)
-		// 	fmt.Println("object: ", object)
-		// 	fmt.Println("object.objectmeta: ", object.ObjectMeta)
-		// 	fmt.Println("object.objectmeta.clustername: ", object.ObjectMeta.ClusterName)
-		// 	// obj, err := json.Marshal(object) 
-		// 	// if err == nil {
-		// 	// 	fmt.Println("obj: ", string(obj))
-		// 	// }
-		// }
 		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
 			// operatorSyncChannel <- false
 			broadcaster.Submit(broadcast.BroadcastMessage{
@@ -122,6 +112,7 @@ func PersistClusterName(
 	log logger.Handler, 
 	handler *database.Handler, 
 	provider models.Provider,
+	meshsyncCh chan struct{},
 ){
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 	h := &handlers.Handler{}
@@ -134,23 +125,20 @@ func PersistClusterName(
 	clusterName := clusterConfig.Cluster["name"].(string)
 	clusterId := clusterConfig.KubernetesServerID.String()
 	object := meshsyncmodel.Object{
-		Kind: "Node",
+		Kind: "Cluster",
 		ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
 			Name: clusterName,
+			ClusterID: clusterId,
 		},
 		ClusterID: clusterId,
 	}
-	
-	// fmt.Println("cluster config: ", clusterConfig)
-	// fmt.Println("cluster info: ", clusterConfig.Cluster)
-	// fmt.Println("cluster name: ", clusterConfig.Cluster["name"])
-	// fmt.Println("cluster object: ", object)
-	
+
 	err = recordMeshSyncData(broker.Add, handler, &object)
 	if err != nil {
 		log.Error(err)
 		return
 	}
+	meshsyncCh <- struct{}{}
 }
 
 func applyYaml(client *mesherykube.Client, delete bool, file string) error {
