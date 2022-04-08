@@ -110,7 +110,7 @@ Las guías de estilo de programacción relevantes son los [Comentarios de revisi
 Para construir y ejecutar el código del servidor Meshery, ejecuta el siguiente comando:
 
 ```sh
-make run-local
+make server
 ```
 
 Cada vez que se realicen cambios en el código GO, tendrás que detener el servidor y ejecutar el comando anterior nuevamente.

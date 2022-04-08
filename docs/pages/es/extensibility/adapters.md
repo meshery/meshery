@@ -79,7 +79,7 @@ La prueba de los cambios locales que se ejecutan como un contenedor se puede log
 
 ### Ejecutando un adaptador como proceso
 
-Otra forma de probar los cambios locales es ejecutar el adaptador como un proceso. Para hacer esto, clone el repositorio de meshery e inicie meshery usando make run-local-cloud. Inicie el adaptador desde su IDE o ejecutando make run. Luego, en la interfaz de malla, agregue el adaptador usando “localhost: <PORT>”.
+Otra forma de probar los cambios locales es ejecutar el adaptador como un proceso. Para hacer esto, clone el repositorio de meshery e inicie meshery usando `make server-local`. Inicie el adaptador desde su IDE o ejecutando make run. Luego, en la interfaz de malla, agregue el adaptador usando “localhost: <PORT>”.
 
 ### Creación de un nuevo adaptador Meshery
 
