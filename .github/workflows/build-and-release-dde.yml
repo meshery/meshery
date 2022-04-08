@@ -1,5 +1,7 @@
 name: Docker Extension for Meshery
 on:
+  release:
+    types: [published]
   push:
     tags:
       - 'v*'  
@@ -27,18 +29,20 @@ env:
   GIT_VERSION: ${{github.event.inputs.release-ver}}
   GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}
   RELEASE_CHANNEL: ${{github.event.inputs.release-channel}}
+  GIT_TAG: ${{ github.event.release.tag_name }}
 
 jobs:
-  # print-inputs:
-  #   runs-on: ubuntu-latest
-  #   steps:
+  print-inputs:
+    runs-on: ubuntu-latest
+    steps:
 
-  #   - run: |
-  #       echo "GIT_VERSION: ${{github.event.inputs.release-ver}}"
-  #       echo "GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
-  #       echo "RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
-  #       echo "GIT_VERSION: ${{env.GIT_VERSION}}"
-  #       echo "GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
+    - run: |
+        echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
+        echo " Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
+        echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
+        echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
+        echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
+        echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
   
   docker-extension:
     runs-on: ubuntu-latest
@@ -50,8 +54,8 @@ jobs:
         name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
         run: |
-          GIT_REF=`git symbolic-ref HEAD`
-          if [[ $GIT_REF = refs/tags* ]]
+          # GIT_REF=`git symbolic-ref HEAD`
+          if [[ $GIT_TAG = refs/tags* ]]
           then
             echo RELEASE_CHANNEL=stable >> $GITHUB_ENV
           else
@@ -83,7 +87,7 @@ jobs:
             latest=false
           tags: |
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{sha}}
-            type=semver,pattern={{version}},value=${{env.GIT_VERSION}}
+            type=semver,pattern={{version}},value=${{env.GIT_STRIPPED_VERSION}}
             type=raw,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}}
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=${{env.RELEASE_CHANNEL}}-latest
