@@ -108,29 +108,29 @@ func persistData(msg broker.Message,
 }
 
 func PersistClusterName(
-	ctx context.Context, 
-	log logger.Handler, 
-	handler *database.Handler, 
+	ctx context.Context,
+	log logger.Handler,
+	handler *database.Handler,
 	provider models.Provider,
 	meshsyncCh chan struct{},
-){
+) {
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 	h := &handlers.Handler{}
-	
+
 	clusterConfig, err := h.GetCurrentContext(tokenString, provider)
 	if err != nil {
 		log.Error(err)
 	}
 
 	clusterName := clusterConfig.Cluster["name"].(string)
-	clusterId := clusterConfig.KubernetesServerID.String()
+	clusterID := clusterConfig.KubernetesServerID.String()
 	object := meshsyncmodel.Object{
 		Kind: "Cluster",
 		ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
-			Name: clusterName,
-			ClusterID: clusterId,
+			Name:      clusterName,
+			ClusterID: clusterID,
 		},
-		ClusterID: clusterId,
+		ClusterID: clusterID,
 	}
 
 	err = recordMeshSyncData(broker.Add, handler, &object)
