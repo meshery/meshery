@@ -12,7 +12,7 @@ const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
 function PatternCardGridItem({ pattern, handleDeploy, handleSubmit, setSelectedPatterns }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
-  const [yaml, setYaml] = useState("");
+  const [yaml, setYaml] = useState(pattern.pattern_file);
 
   return (
     <Grid item {...gridProps}>

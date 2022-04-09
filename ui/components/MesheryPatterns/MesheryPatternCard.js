@@ -35,7 +35,7 @@ const useStyles= makeStyles(() => ({
     minHeight : "6rem",
     position : "relative"
   },
-  deleteEditButton : {
+  updateDeleteButtons : {
     width : "fit-content",
     margin : "10 0 0 auto",
     position : "absolute",
@@ -307,7 +307,7 @@ function MesheryPatternCard({
             </Grid>
 
             <Grid item xs={12}>
-              <div className={classes.deleteEditButton} >
+              <div className={classes.updateDeleteButtons} >
 
                 {/* Save button */}
                 <IconButton onClick={(ev) =>
