@@ -20,7 +20,7 @@ export const ServiceMeshAdapters = styled('div')(({ theme }) => ({
   display: "flex",
   justifyContent: 'center', alignItems: 'center',
   alignContent: 'space-between',
-  [theme.breakpoints.down("xs")]: {
+  [theme.breakpoints.down("md")]: {
     width: "100%"
   },
 }));
@@ -33,13 +33,12 @@ export const ExtensionWrapper = styled('div')(({ theme }) => ({
   margin: theme.spacing(2),
   display: "flex",
   justifyContent: 'center', alignItems: 'center',
-  
-  minHeight:"12rem",
+  height:"12rem",
   backgroundColor: "#393F49",
   borderRadius: "20px ",
   padding: "2rem",
   textAlign: "center",
-  [theme.breakpoints.down("xs")]: {
+  [theme.breakpoints.down("md")]: {
     width: "100%",
   }
 }));

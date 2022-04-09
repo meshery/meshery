@@ -35,11 +35,14 @@ prepare-buildx:
 
 ## Build & Upload extension image to hub. Do not push if tag already exists.
 push-extension: prepare-buildx
-	docker pull $(IMAGE):$(RELEASE_CHANNEL)-$(GIT_VERSION) && echo "Failure: Tag already exists" || docker buildx build --push \
+	docker pull $(IMAGE):$(RELEASE_CHANNEL)-$(GIT_VERSION) && echo "Failure: Tag already exists" || \ 
+	docker buildx build --push \
 	--builder=$(BUILDER) --platform=linux/amd64,linux/arm64 \
-	--build-arg tag=$(IMAGE):$(RELEASE_CHANNEL)-$(GIT_VERSION) \
+	--build-arg RELEASE_CHANNEL=$(RELEASE_CHANNEL) \
 	--build-arg GIT_VERSION=$(GIT_VERSION) \
 	--build-arg GIT_STRIPPED_VERSION=$(GIT_STRIPPED_VERSION) \
-	--tag=$(IMAGE):$(RELEASE_CHANNEL) .
+	--tag=$(IMAGE):$(RELEASE_CHANNEL)-latest \
+	--tag=$(IMAGE):$(RELEASE_CHANNEL)-$(GIT_VERSION) 
+	--tag=$(GIT_VERSION) .
 
 .PHONY: prepare-buildx push-extension

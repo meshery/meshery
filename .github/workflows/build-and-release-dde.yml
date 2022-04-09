@@ -1,5 +1,7 @@
 name: Docker Extension for Meshery
 on:
+  release:
+    types: [published]
   push:
     tags:
       - 'v*'  
@@ -7,17 +9,17 @@ on:
       - 'master'
     paths-ignore:
       - 'docs/**'
-      #- '.github/**'
+      - '.github/**'
   workflow_dispatch:
     inputs:
       release-ver:
           description: 'Stable Release Version'     
           required: true
-          default: 'v0.6.0-rc-'
+          default: 'v'
       stripped-release-ver:
           description: 'Stripped Stable Release Version'     
           required: true
-          default: '0.6.0-rc-'
+          default: ''
       release-channel:
           description: 'Release Channel'     
           required: true
@@ -27,47 +29,47 @@ env:
   GIT_VERSION: ${{github.event.inputs.release-ver}}
   GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}
   RELEASE_CHANNEL: ${{github.event.inputs.release-channel}}
+  GIT_TAG: ${{ github.event.release.tag_name }}
 
 jobs:
+  print-inputs:
+    runs-on: ubuntu-latest
+    steps:
+
+    - run: |
+        echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
+        echo " Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
+        echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
+        echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
+        echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
+        echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
+  
   docker-extension:
     runs-on: ubuntu-latest
     steps:
       - 
         name: Checkout repo
         uses: actions/checkout@v3
-      # - 
-      #   name: Identify Release Values
-      #   run: |
-      #     GIT_REF=`git symbolic-ref HEAD`
-      #     if [[ $GIT_REF = refs/tags* ]]
-      #     then
-      #     RELEASE_CHANNEL="stable"
-      #     # export RELEASE_CHANNEL="stable"
-      #     else
-      #     RELEASE_CHANNEL="edge" 
-      #     # export RELEASE_CHANNEL="edge"
-      #     fi
-      #     echo "Release channel determined to be $RELEASE_CHANNEL"
-      #     echo LATEST_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-      #     echo GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-      #     echo GIT_STRIPPED_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always | cut -c 2-)
-      #   shell: bash
-      # -
-      #   name: Determine Stable Release Channel
-      #   run: |
-      #     if [[ ${{ github.ref }} = refs/tags* ]]
-      #         echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
-      #         echo "Release channel determined to be $RELEASE_CHANNEL"
-      # -
-      #   name: Determine Edge Release Channel
-      #   run: |
-      #     if [[ ${{ github.ref }} != refs/tags* ]]
-      #       echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV 
-      #       GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always)
-      #       echo $GIT_VERSION >> $GITHUB_ENV
-      #       GIT_STRIPPED_VERSION=`echo $GIT_VERSION | cut -c 2-`
-      #       echo $GIT_STRIPPED_VERSION >> $GITHUB_ENV
-      #       echo "Release channel determined to be $RELEASE_CHANNEL"
+      - 
+        name: Identify Release Values
+        if: "${{ github.event.inputs.release-ver}} != 'v' }}"
+        run: |
+          # GIT_REF=`git symbolic-ref HEAD`
+          if [[ $GIT_TAG = refs/tags* ]]
+          then
+            echo RELEASE_CHANNEL=stable >> $GITHUB_ENV
+          else
+            echo RELEASE_CHANNEL=edge >> $GITHUB_ENV
+          fi
+          echo "Release channel determined to be $RELEASE_CHANNEL"
+          LATEST_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
+          GIT_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
+          # GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always) 
+          GIT_STRIPPED_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g' | cut -c2-)
+          echo "GIT_LATEST=$LATEST_VERSION" >> $GITHUB_ENV
+          echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
+          echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
+        shell: bash
 
       -
         name: Set up QEMU
@@ -84,20 +86,18 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=${{github.event.inputs.release-channel}}-{{sha}}
-            type=semver,pattern={{version}},value=${{github.event.inputs.release-ver}}
-            type=raw,pattern={{version}},value=${{github.event.inputs.release-channel}}-${{github.event.inputs.release-ver}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-            type=raw,value={{tag}},enable=${{github.event.inputs.release-channel}}-${{ startsWith(github.ref, 'refs/tags/v') }}
-            type=raw,value=${{github.event.inputs.release-channel}}-latest
-            type=semver,pattern={{version}},value=-v${{github.event.inputs.stripped-release-ver}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-          
+            type=raw,value=${{env.RELEASE_CHANNEL}}-{{sha}}
+            type=semver,pattern={{version}},value=${{env.GIT_STRIPPED_VERSION}}
+            type=raw,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}}
+            type=raw,value=${{env.RELEASE_CHANNEL}}-{{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=${{env.RELEASE_CHANNEL}}-latest
+            type=semver,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
       -
         name: Login to DockerHub
         uses: docker/login-action@v1 
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - 
         name: Build and Push 
         uses: docker/build-push-action@v2
@@ -107,6 +107,7 @@ jobs:
           build-args: |
             GIT_STRIPPED_VERSION=${{env.GIT_STRIPPED_VERSION}}
             GIT_VERSION=${{env.GIT_VERSION}}
+            RELEASE_CHANNEL=${{env.RELEASE_CHANNEL}}
           tags: ${{ steps.meta.outputs.tags }}     
           platforms: linux/amd64,linux/arm64
 
