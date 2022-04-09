@@ -10,6 +10,8 @@ import { getRefinedJsonSchema } from "./helper";
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
+import _ from "lodash"
+import { CircularProgress, Typography } from '@material-ui/core';
 
 const Form = withTheme(MaterialUITheme);
 
@@ -35,7 +37,8 @@ function RJSF(props) {
   const errorHandler = handleError();
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
-  const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
+  const [schema, setSchema] = React.useState({ rjsfSchema: {}, uiSchema: {} })
+  const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
     // Apply debouncing mechanism for the state propagation
@@ -52,9 +55,18 @@ function RJSF(props) {
     setSchema({ rjsfSchema, uiSchema })
   }, [jsonSchema]) // to reduce heavy lifting on every react render
 
+  React.useEffect(() => {
+    if (!_.isEqual(schema, { rjsfSchema: {}, uiSchema: {} })) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300); // for showing circular progress
+    }
+  }, [schema])
+
   return (
     <RJSFWrapperComponent {...props}>
       <RJSFForm
+        isLoading={isLoading}
         schema={schema}
         data={data}
         onChange={(e) => {
@@ -83,6 +95,8 @@ function RJSFForm(props) {
     jsonSchema,
     data,
     onChange,
+    isLoading,
+    env,
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
   } = props;
@@ -94,6 +108,10 @@ function RJSFForm(props) {
     }
     rjsfTheme.zIndex.modal = 99999;
   }, [])
+
+  if (isLoading && env === "mm-extension") {
+    return <LoadingComponent />
+  }
 
   return (
     <MuiThemeProvider theme={rjsfTheme}>
@@ -107,7 +125,7 @@ function RJSFForm(props) {
         additionalMetaSchemas={[JS4]}
         uiSchema={schema.uiSchema}
         widgets={{
-          TextWidget : CustomInputField
+          TextWidget: CustomInputField
         }}
         liveValidate
         showErrorList={false}
@@ -122,3 +140,17 @@ function RJSFForm(props) {
     </MuiThemeProvider>
   )
 }
+
+const LoadingComponent = () => (
+  <div style={{
+    textAlign: "center",
+    padding: "40px 8px"
+  }}  >
+    <CircularProgress />
+    <Typography
+      variant='h6'
+    >
+      Loading MeshModel Data, just for you!
+    </Typography>
+  </div>
+)

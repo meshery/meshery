@@ -66,6 +66,7 @@
     "js-yaml": "^4.1.0",
     "jsonlint-mod": "^1.7.6",
     "jss": "latest",
+    "lodash": "^4.17.21",
     "minimist": ">=1.2.2",
     "moment": "^2.29.1",
     "mui-datatables": "^3.7.8",
