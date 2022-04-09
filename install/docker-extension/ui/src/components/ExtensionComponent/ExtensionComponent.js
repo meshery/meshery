@@ -37,12 +37,16 @@ const ExtensionsComponent = props => {
     // window.ddClient.extension.vm.service.get("/ping").then(console.log);
   }, [])
   
-  const submitConfig = () => {
-    const data = { meshLocationURL : meshLocationURL.value };
+  const baseURL = "http://localhost:9081"
+  const submitConfig = (adapterLocation) => {
+
+    const data = { meshLocationURL : adapterLocation };
+
     const params = Object.keys(data)
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
     .join("&");
-    dataFetch("/api/system/adapter/manage",
+
+    dataFetch(`${baseURL}/api/system/adapter/manage`,
     {
       credentials : "same-origin",
       method : "POST",
@@ -55,37 +59,14 @@ const ExtensionsComponent = props => {
         meshLocationURL("");
       }
       console.log("provisioned");
-      update
     },(e) => { 
       console.error(e) 
     })
   }
 
-  const fetchAvailableAdapters = () => {
-    dataFetch(
-      "/api/system/adapters",
-      { credentials : "same-origin",
-        method : "GET",
-        credentials : "include", },
-      (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          const options = result.map((res) => ({ value : res.adapter_location,
-            label : res.adapter_location, }));
-           availableAdapters (options);
-        }
-      },
-      console.log("Unable to fetch available adapters")
-    );
-  };
 
   // Wrote separate functions since we need these functions to provision the adapters as well
   const handleConsul = () => {
-
-   if (!meshLocationURL || !meshLocationURL.value || meshLocationURL.value === ""){
-     meshLocationURLError('true')
-     return;
-   }
    submitConfig();
     isConsulChecked(prev => !prev)
   }
