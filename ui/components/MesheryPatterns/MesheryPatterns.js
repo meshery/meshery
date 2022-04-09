@@ -1,6 +1,7 @@
 // @ts-check
 import {
   Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  Paper,
   TableCell, Tooltip, Typography
 } from "@material-ui/core";
 import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
@@ -48,6 +49,12 @@ const styles = (theme) => ({
     width : "24px",
     height : "24px",
   },
+  topToolbar : {
+    margin : "2rem auto",
+    display : "flex",
+    justifyContent : "space-between",
+    paddingLeft : "1rem"
+  },
   viewSwitchButton : {
     justifySelf : "flex-end",
     marginLeft : "auto",
@@ -58,10 +65,33 @@ const styles = (theme) => ({
     justifyContent : "flex-start",
     alignItems : "center",
     whiteSpace : "nowrap",
-    margin : "1rem auto 2rem auto"
   },
   UploadImport : {
-    paddingLeft : "1.5rem"
+    paddingLeft : "1.5rem",
+  },
+  noDesignAddButton : {
+    marginTop : "0.5rem"
+  },
+  noDesignContainer : {
+    padding : "2rem",
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "column",
+  },
+  noDesignButtons : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "row",
+  },
+  noDesignPaper : {
+    padding : "0.5rem",
+    fontSize : "3rem"
+  },
+  noDesignText : {
+    fontSize : "2rem",
+    marginBottom : "2rem",
   }
 });
 
@@ -728,7 +758,7 @@ function MesheryPatterns({
     }
   };
 
-  // console.log(patterns)
+  console.log(patterns)
   return (
     <>
 
@@ -739,29 +769,34 @@ function MesheryPatterns({
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
-        {!selectedPattern.show && <div className={classes.createButton}>
-          <Button
-            aria-label="Add Pattern"
-            variant="contained"
-            color="primary"
-            size="large"
-            // @ts-ignore
-            onClick={() => setSelectedPattern({
-              pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-              show : true,
-            })}
-          >
-            <AddIcon />
+        <div className={classes.topToolbar} >
+          {!selectedPattern.show && (patterns.length>0 || viewType==="table") && <div className={classes.createButton}>
+            <Button
+              aria-label="Add Pattern"
+              variant="contained"
+              color="primary"
+              size="large"
+              // @ts-ignore
+              onClick={() => setSelectedPattern({
+                pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                show : true,
+              })}
+            >
+              <AddIcon />
            Create Design
-          </Button>
-          <div className={classes.UploadImport}>
-            <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler}  />
+            </Button>
+            <div className={classes.UploadImport}>
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler}  />
+            </div>
+
           </div>
+          }
+          {!selectedPattern.show &&
           <div className={classes.viewSwitchButton}>
             <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
+          }
         </div>
-        }
         {
           !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
             <MUIDataTable
@@ -774,6 +809,37 @@ function MesheryPatterns({
             />
           </MuiThemeProvider>
         }
+        {!selectedPattern.show && viewType==="grid" && patterns.length===0 &&
+          <Paper className={classes.noDesignPaper} >
+            <div className={classes.noDesignContainer}>
+              <Typography className={classes.noDesignText} align="center" color="textSecondary">
+              No Designs Found
+              </Typography>
+              <div className={classes.noDesignButtons}>
+                <Button
+                  aria-label="Add Performance Profile"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  className={classes.noDesignAddButton}
+                  // @ts-ignore
+                  onClick={() => setSelectedPattern({
+                    pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                    show : true,
+                  })}
+                >
+                  <AddIcon />
+              Create Design
+
+                </Button>
+                <div className={classes.UploadImport}>
+                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler}  />
+                </div>
+              </div>
+            </div>
+          </Paper>
+        }
+
         {
           !selectedPattern.show && viewType==="grid" &&
             // grid vieww
