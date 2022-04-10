@@ -88,6 +88,10 @@ func init() {
 	// global verbose flag for verbose logs
 	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
+	_ = TreePath()
+}
+
+func TreePath() *cobra.Command {
 	availableSubcommands = []*cobra.Command{
 		versionCmd,
 		system.SystemCmd,
@@ -99,6 +103,7 @@ func init() {
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
+	return RootCmd
 }
 
 // initConfig reads in config file and ENV variables if set.
