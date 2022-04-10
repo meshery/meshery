@@ -26,9 +26,9 @@ func TestLogin(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-
-			SystemCmd.SetArgs(tt.Args)
-			err = SystemCmd.Execute()
+			cmd := SystemCmd
+			cmd.SetArgs(tt.Args)
+			err = cmd.Execute()
 			kb.SetKeys(keybd_event.VK_ENTER) // To press and simulate Enter key
 			if err != nil {
 				t.Error(err)

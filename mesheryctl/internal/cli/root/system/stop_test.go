@@ -16,16 +16,17 @@ func TestStop(t *testing.T) {
 		{
 			Name:        "Run stop with --force",
 			Args:        []string{"stop", "--force"},
-			ExpectError: true,
+			ExpectError: false,
 		},
 	}
 
 	for _, tt := range tests {
+		utils.SetupContextEnv(t)
 		t.Run(tt.Name, func(t *testing.T) {
 			utils.SetupLogrusFormatter()
-
-			SystemCmd.SetArgs(tt.Args)
-			err = SystemCmd.Execute()
+			cmd := SystemCmd
+			cmd.SetArgs(tt.Args)
+			err = cmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
