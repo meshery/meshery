@@ -69,8 +69,8 @@ run-local: server-local error
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
 ## for user authentication.
 server-local:
-	cd cmd; go clean; rm meshery; go mod tidy; \
-	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
+	cd cmd; go$(GOVERSION) clean; rm meshery; go$(GOVERSION) mod tidy; \
+	go$(GOVERSION) build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
@@ -91,11 +91,11 @@ server:
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go run main.go;
+	go$(GOVERSION) run main.go;
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine.
 server-skip-compgen:
-	cd cmd; go mod tidy; \
+	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -103,11 +103,11 @@ server-skip-compgen:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
  	SKIP_COMP_GEN=true \
-	go run main.go;
+	go$(GOVERSION) run main.go;
 		
 ## Build and run Meshery Server with no seed content.
 server-no-content:
-	cd cmd; go mod tidy; \
+	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -115,7 +115,7 @@ server-no-content:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
-	go run main.go;
+	go$(GOVERSION) run main.go;
 
 ## Lint check Meshery Server.
 golangci: error
