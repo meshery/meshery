@@ -31,7 +31,6 @@ import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpe
 import {
   successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction, showProgress, hideProgress
 } from './ConnectionWizard/helpers/common';
-
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
   secondaryBar : { zIndex : 0, },
@@ -148,7 +147,14 @@ function K8sContextMenu({
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
+  const styleSlider = {
+    backgroundColor : "#EEEEEE",
+    position : "absolute",
+    left : "-5rem",
+    zIndex : "-1",
+    bottom : "-100%",
+    transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)"
+  }
   const handleKubernetesClick = () => {
     showProgress()
     pingKubernetes(
@@ -170,7 +176,6 @@ function K8sContextMenu({
   if (showFullContextMenu) {
     open = showFullContextMenu;
   }
-
 
   useEffect(() => {
     setTransformProperty(prev => (prev + ( contexts.total_count ? contexts.total_count * 3.125 : 0 )))
@@ -210,7 +215,7 @@ function K8sContextMenu({
         </div>
       </IconButton>
 
-      <Slide direction="down"  timeout={400} in={open} style={{ backgroundColor : "#EEEEEE", position : "absolute", left : "-5rem", zIndex : "-1", bottom : "-100%", transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)" }} mountOnEnter unmountOnExit>
+      <Slide direction="down" style ={styleSlider} timeout={400} in={open} mountOnEnter unmountOnExit>
         <div>
           <ClickAwayListener onClickAway={(e) => {
 
