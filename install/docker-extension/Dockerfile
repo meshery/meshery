@@ -19,8 +19,8 @@ COPY ui/package.json /ui/package.json
 COPY ui/package-lock.json /ui/package-lock.json
 ARG TARGETARCH
 RUN --mount=type=cache,target=/usr/src/app/.npm-${TARGETARCH} \
-    npm set cache /usr/src/app/.npm-${TARGETARCH} && \
-    npm ci
+  npm set cache /usr/src/app/.npm-${TARGETARCH} && \
+  npm ci
 # install
 COPY ui /ui
 RUN npm run build
@@ -30,10 +30,10 @@ ARG GIT_STRIPPED_VERSION
 ARG GIT_VERSION
 ARG RELEASE_CHANNEL
 LABEL org.opencontainers.image.title="meshery" \
-    org.opencontainers.image.description="Design and operate your cloud native deployments with the extensible management plane, Meshery." \
-    org.opencontainers.image.vendor="Layer5, Inc." \
-    com.docker.desktop.extension.api.version=">= 0.2.0" \
-    com.docker.desktop.extension.icon="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/meshery-logo-light.svg"
+  org.opencontainers.image.description="Design and operate your cloud native deployments with the extensible management plane, Meshery." \
+  org.opencontainers.image.vendor="Layer5, Inc." \
+  com.docker.desktop.extension.api.version=">= 0.2.0" \
+  com.docker.desktop.extension.icon="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/meshery-logo-light.svg"
 COPY --from=builder /backend/bin/service /
 COPY docker-compose.yaml .
 COPY metadata.json .
@@ -46,4 +46,4 @@ RUN unzip /mesheryctl/windows/mesheryctl_${GIT_STRIPPED_VERSION}_Windows_x86_64.
 RUN unzip /mesheryctl/linux/mesheryctl_${GIT_STRIPPED_VERSION}_Linux_x86_64.zip -d /mesheryctl/linux/
 COPY meshery-logo-light.svg .
 COPY --from=client-builder /ui/build ui
-CMD /service -socket /run/guest-services/extension-meshery.sock
+CMD ./service -socket /run/guest-services/extension-meshery.sock
