@@ -150,7 +150,7 @@ const LoadingComponent = () => (
     <Typography
       variant='h6'
     >
-      Loading MeshModel Data, just for you!
+      Generating MeshModel...
     </Typography>
   </div>
 )
