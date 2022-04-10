@@ -54,12 +54,12 @@ func (s byName) Less(i, j int) bool { return s[i].Name() < s[j].Name() }
 func prepender(filename string) string {
 	file := strings.Split(filename, ".md")
 	title := filepath.Base(file[0])
-	base := strings.TrimSuffix(title, path.Ext(title))
-	url := "reference/" + strings.ToLower(base) + "/"
 	words := strings.Split(title, "-")
 	if len(words) <= 1 {
+		url := "reference/" + words[0] + "/"
 		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[0])
 	}
+	url := "reference/" + words[0] + "/" + words[1] + "/"
 	return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1])
 }
 
@@ -73,7 +73,7 @@ func linkHandler(name string) string {
 }
 
 func doc() {
-	markDownPath := "../internal/cli/root/testDoc/" //Sample path
+	markDownPath := "../../docs/pages/reference/mesheryctl/" // Path for docs
 	//yamlPath := "./internal/cli/root/testDoc/"
 
 	fmt.Println("Scanning available commands...")
@@ -90,13 +90,13 @@ func doc() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Generating yaml docs...")
+	//fmt.Println("Generating yaml docs...")
 
 	// Generates YAML for whole tree
-	err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
-	if err != nil {
-		log.Fatal(err)
-	}
+	//err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
 	fmt.Println("Documentation generated at " + markDownPath)
 }
