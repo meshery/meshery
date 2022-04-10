@@ -83,15 +83,16 @@ jobs:
             fi
             cat ~/.meshery/auth.json
 
-      # Add adapter to meshconfig which will be picked up by mesheryctl to start the adapter
-      - name: Add adapter to meshconfig
-        run: |
-            yq -e -i '.contexts.local.components += ["meshery-${{ inputs.adapter_name }}"]' ~/.meshery/config.yaml
-
       # Start Meshery Server (Assuming that this step will create the meshery namespace)
       - name: Start Meshery Server using mesheryctl
         run: |
               curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
+
+       # Add adapter to the context using mesheryctl
+      - name: Add adapter to the context
+        run: |
+            mesheryctl system context create adapter-test -a meshery-${{ inputs.adapter_name }}
+            mesheryctl system context switch adapter-test -y
       
       # Start tunnelling to allocate external IP to LoadBalancer type service(meshery)(SO that we can access meshery from outside)
       - name: Start tunelling
