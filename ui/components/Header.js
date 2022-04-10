@@ -107,11 +107,11 @@ const styles = (theme) => ({
     cursor : "pointer"
   },
   cMenuContainer : {
-    backgroundColor : "#EEEEEE",
+    backgroundColor : "revert",
+    marginTop : "-1.6rem",
     borderRadius : "3px",
     padding : "1rem",
     zIndex : 1201,
-    marginTop : "1.3rem",
     boxShadow : "20px #979797",
     transition : "linear .2s",
     transitionProperty : "height"
@@ -210,7 +210,7 @@ function K8sContextMenu({
         </div>
       </IconButton>
 
-      <Slide direction="down"  timeout={400} in={open} style={{ position : "absolute", left : "-5rem", zIndex : "-1", bottom : "-100%", transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)" }} mountOnEnter unmountOnExit>
+      <Slide direction="down"  timeout={400} in={open} style={{ backgroundColor : "#EEEEEE", position : "absolute", left : "-5rem", zIndex : "-1", bottom : "-100%", transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)" }} mountOnEnter unmountOnExit>
         <div>
           <ClickAwayListener onClickAway={(e) => {
 
@@ -220,7 +220,7 @@ function K8sContextMenu({
             }
           }}>
 
-            <Paper style={{ marginTop : "-1.6rem", }} className={classes.cMenuContainer}>
+            <Paper className={classes.cMenuContainer}>
               <div>
                 <TextField
                   id="search-ctx"
