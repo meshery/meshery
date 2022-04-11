@@ -135,7 +135,8 @@ proto-build:
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: setup-ui-libs ui-setup ui
+.PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lintui-provider  ui-meshery ui-build ui-provider-build ui-provider-test
+
 setup-ui-libs: ui-setup
 ## Install dependencies for building Meshery UI.
 ui-setup:
@@ -163,7 +164,7 @@ ui-provider-lint:
 	cd provider-ui; npm run lint; cd ..
 
 ## Test Meshery Provider UI on your local machine.
-test-provider-ui:
+ui-provider-test:
 	cd provider-ui; npm run test; cd ..
 
 build-ui: ui-build
@@ -186,6 +187,7 @@ ui-provider-build:
 # Meshery Docs
 #-----------------------------------------------------------------------------
 #Incorporating Make docs commands from the Docs Makefile
+.PHONY: docs docs-build site docs-docker
 jekyll=bundle exec jekyll
 
 site: docs
