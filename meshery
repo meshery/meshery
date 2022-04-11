@@ -17,6 +17,7 @@
 # Get the platform to deploy Meshery from the flag
 # Get the deploy option on whether to install cli alone or to deploy Meshery server as well
 # Default option is to start Meshery server
+
 while getopts ":np:" opt; do
     case $opt in
     n)
