@@ -67,7 +67,7 @@ nighthawk-setup:
 run-local: server-local error
 ## Build and run Meshery Server on your local machine
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
-## for user authentication.
+## for user authentication (requires go$(GOVERSION)).
 server-local:
 	cd cmd; go$(GOVERSION) clean; rm meshery; go$(GOVERSION) mod tidy; \
 	go$(GOVERSION) build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
@@ -82,7 +82,7 @@ server-local:
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
-## Buiild and run Meshery Server on your local machine.
+## Build and run Meshery Server on your local machine (requires go$(GOVERSION)).
 server:
 	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -93,7 +93,7 @@ server:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go$(GOVERSION) run main.go;
 
-## Build and run Meshery Server with no Kubernetes components on your local machine.
+## Build and run Meshery Server with no Kubernetes components on your local machine (requires go$(GOVERSION)).
 server-skip-compgen:
 	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -105,7 +105,7 @@ server-skip-compgen:
  	SKIP_COMP_GEN=true \
 	go$(GOVERSION) run main.go;
 		
-## Build and run Meshery Server with no seed content.
+## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
 server-no-content:
 	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -122,11 +122,11 @@ golangci: error
 	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2;
 	$(GOPATH)/bin/golangci-lint run
 
-## Build Meshery's protobufs.
+## Build Meshery's protobufs (requires go$(GOVERSION)).
 proto-build:
 	# see https://grpc.io/docs/languages/go/quickstart/
-	# go get -u google.golang.org/grpc
-	# go get -u google.golang.org/protobuf/cmd/protoc-gen-go \
+	# go$(GOVERSION) get -u google.golang.org/grpc
+	# go$(GOVERSION) get -u google.golang.org/protobuf/cmd/protoc-gen-go \
 	#         google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	# PATH=$(PATH):`pwd`/../protoc/bin:$(GOPATH)/bin
 	# export PATH=$PATH:`pwd`/../protoc/bin:$GOPATH/bin
