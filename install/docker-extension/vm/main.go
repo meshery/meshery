@@ -13,10 +13,8 @@ import (
 )
 
 func main() {
-
 	var socketPath = flag.String("socket", "/run/guest/volumes-service.sock", "Unix domain socket to listen on")
-	// var socketPath = flag.String("socket", "./test.sock", "Unix domain socket to listen on")
-	var testPort = flag.Int("testPort", 0, "Test port to expose instead of socket")
+	var testPort = flag.Int("simplePort", 0, "Test port to expose instead of socket")
 	flag.Parse()
 	unixSocket := "unix:" + *socketPath
 	logrus.New().Infof("Starting listening on %s\n", unixSocket)
@@ -37,7 +35,7 @@ func main() {
 	}
 
 	router.GET("/ping", func(c echo.Context) error {
-		resp, err := http.Get("http://localhost:9081/api/system/version")
+		resp, err := http.Get("http://host.docker.internal:9081/api/system/version")
 		if err != nil {
 			fmt.Println(err.Error())
 			return err
