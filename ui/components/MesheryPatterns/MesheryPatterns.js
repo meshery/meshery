@@ -260,7 +260,6 @@ function MesheryPatterns({
     /**  @type {TypeView} */
     ("grid")
   );
-
   const DEPLOY_URL = '/api/pattern/deploy';
 
   const getMuiTheme = () => createTheme({
@@ -344,7 +343,7 @@ function MesheryPatterns({
     document.body.style.overflowX = "hidden"
 
     return (() => document.body.style.overflowX = "auto")
-  }, []);
+  }, [page,pageSize,search,sortOrder]);
 
   const handleDeploy = (pattern_file) => {
     updateProgress({ showProgress : true });
@@ -376,7 +375,6 @@ function MesheryPatterns({
   function fetchPatterns(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
-
     const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
@@ -817,7 +815,7 @@ function MesheryPatterns({
               </Typography>
               <div className={classes.noDesignButtons}>
                 <Button
-                  aria-label="Add Performance Profile"
+                  aria-label="Create Design"
                   variant="contained"
                   color="primary"
                   size="large"
@@ -843,8 +841,16 @@ function MesheryPatterns({
         {
           !selectedPattern.show && viewType==="grid" &&
             // grid vieww
-            <MesheryPatternGrid patterns={patterns} handleDeploy={handleDeploy} handleSubmit={handleSubmit} setSelectedPattern={setSelectedPattern} selectedPattern={selectedPattern} pages={Math.ceil(count / pageSize)}
-              setPage={setPage}  />}
+            <MesheryPatternGrid
+              patterns={patterns}
+              handleDeploy={handleDeploy}
+              handleSubmit={handleSubmit}
+              setSelectedPattern={setSelectedPattern}
+              selectedPattern={selectedPattern}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+            />}
 
         <PromptComponent ref={modalRef} />
       </NoSsr>

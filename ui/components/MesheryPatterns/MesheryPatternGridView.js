@@ -56,11 +56,12 @@ const useStyles = makeStyles(() => ({
  *  setSelectedPattern : ({show: boolean, pattern:any}) => void,
  *  selectedPattern: {show : boolean, pattern : any},
  *  pages?: number,
+ *  selectedPage?: number,
  *  setPage: (page: number) => void
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[],handleDeploy,handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage }) {
+function MesheryPatternGrid({ patterns=[],handleDeploy,handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
   return (
@@ -85,7 +86,7 @@ function MesheryPatternGrid({ patterns=[],handleDeploy,handleSubmit, setSelected
       {patterns.length
         ? (
           <div className={classes.pagination} >
-            <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
+            <Pagination count={pages} page={selectedPage+1} onChange={(_, page) => setPage(page - 1)} />
           </div>
         )
         : null}
