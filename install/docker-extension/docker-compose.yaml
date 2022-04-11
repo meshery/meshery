@@ -29,10 +29,6 @@ services:
     image: layer5/meshery-consul:stable-latest
     ports:
       - "10002:10002"
-  meshery-nsm:
-    image: layer5/meshery-nsm:stable-latest
-    ports:
-      - "10004:10004"
   meshery-app-mesh:
     image: layer5/meshery-app-mesh:stable-latest
     ports:
