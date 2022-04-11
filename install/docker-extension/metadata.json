@@ -1,4 +1,5 @@
 {
+  "icon": "meshery-logo-light.svg",
   "vm": {
     "composefile": "docker-compose.yaml",
     "exposes": {

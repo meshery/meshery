@@ -67,10 +67,10 @@ nighthawk-setup:
 run-local: server-local error
 ## Build and run Meshery Server on your local machine
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
-## for user authentication.
+## for user authentication (requires go$(GOVERSION)).
 server-local:
-	cd cmd; go clean; rm meshery; go mod tidy; \
-	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
+	cd cmd; go$(GOVERSION) clean; rm meshery; go$(GOVERSION) mod tidy; \
+	go$(GOVERSION) build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
@@ -82,7 +82,7 @@ server-local:
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
-## Buiild and run Meshery Server on your local machine.
+## Build and run Meshery Server on your local machine (requires go$(GOVERSION)).
 server:
 	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -91,11 +91,11 @@ server:
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go run main.go;
+	go$(GOVERSION) run main.go;
 
-## Build and run Meshery Server with no Kubernetes components on your local machine.
+## Build and run Meshery Server with no Kubernetes components on your local machine (requires go$(GOVERSION)).
 server-skip-compgen:
-	cd cmd; go mod tidy; \
+	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -103,11 +103,11 @@ server-skip-compgen:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
  	SKIP_COMP_GEN=true \
-	go run main.go;
+	go$(GOVERSION) run main.go;
 		
-## Build and run Meshery Server with no seed content.
+## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
 server-no-content:
-	cd cmd; go mod tidy; \
+	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -115,18 +115,18 @@ server-no-content:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
-	go run main.go;
+	go$(GOVERSION) run main.go;
 
 ## Lint check Meshery Server.
 golangci: error
 	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2;
 	$(GOPATH)/bin/golangci-lint run
 
-## Build Meshery's protobufs.
+## Build Meshery's protobufs (requires go$(GOVERSION)).
 proto-build:
 	# see https://grpc.io/docs/languages/go/quickstart/
-	# go get -u google.golang.org/grpc
-	# go get -u google.golang.org/protobuf/cmd/protoc-gen-go \
+	# go$(GOVERSION) get -u google.golang.org/grpc
+	# go$(GOVERSION) get -u google.golang.org/protobuf/cmd/protoc-gen-go \
 	#         google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	# PATH=$(PATH):`pwd`/../protoc/bin:$(GOPATH)/bin
 	# export PATH=$PATH:`pwd`/../protoc/bin:$GOPATH/bin
