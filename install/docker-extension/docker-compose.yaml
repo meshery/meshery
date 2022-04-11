@@ -2,9 +2,7 @@ version: '3'
 services:
   meshery-proxy:
     image: ${DESKTOP_PLUGIN_IMAGE}
-    cap_add:
-      - DAC_OVERRIDE
-      - FOWNER
+
   meshery:
     image: layer5/meshery:stable-latest
     environment:
