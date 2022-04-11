@@ -133,6 +133,8 @@ func PersistClusterName(
 		ClusterID: clusterID,
 	}
 
+	// persist the object
+	log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
 	err = recordMeshSyncData(broker.Add, handler, &object)
 	if err != nil {
 		log.Error(err)
