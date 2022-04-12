@@ -11,7 +11,6 @@ import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
 import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import _ from "lodash"
-import { CircularProgress, Typography } from '@material-ui/core';
 
 const Form = withTheme(MaterialUITheme);
 
@@ -96,9 +95,9 @@ function RJSFForm(props) {
     data,
     onChange,
     isLoading,
-    env,
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+    LoadingComponent
   } = props;
 
   useEffect(() => {
@@ -109,7 +108,7 @@ function RJSFForm(props) {
     rjsfTheme.zIndex.modal = 99999;
   }, [])
 
-  if (isLoading && env === "mm-extension") {
+  if (isLoading && LoadingComponent) {
     return <LoadingComponent />
   }
 
@@ -140,17 +139,3 @@ function RJSFForm(props) {
     </MuiThemeProvider>
   )
 }
-
-const LoadingComponent = () => (
-  <div style={{
-    textAlign: "center",
-    padding: "40px 8px"
-  }}  >
-    <CircularProgress />
-    <Typography
-      variant='h6'
-    >
-      Generating MeshModel...
-    </Typography>
-  </div>
-)
