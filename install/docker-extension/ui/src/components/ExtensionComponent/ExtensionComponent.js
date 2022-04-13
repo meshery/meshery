@@ -52,7 +52,7 @@ const ExtensionsComponent = () => {
       credentials: "include",
       headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
       body: params,
-    }).then(console.log).catch(console.log);
+    }).then(window.ddClient.desktopUI.toast.success("Service Mesh was successfully provisioned.")).catch(window.ddClient.desktopUI.toast.error("Some error occured while trying to provision the service mesh."));
   }
 
 
