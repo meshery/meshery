@@ -24,7 +24,7 @@ RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
-FROM alpine:3.15 as seed_content
+FROM alpine:3.15.3 as seed_content
 RUN apk add --no-cache curl
 WORKDIR /
 RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
@@ -61,7 +61,7 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
-FROM alpine:3.15 as jsonschema-util
+FROM alpine:3.15.3 as jsonschema-util
 RUN apk add --no-cache curl
 WORKDIR /
 RUN UTIL_VERSION=$(curl -L -s https://api.github.com/repos/layer5io/kubeopenapi-jsonschema/releases/latest | \
@@ -74,6 +74,8 @@ FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
 #RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
 RUN update-ca-certificates
+RUN apk upgrade --no-cache && \
+    apk add --no-cache libstdc++
 COPY ./oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd

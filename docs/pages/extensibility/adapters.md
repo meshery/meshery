@@ -72,7 +72,7 @@ Testing your local changes running as a container can be accomplished in two way
 
 ### Running an adapter as a process
 
-Another way to test your local changes is to run the adapter as a process. To do this, clone the meshery repository, and start meshery using make run-local-cloud. Start the adapter from your IDE, or by executing make run. Then, in the meshery interface, add the adapter using “localhost:<PORT>”.
+Another way to test your local changes is to run the adapter as a process. To do this, clone the `meshery/meshery` repository, and start Meshery Server using `make server`. Start the adapter from your IDE, or by executing `make run`. Then, in Meshery UI, add the adapter using “localhost:<PORT>”.
 
 ### Creating a new Meshery Adapter
 

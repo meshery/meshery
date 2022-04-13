@@ -1,6 +1,7 @@
 
 import { createTheme } from '@material-ui/core/styles';
 
+
 export const rjsfTheme = createTheme({
   palette : {
     primary : {
@@ -18,6 +19,9 @@ export const rjsfTheme = createTheme({
     MuiCheckbox : {
       color : 'primary',
     },
+    MuiMenu : {
+      variant : "outlined",
+    }
   },
   overrides : {
     MuiButton : {

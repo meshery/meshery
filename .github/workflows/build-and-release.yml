@@ -31,12 +31,13 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:stable-latest
           docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
           docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
-      - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v3
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
+      # SKIP STEP: FAILS BECAUSE README FILE SIZE IS TOO LARGE FOR DOCKER HUB
+      # - name: Docker Hub Description
+      #   uses: peter-evans/dockerhub-description@v3
+      #   env:
+      #     DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #     DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      #     DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
   release:
     name: Meshery build & release
     if: github.repository == 'meshery/meshery'

@@ -82,22 +82,17 @@ jobs:
               echo '{ "meshery-provider": "None", "token": "" }'  > ~/.meshery/auth.json
             fi
             cat ~/.meshery/auth.json
-        
+
       # Start Meshery Server (Assuming that this step will create the meshery namespace)
       - name: Start Meshery Server using mesheryctl
         run: |
               curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
-      
-      # Start the adapter using yamls
-      - name: Start adapter 
+
+       # Add adapter to the context using mesheryctl
+      - name: Add adapter to the context
         run: |
-          touch testimagedep.yaml
-          curl ${{ inputs.deployment_url }} > ./testimagedep.yaml
-          yq e -i '.spec.template.spec.containers[0].image="test:test"' ./testimagedep.yaml 
-          yq e -i '.spec.template.spec.containers[0].imagePullPolicy="Never"' ./testimagedep.yaml 
-          cat testimagedep.yaml
-          kubectl apply -f testimagedep.yaml --namespace=meshery
-          kubectl apply -f ${{ inputs.service_url }} --namespace=meshery
+            mesheryctl system context create adapter-test -a meshery-${{ inputs.adapter_name }}
+            mesheryctl system context switch adapter-test -y
       
       # Start tunnelling to allocate external IP to LoadBalancer type service(meshery)(SO that we can access meshery from outside)
       - name: Start tunelling

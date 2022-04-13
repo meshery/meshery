@@ -1,7 +1,7 @@
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import React from "react";
+import React, { useEffect } from "react";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import { rjsfTheme } from "../../../themes";
 import handleError from '../../ErrorHandling';
@@ -10,6 +10,7 @@ import { getRefinedJsonSchema } from "./helper";
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
+import _ from "lodash"
 
 const Form = withTheme(MaterialUITheme);
 
@@ -35,7 +36,8 @@ function RJSF(props) {
   const errorHandler = handleError();
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
-  const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
+  const [schema, setSchema] = React.useState({ rjsfSchema: {}, uiSchema: {} })
+  const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
     // Apply debouncing mechanism for the state propagation
@@ -52,9 +54,18 @@ function RJSF(props) {
     setSchema({ rjsfSchema, uiSchema })
   }, [jsonSchema]) // to reduce heavy lifting on every react render
 
+  React.useEffect(() => {
+    if (!_.isEqual(schema, { rjsfSchema: {}, uiSchema: {} })) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300); // for showing circular progress
+    }
+  }, [schema])
+
   return (
     <RJSFWrapperComponent {...props}>
       <RJSFForm
+        isLoading={isLoading}
         schema={schema}
         data={data}
         onChange={(e) => {
@@ -83,9 +94,23 @@ function RJSFForm(props) {
     jsonSchema,
     data,
     onChange,
+    isLoading,
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+    LoadingComponent
   } = props;
+
+  useEffect(() => {
+    const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
+    if (extensionTooltipPortal) {
+      rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
+    }
+    rjsfTheme.zIndex.modal = 99999;
+  }, [])
+
+  if (isLoading && LoadingComponent) {
+    return <LoadingComponent />
+  }
 
   return (
     <MuiThemeProvider theme={rjsfTheme}>
@@ -99,7 +124,7 @@ function RJSFForm(props) {
         additionalMetaSchemas={[JS4]}
         uiSchema={schema.uiSchema}
         widgets={{
-          TextWidget : CustomInputField
+          TextWidget: CustomInputField
         }}
         liveValidate
         showErrorList={false}
