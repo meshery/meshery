@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 
@@ -13,7 +12,6 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // Operation is the common body type to be passed for Mesh Ops
@@ -77,34 +75,50 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 
 		log.Infof("Starting service mesh validation...")
 
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err)
-		}
-		_, err = sendValidateRequest(mctlCfg, meshName, false)
-		if err != nil {
-			log.Fatalln(err)
-		}
+			// Choose which specification to use for conformance test
+			var query string
+			switch spec {
+			case "smi":
+				query = "smi_conformance"
+			case "istio-vet":
+				if adapterURL == "meshery-istio:10000" {
+					query = "istio-vet"
+					break
+				}
+				return errors.New("only Istio supports istio-vet operation")
+			default:
+				return errors.New("specified specification not found or not yet supported")
+			}
 
-		if watch {
-			log.Infof("Verifying Operation")
-			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
+			_, err = sendOperationRequest(mctlCfg, query, false)
 			if err != nil {
 				log.Fatalln(err)
 			}
-		}
 
-		return nil
-	},
-}
+			if watch {
+				log.Infof("Verifying Operation")
+				_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
+				if err != nil {
+					log.Fatalln(err)
+				}
+			}
+
+			return nil
+		},
+	}
+)
 
 func init() {
 	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "specification to be used for conformance test")
 	_ = validateCmd.MarkFlagRequired("spec")
-	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "Adapter to use for validation")
-	_ = validateCmd.MarkFlagRequired("adapter")
-	validateCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
-	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
+	validateCmd.Flags().StringVarP(
+		&namespace, "namespace", "n", "default",
+		"Kubernetes namespace where the mesh is deployed",
+	)
+	validateCmd.Flags().BoolVarP(
+		&watch, "watch", "w", false,
+		"Watch for events and verify operation (in beta testing)",
+	)
 }
 
 func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
@@ -153,61 +167,4 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	}
 
 	return "", nil
-}
-
-func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
-	method := "POST"
-	data := url.Values{}
-	data.Set("adapter", adapterURL)
-	data.Set("query", query)
-	data.Set("customBody", "")
-	data.Set("namespace", namespace)
-	if delete {
-		data.Set("deleteOp", "on")
-	} else {
-		data.Set("deleteOp", "")
-	}
-
-	// Choose which specification to use for conformance test
-	switch spec {
-	case "smi":
-		{
-			data.Set("query", "smi_conformance")
-			break
-		}
-	case "istio-vet":
-		{
-			if adapterURL == "meshery-istio:10000" {
-				data.Set("query", "istio-vet")
-				break
-			}
-			return "", errors.New("only Istio supports istio-vet operation")
-		}
-	default:
-		{
-			return "", errors.New("specified specification not found or not yet supported")
-		}
-	}
-
-	payload := strings.NewReader(data.Encode())
-
-	client := &http.Client{}
-	req, err := utils.NewRequest(method, path, payload)
-	if err != nil {
-		return "", ErrCreatingValidateRequest(err)
-	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
-
-	res, err := client.Do(req)
-	if err != nil {
-		return "", ErrCreatingDeployRequest(err)
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
-	return string(body), nil
 }
