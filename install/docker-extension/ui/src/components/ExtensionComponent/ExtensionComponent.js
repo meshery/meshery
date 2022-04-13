@@ -17,8 +17,9 @@ import dataFetch from "../../lib/data-fetch";
 import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
 
 
-const ExtensionsComponent = props => {
-  const {meshLocationURL, availableAdapters} = props;
+const baseURL = "http://localhost:9081"
+
+const ExtensionsComponent = () => {
   const [consulChecked, isConsulChecked] = useState(true);
   const [istioChecked, isIstioChecked] = useState(false);
   const [linkerdChecked, isLinkerdChecked] = useState(false);
@@ -36,50 +37,44 @@ const ExtensionsComponent = props => {
   useEffect(() => {
     // window.ddClient.extension.vm.service.get("/ping").then(console.log);
   }, [])
-  
-  const baseURL = "http://localhost:9081"
+
   const submitConfig = (adapterLocation) => {
 
-    const data = { meshLocationURL : adapterLocation };
+    const data = { meshLocationURL: adapterLocation };
 
     const params = Object.keys(data)
-    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
-    .join("&");
+      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
 
-    dataFetch(`${baseURL}/api/system/adapter/manage`,
-    {
-      credentials : "same-origin",
-      method : "POST",
-      credentials : "include",
-      headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
-      body : params,
-    },
-    (result) => {
-      if (typeof result !== "undefined"){ 
-        meshLocationURL("");
-      }
-      console.log("provisioned");
-    },(e) => { 
-      console.error(e) 
-    })
+    console.log("asdf")
+    window.ddClient.extension.vm.service.post("/api/system/adapter/manage", {
+      credentials: "same-origin",
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
+      body: params,
+    }).then(console.log).catch(console.log);
   }
 
 
   // Wrote separate functions since we need these functions to provision the adapters as well
   const handleConsul = () => {
-   submitConfig();
+    submitConfig("http://localhost:10000");
     isConsulChecked(prev => !prev)
   }
   const handleIstio = () => {
+    submitConfig("http://localhost:10000");
     isIstioChecked(prev => !prev);
   }
   const handleLinkerd = () => {
+    submitConfig("http://localhost:10000");
     isLinkerdChecked(prev => !prev);
   }
   const handleNginx = () => {
+    submitConfig("http://localhost:10000");
     isNginxChecked(prev => !prev);
   }
   const handleKuma = () => {
+    submitConfig("http://localhost:10000");
     isKumaChecked(prev => !prev);
   }
 
@@ -92,65 +87,65 @@ const ExtensionsComponent = props => {
         <CustomTypography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
 
         <SectionWrapper>
-        <ExtensionWrapper>
-          
+          <ExtensionWrapper>
+
             <AccountDiv>
               <CustomTypography sx={{ marginBottom: "2rem" }}>
                 Account
               </CustomTypography>
               <div style={{ paddingBottom: "2rem" }}>
                 <a style={{ textDecoration: "none" }} href="http://localhost:9081">
-                  <Button sx={{ color: "#FFFFFF", whiteSpace: "nowrap" }}       variant="contained">
+                  <Button sx={{ color: "#FFFFFF", whiteSpace: "nowrap" }} variant="contained">
                     Open Meshery
                   </Button>
                 </a>
               </div>
             </AccountDiv>
-          
-        </ExtensionWrapper>
 
-        <ExtensionWrapper>
-          <AccountDiv>
-            <CustomTypography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</CustomTypography>
-            <div style={{ paddingBottom: "2rem" }}>
-            <label htmlFor="upload-button" >
-              <Button sx={{ backgroundColor: "#7794AB" }} variant="contained" color="primary" aria-label="Upload Button" component="span" >
-                <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" />
-                Browse...
-              </Button>
-            </label>
-            </div>
+          </ExtensionWrapper>
+
+          <ExtensionWrapper>
+            <AccountDiv>
+              <CustomTypography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</CustomTypography>
+              <div style={{ paddingBottom: "2rem" }}>
+                <label htmlFor="upload-button" >
+                  <Button sx={{ backgroundColor: "#7794AB" }} variant="contained" color="primary" aria-label="Upload Button" component="span" >
+                    <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" />
+                    Browse...
+                  </Button>
+                </label>
+              </div>
             </AccountDiv>
           </ExtensionWrapper>
           <ExtensionWrapper>
             <div>
-          <CustomTypography sx={{ marginBottom: "2rem" }}>Deploy a Service Mesh</CustomTypography>
-          <Grid style = {{display: "flex", justifyContent: 'center', alignItems: 'center' }}>
-            <ServiceMeshAdapters>
-             
-              <StyledDiv>
-                <AdapterDiv inactiveAdapter={!consulChecked}>
-                  <ConsulIcon width={40} height={40} /> </AdapterDiv>
-                <Switch onChange={handleConsul} color="primary" defaultChecked></Switch>
-              </StyledDiv>
-              <StyledDiv>
-                <AdapterDiv inactiveAdapter={!istioChecked}>
-                  <IstioIcon width={40} height={40} /></AdapterDiv>
-                <Switch onChange={handleIstio} color="primary"></Switch> </StyledDiv>
+              <CustomTypography sx={{ marginBottom: "2rem" }}>Deploy a Service Mesh</CustomTypography>
+              <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
+                <ServiceMeshAdapters>
 
-              <StyledDiv>
-                <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
-                <Switch onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
-              <StyledDiv>
-                <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv><Switch onChange={handleNginx} color="primary"></Switch> </StyledDiv>
-              <StyledDiv>
-                <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv><Switch onChange={handleKuma} color="primary"></Switch> </StyledDiv>
-            </ServiceMeshAdapters>
-          </Grid>
-          </div>
-      </ExtensionWrapper>
-      </SectionWrapper>
-    </ComponentWrapper>
+                  <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!consulChecked}>
+                      <ConsulIcon width={40} height={40} /> </AdapterDiv>
+                    <Switch onChange={handleConsul} color="primary" defaultChecked></Switch>
+                  </StyledDiv>
+                  <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!istioChecked}>
+                      <IstioIcon width={40} height={40} /></AdapterDiv>
+                    <Switch onChange={handleIstio} color="primary"></Switch> </StyledDiv>
+
+                  <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
+                    <Switch onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
+                  <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv><Switch onChange={handleNginx} color="primary"></Switch> </StyledDiv>
+                  <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv><Switch onChange={handleKuma} color="primary"></Switch> </StyledDiv>
+                </ServiceMeshAdapters>
+              </Grid>
+            </div>
+          </ExtensionWrapper>
+        </SectionWrapper>
+      </ComponentWrapper>
     </DockerMuiThemeProvider >
   );
 }
