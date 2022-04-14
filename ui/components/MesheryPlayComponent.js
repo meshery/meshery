@@ -14,7 +14,7 @@ import { setAdapter } from "../lib/store";
 
 const styles = (theme) => ({
   icon : { fontSize : 20, },
-  root : { padding : theme.spacing(0),
+  playRoot : { padding : theme.spacing(0),
     marginBottom : theme.spacing(2), },
   buttons : { display : "flex",
     justifyContent : "flex-end", },
@@ -206,7 +206,7 @@ class MesheryPlayComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <div className={classes.root}>
+          <div className={classes.playRoot}>
             <Grid container>
               <Grid item xs={12} className={classes.paneSection}>
                 <TextField

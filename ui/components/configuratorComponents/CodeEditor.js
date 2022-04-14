@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 
 const useStyles = makeStyles(theme => ({
-  root : {
+  cardRoot : {
     position : "sticky"
   },
   codeMirror : {
@@ -52,7 +52,7 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, cleanHandler }
       <Card
         elevation={0}
         // @ts-ignore
-        className={classes.root}
+        className={classes.cardRoot}
       >
         <CardContent >
           <CodeMirror

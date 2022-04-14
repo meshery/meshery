@@ -26,7 +26,8 @@ const ColorlibConnector = withStyles({
   },
 })(StepConnector);
 
-const useColorlibStepIconStyles = makeStyles({ root : {
+const useColorlibStepIconStyles = makeStyles({ 
+  icnlist : {
   backgroundColor : "#ccc",
   zIndex : 1,
   color : "#fff",
@@ -60,7 +61,7 @@ function ColorlibStepIcon(props) {
 
   return (
     <div
-      className={clsx(classes.root, { [classes.active] : active,
+      className={clsx(classes.icnlist, { [classes.active] : active,
         [classes.completed] : completed, })}
       style={{ position : "relative", cursor : "default" }}
     >
