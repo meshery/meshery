@@ -58,11 +58,17 @@ var createContextCmd = &cobra.Command{
 	Short: "Create a new context (a named Meshery deployment)",
 	Long:  `Add a new context to Meshery config.yaml file`,
 	Example: `
-	Create new context
-	mesheryctl system context create context-name
+	// Create new context
+	mesheryctl system context create [context-name]
 
-	Create new context and provide list of components, platform & URL
+	// Create new context and provide list of components, platform & URL
 	mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
+
+	// Delete context
+	mesheryctl system context delete [context name]
+
+	// View current context
+	mesheryctl system context view
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {

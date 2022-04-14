@@ -50,6 +50,13 @@ var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Open Meshery UI in browser.",
 	Args:  cobra.NoArgs,
+	Example: `
+	// Open Meshery UI in browser
+	mesheryctl system dashboard
+
+	// Open Meshery UI in browser and use port-forwarding
+	mesheryctl system dashboard --port-forward
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// check if meshery is running or not
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

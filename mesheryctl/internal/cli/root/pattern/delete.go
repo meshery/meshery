@@ -18,6 +18,10 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete pattern file",
 	Long:  `delete pattern file will trigger deletion of the pattern file`,
 	Args:  cobra.MinimumNArgs(0),
+	Example: `
+	// delete a pattern file
+	mesheryctl pattern delete [pattern-name]
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

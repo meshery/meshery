@@ -152,6 +152,16 @@ var switchCmd = &cobra.Command{
 	Use:   "switch [stable|stable-version|edge|edge-version]",
 	Short: "switch release channel and version",
 	Long:  `Switch release channel and version of context in focus`,
+	Example: `
+	// Switch between release channels
+	mesheryctl system channel switch [stable|stable-version|edge|edge-version]
+
+	// Subscribe to release channel or version
+	mesheryctl system channel set [stable|stable-version|edge|edge-version]
+
+	// View current release channel
+	mesheryctl system channel view
+	`,
 	Args:  cobra.ExactArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
