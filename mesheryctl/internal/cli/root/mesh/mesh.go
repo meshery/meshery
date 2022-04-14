@@ -21,7 +21,7 @@ var MeshCmd = &cobra.Command{
 	// Lifecycle management of service meshes
 	mesheryctl mesh [subcommand] 
 	`,
-	Args:  cobra.MinimumNArgs(1),
+	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))

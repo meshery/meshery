@@ -162,7 +162,7 @@ var switchCmd = &cobra.Command{
 	// View current release channel
 	mesheryctl system channel view
 	`,
-	Args:  cobra.ExactArgs(1),
+	Args: cobra.ExactArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
