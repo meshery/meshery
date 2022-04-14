@@ -1,7 +1,7 @@
 version: '3'
 services:
-  meshery-proxy:
-    image: "${DESKTOP_PLUGIN_IMAGE}"
+  vm:
+    image: ${DESKTOP_PLUGIN_IMAGE}
 
   meshery:
     image: layer5/meshery:stable-latest

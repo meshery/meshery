@@ -1,6 +1,6 @@
 {
   "icon": "meshery-logo-light.svg",
-  "meshery-proxy": {
+  "vm": {
     "composefile": "docker-compose.yaml",
     "exposes": {
       "socket": "extension-meshery.sock"
