@@ -107,7 +107,7 @@ const styles = (theme) => ({
   },
   cMenuContainer : {
     backgroundColor : "revert",
-    marginTop : "-1.6rem",
+    marginTop : "-0.7rem",
     borderRadius : "3px",
     padding : "1rem",
     zIndex : 1201,
@@ -147,14 +147,16 @@ function K8sContextMenu({
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
   const styleSlider = {
     backgroundColor : "#EEEEEE",
     position : "absolute",
     left : "-5rem",
     zIndex : "-1",
-    bottom : "-100%",
+    bottom : "-55%",
     transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)"
   }
+
   const handleKubernetesClick = () => {
     showProgress()
     pingKubernetes(
