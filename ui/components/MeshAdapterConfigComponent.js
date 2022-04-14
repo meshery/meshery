@@ -15,7 +15,7 @@ import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 
 const styles = (theme) => ({
-  root : { padding : theme.spacing(5), },
+  wrapperClass : { padding : theme.spacing(5), },
   buttons : { display : "flex",
     justifyContent : "flex-end", },
   button : { marginTop : theme.spacing(3),
@@ -255,7 +255,7 @@ class MeshAdapterConfigComponent extends React.Component {
 
     return (
       <NoSsr>
-        <div className={classes.root}>
+        <div className={classes.wrapperClass}>
           {showAdapters}
 
           <Grid container spacing={1} alignItems="flex-end">

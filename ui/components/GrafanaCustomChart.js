@@ -19,7 +19,7 @@ import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js'
 
 const grafanaStyles = (theme) => ({
-  root : { width : '100%', },
+  chart : { width : '100%', },
   column : { flex : '1', },
   heading : { fontSize : theme.typography.pxToRem(15), },
   secondaryHeading : { fontSize : theme.typography.pxToRem(15),
@@ -766,7 +766,7 @@ class GrafanaCustomChart extends Component {
       } else {
         mainChart = (
           <div>
-            <div ref={(ch) => self.chartRef = ch} className={classes.root} />
+            <div ref={(ch) => self.chartRef = ch} className={classes.chart} />
           </div>
         );
       }

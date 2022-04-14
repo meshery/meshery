@@ -15,7 +15,6 @@ import PrometheusConfigComponent from "./PrometheusConfigComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 
 const promStyles = (theme) => ({
-  root : { padding : theme.spacing(5), },
   buttons : { display : "flex",
     //   justifyContent: 'flex-end',
   },
