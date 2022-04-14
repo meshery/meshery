@@ -269,7 +269,7 @@ function K8sContextMenu({
                 {contexts?.contexts?.map(ctx => (
                   <div id={ctx.id} className={classes.chip}>
                     <Tooltip title={`Server: ${ctx.server}`}>
-                      <div style={{ display : "flex", justifyContent : "center", alignItems : "center" }}>
+                      <div style={{ display : "flex", justifyContent : "flex-start", alignItems : "center" }}>
                         <Checkbox
                           checked={activeContexts.includes(ctx.id)}
                           onChange={() => setActiveContexts(ctx.id)}
