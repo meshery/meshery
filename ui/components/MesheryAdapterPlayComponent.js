@@ -54,7 +54,7 @@ import ReactSelectWrapper from "./ReactSelectWrapper";
 import MesheryMetrics from "./MesheryMetrics"
 
 const styles = (theme) => ({
-  root : { backgroundColor : "#eaeff1", },
+  smWrapper : { backgroundColor : "#eaeff1", },
   buttons : { width : "100%", },
   button : { marginTop : theme.spacing(3),
     marginLeft : theme.spacing(1), },
@@ -1050,7 +1050,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           <MesheryResultDialog rowData={selectedRowData} close={self.resetSelectedRowData()} />
         )}
         <React.Fragment>
-          <div className={classes.root}>
+          <div className={classes.smWrapper}>
             <Grid container spacing={2} direction="row" alignItems="flex-start">
               {/* SECTION 1 */}
               <Grid item xs={12}>

@@ -10,7 +10,7 @@ import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from './ExpansionPanels';
 
 const grafanaStyles = (theme) => ({
-  root : { width : '100%', },
+  wrapper : { width : '100%', },
   column : { flexBasis : '33.33%', },
   heading : { fontSize : theme.typography.pxToRem(15), },
   secondaryHeading : { fontSize : theme.typography.pxToRem(15),
@@ -59,7 +59,7 @@ class GrafanaCharts extends Component {
       return (
         <NoSsr>
           <React.Fragment>
-            <div className={classes.root}>
+            <div className={classes.wrapper}>
               <div className={classes.dateRangePicker}>
                 <GrafanaDateRangePicker
                   from={from}

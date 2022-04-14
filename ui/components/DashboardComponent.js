@@ -46,7 +46,7 @@ import { versionMapper } from "../utils/nameMapper";
 //import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
-  root : { backgroundColor : "#eaeff1", },
+  rootClass : { backgroundColor : "#eaeff1", },
   chip : { marginRight : theme.spacing(1),
     marginBottom : theme.spacing(1), },
   buttons : { display : "flex",
@@ -980,7 +980,7 @@ class DashboardComponent extends React.Component {
     );
     return (
       <NoSsr>
-        <div className={classes.root}>
+        <div className={classes.rootClass}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <div className={classes.dashboardSection} data-test="service-mesh">

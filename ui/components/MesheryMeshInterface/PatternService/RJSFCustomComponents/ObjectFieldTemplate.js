@@ -13,7 +13,7 @@ import HelpOutlineIcon from '../HelpOutlineIcon';
 const { canExpand } = utils;
 
 const useStyles = makeStyles({
-  root : {
+  objectFieldGrid : {
     marginTop : 10,
     // paddingLeft: "0.6rem",
     padding : "0.6rem",
@@ -81,7 +81,7 @@ const ObjectFieldTemplate = ({
         />
       )} */}
 
-      <Grid container={true} spacing={2} className={classes.root} style={Object.keys(properties).length === 0 || schema["$schema"] ? { border : "none" } : null}>
+      <Grid container={true} spacing={2} className={classes.objectFieldGrid} style={Object.keys(properties).length === 0 || schema["$schema"] ? { border : "none" } : null}>
         {properties.map((element, index) => {
           // console.log("eke", element)
           // Remove the <Grid> if the inner element is hidden as the <Grid>

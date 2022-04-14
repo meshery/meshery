@@ -39,7 +39,7 @@ import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
 import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
-  root : { padding : theme.spacing(5), },
+  clusterConfiguratorWrapper : { padding : theme.spacing(5), },
   buttons : { display : "flex",
     justifyContent : "flex-end", },
   button : { marginTop : theme.spacing(3),
@@ -804,7 +804,7 @@ handleNATSClick = () => {
     return (
       <NoSsr>
         <PromptComponent ref={this.ref} />
-        <div className={classes.root}>
+        <div className={classes.clusterConfiguratorWrapper}>
           <Grid container spacing={5} className={classes.contentContainer}>
             <Grid item spacing={1} xs={12} md={6} className={classes.configBoxContainer}>
               <div className={classes.heading}>
@@ -882,7 +882,7 @@ handleNATSClick = () => {
     return (
       <NoSsr>
         <PromptComponent ref={this.ref} />
-        <div className={classes.root}>
+        <div className={classes.clusterConfiguratorWrapper}>
           <Grid container spacing={5}>
             <Grid item spacing={1} xs={12} md={6}>
               <div className={classes.heading}>
