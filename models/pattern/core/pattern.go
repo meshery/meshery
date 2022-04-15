@@ -42,6 +42,7 @@ type Service struct {
 	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
 	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
 	Namespace   string            `yaml:"namespace" json:"namespace"`
+	Version     string            `yaml:"version" json:"version"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
@@ -208,6 +209,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	}
 	dependsOnMap := make(map[string][]string, 0) //used to figure out dependencies from traits.meshmap.parent
 	eleToSvc := make(map[string]string)          //used to map cyto element ID uniquely to the name of the service created.
+
 	err := processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
 		//Extract parents, if present
 		m, ok := svc.Traits["meshmap"].(map[string]interface{})
@@ -234,6 +236,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		pf.Services[svc.Name] = &svc
 		return nil
 	})
+
 	//add depends-on field
 	for child, parents := range dependsOnMap {
 		childSvc := eleToSvc[child]
@@ -247,6 +250,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	}
 	return pf, err
 }
+
 func getRandomAlphabetsOfDigit(length int) (s string) {
 	charSet := "abcdedfghijklmnopqrstuvwxyz"
 	for i := 0; i < length; i++ {
@@ -291,6 +295,7 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 				"posY": elem.Position.Y,
 			},
 		}
+
 		if err := json.Unmarshal(svcByt, &svc); err != nil {
 			return fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
