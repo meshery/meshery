@@ -1,6 +1,7 @@
 apiVersion: v2
 name: meshery-nginx-sm
 description: Meshery Adapter for NGINX Service Mesh.
+icon: https://meshery.io/images/logos/meshery-logo.png
 source:
   - https://github.com/layer5io/meshery-nginx-sm
 
@@ -22,7 +23,7 @@ version: 2.1.2
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 # TODO: Need the confirm the image tag.
-appVersion: stable-latest
+# appVersion: stable-latest
 
 maintainers:
   - name: Layer5 Authors

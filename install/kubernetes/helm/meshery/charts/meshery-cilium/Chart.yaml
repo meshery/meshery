@@ -1,6 +1,7 @@
 apiVersion: v2
 name: meshery-cilium
 description: Meshery Adapter for Cilium chart.
+icon: https://meshery.io/images/logos/meshery-logo.png
 source: 
   - https://github.com/meshery/meshery-cilium
 
@@ -23,7 +24,7 @@ version: 0.1.0
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 # TODO: Need the confirm the image tag.
-appVersion: 0.1.0
+# appVersion: 0.1.0
 
 maintainers:
   - name: aisuko
