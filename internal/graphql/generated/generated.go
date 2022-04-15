@@ -101,6 +101,10 @@ type ComplexityRoot struct {
 		Description func(childComplexity int) int
 	}
 
+	KctlDescribeDetails struct {
+		Describe func(childComplexity int) int
+	}
+
 	MesheryResult struct {
 		CreatedAt          func(childComplexity int) int
 		Mesh               func(childComplexity int) int
@@ -218,6 +222,7 @@ type ComplexityRoot struct {
 		GetAvailableNamespaces func(childComplexity int) int
 		GetControlPlanes       func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes          func(childComplexity int, filter *model.ServiceMeshFilter) int
+		GetKubectlDescribe     func(childComplexity int, name *string, typeArg *string, namespace *string) int
 		GetMeshsyncStatus      func(childComplexity int) int
 		GetNatsStatus          func(childComplexity int) int
 		GetOperatorStatus      func(childComplexity int) int
@@ -264,6 +269,7 @@ type QueryResolver interface {
 	GetWorkloads(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetTraits(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetScopes(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
+	GetKubectlDescribe(ctx context.Context, name *string, typeArg *string, namespace *string) (*model.KctlDescribeDetails, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
@@ -514,6 +520,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Error.Description(childComplexity), true
+
+	case "KctlDescribeDetails.describe":
+		if e.complexity.KctlDescribeDetails.Describe == nil {
+			break
+		}
+
+		return e.complexity.KctlDescribeDetails.Describe(childComplexity), true
 
 	case "MesheryResult.created_at":
 		if e.complexity.MesheryResult.CreatedAt == nil {
@@ -1114,6 +1127,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetDataPlanes(childComplexity, args["filter"].(*model.ServiceMeshFilter)), true
+
+	case "Query.getKubectlDescribe":
+		if e.complexity.Query.GetKubectlDescribe == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getKubectlDescribe_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetKubectlDescribe(childComplexity, args["name"].(*string), args["type"].(*string), args["namespace"].(*string)), true
 
 	case "Query.getMeshsyncStatus":
 		if e.complexity.Query.GetMeshsyncStatus == nil {
@@ -1762,7 +1787,9 @@ type Query {
   getTraits(name: String, id: ID, trim: Boolean): [OAMCapability]
   # Query for getting scopes
   getScopes(name: String, id: ID, trim: Boolean): [OAMCapability]
-  # getOAMComponents(type: String!, name: String, id: ID, trim: Boolean): Any
+
+  # Query for getting kubectl describe details with meshkit 
+  getKubectlDescribe(name: String, type: String, namespace: String): KctlDescribeDetails!
 }
 
 #
@@ -1818,7 +1845,10 @@ type OAMCapability {
   restricted: Boolean
   metadata: Any
 }
-`, BuiltIn: false},
+
+type KctlDescribeDetails {
+  describe: String
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -1967,6 +1997,39 @@ func (ec *executionContext) field_Query_getDataPlanes_args(ctx context.Context, 
 		}
 	}
 	args["filter"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getKubectlDescribe_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["type"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["type"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["namespace"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["namespace"] = arg2
 	return args, nil
 }
 
@@ -3324,6 +3387,38 @@ func (ec *executionContext) _Error_description(ctx context.Context, field graphq
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KctlDescribeDetails_describe(ctx context.Context, field graphql.CollectedField, obj *model.KctlDescribeDetails) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "KctlDescribeDetails",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Describe, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _MesheryResult_meshery_id(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
@@ -6395,6 +6490,48 @@ func (ec *executionContext) _Query_getScopes(ctx context.Context, field graphql.
 	return ec.marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getKubectlDescribe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getKubectlDescribe_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetKubectlDescribe(rctx, args["name"].(*string), args["type"].(*string), args["namespace"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.KctlDescribeDetails)
+	fc.Result = res
+	return ec.marshalNKctlDescribeDetails2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8684,6 +8821,34 @@ func (ec *executionContext) _Error(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
+var kctlDescribeDetailsImplementors = []string{"KctlDescribeDetails"}
+
+func (ec *executionContext) _KctlDescribeDetails(ctx context.Context, sel ast.SelectionSet, obj *model.KctlDescribeDetails) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kctlDescribeDetailsImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KctlDescribeDetails")
+		case "describe":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._KctlDescribeDetails_describe(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mesheryResultImplementors = []string{"MesheryResult"}
 
 func (ec *executionContext) _MesheryResult(ctx context.Context, sel ast.SelectionSet, obj *model.MesheryResult) graphql.Marshaler {
@@ -9944,6 +10109,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "getKubectlDescribe":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getKubectlDescribe(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "__type":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -10739,6 +10927,20 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNKctlDescribeDetails2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx context.Context, sel ast.SelectionSet, v model.KctlDescribeDetails) graphql.Marshaler {
+	return ec._KctlDescribeDetails(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNKctlDescribeDetails2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx context.Context, sel ast.SelectionSet, v *model.KctlDescribeDetails) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._KctlDescribeDetails(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.NameSpace) graphql.Marshaler {

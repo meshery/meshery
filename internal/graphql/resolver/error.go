@@ -23,6 +23,7 @@ const (
 	ErrGettingNamespaceCode         = "1014"
 	ErrFetchingPatternsCode         = "1015"
 	ErrInvalidOAMTypeCode           = "2173"
+	ErrKubectlDescribeCode          = "not set"
 )
 
 var (
@@ -92,6 +93,16 @@ func ErrInvalidOAMType() error {
 		errors.Alert,
 		[]string{"invalid oam type is requested"},
 		[]string{"invalid oam type requested, supported types are workload, scope, trait "},
+		nil, nil,
+	)
+}
+
+func ErrKubectlDescribe(err error) error {
+	return errors.New(
+		ErrKubectlDescribeCode,
+		errors.Alert,
+		[]string{"failed to find the resource", "invalid resource type", "resource doens't exists"},
+		[]string{err.Error(), "invalid kubernetes resource type or couldn't find the specified resource"},
 		nil, nil,
 	)
 }
