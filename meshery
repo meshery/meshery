@@ -32,12 +32,19 @@ while getopts ":np:" opt; do
             PLATFORM="kubernetes"
             ;;
         *)
-            echo "Invalid platform. Enter a valid platform to deploy Meshery. Available platforms [docker, kubernetes]:"
+            echo "Invalid platform. Enter a valid platform to deploy Meshery [docker, kubernetes]:"
             read PLATFORM < /dev/tty
-            # Loop until a valid platform is provided from the user
+            LCOUNTER=1
+            # Loop until a valid platform is provided from the user, exit after 5 tries
             until [ "$PLATFORM" == "docker" ] || [ "$PLATFORM" == "kubernetes" ]; do
-                echo "Invalid platform. Enter a valid platform to deploy Meshery. Available platforms [docker, kubernetes]:"
-                read PLATFORM < /dev/tty
+          
+                if [ $LCOUNTER -eq 5 ]; then
+                    echo "Too many invalid attempts. Please try again."
+                    exit 1
+                fi
+            echo "Invalid platform. Enter a valid platform to deploy Meshery [docker, kubernetes]:"
+            read PLATFORM < /dev/tty
+            let LCOUNTER++
             done
             ;;
         esac
@@ -65,12 +72,19 @@ if [ "$DEPLOY_MESHERY" != false ]; then
   docker | kubernetes) ;;
 
   *)
-      echo "Invalid platform. Enter a valid platform to deploy Meshery. Available platforms [docker, kubernetes]:"
+      echo "Invalid platform. Enter a valid platform to deploy Meshery [docker, kubernetes]:"
       read PLATFORM < /dev/tty
-      # Loop until a valid platform is provided from the user
+      LCOUNTER=1
+      # Loop until a valid platform is provided from the user, exit after 5 tries
       until [ "$PLATFORM" == "docker" ] || [ "$PLATFORM" == "kubernetes" ]; do
-          echo "Invalid platform. Enter a valid platform to deploy Meshery. Available platforms [docker, kubernetes]:"
+          
+          if [ $LCOUNTER -eq 5 ]; then
+              echo "Too many invalid attempts. Please try again."
+              exit 1
+          fi
+          echo "Invalid platform. Enter a valid platform to deploy Meshery [docker, kubernetes]:"
           read PLATFORM < /dev/tty
+          let LCOUNTER++
       done
       ;;
   esac
