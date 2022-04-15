@@ -37,7 +37,7 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 2.1.2
+# version: 2.1.2
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
@@ -45,38 +45,52 @@ version: 2.1.2
 # appVersion: v0.6.0
 
 dependencies:
-  - name: meshery-istio
-    condition: meshery-istio.enabled
-  - name: meshery-linkerd
-    condition: meshery-linkerd.enabled
-  - name: meshery-consul
-    condition: meshery-consul.enabled
-  - name: meshery-kuma
-    condition: meshery-kuma.enabled
-  - name: meshery-osm
-    condition: meshery-osm.enabled
-  - name: meshery-nsm
-    condition: meshery-nsm.enabled
-  - name: meshery-traefik-mesh
-    condition: meshery-traefik-mesh.enabled
-  - name: meshery-cpx
-    condition: meshery-cpx.enabled
-  - name: meshery-nginx-sm
-    condition: meshery-nginx-sm.enabled
-  - name: meshery-app-mesh
-    condition: meshery-app-mesh.enabled
-  - name: meshery-operator
-    condition: meshery-operator.enabled
-  - name: meshery-broker
-    condition: meshery-broker.enabled
-  - name: meshery-meshsync
-    condition: meshery-meshsync.enabled
-  - name: meshery-cilium
-    condition: meshery-cilium.enabled
-  - name: meshery-perf
-    condition: meshery-perf.enabled
+- name: meshery-istio
+  version: 2.1.2
+  condition: meshery-istio.enabled
+- name: meshery-linkerd
+  version: 2.1.2
+  condition: meshery-linkerd.enabled
+- name: meshery-consul
+  version: 2.1.2
+  condition: meshery-consul.enabled
+- name: meshery-kuma
+  version: 2.1.2
+  condition: meshery-kuma.enabled
+- name: meshery-osm
+  version: 2.1.2
+  condition: meshery-osm.enabled
+- name: meshery-nsm
+  version: 2.1.2
+  condition: meshery-nsm.enabled
+- name: meshery-traefik-mesh
+  version: 2.1.2
+  condition: meshery-traefik-mesh.enabled
+- name: meshery-cpx
+  version: 2.1.2
+  condition: meshery-cpx.enabled
+- name: meshery-nginx-sm
+  version: 2.1.2
+  condition: meshery-nginx-sm.enabled
+- name: meshery-app-mesh
+  version: 2.1.2
+  condition: meshery-app-mesh.enabled
+- name: meshery-operator
+  version: 2.1.2
+  condition: meshery-operator.enabled
+- name: meshery-broker
+  version: 0.1.0
+  condition: meshery-broker.enabled
+- name: meshery-meshsync
+  version: 0.1.0
+  condition: meshery-meshsync.enabled
+- name: meshery-cilium
+  version: 0.1.0
+  condition: meshery-cilium.enabled
+- name: meshery-perf
+  version: 0.1.0
+  condition: meshery-perf.enabled
 
 maintainers:
   - name: Meshery Authors
     email: maintainers@meshery.io
-
