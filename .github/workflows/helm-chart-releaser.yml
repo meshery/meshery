@@ -18,7 +18,10 @@ on:
         description: 'Log level'
         required: true
         default: 'warning'
-
+      release-ver:
+          description: 'Release Version'     
+          required: false
+          default: 'v'
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -82,3 +85,22 @@ jobs:
           commit_email: l5io@layer5.io
           chart_version: ${{ steps.vars.outputs.tag }}
           app_version: ${{ steps.vars.outputs.tag }}
+  manual-release-chart:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }} && ${{ github.ref == 'refs/heads/master' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Publish Helm chart for release version
+        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        uses: stefanprodan/helm-gh-pages@master
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          charts_dir: install/kubernetes/helm
+          owner: meshery
+          repository: meshery.io
+          branch: master
+          target_dir: charts
+          commit_username: l5io
+          commit_email: l5io@layer5.io
+          chart_version: ${{github.event.inputs.release-ver}}
+          app_version: ${{github.event.inputs.release-ver}}
