@@ -25,7 +25,7 @@ import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceCom
 
 
 const styles = (theme) => ({
-  root : {
+  statsWrapper : {
     maxWidth : "100%",
     height : 'auto',
     borderTopLeftRadius : 0,
@@ -248,7 +248,7 @@ class UserPreference extends React.Component {
             }
           </Tabs>
         </Paper>
-        <Paper className={classes.root}>
+        <Paper className={classes.statsWrapper}>
           {tabVal == 0 &&
             <div className={classes.formContainer}>
               <FormControl component="fieldset" className={classes.formGrp}>

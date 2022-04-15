@@ -116,7 +116,7 @@ const infoloadGenerators = (
   </>
 );
 const styles = (theme) => ({
-  root : { padding : theme.spacing(10), position : "relative" },
+  wrapperClss : { padding : theme.spacing(10), position : "relative" },
   buttons : { display : "flex", justifyContent : "flex-end" },
   button : { marginTop : theme.spacing(3), marginLeft : theme.spacing(1) },
   expansionPanel : { boxShadow : "none", border : "1px solid rgb(196,196,196)" },
@@ -747,7 +747,7 @@ class MesheryPerformanceComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <div className={classes.root} style={this.props.style || {}}>
+          <div className={classes.wrapperClss} style={this.props.style || {}}>
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
                 <Tooltip title="If a profile name is not provided, a random one will be generated for you.">

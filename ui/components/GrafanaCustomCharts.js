@@ -11,7 +11,7 @@ import GrafanaCustomChart from './GrafanaCustomChart';
 import Divider from '@material-ui/core/Divider';
 
 const grafanaStyles = (theme) => ({
-  root : { width : '100%', },
+  grafanaRoot : { width : '100%', },
   column : { flex : '1', },
   heading : { fontSize : theme.typography.pxToRem(15), },
   secondaryHeading : { fontSize : theme.typography.pxToRem(15),
@@ -110,7 +110,7 @@ class GrafanaCustomCharts extends Component {
       return (
         <NoSsr>
           <React.Fragment>
-            <div className={classes.root}>
+            <div className={classes.grafanaRoot}>
               {!(boardPanelData && boardPanelData !== null)
                 && (
                   <div className={classes.chartsHeaderOptions}>

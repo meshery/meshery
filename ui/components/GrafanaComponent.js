@@ -16,7 +16,6 @@ import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 
 const grafanaStyles = (theme) => ({
-  root : { padding : theme.spacing(5), },
   buttons : { display : "flex",
     //   justifyContent: 'flex-end',
   },
