@@ -1,4 +1,5 @@
 import makeStyles from "@mui/styles/makeStyles";
+import JungleGreen from "../../styles/colors";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,7 +75,7 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   itemCategory: {
-    backgroundColor: "#263238",
+    backgroundColor: JungleGreen,
     boxShadow: "0 -1px 0 #404854 inset",
     paddingTop: 16,
     paddingBottom: 16,
@@ -92,7 +93,8 @@ export const useStyles = makeStyles((theme) => ({
   },
   itemActionable: {
     "&:hover": {
-      backgroundColor: "rgba(255, 255, 255, 0.08)",
+      backgroundColor: "rgb(0, 187, 166, 0.5)",
+      color: "#fff",
     },
   },
   itemActiveItem: {
@@ -135,11 +137,7 @@ export const useStyles = makeStyles((theme) => ({
     borderRadius: "unset",
   },
   mainLogoTextCollapsed: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    width: 170,
-    height: "100%",
-    borderRadius: "unset",
+    display: "none",
   },
   settingsIcon: {
     marginLeft: theme.spacing(2),
@@ -195,7 +193,8 @@ export const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: "hidden",
-    width: theme.spacing(8),
+    width: theme.spacing(9),
+    boxShadow: "1px -1px 3px 0px rgb(0 0 0 / 20%), 2px 1px 10px 0px rgb(0 0 0 / 14%), 2px 1px 3px 1px rgb(0 0 0 / 12%)",
   },
   sidebarExpanded: {
     width: "256px",
@@ -215,36 +214,48 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   collapseButtonWrapper: {
+    boxShadow:
+      "0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)",
+    borderRadius: "0 5px 5px 0",
+    backgroundColor: "#FFFFFF",
+    color: JungleGreen,
+    position: "fixed",
+    cursor: "pointer",
+    bottom: "12%",
+    left: "16rem",
     width: "auto",
-    "margin-left": "auto",
-    opacity: "0.7",
-    transition: "opacity 200ms linear",
+
+    transition: theme.transitions.create("left", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
     "&:hover": {
       opacity: 1,
-      background: "transparent",
     },
     "&:focus": {
       opacity: 1,
-      background: "transparent",
     },
   },
   collapseButtonWrapperRotated: {
+    borderRadius: "0 5px 5px 0",
+    backgroundColor: "#515b60",
+    color: "#ffffff",
+    position: "fixed",
+    cursor: "pointer",
     width: "auto",
-    "margin-left": "auto",
-    marginRight: theme.spacing(1),
-    opacity: "0.7",
-    transition: "opacity 200ms linear",
+    transition: theme.transitions.create("left", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
     transform: "rotate(180deg)",
-    justifyContent: "center",
-    alignSelf: "baseline",
-    marginLeft: "3px",
+    bottom: "12%",
+    left: "3.4rem",
+    zIndex: "1400",
     "&:hover": {
       opacity: 1,
-      background: "transparent",
     },
     "&:focus": {
       opacity: 1,
-      background: "transparent",
     },
   },
   noPadding: {
@@ -274,6 +285,7 @@ export const useStyles = makeStyles((theme) => ({
   btnGrpMarginRight: {
     marginRight: 4,
     alignItems: "center",
+    marginBottom: "0.5rem",
   },
   helpIcon: {
     color: "#fff",
@@ -313,6 +325,13 @@ export const useStyles = makeStyles((theme) => ({
   },
   rightTranslate: {
     transform: "translateX(0.5px)",
+  },
+  version: {
+    color: "#FFFFFF",
+    display: "flex",
+    justifyContent: "space-evenly",
+    fontSize: "0.8rem",
+    paddingBottom: "1rem",
   },
 }));
 

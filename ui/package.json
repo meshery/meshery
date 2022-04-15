@@ -11,7 +11,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "dev:proxy": "node ui_dev_server.js",
-    "postinstall": "cd .. && npx husky install ui/.husky"
+    "postinstall": "cd .. && npx husky install ui/.husky",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -62,7 +63,7 @@
     "eslint-plugin-react": "^7.25.1",
     "graphql": "^15.5.1",
     "http-proxy": "^1.18.1",
-    "husky": "^7.0.2",
+    "husky": "^7.0.0",
     "jest": "^27.1.0",
     "lint-staged": "^11.1.2",
     "pinst": "^2.1.6",
