@@ -10,6 +10,7 @@ import { getRefinedJsonSchema } from "./helper";
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
+import _ from "lodash"
 
 const Form = withTheme(MaterialUITheme);
 
@@ -36,6 +37,7 @@ function RJSF(props) {
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
   const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
+  const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
     // Apply debouncing mechanism for the state propagation
@@ -52,9 +54,18 @@ function RJSF(props) {
     setSchema({ rjsfSchema, uiSchema })
   }, [jsonSchema]) // to reduce heavy lifting on every react render
 
+  React.useEffect(() => {
+    if (!_.isEqual(schema, { rjsfSchema : {}, uiSchema : {} })) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300); // for showing circular progress
+    }
+  }, [schema])
+
   return (
     <RJSFWrapperComponent {...props}>
       <RJSFForm
+        isLoading={isLoading}
         schema={schema}
         data={data}
         onChange={(e) => {
@@ -83,8 +94,10 @@ function RJSFForm(props) {
     jsonSchema,
     data,
     onChange,
+    isLoading,
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+    LoadingComponent
   } = props;
 
   useEffect(() => {
@@ -94,6 +107,10 @@ function RJSFForm(props) {
     }
     rjsfTheme.zIndex.modal = 99999;
   }, [])
+
+  if (isLoading && LoadingComponent) {
+    return <LoadingComponent />
+  }
 
   return (
     <MuiThemeProvider theme={rjsfTheme}>

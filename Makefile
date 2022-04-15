@@ -27,7 +27,7 @@ docker-build:
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
-docker-local-cloud-run:
+docker-local-cloud:
 	
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
@@ -40,7 +40,7 @@ docker-local-cloud-run:
 
 ## Runs Meshery in a container locally and points to remote
 ## Remote Provider for user authentication.
-docker-cloud-run:
+docker-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -54,6 +54,7 @@ docker-cloud-run:
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
+.PHONY: server
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
@@ -63,25 +64,13 @@ wrk2-setup:
 nighthawk-setup:
 	cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
-run-local-cloud: server-local-cloud-run error
-## Run Meshery on your local machine and point to locally-running
-##  Meshery Cloud for user authentication.
-server-local-cloud-run:
-	cd cmd; go clean; rm meshery; go mod tidy; \
-	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	./meshery; \
-	cd ..
-
-run-local: server-local-run error
-## Build and run Meshery to run on your local machine
-## and point to remote Meshery Cloud for user authentication.
-server-local-run:
-	cd cmd; go clean; rm meshery; go mod tidy; \
-	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
+run-local: server-local error
+## Build and run Meshery Server on your local machine
+## and point to (expect) a locally running Meshery Cloud or other Provider(s)
+## for user authentication (requires go$(GOVERSION)).
+server-local:
+	cd cmd; go$(GOVERSION) clean; rm meshery; go$(GOVERSION) mod tidy; \
+	go$(GOVERSION) build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
@@ -90,22 +79,23 @@ server-local-run:
 	./meshery; \
 	cd ..
 
-run-fast: server-run
-## Buiild and run Meshery Server on your local machine.
-server-run:
-	cd cmd; go mod tidy; \
+run-fast: 
+	## "DEPRECATED: This target is deprecated. Use `make server`.
+
+## Build and run Meshery Server on your local machine (requires go$(GOVERSION)).
+server:
+	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go run main.go;
+	go$(GOVERSION) run main.go;
 
-run-fast-skip-compgen: server-fast-skip-compgen-run
-## Build and run Meshery Server with no Kubernetes components on your local machine.
-server-fast-skip-compgen-run:
-	cd cmd; go mod tidy; \
+## Build and run Meshery Server with no Kubernetes components on your local machine (requires go$(GOVERSION)).
+server-skip-compgen:
+	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -113,11 +103,11 @@ server-fast-skip-compgen-run:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
  	SKIP_COMP_GEN=true \
-	go run main.go;
+	go$(GOVERSION) run main.go;
 		
-## Build and run Meshery Server with no seed content.
-server-fast-no-content-run:
-	cd cmd; go mod tidy; \
+## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
+server-no-content:
+	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -125,18 +115,18 @@ server-fast-no-content-run:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
-	go run main.go;
+	go$(GOVERSION) run main.go;
 
 ## Lint check Meshery Server.
-golangci-run: error
+golangci: error
 	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2;
 	$(GOPATH)/bin/golangci-lint run
 
-## Build Meshery's protobufs.
+## Build Meshery's protobufs (requires go$(GOVERSION)).
 proto-build:
 	# see https://grpc.io/docs/languages/go/quickstart/
-	# go get -u google.golang.org/grpc
-	# go get -u google.golang.org/protobuf/cmd/protoc-gen-go \
+	# go$(GOVERSION) get -u google.golang.org/grpc
+	# go$(GOVERSION) get -u google.golang.org/protobuf/cmd/protoc-gen-go \
 	#         google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	# PATH=$(PATH):`pwd`/../protoc/bin:$(GOPATH)/bin
 	# export PATH=$PATH:`pwd`/../protoc/bin:$GOPATH/bin
@@ -145,20 +135,22 @@ proto-build:
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds
 #-----------------------------------------------------------------------------
+.PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lintui-provider  ui-meshery ui-build ui-provider-build ui-provider-test
+
 setup-ui-libs: ui-setup
 ## Install dependencies for building Meshery UI.
 ui-setup:
 	cd ui; npm i; cd ..
 	cd provider-ui; npm i; cd ..
 
-run-ui-dev: ui-run
+run-ui-dev: ui
 ## Run Meshery UI on your local machine. Listen for changes.
-ui-run:
+ui:
 	cd ui; npm run dev; cd ..
 
-run-provider-ui-dev: ui-provider-run
+run-provider-ui-dev: ui-provider
 ## Run Meshery Provider UI  on your local machine. Listen for changes.
-ui-provider-run:
+ui-provider:
 	cd provider-ui; npm run dev; cd ..
 
 lint-ui: ui-lint
@@ -172,7 +164,7 @@ ui-provider-lint:
 	cd provider-ui; npm run lint; cd ..
 
 ## Test Meshery Provider UI on your local machine.
-test-provider-ui:
+ui-provider-test:
 	cd provider-ui; npm run test; cd ..
 
 build-ui: ui-build
@@ -195,12 +187,13 @@ ui-provider-build:
 # Meshery Docs
 #-----------------------------------------------------------------------------
 #Incorporating Make docs commands from the Docs Makefile
+.PHONY: docs docs-build site docs-docker
 jekyll=bundle exec jekyll
 
-site: docs-run
+site: docs
 
 ## Run Meshery Docs. Listen for changes.
-docs-run:
+docs:
 	cd docs; bundle install; $(jekyll) serve --drafts --livereload --config _config_dev.yml
 
 ## Build Meshery Docs on your local machine.
@@ -214,7 +207,7 @@ docs-docker:
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
-.PHONY: helm-docs
+.PHONY: helm-docs server lint-helm
 ## Generate all Meshery Helm Chart documentation in markdown format.
 helm-docs: helm-operator-docs helm-meshery-docs
 
@@ -228,7 +221,6 @@ helm-meshery-docs:
 	GO111MODULE=on go install github.com/norwoodj/helm-docs/cmd/helm-docs 
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery
 
-.PHONY: lint-helm
 ## Lint all of Meshery's Helm Charts
 helm-lint: helm-operator-lint helm-meshery-lint
 
@@ -247,7 +239,7 @@ swagger-build:
 	swagger generate spec -o ./helpers/swagger.yaml --scan-models
 
 ## Generate and serve Meshery REST API specifications
-swagger-run: swagger-build
+swagger: swagger-build
 	swagger serve ./helpers/swagger.yaml
 
 ## Build Meshery REST API documentation

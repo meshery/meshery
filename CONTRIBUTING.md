@@ -104,24 +104,24 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`.
 1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
 
-#### Build and run Meshery server
+#### Build and run Meshery Server
 
 Before you can access the Meshery UI, you need to install the UI dependencies,
 
 ```sh
-make setup-ui-libs
+make ui-setup
 ```
 
-and then Build and export the UI
+and then build and export the UI
 
 ```sh
-make build-ui
+make ui
 ```
 
-To build & run the Meshery server code, run the following command:
+To build & run Meshery Server, run the following command:
 
 ```sh
-make run-local
+make server
 ```
 
 Any time changes are made to the Go code, you will have to stop the server and run the above command again.
@@ -129,7 +129,7 @@ Once the Meshery server is up and running, you should be able to access Meshery 
 
 To access the [Meshery UI Development Server](#ui-development-server) on port `3000`, you will need to select your **Cloud Provider** by navigating to `localhost:9081` after running the Meshery server.
 
-**Please note**: When running `make run-local` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
+**Please note**: When running `make server` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
 
 #### Tests
 

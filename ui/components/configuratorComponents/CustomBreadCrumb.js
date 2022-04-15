@@ -2,7 +2,7 @@ import { ClickAwayListener, makeStyles } from "@material-ui/core"
 import React, { useEffect, useState } from "react"
 
 const useStyles = makeStyles(() => ({
-  root : {
+  designWrapper : {
     width : "100%",
     color : "#fff",
     position : "fixed",
@@ -57,7 +57,7 @@ export default function CustomBreadCrumb({ title, onBack, titleChangeHandler }) 
   }
 
   return (
-    <div className={classes.root}>
+    <div className={classes.designWrapper}>
       {"> "}
       <span
         className={classes.span}

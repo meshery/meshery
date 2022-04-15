@@ -31,9 +31,7 @@ import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpe
 import {
   successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction, showProgress, hideProgress
 } from './ConnectionWizard/helpers/common';
-
 const lightColor = 'rgba(255, 255, 255, 0.7)';
-
 const styles = (theme) => ({
   secondaryBar : { zIndex : 0, },
   menuButton : { marginLeft : -theme.spacing(1), },
@@ -108,11 +106,11 @@ const styles = (theme) => ({
     cursor : "pointer"
   },
   cMenuContainer : {
-    backgroundColor : "#EEEEEE",
+    backgroundColor : "revert",
+    marginTop : "-0.7rem",
     borderRadius : "3px",
     padding : "1rem",
     zIndex : 1201,
-    marginTop : "1.3rem",
     boxShadow : "20px #979797",
     transition : "linear .2s",
     transitionProperty : "height"
@@ -147,8 +145,17 @@ function K8sContextMenu({
 }) {
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
-  const [transformProperty, setTransformProperty] = React.useState(75)
+  const [transformProperty, setTransformProperty] = React.useState(100)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const styleSlider = {
+    backgroundColor : "#EEEEEE",
+    position : "absolute",
+    left : "-5rem",
+    zIndex : "-1",
+    bottom : "-55%",
+    transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)"
+  }
 
   const handleKubernetesClick = () => {
     showProgress()
@@ -171,7 +178,6 @@ function K8sContextMenu({
   if (showFullContextMenu) {
     open = showFullContextMenu;
   }
-
 
   useEffect(() => {
     setTransformProperty(prev => (prev + ( contexts.total_count ? contexts.total_count * 3.125 : 0 )))
@@ -211,20 +217,23 @@ function K8sContextMenu({
         </div>
       </IconButton>
 
-      <Slide direction="down" timeout={300} in={open} style={{ position : "absolute", left : "-5rem", zIndex : "-1", bottom : "-75%", transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)" }} mountOnEnter unmountOnExit>
+      <Slide direction="down" style ={styleSlider} timeout={400} in={open} mountOnEnter unmountOnExit>
         <div>
           <ClickAwayListener onClickAway={(e) => {
-            if (!e.target.classList.contains("cbadge") && e.target.className !="k8s-image" && !e.target.classList.contains("k8s-icon-button"))  {
+
+            if (!e.target.className.includes("cbadge") && e.target.className !="k8s-image" && !e.target.className.includes("k8s-icon-button")) {
               setAnchorEl(false)
               setShowFullContextMenu(false)
             }
           }}>
+
             <Paper className={classes.cMenuContainer}>
               <div>
                 <TextField
                   id="search-ctx"
+                  label="Search"
                   size="small"
-                  placeholder="search..."
+                  variant="outlined"
                   onChange={ev => searchContexts(ev.target.value)}
                   style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
                   InputProps={{ endAdornment :
@@ -262,7 +271,7 @@ function K8sContextMenu({
                 {contexts?.contexts?.map(ctx => (
                   <div id={ctx.id} className={classes.chip}>
                     <Tooltip title={`Server: ${ctx.server}`}>
-                      <div style={{ display : "flex", justifyContent : "center" }}>
+                      <div style={{ display : "flex", justifyContent : "flex-start", alignItems : "center" }}>
                         <Checkbox
                           checked={activeContexts.includes(ctx.id)}
                           onChange={() => setActiveContexts(ctx.id)}
@@ -281,6 +290,7 @@ function K8sContextMenu({
                     </Tooltip>
                   </div>
                 ))}
+
               </div>
             </Paper>
 
@@ -440,7 +450,6 @@ class Header extends React.Component {
           <Toolbar>
             <Grid container alignItems="center" spacing={8}>
               <Grid item xs>
-
               </Grid>
               {/* <Grid item>
                 <Button className={classes.button} variant="outlined" color="inherit" size="small">

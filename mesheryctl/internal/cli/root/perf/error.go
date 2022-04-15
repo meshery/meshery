@@ -107,7 +107,7 @@ func ErrFailUnmarshalFile(err error) error {
 
 func ErrInvalidTestConfigFile() error {
 	return errors.New(ErrInvalidTestConfigFileCode, errors.Alert, []string{},
-		[]string{"invalid test conffigration file", formatErrorWithReference()}, []string{"the test configuration is outdated or incorrect"}, []string{"see https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl for a valid configuration file"})
+		[]string{"invalid test configuration file", formatErrorWithReference()}, []string{"the test configuration is outdated or incorrect"}, []string{"see https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl for a valid configuration file"})
 }
 
 func formatErrorWithReference() string {

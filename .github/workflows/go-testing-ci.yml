@@ -8,6 +8,7 @@ on:
       - "ui/**"
       - "provider-ui/**"
       - ".github/**"
+      - '**.md'
       - "install/**"
   pull_request:
     branches:
