@@ -1,6 +1,6 @@
 # meshery
 
-![version: 0.5.0](https://img.shields.io/badge/Version-2.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.6.0](https://img.shields.io/badge/AppVersion-v0.6.0-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Meshery chart for deploying Meshery and Meshery's adapters.
 
@@ -8,10 +8,10 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Layer5 Authors | community@layer5.io |  |
-| aisuko | urakiny@gmail.com |  |
-| leecalcote | lee.calcote@layer5.io |  |
-| darrenlau | panyuenlau@gmail.com |  |
+| Layer5 Authors | <community@layer5.io> |  |
+| aisuko | <urakiny@gmail.com> |  |
+| leecalcote | <lee.calcote@layer5.io> |  |
+| darrenlau | <panyuenlau@gmail.com> |  |
 
 ## Values
 
@@ -33,7 +33,8 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | ingress.hosts[0].host | string | `"chart-example.local"` |  |
 | ingress.hosts[0].paths | list | `[]` |  |
 | ingress.tls | list | `[]` |  |
-| mesherygateway | object | `{"enabled":false,"selector":{"istio":"ingressgateway"}}` |  There will be an issue when deploying Meshery before Istio and this could make the deploying fail. meshery-gateway |
+| mesherygateway.enabled | bool | `false` |  |
+| mesherygateway.selector.istio | string | `"ingressgateway"` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
@@ -48,7 +49,7 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | service.port | int | `9081` |  |
 | service.target_port | int | `8080` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.name | string | `"meshery-server"` |  If not set and create is true, a name is generated using the fullname template |
+| serviceAccount.name | string | `"meshery-server"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 
