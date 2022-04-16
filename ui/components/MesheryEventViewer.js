@@ -18,9 +18,8 @@ class MesheryEventViewer extends React.Component {
 
   render() {
     const {
-      classes, eventVariant, eventSummary, eventDetails,
+      classes, eventVariant, eventSummary, eventDetails, eventCause, eventErrCode, eventRemedy
     } = this.props;
-
     return (
       <NoSsr>
         <React.Fragment>
@@ -31,6 +30,9 @@ class MesheryEventViewer extends React.Component {
               : eventTypes[0].type}
             message={eventSummary}
             details={eventDetails}
+            cause={eventCause}
+            errcode={eventErrCode}
+            remedy={eventRemedy}
             onClose={this.handleSnackbarClose}
             className={classes.event}
           />
@@ -46,6 +48,9 @@ MesheryEventViewer.propTypes = {
   eventSummary : PropTypes.string.isRequired,
   eventDetails : PropTypes.string.isRequired,
   deleteEvent : PropTypes.func.isRequired,
+  eventCause : PropTypes.string.isRequired,
+  eventErrCode : PropTypes.string.isRequired,
+  eventRemedy : PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(MesheryEventViewer);
