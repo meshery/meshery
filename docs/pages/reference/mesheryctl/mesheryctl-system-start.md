@@ -29,7 +29,6 @@ mesheryctl system start [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Start meshery
 	mesheryctl system start
 

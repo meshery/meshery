@@ -29,7 +29,6 @@ mesheryctl system channel view [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// View current release channel
 	mesheryctl system channel view
 	

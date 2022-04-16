@@ -29,7 +29,6 @@ mesheryctl perf apply [profile-name | --file] --flags [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Execute a Performance test with the specified performance profile
 	mesheryctl perf apply meshery-profile --flags
 

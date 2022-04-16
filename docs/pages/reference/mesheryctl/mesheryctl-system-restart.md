@@ -29,7 +29,6 @@ mesheryctl system restart [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Restart all Meshery containers, their instances and their connected volumes
 	mesheryctl system restart
 

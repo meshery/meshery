@@ -29,7 +29,6 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flag
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Switch between release channels
 	mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	

@@ -29,7 +29,6 @@ mesheryctl system context [command] [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Base command
 	mesheryctl system context
 	

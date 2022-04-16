@@ -47,7 +47,7 @@ mesheryctl system [flags]
 
 ## See Also
 
-* [mesheryctl](/reference/mesheryctl/main)	 - Meshery Command Line tool
+* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
 * [mesheryctl system channel](channel/)	 - Switch between release channels
 * [mesheryctl system check](check/)	 - Meshery environment check
 * [mesheryctl system completion](completion/)	 - Output shell completion code

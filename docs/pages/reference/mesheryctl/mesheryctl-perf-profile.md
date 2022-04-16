@@ -29,7 +29,6 @@ mesheryctl perf profile [profile-name] [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// List performance profiles (maximum 25 profiles)
 	mesheryctl perf profile
 

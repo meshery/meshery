@@ -29,7 +29,6 @@ mesheryctl perf [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Run performance test
 	mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
 		
@@ -71,7 +70,7 @@ mesheryctl perf [flags]
 
 ## See Also
 
-* [mesheryctl](/reference/mesheryctl/main)	 - Meshery Command Line tool
+* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
 * [mesheryctl perf apply](apply/)	 - Run a Performance test
 * [mesheryctl perf profile](profile/)	 - List performance profiles
 * [mesheryctl perf result](result/)	 - List performance test results

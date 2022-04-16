@@ -25,7 +25,6 @@ mesheryctl system dashboard [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Open Meshery UI in browser
 	mesheryctl system dashboard
 

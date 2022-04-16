@@ -22,7 +22,6 @@ Meshery is the service mesh management plane, providing lifecycle, performance, 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Base command
 	mesheryctl
 

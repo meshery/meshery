@@ -46,7 +46,7 @@ mesheryctl app [flags]
 
 ## See Also
 
-* [mesheryctl](/reference/mesheryctl/main)	 - Meshery Command Line tool
+* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
 * [mesheryctl app list](list/)	 - List applications
 * [mesheryctl app offboard](offboard/)	 - Offboard application
 * [mesheryctl app onboard](onboard/)	 - Onboard application

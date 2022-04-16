@@ -29,7 +29,6 @@ mesheryctl version [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// To view the version of mesheryctl
 	mesheryctl version
 	
@@ -58,5 +57,5 @@ mesheryctl version [flags]
 
 ## See Also
 
-* [mesheryctl](/reference/mesheryctl/main)	 - Meshery Command Line tool
+* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
 

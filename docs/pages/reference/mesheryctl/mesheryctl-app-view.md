@@ -29,7 +29,6 @@ mesheryctl app view <application name> [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	View applictaions with name
 	mesheryctl app view <app-name>
 

@@ -29,7 +29,6 @@ mesheryctl system token delete [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	mesheryctl system token delete <token-name>
 	
 

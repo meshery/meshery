@@ -29,7 +29,6 @@ mesheryctl system token list [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	mesheryctl system token list
 	
 

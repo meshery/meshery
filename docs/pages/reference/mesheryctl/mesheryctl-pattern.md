@@ -29,7 +29,6 @@ mesheryctl pattern [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Apply pattern file
 	mesheryctl pattern apply --file [path to pattern file]
 
@@ -68,7 +67,7 @@ mesheryctl pattern [flags]
 
 ## See Also
 
-* [mesheryctl](/reference/mesheryctl/main)	 - Meshery Command Line tool
+* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
 * [mesheryctl pattern apply](apply/)	 - Apply pattern file
 * [mesheryctl pattern delete](delete/)	 - Delete pattern file
 * [mesheryctl pattern list](list/)	 - List patterns

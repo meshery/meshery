@@ -29,7 +29,6 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Subscribe to release channel or version
 	mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	

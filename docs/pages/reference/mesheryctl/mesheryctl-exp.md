@@ -45,7 +45,7 @@ mesheryctl exp [flags]
 
 ## See Also
 
-* [mesheryctl](/reference/mesheryctl/main)	 - Meshery Command Line tool
+* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
 * [mesheryctl exp filter](filter/)	 - Service Mesh Filter Management
 * [mesheryctl exp mesh](mesh/)	 - Service Mesh Lifecycle Management
 

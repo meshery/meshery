@@ -29,7 +29,6 @@ mesheryctl mesh [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Lifecycle management of service meshes
 	mesheryctl mesh [subcommand] 
 	
@@ -58,7 +57,7 @@ mesheryctl mesh [flags]
 
 ## See Also
 
-* [mesheryctl](/reference/mesheryctl/main)	 - Meshery Command Line tool
+* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
 * [mesheryctl mesh deploy](deploy/)	 - Deploy a service mesh to the Kubernetes cluster
 * [mesheryctl mesh remove](remove/)	 - remove a service mesh in the kubernetes cluster
 * [mesheryctl mesh validate](validate/)	 - Validate conformance to service mesh standards

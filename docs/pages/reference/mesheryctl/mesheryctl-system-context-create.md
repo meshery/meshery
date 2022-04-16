@@ -29,7 +29,6 @@ mesheryctl system context create context-name [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Create new context
 	mesheryctl system context create [context-name]
 

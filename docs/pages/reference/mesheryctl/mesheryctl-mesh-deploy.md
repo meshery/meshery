@@ -29,7 +29,6 @@ mesheryctl mesh deploy [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 		// Deploy a service mesh from an interactive on the default namespace
 		mesheryctl mesh deploy
 

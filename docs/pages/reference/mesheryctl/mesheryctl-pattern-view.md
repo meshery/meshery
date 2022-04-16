@@ -29,7 +29,6 @@ mesheryctl pattern view <pattern name> [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// view a pattern
 	mesheryctl pattern view [pattern-name/id]
 	

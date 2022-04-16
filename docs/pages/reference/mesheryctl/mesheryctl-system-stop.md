@@ -29,7 +29,6 @@ mesheryctl system stop [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Stop Meshery
 	mesheryctl system stop
 

@@ -29,7 +29,6 @@ mesheryctl perf result profile-name [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// List Test results (maximum 25 results)
 	mesheryctl perf result saturday-profile
 

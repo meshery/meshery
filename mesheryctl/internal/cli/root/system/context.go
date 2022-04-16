@@ -105,7 +105,7 @@ var deleteContextCmd = &cobra.Command{
 	// Delete context
 	mesheryctl system context delete [context name]
 	`,
-	Args:  cobra.ExactArgs(1),
+	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
@@ -177,9 +177,9 @@ var deleteContextCmd = &cobra.Command{
 
 // listContextCmd represents the list command
 var listContextCmd = &cobra.Command{
-	Use:          "list",
-	Short:        "list contexts",
-	Long:         `List current context and available contexts`,
+	Use:   "list",
+	Short: "list contexts",
+	Long:  `List current context and available contexts`,
 	Example: `
 	// List contexts
 	mesheryctl system context list
@@ -383,7 +383,7 @@ var ContextCmd = &cobra.Command{
 	// Base command
 	mesheryctl system context
 	`,
-	Args:  cobra.MaximumNArgs(1),
+	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			currentContext := viper.GetString("current-context")

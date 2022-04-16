@@ -75,7 +75,7 @@ func linkHandler(name string) string {
 	base := strings.TrimSuffix(name, path.Ext(name))
 	words := strings.Split(base, "-")
 	if len(words) <= 1 {
-		return "/reference/mesheryctl/main"
+		return "reference/mesheryctl/main"
 	}
 	if len(words) == 3 {
 		return strings.ToLower(words[2]) + "/"
@@ -155,7 +155,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 
 	if len(cmd.Example) > 0 {
 		buf.WriteString("## Examples\n\n")
-		buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n\n%s\n\n</div>\n</pre> \n\n", cmd.Example))
+		buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", cmd.Example))
 	}
 
 	if err := printOptions(buf, cmd, name); err != nil {

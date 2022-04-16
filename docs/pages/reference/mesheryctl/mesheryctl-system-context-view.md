@@ -29,7 +29,6 @@ mesheryctl system context view [context-name | --context context-name| --all] --
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	View default context
 	mesheryctl system context view
 

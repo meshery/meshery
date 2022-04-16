@@ -28,7 +28,6 @@ mesheryctl system completion [bash|zsh|fish]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
   # bash <= 3.2
   source /dev/stdin <<< "$(mesheryctl system completion bash)"
 

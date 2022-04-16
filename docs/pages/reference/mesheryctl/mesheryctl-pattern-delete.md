@@ -29,7 +29,6 @@ mesheryctl pattern delete [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// delete a pattern file
 	mesheryctl pattern delete [pattern-name]
 	

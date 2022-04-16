@@ -29,7 +29,6 @@ mesheryctl system check [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Run system checks for both pre and post mesh deployment scenarios on Meshery
 	mesheryctl system check
 

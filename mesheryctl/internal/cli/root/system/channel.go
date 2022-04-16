@@ -50,7 +50,7 @@ var viewCmd = &cobra.Command{
 	// View current release channel
 	mesheryctl system channel view
 	`,
-	Args:  cobra.NoArgs,
+	Args: cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -93,7 +93,7 @@ var setCmd = &cobra.Command{
 	// Subscribe to release channel or version
 	mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	`,
-	Args:  cobra.ExactArgs(1),
+	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())

@@ -29,7 +29,6 @@ mesheryctl pattern apply [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// apply a pattern file
 	mesheryctl pattern apply -f [file | URL]
 

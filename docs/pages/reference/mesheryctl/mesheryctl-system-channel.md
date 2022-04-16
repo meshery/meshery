@@ -24,6 +24,18 @@ mesheryctl system channel [flags]
 </div>
 </pre> 
 
+## Examples
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+
+	// Subscribe to release channel or version
+	mesheryctl system channel [stable|stable-version|edge|edge-version]
+	
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>

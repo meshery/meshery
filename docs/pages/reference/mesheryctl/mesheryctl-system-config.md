@@ -29,7 +29,6 @@ mesheryctl system config [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-
 	// Set configuration according to k8s cluster
 	mesheryctl system config [aks|eks|gke|minikube]
 
