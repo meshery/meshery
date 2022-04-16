@@ -222,7 +222,7 @@ type ComplexityRoot struct {
 		GetAvailableNamespaces func(childComplexity int) int
 		GetControlPlanes       func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes          func(childComplexity int, filter *model.ServiceMeshFilter) int
-		GetKubectlDescribe     func(childComplexity int, name *string, typeArg *string, namespace *string) int
+		GetKubectlDescribe     func(childComplexity int, name string, typeArg string, namespace string) int
 		GetMeshsyncStatus      func(childComplexity int) int
 		GetNatsStatus          func(childComplexity int) int
 		GetOperatorStatus      func(childComplexity int) int
@@ -269,7 +269,7 @@ type QueryResolver interface {
 	GetWorkloads(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetTraits(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetScopes(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
-	GetKubectlDescribe(ctx context.Context, name *string, typeArg *string, namespace *string) (*model.KctlDescribeDetails, error)
+	GetKubectlDescribe(ctx context.Context, name string, typeArg string, namespace string) (*model.KctlDescribeDetails, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
@@ -1138,7 +1138,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetKubectlDescribe(childComplexity, args["name"].(*string), args["type"].(*string), args["namespace"].(*string)), true
+		return e.complexity.Query.GetKubectlDescribe(childComplexity, args["name"].(string), args["type"].(string), args["namespace"].(string)), true
 
 	case "Query.getMeshsyncStatus":
 		if e.complexity.Query.GetMeshsyncStatus == nil {
@@ -1789,7 +1789,7 @@ type Query {
   getScopes(name: String, id: ID, trim: Boolean): [OAMCapability]
 
   # Query for getting kubectl describe details with meshkit 
-  getKubectlDescribe(name: String, type: String, namespace: String): KctlDescribeDetails!
+  getKubectlDescribe(name: String!, type: String!, namespace: String!): KctlDescribeDetails!
 }
 
 #
@@ -2003,28 +2003,28 @@ func (ec *executionContext) field_Query_getDataPlanes_args(ctx context.Context, 
 func (ec *executionContext) field_Query_getKubectlDescribe_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
+	var arg0 string
 	if tmp, ok := rawArgs["name"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["name"] = arg0
-	var arg1 *string
+	var arg1 string
 	if tmp, ok := rawArgs["type"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["type"] = arg1
-	var arg2 *string
+	var arg2 string
 	if tmp, ok := rawArgs["namespace"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
-		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -6515,7 +6515,7 @@ func (ec *executionContext) _Query_getKubectlDescribe(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetKubectlDescribe(rctx, args["name"].(*string), args["type"].(*string), args["namespace"].(*string))
+		return ec.resolvers.Query().GetKubectlDescribe(rctx, args["name"].(string), args["type"].(string), args["namespace"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

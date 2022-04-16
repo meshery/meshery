@@ -126,7 +126,7 @@ func (r *queryResolver) GetScopes(ctx context.Context, name *string, id *string,
 	return r.getScopes(ctx, name, id, trim)
 }
 
-func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name *string, typeArg *string, namespace *string) (*model.KctlDescribeDetails, error) {
+func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, typeArg string, namespace string) (*model.KctlDescribeDetails, error) {
 	return r.getKubectlDescribe(ctx, name, typeArg, namespace)
 }
 

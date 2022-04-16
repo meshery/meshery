@@ -392,7 +392,7 @@ type Query {
   getScopes(name: String, id: ID, trim: Boolean): [OAMCapability]
 
   # Query for getting kubectl describe details with meshkit 
-  getKubectlDescribe(name: String, type: String, namespace: String): KctlDescribeDetails!
+  getKubectlDescribe(name: String!, type: String!, namespace: String!): KctlDescribeDetails!
 }
 
 #
