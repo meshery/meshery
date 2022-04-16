@@ -7,7 +7,7 @@ import {
 import ReactSelectWrapper from './ReactSelectWrapper'
 
 const grafanaStyles = (theme) => ({
-  root : { padding : theme.spacing(5), },
+  wrapper : { padding : theme.spacing(5), },
   buttons : { display : 'flex',
     justifyContent : 'flex-end', },
   inputContainer : { marginTop : theme.spacing(2),
@@ -25,7 +25,7 @@ class GrafanaConfigComponent extends Component {
       return (
         <NoSsr>
           <React.Fragment>
-            <div className={classes.root}>
+            <div className={classes.wrapper}>
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6}>
                   <div className={classes.inputContainer}>

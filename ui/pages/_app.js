@@ -82,10 +82,15 @@ class MesheryApp extends App {
   };
 
   setActiveContexts = (id) => {
-    if (id === "all") {
+    if (id === ".all") {
+      let activeContexts = []
+      this.state.k8sContexts.contexts.forEach(ctx =>
+        activeContexts.push(ctx.id )
+      );
+      activeContexts.push(".all");
       this.setState(state => {
-        if (state.activeK8sContexts?.includes("all")) return { activeK8sContexts : [] };
-        return { activeK8sContexts : ["all"] };
+        if (state.activeK8sContexts?.includes(".all")) return { activeK8sContexts : [] };
+        return { activeK8sContexts : activeContexts };
       });
 
       return;

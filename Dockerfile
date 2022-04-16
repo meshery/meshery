@@ -74,6 +74,8 @@ FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
 #RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
 RUN update-ca-certificates
+RUN apk upgrade --no-cache && \
+    apk add --no-cache libstdc++
 COPY ./oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd

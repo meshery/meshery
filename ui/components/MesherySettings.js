@@ -26,7 +26,7 @@ import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
 
 const styles = (theme) => ({
-  root : { flexGrow : 1,
+  wrapperClss : { flexGrow : 1,
     maxWidth : '100%',
     height : 'auto', },
   tab : { minWidth : 40,
@@ -287,8 +287,8 @@ class MesherySettings extends React.Component {
       );
     }
     return (
-      <div className={classes.root}>
-        <Paper square className={classes.root}>
+      <div className={classes.wrapperClss}>
+        <Paper square className={classes.wrapperClss}>
           <Tabs
             value={tabVal}
             onChange={this.handleChange('tabVal')}
