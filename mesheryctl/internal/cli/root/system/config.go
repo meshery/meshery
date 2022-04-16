@@ -298,10 +298,10 @@ var configCmd = &cobra.Command{
 	Long:  `Configure the Kubernetes cluster used by Meshery.`,
 	Args:  cobra.ExactArgs(1),
 	Example: `
-	mesheryctl system config minikube
-	mesheryctl system config eks
+	// Set configuration according to k8s cluster
+	mesheryctl system config [aks|eks|gke|minikube]
 
-	// Path to token for authenticating to Meshery API.
+	// Path to token for authenticating to Meshery API (optional)
 	mesheryctl system config --token "~/Downloads/auth.json"
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {

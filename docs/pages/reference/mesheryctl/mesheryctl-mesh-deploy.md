@@ -1,0 +1,72 @@
+---
+layout: default
+title: mesheryctl-mesh-deploy
+permalink: /reference/mesheryctl/mesh/deploy/
+redirect_from: /reference/mesheryctl/mesh/deploy/
+type: reference
+display-title: "false"
+language: en
+command: mesh
+---
+
+# mesheryctl mesh deploy
+
+Deploy a service mesh to the Kubernetes cluster
+
+## Synopsis
+
+Deploy a service mesh to the connected Kubernetes cluster
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl mesh deploy [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+
+
+		// Deploy a service mesh from an interactive on the default namespace
+		mesheryctl mesh deploy
+
+		// Deploy Linkerd mesh on a specific namespace
+		mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
+
+		// Deploy Linkerd mesh and wait for it to be deployed
+		mesheryctl mesh deploy --adapter meshery-linkerd --watch
+		
+
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -a, --adapter string     Adapter to use for installation (default "meshery-istio:10000")
+  -h, --help               help for deploy
+  -n, --namespace string   Kubernetes namespace to be used for deploying the validation tests and sample workload (default "default")
+  -t, --token string       Path to token for authenticating to Meshery API
+  -w, --watch              Watch for events and verify operation (in beta testing)
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+* [mesheryctl mesh](mesh/)	 - Service Mesh Lifecycle Management
+

@@ -37,7 +37,7 @@ var updateCmd = &cobra.Command{
 	// Pull new Meshery images from Docker Hub. Does not update mesheryctl. This command may be executed while Meshery is running.
 	mesheryctl system update
 
-	// Pull the latest manifest files
+	// Pull the latest manifest files alone
 	mesheryctl system update --skip-reset
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {

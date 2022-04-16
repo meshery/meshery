@@ -53,6 +53,9 @@ var stopCmd = &cobra.Command{
 
 	// Reset Meshery's configuration file to default settings.
 	mesheryctl system stop --reset
+
+	// Stop Meshery forcefully
+	mesheryctl system stop --force
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite

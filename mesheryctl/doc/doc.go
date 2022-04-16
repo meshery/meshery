@@ -31,7 +31,7 @@ title: %s
 permalink: /%s
 redirect_from: /%s
 type: reference
-display-title: false
+display-title: "false"
 language: en
 command: %s
 ---
@@ -56,20 +56,34 @@ func prepender(filename string) string {
 	title := filepath.Base(file[0])
 	words := strings.Split(title, "-")
 	if len(words) <= 1 {
-		url := "reference/" + words[0] + "/"
+		url := "reference/" + words[0] + "/main"
 		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[0])
+	}
+	if len(words) == 3 {
+		url := "reference/" + words[0] + "/" + words[1] + "/" + words[2] + "/"
+		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1])
+	}
+	if len(words) == 4 {
+		url := "reference/" + words[0] + "/" + words[1] + "/" + words[2] + "/" + words[3] + "/"
+		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1])
 	}
 	url := "reference/" + words[0] + "/" + words[1] + "/"
 	return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1])
 }
 
-func subprepender(filename string) string {
-	return fmt.Sprintf("")
-}
-
 func linkHandler(name string) string {
 	base := strings.TrimSuffix(name, path.Ext(name))
-	return "reference/" + strings.ToLower(base) + "/"
+	words := strings.Split(base, "-")
+	if len(words) <= 1 {
+		return "/reference/mesheryctl/main"
+	}
+	if len(words) == 3 {
+		return strings.ToLower(words[2]) + "/"
+	}
+	if len(words) == 4 {
+		return strings.ToLower(words[2]) + "/" + strings.ToLower(words[3]) + "/"
+	}
+	return strings.ToLower(words[1]) + "/"
 }
 
 func doc() {
@@ -141,7 +155,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 
 	if len(cmd.Example) > 0 {
 		buf.WriteString("## Examples\n\n")
-		buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre>\n\n", cmd.Example))
+		buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n\n%s\n\n</div>\n</pre> \n\n", cmd.Example))
 	}
 
 	if err := printOptions(buf, cmd, name); err != nil {

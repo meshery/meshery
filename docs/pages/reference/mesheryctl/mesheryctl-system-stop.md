@@ -1,0 +1,73 @@
+---
+layout: default
+title: mesheryctl-system-stop
+permalink: /reference/mesheryctl/system/stop/
+redirect_from: /reference/mesheryctl/system/stop/
+type: reference
+display-title: "false"
+language: en
+command: system
+---
+
+# mesheryctl system stop
+
+Stop Meshery
+
+## Synopsis
+
+Stop all Meshery containers / remove all Meshery resources.
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system stop [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+
+
+	// Stop Meshery
+	mesheryctl system stop
+
+	// Reset Meshery's configuration file to default settings.
+	mesheryctl system stop --reset
+
+	// Stop Meshery forcefully
+	mesheryctl system stop --force
+	
+
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --force            (optional) uninstall Meshery resources forcefully
+  -h, --help             help for stop
+      --keep-namespace   (optional) keep the Meshery namespace during uninstallation
+      --reset            (optional) reset Meshery's configuration file to default settings.
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string    path to config file (default "/home/admin-pc/.meshery/config.yaml")
+  -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
+  -y, --yes              (optional) assume yes for user interactive prompts.
+
+</div>
+</pre>
+
+## See Also
+
+* [mesheryctl system](system/)	 - Meshery Lifecycle Management
+

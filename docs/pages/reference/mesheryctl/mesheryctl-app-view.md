@@ -1,0 +1,71 @@
+---
+layout: default
+title: mesheryctl-app-view
+permalink: /reference/mesheryctl/app/view/
+redirect_from: /reference/mesheryctl/app/view/
+type: reference
+display-title: "false"
+language: en
+command: app
+---
+
+# mesheryctl app view
+
+Display application(s)
+
+## Synopsis
+
+Displays the contents of a specific application based on name or id
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl app view <application name> [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+
+
+	View applictaions with name
+	mesheryctl app view <app-name>
+
+	View applications with id
+	mesheryctl app view <app-id>
+
+	View all applications
+	mesheryctl app view --all
+	
+
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -a, --all                    (optional) view all applications available
+  -h, --help                   help for view
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+* [mesheryctl app](app/)	 - Service Mesh Apps Management
+

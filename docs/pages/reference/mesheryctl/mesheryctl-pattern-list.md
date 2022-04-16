@@ -1,0 +1,63 @@
+---
+layout: default
+title: mesheryctl-pattern-list
+permalink: /reference/mesheryctl/pattern/list/
+redirect_from: /reference/mesheryctl/pattern/list/
+type: reference
+display-title: "false"
+language: en
+command: pattern
+---
+
+# mesheryctl pattern list
+
+List patterns
+
+## Synopsis
+
+Display list of all available pattern files.
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl pattern list [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+
+
+	// list all available patterns
+	mesheryctl pattern list
+	
+
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -h, --help   help for list
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+* [mesheryctl pattern](pattern/)	 - Service Mesh Patterns Management
+

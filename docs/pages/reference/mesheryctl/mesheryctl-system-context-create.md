@@ -1,0 +1,71 @@
+---
+layout: default
+title: mesheryctl-system-context-create
+permalink: /reference/mesheryctl/system/context/create/
+redirect_from: /reference/mesheryctl/system/context/create/
+type: reference
+display-title: "false"
+language: en
+command: system
+---
+
+# mesheryctl system context create
+
+Create a new context (a named Meshery deployment)
+
+## Synopsis
+
+Add a new context to Meshery config.yaml file
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system context create context-name [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+
+
+	// Create new context
+	mesheryctl system context create [context-name]
+
+	// Create new context and provide list of components, platform & URL
+	mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
+	
+
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -a, --components stringArray   List of components
+  -h, --help                     help for create
+  -p, --platform string          Platform to deploy Meshery
+  -s, --set                      Set as current context
+  -u, --url string               Meshery Server URL with Port
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string    path to config file (default "/home/admin-pc/.meshery/config.yaml")
+  -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
+  -y, --yes              (optional) assume yes for user interactive prompts.
+
+</div>
+</pre>
+
+## See Also
+
+* [mesheryctl system context](context/)	 - Configure your Meshery deployment(s)
+

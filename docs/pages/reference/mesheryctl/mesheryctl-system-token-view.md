@@ -1,0 +1,65 @@
+---
+layout: default
+title: mesheryctl-system-token-view
+permalink: /reference/mesheryctl/system/token/view/
+redirect_from: /reference/mesheryctl/system/token/view/
+type: reference
+display-title: "false"
+language: en
+command: system
+---
+
+# mesheryctl system token view
+
+View token
+
+## Synopsis
+
+View a specific token in meshery config
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system token view [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+
+
+	mesheryctl system token view <token-name>
+	mesheryctl system token view (show token of current context)
+	
+
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --all    set the flag to view all the tokens.
+  -h, --help   help for view
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string    path to config file (default "/home/admin-pc/.meshery/config.yaml")
+  -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
+  -y, --yes              (optional) assume yes for user interactive prompts.
+
+</div>
+</pre>
+
+## See Also
+
+* [mesheryctl system token](token/)	 - Manage Meshery user tokens
+

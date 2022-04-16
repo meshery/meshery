@@ -1,0 +1,64 @@
+---
+layout: default
+title: mesheryctl-system-reset
+permalink: /reference/mesheryctl/system/reset/
+redirect_from: /reference/mesheryctl/system/reset/
+type: reference
+display-title: "false"
+language: en
+command: system
+---
+
+# mesheryctl system reset
+
+Reset Meshery's configuration
+
+## Synopsis
+
+Reset Meshery to it's default configuration.
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system reset [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+
+
+	// Resets meshery.yaml file with a copy from Meshery repo
+	mesheryctl system reset
+	
+
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -h, --help   help for reset
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string    path to config file (default "/home/admin-pc/.meshery/config.yaml")
+  -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
+  -y, --yes              (optional) assume yes for user interactive prompts.
+
+</div>
+</pre>
+
+## See Also
+
+* [mesheryctl system](system/)	 - Meshery Lifecycle Management
+
