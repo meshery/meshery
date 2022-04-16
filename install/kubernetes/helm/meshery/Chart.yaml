@@ -46,6 +46,7 @@ version: 0.5.0
 
 dependencies:
 - name: meshery-istio
+  version: 0.5.0
   condition: meshery-istio.enabled
 - name: meshery-linkerd
   version: 0.5.0
