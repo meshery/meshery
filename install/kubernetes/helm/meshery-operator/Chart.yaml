@@ -39,7 +39,7 @@ version: 0.6.0
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 # TODO: Need the confirm the image tag.
-appVersion: 0.6.0
+# appVersion: 0.6.0
 
 dependencies:
 - name: meshery-istio
