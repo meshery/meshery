@@ -6,16 +6,12 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestStop(t *testing.T) {
+func TestUpdate(t *testing.T) {
+	utils.SetupContextEnv(t)
 	tests := []utils.CmdTestInput{
 		{
-			Name:        "Run stop",
-			Args:        []string{"stop", "-y"},
-			ExpectError: true,
-		},
-		{
-			Name:        "Run stop with --force",
-			Args:        []string{"stop", "--force", "-y"},
+			Name:        "Run update",
+			Args:        []string{"update", "-y"},
 			ExpectError: true,
 		},
 	}
@@ -32,7 +28,7 @@ func TestStop(t *testing.T) {
 				t.Log("Pods are not running!")
 			}
 			if err != nil {
-				t.Error(err)
+				t.Log("Error obtained: ", err)
 			}
 		})
 	}

@@ -15,6 +15,7 @@ func TestLogin(t *testing.T) {
 			Name:             "Run login",
 			Args:             []string{"login"},
 			ExpectedResponse: "login.output.golden",
+			ExpectError:      true,
 		},
 	}
 
@@ -29,6 +30,10 @@ func TestLogin(t *testing.T) {
 			cmd := SystemCmd
 			cmd.SetArgs(tt.Args)
 			err = cmd.Execute()
+			_, errPo := utils.AreAllPodsRunning()
+			if errPo != nil {
+				t.Log("Pods are not running!")
+			}
 			kb.SetKeys(keybd_event.VK_ENTER) // To press and simulate Enter key
 			if err != nil {
 				t.Error(err)
