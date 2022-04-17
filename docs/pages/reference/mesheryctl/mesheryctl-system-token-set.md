@@ -30,8 +30,7 @@ mesheryctl system token set [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	mesheryctl system token set <token-name> 
-
+mesheryctl system token set [token-name] 
 	
 
 </div>

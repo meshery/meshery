@@ -30,8 +30,8 @@ mesheryctl pattern list [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// list all available patterns
-	mesheryctl pattern list
+// list all available patterns
+mesheryctl pattern list
 	
 
 </div>

@@ -30,20 +30,20 @@ mesheryctl system start [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Start meshery
-	mesheryctl system start
+// Start meshery
+mesheryctl system start
 
-	// To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
-	mesheryctl system context create k8s -p kubernetes -s
+// To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
+mesheryctl system context create k8s -p kubernetes -s
 
-	// (optional) skip checking for new updates available in Meshery.
-	mesheryctl system start --skip-update
+// (optional) skip checking for new updates available in Meshery.
+mesheryctl system start --skip-update
 
-	// Reset Meshery's configuration file to default settings.
-	mesheryctl system start --reset
+// Reset Meshery's configuration file to default settings.
+mesheryctl system start --reset
 
-	// Silently create Meshery's configuration file with default settings.
-	mesheryctl system start --silent
+// Silently create Meshery's configuration file with default settings.
+mesheryctl system start --silent
 	
 
 </div>

@@ -30,8 +30,8 @@ mesheryctl app list [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	List all the applications
-	mesheryctl app list
+// List all the applications
+mesheryctl app list
 	
 
 </div>

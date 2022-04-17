@@ -30,8 +30,8 @@ mesheryctl system reset [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Resets meshery.yaml file with a copy from Meshery repo
-	mesheryctl system reset
+// Resets meshery.yaml file with a copy from Meshery repo
+mesheryctl system reset
 	
 
 </div>

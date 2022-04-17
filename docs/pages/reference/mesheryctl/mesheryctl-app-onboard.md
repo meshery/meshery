@@ -30,8 +30,8 @@ mesheryctl app onboard [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	Onboard application by providing file path
-	mesheryctl app onboard -f <filepath>
+// Onboard application by providing file path
+mesheryctl app onboard -f [filepath]
 	
 
 </div>

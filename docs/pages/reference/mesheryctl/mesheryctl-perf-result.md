@@ -30,14 +30,14 @@ mesheryctl perf result profile-name [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// List Test results (maximum 25 results)
-	mesheryctl perf result saturday-profile
+// List Test results (maximum 25 results)
+mesheryctl perf result saturday-profile
 
-	// View other set of performance results with --page (maximum 25 results)
-	mesheryctl perf result saturday-profile --page 2
+// View other set of performance results with --page (maximum 25 results)
+mesheryctl perf result saturday-profile --page 2
 
-	// View single performance result with detailed information
-	mesheryctl perf result saturday-profile --view
+// View single performance result with detailed information
+mesheryctl perf result saturday-profile --view
 
 
 </div>

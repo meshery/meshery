@@ -33,8 +33,8 @@ mesheryctl system logout [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Invalidate current session with your Meshery Provider.
-	mesheryctl system logout
+// Invalidate current session with your Meshery Provider.
+mesheryctl system logout
 	
 
 </div>

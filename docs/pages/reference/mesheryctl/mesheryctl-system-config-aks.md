@@ -30,8 +30,8 @@ mesheryctl system config aks [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	Configure Meshery to connect to AKS cluster using auth token
-	mesheryctl system config aks --token auth.json
+// Configure Meshery to connect to AKS cluster using auth token
+mesheryctl system config aks --token auth.json
 	
 
 </div>

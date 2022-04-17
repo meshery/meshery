@@ -25,6 +25,18 @@ mesheryctl app [flags]
 </div>
 </pre> 
 
+## Examples
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+
+// Base command
+mesheryctl app [subcommand]
+	
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>

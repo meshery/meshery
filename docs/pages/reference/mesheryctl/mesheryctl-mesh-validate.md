@@ -30,8 +30,8 @@ mesheryctl mesh validate [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Validate conformance to service mesh standards
-	mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+// Validate conformance to service mesh standards
+mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
 	
 
 </div>

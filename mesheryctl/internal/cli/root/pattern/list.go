@@ -26,8 +26,8 @@ var listCmd = &cobra.Command{
 	Long:  `Display list of all available pattern files.`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-	// list all available patterns
-	mesheryctl pattern list
+// list all available patterns
+mesheryctl pattern list
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

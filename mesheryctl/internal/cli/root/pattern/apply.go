@@ -30,11 +30,11 @@ var applyCmd = &cobra.Command{
 	Short: "Apply pattern file",
 	Long:  `Apply pattern file will trigger deploy of the pattern file`,
 	Example: `
-	// apply a pattern file
-	mesheryctl pattern apply -f [file | URL]
+// apply a pattern file
+mesheryctl pattern apply -f [file | URL]
 
-	// deploy a saved pattern
-	mesheryctl pattern apply [pattern-name]
+// deploy a saved pattern
+mesheryctl pattern apply [pattern-name]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {

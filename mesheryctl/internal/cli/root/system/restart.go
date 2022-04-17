@@ -35,11 +35,11 @@ var restartCmd = &cobra.Command{
 	Long:  `Restart all Meshery containers / pods.`,
 	Args:  cobra.NoArgs,
 	Example: `
-	// Restart all Meshery containers, their instances and their connected volumes
-	mesheryctl system restart
+// Restart all Meshery containers, their instances and their connected volumes
+mesheryctl system restart
 
-	// (optional) skip checking for new updates available in Meshery.
-	mesheryctl system restart --skip-update
+// (optional) skip checking for new updates available in Meshery.
+mesheryctl system restart --skip-update
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite

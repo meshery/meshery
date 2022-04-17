@@ -30,11 +30,11 @@ mesheryctl system update [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Pull new Meshery images from Docker Hub. Does not update mesheryctl. This command may be executed while Meshery is running.
-	mesheryctl system update
+// Pull new Meshery images from Docker Hub. Does not update mesheryctl. This command may be executed while Meshery is running.
+mesheryctl system update
 
-	// Pull the latest manifest files alone
-	mesheryctl system update --skip-reset
+// Pull the latest manifest files alone
+mesheryctl system update --skip-reset
 	
 
 </div>

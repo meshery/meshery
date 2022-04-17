@@ -17,8 +17,8 @@ var (
 		Args:  cobra.MinimumNArgs(0),
 		Long:  `remove service mesh in the connected kubernetes cluster`,
 		Example: `
-		// Remove a service mesh
-		mesheryctl mesh remove [mesh adapter name]
+	// Remove a service mesh
+	mesheryctl mesh remove [mesh adapter name]
 		`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			utils.Log.Info("Verifying prerequisites...")

@@ -18,8 +18,8 @@ var MeshCmd = &cobra.Command{
 	Short: "Service Mesh Lifecycle Management",
 	Long:  `Provisioning, configuration, and on-going operational management of service meshes`,
 	Example: `
-	// Lifecycle management of service meshes
-	mesheryctl mesh [subcommand] 
+// Lifecycle management of service meshes
+mesheryctl mesh [subcommand] 
 	`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {

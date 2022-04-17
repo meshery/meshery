@@ -30,8 +30,8 @@ mesheryctl app offboard [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	Offboard application by providing file path
-	mesheryctl app offboard -f <filepath>
+// Offboard application by providing file path
+mesheryctl app offboard -f [filepath]
 	
 
 </div>

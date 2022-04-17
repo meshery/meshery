@@ -33,8 +33,8 @@ var resetCmd = &cobra.Command{
 	Long:  `Reset Meshery to it's default configuration.`,
 	Args:  cobra.NoArgs,
 	Example: `
-	// Resets meshery.yaml file with a copy from Meshery repo
-	mesheryctl system reset
+// Resets meshery.yaml file with a copy from Meshery repo
+mesheryctl system reset
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return resetMesheryConfig()

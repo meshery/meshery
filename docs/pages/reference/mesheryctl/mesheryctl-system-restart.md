@@ -30,11 +30,11 @@ mesheryctl system restart [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Restart all Meshery containers, their instances and their connected volumes
-	mesheryctl system restart
+// Restart all Meshery containers, their instances and their connected volumes
+mesheryctl system restart
 
-	// (optional) skip checking for new updates available in Meshery.
-	mesheryctl system restart --skip-update
+// (optional) skip checking for new updates available in Meshery.
+mesheryctl system restart --skip-update
 	
 
 </div>

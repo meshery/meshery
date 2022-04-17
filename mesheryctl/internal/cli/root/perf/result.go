@@ -42,14 +42,14 @@ var resultCmd = &cobra.Command{
 	Long:  `List all the available test results of a performance profile`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-	// List Test results (maximum 25 results)
-	mesheryctl perf result saturday-profile
+// List Test results (maximum 25 results)
+mesheryctl perf result saturday-profile
 
-	// View other set of performance results with --page (maximum 25 results)
-	mesheryctl perf result saturday-profile --page 2
+// View other set of performance results with --page (maximum 25 results)
+mesheryctl perf result saturday-profile --page 2
 
-	// View single performance result with detailed information
-	mesheryctl perf result saturday-profile --view
+// View single performance result with detailed information
+mesheryctl perf result saturday-profile --view
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile

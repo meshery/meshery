@@ -30,11 +30,11 @@ mesheryctl system config [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Set configuration according to k8s cluster
-	mesheryctl system config [aks|eks|gke|minikube]
+// Set configuration according to k8s cluster
+mesheryctl system config [aks|eks|gke|minikube]
 
-	// Path to token for authenticating to Meshery API (optional)
-	mesheryctl system config --token "~/Downloads/auth.json"
+// Path to token for authenticating to Meshery API (optional)
+mesheryctl system config --token "~/Downloads/auth.json"
 	
 
 </div>

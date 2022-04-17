@@ -30,11 +30,11 @@ mesheryctl pattern apply [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// apply a pattern file
-	mesheryctl pattern apply -f [file | URL]
+// apply a pattern file
+mesheryctl pattern apply -f [file | URL]
 
-	// deploy a saved pattern
-	mesheryctl pattern apply [pattern-name]
+// deploy a saved pattern
+mesheryctl pattern apply [pattern-name]
 	
 
 </div>

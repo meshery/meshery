@@ -26,11 +26,11 @@ mesheryctl system dashboard [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Open Meshery UI in browser
-	mesheryctl system dashboard
+// Open Meshery UI in browser
+mesheryctl system dashboard
 
-	// Open Meshery UI in browser and use port-forwarding
-	mesheryctl system dashboard --port-forward
+// Open Meshery UI in browser and use port-forwarding
+mesheryctl system dashboard --port-forward
 	
 
 </div>

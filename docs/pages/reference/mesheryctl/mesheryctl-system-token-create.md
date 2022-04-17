@@ -30,9 +30,9 @@ mesheryctl system token create [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	mesheryctl system token create <token-name> -f <token-path>
-	mesheryctl system token create <token-name> (default path is auth.json)
-	mesheryctl system token create <token-name> -f <token-path> --set
+mesheryctl system token create [token-name] -f [token-path]
+mesheryctl system token create [token-name] (default path is auth.json)
+mesheryctl system token create [token-name] -f [token-path] --set
 	
 
 </div>

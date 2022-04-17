@@ -30,8 +30,8 @@ mesheryctl system channel [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Subscribe to release channel or version
-	mesheryctl system channel [stable|stable-version|edge|edge-version]
+// Subscribe to release channel or version
+mesheryctl system channel [stable|stable-version|edge|edge-version]
 	
 
 </div>

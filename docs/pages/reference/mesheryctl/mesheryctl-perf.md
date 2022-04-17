@@ -30,18 +30,18 @@ mesheryctl perf [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Run performance test
-	mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
-		
-	// List performance profiles
-	mesheryctl perf profile sam-test
+// Run performance test
+mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
+	
+// List performance profiles
+mesheryctl perf profile sam-test
 
-	// List performance results
-	mesheryctl perf result sam-test
+// List performance results
+mesheryctl perf result sam-test
 
-	// Display Perf profile in JSON or YAML
-	mesheryctl perf result -o json
-	mesheryctl perf result -o yaml
+// Display Perf profile in JSON or YAML
+mesheryctl perf result -o json
+mesheryctl perf result -o yaml
 	
 
 </div>

@@ -30,8 +30,8 @@ mesheryctl system config minikube [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	Configure Meshery to connect to minikube cluster using auth token
-	mesheryctl system config minikube --token auth.json
+// Configure Meshery to connect to minikube cluster using auth token
+mesheryctl system config minikube --token auth.json
 	
 
 </div>

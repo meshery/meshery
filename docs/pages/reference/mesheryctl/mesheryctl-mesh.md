@@ -30,8 +30,8 @@ mesheryctl mesh [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Lifecycle management of service meshes
-	mesheryctl mesh [subcommand] 
+// Lifecycle management of service meshes
+mesheryctl mesh [subcommand] 
 	
 
 </div>

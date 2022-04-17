@@ -30,8 +30,8 @@ mesheryctl system config gke [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	Configure Meshery to connect to GKE cluster using auth token
-	mesheryctl system config gke --token auth.json
+// Configure Meshery to connect to GKE cluster using auth token
+mesheryctl system config gke --token auth.json
 	
 
 </div>

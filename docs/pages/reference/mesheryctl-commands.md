@@ -35,14 +35,14 @@ Meshery CLI commands are categorized by function, which are:
   </tr>
   {% assign command1 = site.data.mesheryctlcommands.cmds.global %}
     <tr>
-      <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/mesheryctl">{{ command1.name }}</a></td>
+      <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/main">{{ command1.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command1.description }}</td>
     </tr>
     {% for subcommand_hash in command1.subcommands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
-         <td><a href="{{ site.baseurl }}/reference/mesheryctl/mesheryctl/version">{{ subcommand.name }}</a></td>
+         <td><a href="{{ site.baseurl }}/reference/mesheryctl/version">{{ subcommand.name }}</a></td>
          <td></td>
          <td>{{ subcommand.description }}</td>
       </tr>
@@ -510,7 +510,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% assign command8 = site.data.mesheryctlcommands.cmds.app %}
     <tr>
-      <td rowspan=12><a href="{{ site.baseurl }}/reference/mesheryctl/apps">{{ command8.name }}</a></td>
+      <td rowspan=12><a href="{{ site.baseurl }}/reference/mesheryctl/app">{{ command8.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command8.description }}</td>
@@ -524,7 +524,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% assign subcommand1 = command8.subcommands.onboard %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/onboard">{{ subcommand1.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/app/onboard">{{ subcommand1.name }}</a></td>
         <td></td>
         <td>{{ subcommand1.description }}</td>
       </tr>
@@ -537,7 +537,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% assign subcommand2 = command8.subcommands.offboard %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/offboard">{{ subcommand2.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/app/offboard">{{ subcommand2.name }}</a></td>
         <td></td>
         <td>{{ subcommand2.description }}</td>
       </tr>
@@ -550,13 +550,13 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% assign subcommand3 = command8.subcommands.list %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/list">{{ subcommand3.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/app/list">{{ subcommand3.name }}</a></td>
         <td></td>
         <td>{{ subcommand3.description }}</td>
       </tr>
     {% assign subcommand4 = command8.subcommands.view %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/apps/view">{{ subcommand4.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/app/view">{{ subcommand4.name }}</a></td>
         <td></td>
         <td>{{ subcommand4.description }}</td>
       </tr>

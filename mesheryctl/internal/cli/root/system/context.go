@@ -58,11 +58,11 @@ var createContextCmd = &cobra.Command{
 	Short: "Create a new context (a named Meshery deployment)",
 	Long:  `Add a new context to Meshery config.yaml file`,
 	Example: `
-	// Create new context
-	mesheryctl system context create [context-name]
+// Create new context
+mesheryctl system context create [context-name]
 
-	// Create new context and provide list of components, platform & URL
-	mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
+// Create new context and provide list of components, platform & URL
+mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -102,8 +102,8 @@ var deleteContextCmd = &cobra.Command{
 	Short: "delete context",
 	Long:  `Delete an existing context (a named Meshery deployment) from Meshery config file`,
 	Example: `
-	// Delete context
-	mesheryctl system context delete [context name]
+// Delete context
+mesheryctl system context delete [context name]
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -181,8 +181,8 @@ var listContextCmd = &cobra.Command{
 	Short: "list contexts",
 	Long:  `List current context and available contexts`,
 	Example: `
-	// List contexts
-	mesheryctl system context list
+// List contexts
+mesheryctl system context list
 	`,
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
@@ -232,17 +232,17 @@ var viewContextCmd = &cobra.Command{
 	Short: "view current context",
 	Long:  `Display active Meshery context`,
 	Example: `
-	View default context
-	mesheryctl system context view
+// View default context
+mesheryctl system context view
 
-	View specified context
-	mesheryctl system context view context-name
+// View specified context
+mesheryctl system context view context-name
 
-	View specified context with context flag
-	mesheryctl system context view --context context-name
+// View specified context with context flag
+mesheryctl system context view --context context-name
 
-	View config of all contexts
-	mesheryctl system context view --all
+// View config of all contexts
+mesheryctl system context view --all
 	`,
 	Args:         cobra.MaximumNArgs(1),
 	SilenceUsage: true,
@@ -319,8 +319,8 @@ var switchContextCmd = &cobra.Command{
 	Short: "switch context",
 	Long:  `Configure mesheryctl to actively use one one context vs. another context`,
 	Example: `
-	// Switch to context named "context-name"
-	mesheryctl system context switch context-name
+// Switch to context named "context-name"
+mesheryctl system context switch context-name
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system context switch [context name]
@@ -380,8 +380,8 @@ var ContextCmd = &cobra.Command{
 	Short: "Configure your Meshery deployment(s)",
 	Long:  `Configure and switch between different named Meshery server and component versions and deployments.`,
 	Example: `
-	// Base command
-	mesheryctl system context
+// Base command
+mesheryctl system context
 	`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {

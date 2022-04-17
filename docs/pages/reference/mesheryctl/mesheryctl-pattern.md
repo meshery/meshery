@@ -30,17 +30,17 @@ mesheryctl pattern [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Apply pattern file
-	mesheryctl pattern apply --file [path to pattern file]
+// Apply pattern file
+mesheryctl pattern apply --file [path to pattern file]
 
-	// Deprovision pattern file
-	mesheryctl pattern delete --file [path to pattern file]
+// Deprovision pattern file
+mesheryctl pattern delete --file [path to pattern file]
 
-	// View pattern file
-	mesheryctl pattern view [pattern name/id]
+// View pattern file
+mesheryctl pattern view [pattern name/id]
 
-	// List all patterns
-	mesheryctl pattern list
+// List all patterns
+mesheryctl pattern list
 	
 
 </div>

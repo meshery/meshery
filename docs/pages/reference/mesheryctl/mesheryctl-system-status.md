@@ -30,8 +30,8 @@ mesheryctl system status [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
-	mesheryctl system status 
+// Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
+mesheryctl system status 
 	
 
 </div>

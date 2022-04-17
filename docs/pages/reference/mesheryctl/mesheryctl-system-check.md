@@ -30,20 +30,20 @@ mesheryctl system check [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Run system checks for both pre and post mesh deployment scenarios on Meshery
-	mesheryctl system check
+// Run system checks for both pre and post mesh deployment scenarios on Meshery
+mesheryctl system check
 
-	// Run Pre-mesh deployment checks (Docker and Kubernetes)
-	mesheryctl system check --preflight
+// Run Pre-mesh deployment checks (Docker and Kubernetes)
+mesheryctl system check --preflight
 
-	// Run checks on specific mesh adapter
-	mesheryctl system check --adapter meshery-istio:10000
+// Run checks on specific mesh adapter
+mesheryctl system check --adapter meshery-istio:10000
 
-	// Verify the health of Meshery Operator's deployment with MeshSync and Broker
-	mesheryctl system check --operator
+// Verify the health of Meshery Operator's deployment with MeshSync and Broker
+mesheryctl system check --operator
 
-	// Runs diagnostic checks and bundles up to open an issue if present
-	mesheryctl system check --report
+// Runs diagnostic checks and bundles up to open an issue if present
+mesheryctl system check --report
 	
 
 </div>

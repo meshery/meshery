@@ -51,11 +51,11 @@ var dashboardCmd = &cobra.Command{
 	Short: "Open Meshery UI in browser.",
 	Args:  cobra.NoArgs,
 	Example: `
-	// Open Meshery UI in browser
-	mesheryctl system dashboard
+// Open Meshery UI in browser
+mesheryctl system dashboard
 
-	// Open Meshery UI in browser and use port-forwarding
-	mesheryctl system dashboard --port-forward
+// Open Meshery UI in browser and use port-forwarding
+mesheryctl system dashboard --port-forward
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// check if meshery is running or not

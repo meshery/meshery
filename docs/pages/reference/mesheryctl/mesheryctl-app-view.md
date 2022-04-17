@@ -30,14 +30,14 @@ mesheryctl app view <application name> [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	View applictaions with name
-	mesheryctl app view <app-name>
+// View applictaions with name
+mesheryctl app view [app-name]
 
-	View applications with id
-	mesheryctl app view <app-id>
+// View applications with id
+mesheryctl app view [app-id]
 
-	View all applications
-	mesheryctl app view --all
+// View all applications
+mesheryctl app view --all
 	
 
 </div>

@@ -30,14 +30,14 @@ mesheryctl perf profile [profile-name] [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// List performance profiles (maximum 25 profiles)
-	mesheryctl perf profile
+// List performance profiles (maximum 25 profiles)
+mesheryctl perf profile
 
-	// List performance profiles with search (maximum 25 profiles)
-	mesheryctl perf profile test 2
+// List performance profiles with search (maximum 25 profiles)
+mesheryctl perf profile test 2
 
-	// View single performance profile with detailed information
-	mesheryctl perf profile test --view
+// View single performance profile with detailed information
+mesheryctl perf profile test --view
 
 
 </div>

@@ -33,8 +33,8 @@ mesheryctl system login [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	//Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
-    mesheryctl system login 
+// Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
+mesheryctl system login 
 	
 
 </div>

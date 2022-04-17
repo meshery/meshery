@@ -42,26 +42,26 @@ var applyCmd = &cobra.Command{
 	Long:  `Run Performance test using existing profiles or using flags`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-	// Execute a Performance test with the specified performance profile
-	mesheryctl perf apply meshery-profile --flags
+// Execute a Performance test with the specified performance profile
+mesheryctl perf apply meshery-profile --flags
 
-	// Execute a Performance test with creating a new performance profile
-	mesheryctl perf apply meshery-profile-new --url "https://google.com"
+// Execute a Performance test with creating a new performance profile
+mesheryctl perf apply meshery-profile-new --url "https://google.com"
 
-	// Run Performance test using SMP compatible test configuration
-	mesheryctl perf apply -f perf-config.yaml
+// Run Performance test using SMP compatible test configuration
+mesheryctl perf apply -f perf-config.yaml
 
-	// Run performance test using SMP compatible test configuration and override values with flags
-	mesheryctl perf apply -f [filepath] --flags
+// Run performance test using SMP compatible test configuration and override values with flags
+mesheryctl perf apply -f [filepath] --flags
 
-	// Choice of load generator - fortio or wrk2 (default: fortio)
-	mesheryctl perf apply meshery-test --load-generator wrk2
+// Choice of load generator - fortio or wrk2 (default: fortio)
+mesheryctl perf apply meshery-test --load-generator wrk2
 
-	// Execute a Performance test with specified queries per second
-	mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
+// Execute a Performance test with specified queries per second
+mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
 
-	// Execute a Performance test with specified service mesh
-	mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
+// Execute a Performance test with specified service mesh
+mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client := &http.Client{}

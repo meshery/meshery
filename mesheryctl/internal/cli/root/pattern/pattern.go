@@ -20,17 +20,17 @@ var PatternCmd = &cobra.Command{
 	Long:  `Manage service meshes using predefined patterns`,
 	Args:  cobra.MinimumNArgs(1),
 	Example: `
-	// Apply pattern file
-	mesheryctl pattern apply --file [path to pattern file]
+// Apply pattern file
+mesheryctl pattern apply --file [path to pattern file]
 
-	// Deprovision pattern file
-	mesheryctl pattern delete --file [path to pattern file]
+// Deprovision pattern file
+mesheryctl pattern delete --file [path to pattern file]
 
-	// View pattern file
-	mesheryctl pattern view [pattern name/id]
+// View pattern file
+mesheryctl pattern view [pattern name/id]
 
-	// List all patterns
-	mesheryctl pattern list
+// List all patterns
+mesheryctl pattern list
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
