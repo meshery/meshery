@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-status
-permalink: /reference/mesheryctl/system/status/
-redirect_from: /reference/mesheryctl/system/status/
+permalink: reference/mesheryctl/system/status/
+redirect_from: reference/mesheryctl/system/status/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: status
 ---
 
 # mesheryctl system status
@@ -59,5 +60,4 @@ mesheryctl system status [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

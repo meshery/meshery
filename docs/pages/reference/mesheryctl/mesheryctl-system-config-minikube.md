@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-config-minikube
-permalink: /reference/mesheryctl/system/config/minikube/
-redirect_from: /reference/mesheryctl/system/config/minikube/
+permalink: reference/mesheryctl/system/config/minikube/
+redirect_from: reference/mesheryctl/system/config/minikube/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: config
 ---
 
 # mesheryctl system config minikube
@@ -60,5 +61,4 @@ mesheryctl system config minikube [flags]
 
 ## See Also
 
-* [mesheryctl system config](config/)	 - Configure Meshery
-
+Go back to [command reference index](/reference/mesheryctl/) 

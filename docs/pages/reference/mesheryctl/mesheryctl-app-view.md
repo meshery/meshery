@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-app-view
-permalink: /reference/mesheryctl/app/view/
-redirect_from: /reference/mesheryctl/app/view/
+permalink: reference/mesheryctl/app/view/
+redirect_from: reference/mesheryctl/app/view/
 type: reference
 display-title: "false"
 language: en
 command: app
+subcommand: view
 ---
 
 # mesheryctl app view
@@ -66,5 +67,4 @@ mesheryctl app view <application name> [flags]
 
 ## See Also
 
-* [mesheryctl app](app/)	 - Service Mesh Apps Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

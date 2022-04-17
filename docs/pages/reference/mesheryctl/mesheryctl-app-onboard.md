@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-app-onboard
-permalink: /reference/mesheryctl/app/onboard/
-redirect_from: /reference/mesheryctl/app/onboard/
+permalink: reference/mesheryctl/app/onboard/
+redirect_from: reference/mesheryctl/app/onboard/
 type: reference
 display-title: "false"
 language: en
 command: app
+subcommand: onboard
 ---
 
 # mesheryctl app onboard
@@ -60,5 +61,4 @@ mesheryctl app onboard [flags]
 
 ## See Also
 
-* [mesheryctl app](app/)	 - Service Mesh Apps Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

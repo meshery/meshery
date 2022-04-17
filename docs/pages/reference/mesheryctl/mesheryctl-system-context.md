@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-context
-permalink: /reference/mesheryctl/system/context/
-redirect_from: /reference/mesheryctl/system/context/
+permalink: reference/mesheryctl/system/context/
+redirect_from: reference/mesheryctl/system/context/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: context
 ---
 
 # mesheryctl system context
@@ -59,10 +60,4 @@ mesheryctl system context [command] [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-* [mesheryctl system context create](context/create/)	 - Create a new context (a named Meshery deployment)
-* [mesheryctl system context delete](context/delete/)	 - delete context
-* [mesheryctl system context list](context/list/)	 - list contexts
-* [mesheryctl system context switch](context/switch/)	 - switch context
-* [mesheryctl system context view](context/view/)	 - view current context
-
+Go back to [command reference index](/reference/mesheryctl/) 

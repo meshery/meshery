@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-completion
-permalink: /reference/mesheryctl/system/completion/
-redirect_from: /reference/mesheryctl/system/completion/
+permalink: reference/mesheryctl/system/completion/
+redirect_from: reference/mesheryctl/system/completion/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: completion
 ---
 
 # mesheryctl system completion
@@ -85,5 +86,4 @@ mesheryctl system completion [bash|zsh|fish]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-context-view
-permalink: /reference/mesheryctl/system/context/view/
-redirect_from: /reference/mesheryctl/system/context/view/
+permalink: reference/mesheryctl/system/context/view/
+redirect_from: reference/mesheryctl/system/context/view/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: context
 ---
 
 # mesheryctl system context view
@@ -69,5 +70,4 @@ mesheryctl system context view [context-name | --context context-name| --all] --
 
 ## See Also
 
-* [mesheryctl system context](context/)	 - Configure your Meshery deployment(s)
-
+Go back to [command reference index](/reference/mesheryctl/) 

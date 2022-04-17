@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-mesh
-permalink: /reference/mesheryctl/mesh/
-redirect_from: /reference/mesheryctl/mesh/
+permalink: reference/mesheryctl/mesh/
+redirect_from: reference/mesheryctl/mesh/
 type: reference
 display-title: "false"
 language: en
 command: mesh
+subcommand: nil
 ---
 
 # mesheryctl mesh
@@ -57,8 +58,4 @@ mesheryctl mesh [flags]
 
 ## See Also
 
-* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
-* [mesheryctl mesh deploy](deploy/)	 - Deploy a service mesh to the Kubernetes cluster
-* [mesheryctl mesh remove](remove/)	 - remove a service mesh in the kubernetes cluster
-* [mesheryctl mesh validate](validate/)	 - Validate conformance to service mesh standards
-
+Go back to [command reference index](/reference/mesheryctl/) 

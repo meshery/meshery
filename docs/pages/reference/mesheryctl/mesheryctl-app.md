@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-app
-permalink: /reference/mesheryctl/app/
-redirect_from: /reference/mesheryctl/app/
+permalink: reference/mesheryctl/app/
+redirect_from: reference/mesheryctl/app/
 type: reference
 display-title: "false"
 language: en
 command: app
+subcommand: nil
 ---
 
 # mesheryctl app
@@ -46,9 +47,4 @@ mesheryctl app [flags]
 
 ## See Also
 
-* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
-* [mesheryctl app list](list/)	 - List applications
-* [mesheryctl app offboard](offboard/)	 - Offboard application
-* [mesheryctl app onboard](onboard/)	 - Onboard application
-* [mesheryctl app view](view/)	 - Display application(s)
-
+Go back to [command reference index](/reference/mesheryctl/) 

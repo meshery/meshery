@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-login
-permalink: /reference/mesheryctl/system/login/
-redirect_from: /reference/mesheryctl/system/login/
+permalink: reference/mesheryctl/system/login/
+redirect_from: reference/mesheryctl/system/login/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: login
 ---
 
 # mesheryctl system login
@@ -62,5 +63,4 @@ mesheryctl system login [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

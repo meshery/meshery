@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-mesh-deploy
-permalink: /reference/mesheryctl/mesh/deploy/
-redirect_from: /reference/mesheryctl/mesh/deploy/
+permalink: reference/mesheryctl/mesh/deploy/
+redirect_from: reference/mesheryctl/mesh/deploy/
 type: reference
 display-title: "false"
 language: en
 command: mesh
+subcommand: deploy
 ---
 
 # mesheryctl mesh deploy
@@ -67,5 +68,4 @@ mesheryctl mesh deploy [flags]
 
 ## See Also
 
-* [mesheryctl mesh](mesh/)	 - Service Mesh Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

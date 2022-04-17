@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-config-eks
-permalink: /reference/mesheryctl/system/config/eks/
-redirect_from: /reference/mesheryctl/system/config/eks/
+permalink: reference/mesheryctl/system/config/eks/
+redirect_from: reference/mesheryctl/system/config/eks/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: config
 ---
 
 # mesheryctl system config eks
@@ -60,5 +61,4 @@ mesheryctl system config eks [flags]
 
 ## See Also
 
-* [mesheryctl system config](config/)	 - Configure Meshery
-
+Go back to [command reference index](/reference/mesheryctl/) 

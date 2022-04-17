@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-start
-permalink: /reference/mesheryctl/system/start/
-redirect_from: /reference/mesheryctl/system/start/
+permalink: reference/mesheryctl/system/start/
+redirect_from: reference/mesheryctl/system/start/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: start
 ---
 
 # mesheryctl system start
@@ -75,5 +76,4 @@ mesheryctl system start [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

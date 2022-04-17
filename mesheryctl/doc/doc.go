@@ -8,7 +8,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"sort"
 	"strings"
 	"time"
 
@@ -16,24 +15,18 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
-	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
-	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
-	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
-	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
-	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
-	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 )
 
 const markdownTemplateCommand = `---
 layout: default
 title: %s
-permalink: /%s
-redirect_from: /%s
+permalink: %s
+redirect_from: %s
 type: reference
 display-title: "false"
 language: en
 command: %s
+subcommand: %s
 ---
 
 `
@@ -45,37 +38,31 @@ type cmdDoc struct {
 	Example     string `yaml:"example"`
 }
 
-type byName []*cobra.Command
-
-func (s byName) Len() int           { return len(s) }
-func (s byName) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-func (s byName) Less(i, j int) bool { return s[i].Name() < s[j].Name() }
-
 func prepender(filename string) string {
 	file := strings.Split(filename, ".md")
 	title := filepath.Base(file[0])
 	words := strings.Split(title, "-")
 	if len(words) <= 1 {
 		url := "reference/" + words[0] + "/main"
-		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[0])
+		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[0], "nil")
 	}
 	if len(words) == 3 {
 		url := "reference/" + words[0] + "/" + words[1] + "/" + words[2] + "/"
-		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1])
+		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], words[2])
 	}
 	if len(words) == 4 {
 		url := "reference/" + words[0] + "/" + words[1] + "/" + words[2] + "/" + words[3] + "/"
-		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1])
+		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], words[2])
 	}
 	url := "reference/" + words[0] + "/" + words[1] + "/"
-	return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1])
+	return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], "nil")
 }
 
 func linkHandler(name string) string {
 	base := strings.TrimSuffix(name, path.Ext(name))
 	words := strings.Split(base, "-")
 	if len(words) <= 1 {
-		return "reference/mesheryctl/main"
+		return "/main/"
 	}
 	if len(words) == 3 {
 		return strings.ToLower(words[2]) + "/"
@@ -164,30 +151,13 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 	if hasSeeAlso(cmd) {
 		buf.WriteString("## See Also\n\n")
 		if cmd.HasParent() {
-			parent := cmd.Parent()
-			pname := parent.CommandPath()
-			link := pname + ".md"
-			link = strings.Replace(link, " ", "-", -1)
-			buf.WriteString(fmt.Sprintf("* [%s](%s)\t - %s\n", pname, linkHandler(link), parent.Short))
 			cmd.VisitParents(func(c *cobra.Command) {
 				if c.DisableAutoGenTag {
 					cmd.DisableAutoGenTag = c.DisableAutoGenTag
 				}
 			})
 		}
-
-		children := cmd.Commands()
-		sort.Sort(byName(children))
-
-		for _, child := range children {
-			if !child.IsAvailableCommand() || child.IsAdditionalHelpTopicCommand() {
-				continue
-			}
-			cname := name + " " + child.Name()
-			link := cname
-			link = strings.Replace(link, " ", "-", -1)
-			buf.WriteString(fmt.Sprintf("* [%s](%s)\t - %s\n", cname, linkHandler(link), child.Short))
-		}
+		buf.WriteString("Go back to [command reference index](/reference/mesheryctl/) ")
 		buf.WriteString("\n")
 	}
 	if !cmd.DisableAutoGenTag {

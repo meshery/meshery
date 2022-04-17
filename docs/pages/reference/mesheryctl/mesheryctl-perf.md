@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-perf
-permalink: /reference/mesheryctl/perf/
-redirect_from: /reference/mesheryctl/perf/
+permalink: reference/mesheryctl/perf/
+redirect_from: reference/mesheryctl/perf/
 type: reference
 display-title: "false"
 language: en
 command: perf
+subcommand: nil
 ---
 
 # mesheryctl perf
@@ -70,8 +71,4 @@ mesheryctl perf [flags]
 
 ## See Also
 
-* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
-* [mesheryctl perf apply](apply/)	 - Run a Performance test
-* [mesheryctl perf profile](profile/)	 - List performance profiles
-* [mesheryctl perf result](result/)	 - List performance test results
-
+Go back to [command reference index](/reference/mesheryctl/) 

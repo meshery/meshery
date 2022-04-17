@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-exp-filter-delete
-permalink: /reference/mesheryctl/exp/filter/delete/
-redirect_from: /reference/mesheryctl/exp/filter/delete/
+permalink: reference/mesheryctl/exp/filter/delete/
+redirect_from: reference/mesheryctl/exp/filter/delete/
 type: reference
 display-title: "false"
 language: en
 command: exp
+subcommand: filter
 ---
 
 # mesheryctl exp filter delete
@@ -46,5 +47,4 @@ mesheryctl exp filter delete [flags]
 
 ## See Also
 
-* [mesheryctl exp filter](filter/)	 - Service Mesh Filter Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

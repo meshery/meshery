@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-reset
-permalink: /reference/mesheryctl/system/reset/
-redirect_from: /reference/mesheryctl/system/reset/
+permalink: reference/mesheryctl/system/reset/
+redirect_from: reference/mesheryctl/system/reset/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: reset
 ---
 
 # mesheryctl system reset
@@ -59,5 +60,4 @@ mesheryctl system reset [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

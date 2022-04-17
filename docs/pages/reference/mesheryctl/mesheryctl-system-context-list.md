@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-context-list
-permalink: /reference/mesheryctl/system/context/list/
-redirect_from: /reference/mesheryctl/system/context/list/
+permalink: reference/mesheryctl/system/context/list/
+redirect_from: reference/mesheryctl/system/context/list/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: context
 ---
 
 # mesheryctl system context list
@@ -59,5 +60,4 @@ mesheryctl system context list [flags]
 
 ## See Also
 
-* [mesheryctl system context](context/)	 - Configure your Meshery deployment(s)
-
+Go back to [command reference index](/reference/mesheryctl/) 

@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-update
-permalink: /reference/mesheryctl/system/update/
-redirect_from: /reference/mesheryctl/system/update/
+permalink: reference/mesheryctl/system/update/
+redirect_from: reference/mesheryctl/system/update/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: update
 ---
 
 # mesheryctl system update
@@ -63,5 +64,4 @@ mesheryctl system update [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

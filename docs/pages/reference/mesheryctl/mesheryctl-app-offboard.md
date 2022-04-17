@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-app-offboard
-permalink: /reference/mesheryctl/app/offboard/
-redirect_from: /reference/mesheryctl/app/offboard/
+permalink: reference/mesheryctl/app/offboard/
+redirect_from: reference/mesheryctl/app/offboard/
 type: reference
 display-title: "false"
 language: en
 command: app
+subcommand: offboard
 ---
 
 # mesheryctl app offboard
@@ -59,5 +60,4 @@ mesheryctl app offboard [flags]
 
 ## See Also
 
-* [mesheryctl app](app/)	 - Service Mesh Apps Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

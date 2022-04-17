@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-pattern
-permalink: /reference/mesheryctl/pattern/
-redirect_from: /reference/mesheryctl/pattern/
+permalink: reference/mesheryctl/pattern/
+redirect_from: reference/mesheryctl/pattern/
 type: reference
 display-title: "false"
 language: en
 command: pattern
+subcommand: nil
 ---
 
 # mesheryctl pattern
@@ -67,9 +68,4 @@ mesheryctl pattern [flags]
 
 ## See Also
 
-* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
-* [mesheryctl pattern apply](apply/)	 - Apply pattern file
-* [mesheryctl pattern delete](delete/)	 - Delete pattern file
-* [mesheryctl pattern list](list/)	 - List patterns
-* [mesheryctl pattern view](view/)	 - Display pattern(s)
-
+Go back to [command reference index](/reference/mesheryctl/) 

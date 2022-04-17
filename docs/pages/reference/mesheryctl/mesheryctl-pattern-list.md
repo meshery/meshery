@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-pattern-list
-permalink: /reference/mesheryctl/pattern/list/
-redirect_from: /reference/mesheryctl/pattern/list/
+permalink: reference/mesheryctl/pattern/list/
+redirect_from: reference/mesheryctl/pattern/list/
 type: reference
 display-title: "false"
 language: en
 command: pattern
+subcommand: list
 ---
 
 # mesheryctl pattern list
@@ -58,5 +59,4 @@ mesheryctl pattern list [flags]
 
 ## See Also
 
-* [mesheryctl pattern](pattern/)	 - Service Mesh Patterns Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

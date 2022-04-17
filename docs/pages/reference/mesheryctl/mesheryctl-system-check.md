@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-check
-permalink: /reference/mesheryctl/system/check/
-redirect_from: /reference/mesheryctl/system/check/
+permalink: reference/mesheryctl/system/check/
+redirect_from: reference/mesheryctl/system/check/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: check
 ---
 
 # mesheryctl system check
@@ -74,5 +75,4 @@ mesheryctl system check [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

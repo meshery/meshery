@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-token-delete
-permalink: /reference/mesheryctl/system/token/delete/
-redirect_from: /reference/mesheryctl/system/token/delete/
+permalink: reference/mesheryctl/system/token/delete/
+redirect_from: reference/mesheryctl/system/token/delete/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: token
 ---
 
 # mesheryctl system token delete
@@ -58,5 +59,4 @@ mesheryctl system token delete [flags]
 
 ## See Also
 
-* [mesheryctl system token](token/)	 - Manage Meshery user tokens
-
+Go back to [command reference index](/reference/mesheryctl/) 

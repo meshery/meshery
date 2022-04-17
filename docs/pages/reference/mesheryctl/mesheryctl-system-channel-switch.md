@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-channel-switch
-permalink: /reference/mesheryctl/system/channel/switch/
-redirect_from: /reference/mesheryctl/system/channel/switch/
+permalink: reference/mesheryctl/system/channel/switch/
+redirect_from: reference/mesheryctl/system/channel/switch/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: channel
 ---
 
 # mesheryctl system channel switch
@@ -59,5 +60,4 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flag
 
 ## See Also
 
-* [mesheryctl system channel](channel/)	 - Switch between release channels
-
+Go back to [command reference index](/reference/mesheryctl/) 

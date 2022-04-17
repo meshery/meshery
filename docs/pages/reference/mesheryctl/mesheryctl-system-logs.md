@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-logs
-permalink: /reference/mesheryctl/system/logs/
-redirect_from: /reference/mesheryctl/system/logs/
+permalink: reference/mesheryctl/system/logs/
+redirect_from: reference/mesheryctl/system/logs/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: logs
 ---
 
 # mesheryctl system logs
@@ -62,5 +63,4 @@ mesheryctl system logs [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

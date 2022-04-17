@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-restart
-permalink: /reference/mesheryctl/system/restart/
-redirect_from: /reference/mesheryctl/system/restart/
+permalink: reference/mesheryctl/system/restart/
+redirect_from: reference/mesheryctl/system/restart/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: restart
 ---
 
 # mesheryctl system restart
@@ -63,5 +64,4 @@ mesheryctl system restart [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

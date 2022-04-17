@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-stop
-permalink: /reference/mesheryctl/system/stop/
-redirect_from: /reference/mesheryctl/system/stop/
+permalink: reference/mesheryctl/system/stop/
+redirect_from: reference/mesheryctl/system/stop/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: stop
 ---
 
 # mesheryctl system stop
@@ -68,5 +69,4 @@ mesheryctl system stop [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

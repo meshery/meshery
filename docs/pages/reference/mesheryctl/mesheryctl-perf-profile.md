@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-perf-profile
-permalink: /reference/mesheryctl/perf/profile/
-redirect_from: /reference/mesheryctl/perf/profile/
+permalink: reference/mesheryctl/perf/profile/
+redirect_from: reference/mesheryctl/perf/profile/
 type: reference
 display-title: "false"
 language: en
 command: perf
+subcommand: profile
 ---
 
 # mesheryctl perf profile
@@ -68,5 +69,4 @@ mesheryctl perf profile [profile-name] [flags]
 
 ## See Also
 
-* [mesheryctl perf](perf/)	 - Performance Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

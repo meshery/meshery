@@ -98,10 +98,6 @@ func init() {
 	// global verbose flag for verbose logs
 	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
-	_ = TreePath()
-}
-
-func TreePath() *cobra.Command {
 	availableSubcommands = []*cobra.Command{
 		versionCmd,
 		system.SystemCmd,
@@ -113,6 +109,9 @@ func TreePath() *cobra.Command {
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
+}
+
+func TreePath() *cobra.Command {
 	return RootCmd
 }
 

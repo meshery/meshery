@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-token-set
-permalink: /reference/mesheryctl/system/token/set/
-redirect_from: /reference/mesheryctl/system/token/set/
+permalink: reference/mesheryctl/system/token/set/
+redirect_from: reference/mesheryctl/system/token/set/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: token
 ---
 
 # mesheryctl system token set
@@ -59,5 +60,4 @@ mesheryctl system token set [flags]
 
 ## See Also
 
-* [mesheryctl system token](token/)	 - Manage Meshery user tokens
-
+Go back to [command reference index](/reference/mesheryctl/) 

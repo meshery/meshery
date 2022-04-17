@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-mesh-validate
-permalink: /reference/mesheryctl/mesh/validate/
-redirect_from: /reference/mesheryctl/mesh/validate/
+permalink: reference/mesheryctl/mesh/validate/
+redirect_from: reference/mesheryctl/mesh/validate/
 type: reference
 display-title: "false"
 language: en
 command: mesh
+subcommand: validate
 ---
 
 # mesheryctl mesh validate
@@ -61,5 +62,4 @@ mesheryctl mesh validate [flags]
 
 ## See Also
 
-* [mesheryctl mesh](mesh/)	 - Service Mesh Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

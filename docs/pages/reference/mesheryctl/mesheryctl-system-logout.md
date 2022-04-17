@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-logout
-permalink: /reference/mesheryctl/system/logout/
-redirect_from: /reference/mesheryctl/system/logout/
+permalink: reference/mesheryctl/system/logout/
+redirect_from: reference/mesheryctl/system/logout/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: logout
 ---
 
 # mesheryctl system logout
@@ -62,5 +63,4 @@ mesheryctl system logout [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

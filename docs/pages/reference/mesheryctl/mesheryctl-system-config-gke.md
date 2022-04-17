@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-config-gke
-permalink: /reference/mesheryctl/system/config/gke/
-redirect_from: /reference/mesheryctl/system/config/gke/
+permalink: reference/mesheryctl/system/config/gke/
+redirect_from: reference/mesheryctl/system/config/gke/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: config
 ---
 
 # mesheryctl system config gke
@@ -60,5 +61,4 @@ mesheryctl system config gke [flags]
 
 ## See Also
 
-* [mesheryctl system config](config/)	 - Configure Meshery
-
+Go back to [command reference index](/reference/mesheryctl/) 

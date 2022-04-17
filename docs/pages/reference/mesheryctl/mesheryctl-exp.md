@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-exp
-permalink: /reference/mesheryctl/exp/
-redirect_from: /reference/mesheryctl/exp/
+permalink: reference/mesheryctl/exp/
+redirect_from: reference/mesheryctl/exp/
 type: reference
 display-title: "false"
 language: en
 command: exp
+subcommand: nil
 ---
 
 # mesheryctl exp
@@ -45,7 +46,4 @@ mesheryctl exp [flags]
 
 ## See Also
 
-* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
-* [mesheryctl exp filter](filter/)	 - Service Mesh Filter Management
-* [mesheryctl exp mesh](mesh/)	 - Service Mesh Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

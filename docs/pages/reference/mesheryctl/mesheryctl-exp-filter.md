@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-exp-filter
-permalink: /reference/mesheryctl/exp/filter/
-redirect_from: /reference/mesheryctl/exp/filter/
+permalink: reference/mesheryctl/exp/filter/
+redirect_from: reference/mesheryctl/exp/filter/
 type: reference
 display-title: "false"
 language: en
 command: exp
+subcommand: filter
 ---
 
 # mesheryctl exp filter
@@ -42,9 +43,4 @@ mesheryctl exp filter [flags]
 
 ## See Also
 
-* [mesheryctl exp](exp/)	 - Experimental commands for mesheryctl
-* [mesheryctl exp filter apply](filter/apply/)	 - Apply filter file
-* [mesheryctl exp filter delete](filter/delete/)	 - Delete filter file
-* [mesheryctl exp filter list](filter/list/)	 - List filters
-* [mesheryctl exp filter view](filter/view/)	 - Display filters(s)
-
+Go back to [command reference index](/reference/mesheryctl/) 

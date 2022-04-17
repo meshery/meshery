@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-token-create
-permalink: /reference/mesheryctl/system/token/create/
-redirect_from: /reference/mesheryctl/system/token/create/
+permalink: reference/mesheryctl/system/token/create/
+redirect_from: reference/mesheryctl/system/token/create/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: token
 ---
 
 # mesheryctl system token create
@@ -62,5 +63,4 @@ mesheryctl system token create [flags]
 
 ## See Also
 
-* [mesheryctl system token](token/)	 - Manage Meshery user tokens
-
+Go back to [command reference index](/reference/mesheryctl/) 

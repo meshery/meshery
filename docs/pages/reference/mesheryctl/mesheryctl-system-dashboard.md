@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-dashboard
-permalink: /reference/mesheryctl/system/dashboard/
-redirect_from: /reference/mesheryctl/system/dashboard/
+permalink: reference/mesheryctl/system/dashboard/
+redirect_from: reference/mesheryctl/system/dashboard/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: dashboard
 ---
 
 # mesheryctl system dashboard
@@ -60,5 +61,4 @@ mesheryctl system dashboard [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

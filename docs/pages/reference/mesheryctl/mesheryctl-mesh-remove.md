@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-mesh-remove
-permalink: /reference/mesheryctl/mesh/remove/
-redirect_from: /reference/mesheryctl/mesh/remove/
+permalink: reference/mesheryctl/mesh/remove/
+redirect_from: reference/mesheryctl/mesh/remove/
 type: reference
 display-title: "false"
 language: en
 command: mesh
+subcommand: remove
 ---
 
 # mesheryctl mesh remove
@@ -60,5 +61,4 @@ mesheryctl mesh remove [flags]
 
 ## See Also
 
-* [mesheryctl mesh](mesh/)	 - Service Mesh Lifecycle Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

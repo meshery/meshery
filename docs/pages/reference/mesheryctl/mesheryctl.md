@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl
-permalink: /reference/mesheryctl/main
-redirect_from: /reference/mesheryctl/main
+permalink: reference/mesheryctl/main
+redirect_from: reference/mesheryctl/main
 type: reference
 display-title: "false"
 language: en
 command: mesheryctl
+subcommand: nil
 ---
 
 # mesheryctl
@@ -48,18 +49,4 @@ Meshery is the service mesh management plane, providing lifecycle, performance, 
 
 ## See Also
 
-* [mesheryctl app](app/)	 - Service Mesh Apps Management
-* [mesheryctl app](app/)	 - Service Mesh Apps Management
-* [mesheryctl exp](exp/)	 - Experimental commands for mesheryctl
-* [mesheryctl exp](exp/)	 - Experimental commands for mesheryctl
-* [mesheryctl mesh](mesh/)	 - Service Mesh Lifecycle Management
-* [mesheryctl mesh](mesh/)	 - Service Mesh Lifecycle Management
-* [mesheryctl pattern](pattern/)	 - Service Mesh Patterns Management
-* [mesheryctl pattern](pattern/)	 - Service Mesh Patterns Management
-* [mesheryctl perf](perf/)	 - Performance Management
-* [mesheryctl perf](perf/)	 - Performance Management
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-* [mesheryctl version](version/)	 - Version of mesheryctl
-* [mesheryctl version](version/)	 - Version of mesheryctl
-
+Go back to [command reference index](/reference/mesheryctl/) 

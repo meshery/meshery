@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-config
-permalink: /reference/mesheryctl/system/config/
-redirect_from: /reference/mesheryctl/system/config/
+permalink: reference/mesheryctl/system/config/
+redirect_from: reference/mesheryctl/system/config/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: config
 ---
 
 # mesheryctl system config
@@ -62,9 +63,4 @@ mesheryctl system config [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-* [mesheryctl system config aks](config/aks/)	 - Configure Meshery to use AKS cluster
-* [mesheryctl system config eks](config/eks/)	 - Configure Meshery to use EKS cluster
-* [mesheryctl system config gke](config/gke/)	 - Configure Meshery to use GKE cluster
-* [mesheryctl system config minikube](config/minikube/)	 - Configure Meshery to use minikube cluster
-
+Go back to [command reference index](/reference/mesheryctl/) 

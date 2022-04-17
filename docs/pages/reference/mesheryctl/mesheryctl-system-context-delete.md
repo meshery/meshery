@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-context-delete
-permalink: /reference/mesheryctl/system/context/delete/
-redirect_from: /reference/mesheryctl/system/context/delete/
+permalink: reference/mesheryctl/system/context/delete/
+redirect_from: reference/mesheryctl/system/context/delete/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: context
 ---
 
 # mesheryctl system context delete
@@ -60,5 +61,4 @@ mesheryctl system context delete context-name [flags]
 
 ## See Also
 
-* [mesheryctl system context](context/)	 - Configure your Meshery deployment(s)
-
+Go back to [command reference index](/reference/mesheryctl/) 

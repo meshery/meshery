@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-pattern-delete
-permalink: /reference/mesheryctl/pattern/delete/
-redirect_from: /reference/mesheryctl/pattern/delete/
+permalink: reference/mesheryctl/pattern/delete/
+redirect_from: reference/mesheryctl/pattern/delete/
 type: reference
 display-title: "false"
 language: en
 command: pattern
+subcommand: delete
 ---
 
 # mesheryctl pattern delete
@@ -59,5 +60,4 @@ mesheryctl pattern delete [flags]
 
 ## See Also
 
-* [mesheryctl pattern](pattern/)	 - Service Mesh Patterns Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

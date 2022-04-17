@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-system-channel
-permalink: /reference/mesheryctl/system/channel/
-redirect_from: /reference/mesheryctl/system/channel/
+permalink: reference/mesheryctl/system/channel/
+redirect_from: reference/mesheryctl/system/channel/
 type: reference
 display-title: "false"
 language: en
 command: system
+subcommand: channel
 ---
 
 # mesheryctl system channel
@@ -59,8 +60,4 @@ mesheryctl system channel [flags]
 
 ## See Also
 
-* [mesheryctl system](system/)	 - Meshery Lifecycle Management
-* [mesheryctl system channel set](channel/set/)	 - set release channel and version
-* [mesheryctl system channel switch](channel/switch/)	 - switch release channel and version
-* [mesheryctl system channel view](channel/view/)	 - view release channel and version
-
+Go back to [command reference index](/reference/mesheryctl/) 

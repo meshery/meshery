@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-pattern-apply
-permalink: /reference/mesheryctl/pattern/apply/
-redirect_from: /reference/mesheryctl/pattern/apply/
+permalink: reference/mesheryctl/pattern/apply/
+redirect_from: reference/mesheryctl/pattern/apply/
 type: reference
 display-title: "false"
 language: en
 command: pattern
+subcommand: apply
 ---
 
 # mesheryctl pattern apply
@@ -63,5 +64,4 @@ mesheryctl pattern apply [flags]
 
 ## See Also
 
-* [mesheryctl pattern](pattern/)	 - Service Mesh Patterns Management
-
+Go back to [command reference index](/reference/mesheryctl/) 

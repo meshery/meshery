@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-version
-permalink: /reference/mesheryctl/version/
-redirect_from: /reference/mesheryctl/version/
+permalink: reference/mesheryctl/version/
+redirect_from: reference/mesheryctl/version/
 type: reference
 display-title: "false"
 language: en
 command: version
+subcommand: nil
 ---
 
 # mesheryctl version
@@ -57,5 +58,4 @@ mesheryctl version [flags]
 
 ## See Also
 
-* [mesheryctl](reference/mesheryctl/main)	 - Meshery Command Line tool
-
+Go back to [command reference index](/reference/mesheryctl/) 

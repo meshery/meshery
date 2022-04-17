@@ -1,12 +1,13 @@
 ---
 layout: default
 title: mesheryctl-exp-filter-list
-permalink: /reference/mesheryctl/exp/filter/list/
-redirect_from: /reference/mesheryctl/exp/filter/list/
+permalink: reference/mesheryctl/exp/filter/list/
+redirect_from: reference/mesheryctl/exp/filter/list/
 type: reference
 display-title: "false"
 language: en
 command: exp
+subcommand: filter
 ---
 
 # mesheryctl exp filter list
@@ -46,5 +47,4 @@ mesheryctl exp filter list [flags]
 
 ## See Also
 
-* [mesheryctl exp filter](filter/)	 - Service Mesh Filter Management
-
+Go back to [command reference index](/reference/mesheryctl/) 
