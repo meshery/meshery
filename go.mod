@@ -174,7 +174,6 @@ require (
 	github.com/nats-io/nats.go v1.13.1-0.20220308171302-2f2f6968e98d // indirect
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
-	github.com/norwoodj/helm-docs v1.8.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
@@ -222,7 +221,6 @@ require (
 	k8s.io/apiserver v0.22.4 // indirect
 	k8s.io/cli-runtime v0.23.0-alpha.1 // indirect
 	k8s.io/component-base v0.23.0-alpha.1 // indirect
-	k8s.io/helm v2.14.3+incompatible // indirect
 	k8s.io/klog/v2 v2.10.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20211115234752-e816edb12b65 // indirect
 	k8s.io/kubectl v0.23.0-alpha.1 // indirect
