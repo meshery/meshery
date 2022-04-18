@@ -10,12 +10,6 @@ list: exclude
 type: "project"
 ---
 
-# Meshery Compatibility Matrix
-
-## Integration Tests
-
-As a key aspect of Meshery, its integrations with other systems are routinely tested. Unit, integration testing occurs before and after every pull request (before code is to be merged into the project and after code is merged into the project). Regression tests are run nightly.
-
 <script type="text/javascript">
     function toggle_visibility(id) {
        var e = document.getElementById(id);
@@ -96,6 +90,53 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
 </style>
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
+
+# Meshery Compatibility Matrix
+
+## Summary of Integration Tests
+
+<table>
+  <th>Meshery Component</th>
+  <th>Meshery Component Version</th>
+  <th>Service Mesh</th>
+  <th>Service Mesh Version</th>
+  <th>Overall Compatibility</th>
+
+    <!-- display tests from the stable channel -->
+
+    {% for group in sorted_tests_group %}
+      {% assign items = group.items | sort: "meshery-component-version" | reverse %}
+      {% for item in items limit: 1 %}
+        {% if item.meshery-component-version != "edge" %}
+          {% if item.overall-status == "passing" %}
+            {% assign overall-status = "background-color: #56B257; color: white;" %}
+            {% assign result-state = "✅" %}
+          {% elsif item.overall-status == "partial" %}
+            {% assign overall-status = "background-color: #EBC017; color: white;" %}
+            {% assign result-state = "⚠️" %}
+          {% elsif item.overall-status == "failing" %}
+            {% assign overall-status = "background-color: #B32700; color: white;" %}
+            {% assign result-state = "❌" %}
+          {% else %}
+            {% assign overall-status = "" %}
+          {% endif %}
+          <tr style="visibility: hidden; display: none;" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.meshery-component}}-stable');">
+            <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
+            <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
+            <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
+            <td>{{ item.service-mesh-version }}</td>
+            <td style="{{ overall-status }}"></td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+
+</table>
+
+## Integration Tests
+
+As a key aspect of Meshery, its integrations with other systems are routinely tested. Unit, integration testing occurs before and after every pull request (before code is to be merged into the project and after code is merged into the project). Regression tests are run nightly.
+
 
 <div class="checkbox">
     <div>
