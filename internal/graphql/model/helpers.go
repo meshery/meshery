@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 	"sync"
+	"fmt"
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
@@ -121,26 +122,27 @@ func PersistClusterName(
 	if err != nil {
 		log.Error(err)
 	}
-
-	clusterName := clusterConfig.Cluster["name"].(string)
-	clusterID := clusterConfig.KubernetesServerID.String()
-	object := meshsyncmodel.Object{
-		Kind: "Cluster",
-		ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
-			Name:      clusterName,
+	if clusterConfig != nil {
+		clusterName := clusterConfig.Cluster["name"].(string)
+		clusterID := clusterConfig.KubernetesServerID.String()
+		object := meshsyncmodel.Object{
+			Kind: "Cluster",
+			ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
+				Name:      clusterName,
+				ClusterID: clusterID,
+			},
 			ClusterID: clusterID,
-		},
-		ClusterID: clusterID,
+		}
+	
+		// persist the object
+		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
+		err = recordMeshSyncData(broker.Add, handler, &object)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+		meshsyncCh <- struct{}{}
 	}
-
-	// persist the object
-	log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
-	err = recordMeshSyncData(broker.Add, handler, &object)
-	if err != nil {
-		log.Error(err)
-		return
-	}
-	meshsyncCh <- struct{}{}
 }
 
 func applyYaml(client *mesherykube.Client, delete bool, file string) error {
