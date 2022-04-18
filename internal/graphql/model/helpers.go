@@ -4,7 +4,6 @@ import (
 	"context"
 	"strings"
 	"sync"
-	"fmt"
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
