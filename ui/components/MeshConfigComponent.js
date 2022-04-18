@@ -420,7 +420,7 @@ handleNATSClick = () => {
           autohideduration : 2000,
         })
       } else {
-        self.handleError("Broker could not be reached")("Client is not connected to Broker");
+        self.handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
       }
       self.setState({
         NATSState : res.controller.status,
@@ -483,7 +483,7 @@ handleNATSClick = () => {
           autohideduration : 2000,
         })
       } else {
-        self.handleError("MeshSync could not be reached")("MeshSync is disabled");
+        self.handleError("MeshSync could not be reached")("MeshSync is unavailable");
         self.setState({
           meshSyncInstalled : false,
           meshSyncVersion : "",
