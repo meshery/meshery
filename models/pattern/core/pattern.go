@@ -209,14 +209,21 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	dependsOnMap := make(map[string][]string, 0) //used to figure out dependencies from traits.meshmap.parent
 	eleToSvc := make(map[string]string)          //used to map cyto element ID uniquely to the name of the service created.
 	countDuplicates := make(map[string]int)
-	processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
+	//store the names of services and their count
+	err := processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
 		name, ok := svc.Settings["name"].(string)
-		if ok {
-			countDuplicates[name]++
+		if !ok {
+			return fmt.Errorf("missing name in service settings")
 		}
+		countDuplicates[name]++
 		return nil
 	})
-	err := processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
+	if err != nil {
+		return pf, err
+	}
+
+	//Populate the dependsOn field with appropriate unique service names
+	err = processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
 		//Extract parents, if present
 		m, ok := svc.Traits["meshmap"].(map[string]interface{})
 		if ok {
@@ -233,7 +240,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		if !ok {
 			return fmt.Errorf("required service setting: \"name\" missing")
 		}
-		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propogate the unique name they want to give to their workload
+		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
 		if countDuplicates[svc.Name] > 1 {
 			//set appropriate unique service name
 			svc.Name = strings.ToLower(svc.Name)
