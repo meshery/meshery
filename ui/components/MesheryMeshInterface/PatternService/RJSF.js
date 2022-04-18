@@ -36,7 +36,7 @@ function RJSF(props) {
   const errorHandler = handleError();
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
-  const [schema, setSchema] = React.useState({ rjsfSchema: {}, uiSchema: {} })
+  const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
   const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
@@ -55,7 +55,7 @@ function RJSF(props) {
   }, [jsonSchema]) // to reduce heavy lifting on every react render
 
   React.useEffect(() => {
-    if (!_.isEqual(schema, { rjsfSchema: {}, uiSchema: {} })) {
+    if (!_.isEqual(schema, { rjsfSchema : {}, uiSchema : {} })) {
       setTimeout(() => {
         setIsLoading(false);
       }, 300); // for showing circular progress
@@ -124,7 +124,7 @@ function RJSFForm(props) {
         additionalMetaSchemas={[JS4]}
         uiSchema={schema.uiSchema}
         widgets={{
-          TextWidget: CustomInputField
+          TextWidget : CustomInputField
         }}
         liveValidate
         showErrorList={false}

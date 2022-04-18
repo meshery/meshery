@@ -1,18 +1,24 @@
 module.exports = {
-  "env" : { "browser" : true,
-    "es6" : true },
+  "env" : {
+    "browser" : true,
+    "es6" : true
+  },
   'settings' : { 'react' : { 'version' : require('./package.json').dependencies.react, }, },
   "extends" : [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:cypress/recommended"
   ],
-  "globals" : { "Atomics" : "readonly",
-    "SharedArrayBuffer" : "readonly" },
-  'parser' : 'babel-eslint',
-  "parserOptions" : { "ecmaFeatures" : { "jsx" : true },
+  "globals" : {
+    "Atomics" : "readonly",
+    "SharedArrayBuffer" : "readonly"
+  },
+  "parser" : "@babel/eslint-parser",
+  "parserOptions" : {
+    "ecmaFeatures" : { "jsx" : true },
     "ecmaVersion" : 2018,
-    "sourceType" : "module" },
+    "sourceType" : "module"
+  },
   "plugins" : [
     "react",
     "cypress"
@@ -22,18 +28,24 @@ module.exports = {
     "comma-style" : ["error"],
     "arrow-spacing" : [
       "error",
-      { "after" : true,
-        "before" : true }
+      {
+        "after" : true,
+        "before" : true
+      }
     ],
     "jsx-quotes" : ["error", "prefer-double"],
     "block-scoped-var" : "error",
     "keyword-spacing" : "error",
     "no-trailing-spaces" : "error",
     "object-curly-spacing" : ["error", "always"],
-    "arrow-spacing" : ["error" ,{ "before" : true,
-      "after" : true, }],
-    "key-spacing" : ["error", { "beforeColon" : true,
-      "afterColon" : true, }],
+    "arrow-spacing" : ["error", {
+      "before" : true,
+      "after" : true,
+    }],
+    "key-spacing" : ["error", {
+      "beforeColon" : true,
+      "afterColon" : true,
+    }],
     "block-spacing" : "error",
     "brace-style" : [
       "error",
