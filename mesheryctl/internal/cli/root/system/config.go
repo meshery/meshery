@@ -60,16 +60,24 @@ func getContexts(configFile string) ([]string, error) {
 		return nil, err
 	}
 
+	log.Debugf("Get context API response: %s", string(body))
 	var results []map[string]interface{}
 	err = json.Unmarshal(body, &results)
 	if err != nil {
 		return nil, err
 	}
 
+	if results == nil {
+		errstr := "Error unmarshalling the context info, check " + configFile + " file"
+		return nil, errors.New(errstr)
+	}
+
+	log.Debugf("Unmarshalled get context API response: %s", results)
 	var contexts []string
 	for _, item := range results {
-		contexts = append(contexts, item["contextName"].(string))
+		contexts = append(contexts, item["name"].(string))
 	}
+	log.Debugf("Available contexts: %s", contexts)
 	return contexts, nil
 }
 
@@ -98,7 +106,7 @@ func setContext(configFile, cname string) error {
 		return err
 	}
 	// TODO: Pretty print the output
-	fmt.Printf("%v\n", string(body))
+	log.Debugf("Set context API response: %s", string(body))
 	return nil
 }
 
@@ -345,7 +353,7 @@ func setToken() {
 		choosenCtx = contexts[choice-1]
 	}
 
-	log.Debugf("Chosen context : %s", choosenCtx)
+	log.Debugf("Chosen context : %s out of the %d available contexts", choosenCtx, len(contexts))
 	err = setContext(utils.ConfigPath, choosenCtx)
 	if err != nil {
 		log.Fatalf("Error setting context: %s", err.Error())
