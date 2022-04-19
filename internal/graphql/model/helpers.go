@@ -120,6 +120,11 @@ func PersistClusterName(
 	clusterConfig, err := h.GetCurrentContext(tokenString, provider)
 	if err != nil {
 		log.Error(err)
+		return
+	}
+
+	if clusterConfig == nil {
+		return
 	}
 
 	clusterName := clusterConfig.Cluster["name"].(string)
@@ -132,7 +137,7 @@ func PersistClusterName(
 		},
 		ClusterID: clusterID,
 	}
-
+	
 	// persist the object
 	log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
 	err = recordMeshSyncData(broker.Add, handler, &object)
