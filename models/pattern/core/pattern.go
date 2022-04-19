@@ -370,7 +370,9 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 	namespace, _ := metadata["namespace"].(string)
 	labels, _ := metadata["labels"].(map[string]interface{})
 	annotations, _ := metadata["annotations"].(map[string]interface{})
-
+	if namespace == "" {
+		namespace = "default"
+	}
 	fmt.Printf("%+#v\n", manifest)
 
 	// rest will store a map of everything other than the above mentioned fields
@@ -435,7 +437,9 @@ func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (strin
 	spec, _ := manifest["spec"].(map[string]interface{})
 	labels, _ := metadata["labels"].(map[string]interface{})
 	annotations, _ := metadata["annotations"].(map[string]interface{})
-
+	if namespace == "" {
+		namespace = "default"
+	}
 	id := name
 	uid, err := uuid.NewV4()
 	if err == nil {
