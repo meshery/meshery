@@ -20,7 +20,7 @@ import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDi
 const baseURL = "http://localhost:9081"
 
 const ExtensionsComponent = () => {
-  const [consulChecked, isConsulChecked] = useState(true);
+  const [consulChecked, setConsulChecked] = useState(false);
   const [istioChecked, isIstioChecked] = useState(false);
   const [linkerdChecked, isLinkerdChecked] = useState(false);
   const [nginxChecked, isNginxChecked] = useState(false);
@@ -58,23 +58,38 @@ const ExtensionsComponent = () => {
 
   // Wrote separate functions since we need these functions to provision the adapters as well
   const handleConsul = () => {
-    submitConfig("http://localhost:10000");
-    isConsulChecked(prev => !prev)
+    window.ddClient.desktopUI.toast.success(`Request received. ${consulChecked ? "Deprovisioning" : "Provisioning"} Consul Service Mesh...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Consul Service Mesh ${consulChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    }, 3000)
+    setConsulChecked(prev => !prev)
   }
   const handleIstio = () => {
-    submitConfig("http://localhost:10000");
+    window.ddClient.desktopUI.toast.success(`Request received. ${istioChecked ? "Deprovisioning" : "Provisioning"} Istio Service Mesh...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Istio Service Mesh ${istioChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    }, 3000)
     isIstioChecked(prev => !prev);
   }
   const handleLinkerd = () => {
-    submitConfig("http://localhost:10000");
+    window.ddClient.desktopUI.toast.success(`Request received. ${linkerdChecked ? "Deprovisioning" : "Provisioning"} Linkerd Service Mesh...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Linkerd Service Mesh ${linkerdChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    }, 3000)
     isLinkerdChecked(prev => !prev);
   }
   const handleNginx = () => {
-    submitConfig("http://localhost:10000");
+    window.ddClient.desktopUI.toast.success(`Request received. ${nginxChecked ? "Deprovisioning" : "Provisioning"} Nginx Service Mesh...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Nginx Service Mesh ${nginxChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    }, 3000)
     isNginxChecked(prev => !prev);
   }
   const handleKuma = () => {
-    submitConfig("http://localhost:10000");
+    window.ddClient.desktopUI.toast.success(`Request received. ${kumaChecked ? "Deprovisioning" : "Provisioning"} Kuma Service Mesh...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Kuma Service Mesh ${kumaChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    }, 3000)
     isKumaChecked(prev => !prev);
   }
 
@@ -122,24 +137,23 @@ const ExtensionsComponent = () => {
               <CustomTypography sx={{ marginBottom: "2rem" }}>Deploy a Service Mesh</CustomTypography>
               <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
                 <ServiceMeshAdapters>
-
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!consulChecked}>
                       <ConsulIcon width={40} height={40} /> </AdapterDiv>
-                    <Switch onChange={handleConsul} color="primary" defaultChecked></Switch>
+                    <Switch checked={consulChecked} onChange={handleConsul} color="primary" ></Switch>
                   </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!istioChecked}>
                       <IstioIcon width={40} height={40} /></AdapterDiv>
-                    <Switch onChange={handleIstio} color="primary"></Switch> </StyledDiv>
+                    <Switch checked={istioChecked} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
 
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
-                    <Switch onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
+                    <Switch checked={linkerdChecked} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv><Switch onChange={handleNginx} color="primary"></Switch> </StyledDiv>
+                    <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv><Switch checked={nginxChecked} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv><Switch onChange={handleKuma} color="primary"></Switch> </StyledDiv>
+                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv><Switch checked={kumaChecked} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
               </Grid>
             </div>
