@@ -409,6 +409,19 @@ handleNATSClick = () => {
   NatsStatusQuery().subscribe({
     next : (res) => {
       self.props.updateProgress({ showProgress : false });
+      if (res.controller.name === "broker" && res.controller.status == "CONNECTED") {
+        this.props.enqueueSnackbar(`Broker was successfully pinged`, {
+          variant : "success",
+          action : (key) => (
+            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          ),
+          autohideduration : 2000,
+        })
+      } else {
+        self.handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
+      }
       self.setState({
         NATSState : res.controller.status,
         NATSVersion : res.controller.version,
@@ -460,7 +473,17 @@ handleNATSClick = () => {
           meshSyncInstalled : true,
           meshSyncVersion : res.controller.version,
         });
+        this.props.enqueueSnackbar(`MeshSync was successfully pinged`, {
+          variant : "success",
+          action : (key) => (
+            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          ),
+          autohideduration : 2000,
+        })
       } else {
+        self.handleError("MeshSync could not be reached")("MeshSync is unavailable");
         self.setState({
           meshSyncInstalled : false,
           meshSyncVersion : "",

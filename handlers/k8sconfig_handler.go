@@ -247,6 +247,9 @@ func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models
 		}
 
 		// Attempt to get kubeconfig from the filesystem
+		if h.config == nil {
+			return nil, ErrInvalidK8SConfig
+		}
 		data, err := utils.ReadFileSource(fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config")))
 		if err != nil {
 			// Could be an in-cluster deployment

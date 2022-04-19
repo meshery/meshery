@@ -147,7 +147,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
             aria-label="Update"
             color="primary"
             onClick={() =>
-              onSubmit( { data : yaml, id : pattern.id, name : pattern.name, action : FILE_OPS.UPDATE } )
+              onSubmit( { data : yaml, id : pattern.id, name : pattern.name, type : FILE_OPS.UPDATE } )
             }
           >
             <SaveIcon />
@@ -161,7 +161,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
               data : yaml,
               id : pattern.id,
               name : pattern.name,
-              action : FILE_OPS.DELETE
+              type : FILE_OPS.DELETE
             })}
           >
             <DeleteIcon />

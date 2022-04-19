@@ -54,7 +54,7 @@ jobs:
         name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
         run: |
-          # GIT_REF=`git symbolic-ref HEAD`
+          GIT_TAG=`git symbolic-ref HEAD -q`
           if [[ $GIT_TAG = refs/tags* ]]
           then
             echo RELEASE_CHANNEL=stable >> $GITHUB_ENV
