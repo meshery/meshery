@@ -2,7 +2,7 @@
   "name": "ui",
   "version": "1.0.0",
   "homepage": "./",
-  "description": "the service mesh management plane",
+  "description": "the cloud native management plane",
   "main": "index.js",
   "dependencies": {
     "@docker/docker-mui-theme": "^0.0.4",
