@@ -9,14 +9,14 @@ import IstioIcon from "../../img/SVGs/IstioIcon";
 import KumaIcon from "../../img/SVGs/kumaIcon";
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
 import NginxIcon from "../../img/SVGs/nginxIcon";
-import MeshsyncIcon from "../../img/SVGs/meshsync";
+import Meshery from "../../img/SVGs/meshery";
 import MesheryBlackIcon from "../../img/SVGs/mesheryBlackIcon";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import CustomTypography from "../CustomTypography"
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
-import MeshSyncAnimation from "../MeshSyncAnimation/MeshSyncAnimation";
+import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 
 
 const ExtensionsComponent = props => {
@@ -87,30 +87,31 @@ const ExtensionsComponent = props => {
         <CustomTypography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
 
         <SectionWrapper>
+
         <ExtensionWrapper>
-          
             <AccountDiv>
               <CustomTypography sx={{ marginBottom: "1rem" }}>
                 Account
               </CustomTypography>
               <div style={{marginBottom: "0.5rem"}}>
                 <a style={{ textDecoration: "none" }} href="http://localhost:9081">
+               
                 <div
           onMouseEnter={() => setIsHovered(!isHovered)}
           onMouseLeave={onMouseOut}
           onClick={onClick}
           onMouseOver={onMouseOver}
         > 
-        {isHovered ? <MeshSyncAnimation style={{ height : "70px" }} /> : <MeshsyncIcon height={70} width={72} /> }
+         {isHovered ?    <MesheryAnimation height={70} width={72}/> : <Meshery height={70} width={72} /> } 
         
         </div>
-        <MesheryBlackIcon width={110} />
+        {/* <MesheryBlackIcon width={110} /> */}
              {/* <div onMouseEnter={trigger}>   <MeshSyncAnimation style={{ height : "75px" }} /> </div> */}
                 </a>
               </div>
             </AccountDiv>
-          
-        </ExtensionWrapper>
+            </ExtensionWrapper>
+
 
         <ExtensionWrapper>
           <AccountDiv>
