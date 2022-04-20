@@ -90,7 +90,7 @@ const ExtensionsComponent = props => {
 
         <ExtensionWrapper>
             <AccountDiv>
-              <CustomTypography sx={{ marginBottom: "1rem" }}>
+              <CustomTypography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 Launch Meshery
               </CustomTypography>
               <div style={{marginBottom: "0.5rem"}}>
