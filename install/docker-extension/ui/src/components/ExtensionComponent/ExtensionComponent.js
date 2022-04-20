@@ -9,11 +9,14 @@ import IstioIcon from "../../img/SVGs/IstioIcon";
 import KumaIcon from "../../img/SVGs/kumaIcon";
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
 import NginxIcon from "../../img/SVGs/nginxIcon";
+import MeshsyncIcon from "../../img/SVGs/meshsync";
+import MesheryBlackIcon from "../../img/SVGs/mesheryBlackIcon";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import CustomTypography from "../CustomTypography"
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
+import MeshSyncAnimation from "../MeshSyncAnimation/MeshSyncAnimation";
 
 
 const ExtensionsComponent = props => {
@@ -22,6 +25,7 @@ const ExtensionsComponent = props => {
   const [linkerdChecked, isLinkerdChecked] = useState(false);
   const [nginxChecked, isNginxChecked] = useState(false);
   const [kumaChecked, isKumaChecked] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
 
   const theme = {
@@ -29,6 +33,28 @@ const ExtensionsComponent = props => {
     backgroundColor: "#222C32",
     padding: "5rem",
     maxHeight: "100vh"
+  };
+
+  const onMouseOver = e => {
+    let target = e.target.closest("div");
+    target.style.transition = "all .5s";
+    target.style.transform = "scale(1.11)";
+  }
+  const onMouseOut = e => {
+    setIsHovered(!isHovered);
+    let target = e.target.closest("div");
+    target.style.transition = "all .8s";
+    target.style.transform = "scale(1)";
+  }
+
+  const onClick = e => {
+    let target = e.target.closest("div");
+    target.style.transition = "all .2s";
+    target.style.transform = "scale(0.9)";
+    target.style.cursor = "grabbing";
+    setTimeout(() => {
+      target.style.transition = "none";
+    }, 100);
   };
 
   useEffect(() => {
@@ -64,14 +90,22 @@ const ExtensionsComponent = props => {
         <ExtensionWrapper>
           
             <AccountDiv>
-              <CustomTypography sx={{ marginBottom: "2rem" }}>
+              <CustomTypography sx={{ marginBottom: "1rem" }}>
                 Account
               </CustomTypography>
-              <div style={{ paddingBottom: "2rem" }}>
+              <div style={{marginBottom: "0.5rem"}}>
                 <a style={{ textDecoration: "none" }} href="http://localhost:9081">
-                  <Button sx={{ color: "#FFFFFF", whiteSpace: "nowrap" }}       variant="contained">
-                    Open Meshery
-                  </Button>
+                <div
+          onMouseEnter={() => setIsHovered(!isHovered)}
+          onMouseLeave={onMouseOut}
+          onClick={onClick}
+          onMouseOver={onMouseOver}
+        > 
+        {isHovered ? <MeshSyncAnimation style={{ height : "70px" }} /> : <MeshsyncIcon height={70} width={72} /> }
+        
+        </div>
+        <MesheryBlackIcon width={110} />
+             {/* <div onMouseEnter={trigger}>   <MeshSyncAnimation style={{ height : "75px" }} /> </div> */}
                 </a>
               </div>
             </AccountDiv>
