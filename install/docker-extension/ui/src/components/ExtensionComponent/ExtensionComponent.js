@@ -91,7 +91,7 @@ const ExtensionsComponent = props => {
         <ExtensionWrapper>
             <AccountDiv>
               <CustomTypography sx={{ marginBottom: "1rem" }}>
-                Account
+                Launch Meshery
               </CustomTypography>
               <div style={{marginBottom: "0.5rem"}}>
                 <a style={{ textDecoration: "none" }} href="http://localhost:9081">
