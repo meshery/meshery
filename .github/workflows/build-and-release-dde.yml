@@ -7,9 +7,8 @@ on:
       - 'v*'  
     branches:
       - 'master'
-    paths-ignore:
-       - 'docs/**'
-       - '.github/**'
+    paths:
+      - 'install/docker-extension/**'
   workflow_dispatch:
     inputs:
       release-ver:
