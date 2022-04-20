@@ -41,7 +41,7 @@ const ExtensionsComponent = () => {
   const onMouseOver = e => {
     let target = e.target.closest("div");
     target.style.transition = "all .5s";
-    target.style.transform = "scale(1.11)";
+    target.style.transform = "scale(1)";
   }
   const onMouseOut = e => {
     setIsHovered(!isHovered);
@@ -53,11 +53,7 @@ const ExtensionsComponent = () => {
   const onClick = e => {
     let target = e.target.closest("div");
     target.style.transition = "all .2s";
-    target.style.transform = "scale(0.9)";
-    target.style.cursor = "grabbing";
-    setTimeout(() => {
-      target.style.transition = "none";
-    }, 100);
+    target.style.transform = "scale(0.8)";
   };
 
   useEffect(() => {
