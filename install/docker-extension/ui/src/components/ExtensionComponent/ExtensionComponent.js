@@ -15,12 +15,15 @@ import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import CustomTypography from "../CustomTypography"
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
+import dataFetch from "../../lib/data-fetch";
 import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 
 
-const ExtensionsComponent = props => {
-  const [consulChecked, isConsulChecked] = useState(true);
+const baseURL = "http://localhost:9081"
+
+const ExtensionsComponent = () => {
+  const [consulChecked, setConsulChecked] = useState(false);
   const [istioChecked, isIstioChecked] = useState(false);
   const [linkerdChecked, isLinkerdChecked] = useState(false);
   const [nginxChecked, isNginxChecked] = useState(false);
@@ -61,20 +64,58 @@ const ExtensionsComponent = props => {
     // window.ddClient.extension.vm.service.get("/ping").then(console.log);
   }, [])
 
+  const submitConfig = (adapterLocation) => {
+
+    const data = { meshLocationURL: adapterLocation };
+
+    const params = Object.keys(data)
+      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
+
+    console.log("asdf")
+    window.ddClient.extension.vm.service.post("/api/system/adapter/manage", {
+      credentials: "same-origin",
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
+      body: params,
+    }).then(window.ddClient.desktopUI.toast.success("Service Mesh was successfully provisioned.")).catch(window.ddClient.desktopUI.toast.error("Some error occured while trying to provision the service mesh."));
+  }
+
+
   // Wrote separate functions since we need these functions to provision the adapters as well
   const handleConsul = () => {
-    isConsulChecked(prev => !prev);
+    window.ddClient.desktopUI.toast.success(`Request received. ${consulChecked ? "Deprovisioning" : "Provisioning"} Consul Service Mesh...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Consul Service Mesh ${consulChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    }, 3000)
+    setConsulChecked(prev => !prev)
   }
   const handleIstio = () => {
+    window.ddClient.desktopUI.toast.success(`Request received. ${istioChecked ? "Deprovisioning" : "Provisioning"} Istio Service Mesh...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Istio Service Mesh ${istioChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    }, 3000)
     isIstioChecked(prev => !prev);
   }
   const handleLinkerd = () => {
+    window.ddClient.desktopUI.toast.success(`Request received. ${linkerdChecked ? "Deprovisioning" : "Provisioning"} Linkerd Service Mesh...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Linkerd Service Mesh ${linkerdChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    }, 3000)
     isLinkerdChecked(prev => !prev);
   }
   const handleNginx = () => {
+    window.ddClient.desktopUI.toast.success(`Request received. ${nginxChecked ? "Deprovisioning" : "Provisioning"} Nginx Service Mesh...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Nginx Service Mesh ${nginxChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    }, 3000)
     isNginxChecked(prev => !prev);
   }
   const handleKuma = () => {
+    window.ddClient.desktopUI.toast.success(`Request received. ${kumaChecked ? "Deprovisioning" : "Provisioning"} Kuma Service Mesh...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Kuma Service Mesh ${kumaChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    }, 3000)
     isKumaChecked(prev => !prev);
   }
 
@@ -128,33 +169,32 @@ const ExtensionsComponent = props => {
           </ExtensionWrapper>
           <ExtensionWrapper>
             <div>
-          <CustomTypography sx={{ marginBottom: "2rem" }}>Deploy a Service Mesh</CustomTypography>
-          <Grid style = {{display: "flex", justifyContent: 'center', alignItems: 'center' }}>
-            <ServiceMeshAdapters>
-             
-              <StyledDiv>
-                <AdapterDiv inactiveAdapter={!consulChecked}>
-                  <ConsulIcon width={40} height={40} /> </AdapterDiv>
-                <Switch onChange={handleConsul} color="primary" defaultChecked></Switch>
-              </StyledDiv>
-              <StyledDiv>
-                <AdapterDiv inactiveAdapter={!istioChecked}>
-                  <IstioIcon width={40} height={40} /></AdapterDiv>
-                <Switch onChange={handleIstio} color="primary"></Switch> </StyledDiv>
+              <CustomTypography sx={{ marginBottom: "2rem" }}>Deploy a Service Mesh</CustomTypography>
+              <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
+                <ServiceMeshAdapters>
+                  <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!consulChecked}>
+                      <ConsulIcon width={40} height={40} /> </AdapterDiv>
+                    <Switch checked={consulChecked} onChange={handleConsul} color="primary" ></Switch>
+                  </StyledDiv>
+                  <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!istioChecked}>
+                      <IstioIcon width={40} height={40} /></AdapterDiv>
+                    <Switch checked={istioChecked} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
 
-              <StyledDiv>
-                <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
-                <Switch onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
-              <StyledDiv>
-                <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv><Switch onChange={handleNginx} color="primary"></Switch> </StyledDiv>
-              <StyledDiv>
-                <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv><Switch onChange={handleKuma} color="primary"></Switch> </StyledDiv>
-            </ServiceMeshAdapters>
-          </Grid>
-          </div>
-      </ExtensionWrapper>
-      </SectionWrapper>
-    </ComponentWrapper>
+                  <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
+                    <Switch checked={linkerdChecked} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
+                  <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv><Switch checked={nginxChecked} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
+                  <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv><Switch checked={kumaChecked} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
+                </ServiceMeshAdapters>
+              </Grid>
+            </div>
+          </ExtensionWrapper>
+        </SectionWrapper>
+      </ComponentWrapper>
     </DockerMuiThemeProvider >
   );
 }
