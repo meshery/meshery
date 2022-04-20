@@ -9,12 +9,15 @@ import IstioIcon from "../../img/SVGs/IstioIcon";
 import KumaIcon from "../../img/SVGs/kumaIcon";
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
 import NginxIcon from "../../img/SVGs/nginxIcon";
+import Meshery from "../../img/SVGs/meshery";
+import MesheryBlackIcon from "../../img/SVGs/mesheryBlackIcon";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import CustomTypography from "../CustomTypography"
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import dataFetch from "../../lib/data-fetch";
 import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
+import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 
 
 const baseURL = "http://localhost:9081"
@@ -25,6 +28,7 @@ const ExtensionsComponent = () => {
   const [linkerdChecked, isLinkerdChecked] = useState(false);
   const [nginxChecked, isNginxChecked] = useState(false);
   const [kumaChecked, isKumaChecked] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
 
   const theme = {
@@ -32,6 +36,28 @@ const ExtensionsComponent = () => {
     backgroundColor: "#222C32",
     padding: "5rem",
     maxHeight: "100vh"
+  };
+
+  const onMouseOver = e => {
+    let target = e.target.closest("div");
+    target.style.transition = "all .5s";
+    target.style.transform = "scale(1.11)";
+  }
+  const onMouseOut = e => {
+    setIsHovered(!isHovered);
+    let target = e.target.closest("div");
+    target.style.transition = "all .8s";
+    target.style.transform = "scale(1)";
+  }
+
+  const onClick = e => {
+    let target = e.target.closest("div");
+    target.style.transition = "all .2s";
+    target.style.transform = "scale(0.9)";
+    target.style.cursor = "grabbing";
+    setTimeout(() => {
+      target.style.transition = "none";
+    }, 100);
   };
 
   useEffect(() => {
@@ -102,34 +128,43 @@ const ExtensionsComponent = () => {
         <CustomTypography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
 
         <SectionWrapper>
-          <ExtensionWrapper>
 
+        <ExtensionWrapper>
             <AccountDiv>
-              <CustomTypography sx={{ marginBottom: "2rem" }}>
-                Account
+              <CustomTypography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+                Launch Meshery
               </CustomTypography>
-              <div style={{ paddingBottom: "2rem" }}>
+              <div style={{marginBottom: "0.5rem"}}>
                 <a style={{ textDecoration: "none" }} href="http://localhost:9081">
-                  <Button sx={{ color: "#FFFFFF", whiteSpace: "nowrap" }} variant="contained">
-                    Open Meshery
-                  </Button>
+               
+                <div
+          onMouseEnter={() => setIsHovered(!isHovered)}
+          onMouseLeave={onMouseOut}
+          onClick={onClick}
+          onMouseOver={onMouseOver}
+        > 
+         {isHovered ?    <MesheryAnimation height={70} width={72}/> : <Meshery height={70} width={72} /> } 
+        
+        </div>
+        {/* <MesheryBlackIcon width={110} /> */}
+             {/* <div onMouseEnter={trigger}>   <MeshSyncAnimation style={{ height : "75px" }} /> </div> */}
                 </a>
               </div>
             </AccountDiv>
+            </ExtensionWrapper>
 
-          </ExtensionWrapper>
 
-          <ExtensionWrapper>
-            <AccountDiv>
-              <CustomTypography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</CustomTypography>
-              <div style={{ paddingBottom: "2rem" }}>
-                <label htmlFor="upload-button" >
-                  <Button sx={{ backgroundColor: "#7794AB" }} variant="contained" color="primary" aria-label="Upload Button" component="span" >
-                    <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" />
-                    Browse...
-                  </Button>
-                </label>
-              </div>
+        <ExtensionWrapper>
+          <AccountDiv>
+            <CustomTypography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</CustomTypography>
+            <div style={{ paddingBottom: "2rem" }}>
+            <label htmlFor="upload-button" >
+              <Button sx={{ backgroundColor: "#7794AB" }} variant="contained" color="primary" aria-label="Upload Button" component="span" >
+                <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" />
+                Browse...
+              </Button>
+            </label>
+            </div>
             </AccountDiv>
           </ExtensionWrapper>
           <ExtensionWrapper>
