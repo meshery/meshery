@@ -83,7 +83,7 @@ jobs:
         with:
           images: meshery/docker-extension-meshery
           flavor: |
-            latest=false
+            latest=true
           tags: |
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{sha}}
             type=semver,pattern={{version}},value=${{env.GIT_STRIPPED_VERSION}}
