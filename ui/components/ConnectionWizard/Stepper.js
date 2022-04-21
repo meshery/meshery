@@ -26,29 +26,30 @@ const ColorlibConnector = withStyles({
   },
 })(StepConnector);
 
-const useColorlibStepIconStyles = makeStyles({ root : {
-  backgroundColor : "#ccc",
-  zIndex : 1,
-  color : "#fff",
-  width : 50,
-  height : 50,
-  display : "flex",
-  border : ".2rem solid #ccc",
-  borderRadius : "50%",
-  justifyContent : "center",
-  alignItems : "center",
-  cursor : "pointer",
-},
-active : {
-  background : "#fff",
-  color : "#3C494E",
-  boxShadow : "0 4px 10px 0 rgba(0,0,0,.25)",
-  border : ".2rem solid #00B39F",
-  transition : "all 0.5s ease-in",
-},
-completed : { border : ".2rem solid #00B39F",
-  background : "#00B39F",
-  transition : "all 0.5s ease-in", }, });
+const useColorlibStepIconStyles = makeStyles({
+  icnlist : {
+    backgroundColor : "#ccc",
+    zIndex : 1,
+    color : "#fff",
+    width : 50,
+    height : 50,
+    display : "flex",
+    border : ".2rem solid #ccc",
+    borderRadius : "50%",
+    justifyContent : "center",
+    alignItems : "center",
+    cursor : "pointer",
+  },
+  active : {
+    background : "#fff",
+    color : "#3C494E",
+    boxShadow : "0 4px 10px 0 rgba(0,0,0,.25)",
+    border : ".2rem solid #00B39F",
+    transition : "all 0.5s ease-in",
+  },
+  completed : { border : ".2rem solid #00B39F",
+    background : "#00B39F",
+    transition : "all 0.5s ease-in", }, });
 
 const useStepperStyles = makeStyles({ removePadding : { padding : "0 !important" } })
 
@@ -60,7 +61,7 @@ function ColorlibStepIcon(props) {
 
   return (
     <div
-      className={clsx(classes.root, { [classes.active] : active,
+      className={clsx(classes.icnlist, { [classes.active] : active,
         [classes.completed] : completed, })}
       style={{ position : "relative", cursor : "default" }}
     >

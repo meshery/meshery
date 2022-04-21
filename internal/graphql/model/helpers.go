@@ -107,6 +107,47 @@ func persistData(msg broker.Message,
 	}
 }
 
+func PersistClusterName(
+	ctx context.Context,
+	log logger.Handler,
+	handler *database.Handler,
+	provider models.Provider,
+	meshsyncCh chan struct{},
+) {
+	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	h := &handlers.Handler{}
+
+	clusterConfig, err := h.GetCurrentContext(tokenString, provider)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if clusterConfig == nil {
+		return
+	}
+
+	clusterName := clusterConfig.Cluster["name"].(string)
+	clusterID := clusterConfig.KubernetesServerID.String()
+	object := meshsyncmodel.Object{
+		Kind: "Cluster",
+		ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
+			Name:      clusterName,
+			ClusterID: clusterID,
+		},
+		ClusterID: clusterID,
+	}
+	
+	// persist the object
+	log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
+	err = recordMeshSyncData(broker.Add, handler, &object)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	meshsyncCh <- struct{}{}
+}
+
 func applyYaml(client *mesherykube.Client, delete bool, file string) error {
 	contents, err := utils.ReadRemoteFile(file)
 	if err != nil {

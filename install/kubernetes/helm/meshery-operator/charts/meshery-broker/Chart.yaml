@@ -1,8 +1,8 @@
 apiVersion: v2
 name: meshery-broker
-description: Meshery Broker CR Chart
+description: Meshery Broker
 type: application
-version: 0.1.0
+version: 0.5.0
 appVersion: stable-latest
 
 maintainers:

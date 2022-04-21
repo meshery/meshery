@@ -7,7 +7,7 @@ import {
 } from "@material-ui/core";
 
 const styles = makeStyles(() => ({
-  root : {
+  rootClass : {
     backgroundColor : "#fff",
     padding : "2rem",
     textAlign : "center",
@@ -61,7 +61,7 @@ function CustomErrorMessage(){
 
   return (
     <NoSsr>
-	  <div className={classes.root}>
+      <div className={classes.rootClass}>
         <div className={classes.errorSection}>
           <Typography variant="h1">
             <div className={classes.message}>

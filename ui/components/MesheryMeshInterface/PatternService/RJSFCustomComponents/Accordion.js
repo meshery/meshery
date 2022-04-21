@@ -9,7 +9,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { IconButton } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  root : {
+  accordionRoot : {
     width : "100%",
     marginBottom : "1rem"
   },
@@ -79,7 +79,7 @@ export default function SimpleAccordion(props) {
   }, [accordionDetailsRef.current]);
 
   return (
-    <div className={classes.root}>
+    <div className={classes.accordionRoot}>
       <Accordion defaultExpanded elevation={0}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
