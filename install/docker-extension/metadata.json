@@ -1,6 +1,4 @@
 {
-  "name": "meshery-extension",
-  "provider": "Docker Inc.",
   "icon": "meshery-logo-light.svg",
   "vm": {
     "composefile": "docker-compose.yaml",
