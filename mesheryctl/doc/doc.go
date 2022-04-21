@@ -21,7 +21,7 @@ const markdownTemplateCommand = `---
 layout: default
 title: %s
 permalink: %s
-redirect_from: %s
+redirect_from: %s/
 type: reference
 display-title: "false"
 language: en
@@ -47,14 +47,14 @@ func prepender(filename string) string {
 		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[0], "nil")
 	}
 	if len(words) == 3 {
-		url := "reference/" + words[0] + "/" + words[1] + "/" + words[2] + "/"
+		url := "reference/" + words[0] + "/" + words[1] + "/" + words[2] 
 		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], words[2])
 	}
 	if len(words) == 4 {
-		url := "reference/" + words[0] + "/" + words[1] + "/" + words[2] + "/" + words[3] + "/"
+		url := "reference/" + words[0] + "/" + words[1] + "/" + words[2] + "/" + words[3] 
 		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], words[2])
 	}
-	url := "reference/" + words[0] + "/" + words[1] + "/"
+	url := "reference/" + words[0] + "/" + words[1] 
 	return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], "nil")
 }
 

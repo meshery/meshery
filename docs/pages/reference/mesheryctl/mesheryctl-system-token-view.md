@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-token-view
-permalink: reference/mesheryctl/system/token/view/
+permalink: reference/mesheryctl/system/token/view
 redirect_from: reference/mesheryctl/system/token/view/
 type: reference
 display-title: "false"

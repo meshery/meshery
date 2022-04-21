@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-pattern-delete
-permalink: reference/mesheryctl/pattern/delete/
+permalink: reference/mesheryctl/pattern/delete
 redirect_from: reference/mesheryctl/pattern/delete/
 type: reference
 display-title: "false"

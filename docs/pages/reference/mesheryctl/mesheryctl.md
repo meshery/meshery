@@ -2,7 +2,7 @@
 layout: default
 title: mesheryctl
 permalink: reference/mesheryctl/main
-redirect_from: reference/mesheryctl/main
+redirect_from: reference/mesheryctl/main/
 type: reference
 display-title: "false"
 language: en

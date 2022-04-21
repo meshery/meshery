@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-channel-switch
-permalink: reference/mesheryctl/system/channel/switch/
+permalink: reference/mesheryctl/system/channel/switch
 redirect_from: reference/mesheryctl/system/channel/switch/
 type: reference
 display-title: "false"

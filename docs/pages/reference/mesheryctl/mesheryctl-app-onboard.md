@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-app-onboard
-permalink: reference/mesheryctl/app/onboard/
+permalink: reference/mesheryctl/app/onboard
 redirect_from: reference/mesheryctl/app/onboard/
 type: reference
 display-title: "false"

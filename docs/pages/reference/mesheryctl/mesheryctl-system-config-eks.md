@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-config-eks
-permalink: reference/mesheryctl/system/config/eks/
+permalink: reference/mesheryctl/system/config/eks
 redirect_from: reference/mesheryctl/system/config/eks/
 type: reference
 display-title: "false"

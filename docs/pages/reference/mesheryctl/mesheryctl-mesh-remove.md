@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-mesh-remove
-permalink: reference/mesheryctl/mesh/remove/
+permalink: reference/mesheryctl/mesh/remove
 redirect_from: reference/mesheryctl/mesh/remove/
 type: reference
 display-title: "false"

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-dashboard
-permalink: reference/mesheryctl/system/dashboard/
+permalink: reference/mesheryctl/system/dashboard
 redirect_from: reference/mesheryctl/system/dashboard/
 type: reference
 display-title: "false"

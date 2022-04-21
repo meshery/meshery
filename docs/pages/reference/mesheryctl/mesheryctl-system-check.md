@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-check
-permalink: reference/mesheryctl/system/check/
+permalink: reference/mesheryctl/system/check
 redirect_from: reference/mesheryctl/system/check/
 type: reference
 display-title: "false"

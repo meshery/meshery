@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-context-view
-permalink: reference/mesheryctl/system/context/view/
+permalink: reference/mesheryctl/system/context/view
 redirect_from: reference/mesheryctl/system/context/view/
 type: reference
 display-title: "false"

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-exp
-permalink: reference/mesheryctl/exp/
+permalink: reference/mesheryctl/exp
 redirect_from: reference/mesheryctl/exp/
 type: reference
 display-title: "false"

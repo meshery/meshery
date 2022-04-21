@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-exp-filter-list
-permalink: reference/mesheryctl/exp/filter/list/
+permalink: reference/mesheryctl/exp/filter/list
 redirect_from: reference/mesheryctl/exp/filter/list/
 type: reference
 display-title: "false"

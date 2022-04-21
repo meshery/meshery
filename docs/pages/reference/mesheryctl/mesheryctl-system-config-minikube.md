@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-config-minikube
-permalink: reference/mesheryctl/system/config/minikube/
+permalink: reference/mesheryctl/system/config/minikube
 redirect_from: reference/mesheryctl/system/config/minikube/
 type: reference
 display-title: "false"

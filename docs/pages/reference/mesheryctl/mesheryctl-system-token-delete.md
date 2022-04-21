@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-token-delete
-permalink: reference/mesheryctl/system/token/delete/
+permalink: reference/mesheryctl/system/token/delete
 redirect_from: reference/mesheryctl/system/token/delete/
 type: reference
 display-title: "false"

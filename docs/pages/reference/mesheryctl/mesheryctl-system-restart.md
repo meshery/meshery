@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-restart
-permalink: reference/mesheryctl/system/restart/
+permalink: reference/mesheryctl/system/restart
 redirect_from: reference/mesheryctl/system/restart/
 type: reference
 display-title: "false"

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-completion
-permalink: reference/mesheryctl/system/completion/
+permalink: reference/mesheryctl/system/completion
 redirect_from: reference/mesheryctl/system/completion/
 type: reference
 display-title: "false"

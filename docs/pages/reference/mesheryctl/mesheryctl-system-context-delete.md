@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-context-delete
-permalink: reference/mesheryctl/system/context/delete/
+permalink: reference/mesheryctl/system/context/delete
 redirect_from: reference/mesheryctl/system/context/delete/
 type: reference
 display-title: "false"

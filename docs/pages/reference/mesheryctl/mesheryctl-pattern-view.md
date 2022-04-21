@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-pattern-view
-permalink: reference/mesheryctl/pattern/view/
+permalink: reference/mesheryctl/pattern/view
 redirect_from: reference/mesheryctl/pattern/view/
 type: reference
 display-title: "false"

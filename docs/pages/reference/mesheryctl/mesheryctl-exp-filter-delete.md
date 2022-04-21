@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-exp-filter-delete
-permalink: reference/mesheryctl/exp/filter/delete/
+permalink: reference/mesheryctl/exp/filter/delete
 redirect_from: reference/mesheryctl/exp/filter/delete/
 type: reference
 display-title: "false"

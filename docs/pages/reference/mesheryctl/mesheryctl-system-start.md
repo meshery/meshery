@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-start
-permalink: reference/mesheryctl/system/start/
+permalink: reference/mesheryctl/system/start
 redirect_from: reference/mesheryctl/system/start/
 type: reference
 display-title: "false"

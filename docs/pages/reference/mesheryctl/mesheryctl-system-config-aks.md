@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-config-aks
-permalink: reference/mesheryctl/system/config/aks/
+permalink: reference/mesheryctl/system/config/aks
 redirect_from: reference/mesheryctl/system/config/aks/
 type: reference
 display-title: "false"

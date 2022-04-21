@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-config-gke
-permalink: reference/mesheryctl/system/config/gke/
+permalink: reference/mesheryctl/system/config/gke
 redirect_from: reference/mesheryctl/system/config/gke/
 type: reference
 display-title: "false"

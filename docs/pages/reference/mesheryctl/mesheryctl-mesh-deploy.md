@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-mesh-deploy
-permalink: reference/mesheryctl/mesh/deploy/
+permalink: reference/mesheryctl/mesh/deploy
 redirect_from: reference/mesheryctl/mesh/deploy/
 type: reference
 display-title: "false"

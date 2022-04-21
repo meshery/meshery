@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-version
-permalink: reference/mesheryctl/version/
+permalink: reference/mesheryctl/version
 redirect_from: reference/mesheryctl/version/
 type: reference
 display-title: "false"

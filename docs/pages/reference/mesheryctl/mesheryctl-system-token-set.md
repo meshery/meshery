@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-token-set
-permalink: reference/mesheryctl/system/token/set/
+permalink: reference/mesheryctl/system/token/set
 redirect_from: reference/mesheryctl/system/token/set/
 type: reference
 display-title: "false"

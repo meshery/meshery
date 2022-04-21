@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-pattern-apply
-permalink: reference/mesheryctl/pattern/apply/
+permalink: reference/mesheryctl/pattern/apply
 redirect_from: reference/mesheryctl/pattern/apply/
 type: reference
 display-title: "false"

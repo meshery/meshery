@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-mesh-validate
-permalink: reference/mesheryctl/mesh/validate/
+permalink: reference/mesheryctl/mesh/validate
 redirect_from: reference/mesheryctl/mesh/validate/
 type: reference
 display-title: "false"

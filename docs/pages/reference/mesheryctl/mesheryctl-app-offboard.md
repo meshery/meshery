@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-app-offboard
-permalink: reference/mesheryctl/app/offboard/
+permalink: reference/mesheryctl/app/offboard
 redirect_from: reference/mesheryctl/app/offboard/
 type: reference
 display-title: "false"

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-login
-permalink: reference/mesheryctl/system/login/
+permalink: reference/mesheryctl/system/login
 redirect_from: reference/mesheryctl/system/login/
 type: reference
 display-title: "false"

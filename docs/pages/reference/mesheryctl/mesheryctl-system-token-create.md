@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-token-create
-permalink: reference/mesheryctl/system/token/create/
+permalink: reference/mesheryctl/system/token/create
 redirect_from: reference/mesheryctl/system/token/create/
 type: reference
 display-title: "false"

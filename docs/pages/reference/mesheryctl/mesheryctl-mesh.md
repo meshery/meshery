@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-mesh
-permalink: reference/mesheryctl/mesh/
+permalink: reference/mesheryctl/mesh
 redirect_from: reference/mesheryctl/mesh/
 type: reference
 display-title: "false"

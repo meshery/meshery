@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl-system-config
-permalink: reference/mesheryctl/system/config/
+permalink: reference/mesheryctl/system/config
 redirect_from: reference/mesheryctl/system/config/
 type: reference
 display-title: "false"
