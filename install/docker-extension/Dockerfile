@@ -33,7 +33,9 @@ LABEL org.opencontainers.image.title="meshery" \
   org.opencontainers.image.description="Design and operate your cloud native deployments with the extensible management plane, Meshery." \
   org.opencontainers.image.vendor="Layer5, Inc." \
   com.docker.desktop.extension.api.version=">= 0.2.0" \
-  com.docker.desktop.extension.icon="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/meshery-logo-light.svg"
+  com.docker.desktop.extension.icon="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/meshery-logo-light.svg" \
+  com.docker.extension.publisher-url="https://meshery.io" \
+  com.docker.extension.additional-urls="[{"title":"Documentation","url":"https://docs.meshery.io"}, {"title":"Project","url":"https://layer5.io/meshery"}]"
 COPY --from=builder /backend/bin/service /
 COPY docker-compose.yaml .
 COPY metadata.json .
