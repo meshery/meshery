@@ -100,31 +100,28 @@ type: "project"
   <th>Meshery Component Version</th>
   <th>Service Mesh</th>
   <th>Service Mesh Version</th>
+  <th>Meshery Server Version</th>
   <th>Overall Compatibility</th>
-
-    <!-- display tests from the stable channel -->
 
     {% for group in sorted_tests_group %}
       {% assign items = group.items | sort: "meshery-component-version" | reverse %}
       {% for item in items limit: 1 %}
-        {% if item.meshery-component-version != "edge" %}
+        {% if item.meshery-server-version == "v0.6.0-rc.5l"  %}
           {% if item.overall-status == "passing" %}
             {% assign overall-status = "background-color: #56B257; color: white;" %}
-            {% assign result-state = "✅" %}
           {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
-            {% assign result-state = "⚠️" %}
           {% elsif item.overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
-            {% assign result-state = "❌" %}
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
-          <tr style="visibility: hidden; display: none;" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.meshery-component}}-stable');">
+          <tr class="test-details stable stable_visible">
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
             <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
+            <td>{{item.meshery-server-version}}</td>
             <td style="{{ overall-status }}"></td>
           </tr>
         {% endif %}
