@@ -96,11 +96,11 @@ type: "project"
 ## Summary of Integration Tests
 
 <table>
-  <th>Meshery Component</th>
-  <th>Meshery Component Version</th>
+  <th>Meshery Version</th>
+  <th>Component</th>
+  <th>Component Version</th>
   <th>Service Mesh</th>
-  <th>Service Mesh Version</th>
-  <th>Meshery Server Version</th>
+  <th>Version</th>
   <th>Overall Compatibility</th>
 
     {% for group in sorted_tests_group %}
@@ -117,11 +117,12 @@ type: "project"
             {% assign overall-status = "" %}
           {% endif %}
           <tr class="test-details stable stable_visible">
+            <td>{{item.meshery-server-version}}</td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
             <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
-            <td>{{item.meshery-server-version}}</td>
+            
             <td style="{{ overall-status }}"></td>
           </tr>
         {% endif %}
