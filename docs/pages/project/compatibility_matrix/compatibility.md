@@ -91,9 +91,9 @@ type: "project"
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
 
-# Meshery Compatibility Matrix
+# Compatibility Matrix
 
-## Summary of Integration Tests
+Compatibility of Meshery with other integrated systems.
 
 <table>
   <th>Meshery Version</th>
