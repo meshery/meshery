@@ -525,7 +525,6 @@ handleNATSClick = () => {
     }).subscribe({
       next : (res) => {
         self.props.updateProgress({ showProgress : false });
-        console.log(res);
         if (res.resetStatus === "PROCESSING") {
           this.props.enqueueSnackbar(`Database reset successful.`, {
             variant : "success",
