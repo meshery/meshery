@@ -25,7 +25,6 @@ builds:
   goos:
     - darwin
     - linux
-    - freebsd
     - windows
 
   # # GOARCH to build for.
@@ -39,8 +38,6 @@ builds:
  
   # List of combinations of GOOS + GOARCH + GOARM to ignore.
   ignore:
-      - goos: freebsd
-        goarch: arm64
       - goos: windows
         goarch: arm
       - goos: windows

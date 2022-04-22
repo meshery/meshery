@@ -1,15 +1,16 @@
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import React from "react";
+import React, { useEffect } from "react";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import { rjsfTheme } from "../../../themes";
 import handleError from '../../ErrorHandling';
 import { buildUiSchema } from "../helpers";
 import { getRefinedJsonSchema } from "./helper";
-import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
-import MemoizedCustomInputField from "./RJSFCustomComponents/CustomInputField";
-import CustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
+import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
+import CustomInputField from "./RJSFCustomComponents/CustomInputField";
+import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
+import _ from "lodash"
 
 const Form = withTheme(MaterialUITheme);
 
@@ -104,13 +105,9 @@ function RJSF(props) {
 
   const errorHandler = handleError();
 
-  // define new string field
-  const fields = {
-    StringField : ({ idSchema, formData, ...props }) => <MemoizedCustomInputField id={idSchema['$id']} value={formData} idSchema={idSchema} {...props} />
-  }
-
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
   const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
+  const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
     // Apply debouncing mechanism for the state propagation
@@ -127,34 +124,88 @@ function RJSF(props) {
     setSchema({ rjsfSchema, uiSchema })
   }, [jsonSchema]) // to reduce heavy lifting on every react render
 
-  return (
-    <RJSFWrapperComponent {...{ ...props, RJSFWrapperComponent : null, RJSFFormChildComponent : null }}>
-      <MuiThemeProvider theme={rjsfTheme}>
-        <Form
-          schema={schema.rjsfSchema}
-          idPrefix={jsonSchema?.title}
-          onChange={(e) => {
-            setData(e.formData)
-          }}
-          formData={data}
-          fields={fields}
-          ArrayFieldTemplate={ArrayFieldTemplate}
-          ObjectFieldTemplate={CustomObjFieldTemplate}
-          additionalMetaSchemas={[JS4]}
-          uiSchema={schema.uiSchema}
-          liveValidate
-          showErrorList={false}
-          noHtml5Validate
+  React.useEffect(() => {
+    if (!_.isEqual(schema, { rjsfSchema : {}, uiSchema : {} })) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300); // for showing circular progress
+    }
+  }, [schema])
 
-        >
-          {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
-        {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
-          {/* <RJSFFormChildComponent /> */}
-          <></> {/* temporary change for functionality */}
-        </Form>
-      </MuiThemeProvider>
+  return (
+    <RJSFWrapperComponent {...props}>
+      <RJSFForm
+        isLoading={isLoading}
+        schema={schema}
+        data={data}
+        onChange={(e) => {
+          setData(e.formData)
+        }}
+        jsonSchema={jsonSchema}
+      />
     </RJSFWrapperComponent>
   );
 }
 
 export default RJSF;
+
+/**
+ * The Custom RJSF Form that accepts custom fields from the extension
+ * or seed it's own default
+ * Adding a new custom component:
+ * 1. Pass the new prop from the Meshery Extension
+ * 2. Extract from props in the RJSFForm Component
+ * @param {*} props
+ * @returns
+ */
+function RJSFForm(props) {
+  const {
+    schema,
+    jsonSchema,
+    data,
+    onChange,
+    isLoading,
+    ArrayFieldTemplate = MesheryArrayFieldTemplate,
+    ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+    LoadingComponent
+  } = props;
+
+  useEffect(() => {
+    const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
+    if (extensionTooltipPortal) {
+      rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
+    }
+    rjsfTheme.zIndex.modal = 99999;
+  }, [])
+
+  if (isLoading && LoadingComponent) {
+    return <LoadingComponent />
+  }
+
+  return (
+    <MuiThemeProvider theme={rjsfTheme}>
+      <Form
+        schema={schema.rjsfSchema}
+        idPrefix={jsonSchema?.title}
+        onChange={onChange}
+        formData={data}
+        ArrayFieldTemplate={ArrayFieldTemplate}
+        ObjectFieldTemplate={ObjectFieldTemplate}
+        additionalMetaSchemas={[JS4]}
+        uiSchema={schema.uiSchema}
+        widgets={{
+          TextWidget : CustomInputField
+        }}
+        liveValidate
+        showErrorList={false}
+        noHtml5Validate
+      >
+        {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
+{hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
+        {/* <RJSFFormChildComponent /> */}
+        <></> {/* temporary change for functionality */}
+      </Form>
+
+    </MuiThemeProvider>
+  )
+}

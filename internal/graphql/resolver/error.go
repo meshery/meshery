@@ -22,6 +22,7 @@ const (
 	ErrBrokerNotConnectedCode       = "2151"
 	ErrGettingNamespaceCode         = "1014"
 	ErrFetchingPatternsCode         = "1015"
+	ErrInvalidOAMTypeCode           = "2173"
 )
 
 var (
@@ -83,4 +84,14 @@ func ErrGettingNamespace(err error) error {
 }
 func ErrFetchingPatterns(err error) error {
 	return errors.New(ErrFetchingPatternsCode, errors.Alert, []string{"Cannot fetch patterns"}, []string{err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Try again, if still exist, please post an issue on Meshery repository"})
+}
+
+func ErrInvalidOAMType() error {
+	return errors.New(
+		ErrInvalidOAMTypeCode,
+		errors.Alert,
+		[]string{"invalid oam type is requested"},
+		[]string{"invalid oam type requested, supported types are workload, scope, trait "},
+		nil, nil,
+	)
 }

@@ -39,7 +39,7 @@ import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
 import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
-  root : { padding : theme.spacing(5), },
+  clusterConfiguratorWrapper : { padding : theme.spacing(5), },
   buttons : { display : "flex",
     justifyContent : "flex-end", },
   button : { marginTop : theme.spacing(3),
@@ -409,6 +409,19 @@ handleNATSClick = () => {
   NatsStatusQuery().subscribe({
     next : (res) => {
       self.props.updateProgress({ showProgress : false });
+      if (res.controller.name === "broker" && res.controller.status == "CONNECTED") {
+        this.props.enqueueSnackbar(`Broker was successfully pinged`, {
+          variant : "success",
+          action : (key) => (
+            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          ),
+          autohideduration : 2000,
+        })
+      } else {
+        self.handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
+      }
       self.setState({
         NATSState : res.controller.status,
         NATSVersion : res.controller.version,
@@ -460,7 +473,17 @@ handleNATSClick = () => {
           meshSyncInstalled : true,
           meshSyncVersion : res.controller.version,
         });
+        this.props.enqueueSnackbar(`MeshSync was successfully pinged`, {
+          variant : "success",
+          action : (key) => (
+            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          ),
+          autohideduration : 2000,
+        })
       } else {
+        self.handleError("MeshSync could not be reached")("MeshSync is unavailable");
         self.setState({
           meshSyncInstalled : false,
           meshSyncVersion : "",
@@ -804,7 +827,7 @@ handleNATSClick = () => {
     return (
       <NoSsr>
         <PromptComponent ref={this.ref} />
-        <div className={classes.root}>
+        <div className={classes.clusterConfiguratorWrapper}>
           <Grid container spacing={5} className={classes.contentContainer}>
             <Grid item spacing={1} xs={12} md={6} className={classes.configBoxContainer}>
               <div className={classes.heading}>
@@ -882,7 +905,7 @@ handleNATSClick = () => {
     return (
       <NoSsr>
         <PromptComponent ref={this.ref} />
-        <div className={classes.root}>
+        <div className={classes.clusterConfiguratorWrapper}>
           <Grid container spacing={5}>
             <Grid item spacing={1} xs={12} md={6}>
               <div className={classes.heading}>

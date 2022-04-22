@@ -1470,15 +1470,6 @@
         "probable_cause": "Invalid data passed\nUnable to connect with provider",
         "suggested_remediation": "Pass valid values for preferences\nMake sure provider supports saving user preferences\nMake sure you're connected with provider\nMake sure extension provides these preferences"
       },
-      "2173": {
-        "name": "ErrMesheryInstanceIDCode",
-        "code": "2173",
-        "severity": "",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
       "2174": {
         "name": "ErrInvalidKubeConfigCode",
         "code": "2174",

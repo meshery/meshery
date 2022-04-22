@@ -1,4 +1,4 @@
-FROM golang:1.16 as meshery-server
+FROM golang:1.17 as meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -24,13 +24,16 @@ RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
-FROM alpine:3.15 as seed_content
+FROM alpine:3.15.3 as seed_content
 RUN apk add --no-cache curl
 WORKDIR /
-# bundling filters (temporary hardcoding done below, to be removed after https://github.com/layer5io/wasm-filters/issues/38 is resolved)
-RUN curl -L -s https://github.com/layer5io/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz -o wasm-filters.tar.gz \ 
-    && mkdir -p /seed_content/filters/binaries \
-    && tar xzf wasm-filters.tar.gz --directory=/seed_content/filters/binaries
+RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
+    && mkdir -p seed_content/filters/binaries \ 
+    && cd seed_content/filters/binaries  \
+    for line in $lines \
+    do \
+    curl -LO $line \
+    done 
 
 # bundling patterns
 RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
@@ -58,19 +61,21 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
-FROM alpine:3.15 as jsonschema-util
+FROM alpine:3.15.3 as jsonschema-util
 RUN apk add --no-cache curl
 WORKDIR /
 RUN UTIL_VERSION=$(curl -L -s https://api.github.com/repos/layer5io/kubeopenapi-jsonschema/releases/latest | \
 	grep tag_name | sed "s/ *\"tag_name\": *\"\\(.*\\)\",*/\\1/" | \
 	grep -v "rc\.[0-9]$"| head -n 1 ) \
-	&& curl -L https://github.com/layer5io/kubeopenapi-jsonschema/releases/download/${UTIL_VERSION}/kubeopenapi-jsonschema-alpine -o kubeopenapi-jsonschema \
+	&& curl -L https://github.com/layer5io/kubeopenapi-jsonschema/releases/download/${UTIL_VERSION}/kubeopenapi-jsonschema -o kubeopenapi-jsonschema \
 	&& chmod +x /kubeopenapi-jsonschema
 
 FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
 #RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
 RUN update-ca-certificates
+RUN apk upgrade --no-cache && \
+    apk add --no-cache libstdc++
 COPY ./oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd

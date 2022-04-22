@@ -46,7 +46,7 @@ const styles = (theme) => ({
     marginRight : theme.spacing(1), },
   message : { display : "flex",
     alignItems : "center", },
-  root : { [theme.breakpoints.up("sm")] : { minWidth : "344px !important", }, },
+  snackbarContent : { [theme.breakpoints.up("sm")] : { minWidth : "344px !important", }, },
   card : { backgroundColor : "rgba(50, 50, 50)",
     width : "100%", },
   actionRoot : { padding : "8px 8px 8px 16px", },
@@ -77,7 +77,7 @@ function MesherySnackbarWrapper(props) {
   };
 
   return (
-    <SnackbarContent className={classes.root}>
+    <SnackbarContent className={classes.snackbarContent}>
       <Card className={classNames(classes.card, classes[variant], className)}
         aria-label="Show more"
         onMouseEnter={() => setCardHover(true)}

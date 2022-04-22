@@ -301,7 +301,8 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 		_ = l.WriteToPersister(up.UserID, up.Preferences)
 	}
 
-	logrus.Infof("retrieved user: %v", up.User)
+	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
+	// logrus.Debugf("retrieved user: %v", up.User)
 	return &up.User, nil
 }
 
@@ -401,7 +402,8 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 			return k8sContext, ErrUnmarshal(err, "kubernetes context")
 		}
 
-		logrus.Infof("kubernetes context successfully sent to remote provider: %+v", kc)
+		// Sensitive data. Commenting until better debug controls are put into place. - @leecalcote
+		// logrus.Infof("kubernetes context successfully sent to remote provider: %+v", kc)
 		return kc, nil
 	}
 	return k8sContext, ErrPost(fmt.Errorf("failed to save kubernetes context"), fmt.Sprint(resp.Body), resp.StatusCode)

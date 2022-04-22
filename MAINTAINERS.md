@@ -4,7 +4,6 @@
 | ----------------- | ----------------- | ----------- |
 | Hussaina Begum    | hexxdump          | VMware      |
 | Lee Calcote       | leecalcote        | Layer5      |
-| Navendu Pottekkat | navendu-pottekkat | Layer5      |
 | Piyush Singariya  | piyushsingariya   | HDFC Life   |
 
 ### UI Maintainers
@@ -26,13 +25,13 @@
 | Hussaina Begum     | hexxdump    | VMware      |
 | Lee Calcote        | leecalcote  | Layer5      |
 | Michael Gfeller    | mgfeller    | Computas AS |
-| Utkarsh Srivastava | utkarsh-pro | Red Hat     |
 
 ### CI / Build & Release Maintainers
 
 | Name                  | GitHub             | Affiliation |
 | --------------------- | ------------------ | ----------- |
 | Lee Calcote           | leecalcote         | Layer5      |
+| Mario Arriaga         | MarioArriaga92     | F5          |
 
 ### Docs Maintainers
 
@@ -42,12 +41,6 @@
 | Lee Calcote       | leecalcote      | Layer5      |
 | Aditya Chatterjee | warunicorn19    | Layer5      |
 
-### Core Maintainers
-
-| Name               | GitHub      | Affiliation |
-| ------------------ | ----------- | ----------- |
-| Lee Calcote        | leecalcote  | Layer5      |
-| Utkarsh Srivastava | utkarsh-pro | Red Hat     |
 
 ### Site Maintainers
 

@@ -146,9 +146,9 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit({
-              data : yaml, id : pattern.id, name : pattern.name, action : FILE_OPS.UPDATE
-            })}
+            onClick={() =>
+              onSubmit( { data : yaml, id : pattern.id, name : pattern.name, type : FILE_OPS.UPDATE } )
+            }
           >
             <SaveIcon />
           </IconButton>
@@ -161,6 +161,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
               data : yaml,
               id : pattern.id,
               name : pattern.name,
+              type : FILE_OPS.DELETE
             })}
           >
             <DeleteIcon />
@@ -187,6 +188,7 @@ function MesheryPatterns({
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
+  const [close, handleClose] = useState(true);
 
   const DEPLOY_URL = '/api/pattern/deploy';
 
@@ -307,7 +309,6 @@ function MesheryPatterns({
     const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
-
     updateProgress({ showProgress : true });
 
     dataFetch(
@@ -349,7 +350,7 @@ function MesheryPatterns({
     };
   }
 
-  function handleSubmit({ data, id, name, type }) {
+  function handleSubmit( { data, id, name, type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       dataFetch(
@@ -397,7 +398,7 @@ function MesheryPatterns({
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url : data, save : true })
+        body = JSON.stringify({ url : data, name, save : true })
       }
       dataFetch(
         `/api/pattern`,
@@ -409,6 +410,7 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern`);
           updateProgress({ showProgress : false });
+          handleClose(true);
           fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPLOAD_PATTERN)
@@ -417,15 +419,13 @@ function MesheryPatterns({
   }
 
   function uploadHandler(ev) {
+    handleClose(false);
     if (!ev.target.files?.length) return;
-
-    console.log("top level event", ev)
 
     const file = ev.target.files[0];
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      console.log("Bottom level event", event)
       // @ts-ignore
       handleSubmit({
         data : event.target.result,
@@ -711,7 +711,7 @@ function MesheryPatterns({
            Create Design
         </Button>
         <div className={classes.UploadImport}>
-          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler}  />
+          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" modalStatus={close} />
         </div>
 
       </div>

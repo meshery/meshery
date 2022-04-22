@@ -12,6 +12,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import NoSsr from "@material-ui/core/NoSsr";
 import RemoveIcon from "@material-ui/icons/Remove";
 import GitHubIcon from "@material-ui/icons/GitHub";
+import Zoom from '@material-ui/core/Zoom';
 import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
 // import MailIcon from "@material-ui/icons/Mail";
 import Link from "next/link";
@@ -24,6 +25,10 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
+import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
+import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
+import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
+import ConformanceHover from '../public/static/img/drawer-icons/conformance_hover_svg';
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
 import DiscussIcon from '../public/static/img/drawer-icons/discuss_forum_svg.js';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
@@ -32,7 +37,7 @@ import { faAngleLeft,faCaretDown,
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { updatepagetitle, updatebetabadge, toggleDrawer } from "../lib/store";
+import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
@@ -291,6 +296,7 @@ const categories = [
   {
     id : "Lifecycle",
     icon : <LifecycleIcon style={drawerIconsStyle} />,
+    hovericon : <LifecycleHover style={drawerIconsStyle} />,
     href : "/management",
     title : "Lifecycle",
     show : true,
@@ -314,6 +320,13 @@ const categories = [
         id : "Consul",
         href : "/management/consul",
         title : "Consul",
+        link : true,
+        show : true,
+      },
+      {
+        id : "Cilium_Service_Mesh",
+        href : "/management/cilium",
+        title : "Cilium",
         link : true,
         show : true,
       },
@@ -379,10 +392,10 @@ const categories = [
   {
     id : "Configuration",
     icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
-    disabled : true,
+    hovericon : <ConfigurationHover style={{ transform : "scale(1.3)", ...drawerIconsStyle }}/>,
     href : "#",
     title : "Configuration",
-    show : false,
+    show : true,
     link : true,
     children : [
       {
@@ -416,8 +429,8 @@ const categories = [
   },
   {
     id : "Performance",
-    icon :
-      <PerformanceIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
+    icon : <PerformanceIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
+    hovericon : <PerformanceHover  style={drawerIconsStyle}/>,
     href : "/performance",
     title : "Performance",
     show : true,
@@ -444,6 +457,7 @@ const categories = [
   {
     id : "Conformance",
     icon : <ConformanceIcon style={drawerIconsStyle} />,
+    hovericon : <ConformanceHover style={drawerIconsStyle} />,
     href : "/smi_results", //Temp
     title : "Conformance",
     show : true,
@@ -740,8 +754,6 @@ class Navigator extends React.Component {
     category = category.toLowerCase();
     meshAdapters.forEach((adapter) => {
       let aName = adapter.name.toLowerCase();
-      // Manually changing adapter name so that it matches the internal name
-      if (aName === "osm") aName = "open service mesh";
       if (category !== aName) {
         return;
       }
@@ -788,6 +800,8 @@ class Navigator extends React.Component {
    * Changes the route to "/management"
    */
   handleAdapterClick(id, link) {
+    const { setAdapter } = this.props;
+    setAdapter({ selectedAdapter : id });
     if (id != -1 && !link) {
       this.props.router.push("/management");
     }
@@ -1065,7 +1079,7 @@ class Navigator extends React.Component {
     const Menu = (
       <List disablePadding className={classes.hideScrollbar}>
         {categories.map(({
-          id : childId, title, icon, href, show, link, children
+          id : childId, title, icon, href, show, link, children, hovericon
         }) => {
           if (typeof show !== "undefined" && !show) {
             return "";
@@ -1095,16 +1109,27 @@ class Navigator extends React.Component {
                       title={childId}
                       placement="right"
                       disableFocusListener={!isDrawerCollapsed}
-                      disableHoverListener={!isDrawerCollapsed}
+                      disableHoverListener={true}
                       disableTouchListener={!isDrawerCollapsed}
+                      TransitionComponent={Zoom}
+                      arrow
                     >
 
                       { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
-                        <FontAwesomeIcon
-                          icon= {faCaretDown}
-                          onClick={() => this.toggleItemCollapse(childId)}
-                          className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "40%", marginBottom : "0.4rem" }}
-                        /> :
+                        <Tooltip
+                          title={title}
+                          placement="right"
+                          TransitionComponent={Zoom}
+                          arrow
+                        >
+                          <ListItemIcon
+                            onClick={() => this.toggleItemCollapse(childId)}
+
+                            style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
+                            {hovericon}
+                          </ListItemIcon>
+                        </Tooltip>
+                        :
                         <ListItemIcon className={classes.listIcon}>
                           {icon}
                         </ListItemIcon>
@@ -1241,18 +1266,23 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Chevron = (
-      <div className={classname} style={{ display : "flex", justifyContent : "center" }}>
+      <div  className={classname} style={{ display : "flex", justifyContent : "center" }}
+        onClick ={this.toggleMiniDrawer}
+      >
         <FontAwesomeIcon
           icon={faAngleLeft}
           fixedWidth
           size="1.5x"
           style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
           alt="Sidebar collapse toggle icon"
-          onClick={this.toggleMiniDrawer}
         />
+
       </div>
 
     )
+
+
+
     return (
       <NoSsr>
         <Drawer
@@ -1290,6 +1320,7 @@ const mapDispatchToProps = (dispatch) => ({
   updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
   updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
   toggleDrawer : bindActionCreators(toggleDrawer, dispatch),
+  setAdapter : bindActionCreators(setAdapter, dispatch),
 });
 
 const mapStateToProps = (state) => {
@@ -1299,5 +1330,8 @@ const mapStateToProps = (state) => {
   const isDrawerCollapsed = state.get("isDrawerCollapsed")
   return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed };
 };
+
+
+
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator)));

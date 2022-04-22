@@ -180,9 +180,11 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 
 <h3 style="margin:auto;"><br /><br />
   <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
-  <br /><br />
+  <br /><br /><br />
 </h3>
 <p style="clear:both;">&nbsp;</p>
+
+<br /><br /><br /><br />
 
 ## <a name="functionality">Functionality</a>
 
@@ -239,7 +241,7 @@ Meshery provides tooling to validate any service mesh that claims to implement a
 <p style="clear:both;">
 <a href="docs/assets/img/readme/meshery-wasm.png"><img alt="WebAssembly filters" src="docs/assets/img/readme/meshery-wasm.png"  style="margin-right:10px; margin-bottom:10px;" width="45%" align="left"/></a>
 
-<img alt="WebAssembly Logo" src="docs/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" />
+<img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" />
 <h3> Manage data plane intelligence with WebAssembly filters </h3>
 Dynamically load and manage your own WebAssembly filters in Envoy-based service meshes. 
 <br>

@@ -36,7 +36,7 @@ type MockURL struct {
 func NewTestHelper(t *testing.T) *TestHelper {
 	return &TestHelper{
 		Version: "v0.5.10",
-		BaseURL: "http://localhost:9081",
+		BaseURL: MesheryEndpoint,
 	}
 }
 
