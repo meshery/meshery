@@ -7,9 +7,8 @@ on:
       - 'v*'  
     branches:
       - 'master'
-    paths-ignore:
-      - 'docs/**'
-      - '.github/**'
+    paths:
+      - 'install/docker-extension/**'
   workflow_dispatch:
     inputs:
       release-ver:
@@ -76,7 +75,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
       -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v1.6.0 
       -
         name: Docker Meta
         id: meta
@@ -84,7 +83,7 @@ jobs:
         with:
           images: meshery/docker-extension-meshery
           flavor: |
-            latest=false
+            latest=true
           tags: |
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{sha}}
             type=semver,pattern={{version}},value=${{env.GIT_STRIPPED_VERSION}}

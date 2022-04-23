@@ -61,7 +61,7 @@ function CustomErrorMessage(){
 
   return (
     <NoSsr>
-	  <div className={classes.rootClass}>
+      <div className={classes.rootClass}>
         <div className={classes.errorSection}>
           <Typography variant="h1">
             <div className={classes.message}>
