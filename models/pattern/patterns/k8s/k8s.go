@@ -31,9 +31,7 @@ func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v
 func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} {
 	apiVersion := getAPIVersionFromComponent(comp)
 	kind := getKindFromComponent(comp)
-	if kind == "Namespace" {
-		comp.ObjectMeta.Name = comp.Namespace // For namespace the only significance of this field is to provide the name of "Namespace". Originally this field is the service name, that should not be the behavior.
-	}
+
 	component := map[string]interface{}{
 		"apiVersion": apiVersion,
 		"kind":       kind,
