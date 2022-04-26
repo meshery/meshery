@@ -59,3 +59,10 @@ jobs:
         with:
           version: latest
           args: release --rm-dist --skip-validate
+
+  call-dde-release-workflow:
+    uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
+    with:
+      release-ver: {PLACEHOLDER}
+      stripped-release-ver: {PLACEHOLDER}
+      release-channel: stable
