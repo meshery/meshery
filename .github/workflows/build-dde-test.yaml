@@ -1,0 +1,6 @@
+name: Just a lame test workflow
+on:
+  workflow_dispatch:
+
+call-dde-release-workflow:
+    uses: hershd23/meshery/.github/workflows/build-and-release-dde.yml@master
