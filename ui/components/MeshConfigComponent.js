@@ -686,10 +686,13 @@ handleNATSClick = () => {
           </ListItem>
         </List>
       );
+      { console.log(this.state) }
+      { console.log(this.props) }
       showConfigured = (
         <div>
           {contexts?.map(ctx => (
             <Tooltip title={`Server: ${ctx.server}`}>
+
               <Chip
                 label={ctx?.name}
                 onDelete={() => self.handleReconfigure(ctx.id)}
@@ -863,7 +866,9 @@ handleNATSClick = () => {
   meshOut = (showConfigured, operator) => {
     const { classes } = this.props;
     const {
-      k8sfile, k8sfileElementVal, contextNameForForm, contextName, contexts
+      k8sfile, k8sfileElementVal,
+      // contextNameForForm, contextName,
+      contexts
     } = this.state;
 
     return (
@@ -904,13 +909,14 @@ handleNATSClick = () => {
                         ), }}
                     />
                   </FormGroup>
+                  {console.log(contexts)}
                   <TextField
                     select
                     id="contextName"
                     name="contextName"
                     label="Context Name"
                     fullWidth
-                    value={contextNameForForm || contextName}
+                    value={contexts.name}
                     margin="normal"
                     variant="outlined"
                     // disabled={inClusterConfigForm === true}
