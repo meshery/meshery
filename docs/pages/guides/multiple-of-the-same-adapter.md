@@ -34,7 +34,7 @@ While installing mesheryctl using bash installation script, we can choose which 
 This is done by passing ADAPTERS environment variable to meshery bash script.
 
 *For e.g.* 
-`curl -L https://git.io/meshery | ADAPTERS=consul PLATFORM=kubernetes bash -` installs mesheryctl and starts Meshery server for kubernetes platform by loading consul adapter alone. Rest of the service mesh adapters are not loaded.
+`curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -` installs mesheryctl and starts Meshery server for kubernetes platform by loading consul adapter alone. Rest of the service mesh adapters are not loaded.
 
 <h5>Demo of Meshery managing service mesh deployments across multiple clusters:</h5>
 
