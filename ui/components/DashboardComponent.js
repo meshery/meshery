@@ -44,7 +44,7 @@ import { submitGrafanaConfigure } from "./GrafanaComponent";
 import { versionMapper } from "../utils/nameMapper";
 // podNameMapper,
 //import MesheryMetrics from "./MesheryMetrics";
-
+const p = console.log;
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
   chip : { marginRight : theme.spacing(1),
@@ -782,6 +782,7 @@ class DashboardComponent extends React.Component {
       grafana,
       contexts,
       prometheus,
+      contextName
     } = this.state;
     const self = this;
     let showConfigured = "Not connected to Kubernetes.";
@@ -799,6 +800,7 @@ class DashboardComponent extends React.Component {
         //   variant="outlined"
         // />
         <div>
+          {p(contextName)}
           {contexts?.map(ctx => (
             <Tooltip title={`Server: ${ctx.server}`}>
               <Chip
@@ -806,12 +808,15 @@ class DashboardComponent extends React.Component {
                 className={classes.chip}
                 onClick={() => self.handleKubernetesClick(ctx.id)}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
+                disabled={contextName==ctx.name? false : true}
+
                 variant="outlined"
                 data-cy="chipContextName"
               />
             </Tooltip>
 
           ))}
+          {p(contextName)}
         </div>
       );
 
