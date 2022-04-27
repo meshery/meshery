@@ -97,6 +97,7 @@ Compatibility of Meshery with other integrated systems.
 
 <table>
   <th>Meshery Version</th>
+  <th>Kubernetes Version </th>
   <th>Component</th>
   <th>Component Version</th>
   <th>Service Mesh</th>
@@ -118,6 +119,7 @@ Compatibility of Meshery with other integrated systems.
           {% endif %}
           <tr class="test-details stable stable_visible">
             <td>{{item.meshery-server-version}}</td>
+            <td>{{item.k8s-version}}</td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
             <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
