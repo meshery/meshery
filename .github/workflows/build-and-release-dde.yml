@@ -1,19 +1,6 @@
 name: Docker Extension for Meshery
 on:
   workflow_call:
-    inputs:
-      release-ver:
-          description: 'Stable Release Version'     
-          required: true
-          default: 'v'
-      stripped-release-ver:
-          description: 'Stripped Stable Release Version'     
-          required: true
-          default: ''
-      release-channel:
-          description: 'Release Channel'     
-          required: true
-          default: 'edge'
   push:
     tags:
       - 'v*'  
