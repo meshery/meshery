@@ -37,7 +37,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 <img alt="Control service meshes with mesheryctl" src="docs/assets/img/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/>
 <h3>Using `mesheryctl`</h3>
 <p>Meshery runs as a set of containers inside or outside of your Kubernetes clusters.</p>
-<pre>curl -L https://git.io/meshery | bash -</pre>
+<pre>curl -L https://meshery.io/install | bash -</pre>
 <p>See the <a href="https://docs.meshery.io/installation/quick-start">quick start</a> guide.</p>
 <p style="clear:both;">&nbsp;</p>
 

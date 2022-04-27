@@ -86,7 +86,7 @@ jobs:
       # Start Meshery Server (Assuming that this step will create the meshery namespace)
       - name: Start Meshery Server using mesheryctl
         run: |
-              curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
+              curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
       
       # Start the adapter using yamls
       - name: Start adapter 
