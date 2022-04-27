@@ -23,6 +23,8 @@
           url: project/contributing/contributing-server
         - title: Meshery UI
           url: project/contributing/contributing-ui
+        - title: Meshery Cypress Testing
+          url: project/contributing/contributing-cypress
     - title: Releases
       url: project/releases
     - title: Build & Release (CI)
