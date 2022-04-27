@@ -109,13 +109,17 @@ Compatibility of Meshery with other integrated systems.
       {% for item in items limit: 1 %}
         {% if item.meshery-server-version == "v0.6.0-rc.5l"  %}
           {% if item.overall-status == "passing" %}
-            {% assign overall-status = "background-color: #56B257; color: white;" %}
+            {% assign overall-status = "background-color: #56B257; color: white; text-align: center; " %}
+            {% assign percentage = "100%" %}
           {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
+            {% assign percentage = "50%" %}
           {% elsif item.overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
+            {% assign percentage = "0%" %}
           {% else %}
             {% assign overall-status = "" %}
+            {% assign percentage = "N/A" %}
           {% endif %}
           <tr class="test-details stable stable_visible">
             <td>{{item.meshery-server-version}}</td>
@@ -124,8 +128,10 @@ Compatibility of Meshery with other integrated systems.
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
             <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
-            
-            <td style="{{ overall-status }}"></td>
+          
+            <td style="{{ overall-status }} ">
+              {{ percentage }}
+            </td>
           </tr>
         {% endif %}
       {% endfor %}
