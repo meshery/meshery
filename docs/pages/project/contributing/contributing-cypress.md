@@ -1,26 +1,25 @@
 ---
 layout: page
-title: Contributing to Meshery UI
-permalink: project/contributing/contributing-ui
-description: How to contribute to Meshery UI (web-based user interface).
+title: Contributing to Meshery Cypress Tests
+permalink: project/contributing/contributing-cypress
+description: How to contribute to Meshery Cypress (integration & end-to-end) Tests.
 language: en
 type: project
 category: contributing
 ---
 
-## <a name="contributing-ui">UI Contribution Flow</a>
+## <a name="contributing-cypress-intro">Introduction</a>
 
-Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
+To automate functional integration and end-to-end testing through Meshery UI, [Cypress](https://www.cypress.io/) is leveraged as it allows for both UI Integration & End-to-end test scripting with javascript through its [modern features](https://docs.cypress.io/guides/overview/why-cypress#Features) and [supported test types](https://docs.cypress.io/guides/overview/why-cypress#Who-uses-Cypress).
 
-## Architecture
+## Test Framework Architecture
 
-The following is a list of top-level frameworks, libraries, design system used in Meshery UI.
+The following is the foldering structure and description of what each files are intended for:
 
-- [NextJS](https://nextjs.org/) - Server and router
-- [ReactJS](https://reactjs.org/) - User Interface library
-- [Material UI](https://material-ui.com/) - Design System
-- [BillboardJS](https://naver.github.io/billboard.js/) - Charting library, used for exposing Grafana and Prometheus-collected metrics
-- [CytoscapeJS](https://js.cytoscape.org/) - a visualization tool for canvas-based, visual topology (networks)
+- [/ui/cypress](https://github.com/meshery/meshery/tree/master/ui/cypress) - All cypress test-related javascript files.
+- [/ui/cypress/actionHelpers](https://github.com/meshery/meshery/tree/master/ui/cypress/actionHelpers) - Helpers to provide common UI or API level actions across our different cypress integration and end-to-end tests.
+- [/ui/cypress/fixtures](https://github.com/meshery/meshery/tree/master/ui/cypress/fixtures) - Our [Fixture Files](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Fixture-Files) which are used by our tests as external pieces of static data to [Stub](https://docs.cypress.io/guides/guides/network-requests#Stubbing) response data in integration tests **(i.e. [/ui/cypress/integration/integration/configuration_filters_spec.js](https://github.com/meshery/meshery/blob/master/ui/cypress/integration/integration/configuration_filters_spec.js))** or reuse data as test input in end-to-end tests **(i.e. [/ui/cypress/integration/e2e/service_mesh_configuration_management_spec.js](https://github.com/meshery/meshery/blob/master/ui/cypress/integration/e2e/service_mesh_configuration_management_spec.js))**.
+- [/ui/cypress/integration](https://github.com/meshery/meshery/tree/master/ui/cypress/integration) - 
 
 ## Meshery Server APIs
 
@@ -108,7 +107,7 @@ make build-ui
 To start running Meshery Server locally:
 
 ```
-$ make server
+make server
 ```
 > Now, Meshery will run on the default port `http://localhost:9081`.
 
@@ -122,22 +121,17 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 make run-ui-dev
 ```
 
-Refer to [Contributing to Meshery Server](contributing-server), if needed.
+Refer to [Contributing to Meshery Server](contributing-server), as needed.
 
 > Make sure to have Meshery Server configured, up and running on the default port `http://localhost:9081` before proceeding to access and work on the UI server at `http://localhost:3000`.
 
 > Any UI changes made now will _automatically_ be recompiled and served in the browser.
 
-### Running Cypress integration tests
+### Running Meshery Cypress Tests
 
-To run cypress integration tests, a convenience make target called `run-ui-integration-tests` that installs dependencies in `/ui` and `/provider-ui` folders as prerequisite and invokes `ci-test-integration` npm script found in [/ui/package.json](https://github.com/meshery/meshery/blob/master/ui/package.json)
-<pre class="codeblock-pre"><div class="codeblock">
-   <code class="clipboardjs">
-     $ make run-ui-integration-tests
-   </code></div></pre>
-{% include alert.html type="info" title="Above command must be run from Meshery repository's root folder." %}
 
-Refer to [Meshery Cypress Testing](contributing-cypress) for details of how to contribute and benefit from Meshery Cypress (integration & end-to-end) testing.
+
+Refer to [Contributing to Cypress UI Tests](contributing-cypress).
 
 ### Running Meshery from IDE
 
