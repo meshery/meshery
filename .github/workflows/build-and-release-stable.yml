@@ -2,7 +2,7 @@ name: Meshery Build and Releaser (stable)
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Docker login
@@ -46,7 +46,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3.0.0
         with:
-            fetch-depth: 0
+          fetch-depth: 0
       - name: Set up Go
         uses: actions/setup-go@v3.0.0
         with:
@@ -62,3 +62,4 @@ jobs:
 
   call-dde-release-workflow:
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
+
