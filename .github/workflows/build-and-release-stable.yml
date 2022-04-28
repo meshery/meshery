@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker stable build & tag
         run: |
-          DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
       - name: Docker stable push
@@ -39,7 +39,7 @@ jobs:
       #     DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       #     DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
   release:
-    name: Meshery build & release
+    name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery'
     runs-on: macos-latest
     steps:
@@ -59,7 +59,7 @@ jobs:
         with:
           version: latest
           args: release --rm-dist --skip-validate
-
   call-dde-release-workflow:
+    name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
 

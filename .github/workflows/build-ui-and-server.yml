@@ -266,7 +266,7 @@ jobs:
         env:
           RELEASE_CHANNEL: "edge"
         run: |
-          DOCKER_BUILDKIT=1 docker build --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
       - name: Docker edge push
         if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
