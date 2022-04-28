@@ -3,23 +3,13 @@ on:
   push:
     branches:
       - "master"
-    paths-ignore:
-      - "docs/**"
-      - "ui/**"
-      - "provider-ui/**"
-      - ".github/**"
-      - '**.md'
-      - "install/**"
+    paths:
+      - "**.go"
   pull_request:
     branches:
       - "master"
-    paths-ignore:
-      - "docs/**"
-      - "ui/**"
-      - "provider-ui/**"
-      - ".github/**"
-      - '**.md'
-      - "install/**"
+    paths:
+      - "**.go"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -76,3 +66,4 @@ jobs:
           files: ./coverage.txt
           flags: gointegrationtests
           fail_ci_if_error: true
+
