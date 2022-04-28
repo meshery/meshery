@@ -3,7 +3,6 @@ import {
   Grid,
   Button, Switch, Typography
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import ConsulIcon from "../../img/SVGs/consulIcon";
 import IstioIcon from "../../img/SVGs/IstioIcon";
 import KumaIcon from "../../img/SVGs/kumaIcon";
@@ -11,11 +10,9 @@ import {createTheme } from '@mui/material/styles';
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
 import NginxIcon from "../../img/SVGs/nginxIcon";
 import Meshery from "../../img/SVGs/meshery";
-import MesheryBlackIcon from "../../img/SVGs/mesheryBlackIcon";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
-import dataFetch from "../../lib/data-fetch";
 import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 
@@ -44,23 +41,7 @@ const ExtensionsComponent = () => {
   const [nginxChecked, isNginxChecked] = useState(false);
   const [kumaChecked, isKumaChecked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const isDarkTheme = useThemeDetector()
-  const theme = createTheme({
-    components: {
-      // Name of the component
-      MuiSvgIcon: {
-        styleOverrides: {
-          // Name of the slot
-          root: {
-            // Some CSS
-  
-            width: "519px",
-            height: "100px"
-          },
-        },
-      },
-    },
-  });
+  const isDarkTheme = useThemeDetector();
 
 
   const onMouseOver = e => {
