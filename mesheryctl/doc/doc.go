@@ -62,15 +62,15 @@ func linkHandler(name string) string {
 	base := strings.TrimSuffix(name, path.Ext(name))
 	words := strings.Split(base, "-")
 	if len(words) <= 1 {
-		return "/main/"
+		return "/main"
 	}
 	if len(words) == 3 {
-		return strings.ToLower(words[2]) + "/"
+		return strings.ToLower(words[2])
 	}
 	if len(words) == 4 {
-		return strings.ToLower(words[2]) + "/" + strings.ToLower(words[3]) + "/"
+		return strings.ToLower(words[2]) + "/" + strings.ToLower(words[3])
 	}
-	return strings.ToLower(words[1]) + "/"
+	return strings.ToLower(words[1])
 }
 
 func doc() {

@@ -22,7 +22,7 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view <application name>",
+	Use:   "view application name",
 	Short: "Display application(s)",
 	Long:  `Displays the contents of a specific application based on name or id`,
 	Example: `

@@ -92,11 +92,11 @@ jobs:
         with:
           go-version: '1.17'
           check-latest: 'true'
-      - name: Run script
+      - name: Run script 📜
         run: |
-          echo "cd ./mesheryctl/docs"
-          echo "go run docs.go"
-      - name: Commit
+          cd mesheryctl/doc 
+          go run doc.go
+      - name: Commit ✅
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           file_pattern: docs
