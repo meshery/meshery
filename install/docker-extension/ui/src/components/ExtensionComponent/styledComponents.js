@@ -29,6 +29,12 @@ export const AdapterDiv = styled("div")(({ theme, inactiveAdapter }) => ({
   filter: inactiveAdapter ? "grayscale(1) invert(0.35)" : ""
 }))
 
+// export const SpinnerDiv = styled("div")(({noHover}) => ({
+//   "&:hover {   
+//     transform: scale(2),
+//     transitionDuration: "0.5s" "
+// }))
+
 export const ExtensionWrapper = styled('div')(({ theme }) => ({
   margin: theme.spacing(2),
   display: "flex",
