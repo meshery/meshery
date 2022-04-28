@@ -1,10 +1,9 @@
-
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 
-const CustomTypography = styled(Typography)(()=>({  
+const CustomTypography = styled(Typography)(({theme})=>({  
   root: {
-  color: "#FFFFFF"
+  color: theme.palette.common.white
 }})) 
   
 export default CustomTypography;
