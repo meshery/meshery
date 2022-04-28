@@ -280,6 +280,7 @@ class MesheryChart extends React.Component {
     let chartData;
     if (typeof this.props.data !== 'undefined') {
       const results = this.props.data;
+      console.log("result(in mesherychart): ", results)
       if (results.length == 2) {
         chartData = makeOverlayChart(fortioResultToJsChartData(this.props.rawdata,results[0]), fortioResultToJsChartData(this.props.rawdata,results[1]));
       } else if (results.length > 2) {
@@ -305,6 +306,26 @@ class MesheryChart extends React.Component {
           <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
             {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => {
               return <Grid item xs={4} key={`nri-${i}`}>{el}</Grid>
+            })}
+          </Grid>
+          <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
+            {NonRecursiveConstructDisplayCells(chartData?.options?.metadata?.kubernetes?.display?.value || {})?.map((el, i) => {
+              return <Grid item key={`nri-${i}`}>{el}</Grid>
+            })}
+          </Grid>
+          <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
+            { chartData?.options?.metadata?.kubernetes?.display?.value[1]?.display?.value.map((node) => {
+              return (
+                <>
+                  <Typography style={{ marginTop : "0.125rem" }}>{node?.display?.key}:</Typography>
+                  {
+                    NonRecursiveConstructDisplayCells(node?.display?.value || {})?.map((el, i) => {
+                      return <Grid item key={`nri-${i}`}>{el}</Grid>
+                    })
+                  }
+
+                </>
+              )
             })}
           </Grid>
           <div className={classes.chartWrapper} >

@@ -144,8 +144,7 @@ export function getMetadata(rawdata,res) {
     },
     kubernetes : {
       display : {
-        hide : !res.kubernetes,
-        key : "Kuberenetes",
+        key : "Kubernetes",
         value : [
           {
             display : {
