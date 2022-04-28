@@ -14,19 +14,37 @@ import {
   Tooltip,
 } from "@mui/material";
 import React, { useState } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import classNames from "classnames";
 import HelpIcon from "@mui/icons-material/Help";
 import { useStyles } from "./Navbar.styles";
+import { HiddenscrollbarStyle } from "./HiddenSidebar";
 import { getPath } from "@/utils/path";
 import Link from "next/link";
 import { externlinks } from "./constants";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
+import { MesheryServerVersionContainer } from "@/features/mesheryComponents";
+import { Grid } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
-const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCollapse }) => {
+const Navbar = ({
+  isDrawerCollapsed,
+  extensionsNavigator,
+  categories,
+  onDrawerCollapse,
+  isDrawerOpen,
+  setIsDrawerOpen,
+}) => {
   const classes = useStyles();
   const [hoveredId, setHoveredId] = useState(null);
   const [openItems, setOpenItems] = useState([]);
   const [showHelperButton, setShowHelperButton] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   let classname;
   if (isDrawerCollapsed) {
@@ -194,7 +212,7 @@ const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCo
                     disableTouchListener={!isDrawerCollapsed}
                   >
                     {isDrawerCollapsed && children && (hoveredId === childId || openItems.includes(childId)) ? (
-                      <ExpandMoreIcon
+                      <ArrowDropDownIcon
                         onClick={() => toggleItemCollapse(childId)}
                         className={classNames({ [classes.collapsed]: openItems.includes(childId) })}
                       />
@@ -210,7 +228,7 @@ const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCo
                   </ListItemText>
                 </div>
               </Link>
-              <ExpandMoreIcon
+              <ArrowDropDownIcon
                 onClick={() => toggleItemCollapse(childId)}
                 className={classNames(classes.expandMoreIcon, {
                   [classes.collapsed]: openItems.includes(childId),
@@ -307,7 +325,10 @@ const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCo
                 className={classes.item}
                 style={isDrawerCollapsed && !showHelperButton ? { display: "none" } : {}}
               >
-                <Grow in={showHelperButton} timeout={{ enter: 600 - index * 200, exit: 100 * index }}>
+                <Grow
+                  in={showHelperButton || !isDrawerCollapsed}
+                  timeout={{ enter: 600 - index * 200, exit: 100 * index }}
+                >
                   <a
                     href={href}
                     target="_blank"
@@ -322,68 +343,111 @@ const Navbar = ({ isDrawerCollapsed, extensionsNavigator, categories, onDrawerCo
               </ListItem>
             );
           })}
-          <ListItem className={classes.rightMargin}>
+          <ListItem
+            className={classes.rightMargin}
+            style={!isDrawerCollapsed ? { display: "none" } : { marginLeft: "4px" }}
+          >
             <Tooltip title="Help" placement={isDrawerCollapsed ? "right" : "top"}>
               <IconButton
                 className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate}
                 onClick={toggleSpacing}
-                size="large"
               >
                 <HelpIcon className={classes.helpIcon} style={{ fontSize: "1.45rem" }} />
               </IconButton>
             </Tooltip>
           </ListItem>
         </ButtonGroup>
-
-        <ListItem
-          button
-          className={classname}
-          onClick={() => toggleMiniDrawer()}
-          style={{
-            position: "sticky",
-            zIndex: "1",
-            bottom: "0",
-            right: "0",
-          }}
-        >
-          <HelpIcon className={classes.helpIcon} style={{ fontSize: "1.45rem" }} />
-        </ListItem>
       </div>
     );
   };
+
   return (
     <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}>
       <Drawer
-        variant="permanent"
+        variant={isMobile ? "temporary" : "permanent"}
+        open={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
         className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
         classes={{ paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded }}
         style={{ width: "inherit" }}
       >
-        <List disablePadding>
-          <ListItem
-            component="a"
-            onClick={handleTitleClick}
-            className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
-          >
-            <Avatar
-              className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo}
-              src="/static/img/meshery-logo.png"
-            />
-            <Avatar
-              className={isDrawerCollapsed ? classes.mainLogoTextCollapsed : classes.mainLogoText}
-              src="/static/img/meshery-logo-text.png"
-            />
-          </ListItem>
-          {renderNavItems(categories)}
-          {extensionsNavigator && extensionsNavigator.length ? (
-            <React.Fragment>
-              <Divider className={classes.divider} />
-              {renderNavigatorExtensions(extensionsNavigator, 1)}
-            </React.Fragment>
-          ) : null}
-          <Divider className={classes.divider} />
-        </List>
+        <HiddenscrollbarStyle>
+          <List disablePadding>
+            <div className={classname}>
+              <ArrowBackIosIcon
+                style={{ verticalAlign: "middle", margin: "0.7rem -0.1rem 0.7rem 0.3rem", fontSize: "0.9rem" }}
+                onClick={() => toggleMiniDrawer()}
+                alt="Sidebar collapse toggle icon"
+              />
+            </div>
+            <ListItem
+              component="a"
+              onClick={handleTitleClick}
+              className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
+            >
+              <Avatar
+                className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo}
+                src="/static/img/meshery-logo.png"
+              />
+              <Avatar
+                className={isDrawerCollapsed ? classes.mainLogoTextCollapsed : classes.mainLogoText}
+                src="/static/img/meshery-logo-text.png"
+              />
+            </ListItem>
+            {renderNavItems(categories)}
+            {extensionsNavigator && extensionsNavigator.length ? (
+              <React.Fragment>
+                <Divider className={classes.divider} />
+                {renderNavigatorExtensions(extensionsNavigator, 1)}
+              </React.Fragment>
+            ) : null}
+            <Divider className={classes.divider} />
+          </List>
+        </HiddenscrollbarStyle>
         {renderExternalLinkItems()}
+        {
+          <MesheryServerVersionContainer>
+            {({ serverVersion }) => (
+              <div>
+                {isDrawerCollapsed ? (
+                  <div style={{ color: "white", fontSize: "0.7rem", textAlign: "center", paddingBottom: "0.5rem" }}>
+                    {serverVersion}{" "}
+                  </div>
+                ) : (
+                  <div className={classNames(classes.version)}>
+                    <Grid>
+                      {getMesheryVersionText(serverVersion)}
+                      <Link
+                        href={`https://docs.meshery.io/project/releases${
+                          serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
+                        }`}
+                        target="_blank"
+                      >
+                        <OpenInNewIcon sx={{ fontSize: theme.spacing(1.7) }} />
+                      </Link>
+                    </Grid>
+                    <Grid>
+                      {serverVersion.outdated ? (
+                        <>
+                          <Link
+                            href={`https://docs.meshery.io/project/releases${
+                              serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
+                            }`}
+                            target="_blank"
+                          >
+                            {serverVersion.latest}
+                          </Link>
+                        </>
+                      ) : (
+                        "Running latest"
+                      )}
+                    </Grid>
+                  </div>
+                )}
+              </div>
+            )}
+          </MesheryServerVersionContainer>
+        }
       </Drawer>
     </nav>
   );
