@@ -280,7 +280,6 @@ class MesheryChart extends React.Component {
     let chartData;
     if (typeof this.props.data !== 'undefined') {
       const results = this.props.data;
-      console.log("result(in mesherychart): ", results)
       if (results.length == 2) {
         chartData = makeOverlayChart(fortioResultToJsChartData(this.props.rawdata,results[0]), fortioResultToJsChartData(this.props.rawdata,results[1]));
       } else if (results.length > 2) {
