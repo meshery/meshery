@@ -228,6 +228,15 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
+      "1025": {
+        "name": "ErrMakingBinExecutableCode",
+        "code": "1025",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while making cilium cli an executable",
+        "probable_cause": "Download might be corrupted.",
+        "suggested_remediation": "Please retry operation."
+      },
       "1026": {
         "name": "ErrLoadNamespaceCode",
         "code": "1026",
@@ -236,6 +245,42 @@
         "short_description": "Error occured while applying namespace ",
         "probable_cause": "Trying to access a namespace which is not available",
         "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
+      },
+      "1027": {
+        "name": "ErrUnpackingTarCode",
+        "code": "1027",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occured while unpacking tar",
+        "probable_cause": "The gzip might be corrupt",
+        "suggested_remediation": "Please retry operation."
+      },
+      "1028": {
+        "name": "ErrUnzipFileCode",
+        "code": "1028",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while unzipping",
+        "probable_cause": "File might be corrupt",
+        "suggested_remediation": "Please retry operation."
+      },
+      "1029": {
+        "name": "ErrDownloadingTarCode",
+        "code": "1029",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occured while downloading Cilium tar",
+        "probable_cause": "Error occured while download cilium tar from its release url",
+        "suggested_remediation": "Checkout https://github.com/cilium/cilium-cli/releases/download/<release>/cilium-<platform>-<arch>.tar.gz for more details"
+      },
+      "1030": {
+        "name": "ErrGettingReleaseCode",
+        "code": "1030",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get latest version",
+        "probable_cause": "Latest version could not be found at the specified url",
+        "suggested_remediation": "Verify network connectivity.\nEnsure github.com is reachable.\nTry retrying the operation."
       }
     }
   }

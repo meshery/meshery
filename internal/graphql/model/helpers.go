@@ -120,6 +120,11 @@ func PersistClusterName(
 	clusterConfig, err := h.GetCurrentContext(tokenString, provider)
 	if err != nil {
 		log.Error(err)
+		return
+	}
+
+	if clusterConfig == nil {
+		return
 	}
 
 	clusterName := clusterConfig.Cluster["name"].(string)

@@ -36,6 +36,7 @@ import changeOperatorState from "./graphql/mutations/OperatorStatusMutation";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 import NatsStatusQuery from "./graphql/queries/NatsStatusQuery";
 import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
+import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
 import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
@@ -408,7 +409,21 @@ handleNATSClick = () => {
 
   NatsStatusQuery().subscribe({
     next : (res) => {
+      console.log(res);
       self.props.updateProgress({ showProgress : false });
+      if (res.controller.name === "broker" && res.controller.status == "CONNECTED") {
+        this.props.enqueueSnackbar(`Broker was successfully pinged`, {
+          variant : "success",
+          action : (key) => (
+            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          ),
+          autohideduration : 2000,
+        })
+      } else {
+        self.handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
+      }
       self.setState({
         NATSState : res.controller.status,
         NATSVersion : res.controller.version,
@@ -460,7 +475,17 @@ handleNATSClick = () => {
           meshSyncInstalled : true,
           meshSyncVersion : res.controller.version,
         });
+        this.props.enqueueSnackbar(`MeshSync was successfully pinged`, {
+          variant : "success",
+          action : (key) => (
+            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          ),
+          autohideduration : 2000,
+        })
       } else {
+        self.handleError("MeshSync could not be reached")("MeshSync is unavailable");
         self.setState({
           meshSyncInstalled : false,
           meshSyncVersion : "",
@@ -488,6 +513,33 @@ handleNATSClick = () => {
     //   error : self.handleError("Failed to request Meshsync redeployment"),
     // });
   };
+
+  handleReset = () => {
+    this.props.updateProgress({ showProgress : true });
+    const self = this;
+    resetDatabase({
+      selector : {
+        clearDB : "true",
+        ReSync : "false"
+      },
+    }).subscribe({
+      next : (res) => {
+        self.props.updateProgress({ showProgress : false });
+        if (res.resetStatus === "PROCESSING") {
+          this.props.enqueueSnackbar(`Database reset successful.`, {
+            variant : "success",
+            action : (key) => (
+              <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+            autohideduration : 2000,
+          })
+        }
+      },
+      error : self.handleError("Database is not reachable, try restarting server.")
+    });
+  }
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
@@ -786,6 +838,19 @@ handleNATSClick = () => {
             />
             {self.state.operatorProcessing && <CircularProgress />}
           </FormGroup>
+        </div>
+        <div className={classes.buttonsCluster}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => this.handleReset()}
+            className={classes.button}
+            data-cy="btnResetDatabase"
+          >
+              Reset Database
+          </Button>
         </div>
       </React.Fragment>
     );
