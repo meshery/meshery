@@ -317,13 +317,14 @@ class MesheryChart extends React.Component {
             { chartData?.options?.metadata?.kubernetes?.display?.value[1]?.display?.value.map((node) => {
               return (
                 <>
-                  <Typography style={{ marginTop : "0.125rem" }}>{node?.display?.key}:</Typography>
-                  {
-                    NonRecursiveConstructDisplayCells(node?.display?.value || {})?.map((el, i) => {
-                      return <Grid item key={`nri-${i}`}>{el}</Grid>
-                    })
-                  }
-
+                  <Grid container spacing={1} style={{ margin : "0.2rem" }} justifyContent="center">
+                    <Typography style={{ marginTop : "0.125rem" }}>{node?.display?.key}:</Typography>
+                    {
+                      NonRecursiveConstructDisplayCells(node?.display?.value || {})?.map((el, i) => {
+                        return <Grid item key={`nri-${i}`}>{el}</Grid>
+                      })
+                    }
+                  </Grid>
                 </>
               )
             })}
