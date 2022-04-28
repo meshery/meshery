@@ -166,7 +166,23 @@ func stop() error {
 				return err
 			}
 		} else {
-			// Delete the helm release
+			// DryRun helm release uninstallation with helm pkg
+			if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+				Namespace: utils.MesheryNamespace,
+				ChartLocation: meshkitkube.HelmChartLocation{
+					Repository: utils.HelmChartURL,
+					Chart:      utils.HelmChartName,
+				},
+				Action: meshkitkube.UNINSTALL,
+				DryRun: true,
+			}); err != nil {
+				// Dry run failed, in such case; fallback to force cleanup
+				if err = utils.ForceCleanupCluster(); err != nil {
+					return errors.Wrap(err, "cannot stop Meshery")
+				}
+			}
+
+			// Dry run passed; now delete meshery components with the helm pkg
 			if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 				Namespace: utils.MesheryNamespace,
 				ChartLocation: meshkitkube.HelmChartLocation{

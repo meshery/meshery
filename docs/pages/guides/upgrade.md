@@ -126,7 +126,7 @@ Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
- curl -L https://git.io/meshery | DEPLOY_MESHERY=false bash -
+ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
  </div></div>
  </pre>
 

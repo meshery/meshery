@@ -121,13 +121,13 @@
         "suggested_remediation": ""
       },
       "1013": {
-        "name": "ErrAddonInvalidConfigCode",
+        "name": "ErrInvalidInstallationProfileCode",
         "code": "1013",
-        "severity": "",
+        "severity": "Alert",
         "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "Error while installing istio due to wrong profile",
+        "probable_cause": "Invalid profile passed",
+        "suggested_remediation": "Provide one of the profiles: \\\"demo\\\",\\\"minimal\\\",\\\"default\\\" profiles"
       },
       "1014": {
         "name": "ErrCreatingIstioClientCode",
@@ -299,15 +299,6 @@
         "short_description": "Error while labeling namespace:",
         "probable_cause": "",
         "suggested_remediation": ""
-      },
-      "1033": {
-        "name": "ErrInvalidInstallationProfileCode",
-        "code": "1033",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error while installing istio due to wrong profile",
-        "probable_cause": "Invalid profile passed",
-        "suggested_remediation": "Provide one of the profiles: \\\"demo\\\",\\\"minimal\\\",\\\"default\\\" profiles"
       }
     }
   }

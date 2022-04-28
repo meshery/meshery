@@ -18,25 +18,25 @@ on:
         type: string
       adapter_name:
         required: true
-        type: string   
+        type: string
       patternfile_name:
         required: true
-        type: string   
-      k8s_version:  
+        type: string
+      k8s_version:
         required: true
-        type: string   
-      sm_version:  
+        type: string
+      sm_version:
         required: true
-        type: string   
-      output_filename:  
+        type: string
+      output_filename:
         required: true
-        type: string   
-      adapter_version:  
+        type: string
+      adapter_version:
         required: true
-        type: string  
+        type: string
       provider: #default to local
         required: false
-        type: string   
+        type: string
     secrets:
       token:
         required: true
@@ -44,52 +44,51 @@ on:
 jobs:
   TestAdapter:
     runs-on: ubuntu-latest
-    outputs: 
+    outputs:
       exitstatus: ${{ steps.runpods.outputs.exitstatus }}
-    steps:  
+    steps:
       - name: Setting up minikube
         id: setk8s
         uses: manusa/actions-setup-minikube@v2.4.1
         with:
-          minikube version: 'v1.23.2'
+          minikube version: "v1.23.2"
           kubernetes version: '"${{ inputs.k8s_version }}"'
           driver: docker
       - name: Checkout Code
         uses: actions/checkout@v3
 
-
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image
         run: |
           eval $(minikube -p minikube docker-env) 
-          docker build  -t test:test .
+          docker build -f install/docker/Dockerfile -t test:test .
       - name: Retrieve kubeconfig
-        run:  cat ~/.kube/config     
+        run: cat ~/.kube/config
       # Setup meshery config.yaml and auth.json
       - name: Setup meshery config and infinite token for use
         env:
           provider_token: ${{ secrets.token }}
         run: |
-            echo $provider_token 
-            mkdir ~/.meshery
-            config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
-            echo $config > ~/.meshery/config.yaml	
-            cat ~/.meshery/config.yaml
-            echo "Using provider: ${{ inputs.provider }}"
-            if  [ "${{ inputs.provider }}" = "Meshery" ] && [ "$provider_token" != "" ] ;then
-              echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$provider_token'"' > ~/.meshery/auth.json
-            else
-              echo '{ "meshery-provider": "None", "token": "" }'  > ~/.meshery/auth.json
-            fi
-            cat ~/.meshery/auth.json
-        
+          echo $provider_token 
+          mkdir ~/.meshery
+          config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
+          echo $config > ~/.meshery/config.yaml	
+          cat ~/.meshery/config.yaml
+          echo "Using provider: ${{ inputs.provider }}"
+          if  [ "${{ inputs.provider }}" = "Meshery" ] && [ "$provider_token" != "" ] ;then
+            echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$provider_token'"' > ~/.meshery/auth.json
+          else
+            echo '{ "meshery-provider": "None", "token": "" }'  > ~/.meshery/auth.json
+          fi
+          cat ~/.meshery/auth.json
+
       # Start Meshery Server (Assuming that this step will create the meshery namespace)
       - name: Start Meshery Server using mesheryctl
         run: |
-              curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
-      
+          curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
+
       # Start the adapter using yamls
-      - name: Start adapter 
+      - name: Start adapter
         run: |
           touch testimagedep.yaml
           curl ${{ inputs.deployment_url }} > ./testimagedep.yaml
@@ -98,11 +97,10 @@ jobs:
           cat testimagedep.yaml
           kubectl apply -f testimagedep.yaml --namespace=meshery
           kubectl apply -f ${{ inputs.service_url }} --namespace=meshery
-      
+
       # Start tunnelling to allocate external IP to LoadBalancer type service(meshery)(SO that we can access meshery from outside)
       - name: Start tunelling
         run: minikube tunnel &> /dev/null &
-
 
       # Checking meshery server logs
       - name: Check Meshery pod logs
@@ -119,11 +117,11 @@ jobs:
       # If external IP has not been allotted then server is unreachable, exit here in that case
       - name: Check if Meshery has been allotted external IP
         run: |
-              svcstatus=$(kubectl get svc  -n meshery| grep meshery | tr -s ' ' | cut -d " " -f 4)
-              echo $svcstatus
-              if [ "$svcstatus" = "<pending>" ];then
-                 exit 1
-              fi
+          svcstatus=$(kubectl get svc  -n meshery| grep meshery | tr -s ' ' | cut -d " " -f 4)
+          echo $svcstatus
+          if [ "$svcstatus" = "<pending>" ];then
+             exit 1
+          fi
       # Reset meshery's address to the external IP in config.yaml such that mesheryctl can reach it
       - name: Reset Meshery address
         run: |
@@ -139,17 +137,16 @@ jobs:
       # This pattern will try to install  service mesh
       - name: Pattern apply (Install service mesh)
         run: |
-            cat ./${{ inputs.patternfile_name }}
-            mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
+          cat ./${{ inputs.patternfile_name }}
+          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
 
-   
       - name: Check adapter logs
         run: |
-            podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
-            kubectl logs pod/$podname -n meshery
+          podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
+          kubectl logs pod/$podname -n meshery
       - name: Check Meshery logs
         run: |
-            mesheryctl system  logs meshery
+          mesheryctl system  logs meshery
       - name: Whole status for debugging
         run: kubectl get all -A
         # Check if all  pods are in a Running state
@@ -165,7 +162,7 @@ jobs:
           pods=(${podnames//,/ })
           ns=(${nsnames//,/ })
           breakout=1
-          
+
           while [ $SECONDS -lt $end ]; do
               for i in "${!pods[@]}"
               do
@@ -219,7 +216,6 @@ jobs:
           path: ./${{ inputs.output_filename }}
       - name: exit
         run: |
-            if [ "$exitstatus" -eq 1 ];then
-                exit 1
-            fi
-         
+          if [ "$exitstatus" -eq 1 ];then
+              exit 1
+          fi

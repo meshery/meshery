@@ -27,7 +27,7 @@ All set to contribute? Grab an open issue with the [help-wanted label](../../lab
 
 # <a name="contributing">General Contribution Flow</a>
 
-To contribute to Meshery, please follow the fork-and-pull request workflow described [here](./CONTRIBUTING-gitflow.md).
+To contribute to Meshery, please follow the fork-and-pull request workflow described [here](docs/CONTRIBUTING-gitflow.md).
 
 ## <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
@@ -71,7 +71,7 @@ Or you may configure your IDE, for example, Visual Studio Code to automatically 
 
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
 
-1. Create a fork, if you have not already, by following the steps described [here](./CONTRIBUTING-gitflow.md)
+1. Create a fork, if you have not already, by following the steps described [here](docs/CONTRIBUTING-gitflow.md)
 1. In the local copy of your fork, navigate to the docs folder.
    `cd docs`
 1. Create and checkout a new branch to make changes within
@@ -260,12 +260,10 @@ The [`/mesheryctl`](https://github.com/meshery/meshery/tree/master/mesheryctl) f
 
 After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
 
-
 ### `mesheryctl` command reference
 
 - Seee user-facing, documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
 - See contributor-facing design spec for [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) for a complete reference of `mesheryctl`.
-
 
 ### General guidelines and resources
 
@@ -303,3 +301,4 @@ Resources: https://lab.github.com and https://try.github.com/
 ### License
 
 This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
+

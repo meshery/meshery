@@ -120,7 +120,7 @@ const ExtensionsComponent = () => {
     <DockerMuiThemeProvider theme={theme}>
       <ComponentWrapper>
         <CssBaseline />
-        <MesheryIcon />
+        <MesheryIcon  CustomColor="white"/>
         <CustomTypography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
 
         <SectionWrapper>
@@ -165,26 +165,33 @@ const ExtensionsComponent = () => {
           </ExtensionWrapper>
           <ExtensionWrapper>
             <div>
-              <CustomTypography sx={{ marginBottom: "2rem" }}>Deploy a Service Mesh</CustomTypography>
+              <CustomTypography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</CustomTypography>
               <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
                 <ServiceMeshAdapters>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!consulChecked}>
                       <ConsulIcon width={40} height={40} /> </AdapterDiv>
+                      <CustomTypography>Consul</CustomTypography>
                     <Switch checked={consulChecked} onChange={handleConsul} color="primary" ></Switch>
                   </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!istioChecked}>
                       <IstioIcon width={40} height={40} /></AdapterDiv>
+                      <CustomTypography>Istio</CustomTypography>
                     <Switch checked={istioChecked} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
 
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
+                    <CustomTypography>Linkerd</CustomTypography>
                     <Switch checked={linkerdChecked} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv><Switch checked={nginxChecked} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
+                    <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv>
+                    <CustomTypography>Nginx</CustomTypography>
+                    <Switch checked={nginxChecked} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv><Switch checked={kumaChecked} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
+                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
+                    <CustomTypography>Kuma</CustomTypography>
+                    <Switch checked={kumaChecked} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
               </Grid>
             </div>
