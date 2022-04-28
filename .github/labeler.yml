@@ -1,5 +1,5 @@
 area/docs:
-- docs/**/*
+- 'docs/**/*'
 area/ci:
 - '.github/**/*'      
 component/ui:
@@ -7,3 +7,9 @@ component/ui:
 - 'provider-ui/**/*'
 component/mesheryctl:
 - 'mesheryctl/**/*'
+component/extension:
+- 'install/docker-extension/**/*'
+area/lifecycle:
+- 'install/deployment_yamls/*'
+framework/helm:
+- 'install/kubernetes/helm/**/*'
