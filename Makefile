@@ -18,6 +18,7 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
+.PHONY: docker-build docker-local-cloud docker-cloud
 ## Build Meshery Server and UI containers.
 docker-build:
 	# `make docker` builds Meshery inside of a multi-stage Docker container.
@@ -54,7 +55,7 @@ docker-cloud:
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: server
+.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
@@ -135,7 +136,7 @@ proto-build:
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lintui-provider  ui-meshery ui-build ui-provider-build ui-provider-test
+.PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
 setup-ui-libs: ui-setup
 ## Install dependencies for building Meshery UI.
@@ -207,7 +208,7 @@ docs-docker:
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
-.PHONY: helm-docs server lint-helm
+.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-lint
 ## Generate all Meshery Helm Chart documentation in markdown format.
 helm-docs: helm-operator-docs helm-meshery-docs
 
@@ -234,6 +235,7 @@ helm-meshery-lint:
 #-----------------------------------------------------------------------------
 # Meshery APIs
 #-----------------------------------------------------------------------------
+.PHONY: swagger-build swagger swagger-docs-build graphql-docs graphql-build
 ## Build Meshery REST API specifications
 swagger-build:
 	swagger generate spec -o ./helpers/swagger.yaml --scan-models
