@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"strings"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
@@ -190,7 +191,7 @@ func (r *Resolver) getScopes(ctx context.Context, name, id *string, trim *bool) 
 	return
 }
 
-func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, typeArg string, namespace string) (*model.KctlDescribeDetails, error) {
+func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error) {
 	var ResourceMap = map[string]describe.DescribeType{
 		"pod":                       describe.Pod,
 		"deployment":                describe.Deployment,
@@ -225,7 +226,7 @@ func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, typeArg 
 	options := describe.DescriberOptions{
 		Name:      name,
 		Namespace: namespace,
-		Type:      ResourceMap[typeArg],
+		Type:      ResourceMap[strings.ToLower(kind)],
 	}
 
 	client, err := meshkitKube.New([]byte(""))

@@ -222,7 +222,7 @@ type ComplexityRoot struct {
 		GetAvailableNamespaces func(childComplexity int) int
 		GetControlPlanes       func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes          func(childComplexity int, filter *model.ServiceMeshFilter) int
-		GetKubectlDescribe     func(childComplexity int, name string, typeArg string, namespace string) int
+		GetKubectlDescribe     func(childComplexity int, name string, kind string, namespace string) int
 		GetMeshsyncStatus      func(childComplexity int) int
 		GetNatsStatus          func(childComplexity int) int
 		GetOperatorStatus      func(childComplexity int) int
@@ -269,7 +269,7 @@ type QueryResolver interface {
 	GetWorkloads(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetTraits(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetScopes(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
-	GetKubectlDescribe(ctx context.Context, name string, typeArg string, namespace string) (*model.KctlDescribeDetails, error)
+	GetKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
@@ -1138,7 +1138,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetKubectlDescribe(childComplexity, args["name"].(string), args["type"].(string), args["namespace"].(string)), true
+		return e.complexity.Query.GetKubectlDescribe(childComplexity, args["name"].(string), args["kind"].(string), args["namespace"].(string)), true
 
 	case "Query.getMeshsyncStatus":
 		if e.complexity.Query.GetMeshsyncStatus == nil {
@@ -1789,7 +1789,7 @@ type Query {
   getScopes(name: String, id: ID, trim: Boolean): [OAMCapability]
 
   # Query for getting kubectl describe details with meshkit 
-  getKubectlDescribe(name: String!, type: String!, namespace: String!): KctlDescribeDetails!
+  getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 }
 
 #
@@ -2013,14 +2013,14 @@ func (ec *executionContext) field_Query_getKubectlDescribe_args(ctx context.Cont
 	}
 	args["name"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["type"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+	if tmp, ok := rawArgs["kind"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kind"))
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["type"] = arg1
+	args["kind"] = arg1
 	var arg2 string
 	if tmp, ok := rawArgs["namespace"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
@@ -6515,7 +6515,7 @@ func (ec *executionContext) _Query_getKubectlDescribe(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetKubectlDescribe(rctx, args["name"].(string), args["type"].(string), args["namespace"].(string))
+		return ec.resolvers.Query().GetKubectlDescribe(rctx, args["name"].(string), args["kind"].(string), args["namespace"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
