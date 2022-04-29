@@ -32,7 +32,7 @@ mesheryctl system logs [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-// Starts tailing Meshery server debug logs
+// Starts tailing Meshery server debug logs (works with components also)
 mesheryctl system logs --verbose
 mesheryctl system logs meshery-istio
 	

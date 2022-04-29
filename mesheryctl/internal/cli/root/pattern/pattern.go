@@ -21,13 +21,13 @@ var PatternCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Example: `
 // Apply pattern file
-mesheryctl pattern apply --file [path to pattern file]
+mesheryctl pattern apply --file [path to pattern file | URL of the file]
 
 // Deprovision pattern file
 mesheryctl pattern delete --file [path to pattern file]
 
 // View pattern file
-mesheryctl pattern view [pattern name/id]
+mesheryctl pattern view [pattern name | ID]
 
 // List all patterns
 mesheryctl pattern list

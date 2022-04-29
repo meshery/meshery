@@ -33,7 +33,7 @@ mesheryctl system config [flags]
 // Set configuration according to k8s cluster
 mesheryctl system config [aks|eks|gke|minikube]
 
-// Path to token for authenticating to Meshery API (optional)
+// Path to token for authenticating to Meshery API (optional, can be done alternatively using "login")
 mesheryctl system config --token "~/Downloads/auth.json"
 	
 

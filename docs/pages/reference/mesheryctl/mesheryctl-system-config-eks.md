@@ -32,6 +32,9 @@ mesheryctl system config eks [flags]
 
 // Configure Meshery to connect to EKS cluster using auth token
 mesheryctl system config eks --token auth.json
+
+// Configure Meshery to connect to EKS cluster (if session is logged in using login subcommand)
+mesheryctl system config eks
 	
 
 </div>

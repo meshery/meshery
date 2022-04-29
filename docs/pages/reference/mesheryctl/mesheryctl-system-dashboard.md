@@ -29,7 +29,7 @@ mesheryctl system dashboard [flags]
 // Open Meshery UI in browser
 mesheryctl system dashboard
 
-// Open Meshery UI in browser and use port-forwarding
+// Open Meshery UI in browser and use port-forwarding (if default port is taken already)
 mesheryctl system dashboard --port-forward
 	
 

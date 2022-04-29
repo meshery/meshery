@@ -21,7 +21,7 @@ Authenticate to the Local or a Remote Provider of a Meshery Server
 The authentication mode is web-based browser flow`,
 	Args: cobra.MinimumNArgs(0),
 	Example: `
-// Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
+// Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
 mesheryctl system login 
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {

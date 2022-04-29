@@ -49,14 +49,15 @@ var RootCmd = &cobra.Command{
 	Long:  `Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.`,
 	Args:  cobra.MinimumNArgs(1),
 	Example: `
-	// Base command
-	mesheryctl
+// Base command
+mesheryctl
 
-	// Display help
-	mesheryctl --help
+// Display help about command/subcommand
+mesheryctl --help
+mesheryctl system start --help
 
-	// For verbose output
-	mesheryctl -v [or] --verbose
+// For viewing verbose output
+mesheryctl -v [or] --verbose
 	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:

@@ -42,8 +42,8 @@ mesheryctl system start --skip-update
 // Reset Meshery's configuration file to default settings.
 mesheryctl system start --reset
 
-// Silently create Meshery's configuration file with default settings.
-mesheryctl system start --silent
+// Silently create Meshery's configuration file with default settings
+mesheryctl system start --yes
 	
 
 </div>

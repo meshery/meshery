@@ -30,14 +30,14 @@ mesheryctl mesh deploy [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Deploy a service mesh from an interactive on the default namespace
-	mesheryctl mesh deploy
+// Deploy a service mesh from an interactive on the default namespace
+mesheryctl mesh deploy
 
-	// Deploy Linkerd mesh on a specific namespace
-	mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
+// Deploy Linkerd mesh on a specific namespace
+mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
 
-	// Deploy Linkerd mesh and wait for it to be deployed
-	mesheryctl mesh deploy --adapter meshery-linkerd --watch
+// Deploy Linkerd mesh and wait for it to be deployed
+mesheryctl mesh deploy --adapter meshery-linkerd --watch
 		
 
 </div>

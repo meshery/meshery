@@ -36,7 +36,7 @@ mesheryctl system stop
 // Reset Meshery's configuration file to default settings.
 mesheryctl system stop --reset
 
-// Stop Meshery forcefully
+// Stop Meshery forcefully (use it when system stop doesn't work)
 mesheryctl system stop --force
 	
 

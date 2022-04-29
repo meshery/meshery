@@ -31,7 +31,7 @@ mesheryctl pattern view <pattern name> [flags]
 <div class='codeblock'>
 
 // view a pattern
-mesheryctl pattern view [pattern-name/id]
+mesheryctl pattern view [pattern-name | ID]
 	
 
 </div>

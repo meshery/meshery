@@ -181,7 +181,7 @@ var listContextCmd = &cobra.Command{
 	Short: "list contexts",
 	Long:  `List current context and available contexts`,
 	Example: `
-// List contexts
+// List all contexts present
 mesheryctl system context list
 	`,
 	Args:         cobra.NoArgs,
@@ -319,8 +319,8 @@ var switchContextCmd = &cobra.Command{
 	Short: "switch context",
 	Long:  `Configure mesheryctl to actively use one one context vs. another context`,
 	Example: `
-// Switch to context named "context-name"
-mesheryctl system context switch context-name
+// Switch to context named "sample"
+mesheryctl system context switch sample
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system context switch [context name]

@@ -30,8 +30,8 @@ mesheryctl version [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// To view the version of mesheryctl
-	mesheryctl version
+// To view the current version and SHA of release binary of mesheryctl client 
+mesheryctl version
 	
 
 </div>

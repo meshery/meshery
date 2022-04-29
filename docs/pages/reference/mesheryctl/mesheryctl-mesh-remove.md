@@ -30,8 +30,8 @@ mesheryctl mesh remove [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-	// Remove a service mesh
-	mesheryctl mesh remove [mesh adapter name]
+// Remove a service mesh
+mesheryctl mesh remove [mesh adapter name]
 		
 
 </div>

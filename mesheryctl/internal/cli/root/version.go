@@ -40,8 +40,8 @@ var versionCmd = &cobra.Command{
 	Short: "Version of mesheryctl",
 	Long:  `Version of Meshery command line client - mesheryctl.`,
 	Example: `
-	// To view the version of mesheryctl
-	mesheryctl version
+// To view the current version and SHA of release binary of mesheryctl client 
+mesheryctl version
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error

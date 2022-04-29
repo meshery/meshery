@@ -31,7 +31,7 @@ mesheryctl mesh [flags]
 <div class='codeblock'>
 
 // Lifecycle management of service meshes
-mesheryctl mesh [subcommand] 
+mesheryctl mesh 
 	
 
 </div>

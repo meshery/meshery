@@ -32,6 +32,9 @@ mesheryctl system config minikube [flags]
 
 // Configure Meshery to connect to minikube cluster using auth token
 mesheryctl system config minikube --token auth.json
+
+// Configure Meshery to connect to minikube cluster (if session is logged in using login subcommand)
+mesheryctl system config minikube
 	
 
 </div>

@@ -27,7 +27,7 @@ var viewCmd = &cobra.Command{
 	Args:  cobra.MaximumNArgs(1),
 	Example: `
 // view a pattern
-mesheryctl pattern view [pattern-name/id]
+mesheryctl pattern view [pattern-name | ID]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

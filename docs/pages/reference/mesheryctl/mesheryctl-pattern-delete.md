@@ -31,7 +31,7 @@ mesheryctl pattern delete [flags]
 <div class='codeblock'>
 
 // delete a pattern file
-mesheryctl pattern delete [pattern-name]
+mesheryctl pattern delete [file | URL]
 	
 
 </div>

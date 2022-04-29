@@ -30,7 +30,7 @@ mesheryctl system context list [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 
-// List contexts
+// List all contexts present
 mesheryctl system context list
 	
 

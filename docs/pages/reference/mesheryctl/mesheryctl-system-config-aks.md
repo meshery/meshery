@@ -32,6 +32,9 @@ mesheryctl system config aks [flags]
 
 // Configure Meshery to connect to AKS cluster using auth token
 mesheryctl system config aks --token auth.json
+
+// Configure Meshery to connect to AKS cluster (if session is logged in using login subcommand)
+mesheryctl system config aks
 	
 
 </div>

@@ -54,7 +54,7 @@ var dashboardCmd = &cobra.Command{
 // Open Meshery UI in browser
 mesheryctl system dashboard
 
-// Open Meshery UI in browser and use port-forwarding
+// Open Meshery UI in browser and use port-forwarding (if default port is taken already)
 mesheryctl system dashboard --port-forward
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
