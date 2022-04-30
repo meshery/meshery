@@ -23,7 +23,7 @@ const (
 	ErrGettingNamespaceCode         = "1014"
 	ErrFetchingPatternsCode         = "1015"
 	ErrInvalidOAMTypeCode           = "2173"
-	ErrKubectlDescribeCode          = "not set"
+	ErrKubectlDescribeCode          = "2174"
 )
 
 var (
