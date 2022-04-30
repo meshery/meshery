@@ -20,6 +20,10 @@ import {
   ListItem,
   ListItemText,
   CircularProgress,
+  Select,
+  Box,
+  FormControl,
+  InputLabel,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -173,6 +177,7 @@ class MeshConfigComponent extends React.Component {
       k8sfileError : false,
       ts : new Date(),
       contexts : [],
+      selectContext : contextName,
 
       operatorInstalled : false,
       operatorVersion : "N/A",
@@ -319,6 +324,15 @@ class MeshConfigComponent extends React.Component {
     }, variables);
   };
 
+  selectcontext = () => {
+    const self = this;
+    return (event) => {
+      self.setState(() => {
+        return { selectContext : event.target.value }
+      })
+    };
+  };
+
   handleChange = (name) => {
     const self = this;
     return (event) => {
@@ -344,7 +358,16 @@ class MeshConfigComponent extends React.Component {
           })
       }
       if (name === "context") {
-        changeContext(event.target.value).
+        this.setState(() => {
+          return { contextName : this.state.selectContext }
+        })
+        let contextid;
+        this.state.contexts.forEach(element => {
+          if (element.name==this.state.selectContext){
+            contextid=element.id;
+          }
+        });
+        changeContext(contextid).
           then(() => {
             this.handleSuccess("successfully changed kubernetes current context")
             fetchAllContexts(25)
@@ -661,6 +684,7 @@ handleNATSClick = () => {
       operatorSwitch,
       contexts,
     } = this.state;
+
     let showConfigured = <></>;
     const self = this;
     if (clusterConfigured) {
@@ -686,13 +710,10 @@ handleNATSClick = () => {
           </ListItem>
         </List>
       );
-      { console.log(this.state) }
-      { console.log(this.props) }
       showConfigured = (
         <div>
           {contexts?.map(ctx => (
             <Tooltip title={`Server: ${ctx.server}`}>
-
               <Chip
                 label={ctx?.name}
                 onDelete={() => self.handleReconfigure(ctx.id)}
@@ -866,9 +887,7 @@ handleNATSClick = () => {
   meshOut = (showConfigured, operator) => {
     const { classes } = this.props;
     const {
-      k8sfile, k8sfileElementVal,
-      // contextNameForForm, contextName,
-      contexts
+      k8sfile, k8sfileElementVal, contextName, contexts, selectContext
     } = this.state;
 
     return (
@@ -909,28 +928,43 @@ handleNATSClick = () => {
                         ), }}
                     />
                   </FormGroup>
-                  {console.log(contexts)}
-                  <TextField
-                    select
-                    id="contextName"
-                    name="contextName"
-                    label="Context Name"
-                    fullWidth
-                    value={contexts.name}
-                    margin="normal"
-                    variant="outlined"
-                    // disabled={inClusterConfigForm === true}
-                    onChange={this.handleChange("context")}
-                  >
-                    {contexts?.map((ct) => (
-                      <MenuItem key={`ct_---_${ct.name}`} value={ct.id}>
-                        {ct.name}
-                        {ct.is_current_context
-                          ? " (Current Context)"
-                          : ""}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                  <form onSubmit={this.handleChange("context")} >
+                    <Box sx={{ minWidth : 120 }}>
+                      <FormControl variant="outlined" fullWidth>
+                        <InputLabel id="select-label">Context Name</InputLabel>
+                        <Select
+                          id="contextName"
+                          name="contextName"
+                          labelId="select-label"
+                          label="Context Name"
+                          value={selectContext || contextName }
+                          onChange={this.selectcontext()}
+                          // disabled={inClusterConfigForm === true}
+                        >
+                          {contexts?.map((ct) => (
+                            <MenuItem key={`ct_---_${ct.name}`} value= {ct.name}>
+                              {ct.name}
+                              {ct.is_current_context
+                                ? " (Current Context)"
+                                : ""}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                    <div style={{ display : 'flex', justifyContent : 'center' }}>
+                      <Button
+                        type="submit"
+                        value="Submit"
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
+                      >
+                      Change Context
+                      </Button>
+                    </div>
+                  </form>
                 </div>
               </Paper>
             </Grid>
@@ -992,6 +1026,7 @@ handleNATSClick = () => {
   };
 
   render() {
+
     return this.configureTemplate();
   }
 }
