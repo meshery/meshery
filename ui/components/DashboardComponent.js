@@ -44,7 +44,6 @@ import { submitGrafanaConfigure } from "./GrafanaComponent";
 import { versionMapper } from "../utils/nameMapper";
 // podNameMapper,
 //import MesheryMetrics from "./MesheryMetrics";
-const p = console.log;
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
   chip : { marginRight : theme.spacing(1),
@@ -84,8 +83,8 @@ const styles = (theme) => ({
     height : "100%",
   },
 });
-async function fetchAllContexts(number) {
-  return await promisifiedDataFetch("/api/system/kubernetes/contexts?pageSize=" + number)
+async function fetchAllContexts(pageSize) {
+  return await promisifiedDataFetch("/api/system/kubernetes/contexts?pageSize=" + pageSize)
 }
 class DashboardComponent extends React.Component {
   constructor(props) {
@@ -141,7 +140,6 @@ class DashboardComponent extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     const {
-      //contextName
       meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus, contextName
     } = props;
     const st = {};
@@ -161,11 +159,7 @@ class DashboardComponent extends React.Component {
       if (!state.contextsFromFile?.length)
         st.contextsFromFile = { ...st, contextsFromFile : [{ contextName, currentContext : true }] };
       return st;
-    // }
     }
-
-
-
     return st;
   }
 
@@ -787,7 +781,6 @@ class DashboardComponent extends React.Component {
     const self = this;
     let showConfigured = "Not connected to Kubernetes.";
     if (clusterConfigured) {
-      { console.log(this.state) }
       let chp = (
         // <Chip
         //   label={inClusterConfig
@@ -800,7 +793,6 @@ class DashboardComponent extends React.Component {
         //   variant="outlined"
         // />
         <div>
-          {p(contextName)}
           {contexts?.map(ctx => (
             <Tooltip title={`Server: ${ctx.server}`}>
               <Chip
@@ -814,21 +806,15 @@ class DashboardComponent extends React.Component {
                 data-cy="chipContextName"
               />
             </Tooltip>
-
           ))}
-          {p(contextName)}
         </div>
       );
 
-      if (configuredServer) {
-        console.log("Success")
-      } else {
+      if (!configuredServer) {
         chp=showConfigured;
       }
-
       showConfigured = <div showConfigured>{chp}</div>;
     }
-
 
     let showAdapters = "No adapters configured.";
     if (availableAdapters.length > 0) {
