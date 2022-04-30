@@ -1,26 +1,38 @@
 import React, { useState, useEffect } from "react";
 import {
   Grid,
-  Button, Switch
+  Button, Switch, Typography
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import ConsulIcon from "../../img/SVGs/consulIcon";
 import IstioIcon from "../../img/SVGs/IstioIcon";
 import KumaIcon from "../../img/SVGs/kumaIcon";
+import {createTheme } from '@mui/material/styles';
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
 import NginxIcon from "../../img/SVGs/nginxIcon";
 import Meshery from "../../img/SVGs/meshery";
-import MesheryBlackIcon from "../../img/SVGs/mesheryBlackIcon";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
-import CustomTypography from "../CustomTypography"
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
-import dataFetch from "../../lib/data-fetch";
 import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 
 
 const baseURL = "http://localhost:9081"
+
+const useThemeDetector = () => {
+  const getCurrentTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const [isDarkTheme, setIsDarkTheme] = useState(getCurrentTheme());  
+  const mqListener = (e => {
+      setIsDarkTheme(e.matches);
+  });
+  
+  useEffect(() => {
+    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+    darkThemeMq.addListener(mqListener);
+    return () => darkThemeMq.removeListener(mqListener);
+  }, []);
+  return isDarkTheme;
+}
 
 const ExtensionsComponent = () => {
   const [consulChecked, setConsulChecked] = useState(false);
@@ -29,14 +41,8 @@ const ExtensionsComponent = () => {
   const [nginxChecked, isNginxChecked] = useState(false);
   const [kumaChecked, isKumaChecked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const isDarkTheme = useThemeDetector();
 
-
-  const theme = {
-    textAlign: "center",
-    backgroundColor: "#222C32",
-    padding: "5rem",
-    maxHeight: "100vh"
-  };
 
   const onMouseOver = e => {
     let target = e.target.closest("div");
@@ -55,6 +61,9 @@ const ExtensionsComponent = () => {
     target.style.transition = "all .2s";
     target.style.transform = "scale(0.8)";
   };
+
+
+ 
 
   useEffect(() => {
     // window.ddClient.extension.vm.service.get("/ping").then(console.log);
@@ -118,18 +127,18 @@ const ExtensionsComponent = () => {
 
   return (
     <DockerMuiThemeProvider theme={theme}>
+      <CssBaseline />
       <ComponentWrapper>
-        <CssBaseline />
-        <MesheryIcon  CustomColor="white"/>
-        <CustomTypography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</CustomTypography>
+        <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
+        <Typography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</Typography>
 
         <SectionWrapper>
 
         <ExtensionWrapper>
             <AccountDiv>
-              <CustomTypography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+              <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap", color: "white" }}>
                 Launch Meshery
-              </CustomTypography>
+              </Typography>
               <div style={{marginBottom: "0.5rem"}}>
                 <a style={{ textDecoration: "none" }} href="http://localhost:9081">
                
@@ -142,8 +151,6 @@ const ExtensionsComponent = () => {
          {isHovered ?    <MesheryAnimation height={70} width={72}/> : <Meshery height={70} width={72} /> } 
         
         </div>
-        {/* <MesheryBlackIcon width={110} /> */}
-             {/* <div onMouseEnter={trigger}>   <MeshSyncAnimation style={{ height : "75px" }} /> </div> */}
                 </a>
               </div>
             </AccountDiv>
@@ -152,7 +159,7 @@ const ExtensionsComponent = () => {
 
         <ExtensionWrapper>
           <AccountDiv>
-            <CustomTypography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</CustomTypography>
+            <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap", color: "white" }}>Import Compose App</Typography>
             <div style={{ paddingBottom: "2rem" }}>
             <label htmlFor="upload-button" >
               <Button sx={{ backgroundColor: "#7794AB" }} variant="contained" color="primary" aria-label="Upload Button" component="span" >
@@ -165,32 +172,32 @@ const ExtensionsComponent = () => {
           </ExtensionWrapper>
           <ExtensionWrapper>
             <div>
-              <CustomTypography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</CustomTypography>
+              <Typography sx={{ marginBottom: "1rem", color:"white" }}>Deploy a Service Mesh</Typography>
               <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
                 <ServiceMeshAdapters>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!consulChecked}>
                       <ConsulIcon width={40} height={40} /> </AdapterDiv>
-                      <CustomTypography>Consul</CustomTypography>
+                      <Typography sx={{color: "white"}}>Consul</Typography>
                     <Switch checked={consulChecked} onChange={handleConsul} color="primary" ></Switch>
                   </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!istioChecked}>
                       <IstioIcon width={40} height={40} /></AdapterDiv>
-                      <CustomTypography>Istio</CustomTypography>
+                      <Typography sx={{color: "white"}} >Istio</Typography>
                     <Switch checked={istioChecked} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
 
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
-                    <CustomTypography>Linkerd</CustomTypography>
+                    <Typography sx={{color: "white"}}>Linkerd</Typography>
                     <Switch checked={linkerdChecked} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv>
-                    <CustomTypography>Nginx</CustomTypography>
+                    <Typography sx={{color: "white"}}>Nginx</Typography>
                     <Switch checked={nginxChecked} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
-                    <CustomTypography>Kuma</CustomTypography>
+                    <Typography sx={{color: "white"}}>Kuma</Typography>
                     <Switch checked={kumaChecked} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
               </Grid>
@@ -198,7 +205,7 @@ const ExtensionsComponent = () => {
           </ExtensionWrapper>
         </SectionWrapper>
       </ComponentWrapper>
-    </DockerMuiThemeProvider >
+      </DockerMuiThemeProvider>
   );
 }
 

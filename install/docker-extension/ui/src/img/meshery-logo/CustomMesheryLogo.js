@@ -50,7 +50,6 @@ const MesheryIcon = ({CustomColor}) => (
 
 
 
-
 );
 
 export default MesheryIcon;
