@@ -363,7 +363,7 @@ class MeshConfigComponent extends React.Component {
         })
         let contextid;
         this.state.contexts.forEach(element => {
-          if (element.name==this.state.selectContext){
+          if (element.name===this.state.selectContext){
             contextid=element.id;
           }
         });
@@ -939,7 +939,6 @@ handleNATSClick = () => {
                           label="Context Name"
                           value={selectContext || contextName }
                           onChange={this.selectcontext()}
-                          // disabled={inClusterConfigForm === true}
                         >
                           {contexts?.map((ct) => (
                             <MenuItem key={`ct_---_${ct.name}`} value= {ct.name}>

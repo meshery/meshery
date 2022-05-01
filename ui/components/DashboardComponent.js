@@ -32,7 +32,6 @@ import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from "../lib/store";
-// import subscribeServiceMeshEvents from "./graphql/subscriptions/ServiceMeshSubscription";
 import subscribeDataPlaneEvents from "./graphql/subscriptions/DataPlanesSubscription";
 import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
 import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
@@ -42,8 +41,6 @@ import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import { versionMapper } from "../utils/nameMapper";
-// podNameMapper,
-//import MesheryMetrics from "./MesheryMetrics";
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
   chip : { marginRight : theme.spacing(1),
@@ -157,7 +154,7 @@ class DashboardComponent extends React.Component {
       st.configuredServer = k8sconfig.configuredServer;
       st.kts = props.ts;
       if (!state.contextsFromFile?.length)
-        st.contextsFromFile = { ...st, contextsFromFile : [{ contextName, currentContext : true }] };
+        st.contextsFromFile = { ...(st.contextsFromFile || []), contextsFromFile : [{ contextName, currentContext : true }] };
       return st;
     }
     return st;
@@ -227,7 +224,7 @@ class DashboardComponent extends React.Component {
     this.fetchAvailableAdapters();
 
     fetchAllContexts(25)
-      .then(res => this.setState({ contexts : res.contexts }))
+      .then(res => this.setState({ contexts : res?.contexts || [] }))
       .catch(this.handleError("failed to fetch contexts for the instance"))
 
     if (this.state.isMetricsConfigured){
@@ -772,7 +769,6 @@ class DashboardComponent extends React.Component {
       grafanaUrl,
       prometheusUrl,
       availableAdapters,
-
       grafana,
       contexts,
       prometheus,
@@ -782,16 +778,6 @@ class DashboardComponent extends React.Component {
     let showConfigured = "Not connected to Kubernetes.";
     if (clusterConfigured) {
       let chp = (
-        // <Chip
-        //   label={inClusterConfig
-        //     ? "Using In Cluster Config"
-        //     : contextName}
-        //   onClick={self.handleKubernetesClick}
-        //   icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
-        //   className={classes.chip}
-        //   key="k8s-key"
-        //   variant="outlined"
-        // />
         <div>
           {contexts?.map(ctx => (
             <Tooltip title={`Server: ${ctx.server}`}>
@@ -801,7 +787,6 @@ class DashboardComponent extends React.Component {
                 onClick={() => self.handleKubernetesClick(ctx.id)}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                 disabled={contextName==ctx.name? false : true}
-
                 variant="outlined"
                 data-cy="chipContextName"
               />
