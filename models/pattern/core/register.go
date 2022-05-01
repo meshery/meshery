@@ -436,16 +436,16 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
 	}
-	var arrApiResources []string
+	var arrAPIResources []string
 	for res := range apiResources {
-		arrApiResources = append(arrApiResources, res)
+		arrAPIResources = append(arrAPIResources, res)
 	}
 	manifest := string(content)
 	man, err := manifests.GenerateComponents(ctxt, manifest, manifests.K8s, manifests.Config{
 		Name: "Kubernetes",
 		Filter: manifests.CrdFilter{
 			IsJson:        true,
-			OnlyRes:       arrApiResources, //When crd or api-resource names are directly given, we dont need NameFilter
+			OnlyRes:       arrAPIResources, //When crd or api-resource names are directly given, we dont need NameFilter
 			RootFilter:    []string{"$.definitions"},
 			VersionFilter: []string{"$[0]"},
 			GroupFilter:   []string{"$[0]"},
