@@ -178,6 +178,7 @@ class MeshConfigComponent extends React.Component {
       operatorVersion : "N/A",
       meshSyncInstalled : false,
       meshSyncVersion : "N/A",
+      meshSyncState : "N/A",
       NATSState : "UNKNOWN",
       NATSVersion : "N/A",
 
@@ -409,10 +410,10 @@ handleNATSClick = () => {
 
   NatsStatusQuery().subscribe({
     next : (res) => {
-      console.log(res);
       self.props.updateProgress({ showProgress : false });
-      if (res.controller.name === "broker" && res.controller.status == "CONNECTED") {
-        this.props.enqueueSnackbar(`Broker was successfully pinged`, {
+      if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
+        let runningEndpoint = res.controller.status.substring("CONNECTED".length)
+        this.props.enqueueSnackbar(`Broker was successfully pinged. Running at ${runningEndpoint}`, {
           variant : "success",
           action : (key) => (
             <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
@@ -470,12 +471,14 @@ handleNATSClick = () => {
 
     MeshsyncStatusQuery().subscribe({ next : (res) => {
       self.props.updateProgress({ showProgress : false });
-      if (res.controller.name === "meshsync" && res.controller.status == "ENABLED") {
+      if (res.controller.name === "meshsync" && res.controller.status.includes("ENABLED")) {
         self.setState({
           meshSyncInstalled : true,
           meshSyncVersion : res.controller.version,
+          meshSyncState : res.controller.status,
         });
-        this.props.enqueueSnackbar(`MeshSync was successfully pinged`, {
+        let publishEndpoint = res.controller.status.substring("ENABLED".length)
+        this.props.enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
           variant : "success",
           action : (key) => (
             <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
@@ -489,6 +492,7 @@ handleNATSClick = () => {
         self.setState({
           meshSyncInstalled : false,
           meshSyncVersion : "",
+          meshSyncState : res.controller.status
         });
       }
     },
@@ -656,6 +660,7 @@ handleNATSClick = () => {
       operatorVersion,
       meshSyncInstalled,
       meshSyncVersion,
+      meshSyncState,
       NATSState,
       NATSVersion,
       operatorSwitch,
@@ -802,7 +807,7 @@ handleNATSClick = () => {
               <List>
                 <ListItem>
                   <ListItemText primary="MeshSync State" secondary={meshSyncInstalled
-                    ? "Active"
+                    ? meshSyncState
                     : "Disabled"} />
                 </ListItem>
                 <ListItem>
