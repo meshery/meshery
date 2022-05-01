@@ -1448,6 +1448,9 @@ enum MeshType {
 
   # NGINX Service Mesh
   NGINX_SERVICE_MESH
+
+  # Cilium Service Mesh
+  CILIUM_SERVICE_MESH
 }
 
 enum Status {
