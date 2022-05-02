@@ -21,7 +21,7 @@
   "dependencies": {
     "@cypress/code-coverage": "^3.9.11",
     "@material-ui/core": "^4.12.3",
-    "@material-ui/icons": "^4.11.2",
+    "@material-ui/icons": "^4.11.3",
     "babel-plugin-istanbul": "^6.0.0",
     "glob-parent": ">=6.0.2",
     "isomorphic-unfetch": "^3.1.0",
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "cypress": "^9.5.3",
+    "cypress": "^9.6.0",
     "eslint": "^7.32.0",
     "eslint-config-next": "^12.1.4",
     "eslint-plugin-cypress": "^2.12.1",
