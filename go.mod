@@ -43,7 +43,7 @@ require (
 	github.com/layer5io/meshsync v0.5.0
 	github.com/layer5io/nighthawk-go v0.5.0
 	github.com/layer5io/service-mesh-performance v0.3.4
-	github.com/lib/pq v1.10.4
+	github.com/lib/pq v1.10.5
 	github.com/manifoldco/promptui v0.9.0
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
