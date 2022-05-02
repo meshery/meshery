@@ -123,10 +123,15 @@ const ExtensionsComponent = () => {
     }, 3000)
     isKumaChecked(prev => !prev);
   }
-
+  const handleImport = () => {
+    window.ddClient.desktopUI.toast.success(`Importing Compose App...`);
+    setTimeout(() => {
+      window.ddClient.desktopUI.toast.success(`Compose App imported successfully`);
+    }, 3000)
+  }
 
   return (
-    <DockerMuiThemeProvider theme={theme}>
+    <DockerMuiThemeProvider>
       <CssBaseline />
       <ComponentWrapper>
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
@@ -134,9 +139,9 @@ const ExtensionsComponent = () => {
 
         <SectionWrapper>
 
-        <ExtensionWrapper>
+        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba"}}>
             <AccountDiv>
-              <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap", color: "white" }}>
+              <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap"}}>
                 Launch Meshery
               </Typography>
               <div style={{marginBottom: "0.5rem"}}>
@@ -157,47 +162,47 @@ const ExtensionsComponent = () => {
             </ExtensionWrapper>
 
 
-        <ExtensionWrapper>
+        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba"}}>
           <AccountDiv>
-            <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap", color: "white" }}>Import Compose App</Typography>
+            <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
             <div style={{ paddingBottom: "2rem" }}>
             <label htmlFor="upload-button" >
-              <Button sx={{ backgroundColor: "#7794AB" }} variant="contained" color="primary" aria-label="Upload Button" component="span" >
-                <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" />
+              <Button variant="contained" color="primary" aria-label="Upload Button" component="span" >
+                <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" onChange={handleImport} />
                 Browse...
               </Button>
             </label>
             </div>
             </AccountDiv>
           </ExtensionWrapper>
-          <ExtensionWrapper>
+          <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba"}} >
             <div>
-              <Typography sx={{ marginBottom: "1rem", color:"white" }}>Deploy a Service Mesh</Typography>
+              <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
               <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
                 <ServiceMeshAdapters>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!consulChecked}>
                       <ConsulIcon width={40} height={40} /> </AdapterDiv>
-                      <Typography sx={{color: "white"}}>Consul</Typography>
+                      <Typography>Consul</Typography>
                     <Switch checked={consulChecked} onChange={handleConsul} color="primary" ></Switch>
                   </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!istioChecked}>
                       <IstioIcon width={40} height={40} /></AdapterDiv>
-                      <Typography sx={{color: "white"}} >Istio</Typography>
+                      <Typography >Istio</Typography>
                     <Switch checked={istioChecked} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
 
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
-                    <Typography sx={{color: "white"}}>Linkerd</Typography>
+                    <Typography>Linkerd</Typography>
                     <Switch checked={linkerdChecked} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv>
-                    <Typography sx={{color: "white"}}>Nginx</Typography>
+                    <Typography>Nginx</Typography>
                     <Switch checked={nginxChecked} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
-                    <Typography sx={{color: "white"}}>Kuma</Typography>
+                    <Typography>Kuma</Typography>
                     <Switch checked={kumaChecked} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
               </Grid>
