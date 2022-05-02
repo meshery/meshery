@@ -416,6 +416,15 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 	return fmt.Errorf("%s", strings.Join(errs, "\n"))
 }
 
+const customResourceKey = "isCustomResource"
+
+type crd struct {
+	Items []crdhelper `json:"items"`
+}
+type crdhelper struct {
+	Metadata map[string]interface{} `json:"metadata"`
+}
+
 // GetK8Components returns all the generated definitions and schemas for available api resources
 func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifests.Component, error) {
 	cli, err := kubernetes.New(config)
@@ -427,6 +436,20 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
 	}
+	var customResources = make(map[string]bool)
+	crdresult, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/apiextensions.k8s.io/v1/customresourcedefinitions").Do(context.Background()).Raw()
+	if err != nil {
+		return nil, ErrGetK8sComponents(err)
+	}
+
+	var xcrd crd
+	err = json.Unmarshal(crdresult, &xcrd)
+	if err != nil {
+		return nil, ErrGetK8sComponents(err)
+	}
+	for _, item := range xcrd.Items {
+		customResources[item.Metadata["name"].(string)] = true
+	}
 	res := req.Do(context.Background())
 	content, err := res.Raw()
 	if err != nil {
@@ -436,9 +459,14 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
 	}
+
 	var arrAPIResources []string
 	for res := range apiResources {
 		arrAPIResources = append(arrAPIResources, res)
+	}
+	groups, err := getGroupsFromResource(cli) //change this
+	if err != nil {
+		return nil, err
 	}
 	manifest := string(content)
 	man, err := manifests.GenerateComponents(ctxt, manifest, manifests.K8s, manifests.Config{
@@ -471,13 +499,20 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 			if err != nil {
 				return
 			}
+			//Add additional info in metadata like whether the resource is namespaced or not. Or whether it is a custom resource.
 			kind := strings.TrimSuffix(def.Spec.Metadata["k8sKind"], ".K8s")
 			if apiResources[kind].Namespaced {
 				def.Spec.Metadata["namespaced"] = "true"
 			} else {
 				def.Spec.Metadata["namespaced"] = "false"
 			}
-
+			def.Spec.Metadata[customResourceKey] = "false" //default
+			for cr := range customResources {
+				if groups[kind][cr] {
+					def.Spec.Metadata[customResourceKey] = "true"
+					break
+				}
+			}
 			b, err := json.Marshal(def)
 			if err != nil {
 				return
@@ -529,6 +564,7 @@ func DeleteK8sWorkloads(ctx string) {
 	}
 }
 
+//TODO: To be moved in meshkit
 // getAPIRes gets all the available api resources from kube-api server. It is equivalent to the output of `kubectl api-resources`
 //Returns a map of api resources with key as api-resource kind and value as api-resource object
 func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
@@ -543,4 +579,44 @@ func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
 		}
 	}
 	return apiRes, nil
+}
+
+//TODO: To be moved in meshkit
+//Return a set of resource.groups(with resourcename appended) for a given kind //Example: {"CSIDriver":{"csidrivers.storage.k8s.io"}}
+func getGroupsFromResource(cli *kubernetes.Client) (gr map[string]map[string]bool, err error) {
+	gr = make(map[string]map[string]bool)
+
+	var gl v1.APIGroupList
+	gs, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis").Do(context.Background()).Raw()
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(gs, &gl)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, g := range gl.Groups {
+		groupName := g.Name
+		var apig v1.APIGroup
+		apigbytes, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/" + groupName).Do(context.Background()).Raw()
+		if err != nil {
+			return nil, err
+		}
+		err = json.Unmarshal(apigbytes, &apig)
+		if err != nil {
+			return nil, err
+		}
+		apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion(apig.PreferredVersion.GroupVersion)
+		if err != nil {
+			return nil, err
+		}
+		for _, res := range apiRes.APIResources {
+			if gr[res.Kind] == nil {
+				gr[res.Kind] = make(map[string]bool)
+			}
+			gr[res.Kind][res.Name+"."+groupName] = true
+		}
+	}
+	return
 }
