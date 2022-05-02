@@ -135,8 +135,8 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, ch chan struct{}) (
 	// 	})
 	// }
 	status := fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
-	meshsyncStatus.Status = Status (status)
- 	meshsyncStatus.Name = "meshsync"
+	meshsyncStatus.Status = Status(status)
+	meshsyncStatus.Name = "meshsync"
 	meshsyncStatus.Version = meshsync.Labels["version"]
 
 	return meshsyncStatus, nil
