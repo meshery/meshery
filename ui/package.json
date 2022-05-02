@@ -61,7 +61,7 @@
     "eslint-loader": "^4.0.2",
     "glob-parent": "^5.1.2",
     "graphql": "^15.7.2",
-    "immutable": "^4.0.0-rc.15",
+    "immutable": "^4.0.0",
     "isomorphic-unfetch": "^3.1.0",
     "js-yaml": "^4.1.0",
     "jsonlint-mod": "^1.7.6",
