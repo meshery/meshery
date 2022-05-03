@@ -36,7 +36,6 @@ export const ExtensionWrapper = styled('div')(({ theme }) => ({
   justifyContent: 'center', 
   alignItems: 'center',
   height:"12rem",
-  backgroundColor: "#393F49",
   borderRadius: "20px ",
   padding: "2rem",
   textAlign: "center",
