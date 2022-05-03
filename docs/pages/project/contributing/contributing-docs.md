@@ -102,7 +102,7 @@ Restart your WSL VM before moving forward.
 - rbenv install version
 
 ```bash
-  rbenv install 2.5.1
+  rbenv install 2.7.5
 ```
 
 - To list all the versions that can be installed

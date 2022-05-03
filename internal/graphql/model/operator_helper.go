@@ -92,9 +92,9 @@ func GetBrokerInfo(mesheryclient operatorClient.Interface, brokerConn brokerpkg.
 		return brokerStatus, ErrMesheryClient(err)
 	}
 	if err == nil {
-		brokerStatus.Status = StatusConnected
+		status := fmt.Sprintf("%s %s", StatusConnected, broker.Status.Endpoint.External)
 		if brokerConn.Info() == brokerpkg.NotConnected {
-			brokerStatus.Status = StatusEnabled
+			brokerStatus.Status = Status(status)
 		}
 		brokerStatus.Name = "broker"
 		brokerStatus.Version = broker.Labels["version"]
@@ -134,8 +134,8 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, ch chan struct{}) (
 	// 		Status:  status,
 	// 	})
 	// }
-
-	meshsyncStatus.Status = StatusEnabled
+	status := fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
+	meshsyncStatus.Status = Status(status)
 	meshsyncStatus.Name = "meshsync"
 	meshsyncStatus.Version = meshsync.Labels["version"]
 

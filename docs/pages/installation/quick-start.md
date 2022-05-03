@@ -18,7 +18,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- $ curl -L https://git.io/meshery | PLATFORM=kubernetes bash - 
+ $ curl -L https://meshery.io/install | PLATFORM=kubernetes bash - 
  </div></div>
  </pre>
  <br>
@@ -27,7 +27,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- $ curl -L https://git.io/meshery | PLATFORM=docker bash - 
+ $ curl -L https://meshery.io/install | PLATFORM=docker bash - 
  </div></div>
  </pre>
  

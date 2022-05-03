@@ -1,7 +1,6 @@
 name: Docker Extension for Meshery
 on:
-  release:
-    types: [published]
+  workflow_call:
   push:
     tags:
       - 'v*'  

@@ -2,10 +2,13 @@ package resolver
 
 import (
 	"context"
+	"strings"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
+	meshkitKube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/layer5io/meshkit/utils/kubernetes/describe"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
@@ -186,4 +189,59 @@ func (r *Resolver) getScopes(ctx context.Context, name, id *string, trim *bool) 
 		}
 	}
 	return
+}
+
+func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error) {
+	var ResourceMap = map[string]describe.DescribeType{
+		"pod":                       describe.Pod,
+		"deployment":                describe.Deployment,
+		"job":                       describe.Job,
+		"cronjob":                   describe.CronJob,
+		"statefulset":               describe.StatefulSet,
+		"daemonset":                 describe.DaemonSet,
+		"replicaset":                describe.ReplicaSet,
+		"secret":                    describe.Secret,
+		"service":                   describe.Service,
+		"serviceaccount":            describe.ServiceAccount,
+		"node":                      describe.Node,
+		"limitrange":                describe.LimitRange,
+		"resourcequota":             describe.ResourceQuota,
+		"persistentvolume":          describe.PersistentVolume,
+		"persistentvolumeclaim":     describe.PersistentVolumeClaim,
+		"namespace":                 describe.Namespace,
+		"endpoints":                 describe.Endpoints,
+		"configmap":                 describe.ConfigMap,
+		"priorityclass":             describe.PriorityClass,
+		"ingress":                   describe.Ingress,
+		"role":                      describe.Role,
+		"clusterrole":               describe.ClusterRole,
+		"rolebinding":               describe.RoleBinding,
+		"clusterrolebinding":        describe.ClusterRoleBinding,
+		"networkpolicy":             describe.NetworkPolicy,
+		"replicationcontroller":     describe.ReplicationController,
+		"certificatesigningrequest": describe.CertificateSigningRequest,
+		"endpointslice":             describe.EndpointSlice,
+	}
+
+	options := describe.DescriberOptions{
+		Name:      name,
+		Namespace: namespace,
+		Type:      ResourceMap[strings.ToLower(kind)],
+	}
+
+	client, err := meshkitKube.New([]byte(""))
+	if err != nil {
+		r.Log.Error(ErrMesheryClient(err))
+		return nil, err
+	}
+
+	details, err := describe.Describe(client, options)
+	if err != nil {
+		r.Log.Error(ErrKubectlDescribe(err))
+		return nil, err
+	}
+
+	return &model.KctlDescribeDetails{
+		Describe: &details,
+	}, nil
 }
