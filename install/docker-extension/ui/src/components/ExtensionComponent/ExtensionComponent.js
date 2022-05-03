@@ -139,7 +139,7 @@ const ExtensionsComponent = () => {
 
         <SectionWrapper>
 
-        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba"}}>
+        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap"}}>
                 Launch Meshery
@@ -162,7 +162,7 @@ const ExtensionsComponent = () => {
             </ExtensionWrapper>
 
 
-        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba"}}>
+        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}}>
           <AccountDiv>
             <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
             <div style={{ paddingBottom: "2rem" }}>
@@ -175,7 +175,7 @@ const ExtensionsComponent = () => {
             </div>
             </AccountDiv>
           </ExtensionWrapper>
-          <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba"}} >
+          <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}} >
             <div>
               <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
               <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
