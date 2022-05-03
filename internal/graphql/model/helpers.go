@@ -128,7 +128,7 @@ func PersistClusterName(
 	}
 
 	clusterName := clusterConfig.Cluster["name"].(string)
-	clusterID := clusterConfig.ID
+	clusterID := clusterConfig.KubernetesServerID.String()
 	object := meshsyncmodel.Object{
 		Kind: "Cluster",
 		ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
