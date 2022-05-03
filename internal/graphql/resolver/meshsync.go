@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
@@ -13,6 +14,7 @@ import (
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
+var connectionTrackerSingleton = k8sConnectionTracker{}
 var (
 	MeshSyncSubscriptionError = model.Error{
 		Description: "Failed to get MeshSync data",
@@ -136,6 +138,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 }
 
 func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider) error {
+	//kubeclient generated from models.KubehandlerKey is a kubeclient that has current context set by meshery
 	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
 	if !ok || kubeclient == nil {
 		r.Log.Error(ErrNilClient)
@@ -146,8 +149,19 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 	if err != nil {
 		return err
 	}
-
-	if r.BrokerConn.IsEmpty() && status != nil && status.Status == model.StatusEnabled {
+	currContext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || kubeclient == nil {
+		r.Log.Error(ErrNilClient)
+		return ErrNilClient
+	}
+	var switchedContext bool
+	if currContext.ID != connectionTrackerSingleton.id {
+		connectionTrackerSingleton.set(currContext.ID)
+		if r.BrokerConn != nil {
+			switchedContext = true
+		}
+	}
+	if (r.BrokerConn.IsEmpty() || switchedContext) && status != nil && status.Status == model.StatusEnabled {
 		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
@@ -217,4 +231,21 @@ func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider) 
 		Type:   "health",
 	})
 	return model.StatusConnected, nil
+}
+
+type k8sConnectionTracker struct {
+	mx sync.Mutex
+	id string
+}
+
+func (k *k8sConnectionTracker) set(id string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	k.id = id
+}
+
+func (k *k8sConnectionTracker) get() string {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	return k.id
 }
