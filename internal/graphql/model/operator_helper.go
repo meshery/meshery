@@ -146,10 +146,15 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 		Namespace:    "meshery",
 		PortSelector: "client",
 	})
-	if endpointS.External.Address != "" {
+	if err != nil {
+		return endpoint, err
+	}
+	if endpointS.External != nil && endpointS.External.Address != "" {
 		endpoint = endpointS.External.Address + ":" + strconv.Itoa(int(endpointS.External.Port))
-	} else {
+	} else if endpointS.Internal != nil {
 		endpoint = endpointS.Internal.Address + ":" + strconv.Itoa(int(endpointS.Internal.Port))
+	} else {
+		return endpoint, ErrSubscribeChannel(fmt.Errorf("could not get broker's endpoint"))
 	}
 	// subscribing to nats
 	conn, err := nats.New(nats.Options{
