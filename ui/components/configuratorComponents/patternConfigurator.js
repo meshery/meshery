@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
       height : '100%',
     }
   },
-  patterntype : {
+  patternType : {
     padding : '0px',
     paddingBottom : '5px' ,
     paddingTop : '5px',
@@ -383,7 +383,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
               {getMeshOptions().map(item => {
                 const details = getMeshProperties(item);
                 return (
-                  <MenuItem className={classes.patterntype} key={details.name} value={details.name}>
+                  <MenuItem className={classes.patternType} key={details.name} value={details.name}>
                     <img src={details.img} height="32px" />
                   </MenuItem>);
               })}
