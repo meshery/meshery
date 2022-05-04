@@ -3,17 +3,14 @@ package model
 import (
 	"context"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
-	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/models"
 	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
-	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -143,57 +140,17 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, ch chan struct{}) (
 }
 
 func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler) (string, error) {
-	var broker *operatorv1alpha1.Broker
-
-	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
-	if err != nil {
-		if mesheryclient == nil {
-			return "", ErrMesheryClient(nil)
-		}
-		return "", ErrMesheryClient(err)
+	var endpoint string
+	endpointS, err := mesherykube.GetServiceEndpoint(context.Background(), mesheryKubeClient.KubeClient, &mesherykube.ServiceOptions{
+		Name:         "meshery-broker",
+		Namespace:    "meshery",
+		PortSelector: "client",
+	})
+	if endpointS.External.Address != "" {
+		endpoint = endpointS.External.Address + ":" + strconv.Itoa(int(endpointS.External.Port))
+	} else {
+		endpoint = endpointS.Internal.Address + ":" + strconv.Itoa(int(endpointS.Internal.Port))
 	}
-
-	timeout := 60
-	for timeout > 0 {
-		broker, err = mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
-		if err == nil && broker.Status.Endpoint.External != "" {
-			break
-		}
-		timeout--
-		time.Sleep(1 * time.Second)
-	}
-
-	endpoint := broker.Status.Endpoint.Internal
-	if len(strings.Split(broker.Status.Endpoint.Internal, ":")) > 1 {
-		port, _ := strconv.Atoi(strings.Split(broker.Status.Endpoint.Internal, ":")[1])
-		if !utils.TcpCheck(&utils.HostPort{
-			Address: strings.Split(broker.Status.Endpoint.Internal, ":")[0],
-			Port:    int32(port),
-		}, nil) {
-			endpoint = broker.Status.Endpoint.External
-			port, _ = strconv.Atoi(strings.Split(broker.Status.Endpoint.External, ":")[1])
-			if !utils.TcpCheck(&utils.HostPort{
-				Address: strings.Split(broker.Status.Endpoint.External, ":")[0],
-				Port:    int32(port),
-			}, nil) {
-				if !utils.TcpCheck(&utils.HostPort{
-					Address: "host.docker.internal",
-					Port:    int32(port),
-				}, nil) {
-					u, _ := url.Parse(mesheryKubeClient.RestConfig.Host)
-					if utils.TcpCheck(&utils.HostPort{
-						Address: u.Hostname(),
-						Port:    int32(port),
-					}, nil) {
-						endpoint = fmt.Sprintf("%s:%d", u.Hostname(), int32(port))
-					}
-				} else {
-					endpoint = fmt.Sprintf("host.docker.internal:%d", int32(port))
-				}
-			}
-		}
-	}
-
 	// subscribing to nats
 	conn, err := nats.New(nats.Options{
 		URLS:           []string{endpoint},
