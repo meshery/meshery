@@ -155,11 +155,9 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		return ErrNilClient
 	}
 	var switchedContext bool
-	if currContext.ID != connectionTrackerSingleton.id {
+	if currContext.ID != connectionTrackerSingleton.get() {
 		connectionTrackerSingleton.set(currContext.ID)
-		if r.BrokerConn != nil {
-			switchedContext = true
-		}
+		switchedContext = true
 	}
 	if (r.BrokerConn.IsEmpty() || switchedContext) && status != nil && status.Status == model.StatusEnabled {
 		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn)
