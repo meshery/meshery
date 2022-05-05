@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
 } from '../lib/chartjs-formatter';
+//import MUIDataTable from "mui-datatables";
 import bb, { areaStep, line } from 'billboard.js'
 
 
@@ -276,6 +277,181 @@ class MesheryChart extends React.Component {
     }
   }
 
+  getMuiTheme = () => createTheme({
+    overrides : {
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
+          },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b" ,
+          marginTop : "7px",
+          marginRight : "8px",
+        },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
+          },
+        },
+      },
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      }
+    }
+  })
+
+  // columns = [
+  //   { name : "server",
+  //     label : "Server",
+  //     options : {
+  //       filter : false,
+  //       sort : true,
+  //       searchable : true,
+  //       customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+  //         return (
+  //           <TableCell key={index} onClick={() => sortColumn(index)}>
+  //             <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+  //               <b>{column.label}</b>
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         );
+  //       },
+  //     }, },
+  //   { name : "hostname",
+  //     label : "Hostname",
+  //     options : {
+  //       filter : false,
+  //       sort : true,
+  //       searchable : true,
+  //       customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+  //         return (
+  //           <TableCell key={index} onClick={() => sortColumn(index)}>
+  //             <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+  //               <b>{column.label}</b>
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         );
+  //       },
+  //     }, },
+  //   { name : "cpu",
+  //     label : "CPU",
+  //     options : {
+  //       filter : false,
+  //       sort : true,
+  //       searchable : true,
+  //       customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+  //         return (
+  //           <TableCell key={index} onClick={() => sortColumn(index)}>
+  //             <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+  //               <b>{column.label}</b>
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         );
+  //       },
+  //     }, },
+  //   { name : "memory",
+  //     label : "Memory",
+  //     options : {
+  //       filter : false,
+  //       sort : true,
+  //       searchable : true,
+  //       customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+  //         return (
+  //           <TableCell key={index} onClick={() => sortColumn(index)}>
+  //             <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+  //               <b>{column.label}</b>
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         );
+  //       },
+  //     }, },
+  //   { name : "arch",
+  //     label : "Arch",
+  //     options : {
+  //       filter : false,
+  //       sort : true,
+  //       searchable : true,
+  //       customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+  //         return (
+  //           <TableCell key={index} onClick={() => sortColumn(index)}>
+  //             <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+  //               <b>{column.label}</b>
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         );
+  //       },
+  //     }, },
+  //   { name : "os",
+  //     label : "OS",
+  //     options : {
+  //       filter : false,
+  //       sort : true,
+  //       searchable : true,
+  //       customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+  //         return (
+  //           <TableCell key={index} onClick={() => sortColumn(index)}>
+  //             <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+  //               <b>{column.label}</b>
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         );
+  //       },
+  //     }, },
+  //   { name : "kubeletVersion",
+  //     label : "Kubelet Version",
+  //     options : {
+  //       filter : false,
+  //       sort : true,
+  //       searchable : true,
+  //       customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+  //         return (
+  //           <TableCell key={index} onClick={() => sortColumn(index)}>
+  //             <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+  //               <b>{column.label}</b>
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         );
+  //       },
+  //     }, },
+  //   { name : "containerRuntime",
+  //     label : "Container Runtime",
+  //     options : {
+  //       filter : false,
+  //       sort : true,
+  //       searchable : true,
+  //       customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+  //         return (
+  //           <TableCell key={index} onClick={() => sortColumn(index)}>
+  //             <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+  //               <b>{column.label}</b>
+  //             </TableSortLabel>
+  //           </TableCell>
+  //         );
+  //       },
+  //     }, },
+  // ]
+
   render() {
     let chartData;
     if (typeof this.props.data !== 'undefined') {
@@ -305,27 +481,6 @@ class MesheryChart extends React.Component {
           <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
             {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => {
               return <Grid item xs={4} key={`nri-${i}`}>{el}</Grid>
-            })}
-          </Grid>
-          <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
-            {NonRecursiveConstructDisplayCells(chartData?.options?.metadata?.kubernetes?.display?.value || {})?.map((el, i) => {
-              return <Grid item key={`nri-${i}`}>{el}</Grid>
-            })}
-          </Grid>
-          <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
-            { chartData?.options?.metadata?.kubernetes?.display?.value[1]?.display?.value.map((node) => {
-              return (
-                <>
-                  <Grid container spacing={1} style={{ margin : "0.2rem" }} justifyContent="center">
-                    <Typography style={{ marginTop : "0.125rem" }}>{node?.display?.key}:</Typography>
-                    {
-                      NonRecursiveConstructDisplayCells(node?.display?.value || {})?.map((el, i) => {
-                        return <Grid item key={`nri-${i}`}>{el}</Grid>
-                      })
-                    }
-                  </Grid>
-                </>
-              )
             })}
           </Grid>
           <div className={classes.chartWrapper} >
@@ -360,6 +515,27 @@ class MesheryChart extends React.Component {
               }
             </div>
           </div>
+          <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
+            {NonRecursiveConstructDisplayCells(chartData?.options?.metadata?.kubernetes?.display?.value || {})?.map((el, i) => {
+              return <Grid item key={`nri-${i}`}>{el}</Grid>
+            })}
+          </Grid>
+          <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
+            { chartData?.options?.metadata?.kubernetes?.display?.value[1]?.display?.value.map((node) => {
+              return (
+                <>
+                  <Grid container spacing={1} style={{ margin : "0.2rem" }} justifyContent="center">
+                    <Typography style={{ marginTop : "0.125rem" }}>{node?.display?.key}:</Typography>
+                    {
+                      NonRecursiveConstructDisplayCells(node?.display?.value || {})?.map((el, i) => {
+                        return <Grid item key={`nri-${i}`}>{el}</Grid>
+                      })
+                    }
+                  </Grid>
+                </>
+              )
+            })}
+          </Grid>
         </div>
       </NoSsr>
     );
