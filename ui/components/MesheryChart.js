@@ -344,7 +344,7 @@ class MesheryChart extends React.Component {
               }
             </div>
           </div>
-          <div style={{ marginTop : "1.5rem" }}>
+          <div style={{ margin : "1.5rem" }}>
             <NodeDetails chartData={chartData} />
           </div>
         </div>
