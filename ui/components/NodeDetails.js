@@ -57,22 +57,6 @@ class NodeDetails extends React.Component {
   render() {
     const chartData = this.props.chartData;
     const columns = [
-      // { name : "server",
-      //   label : "Server",
-      //   options : {
-      //     filter : false,
-      //     sort : true,
-      //     searchable : true,
-      //     customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-      //       return (
-      //         <TableCell key={index} onClick={() => sortColumn(index)}>
-      //           <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-      //             <b>{column.label}</b>
-      //           </TableSortLabel>
-      //         </TableCell>
-      //       );
-      //     },
-      //   }, },
       { name : "hostname",
         label : "Hostname",
         options : {
@@ -190,74 +174,7 @@ class NodeDetails extends React.Component {
 
     const options = {
       filter : false,
-      filterType : 'textField',
-      responsive : 'scrollFullHeight',
-      resizableColumns : true,
-      selectableRows : true,
-      serverSide : true,
-      rowsPerPage : 10,
-      rowsPerPageOptions : [10, 20, 25],
-      fixedHeader : true,
-      print : false,
-      download : false,
-      onRowsSelect : (currentRowsSelected, allRowsSelected) => {
-      // const rs = self.props.results_selection;
-        const res = {};
-        allRowsSelected.forEach(({ dataIndex }) => {
-          if (dataIndex < self.state.pageSize) {
-            if (typeof res[dataIndex] !== 'undefined') {
-              delete res[dataIndex];
-            } else {
-              res[dataIndex] = self.state.results[dataIndex];
-            }
-          }
-        });
-
-        self.props.updateResultsSelection({ page, results : res });
-      },
-
-      onTableChange : (action, tableState) => {
-        const sortInfo = tableState.announceText
-          ? tableState.announceText.split(' : ')
-          :[];
-        let order='';
-        if (tableState.activeColumn){
-          order = `${columns[tableState.activeColumn].name} desc`;
-        }
-
-        switch (action) {
-          case 'changePage':
-            self.fetchResults(tableState.page, self.state.pageSize, self.state.search, self.state.sortOrder);
-            break;
-          case 'changeRowsPerPage':
-            self.fetchResults(self.state.page, tableState.rowsPerPage, self.state.search, self.state.sortOrder);
-            break;
-          case 'search':
-            if (self.searchTimeout) {
-              clearTimeout(self.searchTimeout);
-            }
-            self.searchTimeout = setTimeout(() => {
-              if (self.state.search !== tableState.searchText) {
-                self.fetchResults(self.state.page, self.state.pageSize, tableState.searchText !== null
-                  ? tableState.searchText
-                  : '', self.state.sortOrder);
-              }
-            }, 500);
-            break;
-          case 'sort':
-            if (sortInfo.length == 2) {
-              if (sortInfo[1] === 'ascending') {
-                order = `${columns[tableState.activeColumn].name} asc`;
-              } else {
-                order = `${columns[tableState.activeColumn].name} desc`;
-              }
-            }
-            if (order !== this.state.sortOrder) {
-              self.fetchResults(self.state.page, self.state.pageSize, self.state.search, order);
-            }
-            break;
-        }
-      },
+      selectableRows : false,
     };
 
     let server = chartData?.options?.metadata?.kubernetes?.display?.value[0]?.display?.value;
