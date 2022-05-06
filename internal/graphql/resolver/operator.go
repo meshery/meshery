@@ -154,7 +154,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 		return nil, err
 	}
 
-	status, err := model.GetMeshSyncInfo(mesheryclient, r.meshsyncLivenessChannel)
+	status, err := model.GetMeshSyncInfo(mesheryclient, kubeclient, r.meshsyncLivenessChannel)
 	if err != nil {
 		return &status, err
 	}
@@ -171,7 +171,7 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) 
 		return nil, err
 	}
 
-	status, err := model.GetBrokerInfo(mesheryclient, r.BrokerConn)
+	status, err := model.GetBrokerInfo(mesheryclient, kubeclient, r.BrokerConn)
 	if err != nil {
 		return &status, err
 	}

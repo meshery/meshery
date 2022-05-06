@@ -78,7 +78,7 @@ func (r *Resolver) getMeshSyncStatus(ctx context.Context) model.OperatorControll
 		}
 	}
 
-	status, err = model.GetMeshSyncInfo(mesheryclient, r.meshsyncLivenessChannel)
+	status, err = model.GetMeshSyncInfo(mesheryclient, kubeclient, r.meshsyncLivenessChannel)
 
 	if err != nil {
 		return model.OperatorControllerStatus{
