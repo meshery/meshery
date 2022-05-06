@@ -11,7 +11,8 @@ import MailIcon from "@mui/icons-material/Mail";
 import ConformanceIcon from "./drawer-icons/conformance_svg";
 import SmiIcon from "./drawer-icons/servicemeshinterface-icon-white_svg";
 import { drawerIconsStyle } from "./Navbar.styles";
-
+import { faSlack } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faDigitalTachograph } from "@fortawesome/free-solid-svg-icons";
 // import { faSlack } from "@fortawesome/free-brands-svg-icons";
 // import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
@@ -34,8 +35,7 @@ export const externlinks = [
     id: "community",
     href: "http://slack.layer5.io",
     title: "Community",
-    // icon: <FontAwesomeIcon style={{ marginBottom: 2, ...drawerIconsStyle }} icon={MailIcon} transform="grow-1" />,
-    icon: <MailIcon />,
+    icon: <FontAwesomeIcon style={{ marginBottom: 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
     external_icon: ExternalLinkIcon,
   },
   {
@@ -71,6 +71,13 @@ export const navigatorItemsTree = [
     show: true,
     link: true,
     children: [
+      {
+        id: "App_Mesh",
+        href: "/management/app-mesh",
+        title: "AWS App Mesh",
+        link: true,
+        show: true,
+      },
       {
         id: "Citrix_Service_Mesh",
         href: "/management/citrix",
