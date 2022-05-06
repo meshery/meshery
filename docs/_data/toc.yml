@@ -89,8 +89,6 @@
       url: service-meshes/adapters/nsm
     - title: NGINX Service Mesh
       url: service-meshes/adapters/nginx-sm
-    - title: Octarine
-      url: service-meshes/adapters/octarine
     - title: Open Service Mesh
       url: service-meshes/adapters/osm
     - title: Tanzu
