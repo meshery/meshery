@@ -13,6 +13,7 @@ const useStyles = makeStyles(() => ({
     // @ts-ignore
     background : ({ color }) => `linear-gradient(115deg, ${pSBCr( color, -30)} 0%, ${color} 100%)`,
     position : "sticky",
+    zIndex : 'auto',
   },
   tabPanel : {
     marginTop : "1.1rem",

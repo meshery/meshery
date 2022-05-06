@@ -11,6 +11,7 @@ import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCor
 import environment, { subscriptionClient } from "../lib/relayEnvironment";
 import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
+import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeavingPage";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -41,6 +42,7 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         subscriptionClient,
         isDrawerCollapsed,
         LoadingScreen,
+        preventLeavingHook : usePreventUserFromLeavingPage,
         resolver : {
           query : {},
           mutation : {},

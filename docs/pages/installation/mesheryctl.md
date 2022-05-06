@@ -19,7 +19,7 @@ Install `mesheryctl` command
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
-  $ curl -L https://git.io/meshery | DEPLOY_MESHERY=false bash -
+  $ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
  </div></div>
  </pre>
 
@@ -27,7 +27,7 @@ Install `mesheryctl` command and deploy Meshery on Docker
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
-  $ curl -L https://git.io/meshery | PLATFORM=docker bash -
+  $ curl -L https://meshery.io/install | PLATFORM=docker bash -
  </div></div>
  </pre>
 
@@ -35,7 +35,7 @@ Install `mesheryctl` command and deploy Meshery on Kubernetes
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
-  $ curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
+  $ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
  </div></div>
  </pre>
 
@@ -43,7 +43,7 @@ Install `mesheryctl` command and deploy Meshery on Kubernetes
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
-  $ curl -L https://git.io/meshery | ADAPTERS=consul PLATFORM=kubernetes bash -
+  $ curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -
  </div></div>
  </pre>
 
