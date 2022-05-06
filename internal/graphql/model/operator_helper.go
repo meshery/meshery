@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	v1 "k8s.io/api/core/v1"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -96,11 +97,7 @@ func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *me
 	statefulSet, err := mesheryKubeClient.KubeClient.AppsV1().StatefulSets("meshery").Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
 	brokerVersion := ""
 	if err == nil {
-		for _, ss := range statefulSet.Spec.Template.Spec.Containers {
-			if ss.Name == "nats" {
-				brokerVersion = strings.Split(ss.Image, ":")[1]
-			}
-		}
+		brokerVersion = imageVersionExtractUtil(statefulSet.Spec.Template, "nats")
 	}
 	fmt.Println("broker ss: ", brokerVersion)
 	if err == nil {
@@ -123,13 +120,9 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 	}
 
 	meshsyncDeployment, err := mesheryKubeClient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
-	meshsyncversion := ""
+	meshsyncVersion := ""
 	if err == nil {
-		for _, container := range meshsyncDeployment.Spec.Template.Spec.Containers {
-			if container.Name == "meshsync" {
-				meshsyncversion = strings.Split(container.Image, ":")[1]
-			}
-		}
+		meshsyncVersion = imageVersionExtractUtil(meshsyncDeployment.Spec.Template, "meshsync")
 	}
 
 	// Synthetic Check for MeshSync data is too time consuming. Commented for now.
@@ -158,7 +151,7 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 	status := fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
 	meshsyncStatus.Status = Status(status)
 	meshsyncStatus.Name = "meshsync"
-	meshsyncStatus.Version = meshsyncversion
+	meshsyncStatus.Version = meshsyncVersion
 	return meshsyncStatus, nil
 }
 
@@ -244,4 +237,14 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	}
 
 	return endpoint, nil
+}
+
+func imageVersionExtractUtil(container v1.PodTemplateSpec, containerName string) string {
+	version := ""
+	for _, container := range container.Spec.Containers {
+		if strings.Compare(container.Name, containerName) == 0 {
+			version = strings.Split(container.Image, ":")[1]
+		}
+	}
+	return version
 }
