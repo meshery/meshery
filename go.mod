@@ -38,7 +38,7 @@ require (
 	github.com/jarcoal/httpmock v1.1.0
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.5.2
+	github.com/layer5io/meshery-operator v0.5.4
 	github.com/layer5io/meshkit v0.5.17
 	github.com/layer5io/meshsync v0.5.3
 	github.com/layer5io/nighthawk-go v0.5.0
