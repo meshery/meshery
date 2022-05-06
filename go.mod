@@ -19,7 +19,7 @@ replace (
 )
 
 require (
-	fortio.org/fortio v1.21.0
+	fortio.org/fortio v1.28.0
 	github.com/99designs/gqlgen v0.17.5
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.18.1
