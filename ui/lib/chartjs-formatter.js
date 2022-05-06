@@ -189,7 +189,7 @@ export function getMetadata(rawdata,res) {
                       {
                         display : {
                           key : "OS",
-                          value : node?.os_image,
+                          value : node?.operating_system,
                         }
                       },
                       {
