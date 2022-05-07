@@ -188,7 +188,7 @@ const ExtensionsComponent = () => {
 
         <SectionWrapper>
 
-          <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
+        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 Launch Meshery
