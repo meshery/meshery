@@ -61,7 +61,7 @@ jobs:
       - name: Build the tagged Docker image
         run: |
           eval $(minikube -p minikube docker-env) 
-          docker build -f install/docker/Dockerfile -t test:test .
+          docker build -t test:test .
       - name: Retrieve kubeconfig
         run: cat ~/.kube/config
       # Setup meshery config.yaml and auth.json
