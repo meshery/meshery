@@ -5,7 +5,6 @@ import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
 } from '../lib/chartjs-formatter';
 import bb, { areaStep, line } from 'billboard.js'
-import NodeDetails from './NodeDetails';
 
 
 const styles = (theme) => ({
@@ -343,9 +342,6 @@ class MesheryChart extends React.Component {
                   null
               }
             </div>
-          </div>
-          <div style={{ margin : "1.5rem" }}>
-            <NodeDetails chartData={chartData} />
           </div>
         </div>
       </NoSsr>

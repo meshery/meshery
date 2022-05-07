@@ -156,8 +156,6 @@ export function getMetadata(rawdata,res) {
             display : {
               key : "Nodes",
               value : res.kubernetes?.nodes?.map((node, i) => {
-                let m = node?.allocatable_memory
-                const mem = (String(m).slice(0, String(m).length-2)*0.000001024).toPrecision(5);
                 return {
                   display : {
                     key : `Node ${i + 1}`,
@@ -177,7 +175,7 @@ export function getMetadata(rawdata,res) {
                       {
                         display : {
                           key : "Memory",
-                          value : mem+"Gi",
+                          value : node?.allocatable_memory,
                         }
                       },
                       {
