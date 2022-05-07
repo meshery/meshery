@@ -5,12 +5,9 @@ import {  createTheme } from '@material-ui/core/styles';
 import MUIDataTable from "mui-datatables";
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 
-class NodeDetails extends React.Component {
-  constructor(props){
-    super(props);
-  }
+function NodeDetails(props) {
 
-  getMuiTheme = () => createTheme({
+  const getMuiTheme = () => createTheme({
     overrides : {
       MuiInput : {
         underline : {
@@ -54,153 +51,151 @@ class NodeDetails extends React.Component {
     }
   })
 
-  render() {
-    const chartData = this.props.chartData;
-    const columns = [
-      { name : "hostname",
-        label : "Hostname",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-            return (
-              <TableCell key={index} onClick={() => sortColumn(index)}>
-                <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-            );
-          },
-        }, },
-      { name : "cpu",
-        label : "CPU",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-            return (
-              <TableCell key={index} onClick={() => sortColumn(index)}>
-                <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-            );
-          },
-        }, },
-      { name : "memory",
-        label : "Memory",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-            return (
-              <TableCell key={index} onClick={() => sortColumn(index)}>
-                <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-            );
-          },
-        }, },
-      { name : "arch",
-        label : "Arch",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-            return (
-              <TableCell key={index} onClick={() => sortColumn(index)}>
-                <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-            );
-          },
-        }, },
-      { name : "os",
-        label : "OS",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-            return (
-              <TableCell key={index} onClick={() => sortColumn(index)}>
-                <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-            );
-          },
-        }, },
-      { name : "kubeletVersion",
-        label : "Kubelet Version",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-            return (
-              <TableCell key={index} onClick={() => sortColumn(index)}>
-                <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-            );
-          },
-        }, },
-      { name : "containerRuntime",
-        label : "Container Runtime",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-            return (
-              <TableCell key={index} onClick={() => sortColumn(index)}>
-                <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-            );
-          },
-        }, },]
+  const chartData = props.chartData;
+  const columns = [
+    { name : "hostname",
+      label : "Hostname",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+      }, },
+    { name : "cpu",
+      label : "CPU",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+      }, },
+    { name : "memory",
+      label : "Memory",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+      }, },
+    { name : "arch",
+      label : "Arch",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+      }, },
+    { name : "os",
+      label : "OS",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+      }, },
+    { name : "kubeletVersion",
+      label : "Kubelet Version",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+      }, },
+    { name : "containerRuntime",
+      label : "Container Runtime",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+      }, },]
 
-    let data = []
+  let data = []
 
-    const options = {
-      filter : false,
-      selectableRows : false,
-    };
+  const options = {
+    filter : false,
+    selectableRows : false,
+  };
 
-    let server = chartData?.options?.metadata?.kubernetes?.display?.value[0]?.display?.value;
+  let server = chartData?.options?.metadata?.kubernetes?.display?.value[0]?.display?.value;
 
-    chartData?.options?.metadata?.kubernetes?.display?.value[1]?.display?.value.map((node) => {
-      let d = node?.display?.value
-      let arr = []
-      Object.keys(d).map(el => {
-        arr.push(d[el].display?.value)
-      })
-      data.push(arr)
+  chartData?.options?.metadata?.kubernetes?.display?.value[1]?.display?.value.map((node) => {
+    let d = node?.display?.value
+    let arr = []
+    Object.keys(d).map(el => {
+      arr.push(d[el].display?.value)
     })
+    data.push(arr)
+  })
 
-    return (
-      <NoSsr>
-        <MuiThemeProvider theme={this.getMuiTheme()}>
-          <MUIDataTable
-            title={<div style={{ fontSize : 18 }}>Node Details (Server Version: {server})</div>}
-            data={data}
-            options={options}
-            columns={columns}
-          />
-        </MuiThemeProvider>
-      </NoSsr>
-    )
-  }
+  return (
+    <NoSsr>
+      <MuiThemeProvider theme={getMuiTheme()}>
+        <MUIDataTable
+          title={<div style={{ fontSize : 18 }}>Node Details (Server Version: {server})</div>}
+          data={data}
+          options={options}
+          columns={columns}
+        />
+      </MuiThemeProvider>
+    </NoSsr>
+  )
 }
 
 export default NodeDetails;
