@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"flag"
+	"fmt"
 	// "fmt"
 	"io"
 	"log"
@@ -66,8 +67,16 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			values := req.URL.Query()
 			token := values["token"][0]
 			log.Println("Setting the value of token to be: ", token)
-			p.token = token
-			wr.WriteHeader(http.StatusFound)
+			if token != "" {
+				p.token = token
+			}
+			if p.token == "" {
+				wr.WriteHeader(http.StatusUnauthorized)
+				wr.Write([]byte(fmt.Sprintf("You have not been authenticated")))
+			} else {
+				wr.WriteHeader(http.StatusFound)
+				wr.Write([]byte(fmt.Sprintf("You have been authenticated succesfully, you can safely close this window. ")))
+			}
 		}
 	}
 

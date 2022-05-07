@@ -6,7 +6,7 @@ import {
 import ConsulIcon from "../../img/SVGs/consulIcon";
 import IstioIcon from "../../img/SVGs/IstioIcon";
 import KumaIcon from "../../img/SVGs/kumaIcon";
-import {createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
 import NginxIcon from "../../img/SVGs/nginxIcon";
 import Meshery from "../../img/SVGs/meshery";
@@ -15,17 +15,19 @@ import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
+import { useLogin } from "../../hooks/useLogin"
+import axios from "axios";
 
 
 const baseURL = "http://localhost:9081"
 
 const useThemeDetector = () => {
   const getCurrentTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const [isDarkTheme, setIsDarkTheme] = useState(getCurrentTheme());  
+  const [isDarkTheme, setIsDarkTheme] = useState(getCurrentTheme());
   const mqListener = (e => {
-      setIsDarkTheme(e.matches);
+    setIsDarkTheme(e.matches);
   });
-  
+
   useEffect(() => {
     const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
     darkThemeMq.addListener(mqListener);
@@ -43,6 +45,7 @@ const ExtensionsComponent = () => {
   const [isHovered, setIsHovered] = useState(false);
   const isDarkTheme = useThemeDetector();
 
+  const isLoggedIn = useLogin()
 
   const onMouseOver = e => {
     let target = e.target.closest("div");
@@ -63,71 +66,71 @@ const ExtensionsComponent = () => {
   };
 
 
- 
-
-  useEffect(() => {
-    // window.ddClient.extension.vm.service.get("/ping").then(console.log);
-  }, [])
 
   const submitConfig = (adapterLocation) => {
-
     const data = { meshLocationURL: adapterLocation };
 
     const params = Object.keys(data)
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
 
-    console.log("asdf")
-    window.ddClient.extension.vm.service.post("/api/system/adapter/manage", {
+    fetch("/api/system/adapter/manage", {
       credentials: "same-origin",
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
       body: params,
-    }).then(window.ddClient.desktopUI.toast.success("Service Mesh was successfully provisioned.")).catch(window.ddClient.desktopUI.toast.error("Some error occured while trying to provision the service mesh."));
+    }).then(() => {
+      window.ddClient.desktopUI.toast.success("Service Mesh was successfully provisioned.")
+    }).catch(() => window.ddClient.desktopUI.toast.error("Some error occured while trying to provision the service mesh."));
   }
 
 
   // Wrote separate functions since we need these functions to provision the adapters as well
   const handleConsul = () => {
-    window.ddClient.desktopUI.toast.success(`Request received. ${consulChecked ? "Deprovisioning" : "Provisioning"} Consul Service Mesh...`);
-    setTimeout(() => {
-      window.ddClient.desktopUI.toast.success(`Consul Service Mesh ${consulChecked ? "Deprovisioned" : "Provisioned"} successfully`);
-    }, 3000)
+    // window.ddClient.desktopUI.toast.success(`Request received. ${consulChecked ? "Deprovisioning" : "Provisioning"} Consul Service Mesh...`);
+    // setTimeout(() => {
+    //   window.ddClient.desktopUI.toast.success(`Consul Service Mesh ${consulChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    // }, 3000)
+    submitConfig("localhost:10002")
     setConsulChecked(prev => !prev)
   }
   const handleIstio = () => {
-    window.ddClient.desktopUI.toast.success(`Request received. ${istioChecked ? "Deprovisioning" : "Provisioning"} Istio Service Mesh...`);
-    setTimeout(() => {
-      window.ddClient.desktopUI.toast.success(`Istio Service Mesh ${istioChecked ? "Deprovisioned" : "Provisioned"} successfully`);
-    }, 3000)
+    // window.ddClient.desktopUI.toast.success(`Request received. ${istioChecked ? "Deprovisioning" : "Provisioning"} Istio Service Mesh...`);
+    // setTimeout(() => {
+    //   window.ddClient.desktopUI.toast.success(`Istio Service Mesh ${istioChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    // }, 3000)
+    submitConfig("localhost:10000")
     isIstioChecked(prev => !prev);
   }
   const handleLinkerd = () => {
-    window.ddClient.desktopUI.toast.success(`Request received. ${linkerdChecked ? "Deprovisioning" : "Provisioning"} Linkerd Service Mesh...`);
-    setTimeout(() => {
-      window.ddClient.desktopUI.toast.success(`Linkerd Service Mesh ${linkerdChecked ? "Deprovisioned" : "Provisioned"} successfully`);
-    }, 3000)
+    // window.ddClient.desktopUI.toast.success(`Request received. ${linkerdChecked ? "Deprovisioning" : "Provisioning"} Linkerd Service Mesh...`);
+    // setTimeout(() => {
+    //   window.ddClient.desktopUI.toast.success(`Linkerd Service Mesh ${linkerdChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    // }, 3000)
+    submitConfig("localhost:10001")
     isLinkerdChecked(prev => !prev);
   }
   const handleNginx = () => {
-    window.ddClient.desktopUI.toast.success(`Request received. ${nginxChecked ? "Deprovisioning" : "Provisioning"} Nginx Service Mesh...`);
-    setTimeout(() => {
-      window.ddClient.desktopUI.toast.success(`Nginx Service Mesh ${nginxChecked ? "Deprovisioned" : "Provisioned"} successfully`);
-    }, 3000)
+    // window.ddClient.desktopUI.toast.success(`Request received. ${nginxChecked ? "Deprovisioning" : "Provisioning"} Nginx Service Mesh...`);
+    // setTimeout(() => {
+    //   window.ddClient.desktopUI.toast.success(`Nginx Service Mesh ${nginxChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    // }, 3000)
+    // submitConfig("localhost:10001")
     isNginxChecked(prev => !prev);
   }
   const handleKuma = () => {
-    window.ddClient.desktopUI.toast.success(`Request received. ${kumaChecked ? "Deprovisioning" : "Provisioning"} Kuma Service Mesh...`);
-    setTimeout(() => {
-      window.ddClient.desktopUI.toast.success(`Kuma Service Mesh ${kumaChecked ? "Deprovisioned" : "Provisioned"} successfully`);
-    }, 3000)
+    // window.ddClient.desktopUI.toast.success(`Request received. ${kumaChecked ? "Deprovisioning" : "Provisioning"} Kuma Service Mesh...`);
+    // setTimeout(() => {
+    //   window.ddClient.desktopUI.toast.success(`Kuma Service Mesh ${kumaChecked ? "Deprovisioned" : "Provisioned"} successfully`);
+    // }, 3000)
+    submitConfig("localhost:10007")
     isKumaChecked(prev => !prev);
   }
   const handleImport = () => {
-    window.ddClient.desktopUI.toast.success(`Importing Compose App...`);
-    setTimeout(() => {
-      window.ddClient.desktopUI.toast.success(`Compose App imported successfully`);
-    }, 3000)
+    // window.ddClient.desktopUI.toast.success(`Importing Compose App...`);
+    // setTimeout(() => {
+    //   window.ddClient.desktopUI.toast.success(`Compose App imported successfully`);
+    // }, 3000)
   }
 
   return (
@@ -139,43 +142,54 @@ const ExtensionsComponent = () => {
 
         <SectionWrapper>
 
-        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba"}}>
+          <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
             <AccountDiv>
-              <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap"}}>
+              <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 Launch Meshery
               </Typography>
-              <div style={{marginBottom: "0.5rem"}}>
+              <div style={{ marginBottom: "0.5rem" }}>
                 <a style={{ textDecoration: "none" }} href="http://localhost:9081">
-               
-                <div
-          onMouseEnter={() => setIsHovered(!isHovered)}
-          onMouseLeave={onMouseOut}
-          onClick={onClick}
-          onMouseOver={onMouseOver}
-        > 
-         {isHovered ?    <MesheryAnimation height={70} width={72}/> : <Meshery height={70} width={72} /> } 
-        
-        </div>
+
+                  <div
+                    onMouseEnter={() => setIsHovered(!isHovered)}
+                    onMouseLeave={onMouseOut}
+                    onClick={onClick}
+                    onMouseOver={onMouseOver}
+                  >
+                    {isHovered ? <MesheryAnimation height={70} width={72} /> : <Meshery height={70} width={72} />}
+
+                  </div>
                 </a>
               </div>
             </AccountDiv>
-            </ExtensionWrapper>
+          </ExtensionWrapper>
 
 
-        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba"}}>
-          <AccountDiv>
-            <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
-            <div style={{ paddingBottom: "2rem" }}>
-            <label htmlFor="upload-button" >
-              <Button variant="contained" color="primary" aria-label="Upload Button" component="span" >
-                <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" onChange={handleImport} />
-                Browse...
-              </Button>
-            </label>
-            </div>
+          <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
+            <AccountDiv>
+              <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
+              <div style={{ paddingBottom: "2rem" }}>
+                <label htmlFor="upload-button" >
+                  <Button variant="contained" color="primary" aria-label="Upload Button" component="span" >
+                    <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" onChange={handleImport} />
+                    Browse...
+                  </Button>
+                </label>
+              </div>
             </AccountDiv>
           </ExtensionWrapper>
-          <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba"}} >
+
+          <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
+            <AccountDiv>
+              <Button variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
+                window.ddClient.host.openExternal("https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14")
+              }}>
+                {isLoggedIn ? "Logged In" : "Login"}
+              </Button>
+            </AccountDiv>
+          </ExtensionWrapper>
+
+          <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }} >
             <div>
               <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
               <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
@@ -183,13 +197,13 @@ const ExtensionsComponent = () => {
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!consulChecked}>
                       <ConsulIcon width={40} height={40} /> </AdapterDiv>
-                      <Typography>Consul</Typography>
+                    <Typography>Consul</Typography>
                     <Switch checked={consulChecked} onChange={handleConsul} color="primary" ></Switch>
                   </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!istioChecked}>
                       <IstioIcon width={40} height={40} /></AdapterDiv>
-                      <Typography >Istio</Typography>
+                    <Typography >Istio</Typography>
                     <Switch checked={istioChecked} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
 
                   <StyledDiv>
@@ -210,7 +224,7 @@ const ExtensionsComponent = () => {
           </ExtensionWrapper>
         </SectionWrapper>
       </ComponentWrapper>
-      </DockerMuiThemeProvider>
+    </DockerMuiThemeProvider>
   );
 }
 

@@ -1,33 +1,30 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
 
-	// "github.com/docker/meshery-extension/vm/pkg/socket"
 	"github.com/docker/meshery-extension/vm/proxy"
 	"github.com/sirupsen/logrus"
 )
 
 var (
 	MesheryServerHost = "http://host.docker.internal:9081"
+	Port              = "7877"
 )
 
 func main() {
 
-	var socketPath = flag.String("socket", "/run/guest/volumes-service.sock", "Unix domain socket to listen on")
-	flag.Parse()
-	unixSocket := "unix:" + *socketPath
-	// ln, err := socket.ListenOn(unixSocket)
-	ln, err := net.Listen("tcp", "localhost:7877")
+  serveAt := fmt.Sprintf("0.0.0.0:%s", Port)
+	ln, err := net.Listen("tcp", serveAt)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	handler := &proxy.Proxy{}
-	logrus.New().Infof("Starting listening on %s\n", unixSocket)
+	logrus.New().Infof("Starting listening on %s \n", serveAt)
 	if err := http.Serve(ln, handler); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
