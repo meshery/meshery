@@ -24,10 +24,6 @@ const styles = (theme) => ({
   chart : {
     width : "calc( 100% - 150px )"
   },
-  mesheryChart : {
-    overflowY : "auto",
-    height : "550px"
-  },
   chartWrapper : {
     display : "flex", flexWrap : "no-wrap", justifyContent : "center", alignItems : "center"
   }
@@ -304,7 +300,7 @@ class MesheryChart extends React.Component {
 
     return (
       <NoSsr>
-        <div className={classes.mesheryChart}>
+        <div>
           <div ref={(ch) => this.titleRef = ch} className={classes.title} style={{ display : "none" }}/>
           <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">
             {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => {
