@@ -50,8 +50,8 @@ function NodeDetails(props) {
       }
     }
   })
+  const chartData = props.result;
 
-  const chartData = props.chartData;
   const columns = [
     { name : "hostname",
       label : "Hostname",
@@ -173,14 +173,20 @@ function NodeDetails(props) {
     selectableRows : false,
   };
 
-  let server = chartData?.options?.metadata?.kubernetes?.display?.value[0]?.display?.value;
+  let server = chartData?.kubernetes?.server_version;
 
-  chartData?.options?.metadata?.kubernetes?.display?.value[1]?.display?.value.map((node) => {
-    let d = node?.display?.value
+  chartData?.kubernetes?.nodes.map((node) => {
     let arr = []
-    Object.keys(d).map(el => {
-      arr.push(d[el].display?.value)
-    })
+    let m = node?.allocatable_memory
+    const mem = (String(m).slice(0, String(m).length-2)*0.000001024).toPrecision(5);
+    arr.push(node?.hostname);
+    arr.push(node?.allocatable_cpu);
+    arr.push(mem+"Gi");
+    arr.push(node?.architecture);
+    arr.push(node?.operating_system);
+    arr.push(node?.kubelet_version);
+    arr.push(node?.container_runtime_version);
+
     data.push(arr)
   })
 
@@ -188,7 +194,7 @@ function NodeDetails(props) {
     <NoSsr>
       <MuiThemeProvider theme={getMuiTheme()}>
         <MUIDataTable
-          title={<div style={{ fontSize : 18 }}>Node Details (Server Version: {server})</div>}
+          title={<div style={{ fontSize : 18 }}>Server Version: {server}</div>}
           data={data}
           options={options}
           columns={columns}

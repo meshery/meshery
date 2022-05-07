@@ -17,8 +17,10 @@ import MesheryChart from "../MesheryChart";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import GenericModal from "../GenericModal";
 import BarChartIcon from '@material-ui/icons/BarChart';
+import InfoIcon from '@material-ui/icons/Info';
 import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
+import NodeDetails from "../NodeDetails";
 
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
@@ -51,7 +53,7 @@ function generateResultsForDisplay(results) {
   return [];
 }
 
-function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
+function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, setSelectedProfileIdxForNodeDetails) {
   const columns = [
     { name : "name",
       label : "Name",
@@ -162,7 +164,7 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
           );
         },
       }, },
-    { name : "Details",
+    { name : "Chart",
       options : {
         filter : false,
         sort : false,
@@ -176,8 +178,28 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
         },
         customBodyRender : function CustomBody(value, tableMeta) {
           return (
-            <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdx(tableMeta.rowIndex)}>
+            <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}>
               <BarChartIcon />
+            </IconButton>
+          );
+        },
+      }, },
+    { name : "Node Details",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell key={index}>
+              <b>{column.label}</b>
+            </TableCell>
+          );
+        },
+        customBodyRender : function CustomBody(value, tableMeta) {
+          return (
+            <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdxForNodeDetails(tableMeta.rowIndex)}>
+              <InfoIcon />
             </IconButton>
           );
         },
@@ -250,6 +272,24 @@ function ResultChart({ result }) {
   );
 }
 
+function ResultNodeDetails({ result }){
+  if (!result) return <div />
+  const chartData = result.runner_results;
+  console.log("runner_result(new): ", chartData)
+  return (
+    <Paper
+      style={{ width : "100%",
+        maxWidth : "90vw",
+        padding : "0.5rem" }}
+    >
+      <div>
+        <Typography variant="h6" gutterBottom align="center">Node Details</Typography>
+        <NodeDetails result={chartData}/>
+      </div>
+    </Paper>
+  )
+}
+
 /**
  *
  * @param {{
@@ -282,7 +322,8 @@ function MesheryResults({
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [results, setResults] = useState([]);
-  const [selectedRowData, setSelectedRowData] = useState();
+  const [selectedRowChart, setSelectedRowChart] = useState();
+  const [selectedRowNodeDetails, setSelectedRowNodeDetails] = useState();
 
   const searchTimeout = useRef();
 
@@ -362,7 +403,7 @@ function MesheryResults({
       autoHideDuration : 8000, });
   }
 
-  const columns = generateColumnsForDisplay(sortOrder, (idx) => setSelectedRowData(results[idx]));
+  const columns = generateColumnsForDisplay(sortOrder, (idx) => setSelectedRowChart(results[idx]), (idx) => setSelectedRowNodeDetails(results[idx]));
 
   const options = {
     elevation : elevation,
@@ -455,11 +496,19 @@ function MesheryResults({
       />
 
       <GenericModal
-        open={!!selectedRowData}
+        open={!!selectedRowChart}
         // @ts-ignore
-        Content={<ResultChart result={selectedRowData} />}
-        handleClose={() => setSelectedRowData(undefined)}
+        Content={<ResultChart result={selectedRowChart} />}
+        handleClose={() => setSelectedRowChart(undefined)}
       />
+
+      <GenericModal
+        open={!!selectedRowNodeDetails}
+        // @ts-ignore
+        Content={<ResultNodeDetails result={selectedRowNodeDetails} />}
+        handleClose={() => setSelectedRowNodeDetails(undefined)}
+      />
+
     </NoSsr>
   );
 }
