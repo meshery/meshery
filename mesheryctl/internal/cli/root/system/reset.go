@@ -76,6 +76,14 @@ func resetMesheryConfig() error {
 	log.Printf("Version: %s", currCtx.GetVersion())
 	log.Printf("Platform: %s\n", currCtx.GetPlatform())
 
+	// Reset the config file to the default context
+	defaultContext := utils.TemplateContext
+	defaultContext.Platform = currCtx.Platform
+	err = config.AddContextToConfig(mctlCfg.GetCurrentContextName(), defaultContext, utils.DefaultConfigPath, true, true)
+	if err != nil {
+		return ErrSettingDefaultContextToConfig(err)
+	}
+
 	switch currCtx.GetPlatform() {
 	case "docker":
 
