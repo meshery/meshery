@@ -15,11 +15,18 @@ import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
-import { useLogin } from "../../hooks/useLogin"
 import axios from "axios";
 
 
 const baseURL = "http://localhost:9081"
+
+export function trueRandom() {
+  return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
+}
+
+export function randomPatternNameGenerator() {
+  return "meshery_" + Math.floor(trueRandom() * 100)
+}
 
 const useThemeDetector = () => {
   const getCurrentTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -44,8 +51,20 @@ const ExtensionsComponent = () => {
   const [kumaChecked, isKumaChecked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const isDarkTheme = useThemeDetector();
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const isLoggedIn = useLogin()
+  useEffect(() => {
+    fetch("http://127.0.0.1:7877/token/store")
+      .then((obj) => {
+        console.log(obj)
+        if (obj.status >= 200 && obj.status < 300) setIsLoggedIn(true)
+        else setIsLoggedIn(false)
+      })
+      .catch((obj) => {
+        setIsLoggedIn(false)
+        console.log(obj)
+      })
+  }, [])
 
   const onMouseOver = e => {
     let target = e.target.closest("div");
@@ -73,11 +92,12 @@ const ExtensionsComponent = () => {
     const params = Object.keys(data)
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
 
-    fetch("/api/system/adapter/manage", {
+    fetch("http://127.0.0.1:7877/api/system/adapter/manage", {
       credentials: "same-origin",
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
+      mode: "no-cors",
       body: params,
     }).then(() => {
       window.ddClient.desktopUI.toast.success("Service Mesh was successfully provisioned.")
@@ -126,7 +146,33 @@ const ExtensionsComponent = () => {
     submitConfig("localhost:10007")
     isKumaChecked(prev => !prev);
   }
+
+
+
   const handleImport = () => {
+    const file = document.getElementById("upload-button").files[0];
+    // Create a reader
+    const reader = new FileReader();
+    reader.addEventListener("load", (event) => {
+
+      let body = { save: true }
+      let name = randomPatternNameGenerator()
+      body = JSON.stringify({
+        ...body, application_data: { name, application_file: event.target.result }
+      })
+
+      fetch("http://localhost:7877/api/application", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
+        body,
+      }).then((res) => {
+        console.log(res)
+        window.ddClient.desktopUI.toast.success("Compose file has been uploaded with name: " + name)
+      }).catch(() => window.ddClient.desktopUI.toast.error("Some error occured while uploading the compose file."));
+
+    });
+    reader.readAsText(file);
+
     // window.ddClient.desktopUI.toast.success(`Importing Compose App...`);
     // setTimeout(() => {
     //   window.ddClient.desktopUI.toast.success(`Compose App imported successfully`);

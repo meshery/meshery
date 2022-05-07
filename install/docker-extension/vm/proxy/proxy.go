@@ -62,83 +62,86 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 
 	client := &http.Client{}
 
+	wr.Header().Set("Access-Control-Allow-Origin", "*")
+
 	if req.URL.Path == "/token/store" {
 		if req.Method == "GET" {
 			values := req.URL.Query()
-			token := values["token"][0]
-			log.Println("Setting the value of token to be: ", token)
+			var token string
+			if values["token"] != nil {
+				token = values["token"][0]
+			}
 			if token != "" {
 				p.token = token
+				log.Println("Setting the value of token to be: ", token)
 			}
 			if p.token == "" {
 				wr.WriteHeader(http.StatusUnauthorized)
-				wr.Write([]byte(fmt.Sprintf("You have not been authenticated")))
+				return
 			} else {
-				wr.WriteHeader(http.StatusFound)
-				wr.Write([]byte(fmt.Sprintf("You have been authenticated succesfully, you can safely close this window. ")))
+				fmt.Fprintf(wr, "You have been authenticated succesfully, you can safely close this window.")
 			}
 		}
 	}
-
 	if req.URL.Path == "/token/store" {
 		if req.Method == "DELETE" {
 			p.token = ""
 			log.Println("Clearing the token from store: ")
 			wr.WriteHeader(http.StatusFound)
 		}
-	}
-
-	//http: Request.RequestURI can't be set in client requests.
-	//http://golang.org/src/pkg/net/http/client.go
-	req.RequestURI = ""
-	req.URL.Scheme = "http"
-
-	delHopHeaders(req.Header)
-
-	req.URL.Host = MesheryServerHost
-
-	if clientIP, _, err := net.SplitHostPort(req.RemoteAddr); err == nil {
-		appendHostToXForwardHeader(req.Header, clientIP)
-	}
-
-	if p.token == "" {
-		log.Println("Sending request without auth token")
 	} else {
-		log.Println("Setting token cookie to the request")
-		req.AddCookie(&http.Cookie{
-			Name:     "token",
-			Value:    string(p.token),
-			Path:     "/",
-			HttpOnly: true,
-		})
-		req.AddCookie(&http.Cookie{
-			Name:     "meshery-provider",
-			Value:    "Meshery",
-			Path:     "/",
-			HttpOnly: true,
-		})
-		req.AddCookie(&http.Cookie{
-			Name:     "meshery.layer5.io_ref",
-			Value:    "/",
-			Path:     "/",
-			HttpOnly: true,
-		})
+		//http: Request.RequestURI can't be set in client requests.
+		//http://golang.org/src/pkg/net/http/client.go
+		req.RequestURI = ""
+		req.URL.Scheme = "http"
+
+		delHopHeaders(req.Header)
+
+		req.URL.Host = MesheryServerHost
+
+		if clientIP, _, err := net.SplitHostPort(req.RemoteAddr); err == nil {
+			appendHostToXForwardHeader(req.Header, clientIP)
+		}
+
+		if p.token == "" {
+			log.Println("Sending request without auth token")
+		} else {
+			log.Println("Setting token cookie to the request")
+			req.AddCookie(&http.Cookie{
+				Name:     "token",
+				Value:    string(p.token),
+				Path:     "/",
+				HttpOnly: true,
+			})
+			req.AddCookie(&http.Cookie{
+				Name:     "meshery-provider",
+				Value:    "Meshery",
+				Path:     "/",
+				HttpOnly: true,
+			})
+			req.AddCookie(&http.Cookie{
+				Name:     "meshery.layer5.io_ref",
+				Value:    "/",
+				Path:     "/",
+				HttpOnly: true,
+			})
+		}
+		log.Println(*req)
+		resp, err := client.Do(req)
+		if err != nil {
+			http.Error(wr, "Server Error", http.StatusInternalServerError)
+			log.Fatal("ServeHTTP:", err)
+		}
+		defer resp.Body.Close()
+
+		log.Println(req.RemoteAddr, " ", resp.Status)
+
+		delHopHeaders(resp.Header)
+
+		copyHeader(wr.Header(), resp.Header)
+		wr.WriteHeader(resp.StatusCode)
+		io.Copy(wr, resp.Body)
 	}
-	log.Println(*req)
-	resp, err := client.Do(req)
-	if err != nil {
-		http.Error(wr, "Server Error", http.StatusInternalServerError)
-		log.Fatal("ServeHTTP:", err)
-	}
-	defer resp.Body.Close()
-
-	log.Println(req.RemoteAddr, " ", resp.Status)
-
-	delHopHeaders(resp.Header)
-
-	copyHeader(wr.Header(), resp.Header)
-	wr.WriteHeader(resp.StatusCode)
-	io.Copy(wr, resp.Body)
 }
 
 func main() {
