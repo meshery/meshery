@@ -46,6 +46,14 @@ _Popular Installers:_
 
   **Answer:** _Many. See Meshery's [Compatibility Matrix]({{site.baseurl}}/project/compatibility-matrix)._
 
+#### Question: Why Meshery connects to single broker on Mac, when running `Docker-Desktop` and `Minikube` clusters?
+
+  **Answer:** _For connecting to broker, Meshery uses `meshery-broker` service. Now this service is of LoadBalancer type and requires that the user should have the setup for it which provides an external IP address for this service to connect with Meshery server. In the case of Docker-Desktop, you get an external IP address of **localhost**. For Minikube, you do `minikube tunnel` which too provides an external IP address of **localhost**. As both the services of different clusters are exposed at localhost:4222 so Meshery server is able to connect to only one of them and hence you might see Meshsync data coming from just one cluster._
+  
+  _Few ways to solve this problem:_
+  - _Use an external cloud provider which provides you with the LoadBalancer having an external IP address other than localhost_
+  - _Use [Kind](https://kind.sigs.k8s.io) cluster with [MetalLB](https://metallb.universe.tf) configuration_
+
 {% include discuss.html %}
 
 <!--Add other questions-->
