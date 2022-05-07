@@ -23,9 +23,11 @@ function getPath() {
 export function getCapabilities(type, cb) {
   dataFetch(
     "/api/provider/capabilities",
-    { credentials : "same-origin",
+    {
+      credentials : "same-origin",
       method : "GET",
-      credentials : "include", },
+      credentials : "include",
+    },
     (result) => {
       if (result) {
         cb(ExtensionPointSchemaValidator(type)(result?.extensions[type]));
@@ -140,7 +142,7 @@ function ExtensionSandbox({ type, Extension }) {
   }, []);
 
   if (type === "navigator") {
-    return isLoading?
+    return isLoading ?
       <LoadingScreen message="Establishing Remote Connection" />
       : (
         <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extensions, getPath()))} />
@@ -150,7 +152,7 @@ function ExtensionSandbox({ type, Extension }) {
   if (type === "user_prefs") {
     return isLoading
       ? <Typography align="center">
-        <CircularProgress/>
+        <CircularProgress />
       </Typography>
       : (
         getComponentURIFromPathForUserPrefs(extensions).map(uri => {
