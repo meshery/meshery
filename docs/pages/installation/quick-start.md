@@ -36,7 +36,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- $ curl -L https://meshery.io/install | PLATFORM=docker bash - 
+ $ docker extension install meshery/docker-extension-meshery
  </div></div>
  </pre>
 
