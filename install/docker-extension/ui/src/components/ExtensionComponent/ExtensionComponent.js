@@ -52,12 +52,16 @@ const ExtensionsComponent = () => {
   const [isHovered, setIsHovered] = useState(false);
   const isDarkTheme = useThemeDetector();
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userName, setUserName] = useState("")
 
   useEffect(() => {
     fetch("http://127.0.0.1:7877/token/store")
       .then((obj) => {
         console.log(obj)
-        if (obj.status >= 200 && obj.status < 300) setIsLoggedIn(true)
+        if (obj.status >= 200 && obj.status < 300) {
+          setIsLoggedIn(true)
+          fetch("http://127.0.0.1:7877/api/user").then(res => res.text()).then(res => setUserName(JSON.parse(res)?.user_id))
+        }
         else setIsLoggedIn(false)
       })
       .catch((obj) => {
@@ -82,6 +86,10 @@ const ExtensionsComponent = () => {
     let target = e.target.closest("div");
     target.style.transition = "all .2s";
     target.style.transform = "scale(0.8)";
+    fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
+      console.log(res)
+      window.ddClient.host.openExternal("http://localhost:7877/api/user/token?token=" + res)
+    }).catch(console.log)
   };
 
 
@@ -194,7 +202,7 @@ const ExtensionsComponent = () => {
                 Launch Meshery
               </Typography>
               <div style={{ marginBottom: "0.5rem" }}>
-                <a style={{ textDecoration: "none" }} href="http://localhost:9081">
+                <a style={{ textDecoration: "none" }} >
 
                   <div
                     onMouseEnter={() => setIsHovered(!isHovered)}
@@ -207,35 +215,39 @@ const ExtensionsComponent = () => {
                   </div>
                 </a>
               </div>
+
+              {userName && <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+                User Id:  {userName}
+              </Typography>}
             </AccountDiv>
           </ExtensionWrapper>
 
 
-          <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
+          {isLoggedIn && <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
               <div style={{ paddingBottom: "2rem" }}>
                 <label htmlFor="upload-button" >
-                  <Button variant="contained" color="primary" aria-label="Upload Button" component="span" >
+                  <Button variant="contained" color="primary" disabled={!isLoggedIn} aria-label="Upload Button" component="span" >
                     <input id="upload-button" type="file" accept=".yaml, .yml" hidden name="upload-button" onChange={handleImport} />
                     Browse...
                   </Button>
                 </label>
               </div>
             </AccountDiv>
-          </ExtensionWrapper>
+          </ExtensionWrapper>}
 
-          <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
-            <AccountDiv>
+          {!isLoggedIn && <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
+            <AccountDiv style={{ width: "" }}>
               <Button variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
                 window.ddClient.host.openExternal("https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14")
               }}>
-                {isLoggedIn ? "Logged In" : "Login"}
+                Login
               </Button>
             </AccountDiv>
-          </ExtensionWrapper>
+          </ExtensionWrapper>}
 
-          <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }} >
+          {!!isLoggedIn && <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }} >
             <div>
               <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
               <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
@@ -244,30 +256,30 @@ const ExtensionsComponent = () => {
                     <AdapterDiv inactiveAdapter={!consulChecked}>
                       <ConsulIcon width={40} height={40} /> </AdapterDiv>
                     <Typography>Consul</Typography>
-                    <Switch checked={consulChecked} onChange={handleConsul} color="primary" ></Switch>
+                    <Switch checked={consulChecked} disabled={!isLoggedIn} onChange={handleConsul} color="primary" ></Switch>
                   </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!istioChecked}>
                       <IstioIcon width={40} height={40} /></AdapterDiv>
                     <Typography >Istio</Typography>
-                    <Switch checked={istioChecked} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
+                    <Switch checked={istioChecked} disabled={!isLoggedIn} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
 
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
                     <Typography>Linkerd</Typography>
-                    <Switch checked={linkerdChecked} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
+                    <Switch checked={linkerdChecked} disabled={!isLoggedIn} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv>
                     <Typography>Nginx</Typography>
-                    <Switch checked={nginxChecked} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
+                    <Switch checked={nginxChecked} disabled={!isLoggedIn} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
                     <Typography>Kuma</Typography>
-                    <Switch checked={kumaChecked} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
+                    <Switch checked={kumaChecked} disabled={!isLoggedIn} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
               </Grid>
             </div>
-          </ExtensionWrapper>
+          </ExtensionWrapper>}
         </SectionWrapper>
       </ComponentWrapper>
     </DockerMuiThemeProvider>

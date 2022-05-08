@@ -3,6 +3,7 @@ package proxy
 import (
 	"flag"
 	"fmt"
+
 	// "fmt"
 	"io"
 	"log"
@@ -64,7 +65,8 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 
 	wr.Header().Set("Access-Control-Allow-Origin", "*")
 
-	if req.URL.Path == "/token/store" {
+	switch req.URL.Path {
+	case "/token/store":
 		if req.Method == "GET" {
 			values := req.URL.Query()
 			var token string
@@ -82,14 +84,13 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 				fmt.Fprintf(wr, "You have been authenticated succesfully, you can safely close this window.")
 			}
 		}
-	}
-	if req.URL.Path == "/token/store" {
-		if req.Method == "DELETE" {
-			p.token = ""
-			log.Println("Clearing the token from store: ")
-			wr.WriteHeader(http.StatusFound)
+	case "/token":
+		if req.Method == "GET" {
+			if p.token != "" {
+				fmt.Fprintf(wr, p.token)
+			}
 		}
-	} else {
+	default:
 		//http: Request.RequestURI can't be set in client requests.
 		//http://golang.org/src/pkg/net/http/client.go
 		req.RequestURI = ""
