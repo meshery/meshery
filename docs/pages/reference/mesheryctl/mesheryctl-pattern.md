@@ -27,20 +27,40 @@ mesheryctl pattern [flags]
 
 ## Examples
 
+Apply pattern file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Apply pattern file
 mesheryctl pattern apply --file [path to pattern file | URL of the file]
 
-// Deprovision pattern file
+</div>
+</pre> 
+
+Deprovision pattern file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl pattern delete --file [path to pattern file]
 
-// View pattern file
+</div>
+</pre> 
+
+View pattern file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl pattern view [pattern name | ID]
 
-// List all patterns
+</div>
+</pre> 
+
+List all patterns
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl pattern list
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

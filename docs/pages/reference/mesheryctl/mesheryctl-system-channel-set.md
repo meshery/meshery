@@ -27,11 +27,16 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 
 ## Examples
 
+Subscribe to release channel or version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Subscribe to release channel or version
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

@@ -27,11 +27,16 @@ mesheryctl mesh remove [flags]
 
 ## Examples
 
+Remove a service mesh
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Remove a service mesh
 mesheryctl mesh remove [mesh adapter name]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 		
 
 </div>

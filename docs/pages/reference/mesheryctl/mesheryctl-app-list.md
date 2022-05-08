@@ -27,11 +27,16 @@ mesheryctl app list [flags]
 
 ## Examples
 
+List all the applications
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// List all the applications
 mesheryctl app list
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

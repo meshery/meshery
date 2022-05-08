@@ -27,21 +27,54 @@ mesheryctl perf [flags]
 
 ## Examples
 
+Run performance test
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Run performance test
 mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
-// List performance profiles
+
+</div>
+</pre> 
+
+List performance profiles
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf profile sam-test
 
-// List performance results
+</div>
+</pre> 
+
+List performance results
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf result sam-test
 
-// Display Perf profile in JSON or YAML
+</div>
+</pre> 
+
+Display Perf profile in JSON or YAML
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf result -o json
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf result -o yaml
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

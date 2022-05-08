@@ -27,29 +27,64 @@ mesheryctl perf apply [profile-name | --file] --flags [flags]
 
 ## Examples
 
+Execute a Performance test with the specified performance profile
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Execute a Performance test with the specified performance profile
 mesheryctl perf apply meshery-profile --flags
 
-// Execute a Performance test with creating a new performance profile
+</div>
+</pre> 
+
+Execute a Performance test with creating a new performance profile
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com"
 
-// Run Performance test using SMP compatible test configuration
+</div>
+</pre> 
+
+Run Performance test using SMP compatible test configuration
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf apply -f perf-config.yaml
 
-// Run performance test using SMP compatible test configuration and override values with flags
+</div>
+</pre> 
+
+Run performance test using SMP compatible test configuration and override values with flags
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf apply -f [filepath] --flags
 
-// Choice of load generator - fortio or wrk2 (default: fortio)
+</div>
+</pre> 
+
+Choice of load generator - fortio or wrk2 (default: fortio)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf apply meshery-test --load-generator wrk2
 
-// Execute a Performance test with specified queries per second
+</div>
+</pre> 
+
+Execute a Performance test with specified queries per second
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
 
-// Execute a Performance test with specified service mesh
+</div>
+</pre> 
+
+Execute a Performance test with specified service mesh
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

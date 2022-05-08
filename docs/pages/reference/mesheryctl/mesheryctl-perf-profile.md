@@ -27,18 +27,26 @@ mesheryctl perf profile [profile-name] [flags]
 
 ## Examples
 
+List performance profiles (maximum 25 profiles)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// List performance profiles (maximum 25 profiles)
 mesheryctl perf profile
 
-// List performance profiles with search (maximum 25 profiles)
+</div>
+</pre> 
+
+List performance profiles with search (maximum 25 profiles)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf profile test 2
 
-// View single performance profile with detailed information
-mesheryctl perf profile test --view
+</div>
+</pre> 
 
+View single performance profile with detailed information
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl perf profile test --view
 
 </div>
 </pre> 

@@ -27,11 +27,16 @@ mesheryctl pattern list [flags]
 
 ## Examples
 
+list all available patterns
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// list all available patterns
 mesheryctl pattern list
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

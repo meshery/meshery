@@ -27,17 +27,32 @@ mesheryctl app view application name [flags]
 
 ## Examples
 
+View applictaions with name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// View applictaions with name
 mesheryctl app view [app-name]
 
-// View applications with id
+</div>
+</pre> 
+
+View applications with id
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl app view [app-id]
 
-// View all applications
+</div>
+</pre> 
+
+View all applications
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl app view --all
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

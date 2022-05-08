@@ -27,11 +27,16 @@ mesheryctl system context switch context-name [flags]
 
 ## Examples
 
+Switch to context named "sample"
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Switch to context named "sample"
 mesheryctl system context switch sample
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

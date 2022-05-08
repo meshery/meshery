@@ -20,18 +20,39 @@ Meshery is the service mesh management plane, providing lifecycle, performance, 
 
 ## Examples
 
+Base command
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Base command
 mesheryctl
 
-// Display help about command/subcommand
+</div>
+</pre> 
+
+Display help about command/subcommand
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl --help
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system start --help
 
-// For viewing verbose output
+</div>
+</pre> 
+
+For viewing verbose output
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl -v [or] --verbose
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

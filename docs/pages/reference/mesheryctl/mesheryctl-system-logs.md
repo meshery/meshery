@@ -29,12 +29,23 @@ mesheryctl system logs [flags]
 
 ## Examples
 
+Starts tailing Meshery server debug logs (works with components also)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Starts tailing Meshery server debug logs (works with components also)
 mesheryctl system logs --verbose
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system logs meshery-istio
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

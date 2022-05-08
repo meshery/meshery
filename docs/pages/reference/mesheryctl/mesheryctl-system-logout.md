@@ -30,11 +30,16 @@ mesheryctl system logout [flags]
 
 ## Examples
 
+Logout current session with your Meshery Provider.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Logout current session with your Meshery Provider.
 mesheryctl system logout
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

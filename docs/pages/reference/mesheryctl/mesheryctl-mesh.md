@@ -27,11 +27,16 @@ mesheryctl mesh [flags]
 
 ## Examples
 
+Lifecycle management of service meshes
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Lifecycle management of service meshes
 mesheryctl mesh 
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

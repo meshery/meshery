@@ -27,17 +27,32 @@ mesheryctl mesh deploy [flags]
 
 ## Examples
 
+Deploy a service mesh from an interactive on the default namespace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Deploy a service mesh from an interactive on the default namespace
 mesheryctl mesh deploy
 
-// Deploy Linkerd mesh on a specific namespace
+</div>
+</pre> 
+
+Deploy Linkerd mesh on a specific namespace
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
 
-// Deploy Linkerd mesh and wait for it to be deployed
+</div>
+</pre> 
+
+Deploy Linkerd mesh and wait for it to be deployed
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl mesh deploy --adapter meshery-linkerd --watch
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 		
 
 </div>

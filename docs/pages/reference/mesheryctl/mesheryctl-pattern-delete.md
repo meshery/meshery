@@ -27,11 +27,16 @@ mesheryctl pattern delete [flags]
 
 ## Examples
 
+delete a pattern file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// delete a pattern file
 mesheryctl pattern delete [file | URL]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

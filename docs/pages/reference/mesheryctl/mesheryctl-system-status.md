@@ -27,11 +27,16 @@ mesheryctl system status [flags]
 
 ## Examples
 
+Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 mesheryctl system status 
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

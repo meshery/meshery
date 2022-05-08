@@ -27,18 +27,26 @@ mesheryctl perf result profile-name [flags]
 
 ## Examples
 
+List Test results (maximum 25 results)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// List Test results (maximum 25 results)
 mesheryctl perf result saturday-profile
 
-// View other set of performance results with --page (maximum 25 results)
+</div>
+</pre> 
+
+View other set of performance results with --page (maximum 25 results)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl perf result saturday-profile --page 2
 
-// View single performance result with detailed information
-mesheryctl perf result saturday-profile --view
+</div>
+</pre> 
 
+View single performance result with detailed information
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl perf result saturday-profile --view
 
 </div>
 </pre> 

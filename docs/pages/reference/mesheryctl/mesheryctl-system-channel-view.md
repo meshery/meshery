@@ -27,11 +27,16 @@ mesheryctl system channel view [flags]
 
 ## Examples
 
+View current release channel
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// View current release channel
 mesheryctl system channel view
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

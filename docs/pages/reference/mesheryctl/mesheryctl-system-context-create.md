@@ -27,14 +27,24 @@ mesheryctl system context create context-name [flags]
 
 ## Examples
 
+Create new context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Create new context
 mesheryctl system context create [context-name]
 
-// Create new context and provide list of components, platform & URL
+</div>
+</pre> 
+
+Create new context and provide list of components, platform & URL
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

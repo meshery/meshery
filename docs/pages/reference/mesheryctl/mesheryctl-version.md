@@ -27,11 +27,16 @@ mesheryctl version [flags]
 
 ## Examples
 
+To view the current version and SHA of release binary of mesheryctl client 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// To view the current version and SHA of release binary of mesheryctl client 
 mesheryctl version
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

@@ -27,20 +27,40 @@ mesheryctl system context view [context-name | --context context-name| --all] --
 
 ## Examples
 
+View default context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// View default context
 mesheryctl system context view
 
-// View specified context
+</div>
+</pre> 
+
+View specified context
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system context view context-name
 
-// View specified context with context flag
+</div>
+</pre> 
+
+View specified context with context flag
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system context view --context context-name
 
-// View config of all contexts
+</div>
+</pre> 
+
+View config of all contexts
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system context view --all
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

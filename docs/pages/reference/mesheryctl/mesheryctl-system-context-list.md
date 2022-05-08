@@ -27,11 +27,16 @@ mesheryctl system context list [flags]
 
 ## Examples
 
+List all contexts present
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// List all contexts present
 mesheryctl system context list
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

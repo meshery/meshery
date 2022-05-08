@@ -27,11 +27,16 @@ mesheryctl system context delete context-name [flags]
 
 ## Examples
 
+Delete context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Delete context
 mesheryctl system context delete [context name]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

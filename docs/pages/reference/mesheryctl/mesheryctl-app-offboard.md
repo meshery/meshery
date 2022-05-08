@@ -27,11 +27,16 @@ mesheryctl app offboard [flags]
 
 ## Examples
 
+Offboard application by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Offboard application by providing file path
 mesheryctl app offboard -f [filepath]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

@@ -27,11 +27,16 @@ mesheryctl pattern view <pattern name> [flags]
 
 ## Examples
 
+view a pattern
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// view a pattern
 mesheryctl pattern view [pattern-name | ID]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

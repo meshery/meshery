@@ -27,11 +27,16 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flag
 
 ## Examples
 
+Switch between release channels
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Switch between release channels
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

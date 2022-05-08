@@ -27,11 +27,16 @@ mesheryctl app onboard [flags]
 
 ## Examples
 
+Onboard application by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Onboard application by providing file path
 mesheryctl app onboard -f [filepath]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

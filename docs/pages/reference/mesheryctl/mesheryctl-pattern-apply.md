@@ -27,14 +27,24 @@ mesheryctl pattern apply [flags]
 
 ## Examples
 
+apply a pattern file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// apply a pattern file
 mesheryctl pattern apply -f [file | URL]
 
-// deploy a saved pattern
+</div>
+</pre> 
+
+deploy a saved pattern
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl pattern apply [pattern-name]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

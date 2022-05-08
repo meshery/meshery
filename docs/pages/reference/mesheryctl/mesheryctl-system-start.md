@@ -27,23 +27,48 @@ mesheryctl system start [flags]
 
 ## Examples
 
+Start meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Start meshery
 mesheryctl system start
 
-// To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
+</div>
+</pre> 
+
+To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system context create k8s -p kubernetes -s
 
-// (optional) skip checking for new updates available in Meshery.
+</div>
+</pre> 
+
+(optional) skip checking for new updates available in Meshery.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system start --skip-update
 
-// Reset Meshery's configuration file to default settings.
+</div>
+</pre> 
+
+Reset Meshery's configuration file to default settings.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system start --reset
 
-// Silently create Meshery's configuration file with default settings
+</div>
+</pre> 
+
+Silently create Meshery's configuration file with default settings
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system start --yes
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

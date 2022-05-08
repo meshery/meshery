@@ -27,11 +27,16 @@ mesheryctl system reset [flags]
 
 ## Examples
 
+Resets meshery.yaml file with a copy from Meshery repo
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Resets meshery.yaml file with a copy from Meshery repo
 mesheryctl system reset
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

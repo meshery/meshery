@@ -30,11 +30,16 @@ mesheryctl system login [flags]
 
 ## Examples
 
+Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
 mesheryctl system login 
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

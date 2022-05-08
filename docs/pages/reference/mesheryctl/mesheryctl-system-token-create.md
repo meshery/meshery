@@ -29,10 +29,27 @@ mesheryctl system token create [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
 mesheryctl system token create [token-name] -f [token-path]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system token create [token-name] (default path is auth.json)
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system token create [token-name] -f [token-path] --set
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

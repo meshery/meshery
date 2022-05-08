@@ -27,17 +27,32 @@ mesheryctl system stop [flags]
 
 ## Examples
 
+Stop Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
-// Stop Meshery
 mesheryctl system stop
 
-// Reset Meshery's configuration file to default settings.
+</div>
+</pre> 
+
+Reset Meshery's configuration file to default settings.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system stop --reset
 
-// Stop Meshery forcefully (use it when system stop doesn't work)
+</div>
+</pre> 
+
+Stop Meshery forcefully (use it when system stop doesn't work)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system stop --force
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>

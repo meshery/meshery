@@ -29,9 +29,20 @@ mesheryctl system token view [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-
 mesheryctl system token view [token-name]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 mesheryctl system token view (show token of current context)
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
 	
 
 </div>
