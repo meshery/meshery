@@ -12,6 +12,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var (
+	noneProviderFlag bool
+)
+
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Authenticate to a Meshery Server",
@@ -61,7 +65,13 @@ The authentication mode is web-based browser flow`,
 			return nil
 		}
 
-		tokenData, err := utils.InitiateLogin(mctlCfg)
+		var tokenData []byte
+		if noneProviderFlag {
+			tokenData, err = utils.InitiateLoginNone(mctlCfg)
+		} else {
+			tokenData, err = utils.InitiateLogin(mctlCfg)
+		}
+
 		if err != nil {
 			log.Println("authentication failed:", err)
 			return nil
@@ -87,4 +97,8 @@ The authentication mode is web-based browser flow`,
 
 		return nil
 	},
+}
+
+func init() {
+	loginCmd.Flags().BoolVarP(&noneProviderFlag, "none", "", false, "login Meshery with 'None' provider")
 }
