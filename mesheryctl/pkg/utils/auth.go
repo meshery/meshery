@@ -406,14 +406,9 @@ func selectProviderPrompt(provs map[string]Provider) Provider {
 
 func chooseNoneProvider(provs map[string]Provider) Provider {
 	provArray := []Provider{}
-	provNames := []string{}
 
 	for _, prov := range provs {
 		provArray = append(provArray, prov)
-	}
-
-	for _, prov := range provArray {
-		provNames = append(provNames, prov.ProviderName)
 	}
 
 	return provArray[1]
