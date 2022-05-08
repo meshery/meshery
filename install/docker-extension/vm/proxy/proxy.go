@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"flag"
+	// "fmt"
 	"io"
 	"log"
 	"net"
@@ -11,6 +12,7 @@ import (
 
 var (
 	MesheryServerHost = "host.docker.internal:9081"
+	TestingServer     = "localhost:9081"
 )
 
 // Hop-by-hop headers. These are removed when sent to the backend.
@@ -51,12 +53,31 @@ func appendHostToXForwardHeader(header http.Header, host string) {
 }
 
 type Proxy struct {
+	token string
 }
 
 func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	log.Println(req.RemoteAddr, " ", req.Method, " ", req.URL)
 
 	client := &http.Client{}
+
+	if req.URL.Path == "/token/store" {
+		if req.Method == "GET" {
+			values := req.URL.Query()
+			token := values["token"][0]
+			log.Println("Setting the value of token to be: ", token)
+			p.token = token
+			wr.WriteHeader(http.StatusFound)
+		}
+	}
+
+	if req.URL.Path == "/token/store" {
+		if req.Method == "DELETE" {
+			p.token = ""
+			log.Println("Clearing the token from store: ")
+			wr.WriteHeader(http.StatusFound)
+		}
+	}
 
 	//http: Request.RequestURI can't be set in client requests.
 	//http://golang.org/src/pkg/net/http/client.go
@@ -71,6 +92,30 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		appendHostToXForwardHeader(req.Header, clientIP)
 	}
 
+	if p.token == "" {
+		log.Println("Sending request without auth token")
+	} else {
+		log.Println("Setting token cookie to the request")
+		req.AddCookie(&http.Cookie{
+			Name:     "token",
+			Value:    string(p.token),
+			Path:     "/",
+			HttpOnly: true,
+		})
+		req.AddCookie(&http.Cookie{
+			Name:     "meshery-provider",
+			Value:    "Meshery",
+			Path:     "/",
+			HttpOnly: true,
+		})
+		req.AddCookie(&http.Cookie{
+			Name:     "meshery.layer5.io_ref",
+			Value:    "/",
+			Path:     "/",
+			HttpOnly: true,
+		})
+	}
+	log.Println(*req)
 	resp, err := client.Do(req)
 	if err != nil {
 		http.Error(wr, "Server Error", http.StatusInternalServerError)

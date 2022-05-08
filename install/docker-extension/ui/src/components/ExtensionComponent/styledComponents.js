@@ -29,18 +29,13 @@ export const AdapterDiv = styled("div")(({ theme, inactiveAdapter }) => ({
   filter: inactiveAdapter ? "grayscale(1) invert(0.35)" : ""
 }))
 
-// export const SpinnerDiv = styled("div")(({noHover}) => ({
-//   "&:hover {   
-//     transform: scale(2),
-//     transitionDuration: "0.5s" "
-// }))
 
 export const ExtensionWrapper = styled('div')(({ theme }) => ({
   margin: theme.spacing(2),
   display: "flex",
-  justifyContent: 'center', alignItems: 'center',
+  justifyContent: 'center', 
+  alignItems: 'center',
   height:"12rem",
-  backgroundColor: "#393F49",
   borderRadius: "20px ",
   padding: "2rem",
   textAlign: "center",
@@ -51,7 +46,6 @@ export const ExtensionWrapper = styled('div')(({ theme }) => ({
 
 export const ComponentWrapper = styled('div')(({theme }) => ({
   textAlign: "center",
-    backgroundColor: "#222C32",
     padding: "5rem",
     maxHeight: "100vh"
 }))

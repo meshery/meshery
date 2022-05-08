@@ -20,6 +20,10 @@ import {
   ListItem,
   ListItemText,
   CircularProgress,
+  Select,
+  Box,
+  FormControl,
+  InputLabel,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -173,11 +177,13 @@ class MeshConfigComponent extends React.Component {
       k8sfileError : false,
       ts : new Date(),
       contexts : [],
+      selectContext : contextName,
 
       operatorInstalled : false,
       operatorVersion : "N/A",
       meshSyncInstalled : false,
       meshSyncVersion : "N/A",
+      meshSyncState : "N/A",
       NATSState : "UNKNOWN",
       NATSVersion : "N/A",
 
@@ -319,6 +325,15 @@ class MeshConfigComponent extends React.Component {
     }, variables);
   };
 
+  selectcontext = () => {
+    const self = this;
+    return (event) => {
+      self.setState(() => {
+        return { selectContext : event.target.value }
+      })
+    };
+  };
+
   handleChange = (name) => {
     const self = this;
     return (event) => {
@@ -344,7 +359,16 @@ class MeshConfigComponent extends React.Component {
           })
       }
       if (name === "context") {
-        changeContext(event.target.value).
+        this.setState(() => {
+          return { contextName : this.state.selectContext }
+        })
+        let contextid;
+        this.state.contexts.forEach(element => {
+          if (element.name===this.state.selectContext){
+            contextid=element.id;
+          }
+        });
+        changeContext(contextid).
           then(() => {
             this.handleSuccess("successfully changed kubernetes current context")
             fetchAllContexts(25)
@@ -409,10 +433,10 @@ handleNATSClick = () => {
 
   NatsStatusQuery().subscribe({
     next : (res) => {
-      console.log(res);
       self.props.updateProgress({ showProgress : false });
-      if (res.controller.name === "broker" && res.controller.status == "CONNECTED") {
-        this.props.enqueueSnackbar(`Broker was successfully pinged`, {
+      if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
+        let runningEndpoint = res.controller.status.substring("CONNECTED".length)
+        this.props.enqueueSnackbar(`Broker was successfully pinged. Running at ${runningEndpoint}`, {
           variant : "success",
           action : (key) => (
             <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
@@ -470,12 +494,14 @@ handleNATSClick = () => {
 
     MeshsyncStatusQuery().subscribe({ next : (res) => {
       self.props.updateProgress({ showProgress : false });
-      if (res.controller.name === "meshsync" && res.controller.status == "ENABLED") {
+      if (res.controller.name === "meshsync" && res.controller.status.includes("ENABLED")) {
         self.setState({
           meshSyncInstalled : true,
           meshSyncVersion : res.controller.version,
+          meshSyncState : res.controller.status,
         });
-        this.props.enqueueSnackbar(`MeshSync was successfully pinged`, {
+        let publishEndpoint = res.controller.status.substring("ENABLED".length)
+        this.props.enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
           variant : "success",
           action : (key) => (
             <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
@@ -489,6 +515,7 @@ handleNATSClick = () => {
         self.setState({
           meshSyncInstalled : false,
           meshSyncVersion : "",
+          meshSyncState : res.controller.status
         });
       }
     },
@@ -656,11 +683,13 @@ handleNATSClick = () => {
       operatorVersion,
       meshSyncInstalled,
       meshSyncVersion,
+      meshSyncState,
       NATSState,
       NATSVersion,
       operatorSwitch,
       contexts,
     } = this.state;
+
     let showConfigured = <></>;
     const self = this;
     if (clusterConfigured) {
@@ -802,7 +831,7 @@ handleNATSClick = () => {
               <List>
                 <ListItem>
                   <ListItemText primary="MeshSync State" secondary={meshSyncInstalled
-                    ? "Active"
+                    ? meshSyncState
                     : "Disabled"} />
                 </ListItem>
                 <ListItem>
@@ -863,7 +892,7 @@ handleNATSClick = () => {
   meshOut = (showConfigured, operator) => {
     const { classes } = this.props;
     const {
-      k8sfile, k8sfileElementVal, contextNameForForm, contextName, contexts
+      k8sfile, k8sfileElementVal, contextName, contexts, selectContext
     } = this.state;
 
     return (
@@ -904,27 +933,42 @@ handleNATSClick = () => {
                         ), }}
                     />
                   </FormGroup>
-                  <TextField
-                    select
-                    id="contextName"
-                    name="contextName"
-                    label="Context Name"
-                    fullWidth
-                    value={contextNameForForm || contextName}
-                    margin="normal"
-                    variant="outlined"
-                    // disabled={inClusterConfigForm === true}
-                    onChange={this.handleChange("context")}
-                  >
-                    {contexts?.map((ct) => (
-                      <MenuItem key={`ct_---_${ct.name}`} value={ct.id}>
-                        {ct.name}
-                        {ct.is_current_context
-                          ? " (Current Context)"
-                          : ""}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                  <form onSubmit={this.handleChange("context")} >
+                    <Box sx={{ minWidth : 120 }}>
+                      <FormControl variant="outlined" fullWidth>
+                        <InputLabel id="select-label">Context Name</InputLabel>
+                        <Select
+                          id="contextName"
+                          name="contextName"
+                          labelId="select-label"
+                          label="Context Name"
+                          value={selectContext || contextName }
+                          onChange={this.selectcontext()}
+                        >
+                          {contexts?.map((ct) => (
+                            <MenuItem key={`ct_---_${ct.name}`} value= {ct.name}>
+                              {ct.name}
+                              {ct.is_current_context
+                                ? " (Current Context)"
+                                : ""}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                    <div style={{ display : 'flex', justifyContent : 'center' }}>
+                      <Button
+                        type="submit"
+                        value="Submit"
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
+                      >
+                      Change Context
+                      </Button>
+                    </div>
+                  </form>
                 </div>
               </Paper>
             </Grid>
@@ -986,6 +1030,7 @@ handleNATSClick = () => {
   };
 
   render() {
+
     return this.configureTemplate();
   }
 }
