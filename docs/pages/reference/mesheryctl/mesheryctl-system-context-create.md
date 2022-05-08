@@ -43,13 +43,6 @@ mesheryctl system context create context-name --components meshery-osm --platfor
 </div>
 </pre> 
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	
-
-</div>
-</pre> 
-
 ## Options
 
 <pre class='codeblock-pre'>

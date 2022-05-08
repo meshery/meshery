@@ -35,13 +35,6 @@ mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1
 </div>
 </pre> 
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	
-
-</div>
-</pre> 
-
 List performance profiles
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -69,13 +62,6 @@ mesheryctl perf result -o json
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result -o yaml
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	
 
 </div>
 </pre> 

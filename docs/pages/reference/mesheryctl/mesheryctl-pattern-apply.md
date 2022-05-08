@@ -43,13 +43,6 @@ mesheryctl pattern apply [pattern-name]
 </div>
 </pre> 
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	
-
-</div>
-</pre> 
-
 ## Options
 
 <pre class='codeblock-pre'>

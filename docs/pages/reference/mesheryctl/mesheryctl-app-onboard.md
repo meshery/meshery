@@ -35,13 +35,6 @@ mesheryctl app onboard -f [filepath]
 </div>
 </pre> 
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	
-
-</div>
-</pre> 
-
 ## Options
 
 <pre class='codeblock-pre'>

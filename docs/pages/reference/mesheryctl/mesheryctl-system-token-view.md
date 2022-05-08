@@ -41,13 +41,6 @@ mesheryctl system token view (show token of current context)
 </div>
 </pre> 
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	
-
-</div>
-</pre> 
-
 ## Options
 
 <pre class='codeblock-pre'>

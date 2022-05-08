@@ -35,13 +35,6 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 </div>
 </pre> 
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	
-
-</div>
-</pre> 
-
 ## Options
 
 <pre class='codeblock-pre'>

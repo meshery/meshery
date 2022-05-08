@@ -83,13 +83,6 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 </div>
 </pre> 
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	
-
-</div>
-</pre> 
-
 ## Options
 
 <pre class='codeblock-pre'>

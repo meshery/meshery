@@ -142,9 +142,9 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 
 	if len(cmd.Example) > 0 {
 		buf.WriteString("## Examples\n\n")
-		var examples []string = strings.Split(cmd.Example, "\n")
+		var examples = strings.Split(cmd.Example, "\n")
 		for i := 0; i < len(examples); i++ {
-			if examples[i] != "" {
+			if examples[i] != "" && examples[i] != " " && examples[i] != "	"{
 				if strings.HasPrefix(examples[i], "//") {
 					buf.WriteString(strings.Replace(examples[i], "// ", "", -1) + "\n")
 				} else {
