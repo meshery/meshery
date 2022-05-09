@@ -38,7 +38,7 @@
           url: installation/platforms/aks
         - title: Docker
           url: installation/platforms/docker
-        - title: Docker extension
+        - title: Docker Extension
           url: installation/platforms/docker-extension
         - title: EKS
           url: installation/platforms/eks
