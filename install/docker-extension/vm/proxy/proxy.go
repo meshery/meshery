@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	// "fmt"
+	"github.com/gorilla/websocket"
 	"io"
 	"log"
 	"net"
@@ -16,6 +17,11 @@ var (
 	MesheryServerHost = "host.docker.internal:9081"
 	TestingServer     = "localhost:9081"
 )
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 
 // Hop-by-hop headers. These are removed when sent to the backend.
 // http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
@@ -58,14 +64,52 @@ type Proxy struct {
 	token string
 }
 
+func handleWsMessage(conn *websocket.Conn) {
+	for {
+		// read in a message
+		messageType, p, err := conn.ReadMessage()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		// print out that message for clarity
+		fmt.Println(string(p))
+
+		if err := conn.WriteMessage(messageType, p); err != nil {
+			log.Println(err)
+			return
+		}
+
+	}
+}
+
 func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	log.Println(req.RemoteAddr, " ", req.Method, " ", req.URL)
+	authWsChan := make(chan bool)
 
 	client := &http.Client{}
 
 	wr.Header().Set("Access-Control-Allow-Origin", "*")
 
 	switch req.URL.Path {
+	case "/ws":
+		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+
+		ws, err := upgrader.Upgrade(wr, req, nil)
+		if err != nil {
+			log.Println(err)
+		}
+		go handleWsMessage(ws)
+
+		for res := range authWsChan {
+			if res == true {
+				err = ws.WriteMessage(1, []byte("Authenticated"))
+				if err != nil {
+					log.Println(err)
+				}
+			}
+		}
+
 	case "/token/store":
 		if req.Method == "GET" {
 			values := req.URL.Query()
@@ -75,13 +119,14 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			}
 			if token != "" {
 				p.token = token
+				authWsChan <- true
 				log.Println("Setting the value of token to be: ", token)
 			}
 			if p.token == "" {
 				wr.WriteHeader(http.StatusUnauthorized)
 				return
 			} else {
-				fmt.Fprintf(wr, "You have been authenticated succesfully, you can safely close this window.")
+				http.ServeFile(wr, req, "../assets/auth.html")
 			}
 		}
 	case "/token":
