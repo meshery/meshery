@@ -38,6 +38,8 @@
           url: installation/platforms/aks
         - title: Docker
           url: installation/platforms/docker
+        - title: Docker extension
+          url: installation/platforms/docker-extension
         - title: EKS
           url: installation/platforms/eks
         - title: GKE
