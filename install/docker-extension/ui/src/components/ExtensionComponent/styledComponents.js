@@ -10,10 +10,10 @@ export const StyledDiv = styled('div')(() => ({
 
 export const AccountDiv = styled('div')(() => ({
   width: "50%",
-  
+
   display: "flex",
   flexDirection: "column",
-  justifyContent: 'center', alignItems: 'center' ,
+  justifyContent: 'center', alignItems: 'center',
 }));
 
 export const ServiceMeshAdapters = styled('div')(({ theme }) => ({
@@ -33,9 +33,9 @@ export const AdapterDiv = styled("div")(({ theme, inactiveAdapter }) => ({
 export const ExtensionWrapper = styled('div')(({ theme }) => ({
   margin: theme.spacing(2),
   display: "flex",
-  justifyContent: 'center', 
+  justifyContent: 'center',
   alignItems: 'center',
-  height:"12rem",
+  height: "12rem",
   borderRadius: "20px ",
   padding: "2rem",
   textAlign: "center",
@@ -44,13 +44,13 @@ export const ExtensionWrapper = styled('div')(({ theme }) => ({
   }
 }));
 
-export const ComponentWrapper = styled('div')(({theme }) => ({
+export const ComponentWrapper = styled('div')(({ theme }) => ({
   textAlign: "center",
-    padding: "5rem",
-    maxHeight: "100vh"
+  padding: "5rem",
+  maxHeight: "100vh"
 }))
 
-export const SectionWrapper = styled('div')(({theme }) => ({
+export const SectionWrapper = styled('div')(({ theme }) => ({
   padding: "2rem", display: "flex", flexDirection: 'row',
-  justifyContent: 'center', alignItems: 'center' 
+  justifyContent: 'center', alignItems: 'center'
 }))
