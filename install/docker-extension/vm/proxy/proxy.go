@@ -61,7 +61,8 @@ func appendHostToXForwardHeader(header http.Header, host string) {
 }
 
 type Proxy struct {
-	token string
+	token      string
+	authWsChan chan bool
 }
 
 func handleWsMessage(conn *websocket.Conn) {
@@ -85,7 +86,9 @@ func handleWsMessage(conn *websocket.Conn) {
 
 func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	log.Println(req.RemoteAddr, " ", req.Method, " ", req.URL)
-	authWsChan := make(chan bool)
+	if p.authWsChan == nil {
+		p.authWsChan = make(chan bool)
+	}
 
 	client := &http.Client{}
 
@@ -101,7 +104,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		}
 		go handleWsMessage(ws)
 
-		for res := range authWsChan {
+		for res := range p.authWsChan {
 			if res == true {
 				err = ws.WriteMessage(1, []byte("Authenticated"))
 				if err != nil {
@@ -119,15 +122,28 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			}
 			if token != "" {
 				p.token = token
-				authWsChan <- true
+				p.authWsChan <- true
 				log.Println("Setting the value of token to be: ", token)
 			}
 			if p.token == "" {
 				wr.WriteHeader(http.StatusUnauthorized)
 				return
 			} else {
-				// http.ServeFile(wr, req, "")
-				fmt.Fprintf(wr, "Authentication successful. You can close this window now.")
+				htmlTemplate := `
+        <html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+<script type="text/javascript">
+  window.open('docker-desktop://dashboard/open','_self')
+</script>
+<p>You have been authenticated succesfully, you can close this window now.</p>
+
+</body>
+</html>
+        `
+				fmt.Fprint(wr, htmlTemplate)
 			}
 		}
 	case "/token":
