@@ -299,7 +299,7 @@ class MesheryApp extends App {
             <footer className={classes.footer}>
               <Typography variant="body2" align="center" color="textSecondary" component="p">
                 <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                navigator.userAgent.toLowerCase() </span>
+                {navigator.userAgent.toLowerCase()} </span>
               </Typography>
             </footer>
           </div>
