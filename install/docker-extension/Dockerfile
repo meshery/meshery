@@ -50,4 +50,5 @@ RUN unzip /mesheryctl/windows/mesheryctl_${GIT_STRIPPED_VERSION}_Windows_x86_64.
 RUN unzip /mesheryctl/linux/mesheryctl_${GIT_STRIPPED_VERSION}_Linux_x86_64.zip -d /mesheryctl/linux/
 COPY meshery-logo-light.svg .
 COPY --from=client-builder /ui/build ui
-CMD ./service -socket /run/guest-services/extension-meshery.sock
+EXPOSE 7877/tcp
+CMD ./service 
