@@ -67,7 +67,8 @@ class MesheryApp extends App {
       isDrawerCollapsed : false,
       k8sContexts : {},
       activeK8sContexts : [],
-      spa : false // should the app be rendered as a single page only
+      spa : false, // should the app be rendered as a single page only,
+      userAgent : ""
     };
   }
 
@@ -215,7 +216,7 @@ class MesheryApp extends App {
       })
       .catch(err => console.error(err))
 
-    this.setState({ spa : this.shouldTheAppBeSPA() });
+    this.setState({ spa : this.shouldTheAppBeSPA(), userAgent : this.getUserAgent() });
   }
 
   /**
@@ -225,7 +226,12 @@ class MesheryApp extends App {
    */
   shouldTheAppBeSPA = () => {
     let useAgent = navigator.userAgent.toLowerCase();
+    console.log("usewr", { useAgent })
     return useAgent.indexOf('electron') > -1 || useAgent.indexOf('docker-desktop') > -1;
+  }
+
+  getUserAgent = () => {
+    return navigator.userAgent.toLowerCase();
   }
 
   render() {
@@ -299,7 +305,7 @@ class MesheryApp extends App {
             <footer className={classes.footer}>
               <Typography variant="body2" align="center" color="textSecondary" component="p">
                 <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                {navigator.userAgent.toLowerCase()} </span>
+                  {this.state.userAgent} <FavoriteIcon /> </span>
               </Typography>
             </footer>
           </div>
