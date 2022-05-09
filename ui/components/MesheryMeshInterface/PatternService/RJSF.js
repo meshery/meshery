@@ -11,7 +11,6 @@ import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
 import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import _ from "lodash"
-import { CircularProgress, Typography } from '@material-ui/core';
 
 const Form = withTheme(MaterialUITheme);
 
@@ -37,7 +36,7 @@ function RJSF(props) {
   const errorHandler = handleError();
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
-  const [schema, setSchema] = React.useState({ rjsfSchema: {}, uiSchema: {} })
+  const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
   const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
@@ -56,7 +55,7 @@ function RJSF(props) {
   }, [jsonSchema]) // to reduce heavy lifting on every react render
 
   React.useEffect(() => {
-    if (!_.isEqual(schema, { rjsfSchema: {}, uiSchema: {} })) {
+    if (!_.isEqual(schema, { rjsfSchema : {}, uiSchema : {} })) {
       setTimeout(() => {
         setIsLoading(false);
       }, 300); // for showing circular progress
@@ -96,9 +95,9 @@ function RJSFForm(props) {
     data,
     onChange,
     isLoading,
-    env,
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+    LoadingComponent
   } = props;
 
   useEffect(() => {
@@ -109,7 +108,7 @@ function RJSFForm(props) {
     rjsfTheme.zIndex.modal = 99999;
   }, [])
 
-  if (isLoading && env === "mm-extension") {
+  if (isLoading && LoadingComponent) {
     return <LoadingComponent />
   }
 
@@ -125,7 +124,7 @@ function RJSFForm(props) {
         additionalMetaSchemas={[JS4]}
         uiSchema={schema.uiSchema}
         widgets={{
-          TextWidget: CustomInputField
+          TextWidget : CustomInputField
         }}
         liveValidate
         showErrorList={false}
@@ -140,17 +139,3 @@ function RJSFForm(props) {
     </MuiThemeProvider>
   )
 }
-
-const LoadingComponent = () => (
-  <div style={{
-    textAlign: "center",
-    padding: "40px 8px"
-  }}  >
-    <CircularProgress />
-    <Typography
-      variant='h6'
-    >
-      Generating MeshModel...
-    </Typography>
-  </div>
-)

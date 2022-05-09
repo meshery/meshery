@@ -1,6 +1,6 @@
 # meshery-linkerd
 
-![Version: 2.1.2](https://img.shields.io/badge/Version-2.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
 Mesherylinkerd chart for deploying meshery-linkerd.
 
@@ -8,9 +8,9 @@ Mesherylinkerd chart for deploying meshery-linkerd.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Layer5 Authors | community@layer5.io |  |
-| aisuko | urakiny@gmail.com |  |
-| leecalcote | lee.calcote@layer5.io |  |
+| Layer5 Authors | <community@layer5.io> |  |
+| aisuko | <urakiny@gmail.com> |  |
+| leecalcote | <lee.calcote@layer5.io> |  |
 
 ## Values
 
@@ -25,7 +25,8 @@ Mesherylinkerd chart for deploying meshery-linkerd.
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |
-| ingress.hosts | list | `[{"host":"chart-example.local","paths":[]}]` |  kubernetes.io/tls-acme: "true" |
+| ingress.hosts[0].host | string | `"chart-example.local"` |  |
+| ingress.hosts[0].paths | list | `[]` |  |
 | ingress.tls | list | `[]` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
@@ -39,7 +40,7 @@ Mesherylinkerd chart for deploying meshery-linkerd.
 | service.port | int | `10001` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `false` |  |
-| serviceAccount.name | string | `""` |  If not set and create is true, a name is generated using the fullname template |
+| serviceAccount.name | string | `""` |  |
 | serviceAccountNameOverride | string | `""` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |

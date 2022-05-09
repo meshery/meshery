@@ -18,11 +18,12 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
+.PHONY: docker-build docker-local-cloud docker-cloud
 ## Build Meshery Server and UI containers.
 docker-build:
 	# `make docker` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
 
 
 ## Meshery Cloud for user authentication.
@@ -54,7 +55,7 @@ docker-cloud:
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: server
+.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
@@ -67,7 +68,7 @@ nighthawk-setup:
 run-local: server-local error
 ## Build and run Meshery Server on your local machine
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
-## for user authentication (requires go$(GOVERSION)).
+## for user authentication (requires go${GOVERSION}).
 server-local:
 	cd cmd; go$(GOVERSION) clean; rm meshery; go$(GOVERSION) mod tidy; \
 	go$(GOVERSION) build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
@@ -82,7 +83,7 @@ server-local:
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
-## Build and run Meshery Server on your local machine (requires go$(GOVERSION)).
+## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
 server:
 	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -93,7 +94,7 @@ server:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go$(GOVERSION) run main.go;
 
-## Build and run Meshery Server with no Kubernetes components on your local machine (requires go$(GOVERSION)).
+## Build and run Meshery Server with no Kubernetes components on your local machine (requires go${GOVERSION}).
 server-skip-compgen:
 	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -135,7 +136,8 @@ proto-build:
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: setup-ui-libs ui-setup ui
+.PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
+
 setup-ui-libs: ui-setup
 ## Install dependencies for building Meshery UI.
 ui-setup:
@@ -163,7 +165,7 @@ ui-provider-lint:
 	cd provider-ui; npm run lint; cd ..
 
 ## Test Meshery Provider UI on your local machine.
-test-provider-ui:
+ui-provider-test:
 	cd provider-ui; npm run test; cd ..
 
 build-ui: ui-build
@@ -186,6 +188,7 @@ ui-provider-build:
 # Meshery Docs
 #-----------------------------------------------------------------------------
 #Incorporating Make docs commands from the Docs Makefile
+.PHONY: docs docs-build site docs-docker
 jekyll=bundle exec jekyll
 
 site: docs
@@ -205,7 +208,7 @@ docs-docker:
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
-.PHONY: helm-docs server lint-helm
+.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-lint
 ## Generate all Meshery Helm Chart documentation in markdown format.
 helm-docs: helm-operator-docs helm-meshery-docs
 
@@ -232,6 +235,7 @@ helm-meshery-lint:
 #-----------------------------------------------------------------------------
 # Meshery APIs
 #-----------------------------------------------------------------------------
+.PHONY: swagger-build swagger swagger-docs-build graphql-docs graphql-build
 ## Build Meshery REST API specifications
 swagger-build:
 	swagger generate spec -o ./helpers/swagger.yaml --scan-models

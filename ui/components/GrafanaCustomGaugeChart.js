@@ -6,7 +6,7 @@ import bb, { gauge } from 'billboard.js'
 const useStyles = makeStyles({
   '@global' : { '.bb-chart-arcs-background' : { fill : '#e0e0e0',
     stroke : 'none', }, },
-  root : { width : '100%',
+  grRoot : { width : '100%',
     height : '75%',
     minHeight : '18rem', },
   error : {
@@ -115,7 +115,7 @@ export default function GrafanaCustomGaugeChart(props) {
     <NoSsr>
       {/* <div className={classes.title}>{panel.title}</div> */}
       <div className={classes.error}>{error && 'There was an error communicating with the server'}</div>
-      <div ref={(ch) => chartRef = ch} className={classes.root} />
+      <div ref={(ch) => chartRef = ch} className={classes.grRoot} />
     </NoSsr>
   );
 }

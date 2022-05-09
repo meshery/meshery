@@ -1,5 +1,5 @@
 import { NoSsr, withStyles } from "@material-ui/core";
-import MesheryPatterns from "../../components/MesheryPatterns";
+import MesheryPatterns from "../../components/MesheryPatterns/MesheryPatterns";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
