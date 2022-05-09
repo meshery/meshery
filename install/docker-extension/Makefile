@@ -2,7 +2,7 @@
 # include ../Makefile.core.mk
 # include ../Makefile.show-help.mk
 
-IMAGE?=meshery/docker-extension-meshery
+IMAGE?=meshery/docker-extension-meshery:edge-latest
 
 BUILDER=buildx-multi-arch
 STATIC_FLAGS=CGO_ENABLED=0
@@ -45,4 +45,10 @@ push-extension: prepare-buildx
 	--tag=$(IMAGE):$(RELEASE_CHANNEL)-$(GIT_VERSION) 
 	--tag=$(GIT_VERSION) .
 
-.PHONY: prepare-buildx push-extension
+ui-build:
+	cd ui/src; npm install; npm run build; cd ../..;
+
+ui:
+	cd ui/src; npm run start; cd ../..;
+
+.PHONY: prepare-buildx push-extension extension ui

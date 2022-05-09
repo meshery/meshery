@@ -61,24 +61,37 @@ func getContexts(configFile string) ([]string, error) {
 	}
 
 	log.Debugf("Get context API response: %s", string(body))
-	var results []map[string]interface{}
+	var results map[string]interface{}
 	err = json.Unmarshal(body, &results)
 	if err != nil {
 		return nil, err
 	}
 
-	if results == nil {
+	if results == nil || results["contexts"] == nil {
 		errstr := "Error unmarshalling the context info, check " + configFile + " file"
 		return nil, errors.New(errstr)
 	}
-
-	log.Debugf("Unmarshalled get context API response: %s", results)
-	var contexts []string
-	for _, item := range results {
-		contexts = append(contexts, item["name"].(string))
+	contexts, ok := results["contexts"].([]interface{})
+	if !ok {
+		errstr := "Unexpected response from server: contexts should be an array"
+		return nil, errors.New(errstr)
 	}
-	log.Debugf("Available contexts: %s", contexts)
-	return contexts, nil
+	var contextNames []string
+	for _, ctx := range contexts {
+		contextstruct, ok := ctx.(map[string]interface{})
+		if !ok {
+			errstr := "Error unmarshalling the context info"
+			return nil, errors.New(errstr)
+		}
+		ctxname, ok := contextstruct["name"].(string)
+		if !ok {
+			errstr := "Invalid context name: context name should be a string"
+			return nil, errors.New(errstr)
+		}
+		contextNames = append(contextNames, ctxname)
+	}
+	log.Debugf("Available contexts: %s", contextNames)
+	return contextNames, nil
 }
 
 func setContext(configFile, cname string) error {

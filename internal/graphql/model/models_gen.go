@@ -69,6 +69,10 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type KctlDescribeDetails struct {
+	Describe *string `json:"describe"`
+}
+
 type MesheryResult struct {
 	MesheryID          *string                `json:"meshery_id"`
 	Name               *string                `json:"name"`

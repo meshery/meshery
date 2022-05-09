@@ -6,7 +6,6 @@ description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"
 list: exclude
-type: "project"
 service-mesh: "meshery-traefik-mesh"
 subheading: Meshery-Traefik-Mesh
 ---

@@ -1,7 +1,7 @@
 import React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
-import { MuiThemeProvider,  withStyles } from '@material-ui/core/styles';
+import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import getPageContext from '../components/PageContext';
 import Navigator from '../components/Navigator';
@@ -45,10 +45,10 @@ if (typeof window !== 'undefined') {
   require('codemirror/addon/lint/lint');
   require('codemirror/addon/lint/yaml-lint');
   require('codemirror/addon/lint/json-lint');
-  if (typeof window.jsyaml === 'undefined'){
+  if (typeof window.jsyaml === 'undefined') {
     window.jsyaml = require('js-yaml');
   }
-  if (typeof window.jsonlint === 'undefined'){
+  if (typeof window.jsonlint === 'undefined') {
     // jsonlint did not work well with codemirror json-lint. Hence, found an alternative (jsonlint-mod) based on https://github.com/scniro/react-codemirror2/issues/21
     window.jsonlint = require('jsonlint-mod');
   }
@@ -67,6 +67,8 @@ class MesheryApp extends App {
       isDrawerCollapsed : false,
       k8sContexts : {},
       activeK8sContexts : [],
+      spa : false, // should the app be rendered as a single page only,
+      userAgent : ""
     };
   }
 
@@ -75,7 +77,7 @@ class MesheryApp extends App {
   }
 
   handleL5CommunityClick = () => {
-    if (typeof window !== 'undefined'){
+    if (typeof window !== 'undefined') {
       const w = window.open('https://layer5.io', '_blank');
       w.focus();
     }
@@ -85,7 +87,7 @@ class MesheryApp extends App {
     if (id === ".all") {
       let activeContexts = []
       this.state.k8sContexts.contexts.forEach(ctx =>
-        activeContexts.push(ctx.id )
+        activeContexts.push(ctx.id)
       );
       activeContexts.push(".all");
       this.setState(state => {
@@ -115,24 +117,26 @@ class MesheryApp extends App {
 
   async loadConfigFromServer() {
     const { store } = this.props;
-    dataFetch('/api/system/sync', { credentials : 'same-origin',
+    dataFetch('/api/system/sync', {
+      credentials : 'same-origin',
       method : 'GET',
-      credentials : 'include', }, result => {
-      if (typeof result !== 'undefined'){
-        if (result.k8sConfig){
-          if (typeof result.k8sConfig.inClusterConfig === 'undefined'){
+      credentials : 'include',
+    }, result => {
+      if (typeof result !== 'undefined') {
+        if (result.k8sConfig) {
+          if (typeof result.k8sConfig.inClusterConfig === 'undefined') {
             result.k8sConfig.inClusterConfig = false;
           }
-          if (typeof result.k8sConfig.k8sfile === 'undefined'){
+          if (typeof result.k8sConfig.k8sfile === 'undefined') {
             result.k8sConfig.k8sfile = '';
           }
-          if (typeof result.k8sConfig.contextName === 'undefined'){
+          if (typeof result.k8sConfig.contextName === 'undefined') {
             result.k8sConfig.contextName = '';
           }
-          if (typeof result.k8sConfig.clusterConfigured === 'undefined'){
+          if (typeof result.k8sConfig.clusterConfigured === 'undefined') {
             result.k8sConfig.clusterConfigured = false;
           }
-          if (typeof result.k8sConfig.configuredServer === 'undefined'){
+          if (typeof result.k8sConfig.configuredServer === 'undefined') {
             result.k8sConfig.configuredServer = '';
           }
           store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : result.k8sConfig });
@@ -140,52 +144,52 @@ class MesheryApp extends App {
         if (result.meshAdapters && result.meshAdapters !== null && result.meshAdapters.length > 0) {
           store.dispatch({ type : actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters : result.meshAdapters });
         }
-        if (result.grafana){
-          if (typeof result.grafana.grafanaURL === 'undefined'){
+        if (result.grafana) {
+          if (typeof result.grafana.grafanaURL === 'undefined') {
             result.grafana.grafanaURL = '';
           }
-          if (typeof result.grafana.grafanaAPIKey === 'undefined'){
+          if (typeof result.grafana.grafanaAPIKey === 'undefined') {
             result.grafana.grafanaAPIKey = '';
           }
-          if (typeof result.grafana.grafanaBoardSearch === 'undefined'){
+          if (typeof result.grafana.grafanaBoardSearch === 'undefined') {
             result.grafana.grafanaBoardSearch = '';
           }
-          if (typeof result.grafana.grafanaBoards === 'undefined'){
+          if (typeof result.grafana.grafanaBoards === 'undefined') {
             result.grafana.grafanaBoards = [];
           }
-          if (typeof result.grafana.selectedBoardsConfigs === 'undefined'){
+          if (typeof result.grafana.selectedBoardsConfigs === 'undefined') {
             result.grafana.selectedBoardsConfigs = [];
           }
           store.dispatch({ type : actionTypes.UPDATE_GRAFANA_CONFIG, grafana : result.grafana });
         }
-        if (result.prometheus){
-          if (typeof result.prometheus.prometheusURL === 'undefined'){
+        if (result.prometheus) {
+          if (typeof result.prometheus.prometheusURL === 'undefined') {
             result.prometheus.prometheusURL = '';
           }
-          if (typeof result.prometheus.selectedPrometheusBoardsConfigs === 'undefined'){
+          if (typeof result.prometheus.selectedPrometheusBoardsConfigs === 'undefined') {
             result.prometheus.selectedPrometheusBoardsConfigs = [];
           }
           store.dispatch({ type : actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus : result.prometheus });
         }
-        if (result.loadTestPrefs){
-          if (typeof result.loadTestPrefs.c === 'undefined'){
+        if (result.loadTestPrefs) {
+          if (typeof result.loadTestPrefs.c === 'undefined') {
             result.loadTestPrefs.c = 0;
           }
-          if (typeof result.loadTestPrefs.qps === 'undefined'){
+          if (typeof result.loadTestPrefs.qps === 'undefined') {
             result.loadTestPrefs.qps = 0;
           }
-          if (typeof result.loadTestPrefs.t === 'undefined'){
+          if (typeof result.loadTestPrefs.t === 'undefined') {
             result.loadTestPrefs.t = '30s';
           }
-          if (typeof result.loadTestPrefs.gen === 'undefined'){
+          if (typeof result.loadTestPrefs.gen === 'undefined') {
             result.loadTestPrefs.gen = '';
           }
           store.dispatch({ type : actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref : result.loadTestPrefs });
         }
-        if (typeof result.anonymousUsageStats !== 'undefined'){
+        if (typeof result.anonymousUsageStats !== 'undefined') {
           store.dispatch({ type : actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats : result.anonymousUsageStats });
         }
-        if (typeof result.anonymousPerfResults !== 'undefined'){
+        if (typeof result.anonymousPerfResults !== 'undefined') {
           store.dispatch({ type : actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults : result.anonymousPerfResults });
         }
       }
@@ -201,7 +205,7 @@ class MesheryApp extends App {
     return { pageProps };
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
 
     fetchContexts()
@@ -211,6 +215,23 @@ class MesheryApp extends App {
         if (active) this.setState({ activeK8sContexts : [active?.id] })
       })
       .catch(err => console.error(err))
+
+    this.setState({ spa : this.shouldTheAppBeSPA(), userAgent : this.getUserAgent() });
+  }
+
+  /**
+   * Should the application only shown as a single page
+   * SPA Agents: Docker-desktop, Electron env
+   * @returns {boolean}
+   */
+  shouldTheAppBeSPA = () => {
+    let useAgent = navigator.userAgent.toLowerCase();
+    console.log("usewr", { useAgent })
+    return useAgent.indexOf('electron') > -1 || useAgent.indexOf('docker-desktop') > -1;
+  }
+
+  getUserAgent = () => {
+    return navigator.userAgent.toLowerCase();
   }
 
   render() {
@@ -221,7 +242,7 @@ class MesheryApp extends App {
       <NoSsr>
         <div className={classes.root}>
           <CssBaseline />
-          <nav className={isDrawerCollapsed
+          {!this.state.spa && (<nav className={isDrawerCollapsed
             ? classes.drawerCollapsed
             : classes.drawer} data-test="navigation">
             <Hidden smUp implementation="js">
@@ -238,12 +259,14 @@ class MesheryApp extends App {
                 onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
                 isDrawerCollapsed={isDrawerCollapsed} />
             </Hidden>
-          </nav>
+          </nav>)}
           <div className={classes.appContent}>
             <SnackbarProvider
-              anchorOrigin={{ vertical : 'bottom',
-                horizontal : 'right', }}
-              iconVariant = {{
+              anchorOrigin={{
+                vertical : 'bottom',
+                horizontal : 'right',
+              }}
+              iconVariant={{
                 success : <CheckCircle style={{ marginRight : "0.5rem" }} />,
                 error : <Error style={{ marginRight : "0.5rem" }} />,
                 warning : <Warning style={{ marginRight : "0.5rem" }} />,
@@ -282,7 +305,7 @@ class MesheryApp extends App {
             <footer className={classes.footer}>
               <Typography variant="body2" align="center" color="textSecondary" component="p">
                 <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                              Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</span>
+                  {this.state.userAgent} <FavoriteIcon /> </span>
               </Typography>
             </footer>
           </div>
@@ -316,7 +339,9 @@ const MesheryAppWrapper = (props) => {
   );
 }
 
-export default withStyles(styles)(withRedux(makeStore, { serializeState : state => state.toJS(),
-  deserializeState : state => fromJS(state) })(MesheryAppWrapper));
+export default withStyles(styles)(withRedux(makeStore, {
+  serializeState : state => state.toJS(),
+  deserializeState : state => fromJS(state)
+})(MesheryAppWrapper));
 
 
