@@ -53,6 +53,13 @@ const ExtensionsComponent = () => {
   const isDarkTheme = useThemeDetector();
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userName, setUserName] = useState("")
+  const [token, setToken] = useState()
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
+      setToken(res)
+    }).catch(console.log)
+  }, [])
 
   useEffect(() => {
     fetch("http://127.0.0.1:7877/token/store")
@@ -86,10 +93,10 @@ const ExtensionsComponent = () => {
     let target = e.target.closest("div");
     target.style.transition = "all .2s";
     target.style.transform = "scale(0.8)";
-    fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
-      console.log(res)
-      window.ddClient.host.openExternal("http://localhost:7877/api/user/token?token=" + res)
-    }).catch(console.log)
+    // fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
+    //   console.log(res)
+    //   window.ddClient.host.openExternal("http://localhost:7877/api/user/token?token=" + res)
+    // }).catch(console.log)
   };
 
 
@@ -196,13 +203,13 @@ const ExtensionsComponent = () => {
 
         <SectionWrapper>
 
-        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}}>
+          <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 Launch Meshery
               </Typography>
               <div style={{ marginBottom: "0.5rem" }}>
-                <a style={{ textDecoration: "none" }} >
+                <a style={{ textDecoration: "none" }} href={token && "http://localhost:7877/api/user/token?token=" + token} >
 
                   <div
                     onMouseEnter={() => setIsHovered(!isHovered)}
@@ -217,7 +224,7 @@ const ExtensionsComponent = () => {
               </div>
 
               {userName && <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
-                User Id:  {userName}
+                User: {userName}
               </Typography>}
             </AccountDiv>
           </ExtensionWrapper>
