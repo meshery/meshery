@@ -126,7 +126,8 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 				wr.WriteHeader(http.StatusUnauthorized)
 				return
 			} else {
-				http.ServeFile(wr, req, "../assets/auth.html")
+				// http.ServeFile(wr, req, "")
+				fmt.Fprintf(wr, "Authentication successful. You can close this window now.")
 			}
 		}
 	case "/token":
