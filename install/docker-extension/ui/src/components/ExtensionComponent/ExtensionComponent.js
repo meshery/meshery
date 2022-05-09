@@ -6,9 +6,15 @@ import {
 import ConsulIcon from "../../img/SVGs/consulIcon";
 import IstioIcon from "../../img/SVGs/IstioIcon";
 import KumaIcon from "../../img/SVGs/kumaIcon";
+import Joyride from 'react-joyride';
+import Tour from "../Walkthrough/Tour";
 import { createTheme } from '@mui/material/styles';
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
 import NginxIcon from "../../img/SVGs/nginxIcon";
+import OsmIcon from "../../img/SVGs/osmIcon";
+import AppmeshIcon from "../../img/SVGs/appmeshIcon";
+import CiliumIcon from "../../img/SVGs/ciliumIcon";
+import TraefikIcon from "../../img/SVGs/traefikIcon";
 import Meshery from "../../img/SVGs/meshery";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
@@ -49,6 +55,10 @@ const ExtensionsComponent = () => {
   const [linkerdChecked, isLinkerdChecked] = useState(false);
   const [nginxChecked, isNginxChecked] = useState(false);
   const [kumaChecked, isKumaChecked] = useState(false);
+  const [appmeshChecked, isAppmeshChecked] = useState(false);
+  const [osmChecked, isOSMChecked] = useState(false);
+  const [traefikChecked, isTraefikChecked] = useState(false);
+  const [ciliumChecked, isCiliumChecked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const isDarkTheme = useThemeDetector();
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -175,7 +185,7 @@ const ExtensionsComponent = () => {
     // setTimeout(() => {
     //   window.ddClient.desktopUI.toast.success(`Nginx Service Mesh ${nginxChecked ? "Deprovisioned" : "Provisioned"} successfully`);
     // }, 3000)
-    // submitConfig("localhost:10001")
+    submitConfig("localhost:10010")
     isNginxChecked(prev => !prev);
   }
   const handleKuma = () => {
@@ -186,7 +196,22 @@ const ExtensionsComponent = () => {
     submitConfig("localhost:10007")
     isKumaChecked(prev => !prev);
   }
-
+  const handleOSM = () => {
+    submitConfig("localhost:10009")
+    isOSMChecked(prev => !prev);
+  } 
+   const handleAppMesh = () => {
+    submitConfig("localhost:10005")
+    isAppmeshChecked(prev => !prev);
+  }  
+  const handleTraefik = () => {
+    submitConfig("localhost:10006")
+    isTraefikChecked(prev => !prev);
+  }  
+  const handleCilium = () => {
+    submitConfig("localhost:10012")
+    isCiliumChecked(prev => !prev);
+  }
 
 
   const handleImport = () => {
@@ -222,13 +247,15 @@ const ExtensionsComponent = () => {
   return (
     <DockerMuiThemeProvider>
       <CssBaseline />
+      {/* <Tour /> */}
       <ComponentWrapper>
+        
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
         <Typography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</Typography>
 
         <SectionWrapper>
 
-          <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
+          <ExtensionWrapper className="third-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 Launch Meshery
@@ -247,15 +274,20 @@ const ExtensionsComponent = () => {
                   </div>
                 </a>
               </div>
-
-              {userName && <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+{ !isLoggedIn ?  <Button sx={{ marginTop: "0.3rem"}} variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
+                window.ddClient.host.openExternal("https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14")
+              }}>
+                Login
+              </Button> : userName &&
+             <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 User: {userName}
-              </Typography>}
+              </Typography>
+}
             </AccountDiv>
           </ExtensionWrapper>
 
 
-          {isLoggedIn && <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
+          {isLoggedIn && <ExtensionWrapper className="second-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
               <div style={{ paddingBottom: "2rem" }}>
@@ -269,21 +301,19 @@ const ExtensionsComponent = () => {
             </AccountDiv>
           </ExtensionWrapper>}
 
-          {!isLoggedIn && <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
-            <AccountDiv style={{ width: "" }}>
-              <Button variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
-                window.ddClient.host.openExternal("https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14")
-              }}>
-                Login
-              </Button>
-            </AccountDiv>
-          </ExtensionWrapper>}
-
-          {!!isLoggedIn && <ExtensionWrapper sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }} >
+          {!!isLoggedIn && <ExtensionWrapper className="first-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }} >
             <div>
               <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
               <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
                 <ServiceMeshAdapters>
+                <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!appmeshChecked}><AppmeshIcon width={40} height={40} /></AdapterDiv>
+                    <Typography sx={{whiteSpace: "nowrap"}}>App Mesh</Typography>
+                    <Switch checked={appmeshChecked} disabled={!isLoggedIn} onChange={handleAppMesh} color="primary"></Switch> </StyledDiv>
+                    <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!ciliumChecked}><CiliumIcon width={40} height={40} /></AdapterDiv>
+                    <Typography>Cilium</Typography>
+                    <Switch checked={ciliumChecked} disabled={!isLoggedIn} onChange={handleCilium} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!consulChecked}>
                       <ConsulIcon width={40} height={40} /> </AdapterDiv>
@@ -295,19 +325,26 @@ const ExtensionsComponent = () => {
                       <IstioIcon width={40} height={40} /></AdapterDiv>
                     <Typography >Istio</Typography>
                     <Switch checked={istioChecked} disabled={!isLoggedIn} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
-
+                    <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
+                    <Typography>Kuma</Typography>
+                    <Switch checked={kumaChecked} disabled={!isLoggedIn} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
                     <Typography>Linkerd</Typography>
                     <Switch checked={linkerdChecked} disabled={!isLoggedIn} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv>
-                    <Typography>Nginx</Typography>
+                    <Typography>NGINX</Typography>
                     <Switch checked={nginxChecked} disabled={!isLoggedIn} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
-                    <Typography>Kuma</Typography>
-                    <Switch checked={kumaChecked} disabled={!isLoggedIn} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
+                    <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!osmChecked}><OsmIcon width={40} height={40} /></AdapterDiv>
+                    <Typography>OSM</Typography>
+                    <Switch checked={osmChecked} disabled={!isLoggedIn} onChange={handleOSM} color="primary"></Switch> </StyledDiv>
+                    <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!traefikChecked}><TraefikIcon width={40} height={40} /></AdapterDiv>
+                    <Typography sx={{whiteSpace: "nowrap"}}>Traefik Mesh</Typography>
+                    <Switch checked={traefikChecked} disabled={!isLoggedIn} onChange={handleTraefik} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
               </Grid>
             </div>
