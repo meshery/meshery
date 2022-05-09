@@ -7,8 +7,11 @@ import ConsulIcon from "../../img/SVGs/consulIcon";
 import IstioIcon from "../../img/SVGs/IstioIcon";
 import KumaIcon from "../../img/SVGs/kumaIcon";
 import {createTheme } from '@mui/material/styles';
+import Joyride from 'react-joyride';
+import Tour from "../Walkthrough/Tour";
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
 import NginxIcon from "../../img/SVGs/nginxIcon";
+import OsmIcon from "../../img/SVGs/osmIcon";
 import Meshery from "../../img/SVGs/meshery";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
@@ -18,6 +21,7 @@ import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 
 
 const baseURL = "http://localhost:9081"
+
 
 const useThemeDetector = () => {
   const getCurrentTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -34,7 +38,8 @@ const useThemeDetector = () => {
   return isDarkTheme;
 }
 
-const ExtensionsComponent = () => {
+const ExtensionsComponent = (props) => {
+  const {steps} = props;
   const [consulChecked, setConsulChecked] = useState(false);
   const [istioChecked, isIstioChecked] = useState(false);
   const [linkerdChecked, isLinkerdChecked] = useState(false);
@@ -133,13 +138,15 @@ const ExtensionsComponent = () => {
   return (
     <DockerMuiThemeProvider>
       <CssBaseline />
+      <Tour />
       <ComponentWrapper>
+        
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
         <Typography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</Typography>
 
         <SectionWrapper>
 
-        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}}>
+        <ExtensionWrapper className="third-step" sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap"}}>
                 Launch Meshery
@@ -162,8 +169,8 @@ const ExtensionsComponent = () => {
             </ExtensionWrapper>
 
 
-        <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}}>
-          <AccountDiv>
+        <ExtensionWrapper className="second-step" sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}} >
+          <AccountDiv  >
             <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
             <div style={{ paddingBottom: "2rem" }}>
             <label htmlFor="upload-button" >
@@ -175,7 +182,7 @@ const ExtensionsComponent = () => {
             </div>
             </AccountDiv>
           </ExtensionWrapper>
-          <ExtensionWrapper sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}} >
+          <ExtensionWrapper className="first-step" sx={{backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE"}} >
             <div>
               <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
               <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
@@ -191,19 +198,22 @@ const ExtensionsComponent = () => {
                       <IstioIcon width={40} height={40} /></AdapterDiv>
                       <Typography >Istio</Typography>
                     <Switch checked={istioChecked} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
-
+                    <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
+                    <Typography>Kuma</Typography>
+                    <Switch checked={kumaChecked} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
                     <Typography>Linkerd</Typography>
                     <Switch checked={linkerdChecked} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv>
-                    <Typography>Nginx</Typography>
+                    <Typography>NGINX</Typography>
                     <Switch checked={nginxChecked} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
-                    <Typography>Kuma</Typography>
-                    <Switch checked={kumaChecked} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
+                    <StyledDiv>
+                    <AdapterDiv inactiveAdapter={!nginxChecked}><OsmIcon width={40} height={40} /></AdapterDiv>
+                    <Typography>NGINX</Typography>
+                    <Switch checked={nginxChecked} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
               </Grid>
             </div>
