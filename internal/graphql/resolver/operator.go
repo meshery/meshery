@@ -87,6 +87,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			}
 			connectionTrackerSingleton.Set(currcontext.ID, endpoint)
 			r.Log.Info("Connected to broker at:", endpoint)
+			connectionTrackerSingleton.Log(r.Log)
 		}
 
 		r.Log.Info("Meshsync operation executed")

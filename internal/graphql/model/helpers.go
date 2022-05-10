@@ -311,11 +311,11 @@ func (k *K8sConnectionTracker) Get(id string) (url string) {
 }
 
 func (k *K8sConnectionTracker) Log(l logger.Handler) {
-	var e = "Connected to brokers: "
+	var e = "Connected broker endpoints : "
 	k.mx.Lock()
 	defer k.mx.Unlock()
 	for _, v := range k.ContextToBroker {
 		e += v + ", "
 	}
-	l.Info(e)
+	l.Info(strings.TrimSuffix(e, ", "))
 }
