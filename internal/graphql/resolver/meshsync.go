@@ -174,7 +174,6 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		r.Log.Info("Connected to broker at:", endpoint)
 		connectionTrackerSingleton.Set(currContext.ID, endpoint)
 		connectionTrackerSingleton.Log(r.Log)
-		r.Config.BrokerEndpointURL = &endpoint
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
 			Source: broadcast.OperatorSyncChannel,
 			Data:   false,
