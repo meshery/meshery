@@ -46,6 +46,7 @@ LABEL org.opencontainers.image.title="Meshery" \
   <h2>MeshMap is the world's only visual designer for Kubernetes and service mesh deployments.</h2> \ 
   <p>The Meshery Docker Extension extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure: service meshes.</p> \ 
   <ul> \
+    <li><b>Detection of Kubernetes environments -</b> scan your kubeconfig and select your current Kubernetes environment. Switch from one environment to another one.</li> \
     <li><b>Service mesh support for your Docker Compose apps -</b> Import your Docker Compose apps. Configure and deploy them to Kubernetes and any service mesh.</li> \ 
     <li><b>Visual designer for Docker Compose apps -</b> Early access to the Docker Extension for Meshery that offers a visual topology for designing Docker Compose applications, operating Kubernetes, service meshes, and their workloads.</li> \ 
     <li><b>Single-click deployment of any service mesh -</b> Support of 10 different service meshes to the fingertips of developers in connection with Docker Desktop’s ability to deliver Kubernetes locally.</li> \ 
