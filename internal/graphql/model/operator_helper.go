@@ -174,7 +174,6 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	for timeout > 0 {
 		broker, err = mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
 		if err == nil && broker.Status.Endpoint.External != "" {
-			fmt.Println("broker endpoint: ", broker.Status.Endpoint.External)
 			break
 		}
 
@@ -212,7 +211,6 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 			}
 		}
 	}
-	fmt.Println("endpoint calculated: ", endpoint)
 	endpoints = append(endpoints, endpoint)
 	// subscribing to nats
 	conn, err := nats.New(nats.Options{
@@ -225,7 +223,6 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	})
 	// Hack for minikube based clusters
 	if err != nil && conn == nil {
-		fmt.Println("her1 ", err.Error())
 		return endpoint, err
 	}
 	defer func() {
