@@ -99,7 +99,6 @@ func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *me
 	if err == nil {
 		brokerVersion = imageVersionExtractUtil(statefulSet.Spec.Template, "nats")
 	}
-	fmt.Println("broker ss: ", brokerVersion)
 	if err == nil {
 		status := fmt.Sprintf("%s %s", StatusConnected, broker.Status.Endpoint.External)
 		if brokerConn.Info() == brokerpkg.NotConnected {
@@ -155,9 +154,14 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 	return meshsyncStatus, nil
 }
 
-func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler) (string, error) {
+func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {
 	var broker *operatorv1alpha1.Broker
-
+	var endpoints []string
+	if ct != nil {
+		for _, e := range ct.ContextToBroker {
+			endpoints = append(endpoints, e)
+		}
+	}
 	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
 		if mesheryclient == nil {
@@ -170,8 +174,10 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	for timeout > 0 {
 		broker, err = mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
 		if err == nil && broker.Status.Endpoint.External != "" {
+			fmt.Println("broker endpoint: ", broker.Status.Endpoint.External)
 			break
 		}
+
 		timeout--
 		time.Sleep(1 * time.Second)
 	}
@@ -206,10 +212,11 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 			}
 		}
 	}
-
+	fmt.Println("endpoint calculated: ", endpoint)
+	endpoints = append(endpoints, endpoint)
 	// subscribing to nats
 	conn, err := nats.New(nats.Options{
-		URLS:           []string{endpoint},
+		URLS:           endpoints,
 		ConnectionName: "meshery",
 		Username:       "",
 		Password:       "",
@@ -217,9 +224,26 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 		MaxReconnect:   5,
 	})
 	// Hack for minikube based clusters
-	if err != nil {
+	if err != nil && conn == nil {
+		fmt.Println("her1 ", err.Error())
 		return endpoint, err
 	}
+	defer func() {
+		if conn == nil {
+			return
+		}
+		c := make(map[string]string)
+		available := make(map[string]bool)
+		for _, server := range conn.ConnectedEndpoints() {
+			available[server] = true
+		}
+		for id, url := range ct.ContextToBroker {
+			if available[url] {
+				c[id] = url
+			}
+		}
+		ct.ContextToBroker = c
+	}()
 	conn.DeepCopyInto(brokerConn)
 
 	err = brokerConn.SubscribeWithChannel(MeshsyncSubject, BrokerQueue, datach)
