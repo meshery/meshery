@@ -150,6 +150,8 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		if req.Method == "GET" {
 			if p.token != "" {
 				fmt.Fprintf(wr, p.token)
+			} else {
+				fmt.Fprintf(wr, "null")
 			}
 		}
 	default:
@@ -193,7 +195,6 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		resp, err := client.Do(req)
 		if err != nil {
 			http.Error(wr, "Server Error", http.StatusInternalServerError)
-			log.Fatal("ServeHTTP:", err)
 		}
 		defer resp.Body.Close()
 

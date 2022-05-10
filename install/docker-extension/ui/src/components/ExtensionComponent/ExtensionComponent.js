@@ -65,52 +65,25 @@ const ExtensionsComponent = () => {
   const [userName, setUserName] = useState("")
   const [token, setToken] = useState()
 
-  useEffect(() => {
-        let socket = new WebSocket("ws://127.0.0.1:7877/ws");
-        console.log("Attempting Connection...");
-
-        socket.onopen = () => {
-            console.log("Successfully Connected");
-            socket.send("Hi From the Client!")
-        };
-
-        socket.onclose = event => {
-            console.log("Socket Closed Connection: ", event);
-            socket.send("Client Closed!")
-        };
-
-        socket.onmessage = msg  => {
-          console.log("From proxy ws connection: ", msg)
-          if(msg.data == "Authenticated")
-          setIsLoggedIn(true)
-    }
-
-        socket.onerror = error => {
-            console.log("Socket Error: ", error);
-        };
-  }, [])
 
   useEffect(() => {
     fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
-      setToken(res)
+      console.log({ tokenReqRes: res })
+      if (res !== "null") {
+        setIsLoggedIn(true)
+        setToken(res)
+        fetch("http://127.0.0.1:7877/api/user").then(res => res.text()).then(console.log).then(res => setUserName(JSON.parse(res)?.user_id))
+      } else {
+        let ws = new WebSocket("ws://127.0.0.1:7877/ws")
+        ws.onmessage = msg => {
+          console.log("From proxy ws connection: ", msg)
+          if (msg.data == "Authenticated")
+            setIsLoggedIn(true)
+        }
+      }
     }).catch(console.log)
   }, [])
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:7877/token/store")
-      .then((obj) => {
-        console.log(obj)
-        if (obj.status >= 200 && obj.status < 300) {
-          setIsLoggedIn(true)
-          fetch("http://127.0.0.1:7877/api/user").then(res => res.text()).then(res => setUserName(JSON.parse(res)?.user_id))
-        }
-        else setIsLoggedIn(false)
-      })
-      .catch((obj) => {
-        setIsLoggedIn(false)
-        console.log(obj)
-      })
-  }, [])
 
   const onMouseOver = e => {
     let target = e.target.closest("div");
@@ -199,15 +172,15 @@ const ExtensionsComponent = () => {
   const handleOSM = () => {
     submitConfig("localhost:10009")
     isOSMChecked(prev => !prev);
-  } 
-   const handleAppMesh = () => {
+  }
+  const handleAppMesh = () => {
     submitConfig("localhost:10005")
     isAppmeshChecked(prev => !prev);
-  }  
+  }
   const handleTraefik = () => {
     submitConfig("localhost:10006")
     isTraefikChecked(prev => !prev);
-  }  
+  }
   const handleCilium = () => {
     submitConfig("localhost:10012")
     isCiliumChecked(prev => !prev);
@@ -249,7 +222,7 @@ const ExtensionsComponent = () => {
       <CssBaseline />
       {/* <Tour /> */}
       <ComponentWrapper>
-        
+
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
         <Typography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</Typography>
 
@@ -261,7 +234,7 @@ const ExtensionsComponent = () => {
                 Launch Meshery
               </Typography>
               <div style={{ marginBottom: "0.5rem" }}>
-                <a style={{ textDecoration: "none" }} href={token && "http://localhost:7877/api/user/token?token=" + token} >
+                <a style={{ textDecoration: "none" }} href={"http://localhost:7877/api/user/token?token=" + token} >
 
                   <div
                     onMouseEnter={() => setIsHovered(!isHovered)}
@@ -274,15 +247,15 @@ const ExtensionsComponent = () => {
                   </div>
                 </a>
               </div>
-{ !isLoggedIn ?  <Button sx={{ marginTop: "0.3rem"}} variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
+              {!isLoggedIn ? <Button sx={{ marginTop: "0.3rem" }} variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
                 window.ddClient.host.openExternal("https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14")
               }}>
                 Login
               </Button> : userName &&
-             <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+              <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 User: {userName}
               </Typography>
-}
+              }
             </AccountDiv>
           </ExtensionWrapper>
 
@@ -306,11 +279,11 @@ const ExtensionsComponent = () => {
               <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
               <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
                 <ServiceMeshAdapters>
-                <StyledDiv>
+                  <StyledDiv>
                     <AdapterDiv inactiveAdapter={!appmeshChecked}><AppmeshIcon width={40} height={40} /></AdapterDiv>
-                    <Typography sx={{whiteSpace: "nowrap"}}>App Mesh</Typography>
+                    <Typography sx={{ whiteSpace: "nowrap" }}>App Mesh</Typography>
                     <Switch checked={appmeshChecked} disabled={!isLoggedIn} onChange={handleAppMesh} color="primary"></Switch> </StyledDiv>
-                    <StyledDiv>
+                  <StyledDiv>
                     <AdapterDiv inactiveAdapter={!ciliumChecked}><CiliumIcon width={40} height={40} /></AdapterDiv>
                     <Typography>Cilium</Typography>
                     <Switch checked={ciliumChecked} disabled={!isLoggedIn} onChange={handleCilium} color="primary"></Switch> </StyledDiv>
@@ -325,7 +298,7 @@ const ExtensionsComponent = () => {
                       <IstioIcon width={40} height={40} /></AdapterDiv>
                     <Typography >Istio</Typography>
                     <Switch checked={istioChecked} disabled={!isLoggedIn} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
-                    <StyledDiv>
+                  <StyledDiv>
                     <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
                     <Typography>Kuma</Typography>
                     <Switch checked={kumaChecked} disabled={!isLoggedIn} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
@@ -337,13 +310,13 @@ const ExtensionsComponent = () => {
                     <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv>
                     <Typography>NGINX</Typography>
                     <Switch checked={nginxChecked} disabled={!isLoggedIn} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
-                    <StyledDiv>
+                  <StyledDiv>
                     <AdapterDiv inactiveAdapter={!osmChecked}><OsmIcon width={40} height={40} /></AdapterDiv>
                     <Typography>OSM</Typography>
                     <Switch checked={osmChecked} disabled={!isLoggedIn} onChange={handleOSM} color="primary"></Switch> </StyledDiv>
-                    <StyledDiv>
+                  <StyledDiv>
                     <AdapterDiv inactiveAdapter={!traefikChecked}><TraefikIcon width={40} height={40} /></AdapterDiv>
-                    <Typography sx={{whiteSpace: "nowrap"}}>Traefik Mesh</Typography>
+                    <Typography sx={{ whiteSpace: "nowrap" }}>Traefik Mesh</Typography>
                     <Switch checked={traefikChecked} disabled={!isLoggedIn} onChange={handleTraefik} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
               </Grid>
