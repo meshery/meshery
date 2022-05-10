@@ -46,9 +46,10 @@ _Popular Installers:_
 
   **Answer:** _Many. See Meshery's [Compatibility Matrix]({{site.baseurl}}/project/compatibility-matrix)._
 
-#### Question: Why Meshery connects to single broker on Mac, when running `Docker-Desktop` and `Minikube` clusters?
+#### Question: Why is Meshery Server only receiving MeshSync updates from one of my Kubernetes Clusters?
 
-  **Answer:** _For connecting to broker, Meshery uses `meshery-broker` service. Now this service is of LoadBalancer type and requires that the user should have the setup for it which provides an external IP address for this service to connect with Meshery server. In the case of Docker-Desktop, you get an external IP address of **localhost**. For Minikube, you do `minikube tunnel` which too provides an external IP address of **localhost**. As both the services of different clusters are exposed at localhost:4222 so Meshery server is able to connect to only one of them and hence you might see Meshsync data coming from just one cluster._
+  **Answer:** _In order to receive MeshSync updates, Meshery Server subscribes for updates Meshery Broker. In other words, Meshery Server connects to the `meshery-broker` service port in order to subscribe for streaming MeshSync updates. By default, the Meshery Broker service is deployed as type Kubernetes Service type `LoadBalancer`, which requires that your Kubernetes cluster provides an external IP address to the Meshery Broker service, exposing it external to the Kubernetes cluster. _
+_If you're running Kubernetes in Docker Desktop, an external IP address of `localhost` is assigned. If you're running Minikube, and execute `minikube tunnel` to gain access to Meshery Broker's service, you will find that both Meshery Broker service endpoints (from two different clusters) are sharing the same `localhost:4222` address and port number. This port sharing causes conflict and Meshery Server is only able to connect to one of the Meshery Brokers._
   
   _Few ways to solve this problem:_
   - _Use an external cloud provider which provides you with the LoadBalancer having an external IP address other than localhost_
