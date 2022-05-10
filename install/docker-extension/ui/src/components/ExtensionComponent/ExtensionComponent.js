@@ -221,14 +221,14 @@ const ExtensionsComponent = () => {
     <DockerMuiThemeProvider>
       <CssBaseline />
       {/* <Tour /> */}
-      <ComponentWrapper>
+      <ComponentWrapper sx={{}}>
 
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
         <Typography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</Typography>
 
         <SectionWrapper>
 
-          <ExtensionWrapper className="third-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
+          <ExtensionWrapper className="third-step" sx={{  backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE", }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 Launch Meshery
@@ -260,7 +260,7 @@ const ExtensionsComponent = () => {
           </ExtensionWrapper>
 
 
-          {isLoggedIn && <ExtensionWrapper className="second-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }}>
+          {isLoggedIn && <ExtensionWrapper className="second-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
               <div style={{ paddingBottom: "2rem" }}>
@@ -274,10 +274,10 @@ const ExtensionsComponent = () => {
             </AccountDiv>
           </ExtensionWrapper>}
 
-          {!!isLoggedIn && <ExtensionWrapper className="first-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#a5b1ba" }} >
-            <div>
+          {!!isLoggedIn && <ExtensionWrapper className="first-step" sx={{ height: ["19rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
+            <div style={{display: ""}}>
+              <div style={{flexWrap: "50%"}}>
               <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
-              <Grid style={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
                 <ServiceMeshAdapters>
                   <StyledDiv>
                     <AdapterDiv inactiveAdapter={!appmeshChecked}><AppmeshIcon width={40} height={40} /></AdapterDiv>
@@ -319,7 +319,7 @@ const ExtensionsComponent = () => {
                     <Typography sx={{ whiteSpace: "nowrap" }}>Traefik Mesh</Typography>
                     <Switch checked={traefikChecked} disabled={!isLoggedIn} onChange={handleTraefik} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
-              </Grid>
+              </div>
             </div>
           </ExtensionWrapper>}
         </SectionWrapper>

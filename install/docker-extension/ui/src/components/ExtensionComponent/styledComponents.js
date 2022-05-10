@@ -1,10 +1,8 @@
 import { styled } from "@mui/material/styles";
 
 export const StyledDiv = styled('div')(() => ({
-  width: "16%",
-  flexDirection: "column",
-  display: "flex",
-  padding: "0.3rem"
+  paddingLeft: "0.4rem",
+  paddingRight: "0.4rem"
 }));
 
 
@@ -18,15 +16,20 @@ export const AccountDiv = styled('div')(() => ({
 
 export const ServiceMeshAdapters = styled('div')(({ theme }) => ({
   display: "flex",
-  justifyContent: 'center', alignItems: 'center',
-  alignContent: 'space-between',
-  [theme.breakpoints.down("md")]: {
-    width: "100%"
-  },
+ alignItems: 'center',
+ [theme.breakpoints.down("md")]: {
+  display: "flex",
+  flexWrap: "wrap",
+},
+[theme.breakpoints.down("sm")]: {
+  display: "flex",
+  flexWrap: "wrap",
+}
 }));
 
 export const AdapterDiv = styled("div")(({ theme, inactiveAdapter }) => ({
   filter: inactiveAdapter ? "grayscale(1) invert(0.35)" : ""
+
 }))
 
 
@@ -40,7 +43,7 @@ export const ExtensionWrapper = styled('div')(({ theme }) => ({
   padding: "2rem",
   textAlign: "center",
   [theme.breakpoints.down("md")]: {
-    width: "100%",
+    height: "12rem"
   }
 }));
 
@@ -51,6 +54,6 @@ export const ComponentWrapper = styled('div')(({ theme }) => ({
 }))
 
 export const SectionWrapper = styled('div')(({ theme }) => ({
-  padding: "2rem", display: "flex", flexDirection: 'row',
-  justifyContent: 'center', alignItems: 'center'
+  padding: "2rem", display: "flex", flexWrap: "wrap",
+  justifyContent: 'center', alignItems: 'center',
 }))
