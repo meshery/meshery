@@ -274,9 +274,8 @@ const ExtensionsComponent = () => {
             </AccountDiv>
           </ExtensionWrapper>}
 
-          {!!isLoggedIn && <ExtensionWrapper className="first-step" sx={{ height: ["19rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
-            <div style={{display: ""}}>
-              <div style={{flexWrap: "50%"}}>
+          {!!isLoggedIn && <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
+            <div>
               <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
                 <ServiceMeshAdapters>
                   <StyledDiv>
@@ -320,7 +319,6 @@ const ExtensionsComponent = () => {
                     <Switch checked={traefikChecked} disabled={!isLoggedIn} onChange={handleTraefik} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
               </div>
-            </div>
           </ExtensionWrapper>}
         </SectionWrapper>
       </ComponentWrapper>
