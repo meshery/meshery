@@ -1,8 +1,10 @@
 version: '3'
 services:
-  vm:
-    image: ${DESKTOP_PLUGIN_IMAGE}
 
+  meshery-proxy:
+    image: ${DESKTOP_PLUGIN_IMAGE}
+    ports:
+      - "7877:7877"
   meshery:
     image: layer5/meshery:stable-latest
     # TODO add: meshery-nginx-sm:10010
