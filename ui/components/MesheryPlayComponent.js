@@ -215,7 +215,6 @@ class MesheryPlayComponent extends React.Component {
     const self = this;
     const imageIcon = self.pickImage(adapter);
     let adapCount = 0;
-    console.log({ adapter, meshAdapters })
     return (
       <NoSsr>
         <React.Fragment>
