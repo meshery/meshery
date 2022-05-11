@@ -47,8 +47,7 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*Co
 					version = strings.Split(objspec.Containers[0].Image, ":")[1]
 				}
 				members = append(members, &ControlPlaneMember{
-					Name: obj.ObjectMeta.Name,
-					//In most cases a
+					Name:      obj.ObjectMeta.Name,
 					Component: strings.Split(obj.ObjectMeta.GenerateName, "-")[0],
 					Version:   strings.Split(version, "@")[0],
 					Namespace: obj.ObjectMeta.Namespace,
