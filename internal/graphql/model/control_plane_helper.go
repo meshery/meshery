@@ -16,6 +16,7 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid st
 
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
+			Where("cluster_id = ?", cid).
 			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
@@ -28,9 +29,9 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid st
 		members := make([]*ControlPlaneMember, 0)
 		for _, obj := range object {
 			if meshsyncmodel.IsObject(obj) {
-				if obj.ClusterID != cid {
-					continue
-				}
+				// if obj.ClusterID != cid {
+				// 	continue
+				// }
 				objspec := corev1.PodSpec{}
 				err := utils.Unmarshal(obj.Spec.Attribute, &objspec)
 				if err != nil {

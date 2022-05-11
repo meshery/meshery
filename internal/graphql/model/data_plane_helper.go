@@ -17,6 +17,7 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid strin
 
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
+			Where("cluster_id = ?", cid).
 			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("Status").
 			Preload("Spec"). // get only resources specs that has proxy string inside its attributes
@@ -31,9 +32,9 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid strin
 		for _, obj := range object {
 			if meshsyncmodel.IsObject(obj) {
 
-				if obj.ClusterID != cid {
-					continue
-				}
+				// if obj.ClusterID != cid {
+				// 	continue
+				// }
 				objspec := corev1.PodSpec{}
 				objstatus := corev1.PodStatus{}
 
