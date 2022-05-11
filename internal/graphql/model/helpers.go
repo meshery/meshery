@@ -292,6 +292,7 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 	return overrideValues
 }
 
+//K8sConnectionTracker keeps track of BrokerURLs per kubernetes context
 type K8sConnectionTracker struct {
 	mx              sync.Mutex
 	ContextToBroker map[string]string //ContextID -> BrokerURL
@@ -310,6 +311,7 @@ func (k *K8sConnectionTracker) Get(id string) (url string) {
 	return
 }
 
+// Takes the meshkit Logger and logs a comma seperated list of currently tracked Broker Endpoints
 func (k *K8sConnectionTracker) Log(l logger.Handler) {
 	var e = "Connected broker endpoints : "
 	k.mx.Lock()
