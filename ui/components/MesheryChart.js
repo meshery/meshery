@@ -278,6 +278,8 @@ class MesheryChart extends React.Component {
 
   render() {
     let chartData;
+    const switchView = this.props.switchView;
+
     if (typeof this.props.data !== 'undefined') {
       const results = this.props.data;
       if (results.length == 2) {
@@ -339,6 +341,7 @@ class MesheryChart extends React.Component {
               }
             </div>
           </div>
+          <div style={{ margin : "2rem auto 0.5rem", width : "fit-content", cursor : "pointer" }} onClick={() => switchView("graph")}><i>Click here for <b>Node Details</b></i></div>
         </div>
       </NoSsr>
     );
