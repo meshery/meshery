@@ -33,15 +33,24 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*Co
 				if err != nil {
 					return nil, err
 				}
-
+				var imageOrgs = make(map[string]bool)
+				for _, c := range objspec.Containers {
+					imageOrgs[strings.Split(c.Image, "/")[1]] = true // Extracting image org from <domainname>/<imageorg>/<imagename>
+				}
 				version := "unknown"
+
+				//If image orgs are not passed on in from controlPlaneImageOrgs variable, then skip this filtering (for backward compatibility)
+				if len(controlPlaneImageOrgs[MeshType(selector)]) != 0 && !haveCommonElements(controlPlaneImageOrgs[MeshType(selector)], imageOrgs) {
+					continue
+				}
 				if len(strings.Split(objspec.Containers[0].Image, ":")) > 0 {
 					version = strings.Split(objspec.Containers[0].Image, ":")[1]
 				}
 				members = append(members, &ControlPlaneMember{
-					Name:      obj.ObjectMeta.Name,
+					Name: obj.ObjectMeta.Name,
+					//In most cases a
 					Component: strings.Split(obj.ObjectMeta.GenerateName, "-")[0],
-					Version:   version,
+					Version:   strings.Split(version, "@")[0],
 					Namespace: obj.ObjectMeta.Namespace,
 				})
 			}
@@ -53,4 +62,13 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*Co
 	}
 
 	return controlplanelist, nil
+}
+
+func haveCommonElements(a []string, b map[string]bool) bool {
+	for _, ae := range a {
+		if b[ae] {
+			return true
+		}
+	}
+	return false
 }
