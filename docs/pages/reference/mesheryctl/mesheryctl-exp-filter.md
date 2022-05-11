@@ -21,6 +21,16 @@ mesheryctl exp filter [flags]
 </div>
 </pre> 
 
+## Examples
+
+Base command for WASM filters (experimental feature)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp filter [subcommands]	
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>

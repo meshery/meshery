@@ -25,6 +25,24 @@ mesheryctl exp filter apply [flags]
 </div>
 </pre> 
 
+## Examples
+
+Apply WASM filter file (login required)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp filter apply --file [GitHub Link]
+
+</div>
+</pre> 
+
+Apply the file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree/master/http-auth
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>

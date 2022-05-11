@@ -20,7 +20,25 @@ Displays the contents of a specific filter based on name or id
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp filter view <filter name> [flags]
+mesheryctl exp filter view [filter name] [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+View the specified WASM filter file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp filter view [filter-name | ID]	
+
+</div>
+</pre> 
+
+View using filter name
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp filter view test-wasm
 
 </div>
 </pre> 

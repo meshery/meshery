@@ -568,4 +568,75 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       </tr>
       {% endfor %}
 </thead>
+
+## Service Mesh Filter Management (experimental feature)
+
+<table>
+<thead>
+  <tr>
+    <th>Main Command</th>
+    <th>Command</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign command9 = site.data.mesheryctlcommands.cmds.filter %}
+    <tr>
+      <td rowspan=12><a href="{{ site.baseurl }}/reference/mesheryctl/exp/filter">{{ command9.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ command9.description }}</td>
+    </tr>
+    {% for flag_hash in command9.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% assign subcommand1 = command9.subcommands.apply %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/exp/filter/apply">{{ subcommand1.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand1.description }}</td>
+      </tr>
+    {% for flag_hash in subcommand1.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% assign subcommand2 = command9.subcommands.delete %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/exp/filter/delete">{{ subcommand2.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand2.description }}</td>
+      </tr>
+    {% for flag_hash in subcommand2.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% assign subcommand3 = command9.subcommands.list %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/exp/filter/list">{{ subcommand3.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand3.description }}</td>
+      </tr>
+    {% assign subcommand4 = command9.subcommands.view %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/exp/filter/view">{{ subcommand4.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand4.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand4.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td></td>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+      </tr>
+      {% endfor %}
+</thead>
 </table>

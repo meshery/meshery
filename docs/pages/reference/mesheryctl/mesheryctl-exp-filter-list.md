@@ -25,6 +25,16 @@ mesheryctl exp filter list [flags]
 </div>
 </pre> 
 
+## Examples
+
+List all WASM filter files present
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp filter list	
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>

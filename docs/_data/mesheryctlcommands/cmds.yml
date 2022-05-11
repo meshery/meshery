@@ -730,3 +730,32 @@ app:
               mesheryctl app view [application-name|application-id] -o json  
           example:
               mesheryctl app view bookInfo -o json
+
+filter:
+  name: filter
+  description: Service Mesh Filter Management (experimental feature)
+  
+  flags:
+    name: --file, -f
+    description: (required) path to WASM file [GitHub links only supported]
+    flags:
+      name: --file, -f
+      description: (required) path to WASM file [GitHub links only supported]
+
+  subcommands:
+    apply:
+      name: apply
+      description: Apply WASM file to deploy a filter
+
+    delete: 
+      name: delete
+      description: Delete filter from Meshery
+
+    list:
+      name: list
+      description: List all WASM filters
+    
+    view:
+      name: view
+      description: View the specified WASM filter
+  

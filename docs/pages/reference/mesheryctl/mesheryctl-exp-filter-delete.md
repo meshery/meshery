@@ -25,6 +25,24 @@ mesheryctl exp filter delete [flags]
 </div>
 </pre> 
 
+## Examples
+
+Delete the specified WASM filter file using name or ID
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp filter delete [filter-name | ID]
+
+</div>
+</pre> 
+
+Delete using the file name
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp filter delete test-wasm
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
