@@ -60,17 +60,38 @@ func getContexts(configFile string) ([]string, error) {
 		return nil, err
 	}
 
-	var results []map[string]interface{}
+	log.Debugf("Get context API response: %s", string(body))
+	var results map[string]interface{}
 	err = json.Unmarshal(body, &results)
 	if err != nil {
 		return nil, err
 	}
 
-	var contexts []string
-	for _, item := range results {
-		contexts = append(contexts, item["contextName"].(string))
+	if results == nil || results["contexts"] == nil {
+		errstr := "Error unmarshalling the context info, check " + configFile + " file"
+		return nil, errors.New(errstr)
 	}
-	return contexts, nil
+	contexts, ok := results["contexts"].([]interface{})
+	if !ok {
+		errstr := "Unexpected response from server: contexts should be an array"
+		return nil, errors.New(errstr)
+	}
+	var contextNames []string
+	for _, ctx := range contexts {
+		contextstruct, ok := ctx.(map[string]interface{})
+		if !ok {
+			errstr := "Error unmarshalling the context info"
+			return nil, errors.New(errstr)
+		}
+		ctxname, ok := contextstruct["name"].(string)
+		if !ok {
+			errstr := "Invalid context name: context name should be a string"
+			return nil, errors.New(errstr)
+		}
+		contextNames = append(contextNames, ctxname)
+	}
+	log.Debugf("Available contexts: %s", contextNames)
+	return contextNames, nil
 }
 
 func setContext(configFile, cname string) error {
@@ -98,7 +119,7 @@ func setContext(configFile, cname string) error {
 		return err
 	}
 	// TODO: Pretty print the output
-	fmt.Printf("%v\n", string(body))
+	log.Debugf("Set context API response: %s", string(body))
 	return nil
 }
 
@@ -345,7 +366,7 @@ func setToken() {
 		choosenCtx = contexts[choice-1]
 	}
 
-	log.Debugf("Chosen context : %s", choosenCtx)
+	log.Debugf("Chosen context : %s out of the %d available contexts", choosenCtx, len(contexts))
 	err = setContext(utils.ConfigPath, choosenCtx)
 	if err != nil {
 		log.Fatalf("Error setting context: %s", err.Error())

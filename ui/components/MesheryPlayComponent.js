@@ -14,7 +14,7 @@ import { setAdapter } from "../lib/store";
 
 const styles = (theme) => ({
   icon : { fontSize : 20, },
-  root : { padding : theme.spacing(0),
+  playRoot : { padding : theme.spacing(0),
     marginBottom : theme.spacing(2), },
   buttons : { display : "flex",
     justifyContent : "flex-end", },
@@ -193,6 +193,11 @@ class MesheryPlayComponent extends React.Component {
         </NoSsr>
       );
     }
+
+    if (!adapter) {
+      this.setState({ adapter : meshAdapters[0] })
+    }
+
     if (this.props.adapter && this.props.adapter !== "") {
       const indContent = this.renderIndividualAdapter();
       if (indContent !== "") {
@@ -203,10 +208,11 @@ class MesheryPlayComponent extends React.Component {
     const self = this;
     const imageIcon = self.pickImage(adapter);
     let adapCount = 0;
+    console.log({ adapter, meshAdapters })
     return (
       <NoSsr>
         <React.Fragment>
-          <div className={classes.root}>
+          <div className={classes.playRoot}>
             <Grid container>
               <Grid item xs={12} className={classes.paneSection}>
                 <TextField

@@ -14,7 +14,7 @@ import CodeIcon from '@material-ui/icons/Code';
 import Alert from '@material-ui/lab/Alert';
 
 const promStyles = (theme) => ({
-  root : { padding : theme.spacing(5), },
+  prometheusWrapper : { padding : theme.spacing(5), },
   buttons : { display : 'flex',
     justifyContent : 'flex-end', },
   button : { marginTop : theme.spacing(3), },
@@ -264,7 +264,7 @@ class PrometheusSelectionComponent extends Component {
       return (
         <NoSsr>
           <React.Fragment>
-            <div className={classes.root}>
+            <div className={classes.prometheusWrapper}>
               <div className={classes.alignRight}>
                 <Chip
                   label={prometheusURL}
@@ -279,7 +279,7 @@ class PrometheusSelectionComponent extends Component {
                 <Grid item xs={12}>
                   <div style={{ padding : '20px', display : 'flex' }}>
                     <CodeIcon style={{ marginRight : '6px' }} />
-                  Paste your custom boaard JSON below.
+                  Paste your custom board JSON below.
                   </div>
 
                   <CodeMirror

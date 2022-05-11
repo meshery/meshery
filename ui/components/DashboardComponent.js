@@ -23,6 +23,7 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
+import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -31,8 +32,6 @@ import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from "../lib/store";
-import dataFetch from "../lib/data-fetch";
-// import subscribeServiceMeshEvents from "./graphql/subscriptions/ServiceMeshSubscription";
 import subscribeDataPlaneEvents from "./graphql/subscriptions/DataPlanesSubscription";
 import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
 import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
@@ -42,11 +41,8 @@ import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import { versionMapper } from "../utils/nameMapper";
-// podNameMapper,
-//import MesheryMetrics from "./MesheryMetrics";
-
 const styles = (theme) => ({
-  root : { backgroundColor : "#eaeff1", },
+  rootClass : { backgroundColor : "#eaeff1", },
   chip : { marginRight : theme.spacing(1),
     marginBottom : theme.spacing(1), },
   buttons : { display : "flex",
@@ -84,6 +80,9 @@ const styles = (theme) => ({
     height : "100%",
   },
 });
+async function fetchAllContexts(pageSize) {
+  return await promisifiedDataFetch("/api/system/kubernetes/contexts?pageSize=" + pageSize)
+}
 class DashboardComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -93,6 +92,7 @@ class DashboardComponent extends React.Component {
     this._isMounted = false;
     this.state = {
       meshAdapters,
+      contextsFromFile : [],
       availableAdapters : [],
       mts : new Date(),
       meshLocationURLError : false,
@@ -137,13 +137,15 @@ class DashboardComponent extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     const {
-      meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus
+      meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus, contextName
     } = props;
     const st = {};
     if (meshAdaptersts > state.mts) {
       st.meshAdapters = meshAdapters;
       st.mts = meshAdaptersts;
     }
+    st.grafana = grafana;
+    st.prometheus = prometheus;
     if (k8sconfig.ts > state.kts) {
       st.inClusterConfig = k8sconfig.inClusterConfig;
       st.k8sfile = k8sconfig.k8sfile;
@@ -151,11 +153,10 @@ class DashboardComponent extends React.Component {
       st.clusterConfigured = k8sconfig.clusterConfigured;
       st.configuredServer = k8sconfig.configuredServer;
       st.kts = props.ts;
+      if (!state.contextsFromFile?.length)
+        st.contextsFromFile = { ...(st.contextsFromFile || []), contextsFromFile : [{ contextName, currentContext : true }] };
+      return st;
     }
-
-    st.grafana = grafana;
-    st.prometheus = prometheus;
-
     return st;
   }
 
@@ -221,6 +222,10 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this._isMounted = true
     this.fetchAvailableAdapters();
+
+    fetchAllContexts(25)
+      .then(res => this.setState({ contexts : res?.contexts || [] }))
+      .catch(this.handleError("failed to fetch contexts for the instance"))
 
     if (this.state.isMetricsConfigured){
       this.fetchMetricComponents();
@@ -758,8 +763,6 @@ class DashboardComponent extends React.Component {
   configureTemplate = () => {
     const { classes } = this.props;
     const {
-      inClusterConfig,
-      contextName,
       clusterConfigured,
       configuredServer,
       meshAdapters,
@@ -767,33 +770,36 @@ class DashboardComponent extends React.Component {
       prometheusUrl,
       availableAdapters,
       grafana,
+      contexts,
       prometheus,
+      contextName
     } = this.state;
     const self = this;
     let showConfigured = "Not connected to Kubernetes.";
     if (clusterConfigured) {
       let chp = (
-        <Chip
-          label={inClusterConfig
-            ? "Using In Cluster Config"
-            : contextName}
-          onClick={self.handleKubernetesClick}
-          icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
-          className={classes.chip}
-          key="k8s-key"
-          variant="outlined"
-        />
+        <div>
+          {contexts?.map(ctx => (
+            <Tooltip title={`Server: ${ctx.server}`}>
+              <Chip
+                label={ctx?.name}
+                className={classes.chip}
+                onClick={() => self.handleKubernetesClick(ctx.id)}
+                icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
+                disabled={contextName==ctx.name? false : true}
+                variant="outlined"
+                data-cy="chipContextName"
+              />
+            </Tooltip>
+          ))}
+        </div>
       );
 
-      if (configuredServer) {
-        chp = <Tooltip title={`Server: ${configuredServer}`}>{chp}</Tooltip>;
-      } else {
+      if (!configuredServer) {
         chp=showConfigured;
       }
-
       showConfigured = <div showConfigured>{chp}</div>;
     }
-
 
     let showAdapters = "No adapters configured.";
     if (availableAdapters.length > 0) {
@@ -980,7 +986,7 @@ class DashboardComponent extends React.Component {
     );
     return (
       <NoSsr>
-        <div className={classes.root}>
+        <div className={classes.rootClass}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <div className={classes.dashboardSection} data-test="service-mesh">

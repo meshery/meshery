@@ -27,7 +27,7 @@ All set to contribute? Grab an open issue with the [help-wanted label](../../lab
 
 # <a name="contributing">General Contribution Flow</a>
 
-To contribute to Meshery, please follow the fork-and-pull request workflow described [here](./CONTRIBUTING-gitflow.md).
+To contribute to Meshery, please follow the fork-and-pull request workflow described [here](docs/CONTRIBUTING-gitflow.md).
 
 ## <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
@@ -71,7 +71,7 @@ Or you may configure your IDE, for example, Visual Studio Code to automatically 
 
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
 
-1. Create a fork, if you have not already, by following the steps described [here](./CONTRIBUTING-gitflow.md)
+1. Create a fork, if you have not already, by following the steps described [here](docs/CONTRIBUTING-gitflow.md)
 1. In the local copy of your fork, navigate to the docs folder.
    `cd docs`
 1. Create and checkout a new branch to make changes within
@@ -104,24 +104,24 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`.
 1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
 
-#### Build and run Meshery server
+#### Build and run Meshery Server
 
 Before you can access the Meshery UI, you need to install the UI dependencies,
 
 ```sh
-make setup-ui-libs
+make ui-setup
 ```
 
-and then Build and export the UI
+and then build and export the UI
 
 ```sh
-make build-ui
+make ui
 ```
 
-To build & run the Meshery server code, run the following command:
+To build & run Meshery Server, run the following command:
 
 ```sh
-make run-local
+make server
 ```
 
 Any time changes are made to the Go code, you will have to stop the server and run the above command again.
@@ -129,7 +129,7 @@ Once the Meshery server is up and running, you should be able to access Meshery 
 
 To access the [Meshery UI Development Server](#ui-development-server) on port `3000`, you will need to select your **Cloud Provider** by navigating to `localhost:9081` after running the Meshery server.
 
-**Please note**: When running `make run-local` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
+**Please note**: When running `make server` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
 
 #### Tests
 
@@ -260,12 +260,10 @@ The [`/mesheryctl`](https://github.com/meshery/meshery/tree/master/mesheryctl) f
 
 After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
 
-
 ### `mesheryctl` command reference
 
 - Seee user-facing, documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
 - See contributor-facing design spec for [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) for a complete reference of `mesheryctl`.
-
 
 ### General guidelines and resources
 
@@ -303,3 +301,4 @@ Resources: https://lab.github.com and https://try.github.com/
 ### License
 
 This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
+
