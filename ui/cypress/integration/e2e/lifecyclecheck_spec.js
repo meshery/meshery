@@ -39,15 +39,7 @@ describe("Test Lifecycle Paths With None Provider", () => {
 
   it("visit Management page", () => {
     cy.visit("/management");
-    cy.get('body').then(body => {
-      if (body.find('Select Service MeshType').length > 0) {
-        cy.contains("Select Service Mesh Type");
-        cy.contains("Manage Service Mesh");
-        cy.contains("Lifecycle");
-      } else {
-        cy.contains("Configure Settings")
-      }
-    })
+    cy.contains("Lifecycle");
   })
 
   // assumption: istio adapter is live
