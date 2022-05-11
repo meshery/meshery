@@ -31,10 +31,6 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid strin
 		proxies := make([]*Container, 0)
 		for _, obj := range object {
 			if meshsyncmodel.IsObject(obj) {
-
-				// if obj.ClusterID != cid {
-				// 	continue
-				// }
 				objspec := corev1.PodSpec{}
 				objstatus := corev1.PodStatus{}
 

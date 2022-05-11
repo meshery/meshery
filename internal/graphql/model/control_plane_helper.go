@@ -29,9 +29,6 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid st
 		members := make([]*ControlPlaneMember, 0)
 		for _, obj := range object {
 			if meshsyncmodel.IsObject(obj) {
-				// if obj.ClusterID != cid {
-				// 	continue
-				// }
 				objspec := corev1.PodSpec{}
 				err := utils.Unmarshal(obj.Spec.Attribute, &objspec)
 				if err != nil {
