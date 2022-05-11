@@ -87,6 +87,13 @@ class MesheryPlayComponent extends React.Component {
     router.events.on('routeChangeComplete', this.handleRouteChange)
   }
 
+  componentDidUpdate(prevProps) {
+    // update the adapter when the meshadapters props are changed
+    if (prevProps.meshAdapters?.length !== this.props.meshAdapters.length) {
+      this.handleRouteChange()
+    }
+  }
+
   componentWillUnmount() {
     this.props.router.events.off('routeChangeComplete', this.handleRouteChange)
   }
