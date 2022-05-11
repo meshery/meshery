@@ -159,11 +159,11 @@
       "1022": {
         "name": "ErrRetrievingCurrentContextCode",
         "code": "1022",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "Error retrieving current context",
-        "probable_cause": "current context is not retrieved successfully",
-        "suggested_remediation": "Verify current context is retrieved successfully and valid"
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "1023": {
         "name": "ErrSettingTemporaryContextCode",
@@ -461,6 +461,15 @@
         "short_description": "Unable to communicate with Meshery server",
         "probable_cause": "",
         "suggested_remediation": "See https://docs.meshery.io for help getting started with Meshery"
+      },
+      "1059": {
+        "name": "ErrSettingDefaultContextToConfigCode",
+        "code": "1059",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
