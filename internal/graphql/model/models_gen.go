@@ -214,6 +214,7 @@ const (
 	MeshTypeTanzu              MeshType = "TANZU"
 	MeshTypeOpenServiceMesh    MeshType = "OPEN_SERVICE_MESH"
 	MeshTypeNginxServiceMesh   MeshType = "NGINX_SERVICE_MESH"
+	MeshTypeCilium MeshType = "CILIUM_SERVICE_MESH"
 )
 
 var AllMeshType = []MeshType{

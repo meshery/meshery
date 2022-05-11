@@ -25,7 +25,7 @@ const (
 var (
 	controlPlaneNamespace = map[MeshType]string{
 		MeshTypeIstio:              "istio-system",
-		MeshTypeLinkerd:            "linkerd-system",
+		MeshTypeLinkerd:            "linkerd",
 		MeshTypeConsul:             "consul-system",
 		MeshTypeOctarine:           "octarine-system",
 		MeshTypeTraefikMesh:        "traefik-system",
@@ -35,6 +35,7 @@ var (
 		MeshTypeNetworkServiceMesh: "nsm-system",
 		MeshTypeCitrixServiceMesh:  "ctrix-system",
 		MeshTypeAppMesh:            "appmesh-system",
+		MeshTypeCilium:             "kube-system",
 	}
 
 	addonPortSelector = map[string]string{

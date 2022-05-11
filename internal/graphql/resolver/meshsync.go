@@ -34,7 +34,6 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 		r.brokerChannel = make(chan *broker.Message)
 	}
 	prevStatus := r.getMeshSyncStatus(ctx)
-
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("Initializing MeshSync subscription")
 

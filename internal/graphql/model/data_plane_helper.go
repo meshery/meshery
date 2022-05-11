@@ -11,7 +11,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataPlane, error) {
+func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid string) ([]*DataPlane, error) {
 	object := []meshsyncmodel.Object{}
 	dataPlaneList := make([]*DataPlane, 0)
 
@@ -19,8 +19,7 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
 			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("Status").
-			Preload("Spec").
-			// get only resources specs that has proxy string inside its attributes
+			Preload("Spec"). // get only resources specs that has proxy string inside its attributes
 			Where("EXISTS(SELECT 1 FROM resource_specs rsp WHERE rsp.attribute LIKE ? AND rsp.id = objects.id)", `%proxy%`).
 			// get only resources statuses that has proxy string inside its attributes
 			Where("EXISTS(SELECT 1 FROM resource_statuses rst WHERE rst.attribute LIKE ? AND rst.id = objects.id)", `%proxy%`).
@@ -31,6 +30,10 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 		proxies := make([]*Container, 0)
 		for _, obj := range object {
 			if meshsyncmodel.IsObject(obj) {
+
+				if obj.ClusterID != cid {
+					continue
+				}
 				objspec := corev1.PodSpec{}
 				objstatus := corev1.PodStatus{}
 

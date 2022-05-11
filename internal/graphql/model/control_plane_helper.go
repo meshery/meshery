@@ -10,7 +10,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*ControlPlane, error) {
+func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid string) ([]*ControlPlane, error) {
 	object := []meshsyncmodel.Object{}
 	controlplanelist := make([]*ControlPlane, 0)
 
@@ -28,6 +28,9 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*Co
 		members := make([]*ControlPlaneMember, 0)
 		for _, obj := range object {
 			if meshsyncmodel.IsObject(obj) {
+				if obj.ClusterID != cid {
+					continue
+				}
 				objspec := corev1.PodSpec{}
 				err := utils.Unmarshal(obj.Spec.Attribute, &objspec)
 				if err != nil {
