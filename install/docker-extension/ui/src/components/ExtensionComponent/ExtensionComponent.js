@@ -72,7 +72,7 @@ const ExtensionsComponent = () => {
       if (res !== "null") {
         setIsLoggedIn(true)
         setToken(res)
-        fetch("http://127.0.0.1:7877/api/user").then(res => res.text()).then(console.log).then(res => setUserName(JSON.parse(res)?.user_id))
+        fetch("http://localhost:7877/api/user").then(res => res.text()).then(res => setUserName(JSON.parse(res)?.user_id))
       } else {
         let ws = new WebSocket("ws://127.0.0.1:7877/ws")
         ws.onmessage = msg => {
@@ -82,7 +82,7 @@ const ExtensionsComponent = () => {
         }
       }
     }).catch(console.log)
-  }, [])
+  }, [isLoggedIn])
 
 
   const onMouseOver = e => {
@@ -234,7 +234,7 @@ const ExtensionsComponent = () => {
                 Launch Meshery
               </Typography>
               <div style={{ marginBottom: "0.5rem" }}>
-                <a style={{ textDecoration: "none" }} href={"http://localhost:7877/api/user/token?token=" + token} >
+                <a style={{ textDecoration: "none" }} href={token && "http://localhost:9081/api/user/token?token=" + token} >
 
                   <div
                     onMouseEnter={() => setIsHovered(!isHovered)}
@@ -251,10 +251,10 @@ const ExtensionsComponent = () => {
                 window.ddClient.host.openExternal("https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14")
               }}>
                 Login
-              </Button> : userName &&
-              <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
-                User: {userName}
-              </Typography>
+              </Button> : (userName &&
+                <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+                  User: {userName}
+                </Typography>)
               }
             </AccountDiv>
           </ExtensionWrapper>
