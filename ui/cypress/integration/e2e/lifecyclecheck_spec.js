@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 // ***********************************************************
 
-function doGeneralIstioLifecycleChecks(cy) {
+function doGeneralIstioLifecycleChecks() {
   cy.contains("Lifecycle");
   cy.contains("Manage Service Mesh Lifecycle");
   cy.contains("Namespace");
@@ -11,7 +11,7 @@ function doGeneralIstioLifecycleChecks(cy) {
   cy.contains("Apply Custom Configuration");
 }
 
-function verifyAllIstioAddons(cy) {
+function verifyAllIstioAddons() {
   cy.contains("Grafana");
   cy.contains("Jaeger");
   cy.contains("Kiali");
@@ -19,14 +19,13 @@ function verifyAllIstioAddons(cy) {
   cy.contains("Zipkin");
 }
 
-function doGeneralConsulLifecycleChecks(cy) {
+function doGeneralConsulLifecycleChecks() {
   cy.contains("Lifecycle");
   cy.contains("Manage Service Mesh Lifecycle");
   cy.contains("Namespace");
   cy.contains("Manage Sample Application Lifecycle");
   cy.contains("Apply Custom Configuration");
-  cy.get('body').should("not.contain",  "Apply Service Mesh Configuration");
-
+  cy.get('body').should("not.contain", "Apply Service Mesh Configuration");
 }
 
 describe("Test Lifecycle Paths With None Provider", () => {
@@ -40,14 +39,19 @@ describe("Test Lifecycle Paths With None Provider", () => {
 
   it("visit Management page", () => {
     cy.visit("/management");
-    cy.contains("Select Service Mesh Type")
-    cy.contains("Manage Service Mesh")
-    cy.contains("Lifecycle")
-      
+    cy.get('body').then(body => {
+      if (body.find('Select Service MeshType').length > 0) {
+        cy.contains("Select Service Mesh Type");
+        cy.contains("Manage Service Mesh");
+        cy.contains("Lifecycle");
+      } else {
+        cy.contains("Configure Settings")
+      }
+    })
   })
 
   // assumption: istio adapter is live
-  it("Visit Istio by link", () => {    
+  it("Visit Istio by link", () => {
     cy.visit(ISTIO_URL);
     doGeneralIstioLifecycleChecks(cy);
     verifyAllIstioAddons(cy);
