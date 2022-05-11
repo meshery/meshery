@@ -311,7 +311,7 @@ func (k *K8sConnectionTracker) Get(id string) (url string) {
 	return
 }
 
-// Takes the meshkit Logger and logs a comma seperated list of currently tracked Broker Endpoints
+// Takes the meshkit Logger and logs a comma separated list of currently tracked Broker Endpoints
 func (k *K8sConnectionTracker) Log(l logger.Handler) {
 	var e = "Connected broker endpoints : "
 	k.mx.Lock()
