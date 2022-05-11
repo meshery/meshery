@@ -66,7 +66,7 @@ mesheryctl version
 				}
 
 				// Add Context to context file
-				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
+				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
 				if err != nil {
 					utils.Log.Error(ErrAddingContextToConfig)
 				}

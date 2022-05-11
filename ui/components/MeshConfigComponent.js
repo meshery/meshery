@@ -265,14 +265,16 @@ class MeshConfigComponent extends React.Component {
     if (res.operator?.status === "ENABLED") {
       self.setState({ operatorProcessing : false })
       res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status == "CONNECTED") {
+        if (controller.name === "broker" && controller.status.includes("CONNECTED")) {
           self.setState({
             NATSState : controller.status,
             NATSVersion : controller.version,
           });
-        } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
+        } else if (controller.name === "meshsync" && controller.status.includes("ENABLED")) {
           self.setState({ meshSyncInstalled : true,
-            meshSyncVersion : controller.version, });
+            meshSyncVersion : controller.version,
+            meshSyncState : controller.status
+          });
         }
       });
       self.setState({ operatorInstalled : true,
@@ -293,6 +295,7 @@ class MeshConfigComponent extends React.Component {
       operatorInstalled : false,
       NATSState : "UNKNOWN",
       meshSyncInstalled : false,
+      meshSyncState : "N/A",
       operatorSwitch : false,
       operatorVersion : "N/A",
       meshSyncVersion : "N/A",
@@ -449,7 +452,7 @@ handleNATSClick = () => {
         self.handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
       }
       self.setState({
-        NATSState : res.controller.status,
+        NATSState : res.controller.status.length !== 0 ? res.controller.status : "UNKNOWN",
         NATSVersion : res.controller.version,
       });
     },

@@ -97,7 +97,7 @@ mesheryctl system update --skip-reset
 		switch currCtx.GetPlatform() {
 		case "docker":
 			if !utils.SkipResetFlag {
-				err := resetMesheryConfig()
+				err := fetchManifests(mctlCfg)
 
 				if err != nil {
 					return err

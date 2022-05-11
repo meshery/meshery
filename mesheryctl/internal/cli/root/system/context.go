@@ -86,7 +86,7 @@ mesheryctl system context create context-name --components meshery-osm --platfor
 			tempCntxt.Components = components
 		}
 
-		err := config.AddContextToConfig(args[0], tempCntxt, viper.ConfigFileUsed(), set)
+		err := config.AddContextToConfig(args[0], tempCntxt, viper.ConfigFileUsed(), set, false)
 		if err != nil {
 			return err
 		}
