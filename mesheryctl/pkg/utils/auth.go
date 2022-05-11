@@ -283,8 +283,8 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
 	return data, nil
 }
 
-// Initiate Login to None provider
-func InitiateLoginNone(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
+// Initiate Login on provider mentioned by user
+func InitiateLoginDirect(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, error) {
 	// Get the providers info
 	providers, err := GetProviderInfo(mctlCfg)
 	if err != nil {
@@ -292,15 +292,24 @@ func InitiateLoginNone(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
 	}
 
 	// Let the user select a provider
-	provider := chooseNoneProvider(providers)
+	provider, err := chooseProviderDirect(providers, option)
+
+	if err != nil {
+		return nil, err
+	}
 
 	var token string
 
-	log.Println("Initiating login using 'None' provider...")
+	log.Println("Initiating login using provider given...")
 
 	// If the provider URL is empty then local provider
 	if provider.ProviderURL == "" {
 		token, err = initiateLocalProviderAuth(provider)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		token, err = initiateRemoteProviderAuth(provider)
 		if err != nil {
 			return nil, err
 		}
@@ -404,14 +413,24 @@ func selectProviderPrompt(provs map[string]Provider) Provider {
 	}
 }
 
-func chooseNoneProvider(provs map[string]Provider) Provider {
+func chooseProviderDirect(provs map[string]Provider, option string) (Provider, error) {
 	provArray := []Provider{}
+	provNames := []string{}
 
 	for _, prov := range provs {
 		provArray = append(provArray, prov)
 	}
 
-	return provArray[1]
+	for _, prov := range provArray {
+		provNames = append(provNames, prov.ProviderName)
+	}
+
+	for i := 0; i < len(provNames); i++ {
+		if provNames[i] == option {
+			return provArray[i], nil
+		}
+	}
+	return provArray[1], fmt.Errorf("The specified provider '%s' is not available. Please try giving correct provider name", option)
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {

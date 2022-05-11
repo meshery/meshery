@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	noneProviderFlag bool
+	providerFlag string
 )
 
 var loginCmd = &cobra.Command{
@@ -66,8 +66,9 @@ The authentication mode is web-based browser flow`,
 		}
 
 		var tokenData []byte
-		if noneProviderFlag {
-			tokenData, err = utils.InitiateLoginNone(mctlCfg)
+		if providerFlag != "" {
+			var provider = providerFlag
+			tokenData, err = utils.InitiateLoginDirect(mctlCfg, provider)
 		} else {
 			tokenData, err = utils.InitiateLogin(mctlCfg)
 		}
@@ -100,5 +101,5 @@ The authentication mode is web-based browser flow`,
 }
 
 func init() {
-	loginCmd.Flags().BoolVarP(&noneProviderFlag, "none", "", false, "login Meshery with 'None' provider")
+	loginCmd.PersistentFlags().StringVarP(&providerFlag, "provider", "p", "", "login Meshery with specified provider")
 }
