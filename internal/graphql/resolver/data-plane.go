@@ -16,12 +16,8 @@ func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, 
 	} else {
 		selectors = append(selectors, *filter.Type)
 	}
-	k8sctx, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok {
-		r.Log.Error(ErrEmptyCurrentK8sContext)
-		return nil, ErrEmptyCurrentK8sContext
-	}
-	dataPlaneList, err := model.GetDataPlaneState(selectors, provider, k8sctx.KubernetesServerID.String())
+
+	dataPlaneList, err := model.GetDataPlaneState(selectors, provider)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err
