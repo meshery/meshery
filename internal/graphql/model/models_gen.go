@@ -214,6 +214,7 @@ const (
 	MeshTypeTanzu              MeshType = "TANZU"
 	MeshTypeOpenServiceMesh    MeshType = "OPEN_SERVICE_MESH"
 	MeshTypeNginxServiceMesh   MeshType = "NGINX_SERVICE_MESH"
+	MeshTypeCiliumServiceMesh  MeshType = "CILIUM_SERVICE_MESH"
 )
 
 var AllMeshType = []MeshType{
@@ -231,11 +232,12 @@ var AllMeshType = []MeshType{
 	MeshTypeTanzu,
 	MeshTypeOpenServiceMesh,
 	MeshTypeNginxServiceMesh,
+	MeshTypeCiliumServiceMesh,
 }
 
 func (e MeshType) IsValid() bool {
 	switch e {
-	case MeshTypeAllMesh, MeshTypeInvalidMesh, MeshTypeAppMesh, MeshTypeCitrixServiceMesh, MeshTypeConsul, MeshTypeIstio, MeshTypeKuma, MeshTypeLinkerd, MeshTypeTraefikMesh, MeshTypeOctarine, MeshTypeNetworkServiceMesh, MeshTypeTanzu, MeshTypeOpenServiceMesh, MeshTypeNginxServiceMesh:
+	case MeshTypeAllMesh, MeshTypeInvalidMesh, MeshTypeAppMesh, MeshTypeCitrixServiceMesh, MeshTypeConsul, MeshTypeIstio, MeshTypeKuma, MeshTypeLinkerd, MeshTypeTraefikMesh, MeshTypeOctarine, MeshTypeNetworkServiceMesh, MeshTypeTanzu, MeshTypeOpenServiceMesh, MeshTypeNginxServiceMesh, MeshTypeCiliumServiceMesh:
 		return true
 	}
 	return false
