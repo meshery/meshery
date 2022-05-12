@@ -234,7 +234,7 @@ function generateSelectedRows(results_selection, page, pageSize) {
   return rowsSelected;
 }
 
-function ResultChart({ result, switchView }) {
+function ResultChart({ result }) {
   if (!result) return <div />;
 
   const row = result.runner_results;
@@ -253,7 +253,6 @@ function ResultChart({ result, switchView }) {
         <MesheryChart
           rawdata={[result && result.runner_results ? result : {}]}
           data={[result && result.runner_results ? result.runner_results : {}]}
-          switchView={switchView}
         />
       </div>
       {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
@@ -274,7 +273,7 @@ function ResultChart({ result, switchView }) {
   );
 }
 
-function ResultNodeDetails({ result, switchView }){
+function ResultNodeDetails({ result }){
   if (!result) return <div />
   const chartData = result.runner_results;
   return (
@@ -286,7 +285,6 @@ function ResultNodeDetails({ result, switchView }){
       <div>
         <Typography variant="h6" gutterBottom align="center">Node Details</Typography>
         <NodeDetails result={chartData}/>
-        <div style={{ margin : "2rem auto 0.5rem", width : "fit-content", cursor : "pointer" }} onClick={() => switchView("nodeTable")}><i>Click here for <b>Performance Graph</b></i></div>
       </div>
     </Paper>
   )
@@ -326,7 +324,6 @@ function MesheryResults({
   const [results, setResults] = useState([]);
   const [selectedRowChart, setSelectedRowChart] = useState();
   const [selectedRowNodeDetails, setSelectedRowNodeDetails] = useState();
-  const [rowIdx, setRowIdx] = useState();
 
   const searchTimeout = useRef();
 
@@ -407,9 +404,9 @@ function MesheryResults({
   }
 
   const columns = generateColumnsForDisplay(sortOrder, (idx) => {
-    setRowIdx(idx); setSelectedRowChart(results[idx])
+    setSelectedRowChart(results[idx])
   }, (idx) => {
-    setRowIdx(idx); setSelectedRowNodeDetails(results[idx])
+    setSelectedRowNodeDetails(results[idx])
   });
 
   const options = {
@@ -492,16 +489,6 @@ function MesheryResults({
     },
   };
 
-  function switchView(sender){
-    if (sender == "graph"){
-      setSelectedRowChart(null)
-      setSelectedRowNodeDetails(results[rowIdx]);
-    } else {
-      setSelectedRowNodeDetails(null);
-      setSelectedRowChart(results[rowIdx])
-    }
-  }
-
   return (
     <NoSsr>
       <MUIDataTable
@@ -515,14 +502,14 @@ function MesheryResults({
       <GenericModal
         open={!!selectedRowChart}
         // @ts-ignore
-        Content={<ResultChart result={selectedRowChart} switchView={switchView} />}
+        Content={<ResultChart result={selectedRowChart} />}
         handleClose={() => setSelectedRowChart(undefined)}
       />
 
       <GenericModal
         open={!!selectedRowNodeDetails}
         // @ts-ignore
-        Content={<ResultNodeDetails result={selectedRowNodeDetails} switchView={switchView} />}
+        Content={<ResultNodeDetails result={selectedRowNodeDetails} />}
         handleClose={() => setSelectedRowNodeDetails(undefined)}
       />
 
