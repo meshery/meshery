@@ -26,6 +26,7 @@ var (
 	controlPlaneNamespace = map[MeshType]string{
 		MeshTypeIstio:              "istio-system",
 		MeshTypeLinkerd:            "linkerd-system",
+		MeshTypeCiliumServiceMesh:  "kube-system",
 		MeshTypeConsul:             "consul-system",
 		MeshTypeOctarine:           "octarine-system",
 		MeshTypeTraefikMesh:        "traefik-system",
@@ -43,6 +44,13 @@ var (
 		"jaeger-collector": "jaeger-collector-http",
 		"kiali":            "http",
 		"zipkin":           "http-query",
+	}
+)
+
+var (
+	//TODO: Add the image orgs of other control plane pods. This change is backwards compatible and wont break anything
+	controlPlaneImageOrgs = map[MeshType][]string{
+		MeshTypeCiliumServiceMesh: {"cilium"},
 	}
 )
 
@@ -290,4 +298,34 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 	}
 
 	return overrideValues
+}
+
+//K8sConnectionTracker keeps track of BrokerURLs per kubernetes context
+type K8sConnectionTracker struct {
+	mx              sync.Mutex
+	ContextToBroker map[string]string //ContextID -> BrokerURL
+}
+
+func (k *K8sConnectionTracker) Set(id string, url string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	k.ContextToBroker[id] = url
+}
+
+func (k *K8sConnectionTracker) Get(id string) (url string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	url = k.ContextToBroker[id]
+	return
+}
+
+// Takes the meshkit Logger and logs a comma separated list of currently tracked Broker Endpoints
+func (k *K8sConnectionTracker) Log(l logger.Handler) {
+	var e = "Connected broker endpoints : "
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	for _, v := range k.ContextToBroker {
+		e += v + ", "
+	}
+	l.Info(strings.TrimSuffix(e, ", "))
 }

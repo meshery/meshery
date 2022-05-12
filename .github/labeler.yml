@@ -7,7 +7,7 @@ component/ui:
   - "provider-ui/**/*"
 component/mesheryctl:
   - "mesheryctl/**/*"
-component/extension:
+component/extensions:
   - "install/docker-extension/**/*"
   - "ui/components/ExtensionSandbox.js"
   - "ui/remote-component.config.js"

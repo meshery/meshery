@@ -13,6 +13,10 @@ import (
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
+//Global singleton instance of k8s connection tracker to map Each K8sContext to a unique Broker URL
+var connectionTrackerSingleton = &model.K8sConnectionTracker{
+	ContextToBroker: make(map[string]string),
+}
 var (
 	MeshSyncSubscriptionError = model.Error{
 		Description: "Failed to get MeshSync data",
@@ -30,7 +34,6 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 		r.brokerChannel = make(chan *broker.Message)
 	}
 	prevStatus := r.getMeshSyncStatus(ctx)
-
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("Initializing MeshSync subscription")
 
@@ -146,9 +149,17 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 	if err != nil {
 		return err
 	}
-
-	if r.BrokerConn.IsEmpty() && status != nil && status.Status == model.StatusEnabled {
-		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn)
+	currContext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || kubeclient == nil {
+		r.Log.Error(ErrNilClient)
+		return ErrNilClient
+	}
+	var newContextFound bool
+	if connectionTrackerSingleton.Get(currContext.ID) == "" {
+		newContextFound = true
+	}
+	if (r.BrokerConn.IsEmpty() || newContextFound) && status != nil && status.Status == model.StatusEnabled {
+		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
 
@@ -161,7 +172,8 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
-		r.Config.BrokerEndpointURL = &endpoint
+		connectionTrackerSingleton.Set(currContext.ID, endpoint)
+		connectionTrackerSingleton.Log(r.Log)
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
 			Source: broadcast.OperatorSyncChannel,
 			Data:   false,

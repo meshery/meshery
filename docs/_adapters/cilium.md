@@ -2,7 +2,7 @@
 layout: default
 title: Meshery Adapter for Cilium Service Mesh
 name: Meshery Adapter for Cilium Service Mesh
-mesh_name: Ciluim
+mesh_name: Cilium
 earliest_version: v1.10.6
 port: 10012/gRPC
 project_status: beta
