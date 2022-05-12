@@ -8,6 +8,7 @@ import TableSortLabel from '@material-ui/core/TableSortLabel'
 function NodeDetails(props) {
 
   const getMuiTheme = () => createTheme({
+    shadows : ["none"],
     overrides : {
       MuiInput : {
         underline : {
