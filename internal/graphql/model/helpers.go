@@ -26,6 +26,7 @@ var (
 	controlPlaneNamespace = map[MeshType]string{
 		MeshTypeIstio:              "istio-system",
 		MeshTypeLinkerd:            "linkerd-system",
+		MeshTypeCiliumServiceMesh:  "kube-system",
 		MeshTypeConsul:             "consul-system",
 		MeshTypeOctarine:           "octarine-system",
 		MeshTypeTraefikMesh:        "traefik-system",
@@ -43,6 +44,13 @@ var (
 		"jaeger-collector": "jaeger-collector-http",
 		"kiali":            "http",
 		"zipkin":           "http-query",
+	}
+)
+
+var (
+	//TODO: Add the image orgs of other control plane pods. This change is backwards compatible and wont break anything
+	controlPlaneImageOrgs = map[MeshType][]string{
+		MeshTypeCiliumServiceMesh: {"cilium"},
 	}
 )
 
