@@ -144,8 +144,6 @@ type HandlerConfig struct {
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
 
-	BrokerEndpointURL *string
-
 	PerformanceChannel       chan struct{}
 	PerformanceResultChannel chan struct{}
 }
