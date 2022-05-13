@@ -734,10 +734,10 @@ app:
 filter:
   name: filter
   description: Service Mesh Filter Management (experimental feature)
-  
   flags:
-    name: --file, -f
-    description: (required) path to WASM file [GitHub links only supported]
+    file:
+      name: --file, -f
+      description: (required) path to WASM file [GitHub links only supported]
 
   subcommands:
     apply:
