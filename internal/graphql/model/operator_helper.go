@@ -223,7 +223,6 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	if err != nil && conn == nil {
 		return endpoint, err
 	}
-	fmt.Println("lode: ", endpoints)
 	defer func() {
 		if conn == nil {
 			return
