@@ -30,7 +30,11 @@ func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.P
 
 	for rows.Next() {
 		var name string
-		rows.Scan(&name)
+		err := rows.Scan(&name)
+		if err != nil {
+			r.Log.Error(ErrGettingNamespace(err))
+			return nil, err
+		}
 
 		namespaces = append(namespaces, name)
 	}
