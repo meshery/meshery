@@ -46,7 +46,6 @@ var (
 		"zipkin":           "http-query",
 	}
 )
-
 var (
 	//TODO: Add the image orgs of other control plane pods. This change is backwards compatible and wont break anything
 	controlPlaneImageOrgs = map[MeshType][]string{
@@ -298,4 +297,59 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 	}
 
 	return overrideValues
+}
+
+//K8sConnectionTracker keeps track of BrokerURLs per kubernetes context
+type K8sConnectionTracker struct {
+	mx              sync.Mutex
+	contextToBroker map[string]string //ContextID -> BrokerURL
+}
+
+func NewK8sConnctionTracker() *K8sConnectionTracker {
+	return &K8sConnectionTracker{
+		contextToBroker: make(map[string]string),
+	}
+}
+func (k *K8sConnectionTracker) Set(id string, url string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	k.contextToBroker[id] = url
+}
+
+//Takes a set of endpoints and discard the current endpoint if its not present in the set
+func (k *K8sConnectionTracker) ResetEndpoints(available map[string]bool) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	c := make(map[string]string)
+	for id, url := range k.contextToBroker {
+		if available[url] {
+			c[id] = url
+		}
+	}
+	k.contextToBroker = c
+}
+func (k *K8sConnectionTracker) ListBrokerEndpoints() (a []string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	for _, v := range k.contextToBroker {
+		a = append(a, v)
+	}
+	return
+}
+func (k *K8sConnectionTracker) Get(id string) (url string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	url = k.contextToBroker[id]
+	return
+}
+
+// Takes the meshkit Logger and logs a comma separated list of currently tracked Broker Endpoints
+func (k *K8sConnectionTracker) Log(l logger.Handler) {
+	var e = "Connected broker endpoints : "
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	for _, v := range k.contextToBroker {
+		e += v + ", "
+	}
+	l.Info(strings.TrimSuffix(e, ", "))
 }

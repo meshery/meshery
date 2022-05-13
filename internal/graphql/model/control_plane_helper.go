@@ -10,12 +10,13 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*ControlPlane, error) {
+func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid string) ([]*ControlPlane, error) {
 	object := []meshsyncmodel.Object{}
 	controlplanelist := make([]*ControlPlane, 0)
 
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
+			Where("cluster_id = ?", cid).
 			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
@@ -62,7 +63,6 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider) ([]*Co
 
 	return controlplanelist, nil
 }
-
 func haveCommonElements(a []string, b map[string]bool) bool {
 	for _, ae := range a {
 		if b[ae] {
