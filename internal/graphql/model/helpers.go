@@ -26,6 +26,7 @@ var (
 	controlPlaneNamespace = map[MeshType]string{
 		MeshTypeIstio:              "istio-system",
 		MeshTypeLinkerd:            "linkerd-system",
+		MeshTypeCiliumServiceMesh:  "kube-system",
 		MeshTypeConsul:             "consul-system",
 		MeshTypeOctarine:           "octarine-system",
 		MeshTypeTraefikMesh:        "traefik-system",
