@@ -738,9 +738,6 @@ filter:
   flags:
     name: --file, -f
     description: (required) path to WASM file [GitHub links only supported]
-    flags:
-      name: --file, -f
-      description: (required) path to WASM file [GitHub links only supported]
 
   subcommands:
     apply:

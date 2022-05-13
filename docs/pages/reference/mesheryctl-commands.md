@@ -568,6 +568,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       </tr>
       {% endfor %}
 </thead>
+</table>
 
 ## Service Mesh Filter Management (experimental feature)
 
