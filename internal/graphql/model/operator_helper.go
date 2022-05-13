@@ -234,7 +234,6 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 		ct.ResetEndpoints(available)
 	}()
 	conn.DeepCopyInto(brokerConn)
-	fmt.Println("new nats", brokerConn.ConnectedEndpoints())
 	err = brokerConn.SubscribeWithChannel(MeshsyncSubject, BrokerQueue, datach)
 	if err != nil {
 		return endpoint, ErrSubscribeChannel(err)
