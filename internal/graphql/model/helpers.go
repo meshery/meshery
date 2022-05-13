@@ -45,6 +45,12 @@ var (
 		"zipkin":           "http-query",
 	}
 )
+var (
+	//TODO: Add the image orgs of other control plane pods. This change is backwards compatible and wont break anything
+	controlPlaneImageOrgs = map[MeshType][]string{
+		MeshTypeCiliumServiceMesh: {"cilium"},
+	}
+)
 
 // listernToEvents - scale this function with the number of channels
 func ListernToEvents(log logger.Handler,
