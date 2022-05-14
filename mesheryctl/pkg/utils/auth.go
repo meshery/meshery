@@ -247,7 +247,7 @@ func CreateTempAuthServer(fn func(http.ResponseWriter, *http.Request)) (*http.Se
 }
 
 // InitiateLogin initates the login process
-func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
+func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, error) {
 	// Get the providers info
 	providers, err := GetProviderInfo(mctlCfg)
 	if err != nil {
@@ -255,52 +255,20 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
 	}
 
 	// Let the user select a provider
-	provider := selectProviderPrompt(providers)
+	var provider Provider
+	if option != "" {
+		provider, err = chooseProviderDirect(providers, option)
+	} else {
+		provider = selectProviderPrompt(providers)
+	}
+
+	if err != nil {
+		return nil, err
+	}
 
 	var token string
 
 	log.Println("Initiating login...")
-
-	// If the provider URL is empty then local provider
-	if provider.ProviderURL == "" {
-		token, err = initiateLocalProviderAuth(provider)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		token, err = initiateRemoteProviderAuth(provider)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// Send request with the token to the meshery server
-	data, err := getTokenObjFromMesheryServer(mctlCfg, provider.ProviderName, token)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
-}
-
-// Initiate Login on provider mentioned by user
-func InitiateLoginDirect(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, error) {
-	// Get the providers info
-	providers, err := GetProviderInfo(mctlCfg)
-	if err != nil {
-		return nil, err
-	}
-
-	// Let the user select a provider
-	provider, err := chooseProviderDirect(providers, option)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var token string
-
-	log.Println("Initiating login using provider given...")
 
 	// If the provider URL is empty then local provider
 	if provider.ProviderURL == "" {

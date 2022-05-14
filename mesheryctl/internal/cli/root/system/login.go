@@ -68,9 +68,9 @@ The authentication mode is web-based browser flow`,
 		var tokenData []byte
 		if providerFlag != "" {
 			var provider = providerFlag
-			tokenData, err = utils.InitiateLoginDirect(mctlCfg, provider)
+			tokenData, err = utils.InitiateLogin(mctlCfg, provider)
 		} else {
-			tokenData, err = utils.InitiateLogin(mctlCfg)
+			tokenData, err = utils.InitiateLogin(mctlCfg, "")
 		}
 
 		if err != nil {
