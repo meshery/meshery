@@ -97,6 +97,7 @@ const styles = (theme) => ({
   expTitle : { display : "inline",
     verticalAlign : "middle", },
   icon : { width : theme.spacing(2.5), },
+
   tableHeader : { fontWeight : "bolder",
     fontSize : 18, },
   secondaryTable : { borderRadius : 10,
@@ -786,7 +787,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         <DialogContent>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <ReactSelectWrapper
+              <ReactSelectWrapper style={{ width : "32.5%" }}
                 label="Namespace"
                 value={namespace}
                 error={namespaceError}
