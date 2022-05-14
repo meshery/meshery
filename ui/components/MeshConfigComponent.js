@@ -897,7 +897,7 @@ handleNATSClick = () => {
   meshOut = (showConfigured, operator) => {
     const { classes } = this.props;
     const {
-      k8sfile, k8sfileElementVal, contextName, contexts, fileName, selectContext
+      k8sfileElementVal, contextName, contexts, fileName, selectContext
     } = this.state;
 
     return (
