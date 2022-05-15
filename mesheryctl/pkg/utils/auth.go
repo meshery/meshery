@@ -257,8 +257,10 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 	// Let the user select a provider
 	var provider Provider
 	if option != "" {
-		provider, err = chooseProviderDirect(providers, option)
+		// If option is given by user
+		provider, err = chooseDirectProvider(providers, option)
 	} else {
+		// Trigger prompt
 		provider = selectProviderPrompt(providers)
 	}
 
@@ -381,7 +383,7 @@ func selectProviderPrompt(provs map[string]Provider) Provider {
 	}
 }
 
-func chooseProviderDirect(provs map[string]Provider, option string) (Provider, error) {
+func chooseDirectProvider(provs map[string]Provider, option string) (Provider, error) {
 	provArray := []Provider{}
 	provNames := []string{}
 
@@ -393,8 +395,8 @@ func chooseProviderDirect(provs map[string]Provider, option string) (Provider, e
 		provNames = append(provNames, prov.ProviderName)
 	}
 
-	for i := 0; i < len(provNames); i++ {
-		if provNames[i] == option {
+	for i := range provNames {
+		if strings.ToLower(provNames[i]) == option {
 			return provArray[i], nil
 		}
 	}
