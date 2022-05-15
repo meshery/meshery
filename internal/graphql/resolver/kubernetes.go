@@ -9,25 +9,43 @@ import (
 	"github.com/layer5io/meshery/models/pattern/core"
 	meshkitKube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/describe"
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
 func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider) ([]*model.NameSpace, error) {
-	resourceobjects := make([]meshsyncmodel.ResourceObjectMeta, 0)
-
-	result := provider.GetGenericPersister().Distinct("namespace").Not("namespace = ?", "").Find(&resourceobjects)
-	if result.Error != nil {
-		r.Log.Error(ErrGettingNamespace(result.Error))
-		return nil, result.Error
+	k8sctx, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok || k8sctx == nil || k8sctx.KubernetesServerID == nil {
+		r.Log.Error(ErrEmptyCurrentK8sContext)
+		return nil, ErrEmptyCurrentK8sContext
 	}
-	namespaces := make([]*model.NameSpace, 0)
-	for _, obj := range resourceobjects {
-		namespaces = append(namespaces, &model.NameSpace{
-			Namespace: obj.Namespace,
+	// resourceobjects := make([]meshsyncmodel.ResourceObjectMeta, 0)
+	namespaces := make([]string, 0)
+	rows, err := provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace' AND o.cluster_id = ?", k8sctx.KubernetesServerID.String()).Rows()
+
+	if err != nil {
+		r.Log.Error(ErrGettingNamespace(err))
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var name string
+		err := rows.Scan(&name)
+		if err != nil {
+			r.Log.Error(ErrGettingNamespace(err))
+			return nil, err
+		}
+
+		namespaces = append(namespaces, name)
+	}
+	modelnamespaces := make([]*model.NameSpace, 0)
+
+	for _, ns := range namespaces {
+		modelnamespaces = append(modelnamespaces, &model.NameSpace{
+			Namespace: ns,
 		})
 	}
-
-	return namespaces, nil
+	return modelnamespaces, nil
 }
 
 // getWorkloads return workloads

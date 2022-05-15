@@ -1,15 +1,15 @@
-version: '3'
+version: "3"
 services:
-  vm:
+  meshery-proxy:
     image: ${DESKTOP_PLUGIN_IMAGE}
-
+    ports:
+      - "7877:7877"
   meshery:
     image: layer5/meshery:stable-latest
-    # TODO add: meshery-nginx-sm:10010
     environment:
       - "PROVIDER_BASE_URLS=https://meshery.layer5.io"
       - "SAAS_BASE_URL=https://meshery.layer5.io"
-      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006  meshery-cilium:10012"
+      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nginx-sm:10010 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006  meshery-cilium:10012"
       - "EVENT=mesheryLocal"
       - "PORT=9081"
     volumes:
@@ -32,7 +32,7 @@ services:
   meshery-app-mesh:
     image: layer5/meshery-app-mesh:stable-latest
     ports:
-      - "10005:10005"      
+      - "10005:10005"
   meshery-traefik-mesh:
     image: layer5/meshery-traefik-mesh:stable-latest
     ports:
@@ -45,11 +45,12 @@ services:
     image: layer5/meshery-osm:stable-latest
     ports:
       - "10009:10009"
-#  meshery-nginx-sm:
-#   image: layer5/meshery-nginx-sm:stable-latest
-#   ports:
-#     - "10010:10010"
-  meshery-cilium: 
+  meshery-nginx-sm:
+    image: layer5/meshery-nginx-sm:stable-latest
+    ports:
+      - "10010:10010"
+  meshery-cilium:
     image: layer5/meshery-cilium:stable-latest
     ports:
       - "10012:10012"
+

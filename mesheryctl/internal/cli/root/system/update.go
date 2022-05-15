@@ -90,7 +90,7 @@ var updateCmd = &cobra.Command{
 		switch currCtx.GetPlatform() {
 		case "docker":
 			if !utils.SkipResetFlag {
-				err := resetMesheryConfig()
+				err := fetchManifests(mctlCfg)
 
 				if err != nil {
 					return err
