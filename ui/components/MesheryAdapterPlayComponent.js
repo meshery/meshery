@@ -787,7 +787,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         <DialogContent>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <ReactSelectWrapper style={{ width : "32.5%" }}
+              <ReactSelectWrapper
                 label="Namespace"
                 value={namespace}
                 error={namespaceError}
@@ -1069,7 +1069,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                         {adapterChip}
                       </div>
                       <div className={classes.inputContainer}>
-                        <ReactSelectWrapper
+                        <ReactSelectWrapper style={{ width : "32.5%" }}
                           label="Namespace"
                           value={namespace}
                           error={namespaceError}
