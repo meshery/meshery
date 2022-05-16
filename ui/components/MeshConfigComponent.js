@@ -140,7 +140,7 @@ async function uploadK8sConfig() {
   const field = document.getElementById("k8sfile");
   if (field instanceof HTMLInputElement) {
     if (field.files.length < 1) return;
-    const name=field.files[0].name;
+    const name = field.files[0].name;
     const formData = new FormData();
     formData.append("k8sfile", field.files[0])
 
