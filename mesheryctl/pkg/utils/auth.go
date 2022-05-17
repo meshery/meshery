@@ -396,7 +396,7 @@ func chooseDirectProvider(provs map[string]Provider, option string) (Provider, e
 	}
 
 	for i := range provNames {
-		if strings.ToLower(provNames[i]) == strings.ToLower(option) {
+		if strings.EqualFold(provNames[i], option) {
 			return provArray[i], nil
 		}
 	}
