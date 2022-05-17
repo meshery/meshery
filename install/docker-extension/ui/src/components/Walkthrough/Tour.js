@@ -8,7 +8,7 @@ const TOUR_STEPS = [
     target: ".first-step",
     title: "Choose the Service Mesh that you would like to deploy",
     placement: "right-start",
-    content: <i>Deploy any of the 10 service meshes with a single click</i>, 
+    content: <i>Deploy any service mesh with a single click.</i>, 
     disableBeacon: true,
   },
   {
@@ -21,7 +21,7 @@ const TOUR_STEPS = [
     target: ".third-step",
     title:"Open Meshery",
     placement: "top",
-    content: <i>Launch Meshery to design and visualize your Docker Compose applications, run performance tests and much more.  </i>
+    content: <i>Launch Meshery to  visualize and design your Docker Compose applications, run performance tests and much more.</i>
   },
 ];
 const INITIAL_STATE = {
