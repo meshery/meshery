@@ -5,7 +5,7 @@ name: Meshery Adapter for Cilium Service Mesh
 mesh_name: Cilium
 earliest_version: v1.10.6
 port: 10012/gRPC
-project_status: beta
+project_status: stable
 adapter_version: v0.1.0
 lab: cilium-meshery-adapter
 github_link: https://github.com/meshery/meshery-cilium
@@ -47,3 +47,4 @@ Want to contribute? Check our [progress]({{page.github_link}}).
 <a href="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png" />
 </a>
+

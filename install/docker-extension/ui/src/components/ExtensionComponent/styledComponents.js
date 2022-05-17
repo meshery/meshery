@@ -1,3 +1,4 @@
+
 import { styled } from "@mui/material/styles";
 
 export const StyledDiv = styled('div')(() => ({
@@ -43,10 +44,17 @@ export const ComponentWrapper = styled('div')(({ theme }) => ({
   textAlign: "center",
   padding: "5rem",
   maxHeight: "100vh",
-  overflowY: "scroll"
 }))
 
 export const SectionWrapper = styled('div')(({ theme }) => ({
   padding: "2rem", display: "flex", flexWrap: "wrap",
   justifyContent: 'center', alignItems: 'center',
 }))
+
+export const LoadingDiv = styled('div')(({theme}) => ({
+ top: "40%",
+ left: "43%",
+  position: "absolute",
+  
+  zIndex: 10,
+}))  

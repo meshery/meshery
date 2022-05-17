@@ -108,7 +108,7 @@ make build-ui
 To start running Meshery locally:
 
 ```
-make run-fast
+make server
 ```
 
 > Now, Meshery will run on the default port `http://localhost:9081`.
@@ -130,3 +130,4 @@ make run-ui-dev
 All of the above steps would get the Meshery's development server running for you to work on in any IDE of your choice.
 
 {% include suggested-reading.html %}
+

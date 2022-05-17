@@ -861,7 +861,7 @@ class Navigator extends React.Component {
               return "";
             }
             return (
-              <React.Fragment key={idc}>
+              <div key={idc}>
                 <ListItem
                   button
                   key={idc}
@@ -878,7 +878,7 @@ class Navigator extends React.Component {
                   {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                 </ListItem>
                 {this.renderChildren(idname, childrenc, depth + 1)}
-              </React.Fragment>
+              </div>
             );
           })}
         </List>
@@ -897,6 +897,7 @@ class Navigator extends React.Component {
               return (
                 <React.Fragment key={idc}>
                   <ListItem
+                    data-cy={idc}
                     button
                     key={idc}
                     className={classNames(
@@ -1085,7 +1086,7 @@ class Navigator extends React.Component {
             return "";
           }
           return (
-            <React.Fragment key={childId}>
+            <div key={childId}>
               <ListItem
                 button={!!link}
                 dense
@@ -1104,7 +1105,7 @@ class Navigator extends React.Component {
                 <Link href={link
                   ? href
                   : ""}>
-                  <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
+                  <div data-cy={childId} className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
                     <Tooltip
                       title={childId}
                       placement="right"
@@ -1157,7 +1158,7 @@ class Navigator extends React.Component {
               <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679", opacity : "100%" }}>
                 {this.renderChildren(childId, children, 1)}
               </Collapse>
-            </React.Fragment>
+            </div>
           );
         })}
         {this.state.navigator && this.state.navigator.length
