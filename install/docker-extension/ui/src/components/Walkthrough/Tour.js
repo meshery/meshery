@@ -8,20 +8,20 @@ const TOUR_STEPS = [
     target: ".first-step",
     title: "Choose the Service Mesh that you would like to deploy",
     placement: "right-start",
-    content: <i>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</i>,
+    content: <i>Deploy any service mesh with a single click.</i>, 
     disableBeacon: true,
   },
   {
     target: ".second-step",
     title:"Import your docker compose apps",
     content:
-    <i>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</i>,
+    <i>Import your Docker Compose apps. Configure and deploy them to Kubernetes and any service mesh.</i>,
   },
   {
     target: ".third-step",
     title:"Open Meshery",
     placement: "top",
-    content: <i>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</i>
+    content: <i>Launch Meshery to  visualize and design your Docker Compose applications, run performance tests and much more.</i>
   },
 ];
 const INITIAL_STATE = {
@@ -102,7 +102,7 @@ const [tourState, dispatch] = useReducer(reducer, INITIAL_STATE);
             textAlign: "left"
           },
           buttonNext: {
-            backgroundColor: "#2496ED",
+            backgroundColor: "#367AF6",
             borderColor:"none",
             fontSize: "15px",
             padding:"10px"
