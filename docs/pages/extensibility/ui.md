@@ -49,6 +49,8 @@ function RJSFWrapperComponent(props) {
  ```
 Extract the props in the [RJSFForm Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91)
 
+_Extensibility documentation missing?_
+Submit an issue to request more documentation.
 
 ### Extension Points by File
 
