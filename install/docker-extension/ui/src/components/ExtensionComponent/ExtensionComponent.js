@@ -19,7 +19,6 @@ import Meshery from "../../img/SVGs/meshery";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
-import { LoadingComponent } from "../LoadingComponent/LoadingComponent";
 import { LoadComp } from "../LoadingComponent/LoadComp";
 import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
