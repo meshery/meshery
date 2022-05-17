@@ -12,6 +12,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var (
+	providerFlag string
+)
+
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Authenticate to a Meshery Server",
@@ -65,7 +69,14 @@ mesheryctl system login
 			return nil
 		}
 
-		tokenData, err := utils.InitiateLogin(mctlCfg)
+		var tokenData []byte
+		if providerFlag != "" {
+			var provider = providerFlag
+			tokenData, err = utils.InitiateLogin(mctlCfg, provider)
+		} else {
+			tokenData, err = utils.InitiateLogin(mctlCfg, "")
+		}
+
 		if err != nil {
 			log.Println("authentication failed:", err)
 			return nil
@@ -91,4 +102,8 @@ mesheryctl system login
 
 		return nil
 	},
+}
+
+func init() {
+	loginCmd.PersistentFlags().StringVarP(&providerFlag, "provider", "p", "", "login Meshery with specified provider")
 }
