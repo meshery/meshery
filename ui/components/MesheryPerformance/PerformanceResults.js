@@ -6,6 +6,8 @@ import {
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -234,8 +236,66 @@ function generateSelectedRows(results_selection, page, pageSize) {
   return rowsSelected;
 }
 
-function ResultChart({ result }) {
+function ResultChart({ result, handleTabChange, tabValue }) {
   if (!result) return <div />;
+
+  const row = result.runner_results;
+  const boardConfig = result.server_board_config;
+  const serverMetrics = result.server_metrics;
+  const startTime = new Date(row.StartTime);
+  const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
+
+  return (
+    <Paper
+      style={{ width : "100%",
+        maxWidth : "90vw",
+        padding : "0.5rem" }}
+    >
+      <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
+        <Tab label="Performance Chart" />
+        <Tab label="Node Details" />
+      </Tabs>
+
+      {
+        (tabValue == 0) ?
+          <div>
+            <div>
+              <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
+              <MesheryChart
+                rawdata={[result && result.runner_results ? result : {}]}
+                data={[result && result.runner_results ? result.runner_results : {}]}
+              />
+            </div>
+            {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
+              <div>
+                <GrafanaCustomCharts
+                  boardPanelConfigs={[boardConfig]}
+                  // @ts-ignore
+                  boardPanelData={[serverMetrics]}
+                  startDate={startTime}
+                  from={startTime.getTime().toString()}
+                  endDate={endTime}
+                  to={endTime.getTime().toString()}
+                  liveTail={false}
+                />
+              </div>
+            )}
+          </div>
+          : (tabValue == 1) ?
+            <div>
+              <Typography variant="h6" gutterBottom align="center">Node Details</Typography>
+              <NodeDetails result={row}/>
+            </div>
+            : <div />
+      }
+    </Paper>
+  );
+}
+
+function ResultNodeDetails({ result, handleTabChange, tabValue }){
+  console.log("results: ", result)
+  if (!result) return <div />
+  const chartData = result.runner_results;
 
   const row = result.runner_results;
   const boardConfig = result.server_board_config;
@@ -248,44 +308,43 @@ function ResultChart({ result }) {
         maxWidth : "90vw",
         padding : "0.5rem" }}
     >
-      <div>
-        <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
-        <MesheryChart
-          rawdata={[result && result.runner_results ? result : {}]}
-          data={[result && result.runner_results ? result.runner_results : {}]}
-        />
-      </div>
-      {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-        <div>
-          <GrafanaCustomCharts
-            boardPanelConfigs={[boardConfig]}
-            // @ts-ignore
-            boardPanelData={[serverMetrics]}
-            startDate={startTime}
-            from={startTime.getTime().toString()}
-            endDate={endTime}
-            to={endTime.getTime().toString()}
-            liveTail={false}
-          />
-        </div>
-      )}
-    </Paper>
-  );
-}
-
-function ResultNodeDetails({ result }){
-  if (!result) return <div />
-  const chartData = result.runner_results;
-  return (
-    <Paper
-      style={{ width : "100%",
-        maxWidth : "90vw",
-        padding : "0.5rem" }}
-    >
-      <div>
-        <Typography variant="h6" gutterBottom align="center">Node Details</Typography>
-        <NodeDetails result={chartData}/>
-      </div>
+      <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
+        <Tab label="Performance Chart" />
+        <Tab label="Node Details" />
+      </Tabs>
+      {
+        (tabValue == 1) ?
+          <div>
+            <Typography variant="h6" gutterBottom align="center">Node Details</Typography>
+            <NodeDetails result={chartData}/>
+          </div>
+          :
+          (tabValue == 0) ?
+            <div>
+              <div>
+                <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
+                <MesheryChart
+                  rawdata={[result && result.runner_results ? result : {}]}
+                  data={[result && result.runner_results ? result.runner_results : {}]}
+                />
+              </div>
+              {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
+                <div>
+                  <GrafanaCustomCharts
+                    boardPanelConfigs={[boardConfig]}
+                    // @ts-ignore
+                    boardPanelData={[serverMetrics]}
+                    startDate={startTime}
+                    from={startTime.getTime().toString()}
+                    endDate={endTime}
+                    to={endTime.getTime().toString()}
+                    liveTail={false}
+                  />
+                </div>
+              )}
+            </div>
+            : <div/>
+      }
     </Paper>
   )
 }
@@ -324,6 +383,7 @@ function MesheryResults({
   const [results, setResults] = useState([]);
   const [selectedRowChart, setSelectedRowChart] = useState();
   const [selectedRowNodeDetails, setSelectedRowNodeDetails] = useState();
+  const [tabValue, setTabValue] = useState(0);
 
   const searchTimeout = useRef();
 
@@ -405,8 +465,10 @@ function MesheryResults({
 
   const columns = generateColumnsForDisplay(sortOrder, (idx) => {
     setSelectedRowChart(results[idx])
+    setTabValue(0)
   }, (idx) => {
     setSelectedRowNodeDetails(results[idx])
+    setTabValue(1)
   });
 
   const options = {
@@ -489,6 +551,10 @@ function MesheryResults({
     },
   };
 
+  function handleTabChange(event, newValue) {
+    setTabValue(newValue);
+  }
+
   return (
     <NoSsr>
       <MUIDataTable
@@ -502,14 +568,24 @@ function MesheryResults({
       <GenericModal
         open={!!selectedRowChart}
         // @ts-ignore
-        Content={<ResultChart result={selectedRowChart} />}
+        Content={
+          <ResultChart
+            result={selectedRowChart}
+            handleTabChange={handleTabChange}
+            tabValue={tabValue}
+          />}
         handleClose={() => setSelectedRowChart(undefined)}
       />
 
       <GenericModal
         open={!!selectedRowNodeDetails}
         // @ts-ignore
-        Content={<ResultNodeDetails result={selectedRowNodeDetails} />}
+        Content={
+          <ResultNodeDetails
+            result={selectedRowNodeDetails}
+            handleTabChange={handleTabChange}
+            tabValue={tabValue}
+          />}
         handleClose={() => setSelectedRowNodeDetails(undefined)}
       />
 
