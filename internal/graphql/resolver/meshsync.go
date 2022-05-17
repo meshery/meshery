@@ -14,9 +14,7 @@ import (
 )
 
 //Global singleton instance of k8s connection tracker to map Each K8sContext to a unique Broker URL
-var connectionTrackerSingleton = &model.K8sConnectionTracker{
-	ContextToBroker: make(map[string]string),
-}
+var connectionTrackerSingleton = model.NewK8sConnctionTracker()
 var (
 	MeshSyncSubscriptionError = model.Error{
 		Description: "Failed to get MeshSync data",

@@ -158,9 +158,7 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	var broker *operatorv1alpha1.Broker
 	var endpoints []string
 	if ct != nil {
-		for _, e := range ct.ContextToBroker {
-			endpoints = append(endpoints, e)
-		}
+		endpoints = ct.ListBrokerEndpoints()
 	}
 	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
@@ -229,20 +227,13 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 		if conn == nil {
 			return
 		}
-		c := make(map[string]string)
 		available := make(map[string]bool)
 		for _, server := range conn.ConnectedEndpoints() {
 			available[server] = true
 		}
-		for id, url := range ct.ContextToBroker {
-			if available[url] {
-				c[id] = url
-			}
-		}
-		ct.ContextToBroker = c
+		ct.ResetEndpoints(available)
 	}()
 	conn.DeepCopyInto(brokerConn)
-
 	err = brokerConn.SubscribeWithChannel(MeshsyncSubject, BrokerQueue, datach)
 	if err != nil {
 		return endpoint, ErrSubscribeChannel(err)

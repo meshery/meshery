@@ -8,7 +8,7 @@ abstract: 'Meshery architecture is extensible. Meshery provides several extensio
 ---
 ## Guiding Principles of Adapter Design
 
-Adapters allow Meshery to interface with the different service meshes. Review the list of all available [service mesh adapters](service-meshes/adapters). See the [Meshery Architecture](architecture) diagrams for visuals on how adapters relate to other Meshery components.
+Adapters allow Meshery to interface with the different service meshes. Review the list of all available [service mesh adapters](../concepts/architecture/service-meshes/adapters.md). See the [Meshery Architecture](../concepts/architecture/architecture.md) diagrams for visuals on how adapters relate to other Meshery components.
 
 Meshery upholds the following guiding principles for adapter design:
 

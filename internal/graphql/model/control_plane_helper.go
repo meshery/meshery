@@ -63,7 +63,6 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid st
 
 	return controlplanelist, nil
 }
-
 func haveCommonElements(a []string, b map[string]bool) bool {
 	for _, ae := range a {
 		if b[ae] {
