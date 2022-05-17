@@ -6,6 +6,8 @@ import {
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -234,7 +236,7 @@ function generateSelectedRows(results_selection, page, pageSize) {
   return rowsSelected;
 }
 
-function ResultChart({ result, switchView }) {
+function ResultChart({ result, switchView, handleTabChange, tabValue }) {
   if (!result) return <div />;
 
   const row = result.runner_results;
@@ -242,52 +244,85 @@ function ResultChart({ result, switchView }) {
   const serverMetrics = result.server_metrics;
   const startTime = new Date(row.StartTime);
   const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
+  console.log("inside resultnode..")
+  console.log("tabValue: ", tabValue)
   return (
     <Paper
       style={{ width : "100%",
         maxWidth : "90vw",
         padding : "0.5rem" }}
     >
-      <div>
-        <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
-        <MesheryChart
-          rawdata={[result && result.runner_results ? result : {}]}
-          data={[result && result.runner_results ? result.runner_results : {}]}
-          switchView={switchView}
-        />
-      </div>
-      {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-        <div>
-          <GrafanaCustomCharts
-            boardPanelConfigs={[boardConfig]}
-            // @ts-ignore
-            boardPanelData={[serverMetrics]}
-            startDate={startTime}
-            from={startTime.getTime().toString()}
-            endDate={endTime}
-            to={endTime.getTime().toString()}
-            liveTail={false}
-          />
-        </div>
-      )}
+      <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
+        <Tab label="Performance Chart" />
+        <Tab label="Node Details" />
+      </Tabs>
+
+      {
+        (tabValue == 0) ?
+          <div>
+            <div>
+              <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
+              <MesheryChart
+                rawdata={[result && result.runner_results ? result : {}]}
+                data={[result && result.runner_results ? result.runner_results : {}]}
+                switchView={switchView}
+              />
+            </div>
+            {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
+              <div>
+                <GrafanaCustomCharts
+                  boardPanelConfigs={[boardConfig]}
+                  // @ts-ignore
+                  boardPanelData={[serverMetrics]}
+                  startDate={startTime}
+                  from={startTime.getTime().toString()}
+                  endDate={endTime}
+                  to={endTime.getTime().toString()}
+                  liveTail={false}
+                />
+              </div>
+            )}
+          </div>
+          : (tabValue == 1) ?
+            <div>
+              <Typography variant="h6" gutterBottom align="center">Node Details</Typography>
+              <NodeDetails result={row}/>
+              <div style={{ margin : "2rem auto 0.5rem", width : "fit-content", cursor : "pointer" }} onClick={() => switchView("nodeTable")}><i>Click here for <b>Performance Graph</b></i></div>
+            </div>
+            : <div />
+      }
     </Paper>
   );
 }
 
-function ResultNodeDetails({ result, switchView }){
+function ResultNodeDetails({ result, switchView, handleTabChange, tabValue }){
+  console.log("results: ", result)
   if (!result) return <div />
   const chartData = result.runner_results;
+  console.log("inside resultnode..")
+  console.log("tabValue: ", tabValue)
   return (
     <Paper
       style={{ width : "100%",
         maxWidth : "90vw",
         padding : "0.5rem" }}
     >
-      <div>
-        <Typography variant="h6" gutterBottom align="center">Node Details</Typography>
-        <NodeDetails result={chartData}/>
-        <div style={{ margin : "2rem auto 0.5rem", width : "fit-content", cursor : "pointer" }} onClick={() => switchView("nodeTable")}><i>Click here for <b>Performance Graph</b></i></div>
-      </div>
+      <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
+        <Tab label="Performance Chart" />
+        <Tab label="Node Details" />
+      </Tabs>
+      {
+        (tabValue == 1) ?
+          <div>
+            <Typography variant="h6" gutterBottom align="center">Node Details</Typography>
+            <NodeDetails result={chartData}/>
+            <div style={{ margin : "2rem auto 0.5rem", width : "fit-content", cursor : "pointer" }} onClick={() => switchView("nodeTable")}><i>Click here for <b>Performance Graph</b></i></div>
+          </div>
+          :
+          <div/>
+      }
+
+
     </Paper>
   )
 }
@@ -327,6 +362,7 @@ function MesheryResults({
   const [selectedRowChart, setSelectedRowChart] = useState();
   const [selectedRowNodeDetails, setSelectedRowNodeDetails] = useState();
   const [rowIdx, setRowIdx] = useState();
+  const [tabValue, setTabValue] = useState(0);
 
   const searchTimeout = useRef();
 
@@ -492,6 +528,10 @@ function MesheryResults({
     },
   };
 
+  function handleTabChange(event, newValue) {
+    setTabValue(newValue);
+  }
+
   function switchView(sender){
     if (sender == "graph"){
       setSelectedRowChart(null)
@@ -515,14 +555,24 @@ function MesheryResults({
       <GenericModal
         open={!!selectedRowChart}
         // @ts-ignore
-        Content={<ResultChart result={selectedRowChart} switchView={switchView} />}
+        Content={
+          <ResultChart result={selectedRowChart}
+            switchView={switchView}
+            handleTabChange={handleTabChange}
+            tabValue={tabValue}
+          />}
         handleClose={() => setSelectedRowChart(undefined)}
       />
 
       <GenericModal
         open={!!selectedRowNodeDetails}
         // @ts-ignore
-        Content={<ResultNodeDetails result={selectedRowNodeDetails} switchView={switchView} />}
+        Content={
+          <ResultNodeDetails result={selectedRowNodeDetails}
+            switchView={switchView}
+            handleTabChange={handleTabChange}
+            tabValue={tabValue}
+          />}
         handleClose={() => setSelectedRowNodeDetails(undefined)}
       />
 
