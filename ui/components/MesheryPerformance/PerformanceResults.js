@@ -251,7 +251,15 @@ function ResultChart({ result, handleTabChange, tabValue }) {
         maxWidth : "90vw",
         padding : "0.5rem" }}
     >
-      <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        TabIndicatorProps={{
+          style : {
+            backgroundColor : "#607d8b"
+          }
+        }}
+      >
         <Tab label="Performance Chart" />
         <Tab label="Node Details" />
       </Tabs>
@@ -308,7 +316,15 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }){
         maxWidth : "90vw",
         padding : "0.5rem" }}
     >
-      <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        TabIndicatorProps={{
+          style : {
+            backgroundColor : "#607d8b"
+          }
+        }}
+      >
         <Tab label="Performance Chart" />
         <Tab label="Node Details" />
       </Tabs>
