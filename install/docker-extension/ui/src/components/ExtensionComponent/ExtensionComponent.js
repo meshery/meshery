@@ -19,7 +19,9 @@ import Meshery from "../../img/SVGs/meshery";
 import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
-import { StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
+import { LoadingComponent } from "../LoadingComponent/LoadingComponent";
+import { LoadComp } from "../LoadingComponent/LoadComp";
+import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 import axios from "axios";
 
@@ -64,6 +66,7 @@ const ExtensionsComponent = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userName, setUserName] = useState("")
   const [token, setToken] = useState()
+  const [changing, isChanging] = useState(false)
 
 
   useEffect(() => {
@@ -101,6 +104,8 @@ const ExtensionsComponent = () => {
     let target = e.target.closest("div");
     target.style.transition = "all .2s";
     target.style.transform = "scale(0.8)";
+    isChanging(true);
+    setIsHovered(true);
     // fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
     //   console.log(res)
     //   window.ddClient.host.openExternal("http://localhost:7877/api/user/token?token=" + res)
@@ -220,9 +225,12 @@ const ExtensionsComponent = () => {
   return (
     <DockerMuiThemeProvider>
       <CssBaseline />
-      {/* <Tour /> */}
-      <ComponentWrapper sx={{}}>
-
+      {changing && <LoadingDiv sx={{opacity: "1"}}>
+        <LoadComp />
+      </LoadingDiv>  }
+      <ComponentWrapper sx={{opacity: changing ? "0.3" : "1"}}>
+     {isLoggedIn && <Tour />}
+  
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
         <Typography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</Typography>
 
@@ -259,7 +267,6 @@ const ExtensionsComponent = () => {
             </AccountDiv>
           </ExtensionWrapper>
 
-
           {isLoggedIn && <ExtensionWrapper className="second-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
@@ -273,6 +280,8 @@ const ExtensionsComponent = () => {
               </div>
             </AccountDiv>
           </ExtensionWrapper>}
+
+        
 
           {!!isLoggedIn && <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
             <div>
