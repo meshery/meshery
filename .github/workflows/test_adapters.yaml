@@ -5,13 +5,13 @@ on:
   workflow_call:
     inputs:
       expected_resources:
-        required: false # for now
+        required: true
         type: string
       expected_resources_types:
-        required: false # for now
+        required: true
         type: string
       expected_resources_namespaces:
-        required: false # for now
+        required: true
         type: string
       service_url:
         required: true
@@ -195,11 +195,11 @@ jobs:
             resourcestatus=$(kubectl get ${types[i]} -n ${ns[i]} | grep ${resources[i]} | tr -s ' ' | cut -d " " -f 3)
             if [[ ("${types[i]}" = "pod" && "$resourcestatus" = "Running") || ("${types[i]}" != "pod" && "$resourcestarted" != "") ]];then
               itran=1
-              echo "Resource ${resources[i]} started in namespace ${ns[i]}"
+              echo "${types[i]} ${resources[i]} started in namespace ${ns[i]}"
               echo $(jq '.resources_status."'${resources[i]}'" |=  "Running"' data.json) > data.json 
             else
               itdidnotrun=1
-              echo "Resource ${resources[i]} did not start in namespace ${ns[i]} "
+              echo "${types[i]} ${resources[i]} did not start in namespace ${ns[i]} "
               echo $(jq '.resources_status."'${resources[i]}'" |=  "Not Running"' data.json) > data.json 
               exitstatus=1
             fi
