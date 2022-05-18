@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'meshery/meshery'
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         token: ${{ secrets.GH_ACCESS_TOKEN }}
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7.1
+        ruby-version: 2.7.5
         bundler-cache: true
 
     - name: graphql-docs

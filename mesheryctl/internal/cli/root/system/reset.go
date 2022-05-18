@@ -76,6 +76,28 @@ func resetMesheryConfig() error {
 	log.Printf("Version: %s", currCtx.GetVersion())
 	log.Printf("Platform: %s\n", currCtx.GetPlatform())
 
+	// Reset the config file to the default context
+	defaultContext := utils.TemplateContext
+	defaultContext.Platform = currCtx.Platform
+	err = config.AddContextToConfig(mctlCfg.GetCurrentContextName(), defaultContext, utils.DefaultConfigPath, true, true)
+	if err != nil {
+		return ErrSettingDefaultContextToConfig(err)
+	}
+
+	if err = fetchManifests(mctlCfg); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Fetches manifests for meshery components based on the current context
+func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		return ErrRetrievingCurrentContext(err)
+	}
+
 	switch currCtx.GetPlatform() {
 	case "docker":
 
@@ -115,5 +137,6 @@ func resetMesheryConfig() error {
 	default:
 		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.Platform, utils.MesheryFolder)
 	}
+
 	return nil
 }

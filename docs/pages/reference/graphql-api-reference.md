@@ -114,6 +114,20 @@ Query Data Plane information for a Service Mesh (or all) in your cluster.
 | ---- | ---- | ----------- |
 | <a id="querygetdataplanesfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
 
+### `Query.getKubectlDescribe`
+
+Query for getting kubectl describe details with meshkit.
+
+###### **Returns** [`KctlDescribeDetails!`](#kctldescribedetails).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetkubectldescribekind"></a>`kind` | [`String!`](#string) |  |
+| <a id="querygetkubectldescribename"></a>`name` | [`String!`](#string) |  |
+| <a id="querygetkubectldescribenamespace"></a>`namespace` | [`String!`](#string) |  |
+
 ### `Query.getMeshsyncStatus`
 
 Check the Meshsync Status.
@@ -155,6 +169,48 @@ Query for fetching all results for profile ID.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="querygetperformanceprofilesselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
+
+### `Query.getScopes`
+
+Query for getting scopes.
+
+###### **Returns** [`[OAMCapability]`](#oamcapability).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetscopesid"></a>`id` | [`ID`](#id) |  |
+| <a id="querygetscopesname"></a>`name` | [`String`](#string) |  |
+| <a id="querygetscopestrim"></a>`trim` | [`Boolean`](#boolean) |  |
+
+### `Query.getTraits`
+
+Query for getting traits.
+
+###### **Returns** [`[OAMCapability]`](#oamcapability).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygettraitsid"></a>`id` | [`ID`](#id) |  |
+| <a id="querygettraitsname"></a>`name` | [`String`](#string) |  |
+| <a id="querygettraitstrim"></a>`trim` | [`Boolean`](#boolean) |  |
+
+### `Query.getWorkloads`
+
+Query for getting workloads.
+
+###### **Returns** [`[OAMCapability]`](#oamcapability).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetworkloadsid"></a>`id` | [`ID`](#id) |  |
+| <a id="querygetworkloadsname"></a>`name` | [`String`](#string) |  |
+| <a id="querygetworkloadstrim"></a>`trim` | [`Boolean`](#boolean) |  |
 
 ### `Query.resyncCluster`
 
@@ -395,6 +451,14 @@ Data Plane for a particular Mesh.
 | <a id="errorcode"></a>`code` | [`String!`](#string) | Error Code. |
 | <a id="errordescription"></a>`description` | [`String!`](#string) | Error Details. |
 
+### `KctlDescribeDetails`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="kctldescribedetailsdescribe"></a>`describe` | [`String`](#string) |  |
+
 ### `MesheryResult`
 
 #### **Fields**
@@ -423,6 +487,19 @@ Type to define a k8s Namespace.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="namespacenamespace"></a>`namespace` | [`String!`](#string) | Namespace Name. |
+
+### `OAMCapability`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="oamcapabilityhost"></a>`host` | [`String`](#string) |  |
+| <a id="oamcapabilityid"></a>`id` | [`String`](#string) |  |
+| <a id="oamcapabilitymetadata"></a>`metadata` | [`Any`](#any) |  |
+| <a id="oamcapabilityoam_definition"></a>`oam_definition` | [`Any`](#any) |  |
+| <a id="oamcapabilityoam_ref_schema"></a>`oam_ref_schema` | [`String`](#string) |  |
+| <a id="oamcapabilityrestricted"></a>`restricted` | [`Boolean`](#boolean) |  |
 
 ### `OperatorControllerStatus`
 
@@ -551,6 +628,7 @@ Service Mesh Types.
 | ----- | ----------- |
 | <a id="meshtypeall_mesh"></a>`ALL_MESH` | All meshes that Meshery supports. |
 | <a id="meshtypeapp_mesh"></a>`APP_MESH` | AWS App Mesh. |
+| <a id="meshtypecilium_service_mesh"></a>`CILIUM_SERVICE_MESH` | Cilium Service Mesh. |
 | <a id="meshtypecitrix_service_mesh"></a>`CITRIX_SERVICE_MESH` | Citrix Service Mesh. |
 | <a id="meshtypeconsul"></a>`CONSUL` | Consul by HashiCorp. |
 | <a id="meshtypeinvalid_mesh"></a>`INVALID_MESH` | Invalid Mesh. |

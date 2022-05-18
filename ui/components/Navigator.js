@@ -12,6 +12,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import NoSsr from "@material-ui/core/NoSsr";
 import RemoveIcon from "@material-ui/icons/Remove";
 import GitHubIcon from "@material-ui/icons/GitHub";
+import Zoom from '@material-ui/core/Zoom';
 import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
 // import MailIcon from "@material-ui/icons/Mail";
 import Link from "next/link";
@@ -24,6 +25,10 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
+import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
+import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
+import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
+import ConformanceHover from '../public/static/img/drawer-icons/conformance_hover_svg';
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
 import DiscussIcon from '../public/static/img/drawer-icons/discuss_forum_svg.js';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
@@ -291,6 +296,7 @@ const categories = [
   {
     id : "Lifecycle",
     icon : <LifecycleIcon style={drawerIconsStyle} />,
+    hovericon : <LifecycleHover style={drawerIconsStyle} />,
     href : "/management",
     title : "Lifecycle",
     show : true,
@@ -386,7 +392,7 @@ const categories = [
   {
     id : "Configuration",
     icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
-    disabled : true,
+    hovericon : <ConfigurationHover style={{ transform : "scale(1.3)", ...drawerIconsStyle }}/>,
     href : "#",
     title : "Configuration",
     show : true,
@@ -423,8 +429,8 @@ const categories = [
   },
   {
     id : "Performance",
-    icon :
-      <PerformanceIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
+    icon : <PerformanceIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
+    hovericon : <PerformanceHover  style={drawerIconsStyle}/>,
     href : "/performance",
     title : "Performance",
     show : true,
@@ -451,6 +457,7 @@ const categories = [
   {
     id : "Conformance",
     icon : <ConformanceIcon style={drawerIconsStyle} />,
+    hovericon : <ConformanceHover style={drawerIconsStyle} />,
     href : "/smi_results", //Temp
     title : "Conformance",
     show : true,
@@ -854,7 +861,7 @@ class Navigator extends React.Component {
               return "";
             }
             return (
-              <React.Fragment key={idc}>
+              <div key={idc}>
                 <ListItem
                   button
                   key={idc}
@@ -871,7 +878,7 @@ class Navigator extends React.Component {
                   {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                 </ListItem>
                 {this.renderChildren(idname, childrenc, depth + 1)}
-              </React.Fragment>
+              </div>
             );
           })}
         </List>
@@ -890,6 +897,7 @@ class Navigator extends React.Component {
               return (
                 <React.Fragment key={idc}>
                   <ListItem
+                    data-cy={idc}
                     button
                     key={idc}
                     className={classNames(
@@ -1072,13 +1080,13 @@ class Navigator extends React.Component {
     const Menu = (
       <List disablePadding className={classes.hideScrollbar}>
         {categories.map(({
-          id : childId, title, icon, href, show, link, children
+          id : childId, title, icon, href, show, link, children, hovericon
         }) => {
           if (typeof show !== "undefined" && !show) {
             return "";
           }
           return (
-            <React.Fragment key={childId}>
+            <div key={childId}>
               <ListItem
                 button={!!link}
                 dense
@@ -1091,26 +1099,38 @@ class Navigator extends React.Component {
                   path === href && classes.itemActiveItem
                 )}
                 onClick={() => this.toggleItemCollapse(childId)}
-
+                onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
+                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }) : null}
               >
                 <Link href={link
                   ? href
                   : ""}>
-                  <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
+                  <div data-cy={childId} className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
                     <Tooltip
                       title={childId}
                       placement="right"
                       disableFocusListener={!isDrawerCollapsed}
-                      disableHoverListener={!isDrawerCollapsed}
+                      disableHoverListener={true}
                       disableTouchListener={!isDrawerCollapsed}
+                      TransitionComponent={Zoom}
+                      arrow
                     >
 
                       { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
-                        <FontAwesomeIcon
-                          icon= {faCaretDown}
-                          onClick={() => this.toggleItemCollapse(childId)}
-                          className={classNames({ [classes.collapsed] : this.state.openItems.includes(childId) })} style={{ marginLeft : "40%", marginBottom : "0.4rem" }}
-                        /> :
+                        <Tooltip
+                          title={title}
+                          placement="right"
+                          TransitionComponent={Zoom}
+                          arrow
+                        >
+                          <ListItemIcon
+                            onClick={() => this.toggleItemCollapse(childId)}
+
+                            style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
+                            {hovericon}
+                          </ListItemIcon>
+                        </Tooltip>
+                        :
                         <ListItemIcon className={classes.listIcon}>
                           {icon}
                         </ListItemIcon>
@@ -1138,7 +1158,7 @@ class Navigator extends React.Component {
               <Collapse in={this.state.openItems.includes(childId)} style={{ backgroundColor : "#396679", opacity : "100%" }}>
                 {this.renderChildren(childId, children, 1)}
               </Collapse>
-            </React.Fragment>
+            </div>
           );
         })}
         {this.state.navigator && this.state.navigator.length

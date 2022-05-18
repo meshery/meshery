@@ -247,7 +247,7 @@ func CreateTempAuthServer(fn func(http.ResponseWriter, *http.Request)) (*http.Se
 }
 
 // InitiateLogin initates the login process
-func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
+func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, error) {
 	// Get the providers info
 	providers, err := GetProviderInfo(mctlCfg)
 	if err != nil {
@@ -255,7 +255,18 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
 	}
 
 	// Let the user select a provider
-	provider := selectProviderPrompt(providers)
+	var provider Provider
+	if option != "" {
+		// If option is given by user
+		provider, err = chooseDirectProvider(providers, option)
+	} else {
+		// Trigger prompt
+		provider = selectProviderPrompt(providers)
+	}
+
+	if err != nil {
+		return nil, err
+	}
 
 	var token string
 
@@ -370,6 +381,26 @@ func selectProviderPrompt(provs map[string]Provider) Provider {
 
 		return provArray[i]
 	}
+}
+
+func chooseDirectProvider(provs map[string]Provider, option string) (Provider, error) {
+	provArray := []Provider{}
+	provNames := []string{}
+
+	for _, prov := range provs {
+		provArray = append(provArray, prov)
+	}
+
+	for _, prov := range provArray {
+		provNames = append(provNames, prov.ProviderName)
+	}
+
+	for i := range provNames {
+		if strings.EqualFold(provNames[i], option) {
+			return provArray[i], nil
+		}
+	}
+	return provArray[1], fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {

@@ -3,17 +3,13 @@ on:
   push:
     branches:
       - "master"
-    paths-ignore:
-      - "docs/**"
-      - "ui/**"
-      - "provider-ui/**"
-      - ".github/**"
-      - "install/**"
+    paths:
+      - "**.go"
   pull_request:
     branches:
       - "master"
-    paths-ignore:
-      - "docs/**"
+    paths:
+      - "**.go"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -48,7 +44,7 @@ jobs:
     name: Integration tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
@@ -70,3 +66,4 @@ jobs:
           files: ./coverage.txt
           flags: gointegrationtests
           fail_ci_if_error: true
+

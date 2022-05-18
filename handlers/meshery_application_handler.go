@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 )
 
 // MesheryApplicationRequestBody refers to the type of request body that
@@ -120,6 +121,18 @@ func (h *Handler) handleApplicationPOST(
 		}
 
 		mesheryApplication := parsedBody.ApplicationData
+
+		// check whether the uploaded file is a docker compose file
+		if kompose.IsManifestADockerCompose([]byte(mesheryApplication.ApplicationFile)) {
+			res, err := kompose.Convert(mesheryApplication.ApplicationFile) // convert the docker compose file into kubernetes manifest
+			if err != nil {
+				obj := "convert"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				return
+			}
+			mesheryApplication.ApplicationFile = res
+		}
 
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryApplication(token, mesheryApplication)

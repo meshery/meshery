@@ -89,7 +89,7 @@ function TooltipIcon({ children, onClick, title }) {
 
 function YAMLEditor({ application, onClose, onSubmit }) {
   const classes = useStyles();
-  const [yaml, setYaml] = useState("");
+  const [yaml, setYaml] = useState(application.application_file);
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -319,7 +319,7 @@ function MesheryApplications({
         {
           credentials : "include",
           method : "POST",
-          body : JSON.stringify({ application_data : { id, application_file : data }, save : true }),
+          body : JSON.stringify({ application_data : { id, name, application_file : data }, save : true }),
         },
         () => {
           console.log("ApplicationFile API", `/api/application`);

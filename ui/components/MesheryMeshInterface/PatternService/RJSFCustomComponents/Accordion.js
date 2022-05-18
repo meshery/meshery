@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import MuiAccordion from "@material-ui/core/Accordion";
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
@@ -19,50 +19,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-
-const Accordion = withStyles({
-  root : {
-    border : '1px solid rgba(0, 0, 0, .125)',
-    boxShadow : 'none',
-    '&:not(:last-child)' : {
-      borderBottom : 0,
-    },
-    '&:before' : {
-      display : 'none',
-    },
-    '&$expanded' : {
-      margin : 'auto',
-    },
-  },
-  expanded : {},
-})(MuiAccordion);
-
-const AccordionSummary = withStyles({
-  root : {
-    backgroundColor : 'rgba(0, 0, 0, .03)',
-    borderBottom : '1px solid rgba(0, 0, 0, .125)',
-    marginBottom : -1,
-    maxHeight : "1.5rem",
-    '&$expanded' : {
-      minHeight : 56,
-    },
-  },
-  content : {
-    justifyContent : "space-between",
-    '&$expanded' : {
-      margin : '12px 0',
-      justifyContent : "space-between",
-    },
-  },
-  expanded : {},
-})(MuiAccordionSummary);
-
-const AccordionDetails = withStyles((theme) => ({
-  root : {
-    padding : theme.spacing(2),
-  },
-}))(MuiAccordionDetails);
-
 export default function SimpleAccordion(props) {
   const classes = useStyles();
   const accordionDetailsRef = React.useRef(null);
@@ -80,8 +36,8 @@ export default function SimpleAccordion(props) {
 
   return (
     <div className={classes.accordionRoot}>
-      <Accordion defaultExpanded elevation={0}>
-        <AccordionSummary
+      <MuiAccordion defaultExpanded elevation={0}>
+        <MuiAccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
@@ -103,10 +59,10 @@ export default function SimpleAccordion(props) {
               <DeleteIcon />
             </IconButton>
           )}
-        </AccordionSummary>
-        <AccordionDetails ref={accordionDetailsRef} >{props.children}</AccordionDetails>
+        </MuiAccordionSummary>
+        <MuiAccordionDetails ref={accordionDetailsRef} >{props.children}</MuiAccordionDetails>
 
-      </Accordion>
+      </MuiAccordion>
     </div>
   );
 }

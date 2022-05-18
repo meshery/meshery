@@ -26,6 +26,7 @@ var (
 	controlPlaneNamespace = map[MeshType]string{
 		MeshTypeIstio:              "istio-system",
 		MeshTypeLinkerd:            "linkerd-system",
+		MeshTypeCiliumServiceMesh:  "kube-system",
 		MeshTypeConsul:             "consul-system",
 		MeshTypeOctarine:           "octarine-system",
 		MeshTypeTraefikMesh:        "traefik-system",
@@ -43,6 +44,12 @@ var (
 		"jaeger-collector": "jaeger-collector-http",
 		"kiali":            "http",
 		"zipkin":           "http-query",
+	}
+)
+var (
+	//TODO: Add the image orgs of other control plane pods. This change is backwards compatible and wont break anything
+	controlPlaneImageOrgs = map[MeshType][]string{
+		MeshTypeCiliumServiceMesh: {"cilium"},
 	}
 )
 
@@ -105,6 +112,47 @@ func persistData(msg broker.Message,
 	case broker.SMI:
 		log.Info("Received SMI Result")
 	}
+}
+
+func PersistClusterName(
+	ctx context.Context,
+	log logger.Handler,
+	handler *database.Handler,
+	provider models.Provider,
+	meshsyncCh chan struct{},
+) {
+	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	h := &handlers.Handler{}
+
+	clusterConfig, err := h.GetCurrentContext(tokenString, provider)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if clusterConfig == nil {
+		return
+	}
+
+	clusterName := clusterConfig.Cluster["name"].(string)
+	clusterID := clusterConfig.KubernetesServerID.String()
+	object := meshsyncmodel.Object{
+		Kind: "Cluster",
+		ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
+			Name:      clusterName,
+			ClusterID: clusterID,
+		},
+		ClusterID: clusterID,
+	}
+
+	// persist the object
+	log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
+	err = recordMeshSyncData(broker.Add, handler, &object)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	meshsyncCh <- struct{}{}
 }
 
 func applyYaml(client *mesherykube.Client, delete bool, file string) error {
@@ -249,4 +297,59 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 	}
 
 	return overrideValues
+}
+
+//K8sConnectionTracker keeps track of BrokerURLs per kubernetes context
+type K8sConnectionTracker struct {
+	mx              sync.Mutex
+	contextToBroker map[string]string //ContextID -> BrokerURL
+}
+
+func NewK8sConnctionTracker() *K8sConnectionTracker {
+	return &K8sConnectionTracker{
+		contextToBroker: make(map[string]string),
+	}
+}
+func (k *K8sConnectionTracker) Set(id string, url string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	k.contextToBroker[id] = url
+}
+
+//Takes a set of endpoints and discard the current endpoint if its not present in the set
+func (k *K8sConnectionTracker) ResetEndpoints(available map[string]bool) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	c := make(map[string]string)
+	for id, url := range k.contextToBroker {
+		if available[url] {
+			c[id] = url
+		}
+	}
+	k.contextToBroker = c
+}
+func (k *K8sConnectionTracker) ListBrokerEndpoints() (a []string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	for _, v := range k.contextToBroker {
+		a = append(a, v)
+	}
+	return
+}
+func (k *K8sConnectionTracker) Get(id string) (url string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	url = k.contextToBroker[id]
+	return
+}
+
+// Takes the meshkit Logger and logs a comma separated list of currently tracked Broker Endpoints
+func (k *K8sConnectionTracker) Log(l logger.Handler) {
+	var e = "Connected broker endpoints : "
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	for _, v := range k.contextToBroker {
+		e += v + ", "
+	}
+	l.Info(strings.TrimSuffix(e, ", "))
 }

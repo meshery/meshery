@@ -1,6 +1,6 @@
 # meshery-operator
 
-![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.6.0](https://img.shields.io/badge/AppVersion-0.6.0-informational?style=flat-square)
+![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Meshery Operator chart.
 
@@ -8,28 +8,29 @@ Meshery Operator chart.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Layer5 Authors | community@layer5.io |  |
-| aisuko | urakiny@gmail.com |  |
-| leecalcote | leecalcote@gmail.com |  |
+| Layer5 Authors | <community@layer5.io> |  |
+| aisuko | <urakiny@gmail.com> |  |
+| leecalcote | <leecalcote@gmail.com> |  |
 
 ## Requirements
 
 | Repository | Name | Version |
 |------------|------|---------|
-|  | meshery | 2.1.2 |
-|  | meshery-app-mesh | 2.1.2 |
-|  | meshery-broker | 0.1.0 |
-|  | meshery-cilium | 0.1.0 |
-|  | meshery-consul | 2.1.2 |
-|  | meshery-cpx | 2.1.2 |
-|  | meshery-istio | 2.1.2 |
-|  | meshery-kuma | 2.1.2 |
-|  | meshery-linkerd | 2.1.2 |
-|  | meshery-meshsync | 0.1.0 |
-|  | meshery-nginx-sm | 2.1.2 |
-|  | meshery-nsm | 2.1.2 |
-|  | meshery-osm | 2.1.2 |
-|  | meshery-traefik-mesh | 2.1.2 |
+|  | meshery | 0.5.0 |
+|  | meshery-app-mesh | 0.5.0 |
+|  | meshery-broker | 0.5.0 |
+|  | meshery-cilium | 0.5.0 |
+|  | meshery-consul | 0.5.0 |
+|  | meshery-cpx | 0.5.0 |
+|  | meshery-istio | 0.5.0 |
+|  | meshery-kuma | 0.5.0 |
+|  | meshery-linkerd | 0.5.0 |
+|  | meshery-meshsync | 0.5.0 |
+|  | meshery-nginx-sm | 0.5.0 |
+|  | meshery-nsm | 0.5.0 |
+|  | meshery-osm | 0.5.0 |
+|  | meshery-perf | 0.5.0 |
+|  | meshery-traefik-mesh | 0.5.0 |
 
 ## Values
 
@@ -38,7 +39,7 @@ Meshery Operator chart.
 | affinity | object | `{}` |  |
 | annotations | object | `{}` |  |
 | env | object | `{}` |  |
-| fullnameOverride | string | `""` |  |
+| fullnameOverride | string | `"meshery-operator"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |
@@ -52,7 +53,9 @@ Meshery Operator chart.
 | kubeRbac.image.pullPolicy | string | `"IfNotPresent"` |  |
 | kubeRbac.image.repository | string | `"gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0"` |  |
 | kubeRbac.name | string | `"kube-rbac-proxy"` |  |
-| meshery-app-mesh | object | `{"enabled":false,"fullnameOverride":"meshery-app-mesh","serviceAccountNameOverride":"meshery-server"}` |  If need to use a different service accounts for the adapters, modify the serviceAccountNameOverride for the corresponding adapters here, or set the serviceAccountNameOverride to empty while setting the serviceAccount information in the sub-chart accordingly |
+| meshery-app-mesh.enabled | bool | `false` |  |
+| meshery-app-mesh.fullnameOverride | string | `"meshery-app-mesh"` |  |
+| meshery-app-mesh.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-broker.enabled | bool | `true` |  |
 | meshery-broker.fullnameOverride | string | `"meshery-broker"` |  |
 | meshery-broker.serviceAccountNameOverride | string | `"meshery-server"` |  |
@@ -85,6 +88,9 @@ Meshery Operator chart.
 | meshery-osm.enabled | bool | `true` |  |
 | meshery-osm.fullnameOverride | string | `"meshery-osm"` |  |
 | meshery-osm.serviceAccountNameOverride | string | `"meshery-server"` |  |
+| meshery-perf.enabled | bool | `false` |  |
+| meshery-perf.fullnameOverride | string | `"meshery-perf"` |  |
+| meshery-perf.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-traefik-mesh.enabled | bool | `false` |  |
 | meshery-traefik-mesh.fullnameOverride | string | `"meshery-traefik-mesh"` |  |
 | meshery-traefik-mesh.serviceAccountNameOverride | string | `"meshery-server"` |  |
@@ -109,7 +115,7 @@ Meshery Operator chart.
 | service.port | int | `10000` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | string | `"create"` |  |
-| serviceAccount.name | string | `"meshery-operator"` |  If not set and create is false, a name is generated using the fullname template |
+| serviceAccount.name | string | `"meshery-operator"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 
