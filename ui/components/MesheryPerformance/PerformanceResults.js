@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useEffect, useState, useRef } from "react";
 import {
-  NoSsr, TableCell, IconButton, Typography, Paper
+  NoSsr, TableCell, IconButton, Paper
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -268,7 +268,6 @@ function ResultChart({ result, handleTabChange, tabValue }) {
         (tabValue == 0) ?
           <div>
             <div>
-              <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
               <MesheryChart
                 rawdata={[result && result.runner_results ? result : {}]}
                 data={[result && result.runner_results ? result.runner_results : {}]}
@@ -291,7 +290,6 @@ function ResultChart({ result, handleTabChange, tabValue }) {
           </div>
           : (tabValue == 1) ?
             <div>
-              <Typography variant="h6" gutterBottom align="center">Node Details</Typography>
               <NodeDetails result={row}/>
             </div>
             : <div />
@@ -331,14 +329,12 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }){
       {
         (tabValue == 1) ?
           <div>
-            <Typography variant="h6" gutterBottom align="center">Node Details</Typography>
             <NodeDetails result={chartData}/>
           </div>
           :
           (tabValue == 0) ?
             <div>
               <div>
-                <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
                 <MesheryChart
                   rawdata={[result && result.runner_results ? result : {}]}
                   data={[result && result.runner_results ? result.runner_results : {}]}
