@@ -384,23 +384,23 @@ func _processPattern(
 		return "", ErrRetrieveUserToken(fmt.Errorf("token not found in the context"))
 	}
 
-	// Get the kubehandler from the context
-	kubeClient, ok := ctx.Value(models.KubeHanderKey).(*meshkube.Client)
-	if !ok || kubeClient == nil {
-		return "", ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
-	}
+	// // Get the kubehandler from the context
+	// kubeClient, ok := ctx.Value(models.KubeHanderKey).(*meshkube.Client)
+	// if !ok || kubeClient == nil {
+	// 	return "", ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
+	// }
 
-	// Get the kubernetes config from the context
-	kubecfg, ok := ctx.Value(models.KubeConfigKey).([]byte)
-	if !ok || kubecfg == nil {
-		return "", ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
-	}
+	// // Get the kubernetes config from the context
+	// kubecfg, ok := ctx.Value(models.KubeConfigKey).([]byte)
+	// if !ok || kubecfg == nil {
+	// 	return "", ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
+	// }
 
-	// Get the kubernetes context from the context
-	mk8scontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || mk8scontext == nil {
-		return "", ErrInvalidKubeContext(fmt.Errorf("failed to find k8s context"), "_processPattern couldn't find a valid k8s context")
-	}
+	// // Get the kubernetes context from the context
+	// mk8scontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
+	// if !ok || mk8scontext == nil {
+	// 	return "", ErrInvalidKubeContext(fmt.Errorf("failed to find k8s context"), "_processPattern couldn't find a valid k8s context")
+	// }
 
 	internal := func(kubeClient *meshkube.Client, kubecfg []byte, mk8scontext *models.K8sContext) (string, error) {
 		sip := &serviceInfoProvider{
@@ -462,7 +462,6 @@ func _processPattern(
 	customK8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	if ok && len(customK8scontexts) > 0 {
 		var wg sync.WaitGroup
-		var lock sync.Mutex
 		resp := []string{}
 		errs := []string{}
 
@@ -470,9 +469,6 @@ func _processPattern(
 			wg.Add(1)
 			go func(c *models.K8sContext) {
 				defer wg.Done()
-
-				lock.Lock()
-				defer lock.Unlock()
 
 				// Generate Kube Handler
 				kh, err := c.GenerateKubeHandler()
@@ -506,8 +502,8 @@ func _processPattern(
 
 		return mergeMsgs(resp), fmt.Errorf(mergeMsgs(errs))
 	}
+	return "", ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
 
-	return internal(kubeClient, kubecfg, mk8scontext)
 }
 
 type serviceInfoProvider struct {

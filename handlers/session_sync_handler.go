@@ -5,6 +5,7 @@ import (
 
 	"encoding/json"
 
+	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 )
 
@@ -40,8 +41,37 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	meshAdapters := []*models.Adapter{}
 
 	adapters := h.config.AdapterTracker.GetAdapters(req.Context())
+
 	for _, adapter := range adapters {
-		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, prefObj, adapter.Location, provider)
+
+		// Get the k8sconfig
+		k8scontexts, ok := req.Context().Value(models.KubeContextKey).([]models.K8sContext)
+		if !ok || len(k8scontexts) == 0 {
+			h.log.Error(ErrInvalidK8SConfig)
+			http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+			return
+		}
+		var mClient *meshes.MeshClient
+		for _, mk8scontext := range k8scontexts {
+			k8sconfig, err := mk8scontext.GenerateKubeConfig()
+			if err != nil {
+				continue
+				// h.log.Error(ErrInvalidK8SConfig)
+				// return nil, ErrInvalidK8SConfig
+			}
+
+			mClient, err = meshes.CreateClient(req.Context(), k8sconfig, mk8scontext.Name, adapter.Location)
+			if err != nil {
+				continue
+				// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
+				// return
+			}
+		}
+		if mClient == nil {
+			http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
+			return
+		}
+		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, prefObj, adapter.Location, provider, mClient)
 	}
 	h.log.Debug("final list of active adapters: ", meshAdapters)
 	prefObj.MeshAdapters = meshAdapters
