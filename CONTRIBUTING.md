@@ -168,7 +168,7 @@ _Tip:_ The [Meshery adapter for Istio](https://github.com/meshery/meshery-istio)
 
 #### <a name="meshery-istio">Running Meshery Adapter (Meshery-Istio)</a>
 
-**Meshery-Istio** is a pre-written example of Meshery Adapter written in Go. Follow these instuctions to run meshery-istio to avoid errors related to Meshery Adapters
+**Meshery-Istio** is a pre-written example of Meshery Adapter written in Go. Follow these instructions to run meshery-istio to avoid errors related to Meshery Adapters
 
 1. Fork [Meshery-Istio](https://github.com/meshery/meshery-istio)
 2. Clone your fork locally
@@ -262,7 +262,7 @@ After making changes, run `make` in the `mesheryctl` folder to build the binary.
 
 ### `mesheryctl` command reference
 
-- Seee user-facing, documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
+- See user-facing, documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
 - See contributor-facing design spec for [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) for a complete reference of `mesheryctl`.
 
 ### General guidelines and resources
