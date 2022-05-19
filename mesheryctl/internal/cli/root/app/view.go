@@ -22,18 +22,18 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view <application name>",
+	Use:   "view application name",
 	Short: "Display application(s)",
 	Long:  `Displays the contents of a specific application based on name or id`,
 	Example: `
-	View applictaions with name
-	mesheryctl app view <app-name>
+// View applictaions with name
+mesheryctl app view [app-name]
 
-	View applications with id
-	mesheryctl app view <app-id>
+// View applications with id
+mesheryctl app view [app-id]
 
-	View all applications
-	mesheryctl app view --all
+// View all applications
+mesheryctl app view --all
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {

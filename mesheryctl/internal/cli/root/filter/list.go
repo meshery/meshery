@@ -24,7 +24,11 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List filters",
 	Long:  `Display list of all available filter files.`,
-	Args:  cobra.MinimumNArgs(0),
+	Example: `
+// List all WASM filter files present
+mesheryctl exp filter list	
+	`,
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

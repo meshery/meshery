@@ -52,7 +52,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com"
 mesheryctl perf apply -f perf-config.yaml
 
 // Run performance test using SMP compatible test configuration and override values with flags
-mesheryctl perf apply -f <filepath> --flags
+mesheryctl perf apply -f [filepath] --flags
 
 // Choice of load generator - fortio or wrk2 (default: fortio)
 mesheryctl perf apply meshery-test --load-generator wrk2

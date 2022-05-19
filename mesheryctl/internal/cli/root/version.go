@@ -39,6 +39,10 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Version of mesheryctl",
 	Long:  `Version of Meshery command line client - mesheryctl.`,
+	Example: `
+// To view the current version and SHA of release binary of mesheryctl client 
+mesheryctl version
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())

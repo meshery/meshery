@@ -52,6 +52,22 @@ var startCmd = &cobra.Command{
 	Short: "Start Meshery",
 	Long:  `Start Meshery and each of its service mesh components.`,
 	Args:  cobra.NoArgs,
+	Example: `
+// Start meshery
+mesheryctl system start
+
+// To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
+mesheryctl system context create k8s -p kubernetes -s
+
+// (optional) skip checking for new updates available in Meshery.
+mesheryctl system start --skip-update
+
+// Reset Meshery's configuration file to default settings.
+mesheryctl system start --reset
+
+// Silently create Meshery's configuration file with default settings
+mesheryctl system start --yes
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
