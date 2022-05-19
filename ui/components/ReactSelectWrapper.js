@@ -114,7 +114,9 @@ function Menu(props) {
       {props.children}
     </Paper>
   );
+
 }
+
 
 const components = {
   Control,
@@ -125,12 +127,13 @@ const components = {
   Placeholder,
   SingleValue,
   ValueContainer,
+
 };
 
 class ReactSelectWrapper extends React.Component {
   render() {
     const {
-      classes, theme, label, placeholder, onChange, onInputChange, value, options, error, noOptionsMessage = "No Options"
+      classes, theme, label, placeholder, onChange, onInputChange, value, options, error, noOptionsMessage, style = "No Options"
     } = this.props;
 
     const selectStyles = { input : (base) => ({ ...base,
@@ -143,6 +146,7 @@ class ReactSelectWrapper extends React.Component {
           <CreatableSelect
             classes={classes}
             styles={selectStyles}
+            style={style}
             textFieldProps={{ label,
               InputLabelProps : { shrink : true, },
               error, }}
