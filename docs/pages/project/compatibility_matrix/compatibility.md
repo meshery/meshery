@@ -95,6 +95,7 @@ type: "project"
   .tooltipss{
     position:relative;
     width:fit-content;
+    cursor:pointer;
   }
   .tooltipss .tooltiptext {
   visibility: hidden;
@@ -215,20 +216,20 @@ Compatibility of Meshery with other integrated systems.
         {% endif %}
       {% endfor %}
       {% assign istio_percentage = successfull_istio | divided_by:istio_size | times:100 | round:2 %}
-      <td class = "compatibility">{{istio_percentage}}
+      <td onclick = "clickIcon(`meshery-istio`)" class = "compatibility">{{istio_percentage}}
       </td>
       {% assign linkerd_percentage = successfull_linkerd | divided_by:linkerd_size | times:100 | round:2 %}
-      <td class = "compatibility">{{linkerd_percentage}}</td>
+      <td onclick = "clickIcon(`meshery-linkerd`)" class = "compatibility">{{linkerd_percentage}}</td>
       {% assign kuma_percentage = successfull_kuma | divided_by:kuma_size | times:100 | round:2 %}
-      <td class = "compatibility">{{kuma_percentage}}</td>
+      <td onclick = "clickIcon(`meshery-kuma`)" class = "compatibility">{{kuma_percentage}}</td>
       {% assign osm_percentage = successfull_osm | divided_by:osm_size | times:100 | round:2 %}
-      <td class = "compatibility">{{osm_percentage}}%</td>
+      <td onclick = "clickIcon(`meshery-osm`)" class = "compatibility">{{osm_percentage}}%</td>
       {% assign nginx_percentage = successfull_nginx_sm | divided_by:nginx_size | times:100 | round:2 %}
-      <td class = "compatibility">{{nginx_percentage}}% </td>
+      <td onclick = "clickIcon(`meshery-nginx-sm`)" class = "compatibility">{{nginx_percentage}}% </td>
       {% assign traefik_percentage = successfull_traefik_mesh | divided_by:traefik_size | times:100 | round:2 %}
-      <td class = "compatibility">{{traefik_percentage}}%</td>
+      <td onclick = "clickIcon(`meshery-traefik-mesh`)" class = "compatibility">{{traefik_percentage}}%</td>
       {% assign cilium_percentage = successfull_cilium | divided_by:cilium_size | times:100 | round:2 %}
-      <td class = "compatibility">{{cilium_percentage}}%</td>
+      <td onclick = "clickIcon(`meshery-cilium`)" class = "compatibility">{{cilium_percentage}}%</td>
     </tr>
   {% endfor %}
 </table>
@@ -262,6 +263,10 @@ Compatibility of Meshery with other integrated systems.
         }
       }
     }
+  function clickIcon(serviceMesh){
+    console.log("clicked",serviceMesh);
+    location.href = `{{site.baseurl}}/project/compatibility-matrix/${serviceMesh}-past-results`
+  }
 
 showCompatability()
 </script>
