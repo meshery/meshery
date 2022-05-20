@@ -19,6 +19,10 @@ Remove authentication for Meshery Server
 
 This command removes the authentication token from the user's filesystem`,
 	Args: cobra.MinimumNArgs(0),
+	Example: `
+// Logout current session with your Meshery Provider.
+mesheryctl system logout
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

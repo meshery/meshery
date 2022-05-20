@@ -16,6 +16,10 @@ var (
 		Short: "remove a service mesh in the kubernetes cluster",
 		Args:  cobra.MinimumNArgs(0),
 		Long:  `remove service mesh in the connected kubernetes cluster`,
+		Example: `
+// Remove a service mesh
+mesheryctl mesh remove [mesh adapter name]
+		`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

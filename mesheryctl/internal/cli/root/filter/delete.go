@@ -17,7 +17,14 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete filter file",
 	Long:  `delete filter file will trigger deletion of the filter file`,
-	Args:  cobra.MinimumNArgs(0),
+	Example: `
+// Delete the specified WASM filter file using name or ID
+mesheryctl exp filter delete [filter-name | ID]
+
+// Delete using the file name
+mesheryctl exp filter delete test-wasm
+	`,
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
