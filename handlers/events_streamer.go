@@ -101,29 +101,6 @@ STOP:
 				meshAdapters = []*models.Adapter{}
 			}
 
-			// Get meshery kubernetes context
-			mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-			if !ok || mk8scontext == nil {
-				// Clear the adapter cache
-				localMeshAdapters = closeAdapterConnections(localMeshAdaptersLock, localMeshAdapters)
-
-				// Sleep - wait for the context to be available
-				time.Sleep(1 * time.Second)
-
-				continue
-			}
-
-			kubeconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
-			if !ok || kubeconfig == nil {
-				// Clear the adapter cache
-				localMeshAdapters = closeAdapterConnections(localMeshAdaptersLock, localMeshAdapters)
-
-				// Sleep - wait for the context to be available
-				time.Sleep(1 * time.Second)
-
-				continue
-			}
-
 			adaptersLen := len(meshAdapters)
 			if adaptersLen == 0 {
 				log.Debug("No valid mesh adapter(s) found.") // switching from Error to Debug to prevent it from filling up the logs
@@ -135,7 +112,7 @@ STOP:
 				for _, ma := range meshAdapters {
 					mClient, ok := localMeshAdapters[ma.Location]
 					if !ok {
-						mClient, err = meshes.CreateClient(req.Context(), kubeconfig, mk8scontext.Name, ma.Location)
+						mClient, err = meshes.CreateClient(req.Context(), ma.Location)
 						if err == nil {
 							localMeshAdapters[ma.Location] = mClient
 						}

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/gob"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"sync"
@@ -80,38 +81,22 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	k8scontexts, ok := req.Context().Value(models.KubeContextKey).([]models.K8sContext)
-	if !ok || len(k8scontexts) == 0 {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
-	var mClient *meshes.MeshClient
-	for _, mk8scontext := range k8scontexts {
-		k8sconfig, err := mk8scontext.GenerateKubeConfig()
-		if err != nil {
-			continue
-			// h.log.Error(ErrInvalidK8SConfig)
-			// return nil, ErrInvalidK8SConfig
-		}
-
-		mClient, err = meshes.CreateClient(req.Context(), k8sconfig, mk8scontext.Name, meshAdapters[aID].Location)
-		if err != nil {
-			continue
-			// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
-			// return
-		}
-	}
-	if mClient == nil {
+	mClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
+	if err != nil {
 		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return
 	}
-	_, err := mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
+	defer func() {
+		_ = mClient.Close()
+	}()
+	fmt.Println("here")
+	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
 	if err != nil {
 		h.log.Error(ErrMeshClient)
 		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	_, _ = w.Write([]byte("{}"))
 }
 
@@ -147,34 +132,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 			http.Error(w, ErrAddAdapter.Error(), http.StatusBadRequest)
 			return
 		}
-
-		// Get the k8sconfig
-		k8scontexts, ok := req.Context().Value(models.KubeContextKey).([]models.K8sContext)
-		if !ok || len(k8scontexts) == 0 {
-			h.log.Error(ErrInvalidK8SConfig)
-			http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-			return
-		}
-		var mClient *meshes.MeshClient
-		for _, mk8scontext := range k8scontexts {
-			k8sconfig, err := mk8scontext.GenerateKubeConfig()
-			if err != nil {
-				continue
-				// h.log.Error(ErrInvalidK8SConfig)
-				// return nil, ErrInvalidK8SConfig
-			}
-
-			mClient, err = meshes.CreateClient(req.Context(), k8sconfig, mk8scontext.Name, meshLocationURL)
-			if err != nil {
-				continue
-				// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
-				// return
-			}
-		}
-		if mClient == nil {
-			http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
-		}
-		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL, provider, mClient)
+		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL, provider)
 		if err != nil {
 			// h.log.Error(ErrRetrieveData(err))
 			http.Error(w, ErrRetrieveData(err).Error(), http.StatusInternalServerError)
@@ -207,7 +165,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, prefObj *models.Preference, meshLocationURL string, provider models.Provider, mClient *meshes.MeshClient) ([]*models.Adapter, error) {
+func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, prefObj *models.Preference, meshLocationURL string, provider models.Provider) ([]*models.Adapter, error) {
 	alreadyConfigured := false
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {
@@ -225,15 +183,12 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		return meshAdapters, nil
 	}
 
-	// // Get the kubernetes context
-	// mk8scontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
-	// if !ok || mk8scontext == nil {
-	// 	h.log.Error(ErrInvalidK8SConfig)
-	// 	return nil, ErrInvalidK8SConfig
-	// }
-
-	// // Get the k8sconfig
-
+	mClient, err := meshes.CreateClient(ctx, meshLocationURL)
+	if err != nil {
+		h.log.Error(ErrMeshClient)
+		// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
+		return meshAdapters, ErrMeshClient
+	}
 	h.log.Debug("created client for adapter: ", meshLocationURL)
 	defer func() {
 		_ = mClient.Close()
@@ -355,48 +310,43 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		return
 	}
 	var wg sync.WaitGroup
-	errs := []string{}
+	var configs []string
 	for _, c := range mk8sContexts {
 		wg.Add(1)
 		go func(c *models.K8sContext) {
 			// Generate Kube Handler
 			kc, err := c.GenerateKubeConfig()
 			if err != nil {
-				errs = append(errs, c.ID+":"+err.Error())
 				return
 			}
-			mClient, err := meshes.CreateClient(req.Context(), kc, c.Name, meshAdapters[aID].Location)
-			if err != nil {
-				errs = append(errs, c.ID+":"+err.Error())
-				return
-			}
-			defer func() {
-				_ = mClient.Close()
-			}()
-			operationID, err := uuid.NewV4()
+			configs = append(configs, string(kc))
 
-			if err != nil {
-				errs = append(errs, c.ID+":"+err.Error())
-				return
-			}
-			_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
-				OperationId: operationID.String(),
-				OpName:      opName,
-				Username:    user.UserID,
-				Namespace:   namespace,
-				CustomBody:  customBody,
-				DeleteOp:    (delete != ""),
-			})
-			if err != nil {
-				errs = append(errs, c.ID+":"+err.Error())
-				return
-			}
 		}(&c)
 	}
 	wg.Wait()
-	if len(errs) == 0 {
-		_, _ = w.Write([]byte("{}"))
+	mClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
+	if err != nil {
 		return
 	}
-	http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
+	defer func() {
+		_ = mClient.Close()
+	}()
+	operationID, err := uuid.NewV4()
+
+	if err != nil {
+		return
+	}
+	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
+		OperationId: operationID.String(),
+		OpName:      opName,
+		Username:    user.UserID,
+		Namespace:   namespace,
+		CustomBody:  customBody,
+		DeleteOp:    (delete != ""),
+		KubeConfigs: configs,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

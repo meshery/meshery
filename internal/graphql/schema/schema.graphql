@@ -188,6 +188,9 @@ type ControlPlaneMember {
 input OperatorStatusInput {
   # Desired status for Meshery Operator
   targetStatus: Status!
+  
+  k8scontextid: String!
+
 }
 
 # Status of Meshery Operator and its controllers

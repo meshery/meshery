@@ -115,30 +115,34 @@ func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, p
 	if ok && len(customK8scontexts) > 0 {
 		for _, mk8scontext := range customK8scontexts {
 			wg.Add(1)
-			k8sconfig, err := mk8scontext.GenerateKubeConfig()
-			if err != nil {
-				errs = append(errs, err.Error())
-				h.log.Error(err)
-				continue
-			}
-			availablePromGrafana, err := helpers.ScanGrafana(k8sconfig, mk8scontext.Name)
-			if err != nil {
-				errs = append(errs, err.Error())
-				h.log.Error(err)
-				continue
-			}
-			if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-				obj := "payloads"
-				h.log.Error(ErrMarshal(err, obj))
-				errs = append(errs, ErrMarshal(err, obj).Error())
-				continue
-			}
+			go func(mk8scontext models.K8sContext) {
+				k8sconfig, err := mk8scontext.GenerateKubeConfig()
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				availablePromGrafana, err := helpers.ScanGrafana(k8sconfig, mk8scontext.Name)
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
+					obj := "payloads"
+					h.log.Error(ErrMarshal(err, obj))
+					errs = append(errs, ErrMarshal(err, obj).Error())
+					return
+				}
+			}(mk8scontext)
+
 		}
+		wg.Wait()
 	}
+
 	if len(errs) != 0 {
 		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
 	}
-	wg.Wait()
 
 }
 
@@ -232,22 +236,6 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		h.log.Error(ErrPrometheusConfig)
 		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Get the kubernetes context
-	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || mk8scontext == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Get the k8sconfig
-	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
-	if !ok || k8sconfig == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 

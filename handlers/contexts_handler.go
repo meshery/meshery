@@ -30,20 +30,20 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, prefO
 }
 
 func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.URL.Query().Get("current") != "" {
-		context, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-		if !ok || context == nil {
-			http.Error(w, "failed to get context", http.StatusInternalServerError)
-			return
-		}
+	// if req.URL.Query().Get("current") != "" {
+	// 	context, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
+	// 	if !ok || context == nil {
+	// 		http.Error(w, "failed to get context", http.StatusInternalServerError)
+	// 		return
+	// 	}
 
-		if err := json.NewEncoder(w).Encode(context); err != nil {
-			http.Error(w, "failed to encode context", http.StatusInternalServerError)
-			return
-		}
+	// 	if err := json.NewEncoder(w).Encode(context); err != nil {
+	// 		http.Error(w, "failed to encode context", http.StatusInternalServerError)
+	// 		return
+	// 	}
 
-		return
-	}
+	// 	return
+	// }
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {

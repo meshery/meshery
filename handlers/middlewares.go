@@ -137,8 +137,16 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]
 		k8scontexts := []models.K8sContext{}
-
-		if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
+		if len(k8sContextIDs) == 0 {
+			contexts, err := provider.LoadAllK8sContext(token)
+			if err != nil {
+				logrus.Warn("failed to load all k8scontext")
+			}
+			if len(contexts) == 1 { //If there is only one loaded contexts then use that
+				logrus.Warn("will be using the single available context for k8s related operation")
+				k8scontexts = append(k8scontexts, *contexts[0])
+			}
+		} else if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
 			contexts, err := provider.LoadAllK8sContext(token)
 			if err != nil {
 				logrus.Warn("failed to load all k8scontext")
