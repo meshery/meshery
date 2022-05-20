@@ -137,24 +137,25 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 }
 
 func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider) error {
-	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok || kubeclient == nil {
-		r.Log.Error(ErrNilClient)
-		return ErrNilClient
-	}
 
 	status, err := r.getOperatorStatus(ctx, provider)
 	if err != nil {
 		return err
 	}
-	currContext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || kubeclient == nil {
+	currContexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok || len(currContexts) == 0 {
 		r.Log.Error(ErrNilClient)
 		return ErrNilClient
 	}
+	currContext := currContexts[0]
 	var newContextFound bool
 	if connectionTrackerSingleton.Get(currContext.ID) == "" {
 		newContextFound = true
+	}
+	kubeclient, err := currContext.GenerateKubeHandler()
+	if err != nil {
+		r.Log.Error(ErrNilClient)
+		return ErrNilClient
 	}
 	if (r.BrokerConn.IsEmpty() || newContextFound) && status != nil && status.Status == model.StatusEnabled {
 		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)

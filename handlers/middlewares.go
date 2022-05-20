@@ -142,7 +142,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			if err != nil {
 				logrus.Warn("failed to load all k8scontext")
 			}
-			if len(contexts) == 1 { //If there is only one loaded contexts then use that
+			if len(contexts) > 0 { //If there is only one loaded contexts then use that
 				logrus.Warn("will be using the single available context for k8s related operation")
 				k8scontexts = append(k8scontexts, *contexts[0])
 			}

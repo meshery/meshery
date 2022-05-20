@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -13,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -1474,26 +1472,26 @@ func getSeededAppLocation(path string) (map[string][]string, error) {
 	return applicationsAndURLS, nil
 }
 
-// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
-func getLatestStableReleaseTag() (string, error) {
-	url := "https://github.com/layer5io/wasm-filters/releases/latest"
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", errors.New("failed to get latest stable release tag")
-	}
-	defer SafeClose(resp.Body)
+// // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
+// func getLatestStableReleaseTag() (string, error) {
+// 	url := "https://github.com/layer5io/wasm-filters/releases/latest"
+// 	resp, err := http.Get(url)
+// 	if err != nil {
+// 		return "", errors.New("failed to get latest stable release tag")
+// 	}
+// 	defer SafeClose(resp.Body)
 
-	if resp.StatusCode != http.StatusOK {
-		return "", errors.New("failed to get latest stable release tag")
-	}
+// 	if resp.StatusCode != http.StatusOK {
+// 		return "", errors.New("failed to get latest stable release tag")
+// 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", errors.New("failed to get latest stable release tag")
-	}
-	re := regexp.MustCompile("/releases/tag/(.*?)\"")
-	releases := re.FindAllString(string(body), -1)
-	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
-	latest = strings.ReplaceAll(latest, "\"", "")
-	return latest, nil
-}
+// 	body, err := ioutil.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return "", errors.New("failed to get latest stable release tag")
+// 	}
+// 	re := regexp.MustCompile("/releases/tag/(.*?)\"")
+// 	releases := re.FindAllString(string(body), -1)
+// 	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
+// 	latest = strings.ReplaceAll(latest, "\"", "")
+// 	return latest, nil
+// }
