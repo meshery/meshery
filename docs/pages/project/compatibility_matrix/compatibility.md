@@ -8,9 +8,6 @@ language: en
 display-title: "false"
 list: exclude
 type: "project"
-#  {% if k8s_items.name == "meshery-istio" %}
-#       {% assign successfull = successfull | plus: 1 %}
-#     {% endif %}
 ---
 
 <script type="text/javascript">
@@ -67,10 +64,10 @@ type: "project"
 </script>
 
 <style>
-  td:hover, tr:hover {
+  /* td:hover, tr:hover {
     background-color: #ccfff9;
     cursor:pointer;
-  }
+  } */
   .edge_visible{
     display: table-row !important;
     visibility: visible !important;
@@ -95,6 +92,42 @@ type: "project"
   .yellowCheckbox{
     width:1.5rem
   }
+  .tooltipss{
+    position:relative;
+    width:fit-content;
+  }
+  .tooltipss .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltipss .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltipss:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
 </style>
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
@@ -182,8 +215,7 @@ Compatibility of Meshery with other integrated systems.
         {% endif %}
       {% endfor %}
       {% assign istio_percentage = successfull_istio | divided_by:istio_size | times:100 | round:2 %}
-      <td class = "compatibility">
-       {{istio_percentage}} 
+      <td class = "compatibility">{{istio_percentage}}
       </td>
       {% assign linkerd_percentage = successfull_linkerd | divided_by:linkerd_size | times:100 | round:2 %}
       <td class = "compatibility">{{linkerd_percentage}}</td>
@@ -209,13 +241,24 @@ Compatibility of Meshery with other integrated systems.
         console.log(parseFloat(percentContainer[i].innerHTML));
         let percentage = parseFloat(percentContainer[i].innerHTML);
         if (percentage == 100.00){
-          percentContainer[i].innerHTML = `<img src = "{{site.baseurl}}/assets/img/passing.svg" class = "yellowCheckbox" >`
+          percentContainer[i].innerHTML = `
+            <div class = "tooltipss">
+              <img src = "{{site.baseurl}}/assets/img/passing.svg" class = "yellowCheckbox" >
+              <span class = "tooltiptext">${percentage}%</span>
+            </div>
+          `
         }
         else if(percentage >=1 && percentage<=99.99){
-          percentContainer[i].innerHTML = `<img src = "{{site.baseurl}}/assets/img/YellowCheck.svg" class = "yellowCheckbox" >`
+          percentContainer[i].innerHTML = `<div class = "tooltipss">
+              <img src = "{{site.baseurl}}/assets/img/YellowCheck.svg" class = "yellowCheckbox" >
+              <span class = "tooltiptext">${percentage}%</span>
+            </div>`
         }
         else{
-           percentContainer[i].innerHTML = `<img src = "{{site.baseurl}}/assets/img/failing.svg" class = "yellowCheckbox" >`
+           percentContainer[i].innerHTML = `<div class = "tooltipss">
+              <img src = "{{site.baseurl}}/assets/img/failing.svg" class = "yellowCheckbox" >
+              <span class = "tooltiptext">${percentage}%</span>
+            </div>`
         }
       }
     }
