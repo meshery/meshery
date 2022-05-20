@@ -31,8 +31,8 @@ var onboardCmd = &cobra.Command{
 	Long:  `Command will trigger deploy of Application file`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-	Onboard application by providing file path
-	mesheryctl app onboard -f <filepath>
+// Onboard application by providing file path
+mesheryctl app onboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request

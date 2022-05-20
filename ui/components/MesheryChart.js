@@ -278,6 +278,7 @@ class MesheryChart extends React.Component {
 
   render() {
     let chartData;
+
     if (typeof this.props.data !== 'undefined') {
       const results = this.props.data;
       if (results.length == 2) {

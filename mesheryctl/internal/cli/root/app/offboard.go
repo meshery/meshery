@@ -19,8 +19,8 @@ var offboardCmd = &cobra.Command{
 	Long:  `Offboard application will trigger deletion of the application file`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-	Offboard application by providing file path
-	mesheryctl app offboard -f <filepath>
+// Offboard application by providing file path
+mesheryctl app offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
