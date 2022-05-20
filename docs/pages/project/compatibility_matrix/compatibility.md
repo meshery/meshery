@@ -64,10 +64,10 @@ type: "project"
 </script>
 
 <style>
-  /* td:hover, tr:hover {
+  td:hover, tr:hover {
     background-color: #ccfff9;
     cursor:pointer;
-  } */
+  }
   .edge_visible{
     display: table-row !important;
     visibility: visible !important;
