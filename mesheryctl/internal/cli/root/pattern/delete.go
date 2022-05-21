@@ -21,11 +21,11 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete pattern file",
 	Long:  `delete pattern file will trigger deletion of the pattern file`,
+	Args:  cobra.MinimumNArgs(0),
 	Example: `
-	// delete components from pattern file
-	mesheryctl pattern delete -f <file | URL>
+// delete a pattern file
+mesheryctl pattern delete [file | URL]
 	`,
-	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		client := &http.Client{}

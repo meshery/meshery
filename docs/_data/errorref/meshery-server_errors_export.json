@@ -1470,15 +1470,6 @@
         "probable_cause": "Invalid data passed\nUnable to connect with provider",
         "suggested_remediation": "Pass valid values for preferences\nMake sure provider supports saving user preferences\nMake sure you're connected with provider\nMake sure extension provides these preferences"
       },
-      "2175": {
-        "name": "ErrInvalidKubeHandlerCode",
-        "code": "2175",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Invalid Kube Handler",
-        "probable_cause": "Meshery handler failed to find a valid kubernetes handler for the deployment",
-        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
-      },
       "2176": {
         "name": "ErrInvalidKubeContextCode",
         "code": "2176",

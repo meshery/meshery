@@ -79,7 +79,7 @@ Restart your WSL VM before moving forward.
   ```bash
     git clone https://github.com/rbenv/rbenv.git ~/.rbenv
   ```
-    <strong>Note:</strong> Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
+  <strong>Note:</strong> Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
 - Setting the path
   ```bash
     echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
@@ -165,7 +165,7 @@ Restart your WSL VM before moving forward.
 If you've Docker and `make` installed in your system, then you can serve the site locally
 
 ```
-$ make docker-docs
+$ make docker
 ```
 
 This doesn't require the need for installing Jekyll and Ruby in your system
@@ -341,3 +341,4 @@ The assign tag is used to create a new variable. It is written in the following 
 ```
 
 {% include suggested-reading.html %}
+

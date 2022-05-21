@@ -21,10 +21,17 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view <filter name>",
+	Use:   "view [filter name]",
 	Short: "Display filters(s)",
 	Long:  `Displays the contents of a specific filter based on name or id`,
-	Args:  cobra.MaximumNArgs(1),
+	Example: `
+// View the specified WASM filter file
+mesheryctl exp filter view [filter-name | ID]	
+
+// View using filter name
+mesheryctl exp filter view test-wasm
+	`,
+	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
