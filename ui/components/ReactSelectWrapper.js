@@ -133,7 +133,7 @@ const components = {
 class ReactSelectWrapper extends React.Component {
   render() {
     const {
-      classes, theme, label, placeholder, onChange, onInputChange, value, options, error, noOptionsMessage, style = "No Options"
+      classes, theme, label, placeholder, onChange, onInputChange, value, options, error, noOptionsMessage = "No Options" , style={}
     } = this.props;
 
     const selectStyles = { input : (base) => ({ ...base,
