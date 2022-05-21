@@ -30,7 +30,14 @@ var applyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Apply filter file",
 	Long:  `Apply filter file will trigger deploy of the filter file`,
-	Args:  cobra.MinimumNArgs(0),
+	Example: `
+// Apply WASM filter file (login required)
+mesheryctl exp filter apply --file [GitHub Link]
+
+// Apply the file
+mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree/master/http-auth
+	`,
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error

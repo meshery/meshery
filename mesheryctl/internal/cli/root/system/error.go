@@ -7,26 +7,27 @@ import (
 )
 
 const (
-	ErrHealthCheckFailedCode        = "1000"
-	ErrInvalidComponentCode         = "1001"
-	ErrDownloadFileCode             = "1002"
-	ErrStopMesheryCode              = "1003"
-	ErrResetMeshconfigCode          = "1004"
-	ErrApplyManifestCode            = "1005"
-	ErrApplyOperatorManifestCode    = "1006"
-	ErrCreateDirCode                = "1007"
-	ErrUnmarshalCode                = "1008"
-	ErrUnsupportedPlatformCode      = "1009"
-	ErrRetrievingCurrentContextCode = "1022"
-	ErrSettingTemporaryContextCode  = "1023"
-	ErrCreateManifestsFolderCode    = "1024"
-	ErrProcessingMctlConfigCode     = "1025"
-	ErrRestartMesheryCode           = "1026"
-	ErrK8sQueryCode                 = "1041"
-	ErrK8sConfigCode                = "1042"
-	ErrInitPortForwardCode          = "1047"
-	ErrRunPortForwardCode           = "1048"
-	ErrFailedGetEphemeralPortCode   = "1049"
+	ErrHealthCheckFailedCode             = "1000"
+	ErrInvalidComponentCode              = "1001"
+	ErrDownloadFileCode                  = "1002"
+	ErrStopMesheryCode                   = "1003"
+	ErrResetMeshconfigCode               = "1004"
+	ErrApplyManifestCode                 = "1005"
+	ErrApplyOperatorManifestCode         = "1006"
+	ErrCreateDirCode                     = "1007"
+	ErrUnmarshalCode                     = "1008"
+	ErrUnsupportedPlatformCode           = "1009"
+	ErrRetrievingCurrentContextCode      = "1022"
+	ErrSettingDefaultContextToConfigCode = "1059"
+	ErrSettingTemporaryContextCode       = "1023"
+	ErrCreateManifestsFolderCode         = "1024"
+	ErrProcessingMctlConfigCode          = "1025"
+	ErrRestartMesheryCode                = "1026"
+	ErrK8sQueryCode                      = "1041"
+	ErrK8sConfigCode                     = "1042"
+	ErrInitPortForwardCode               = "1047"
+	ErrRunPortForwardCode                = "1048"
+	ErrFailedGetEphemeralPortCode        = "1049"
 )
 
 func ErrHealthCheckFailed(err error) error {
@@ -71,6 +72,10 @@ func ErrUnsupportedPlatform(platform string, config string) error {
 
 func ErrRetrievingCurrentContext(err error) error {
 	return errors.New(ErrRetrievingCurrentContextCode, errors.Alert, []string{"Error retrieving current context"}, []string{err.Error()}, []string{"current context is not retrieved successfully"}, []string{"Verify current context is retrieved successfully and valid"})
+}
+
+func ErrSettingDefaultContextToConfig(err error) error {
+	return errors.New(ErrRetrievingCurrentContextCode, errors.Alert, []string{"Error setting default context to config"}, []string{err.Error()}, []string{"Mesheryctl config file may not exist or is invalid"}, []string{"Make sure the Mesheryctl config file exists"})
 }
 
 func ErrSettingTemporaryContext(err error) error {

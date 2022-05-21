@@ -365,7 +365,8 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 	// Get the context
 	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
 	if !ok || mk8scontext == nil {
-		h.log.Error(ErrLoadTest(err, "unable to perform: failed to identify kubernetes context"))
+		h.log.Error(ErrInvalidK8SConfig)
+		h.log.Error(ErrPerformanceTest)
 		respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
 			Message: "unable to perform: failed to identify kubernetes context",

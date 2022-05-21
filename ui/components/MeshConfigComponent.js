@@ -140,7 +140,7 @@ async function uploadK8sConfig() {
   const field = document.getElementById("k8sfile");
   if (field instanceof HTMLInputElement) {
     if (field.files.length < 1) return;
-
+    const name = field.files[0].name;
     const formData = new FormData();
     formData.append("k8sfile", field.files[0])
 
@@ -151,6 +151,7 @@ async function uploadK8sConfig() {
         body : formData,
       }
     )
+    return name;
   }
 }
 
@@ -190,7 +191,7 @@ class MeshConfigComponent extends React.Component {
       operatorSwitch : false,
       operatorProcessing : false,
 
-
+      fileName : "",
       meshSyncStatusEventsSubscription : null,
       operatorStatusEventsSubscription : null,
 
@@ -265,14 +266,16 @@ class MeshConfigComponent extends React.Component {
     if (res.operator?.status === "ENABLED") {
       self.setState({ operatorProcessing : false })
       res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status == "CONNECTED") {
+        if (controller.name === "broker" && controller.status.includes("CONNECTED")) {
           self.setState({
             NATSState : controller.status,
             NATSVersion : controller.version,
           });
-        } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
+        } else if (controller.name === "meshsync" && controller.status.includes("ENABLED")) {
           self.setState({ meshSyncInstalled : true,
-            meshSyncVersion : controller.version, });
+            meshSyncVersion : controller.version,
+            meshSyncState : controller.status
+          });
         }
       });
       self.setState({ operatorInstalled : true,
@@ -293,6 +296,7 @@ class MeshConfigComponent extends React.Component {
       operatorInstalled : false,
       NATSState : "UNKNOWN",
       meshSyncInstalled : false,
+      meshSyncState : "N/A",
       operatorSwitch : false,
       operatorVersion : "N/A",
       meshSyncVersion : "N/A",
@@ -347,8 +351,9 @@ class MeshConfigComponent extends React.Component {
         }
 
         uploadK8sConfig().
-          then(() => {
+          then((name) => {
             this.handleSuccess("successfully uploaded kubernetes config")
+            this.setState({ fileName : name });
             fetchAllContexts(25)
               .then(res => this.setState({ contexts : res.contexts }))
               .catch(this.handleError("failed to get contexts"))
@@ -449,7 +454,7 @@ handleNATSClick = () => {
         self.handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
       }
       self.setState({
-        NATSState : res.controller.status,
+        NATSState : res.controller.status.length !== 0 ? res.controller.status : "UNKNOWN",
         NATSVersion : res.controller.version,
       });
     },
@@ -892,7 +897,7 @@ handleNATSClick = () => {
   meshOut = (showConfigured, operator) => {
     const { classes } = this.props;
     const {
-      k8sfile, k8sfileElementVal, contextName, contexts, selectContext
+      k8sfileElementVal, contextName, contexts, fileName, selectContext
     } = this.state;
 
     return (
@@ -922,7 +927,7 @@ handleNATSClick = () => {
                       label="Upload kubeconfig"
                       variant="outlined"
                       fullWidth
-                      value={k8sfile.replace("C:\\fakepath\\", "")}
+                      value={fileName}
                       onClick={() => document.querySelector("#k8sfile")?.click()}
                       margin="normal"
                       InputProps={{ readOnly : true,

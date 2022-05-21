@@ -128,8 +128,11 @@ var aksConfigCmd = &cobra.Command{
 	Short: "Configure Meshery to use AKS cluster",
 	Long:  `Configure Meshery to connect to AKS cluster`,
 	Example: `
-	Configure Meshery to connect to AKS cluster using auth token
-	mesheryctl system config aks --token auth.json
+// Configure Meshery to connect to AKS cluster using auth token
+mesheryctl system config aks --token auth.json
+
+// Configure Meshery to connect to AKS cluster (if session is logged in using login subcommand)
+mesheryctl system config aks
 	`,
 	Args: cobra.ExactArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -190,8 +193,11 @@ var eksConfigCmd = &cobra.Command{
 	Short: "Configure Meshery to use EKS cluster",
 	Long:  `Configure Meshery to connect to EKS cluster`,
 	Example: `
-	Configure Meshery to connect to EKS cluster using auth token
-	mesheryctl system config eks --token auth.json
+// Configure Meshery to connect to EKS cluster using auth token
+mesheryctl system config eks --token auth.json
+
+// Configure Meshery to connect to EKS cluster (if session is logged in using login subcommand)
+mesheryctl system config eks
 	`,
 	Args: cobra.ExactArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -252,8 +258,11 @@ var gkeConfigCmd = &cobra.Command{
 	Short: "Configure Meshery to use GKE cluster",
 	Long:  `Configure Meshery to connect to GKE cluster`,
 	Example: `
-	Configure Meshery to connect to GKE cluster using auth token
-	mesheryctl system config gke --token auth.json
+// Configure Meshery to connect to GKE cluster using auth token
+mesheryctl system config gke --token auth.json
+
+// Configure Meshery to connect to GKE cluster (if session is logged in using login subcommand)
+mesheryctl system config gke
 	`,
 	Args: cobra.ExactArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -277,8 +286,11 @@ var minikubeConfigCmd = &cobra.Command{
 	Short: "Configure Meshery to use minikube cluster",
 	Long:  `Configure Meshery to connect to minikube cluster`,
 	Example: `
-	Configure Meshery to connect to minikube cluster using auth token
-	mesheryctl system config minikube --token auth.json
+// Configure Meshery to connect to minikube cluster using auth token
+mesheryctl system config minikube --token auth.json
+
+// Configure Meshery to connect to minikube cluster (if session is logged in using login subcommand)
+mesheryctl system config minikube
 	`,
 	Args: cobra.ExactArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -318,6 +330,13 @@ var configCmd = &cobra.Command{
 	Short: "Configure Meshery",
 	Long:  `Configure the Kubernetes cluster used by Meshery.`,
 	Args:  cobra.ExactArgs(1),
+	Example: `
+// Set configuration according to k8s cluster
+mesheryctl system config [aks|eks|gke|minikube]
+
+// Path to token for authenticating to Meshery API (optional, can be done alternatively using "login")
+mesheryctl system config --token "~/Downloads/auth.json"
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {

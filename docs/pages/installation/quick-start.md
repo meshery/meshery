@@ -30,7 +30,16 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
  $ curl -L https://meshery.io/install | PLATFORM=docker bash - 
  </div></div>
  </pre>
- 
+ <br>
+
+###### Install using Docker extension for Meshery
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ $ docker extension install meshery/docker-extension-meshery
+ </div></div>
+ </pre>
+
 _Download, install, and run Meshery in a single command. See all [installation methods]({{ site.baseurl }}/installation/platforms)._
 
 ## Access Meshery
@@ -73,3 +82,4 @@ You may now proceed to install and work with any [service mesh]({{ site.baseurl 
   <source src="/assets/img/adapters/meshery-ui-setup.mp4" type="video/mp4">
  Your browser does not support the video tag
 </video>
+
