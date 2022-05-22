@@ -372,6 +372,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 	for _, k8context := range mk8sContexts {
 		wg.Add(1)
 		go func(mk8scontext *models.K8sContext) {
+			defer wg.Done()
 			// Get the k8sconfig
 			k8sconfig, err := mk8scontext.GenerateKubeConfig()
 			if err == nil {

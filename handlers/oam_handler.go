@@ -399,7 +399,14 @@ func _processPattern(
 	// if !ok || mk8scontext == nil {
 	// 	return "", ErrInvalidKubeContext(fmt.Errorf("failed to find k8s context"), "_processPattern couldn't find a valid k8s context")
 	// }
-
+	var configs []string
+	for _, ctx := range k8scontexts {
+		cfg, err := ctx.GenerateKubeConfig()
+		if err != nil {
+			return "", ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
+		}
+		configs = append(configs, string(cfg))
+	}
 	internal := func(mk8scontext []models.K8sContext) (string, error) {
 		sip := &serviceInfoProvider{
 			token:      token,
@@ -415,8 +422,8 @@ func _processPattern(
 			userID:     userID,
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
-			skipPrintLogs: skipPrintLogs,
-
+			skipPrintLogs:   skipPrintLogs,
+			kubeconfigs:     configs,
 			accumulatedMsgs: []string{},
 			err:             nil,
 		}

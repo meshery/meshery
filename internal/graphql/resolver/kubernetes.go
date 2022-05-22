@@ -12,11 +12,16 @@ import (
 )
 
 func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider) ([]*model.NameSpace, error) {
-	k8sctx, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || k8sctx == nil || k8sctx.KubernetesServerID == nil {
+	k8sctxs, ok := ctx.Value(models.KubeContextKey).([]models.K8sContext)
+	if !ok || len(k8sctxs) == 0 {
 		r.Log.Error(ErrEmptyCurrentK8sContext)
 		return nil, ErrEmptyCurrentK8sContext
 	}
+	if k8sctxs[0].KubernetesServerID != nil {
+		r.Log.Error(ErrEmptyCurrentK8sContext)
+		return nil, ErrEmptyCurrentK8sContext
+	}
+	k8sctx := k8sctxs[0]
 	// resourceobjects := make([]meshsyncmodel.ResourceObjectMeta, 0)
 	namespaces := make([]string, 0)
 	rows, err := provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace' AND o.cluster_id = ?", k8sctx.KubernetesServerID.String()).Rows()

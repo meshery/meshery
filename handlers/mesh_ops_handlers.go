@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/meshes"
@@ -309,23 +308,19 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
-	var wg sync.WaitGroup
 	var configs []string
 	for _, c := range mk8sContexts {
-		wg.Add(1)
-		go func(c *models.K8sContext) {
-			// Generate Kube Handler
-			kc, err := c.GenerateKubeConfig()
-			if err != nil {
-				return
-			}
-			configs = append(configs, string(kc))
+		// Generate Kube Handler
+		kc, err := c.GenerateKubeConfig()
+		if err != nil {
+			return
+		}
+		configs = append(configs, string(kc))
 
-		}(&c)
 	}
-	wg.Wait()
 	mClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer func() {
@@ -334,6 +329,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	operationID, err := uuid.NewV4()
 
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{

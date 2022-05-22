@@ -42,8 +42,9 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 	}
 	var wg sync.WaitGroup
 	for _, kcli := range kclis {
+		wg.Add(1)
 		go func(kcli *kubernetes.Client) {
-			wg.Add(1)
+			defer wg.Done()
 			for _, comp := range comps {
 				if comp.Spec.Type == "Application" {
 					if err := application.Deploy(kcli, comp, config, isDel); err != nil {

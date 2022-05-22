@@ -33,24 +33,28 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 	if ok && len(customK8scontexts) > 0 {
 		for _, mk8scontext := range customK8scontexts {
 			wg.Add(1)
-			k8sconfig, err := mk8scontext.GenerateKubeConfig()
-			if err != nil {
-				errs = append(errs, err.Error())
-				h.log.Error(err)
-				continue
-			}
-			availablePromGrafana, err := helpers.ScanPromGrafana(k8sconfig, mk8scontext.Name)
-			if err != nil {
-				errs = append(errs, err.Error())
-				h.log.Error(err)
-				continue
-			}
-			if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-				obj := "payloads"
-				h.log.Error(ErrMarshal(err, obj))
-				errs = append(errs, ErrMarshal(err, obj).Error())
-				continue
-			}
+			go func(mk8scontext models.K8sContext) {
+				defer wg.Done()
+				k8sconfig, err := mk8scontext.GenerateKubeConfig()
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				availablePromGrafana, err := helpers.ScanPromGrafana(k8sconfig, mk8scontext.Name)
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
+					obj := "payloads"
+					h.log.Error(ErrMarshal(err, obj))
+					errs = append(errs, ErrMarshal(err, obj).Error())
+					return
+				}
+			}(mk8scontext)
+
 		}
 	}
 	if len(errs) != 0 {
@@ -74,24 +78,28 @@ func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request
 	if ok && len(customK8scontexts) > 0 {
 		for _, mk8scontext := range customK8scontexts {
 			wg.Add(1)
-			k8sconfig, err := mk8scontext.GenerateKubeConfig()
-			if err != nil {
-				errs = append(errs, err.Error())
-				h.log.Error(err)
-				continue
-			}
-			availablePromGrafana, err := helpers.ScanPrometheus(k8sconfig, mk8scontext.Name)
-			if err != nil {
-				errs = append(errs, err.Error())
-				h.log.Error(err)
-				continue
-			}
-			if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-				obj := "payloads"
-				h.log.Error(ErrMarshal(err, obj))
-				errs = append(errs, ErrMarshal(err, obj).Error())
-				continue
-			}
+			go func(mk8scontext models.K8sContext) {
+				defer wg.Done()
+				k8sconfig, err := mk8scontext.GenerateKubeConfig()
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				availablePromGrafana, err := helpers.ScanPrometheus(k8sconfig, mk8scontext.Name)
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
+					obj := "payloads"
+					h.log.Error(ErrMarshal(err, obj))
+					errs = append(errs, ErrMarshal(err, obj).Error())
+					return
+				}
+			}(mk8scontext)
+
 		}
 	}
 	if len(errs) != 0 {
@@ -116,6 +124,7 @@ func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, p
 		for _, mk8scontext := range customK8scontexts {
 			wg.Add(1)
 			go func(mk8scontext models.K8sContext) {
+				defer wg.Done()
 				k8sconfig, err := mk8scontext.GenerateKubeConfig()
 				if err != nil {
 					errs = append(errs, err.Error())
@@ -137,13 +146,11 @@ func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, p
 			}(mk8scontext)
 
 		}
-		wg.Wait()
 	}
-
 	if len(errs) != 0 {
 		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
 	}
-
+	wg.Wait()
 }
 
 // swagger:route GET /api/telemetry/metrics/config PrometheusAPI idGetPrometheusConfig
