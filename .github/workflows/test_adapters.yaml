@@ -180,7 +180,7 @@ jobs:
                   resourceinfo=$(kubectl get ${types[i]} -n ${ns[i]} | grep ${resources[i]} | tr -s ' ')
                   resourcestarted=$(echo $resourceinfo | cut -d " " -f 1)
                   resourcestatus=$(echo $resourceinfo | cut -d " " -f 3)
-                  if [[ ("${types[i]}" = "pod" && "$resourcestatus" = "Running") || ("${types[i]}" != "pod" && "$resourcestarted" != "") ]];then
+                  if [[ ("${types[i]}" = "pod" && "$resourcestatus" != "Running") || ("${types[i]}" != "pod" && "$resourcestarted" = "") ]];then
                     breakout=0
                   fi
               done
