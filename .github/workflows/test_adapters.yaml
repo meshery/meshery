@@ -180,7 +180,7 @@ jobs:
                   resourceinfo=$(kubectl get ${types[i]} -n ${ns[i]} | grep ${resources[i]} | tr -s ' ')
                   resourcestarted=$(echo $resourceinfo | cut -d " " -f 1)
                   resourcestatus=$(echo $resourceinfo | cut -d " " -f 3)
-                  if [[ ("${types[i]}" = "pod" && "$resourcestatus" = "Running") || ("${types[i]}" != "pod" && "$resourcestarted" != "") ]];then
+                  if [[ ("${types[i]}" = "pod" && "$resourcestatus" != "Running") || ("${types[i]}" != "pod" && "$resourcestarted" = "") ]];then
                     breakout=0
                   fi
               done
@@ -203,11 +203,11 @@ jobs:
             if [[ ("${types[i]}" = "pod" && "$resourcestatus" = "Running") || ("${types[i]}" != "pod" && "$resourcestarted" != "") ]];then
               itran=1
               echo "${types[i]} ${resources[i]} started in namespace ${ns[i]}"
-              echo $(jq '.resources_status."'${resources[i]}'" |=  "Running"' data.json) > data.json 
+              echo $(jq '.resources_status."'${types[i]}/${resources[i]}'" |=  "Running"' data.json) > data.json 
             else
               itdidnotrun=1
               echo "${types[i]} ${resources[i]} did not start in namespace ${ns[i]} "
-              echo $(jq '.resources_status."'${resources[i]}'" |=  "Not Running"' data.json) > data.json 
+              echo $(jq '.resources_status."'${types[i]}/${resources[i]}'" |=  "Not Running"' data.json) > data.json 
               exitstatus=1
             fi
           done
