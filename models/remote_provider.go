@@ -51,7 +51,7 @@ type RemoteProvider struct {
 
 	ProviderVersion    string
 	SmiResultPersister *SMIResultsPersister
-	GenericPersister   database.Handler
+	GenericPersister   *database.Handler
 	KubeClient         *mesherykube.Client
 }
 
@@ -2747,7 +2747,7 @@ func validateExtractPath(filePath string, destination string) error {
 
 // GetGenericPersister - to return persister
 func (l *RemoteProvider) GetGenericPersister() *database.Handler {
-	return &l.GenericPersister
+	return l.GenericPersister
 }
 
 // SetKubeClient - to set meshery kubernetes client

@@ -44,7 +44,7 @@ type DefaultLocalProvider struct {
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
-	GenericPersister                database.Handler
+	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
 }
 
@@ -936,7 +936,7 @@ func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 
 // GetGenericPersister - to return persister
 func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
-	return &l.GenericPersister
+	return l.GenericPersister
 }
 
 // SetKubeClient - to set meshery kubernetes client
