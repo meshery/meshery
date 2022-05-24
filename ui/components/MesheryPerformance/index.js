@@ -1051,7 +1051,7 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => {
   const grafana = state.get("grafana").toJS();
   const prometheus = state.get("prometheus").toJS();
-  const k8sConfig = state.get("k8sConfig").toJS();
+  const k8sConfig = state.get("k8sConfig");
   const staticPrometheusBoardConfig = state.get("staticPrometheusBoardConfig").toJS();
   return {
     grafana,

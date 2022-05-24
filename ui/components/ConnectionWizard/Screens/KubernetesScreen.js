@@ -87,7 +87,7 @@ const KubernetesScreen = ({
 };
 
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get("k8sConfig").toJS();
+  const k8sconfig = state.get("k8sConfig");
   return { k8sconfig, };
 };
 

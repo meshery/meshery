@@ -426,7 +426,7 @@ class MesherySettings extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig').toJS();
+  const k8sconfig = state.get('k8sConfig');
   const meshAdapters = state.get('meshAdapters').toJS();
   const grafana = state.get('grafana').toJS();
   const prometheus = state.get('prometheus').toJS();

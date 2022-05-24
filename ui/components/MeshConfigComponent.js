@@ -1045,7 +1045,8 @@ MeshConfigComponent.propTypes = { classes : PropTypes.object.isRequired, };
 const mapDispatchToProps = (dispatch) => ({ updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch), });
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get("k8sConfig").toJS();
+  console.log({ state, get : state.get("k8sConfig"), });
+  const k8sconfig = state.get("k8sConfig");
   return k8sconfig;
 };
 

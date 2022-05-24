@@ -1023,11 +1023,11 @@ const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(
   updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
   updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch), });
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get("k8sConfig").toJS();
-  const meshAdapters = state.get("meshAdapters").toJS();
+  const k8sconfig = state.get("k8sConfig");
+  const meshAdapters = state.get("meshAdapters");
   const meshAdaptersts = state.get("meshAdaptersts");
-  const grafana = state.get("grafana").toJS();
-  const prometheus = state.get("prometheus").toJS();
+  const grafana = state.get("grafana");
+  const prometheus = state.get("prometheus");
   return {
     meshAdapters,
     meshAdaptersts,

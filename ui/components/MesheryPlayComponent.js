@@ -272,8 +272,8 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get("k8sConfig").toJS();
-  const meshAdapters = state.get("meshAdapters").toJS();
+  const k8sconfig = state.get("k8sConfig");
+  const meshAdapters = state.get("meshAdapters");
   const meshAdaptersts = state.get("meshAdaptersts");
   const selectedAdapter = state.get("selectedAdapter");
   return { k8sconfig, meshAdapters, meshAdaptersts, selectedAdapter };
