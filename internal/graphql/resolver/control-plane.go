@@ -16,7 +16,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 	} else {
 		selectors = append(selectors, *filter.Type)
 	}
-	k8sctxs, ok := ctx.Value(models.KubeContextKey).([]models.K8sContext)
+	k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		r.Log.Error(ErrEmptyCurrentK8sContext)
 		return nil, ErrEmptyCurrentK8sContext

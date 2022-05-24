@@ -10,7 +10,7 @@ import (
 
 type SessionSyncData struct {
 	*models.Preference `json:",inline"`
-	K8sConfigs         SessionSyncDataK8sConfig `json:"k8sConfig,omitempty"`
+	K8sConfigs         []SessionSyncDataK8sConfig `json:"k8sConfig,omitempty"`
 }
 
 type SessionSyncDataK8sConfig struct {
@@ -63,7 +63,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	}
 	data := SessionSyncData{
 		Preference: prefObj,
-		K8sConfigs: s[0],
+		K8sConfigs: s,
 	}
 
 	err = json.NewEncoder(w).Encode(data)

@@ -12,7 +12,7 @@ import (
 )
 
 func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider) ([]*model.NameSpace, error) {
-	k8sctxs, ok := ctx.Value(models.KubeContextKey).([]models.K8sContext)
+	k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		r.Log.Error(ErrEmptyCurrentK8sContext)
 		return nil, ErrEmptyCurrentK8sContext

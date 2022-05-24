@@ -25,14 +25,13 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		r.Log.Info("Installing Operator")
 		delete = false
 	}
-
-	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok || kubeclient == nil {
+	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok || len(k8scontexts) == 0 {
 		r.Log.Error(ErrNilClient)
 		return model.StatusUnknown, ErrNilClient
 	}
-	currcontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok {
+	kubeclient, err := k8scontexts[0].GenerateKubeHandler()
+	if err != nil || kubeclient == nil {
 		r.Log.Error(ErrNilClient)
 		return model.StatusUnknown, ErrNilClient
 	}
@@ -85,7 +84,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 				})
 				return
 			}
-			connectionTrackerSingleton.Set(currcontext.ID, endpoint)
+			connectionTrackerSingleton.Set(k8scontexts[0].ID, endpoint)
 			r.Log.Info("Connected to broker at:", endpoint)
 			connectionTrackerSingleton.Log(r.Log)
 		}
