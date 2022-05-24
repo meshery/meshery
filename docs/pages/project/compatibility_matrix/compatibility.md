@@ -291,7 +291,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
   <th>Meshery Component</th>
   <th>Meshery Component Version</th>
   <th>Meshery Server Version</th>
-  <th>Service Mesh</th>
+  <th style = "whitespace:no-wrap;">Service Mesh</th>
   <th>Service Mesh Version</th>
 
     {% for group in sorted_tests_group %}
@@ -312,7 +312,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           {% endif %}
           <tr style="visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{item.meshery-component}}');">
             <td style="{{ overall-status }}">{{ item.timestamp }}</td>
-            <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
+            <td style="white-space:nowrap;"><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             {% if item.meshery-component-version == "edge" %}
               <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases">{{ item.meshery-component-version }}</a></td>
             {% else %}
@@ -323,7 +323,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             {% else %}
               <td><a href="{{ site.repo }}/releases/tag/{{ item.meshery-server-version }}">{{ item.meshery-server-version }}</a></td>
             {% endif %}
-            <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
+            <td style="white-space: nowrap;"><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
           </tr>
           <tr id="{{item.meshery-component}}" style="visibility:hidden; display:none;">
@@ -346,7 +346,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
 
         <!-- if the latest test is stable as we require edge test to show too and since sorted through timestamp second element will always be an edge tests. -->
 
-        {% else %}
+        {% elsif items[1].meshery-component-version == "edge" %}
           {% if items[1].overall-status == "passing" %}
             {% assign overall-status = "background-color: #56B257; color: white;" %}
             {% assign result-state = "✅" %}
@@ -361,7 +361,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           {% endif %}
           <tr style="visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{items[1].meshery-component}}');">
             <td style="{{ overall-status }}">{{ items[1].timestamp }}</td>
-            <td><a href="{{ site.repo }}-{{ items[1].service-mesh }}">{{ items[1].meshery-component }}</a></td>
+            <td style="white-space:nowrap;"><a href="{{ site.repo }}-{{ items[1].service-mesh }}">{{ items[1].meshery-component }}</a></td>
             {% if items[1].meshery-component-version == "edge" %}
               <td><a href="{{ site.repo }}-{{ items[1].service-mesh }}/releases">{{ items[1].meshery-component-version }}</a></td>
             {% else %}
@@ -372,7 +372,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             {% else %}
               <td><a href="{{ site.repo }}/releases/tag/{{ items[1].meshery-server-version }}">{{ items[1].meshery-server-version }}</a></td>
             {% endif %}
-            <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{items[1].service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ items[1].service-mesh }}">{{ items[1].service-mesh }}</a></td>
+            <td style="white-space:nowrap;"><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{items[1].service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ items[1].service-mesh }}">{{ items[1].service-mesh }}</a></td>
             <td>{{ items[1].service-mesh-version }}</td>
           </tr>
           <tr id="{{items[1].meshery-component}}" style="visibility:hidden; display:none;">
@@ -416,10 +416,10 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           {% endif %}
           <tr style="visibility: hidden; display: none;" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.meshery-component}}-stable');">
             <td style="{{ overall-status }}">{{ item.timestamp }}</td>
-            <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
+            <td style = "white-space:nowrap;"><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
             <td><a href="{{ site.repo }}/releases/tag/{{ item.meshery-server-version }}">{{ item.meshery-server-version }}</a></td>
-            <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
+            <td style="white-space:nowrap;"><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
           </tr>
           <tr id="{{item.meshery-component}}-stable" style="visibility:hidden; display:none;">
