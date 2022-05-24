@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -43,6 +44,7 @@ func sanitizeOrderInput(order string, validColumns []string) string {
 
 var (
 	dbHandler database.Handler
+	mx        sync.Mutex
 )
 
 func SetNewDBInstance() {
@@ -66,6 +68,8 @@ func SetNewDBInstance() {
 }
 
 func GetNewDBInstance() *database.Handler {
+	mx.Lock()
+	defer mx.Unlock()
 	SetNewDBInstance()
 	return &dbHandler
 }
