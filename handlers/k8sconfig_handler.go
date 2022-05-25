@@ -30,8 +30,8 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
 	// }
-
 	if req.Method == http.MethodPost {
+
 		h.addK8SConfig(user, prefObj, w, req, provider)
 		return
 	}
@@ -88,7 +88,6 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 	}
 
 	contexts := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
-
 	for _, ctx := range contexts {
 		_, err := provider.SaveK8sContext(token, ctx) // Ignore errors
 		if err != nil {
