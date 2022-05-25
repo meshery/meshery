@@ -24,6 +24,11 @@ import {
   Box,
   FormControl,
   InputLabel,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Dialog,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -158,7 +163,6 @@ async function uploadK8sConfig() {
 async function changeContext(id) {
   return await promisifiedDataFetch("/api/system/kubernetes/contexts/current/" + id, { method : "POST" })
 }
-
 class MeshConfigComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -166,6 +170,8 @@ class MeshConfigComponent extends React.Component {
       inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer
     } = props;
     this.state = {
+      openDatabaseDialogue : false,
+      openMeshSyncDialogue : false,
       inClusterConfig, // read from store
       inClusterConfigForm : inClusterConfig,
       k8sfile, // read from store
@@ -546,7 +552,7 @@ handleNATSClick = () => {
     // });
   };
 
-  handleReset = () => {
+  handleResetDatabase = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
     resetDatabase({
@@ -561,10 +567,11 @@ handleNATSClick = () => {
           this.props.enqueueSnackbar(`Database reset successful.`, {
             variant : "success",
             action : (key) => (
-              <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+              <IconButton key="close" aria-label="close" color="inherit"  onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             ),
+
             autohideduration : 2000,
           })
         }
@@ -572,7 +579,33 @@ handleNATSClick = () => {
       error : self.handleError("Database is not reachable, try restarting server.")
     });
   }
+  handleFlushMeshSync = () => {
+    this.props.updateProgress({ showProgress : true });
+    const self = this;
+    resetDatabase({
+      selector : {
+        clearDB : "true",
+        ReSync : "false"
+      },
+    }).subscribe({
+      next : (res) => {
+        self.props.updateProgress({ showProgress : false });
+        if (res.resetStatus === "PROCESSING") {
+          this.props.enqueueSnackbar(`MeshSync Flushed successfully.`, {
+            variant : "success",
+            action : (key) => (
+              <IconButton key="close" aria-label="close" color="inherit"  onClick={() => self.props.closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
 
+            autohideduration : 2000,
+          })
+        }
+      },
+      error : self.handleError("Database is not reachable, try restarting server.")
+    });
+  }
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
@@ -693,8 +726,37 @@ handleNATSClick = () => {
       NATSVersion,
       operatorSwitch,
       contexts,
+      openDatabaseDialogue,
+      openMeshSyncDialogue,
     } = this.state;
 
+
+    const handleClickOpenDatabaseDialogue = () => {
+      this.setState( {
+        openDatabaseDialogue : true
+      },
+      )
+    };
+
+    const handleCloseDatabaseDialogue = () => {
+      this.setState(  {
+        openDatabaseDialogue : false
+      },
+      )
+    };
+    const handleClickOpenMeshSyncDialogue = () => {
+      this.setState( {
+        openMeshSyncDialogue : true
+      },
+      )
+    };
+
+    const handleCloseMeshSyncDialogue = () => {
+      this.setState(  {
+        openMeshSyncDialogue : false
+      },
+      )
+    };
     let showConfigured = <></>;
     const self = this;
     if (clusterConfigured) {
@@ -879,12 +941,71 @@ handleNATSClick = () => {
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => this.handleReset()}
+            onClick={handleClickOpenDatabaseDialogue}
             className={classes.button}
             data-cy="btnResetDatabase"
           >
               Reset Database
           </Button>
+          <Dialog
+            open={openDatabaseDialogue}
+            onClose={handleCloseDatabaseDialogue}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Reset Database?"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+            Are you sure to reset all the database of the meshery?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDatabaseDialogue}>NO</Button>
+              <Button onClick={() => {
+                this.handleResetDatabase();
+                handleCloseDatabaseDialogue();
+              }} autoFocus>
+            YES
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleClickOpenMeshSyncDialogue}
+            className={classes.button}
+            data-cy="btnResetDatabase"
+          >
+              Flush MeshSync
+          </Button>
+          <Dialog
+            open={openMeshSyncDialogue}
+            onClose={handleCloseMeshSyncDialogue}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Flush MeshSync?"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+            Are you sure to Flush MeshSync of the meshery?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseMeshSyncDialogue}>NO</Button>
+              <Button onClick={() => {
+                this.handleFlushMeshSync();
+                handleCloseMeshSyncDialogue();
+              }} autoFocus>
+            YES
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
       </React.Fragment>
     );
