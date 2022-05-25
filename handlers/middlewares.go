@@ -146,6 +146,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				k8scontexts = append(k8scontexts, *contexts[0])
 			}
 		} else if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
+
 			contexts, err := provider.LoadAllK8sContext(token)
 			if err != nil {
 				logrus.Warn("failed to load all k8scontext")
@@ -157,6 +158,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				}
 			}
 		} else {
+
 			for _, kctxID := range k8sContextIDs {
 				kctx, err := provider.GetK8sContext(token, kctxID)
 				if err != nil {
