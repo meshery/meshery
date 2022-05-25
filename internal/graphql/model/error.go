@@ -19,7 +19,7 @@ const (
 	ErrNoMeshSyncCode               = "1011"
 	ErrNoExternalEndpointCode       = "1012"
 	ErrApplyHelmChartCode           = "2155"
-	ErrGetVersionCode               = "2175"  
+	ErrGetVersionCode               = "2175"
 )
 
 var (

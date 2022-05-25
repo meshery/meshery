@@ -271,8 +271,8 @@ func getVersion(clientset *mesherykube.Client) (string, error) {
 	meshsyncPod, _ := clientset.KubeClient.CoreV1().Pods("meshery").List(context.TODO(), metav1.ListOptions{
 		LabelSelector: "component=meshsync",
 	})
-	
-	if (!(len(meshsyncPod.Items) > 0)) {
+
+	if !(len(meshsyncPod.Items) > 0) {
 		return "", nil
 	}
 	podName := meshsyncPod.Items[0].Name
@@ -280,7 +280,7 @@ func getVersion(clientset *mesherykube.Client) (string, error) {
 	request := clientset.KubeClient.CoreV1().RESTClient().Post().Resource("pods").Name(podName)
 
 	request.VersionedParams(
-        &v1.PodExecOptions{
+		&v1.PodExecOptions{
 			Command: []string{"env"},
 			Stdin:   true,
 			Stdout:  true,
@@ -288,33 +288,32 @@ func getVersion(clientset *mesherykube.Client) (string, error) {
 			TTY:     true,
 		},
 
-        scheme.ParameterCodec,
-    )
-	
+		scheme.ParameterCodec,
+	)
+
 	exec, err := remotecommand.NewSPDYExecutor(&clientset.RestConfig, "POST", request.URL())
-    if err != nil {
-        return "", err
-    }
+	if err != nil {
+		return "", err
+	}
 	var stdout bytes.Buffer
 
-    err = exec.Stream(remotecommand.StreamOptions{
-        Stdin:  os.Stdin,
-        Stdout: &stdout,
-        Stderr: os.Stderr,
-    })
+	err = exec.Stream(remotecommand.StreamOptions{
+		Stdin:  os.Stdin,
+		Stdout: &stdout,
+		Stderr: os.Stderr,
+	})
 
 	if err != nil {
-        return "", err
-    }
+		return "", err
+	}
 	s := strings.Split(stdout.String(), "\n")
-	if (len(s) > 0) {
-
+	if len(s) > 0 {
 		for _, ele := range s {
-			if (ele == "VERSION") {
-				return ele[strings.Index(ele, "=") + 1 :], nil
+			if ele == "VERSION" {
+				return ele[strings.Index(ele, "=")+1:], nil
 			}
 		}
 	}
-	
+
 	return "", nil
 }
