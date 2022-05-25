@@ -1,9 +1,12 @@
 package model
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/url"
+	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -18,6 +21,8 @@ import (
 	v1 "k8s.io/api/core/v1"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/tools/remotecommand"
+	"k8s.io/kubectl/pkg/scheme"
 )
 
 const (
@@ -117,11 +122,12 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return meshsyncStatus, ErrMesheryClient(err)
 	}
-
-	meshsyncDeployment, err := mesheryKubeClient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
-	meshsyncVersion := ""
-	if err == nil {
-		meshsyncVersion = imageVersionExtractUtil(meshsyncDeployment.Spec.Template, "meshsync")
+	meshsyncVersion, err := getVersion(mesheryKubeClient)
+	if meshsyncVersion == "" {
+		meshsyncVersion = "latest"
+	}
+	if err != nil {
+		return meshsyncStatus, ErrGetVersion(err)
 	}
 
 	// Synthetic Check for MeshSync data is too time consuming. Commented for now.
@@ -259,4 +265,56 @@ func imageVersionExtractUtil(container v1.PodTemplateSpec, containerName string)
 		}
 	}
 	return version
+}
+
+func getVersion(clientset *mesherykube.Client) (string, error) {
+	meshsyncPod, _ := clientset.KubeClient.CoreV1().Pods("meshery").List(context.TODO(), metav1.ListOptions{
+		LabelSelector: "component=meshsync",
+	})
+	
+	if (!(len(meshsyncPod.Items) > 0)) {
+		return "", nil
+	}
+	podName := meshsyncPod.Items[0].Name
+	fmt.Println(reflect.TypeOf(meshsyncPod.Items))
+	request := clientset.KubeClient.CoreV1().RESTClient().Post().Resource("pods").Name(podName)
+
+	request.VersionedParams(
+        &v1.PodExecOptions{
+			Command: []string{"env"},
+			Stdin:   true,
+			Stdout:  true,
+			Stderr:  true,
+			TTY:     true,
+		},
+
+        scheme.ParameterCodec,
+    )
+	
+	exec, err := remotecommand.NewSPDYExecutor(&clientset.RestConfig, "POST", request.URL())
+    if err != nil {
+        return "", err
+    }
+	var stdout bytes.Buffer
+
+    err = exec.Stream(remotecommand.StreamOptions{
+        Stdin:  os.Stdin,
+        Stdout: &stdout,
+        Stderr: os.Stderr,
+    })
+
+	if err != nil {
+        return "", err
+    }
+	s := strings.Split(stdout.String(), "\n")
+	if (len(s) > 0) {
+
+		for _, ele := range s {
+			if (ele == "VERSION") {
+				return ele[strings.Index(ele, "=") + 1 :], nil
+			}
+		}
+	}
+	
+	return "", nil
 }
