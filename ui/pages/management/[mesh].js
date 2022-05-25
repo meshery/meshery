@@ -1,7 +1,8 @@
-import React from "react";
-import { NoSsr } from "@material-ui/core";
+import { Button, makeStyles, NoSsr, Container, Typography } from "@material-ui/core";
+import SettingsIcon from "@material-ui/icons/Settings";
 import Head from "next/head";
-import MesheryMeshInterface from "../../components/MesheryMeshInterface";
+import { useRouter } from "next/router";
+import React from "react";
 
 /**
  * getPath returns the current pathname
@@ -36,8 +37,33 @@ function capitalize(string) {
   return "";
 }
 
+const useStyles = makeStyles((theme) => ({
+  alreadyConfigured : {
+    textAlign : "center",
+    padding : theme.spacing(20),
+  },
+  container : {
+    textAlign : "center",
+    transform : "translateY(-20%)"
+  },
+  wrapper : {
+    display : "flex",
+    alignItems : "center",
+    height : "100%"
+  },
+  btn : {
+    marginBottom : theme.spacing(2),
+  }
+}))
+
 function Mesh() {
   const name = extractComponentName(getPath());
+  const classes = useStyles()
+  const router = useRouter();
+
+  const handleConfigure = () => {
+    router.push("/settings#service-mesh");
+  }
 
   return (
     <NoSsr>
@@ -45,7 +71,26 @@ function Mesh() {
         <title>{capitalize(name)} Management</title>
       </Head>
       <NoSsr>
-        <MesheryMeshInterface adapter={name}/>
+        <div className={classes.wrapper}>
+          <Container className={classes.container}>
+            <Typography variant="h6">
+              Adapter Unavailable
+            </Typography>
+            <Typography variant="subtitle">
+              Connect Meshery Adapter(s) in Settings
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={handleConfigure}
+              className={classes.btn}
+            >
+              <SettingsIcon className={classes.icon} />
+              Settings
+            </Button>
+          </Container>
+        </div>
       </NoSsr>
     </NoSsr>
   );

@@ -11,7 +11,7 @@ import { updateProgress } from '../lib/store';
 import { trueRandom } from '../lib/trueRandom';
 
 const grafanaStyles = (theme) => ({
-  root : { padding : theme.spacing(5), },
+  grafanaRoot : { padding : theme.spacing(5), },
   buttons : { display : 'flex',
     justifyContent : 'flex-end', },
   button : { marginTop : theme.spacing(3),
@@ -201,7 +201,7 @@ class GrafanaSelectionComponent extends Component {
       return (
         <NoSsr>
           <React.Fragment>
-            <div className={classes.root}>
+            <div className={classes.grafanaRoot}>
               <div className={classes.alignRight}>
                 <Chip
                   label={grafanaURL}

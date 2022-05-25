@@ -22,14 +22,18 @@ const (
 	ErrBrokerNotConnectedCode       = "2151"
 	ErrGettingNamespaceCode         = "1014"
 	ErrFetchingPatternsCode         = "1015"
+	ErrInvalidOAMTypeCode           = "2173"
+	ErrKubectlDescribeCode          = "2174"
+	ErrEmptyCurrentK8sContextCode   = "2175"
 )
 
 var (
-	ErrNilClient          = errors.New(ErrNilClientCode, errors.Alert, []string{"Kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-	ErrInvalidRequest     = errors.New(ErrInvalidRequestCode, errors.Alert, []string{"Invalid query, please check syntax"}, []string{"The Graphql query requested is invalid"}, []string{}, []string{"Check the query parameters and syntax of the query being run"})
-	ErrNoMeshSync         = errors.New(ErrNoMeshSyncCode, errors.Alert, []string{"MeshSync disabled"}, []string{"MeshSync custom controller is not running in your kubernetes cluster"}, []string{"Meshery Operator is not running in your cluster or is crashing"}, []string{"Enable Meshery Operator from the settings page in the UI", "Check for logs in the meshery-operator pods from inside the application for more information"})
-	ErrEmptyHandler       = errors.New(ErrNoMeshSyncCode, errors.Alert, []string{"Database handler not initialized"}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
-	ErrBrokerNotConnected = errors.New(ErrBrokerNotConnectedCode, errors.Alert, []string{"Broker not connected"}, []string{"Meshery Broker is not connected to Meshery Server"}, []string{"Meshery Broker is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server has access to the Broker"})
+	ErrNilClient              = errors.New(ErrNilClientCode, errors.Alert, []string{"Kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+	ErrInvalidRequest         = errors.New(ErrInvalidRequestCode, errors.Alert, []string{"Invalid query, please check syntax"}, []string{"The Graphql query requested is invalid"}, []string{}, []string{"Check the query parameters and syntax of the query being run"})
+	ErrNoMeshSync             = errors.New(ErrNoMeshSyncCode, errors.Alert, []string{"MeshSync disabled"}, []string{"MeshSync custom controller is not running in your kubernetes cluster"}, []string{"Meshery Operator is not running in your cluster or is crashing"}, []string{"Enable Meshery Operator from the settings page in the UI", "Check for logs in the meshery-operator pods from inside the application for more information"})
+	ErrEmptyHandler           = errors.New(ErrNoMeshSyncCode, errors.Alert, []string{"Database handler not initialized"}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
+	ErrBrokerNotConnected     = errors.New(ErrBrokerNotConnectedCode, errors.Alert, []string{"Broker not connected"}, []string{"Meshery Broker is not connected to Meshery Server"}, []string{"Meshery Broker is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server has access to the Broker"})
+	ErrEmptyCurrentK8sContext = errors.New(ErrEmptyCurrentK8sContextCode, errors.Alert, []string{"Current kubernetes context is empty"}, []string{"Meshery is not able to get the current kubernetes context"}, []string{"Meshery is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
 )
 
 func ErrUpdateData(err error) error {
@@ -83,4 +87,24 @@ func ErrGettingNamespace(err error) error {
 }
 func ErrFetchingPatterns(err error) error {
 	return errors.New(ErrFetchingPatternsCode, errors.Alert, []string{"Cannot fetch patterns"}, []string{err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Try again, if still exist, please post an issue on Meshery repository"})
+}
+
+func ErrInvalidOAMType() error {
+	return errors.New(
+		ErrInvalidOAMTypeCode,
+		errors.Alert,
+		[]string{"invalid oam type is requested"},
+		[]string{"invalid oam type requested, supported types are workload, scope, trait "},
+		nil, nil,
+	)
+}
+
+func ErrKubectlDescribe(err error) error {
+	return errors.New(
+		ErrKubectlDescribeCode,
+		errors.Alert,
+		[]string{"failed to find the resource", "invalid resource type", "resource doens't exists"},
+		[]string{err.Error(), "invalid kubernetes resource type or couldn't find the specified resource"},
+		nil, nil,
+	)
 }

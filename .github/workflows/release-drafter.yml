@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - master
-
+    paths-ignore:
+      - '.github/**'
 jobs:
   update_release_draft:
     if: github.repository == 'meshery/meshery'
@@ -19,7 +20,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
 
       # - name: Checkout
-      #   uses: actions/checkout@v2
+      #   uses: actions/checkout@v3
 
       # - name: Write release notes to markdown file
       #   run: |

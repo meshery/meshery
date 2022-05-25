@@ -4,33 +4,33 @@
  * W. https://svgartista.net
  **************************************************/
 
-svg .svg-elem-1 {
+ svg .svg-elem-9 {
   fill: transparent;
   -webkit-transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 0.8s;
           transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 0.8s;
 }
 
-svg .active.svg-elem-1 {
+svg .active.svg-elem-9 {
   fill: rgb(0, 211, 169);
 }
 
-svg .svg-elem-2 {
+svg .svg-elem-7 {
   fill: transparent;
   -webkit-transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 0.9s;
           transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 0.9s;
 }
 
-svg .active.svg-elem-2 {
+svg .active.svg-elem-7 {
   fill: rgb(0, 179, 159);
 }
 
-svg .svg-elem-3 {
+svg .svg-elem-5 {
   fill: transparent;
   -webkit-transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1s;
           transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1s;
 }
 
-svg .active.svg-elem-3 {
+svg .active.svg-elem-5 {
   fill: rgb(0, 211, 169);
 }
 
@@ -44,13 +44,13 @@ svg .active.svg-elem-4 {
   fill: rgb(0, 179, 159);
 }
 
-svg .svg-elem-5 {
+svg .svg-elem-3 {
   fill: transparent;
   -webkit-transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1.2000000000000002s;
           transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1.2000000000000002s;
 }
 
-svg .active.svg-elem-5 {
+svg .active.svg-elem-3 {
   fill: rgb(0, 211, 169);
 }
 
@@ -62,13 +62,13 @@ svg .svg-elem-6 {
 svg .active.svg-elem-6 {
 }
 
-svg .svg-elem-7 {
+svg .svg-elem-2 {
   fill: transparent;
   -webkit-transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1.4000000000000001s;
           transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1.4000000000000001s;
 }
 
-svg .active.svg-elem-7 {
+svg .active.svg-elem-2 {
   fill: rgb(32, 189, 171);
 }
 
@@ -80,12 +80,12 @@ svg .svg-elem-8 {
 svg .active.svg-elem-8 {
 }
 
-svg .svg-elem-9 {
+svg .svg-elem-1 {
   fill: transparent;
-  -webkit-transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1.6s;
-          transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1.6s;
+  -webkit-transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1.5000000000000001s;
+          transition: fill 0.7s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1.5000000000000001s;
 }
 
-svg .active.svg-elem-9 {
+svg .active.svg-elem-1 {
   fill: rgb(32, 189, 171);
 }

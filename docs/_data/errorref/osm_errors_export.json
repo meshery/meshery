@@ -193,29 +193,47 @@
         "suggested_remediation": ""
       },
       "1021": {
-        "name": "ErrEmptyConfigCode",
+        "name": "ErrLoadNamespaceCode",
         "code": "1021",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occured while applying namespace ",
+        "probable_cause": "Trying to access a namespace which is not available",
+        "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
+      },
+      "1022": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1022",
         "severity": "Alert",
         "long_description": "",
         "short_description": "Config is empty",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1022": {
+      "1023": {
         "name": "ErrGetLatestReleasesCode",
-        "code": "1022",
+        "code": "1023",
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to fetch release info",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1023": {
+      "1024": {
         "name": "ErrGetLatestReleaseNamesCode",
-        "code": "1023",
+        "code": "1024",
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to extract release names",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1025": {
+        "name": "ErrGetManifestNamesCode",
+        "code": "1025",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch manifest names from github",
         "probable_cause": "",
         "suggested_remediation": ""
       }

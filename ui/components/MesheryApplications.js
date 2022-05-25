@@ -9,7 +9,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import UploadIcon from "@material-ui/icons/Publish";
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
@@ -25,7 +24,7 @@ import configurationTableTheme from "../themes/configurationTableTheme";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";
-import URLUploader from "./URLUploader";
+import UploadImport from "./UploadImport";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -37,7 +36,14 @@ const styles = (theme) => ({
     '& .MuiTableRow-root' : {
       cursor : 'pointer'
     }
-  }
+  },
+  createButton : {
+    display : "flex",
+    justifyContent : "flex-start",
+    alignItems : "center",
+    whiteSpace : "nowrap",
+    margin : "1rem auto 2rem auto"
+  },
 });
 
 
@@ -83,7 +89,7 @@ function TooltipIcon({ children, onClick, title }) {
 
 function YAMLEditor({ application, onClose, onSubmit }) {
   const classes = useStyles();
-  const [yaml, setYaml] = useState("");
+  const [yaml, setYaml] = useState(application.application_file);
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -180,6 +186,7 @@ function MesheryApplications({
   const [pageSize, setPageSize] = useState(10);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [close, handleClose] = useState(true);
   const DEPLOY_URL = '/api/application/deploy';
 
   const searchTimeout = useRef(null);
@@ -312,7 +319,7 @@ function MesheryApplications({
         {
           credentials : "include",
           method : "POST",
-          body : JSON.stringify({ application_data : { id, application_file : data }, save : true }),
+          body : JSON.stringify({ application_data : { id, name, application_file : data }, save : true }),
         },
         () => {
           console.log("ApplicationFile API", `/api/application`);
@@ -345,6 +352,7 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
+          handleClose(true);
           fetchApplications(page, pageSize, search, sortOrder);
         },
         // handleError
@@ -354,6 +362,7 @@ function MesheryApplications({
   }
 
   function uploadHandler(ev) {
+    handleClose(false);
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -535,7 +544,6 @@ function MesheryApplications({
         text : "application(s) selected"
       }
     },
-    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
 
@@ -609,6 +617,11 @@ function MesheryApplications({
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
         <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
+      <div className={classes.createButton}>
+        <div className={classes.UploadImport}>
+          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application" modalStatus={close} />
+        </div>
+      </div>
       <MuiThemeProvider theme={configurationTableTheme()}>
         <MUIDataTable
           title={<div className={classes.tableHeader}>Applications</div>}
@@ -629,26 +642,6 @@ const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(
 const mapStateToProps = (state) => {
   return { user : state.get("user")?.toObject(), };
 };
-
-function CustomToolbar(onClick, urlOnClick) {
-  return function Toolbar() {
-    return (
-      <>
-        <label htmlFor="upload-button">
-          <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" data-cy="file-upload-button" />
-          <Tooltip title="Upload Your Application">
-            <IconButton aria-label="Upload" component="span">
-              <UploadIcon />
-            </IconButton>
-          </Tooltip>
-        </label>
-        <label htmlFor="url-upload-button">
-          <URLUploader onSubmit={urlOnClick} />
-        </label>
-      </>
-    );
-  };
-}
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryApplications)));

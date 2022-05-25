@@ -223,7 +223,7 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
  * @param {String} text
  * @returns
  */
-export function camelCaseToCapitalize(text){
+export function camelCaseToCapitalize(text) {
   if (!text) return null
 
   const result = text.replace(/([A-Z])/g, " $1");
@@ -237,7 +237,7 @@ export function camelCaseToCapitalize(text){
  * @param {String} text
  * @returns
  */
-export function formatString(text){
+export function formatString(text) {
   if (!text) return null
 
   // format string for prettified camelCase
@@ -265,6 +265,13 @@ function jsonSchemaBuilder(schema, obj) {
   if (schema.type === 'object') {
     for (let key in schema.properties) {
       obj[key] = {};
+
+      // handle percentage for range widget
+      if ((schema.properties?.[key]["type"] === 'number' || schema.properties?.[key].type === 'integer')
+        && key.toLowerCase().includes("percent")) {
+        obj[key]["ui:widget"] = "range"
+      }
+
       jsonSchemaBuilder(schema.properties?.[key], obj[key]);
     }
     return
@@ -277,6 +284,9 @@ function jsonSchemaBuilder(schema, obj) {
   }
 
   obj[uiDesc] = " ";
+  if (obj["ui:widget"]) { // if widget is already assigned, don't go over
+    return
+  }
 
   if (schema.type === 'boolean') {
     obj["ui:widget"] = "checkbox";

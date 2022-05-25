@@ -25,7 +25,7 @@ import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceCom
 
 
 const styles = (theme) => ({
-  root : {
+  statsWrapper : {
     maxWidth : "100%",
     height : 'auto',
     borderTopLeftRadius : 0,
@@ -92,7 +92,6 @@ class UserPreference extends React.Component {
     this.state = {
       anonymousStats : props.anonymousStats,
       perfResultStats : props.perfResultStats,
-      startOnZoom : props.startOnZoom,
       tabVal : 0,
       userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
       providerType : ''
@@ -103,10 +102,8 @@ class UserPreference extends React.Component {
     const self = this;
     if (name == 'anonymousUsageStats') {
       self.setState((state) => ({ anonymousStats : !state.anonymousStats }), () => this.handleChange(name));
-    } else if (name == 'anonymousPerfResults') {
-      self.setState((state) => ({ perfResultStats : !state.perfResultStats }), () => this.handleChange(name));
     } else {
-      self.setState((state) => ({ startOnZoom : !state.startOnZoom }), () => this.handleChange(name));
+      self.setState((state) => ({ perfResultStats : !state.perfResultStats }), () => this.handleChange(name));
     }
   }
 
@@ -129,32 +126,23 @@ class UserPreference extends React.Component {
 
   handleChange = (name) => {
     const self = this;
-    const { anonymousStats, perfResultStats, startOnZoom } = this.state;
+    const { anonymousStats, perfResultStats } = this.state;
     let val, msg;
     if (name == 'anonymousUsageStats') {
       val = anonymousStats;
       msg = val
         ? "Sending anonymous usage statistics was enabled"
         : "Sending anonymous usage statistics was disabled";
-
-    } else if (name == 'anonymousPerfResults') {
+    } else {
       val = perfResultStats;
       msg = val
         ? "Sending anonymous performance results was enabled"
         : "Sending anonymous performance results was disabled";
-    } else {
-      val = startOnZoom;
-      msg = val
-        ? "Start on Zoom was enabled"
-        : "Start on Zoom was disabled";
     }
 
     const requestBody = JSON.stringify({
       "anonymousUsageStats" : anonymousStats,
       "anonymousPerfResults" : perfResultStats,
-      "usersExtensionPreferences" : {
-        "showOnZoom" : startOnZoom
-      }
     });
 
     console.log(requestBody,anonymousStats,perfResultStats);
@@ -211,12 +199,11 @@ class UserPreference extends React.Component {
 
   render() {
     const {
-      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs, providerType
+      anonymousStats, perfResultStats, tabVal, userPrefs, providerType
     } = this.state;
     const { classes } = this.props;
 
     const mainIconScale = 'grow-10';
-    const handleToggle = this.handleToggle('startOnZoom');
 
     return (
       <NoSsr>
@@ -261,7 +248,7 @@ class UserPreference extends React.Component {
             }
           </Tabs>
         </Paper>
-        <Paper className={classes.root}>
+        <Paper className={classes.statsWrapper}>
           {tabVal == 0 &&
             <div className={classes.formContainer}>
               <FormControl component="fieldset" className={classes.formGrp}>
@@ -307,7 +294,7 @@ class UserPreference extends React.Component {
             <MesherySettingsPerformanceComponent />
           }
           {tabVal == 2 && userPrefs && providerType != 'local' &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ url })} />
           }
         </Paper>
       </NoSsr>

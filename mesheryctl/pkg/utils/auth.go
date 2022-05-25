@@ -143,12 +143,12 @@ func GetCurrentAuthToken() (string, error) {
 func AddAuthDetails(req *http.Request, filepath string) error {
 	file, err := os.ReadFile(filepath)
 	if err != nil {
-		err = errors.Wrap(err, "could not read token:")
+		err = errors.Wrap(err, "could not read token: ")
 		return err
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid:")
+		err = errors.Wrap(err, "token file invalid: ")
 		return err
 	}
 	req.AddCookie(&http.Cookie{
@@ -174,7 +174,7 @@ func UpdateAuthDetails(filepath string) error {
 	// TODO: get this from the global config
 	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/token", bytes.NewBuffer([]byte("")))
 	if err != nil {
-		err = errors.Wrap(err, "error Creating the request :")
+		err = errors.Wrap(err, "error Creating the request: ")
 		return err
 	}
 	if err := AddAuthDetails(req, filepath); err != nil {
@@ -186,13 +186,13 @@ func UpdateAuthDetails(filepath string) error {
 	defer SafeClose(resp.Body)
 
 	if err != nil {
-		err = errors.Wrap(err, "error dispatching there request :")
+		err = errors.Wrap(err, "error dispatching there request: ")
 		return err
 	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		err = errors.Wrap(err, "error reading body :")
+		err = errors.Wrap(err, "error reading body: ")
 		return err
 	}
 
@@ -207,12 +207,12 @@ func UpdateAuthDetails(filepath string) error {
 func ReadToken(filepath string) (map[string]string, error) {
 	file, err := os.ReadFile(filepath)
 	if err != nil {
-		err = errors.Wrap(err, "could not read token:")
+		err = errors.Wrap(err, "could not read token: ")
 		return nil, err
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid:")
+		err = errors.Wrap(err, "token file invalid: ")
 		return nil, err
 	}
 	return tokenObj, nil
@@ -247,7 +247,7 @@ func CreateTempAuthServer(fn func(http.ResponseWriter, *http.Request)) (*http.Se
 }
 
 // InitiateLogin initates the login process
-func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
+func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, error) {
 	// Get the providers info
 	providers, err := GetProviderInfo(mctlCfg)
 	if err != nil {
@@ -255,7 +255,18 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig) ([]byte, error) {
 	}
 
 	// Let the user select a provider
-	provider := selectProviderPrompt(providers)
+	var provider Provider
+	if option != "" {
+		// If option is given by user
+		provider, err = chooseDirectProvider(providers, option)
+	} else {
+		// Trigger prompt
+		provider = selectProviderPrompt(providers)
+	}
+
+	if err != nil {
+		return nil, err
+	}
 
 	var token string
 
@@ -370,6 +381,26 @@ func selectProviderPrompt(provs map[string]Provider) Provider {
 
 		return provArray[i]
 	}
+}
+
+func chooseDirectProvider(provs map[string]Provider, option string) (Provider, error) {
+	provArray := []Provider{}
+	provNames := []string{}
+
+	for _, prov := range provs {
+		provArray = append(provArray, prov)
+	}
+
+	for _, prov := range provArray {
+		provNames = append(provNames, prov.ProviderName)
+	}
+
+	for i := range provNames {
+		if strings.EqualFold(provNames[i], option) {
+			return provArray[i], nil
+		}
+	}
+	return provArray[1], fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {

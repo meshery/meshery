@@ -9,10 +9,12 @@ import PropTypes from "prop-types";
 import { withRouter } from "next/router";
 import SettingsIcon from "@material-ui/icons/Settings";
 import MesheryAdapterPlayComponent from "./MesheryAdapterPlayComponent";
+import { bindActionCreators } from "redux";
+import { setAdapter } from "../lib/store";
 
 const styles = (theme) => ({
   icon : { fontSize : 20, },
-  root : { padding : theme.spacing(0),
+  playRoot : { padding : theme.spacing(0),
     marginBottom : theme.spacing(2), },
   buttons : { display : "flex",
     justifyContent : "flex-end", },
@@ -70,14 +72,47 @@ class MesheryPlayComponent extends React.Component {
     };
   }
 
+  handleRouteChange =  () => {
+    const queryParam = this.props?.router?.query?.adapter;
+    if (queryParam) {
+      const selectedAdapter = this.state.meshAdapters.find(({ adapter_location }) => adapter_location === queryParam);
+      if (selectedAdapter) {
+        this.setState({ adapter : selectedAdapter })
+      }
+    }
+  }
+
+  componentDidMount() {
+    const { router } = this.props;
+    router.events.on('routeChangeComplete', this.handleRouteChange)
+  }
+
+  componentDidUpdate(prevProps) {
+    // update the adapter when the meshadapters props are changed
+    if (prevProps.meshAdapters?.length !== this.props.meshAdapters.length) {
+      this.handleRouteChange()
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.router.events.off('routeChangeComplete', this.handleRouteChange)
+  }
+
   static getDerivedStateFromProps(props, state) {
-    let { meshAdapters, meshAdaptersts, k8sconfig } = props;
+    let { meshAdapters, meshAdaptersts, k8sconfig, selectedAdapter } = props;
+    let adapter  = state.adapter;
+    let aName = selectedAdapter.toLowerCase()
+    if (meshAdapters && meshAdapters.length > 0) {
+      adapter = meshAdapters.filter((meshadapters) => {
+        return aName ===  meshadapters.name.toLowerCase()
+      });
+    }
     const st = {};
     if (meshAdaptersts > state.mts) {
       st.meshAdapters = meshAdapters;
       st.mts = meshAdaptersts;
       if (meshAdapters && meshAdapters.length > 0) {
-        st.adapter = meshAdapters[0];
+        st.adapter = adapter[0];
       }
     }
     if (k8sconfig.ts > state.kts) {
@@ -88,7 +123,9 @@ class MesheryPlayComponent extends React.Component {
       st.configuredServer = k8sconfig.configuredServer;
       st.kts = props.ts;
     }
-
+    if (adapter.length > 0) {
+      st.adapter = adapter[0];
+    }
     return st;
   }
 
@@ -111,10 +148,12 @@ class MesheryPlayComponent extends React.Component {
     const self = this;
     return (event) => {
       const { meshAdapters } = self.state;
+      const { setAdapter, } = self.props;
       if (event.target.value !== "") {
         const selectedAdapter = meshAdapters.filter(({ adapter_location }) => adapter_location === event.target.value);
         if (typeof selectedAdapter !== "undefined" && selectedAdapter.length === 1) {
           self.setState({ adapter : selectedAdapter[0] });
+          setAdapter({ selectedAdapter : selectedAdapter[0].name });
         }
       }
     };
@@ -161,6 +200,11 @@ class MesheryPlayComponent extends React.Component {
         </NoSsr>
       );
     }
+
+    if (!adapter) {
+      this.setState({ adapter : meshAdapters[0] })
+    }
+
     if (this.props.adapter && this.props.adapter !== "") {
       const indContent = this.renderIndividualAdapter();
       if (indContent !== "") {
@@ -174,7 +218,7 @@ class MesheryPlayComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <div className={classes.root}>
+          <div className={classes.playRoot}>
             <Grid container>
               <Grid item xs={12} className={classes.paneSection}>
                 <TextField
@@ -223,13 +267,16 @@ class MesheryPlayComponent extends React.Component {
 
 MesheryPlayComponent.propTypes = { classes : PropTypes.object.isRequired, };
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = (dispatch) => ({
+  setAdapter : bindActionCreators(setAdapter, dispatch)
+});
 
 const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig").toJS();
   const meshAdapters = state.get("meshAdapters").toJS();
   const meshAdaptersts = state.get("meshAdaptersts");
-  return { k8sconfig, meshAdapters, meshAdaptersts };
+  const selectedAdapter = state.get("selectedAdapter");
+  return { k8sconfig, meshAdapters, meshAdaptersts, selectedAdapter };
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(MesheryPlayComponent)));

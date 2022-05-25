@@ -39,12 +39,16 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Version of mesheryctl",
 	Long:  `Version of Meshery command line client - mesheryctl.`,
+	Example: `
+// To view the current version and SHA of release binary of mesheryctl client 
+mesheryctl version
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			// get the currCtx
-			utils.Log.Error(fmt.Errorf("error processing config: %v", err))
+			utils.Log.Error(ErrProcessingConfig(err))
 			userResponse := false
 			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
 			if userResponse {
@@ -52,19 +56,19 @@ var versionCmd = &cobra.Command{
 				// Create config file if not present in meshery folder
 				err = utils.CreateConfigFile()
 				if err != nil {
-					utils.Log.Error(fmt.Errorf("unable to create config file"))
+					utils.Log.Error(ErrCreatingConfigFile)
 				}
 
 				// Add Token to context file
 				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 				if err != nil {
-					utils.Log.Error(fmt.Errorf("unable to add token to config"))
+					utils.Log.Error(ErrAddingTokenToConfig)
 				}
 
 				// Add Context to context file
-				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
+				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
 				if err != nil {
-					utils.Log.Error(fmt.Errorf("unable to add context to config"))
+					utils.Log.Error(ErrAddingContextToConfig)
 				}
 
 				utils.Log.Info(
@@ -74,7 +78,7 @@ var versionCmd = &cobra.Command{
 
 				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 				if err != nil {
-					utils.Log.Error(errors.New("error unmarshalling config file"))
+					utils.Log.Error(ErrUnmarshallingConfigFile)
 				}
 				currCtx, err := mctlCfg.GetCurrentContext()
 				if err != nil {
@@ -116,7 +120,7 @@ var versionCmd = &cobra.Command{
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(fmt.Errorf("\nUnable to get request context: %v", err))
+			utils.Log.Error(ErrGettingRequestContext(err))
 			return
 		}
 
@@ -126,8 +130,7 @@ var versionCmd = &cobra.Command{
 
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(fmt.Errorf("\n  Unable to communicate with Meshery: %v", err))
-			utils.Log.Error(fmt.Errorf("  See https://docs.meshery.io for help getting started with Meshery"))
+			utils.Log.Error(ErrConnectingToServer(err))
 			return
 		}
 
@@ -136,14 +139,14 @@ var versionCmd = &cobra.Command{
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(fmt.Errorf("\n  Invalid response: %v", err))
+			utils.Log.Error(ErrInvalidAPIResponse(err))
 			return
 		}
 
 		err = json.Unmarshal(data, &version)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(fmt.Errorf("\n  Unable to unmarshal data: %v", err))
+			utils.Log.Error(ErrUnmarshallingAPIData(err))
 			return
 		}
 		rows[1][1] = version.GetBuild()

@@ -88,7 +88,7 @@ The designs in this specification should result in enabling:
 To install/update the UI dependencies:
 
 ```
-make setup-ui-libs
+make ui-setup
 ```
 
 #### Build and export UI
@@ -96,7 +96,7 @@ make setup-ui-libs
 To build and export the UI code:
 
 ```
-make build-ui
+make ui-build
 ```
 
 > Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.
@@ -108,7 +108,7 @@ make build-ui
 To start running Meshery locally:
 
 ```
-make run-fast
+make server
 ```
 
 > Now, Meshery will run on the default port `http://localhost:9081`.
@@ -118,7 +118,7 @@ make run-fast
 If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
 
 ```
-make run-ui-dev
+make ui
 ```
 
 > Make sure to have Meshery Server configured, up and running on the default port `http://localhost:9081` before proceeding to access and work on the UI server at `http://localhost:3000`.
@@ -130,3 +130,4 @@ make run-ui-dev
 All of the above steps would get the Meshery's development server running for you to work on in any IDE of your choice.
 
 {% include suggested-reading.html %}
+

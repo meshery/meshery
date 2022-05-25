@@ -27,7 +27,7 @@
 
         <!--Version Selector -->
 
-        <select onchange="window.location=this.value" class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide bg-white focus:outline-none" name="versioningSelection" id="versioningSelection">
+        <select onchange="window.location=this.value" class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector" name="versioningSelection" id="versioningSelection">
           <!-- <option value="">Versions</option> -->
           {% assign versions = site.data.versions  %}
 
@@ -40,7 +40,7 @@
           {%- else -%}
             {%- assign optionSelected = "" -%}
           {%- endif -%}
-          <option {{optionSelected}} value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0">
+          <option {{optionSelected}} value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0 text-black">
             <span>{{ link.version }}</span>
           </option>
           {% endfor %}

@@ -69,6 +69,10 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type KctlDescribeDetails struct {
+	Describe *string `json:"describe"`
+}
+
 type MesheryResult struct {
 	MesheryID          *string                `json:"meshery_id"`
 	Name               *string                `json:"name"`
@@ -86,6 +90,15 @@ type MesheryResult struct {
 
 type NameSpace struct {
 	Namespace string `json:"namespace"`
+}
+
+type OAMCapability struct {
+	OamDefinition interface{} `json:"oam_definition"`
+	ID            *string     `json:"id"`
+	OamRefSchema  *string     `json:"oam_ref_schema"`
+	Host          *string     `json:"host"`
+	Restricted    *bool       `json:"restricted"`
+	Metadata      interface{} `json:"metadata"`
 }
 
 type OperatorControllerStatus struct {
@@ -201,6 +214,7 @@ const (
 	MeshTypeTanzu              MeshType = "TANZU"
 	MeshTypeOpenServiceMesh    MeshType = "OPEN_SERVICE_MESH"
 	MeshTypeNginxServiceMesh   MeshType = "NGINX_SERVICE_MESH"
+	MeshTypeCiliumServiceMesh  MeshType = "CILIUM_SERVICE_MESH"
 )
 
 var AllMeshType = []MeshType{
@@ -218,11 +232,12 @@ var AllMeshType = []MeshType{
 	MeshTypeTanzu,
 	MeshTypeOpenServiceMesh,
 	MeshTypeNginxServiceMesh,
+	MeshTypeCiliumServiceMesh,
 }
 
 func (e MeshType) IsValid() bool {
 	switch e {
-	case MeshTypeAllMesh, MeshTypeInvalidMesh, MeshTypeAppMesh, MeshTypeCitrixServiceMesh, MeshTypeConsul, MeshTypeIstio, MeshTypeKuma, MeshTypeLinkerd, MeshTypeTraefikMesh, MeshTypeOctarine, MeshTypeNetworkServiceMesh, MeshTypeTanzu, MeshTypeOpenServiceMesh, MeshTypeNginxServiceMesh:
+	case MeshTypeAllMesh, MeshTypeInvalidMesh, MeshTypeAppMesh, MeshTypeCitrixServiceMesh, MeshTypeConsul, MeshTypeIstio, MeshTypeKuma, MeshTypeLinkerd, MeshTypeTraefikMesh, MeshTypeOctarine, MeshTypeNetworkServiceMesh, MeshTypeTanzu, MeshTypeOpenServiceMesh, MeshTypeNginxServiceMesh, MeshTypeCiliumServiceMesh:
 		return true
 	}
 	return false

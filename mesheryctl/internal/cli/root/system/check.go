@@ -96,6 +96,22 @@ var checkCmd = &cobra.Command{
 	Short: "Meshery environment check",
 	Long:  `Verify environment pre/post-deployment of Meshery.`,
 	Args:  cobra.MaximumNArgs(1),
+	Example: `
+// Run system checks for both pre and post mesh deployment scenarios on Meshery
+mesheryctl system check
+
+// Run Pre-mesh deployment checks (Docker and Kubernetes)
+mesheryctl system check --preflight
+
+// Run checks on specific mesh adapter
+mesheryctl system check --adapter meshery-istio:10000
+
+// Verify the health of Meshery Operator's deployment with MeshSync and Broker
+mesheryctl system check --operator
+
+// Runs diagnostic checks and bundles up to open an issue if present
+mesheryctl system check --report
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		hco := &HealthCheckOptions{
 			PrintLogs:  true,
@@ -199,11 +215,11 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 			//If preRunExecution and the current platform is docker then we trigger docker installation
 			//No auto installation of docker for windows
 			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", hc.Options.Subcommand)
+				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
 			}
 			err = utils.Startdockerdaemon(hc.Options.Subcommand)
 			if err != nil {
-				return errors.Wrapf(err, "failed to start Docker.")
+				return errors.Wrapf(err, "failed to start Docker ")
 			}
 		} else if hc.Options.PrintLogs { // warn incase of printing logs
 			log.Warn("!! Docker is not running")
@@ -228,11 +244,11 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 			log.Warn("!! docker-compose is not available")
 			//No auto installation of Docker-compose for windows
 			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", hc.Options.Subcommand)
+				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed ", hc.Options.Subcommand)
 			}
 			err = utils.InstallprereqDocker()
 			if err != nil {
-				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", hc.Options.Subcommand)
+				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed ", hc.Options.Subcommand)
 			}
 		} else if hc.Options.PrintLogs { // warn incase of printing logs
 			log.Warn("!! docker-compose is not available")

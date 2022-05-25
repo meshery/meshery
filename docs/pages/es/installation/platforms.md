@@ -16,9 +16,9 @@ La Tabla a continuación provee instrucciones de instalación para cada platafor
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------: |
 | <img src="/assets/img/platforms/docker.svg" width="20" height="20" /> [Docker]({{ site.baseurl }}/installation/platforms/docker)                              |                        |
 | &nbsp;&nbsp;&nbsp; <img src="/assets/img/platforms/docker.svg" width="20" height="20" /> [Docker Engine]({{ site.baseurl }}/installation/platforms/docker)    |    19.x y superior     |
+| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/docker.svg" width="20" height="20" /> [Docker Desktop]({{ site.baseurl }}/installation/platforms/docker)    |    2.0.x y superior    |
 | <img src="/assets/img/platforms/kubernetes.svg" width="20" height="20" /> [Kubernetes]({{ site.baseurl }}/installation/platforms/kubernetes)                  |   1.12.x y superior    |
 | &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/aks.svg" width="20" height="20" /> [AKS]({{ site.baseurl }}/installation/platforms/aks)                     |                        |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/docker.svg" width="20" height="20" /> [Docker Desktop]({{ site.baseurl }}/installation/platforms/docker)    |    2.0.x y superior    |
 | &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/eks.png" width="20" height="20" /> [EKS]({{ site.baseurl }}/installation/platforms/eks)                     |   1.12.x y superior    |
 | &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/gke.png" width="20" height="20" /> [GKE]({{ site.baseurl }}/installation/platforms/gke)                     |   1.14.x y superior    |
 | &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/helm.svg" width="20" height="20" /> [Helm]({{ site.baseurl }}/installation/platforms/kubernetes#using-helm) |                        |

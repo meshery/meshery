@@ -17,7 +17,7 @@ As the service mesh management plane, Meshery enables the adoption, operation, a
 
 <ul>
     {% for item in sorted_pages %}
-    {% if item.type=="project" and item.language=="en" %}
+    {% if item.type=="project" and item.language=="en" and item.list != "exclude" %}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
       {% if item.description != " " %}
         -  {{ item.description }}

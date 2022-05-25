@@ -37,7 +37,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 <img alt="Control service meshes with mesheryctl" src="docs/assets/img/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/>
 <h3>Using `mesheryctl`</h3>
 <p>Meshery runs as a set of containers inside or outside of your Kubernetes clusters.</p>
-<pre>curl -L https://git.io/meshery | bash -</pre>
+<pre>curl -L https://meshery.io/install | bash -</pre>
 <p>See the <a href="https://docs.meshery.io/installation/quick-start">quick start</a> guide.</p>
 <p style="clear:both;">&nbsp;</p>
 
@@ -241,7 +241,7 @@ Meshery provides tooling to validate any service mesh that claims to implement a
 <p style="clear:both;">
 <a href="docs/assets/img/readme/meshery-wasm.png"><img alt="WebAssembly filters" src="docs/assets/img/readme/meshery-wasm.png"  style="margin-right:10px; margin-bottom:10px;" width="45%" align="left"/></a>
 
-<img alt="WebAssembly Logo" src="docs/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" />
+<img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" />
 <h3> Manage data plane intelligence with WebAssembly filters </h3>
 Dynamically load and manage your own WebAssembly filters in Envoy-based service meshes. 
 <br>
