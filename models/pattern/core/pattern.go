@@ -42,6 +42,7 @@ type Service struct {
 	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
 	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
 	Namespace   string            `yaml:"namespace" json:"namespace"`
+	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
@@ -208,7 +209,22 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	}
 	dependsOnMap := make(map[string][]string, 0) //used to figure out dependencies from traits.meshmap.parent
 	eleToSvc := make(map[string]string)          //used to map cyto element ID uniquely to the name of the service created.
+	countDuplicates := make(map[string]int)
+	//store the names of services and their count
 	err := processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
+		name, ok := svc.Settings["name"].(string)
+		if !ok {
+			return fmt.Errorf("missing name in service settings")
+		}
+		countDuplicates[name]++
+		return nil
+	})
+	if err != nil {
+		return pf, err
+	}
+
+	//Populate the dependsOn field with appropriate unique service names
+	err = processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
 		//Extract parents, if present
 		m, ok := svc.Traits["meshmap"].(map[string]interface{})
 		if ok {
@@ -221,32 +237,36 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 				dependsOnMap[elementID] = append(dependsOnMap[elementID], parentID)
 			}
 		}
-
-		//set appropriate unique service name
-		nameFromSettings, ok := svc.Settings["name"].(string)
-		if ok {
-			svc.Name = strings.ToLower(nameFromSettings)
+		svc.Name, ok = svc.Settings["name"].(string)
+		if !ok {
+			return fmt.Errorf("required service setting: \"name\" missing")
 		}
-
-		svc.Name += "-" + getRandomAlphabetsOfDigit(5)
-
+		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
+		if countDuplicates[svc.Name] > 1 {
+			//set appropriate unique service name
+			svc.Name = strings.ToLower(svc.Name)
+			svc.Name += "-" + getRandomAlphabetsOfDigit(5)
+		}
 		eleToSvc[ele.Data.ID] = svc.Name //will be used while adding depends-on
 		pf.Services[svc.Name] = &svc
 		return nil
 	})
-	//add depends-on field
-	for child, parents := range dependsOnMap {
-		childSvc := eleToSvc[child]
-		if childSvc != "" {
-			for _, parent := range parents {
-				if eleToSvc[parent] != "" {
-					pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
+	if err == nil {
+		//add depends-on field
+		for child, parents := range dependsOnMap {
+			childSvc := eleToSvc[child]
+			if childSvc != "" {
+				for _, parent := range parents {
+					if eleToSvc[parent] != "" {
+						pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
+					}
 				}
 			}
 		}
 	}
 	return pf, err
 }
+
 func getRandomAlphabetsOfDigit(length int) (s string) {
 	charSet := "abcdedfghijklmnopqrstuvwxyz"
 	for i := 0; i < length; i++ {
@@ -291,6 +311,7 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 				"posY": elem.Position.Y,
 			},
 		}
+
 		if err := json.Unmarshal(svcByt, &svc); err != nil {
 			return fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
@@ -370,7 +391,9 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 	namespace, _ := metadata["namespace"].(string)
 	labels, _ := metadata["labels"].(map[string]interface{})
 	annotations, _ := metadata["annotations"].(map[string]interface{})
-
+	if namespace == "" {
+		namespace = "default"
+	}
 	fmt.Printf("%+#v\n", manifest)
 
 	// rest will store a map of everything other than the above mentioned fields
@@ -435,7 +458,9 @@ func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (strin
 	spec, _ := manifest["spec"].(map[string]interface{})
 	labels, _ := metadata["labels"].(map[string]interface{})
 	annotations, _ := metadata["annotations"].(map[string]interface{})
-
+	if namespace == "" {
+		namespace = "default"
+	}
 	id := name
 	uid, err := uuid.NewV4()
 	if err == nil {

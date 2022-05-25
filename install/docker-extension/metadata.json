@@ -1,19 +1,13 @@
 {
   "icon": "meshery-logo-light.svg",
   "vm": {
-    "composefile": "docker-compose.yaml",
-    "exposes": {
-      "socket": "extension-meshery.sock"
-    }
+    "composefile": "docker-compose.yaml"
   },
   "ui": {
     "dashboard-tab": {
       "title": "Meshery",
       "src": "/index.html",
-      "root": "/ui",
-      "backend": {
-        "socket": "extension-meshery.sock"
-      }
+      "root": "/ui"
     }
   },
   "host": {

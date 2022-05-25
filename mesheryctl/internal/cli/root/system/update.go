@@ -33,6 +33,13 @@ var updateCmd = &cobra.Command{
 	Short: "Pull new Meshery images/manifest files.",
 	Long:  `Pull new Meshery container images and manifests from artifact repository.`,
 	Args:  cobra.NoArgs,
+	Example: `
+// Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
+mesheryctl system update
+
+// Pull the latest manifest files alone
+mesheryctl system update --skip-reset
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -90,7 +97,7 @@ var updateCmd = &cobra.Command{
 		switch currCtx.GetPlatform() {
 		case "docker":
 			if !utils.SkipResetFlag {
-				err := resetMesheryConfig()
+				err := fetchManifests(mctlCfg)
 
 				if err != nil {
 					return err

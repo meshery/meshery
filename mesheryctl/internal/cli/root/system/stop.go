@@ -47,6 +47,16 @@ var stopCmd = &cobra.Command{
 	Short: "Stop Meshery",
 	Long:  `Stop all Meshery containers / remove all Meshery resources.`,
 	Args:  cobra.NoArgs,
+	Example: `
+// Stop Meshery
+mesheryctl system stop
+
+// Reset Meshery's configuration file to default settings.
+mesheryctl system stop --reset
+
+// Stop Meshery forcefully (use it when system stop doesn't work)
+mesheryctl system stop --force
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -156,7 +166,23 @@ func stop() error {
 				return err
 			}
 		} else {
-			// Delete the helm release
+			// DryRun helm release uninstallation with helm pkg
+			if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+				Namespace: utils.MesheryNamespace,
+				ChartLocation: meshkitkube.HelmChartLocation{
+					Repository: utils.HelmChartURL,
+					Chart:      utils.HelmChartName,
+				},
+				Action: meshkitkube.UNINSTALL,
+				DryRun: true,
+			}); err != nil {
+				// Dry run failed, in such case; fallback to force cleanup
+				if err = utils.ForceCleanupCluster(); err != nil {
+					return errors.Wrap(err, "cannot stop Meshery")
+				}
+			}
+
+			// Dry run passed; now delete meshery components with the helm pkg
 			if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 				Namespace: utils.MesheryNamespace,
 				ChartLocation: meshkitkube.HelmChartLocation{

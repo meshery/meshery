@@ -31,7 +31,11 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		r.Log.Error(ErrNilClient)
 		return model.StatusUnknown, ErrNilClient
 	}
-
+	currcontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
+	if !ok {
+		r.Log.Error(ErrNilClient)
+		return model.StatusUnknown, ErrNilClient
+	}
 	if kubeclient.KubeClient == nil {
 		r.Log.Error(ErrNilClient)
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
@@ -70,7 +74,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 				return
 			}
 
-			endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn)
+			endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
 			r.Log.Debug("Endpoint: ", endpoint)
 			if err != nil {
 				r.Log.Error(err)
@@ -81,7 +85,9 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 				})
 				return
 			}
+			connectionTrackerSingleton.Set(currcontext.ID, endpoint)
 			r.Log.Info("Connected to broker at:", endpoint)
+			connectionTrackerSingleton.Log(r.Log)
 		}
 
 		r.Log.Info("Meshsync operation executed")
@@ -154,7 +160,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 		return nil, err
 	}
 
-	status, err := model.GetMeshSyncInfo(mesheryclient, r.meshsyncLivenessChannel)
+	status, err := model.GetMeshSyncInfo(mesheryclient, kubeclient, r.meshsyncLivenessChannel)
 	if err != nil {
 		return &status, err
 	}
@@ -171,7 +177,7 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) 
 		return nil, err
 	}
 
-	status, err := model.GetBrokerInfo(mesheryclient, r.BrokerConn)
+	status, err := model.GetBrokerInfo(mesheryclient, kubeclient, r.BrokerConn)
 	if err != nil {
 		return &status, err
 	}

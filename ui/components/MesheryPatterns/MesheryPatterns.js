@@ -215,7 +215,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
             aria-label="Update"
             color="primary"
             onClick={() => onSubmit({
-              data : yaml, id : pattern.id, name : pattern.name, action : FILE_OPS.UPDATE
+              data : yaml, id : pattern.id, name : pattern.name, type : FILE_OPS.UPDATE
             })}
           >
             <SaveIcon />
@@ -776,7 +776,7 @@ function MesheryPatterns({
               size="large"
               // @ts-ignore
               onClick={() => setSelectedPattern({
-                pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
                 show : true,
               })}
             >
@@ -822,7 +822,7 @@ function MesheryPatterns({
                   className={classes.noDesignAddButton}
                   // @ts-ignore
                   onClick={() => setSelectedPattern({
-                    pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                    pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
                     show : true,
                   })}
                 >

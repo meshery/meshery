@@ -26,8 +26,8 @@ var listCmd = &cobra.Command{
 	Long:  `Display list of all available applications.`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-	List all the applications
-	mesheryctl app list
+// List all the applications
+mesheryctl app list
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

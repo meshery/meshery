@@ -18,7 +18,7 @@ El repositorio de Meshery incluye un archivo `docker-compose.yaml`. Podemos usar
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
- $ curl -L https://git.io/meshery | bash -
+ $ curl -L https://meshery.io/install | bash -
  </div></div>
  </pre>
 

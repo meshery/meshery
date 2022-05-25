@@ -279,7 +279,7 @@ class PrometheusSelectionComponent extends Component {
                 <Grid item xs={12}>
                   <div style={{ padding : '20px', display : 'flex' }}>
                     <CodeIcon style={{ marginRight : '6px' }} />
-                  Paste your custom boaard JSON below.
+                  Paste your custom board JSON below.
                   </div>
 
                   <CodeMirror
