@@ -169,7 +169,6 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				k8scontexts = append(k8scontexts, kctx)
 			}
 		}
-
 		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
 
 		req1 := req.WithContext(ctx)

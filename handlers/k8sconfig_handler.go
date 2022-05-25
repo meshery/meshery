@@ -18,7 +18,6 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -169,7 +168,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-// swagger:route GET /api/system/kubernetes/ping SystemAPI idGetKubernetesPing
+// swagger:route GET /api/system/kubernetes/ping?contexts={id} SystemAPI idGetKubernetesPing
 // Handle GET request for Kubernetes ping
 //
 // Fetches server version to simulate ping
@@ -184,11 +183,16 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		fmt.Fprintf(w, "failed to get the token for the user")
 		return
 	}
-
-	kubeclient, ok := req.Context().Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok || kubeclient == nil {
+	k8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok || len(k8scontexts) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "failed to get kube client for the user")
+		return
+	}
+	kubeclient, err := k8scontexts[0].GenerateKubeHandler()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "failed to get kube client for the user: %s", err.Error())
 		return
 	}
 

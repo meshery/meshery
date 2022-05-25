@@ -154,9 +154,9 @@ const (
 	// UserPrefsCtxKey is the context key for persisting user preferences to context
 	PerfObjCtxKey ContextKey = "perf_obj"
 
-	KubeHanderKey ContextKey = "kube_handler"
+	// KubeHanderKey ContextKey = "kube_handler"
 
-	KubeConfigKey ContextKey = "kubeconfig"
+	// KubeConfigKey ContextKey = "kubeconfig"
 
 	KubeContextKey ContextKey = "kubecontext"
 
