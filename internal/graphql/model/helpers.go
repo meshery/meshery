@@ -114,44 +114,42 @@ func persistData(msg broker.Message,
 	}
 }
 
-func PersistClusterName(
+func PersistClusterNames(
 	ctx context.Context,
 	log logger.Handler,
 	handler *database.Handler,
-	provider models.Provider,
 	meshsyncCh chan struct{},
 ) {
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
-	h := &handlers.Handler{}
 
-	clusterConfig, err := h.GetCurrentContext(tokenString, provider)
-	if err != nil {
-		log.Error(err)
+	k8sContexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok {
 		return
 	}
-
-	if clusterConfig == nil {
-		return
-	}
-
-	clusterName := clusterConfig.Cluster["name"].(string)
-	clusterID := clusterConfig.KubernetesServerID.String()
-	object := meshsyncmodel.Object{
-		Kind: "Cluster",
-		ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
-			Name:      clusterName,
+	for _, clusterConfig := range k8sContexts {
+		clusterName := clusterConfig.Cluster["name"].(string)
+		clusterID := clusterConfig.KubernetesServerID.String()
+		object := meshsyncmodel.Object{
+			Kind: "Cluster",
+			ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
+				Name:      clusterName,
+				ClusterID: clusterID,
+			},
 			ClusterID: clusterID,
-		},
-		ClusterID: clusterID,
-	}
+		}
 
-	// persist the object
-	log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
-	err = recordMeshSyncData(broker.Add, handler, &object)
-	if err != nil {
-		log.Error(err)
-		return
+		// persist the object
+		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
+		err := recordMeshSyncData(broker.Add, handler, &object)
+		if err != nil {
+			log.Error(err)
+		}
 	}
+	// clusterConfig, err := h.GetCurrentContext(tokenString, provider)
+	// if err != nil {
+	// 	log.Error(err)
+	// 	return
+	// }
+
 	meshsyncCh <- struct{}{}
 }
 

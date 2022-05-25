@@ -30,7 +30,6 @@ type K8sContext struct {
 	Server             string     `json:"server,omitempty" yaml:"server,omitempty"`
 	Owner              *uuid.UUID `json:"owner,omitempty" gorm:"-" yaml:"owner,omitempty"`
 	CreatedBy          *uuid.UUID `json:"created_by,omitempty" gorm:"-" yaml:"created_by,omitempty"`
-	IsCurrentContext   bool       `json:"is_current_context,omitempty" yaml:"is_current_context,omitempty"`
 	MesheryInstanceID  *uuid.UUID `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
 	KubernetesServerID *uuid.UUID `json:"kubernetes_server_id,omitempty" yaml:"kubernetes_server_id,omitempty"`
 
@@ -92,7 +91,6 @@ func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *uuid.UUID) K8
 		cluster,
 		user,
 		server,
-		kcfg.CurrentContext == name,
 		instanceID,
 	)
 }
@@ -102,10 +100,9 @@ func NewK8sContextWithServerID(
 	clusters map[string]interface{},
 	users map[string]interface{},
 	server string,
-	isCurrentContext bool,
 	instanceID *uuid.UUID,
 ) (*K8sContext, error) {
-	ctx := NewK8sContext(contextName, clusters, users, server, isCurrentContext, instanceID)
+	ctx := NewK8sContext(contextName, clusters, users, server, instanceID)
 
 	// Perform Ping test on the cluster
 	if err := ctx.PingTest(); err != nil {
@@ -198,7 +195,6 @@ func NewK8sContextFromInClusterConfig(contextName string, instanceID *uuid.UUID)
 			"name": contextName,
 		},
 		server,
-		true,
 		instanceID,
 	)
 }
@@ -214,7 +210,6 @@ func NewK8sContext(
 	cluster map[string]interface{},
 	user map[string]interface{},
 	server string,
-	isCurrentContext bool,
 	instanceID *uuid.UUID,
 ) K8sContext {
 	ctx := K8sContext{
@@ -223,7 +218,6 @@ func NewK8sContext(
 		Auth:              user,
 		Server:            server,
 		MesheryInstanceID: instanceID,
-		IsCurrentContext:  isCurrentContext,
 	}
 
 	ID, err := K8sContextGenerateID(ctx)

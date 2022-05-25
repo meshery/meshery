@@ -80,17 +80,6 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (K
 			return nil
 		}
 
-		// If the context claims to be the current context then verify that there is no other active context
-		if mkc.IsCurrentContext {
-			var mesheryK8sContext K8sContext
-
-			if err := tx.First(&mesheryK8sContext, "is_current_context = true").Error; err == nil {
-				if mesheryK8sContext.IsCurrentContext {
-					mkc.IsCurrentContext = false
-				}
-			}
-		}
-
 		return tx.Save(&mkc).Error
 	})
 
@@ -119,8 +108,6 @@ func (mkcp *MesheryK8sContextPersister) SetMesheryK8sCurrentContext(id string) e
 			return nil
 		}
 
-		// Set the currently use to "false"
-		mesheryK8sContext.IsCurrentContext = false
 		if err := tx.Save(&mesheryK8sContext).Error; err != nil {
 			return err
 		}

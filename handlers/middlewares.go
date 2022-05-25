@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 )
 
@@ -107,32 +106,32 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
 		ctx = context.WithValue(ctx, models.BrokerURLCtxKey, h.config.BrokerEndpointURL) // nolint
 
-		k8scontext, err := h.GetCurrentContext(token, provider)
-		if err != nil {
-			logrus.Warn("failed to find kubernetes context")
+		// k8scontext, err := h.GetCurrentContext(token, provider)
+		// if err != nil {
+		// 	logrus.Warn("failed to find kubernetes context")
 
-			// Set some defaults in the context so that the casting doesn't fails
-			ctx = context.WithValue(ctx, models.KubeContextKey, nil)
-			ctx = context.WithValue(ctx, models.KubeHanderKey, nil)
-			ctx = context.WithValue(ctx, models.KubeConfigKey, nil)
-		} else {
-			cfg, err := k8scontext.GenerateKubeConfig()
-			if err != nil {
-				logrus.Warn("failed to load kube config for the user: ", err)
-			}
+		// 	// Set some defaults in the context so that the casting doesn't fails
+		// 	ctx = context.WithValue(ctx, models.KubeContextKey, nil)
+		// 	ctx = context.WithValue(ctx, models.KubeHanderKey, nil)
+		// 	ctx = context.WithValue(ctx, models.KubeConfigKey, nil)
+		// } else {
+		// 	cfg, err := k8scontext.GenerateKubeConfig()
+		// 	if err != nil {
+		// 		logrus.Warn("failed to load kube config for the user: ", err)
+		// 	}
 
-			// Create mesherykube handler
-			client, err := kubernetes.New(cfg)
-			if err != nil {
-				logrus.Warn("failed to create kubeconfig handler for the user")
-				// http.Error(w, "failed to create kubeconfig handler for the user", http.StatusInternalServerError)
-				// return
-			}
+		// 	// Create mesherykube handler
+		// 	client, err := kubernetes.New(cfg)
+		// 	if err != nil {
+		// 		logrus.Warn("failed to create kubeconfig handler for the user")
+		// 		// http.Error(w, "failed to create kubeconfig handler for the user", http.StatusInternalServerError)
+		// 		// return
+		// 	}
 
-			ctx = context.WithValue(ctx, models.KubeContextKey, k8scontext)
-			ctx = context.WithValue(ctx, models.KubeHanderKey, client)
-			ctx = context.WithValue(ctx, models.KubeConfigKey, cfg)
-		}
+		// 	ctx = context.WithValue(ctx, models.KubeContextKey, k8scontext)
+		// 	ctx = context.WithValue(ctx, models.KubeHanderKey, client)
+		// 	ctx = context.WithValue(ctx, models.KubeConfigKey, cfg)
+		// }
 
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]

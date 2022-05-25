@@ -234,8 +234,8 @@ type Provider interface {
 	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, id string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)
-	SetCurrentContext(token, id string) (K8sContext, error)
-	GetCurrentContext(token string) (K8sContext, error)
+	// SetCurrentContext(token, id string) (K8sContext, error)
+	// GetCurrentContext(token string) (K8sContext, error)
 
 	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
 	SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error)

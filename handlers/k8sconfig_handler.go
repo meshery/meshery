@@ -8,20 +8,16 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"path/filepath"
 	"sync"
-	"time"
 
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/gofrs/uuid"
 
-	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
-	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -233,106 +229,106 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 	}
 }
 
-func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models.K8sContext, error) {
-	// Try to get current context
-	cc, err := prov.GetCurrentContext(token)
-	if err != nil {
-		// No current context implies that this is the first time meshery is loading up
-		// or it could mean that meshery does not have access to the kubernetes cluster
+// func (h *Handler) GetCurrentContext(token string, prov models.Provider) (*models.K8sContext, error) {
+// 	// Try to get current context
+// 	cc, err := prov.GetCurrentContext(token)
+// 	if err != nil {
+// 		// No current context implies that this is the first time meshery is loading up
+// 		// or it could mean that meshery does not have access to the kubernetes cluster
 
-		// Get meshery instance ID
-		mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
-		if !ok {
-			return nil, ErrMesheryInstanceID
-		}
+// 		// Get meshery instance ID
+// 		mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
+// 		if !ok {
+// 			return nil, ErrMesheryInstanceID
+// 		}
 
-		// Attempt to get kubeconfig from the filesystem
-		if h.config == nil {
-			return nil, ErrInvalidK8SConfig
-		}
-		data, err := utils.ReadFileSource(fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config")))
-		if err != nil {
-			// Could be an in-cluster deployment
-			ctxName := "in-cluster"
+// 		// Attempt to get kubeconfig from the filesystem
+// 		if h.config == nil {
+// 			return nil, ErrInvalidK8SConfig
+// 		}
+// 		data, err := utils.ReadFileSource(fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config")))
+// 		if err != nil {
+// 			// Could be an in-cluster deployment
+// 			ctxName := "in-cluster"
 
-			cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid)
-			if err != nil {
-				logrus.Warn("failed to generate in cluster context: ", err)
-				return nil, err
-			}
+// 			cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid)
+// 			if err != nil {
+// 				logrus.Warn("failed to generate in cluster context: ", err)
+// 				return nil, err
+// 			}
 
-			if _, err := prov.SaveK8sContext(token, *cc); err == nil {
-				_, _ = prov.SetCurrentContext(token, cc.ID) // Ignore the error
-			}
+// 			if _, err := prov.SaveK8sContext(token, *cc); err == nil {
+// 				_, _ = prov.SetCurrentContext(token, cc.ID) // Ignore the error
+// 			}
 
-			// Generate Kube Config
-			if !viper.GetBool("SKIP_COMP_GEN") {
-				ctxID := cc.ID
-				cfg, err := cc.GenerateKubeConfig()
-				if err != nil {
-					return cc, nil
-				}
+// 			// Generate Kube Config
+// 			if !viper.GetBool("SKIP_COMP_GEN") {
+// 				ctxID := cc.ID
+// 				cfg, err := cc.GenerateKubeConfig()
+// 				if err != nil {
+// 					return cc, nil
+// 				}
 
-				go func(config []byte, ctx string) {
-					compCreationSingleton.cancelPreviousRun(ctx)
-					ctxt, cancel := context.WithTimeout(context.Background(), 300*time.Second)
-					compCreationSingleton.registerCancelFunc(ctx, cancel)
-					h.log.Info("Starting to register k8s native components for contextID ", ctx)
-					err := registerK8sComponents(ctxt, config, ctxID)
-					if err != nil {
-						h.log.Error(err)
-						return
-					}
-					h.log.Info("Registration of k8s native components completed for contextID ", ctx)
-				}(cfg, ctxID)
-			}
+// 				go func(config []byte, ctx string) {
+// 					compCreationSingleton.cancelPreviousRun(ctx)
+// 					ctxt, cancel := context.WithTimeout(context.Background(), 300*time.Second)
+// 					compCreationSingleton.registerCancelFunc(ctx, cancel)
+// 					h.log.Info("Starting to register k8s native components for contextID ", ctx)
+// 					err := registerK8sComponents(ctxt, config, ctxID)
+// 					if err != nil {
+// 						h.log.Error(err)
+// 						return
+// 					}
+// 					h.log.Info("Registration of k8s native components completed for contextID ", ctx)
+// 				}(cfg, ctxID)
+// 			}
 
-			return cc, nil
-		}
+// 			return cc, nil
+// 		}
 
-		cfg, err := helpers.FlattenMinifyKubeConfig([]byte(data))
-		if err != nil {
-			return nil, err
-		}
+// 		cfg, err := helpers.FlattenMinifyKubeConfig([]byte(data))
+// 		if err != nil {
+// 			return nil, err
+// 		}
 
-		ctxs := models.K8sContextsFromKubeconfig(cfg, mid)
+// 		ctxs := models.K8sContextsFromKubeconfig(cfg, mid)
 
-		// Persist the generated contexts
-		for _, ctx := range ctxs {
-			_, err := prov.SaveK8sContext(token, ctx)
-			if err != nil {
-				logrus.Warn("failed to save the context: ", err)
-				continue
-			}
-			if !viper.GetBool("SKIP_COMP_GEN") {
-				k8ctxID := ctx.ID
-				cfg, err := ctx.GenerateKubeConfig()
-				if err != nil {
-					return &ctx, nil
-				}
+// 		// Persist the generated contexts
+// 		for _, ctx := range ctxs {
+// 			_, err := prov.SaveK8sContext(token, ctx)
+// 			if err != nil {
+// 				logrus.Warn("failed to save the context: ", err)
+// 				continue
+// 			}
+// 			if !viper.GetBool("SKIP_COMP_GEN") {
+// 				k8ctxID := ctx.ID
+// 				cfg, err := ctx.GenerateKubeConfig()
+// 				if err != nil {
+// 					return &ctx, nil
+// 				}
 
-				go func(config []byte, ctx string) {
-					compCreationSingleton.cancelPreviousRun(ctx) //if a registerK8sComponents is still running for the same context then we safely cancel that assuming that run to be stale now
-					ctxt, cancel := context.WithTimeout(context.Background(), 600*time.Second)
-					compCreationSingleton.registerCancelFunc(ctx, cancel)
-					h.log.Info("Starting to register k8s native components for contextID ", ctx)
-					err := registerK8sComponents(ctxt, config, k8ctxID)
-					if err != nil {
-						h.log.Error(err)
-						return
-					}
-					h.log.Info("Registration of k8s native components completed for contextID ", ctx)
-				}(cfg, k8ctxID)
-			}
-			if ctx.IsCurrentContext {
-				_, _ = prov.SetCurrentContext(token, ctx.ID) // Ignore the error
-				cc = ctx
-			}
-		}
-	}
+// 				go func(config []byte, ctx string) {
+// 					compCreationSingleton.cancelPreviousRun(ctx) //if a registerK8sComponents is still running for the same context then we safely cancel that assuming that run to be stale now
+// 					ctxt, cancel := context.WithTimeout(context.Background(), 600*time.Second)
+// 					compCreationSingleton.registerCancelFunc(ctx, cancel)
+// 					h.log.Info("Starting to register k8s native components for contextID ", ctx)
+// 					err := registerK8sComponents(ctxt, config, k8ctxID)
+// 					if err != nil {
+// 						h.log.Error(err)
+// 						return
+// 					}
+// 					h.log.Info("Registration of k8s native components completed for contextID ", ctx)
+// 				}(cfg, k8ctxID)
+// 			}
+// 			if ctx.IsCurrentContext {
+// 				_, _ = prov.SetCurrentContext(token, ctx.ID) // Ignore the error
+// 				cc = ctx
+// 			}
+// 		}
+// 	}
 
-	return &cc, nil
-}
+// 	return &cc, nil
+// }
 
 //manages creation of k8s components per context. Such that for each k8s context we have one component creation process running at a time
 type compCreation struct {
