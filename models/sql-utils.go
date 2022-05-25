@@ -50,7 +50,7 @@ var (
 func setNewDBInstance() {
 	mx.Lock()
 	defer mx.Unlock()
-	
+
 	// Initialize Logger instance
 	log, err := logger.New("meshery", logger.Options{
 		Format: logger.SyslogLogFormat,
