@@ -73,6 +73,12 @@ function Mesh() {
       <NoSsr>
         <div className={classes.wrapper}>
           <Container className={classes.container}>
+            <Typography variant="h6">
+              Adapter Unavailable
+            </Typography>
+            <Typography variant="subtitle">
+              Connect Meshery Adapter(s) in Settings
+            </Typography>
             <Button
               variant="contained"
               color="primary"
@@ -81,14 +87,8 @@ function Mesh() {
               className={classes.btn}
             >
               <SettingsIcon className={classes.icon} />
-              Configure Settings
+              Settings
             </Button>
-            <Typography variant="h6">
-              Broken Adapter
-            </Typography>
-            <Typography variant="subtitle">
-              Your Adapter is not available
-            </Typography>
           </Container>
         </div>
       </NoSsr>
