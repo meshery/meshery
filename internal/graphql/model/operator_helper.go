@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	v1 "k8s.io/api/core/v1"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -69,46 +70,58 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 		return controllers, ErrMesheryClient(err)
 	}
 
-	broker, err := GetBrokerInfo(mesheryclient, brokerConn)
+	broker, err := GetBrokerInfo(mesheryclient, mesheryKubeClient, brokerConn)
 	if err != nil {
 		return controllers, err
 	}
+
 	controllers = append(controllers, &broker)
 
-	meshsync, err := GetMeshSyncInfo(mesheryclient, ch)
+	meshsync, err := GetMeshSyncInfo(mesheryclient, mesheryKubeClient, ch)
 	if err != nil {
 		return controllers, err
 	}
+
 	controllers = append(controllers, &meshsync)
 
 	return controllers, nil
 }
 
-func GetBrokerInfo(mesheryclient operatorClient.Interface, brokerConn brokerpkg.Handler) (OperatorControllerStatus, error) {
+func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler) (OperatorControllerStatus, error) {
 	var brokerStatus OperatorControllerStatus
 
 	broker, err := mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return brokerStatus, ErrMesheryClient(err)
 	}
+	statefulSet, err := mesheryKubeClient.KubeClient.AppsV1().StatefulSets("meshery").Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
+	brokerVersion := ""
 	if err == nil {
-		brokerStatus.Status = StatusConnected
+		brokerVersion = imageVersionExtractUtil(statefulSet.Spec.Template, "nats")
+	}
+	if err == nil {
+		status := fmt.Sprintf("%s %s", StatusConnected, broker.Status.Endpoint.External)
 		if brokerConn.Info() == brokerpkg.NotConnected {
-			brokerStatus.Status = StatusEnabled
+			brokerStatus.Status = Status(status)
 		}
 		brokerStatus.Name = "broker"
-		brokerStatus.Version = broker.Labels["version"]
+		brokerStatus.Version = brokerVersion
 	}
 
 	return brokerStatus, nil
 }
 
-func GetMeshSyncInfo(mesheryclient operatorClient.Interface, ch chan struct{}) (OperatorControllerStatus, error) {
+func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client, ch chan struct{}) (OperatorControllerStatus, error) {
 	var meshsyncStatus OperatorControllerStatus
-
 	meshsync, err := mesheryclient.CoreV1Alpha1().MeshSyncs(Namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return meshsyncStatus, ErrMesheryClient(err)
+	}
+
+	meshsyncDeployment, err := mesheryKubeClient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
+	meshsyncVersion := ""
+	if err == nil {
+		meshsyncVersion = imageVersionExtractUtil(meshsyncDeployment.Spec.Template, "meshsync")
 	}
 
 	// Synthetic Check for MeshSync data is too time consuming. Commented for now.
@@ -134,17 +147,19 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, ch chan struct{}) (
 	// 		Status:  status,
 	// 	})
 	// }
-
-	meshsyncStatus.Status = StatusEnabled
+	status := fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
+	meshsyncStatus.Status = Status(status)
 	meshsyncStatus.Name = "meshsync"
-	meshsyncStatus.Version = meshsync.Labels["version"]
-
+	meshsyncStatus.Version = meshsyncVersion
 	return meshsyncStatus, nil
 }
 
-func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler) (string, error) {
+func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {
 	var broker *operatorv1alpha1.Broker
-
+	var endpoints []string
+	if ct != nil {
+		endpoints = ct.ListBrokerEndpoints()
+	}
 	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
 		if mesheryclient == nil {
@@ -159,6 +174,7 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 		if err == nil && broker.Status.Endpoint.External != "" {
 			break
 		}
+
 		timeout--
 		time.Sleep(1 * time.Second)
 	}
@@ -193,10 +209,10 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 			}
 		}
 	}
-
+	endpoints = append(endpoints, endpoint)
 	// subscribing to nats
 	conn, err := nats.New(nats.Options{
-		URLS:           []string{endpoint},
+		URLS:           endpoints,
 		ConnectionName: "meshery",
 		Username:       "",
 		Password:       "",
@@ -204,11 +220,20 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 		MaxReconnect:   5,
 	})
 	// Hack for minikube based clusters
-	if err != nil {
+	if err != nil && conn == nil {
 		return endpoint, err
 	}
+	defer func() {
+		if conn == nil {
+			return
+		}
+		available := make(map[string]bool)
+		for _, server := range conn.ConnectedEndpoints() {
+			available[server] = true
+		}
+		ct.ResetEndpoints(available)
+	}()
 	conn.DeepCopyInto(brokerConn)
-
 	err = brokerConn.SubscribeWithChannel(MeshsyncSubject, BrokerQueue, datach)
 	if err != nil {
 		return endpoint, ErrSubscribeChannel(err)
@@ -224,4 +249,14 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	}
 
 	return endpoint, nil
+}
+
+func imageVersionExtractUtil(container v1.PodTemplateSpec, containerName string) string {
+	version := ""
+	for _, container := range container.Spec.Containers {
+		if strings.Compare(container.Name, containerName) == 0 {
+			version = strings.Split(container.Image, ":")[1]
+		}
+	}
+	return version
 }

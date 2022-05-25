@@ -113,7 +113,7 @@ Actualice `mesheryctl` y ejecute Meshery en Mac o Linux con este script:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
- curl -L https://git.io/meshery | bash -
+ curl -L https://meshery.io/install | bash -
  </div></div>
  </pre>
 

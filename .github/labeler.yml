@@ -1,9 +1,18 @@
 area/docs:
-- docs/**/*
+  - "docs/**/*"
 area/ci:
-- '.github/**/*'      
+  - ".github/**/*"
 component/ui:
-- 'ui/**/*'
-- 'provider-ui/**/*'
+  - "ui/**/*"
+  - "provider-ui/**/*"
 component/mesheryctl:
-- 'mesheryctl/**/*'
+  - "mesheryctl/**/*"
+component/extensions:
+  - "install/docker-extension/**/*"
+  - "ui/components/ExtensionSandbox.js"
+  - "ui/remote-component.config.js"
+area/lifecycle:
+  - "install/deployment_yamls/*"
+framework/helm:
+  - "install/kubernetes/helm/**/*"
+

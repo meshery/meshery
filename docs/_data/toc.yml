@@ -40,6 +40,8 @@
           url: installation/platforms/aks
         - title: Docker
           url: installation/platforms/docker
+        - title: Docker Extension
+          url: installation/platforms/docker-extension
         - title: EKS
           url: installation/platforms/eks
         - title: GKE
@@ -79,6 +81,8 @@
       url: service-meshes/adapters/app-mesh
     - title: Citrix Service Mesh
       url: service-meshes/adapters/cpx
+    - title: Cilium Service Mesh
+      url: service-meshes/adapters/cilium
     - title: Consul
       url: service-meshes/adapters/consul
     - title: Istio
@@ -91,8 +95,6 @@
       url: service-meshes/adapters/nsm
     - title: NGINX Service Mesh
       url: service-meshes/adapters/nginx-sm
-    - title: Octarine
-      url: service-meshes/adapters/octarine
     - title: Open Service Mesh
       url: service-meshes/adapters/osm
     - title: Tanzu

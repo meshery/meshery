@@ -4,26 +4,26 @@ on:
     types: [published]
   push:
     tags:
-      - 'v*'  
+      - "v*"
     branches:
-      - 'master'
+      - "master"
     paths-ignore:
-      - 'docs/**'
+      - "docs/**"
       # - '.github/**'
   workflow_dispatch:
     inputs:
       release-ver:
-          description: 'Stable Release Version'     
-          required: true
-          default: 'v'
+        description: "Stable Release Version"
+        required: true
+        default: "v"
       stripped-release-ver:
-          description: 'Stripped Stable Release Version'     
-          required: true
-          default: ''
+        description: "Stripped Stable Release Version"
+        required: true
+        default: ""
       release-channel:
-          description: 'Release Channel'     
-          required: true
-          default: 'edge'
+        description: "Release Channel"
+        required: true
+        default: "edge"
 
 env:
   GIT_VERSION: ${{github.event.inputs.release-ver}}
@@ -35,23 +35,20 @@ jobs:
   print-inputs:
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
+          echo " Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
+          echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
+          echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
+          echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
+          echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
 
-    - run: |
-        echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
-        echo " Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
-        echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
-        echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
-        echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
-        echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
-  
   docker-build:
     runs-on: ubuntu-latest
     steps:
-      - 
-        name: Checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v3
-      - 
-        name: Identify Release Values
+      - name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
         run: |
           GIT_TAG=`git symbolic-ref HEAD -q`
@@ -71,14 +68,11 @@ jobs:
           echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
         shell: bash
 
-      -
-        name: Set up QEMU
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-      -
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      -
-        name: Docker Meta
+      - name: Docker Meta
         id: meta
         uses: docker/metadata-action@v3
         with:
@@ -92,30 +86,29 @@ jobs:
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=${{env.RELEASE_CHANNEL}}-latest
             type=semver,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-      -
-        name: Login to DockerHub
-        uses: docker/login-action@v1 
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - 
-        name: Build and Push 
+      - name: Build and Push
         uses: docker/build-push-action@v2
         with:
-          context: "{{defaultContext}}"
+          context: install/docker/.
           push: true
           build-args: |
             GIT_STRIPPED_VERSION=${{env.GIT_STRIPPED_VERSION}}
             GIT_VERSION=${{env.GIT_VERSION}}
             RELEASE_CHANNEL=${{env.RELEASE_CHANNEL}}
-          tags: ${{ steps.meta.outputs.tags }}     
+          tags: ${{ steps.meta.outputs.tags }}
           platforms: linux/amd64,linux/arm64
 
-      # - 
+      # -
       #   name: Docker Hub Description
       #   uses: peter-evans/dockerhub-description@v3
       #   with:
       #     username: ${{ secrets.DOCKER_USERNAME }}
       #     password: ${{ secrets.DOCKER_PASSWORD }}
-      #     repository: meshery/meshery-docker-extension  
-      #     readme-filepath: /install/docker-extension/README.md 
+      #     repository: meshery/meshery-docker-extension
+      #     readme-filepath: /install/docker-extension/README.md
+
