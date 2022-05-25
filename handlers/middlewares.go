@@ -105,11 +105,11 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
 		ctx = context.WithValue(ctx, models.BrokerURLCtxKey, h.config.BrokerEndpointURL) // nolint
-
+		err = h.LoadContexts(token, provider)
 		// k8scontext, err := h.GetCurrentContext(token, provider)
-		// if err != nil {
-		// 	logrus.Warn("failed to find kubernetes context")
-
+		if err != nil {
+			logrus.Warn("failed to find load kubernetes contexts")
+		}
 		// 	// Set some defaults in the context so that the casting doesn't fails
 		// 	ctx = context.WithValue(ctx, models.KubeContextKey, nil)
 		// 	ctx = context.WithValue(ctx, models.KubeHanderKey, nil)
