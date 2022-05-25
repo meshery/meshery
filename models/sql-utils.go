@@ -47,7 +47,10 @@ var (
 	mx        sync.Mutex
 )
 
-func SetNewDBInstance() {
+func setNewDBInstance() {
+	mx.Lock()
+	defer mx.Unlock()
+	
 	// Initialize Logger instance
 	log, err := logger.New("meshery", logger.Options{
 		Format: logger.SyslogLogFormat,
@@ -68,8 +71,6 @@ func SetNewDBInstance() {
 }
 
 func GetNewDBInstance() *database.Handler {
-	mx.Lock()
-	defer mx.Unlock()
-	SetNewDBInstance()
+	setNewDBInstance()
 	return &dbHandler
 }
