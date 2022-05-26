@@ -141,9 +141,10 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		if err != nil {
 			logrus.Warn("failed to load all k8scontext")
 		}
-		if len(k8sContextIDs) == 0 {
-			if len(contexts) > 0 { //If there is only one loaded contexts then use that
-				logrus.Warn("will be using the single available context for k8s related operation")
+		if len(k8sContextIDs) == 0 { //This is for backwards compabitibility with clients. This will work fine for single cluster.
+			//For multi cluster, it is expected of clients to explicitly pass the k8scontextID.
+			//So for now, randomly one of the contexts from available ones will be pushed to the array to stop anything from breaking in case of no contexts recieved(with single cluster, the behavior would be as expected).
+			if len(contexts) > 0 && contexts[0] != nil {
 				k8scontexts = append(k8scontexts, *contexts[0])
 			}
 		} else if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
