@@ -165,7 +165,9 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			}
 		}
 		for _, k8scontext := range contexts {
-			allk8scontexts = append(allk8scontexts, *k8scontext)
+			if k8scontext != nil {
+				allk8scontexts = append(allk8scontexts, *k8scontext)
+			}
 		}
 		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
 		ctx = context.WithValue(ctx, models.AllKubeClusterKey, allk8scontexts)
