@@ -23,7 +23,7 @@
           url: project/contributing/contributing-server
         - title: Meshery UI
           url: project/contributing/contributing-ui
-        - title: Meshery Cypress Testing
+        - title: End-to-End Testing
           url: project/contributing/contributing-cypress
     - title: Releases
       url: project/releases
@@ -153,3 +153,4 @@
       url: reference/graphql-apis
     - title: "REST API Reference"
       url: reference/rest-apis
+
