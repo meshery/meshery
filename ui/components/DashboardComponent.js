@@ -90,6 +90,7 @@ class DashboardComponent extends React.Component {
       meshAdapters, k8sconfig, grafana, prometheus
     } = props;
     this._isMounted = false;
+    console.log({ k8sconfig : k8sconfig });
     this.state = {
       meshAdapters,
       contextsFromFile : [],
@@ -97,12 +98,6 @@ class DashboardComponent extends React.Component {
       mts : new Date(),
       meshLocationURLError : false,
 
-      inClusterConfig : k8sconfig.inClusterConfig, // read from store
-      k8sfile : k8sconfig.k8sfile, // read from store
-      contextName : k8sconfig.contextName, // read from store
-
-      clusterConfigured : k8sconfig.clusterConfigured, // read from store
-      configuredServer : k8sconfig.configuredServer,
       grafanaUrl : grafana.grafanaURL,
       prometheusUrl : prometheus.prometheusURL,
       k8sfileError : false,
@@ -124,7 +119,7 @@ class DashboardComponent extends React.Component {
       activeMeshScanNamespace : {},
       meshScanNamespaces : {},
 
-      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured,
+      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
       controlPlaneState : "",
       dataPlaneState : "",
 
@@ -136,8 +131,9 @@ class DashboardComponent extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
+    console.log("state", state, "props", props);
     const {
-      meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus, contextName
+      meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus
     } = props;
     const st = {};
     if (meshAdaptersts > state.mts) {
@@ -146,15 +142,10 @@ class DashboardComponent extends React.Component {
     }
     st.grafana = grafana;
     st.prometheus = prometheus;
-    if (k8sconfig.ts > state.kts) {
-      st.inClusterConfig = k8sconfig.inClusterConfig;
-      st.k8sfile = k8sconfig.k8sfile;
-      st.contextName = k8sconfig.contextName;
-      st.clusterConfigured = k8sconfig.clusterConfigured;
-      st.configuredServer = k8sconfig.configuredServer;
-      st.kts = props.ts;
-      if (!state.contextsFromFile?.length)
-        st.contextsFromFile = { ...(st.contextsFromFile || []), contextsFromFile : [{ contextName, currentContext : true }] };
+    console.log("hola!", k8sconfig)
+    if (k8sconfig?.[k8sconfig.length - 1]?.ts > state.kts) { // check the last merged kubernetes config
+      state.kts = k8sconfig[k8sconfig.length - 1].ts;
+
       return st;
     }
     return st;
@@ -551,10 +542,9 @@ class DashboardComponent extends React.Component {
     this.props.router.push(`/settings#metrics/${val}`);
   };
 
-  handleKubernetesClick = () => {
+  handleKubernetesClick = (id) => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
-    const { configuredServer } = this.state;
     dataFetch(
       "/api/system/kubernetes/ping",
       { credentials : "same-origin",
@@ -562,7 +552,8 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Kubernetes connected at "  + `${configuredServer}` , { variant : "success",
+          this.props.enqueueSnackbar("Kubernetes connected at "  + `${id}` , {
+            variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -763,8 +754,6 @@ class DashboardComponent extends React.Component {
   configureTemplate = () => {
     const { classes } = this.props;
     const {
-      clusterConfigured,
-      configuredServer,
       meshAdapters,
       grafanaUrl,
       prometheusUrl,
@@ -772,34 +761,32 @@ class DashboardComponent extends React.Component {
       grafana,
       contexts,
       prometheus,
-      contextName
     } = this.state;
     const self = this;
     let showConfigured = "Not connected to Kubernetes.";
-    if (clusterConfigured) {
-      let chp = (
-        <div>
-          {contexts?.map(ctx => (
-            <Tooltip title={`Server: ${ctx.server}`}>
-              <Chip
-                label={ctx?.name}
-                className={classes.chip}
-                onClick={() => self.handleKubernetesClick(ctx.id)}
-                icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
-                disabled={contextName==ctx.name? false : true}
-                variant="outlined"
-                data-cy="chipContextName"
-              />
-            </Tooltip>
-          ))}
-        </div>
-      );
+    console.log({ contexts })
+    let chp = (
+      <div>
+        {contexts?.map(ctx => (
+          <Tooltip title={`Server: ${ctx.server}`}>
+            <Chip
+              label={ctx?.name}
+              className={classes.chip}
+              onClick={() => self.handleKubernetesClick(ctx.id)}
+              icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
+              variant="outlined"
+              data-cy="chipContextName"
+            />
+          </Tooltip>
+        ))}
+      </div>
+    );
 
-      if (!configuredServer) {
-        chp=showConfigured;
-      }
-      showConfigured = <div showConfigured>{chp}</div>;
+    if (!contexts?.length) {
+      chp=showConfigured;
     }
+
+    showConfigured = <div showConfigured>{chp}</div>;
 
     let showAdapters = "No adapters configured.";
     if (availableAdapters.length > 0) {
@@ -968,7 +955,7 @@ class DashboardComponent extends React.Component {
               }}
             >
               <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-              No service meshes detected in the {self.state.contextName} cluster.
+              No service meshes detected in the {self.state.contexts?.map(ctx => ctx.name).join(",")} cluster(s).
               </Typography>
               <Button
                 aria-label="Add Meshes"

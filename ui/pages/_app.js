@@ -58,14 +58,6 @@ async function fetchContexts(number = 10, search = "") {
   return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pageSize=${number}&search=${encodeURIComponent(search)}`)
 }
 
-const defaultK8sConfig = {
-  inClusterConfig : false,
-  k8sfile : "",
-  contextName : "",
-  clusterConfigured : "",
-  configuredServer : ""
-}
-
 class MesheryApp extends App {
   constructor() {
     super();
@@ -131,7 +123,15 @@ class MesheryApp extends App {
     }, result => {
       if (result) {
         if (result.k8sConfig && result.k8sConfig.length != 0) {
-          const kubeConfigs = result.k8sConfig.map(config => Object.assign(defaultK8sConfig, config))
+          const kubeConfigs = result.k8sConfig.map(config => Object.assign({
+            inClusterConfig : false,
+            k8sfile : "",
+            contextName : "",
+            clusterConfigured : "",
+            configuredServer : "",
+            ts : new Date()
+          }, config));
+          console.log("hi", { kubeConfigs, result });
           store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : kubeConfigs });
         }
         if (result.meshAdapters && result.meshAdapters !== null && result.meshAdapters.length > 0) {

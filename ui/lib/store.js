@@ -112,8 +112,7 @@ export const reducer = (state = initialState, action) => {
       // console.log(`received an action to update user: ${JSON.stringify(action.user)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.user }))}`);
       return state.mergeDeep({ user : action.user });
     case actionTypes.UPDATE_CLUSTER_CONFIG:
-      action.k8sConfig.ts = new Date();
-      // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.k8sConfig)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.k8sConfig }))}`);
+      // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.k8sConfig)} and New state: ${JSON.stringify(state.mergeDeep({ k8sConfig: action.k8sConfig }))}`);
       return state.mergeDeep({ k8sConfig : action.k8sConfig });
     case actionTypes.UPDATE_LOAD_TEST_DATA:
       // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.loadTest)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.loadTest }))}`);
