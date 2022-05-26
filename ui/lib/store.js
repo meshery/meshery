@@ -60,6 +60,7 @@ const initialState = fromJS({
   showProgress : false,
   isDrawerCollapsed: false,
   selectedAdapter : '',
+  activeK8sContext: []
 });
 
 export const actionTypes = {
@@ -83,6 +84,7 @@ export const actionTypes = {
   UPDATE_PROGRESS : 'UPDATE_PROGRESS',
   TOOGLE_DRAWER : 'TOOGLE_DRAWER',
   SET_ADAPTER : 'SET_ADAPTER',
+  SET_ACTIVE_K8S_CONTEXTS : 'SET_ACTIVE_K8S_CONTEXTS',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
 };
 
@@ -173,7 +175,11 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({ isDrawerCollapsed : action.isDrawerCollapsed });
 
     case actionTypes.SET_ADAPTER:
-      return state.mergeDeep({ selectedAdapter : action.selectedAdapter });   
+      return state.mergeDeep({ selectedAdapter : action.selectedAdapter });  
+      
+    case actionTypes.SET_ACTIVE_K8S_CONTEXTS:
+        state = state.updateIn(['activeK8sContext'], val => fromJS([]));
+        return state.mergeDeep({ activeK8sContext : action.activeK8sContext });
       // case actionTypes.UPDATE_SMI_RESULT:
       //   console.log(`received an action to update smi result`,action.smi_result);
       //   if(action.smi_result!==undefined)
@@ -261,6 +267,10 @@ export const toggleDrawer = ({isDrawerCollapsed}) => dispatch => {
 
 export const setAdapter = ({selectedAdapter}) => dispatch => {
   return dispatch({ type : actionTypes.SET_ADAPTER, selectedAdapter });
+}
+
+export const setActiveK8sContexts = ({ activeK8sContext }) => dispatch => {
+  return dispatch({ type : actionTypes.SET_ACTIVE_K8S_CONTEXTS, activeK8sContext });
 }
 // export const updateSMIResults = ({smi_result}) => dispatch => {
 //   console.log("invoking the updateSMIResults action creator. . .",smi_result);

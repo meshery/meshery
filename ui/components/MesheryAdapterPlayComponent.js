@@ -52,6 +52,8 @@ import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import MesheryMetrics from "./MesheryMetrics"
+import ConfirmationMsg from "./Confirmation";
+
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },
@@ -155,7 +157,6 @@ class MesheryAdapterPlayComponent extends React.Component {
       customDialogAdd : false,
       customDialogDel : false,
       customDialogSMI : false,
-
       open : false,
 
       menuState, // category: {add: 1, delete: 0}
@@ -169,11 +170,15 @@ class MesheryAdapterPlayComponent extends React.Component {
       sortOrder : "",
       pageSize : 10,
       namespaceList : [],
+      category : 0,
+      selectedOp : '',
+      isDeleteOp : false
     };
   }
 
   componentDidMount() {
     const self = this;
+    console.log("m", this.props.activeK8sContext);
     const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
     const variables = { serviceMesh : meshname }
     subscribeMeshSyncStatusEvents(res => {
@@ -301,9 +306,15 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
     return () => {
+      self.setState({ open : true })
       const { namespace, cmEditorValAdd, cmEditorValDel } = self.state;
       const { adapter } = self.props;
       const filteredOp = adapter.ops.filter(({ key }) => key === selectedOp);
+      self.setState({
+        category : cat,
+        selectedOp : selectedOp,
+        isDeleteOp : deleteOp
+      })
       if (selectedOp === "" || typeof filteredOp === "undefined" || filteredOp.length === 0) {
         self.setState({ selectionError : true });
         return;
@@ -321,7 +332,6 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ namespaceError : true });
         return;
       }
-      self.submitOp(cat, selectedOp, deleteOp);
     };
   };
 
@@ -348,6 +358,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join("&");
     this.props.updateProgress({ showProgress : true });
+    this.handleClose()
     const self = this;
     dataFetch(
       "/api/system/adapter/operation",
@@ -498,6 +509,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         {selectedAdapterOps
           .sort((adap1, adap2) => adap1.value.localeCompare(adap2.value))
           .map(({ key, value }) => (
+
             <MenuItem key={`${key}_${new Date().getTime()}`} onClick={this.handleSubmit(cat, key, isDelete)}>
               {value}
             </MenuItem>
@@ -506,12 +518,12 @@ class MesheryAdapterPlayComponent extends React.Component {
     );
   }
 
-  handleOpen = () => {
-    setOpen(true);
-  };
+  handleOpen() {
+    this.setState({ open : true });
+  }
 
   handleClose = () => {
-    setOpen(false);
+    this.setState({ open : false });
   };
 
   generateSMIResult() {
@@ -1115,6 +1127,15 @@ class MesheryAdapterPlayComponent extends React.Component {
               </Grid>
             </Grid>
           </div>
+          <ConfirmationMsg
+            open={this.state.open}
+            handleClose={this.handleClose}
+            submit={this.submitOp}
+            category={this.state.category}
+            operation={this.state.selectedOp}
+            isDelete={this.state.isDeleteOp}
+            contexts={this.props.activeK8sContext}
+          />
         </React.Fragment>
       </NoSsr>
     );
@@ -1130,7 +1151,8 @@ MesheryAdapterPlayComponent.propTypes = { classes : PropTypes.object.isRequired,
 // };
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
-  return { grafana : { ...grafana, ts : new Date(grafana.ts) } };
+  const activeK8sContext = st.get("activeK8sContext").toJS();
+  return { grafana : { ...grafana, ts : new Date(grafana.ts), activeK8sContext } };
 };
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),

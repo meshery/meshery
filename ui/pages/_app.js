@@ -9,7 +9,7 @@ import Header from '../components/Header';
 import PropTypes from 'prop-types';
 import Hidden from '@material-ui/core/Hidden';
 import withRedux from "next-redux-wrapper";
-import { makeStore, actionTypes } from '../lib/store';
+import { makeStore, actionTypes, setActiveK8sContexts } from '../lib/store';
 import { connect, Provider } from "react-redux";
 import { fromJS } from 'immutable';
 import { NoSsr, Typography } from '@material-ui/core';
@@ -38,6 +38,7 @@ import 'billboard.js/dist/billboard.min.css';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
 import theme, { styles } from "../themes"
+import { bindActionCreators } from 'redux';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -58,15 +59,14 @@ async function fetchContexts(number = 10, search = "") {
   return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pageSize=${number}&search=${encodeURIComponent(search)}`)
 }
 class MesheryApp extends App {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.pageContext = getPageContext();
 
     this.state = {
       mobileOpen : false,
       isDrawerCollapsed : false,
       k8sContexts : {},
-      activeK8sContexts : [],
     };
   }
 
@@ -81,26 +81,31 @@ class MesheryApp extends App {
     }
   };
 
-  setActiveContexts = (id) => {
+  setActiveContexts = (id, context = {}) => {
     if (id === ".all") {
       let activeContexts = []
       this.state.k8sContexts.contexts.forEach(ctx =>
-        activeContexts.push(ctx.id )
+        activeContexts.push(ctx)
       );
       activeContexts.push(".all");
-      this.setState(state => {
-        if (state.activeK8sContexts?.includes(".all")) return { activeK8sContexts : [] };
-        return { activeK8sContexts : activeContexts };
-      });
 
+      if (this.props.activeK8sContext?.includes(".all")) {
+        this.props.setActiveK8sContexts({ activeK8sContext : [] })
+        return
+      }
+      this.props.setActiveK8sContexts({ activeK8sContext : activeContexts })
       return;
     }
 
-    this.setState(state => {
-      const ids = [...(state.activeK8sContexts || [])];
-      if (ids.includes(id)) return { activeK8sContexts : ids.filter(cid => cid !== id) };
-      return { activeK8sContexts : [...ids, id] }
-    })
+    const contexts = [...(this.props.activeK8sContext || [])];
+    const isCtxSelected = contexts.filter(ctx => (ctx.id === id))
+    console.log("qwerty",isCtxSelected, contexts);
+    if (isCtxSelected.length > 0) {
+      this.props.setActiveK8sContexts({ activeK8sContext : contexts.filter(ctx => (ctx.id !== id && ctx != ".all")) })
+      return
+    }
+    this.props.setActiveK8sContexts({ activeK8sContext : [...contexts, context] })
+    return
   }
 
   searchContexts = (search = "") => {
@@ -108,7 +113,7 @@ class MesheryApp extends App {
       .then(ctx => {
         this.setState({ k8sContexts : ctx })
         const active = ctx?.contexts?.find(c => c.is_current_context === true);
-        if (active) this.setState({ activeK8sContexts : [active?.id] })
+        if (active) this.props.setActiveK8sContexts({ activeK8sContext : [active?.id] })
       })
       .catch(err => console.error(err))
   }
@@ -208,7 +213,7 @@ class MesheryApp extends App {
       .then(ctx => {
         this.setState({ k8sContexts : ctx })
         const active = ctx?.contexts?.find(c => c.is_current_context === true);
-        if (active) this.setState({ activeK8sContexts : [active?.id] })
+        if (active) this.props.setactiveK8sContexts({ activeK8sContext : [active?.id] })
       })
       .catch(err => console.error(err))
   }
@@ -217,6 +222,7 @@ class MesheryApp extends App {
     const {
       Component, pageProps, classes, isDrawerCollapsed
     } = this.props;
+
     return (
       <NoSsr>
         <div className={classes.root}>
@@ -262,7 +268,7 @@ class MesheryApp extends App {
                 onDrawerToggle={this.handleDrawerToggle}
                 onDrawerCollapse={isDrawerCollapsed}
                 contexts={this.state.k8sContexts}
-                activeContexts={this.state.activeK8sContexts}
+                activeContexts={this.props.activeK8sContext}
                 setActiveContexts={this.setActiveContexts}
                 searchContexts={this.searchContexts}
               />
@@ -271,7 +277,7 @@ class MesheryApp extends App {
                   <Component
                     pageContext={this.pageContext}
                     contexts={this.state.k8sContexts}
-                    activeContexts={this.state.activeK8sContexts}
+                    activeContexts={this.props.activeK8sContext}
                     setActiveContexts={this.setActiveContexts}
                     searchContexts={this.searchContexts}
                     {...pageProps}
@@ -294,11 +300,16 @@ class MesheryApp extends App {
 
 MesheryApp.propTypes = { classes : PropTypes.object.isRequired, };
 
-const mapStateToProps = state => ({
-  isDrawerCollapsed : state.get("isDrawerCollapsed")
+const mapDispatchToProps = (dispatch) => ({
+  setActiveK8sContexts : bindActionCreators(setActiveK8sContexts, dispatch)
 })
 
-const MesheryWithRedux = connect(mapStateToProps)(MesheryApp);
+const mapStateToProps = state => ({
+  isDrawerCollapsed : state.get("isDrawerCollapsed"),
+  activeK8sContext : state.get("activeK8sContext").toJS()
+})
+
+const MesheryWithRedux = connect(mapStateToProps, mapDispatchToProps)(MesheryApp);
 
 const MesheryAppWrapper = (props) => {
   return (

@@ -273,8 +273,8 @@ function K8sContextMenu({
                     <Tooltip title={`Server: ${ctx.server}`}>
                       <div style={{ display : "flex", justifyContent : "flex-start", alignItems : "center" }}>
                         <Checkbox
-                          checked={activeContexts.includes(ctx.id)}
-                          onChange={() => setActiveContexts(ctx.id)}
+                          checked={activeContexts.filter(context => (context.id === ctx.id)).length > 0}
+                          onChange={() => setActiveContexts(ctx.id, ctx)}
                           color="primary"
                         />
                         <Chip
