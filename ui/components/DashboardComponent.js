@@ -87,10 +87,9 @@ class DashboardComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      meshAdapters, k8sconfig, grafana, prometheus
+      meshAdapters, grafana, prometheus
     } = props;
     this._isMounted = false;
-    console.log({ k8sconfig : k8sconfig });
     this.state = {
       meshAdapters,
       contextsFromFile : [],
@@ -131,9 +130,8 @@ class DashboardComponent extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    console.log("state", state, "props", props);
     const {
-      meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus
+      meshAdapters, meshAdaptersts, grafana, prometheus
     } = props;
     const st = {};
     if (meshAdaptersts > state.mts) {
@@ -142,12 +140,6 @@ class DashboardComponent extends React.Component {
     }
     st.grafana = grafana;
     st.prometheus = prometheus;
-    console.log("hola!", k8sconfig)
-    if (k8sconfig?.[k8sconfig.length - 1]?.ts > state.kts) { // check the last merged kubernetes config
-      state.kts = k8sconfig[k8sconfig.length - 1].ts;
-
-      return st;
-    }
     return st;
   }
 
@@ -289,7 +281,7 @@ class DashboardComponent extends React.Component {
                 self.setState({ grafanaURL : "http://" + addon.endpoint })
                 submitGrafanaConfigure(self, () => {
                   self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-                  console.log("Grafana added");
+                  console.info("Grafana added");
                 });
               }
             });
@@ -545,14 +537,16 @@ class DashboardComponent extends React.Component {
   handleKubernetesClick = (id) => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const selectedCtx = this.props.k8sconfig?.find((ctx) => ctx.contextID === id);
+    const { configuredServer, contextName } = selectedCtx;
     dataFetch(
-      "/api/system/kubernetes/ping",
+      "/api/system/kubernetes/ping?context=" + id,
       { credentials : "same-origin",
         credentials : "include", },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Kubernetes connected at "  + `${id}` , {
+          this.props.enqueueSnackbar(`${contextName} is connected at ${configuredServer}` , {
             variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
@@ -764,7 +758,6 @@ class DashboardComponent extends React.Component {
     } = this.state;
     const self = this;
     let showConfigured = "Not connected to Kubernetes.";
-    console.log({ contexts })
     let chp = (
       <div>
         {contexts?.map(ctx => (
