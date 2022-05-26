@@ -87,7 +87,7 @@ class DashboardComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      meshAdapters, k8sconfig, grafana, prometheus
+      meshAdapters, grafana, prometheus
     } = props;
     this._isMounted = false;
     this.state = {
@@ -97,12 +97,6 @@ class DashboardComponent extends React.Component {
       mts : new Date(),
       meshLocationURLError : false,
 
-      inClusterConfig : k8sconfig.inClusterConfig, // read from store
-      k8sfile : k8sconfig.k8sfile, // read from store
-      contextName : k8sconfig.contextName, // read from store
-
-      clusterConfigured : k8sconfig.clusterConfigured, // read from store
-      configuredServer : k8sconfig.configuredServer,
       grafanaUrl : grafana.grafanaURL,
       prometheusUrl : prometheus.prometheusURL,
       k8sfileError : false,
@@ -124,7 +118,7 @@ class DashboardComponent extends React.Component {
       activeMeshScanNamespace : {},
       meshScanNamespaces : {},
 
-      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured,
+      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
       controlPlaneState : "",
       dataPlaneState : "",
 
@@ -137,7 +131,7 @@ class DashboardComponent extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     const {
-      meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus, contextName
+      meshAdapters, meshAdaptersts, grafana, prometheus
     } = props;
     const st = {};
     if (meshAdaptersts > state.mts) {
@@ -146,17 +140,6 @@ class DashboardComponent extends React.Component {
     }
     st.grafana = grafana;
     st.prometheus = prometheus;
-    if (k8sconfig.ts > state.kts) {
-      st.inClusterConfig = k8sconfig.inClusterConfig;
-      st.k8sfile = k8sconfig.k8sfile;
-      st.contextName = k8sconfig.contextName;
-      st.clusterConfigured = k8sconfig.clusterConfigured;
-      st.configuredServer = k8sconfig.configuredServer;
-      st.kts = props.ts;
-      if (!state.contextsFromFile?.length)
-        st.contextsFromFile = { ...(st.contextsFromFile || []), contextsFromFile : [{ contextName, currentContext : true }] };
-      return st;
-    }
     return st;
   }
 
@@ -298,7 +281,7 @@ class DashboardComponent extends React.Component {
                 self.setState({ grafanaURL : "http://" + addon.endpoint })
                 submitGrafanaConfigure(self, () => {
                   self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-                  console.log("Grafana added");
+                  console.info("Grafana added");
                 });
               }
             });
@@ -551,18 +534,20 @@ class DashboardComponent extends React.Component {
     this.props.router.push(`/settings#metrics/${val}`);
   };
 
-  handleKubernetesClick = () => {
+  handleKubernetesClick = (id) => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
-    const { configuredServer } = this.state;
+    const selectedCtx = this.props.k8sconfig?.find((ctx) => ctx.contextID === id);
+    const { configuredServer, contextName } = selectedCtx;
     dataFetch(
-      "/api/system/kubernetes/ping",
+      "/api/system/kubernetes/ping?context=" + id,
       { credentials : "same-origin",
         credentials : "include", },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Kubernetes connected at "  + `${configuredServer}` , { variant : "success",
+          this.props.enqueueSnackbar(`${contextName} is connected at ${configuredServer}` , {
+            variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -763,8 +748,6 @@ class DashboardComponent extends React.Component {
   configureTemplate = () => {
     const { classes } = this.props;
     const {
-      clusterConfigured,
-      configuredServer,
       meshAdapters,
       grafanaUrl,
       prometheusUrl,
@@ -772,34 +755,31 @@ class DashboardComponent extends React.Component {
       grafana,
       contexts,
       prometheus,
-      contextName
     } = this.state;
     const self = this;
     let showConfigured = "Not connected to Kubernetes.";
-    if (clusterConfigured) {
-      let chp = (
-        <div>
-          {contexts?.map(ctx => (
-            <Tooltip title={`Server: ${ctx.server}`}>
-              <Chip
-                label={ctx?.name}
-                className={classes.chip}
-                onClick={() => self.handleKubernetesClick(ctx.id)}
-                icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
-                disabled={contextName==ctx.name? false : true}
-                variant="outlined"
-                data-cy="chipContextName"
-              />
-            </Tooltip>
-          ))}
-        </div>
-      );
+    let chp = (
+      <div>
+        {contexts?.map(ctx => (
+          <Tooltip title={`Server: ${ctx.server}`}>
+            <Chip
+              label={ctx?.name}
+              className={classes.chip}
+              onClick={() => self.handleKubernetesClick(ctx.id)}
+              icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
+              variant="outlined"
+              data-cy="chipContextName"
+            />
+          </Tooltip>
+        ))}
+      </div>
+    );
 
-      if (!configuredServer) {
-        chp=showConfigured;
-      }
-      showConfigured = <div showConfigured>{chp}</div>;
+    if (!contexts?.length) {
+      chp=showConfigured;
     }
+
+    showConfigured = <div showConfigured>{chp}</div>;
 
     let showAdapters = "No adapters configured.";
     if (availableAdapters.length > 0) {
@@ -968,7 +948,7 @@ class DashboardComponent extends React.Component {
               }}
             >
               <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-              No service meshes detected in the {self.state.contextName} cluster.
+              No service meshes detected in the {self.state.contexts?.map(ctx => ctx.name).join(",")} cluster(s).
               </Typography>
               <Button
                 aria-label="Add Meshes"
