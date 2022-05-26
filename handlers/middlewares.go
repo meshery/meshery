@@ -135,30 +135,24 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]
-		k8scontexts := []models.K8sContext{}
+		k8scontexts := []models.K8sContext{}    //The contexts passed by the user
+		allk8scontexts := []models.K8sContext{} //All contexts to track all the connected clusters
+		contexts, err := provider.LoadAllK8sContext(token)
+		if err != nil {
+			logrus.Warn("failed to load all k8scontext")
+		}
 		if len(k8sContextIDs) == 0 {
-			contexts, err := provider.LoadAllK8sContext(token)
-			if err != nil {
-				logrus.Warn("failed to load all k8scontext")
-			}
 			if len(contexts) > 0 { //If there is only one loaded contexts then use that
 				logrus.Warn("will be using the single available context for k8s related operation")
 				k8scontexts = append(k8scontexts, *contexts[0])
 			}
 		} else if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
-
-			contexts, err := provider.LoadAllK8sContext(token)
-			if err != nil {
-				logrus.Warn("failed to load all k8scontext")
-			}
-
 			for _, c := range contexts {
 				if c != nil {
 					k8scontexts = append(k8scontexts, *c)
 				}
 			}
 		} else {
-
 			for _, kctxID := range k8sContextIDs {
 				kctx, err := provider.GetK8sContext(token, kctxID)
 				if err != nil {
@@ -169,8 +163,11 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				k8scontexts = append(k8scontexts, kctx)
 			}
 		}
+		for _, k8scontext := range contexts {
+			allk8scontexts = append(allk8scontexts, *k8scontext)
+		}
 		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
-
+		ctx = context.WithValue(ctx, models.AllKubeClusterKey, allk8scontexts)
 		req1 := req.WithContext(ctx)
 
 		next(w, req1, prefObj, user, provider)

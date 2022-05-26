@@ -154,14 +154,8 @@ const (
 	// UserPrefsCtxKey is the context key for persisting user preferences to context
 	PerfObjCtxKey ContextKey = "perf_obj"
 
-	// KubeHanderKey ContextKey = "kube_handler"
-
-	// KubeConfigKey ContextKey = "kubeconfig"
-
-	KubeContextKey ContextKey = "kubecontext"
-
-	KubeClustersKey ContextKey = "kubeclusters"
-
+	KubeClustersKey   ContextKey = "kubeclusters"
+	AllKubeClusterKey ContextKey = "allkubeclusters"
 	// UserPrefsCtxKey is the context key for latest broker endpoint to context
 	BrokerURLCtxKey = "broker_endpoint"
 )
