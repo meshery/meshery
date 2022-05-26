@@ -14,7 +14,7 @@ type SessionSyncData struct {
 }
 
 type SessionSyncDataK8sConfig struct {
-	K8sFile           string `json:"k8sfile,omitempty"`
+	ContextID         string `json:"contextID,omitempty"`
 	ContextName       string `json:"contextName,omitempty"`
 	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
 	ConfiguredServer  string `json:"configuredServer,omitempty"`
@@ -55,6 +55,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	if ok {
 		for _, k8scontext := range k8scontexts {
 			s = append(s, SessionSyncDataK8sConfig{
+				ContextID:         k8scontext.ID,
 				ContextName:       k8scontext.Name,
 				ClusterConfigured: true,
 				ConfiguredServer:  k8scontext.Server,
