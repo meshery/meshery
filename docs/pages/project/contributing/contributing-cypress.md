@@ -86,7 +86,7 @@ This is where Meshery's Cypress supportFile resides ([./support/index.js](https:
 
 ## How to manually run end-to-end tests
 
-Steps to start Cypress depend on whether your Meshery installation is locally built or deployed from built built container images. The following steps try to simplify the latter which should be the most frequently needed scenario:
+Steps to start Cypress depend on whether your Meshery installation is built from source code or from a deployed release. The following steps try to simplify the former which should be the most frequently needed scenario:
 
 ### Run Meshery UI dev server and Cypress
 
