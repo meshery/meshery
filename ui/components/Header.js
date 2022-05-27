@@ -140,6 +140,7 @@ function K8sContextMenu({
   classes = {},
   contexts = {},
   activeContexts = [],
+
   setActiveContexts = () => {},
   searchContexts = () => {}
 }) {
@@ -195,13 +196,11 @@ function K8sContextMenu({
         }}
         onMouseOver={(e) => {
           e.preventDefault();
-          console.log(contexts);
           setAnchorEl(true);
         }}
 
         onMouseLeave={(e) => {
           e.preventDefault();
-          console.log(contexts);
           setAnchorEl(false)
         }}
 
@@ -317,6 +316,7 @@ class Header extends React.Component {
     }
   }
   componentDidMount(){
+    console.log("Header mounted", JSON.stringify(this.props.selectedK8sContexts));
     this._isMounted = true;
     const meshSyncStatusSub = subscribeMeshSyncStatusEvents(data => this.setState({ meshSyncStatus : data?.listenToMeshSyncEvents }));
     const brokerStatusSub = subscribeBrokerStatusEvents(data => {
@@ -338,9 +338,7 @@ class Header extends React.Component {
   }
 
   render() {
-    const {
-      classes, title, onDrawerToggle ,onDrawerCollapse ,isBeta
-    } = this.props;
+    const { classes, title, onDrawerToggle ,onDrawerCollapse ,isBeta } = this.props;
     return (
       <NoSsr>
         <React.Fragment>
@@ -490,10 +488,15 @@ class Header extends React.Component {
 Header.propTypes = { classes : PropTypes.object.isRequired,
   onDrawerToggle : PropTypes.func.isRequired, };
 
-const mapStateToProps = (state) =>
+const mapStateToProps = (state) => {
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
   // console.log("state: " + JSON.stringify(state));
-  ({ title : state.get('page').get('title'), isBeta : state.get('page').get('isBeta') })
+  return ({
+    title : state.get('page').get('title'),
+    isBeta : state.get('page').get('isBeta'),
+    selectedK8sContexts : state.get('selectedK8sContexts')
+  })
+}
 ;
 
 // const mapDispatchToProps = dispatch => {

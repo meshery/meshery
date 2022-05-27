@@ -82,7 +82,19 @@ class MesheryApp extends App {
     }
   };
 
+  /**
+   * Sets the active k8s context on global level.
+   * @param {Array.<string>} activeK8sContexts
+   */
+  activeContextChangeCallback = (activeK8sContexts)  => {
+    if (activeK8sContexts.includes(".all")) {
+      activeK8sContexts = [".all"];
+    }
+    this.props.store.dispatch({ type : actionTypes.SET_K8S_CONTEXT, selectedK8sContexts : activeK8sContexts });
+  }
+
   setActiveContexts = (id) => {
+    console.log("set active ctx", id);
     if (id === ".all") {
       let activeContexts = []
       this.state.k8sContexts.contexts.forEach(ctx =>
@@ -92,8 +104,8 @@ class MesheryApp extends App {
       this.setState(state => {
         if (state.activeK8sContexts?.includes(".all")) return { activeK8sContexts : [] };
         return { activeK8sContexts : activeContexts };
-      });
-
+      },
+      () => this.activeContextChangeCallback(this.state.activeK8sContexts));
       return;
     }
 
@@ -101,7 +113,7 @@ class MesheryApp extends App {
       const ids = [...(state.activeK8sContexts || [])];
       if (ids.includes(id)) return { activeK8sContexts : ids.filter(cid => cid !== id) };
       return { activeK8sContexts : [...ids, id] }
-    })
+    }, () => this.activeContextChangeCallback(this.state.activeK8sContexts))
   }
 
   searchContexts = (search = "") => {

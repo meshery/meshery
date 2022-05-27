@@ -10,14 +10,8 @@ const initialState = fromJS({
     isBeta : false,
   },
   user : {},
-  k8sConfig : {
-    inClusterConfig : false,
-    k8sfile : '',
-    contextName : '',
-    clusterConfigured : false,
-    configuredServer : '',
-    ts : new Date(),
-  },
+  k8sConfig : [], // k8sconfig stores kubernetes cluster configs
+  selectedK8sContexts : [], // The selected k8s context on which the operations should be performed
   loadTest : {
     testName : '',
     meshName : '',
@@ -68,6 +62,7 @@ export const actionTypes = {
   UPDATE_USER : 'UPDATE_USER',
   UPDATE_BETA_BADGE : 'UPDATE_BETA_BADGE',
   UPDATE_CLUSTER_CONFIG : 'UPDATE_CLUSTER_CONFIG',
+  SET_K8S_CONTEXT : 'SET_K8S_CONTEXT',
   UPDATE_LOAD_TEST_DATA : 'UPDATE_LOAD_TEST_DATA',
   UPDATE_ADAPTERS_INFO : 'UPDATE_ADAPTERS_INFO',
   // UPDATE_MESH_RESULTS: 'UPDATE_MESH_RESULTS',
@@ -113,7 +108,9 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({ user : action.user });
     case actionTypes.UPDATE_CLUSTER_CONFIG:
       // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.k8sConfig)} and New state: ${JSON.stringify(state.mergeDeep({ k8sConfig: action.k8sConfig }))}`);
-      return state.mergeDeep({ k8sConfig : action.k8sConfig });
+      return state.merge({ k8sConfig : action.k8sConfig });
+    case actionTypes.SET_K8S_CONTEXT:
+      return state.merge({ selectedK8sContexts : action.selectedK8sContexts });
     case actionTypes.UPDATE_LOAD_TEST_DATA:
       // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.loadTest)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.loadTest }))}`);
       return state.updateIn(['loadTest'], val => fromJS(action.loadTest));
@@ -209,8 +206,11 @@ export const updateUser = ({ user }) => dispatch => {
 }
 
 export const updateK8SConfig = ({ k8sConfig }) => dispatch => {
-  console.log("Update K8s config action");
   return dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig });
+}
+
+export const setK8sContexts = ({  selectedK8sContexts}) => dispatch => {
+  return dispatch({ type : actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
 }
 
 export const updateLoadTestData = ({ loadTest }) => dispatch => {
