@@ -22,6 +22,7 @@ import { updateProgress } from "../lib/store";
 import { trueRandom } from "../lib/trueRandom";
 import configurationTableTheme from "../themes/configurationTableTheme";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
+import { ctxUrl } from "../utils/multi-ctx";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
@@ -176,7 +177,7 @@ const ACTION_TYPES = {
 };
 
 function MesheryApplications({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
 }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
@@ -220,7 +221,7 @@ function MesheryApplications({
         if (res) {
           const pfile = res[0].pattern_file
           dataFetch(
-            DEPLOY_URL,
+            ctxUrl(DEPLOY_URL, selectedK8sContexts),
             {
               credentials : "include",
               method : "POST",
@@ -640,7 +641,7 @@ function MesheryApplications({
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts") };
 };
 
 // @ts-ignore

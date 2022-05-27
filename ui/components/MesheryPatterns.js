@@ -26,6 +26,7 @@ import PatternForm from "./configuratorComponents/patternConfigurator";
 import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils"
+import { ctxUrl } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   grid : {
@@ -177,7 +178,7 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
 }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
@@ -278,7 +279,7 @@ function MesheryPatterns({
   const handleDeploy = (pattern_file) => {
     updateProgress({ showProgress : true });
     dataFetch(
-      DEPLOY_URL,
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials : "include",
         method : "POST",
@@ -739,7 +740,7 @@ function MesheryPatterns({
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"), };
 };
 
 // @ts-ignore

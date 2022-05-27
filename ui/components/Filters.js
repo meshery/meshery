@@ -32,6 +32,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import FILE_OPS from "../utils/configurationFileHandlersEnum"
 import { trueRandom } from "../lib/trueRandom";
+import { ctxUrl } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   grid : {
@@ -134,7 +135,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
   );
 }
 
-function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes }) {
+function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -229,7 +230,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const handleDeploy = (filter_file) => {
     dataFetch(
-      DEPLOY_URL,
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
       { credentials : "include", method : "POST", body : filter_file },
       () => {
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
@@ -602,7 +603,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch) });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject() };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts") };
 };
 
 // @ts-ignore

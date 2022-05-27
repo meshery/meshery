@@ -143,7 +143,6 @@ class MesheryApp extends App {
             configuredServer : "",
             ts : new Date()
           }, config));
-          console.log("hi", { kubeConfigs, result });
           store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : kubeConfigs });
         }
         if (result.meshAdapters && result.meshAdapters !== null && result.meshAdapters.length > 0) {
