@@ -17,6 +17,7 @@ import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import { updateLoadTestPref, updateProgress } from '../lib/store';
 import { durationOptions } from '../lib/prePopulatedOptions';
+import { ctxUrl } from '../utils/multi-ctx';
 
 
 const loadGenerators = [
@@ -116,7 +117,8 @@ class MesherySettingsPerformanceComponent extends React.Component {
     this.setState({ blockRunTest: true }); // to block the button
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    dataFetch('/api/user/prefs', {
+    dataFetch(
+      ctxUrl('/api/user/prefs', this.props.selectedK8sContexts), {
       credentials: 'same-origin',
       method: 'POST',
       credentials: 'include',
@@ -160,7 +162,8 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     const self = this;
-    dataFetch('/api/user/prefs', {
+    dataFetch(
+      ctxUrl('/api/user/prefs', this.props.selectedK8sContexts), {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
@@ -313,10 +316,12 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-
   const loadTestPref = state.get('loadTestPref').toJS();
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
   return {
     ...loadTestPref,
+    selectedK8sContexts,
   };
 };
 

@@ -94,7 +94,6 @@ class MesheryApp extends App {
   }
 
   setActiveContexts = (id) => {
-    console.log("set active ctx", id);
     if (id === ".all") {
       let activeContexts = []
       this.state.k8sContexts.contexts.forEach(ctx =>

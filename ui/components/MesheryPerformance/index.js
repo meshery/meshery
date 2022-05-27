@@ -45,6 +45,7 @@ import LoadTestTimerDialog from "../load-test-timer-dialog";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import { durationOptions } from "../../lib/prePopulatedOptions";
 import fetchControlPlanes from "../graphql/queries/ControlPlanesQuery";
+import { ctxUrl } from "../../utils/multi-ctx";
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -512,7 +513,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     dataFetch(
-      "/api/user/prefs",
+      ctxUrl("/api/user/prefs", this.props.selectedK8sContexts),
       { credentials : "same-origin", method : "GET" },
       (result) => {
         if (typeof result !== "undefined") {
@@ -1053,11 +1054,14 @@ const mapStateToProps = (state) => {
   const prometheus = state.get("prometheus").toJS();
   const k8sConfig = state.get("k8sConfig");
   const staticPrometheusBoardConfig = state.get("staticPrometheusBoardConfig").toJS();
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
   return {
     grafana,
     prometheus,
     staticPrometheusBoardConfig,
     k8sConfig,
+    selectedK8sContexts,
   };
 };
 

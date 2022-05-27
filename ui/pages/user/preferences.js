@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { getPath } from "../../lib/path";
 import Head from 'next/head';
 import dataFetch from '../../lib/data-fetch';
+import { ctxUrl } from "../../utils/multi-ctx";
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
@@ -22,21 +23,23 @@ class UserPref extends React.Component {
     this.props.updatepagepath({ path : getPath() });
 
     await new Promise(resolve => {
-      dataFetch('/api/user/prefs', { credentials : 'same-origin',
-        method : 'GET',
-        credentials : 'include', }, (result) => {
-        resolve();
-        console.log(result);
-        if (typeof result !== 'undefined') {
-          this.setState({
-            anonymousStats : result.anonymousUsageStats||false,
-            perfResultStats : result.anonymousPerfResults||false,
-          });
-        }
-      },
-      // Ignore error because we will fallback to default state
-      // and to avoid try catch due to async await functions
-      resolve);
+      dataFetch(
+        ctxUrl('/api/user/prefs', this.props.selectedK8sContexts),
+        { credentials : 'same-origin',
+          method : 'GET',
+          credentials : 'include', }, (result) => {
+          resolve();
+          console.log(result);
+          if (typeof result !== 'undefined') {
+            this.setState({
+              anonymousStats : result.anonymousUsageStats||false,
+              perfResultStats : result.anonymousPerfResults||false,
+            });
+          }
+        },
+        // Ignore error because we will fallback to default state
+        // and to avoid try catch due to async await functions
+        resolve);
     });
   }
 
@@ -62,8 +65,15 @@ class UserPref extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
+const mapStateToProps = (state) => {
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
+  return {
+    selectedK8sContexts,
+  };
+};
 
 export default withStyles(styles)(connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(UserPref));
