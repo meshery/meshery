@@ -16,16 +16,23 @@ func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, 
 	} else {
 		selectors = append(selectors, *filter.Type)
 	}
-	k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-	if !ok || len(k8sctxs) == 0 {
-		r.Log.Error(ErrEmptyCurrentK8sContext)
-		return nil, ErrEmptyCurrentK8sContext
+	var cid string
+	if filter.Context != nil {
+		cid = *filter.Context
+	} else { //This is a fallback
+		k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+		if !ok || len(k8sctxs) == 0 {
+			r.Log.Error(ErrEmptyCurrentK8sContext)
+			return nil, ErrEmptyCurrentK8sContext
+		}
+		if k8sctxs[0].KubernetesServerID == nil {
+			r.Log.Error(ErrEmptyCurrentK8sContext)
+			return nil, ErrEmptyCurrentK8sContext
+		}
+		cid = k8sctxs[0].KubernetesServerID.String()
 	}
-	if k8sctxs[0].KubernetesServerID == nil {
-		r.Log.Error(ErrEmptyCurrentK8sContext)
-		return nil, ErrEmptyCurrentK8sContext
-	}
-	dataPlaneList, err := model.GetDataPlaneState(selectors, provider, k8sctxs[0].KubernetesServerID.String())
+
+	dataPlaneList, err := model.GetDataPlaneState(selectors, provider, cid)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err

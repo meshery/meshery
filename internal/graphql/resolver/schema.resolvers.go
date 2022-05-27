@@ -63,27 +63,27 @@ func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyn
 	return r.resyncCluster(ctx, provider, selector)
 }
 
-func (r *queryResolver) GetMeshsyncStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
+func (r *queryResolver) GetMeshsyncStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorControllerStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getMeshsyncStatus(ctx, provider)
 }
 
-func (r *queryResolver) DeployMeshsync(ctx context.Context) (model.Status, error) {
+func (r *queryResolver) DeployMeshsync(ctx context.Context, selector *model.K8sContext) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.deployMeshsync(ctx, provider)
 }
 
-func (r *queryResolver) GetNatsStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
+func (r *queryResolver) GetNatsStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorControllerStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getNatsStatus(ctx, provider)
 }
 
-func (r *queryResolver) ConnectToNats(ctx context.Context) (model.Status, error) {
+func (r *queryResolver) ConnectToNats(ctx context.Context, selector *model.K8sContext) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.connectToNats(ctx, provider)
 }
 
-func (r *queryResolver) GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error) {
+func (r *queryResolver) GetAvailableNamespaces(ctx context.Context, selector *model.K8sContext) ([]*model.NameSpace, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getAvailableNamespaces(ctx, provider)
 }
@@ -130,10 +130,10 @@ func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, kin
 	return r.getKubectlDescribe(ctx, name, kind, namespace)
 }
 
-func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
+func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	if selector != nil {
-		return r.listenToAddonState(ctx, provider, selector)
+	if filter != nil {
+		return r.listenToAddonState(ctx, provider, filter)
 	}
 
 	return nil, ErrInvalidRequest
@@ -157,12 +157,12 @@ func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filte
 	return nil, ErrInvalidRequest
 }
 
-func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error) {
+func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context, selector *model.K8sContext) (<-chan *model.OperatorStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.listenToOperatorState(ctx, provider)
 }
 
-func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
+func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, selector *model.K8sContext) (<-chan *model.OperatorControllerStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.listenToMeshSyncEvents(ctx, provider)
 }

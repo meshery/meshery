@@ -16,6 +16,7 @@ type AddonList struct {
 
 type AddonStatusInput struct {
 	Selector     *MeshType `json:"selector"`
+	Context      *string   `json:"context"`
 	TargetStatus Status    `json:"targetStatus"`
 }
 
@@ -69,8 +70,13 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type K8sContext struct {
+	ID *string `json:"id"`
+}
+
 type KctlDescribeDetails struct {
 	Describe *string `json:"describe"`
+	Ctxid    *string `json:"ctxid"`
 }
 
 type MesheryResult struct {
@@ -113,10 +119,12 @@ type OperatorStatus struct {
 	Version     string                      `json:"version"`
 	Controllers []*OperatorControllerStatus `json:"controllers"`
 	Error       *Error                      `json:"error"`
+	Context     *string                     `json:"context"`
 }
 
 type OperatorStatusInput struct {
-	TargetStatus Status `json:"targetStatus"`
+	TargetStatus Status  `json:"targetStatus"`
+	Context      *string `json:"context"`
 }
 
 type PageFilter struct {
@@ -194,7 +202,8 @@ type ReSyncActions struct {
 }
 
 type ServiceMeshFilter struct {
-	Type *MeshType `json:"type"`
+	Type    *MeshType `json:"type"`
+	Context *string   `json:"context"`
 }
 
 type MeshType string

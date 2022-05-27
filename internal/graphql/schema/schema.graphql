@@ -87,7 +87,8 @@ type Error {
 input AddonStatusInput {
   # Filter by Serice Mesh
   selector: MeshType
-
+  #kubernetes context ID
+  context: String
   # Desired Status
   targetStatus: Status!
 }
@@ -153,6 +154,7 @@ type Container_Port {
 input ServiceMeshFilter {
   # Filter by Service Mesh
   type: MeshType
+  context: String #contextID of the cluster
 }
 
 # Control Plane data for a particular Mesh
@@ -189,8 +191,7 @@ input OperatorStatusInput {
   # Desired status for Meshery Operator
   targetStatus: Status!
   
-  k8scontextid: String!
-
+  context: String
 }
 
 # Status of Meshery Operator and its controllers
@@ -206,6 +207,8 @@ type OperatorStatus {
 
   # Error Logs encountered by Meshery Operator
   error: Error
+
+  context: String #contextID of the cluster
 }
 
 # Controllers of Meshery Operator
@@ -321,7 +324,9 @@ input PageFilter {
   from: String
   to: String
 }
-
+input K8sContext{
+  id: String
+}
 # ============== RESYNC =============================
 
 # Type ReSyncActions define the actions involved during resync
@@ -361,19 +366,29 @@ type Query {
   ): Status!
 
   # Check the Meshsync Status
-  getMeshsyncStatus: OperatorControllerStatus!
+  getMeshsyncStatus(
+    selector: K8sContext
+  ): OperatorControllerStatus!
 
   # Check the Meshsync Status and deploy if not enabled
-  deployMeshsync: Status!
+  deployMeshsync(
+    selector: K8sContext
+  ): Status!
 
   # Check is Meshey Server is connected to NATS
-  getNatsStatus: OperatorControllerStatus!
+  getNatsStatus(
+    selector: K8sContext
+  ): OperatorControllerStatus!
 
   # Check is Meshey Server is connected to NATS, if not connect to the NATS Server
-  connectToNats: Status!
+  connectToNats(
+    selector: K8sContext
+  ): Status!
 
   # Query available Namesapces in your cluster
-  getAvailableNamespaces: [NameSpace!]!
+  getAvailableNamespaces(
+    selector: K8sContext
+  ): [NameSpace!]!
 
   # Query for performance result
   getPerfResult(id: ID!): MesheryResult
@@ -415,7 +430,7 @@ type Subscription {
   # Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
   listenToAddonState(
     # Select Mesh Type
-    selector: MeshType
+    filter: ServiceMeshFilter
   ): [AddonList!]!
 
   # Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
@@ -431,10 +446,14 @@ type Subscription {
   ): [DataPlane!]!
 
   # Listen to changes in status of Meshery Operator in your cluster
-  listenToOperatorState: OperatorStatus!
+  listenToOperatorState(
+    selector: K8sContext
+  ): OperatorStatus!
 
   # Listen to changes in the list of available Namesapces in your cluster
-  listenToMeshSyncEvents: OperatorControllerStatus!
+  listenToMeshSyncEvents(
+      selector: K8sContext
+  ): OperatorControllerStatus!
 
   # Listen to changes in Performance Profiles
   subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
@@ -457,4 +476,5 @@ type OAMCapability {
 
 type KctlDescribeDetails {
   describe: String
+  ctxid: String
 }

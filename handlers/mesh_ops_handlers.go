@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/gob"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -88,7 +87,6 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	defer func() {
 		_ = mClient.Close()
 	}()
-	fmt.Println("here")
 	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
 	if err != nil {
 		h.log.Error(ErrMeshClient)

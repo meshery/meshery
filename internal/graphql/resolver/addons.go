@@ -11,7 +11,7 @@ func (r *Resolver) changeAddonStatus(ctx context.Context, provider models.Provid
 	return model.StatusProcessing, nil
 }
 
-func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provider, selector *model.MeshType) ([]*model.AddonList, error) {
+func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
 	k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		r.Log.Error(ErrEmptyCurrentK8sContext)
@@ -28,10 +28,10 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provi
 	}
 
 	selectors := make([]model.MeshType, 0)
-	if selector == nil || *selector == model.MeshTypeAllMesh {
+	if filter == nil || *filter.Type == model.MeshTypeAllMesh {
 		selectors = append(selectors, model.AllMeshType...)
 	} else {
-		selectors = append(selectors, *selector)
+		selectors = append(selectors, *filter.Type)
 	}
 
 	addonlist, err := model.GetAddonsState(selectors, kubeclient, provider)
@@ -43,7 +43,7 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provi
 	return addonlist, nil
 }
 
-func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provider, selector *model.MeshType) (<-chan []*model.AddonList, error) {
+func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
 	if r.addonChannel == nil {
 		r.addonChannel = make(chan []*model.AddonList, 0)
 	}
@@ -59,7 +59,7 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 		for {
 			select {
 			case <-r.MeshSyncChannel:
-				status, err := r.getAvailableAddons(ctx, provider, selector)
+				status, err := r.getAvailableAddons(ctx, provider, filter)
 				if err != nil {
 					r.Log.Error(ErrAddonSubscription(err))
 					break
