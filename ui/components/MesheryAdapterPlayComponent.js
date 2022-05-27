@@ -52,6 +52,7 @@ import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import MesheryMetrics from "./MesheryMetrics"
+import { ctxUrl } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },
@@ -350,7 +351,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.props.updateProgress({ showProgress : true });
     const self = this;
     dataFetch(
-      "/api/system/adapter/operation",
+      ctxUrl("/api/system/adapter/operation", this.props.selectedK8sContexts),
       {
         credentials : "same-origin",
         method : "POST",
@@ -1130,7 +1131,9 @@ MesheryAdapterPlayComponent.propTypes = { classes : PropTypes.object.isRequired,
 // };
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
-  return { grafana : { ...grafana, ts : new Date(grafana.ts) } };
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
+  return { grafana : { ...grafana, ts : new Date(grafana.ts) }, selectedK8sContexts };
 };
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),

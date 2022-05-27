@@ -24,6 +24,7 @@ import PrometheusComponent from './PrometheusComponent';
 import dataFetch from '../lib/data-fetch';
 import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
+import { ctxUrl } from '../utils/multi-ctx';
 
 const styles = (theme) => ({
   wrapperClss : { flexGrow : 1,
@@ -138,7 +139,7 @@ class MesherySettings extends React.Component {
     const self = this;
     self.props.updateProgress({ showProgress : true });
     dataFetch(
-      '/api/system/meshsync/grafana',
+      ctxUrl('/api/system/meshsync/grafana', this.props.selectedK8sContexts),
       {
         credentials : "same-origin",
         method : "GET",
@@ -430,11 +431,13 @@ const mapStateToProps = (state) => {
   const meshAdapters = state.get('meshAdapters').toJS();
   const grafana = state.get('grafana').toJS();
   const prometheus = state.get('prometheus').toJS();
+  const selectedK8sContexts = state.get('selectedK8sContexts');
   return {
     k8sconfig,
     meshAdapters,
     grafana,
     prometheus,
+    selectedK8sContexts,
   };
 };
 
