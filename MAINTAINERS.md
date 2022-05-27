@@ -4,7 +4,6 @@
 | ----------------- | ----------------- | ----------- |
 | Hussaina Begum    | hexxdump          | VMware      |
 | Lee Calcote       | leecalcote        | Layer5      |
-| Piyush Singariya  | piyushsingariya   | HDFC Life   |
 
 ### UI Maintainers
 

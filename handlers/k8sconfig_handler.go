@@ -187,18 +187,6 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		fmt.Fprintf(w, "failed to get the token for the user")
 		return
 	}
-	k8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
-	if !ok || len(k8scontexts) == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "failed to get kube client for the user")
-		return
-	}
-	kubeclient, err := k8scontexts[0].GenerateKubeHandler()
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "failed to get kube client for the user: %s", err.Error())
-		return
-	}
 
 	ctx := req.URL.Query().Get("context")
 	if ctx != "" {
@@ -211,29 +199,29 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		}
 
 		// Create handler for the context
-		kubeclient, err = k8sContext.GenerateKubeHandler()
+		kubeclient, err := k8sContext.GenerateKubeHandler()
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(w, "failed to get kubernetes config for the user")
 			return
 		}
-	}
-
-	version, err := kubeclient.KubeClient.ServerVersion()
-	if err != nil {
-		logrus.Error(ErrKubeVersion(err))
-		http.Error(w, ErrKubeVersion(err).Error(), http.StatusInternalServerError)
+		version, err := kubeclient.KubeClient.ServerVersion()
+		if err != nil {
+			logrus.Error(ErrKubeVersion(err))
+			http.Error(w, ErrKubeVersion(err).Error(), http.StatusInternalServerError)
+			return
+		}
+		if err = json.NewEncoder(w).Encode(map[string]string{
+			"server_version": version.String(),
+		}); err != nil {
+			err = errors.Wrap(err, "unable to marshal the payload")
+			logrus.Error(ErrMarshal(err, "kube-server-version"))
+			http.Error(w, ErrMarshal(err, "kube-server-version").Error(), http.StatusInternalServerError)
+		}
 		return
 	}
-
-	if err = json.NewEncoder(w).Encode(map[string]string{
-		"server_version": version.String(),
-	}); err != nil {
-		err = errors.Wrap(err, "unable to marshal the payload")
-		logrus.Error(ErrMarshal(err, "kube-server-version"))
-		http.Error(w, ErrMarshal(err, "kube-server-version").Error(), http.StatusInternalServerError)
-		return
-	}
+	http.Error(w, "Empty contextID. Pass the context ID(in query parameter \"context\") of the kuberenetes to be pinged", http.StatusBadRequest)
+	return
 }
 
 func (h *Handler) LoadContexts(token string, prov models.Provider) error {

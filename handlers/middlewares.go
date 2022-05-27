@@ -106,7 +106,6 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
 		ctx = context.WithValue(ctx, models.BrokerURLCtxKey, h.config.BrokerEndpointURL) // nolint
 		err = h.LoadContexts(token, provider)
-		// k8scontext, err := h.GetCurrentContext(token, provider)
 		if err != nil {
 			logrus.Warn("failed to find load kubernetes contexts")
 		}
@@ -160,7 +159,6 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 					logrus.Warn("invalid context ID found")
 					continue
 				}
-
 				k8scontexts = append(k8scontexts, kctx)
 			}
 		}
@@ -169,6 +167,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				allk8scontexts = append(allk8scontexts, *k8scontext)
 			}
 		}
+
 		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
 		ctx = context.WithValue(ctx, models.AllKubeClusterKey, allk8scontexts)
 		req1 := req.WithContext(ctx)
