@@ -29,8 +29,8 @@
 MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 </p>
 <p align="center">
-<img src="docs/assets/img/readme/cncf-white.png#gh-dark-mode-only" width="30%" align="center" />
-<img src="docs/assets/img/readme/cncf-black.png#gh-light-mode-only" width="30%" align="center" />
+<img src="docs/assets/img/readme/cncf-white.svg#gh-dark-mode-only" width="30%" align="center" />
+<img src="docs/assets/img/readme/cncf-black.svg#gh-light-mode-only" width="30%" align="center" />
 </p>
 
 <h2><a name="running"></a>Get Started with Meshery</h2>
