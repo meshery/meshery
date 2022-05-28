@@ -1211,15 +1211,6 @@ class MesheryAdapterPlayComponent extends React.Component {
             </Grid>
           </div>
           <PromptComponent ref={this.modalRef} />
-          {/* <ConfirmationMsg
-            open={this.state.open}
-            handleClose={this.handleClose}
-            submit={this.submitOp}
-            category={this.state.category}
-            operation={this.state.selectedOp}
-            isDelete={this.state.isDeleteOp}
-            contexts={this.props.activeK8sContext}
-          /> */}
         </React.Fragment>
       </NoSsr>
     );
