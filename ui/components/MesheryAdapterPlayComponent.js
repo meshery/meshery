@@ -53,7 +53,6 @@ import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import MesheryMetrics from "./MesheryMetrics"
-// import ConfirmationMsg from "./Confirmation";
 import { errorHandlerGenerator, showProgress, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
 import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
 import { Search } from "@material-ui/icons";
@@ -200,7 +199,6 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   componentDidMount() {
     const self = this;
-    console.log("mqw", this.props);
     const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
     const variables = { serviceMesh : meshname }
     subscribeMeshSyncStatusEvents(res => {
@@ -343,7 +341,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     const self = this;
     return async () => {
       let response = await this.showModal()
-      console.log(response, "response");
       if (response === "Continue") {
         this.submitOp(cat, selectedOp, deleteOp)
       }
