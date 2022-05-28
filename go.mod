@@ -16,9 +16,11 @@ replace (
 	go.mongodb.org/mongo-driver v1.5.1 => github.com/mongodb/mongo-go-driver v1.5.1
 	gonum.org/v1/plot v0.9.0 => github.com/gonum/plot v0.9.0
 	vbom.ml/util => github.com/fvbommel/util v0.0.0-20180919145318-efcd4e0f9787
+
 )
 
 require (
+	cuelang.org/go v0.4.3
 	fortio.org/fortio v1.21.0
 	github.com/99designs/gqlgen v0.17.5
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
@@ -95,6 +97,7 @@ require (
 	github.com/chai2010/gettext-go v0.0.0-20160711120539-c6fed771bfd5 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/cncf/xds/go v0.0.0-20211130200136-a8f946100490 // indirect
+	github.com/cockroachdb/apd/v2 v2.0.1 // indirect
 	github.com/containerd/cgroups v1.0.3 // indirect
 	github.com/containerd/containerd v1.6.1 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.3 // indirect
@@ -186,6 +189,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
+	github.com/mpvl/unique v0.0.0-20150818121801-cbe035fff7de // indirect
 	github.com/nats-io/jwt/v2 v2.2.1-0.20220113022732-58e87895b296 // indirect
 	github.com/nats-io/nats.go v1.14.0 // indirect
 	github.com/nats-io/nkeys v0.3.0 // indirect
