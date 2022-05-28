@@ -29,6 +29,9 @@ on:
         required: false
         type: string
         default: 'bridge'
+      k8s_version:
+        required: false
+        type: string
       sm_version:
         required: true
         type: string
