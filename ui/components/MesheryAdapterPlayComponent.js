@@ -28,6 +28,7 @@ import {
   FormGroup,
   FormControlLabel,
   Switch,
+  TextField,
 } from "@material-ui/core";
 import { blue } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
@@ -52,7 +53,11 @@ import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import MesheryMetrics from "./MesheryMetrics"
-import ConfirmationMsg from "./Confirmation";
+// import ConfirmationMsg from "./Confirmation";
+import { errorHandlerGenerator, showProgress, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
+import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
+import { Search } from "@material-ui/icons";
+import PromptComponent from "./PromptComponent";
 
 
 const styles = (theme) => ({
@@ -113,7 +118,22 @@ const styles = (theme) => ({
     minWidth : '250px' },
   card : { height : '100%',
     display : 'flex',
-    flexDirection : 'column' }
+    flexDirection : 'column' },
+  ctxIcon : {
+    display : 'inline',
+    verticalAlign : 'text-top',
+    width : theme.spacing(2.5),
+    marginLeft : theme.spacing(0.5),
+  },
+  ctxChip : {
+    backgroundColor : "white",
+    cursor : "pointer",
+    marginRight : theme.spacing(1),
+    marginLeft : theme.spacing(1),
+    marginBottom : theme.spacing(1),
+    height : "100%",
+    padding : theme.spacing(0.5)
+  },
 });
 
 class MesheryAdapterPlayComponent extends React.Component {
@@ -129,6 +149,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
     this.addIconEles = {};
     this.delIconEles = {};
+    this.modalRef = React.createRef();
     // initializing menuState;
     if (adapter && adapter.ops) {
       // NOTE: this will have to updated to match the categories
@@ -172,13 +193,14 @@ class MesheryAdapterPlayComponent extends React.Component {
       namespaceList : [],
       category : 0,
       selectedOp : '',
-      isDeleteOp : false
+      isDeleteOp : false,
+      context : this.props.activeK8sContext
     };
   }
 
   componentDidMount() {
     const self = this;
-    console.log("m", this.props.activeK8sContext);
+    console.log("mqw", this.props);
     const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
     const variables = { serviceMesh : meshname }
     subscribeMeshSyncStatusEvents(res => {
@@ -215,6 +237,12 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ namespaceList : namespaces })
       },
       error : (err) => console.log("error at namespace fetch: " + err), })
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.activeK8sContext.length != state.context.length) {
+      return props.activeK8sContext.length;
+    }
   }
 
   mapAdapterNameToMeshName(name) {
@@ -303,10 +331,22 @@ class MesheryAdapterPlayComponent extends React.Component {
     };
   }
 
+  handleKubernetesClick() {
+    showProgress()
+    pingKubernetes(
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
+    )
+  }
+
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
-    return () => {
-      self.setState({ open : true })
+    return async () => {
+      let response = await this.showModal()
+      console.log(response, "response");
+      if (response === "Continue") {
+        this.submitOp(cat, selectedOp, deleteOp)
+      }
       const { namespace, cmEditorValAdd, cmEditorValDel } = self.state;
       const { adapter } = self.props;
       const filteredOp = adapter.ops.filter(({ key }) => key === selectedOp);
@@ -481,6 +521,49 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   handleExpandClick() {
     // setExpanded(!expanded);
+  }
+
+  searchContexts = (search) => {
+    const matchedCtx = this.props.activeK8sContext.filter((ctx) => ctx.name.includes(search))
+    setContext(matchedCtx)
+  }
+
+  async showModal() {
+    const { classes } = this.props;
+    let response = await this.modalRef.current.show({
+      title : "The selected operation will be applied to following contexts.",
+      subtitle :
+          <>
+            <div>
+              <TextField
+                id="search-ctx"
+                label="Search"
+                size="small"
+                variant="outlined"
+                onChange={ev => this.searchContexts(ev.target.value)}
+                style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
+                InputProps={{ endAdornment : (
+                  <Search />
+                ) }}
+              />
+            </div>
+            { this.state.context.map((ctx) => (
+              <Tooltip title={`Server: ${ctx.server}`}>
+                <Chip
+                  label={ctx.name}
+                  className={classes.ctxChip}
+                  onClick={this.handleKubernetesClick}
+                  icon={<img src = "/static/img/kubernetes.svg" className={classes.ctxIcon}  />}
+                  variant="outlined"
+                  data-cy="chipContextName"
+                />
+              </Tooltip>
+            ))
+            }
+          </>,
+      options : ["Continue", "Cancel"],
+    })
+    return response;
   }
 
   /**
@@ -1127,7 +1210,8 @@ class MesheryAdapterPlayComponent extends React.Component {
               </Grid>
             </Grid>
           </div>
-          <ConfirmationMsg
+          <PromptComponent ref={this.modalRef} />
+          {/* <ConfirmationMsg
             open={this.state.open}
             handleClose={this.handleClose}
             submit={this.submitOp}
@@ -1135,7 +1219,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             operation={this.state.selectedOp}
             isDelete={this.state.isDeleteOp}
             contexts={this.props.activeK8sContext}
-          />
+          /> */}
         </React.Fragment>
       </NoSsr>
     );
@@ -1152,7 +1236,7 @@ MesheryAdapterPlayComponent.propTypes = { classes : PropTypes.object.isRequired,
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
   const activeK8sContext = st.get("activeK8sContext").toJS();
-  return { grafana : { ...grafana, ts : new Date(grafana.ts), activeK8sContext } };
+  return { grafana : { ...grafana, ts : new Date(grafana.ts) }, activeK8sContext };
 };
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
