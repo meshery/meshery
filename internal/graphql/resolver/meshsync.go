@@ -215,7 +215,7 @@ func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider, 
 		Type:   "health",
 	})
 	var ctxID string
-	if selector.ID != nil {
+	if selector != nil && selector.ID != nil {
 		ctxID = *selector.ID
 	}
 	err := r.connectToBroker(ctx, provider, ctxID)

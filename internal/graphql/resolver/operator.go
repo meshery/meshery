@@ -184,7 +184,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 	var kubeclient *mesherykube.Client
 	var err error
 	var ctxID string
-	if selector.ID != nil {
+	if selector != nil && selector.ID != nil {
 		ctxID = *selector.ID
 
 	}
@@ -223,7 +223,7 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 	var kubeclient *mesherykube.Client
 	var err error
 	var ctxID string
-	if selector.ID != nil {
+	if selector != nil && selector.ID != nil {
 		ctxID = *selector.ID
 
 	}
@@ -272,7 +272,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 	operatorSyncChannel := make(chan broadcast.BroadcastMessage)
 	r.Broadcast.Register(operatorSyncChannel)
 	var ctxID string
-	if selector.ID != nil {
+	if selector != nil && selector.ID != nil {
 		ctxID = *selector.ID
 
 	}

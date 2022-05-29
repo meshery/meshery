@@ -56,7 +56,7 @@ func (r *queryResolver) GetDataPlanes(ctx context.Context, filter *model.Service
 func (r *queryResolver) GetOperatorStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	var ctxID string
-	if selector.ID != nil {
+	if selector != nil && selector.ID != nil {
 		ctxID = *selector.ID
 	}
 	return r.getOperatorStatus(ctx, provider, ctxID)
