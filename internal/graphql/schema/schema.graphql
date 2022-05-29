@@ -358,7 +358,9 @@ type Query {
   ): [DataPlane!]!
 
   # Query status of Meshery Operator in your cluster
-  getOperatorStatus: OperatorStatus
+  getOperatorStatus(
+        selector: K8sContext
+  ): OperatorStatus
 
   # Query to resync the cluster discovery
   resyncCluster(

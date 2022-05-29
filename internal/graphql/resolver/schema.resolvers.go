@@ -23,7 +23,7 @@ func (r *mutationResolver) ChangeAddonStatus(ctx context.Context, input *model.A
 
 func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.changeOperatorStatus(ctx, provider, input.TargetStatus)
+	return r.changeOperatorStatus(ctx, provider, input.TargetStatus, *input.Context)
 }
 
 func (r *queryResolver) GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
@@ -53,9 +53,9 @@ func (r *queryResolver) GetDataPlanes(ctx context.Context, filter *model.Service
 	return nil, ErrInvalidRequest
 }
 
-func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.OperatorStatus, error) {
+func (r *queryResolver) GetOperatorStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getOperatorStatus(ctx, provider)
+	return r.getOperatorStatus(ctx, provider, *selector.ID)
 }
 
 func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error) {
@@ -65,7 +65,7 @@ func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyn
 
 func (r *queryResolver) GetMeshsyncStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorControllerStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getMeshsyncStatus(ctx, provider)
+	return r.getMeshsyncStatus(ctx, provider, selector)
 }
 
 func (r *queryResolver) DeployMeshsync(ctx context.Context, selector *model.K8sContext) (model.Status, error) {
@@ -75,12 +75,12 @@ func (r *queryResolver) DeployMeshsync(ctx context.Context, selector *model.K8sC
 
 func (r *queryResolver) GetNatsStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorControllerStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getNatsStatus(ctx, provider)
+	return r.getNatsStatus(ctx, provider, selector)
 }
 
 func (r *queryResolver) ConnectToNats(ctx context.Context, selector *model.K8sContext) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.connectToNats(ctx, provider)
+	return r.connectToNats(ctx, provider, selector)
 }
 
 func (r *queryResolver) GetAvailableNamespaces(ctx context.Context, selector *model.K8sContext) ([]*model.NameSpace, error) {
@@ -159,7 +159,7 @@ func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filte
 
 func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context, selector *model.K8sContext) (<-chan *model.OperatorStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.listenToOperatorState(ctx, provider)
+	return r.listenToOperatorState(ctx, provider, selector)
 }
 
 func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, selector *model.K8sContext) (<-chan *model.OperatorControllerStatus, error) {

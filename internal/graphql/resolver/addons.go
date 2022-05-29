@@ -50,7 +50,7 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 
 	go func() {
 		r.Log.Info("Addons subscription started")
-		err := r.connectToBroker(ctx, provider)
+		err := r.connectToBroker(ctx, provider, *filter.Context)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
 			return

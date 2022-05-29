@@ -139,9 +139,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	return model.StatusProcessing, nil
 }
 
-func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider) error {
+func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider, ctxID string) error {
 
-	status, err := r.getOperatorStatus(ctx, provider)
+	status, err := r.getOperatorStatus(ctx, provider, ctxID)
 	if err != nil {
 		return err
 	}
@@ -208,13 +208,13 @@ func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider)
 	return model.StatusProcessing, nil
 }
 
-func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider) (model.Status, error) {
+func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider, selector *model.K8sContext) (model.Status, error) {
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
 		Source: broadcast.OperatorSyncChannel,
 		Data:   true,
 		Type:   "health",
 	})
-	err := r.connectToBroker(ctx, provider)
+	err := r.connectToBroker(ctx, provider, *selector.ID)
 	if err != nil {
 		r.Log.Error(err)
 		r.Broadcast.Submit(broadcast.BroadcastMessage{

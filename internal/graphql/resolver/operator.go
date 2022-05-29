@@ -11,7 +11,7 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status) (model.Status, error) {
+func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status, ctxID string) (model.Status, error) {
 	delete := true
 
 	// Tell operator status subscription that operation is starting
@@ -25,15 +25,29 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		r.Log.Info("Installing Operator")
 		delete = false
 	}
-	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-	if !ok || len(k8scontexts) == 0 {
-		r.Log.Error(ErrNilClient)
-		return model.StatusUnknown, ErrNilClient
-	}
-	kubeclient, err := k8scontexts[0].GenerateKubeHandler()
-	if err != nil || kubeclient == nil {
-		r.Log.Error(ErrNilClient)
-		return model.StatusUnknown, ErrNilClient
+
+	var kubeclient *mesherykube.Client
+	var k8scontext models.K8sContext
+	var err error
+	if ctxID != "" {
+		k8scontext, err = provider.GetK8sContext("give token", ctxID)
+		if err != nil {
+			return model.StatusUnknown, ErrMesheryClient(nil)
+		}
+		kubeclient, err = k8scontext.GenerateKubeHandler()
+		if err != nil {
+			return model.StatusUnknown, ErrMesheryClient(err)
+		}
+	} else {
+		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+		if !ok || len(k8scontexts) == 0 {
+			return model.StatusUnknown, ErrMesheryClient(nil)
+		}
+		k8scontext = k8scontexts[0]
+		kubeclient, err = k8scontext.GenerateKubeHandler()
+		if err != nil {
+			return model.StatusUnknown, ErrMesheryClient(err)
+		}
 	}
 	if kubeclient.KubeClient == nil {
 		r.Log.Error(ErrNilClient)
@@ -84,7 +98,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 				})
 				return
 			}
-			connectionTrackerSingleton.Set(k8scontexts[0].ID, endpoint)
+			connectionTrackerSingleton.Set(k8scontext.ID, endpoint)
 			r.Log.Info("Connected to broker at:", endpoint)
 			connectionTrackerSingleton.Log(r.Log)
 		}
@@ -105,20 +119,30 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	return model.StatusProcessing, nil
 }
 
-func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provider) (*model.OperatorStatus, error) {
+func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provider, ctxID string) (*model.OperatorStatus, error) {
 	status := model.StatusUnknown
 	version := string(model.StatusUnknown)
-	// kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	// if !ok || kubeclient == nil {
-	// 	return nil, ErrMesheryClient(nil)
-	// }
-	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrMesheryClient(nil)
-	}
-	kubeclient, err := k8scontexts[0].GenerateKubeHandler()
-	if err != nil {
-		return nil, ErrMesheryClient(err)
+
+	var kubeclient *mesherykube.Client
+	var err error
+	if ctxID != "" {
+		k8scontext, err := provider.GetK8sContext("give token", ctxID)
+		if err != nil {
+			return nil, ErrMesheryClient(nil)
+		}
+		kubeclient, err = k8scontext.GenerateKubeHandler()
+		if err != nil {
+			return nil, ErrMesheryClient(err)
+		}
+	} else {
+		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+		if !ok || len(k8scontexts) == 0 {
+			return nil, ErrMesheryClient(nil)
+		}
+		kubeclient, err = k8scontexts[0].GenerateKubeHandler()
+		if err != nil {
+			return nil, ErrMesheryClient(err)
+		}
 	}
 	name, version, err := model.GetOperator(kubeclient)
 	if err != nil {
@@ -156,14 +180,28 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 	}, nil
 }
 
-func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider) (*model.OperatorControllerStatus, error) {
-	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrMesheryClient(nil)
-	}
-	kubeclient, err := k8scontexts[0].GenerateKubeHandler()
-	if err != nil {
-		return nil, ErrMesheryClient(err)
+func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider, selector *model.K8sContext) (*model.OperatorControllerStatus, error) {
+	var kubeclient *mesherykube.Client
+	var err error
+	ctxID := *selector.ID
+	if ctxID != "" {
+		k8scontext, err := provider.GetK8sContext("give token", ctxID)
+		if err != nil {
+			return nil, ErrMesheryClient(nil)
+		}
+		kubeclient, err = k8scontext.GenerateKubeHandler()
+		if err != nil {
+			return nil, ErrMesheryClient(err)
+		}
+	} else {
+		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+		if !ok || len(k8scontexts) == 0 {
+			return nil, ErrMesheryClient(nil)
+		}
+		kubeclient, err = k8scontexts[0].GenerateKubeHandler()
+		if err != nil {
+			return nil, ErrMesheryClient(err)
+		}
 	}
 	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
 	if err != nil {
@@ -177,15 +215,30 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 	return &status, nil
 }
 
-func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) (*model.OperatorControllerStatus, error) {
-	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrMesheryClient(nil)
+func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, selector *model.K8sContext) (*model.OperatorControllerStatus, error) {
+	var kubeclient *mesherykube.Client
+	var err error
+	ctxID := *selector.ID
+	if ctxID != "" {
+		k8scontext, err := provider.GetK8sContext("give token", ctxID)
+		if err != nil {
+			return nil, ErrMesheryClient(nil)
+		}
+		kubeclient, err = k8scontext.GenerateKubeHandler()
+		if err != nil {
+			return nil, ErrMesheryClient(err)
+		}
+	} else {
+		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+		if !ok || len(k8scontexts) == 0 {
+			return nil, ErrMesheryClient(nil)
+		}
+		kubeclient, err = k8scontexts[0].GenerateKubeHandler()
+		if err != nil {
+			return nil, ErrMesheryClient(err)
+		}
 	}
-	kubeclient, err := k8scontexts[0].GenerateKubeHandler()
-	if err != nil {
-		return nil, ErrMesheryClient(err)
-	}
+
 	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
 	if err != nil {
 		return nil, err
@@ -198,7 +251,7 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider) 
 	return &status, nil
 }
 
-func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider) (<-chan *model.OperatorStatus, error) {
+func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider, selector *model.K8sContext) (<-chan *model.OperatorStatus, error) {
 	operatorChannel := make(chan *model.OperatorStatus)
 
 	if r.operatorSyncChannel == nil {
@@ -213,7 +266,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 
 	go func() {
 		r.Log.Info("Operator subscription started")
-		err := r.connectToBroker(ctx, provider)
+		err := r.connectToBroker(ctx, provider, *selector.ID)
 		if err != nil && err != ErrNoMeshSync {
 			r.Log.Error(err)
 			// The subscription should remain live to send future messages and only die when context is done
@@ -221,13 +274,13 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 		}
 
 		// Enforce enable operator
-		status, err := r.getOperatorStatus(ctx, provider)
+		status, err := r.getOperatorStatus(ctx, provider, *selector.ID)
 		if err != nil {
 			r.Log.Error(ErrOperatorSubscription(err))
 			return
 		}
 		if status.Status != model.StatusEnabled {
-			_, err = r.changeOperatorStatus(ctx, provider, model.StatusEnabled)
+			_, err = r.changeOperatorStatus(ctx, provider, model.StatusEnabled, *selector.ID)
 			if err != nil {
 				r.Log.Error(ErrOperatorSubscription(err))
 				// return
@@ -237,7 +290,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 			select {
 			case processing := <-operatorSyncChannel:
 				r.Log.Info("Operator sync channel called")
-				status, err := r.getOperatorStatus(ctx, provider)
+				status, err := r.getOperatorStatus(ctx, provider, *selector.ID)
 				if err != nil {
 					r.Log.Error(ErrOperatorSubscription(err))
 					r.Log.Info("Operator subscription flushed")
