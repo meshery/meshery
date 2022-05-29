@@ -55,7 +55,11 @@ func (r *queryResolver) GetDataPlanes(ctx context.Context, filter *model.Service
 
 func (r *queryResolver) GetOperatorStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getOperatorStatus(ctx, provider, *selector.ID)
+	var ctxID string
+	if selector.ID != nil {
+		ctxID = *selector.ID
+	}
+	return r.getOperatorStatus(ctx, provider, ctxID)
 }
 
 func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error) {
