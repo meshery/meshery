@@ -221,7 +221,7 @@ type ComplexityRoot struct {
 		FetchAllResults        func(childComplexity int, selector model.PageFilter) int
 		FetchPatterns          func(childComplexity int, selector model.PageFilter) int
 		FetchResults           func(childComplexity int, selector model.PageFilter, profileID string) int
-		GetAvailableAddons     func(childComplexity int, selector *model.MeshType) int
+		GetAvailableAddons     func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetAvailableNamespaces func(childComplexity int, selector *model.K8sContext) int
 		GetControlPlanes       func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes          func(childComplexity int, filter *model.ServiceMeshFilter) int
@@ -254,7 +254,7 @@ type MutationResolver interface {
 	ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error)
 }
 type QueryResolver interface {
-	GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error)
+	GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error)
 	GetControlPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error)
 	GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error)
 	GetOperatorStatus(ctx context.Context) (*model.OperatorStatus, error)
@@ -1122,7 +1122,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetAvailableAddons(childComplexity, args["selector"].(*model.MeshType)), true
+		return e.complexity.Query.GetAvailableAddons(childComplexity, args["filter"].(*model.ServiceMeshFilter)), true
 
 	case "Query.getAvailableNamespaces":
 		if e.complexity.Query.GetAvailableNamespaces == nil {
@@ -1546,7 +1546,6 @@ type Error {
 input AddonStatusInput {
   # Filter by Serice Mesh
   selector: MeshType
-
   #kubernetes context ID
   context: String
   # Desired Status
@@ -1793,6 +1792,7 @@ input K8sContext{
 input ReSyncActions {
   clearDB: String!
   ReSync: String!
+  ContextID: String
 }
 
 # ============== ROOT =================================
@@ -1801,7 +1801,7 @@ type Query {
   # Query details about Addons available (Eg. Prometheus and Grafana)
   getAvailableAddons(
     # Select Mesh Type
-    selector: MeshType
+     filter: ServiceMeshFilter
   ): [AddonList!]!
 
   # Query Control Plane data for a Service Mesh (or all) in your cluster
@@ -2077,15 +2077,15 @@ func (ec *executionContext) field_Query_fetchResults_args(ctx context.Context, r
 func (ec *executionContext) field_Query_getAvailableAddons_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.MeshType
-	if tmp, ok := rawArgs["selector"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx, tmp)
+	var arg0 *model.ServiceMeshFilter
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
+		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["selector"] = arg0
+	args["filter"] = arg0
 	return args, nil
 }
 
@@ -7207,7 +7207,7 @@ func (ec *executionContext) _Query_getAvailableAddons(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetAvailableAddons(rctx, fc.Args["selector"].(*model.MeshType))
+		return ec.resolvers.Query().GetAvailableAddons(rctx, fc.Args["filter"].(*model.ServiceMeshFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11033,6 +11033,14 @@ func (ec *executionContext) unmarshalInputReSyncActions(ctx context.Context, obj
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ReSync"))
 			it.ReSync, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "ContextID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ContextID"))
+			it.ContextID, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}

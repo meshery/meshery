@@ -26,10 +26,10 @@ func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *mode
 	return r.changeOperatorStatus(ctx, provider, input.TargetStatus)
 }
 
-func (r *queryResolver) GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {
+func (r *queryResolver) GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	if selector != nil {
-		return r.getAvailableAddons(ctx, provider, selector)
+	if filter != nil {
+		return r.getAvailableAddons(ctx, provider, filter)
 	}
 
 	return nil, ErrInvalidRequest

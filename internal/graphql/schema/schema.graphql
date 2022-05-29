@@ -333,6 +333,7 @@ input K8sContext{
 input ReSyncActions {
   clearDB: String!
   ReSync: String!
+  ContextID: String
 }
 
 # ============== ROOT =================================
@@ -341,7 +342,7 @@ type Query {
   # Query details about Addons available (Eg. Prometheus and Grafana)
   getAvailableAddons(
     # Select Mesh Type
-    selector: MeshType
+     filter: ServiceMeshFilter
   ): [AddonList!]!
 
   # Query Control Plane data for a Service Mesh (or all) in your cluster
