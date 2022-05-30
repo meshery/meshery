@@ -474,45 +474,13 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 	manifest := string(content)
 	man, err := manifests.GenerateComponents(ctxt, manifest, manifests.K8s, manifests.Config{
 		Name: "Kubernetes",
-		CrdFilter: manifests.CueCrdFilter{
-			IsJson: true,
-			IdentifierExtractor: func(rootCRDCueVal cue.Value) (cue.Value, error) {
-				res := rootCRDCueVal.LookupPath(cue.ParsePath(`"x-kubernetes-group-version-kind"[0].kind`))
-				if !res.Exists() {
-					return res, fmt.Errorf("Could not find the value")
-				}
-				return res.Value(), nil
-			},
-			NameExtractor: func(rootCRDCueVal cue.Value) (cue.Value, error) {
-				res := rootCRDCueVal.LookupPath(cue.ParsePath(`"x-kubernetes-group-version-kind"[0].kind`))
-				if !res.Exists() {
-					return res, fmt.Errorf("Could not find the value")
-				}
-				return res.Value(), nil
-			},
-			VersionExtractor: func(rootCRDCueVal cue.Value) (cue.Value, error) {
-				res := rootCRDCueVal.LookupPath(cue.ParsePath(`"x-kubernetes-group-version-kind"[0].version`))
-				if !res.Exists() {
-					return res, fmt.Errorf("Could not find the value")
-				}
-				return res.Value(), nil
-			},
-			GroupExtractor: func(rootCRDCueVal cue.Value) (cue.Value, error) {
-				res := rootCRDCueVal.LookupPath(cue.ParsePath(`"x-kubernetes-group-version-kind"[0].group`))
-				if !res.Exists() {
-					return res, fmt.Errorf("Could not find the value")
-				}
-				return res.Value(), nil
-			},
-			SpecExtractor: func(rootCRDCueVal cue.Value) (cue.Value, error) {
-				res := rootCRDCueVal.LookupPath(cue.ParsePath(""))
-				if !res.Exists() {
-					return res, fmt.Errorf("Could not find the value")
-				}
-
-				return res.Value(), nil
-			},
-		},
+		CrdFilter: manifests.NewCueCrdFilter(manifests.ExtractorPaths{
+			NamePath:    `"x-kubernetes-group-version-kind"[0].kind`,
+			IdPath:      `"x-kubernetes-group-version-kind"[0].kind`,
+			VersionPath: `"x-kubernetes-group-version-kind"[0].version`,
+			GroupPath:   `"x-kubernetes-group-version-kind"[0].group`,
+			SpecPath:    "",
+		}, true),
 		ExtractCrds: func(manifest string) []string {
 			crds := make([]string, 0)
 			cuectx := cuecontext.New()
