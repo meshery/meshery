@@ -222,7 +222,7 @@ type ComplexityRoot struct {
 		FetchPatterns          func(childComplexity int, selector model.PageFilter) int
 		FetchResults           func(childComplexity int, selector model.PageFilter, profileID string) int
 		GetAvailableAddons     func(childComplexity int, filter *model.ServiceMeshFilter) int
-		GetAvailableNamespaces func(childComplexity int, selector *model.K8sContext) int
+		GetAvailableNamespaces func(childComplexity int, selector []*model.K8sContext) int
 		GetControlPlanes       func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes          func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetKubectlDescribe     func(childComplexity int, name string, kind string, namespace string) int
@@ -234,7 +234,7 @@ type ComplexityRoot struct {
 		GetScopes              func(childComplexity int, name *string, id *string, trim *bool) int
 		GetTraits              func(childComplexity int, name *string, id *string, trim *bool) int
 		GetWorkloads           func(childComplexity int, name *string, id *string, trim *bool) int
-		ResyncCluster          func(childComplexity int, selector *model.ReSyncActions) int
+		ResyncCluster          func(childComplexity int, selector *model.ReSyncActions, context *model.K8sContext) int
 	}
 
 	Subscription struct {
@@ -258,12 +258,12 @@ type QueryResolver interface {
 	GetControlPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error)
 	GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error)
 	GetOperatorStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorStatus, error)
-	ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error)
+	ResyncCluster(ctx context.Context, selector *model.ReSyncActions, context *model.K8sContext) (model.Status, error)
 	GetMeshsyncStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorControllerStatus, error)
 	DeployMeshsync(ctx context.Context, selector *model.K8sContext) (model.Status, error)
 	GetNatsStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorControllerStatus, error)
 	ConnectToNats(ctx context.Context, selector *model.K8sContext) (model.Status, error)
-	GetAvailableNamespaces(ctx context.Context, selector *model.K8sContext) ([]*model.NameSpace, error)
+	GetAvailableNamespaces(ctx context.Context, selector []*model.K8sContext) ([]*model.NameSpace, error)
 	GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error)
 	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error)
 	GetPerformanceProfiles(ctx context.Context, selector model.PageFilter) (*model.PerfPageProfiles, error)
@@ -1134,7 +1134,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetAvailableNamespaces(childComplexity, args["selector"].(*model.K8sContext)), true
+		return e.complexity.Query.GetAvailableNamespaces(childComplexity, args["selector"].([]*model.K8sContext)), true
 
 	case "Query.getControlPlanes":
 		if e.complexity.Query.GetControlPlanes == nil {
@@ -1278,7 +1278,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ResyncCluster(childComplexity, args["selector"].(*model.ReSyncActions)), true
+		return e.complexity.Query.ResyncCluster(childComplexity, args["selector"].(*model.ReSyncActions), args["context"].(*model.K8sContext)), true
 
 	case "Subscription.listenToAddonState":
 		if e.complexity.Subscription.ListenToAddonState == nil {
@@ -1618,7 +1618,7 @@ type Container_Port {
 input ServiceMeshFilter {
   # Filter by Service Mesh
   type: MeshType
-  context: String #contextID of the cluster
+  k8sServerIDs: [String!] 
 }
 
 # Control Plane data for a particular Mesh
@@ -1789,7 +1789,7 @@ input PageFilter {
   to: String
 }
 input K8sContext{
-  id: String
+  id: String!
 }
 # ============== RESYNC =============================
 
@@ -1797,7 +1797,6 @@ input K8sContext{
 input ReSyncActions {
   clearDB: String!
   ReSync: String!
-  ContextID: String
 }
 
 # ============== ROOT =================================
@@ -1830,6 +1829,7 @@ type Query {
   resyncCluster(
     # Selector to control several resync actions
     selector: ReSyncActions
+    context: K8sContext
   ): Status!
 
   # Check the Meshsync Status
@@ -1854,7 +1854,7 @@ type Query {
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
-    selector: K8sContext
+    selector: [K8sContext]
   ): [NameSpace!]!
 
   # Query for performance result
@@ -2099,10 +2099,10 @@ func (ec *executionContext) field_Query_getAvailableAddons_args(ctx context.Cont
 func (ec *executionContext) field_Query_getAvailableNamespaces_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.K8sContext
+	var arg0 []*model.K8sContext
 	if tmp, ok := rawArgs["selector"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalOK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx, tmp)
+		arg0, err = ec.unmarshalOK8sContext2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2360,6 +2360,15 @@ func (ec *executionContext) field_Query_resyncCluster_args(ctx context.Context, 
 		}
 	}
 	args["selector"] = arg0
+	var arg1 *model.K8sContext
+	if tmp, ok := rawArgs["context"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("context"))
+		arg1, err = ec.unmarshalOK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["context"] = arg1
 	return args, nil
 }
 
@@ -7478,7 +7487,7 @@ func (ec *executionContext) _Query_resyncCluster(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ResyncCluster(rctx, fc.Args["selector"].(*model.ReSyncActions))
+		return ec.resolvers.Query().ResyncCluster(rctx, fc.Args["selector"].(*model.ReSyncActions), fc.Args["context"].(*model.K8sContext))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7773,7 +7782,7 @@ func (ec *executionContext) _Query_getAvailableNamespaces(ctx context.Context, f
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetAvailableNamespaces(rctx, fc.Args["selector"].(*model.K8sContext))
+		return ec.resolvers.Query().GetAvailableNamespaces(rctx, fc.Args["selector"].([]*model.K8sContext))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10940,7 +10949,7 @@ func (ec *executionContext) unmarshalInputK8sContext(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.ID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -11069,14 +11078,6 @@ func (ec *executionContext) unmarshalInputReSyncActions(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
-		case "ContextID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ContextID"))
-			it.ContextID, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		}
 	}
 
@@ -11100,11 +11101,11 @@ func (ec *executionContext) unmarshalInputServiceMeshFilter(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
-		case "context":
+		case "k8sServerIDs":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("context"))
-			it.Context, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8sServerIDs"))
+			it.K8sServerIDs, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -13947,6 +13948,26 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
+func (ec *executionContext) unmarshalOK8sContext2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx context.Context, v interface{}) ([]*model.K8sContext, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.K8sContext, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx context.Context, v interface{}) (*model.K8sContext, error) {
 	if v == nil {
 		return nil, nil
@@ -14208,6 +14229,44 @@ func (ec *executionContext) unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5
 	}
 	res, err := ec.unmarshalInputServiceMeshFilter(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {

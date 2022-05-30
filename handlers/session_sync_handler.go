@@ -18,6 +18,7 @@ type SessionSyncDataK8sConfig struct {
 	ContextName       string `json:"contextName,omitempty"`
 	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
 	ConfiguredServer  string `json:"configuredServer,omitempty"`
+	ClusterID         string `json:"clusterID,omitempty"`
 }
 
 // swagger:route GET /api/system/sync SystemAPI idSystemSync
@@ -54,10 +55,15 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	k8scontexts, ok := req.Context().Value(models.AllKubeClusterKey).([]models.K8sContext)
 	if ok {
 		for _, k8scontext := range k8scontexts {
+			var cid string
+			if k8scontext.KubernetesServerID != nil {
+				cid = k8scontext.KubernetesServerID.String()
+			}
 			s = append(s, SessionSyncDataK8sConfig{
 				ContextID:         k8scontext.ID,
 				ContextName:       k8scontext.Name,
 				ClusterConfigured: true,
+				ClusterID:         cid,
 				ConfiguredServer:  k8scontext.Server,
 			})
 		}

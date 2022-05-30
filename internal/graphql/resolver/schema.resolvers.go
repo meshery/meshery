@@ -55,14 +55,10 @@ func (r *queryResolver) GetDataPlanes(ctx context.Context, filter *model.Service
 
 func (r *queryResolver) GetOperatorStatus(ctx context.Context, selector *model.K8sContext) (*model.OperatorStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	var ctxID string
-	if selector != nil && selector.ID != nil {
-		ctxID = *selector.ID
-	}
-	return r.getOperatorStatus(ctx, provider, ctxID)
+	return r.getOperatorStatus(ctx, provider, selector.ID)
 }
 
-func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions) (model.Status, error) {
+func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions, context *model.K8sContext) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.resyncCluster(ctx, provider, selector)
 }
@@ -87,7 +83,7 @@ func (r *queryResolver) ConnectToNats(ctx context.Context, selector *model.K8sCo
 	return r.connectToNats(ctx, provider, selector)
 }
 
-func (r *queryResolver) GetAvailableNamespaces(ctx context.Context, selector *model.K8sContext) ([]*model.NameSpace, error) {
+func (r *queryResolver) GetAvailableNamespaces(ctx context.Context, selector []*model.K8sContext) ([]*model.NameSpace, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getAvailableNamespaces(ctx, provider)
 }

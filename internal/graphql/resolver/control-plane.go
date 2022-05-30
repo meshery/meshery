@@ -16,22 +16,25 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 	} else {
 		selectors = append(selectors, *filter.Type)
 	}
-	var cid string
-	if filter.Context != nil {
-		cid = *filter.Context
+	var cids []string
+	if len(filter.K8sServerIDs) != 0 {
+		cids = filter.K8sServerIDs
 	} else { //This is a fallback
 		k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 		if !ok || len(k8sctxs) == 0 {
 			r.Log.Error(ErrEmptyCurrentK8sContext)
 			return nil, ErrEmptyCurrentK8sContext
 		}
-		if k8sctxs[0].KubernetesServerID == nil {
-			r.Log.Error(ErrEmptyCurrentK8sContext)
-			return nil, ErrEmptyCurrentK8sContext
+		for _, context := range k8sctxs {
+			if context.KubernetesServerID == nil {
+				r.Log.Error(ErrEmptyCurrentK8sContext)
+				return nil, ErrEmptyCurrentK8sContext
+			}
+			cids = append(cids, context.KubernetesServerID.String())
 		}
-		cid = k8sctxs[0].KubernetesServerID.String()
+
 	}
-	controlplanelist, err := model.GetControlPlaneState(selectors, provider, cid)
+	controlplanelist, err := model.GetControlPlaneState(selectors, provider, cids)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err

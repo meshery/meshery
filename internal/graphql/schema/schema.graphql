@@ -154,7 +154,7 @@ type Container_Port {
 input ServiceMeshFilter {
   # Filter by Service Mesh
   type: MeshType
-  context: String #contextID of the cluster
+  k8sServerIDs: [String!] 
 }
 
 # Control Plane data for a particular Mesh
@@ -325,7 +325,7 @@ input PageFilter {
   to: String
 }
 input K8sContext{
-  id: String
+  id: String!
 }
 # ============== RESYNC =============================
 
@@ -333,7 +333,6 @@ input K8sContext{
 input ReSyncActions {
   clearDB: String!
   ReSync: String!
-  ContextID: String
 }
 
 # ============== ROOT =================================
@@ -366,6 +365,7 @@ type Query {
   resyncCluster(
     # Selector to control several resync actions
     selector: ReSyncActions
+    context: K8sContext
   ): Status!
 
   # Check the Meshsync Status
@@ -390,7 +390,7 @@ type Query {
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
-    selector: K8sContext
+    selector: [K8sContext]
   ): [NameSpace!]!
 
   # Query for performance result

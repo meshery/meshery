@@ -71,7 +71,7 @@ type Error struct {
 }
 
 type K8sContext struct {
-	ID *string `json:"id"`
+	ID string `json:"id"`
 }
 
 type KctlDescribeDetails struct {
@@ -197,14 +197,13 @@ type PerfProfile struct {
 }
 
 type ReSyncActions struct {
-	ClearDb   string  `json:"clearDB"`
-	ReSync    string  `json:"ReSync"`
-	ContextID *string `json:"ContextID"`
+	ClearDb string `json:"clearDB"`
+	ReSync  string `json:"ReSync"`
 }
 
 type ServiceMeshFilter struct {
-	Type    *MeshType `json:"type"`
-	Context *string   `json:"context"`
+	Type         *MeshType `json:"type"`
+	K8sServerIDs []string  `json:"k8sServerIDs"`
 }
 
 type MeshType string

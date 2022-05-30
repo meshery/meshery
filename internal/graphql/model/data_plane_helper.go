@@ -11,13 +11,13 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid string) ([]*DataPlane, error) {
+func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid []string) ([]*DataPlane, error) {
 	object := []meshsyncmodel.Object{}
 	dataPlaneList := make([]*DataPlane, 0)
 
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Where("cluster_id = ?", cid).
+			Where("cluster_id = (?)", cid).
 			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("Status").
 			Preload("Spec"). // get only resources specs that has proxy string inside its attributes
