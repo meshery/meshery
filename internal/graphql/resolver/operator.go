@@ -126,13 +126,18 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 	var kubeclient *mesherykube.Client
 	var err error
 	if ctxID != "" {
-		k8scontext, err := provider.GetK8sContext("give token", ctxID)
-		if err != nil {
+		k8scontexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		if !ok || len(k8scontexts) == 0 {
 			return nil, ErrMesheryClient(nil)
 		}
-		kubeclient, err = k8scontext.GenerateKubeHandler()
-		if err != nil {
-			return nil, ErrMesheryClient(err)
+		for _, ctx := range k8scontexts {
+			if ctx.ID == ctxID {
+				kubeclient, err = ctx.GenerateKubeHandler()
+				if err != nil {
+					return nil, ErrMesheryClient(err)
+				}
+				break
+			}
 		}
 	} else {
 		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
@@ -143,6 +148,9 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 		if err != nil {
 			return nil, ErrMesheryClient(err)
 		}
+	}
+	if kubeclient == nil {
+		return nil, ErrMesheryClient(nil)
 	}
 	name, version, err := model.GetOperator(kubeclient)
 	if err != nil {
