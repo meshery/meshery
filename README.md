@@ -287,7 +287,13 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 
 </p>
 
-<a href="https://meshery.io/community"><img alt="Layer5 Service Mesh Community" src="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/socialIcons/slack_color.png" style="margin-left:10px;padding-top:5px;" width="110px" align="right" /></a>
+<a href="https://meshery.io/community">
+<picture align="right">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KrishAryan/meshery/master/docs/assets/img/readme/slack-128.png"  width="110px" align="right" style="margin-left:10px;margin-top:10px;">
+  <source media="(prefers-color-scheme: light)" srcset=https://raw.githubusercontent.com/KrishAryan/meshery/master/docs/assets/img/readme/slack-128.png" width="110px" align="right" style="margin-left:10px;padding-top:5px;">
+  <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/KrishAryan/meshery/master/docs/assets/img/readme/slack-128.png" width="110px" align="right" style="margin-left:10px;padding-top:13px;">
+</picture>
+</a>
 
 <a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="https://docs.meshery.io/assets/img/readme/community.png" style="margin-right:8px;padding-top:5px;" width="140px" align="left" /></a>
 
