@@ -383,7 +383,7 @@ type Query {
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
-        k8scontextID: String!
+        k8sClusterIDs: [String!]
   ): [NameSpace!]!
 
   # Query for performance result

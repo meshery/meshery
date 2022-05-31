@@ -74,9 +74,9 @@ func (r *queryResolver) ConnectToNats(ctx context.Context, k8scontextID string) 
 	return r.connectToNats(ctx, provider, k8scontextID)
 }
 
-func (r *queryResolver) GetAvailableNamespaces(ctx context.Context, k8scontextID string) ([]*model.NameSpace, error) {
+func (r *queryResolver) GetAvailableNamespaces(ctx context.Context, k8sClusterIDs []string) ([]*model.NameSpace, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getAvailableNamespaces(ctx, provider)
+	return r.getAvailableNamespaces(ctx, provider, k8sClusterIDs)
 }
 
 func (r *queryResolver) GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error) {

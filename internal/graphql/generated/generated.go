@@ -219,7 +219,7 @@ type ComplexityRoot struct {
 		FetchPatterns          func(childComplexity int, selector model.PageFilter) int
 		FetchResults           func(childComplexity int, selector model.PageFilter, profileID string) int
 		GetAvailableAddons     func(childComplexity int, filter *model.ServiceMeshFilter) int
-		GetAvailableNamespaces func(childComplexity int, k8scontextID string) int
+		GetAvailableNamespaces func(childComplexity int, k8sClusterIDs []string) int
 		GetControlPlanes       func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes          func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetKubectlDescribe     func(childComplexity int, name string, kind string, namespace string) int
@@ -259,7 +259,7 @@ type QueryResolver interface {
 	DeployMeshsync(ctx context.Context, k8scontextID string) (model.Status, error)
 	GetNatsStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error)
 	ConnectToNats(ctx context.Context, k8scontextID string) (model.Status, error)
-	GetAvailableNamespaces(ctx context.Context, k8scontextID string) ([]*model.NameSpace, error)
+	GetAvailableNamespaces(ctx context.Context, k8sClusterIDs []string) ([]*model.NameSpace, error)
 	GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error)
 	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error)
 	GetPerformanceProfiles(ctx context.Context, selector model.PageFilter) (*model.PerfPageProfiles, error)
@@ -1104,7 +1104,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetAvailableNamespaces(childComplexity, args["k8scontextID"].(string)), true
+		return e.complexity.Query.GetAvailableNamespaces(childComplexity, args["k8sClusterIDs"].([]string)), true
 
 	case "Query.getControlPlanes":
 		if e.complexity.Query.GetControlPlanes == nil {
@@ -1816,7 +1816,7 @@ type Query {
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
-        k8scontextID: String!
+        k8sClusterIDs: [String!]
   ): [NameSpace!]!
 
   # Query for performance result
@@ -2043,15 +2043,15 @@ func (ec *executionContext) field_Query_getAvailableAddons_args(ctx context.Cont
 func (ec *executionContext) field_Query_getAvailableNamespaces_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["k8scontextID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8scontextID"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg0 []string
+	if tmp, ok := rawArgs["k8sClusterIDs"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8sClusterIDs"))
+		arg0, err = ec.unmarshalOString2ᚕstringᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["k8scontextID"] = arg0
+	args["k8sClusterIDs"] = arg0
 	return args, nil
 }
 
@@ -7582,7 +7582,7 @@ func (ec *executionContext) _Query_getAvailableNamespaces(ctx context.Context, f
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetAvailableNamespaces(rctx, fc.Args["k8scontextID"].(string))
+		return ec.resolvers.Query().GetAvailableNamespaces(rctx, fc.Args["k8sClusterIDs"].([]string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

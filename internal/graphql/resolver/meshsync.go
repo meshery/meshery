@@ -145,13 +145,32 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 	if err != nil {
 		return err
 	}
-	currContexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-	if !ok || len(currContexts) == 0 {
+	var currContext *models.K8sContext
+	var newContextFound bool
+	if ctxID == "" {
+		currContexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+		if !ok || len(currContexts) == 0 {
+			r.Log.Error(ErrNilClient)
+			return ErrNilClient
+		}
+		currContext = &currContexts[0]
+	} else {
+		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		if !ok || len(allContexts) == 0 {
+			r.Log.Error(ErrNilClient)
+			return ErrNilClient
+		}
+		for _, ctx := range allContexts {
+			if ctx.ID == ctxID {
+				currContext = &ctx
+				break
+			}
+		}
+	}
+	if currContext == nil {
 		r.Log.Error(ErrNilClient)
 		return ErrNilClient
 	}
-	currContext := currContexts[0]
-	var newContextFound bool
 	if connectionTrackerSingleton.Get(currContext.ID) == "" {
 		newContextFound = true
 	}

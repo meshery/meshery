@@ -32,7 +32,6 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 			}
 			cids = append(cids, context.KubernetesServerID.String())
 		}
-
 	}
 	controlplanelist, err := model.GetControlPlaneState(selectors, provider, cids)
 	if err != nil {
