@@ -17,7 +17,7 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid []str
 
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Where("cluster_id = (?)", cid).
+			Where("cluster_id IN ?", cid).
 			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("Status").
 			Preload("Spec"). // get only resources specs that has proxy string inside its attributes

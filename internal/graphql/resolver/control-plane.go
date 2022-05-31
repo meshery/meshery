@@ -17,8 +17,8 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 		selectors = append(selectors, *filter.Type)
 	}
 	var cids []string
-	if len(filter.K8sServerIDs) != 0 {
-		cids = filter.K8sServerIDs
+	if len(filter.K8sClusterIDs) != 0 {
+		cids = filter.K8sClusterIDs
 	} else { //This is a fallback
 		k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 		if !ok || len(k8sctxs) == 0 {

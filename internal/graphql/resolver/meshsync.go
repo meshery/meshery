@@ -208,13 +208,13 @@ func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider)
 	return model.StatusProcessing, nil
 }
 
-func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider, selector *model.K8sContext) (model.Status, error) {
+func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider, k8scontextID string) (model.Status, error) {
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
 		Source: broadcast.OperatorSyncChannel,
 		Data:   true,
 		Type:   "health",
 	})
-	err := r.connectToBroker(ctx, provider, selector.ID)
+	err := r.connectToBroker(ctx, provider, k8scontextID)
 	if err != nil {
 		r.Log.Error(err)
 		r.Broadcast.Submit(broadcast.BroadcastMessage{

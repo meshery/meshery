@@ -8,19 +8,15 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-func (r *Resolver) changeAddonStatus(ctx context.Context, provider models.Provider) (model.Status, error) {
-	return model.StatusProcessing, nil
-}
-
 func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
 	var kubeclient *kubernetes.Client
-	if filter.Context != nil {
-		var err error
-		kubeclient, err = k8sctxs[0].GenerateKubeHandler()
-		if err != nil {
-			r.Log.Error(ErrNilClient)
-			return nil, ErrNilClient
-		}
+	if filter != nil {
+		// var err error
+		// kubeclient, err = k8sctxs[0].GenerateKubeHandler()
+		// if err != nil {
+		// 	r.Log.Error(ErrNilClient)
+		// 	return nil, ErrNilClient
+		// }
 	} else { //This is a fallback
 		var err error
 		k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
@@ -46,7 +42,7 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provi
 		selectors = append(selectors, *filter.Type)
 	}
 
-	addonlist, err := model.GetAddonsState(selectors, kubeclient, provider)
+	addonlist, err := model.GetAddonsState(selectors, kubeclient, provider, filter.K8sClusterIDs)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err
@@ -62,12 +58,6 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 
 	go func() {
 		r.Log.Info("Addons subscription started")
-		err := r.connectToBroker(ctx, provider, *filter.Context)
-		if err != nil && err != ErrNoMeshSync {
-			r.Log.Error(err)
-			return
-		}
-
 		for {
 			select {
 			case <-r.MeshSyncChannel:
