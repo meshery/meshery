@@ -87,21 +87,21 @@ class MesheryApp extends App {
    * @param {Array.<string>} activeK8sContexts
    */
   activeContextChangeCallback = (activeK8sContexts)  => {
-    if (activeK8sContexts.includes(".all")) {
-      activeK8sContexts = [".all"];
+    if (activeK8sContexts.includes("all")) {
+      activeK8sContexts = ["all"];
     }
     this.props.store.dispatch({ type : actionTypes.SET_K8S_CONTEXT, selectedK8sContexts : activeK8sContexts });
   }
 
   setActiveContexts = (id) => {
-    if (id === ".all") {
+    if (id === "all") {
       let activeContexts = []
       this.state.k8sContexts.contexts.forEach(ctx =>
         activeContexts.push(ctx.id)
       );
-      activeContexts.push(".all");
+      activeContexts.push("all");
       this.setState(state => {
-        if (state.activeK8sContexts?.includes(".all")) return { activeK8sContexts : [] };
+        if (state.activeK8sContexts?.includes("all")) return { activeK8sContexts : [] };
         return { activeK8sContexts : activeContexts };
       },
       () => this.activeContextChangeCallback(this.state.activeK8sContexts));
