@@ -718,6 +718,7 @@ Type ReSyncActions define the actions involved during resync.
 | ---- | ---- | ----------- |
 | <a id="resyncactionsresync"></a>`ReSync` | [`String!`](#string) |  |
 | <a id="resyncactionscleardb"></a>`clearDB` | [`String!`](#string) |  |
+| <a id="resyncactionshardreset"></a>`hardReset` | [`String!`](#string) |  |
 
 ### `ServiceMeshFilter`
 
