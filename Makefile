@@ -184,6 +184,11 @@ build-provider-ui: ui-provider-build
 ui-provider-build:
 	cd provider-ui; npm run build && npm run export; cd ..
 
+run-ui-integration-tests: ui-integration-tests
+## Run Meshery Cypress Integration Tests against your local Meshery UI (cypress runs in non-interactive mode).
+ui-integration-tests: ui-setup
+	cd ui; npm run ci-test-integration; cd ..
+
 #-----------------------------------------------------------------------------
 # Meshery Docs
 #-----------------------------------------------------------------------------
