@@ -247,8 +247,8 @@ function K8sContextMenu({
                     ?
                     <>
                       <Checkbox
-                        checked={activeContexts.includes(".all")}
-                        onChange={() => setActiveContexts(".all")}
+                        checked={activeContexts.includes("all")}
+                        onChange={() => setActiveContexts("all")}
                         color="primary"
                       />
                       <span>Select All</span>
