@@ -186,7 +186,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     },
     this.getSelectedContextId()
     )
-    subscribeOperatorStatusEvents(self.setOperatorState)
+    subscribeOperatorStatusEvents(self.setOperatorState, this.getSelectedContextId())
     subscribeAddonStatusEvents(self.setAddonsState, variables)
 
     fetchAvailableAddons(variables)
