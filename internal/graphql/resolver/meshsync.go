@@ -30,23 +30,24 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 	if r.brokerChannel == nil {
 		r.brokerChannel = make(chan *broker.Message)
 	}
-	var k8sContextIDsMap = make(map[string]bool)
-	for _, k8sContext := range k8scontextIDs {
-		k8sContextIDsMap[k8sContext] = true
-	}
+
 	k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		return nil, ErrNilClient
 	}
 	var k8sContexts []models.K8sContext
-	if len(k8scontextIDs) != 0 {
+	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" {
+		k8sContexts = k8sctxs
+	} else if len(k8scontextIDs) != 0 {
+		var k8sContextIDsMap = make(map[string]bool)
+		for _, k8sContext := range k8scontextIDs {
+			k8sContextIDsMap[k8sContext] = true
+		}
 		for _, k8Context := range k8sctxs {
 			if k8sContextIDsMap[k8Context.ID] {
 				k8sContexts = append(k8sContexts, k8Context)
 			}
 		}
-	} else {
-		k8sContexts = k8sctxs //as a fallback for now
 	}
 	for _, k8sctx := range k8sContexts {
 		prevStatus := r.getMeshSyncStatus(k8sctx)
