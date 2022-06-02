@@ -16,7 +16,6 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Chip from '@material-ui/core/Chip';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
-import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -31,6 +30,7 @@ import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpe
 import {
   successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction, showProgress, hideProgress
 } from './ConnectionWizard/helpers/common';
+import { getFirstCtxIdFromSelectedCtxIds } from '../utils/multi-ctx';
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
   secondaryBar : { zIndex : 0, },
@@ -316,26 +316,32 @@ class Header extends React.Component {
     }
   }
   componentDidMount(){
-    console.log("Header mounted", JSON.stringify(this.props.selectedK8sContexts));
     this._isMounted = true;
-    const meshSyncStatusSub = subscribeMeshSyncStatusEvents(data => this.setState({ meshSyncStatus : data?.listenToMeshSyncEvents }));
+    // const meshSyncStatusSub = subscribeMeshSyncStatusEvents(
+    //   data => this.setState({ meshSyncStatus : data?.listenToMeshSyncEvents }),
+    //   this.getSelectedContextId()
+    // );
     const brokerStatusSub = subscribeBrokerStatusEvents(data => {
       console.log({ brokerData : data })
       this.setState({ brokerStatus : data?.subscribeBrokerConnection })
     });
-    this.setState({ meshSyncStatusSubscription : meshSyncStatusSub, brokerStatusSubscription : brokerStatusSub })
+    this.setState({ brokerStatusSubscription : brokerStatusSub })
+  }
+
+  getSelectedContextId = () => {
+    return getFirstCtxIdFromSelectedCtxIds(["all"], this.props.k8sconfig)
   }
 
   componentWillUnmount = () => {
     this._isMounted = false;
-    this.disposeSubscriptions()
+    // this.disposeSubscriptions()
   }
 
-  disposeSubscriptions = () => {
-    if (this.state.meshSyncStatusSubscription) {
-      this.state.meshSyncStatusSubscription.dispose();
-    }
-  }
+  // disposeSubscriptions = () => {
+  //   if (this.state.meshSyncStatusSubscription) {
+  //     this.state.meshSyncStatusSubscription.dispose();
+  //   }
+  // }
 
   render() {
     const { classes, title, onDrawerToggle ,onDrawerCollapse ,isBeta } = this.props;
@@ -418,13 +424,13 @@ class Header extends React.Component {
                     <MesheryNotification />
                   </div>
 
-                  <Tooltip title={this.state?.meshSyncStatus?.status === "ENABLED" ? "Active" : "Inactive" }>
+                  {/* <Tooltip title={this.state?.meshSyncStatus?.status === "ENABLED" ? "Active" : "Inactive" }>
                     <IconButton>
                       <Link href="/settings#environment">
                         <img className={classes.headerIcons} src={this.state?.meshSyncStatus?.status === "ENABLED" ? "/static/img/meshsync.svg" : "/static/img/meshsync-white.svg"} />
                       </Link>
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip> */}
 
                   {/* <Tooltip title="Broker Status">
                     <div style={{ padding : "1rem", height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.brokerStatus ? "green" : "red" }} />
@@ -494,7 +500,8 @@ const mapStateToProps = (state) => {
   return ({
     title : state.get('page').get('title'),
     isBeta : state.get('page').get('isBeta'),
-    selectedK8sContexts : state.get('selectedK8sContexts')
+    selectedK8sContexts : state.get('selectedK8sContexts'),
+    k8sconfig : state.get('k8sconfig'),
   })
 }
 ;
