@@ -148,14 +148,14 @@ func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filte
 	return nil, ErrInvalidRequest
 }
 
-func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context, k8scontextID string) (<-chan *model.OperatorStatus, error) {
+func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.listenToOperatorState(ctx, provider, k8scontextID)
+	return r.listenToOperatorsState(ctx, provider, k8scontextIDs)
 }
 
-func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, k8scontextID string) (<-chan *model.OperatorControllerStatus, error) {
+func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.listenToMeshSyncEvents(ctx, provider)
+	return r.listenToMeshSyncEvents(ctx, provider, k8scontextIDs)
 }
 
 func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {

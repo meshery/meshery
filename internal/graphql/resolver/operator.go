@@ -264,8 +264,8 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 	return &status, nil
 }
 
-func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Provider, k8scontextID string) (<-chan *model.OperatorStatus, error) {
-	operatorChannel := make(chan *model.OperatorStatus)
+func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error) {
+	operatorChannel := make(chan *model.OperatorStatusPerK8sContext)
 
 	if r.operatorSyncChannel == nil {
 		r.operatorSyncChannel = make(chan bool)
@@ -274,71 +274,95 @@ func (r *Resolver) listenToOperatorState(ctx context.Context, provider models.Pr
 		r.meshsyncLivenessChannel = make(chan struct{})
 	}
 
+	k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+	if !ok || len(k8sctxs) == 0 {
+		return nil, ErrNilClient
+	}
+	var k8sContexts []models.K8sContext
+	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" {
+		k8sContexts = k8sctxs
+	} else if len(k8scontextIDs) != 0 {
+		var k8sContextIDsMap = make(map[string]bool)
+		for _, k8sContext := range k8scontextIDs {
+			k8sContextIDsMap[k8sContext] = true
+		}
+		for _, k8Context := range k8sctxs {
+			if k8sContextIDsMap[k8Context.ID] {
+				k8sContexts = append(k8sContexts, k8Context)
+			}
+		}
+	}
 	operatorSyncChannel := make(chan broadcast.BroadcastMessage)
 	r.Broadcast.Register(operatorSyncChannel)
-	go func() {
-		r.Log.Info("Operator subscription started")
-		err := r.connectToBroker(ctx, provider, k8scontextID)
-		if err != nil && err != ErrNoMeshSync {
-			r.Log.Error(err)
-			// The subscription should remain live to send future messages and only die when context is done
-			// return
-		}
-
-		// Enforce enable operator
-		status, err := r.getOperatorStatus(ctx, provider, k8scontextID)
-		if err != nil {
-			r.Log.Error(ErrOperatorSubscription(err))
-			return
-		}
-		if status.Status != model.StatusEnabled {
-			_, err = r.changeOperatorStatus(ctx, provider, model.StatusEnabled, k8scontextID)
-			if err != nil {
-				r.Log.Error(ErrOperatorSubscription(err))
+	for _, k8scontext := range k8sContexts {
+		go func(k8scontext models.K8sContext) {
+			r.Log.Info("Operator subscription started")
+			err := r.connectToBroker(ctx, provider, k8scontext.ID)
+			if err != nil && err != ErrNoMeshSync {
+				r.Log.Error(err)
+				// The subscription should remain live to send future messages and only die when context is done
 				// return
 			}
-		}
-		for {
-			select {
-			case processing := <-operatorSyncChannel:
-				r.Log.Info("Operator sync channel called")
-				status, err := r.getOperatorStatus(ctx, provider, k8scontextID)
-				if err != nil {
-					r.Log.Error(ErrOperatorSubscription(err))
-					r.Log.Info("Operator subscription flushed")
-					close(operatorChannel)
-					// return
-					continue
-				}
 
-				if processing.Source == broadcast.OperatorSyncChannel {
-					switch processing.Data.(type) {
-					case bool:
-						if processing.Data.(bool) {
-							status.Status = model.StatusProcessing
-						}
-					case *errors.Error:
-						status.Error = &model.Error{
-							Code:        processing.Data.(*errors.Error).Code,
-							Description: processing.Data.(*errors.Error).Error(),
-						}
-					case error:
-						status.Error = &model.Error{
-							Code:        "",
-							Description: processing.Data.(error).Error(),
-						}
-					}
-				}
-				operatorChannel <- status
-			case <-ctx.Done():
-				r.Log.Info("Operator subscription flushed")
-				close(operatorChannel)
-				r.Broadcast.Unregister(operatorSyncChannel)
-				close(operatorSyncChannel)
+			// Enforce enable operator
+			status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
+			if err != nil {
+				r.Log.Error(ErrOperatorSubscription(err))
 				return
 			}
-		}
-	}()
+			if status.Status != model.StatusEnabled {
+				_, err = r.changeOperatorStatus(ctx, provider, model.StatusEnabled, k8scontext.ID)
+				if err != nil {
+					r.Log.Error(ErrOperatorSubscription(err))
+					// return
+				}
+			}
+			for {
+				select {
+				case processing := <-operatorSyncChannel:
+					r.Log.Info("Operator sync channel called")
+					status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
+					if err != nil {
+						r.Log.Error(ErrOperatorSubscription(err))
+						r.Log.Info("Operator subscription flushed")
+						close(operatorChannel)
+						// return
+						continue
+					}
+
+					if processing.Source == broadcast.OperatorSyncChannel {
+						switch processing.Data.(type) {
+						case bool:
+							if processing.Data.(bool) {
+								status.Status = model.StatusProcessing
+							}
+						case *errors.Error:
+							status.Error = &model.Error{
+								Code:        processing.Data.(*errors.Error).Code,
+								Description: processing.Data.(*errors.Error).Error(),
+							}
+						case error:
+							status.Error = &model.Error{
+								Code:        "",
+								Description: processing.Data.(error).Error(),
+							}
+						}
+					}
+					statusWithContext := model.OperatorStatusPerK8sContext{
+						ContextID:      k8scontext.ID,
+						OperatorStatus: status,
+					}
+					operatorChannel <- &statusWithContext
+				case <-ctx.Done():
+					r.Log.Info("Operator subscription flushed")
+					close(operatorChannel)
+					r.Broadcast.Unregister(operatorSyncChannel)
+					close(operatorSyncChannel)
+					return
+				}
+			}
+		}(k8scontext)
+	}
 
 	return operatorChannel, nil
 }
