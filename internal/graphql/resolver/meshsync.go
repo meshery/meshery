@@ -25,36 +25,54 @@ var (
 	}
 )
 
-func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.Provider) (<-chan *model.OperatorControllerStatus, error) {
-	channel := make(chan *model.OperatorControllerStatus)
+func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
+	channel := make(chan *model.OperatorControllerStatusPerK8sContext)
 	if r.brokerChannel == nil {
 		r.brokerChannel = make(chan *broker.Message)
 	}
-	k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+	var k8sContextIDsMap = make(map[string]bool)
+	for _, k8sContext := range k8scontextIDs {
+		k8sContextIDsMap[k8sContext] = true
+	}
+	k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		return nil, ErrNilClient
 	}
-	prevStatus := r.getMeshSyncStatus(k8sctxs[0])
-	go func(k8sctx models.K8sContext, ch chan *model.OperatorControllerStatus) {
-		r.Log.Info("Initializing MeshSync subscription")
-
-		go model.PersistClusterNames(ctx, r.Log, provider.GetGenericPersister(), r.MeshSyncChannel)
-		go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.controlPlaneSyncChannel, r.meshsyncLivenessChannel, r.Broadcast)
-		// signal to install operator when initialized
-		r.MeshSyncChannel <- struct{}{}
-		// extension to notify other channel when data comes in
-		for {
-
-			status := r.getMeshSyncStatus(k8sctx)
-
-			ch <- &status
-			if status != prevStatus {
-				prevStatus = status
+	var k8sContexts []models.K8sContext
+	if len(k8scontextIDs) != 0 {
+		for _, k8Context := range k8sctxs {
+			if k8sContextIDsMap[k8Context.ID] {
+				k8sContexts = append(k8sContexts, k8Context)
 			}
-
-			time.Sleep(10 * time.Second)
 		}
-	}(k8sctxs[0], channel)
+	} else {
+		k8sContexts = k8sctxs //as a fallback for now
+	}
+	for _, k8sctx := range k8sContexts {
+		prevStatus := r.getMeshSyncStatus(k8sctx)
+		go func(k8sctx models.K8sContext, ch chan *model.OperatorControllerStatusPerK8sContext) {
+			r.Log.Info("Initializing MeshSync subscription")
+
+			go model.PersistClusterNames(ctx, r.Log, provider.GetGenericPersister(), r.MeshSyncChannel)
+			go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel, r.controlPlaneSyncChannel, r.meshsyncLivenessChannel, r.Broadcast)
+			// signal to install operator when initialized
+			r.MeshSyncChannel <- struct{}{}
+			// extension to notify other channel when data comes in
+			for {
+
+				status := r.getMeshSyncStatus(k8sctx)
+				statusWithContext := model.OperatorControllerStatusPerK8sContext{
+					ContextID:                k8sctx.ID,
+					OperatorControllerStatus: &status,
+				}
+				ch <- &statusWithContext
+				if status != prevStatus {
+					prevStatus = status
+				}
+				time.Sleep(10 * time.Second)
+			}
+		}(k8sctx, channel)
+	}
 
 	return channel, nil
 }

@@ -191,6 +191,14 @@ input OperatorStatusInput {
   contextID: String!
 }
 
+type OperatorStatusPerK8sContext{
+  contextID: String!
+  operatorStatus: OperatorStatus!
+}
+type OperatorControllerStatusPerK8sContext{
+  contextID: String!
+  OperatorControllerStatus: OperatorControllerStatus!
+}
 # Status of Meshery Operator and its controllers
 type OperatorStatus {
   # Status of Meshery Operator
@@ -204,6 +212,8 @@ type OperatorStatus {
 
   # Error Logs encountered by Meshery Operator
   error: Error
+
+  contextID: String!
 }
 
 # Controllers of Meshery Operator
@@ -219,6 +229,9 @@ type OperatorControllerStatus {
 
   # Controller Error Log
   error: Error
+
+  contextID: String!
+
 }
 
 # ============== NAMESPACE =============================
@@ -440,13 +453,13 @@ type Subscription {
 
   # Listen to changes in status of Meshery Operator in your cluster
   listenToOperatorState(
-    k8scontextID: String!
-  ): OperatorStatus!
+    k8scontextIDs: [String!]
+  ): OperatorStatusPerK8sContext
 
   # Listen to changes in the list of available Namesapces in your cluster
   listenToMeshSyncEvents(
-    k8scontextID: String!
-  ): OperatorControllerStatus!
+    k8scontextIDs: [String!]
+  ): OperatorControllerStatusPerK8sContext
 
   # Listen to changes in Performance Profiles
   subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
