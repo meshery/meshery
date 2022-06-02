@@ -7,6 +7,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"gorm.io/gorm"
 
 	corev1 "k8s.io/api/core/v1"
 )
@@ -16,15 +17,28 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid []str
 	dataPlaneList := make([]*DataPlane, 0)
 
 	for _, selector := range selectors {
-		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Where("cluster_id IN ?", cid).
-			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
-			Preload("Status").
-			Preload("Spec"). // get only resources specs that has proxy string inside its attributes
-			Where("EXISTS(SELECT 1 FROM resource_specs rsp WHERE rsp.attribute LIKE ? AND rsp.id = objects.id)", `%proxy%`).
-			// get only resources statuses that has proxy string inside its attributes
-			Where("EXISTS(SELECT 1 FROM resource_statuses rst WHERE rst.attribute LIKE ? AND rst.id = objects.id)", `%proxy%`).
-			Find(&object, "kind = ?", "Pod")
+		var result *gorm.DB
+		if len(cid) == 1 && cid[0] == "all" {
+			result = provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
+				Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
+				Preload("Status").
+				Preload("Spec"). // get only resources specs that has proxy string inside its attributes
+				Where("EXISTS(SELECT 1 FROM resource_specs rsp WHERE rsp.attribute LIKE ? AND rsp.id = objects.id)", `%proxy%`).
+				// get only resources statuses that has proxy string inside its attributes
+				Where("EXISTS(SELECT 1 FROM resource_statuses rst WHERE rst.attribute LIKE ? AND rst.id = objects.id)", `%proxy%`).
+				Find(&object, "kind = ?", "Pod")
+		} else {
+			result = provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
+				Where("cluster_id IN ?", cid).
+				Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
+				Preload("Status").
+				Preload("Spec"). // get only resources specs that has proxy string inside its attributes
+				Where("EXISTS(SELECT 1 FROM resource_specs rsp WHERE rsp.attribute LIKE ? AND rsp.id = objects.id)", `%proxy%`).
+				// get only resources statuses that has proxy string inside its attributes
+				Where("EXISTS(SELECT 1 FROM resource_statuses rst WHERE rst.attribute LIKE ? AND rst.id = objects.id)", `%proxy%`).
+				Find(&object, "kind = ?", "Pod")
+		}
+
 		if result.Error != nil {
 			return nil, ErrQuery(result.Error)
 		}

@@ -6,6 +6,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"gorm.io/gorm"
 
 	corev1 "k8s.io/api/core/v1"
 )
@@ -15,14 +16,26 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid []
 	controlplanelist := make([]*ControlPlane, 0)
 
 	for _, selector := range selectors {
-		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Where("cluster_id IN ?", cid).
-			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
-			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
-			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
-			Preload("Spec").
-			Preload("Status").
-			Find(&object, "kind = ?", "Pod")
+		var result *gorm.DB
+		if len(cid) == 1 && cid[0] == "all" {
+			result = provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
+				Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
+				Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
+				Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
+				Preload("Spec").
+				Preload("Status").
+				Find(&object, "kind = ?", "Pod")
+		} else {
+			result = provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
+				Where("cluster_id IN ?", cid).
+				Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
+				Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
+				Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
+				Preload("Spec").
+				Preload("Status").
+				Find(&object, "kind = ?", "Pod")
+		}
+
 		if result.Error != nil {
 			return nil, ErrQuery(result.Error)
 		}

@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"database/sql"
 	"strings"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
@@ -31,7 +32,13 @@ func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.P
 	}
 	// resourceobjects := make([]meshsyncmodel.ResourceObjectMeta, 0)
 	namespaces := make([]string, 0)
-	rows, err := provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace' AND o.cluster_id = ?", cids).Rows()
+	var rows *sql.Rows
+	var err error
+	if len(cids) == 1 && cids[0] == "all" {
+		rows, err = provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace'").Rows()
+	} else {
+		rows, err = provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace' AND o.cluster_id IN ?", cids).Rows()
+	}
 
 	if err != nil {
 		r.Log.Error(ErrGettingNamespace(err))
