@@ -50,7 +50,7 @@
                 <i>Test results:</i>
                 <table style="border:0">
                 {% for test in item.tests %}
-                   <tr><td><img style="height:24px; width: 24px" src={{result-state}}></td><td>{{test}}</td></tr>
+                   <tr><td><img style="height:24px; width: 24px" src={{result-state}}></td><td>{{test[0]}}</td></tr>
                 {% endfor %}      
                 </table>      
             </td>
