@@ -1,11 +1,9 @@
 import { graphql, fetchQuery } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
-export default function fetchControlPlanes(variables) {
+export default function fetchDataPlanes(variables) {
   const vars = {
-    filter : {
-      type : variables.type,
-    },
+    filter : variables,
   };
 
   const query = graphql`

@@ -2,8 +2,8 @@ import { graphql, requestSubscription } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
 const meshSyncStatusSubscription = graphql`
-subscription MeshSyncStatusSubscription {
-  listenToMeshSyncEvents {
+subscription MeshSyncStatusSubscription($k8scontextID: String!) {
+  listenToMeshSyncEvents(k8scontextID: $k8scontextID) {
     name
     status
     version

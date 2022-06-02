@@ -2,8 +2,8 @@ import { graphql, requestSubscription } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
 const operatorStatusSubscription = graphql`
-  subscription OperatorStatusSubscription {
-    operator: listenToOperatorState {
+  subscription OperatorStatusSubscription($k8scontextID: String!) {
+    operator: listenToOperatorState(k8scontextID: $k8scontextID) {
       status
       version
       controllers {

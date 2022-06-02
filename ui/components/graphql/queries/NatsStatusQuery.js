@@ -1,11 +1,11 @@
 import { graphql, fetchQuery } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
-export default function NatsStatusQuery() {
+export default function NatsStatusQuery(vars) {
 
   const query = graphql`
-    query NatsStatusQuery {
-      controller: getNatsStatus{
+    query NatsStatusQuery($k8scontextID: String!) {
+      controller: getNatsStatus(k8scontextID: $k8scontextID){
             name
             version
             status
@@ -13,5 +13,5 @@ export default function NatsStatusQuery() {
     }
   `;
 
-  return fetchQuery(environment, query);
+  return fetchQuery(environment, query, vars);
 }
