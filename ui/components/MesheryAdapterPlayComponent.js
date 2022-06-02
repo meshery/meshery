@@ -176,7 +176,8 @@ class MesheryAdapterPlayComponent extends React.Component {
   componentDidMount() {
     const self = this;
     const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
-    const variables = { serviceMesh : meshname }
+    const variables = { type : meshname, k8sClusterIDs : this.getK8sClusterIds() }
+
     subscribeMeshSyncStatusEvents(res => {
       if (res.meshsync?.error) {
         self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
@@ -211,6 +212,11 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ namespaceList : namespaces })
       },
       error : (err) => console.log("error at namespace fetch: " + err), })
+  }
+
+
+  getK8sClusterIds = () => {
+    return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
   }
 
   mapAdapterNameToMeshName(name) {
@@ -1131,9 +1137,10 @@ MesheryAdapterPlayComponent.propTypes = { classes : PropTypes.object.isRequired,
 // };
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
+  const k8sconfig = state.get("k8sConfig");
   const selectedK8sContexts = st.get('selectedK8sContexts');
 
-  return { grafana : { ...grafana, ts : new Date(grafana.ts) }, selectedK8sContexts };
+  return { grafana : { ...grafana, ts : new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
 };
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),

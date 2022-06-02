@@ -167,7 +167,8 @@ class GrafanaComponent extends Component {
           self.props.updateProgress({ showProgress : false });
           if (!(typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="")) {
             let selector = {
-              serviceMesh : "ALL_MESH",
+              type : "ALL_MESH",
+              k8sClusterIDs : this.getK8sClusterIds()
             };
             fetchAvailableAddons(selector).subscribe({
               next : (res) => {
@@ -186,6 +187,10 @@ class GrafanaComponent extends Component {
         },
         self.handleError("There was an error communicating with grafana config")
       )
+  }
+
+  getK8sClusterIds = () => {
+    return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
   }
 
   handleChange = (name) => (event) => {
@@ -421,9 +426,13 @@ GrafanaComponent.propTypes = { classes : PropTypes.object.isRequired,
 
 const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch), });
+
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
-  return { grafana : { ...grafana, ts : new Date(grafana.ts) } };
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+  const k8sconfig = state.get("k8sConfig");
+
+  return { grafana : { ...grafana, ts : new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
 };
 
 export default withStyles(grafanaStyles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(GrafanaComponent)));

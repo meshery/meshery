@@ -13,3 +13,19 @@ export function ctxUrl(url, ctx) {
   }
   return url;
 }
+
+/**
+ * The function takes in all the context and returns
+ *  their respective cluster IDs associated to them
+ *
+ * @param {Array.<string>} selectedContexts
+ * @param {Array.<string>} k8sconfig
+ * @returns
+ */
+export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
+  if (selectedContexts.length === 0){
+    return []
+  }
+
+  return selectedContexts.map(c => k8sconfig.find(cfg => cfg.contextID === c)?.clusterID) || []
+}

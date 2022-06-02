@@ -41,6 +41,7 @@ import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import { versionMapper } from "../utils/nameMapper";
+import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
   chip : { marginRight : theme.spacing(1),
@@ -240,8 +241,13 @@ class DashboardComponent extends React.Component {
 
   }
 
+  getK8sClusterIds = () => {
+    return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+  }
+
   fetchMetricComponents = () => {
     const self = this;
+    let selector = { type : "ALL_MESH", k8sClusterIDs : this.getK8sClusterIds() };
 
     dataFetch(
       "/api/telemetry/metrics/config",
@@ -251,7 +257,6 @@ class DashboardComponent extends React.Component {
       (result) => {
         self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL != "") {
-          let selector = { serviceMesh : "ALL_MESH", };
           fetchAvailableAddons(selector).subscribe({ next : (res) => {
             res?.addonsState?.forEach((addon) => {
               if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
@@ -274,7 +279,6 @@ class DashboardComponent extends React.Component {
       (result) => {
         self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="") {
-          let selector = { serviceMesh : "ALL_MESH", };
           fetchAvailableAddons(selector).subscribe({ next : (res) => {
             res?.addonsState?.forEach((addon) => {
               if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
@@ -292,7 +296,6 @@ class DashboardComponent extends React.Component {
       self.handleError("There was an error communicating with grafana config")
     );
 
-    let selector = { serviceMesh : "ALL_MESH", };
 
     fetchAvailableAddons(selector).subscribe({ next : (res) => {
       res?.addonsState?.forEach((addon) => {
@@ -1002,18 +1005,22 @@ DashboardComponent.propTypes = { classes : PropTypes.object.isRequired, };
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
   updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
   updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch), });
+
 const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig");
   const meshAdapters = state.get("meshAdapters");
   const meshAdaptersts = state.get("meshAdaptersts");
   const grafana = state.get("grafana");
   const prometheus = state.get("prometheus");
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
   return {
     meshAdapters,
     meshAdaptersts,
     k8sconfig,
     grafana,
     prometheus,
+    selectedK8sContexts
   };
 };
 
