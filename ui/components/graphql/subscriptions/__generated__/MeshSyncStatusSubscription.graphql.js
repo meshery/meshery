@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<068116f3e3fc4f5a4d9daf7dfdf24001>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,10 +10,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type MeshSyncStatusSubscriptionVariables = {||};
-export type MeshSyncStatusSubscriptionResponse = {|
+import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
+export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type MeshSyncStatusSubscription$variables = {|
+  k8scontextID: string,
+|};
+export type MeshSyncStatusSubscription$data = {|
   +listenToMeshSyncEvents: {|
     +name: string,
     +status: Status,
@@ -19,34 +24,32 @@ export type MeshSyncStatusSubscriptionResponse = {|
       +code: string,
       +description: string,
     |},
-  |}
+  |},
 |};
 export type MeshSyncStatusSubscription = {|
-  variables: MeshSyncStatusSubscriptionVariables,
-  response: MeshSyncStatusSubscriptionResponse,
+  variables: MeshSyncStatusSubscription$variables,
+  response: MeshSyncStatusSubscription$data,
 |};
 */
 
-
-/*
-subscription MeshSyncStatusSubscription {
-  listenToMeshSyncEvents {
-    name
-    status
-    version
-    error {
-      code
-      description
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "k8scontextID"
+  }
+],
+v1 = [
+  {
     "alias": null,
-    "args": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "k8scontextID",
+        "variableName": "k8scontextID"
+      }
+    ],
     "concreteType": "OperatorControllerStatus",
     "kind": "LinkedField",
     "name": "listenToMeshSyncEvents",
@@ -104,32 +107,35 @@ var v0 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "MeshSyncStatusSubscription",
-    "selections": (v0/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Subscription",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "MeshSyncStatusSubscription",
-    "selections": (v0/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "9a3d3b03529103cf9d737147ed7c2d7a",
+    "cacheID": "f454c7301e9b17565da71991433c215c",
     "id": null,
     "metadata": {},
     "name": "MeshSyncStatusSubscription",
     "operationKind": "subscription",
-    "text": "subscription MeshSyncStatusSubscription {\n  listenToMeshSyncEvents {\n    name\n    status\n    version\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "text": "subscription MeshSyncStatusSubscription(\n  $k8scontextID: String!\n) {\n  listenToMeshSyncEvents(k8scontextID: $k8scontextID) {\n    name\n    status\n    version\n    error {\n      code\n      description\n    }\n  }\n}\n"
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'f9a9715d6c56d418d17154fba8bda254';
 
-module.exports = node;
+(node/*: any*/).hash = "b2826bba5296fa543072c0320de22d65";
+
+module.exports = ((node/*: any*/)/*: GraphQLSubscription<
+  MeshSyncStatusSubscription$variables,
+  MeshSyncStatusSubscription$data,
+>*/);

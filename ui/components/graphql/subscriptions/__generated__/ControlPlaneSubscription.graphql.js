@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<135ff69ebc8496cc98df2228726f8248>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,15 +10,16 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type MeshType = "ALL_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "INVALID_MESH" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORK_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "OCTARINE" | "OPEN_SERVICE_MESH" | "TANZU" | "TRAEFIK_MESH" | "%future added value";
+import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
+export type MeshType = "ALL_MESH" | "INVALID_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "TRAEFIK_MESH" | "OCTARINE" | "NETWORK_SERVICE_MESH" | "TANZU" | "OPEN_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "CILIUM_SERVICE_MESH" | "%future added value";
 export type ServiceMeshFilter = {|
-  type?: ?MeshType
+  type?: ?MeshType,
+  k8sClusterIDs?: ?$ReadOnlyArray<string>,
 |};
-export type ControlPlaneSubscriptionVariables = {|
-  filter?: ?ServiceMeshFilter
+export type ControlPlaneSubscription$variables = {|
+  filter?: ?ServiceMeshFilter,
 |};
-export type ControlPlaneSubscriptionResponse = {|
+export type ControlPlaneSubscription$data = {|
   +controlPlanesState: $ReadOnlyArray<{|
     +name: string,
     +members: $ReadOnlyArray<{|
@@ -24,32 +28,15 @@ export type ControlPlaneSubscriptionResponse = {|
       +component: string,
       +namespace: string,
     |}>,
-  |}>
+  |}>,
 |};
 export type ControlPlaneSubscription = {|
-  variables: ControlPlaneSubscriptionVariables,
-  response: ControlPlaneSubscriptionResponse,
+  variables: ControlPlaneSubscription$variables,
+  response: ControlPlaneSubscription$data,
 |};
 */
 
-
-/*
-subscription ControlPlaneSubscription(
-  $filter: ServiceMeshFilter
-) {
-  controlPlanesState: listenToControlPlaneState(filter: $filter) {
-    name
-    members {
-      name
-      version
-      component
-      namespace
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -144,7 +131,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '615008f1bb16f855507fa1c841187200';
 
-module.exports = node;
+(node/*: any*/).hash = "615008f1bb16f855507fa1c841187200";
+
+module.exports = ((node/*: any*/)/*: GraphQLSubscription<
+  ControlPlaneSubscription$variables,
+  ControlPlaneSubscription$data,
+>*/);

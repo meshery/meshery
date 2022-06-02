@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<3125aec988744bf8c77d206d23103f0d>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,33 +10,39 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type NamespaceQueryVariables = {||};
-export type NamespaceQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type NamespaceQuery$variables = {|
+  k8sClusterIDs?: ?$ReadOnlyArray<string>,
+|};
+export type NamespaceQuery$data = {|
   +namespaces: $ReadOnlyArray<{|
-    +namespace: string
-  |}>
+    +namespace: string,
+  |}>,
 |};
 export type NamespaceQuery = {|
-  variables: NamespaceQueryVariables,
-  response: NamespaceQueryResponse,
+  variables: NamespaceQuery$variables,
+  response: NamespaceQuery$data,
 |};
 */
 
-
-/*
-query NamespaceQuery {
-  namespaces: getAvailableNamespaces {
-    namespace
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "k8sClusterIDs"
+  }
+],
+v1 = [
+  {
     "alias": "namespaces",
-    "args": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "k8sClusterIDs",
+        "variableName": "k8sClusterIDs"
+      }
+    ],
     "concreteType": "NameSpace",
     "kind": "LinkedField",
     "name": "getAvailableNamespaces",
@@ -52,32 +61,35 @@ var v0 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "NamespaceQuery",
-    "selections": (v0/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "NamespaceQuery",
-    "selections": (v0/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "46c4030fb0b28da4b5ce74853e237155",
+    "cacheID": "0e85918419a43e5791cd5a51e7f6896e",
     "id": null,
     "metadata": {},
     "name": "NamespaceQuery",
     "operationKind": "query",
-    "text": "query NamespaceQuery {\n  namespaces: getAvailableNamespaces {\n    namespace\n  }\n}\n"
+    "text": "query NamespaceQuery(\n  $k8sClusterIDs: [String!]\n) {\n  namespaces: getAvailableNamespaces(k8sClusterIDs: $k8sClusterIDs) {\n    namespace\n  }\n}\n"
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '683a843465f9f33c9e162cdb23a14e05';
 
-module.exports = node;
+(node/*: any*/).hash = "04f74232907aa0ba765bd0f8db6c427c";
+
+module.exports = ((node/*: any*/)/*: Query<
+  NamespaceQuery$variables,
+  NamespaceQuery$data,
+>*/);

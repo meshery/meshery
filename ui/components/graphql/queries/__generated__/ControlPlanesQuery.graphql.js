@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<1b9a3ed5711eaa6029c44d22c1caef33>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,15 +10,16 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type MeshType = "ALL_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "INVALID_MESH" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORK_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "OCTARINE" | "OPEN_SERVICE_MESH" | "TANZU" | "TRAEFIK_MESH" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type MeshType = "ALL_MESH" | "INVALID_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "TRAEFIK_MESH" | "OCTARINE" | "NETWORK_SERVICE_MESH" | "TANZU" | "OPEN_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "CILIUM_SERVICE_MESH" | "%future added value";
 export type ServiceMeshFilter = {|
-  type?: ?MeshType
+  type?: ?MeshType,
+  k8sClusterIDs?: ?$ReadOnlyArray<string>,
 |};
-export type ControlPlanesQueryVariables = {|
-  filter?: ?ServiceMeshFilter
+export type ControlPlanesQuery$variables = {|
+  filter?: ?ServiceMeshFilter,
 |};
-export type ControlPlanesQueryResponse = {|
+export type ControlPlanesQuery$data = {|
   +controlPlanesState: $ReadOnlyArray<{|
     +name: string,
     +members: $ReadOnlyArray<{|
@@ -24,32 +28,15 @@ export type ControlPlanesQueryResponse = {|
       +component: string,
       +namespace: string,
     |}>,
-  |}>
+  |}>,
 |};
 export type ControlPlanesQuery = {|
-  variables: ControlPlanesQueryVariables,
-  response: ControlPlanesQueryResponse,
+  variables: ControlPlanesQuery$variables,
+  response: ControlPlanesQuery$data,
 |};
 */
 
-
-/*
-query ControlPlanesQuery(
-  $filter: ServiceMeshFilter
-) {
-  controlPlanesState: getControlPlanes(filter: $filter) {
-    name
-    members {
-      name
-      version
-      component
-      namespace
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -144,7 +131,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '82f1d5dbf1eec9d253f34bc6b6a7e6f4';
 
-module.exports = node;
+(node/*: any*/).hash = "82f1d5dbf1eec9d253f34bc6b6a7e6f4";
+
+module.exports = ((node/*: any*/)/*: Query<
+  ControlPlanesQuery$variables,
+  ControlPlanesQuery$data,
+>*/);

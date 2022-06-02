@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<f34592f1e9202c68f218d97eb62a2091>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,30 +10,38 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type DeployMeshSyncQueryVariables = {||};
-export type DeployMeshSyncQueryResponse = {|
-  +deployMeshsync: Status
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type DeployMeshSyncQuery$variables = {|
+  k8scontextID: string,
+|};
+export type DeployMeshSyncQuery$data = {|
+  +deployMeshsync: Status,
 |};
 export type DeployMeshSyncQuery = {|
-  variables: DeployMeshSyncQueryVariables,
-  response: DeployMeshSyncQueryResponse,
+  variables: DeployMeshSyncQuery$variables,
+  response: DeployMeshSyncQuery$data,
 |};
 */
 
-
-/*
-query DeployMeshSyncQuery {
-  deployMeshsync
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "k8scontextID"
+  }
+],
+v1 = [
+  {
     "alias": null,
-    "args": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "k8scontextID",
+        "variableName": "k8scontextID"
+      }
+    ],
     "kind": "ScalarField",
     "name": "deployMeshsync",
     "storageKey": null
@@ -38,32 +49,35 @@ var v0 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "DeployMeshSyncQuery",
-    "selections": (v0/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DeployMeshSyncQuery",
-    "selections": (v0/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "4ccc7a359f435f939905d3db4fef6e62",
+    "cacheID": "0fabd55f7b3f104df0c380e8296c421b",
     "id": null,
     "metadata": {},
     "name": "DeployMeshSyncQuery",
     "operationKind": "query",
-    "text": "query DeployMeshSyncQuery {\n  deployMeshsync\n}\n"
+    "text": "query DeployMeshSyncQuery(\n  $k8scontextID: String!\n) {\n  deployMeshsync(k8scontextID: $k8scontextID)\n}\n"
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '0f9c347cda862c0d3aa97933d85e5814';
 
-module.exports = node;
+(node/*: any*/).hash = "ade80c586a9696106576404cbf968aaf";
+
+module.exports = ((node/*: any*/)/*: Query<
+  DeployMeshSyncQuery$variables,
+  DeployMeshSyncQuery$data,
+>*/);

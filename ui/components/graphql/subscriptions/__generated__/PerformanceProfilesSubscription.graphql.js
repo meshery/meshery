@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<1f75887f31fc42bd7e0be7b0b02eb63f>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
 export type PageFilter = {|
   page: string,
   pageSize: string,
@@ -16,10 +19,10 @@ export type PageFilter = {|
   from?: ?string,
   to?: ?string,
 |};
-export type PerformanceProfilesSubscriptionVariables = {|
-  selector: PageFilter
+export type PerformanceProfilesSubscription$variables = {|
+  selector: PageFilter,
 |};
-export type PerformanceProfilesSubscriptionResponse = {|
+export type PerformanceProfilesSubscription$data = {|
   +subscribePerfProfiles: {|
     +page: number,
     +page_size: number,
@@ -43,47 +46,15 @@ export type PerformanceProfilesSubscriptionResponse = {|
       +content_type: ?string,
       +service_mesh: ?string,
     |}>,
-  |}
+  |},
 |};
 export type PerformanceProfilesSubscription = {|
-  variables: PerformanceProfilesSubscriptionVariables,
-  response: PerformanceProfilesSubscriptionResponse,
+  variables: PerformanceProfilesSubscription$variables,
+  response: PerformanceProfilesSubscription$data,
 |};
 */
 
-
-/*
-subscription PerformanceProfilesSubscription(
-  $selector: PageFilter!
-) {
-  subscribePerfProfiles(selector: $selector) {
-    page
-    page_size
-    total_count
-    profiles {
-      concurrent_request
-      created_at
-      duration
-      endpoints
-      id
-      last_run
-      load_generators
-      name
-      qps
-      total_results
-      updated_at
-      user_id
-      request_body
-      request_cookies
-      request_headers
-      content_type
-      service_mesh
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -288,7 +259,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '2efb94fd4676d37f9cc54c1c45a8bcdb';
 
-module.exports = node;
+(node/*: any*/).hash = "2efb94fd4676d37f9cc54c1c45a8bcdb";
+
+module.exports = ((node/*: any*/)/*: GraphQLSubscription<
+  PerformanceProfilesSubscription$variables,
+  PerformanceProfilesSubscription$data,
+>*/);
