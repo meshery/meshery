@@ -159,6 +159,7 @@ async function changeContext(id) {
   return await promisifiedDataFetch("/api/system/kubernetes/contexts/current/" + id, { method : "POST" })
 }
 
+// TODO:: THIS COMPONENT NEEDS MAJOR REFRACTORS WITH A NEW DESIGN
 class MeshConfigComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -199,29 +200,9 @@ class MeshConfigComponent extends React.Component {
     this.ref = React.createRef();
   }
 
-  static getDerivedStateFromProps(props, state) {
-    const {
-      inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer
-    } = props;
-    if (props.ts > state.ts) {
-      let newState = {
-        inClusterConfig,
-        k8sfile,
-        k8sfileElementVal : "",
-        contextName,
-        clusterConfigured,
-        configuredServer,
-        ts : props.ts,
-      };
-
-      // If contextsFromFile is empty then add the default value to it
-      if (!state.contextsFromFile?.length)
-        newState = { ...newState, contextsFromFile : [{ contextName, currentContext : true }] };
-      return newState;
-    }
-    return {};
+  getSelectedContextId = () => {
+    return this.props.selectedK8sContexts[0] || "all"
   }
-
 
   componentDidMount() {
     const self = this;
@@ -234,11 +215,11 @@ class MeshConfigComponent extends React.Component {
     });
 
     fetchAllContexts(25)
-      .then(res => this.setState({ contexts : res.contexts }))
-      .catch(this.handleError("failed to fetch contexts for the instance"))
+      .then(res => self.setState({ contexts : res.contexts }))
+      .catch(self.handleError("failed to fetch contexts for the instance"))
 
     let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState);
-    fetchMesheryOperatorStatus().subscribe({
+    fetchMesheryOperatorStatus({ k8scontextID : this.getSelectedContextId() }).subscribe({ // TODO: How to Manage operator status for Multiple contexts @ashish
       next : (res) => {
         self.setOperatorState(res);
       },
@@ -413,7 +394,7 @@ class MeshConfigComponent extends React.Component {
   handleOperatorClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
-    fetchMesheryOperatorStatus().subscribe({ next : (res) => {
+    fetchMesheryOperatorStatus({ k8scontextID : this.getSelectedContextId() }).subscribe({ next : (res) => {
       console.log(res);
       let state = self.setOperatorState(res);
       self.props.updateProgress({ showProgress : false });
@@ -436,7 +417,7 @@ handleNATSClick = () => {
   this.props.updateProgress({ showProgress : true });
   const self = this;
 
-  NatsStatusQuery().subscribe({
+  NatsStatusQuery({ k8scontextID : this.getSelectedContextId() }).subscribe({
     next : (res) => {
       self.props.updateProgress({ showProgress : false });
       if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
@@ -497,7 +478,7 @@ handleNATSClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
 
-    MeshsyncStatusQuery().subscribe({ next : (res) => {
+    MeshsyncStatusQuery({ k8scontextID : this.getSelectedContextId() }).subscribe({ next : (res) => {
       self.props.updateProgress({ showProgress : false });
       if (res.controller.name === "meshsync" && res.controller.status.includes("ENABLED")) {
         self.setState({
@@ -554,6 +535,7 @@ handleNATSClick = () => {
         clearDB : "true",
         ReSync : "false"
       },
+      k8scontextID : this.getSelectedContextId()
     }).subscribe({
       next : (res) => {
         self.props.updateProgress({ showProgress : false });
@@ -1045,9 +1027,9 @@ MeshConfigComponent.propTypes = { classes : PropTypes.object.isRequired, };
 const mapDispatchToProps = (dispatch) => ({ updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch), });
 const mapStateToProps = (state) => {
-  console.log({ state, get : state.get("k8sConfig"), });
   const k8sconfig = state.get("k8sConfig");
-  return k8sconfig;
+  const selectedK8sContexts = state.get('selectedK8sContexts')
+  return { k8sconfig, selectedK8sContexts };
 };
 
 // @ts-ignore

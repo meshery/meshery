@@ -192,7 +192,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setAddonsState(res)
       },
       error : (err) => console.log("error at addon fetch: " + err), })
-    fetchAvailableNamespaces()
+    fetchAvailableNamespaces({ k8sClusterIDs : self.getK8sClusterIds() })
       .subscribe({ next : res => {
         let namespaces = []
         res?.namespaces?.map(ns => {
@@ -217,6 +217,10 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+  }
+
+  getSelectedContextId = () => {
+    return this.props.selectedK8sContexts[0] || "all"
   }
 
   mapAdapterNameToMeshName(name) {

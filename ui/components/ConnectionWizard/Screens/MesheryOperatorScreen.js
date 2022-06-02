@@ -8,9 +8,9 @@ import MesheryOperatorDataPanel from "../DataPanels/MesheryOperator"
 import { useEffect, useState } from "react"
 import { getOperatorStatusFromQueryResult, isMesheryOperatorConnected } from "../helpers/mesheryOperator.js";
 
-
+// Connection Wizard
+// TODO: bind to contextID prop, leaving due to no use in current UI
 const MesheryOperatorScreen = ({ setStepStatus }) => {
-
   const [operatorInformation,setOperatorInformation] = useState({
     operatorInstalled : false,
     NATSInstalled : false,

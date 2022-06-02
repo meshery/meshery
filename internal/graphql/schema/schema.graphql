@@ -367,7 +367,7 @@ type Query {
   ): OperatorControllerStatus!
 
   # Check the Meshsync Status and deploy if not enabled
-  deployMeshsync(
+  deployMeshsync( # what to do in-order to deploy meshsync on multiple clusters/contexts
         k8scontextID: String!
   ): Status!
 
