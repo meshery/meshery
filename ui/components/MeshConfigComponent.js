@@ -213,13 +213,15 @@ class MeshConfigComponent extends React.Component {
         self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
         return;
       }
-    });
+    },
+    this.getSelectedContextId()
+    );
 
     fetchAllContexts(25)
       .then(res => self.setState({ contexts : res.contexts }))
       .catch(self.handleError("failed to fetch contexts for the instance"))
 
-    let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState);
+    let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState, this.getSelectedContextId());
     fetchMesheryOperatorStatus({ k8scontextID : this.getSelectedContextId() }).subscribe({ // TODO: How to Manage operator status for Multiple contexts @ashish
       next : (res) => {
         self.setOperatorState(res);

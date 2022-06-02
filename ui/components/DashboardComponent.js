@@ -41,7 +41,7 @@ import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import { versionMapper } from "../utils/nameMapper";
-import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
+import { getFirstCtxIdFromSelectedCtxIds, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
   chip : { marginRight : theme.spacing(1),
@@ -166,7 +166,7 @@ class DashboardComponent extends React.Component {
     const ALL_MESH = { type : "ALL_MESH", k8sClusterIDs : self.getK8sClusterIds() };
 
     if (self._isMounted){
-      const opSub = subscribeOperatorStatusEvents(self.setOperatorState);
+      const opSub = subscribeOperatorStatusEvents(self.setOperatorState, this.getK8sContextId());
       // subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH, this.state, e => this.setState({ ...e }));
       const cpSub = subscribeControlPlaneEvents((res) => {
         if (res?.controlPlanesState !== undefined){
@@ -243,6 +243,10 @@ class DashboardComponent extends React.Component {
 
   getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+  }
+
+  getK8sContextId = () => {
+    return getFirstCtxIdFromSelectedCtxIds(this.props.selectedK8sContexts, this.props.k8sconfig)
   }
 
   fetchMetricComponents = () => {

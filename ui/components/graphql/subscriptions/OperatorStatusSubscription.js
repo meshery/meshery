@@ -19,10 +19,10 @@ const operatorStatusSubscription = graphql`
   }
 `;
 
-export default function subscribeOperatorStatusEvents(dataCB) {
+export default function subscribeOperatorStatusEvents(dataCB, contextId) {
   return  requestSubscription(environment, {
     subscription : operatorStatusSubscription,
-    variables : {},
+    variables : { k8scontextID : contextId },
     onNext : dataCB,
     onError : (error) => console.log(`An error occured:`, error),
   });
