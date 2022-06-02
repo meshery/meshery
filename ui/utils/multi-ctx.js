@@ -33,3 +33,15 @@ export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
 
   return selectedContexts.map(c => k8sconfig.find(cfg => cfg.contextID === c)?.clusterID) || []
 }
+
+export function getFirstCtxIdFromSelectedCtxIds(selectedK8sContexts, k8sConfig) {
+  if (!selectedK8sContexts.length){
+    return ""
+  }
+
+  if (selectedK8sContexts.includes("all")) {
+    return k8sConfig[0]?.contextID
+  }
+
+  return selectedK8sContexts[0];
+}

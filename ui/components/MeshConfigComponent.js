@@ -42,6 +42,7 @@ import NatsStatusQuery from "./graphql/queries/NatsStatusQuery";
 import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
 import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
 import PromptComponent from "./PromptComponent";
+import { getFirstCtxIdFromSelectedCtxIds } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   clusterConfiguratorWrapper : { padding : theme.spacing(5), },
@@ -201,7 +202,7 @@ class MeshConfigComponent extends React.Component {
   }
 
   getSelectedContextId = () => {
-    return this.props.selectedK8sContexts[0] || "all"
+    return getFirstCtxIdFromSelectedCtxIds(this.props.selectedK8sContexts, this.props.k8sconfig)
   }
 
   componentDidMount() {
@@ -289,9 +290,17 @@ class MeshConfigComponent extends React.Component {
 
   handleOperatorSwitch = () => {
     const self = this;
-    const variables = { status : `${!self.state.operatorSwitch
-      ? "ENABLED"
-      : "DISABLED"}`, };
+
+    if (!self.props.selectedK8sContexts.length) {
+      self.handleError("Please select a context from the navigation bar")("No context Selected");
+      return;
+    }
+
+    const variables = {
+      status : `${!self.state.operatorSwitch ? "ENABLED" : "DISABLED"}`,
+      contextID : this.getSelectedContextId()
+    };
+
     self.props.updateProgress({ showProgress : true });
 
     changeOperatorState((response, errors) => {
@@ -603,7 +612,7 @@ handleNATSClick = () => {
               });
 
               if (response === "yes") {
-                const variables = { status : "DISABLED", };
+                const variables = { status : "DISABLED",contextID : this.getSelectedContextId() };
                 self.props.updateProgress({ showProgress : true });
 
                 changeOperatorState((response, errors) => {
