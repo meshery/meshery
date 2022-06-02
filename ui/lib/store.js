@@ -11,7 +11,7 @@ const initialState = fromJS({
   },
   user : {},
   k8sConfig : [], // k8sconfig stores kubernetes cluster configs
-  selectedK8sContexts : [], // The selected k8s context on which the operations should be performed
+  selectedK8sContexts : ["all"], // The selected k8s context on which the operations should be performed
   loadTest : {
     testName : '',
     meshName : '',
