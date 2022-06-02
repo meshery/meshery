@@ -45,7 +45,7 @@ import LoadTestTimerDialog from "../load-test-timer-dialog";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import { durationOptions } from "../../lib/prePopulatedOptions";
 import fetchControlPlanes from "../graphql/queries/ControlPlanesQuery";
-import { ctxUrl } from "../../utils/multi-ctx";
+import { ctxUrl, getK8sClusterIdsFromCtxId } from "../../utils/multi-ctx";
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -564,6 +564,11 @@ class MesheryPerformanceComponent extends React.Component {
     );
   };
 
+
+  getK8sClusterIds = () => {
+    return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+  }
+
   scanForMeshes = () => {
     const self = this;
 
@@ -575,7 +580,7 @@ class MesheryPerformanceComponent extends React.Component {
      * component of all of the service meshes supported by meshsync v2
      */
 
-    const ALL_MESH = {};
+    const ALL_MESH = { type : "ALL_MESH", k8sClusterIDs : this.getK8sClusterIds() };
 
     fetchControlPlanes(ALL_MESH).subscribe({
       next : (res) => {

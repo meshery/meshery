@@ -52,7 +52,7 @@ import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import MesheryMetrics from "./MesheryMetrics"
-import { ctxUrl } from "../utils/multi-ctx";
+import { ctxUrl, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },

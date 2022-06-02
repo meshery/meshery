@@ -161,9 +161,9 @@ class DashboardComponent extends React.Component {
      * ALL_MESH indicates that we are interested in control plane
      * component of all of the service meshes supported by meshsync v2
      */
-    const ALL_MESH = {};
 
     const self = this;
+    const ALL_MESH = { type : "ALL_MESH", k8sClusterIDs : self.getK8sClusterIds() };
 
     if (self._isMounted){
       const opSub = subscribeOperatorStatusEvents(self.setOperatorState);

@@ -14,6 +14,7 @@ import GrafanaDisplaySelection from "./GrafanaDisplaySelection";
 import { updateGrafanaConfig, updateProgress } from "../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
+import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 
 const grafanaStyles = (theme) => ({
   buttons : { display : "flex",
