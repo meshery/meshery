@@ -384,7 +384,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               <i>Test results:</i>
               <table border="0">
               {% for test in item.tests %}
-                  <tr><td><img style="height:24px; width: 24px" src={{result-state}}></td><td>{{test[0] }}</td></tr>
+                  <tr><td><img style="height:24px; width: 24px" src="{{result-state}}"></td><td>{{test[0] }}</td></tr>
               {% endfor %}
               </table>
             </td>
@@ -431,7 +431,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               <i>Test results:</i>
               <table border="0">
               {% for test in item.tests %}
-                  <tr><td><img style="height:24px; width: 24px" src={{result-state}}></td><td>{{test[0] }}</td></tr>
+                  <tr><td><img style="height:24px; width: 24px" src="{{result-state}}"></td><td>{{test[0] }}</td></tr>
               {% endfor %}
               </table>
             </td>
