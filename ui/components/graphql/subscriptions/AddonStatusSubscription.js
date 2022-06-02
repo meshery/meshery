@@ -13,7 +13,7 @@ const addonStatusSubscription = graphql`
 export default function subscribeAddonStatusEvents(dataCB, variables) { // todo: changes in variable
   requestSubscription(environment, {
     subscription : addonStatusSubscription,
-    variables : { selector : variables.serviceMesh },
+    variables : { filter : variables },
     onNext : dataCB,
     onError : (error) => console.log(`An error occured:`, error),
   });

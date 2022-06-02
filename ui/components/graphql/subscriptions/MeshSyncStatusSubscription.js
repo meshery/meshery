@@ -15,10 +15,10 @@ subscription MeshSyncStatusSubscription($k8scontextID: String!) {
 }
 `;
 
-export default function subscribeMeshSyncStatusEvents(dataCB) {
+export default function subscribeMeshSyncStatusEvents(dataCB, contextId) {
   return requestSubscription(environment, {
     subscription : meshSyncStatusSubscription,
-    variables : {},
+    variables : { k8scontextID : contextId },
     onNext : dataCB,
     onError : (error) => console.log(`An error occured:`, error),
   });

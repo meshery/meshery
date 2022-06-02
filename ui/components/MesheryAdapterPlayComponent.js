@@ -52,7 +52,7 @@ import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import MesheryMetrics from "./MesheryMetrics"
-import { ctxUrl, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
+import { ctxUrl, getFirstCtxIdFromSelectedCtxIds, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },
@@ -183,7 +183,9 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
         return
       }
-    })
+    },
+    this.getSelectedContextId()
+    )
     subscribeOperatorStatusEvents(self.setOperatorState)
     subscribeAddonStatusEvents(self.setAddonsState, variables)
 
@@ -220,7 +222,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 
   getSelectedContextId = () => {
-    return this.props.selectedK8sContexts[0] || "all"
+    return getFirstCtxIdFromSelectedCtxIds(this.props.selectedK8sContexts, this.props.k8sconfig)
   }
 
   mapAdapterNameToMeshName(name) {

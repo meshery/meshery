@@ -213,7 +213,9 @@ class MeshConfigComponent extends React.Component {
         self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
         return;
       }
-    });
+    },
+    this.getSelectedContextId()
+    );
 
     fetchAllContexts(25)
       .then(res => self.setState({ contexts : res.contexts }))
