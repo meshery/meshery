@@ -292,11 +292,12 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 			}
 		}
 	}
-	operatorSyncChannel := make(chan broadcast.BroadcastMessage)
-	r.Broadcast.Register(operatorSyncChannel)
+
 	for _, k8scontext := range k8sContexts {
 		go func(k8scontext models.K8sContext) {
-			r.Log.Info("Operator subscription started")
+			operatorSyncChannel := make(chan broadcast.BroadcastMessage)
+			r.Broadcast.Register(operatorSyncChannel)
+			r.Log.Info("Operator subscription started for ", k8scontext.Name)
 			err := r.connectToBroker(ctx, provider, k8scontext.ID)
 			if err != nil && err != ErrNoMeshSync {
 				r.Log.Error(err)
@@ -320,11 +321,11 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 			for {
 				select {
 				case processing := <-operatorSyncChannel:
-					r.Log.Info("Operator sync channel called")
+					r.Log.Info("Operator sync channel called for ", k8scontext.Name)
 					status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
 					if err != nil {
 						r.Log.Error(ErrOperatorSubscription(err))
-						r.Log.Info("Operator subscription flushed")
+						r.Log.Info("Operator subscription flushed for ", k8scontext.Name)
 						close(operatorChannel)
 						// return
 						continue
@@ -354,7 +355,7 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 					}
 					operatorChannel <- &statusWithContext
 				case <-ctx.Done():
-					r.Log.Info("Operator subscription flushed")
+					r.Log.Info("Operator subscription flushed for ", k8scontext.Name)
 					close(operatorChannel)
 					r.Broadcast.Unregister(operatorSyncChannel)
 					close(operatorSyncChannel)
