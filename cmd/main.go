@@ -155,7 +155,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	meshsyncCh := make(chan struct{})
+	meshsyncCh := make(chan struct{}, 10)
 	brokerConn := nats.NewEmptyConnection
 
 	err = dbHandler.AutoMigrate(
