@@ -41,7 +41,7 @@ import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import { versionMapper } from "../utils/nameMapper";
-import { getFirstCtxIdFromSelectedCtxIds, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
+import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
   chip : { marginRight : theme.spacing(1),
@@ -145,6 +145,7 @@ class DashboardComponent extends React.Component {
   }
 
   disposeSubscriptions = () => {
+    console.debug("disposing subscriptions, state", this.state);
     if (this.state.operatorStatusSubscription) {
       this.state.operatorStatusSubscription.dispose()
     }
@@ -165,20 +166,23 @@ class DashboardComponent extends React.Component {
     const self = this;
     const ALL_MESH = { type : "ALL_MESH", k8sClusterIDs : self.getK8sClusterIds() };
 
-    if (self._isMounted){
-      const opSub = subscribeOperatorStatusEvents(self.setOperatorState, this.getK8sContextId());
+    if (self._isMounted) {
+      const opSub = subscribeOperatorStatusEvents(self.setOperatorState, this.props.selectedK8sContexts);
       // subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH, this.state, e => this.setState({ ...e }));
       const cpSub = subscribeControlPlaneEvents((res) => {
         if (res?.controlPlanesState !== undefined){
           this.setState({ controlPlaneState : res })
         }
       }, ALL_MESH)
+
       const dpSub = subscribeDataPlaneEvents((res) => {
         if (res?.dataPlanesState !== undefined){
           this.setState({ dataPlaneState : res })
         }
       }, ALL_MESH)
+
       this.disposeSubscriptions()
+
       this.setState({ operatorStatusSubscription : opSub, dataPlaneSubscription : dpSub, controlPlaneSubscription : cpSub })
       fetchControlPlanes(ALL_MESH).subscribe({
         next : (controlPlaneRes) => {
@@ -195,7 +199,6 @@ class DashboardComponent extends React.Component {
         error : (err) => console.error(err),
       });
     }
-
   }
 
   componentWillUnmount = () => {
@@ -239,14 +242,16 @@ class DashboardComponent extends React.Component {
       )
     }
 
+    // handle subscriptions update on switching K8s Contexts
+    if (prevProps.selectedK8sContexts !== this.props.selectedK8sContexts
+      || prevProps.k8sconfig !== this.props.k8sconfig){
+      this.disposeSubscriptions()
+      this.initMeshSyncControlPlaneSubscription()
+    }
   }
 
   getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
-  }
-
-  getK8sContextId = () => {
-    return getFirstCtxIdFromSelectedCtxIds(this.props.selectedK8sContexts, this.props.k8sconfig)
   }
 
   fetchMetricComponents = () => {
@@ -339,6 +344,7 @@ class DashboardComponent extends React.Component {
   };
 
   setOperatorState = (res) => {
+    console.debug("[requires change] response from subscription: " + JSON.stringify(res));
     const self = this;
     if (res.operator?.error) {
       self.handleError("Operator could not be reached")(res.operator?.error?.description);
