@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<068116f3e3fc4f5a4d9daf7dfdf24001>>
+ * @generated SignedSource<<0d298ea50d3a9a725b1cd2e0d0ef5854>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -13,16 +13,19 @@
 import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
 export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
 export type MeshSyncStatusSubscription$variables = {|
-  k8scontextID: string,
+  k8scontextIDs?: ?$ReadOnlyArray<string>,
 |};
 export type MeshSyncStatusSubscription$data = {|
-  +listenToMeshSyncEvents: {|
-    +name: string,
-    +status: Status,
-    +version: string,
-    +error: ?{|
-      +code: string,
-      +description: string,
+  +listenToMeshSyncEvents: ?{|
+    +contextID: string,
+    +OperatorControllerStatus: {|
+      +name: string,
+      +status: Status,
+      +version: string,
+      +error: ?{|
+        +code: string,
+        +description: string,
+      |},
     |},
   |},
 |};
@@ -37,7 +40,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "k8scontextID"
+    "name": "k8scontextIDs"
   }
 ],
 v1 = [
@@ -46,11 +49,11 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "k8scontextID",
-        "variableName": "k8scontextID"
+        "name": "k8scontextIDs",
+        "variableName": "k8scontextIDs"
       }
     ],
-    "concreteType": "OperatorControllerStatus",
+    "concreteType": "OperatorControllerStatusPerK8sContext",
     "kind": "LinkedField",
     "name": "listenToMeshSyncEvents",
     "plural": false,
@@ -59,43 +62,61 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "name",
+        "name": "contextID",
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "status",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "version",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "Error",
+        "concreteType": "OperatorControllerStatus",
         "kind": "LinkedField",
-        "name": "error",
+        "name": "OperatorControllerStatus",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "code",
+            "name": "name",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "description",
+            "name": "status",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "version",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Error",
+            "kind": "LinkedField",
+            "name": "error",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "code",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "description",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
@@ -123,17 +144,17 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "f454c7301e9b17565da71991433c215c",
+    "cacheID": "cbe09d18ad6045c56617e15888916d4a",
     "id": null,
     "metadata": {},
     "name": "MeshSyncStatusSubscription",
     "operationKind": "subscription",
-    "text": "subscription MeshSyncStatusSubscription(\n  $k8scontextID: String!\n) {\n  listenToMeshSyncEvents(k8scontextID: $k8scontextID) {\n    name\n    status\n    version\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "text": "subscription MeshSyncStatusSubscription(\n  $k8scontextIDs: [String!]\n) {\n  listenToMeshSyncEvents(k8scontextIDs: $k8scontextIDs) {\n    contextID\n    OperatorControllerStatus {\n      name\n      status\n      version\n      error {\n        code\n        description\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "b2826bba5296fa543072c0320de22d65";
+(node/*: any*/).hash = "ad82236368e06dbae0e9f6008f6dc032";
 
 module.exports = ((node/*: any*/)/*: GraphQLSubscription<
   MeshSyncStatusSubscription$variables,

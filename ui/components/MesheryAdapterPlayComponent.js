@@ -45,14 +45,14 @@ import dataFetch from "../lib/data-fetch";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import MesheryResultDialog from "./MesheryResultDialog";
-import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubscription';
-import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
+// import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubscription';
+// import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import MesheryMetrics from "./MesheryMetrics"
-import { ctxUrl, getFirstCtxIdFromSelectedCtxIds, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
+import { ctxUrl, getFirstCtxIdFromSelectedCtxIds, getK8sClusterIdsFromCtxId, getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },
@@ -170,7 +170,41 @@ class MesheryAdapterPlayComponent extends React.Component {
       sortOrder : "",
       pageSize : 10,
       namespaceList : [],
+      meshsyncStatusEvent : null,
+      operatorStatusEvent : null,
+      addonStatusEvent : null,
     };
+  }
+
+  initSubscription = () => {
+    const self = this;
+
+    const meshsyncStatusEvent = subscribeMeshSyncStatusEvents(res => {
+      if (res.meshsync?.error) {
+        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
+        return
+      }
+    },
+    getK8sConfigIdsFromK8sConfig(this.props.k8sconfig)
+    )
+    // @AShish do we need this subscription here?
+    // const operatorStatusEvent = subscribeOperatorStatusEvents(self.setOperatorState, this.getSelectedContextId())
+    // const addonStatusEvent = subscribeAddonStatusEvents(self.setAddonsState, variables)
+
+    this.setState({ meshsyncStatusEvent,/* operatorStatusEvent, addonStatusEvent*/ });
+  }
+
+  disposeSubscritions = () => {
+    const { meshsyncStatusEvent, operatorStatusEvent, addonStatusEvent } = this.state;
+    if (meshsyncStatusEvent) {
+      meshsyncStatusEvent.dispose()
+    }
+    if (operatorStatusEvent) {
+      operatorStatusEvent.dispose()
+    }
+    if (addonStatusEvent) {
+      addonStatusEvent.dispose()
+    }
   }
 
   componentDidMount() {
@@ -178,16 +212,17 @@ class MesheryAdapterPlayComponent extends React.Component {
     const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
     const variables = { type : meshname, k8sClusterIDs : this.getK8sClusterIds() }
 
-    subscribeMeshSyncStatusEvents(res => {
-      if (res.meshsync?.error) {
-        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
-        return
-      }
-    },
-    this.getSelectedContextId()
-    )
-    subscribeOperatorStatusEvents(self.setOperatorState, this.getSelectedContextId())
-    subscribeAddonStatusEvents(self.setAddonsState, variables)
+    this.initSubscription();
+    // subscribeMeshSyncStatusEvents(res => {
+    //   if (res.meshsync?.error) {
+    //     self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
+    //     return
+    //   }
+    // },
+    // this.props.k8sconfig
+    // )
+    // subscribeOperatorStatusEvents(self.setOperatorState, this.getSelectedContextId())
+    // subscribeAddonStatusEvents(self.setAddonsState, variables)
 
     fetchAvailableAddons(variables)
       .subscribe({ next : res => {
@@ -214,6 +249,14 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ namespaceList : namespaces })
       },
       error : (err) => console.log("error at namespace fetch: " + err), })
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.k8sconfig !== this.props.k8sconfig) {
+      console.debug("k8sconfig changedin meshAdapterPlayComponent")
+      this.disposeSubscription();
+      this.initSubscription();
+    }
   }
 
 

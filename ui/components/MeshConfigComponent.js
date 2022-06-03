@@ -42,7 +42,7 @@ import NatsStatusQuery from "./graphql/queries/NatsStatusQuery";
 import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
 import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
 import PromptComponent from "./PromptComponent";
-import { getFirstCtxIdFromSelectedCtxIds } from "../utils/multi-ctx";
+import { getFirstCtxIdFromSelectedCtxIds, getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   clusterConfiguratorWrapper : { padding : theme.spacing(5), },
@@ -205,7 +205,7 @@ class MeshConfigComponent extends React.Component {
     return getFirstCtxIdFromSelectedCtxIds(this.props.selectedK8sContexts, this.props.k8sconfig)
   }
 
-  componentDidMount() {
+  initSubscription = () => {
     const self = this;
     // Subscribe to the operator events
     let meshSyncStatusEventsSubscription = subscribeMeshSyncStatusEvents((res) => {
@@ -214,14 +214,14 @@ class MeshConfigComponent extends React.Component {
         return;
       }
     },
-    this.getSelectedContextId()
+    getK8sConfigIdsFromK8sConfig(this.props.k8sconfig)
     );
 
     fetchAllContexts(25)
       .then(res => self.setState({ contexts : res.contexts }))
       .catch(self.handleError("failed to fetch contexts for the instance"))
 
-    let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState, this.getSelectedContextId());
+    let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState, getK8sConfigIdsFromK8sConfig(this.props.k8sconfig));
     fetchMesheryOperatorStatus({ k8scontextID : this.getSelectedContextId() }).subscribe({ // TODO: How to Manage operator status for Multiple contexts @ashish
       next : (res) => {
         self.setOperatorState(res);
@@ -232,10 +232,26 @@ class MeshConfigComponent extends React.Component {
     self.setState({ meshSyncStatusEventsSubscription, operatorStatusEventsSubscription })
   }
 
-
-  componentWillUnmount () {
+  disposeSubscription = () => {
+    console.debug("disposing subscriptions", this.state)
     this.state.meshSyncStatusEventsSubscription.dispose()
     this.state.operatorStatusEventsSubscription.dispose()
+  }
+
+  componentDidMount() {
+    this.initSubscription();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.k8sconfig !== this.props.k8sconfig) {
+      console.debug("k8sconfig changed")
+      this.disposeSubscription();
+      this.initSubscription();
+    }
+  }
+
+  componentWillUnmount () {
+    this.disposeSubscription();
   }
 
   setOperatorState = (res) => {

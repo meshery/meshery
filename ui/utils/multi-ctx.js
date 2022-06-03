@@ -51,3 +51,16 @@ export function getFirstCtxIdFromSelectedCtxIds(selectedK8sContexts, k8sConfig) 
 
   return selectedK8sContexts[0];
 }
+
+/**
+ * Get the k8sConfigIds of K8sconfig
+ * @param {Array.<Object>} k8sConfig
+ * @returns
+ */
+export function getK8sConfigIdsFromK8sConfig(k8sConfig) {
+  if (!k8sConfig || !k8sConfig.length){
+    return []
+  }
+
+  return k8sConfig.map(cfg => cfg.contextID)
+}
