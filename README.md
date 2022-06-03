@@ -1,5 +1,8 @@
-<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><img align="center" style="margin-bottom:20px;" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-tag-light-text-side.png"  width="70%" /></a><br /><br /></p>
-  
+<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><picture align="center">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/meshery/full-logo/meshery-logo-tag-light-white-text-side.png"  width="70%" align="center" style="margin-bottom:20px;">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-tag-light-text-side.png" width="70%" align="center" style="margin-bottom:20px;">
+  <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-tag-light-text-side.png" width="70%" align="center" style="margin-bottom:20px;">
+</picture></a><br /><br /></p>
 <p align="center">
 <a href="https://hub.docker.com/r/layer5/meshery" alt="Docker pulls">
   <img src="https://img.shields.io/docker/pulls/layer5/meshery.svg" /></a>
@@ -29,7 +32,8 @@
 MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 </p>
 <p align="center">
-<img src="docs/assets/img/readme/cncf-horizontal-color.svg" width="30%" align="center" />
+<img src="docs/assets/img/readme/cncf-white.svg#gh-dark-mode-only" width="30%" align="center" />
+<img src="docs/assets/img/readme/cncf-black.svg#gh-light-mode-only" width="30%" align="center" />
 </p>
 
 <h2><a name="running"></a>Get Started with Meshery</h2>
@@ -210,8 +214,12 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 </p>
 
 <h3>Adhering to Service Mesh Standards</h3>
-<img alt="Service Mesh Performance (SMP)" src="https://docs.meshery.io/assets/img/readme/smp-dark-text.svg" style="margin-left:10px;" width="18%" align="left" />
 
+<picture align="left">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg"  width="18%" align="left" style="margin-left:10px;">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-dark-text.svg" width="18%" align="left" style="margin-left:10px;">
+  <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg" width="18%" align="left" style="margin-left:10px;">
+</picture>
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through the standardization of APIs.
 
 <p style="clear:both;">
@@ -279,7 +287,13 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 
 </p>
 
-<a href="https://meshery.io/community"><img alt="Layer5 Service Mesh Community" src="https://docs.meshery.io/assets/img/readme/slack-128.png" style="margin-left:10px;padding-top:5px;" width="110px" align="right" /></a>
+<a href="https://meshery.io/community">
+<picture align="right">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/slack-dark-128.png"  width="110px" align="right" style="margin-left:10px;margin-top:10px;">
+  <source media="(prefers-color-scheme: light)" srcset=https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/slack-128.png" width="110px" align="right" style="margin-left:10px;padding-top:5px;">
+  <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/slack-128.png" width="110px" align="right" style="margin-left:10px;padding-top:13px;">
+</picture>
+</a>
 
 <a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="https://docs.meshery.io/assets/img/readme/community.png" style="margin-right:8px;padding-top:5px;" width="140px" align="left" /></a>
 

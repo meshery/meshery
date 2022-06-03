@@ -8,6 +8,13 @@ on:
       - 'master'
     paths:
       - 'install/docker-extension/**'
+    secrets:
+      DOCKER_USERNAME:
+        description: 'A token passed from the caller workflow'
+        required: true
+      DOCKER_PASSWORD:
+        description: 'A token passed from the caller workflow'
+        required: true
   workflow_dispatch:
     inputs:
       release-ver:
@@ -41,6 +48,8 @@ jobs:
         echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
         echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
         echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
+    - run: |
+        echo "Event Inputs: ${{ github.event.inputs.<variable_name> || inputs.<variable_name> }}"
   
   docker-extension:
     runs-on: ubuntu-latest

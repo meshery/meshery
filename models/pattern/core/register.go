@@ -8,6 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"cuelang.org/go/cue"
+	"cuelang.org/go/cue/cuecontext"
+	cueJson "cuelang.org/go/encoding/json"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
@@ -471,17 +474,53 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 	manifest := string(content)
 	man, err := manifests.GenerateComponents(ctxt, manifest, manifests.K8s, manifests.Config{
 		Name: "Kubernetes",
-		Filter: manifests.CrdFilter{
-			IsJson:        true,
-			OnlyRes:       arrAPIResources, //When crd or api-resource names are directly given, we dont need NameFilter
-			RootFilter:    []string{"$.definitions"},
-			VersionFilter: []string{"$[0]"},
-			GroupFilter:   []string{"$[0]"},
-			ItrFilter:     []string{"$..[\"x-kubernetes-group-version-kind\"][?(@.kind"},
-			ItrSpecFilter: []string{"$[0][?(@[\"x-kubernetes-group-version-kind\"][0][\"kind\"]"},
-			ResolveFilter: []string{"--resolve", "$"},
-			GField:        "group",
-			VField:        "version",
+		CrdFilter: manifests.NewCueCrdFilter(manifests.ExtractorPaths{
+			NamePath:    `"x-kubernetes-group-version-kind"[0].kind`,
+			IdPath:      `"x-kubernetes-group-version-kind"[0].kind`,
+			VersionPath: `"x-kubernetes-group-version-kind"[0].version`,
+			GroupPath:   `"x-kubernetes-group-version-kind"[0].group`,
+			SpecPath:    "",
+		}, true),
+		ExtractCrds: func(manifest string) []string {
+			crds := make([]string, 0)
+			cuectx := cuecontext.New()
+			cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
+			parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
+			definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
+			if err != nil {
+				fmt.Printf("%v", err)
+				return nil
+			}
+			for _, resource := range arrAPIResources {
+				resource = strings.ToLower(resource)
+				fields, err := definitions.Fields()
+				if err != nil {
+					fmt.Printf("%v\n", err)
+					continue
+				}
+				for fields.Next() {
+					fieldVal := fields.Value()
+					kindCue := fieldVal.LookupPath(cue.ParsePath(`"x-kubernetes-group-version-kind"[0].kind`))
+					if kindCue.Err() != nil {
+						continue
+					}
+					kind, err := kindCue.String()
+					kind = strings.ToLower(kind)
+					if err != nil {
+						fmt.Printf("%v", err)
+						continue
+					}
+					if kind == resource {
+						crd, err := fieldVal.MarshalJSON()
+						if err != nil {
+							fmt.Printf("%v", err)
+							continue
+						}
+						crds = append(crds, string(crd))
+					}
+				}
+			}
+			return crds
 		},
 		K8sVersion: k8version.String(),
 		ModifyDefSchema: func(s1, s2 *string) { //s1 is the definition and s2 is the schema
@@ -529,6 +568,19 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 				k8s.Format.Prettify(schema)
 			}
 			b, err = json.Marshal(schema)
+			if err != nil {
+				return
+			}
+
+			cuectx := cuecontext.New()
+			cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
+			if err != nil {
+				return
+			}
+			parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
+			definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
+
+			b, err = manifests.ResolveReferences(b, definitions)
 			if err != nil {
 				return
 			}

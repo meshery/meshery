@@ -558,8 +558,11 @@ handleNATSClick = () => {
     resetDatabase({
       selector : {
         clearDB : "true",
-        ReSync : "false"
+        ReSync : "true", // True - For Hard reset, False otherwise
+        hardReset : "true",
       },
+      // For now by default set to hard reset.
+      // TODO: User should be able to select soft or hard reset when "Reset Daatabase" btn is clicked.
     }).subscribe({
       next : (res) => {
         self.props.updateProgress({ showProgress : false });
