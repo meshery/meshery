@@ -6,7 +6,6 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
-	"gorm.io/gorm"
 
 	corev1 "k8s.io/api/core/v1"
 )
@@ -14,33 +13,32 @@ import (
 func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid []string) ([]*ControlPlane, error) {
 	object := []meshsyncmodel.Object{}
 	controlplanelist := make([]*ControlPlane, 0)
-
-	for _, selector := range selectors {
-		var result *gorm.DB
-		if len(cid) == 1 && cid[0] == "all" {
-			result = provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-				Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
-				Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
-				Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
-				Preload("Spec").
-				Preload("Status").
-				Find(&object, "kind = ?", "Pod")
-		} else {
-			result = provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-				Where("cluster_id IN ?", cid).
-				Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
-				Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
-				Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
-				Preload("Spec").
-				Preload("Status").
-				Find(&object, "kind = ?", "Pod")
+	cidMap := make(map[string]bool)
+	var foundall bool
+	for _, c := range cid {
+		if c == "all" {
+			foundall = true
+			break
 		}
+		cidMap[c] = true
+	}
+	for _, selector := range selectors {
 
+		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
+			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
+			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
+			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
+			Preload("Spec").
+			Preload("Status").
+			Find(&object, "kind = ?", "Pod")
 		if result.Error != nil {
 			return nil, ErrQuery(result.Error)
 		}
 		members := make([]*ControlPlaneMember, 0)
 		for _, obj := range object {
+			if !foundall && !cidMap[obj.ClusterID] {
+				continue
+			}
 			if meshsyncmodel.IsObject(obj) {
 				objspec := corev1.PodSpec{}
 				err := utils.Unmarshal(obj.Spec.Attribute, &objspec)
@@ -52,9 +50,8 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid []
 					imageOrgs[strings.Split(c.Image, "/")[1]] = true // Extracting image org from <domainname>/<imageorg>/<imagename>
 				}
 				version := "unknown"
-
 				//If image orgs are not passed on in from controlPlaneImageOrgs variable, then skip this filtering (for backward compatibility)
-				if len(controlPlaneImageOrgs[MeshType(selector)]) != 0 && !haveCommonElements(controlPlaneImageOrgs[MeshType(selector)], imageOrgs) {
+				if len(controlPlaneImageOrgs[MeshType(selector)]) == 0 || !haveCommonElements(controlPlaneImageOrgs[MeshType(selector)], imageOrgs) {
 					continue
 				}
 				if len(strings.Split(objspec.Containers[0].Image, ":")) > 0 {
