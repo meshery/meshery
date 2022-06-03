@@ -501,7 +501,7 @@ const mapStateToProps = (state) => {
     title : state.get('page').get('title'),
     isBeta : state.get('page').get('isBeta'),
     selectedK8sContexts : state.get('selectedK8sContexts'),
-    k8sconfig : state.get('k8sconfig'),
+    k8sconfig : state.get('k8sConfig'),
   })
 }
 ;

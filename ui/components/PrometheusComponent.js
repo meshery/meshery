@@ -316,7 +316,7 @@ const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
   const prometheus = st.get("prometheus").toJS();
   const selectedK8sContexts = st.get('selectedK8sContexts');
-  const k8sconfig = state.get("k8sConfig");
+  const k8sconfig = st.get("k8sConfig");
 
   return { grafana, prometheus, selectedK8sContexts, k8sconfig };
 };

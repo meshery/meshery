@@ -430,8 +430,8 @@ const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCrea
 
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-  const k8sconfig = state.get("k8sConfig");
+  const selectedK8sContexts = st.get('selectedK8sContexts');
+  const k8sconfig = st.get("k8sConfig");
 
   return { grafana : { ...grafana, ts : new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
 };

@@ -1143,7 +1143,7 @@ MesheryAdapterPlayComponent.propTypes = { classes : PropTypes.object.isRequired,
 // };
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
-  const k8sconfig = state.get("k8sConfig");
+  const k8sconfig = st.get("k8sConfig");
   const selectedK8sContexts = st.get('selectedK8sContexts');
 
   return { grafana : { ...grafana, ts : new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
