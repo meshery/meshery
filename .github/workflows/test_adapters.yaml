@@ -25,13 +25,13 @@ on:
       patternfile_name:
         required: true
         type: string
-      k8s_version:
-        required: true
-        type: string
       k8s_cni:
         required: false
         type: string
         default: 'bridge'
+      k8s_version:
+        required: false
+        type: string
       sm_version:
         required: true
         type: string
@@ -50,6 +50,10 @@ on:
 
 jobs:
   TestAdapter:
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s_version: ['v1.20.11', 'v1.21.5', 'v1.22.2']
     runs-on: ubuntu-latest
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
@@ -59,7 +63,7 @@ jobs:
         uses: manusa/actions-setup-minikube@v2.4.1
         with:
           minikube version: "v1.23.2"
-          kubernetes version: '"${{ inputs.k8s_version }}"'
+          kubernetes version: '"${{ matrix.k8s_version }}"'
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
       - name: Checkout Code
@@ -194,7 +198,7 @@ jobs:
           itran=0
           itdidnotrun=0
           echo "Ran on $runon"
-          echo '{"metadata":{ "k8s_version":"'${{ inputs.k8s_version }}'", "service_mesh_name":"'${{ inputs.adapter_name }}'", "service_mesh_version":"'${{ inputs.sm_version }}'","adapter_version":"'${{ inputs.adapter_version }}'" ,"runon":"'$runon'"}, "resources_status":{}, "overall-status":""}' | jq > ./data.json
+          echo '{"metadata":{ "k8s_version":"'${{ matrix.k8s_version }}'", "service_mesh_name":"'${{ inputs.adapter_name }}'", "service_mesh_version":"'${{ inputs.sm_version }}'","adapter_version":"'${{ inputs.adapter_version }}'" ,"runon":"'$runon'"}, "resources_status":{}, "overall-status":""}' | jq > ./data.json
           for i in "${!resources[@]}"
           do
             resourceinfo=$(kubectl get ${types[i]} -n ${ns[i]} | grep ${resources[i]} | tr -s ' ')
