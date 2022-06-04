@@ -6,6 +6,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"regexp"
 	"strings"
 )
 
@@ -85,6 +86,23 @@ func PrefixMatch(key string) (res []Value) {
 
 	for k, v := range globalStore.store {
 		if strings.HasPrefix(k, key) {
+			for _, el := range v {
+				res = append(res, el)
+			}
+		}
+	}
+
+	return
+}
+
+// RegexMatch will return all the values whose key matches the given regular exp
+func RegexMatch(regex string) (res []Value) {
+	globalStore.RLock()
+	defer globalStore.RUnlock()
+
+	for k, v := range globalStore.store {
+		match, _ := regexp.MatchString(regex, k)
+		if match {
 			for _, el := range v {
 				res = append(res, el)
 			}
