@@ -24,6 +24,7 @@ import PrometheusComponent from './PrometheusComponent';
 import dataFetch from '../lib/data-fetch';
 import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
+import MesherySettingsNew from "./MesherySettingsNew";
 
 const styles = (theme) => ({
   wrapperClss : { flexGrow : 1,
@@ -132,6 +133,7 @@ class MesherySettings extends React.Component {
 
   componentDidMount() {
     if (this.state.isMeshConfigured) this.fetchPromGrafanaScanData();
+    console.log("SETTINGSGSGSDGSDGD");
   }
 
   fetchPromGrafanaScanData = () => {
@@ -357,7 +359,7 @@ class MesherySettings extends React.Component {
             </AppBar>
             {subTabVal === 0 && (
               <TabContainer>
-                <MeshConfigComponent tabs={subTabVal} />
+                <MesherySettingsNew tabs={subTabVal} />
               </TabContainer>
             )}
             {subTabVal === 1 && (
