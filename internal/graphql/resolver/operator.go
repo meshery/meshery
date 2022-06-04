@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"sync"
 
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
@@ -176,7 +177,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 		status = model.StatusEnabled
 	}
 
-	controllers, err := model.GetControllersInfo(kubeclient, r.BrokerConn, r.meshsyncLivenessChannel)
+	controllers, err := model.GetControllersInfo(kubeclient, r.BrokerConn)
 	if err != nil {
 		r.Log.Error(err)
 		return &model.OperatorStatus{
@@ -222,7 +223,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 		return nil, err
 	}
 
-	status, err := model.GetMeshSyncInfo(mesheryclient, kubeclient, r.meshsyncLivenessChannel)
+	status, err := model.GetMeshSyncInfo(mesheryclient, kubeclient)
 	if err != nil {
 		return &status, err
 	}
@@ -267,13 +268,6 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error) {
 	operatorChannel := make(chan *model.OperatorStatusPerK8sContext)
 
-	if r.operatorSyncChannel == nil {
-		r.operatorSyncChannel = make(chan bool)
-	}
-	if r.meshsyncLivenessChannel == nil {
-		r.meshsyncLivenessChannel = make(chan struct{})
-	}
-
 	k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		return nil, ErrNilClient
@@ -292,9 +286,11 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 			}
 		}
 	}
-
+	var group sync.WaitGroup
 	for _, k8scontext := range k8sContexts {
+		group.Add(1)
 		go func(k8scontext models.K8sContext) {
+			defer group.Done()
 			operatorSyncChannel := make(chan broadcast.BroadcastMessage)
 			r.Broadcast.Register(operatorSyncChannel)
 			r.Log.Info("Operator subscription started for ", k8scontext.Name)
@@ -318,20 +314,24 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 					// return
 				}
 			}
+			statusWithContext := model.OperatorStatusPerK8sContext{
+				ContextID:      k8scontext.ID,
+				OperatorStatus: status,
+			}
+			operatorChannel <- &statusWithContext
 			for {
 				select {
 				case processing := <-operatorSyncChannel:
-					r.Log.Info("Operator sync channel called for ", k8scontext.Name)
-					status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
-					if err != nil {
-						r.Log.Error(ErrOperatorSubscription(err))
-						r.Log.Info("Operator subscription flushed for ", k8scontext.Name)
-						close(operatorChannel)
-						// return
-						continue
-					}
-
 					if processing.Source == broadcast.OperatorSyncChannel {
+						r.Log.Info("Operator sync channel called for ", k8scontext.Name)
+						status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
+						if err != nil {
+							r.Log.Error(ErrOperatorSubscription(err))
+							r.Log.Info("Operator subscription flushed for ", k8scontext.Name)
+							close(operatorChannel)
+							// return
+							continue
+						}
 						switch processing.Data.(type) {
 						case bool:
 							if processing.Data.(bool) {
@@ -348,22 +348,25 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 								Description: processing.Data.(error).Error(),
 							}
 						}
+						statusWithContext := model.OperatorStatusPerK8sContext{
+							ContextID:      k8scontext.ID,
+							OperatorStatus: status,
+						}
+						operatorChannel <- &statusWithContext
 					}
-					statusWithContext := model.OperatorStatusPerK8sContext{
-						ContextID:      k8scontext.ID,
-						OperatorStatus: status,
-					}
-					operatorChannel <- &statusWithContext
 				case <-ctx.Done():
 					r.Log.Info("Operator subscription flushed for ", k8scontext.Name)
-					close(operatorChannel)
 					r.Broadcast.Unregister(operatorSyncChannel)
 					close(operatorSyncChannel)
+
 					return
 				}
 			}
 		}(k8scontext)
 	}
-
+	go func() {
+		group.Wait()
+		close(operatorChannel)
+	}()
 	return operatorChannel, nil
 }
