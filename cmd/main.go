@@ -194,7 +194,7 @@ func main() {
 		GenericPersister:                dbHandler,
 	}
 	lProv.Initialize()
-	seededUUIDs := lProv.SeedContent(log)
+	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
 
 	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
@@ -271,17 +271,14 @@ func main() {
 		}
 	}()
 	<-c
-	//Close existing database instance
+	logrus.Info("Doing seeded content cleanup...")
+	lProv.Cleanup()
 
-	//Get the db instance/connection pool
 	logrus.Info("Closing database instance...")
 	err = dbHandler.DBClose()
 	if err != nil {
 		log.Error(err)
 	}
-	logrus.Info("Doing seeded content cleanup...")
-	lProv.CleanupSeeded(seededUUIDs)
-
 	// only uninstalls meshery-operator using helm charts
 	// useful for dev deployments
 	// logrus.Info("Uninstalling meshery-operator...")

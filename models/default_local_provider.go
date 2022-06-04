@@ -948,14 +948,11 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 }
 
 // SeedContent- to seed various contents with local provider-like patterns, filters, and applications
-func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
+func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seededUUIDs := make([]uuid.UUID, 0)
 	seedContents := []string{"Pattern", "Application", "Filter"}
-	var wg sync.WaitGroup
 	for _, seedContent := range seedContents {
-		wg.Add(1)
 		go func(comp string, log logger.Handler, seededUUIDs *[]uuid.UUID) {
-			defer wg.Done()
 			names, content, err := getSeededComponents(comp, log)
 			if err != nil {
 				log.Error(ErrGettingSeededComponents(err, comp))
@@ -1020,15 +1017,12 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 			}
 		}(seedContent, log, &seededUUIDs)
 	}
-	wg.Wait()
-	return seededUUIDs
 }
-func (l *DefaultLocalProvider) CleanupSeeded(seededUUIDs []uuid.UUID) {
-	for _, id := range seededUUIDs {
-		_, _ = l.MesheryPatternPersister.DeleteMesheryPattern(id)
-		_, _ = l.MesheryFilterPersister.DeleteMesheryFilter(id)
-		_, _ = l.MesheryApplicationPersister.DeleteMesheryApplication(id)
-	}
+func (l *DefaultLocalProvider) Cleanup() {
+	l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{})
+	l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPattern{})
+	l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{})
+	l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
