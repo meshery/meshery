@@ -929,32 +929,6 @@ handleNATSClick = () => {
             {self.state.operatorProcessing && <CircularProgress />}
           </FormGroup>
         </div>
-        <div className={classes.buttonsCluster}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={ this.handleResetDatabase()}
-            className={classes.button}
-            data-cy="btnResetDatabase"
-          >
-              Reset Database
-          </Button>
-          <PromptComponent ref={this.modalRefOfResetDatabase} />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={this.handleFlushMeshSync()}
-            className={classes.button}
-            data-cy="btnResetDatabase"
-          >
-              Flush MeshSync
-          </Button>
-          <PromptComponent ref={this.modalRefOfFlushMeshsync} />
-        </div>
       </React.Fragment>
     );
 
@@ -1052,6 +1026,32 @@ handleNATSClick = () => {
                 <h4>Operator Configuration</h4>
               </div>
               <Paper className={classes.paper}>{operator}</Paper>
+              <div className={classes.buttonsCluster}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={ this.handleResetDatabase()}
+                  className={classes.button}
+                  data-cy="btnResetDatabase"
+                >
+              Reset Database
+                </Button>
+                <PromptComponent ref={this.modalRefOfResetDatabase} />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.handleFlushMeshSync()}
+                  className={classes.button}
+                  data-cy="btnResetDatabase"
+                >
+              Flush MeshSync
+                </Button>
+                <PromptComponent ref={this.modalRefOfFlushMeshsync} />
+              </div>
             </Grid>
           </Grid>
         </div>
@@ -1096,6 +1096,32 @@ handleNATSClick = () => {
                 <h4>Operator Configuration</h4>
               </div>
               <Paper className={classes.paper}>{operator}</Paper>
+              <div className={classes.buttonsCluster}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={ this.handleResetDatabase()}
+                  className={classes.button}
+                  data-cy="btnResetDatabase"
+                >
+              Reset Database
+                </Button>
+                <PromptComponent ref={this.modalRefOfResetDatabase} />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.handleFlushMeshSync()}
+                  className={classes.button}
+                  data-cy="btnResetDatabase"
+                >
+              Flush MeshSync
+                </Button>
+                <PromptComponent ref={this.modalRefOfFlushMeshsync} />
+              </div>
             </Grid>
           </Grid>
         </div>
