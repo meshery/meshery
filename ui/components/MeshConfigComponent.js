@@ -24,11 +24,6 @@ import {
   Box,
   FormControl,
   InputLabel,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Dialog,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -160,12 +155,14 @@ async function uploadK8sConfig() {
   }
 }
 
+
 async function changeContext(id) {
   return await promisifiedDataFetch("/api/system/kubernetes/contexts/current/" + id, { method : "POST" })
 }
 class MeshConfigComponent extends React.Component {
   constructor(props) {
     super(props);
+
     const {
       inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer
     } = props;
@@ -203,6 +200,8 @@ class MeshConfigComponent extends React.Component {
 
     };
     this.ref = React.createRef();
+    this.modalRefOfResetDatabase = React.createRef();
+    this.modalRefOfFlushMeshsync = React.createRef();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -553,63 +552,82 @@ handleNATSClick = () => {
   };
 
   handleResetDatabase = () => {
-    this.props.updateProgress({ showProgress : true });
-    const self = this;
-    resetDatabase({
-      selector : {
-        clearDB : "true",
-        ReSync : "true",
-        HardReset : "true"
-
-      },
-      // For now by default set to hard reset.
-      // TODO: User should be able to select soft or hard reset when "Reset Daatabase" btn is clicked.
-    }).subscribe({
-      next : (res) => {
-        self.props.updateProgress({ showProgress : false });
-        if (res.resetStatus === "PROCESSING") {
-          this.props.enqueueSnackbar(`Database reset successful.`, {
-            variant : "success",
-            action : (key) => (
-              <IconButton key="close" aria-label="close" color="inherit"  onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ),
-
-            autohideduration : 2000,
-          })
-        }
-      },
-      error : self.handleError("Database is not reachable, try restarting server.")
-    });
+    return async () => {
+      const modalofRefOfResetDatabase = this.modalRefOfResetDatabase.current;
+      let responseOfResetDatabase = await modalofRefOfResetDatabase.show({
+        title : "Reset Database?",
+        subtitle : "Are you sure to reset all the database of the meshery?",
+        options : ["yes", "no"]
+      });
+      if (responseOfResetDatabase === "yes") {
+        this.props.updateProgress({ showProgress : true });
+        const self = this;
+        resetDatabase({
+          selector : {
+            clearDB : "true",
+            ReSync : "true", // True - For Hard reset, False otherwise
+            hardReset : "true",
+          },
+          // For now by default set to hard reset.
+          // TODO: User should be able to select soft or hard reset when "Reset Daatabase" btn is clicked.
+        }).subscribe({
+          next : (res) => {
+            self.props.updateProgress({ showProgress : false });
+            if (res.resetStatus === "PROCESSING") {
+              this.props.enqueueSnackbar(`Database reset successful.`, {
+                variant : "success",
+                action : (key) => (
+                  <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+                    <CloseIcon />
+                  </IconButton>
+                ),
+                autohideduration : 2000,
+              })
+            }
+          },
+          error : self.handleError("Database is not reachable, try restarting server.")
+        });
+      }
+    }
   }
   handleFlushMeshSync = () => {
-    this.props.updateProgress({ showProgress : true });
-    const self = this;
-    resetDatabase({
-      selector : {
-        clearDB : "true",
-        ReSync : "false",
-        HardReset : "false"
-      },
-    }).subscribe({
-      next : (res) => {
-        self.props.updateProgress({ showProgress : false });
-        if (res.resetStatus === "PROCESSING") {
-          this.props.enqueueSnackbar(`MeshSync Flushed successfully.`, {
-            variant : "success",
-            action : (key) => (
-              <IconButton key="close" aria-label="close" color="inherit"  onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ),
-
-            autohideduration : 2000,
-          })
-        }
-      },
-      error : self.handleError("Database is not reachable, try restarting server.")
-    });
+    return async () => {
+      const modalofRefOfFlushMeshsync = this.modalRefOfFlushMeshsync.current;
+      let responseOfFlushMeshsync = await modalofRefOfFlushMeshsync.show({
+        title : "Flush MeshSync?",
+        subtitle : "Are you sure to Flush MeshSync of the meshery?",
+        options : ["yes", "no"]
+      });
+      if (responseOfFlushMeshsync === "yes") {
+        this.props.updateProgress({ showProgress : true });
+        const self = this;
+        resetDatabase({
+          selector : {
+            clearDB : "true",
+            ReSync : "false", // True - For Hard reset, False otherwise
+            hardReset : "false",
+          },
+          // For now by default set to hard reset.
+          // TODO: User should be able to select soft or hard reset when "Reset Daatabase" btn is clicked.
+        }).subscribe({
+          next : (res) => {
+            self.props.updateProgress({ showProgress : false });
+            if (res.resetStatus === "PROCESSING") {
+              this.props.enqueueSnackbar(`Database reset successful.`, {
+                variant : "success",
+                action : (key) => (
+                  <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+                    <CloseIcon />
+                  </IconButton>
+                ),
+                autohideduration : 2000,
+              })
+            }
+          },
+          error : self.handleError("Database is not reachable, try restarting server.")
+        });
+      }
+    }
   }
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
@@ -731,37 +749,8 @@ handleNATSClick = () => {
       NATSVersion,
       operatorSwitch,
       contexts,
-      openDatabaseDialogue,
-      openMeshSyncDialogue,
     } = this.state;
 
-
-    const handleClickOpenDatabaseDialogue = () => {
-      this.setState( {
-        openDatabaseDialogue : true
-      },
-      )
-    };
-
-    const handleCloseDatabaseDialogue = () => {
-      this.setState(  {
-        openDatabaseDialogue : false
-      },
-      )
-    };
-    const handleClickOpenMeshSyncDialogue = () => {
-      this.setState( {
-        openMeshSyncDialogue : true
-      },
-      )
-    };
-
-    const handleCloseMeshSyncDialogue = () => {
-      this.setState(  {
-        openMeshSyncDialogue : false
-      },
-      )
-    };
     let showConfigured = <></>;
     const self = this;
     if (clusterConfigured) {
@@ -946,71 +935,25 @@ handleNATSClick = () => {
             variant="contained"
             color="primary"
             size="large"
-            onClick={handleClickOpenDatabaseDialogue}
+            onClick={ this.handleResetDatabase()}
             className={classes.button}
             data-cy="btnResetDatabase"
           >
               Reset Database
           </Button>
-          <Dialog
-            open={openDatabaseDialogue}
-            onClose={handleCloseDatabaseDialogue}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              {"Reset Database?"}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-            Are you sure to reset all the database of the meshery?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDatabaseDialogue}>NO</Button>
-              <Button onClick={() => {
-                this.handleResetDatabase();
-                handleCloseDatabaseDialogue();
-              }} autoFocus>
-            YES
-              </Button>
-            </DialogActions>
-          </Dialog>
+          <PromptComponent ref={this.modalRefOfResetDatabase} />
           <Button
             type="submit"
             variant="contained"
             color="primary"
             size="large"
-            onClick={handleClickOpenMeshSyncDialogue}
+            onClick={this.handleFlushMeshSync()}
             className={classes.button}
             data-cy="btnResetDatabase"
           >
               Flush MeshSync
           </Button>
-          <Dialog
-            open={openMeshSyncDialogue}
-            onClose={handleCloseMeshSyncDialogue}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              {"Flush MeshSync?"}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-            Are you sure to Flush MeshSync of the meshery?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseMeshSyncDialogue}>NO</Button>
-              <Button onClick={() => {
-                this.handleFlushMeshSync();
-                handleCloseMeshSyncDialogue();
-              }} autoFocus>
-            YES
-              </Button>
-            </DialogActions>
-          </Dialog>
+          <PromptComponent ref={this.modalRefOfFlushMeshsync} />
         </div>
       </React.Fragment>
     );
