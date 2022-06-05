@@ -20,6 +20,7 @@ import PromptComponent from './PromptComponent';
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
 import NatsStatusQuery from './graphql/queries/NatsStatusQuery';
+import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
 
 const styles = (theme) => ({
   operationButton : {
@@ -64,12 +65,11 @@ const styles = (theme) => ({
   },
 });
 
-function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updateProgress, k8sconfig }) {
+function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updateProgress }) {
   const [data, setData] = useState([])
   let k8sfileElementVal ="";
   const [showMenu, setShowMenu] = useState([false])
   const [anchorEl, setAnchorEl] = useState(null);
-  // const [contexts, setContexts] = useState([]);vd` v
   const [operatorInstalled, setOperatorInstalled] = useState(false);
   const [meshSyncInstalled, setMeshSyncInstalled] = useState(false);
   const [meshSyncState, setMeshSyncState] = useState("N/A");
@@ -81,7 +81,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [operatorSwitch, setOperatorSwitch] = useState(false);
   const [meshSyncStatusSubscription, setMeshSyncStatusSubscription] = useState(null);
   const [operatorStatusSubscription, setOperatorStatusSubscription] = useState(null);
-  const [lastDiscover, setLastDiscover] = useState([""]);
   const [contexts, setContexts] = useState([]);
   // const [toUploadContexts, setToUploadContexts] = useState([]);
   // const [open, setOpen] = useState(false);
@@ -91,7 +90,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const dateOptions = { weekday : 'long', year : 'numeric', month : 'long', day : 'numeric' };
 
   useEffect(() => {
-    console.log("ICG", k8sconfig);
     let meshSyncStatusEventsSubscription = subscribeMeshSyncStatusEvents((res) => {
       if (res.meshsync?.error) {
         handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
@@ -103,16 +101,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     fetchAllContexts(25)
       .then(res => {
         console.log(res, "CTX");
-        setContexts(res.contexts);
+        handleContexts(res.contexts);
         res.contexts.forEach((ctx) => {
-          let updatedAt = new Date(ctx.updated_at);
           let data = {
             context : ctx.name,
             location : ctx.server,
             deployment_type : "fix",
-            // last_discovery : lastDiscover[idx],
-            last_discovery : updatedAt.toLocaleDateString("en-US", dateOptions) +
-                             + " " + updatedAt.toLocaleTimeString("en-US"),
+            last_discovery : "",
             name : ctx.name,
             id : ctx.id
           };
@@ -142,6 +137,20 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       }
     }
   }, [])
+
+  const handleContexts = (contexts) => {
+    contexts.forEach((ctx) => {
+      let cdt = new Date(ctx.created_at);
+      let updt = new Date(ctx.updated_at);
+
+      ctx.created_at = cdt.toLocaleDateString("en-US", options)
+      + " " +  cdt.toLocaleTimeString("en-US");
+
+      ctx.updated_at = updt.toLocaleDateString("en-US", options)
+      + " " +  updt.toLocaleTimeString("en-US")
+    })
+    setContexts(contexts);
+  }
 
   const handleMenuClose = (index) => {
     let menu = [...showMenu];
@@ -221,11 +230,11 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const handleLastDiscover = (index) => {
-    let ld = lastDiscover;
     let dt = new Date();
-
-    ld[index] = dt.toLocaleDateString("en-US", dateOptions) + "  " + dt.toLocaleTimeString("en-US");
-    setLastDiscover(ld);
+    const newDate = dt.toLocaleDateString("en-US", dateOptions) + "  " + dt.toLocaleTimeString("en-US");
+    let newData = [...data];
+    newData[index].last_discovery = newDate;
+    setData(newData);
   }
 
   const handleKubernetesClick = (context, index) => {
@@ -237,7 +246,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           handleLastDiscover(index);
-          console.log("ld", lastDiscover);
           enqueueSnackbar("Kubernetes was successfully pinged!", {
             variant : "success",
             "data-cy" : "k8sSuccessSnackbar",
@@ -252,6 +260,28 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       },
       handleError("Kubernetes config could not be validated")
     );
+  };
+
+  const handleOperatorSwitch = () => {
+    const variables = { status : `${!operatorSwitch
+      ? "ENABLED"
+      : "DISABLED"}`, };
+    updateProgress({ showProgress : true });
+
+    changeOperatorState((response, errors) => {
+      updateProgress({ showProgress : false });
+      if (errors !== undefined) {
+        handleError("Unable to install operator");
+      }
+      enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), { variant : "success",
+        autoHideDuration : 2000,
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ), });
+      setOperatorSwitch(operatorSwitch => !operatorSwitch);
+    }, variables);
   };
 
   const handleConfigDelete = (id, index) => {
@@ -389,12 +419,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                   FlushMeshSync
                 </MenuItem>
                 <MenuItem  onClick={() => {
-                  console.log("RDO");
+                  console.log("Flush MeshSync");
                   // handleMenuClose(tableMeta.rowIndex)
                 }}>
                   <Switch
                     checked={operatorSwitch}
-                    onClick={() => console.log("handle operator switch")}
+                    onClick={handleOperatorSwitch}
                     disabled={operatorProcessing}
                     name="OperatorSwitch"
                     color="primary"
@@ -421,14 +451,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       })
     },
     renderExpandableRow : (rowData, rowMetaData) => {
-      console.log("RDASA", rowData, "RM", rowMetaData);
       return (
         <NoSsr>
           <TableCell colSpan={6}>
             <TableContainer>
               <Table>
                 {/* <TableRow> */}
-                <TableCell>
+                <TableCell className={classes.configBoxContainer}>
                   <Paper >
                     <div>
                       <Grid container spacing={1} >
@@ -453,34 +482,33 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="Operator State" secondary={operatorInstalled
-                                ? "Active"
-                                : "Disabled"} />
+                              <ListItemText primary="Name" secondary={contexts[rowMetaData.rowIndex].name}/>
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="Operator Version" secondary={operatorVersion} />
+                              <ListItemText primary="K8s Version" secondary={"K8s version"} />
                             </ListItem>
                           </List>
                         </Grid>
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="MeshSync State" secondary={meshSyncInstalled
-                                ? meshSyncState
-                                : "Disabled"} />
+                              <ListItemText primary="Created At" secondary={
+                                contexts[rowMetaData.rowIndex].created_at
+                              }/>
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
+                              <ListItemText primary="UpdatedAt" secondary={
+                                contexts[rowMetaData.rowIndex].updated_at
+                              } />
                             </ListItem>
                           </List>
                         </Grid>
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="NATS State" secondary={NATSState} />
-                            </ListItem>
-                            <ListItem>
-                              <ListItemText primary="NATS Version" secondary={NATSVersion} />
+                              <ListItemText style={{ overflowWrap : 'break-word' }} primary="Server" secondary={
+                                contexts[rowMetaData.rowIndex].server
+                              }/>
                             </ListItem>
                           </List>
                         </Grid>
