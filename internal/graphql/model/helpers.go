@@ -37,7 +37,7 @@ var (
 		MeshTypeCitrixServiceMesh:  {"citrix-system"},
 		MeshTypeAppMesh:            {"appmesh-system"},
 		//Any namespace added or appended above should also be appended on the AllMesh array
-		MeshTypeAllMesh: {"istio-system", "linkerd-system", "kube-system", "consul-system", "octarine-system", "traefik-system", "osm-system", "kuma-system", "nginx-system", "nsm-system", "citrix-system", "appmesh-system"},
+		MeshTypeAllMesh: {"istio-system", "linkerd-system", "consul-system", "octarine-system", "traefik-system", "osm-system", "kuma-system", "nginx-system", "nsm-system", "citrix-system", "appmesh-system"},
 	}
 
 	addonPortSelector = map[string]string{
