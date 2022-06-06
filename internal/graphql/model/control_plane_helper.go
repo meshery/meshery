@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/layer5io/meshery/models"
@@ -23,9 +24,9 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid []
 		cidMap[c] = true
 	}
 	for _, selector := range selectors {
-
+		fmt.Println("meshtype selector: ", MeshType(selector))
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
+			Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
 			Preload("Spec").
@@ -39,7 +40,7 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid []
 			if !foundall && !cidMap[obj.ClusterID] {
 				continue
 			}
-			if meshsyncmodel.IsObject(obj) {
+			if meshsyncmodel.IsObject(obj) { //As a fallback extract objectmeta manually, if possible
 				objspec := corev1.PodSpec{}
 				err := utils.Unmarshal(obj.Spec.Attribute, &objspec)
 				if err != nil {
@@ -47,11 +48,13 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid []
 				}
 				var imageOrgs = make(map[string]bool)
 				for _, c := range objspec.Containers {
-					imageOrgs[strings.Split(c.Image, "/")[1]] = true // Extracting image org from <domainname>/<imageorg>/<imagename>
+					if len(strings.Split(c.Image, "/")) > 1 {
+						imageOrgs[strings.Split(c.Image, "/")[1]] = true // Extracting image org from <domainname>/<imageorg>/<imagename>
+					}
 				}
 				version := "unknown"
 				//If image orgs are not passed on in from controlPlaneImageOrgs variable, then skip this filtering (for backward compatibility)
-				if len(controlPlaneImageOrgs[MeshType(selector)]) == 0 || !haveCommonElements(controlPlaneImageOrgs[MeshType(selector)], imageOrgs) {
+				if len(controlPlaneImageOrgs[MeshType(selector)]) != 0 && !haveCommonElements(controlPlaneImageOrgs[MeshType(selector)], imageOrgs) {
 					continue
 				}
 				if len(strings.Split(objspec.Containers[0].Image, ":")) > 0 {

@@ -23,19 +23,21 @@ const (
 )
 
 var (
-	controlPlaneNamespace = map[MeshType]string{
-		MeshTypeIstio:              "istio-system",
-		MeshTypeLinkerd:            "linkerd-system",
-		MeshTypeCiliumServiceMesh:  "kube-system",
-		MeshTypeConsul:             "consul-system",
-		MeshTypeOctarine:           "octarine-system",
-		MeshTypeTraefikMesh:        "traefik-system",
-		MeshTypeOpenServiceMesh:    "osm-system",
-		MeshTypeKuma:               "kuma-system",
-		MeshTypeNginxServiceMesh:   "nginx-system",
-		MeshTypeNetworkServiceMesh: "nsm-system",
-		MeshTypeCitrixServiceMesh:  "ctrix-system",
-		MeshTypeAppMesh:            "appmesh-system",
+	controlPlaneNamespace = map[MeshType][]string{
+		MeshTypeIstio:              {"istio-system"},
+		MeshTypeLinkerd:            {"linkerd-system"},
+		MeshTypeCiliumServiceMesh:  {"kube-system"},
+		MeshTypeConsul:             {"consul-system"},
+		MeshTypeOctarine:           {"octarine-system"},
+		MeshTypeTraefikMesh:        {"traefik-system"},
+		MeshTypeOpenServiceMesh:    {"osm-system"},
+		MeshTypeKuma:               {"kuma-system"},
+		MeshTypeNginxServiceMesh:   {"nginx-system"},
+		MeshTypeNetworkServiceMesh: {"nsm-system"},
+		MeshTypeCitrixServiceMesh:  {"citrix-system"},
+		MeshTypeAppMesh:            {"appmesh-system"},
+		//Any namespace added or appended above should also be appended on the AllMesh array
+		MeshTypeAllMesh: {"istio-system", "linkerd-system", "kube-system", "consul-system", "octarine-system", "traefik-system", "osm-system", "kuma-system", "nginx-system", "nsm-system", "citrix-system", "appmesh-system"},
 	}
 
 	addonPortSelector = map[string]string{

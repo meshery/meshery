@@ -279,13 +279,6 @@ func main() {
 	if err != nil {
 		log.Error(err)
 	}
-	// only uninstalls meshery-operator using helm charts
-	// useful for dev deployments
-	// logrus.Info("Uninstalling meshery-operator...")
-	// err = model.Initialize(&kubeclient, true, adapterTracker)
-	// if err != nil {
-	// 	log.Error(err)
-	// }
 
 	logrus.Info("Shutting down Meshery")
 }

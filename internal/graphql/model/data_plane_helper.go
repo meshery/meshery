@@ -25,7 +25,7 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid []str
 	}
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
+			Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("Status").
 			Preload("Spec"). // get only resources specs that has proxy string inside its attributes
 			Where("EXISTS(SELECT 1 FROM resource_specs rsp WHERE rsp.attribute LIKE ? AND rsp.id = objects.id)", `%proxy%`).
@@ -108,12 +108,14 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid []str
 						}
 					}
 				}
+
 			}
+			dataPlaneList = append(dataPlaneList, &DataPlane{
+				Name:    strings.ToLower(selector.String()),
+				Proxies: proxies,
+			})
 		}
-		dataPlaneList = append(dataPlaneList, &DataPlane{
-			Name:    strings.ToLower(selector.String()),
-			Proxies: proxies,
-		})
+
 	}
 	return dataPlaneList, nil
 }

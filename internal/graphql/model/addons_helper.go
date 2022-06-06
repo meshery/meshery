@@ -17,7 +17,7 @@ func GetAddonsState(selectors []MeshType, provider models.Provider, cid []string
 		var result *gorm.DB
 		if len(cid) == 1 && cid[0] == "all" {
 			result = provider.GetGenericPersister().
-				Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[selector]).
+				Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[selector]).
 				Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 				Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
 				Preload("Spec").
