@@ -295,11 +295,13 @@ func (h *Handler) LoadContexts(token string, prov models.Provider) error {
 			}
 
 			go func(config []byte, ctx string) {
+				fmt.Println("will run: ")
 				compCreationSingleton.cancelPreviousRun(ctx) //if a registerK8sComponents is still running for the same context then we safely cancel that assuming that run to be stale now
 				ctxt, cancel := context.WithTimeout(context.Background(), 600*time.Second)
 				compCreationSingleton.registerCancelFunc(ctx, cancel)
 				skipped, err := compCreationSingleton.registerK8sComponents(ctxt, config, k8ctxID)
 				if err != nil {
+					fmt.Println("bhai ye dikkat: ")
 					h.log.Error(err)
 					return
 				}
@@ -335,23 +337,12 @@ func (c *compCreation) registerCancelFunc(ctx string, cancel context.CancelFunc)
 	defer c.compCreationMutex.Unlock()
 	c.compCreationPerContext[ctx] = &cancel
 }
-func (c *compCreation) skip(ctxID string) bool {
-	c.compCreationMutex.Lock()
-	defer c.compCreationMutex.Unlock()
-	if c.compCreationPerContext[ctxID] != nil {
-		return true
-	}
-	return false
-}
 
 var compCreationSingleton = compCreation{
 	compCreationPerContext: make(map[string]*context.CancelFunc),
 }
 
 func (c *compCreation) registerK8sComponents(ctxt context.Context, config []byte, ctx string) (skipped bool, err error) {
-	if c.skip(ctx) {
-		return true, nil
-	}
 	man, err := core.GetK8Components(ctxt, config, ctx)
 	if err != nil {
 		return false, ErrCreatingKubernetesComponents(err, ctx)
@@ -359,6 +350,7 @@ func (c *compCreation) registerK8sComponents(ctxt context.Context, config []byte
 	if man == nil {
 		return false, ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctx)
 	}
+	fmt.Println("no here")
 	for i, def := range man.Definitions {
 		var ord core.WorkloadCapability
 		ord.Metadata = make(map[string]string)
