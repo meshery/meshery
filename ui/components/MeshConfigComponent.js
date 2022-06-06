@@ -565,11 +565,9 @@ handleNATSClick = () => {
         resetDatabase({
           selector : {
             clearDB : "true",
-            ReSync : "true", // True - For Hard reset, False otherwise
+            ReSync : "true",
             hardReset : "true",
           },
-          // For now by default set to hard reset.
-          // TODO: User should be able to select soft or hard reset when "Reset Daatabase" btn is clicked.
         }).subscribe({
           next : (res) => {
             self.props.updateProgress({ showProgress : false });
@@ -604,11 +602,9 @@ handleNATSClick = () => {
         resetDatabase({
           selector : {
             clearDB : "true",
-            ReSync : "false", // True - For Hard reset, False otherwise
+            ReSync : "false",
             hardReset : "false",
           },
-          // For now by default set to hard reset.
-          // TODO: User should be able to select soft or hard reset when "Reset Daatabase" btn is clicked.
         }).subscribe({
           next : (res) => {
             self.props.updateProgress({ showProgress : false });
