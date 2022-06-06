@@ -224,6 +224,7 @@ class MeshConfigComponent extends React.Component {
     let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState, getK8sConfigIdsFromK8sConfig(this.props.k8sconfig));
     fetchMesheryOperatorStatus({ k8scontextID : this.getSelectedContextId() }).subscribe({ // TODO: How to Manage operator status for Multiple contexts @ashish
       next : (res) => {
+        console.log("meshery operator status", res);
         self.setOperatorState(res);
       },
       error : (err) => console.log("error at operator scan: " + err),

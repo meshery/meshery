@@ -172,12 +172,14 @@ class DashboardComponent extends React.Component {
       // subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH, this.state, e => this.setState({ ...e }));
       const cpSub = subscribeControlPlaneEvents((res) => {
         if (res?.controlPlanesState !== undefined){
+          console.log("control plane state --> ", res)
           this.setState({ controlPlaneState : res })
         }
       }, ALL_MESH)
 
       const dpSub = subscribeDataPlaneEvents((res) => {
         if (res?.dataPlanesState !== undefined){
+          console.log("data plane state --> ", res)
           this.setState({ dataPlaneState : res })
         }
       }, ALL_MESH)
@@ -187,10 +189,12 @@ class DashboardComponent extends React.Component {
       this.setState({ operatorStatusSubscription : opSub, dataPlaneSubscription : dpSub, controlPlaneSubscription : cpSub })
       fetchControlPlanes(ALL_MESH).subscribe({
         next : (controlPlaneRes) => {
+          console.log("control plane query subscription --> ", controlPlaneRes)
           this.setState({ controlPlaneState : controlPlaneRes })
           // self.setMeshScanData(controlPlaneRes, null);
           fetchDataPlanes(ALL_MESH).subscribe({
             next : (dataPlaneRes) => {
+              console.log("data plane query subscription --> ", controlPlaneRes)
               this.setState({ dataPlaneState : dataPlaneRes })
               // if (controlPlaneRes) self.setMeshScanData(controlPlaneRes, dataPlaneRes);
             },
