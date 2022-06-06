@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -19,7 +18,6 @@ import (
 	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/router"
 	"github.com/layer5io/meshkit/broker/nats"
-	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -146,11 +144,7 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	dbHandler, err := database.New(database.Options{
-		Filename: fmt.Sprintf("file:%s/mesherydb.sql?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", viper.GetString("USER_DATA_FOLDER")),
-		Engine:   database.SQLITE,
-		Logger:   log,
-	})
+	dbHandler := models.GetNewDBInstance()
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -182,15 +176,15 @@ func main() {
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
-		ResultPersister:                 &models.MesheryResultsPersister{DB: &dbHandler},
-		SmiResultPersister:              &models.SMIResultsPersister{DB: &dbHandler},
-		TestProfilesPersister:           &models.TestProfilesPersister{DB: &dbHandler},
-		PerformanceProfilesPersister:    &models.PerformanceProfilePersister{DB: &dbHandler},
-		MesheryPatternPersister:         &models.MesheryPatternPersister{DB: &dbHandler},
-		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: &dbHandler},
-		MesheryApplicationPersister:     &models.MesheryApplicationPersister{DB: &dbHandler},
-		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: &dbHandler},
-		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: &dbHandler},
+		ResultPersister:                 &models.MesheryResultsPersister{DB: dbHandler},
+		SmiResultPersister:              &models.SMIResultsPersister{DB: dbHandler},
+		TestProfilesPersister:           &models.TestProfilesPersister{DB: dbHandler},
+		PerformanceProfilesPersister:    &models.PerformanceProfilePersister{DB: dbHandler},
+		MesheryPatternPersister:         &models.MesheryPatternPersister{DB: dbHandler},
+		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: dbHandler},
+		MesheryApplicationPersister:     &models.MesheryApplicationPersister{DB: dbHandler},
+		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
+		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 	}
 	lProv.Initialize()
@@ -210,9 +204,9 @@ func main() {
 			SessionName:                parsedURL.Host,
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
-			SessionPreferencePersister: &models.SessionPreferencePersister{DB: &dbHandler},
+			SessionPreferencePersister: &models.SessionPreferencePersister{DB: dbHandler},
 			ProviderVersion:            "v0.3.14",
-			SmiResultPersister:         &models.SMIResultsPersister{DB: &dbHandler},
+			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,
 		}
 

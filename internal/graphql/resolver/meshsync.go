@@ -2,12 +2,15 @@ package resolver
 
 import (
 	"context"
+	"os"
+	"path"
 	"time"
 
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
@@ -117,34 +120,78 @@ func (r *Resolver) getMeshSyncStatus(k8sctx models.K8sContext) model.OperatorCon
 
 func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions) (model.Status, error) {
 	if actions.ClearDb == "true" {
-		// Clear existing data
-		err := provider.GetGenericPersister().Migrator().DropTable(
-			&meshsyncmodel.KeyValue{},
-			&meshsyncmodel.Object{},
-			&meshsyncmodel.ResourceSpec{},
-			&meshsyncmodel.ResourceStatus{},
-			&meshsyncmodel.ResourceObjectMeta{},
-		)
-		if err != nil {
-			if provider.GetGenericPersister() == nil {
-				return "", ErrEmptyHandler
+		if actions.HardReset == "true" {
+			dbPath := path.Join(utils.GetHome(), ".meshery/config")
+			err := os.Mkdir(path.Join(dbPath, ".archive"), os.ModePerm)
+			if err != nil && os.IsNotExist(err) {
+				return "", err
 			}
-			r.Log.Warn(ErrDeleteData(err))
-		}
-		err = provider.GetGenericPersister().Migrator().CreateTable(
-			&meshsyncmodel.KeyValue{},
-			&meshsyncmodel.Object{},
-			&meshsyncmodel.ResourceSpec{},
-			&meshsyncmodel.ResourceStatus{},
-			&meshsyncmodel.ResourceObjectMeta{},
-		)
-		if err != nil {
-			if provider.GetGenericPersister() == nil {
-				return "", ErrEmptyHandler
+			dbHandler := provider.GetGenericPersister()
+
+			oldPath := path.Join(dbPath, "mesherydb.sql")
+			newPath := path.Join(dbPath, ".archive/mesherydb.sql")
+			err = os.Rename(oldPath, newPath)
+			if err != nil {
+				return "", err
 			}
-			r.Log.Warn(ErrDeleteData(err))
+
+			err = dbHandler.DBClose()
+			if err != nil {
+				r.Log.Error(err)
+				return "", err
+			}
+			dbHandler = models.GetNewDBInstance()
+			err = dbHandler.AutoMigrate(
+				&meshsyncmodel.KeyValue{},
+				&meshsyncmodel.Object{},
+				&meshsyncmodel.ResourceSpec{},
+				&meshsyncmodel.ResourceStatus{},
+				&meshsyncmodel.ResourceObjectMeta{},
+				&models.PerformanceProfile{},
+				&models.MesheryResult{},
+				&models.MesheryPattern{},
+				&models.MesheryFilter{},
+				&models.PatternResource{},
+				&models.MesheryApplication{},
+				&models.UserPreference{},
+				&models.PerformanceTestConfig{},
+				&models.SmiResultWithID{},
+				models.K8sContext{},
+			)
+			if err != nil {
+				r.Log.Error(err)
+			}
+		} else {
+			// Clear existing data
+			err := provider.GetGenericPersister().Migrator().DropTable(
+				&meshsyncmodel.KeyValue{},
+				&meshsyncmodel.Object{},
+				&meshsyncmodel.ResourceSpec{},
+				&meshsyncmodel.ResourceStatus{},
+				&meshsyncmodel.ResourceObjectMeta{},
+			)
+			if err != nil {
+				if provider.GetGenericPersister() == nil {
+					return "", ErrEmptyHandler
+				}
+				r.Log.Warn(ErrDeleteData(err))
+			}
+			err = provider.GetGenericPersister().Migrator().CreateTable(
+				&meshsyncmodel.KeyValue{},
+				&meshsyncmodel.Object{},
+				&meshsyncmodel.ResourceSpec{},
+				&meshsyncmodel.ResourceStatus{},
+				&meshsyncmodel.ResourceObjectMeta{},
+			)
+			if err != nil {
+				if provider.GetGenericPersister() == nil {
+					return "", ErrEmptyHandler
+				}
+				r.Log.Warn(ErrDeleteData(err))
+			}
 		}
 	}
+
 	if actions.ReSync == "true" {
 		err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
 			Request: &broker.RequestObject{

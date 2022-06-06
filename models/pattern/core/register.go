@@ -574,6 +574,9 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 
 			cuectx := cuecontext.New()
 			cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
+			if err != nil {
+				return
+			}
 			parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 			definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
 

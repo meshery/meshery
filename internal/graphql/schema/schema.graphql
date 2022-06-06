@@ -339,6 +339,7 @@ input PageFilter {
 input ReSyncActions {
   clearDB: String!
   ReSync: String!
+  hardReset: String!
 }
 
 # ============== ROOT =================================

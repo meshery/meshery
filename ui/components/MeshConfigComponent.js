@@ -560,7 +560,8 @@ handleNATSClick = () => {
     resetDatabase({
       selector : {
         clearDB : "true",
-        ReSync : "false"
+        ReSync : "true", // True - For Hard reset, False otherwise
+        hardReset : "true",
       },
       k8scontextID : this.getSelectedContextId()
     }).subscribe({

@@ -82,8 +82,9 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 
 		if !del {
 			_, err := r.resyncCluster(context.TODO(), provider, &model.ReSyncActions{
-				ReSync:  "false",
-				ClearDb: "true",
+				ReSync:    "false",
+				ClearDb:   "true",
+				HardReset: "false",
 			})
 			if err != nil {
 				r.Log.Error(err)

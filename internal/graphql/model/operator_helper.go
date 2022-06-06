@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -25,6 +26,10 @@ const (
 	RequestSubject  = "meshery.meshsync.request"
 	MeshsyncSubject = "meshery.meshsync.core"
 	BrokerQueue     = "meshery"
+)
+
+var (
+	meshsyncVersion string
 )
 
 func Initialize(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
@@ -221,6 +226,9 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 			Entity: brokerpkg.ReSyncDiscoveryEntity,
 		},
 	})
+
+	go getVersion(brokerConn)
+
 	if err != nil {
 		return endpoint, ErrPublishBroker(err)
 	}
@@ -236,4 +244,28 @@ func imageVersionExtractUtil(container v1.PodTemplateSpec, containerName string)
 		}
 	}
 	return version
+}
+
+func getVersion(brokerConn brokerpkg.Handler) {
+	versionch := make(chan *brokerpkg.Message)
+
+	err := brokerConn.SubscribeWithChannel("meshsync-meta", "meshery", versionch) // what is this queue used for now just using "meshery"
+
+	if err != nil {
+		logrus.Error(err.Error())
+		return
+	}
+	err = brokerConn.Publish(RequestSubject, &brokerpkg.Message{
+		Request: &brokerpkg.RequestObject{
+			Entity: "meshsync-meta",
+		},
+	})
+	if err != nil {
+		logrus.Error(err.Error())
+		return
+	}
+
+	ch := <-versionch
+	meshsyncVersion = "stable-" + ch.Object.(string)
+	fmt.Println("VERSION", meshsyncVersion)
 }

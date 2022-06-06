@@ -203,8 +203,9 @@ type PerfProfile struct {
 }
 
 type ReSyncActions struct {
-	ClearDb string `json:"clearDB"`
-	ReSync  string `json:"ReSync"`
+	ClearDb   string `json:"clearDB"`
+	ReSync    string `json:"ReSync"`
+	HardReset string `json:"hardReset"`
 }
 
 type ServiceMeshFilter struct {
