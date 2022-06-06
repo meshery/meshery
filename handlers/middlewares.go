@@ -113,30 +113,6 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				logrus.Warn("failed to load kubernetes contexts: ", err.Error())
 			}
 		}
-
-		// 	// Set some defaults in the context so that the casting doesn't fails
-		// 	ctx = context.WithValue(ctx, models.KubeContextKey, nil)
-		// 	ctx = context.WithValue(ctx, models.KubeHanderKey, nil)
-		// 	ctx = context.WithValue(ctx, models.KubeConfigKey, nil)
-		// } else {
-		// 	cfg, err := k8scontext.GenerateKubeConfig()
-		// 	if err != nil {
-		// 		logrus.Warn("failed to load kube config for the user: ", err)
-		// 	}
-
-		// 	// Create mesherykube handler
-		// 	client, err := kubernetes.New(cfg)
-		// 	if err != nil {
-		// 		logrus.Warn("failed to create kubeconfig handler for the user")
-		// 		// http.Error(w, "failed to create kubeconfig handler for the user", http.StatusInternalServerError)
-		// 		// return
-		// 	}
-
-		// 	ctx = context.WithValue(ctx, models.KubeContextKey, k8scontext)
-		// 	ctx = context.WithValue(ctx, models.KubeHanderKey, client)
-		// 	ctx = context.WithValue(ctx, models.KubeConfigKey, cfg)
-		// }
-
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]
 		k8scontexts := []models.K8sContext{}    //The contexts passed by the user

@@ -335,23 +335,12 @@ func (c *compCreation) registerCancelFunc(ctx string, cancel context.CancelFunc)
 	defer c.compCreationMutex.Unlock()
 	c.compCreationPerContext[ctx] = &cancel
 }
-func (c *compCreation) skip(ctxID string) bool {
-	c.compCreationMutex.Lock()
-	defer c.compCreationMutex.Unlock()
-	if c.compCreationPerContext[ctxID] != nil {
-		return true
-	}
-	return false
-}
 
 var compCreationSingleton = compCreation{
 	compCreationPerContext: make(map[string]*context.CancelFunc),
 }
 
 func (c *compCreation) registerK8sComponents(ctxt context.Context, config []byte, ctx string) (skipped bool, err error) {
-	if c.skip(ctx) {
-		return true, nil
-	}
 	man, err := core.GetK8Components(ctxt, config, ctx)
 	if err != nil {
 		return false, ErrCreatingKubernetesComponents(err, ctx)
