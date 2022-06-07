@@ -259,14 +259,12 @@ func (h *Handler) LoadContexts(token string, prov models.Provider) error {
 				compCreationSingleton.cancelPreviousRun(ctx)
 				ctxt, cancel := context.WithTimeout(context.Background(), 300*time.Second)
 				compCreationSingleton.registerCancelFunc(ctx, cancel)
-				skipped, err := compCreationSingleton.registerK8sComponents(ctxt, config, ctxID)
+				err := compCreationSingleton.registerK8sComponents(ctxt, config, ctxID)
 				if err != nil {
 					h.log.Error(err)
 					return
 				}
-				if !skipped {
-					h.log.Info("Registration of k8s native components completed for contextID ", ctx)
-				}
+				h.log.Info("Registration of k8s native components completed for contextID ", ctx)
 			}(cfg, ctxID)
 		}
 
@@ -298,14 +296,13 @@ func (h *Handler) LoadContexts(token string, prov models.Provider) error {
 				compCreationSingleton.cancelPreviousRun(ctx) //if a registerK8sComponents is still running for the same context then we safely cancel that assuming that run to be stale now
 				ctxt, cancel := context.WithTimeout(context.Background(), 600*time.Second)
 				compCreationSingleton.registerCancelFunc(ctx, cancel)
-				skipped, err := compCreationSingleton.registerK8sComponents(ctxt, config, k8ctxID)
+				err := compCreationSingleton.registerK8sComponents(ctxt, config, k8ctxID)
 				if err != nil {
 					h.log.Error(err)
 					return
 				}
-				if !skipped {
-					h.log.Info("Registration of k8s native components completed for contextID ", ctx)
-				}
+				h.log.Info("Registration of k8s native components completed for contextID ", ctx)
+
 			}(cfg, k8ctxID)
 		}
 	}
@@ -340,13 +337,13 @@ var compCreationSingleton = compCreation{
 	compCreationPerContext: make(map[string]*context.CancelFunc),
 }
 
-func (c *compCreation) registerK8sComponents(ctxt context.Context, config []byte, ctx string) (skipped bool, err error) {
+func (c *compCreation) registerK8sComponents(ctxt context.Context, config []byte, ctx string) (err error) {
 	man, err := core.GetK8Components(ctxt, config, ctx)
 	if err != nil {
-		return false, ErrCreatingKubernetesComponents(err, ctx)
+		return ErrCreatingKubernetesComponents(err, ctx)
 	}
 	if man == nil {
-		return false, ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctx)
+		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctx)
 	}
 	for i, def := range man.Definitions {
 		var ord core.WorkloadCapability
@@ -359,17 +356,17 @@ func (c *compCreation) registerK8sComponents(ctxt context.Context, config []byte
 		var definition v1alpha1.WorkloadDefinition
 		err := json.Unmarshal([]byte(def), &definition)
 		if err != nil {
-			return false, ErrCreatingKubernetesComponents(err, ctx)
+			return ErrCreatingKubernetesComponents(err, ctx)
 		}
 		ord.OAMDefinition = definition
 		content, err := json.Marshal(ord)
 		if err != nil {
-			return false, ErrCreatingKubernetesComponents(err, ctx)
+			return ErrCreatingKubernetesComponents(err, ctx)
 		}
 		err = core.RegisterWorkload(content)
 		if err != nil {
-			return false, ErrCreatingKubernetesComponents(err, ctx)
+			return ErrCreatingKubernetesComponents(err, ctx)
 		}
 	}
-	return false, nil
+	return nil
 }
