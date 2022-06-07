@@ -9,7 +9,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshery/models"
+
 	pCore "github.com/layer5io/meshery/models/pattern/core"
+	"github.com/layer5io/meshery/models/pattern/stages"
 	"github.com/sirupsen/logrus"
 )
 
@@ -402,7 +404,10 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 				return
 			}
 
-			cyjs, _ := patternFile.ToCytoscapeJS()
+			//TODO: The below line has to go away once the client fully supports referencing variables  and pattern imports inside design
+			newpatternfile := evalImportAndReferenceStage(&patternFile)
+
+			cyjs, _ := newpatternfile.ToCytoscapeJS()
 
 			bytes, err := json.Marshal(&cyjs)
 			if err != nil {
@@ -430,4 +435,24 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
+}
+
+//Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
+// is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
+func evalImportAndReferenceStage(p *pCore.Pattern) (newp pCore.Pattern) {
+	sap := &serviceActionProvider{}
+	sip := &serviceInfoProvider{}
+	chain := stages.CreateChain()
+	chain.
+		Add(stages.Import(sip, sap)).
+		Add(stages.Filler(false)).
+		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
+			data.Lock.Lock()
+			newp = *data.Pattern
+			data.Lock.Unlock()
+		}).
+		Process(&stages.Data{
+			Pattern: p,
+		})
+	return newp
 }
