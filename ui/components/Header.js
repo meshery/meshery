@@ -140,6 +140,7 @@ function K8sContextMenu({
   classes = {},
   contexts = {},
   activeContexts = [],
+  runningStatus,
 
   setActiveContexts = () => {},
   searchContexts = () => {}
@@ -158,11 +159,26 @@ function K8sContextMenu({
     transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)"
   }
 
-  const handleKubernetesClick = () => {
+  const getOperatorStatus = (contextId) => {
+    const state = runningStatus.operatorStatus;
+    if (!state) {
+      return false;
+    }
+
+    const context = state.find(st => st.contextID === contextId)
+    if (!context) {
+      return false;
+    }
+
+    return context.operatorStatus.status === "ENABLED";
+  }
+
+  const handleKubernetesClick = (id) => {
     showProgress()
     pingKubernetes(
       successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress()),
+      id
     )
 
   }
@@ -279,8 +295,11 @@ function K8sContextMenu({
                         <Chip
                           label={ctx?.name}
                           onDelete={handleKubernetesDelete}
-                          onClick={handleKubernetesClick}
-                          avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
+                          onClick={() => handleKubernetesClick(ctx.id)}
+                          avatar={
+                            <Avatar src="/static/img/kubernetes.svg" className={classes.icon}
+                              style={getOperatorStatus(ctx.id) ? {} : { opacity : 0.2 }}
+                            />}
                           variant="filled"
                           className={classes.Chip}
                           data-cy="chipContextName"
@@ -407,6 +426,7 @@ class Header extends React.Component {
                       activeContexts={this.props.activeContexts}
                       setActiveContexts={this.props.setActiveContexts}
                       searchContexts={this.props.searchContexts}
+                      runningStatus={{ operatorStatus : this.props.operatorState, meshSyncStatus : this.props.meshSyncState }}
                     />
                   </div>
 
@@ -495,13 +515,13 @@ Header.propTypes = { classes : PropTypes.object.isRequired,
   onDrawerToggle : PropTypes.func.isRequired, };
 
 const mapStateToProps = (state) => {
-  // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
-  // console.log("state: " + JSON.stringify(state));
   return ({
     title : state.get('page').get('title'),
     isBeta : state.get('page').get('isBeta'),
     selectedK8sContexts : state.get('selectedK8sContexts'),
     k8sconfig : state.get('k8sConfig'),
+    operatorState : state.get('operatorState'),
+    meshSyncState : state.get('meshSyncState')
   })
 }
 ;
