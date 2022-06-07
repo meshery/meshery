@@ -45,27 +45,43 @@ import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
   clusterConfiguratorWrapper : { padding : theme.spacing(5), },
-  buttons : { display : "flex",
-    justifyContent : "flex-end", },
-  button : { marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1), },
-  buttonsCluster : { display : "flex",
-    justifyContent : "center", },
+  buttons : {
+    display : "flex",
+    justifyContent : "flex-end",
+  },
+  button : {
+    marginTop : theme.spacing(3),
+    marginLeft : theme.spacing(1),
+  },
+  buttonsCluster : {
+    display : "flex",
+    justifyContent : "center",
+  },
   margin : { margin : theme.spacing(1), },
-  alreadyConfigured : { textAlign : "center",
-    padding : theme.spacing(20), },
-  colorSwitchBase : { color : blue[300],
-    "&$colorChecked" : { color : blue[500],
-      "& + $colorBar" : { backgroundColor : blue[500], }, }, },
+  alreadyConfigured : {
+    textAlign : "center",
+    padding : theme.spacing(20),
+  },
+  colorSwitchBase : {
+    color : blue[300],
+    "&$colorChecked" : {
+      color : blue[500],
+      "& + $colorBar" : { backgroundColor : blue[500], },
+    },
+  },
   colorBar : {},
   colorChecked : {},
   fileLabel : { width : "100%", },
-  fileLabelText : { cursor : "pointer",
-    "& *" : { cursor : "pointer", }, },
+  fileLabelText : {
+    cursor : "pointer",
+    "& *" : { cursor : "pointer", },
+  },
   inClusterLabel : { paddingRight : theme.spacing(2), },
   alignCenter : { textAlign : "center", },
-  alignLeft : { textAlign : "left",
-    marginBottom : theme.spacing(2), },
+  alignLeft : {
+    textAlign : "left",
+    marginBottom : theme.spacing(2),
+  },
   fileInputStyle : { display : "none", },
   icon : { width : theme.spacing(2.5), },
   configure : {
@@ -80,14 +96,18 @@ const styles = (theme) => ({
     marginBottom : -60,
     [theme.breakpoints.down(945)] : { display : "none", },
   },
-  horizontal : { display : "none",
-    [theme.breakpoints.down(945)] : { display : "block", }, },
+  horizontal : {
+    display : "none",
+    [theme.breakpoints.down(945)] : { display : "block", },
+  },
   formconfig : {
     display : "inline-block",
     marginLeft : 30,
     [theme.breakpoints.up(946)] : { width : "45%", },
-    [theme.breakpoints.down(945)] : { width : "100%",
-      marginLeft : 0, },
+    [theme.breakpoints.down(945)] : {
+      width : "100%",
+      marginLeft : 0,
+    },
   },
   currentConfigHeading : {
     display : "inline-block",
@@ -118,18 +138,26 @@ const styles = (theme) => ({
       flexBasis : '100%',
     },
   },
-  changeConfigHeadingOne : { display : "none",
-    [theme.breakpoints.down(945)] : { display : "inline-block",
+  changeConfigHeadingOne : {
+    display : "none",
+    [theme.breakpoints.down(945)] : {
+      display : "inline-block",
       width : "100%",
-      textAlign : "center", }, },
-  buttonconfig : { display : "inline-block",
+      textAlign : "center",
+    },
+  },
+  buttonconfig : {
+    display : "inline-block",
     width : "48%",
-    [theme.breakpoints.down(945)] : { width : "100%", }, },
+    [theme.breakpoints.down(945)] : { width : "100%", },
+  },
   paper : { padding : theme.spacing(2), },
   heading : { textAlign : "center", },
-  grey : { background : "WhiteSmoke",
+  grey : {
+    background : "WhiteSmoke",
     padding : theme.spacing(2),
-    borderRadius : "inherit", },
+    borderRadius : "inherit",
+  },
 });
 
 async function fetchAllContexts(number) {
@@ -155,17 +183,20 @@ async function uploadK8sConfig() {
   }
 }
 
+
 async function changeContext(id) {
   return await promisifiedDataFetch("/api/system/kubernetes/contexts/current/" + id, { method : "POST" })
 }
-
 class MeshConfigComponent extends React.Component {
   constructor(props) {
     super(props);
+
     const {
       inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer
     } = props;
     this.state = {
+      openDatabaseDialogue : false,
+      openMeshSyncDialogue : false,
       inClusterConfig, // read from store
       inClusterConfigForm : inClusterConfig,
       k8sfile, // read from store
@@ -197,6 +228,8 @@ class MeshConfigComponent extends React.Component {
 
     };
     this.ref = React.createRef();
+    this.modalRefOfResetDatabase = React.createRef();
+    this.modalRefOfFlushMeshsync = React.createRef();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -249,7 +282,7 @@ class MeshConfigComponent extends React.Component {
   }
 
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.state.meshSyncStatusEventsSubscription.dispose()
     this.state.operatorStatusEventsSubscription.dispose()
   }
@@ -272,15 +305,18 @@ class MeshConfigComponent extends React.Component {
             NATSVersion : controller.version,
           });
         } else if (controller.name === "meshsync" && controller.status.includes("ENABLED")) {
-          self.setState({ meshSyncInstalled : true,
+          self.setState({
+            meshSyncInstalled : true,
             meshSyncVersion : controller.version,
             meshSyncState : controller.status
           });
         }
       });
-      self.setState({ operatorInstalled : true,
+      self.setState({
+        operatorInstalled : true,
         operatorSwitch : true,
-        operatorVersion : res.operator?.version, });
+        operatorVersion : res.operator?.version,
+      });
       return true;
     }
 
@@ -308,9 +344,11 @@ class MeshConfigComponent extends React.Component {
 
   handleOperatorSwitch = () => {
     const self = this;
-    const variables = { status : `${!self.state.operatorSwitch
-      ? "ENABLED"
-      : "DISABLED"}`, };
+    const variables = {
+      status : `${!self.state.operatorSwitch
+        ? "ENABLED"
+        : "DISABLED"}`,
+    };
     self.props.updateProgress({ showProgress : true });
 
     changeOperatorState((response, errors) => {
@@ -318,13 +356,15 @@ class MeshConfigComponent extends React.Component {
       if (errors !== undefined) {
         self.handleError("Unable to install operator");
       }
-      self.props.enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), { variant : "success",
+      self.props.enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), {
+        variant : "success",
         autoHideDuration : 2000,
         action : (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
-        ), });
+        ),
+      });
       self.setState((state) => ({ operatorSwitch : !state.operatorSwitch }));
     }, variables);
   };
@@ -369,8 +409,8 @@ class MeshConfigComponent extends React.Component {
         })
         let contextid;
         this.state.contexts.forEach(element => {
-          if (element.name===this.state.selectContext){
-            contextid=element.id;
+          if (element.name === this.state.selectContext) {
+            contextid = element.id;
           }
         });
         changeContext(contextid).
@@ -413,118 +453,125 @@ class MeshConfigComponent extends React.Component {
   handleOperatorClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
-    fetchMesheryOperatorStatus().subscribe({ next : (res) => {
-      console.log(res);
-      let state = self.setOperatorState(res);
-      self.props.updateProgress({ showProgress : false });
-      if (state == true) {
-        this.props.enqueueSnackbar("Operator was successfully pinged!", { variant : "success",
-          autoHideDuration : 2000,
-          action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ), });
-      } else {
-        self.handleError("Operator could not be reached")("Operator is disabled");
-      }
-    },
-    error : self.handleError("Operator could not be pinged"), });
+    fetchMesheryOperatorStatus().subscribe({
+      next : (res) => {
+        console.log(res);
+        let state = self.setOperatorState(res);
+        self.props.updateProgress({ showProgress : false });
+        if (state == true) {
+          this.props.enqueueSnackbar("Operator was successfully pinged!", {
+            variant : "success",
+            autoHideDuration : 2000,
+            action : (key) => (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+        } else {
+          self.handleError("Operator could not be reached")("Operator is disabled");
+        }
+      },
+      error : self.handleError("Operator could not be pinged"),
+    });
   };
 
-handleNATSClick = () => {
-  this.props.updateProgress({ showProgress : true });
-  const self = this;
+  handleNATSClick = () => {
+    this.props.updateProgress({ showProgress : true });
+    const self = this;
 
-  NatsStatusQuery().subscribe({
-    next : (res) => {
-      self.props.updateProgress({ showProgress : false });
-      if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
-        let runningEndpoint = res.controller.status.substring("CONNECTED".length)
-        this.props.enqueueSnackbar(`Broker was successfully pinged. Running at ${runningEndpoint}`, {
-          variant : "success",
-          action : (key) => (
-            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ),
-          autohideduration : 2000,
-        })
-      } else {
-        self.handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
-      }
-      self.setState({
-        NATSState : res.controller.status.length !== 0 ? res.controller.status : "UNKNOWN",
-        NATSVersion : res.controller.version,
-      });
-    },
-    error : self.handleError("NATS status could not be retrieved"), });
+    NatsStatusQuery().subscribe({
+      next : (res) => {
+        self.props.updateProgress({ showProgress : false });
+        if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
+          let runningEndpoint = res.controller.status.substring("CONNECTED".length)
+          this.props.enqueueSnackbar(`Broker was successfully pinged. Running at ${runningEndpoint}`, {
+            variant : "success",
+            action : (key) => (
+              <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+            autohideduration : 2000,
+          })
+        } else {
+          self.handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
+        }
+        self.setState({
+          NATSState : res.controller.status.length !== 0 ? res.controller.status : "UNKNOWN",
+          NATSVersion : res.controller.version,
+        });
+      },
+      error : self.handleError("NATS status could not be retrieved"),
+    });
 
-  // connectToNats().subscribe({
-  //   next : (res) => {
-  //     if (res.connectToNats === "PROCESSING") {
-  //       this.props.updateProgress({ showProgress : false });
-  //       this.props.enqueueSnackbar(`Reconnecting to NATS...`, {
-  //         variant : "info",
-  //         action : (key) => (
-  //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-  //             <CloseIcon />
-  //           </IconButton>
-  //         ),
-  //         autohideduration : 7000,
-  //       })
-  //     }
-  //     if (res.connectToNats === "CONNECTED") {
-  //       this.props.updateProgress({ showProgress : false });
-  //       this.props.enqueueSnackbar(`Successfully connected to NATS`, {
-  //         variant : "success",
-  //         action : (key) => (
-  //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-  //             <CloseIcon />
-  //           </IconButton>
-  //         ),
-  //         autohideduration : 7000,
-  //       })
-  //     }
+    // connectToNats().subscribe({
+    //   next : (res) => {
+    //     if (res.connectToNats === "PROCESSING") {
+    //       this.props.updateProgress({ showProgress : false });
+    //       this.props.enqueueSnackbar(`Reconnecting to NATS...`, {
+    //         variant : "info",
+    //         action : (key) => (
+    //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+    //             <CloseIcon />
+    //           </IconButton>
+    //         ),
+    //         autohideduration : 7000,
+    //       })
+    //     }
+    //     if (res.connectToNats === "CONNECTED") {
+    //       this.props.updateProgress({ showProgress : false });
+    //       this.props.enqueueSnackbar(`Successfully connected to NATS`, {
+    //         variant : "success",
+    //         action : (key) => (
+    //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+    //             <CloseIcon />
+    //           </IconButton>
+    //         ),
+    //         autohideduration : 7000,
+    //       })
+    //     }
 
-  //   },
-  //   error : self.handleError("Failed to request reconnection with NATS"),
-  // });
+    //   },
+    //   error : self.handleError("Failed to request reconnection with NATS"),
+    // });
 
-};
+  };
 
   handleMeshSyncClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
 
-    MeshsyncStatusQuery().subscribe({ next : (res) => {
-      self.props.updateProgress({ showProgress : false });
-      if (res.controller.name === "meshsync" && res.controller.status.includes("ENABLED")) {
-        self.setState({
-          meshSyncInstalled : true,
-          meshSyncVersion : res.controller.version,
-          meshSyncState : res.controller.status,
-        });
-        let publishEndpoint = res.controller.status.substring("ENABLED".length)
-        this.props.enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
-          variant : "success",
-          action : (key) => (
-            <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ),
-          autohideduration : 2000,
-        })
-      } else {
-        self.handleError("MeshSync could not be reached")("MeshSync is unavailable");
-        self.setState({
-          meshSyncInstalled : false,
-          meshSyncVersion : "",
-          meshSyncState : res.controller.status
-        });
-      }
-    },
-    error : self.handleError("MeshSync status could not be retrieved"), });
+    MeshsyncStatusQuery().subscribe({
+      next : (res) => {
+        self.props.updateProgress({ showProgress : false });
+        if (res.controller.name === "meshsync" && res.controller.status.includes("ENABLED")) {
+          self.setState({
+            meshSyncInstalled : true,
+            meshSyncVersion : res.controller.version,
+            meshSyncState : res.controller.status,
+          });
+          let publishEndpoint = res.controller.status.substring("ENABLED".length)
+          this.props.enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
+            variant : "success",
+            action : (key) => (
+              <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+            autohideduration : 2000,
+          })
+        } else {
+          self.handleError("MeshSync could not be reached")("MeshSync is unavailable");
+          self.setState({
+            meshSyncInstalled : false,
+            meshSyncVersion : "",
+            meshSyncState : res.controller.status
+          });
+        }
+      },
+      error : self.handleError("MeshSync status could not be retrieved"),
+    });
 
     // deployMeshSync().subscribe({
     //   next : (res) => {
@@ -546,46 +593,92 @@ handleNATSClick = () => {
     // });
   };
 
-  handleReset = () => {
-    this.props.updateProgress({ showProgress : true });
-    const self = this;
-    resetDatabase({
-      selector : {
-        clearDB : "true",
-        ReSync : "true", // True - For Hard reset, False otherwise
-        hardReset : "true",
-      },
-      // For now by default set to hard reset.
-      // TODO: User should be able to select soft or hard reset when "Reset Daatabase" btn is clicked.
-    }).subscribe({
-      next : (res) => {
-        self.props.updateProgress({ showProgress : false });
-        if (res.resetStatus === "PROCESSING") {
-          this.props.enqueueSnackbar(`Database reset successful.`, {
-            variant : "success",
-            action : (key) => (
-              <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ),
-            autohideduration : 2000,
-          })
-        }
-      },
-      error : self.handleError("Database is not reachable, try restarting server.")
-    });
+  handleResetDatabase = () => {
+    return async () => {
+      const modalofRefOfResetDatabase = this.modalRefOfResetDatabase.current;
+      let responseOfResetDatabase = await modalofRefOfResetDatabase.show({
+        title : "Reset Database?",
+        subtitle : "This operation will reset your Meshery Database to its factory defaults. Data that it contains will not be recoverable. Are you sure that you want to continue?",
+        options : ["yes", "no"]
+      });
+      if (responseOfResetDatabase === "yes") {
+        this.props.updateProgress({ showProgress : true });
+        const self = this;
+        resetDatabase({
+          selector : {
+            clearDB : "true",
+            ReSync : "true",
+            hardReset : "true",
+          },
+        }).subscribe({
+          next : (res) => {
+            self.props.updateProgress({ showProgress : false });
+            if (res.resetStatus === "PROCESSING") {
+              this.props.enqueueSnackbar(`Database reset successful.`, {
+                variant : "success",
+                action : (key) => (
+                  <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+                    <CloseIcon />
+                  </IconButton>
+                ),
+                autohideduration : 2000,
+              })
+            }
+          },
+          error : self.handleError("Database is not reachable, try restarting server.")
+        });
+      }
+    }
   }
-
+  handleFlushMeshSync = () => {
+    return async () => {
+      const modalofRefOfFlushMeshsync = this.modalRefOfFlushMeshsync.current;
+      let responseOfFlushMeshsync = await modalofRefOfFlushMeshsync.show({
+        title : "Flush MeshSync?",
+        subtitle : "MeshSync data is largely considered transient and can typically be safely purged. Would you like to continue purging?",
+        options : ["yes", "no"]
+      });
+      if (responseOfFlushMeshsync === "yes") {
+        this.props.updateProgress({ showProgress : true });
+        const self = this;
+        resetDatabase({
+          selector : {
+            clearDB : "true",
+            ReSync : "false",
+            hardReset : "false",
+          },
+        }).subscribe({
+          next : (res) => {
+            self.props.updateProgress({ showProgress : false });
+            if (res.resetStatus === "PROCESSING") {
+              this.props.enqueueSnackbar(`Database reset successful.`, {
+                variant : "success",
+                action : (key) => (
+                  <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+                    <CloseIcon />
+                  </IconButton>
+                ),
+                autohideduration : 2000,
+              })
+            }
+          },
+          error : self.handleError("Database is not reachable, try restarting server.")
+        });
+      }
+    }
+  }
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error", preventDuplicate : true,
+    this.props.enqueueSnackbar(`${msg}: ${error}`, {
+      variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 7000, });
+      autoHideDuration : 7000,
+    });
   };
 
   handleSuccess = msg => {
@@ -782,44 +875,44 @@ handleNATSClick = () => {
               </List>
             </Grid>
             {operatorInstalled &&
-            <>
-              <Grid item xs={12} md={4}>
-                <List>
-                  <ListItem>
-                    <Tooltip
-                      title={meshSyncInstalled ? `Redeploy MeshSync` : "Not Available"}
-                      aria-label="meshSync"
-                    >
-                      <Chip
-                        label={"MeshSync"}
-                        onClick={self.handleMeshSyncClick}
-                        icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
-                        variant="outlined"
-                        data-cy="chipMeshSync"
-                      />
-                    </Tooltip>
-                  </ListItem>
-                </List>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <List>
-                  <ListItem>
-                    <Tooltip
-                      title={NATSState === "CONNECTED" ? `Reconnect NATS` : "Not Available"}
-                      aria-label="nats"
-                    >
-                      <Chip
-                        label={"NATS"}
-                        onClick={self.handleNATSClick}
-                        icon={<img src="/static/img/nats-icon-color.svg" className={classes.icon} />}
-                        variant="outlined"
-                        data-cy="chipNATS"
-                      />
-                    </Tooltip>
-                  </ListItem>
-                </List>
-              </Grid>
-            </>
+              <>
+                <Grid item xs={12} md={4}>
+                  <List>
+                    <ListItem>
+                      <Tooltip
+                        title={meshSyncInstalled ? `Redeploy MeshSync` : "Not Available"}
+                        aria-label="meshSync"
+                      >
+                        <Chip
+                          label={"MeshSync"}
+                          onClick={self.handleMeshSyncClick}
+                          icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+                          variant="outlined"
+                          data-cy="chipMeshSync"
+                        />
+                      </Tooltip>
+                    </ListItem>
+                  </List>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <List>
+                    <ListItem>
+                      <Tooltip
+                        title={NATSState === "CONNECTED" ? `Reconnect NATS` : "Not Available"}
+                        aria-label="nats"
+                      >
+                        <Chip
+                          label={"NATS"}
+                          onClick={self.handleNATSClick}
+                          icon={<img src="/static/img/nats-icon-color.svg" className={classes.icon} />}
+                          variant="outlined"
+                          data-cy="chipNATS"
+                        />
+                      </Tooltip>
+                    </ListItem>
+                  </List>
+                </Grid>
+              </>
             }
           </Grid>
           <Grid container spacing={1}>
@@ -876,19 +969,6 @@ handleNATSClick = () => {
             {self.state.operatorProcessing && <CircularProgress />}
           </FormGroup>
         </div>
-        <div className={classes.buttonsCluster}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={() => this.handleReset()}
-            className={classes.button}
-            data-cy="btnResetDatabase"
-          >
-              Reset Database
-          </Button>
-        </div>
       </React.Fragment>
     );
 
@@ -933,12 +1013,14 @@ handleNATSClick = () => {
                       value={fileName}
                       onClick={() => document.querySelector("#k8sfile")?.click()}
                       margin="normal"
-                      InputProps={{ readOnly : true,
+                      InputProps={{
+                        readOnly : true,
                         endAdornment : (
                           <InputAdornment position="end">
                             <CloudUploadIcon />
                           </InputAdornment>
-                        ), }}
+                        ),
+                      }}
                     />
                   </FormGroup>
                   <form onSubmit={this.handleChange("context")} >
@@ -950,11 +1032,11 @@ handleNATSClick = () => {
                           name="contextName"
                           labelId="select-label"
                           label="Context Name"
-                          value={selectContext || contextName }
+                          value={selectContext || contextName}
                           onChange={this.selectcontext()}
                         >
                           {contexts?.map((ct) => (
-                            <MenuItem key={`ct_---_${ct.name}`} value= {ct.name}>
+                            <MenuItem key={`ct_---_${ct.name}`} value={ct.name}>
                               {ct.name}
                               {ct.is_current_context
                                 ? " (Current Context)"
@@ -973,7 +1055,7 @@ handleNATSClick = () => {
                         size="large"
                         style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
                       >
-                      Change Context
+                        Change Context
                       </Button>
                     </div>
                   </form>
@@ -986,6 +1068,32 @@ handleNATSClick = () => {
                 <h4>Operator Configuration</h4>
               </div>
               <Paper className={classes.paper}>{operator}</Paper>
+              <div className={classes.buttonsCluster}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.handleResetDatabase()}
+                  className={classes.button}
+                  data-cy="btnResetDatabase"
+                >
+                  Reset Database
+                </Button>
+                <PromptComponent ref={this.modalRefOfResetDatabase} />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.handleFlushMeshSync()}
+                  className={classes.button}
+                  data-cy="btnResetDatabase"
+                >
+                  Flush MeshSync
+                </Button>
+                <PromptComponent ref={this.modalRefOfFlushMeshsync} />
+              </div>
             </Grid>
           </Grid>
         </div>
@@ -1030,6 +1138,32 @@ handleNATSClick = () => {
                 <h4>Operator Configuration</h4>
               </div>
               <Paper className={classes.paper}>{operator}</Paper>
+              <div className={classes.buttonsCluster}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.handleResetDatabase()}
+                  className={classes.button}
+                  data-cy="btnResetDatabase"
+                >
+                  Reset Database
+                </Button>
+                <PromptComponent ref={this.modalRefOfResetDatabase} />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.handleFlushMeshSync()}
+                  className={classes.button}
+                  data-cy="btnResetDatabase"
+                >
+                  Flush MeshSync
+                </Button>
+                <PromptComponent ref={this.modalRefOfFlushMeshsync} />
+              </div>
             </Grid>
           </Grid>
         </div>
@@ -1045,8 +1179,10 @@ handleNATSClick = () => {
 
 MeshConfigComponent.propTypes = { classes : PropTypes.object.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({ updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({
+  updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
+  updateProgress : bindActionCreators(updateProgress, dispatch),
+});
 const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig").toJS();
   return k8sconfig;
