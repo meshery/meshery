@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshery/models/pattern/core"
+
 	pCore "github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/models/pattern/stages"
 	"github.com/sirupsen/logrus"
@@ -439,7 +439,7 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 
 //Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
 // is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
-func evalImportAndReferenceStage(p *core.Pattern) (newp core.Pattern) {
+func evalImportAndReferenceStage(p *pCore.Pattern) (newp pCore.Pattern) {
 	sap := &serviceActionProvider{}
 	sip := &serviceInfoProvider{}
 	chain := stages.CreateChain()
