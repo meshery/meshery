@@ -8,13 +8,6 @@ on:
       - "master"
     paths:
       - "install/docker-extension/**"
-    secrets:
-      DOCKER_USERNAME:
-        description: "A token passed from the caller workflow"
-        required: true
-      DOCKER_PASSWORD:
-        description: "A token passed from the caller workflow"
-        required: true
   workflow_dispatch:
     inputs:
       release-ver:
