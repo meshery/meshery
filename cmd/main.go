@@ -89,10 +89,10 @@ func main() {
 	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
 		logrus.Error(err)
 	}
-	logrus.Info("Registered Meshery local Capabilities")
+	logrus.Info("Local Provider capabilities are: ", version)
 
 	// Get the channel
-	logrus.Info("Meshery server current channel: ", releasechannel)
+	logrus.Info("Meshery Server release channel is: ", releasechannel)
 
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
@@ -107,14 +107,14 @@ func main() {
 		logrus.Fatalf("unable to create the directory for storing user data at %v", viper.GetString("USER_DATA_FOLDER"))
 	}
 
-	logrus.Infof("Using '%s' to store user data", viper.GetString("USER_DATA_FOLDER"))
+	logrus.Infof("Meshery Database is at: %s", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
 		if err != nil {
 			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
 		}
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
-	logrus.Infof("Using '%s' as the folder to look for kubeconfig file", viper.GetString("KUBECONFIG_FOLDER"))
+	logrus.Infof("Using kubeconfig at: %s", viper.GetString("KUBECONFIG_FOLDER"))
 
 	if viper.GetBool("DEBUG") {
 		logrus.SetLevel(logrus.DebugLevel)
@@ -205,7 +205,7 @@ func main() {
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
 			SessionPreferencePersister: &models.SessionPreferencePersister{DB: dbHandler},
-			ProviderVersion:            "v0.3.14",
+			ProviderVersion:            version,
 			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,
 		}
@@ -259,7 +259,7 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	go func() {
-		logrus.Infof("Starting Server listening on :%d", port)
+		logrus.Infof("Meshery Server listening on: %d", port)
 		if err := r.Run(); err != nil {
 			logrus.Fatalf("ListenAndServe Error: %v", err)
 		}
@@ -273,7 +273,7 @@ func main() {
 	if err != nil {
 		log.Error(err)
 	}
-	logrus.Info("Doing seeded content cleanup...")
+	logrus.Info("Removing seed content...")
 	lProv.CleanupSeeded(seededUUIDs)
 
 	// only uninstalls meshery-operator using helm charts
@@ -284,5 +284,5 @@ func main() {
 	// 	log.Error(err)
 	// }
 
-	logrus.Info("Shutting down Meshery")
+	logrus.Info("Shutting down Meshery Server...")
 }

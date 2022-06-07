@@ -1046,7 +1046,7 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 	bf := bytes.NewBuffer(data)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	logrus.Debugf("saving pattern to remote provider - constructed URL: %s", remoteProviderURL.String())
+	// logrus.Debugf("saving pattern to remote provider - constructed URL: %s", remoteProviderURL.String())
 	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	if err != nil {
 		return nil, err
