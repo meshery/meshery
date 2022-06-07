@@ -14,7 +14,7 @@ export const fnMapping = {
     mergeFn : mergeMeshSyncSubscription
   },
   OPERATOR_EVENT_SUBSCRIPTION : {
-    eventName : "listenToOperatorState",
+    eventName : "operator",
     comparatorFn : isOperatorStateSubscriptionDataUpdated,
     subscriptionFn : subscribeOperatorStatusEvents,
     mergeFn : mergeOperatorStateSubscription

@@ -1,46 +1,31 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
 import {
-  NoSsr,
-  Chip,
-  IconButton,
   Button,
   Card,
-  CardContent,
-  Typography,
-  CardHeader,
-  Tooltip,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper,
-  Select,
-  MenuItem,
+  CardContent, CardHeader, Chip,
+  IconButton, MenuItem, NoSsr, Paper,
+  Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
-import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import SettingsIcon from "@material-ui/icons/Settings";
+import Grid from "@material-ui/core/Grid";
+import { withStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
+import CloseIcon from "@material-ui/icons/Close";
+import SettingsIcon from "@material-ui/icons/Settings";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
-import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from "../lib/store";
-import subscribeDataPlaneEvents from "./graphql/subscriptions/DataPlanesSubscription";
-import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
+import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
+import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
+import { versionMapper } from "../utils/nameMapper";
+import { submitGrafanaConfigure } from "./GrafanaComponent";
+import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
-import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
-import { submitGrafanaConfigure } from "./GrafanaComponent";
-import { versionMapper } from "../utils/nameMapper";
-import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
@@ -144,12 +129,11 @@ class DashboardComponent extends React.Component {
   }
 
   disposeSubscriptions = () => {
-    console.debug("disposing subscriptions, state", this.state);
     if (this.state.dataPlaneSubscription) {
-      this.state.dataPlaneSubscription.dispose()
+      this.state.dataPlaneSubscription.unsubscribe()
     }
     if (this.state.controlPlaneSubscription) {
-      this.state.controlPlaneSubscription.dispose()
+      this.state.controlPlaneSubscription.unsubscribe()
     }
   }
 
@@ -158,46 +142,27 @@ class DashboardComponent extends React.Component {
      * ALL_MESH indicates that we are interested in control plane
      * component of all of the service meshes supported by meshsync v2
      */
-
     const self = this;
     const ALL_MESH = { type : "ALL_MESH", k8sClusterIDs : self.getK8sClusterIds() };
 
     if (self._isMounted) {
-      // const opSub = subscribeOperatorStatusEvents(self.setOperatorState, getK8sConfigIdsFromK8sConfig(self.props.k8sConfig));
-      // subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH, this.state, e => this.setState({ ...e }));
-      const cpSub = subscribeControlPlaneEvents((res) => {
-        if (res?.controlPlanesState !== undefined){
-          console.log("control plane state --> ", res)
-          this.setState({ controlPlaneState : res })
-        }
-      }, ALL_MESH)
-
-      const dpSub = subscribeDataPlaneEvents((res) => {
-        if (res?.dataPlanesState !== undefined){
-          console.log("data plane state --> ", res)
-          this.setState({ dataPlaneState : res })
-        }
-      }, ALL_MESH)
-
-      this.disposeSubscriptions()
-
-      this.setState({ dataPlaneSubscription : dpSub, controlPlaneSubscription : cpSub })
-      fetchControlPlanes(ALL_MESH).subscribe({
+      const controlPlaneSubscription = fetchControlPlanes(ALL_MESH).subscribe({
         next : (controlPlaneRes) => {
           console.log("control plane query subscription --> ", controlPlaneRes)
           this.setState({ controlPlaneState : controlPlaneRes })
-          // self.setMeshScanData(controlPlaneRes, null);
-          fetchDataPlanes(ALL_MESH).subscribe({
-            next : (dataPlaneRes) => {
-              console.log("data plane query subscription --> ", controlPlaneRes)
-              this.setState({ dataPlaneState : dataPlaneRes })
-              // if (controlPlaneRes) self.setMeshScanData(controlPlaneRes, dataPlaneRes);
-            },
-            error : (err) => console.error(err),
-          });
         },
         error : (err) => console.error(err),
       });
+
+      const dataPlaneSubscription = fetchDataPlanes(ALL_MESH).subscribe({
+        next : (dataPlaneRes) => {
+          console.log("data plane query subscription --> ", dataPlaneRes)
+          this.setState({ dataPlaneState : dataPlaneRes })
+        },
+        error : (err) => console.error(err),
+      });
+
+      this.setState({ controlPlaneSubscription, dataPlaneSubscription });
     }
   }
 
