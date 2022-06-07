@@ -142,12 +142,6 @@ func PersistClusterNames(
 			log.Error(err)
 		}
 	}
-	// clusterConfig, err := h.GetCurrentContext(tokenString, provider)
-	// if err != nil {
-	// 	log.Error(err)
-	// 	return
-	// }
-
 	meshsyncCh <- struct{}{}
 }
 

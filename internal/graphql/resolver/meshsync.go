@@ -61,14 +61,8 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 
 			go model.PersistClusterNames(ctx, r.Log, provider.GetGenericPersister(), r.MeshSyncChannel)
 			go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.controlPlaneSyncChannel, r.Broadcast)
-			// signal to install operator when initialized
-			fmt.Println("started ended----->")
-			r.MeshSyncChannel <- struct{}{}
-			// extension to notify other channel when data comes in
 			for {
-				fmt.Println("started ended for----->")
 				status := r.getMeshSyncStatus(k8sctx)
-				fmt.Println("started ended statusCtx----->")
 				statusWithContext := model.OperatorControllerStatusPerK8sContext{
 					ContextID:                k8sctx.ID,
 					OperatorControllerStatus: &status,
@@ -86,8 +80,6 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 }
 
 func (r *Resolver) getMeshSyncStatus(k8sctx models.K8sContext) model.OperatorControllerStatus {
-	fmt.Println("started ended getMesh----->")
-
 	var status model.OperatorControllerStatus
 	kubeclient, err := k8sctx.GenerateKubeHandler()
 	if err != nil {
