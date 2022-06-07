@@ -86,7 +86,7 @@
     "react-lazyload": "^3.2.0",
     "react-moment": "^1.1.1",
     "react-redux": "^7.2.5",
-    "react-relay": "^11.0.0",
+    "react-relay": "^13.2.0",
     "react-runtime": "^1.1.0",
     "react-select": "^2.4.3",
     "react-slick": "^0.29.0",
@@ -120,9 +120,9 @@
     "lint-staged": "^12.3.5",
     "nodemon": "^2.0.12",
     "nyc": "^15.1.0",
+    "relay-compiler": "^13.2.0",
     "start-server-and-test": "^1.13.1",
     "webpack": "^4.44.0",
     "webpack-cli": "^4.9.2"
   }
 }
-
