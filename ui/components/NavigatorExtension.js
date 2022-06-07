@@ -12,11 +12,12 @@ import environment, { subscriptionClient } from "../lib/relayEnvironment";
 import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeavingPage";
+import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed }) {
+function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed, selectedK8sContexts, k8sconfig }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
 
   if (loading) {
@@ -25,6 +26,10 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
 
   if (err != null) {
     return <div>Unknown Error: {err.toString()}</div>;
+  }
+
+  const getSelectedK8sClusters = () => {
+    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
   }
 
   return (
@@ -43,6 +48,8 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         isDrawerCollapsed,
         LoadingScreen,
         preventLeavingHook : usePreventUserFromLeavingPage,
+        getSelectedK8sClusters,
+        selectedK8sContexts,
         resolver : {
           query : {},
           mutation : {},
@@ -59,7 +66,10 @@ const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
   const prometheus = st.get("prometheus").toJS();
   const isDrawerCollapsed = st.get("isDrawerCollapsed");
-  return { grafana, prometheus, isDrawerCollapsed };
+  const selectedK8sContexts = st.get('selectedK8sContexts');
+  const k8sconfig = st.get("k8sConfig");
+
+  return { grafana, prometheus, isDrawerCollapsed, selectedK8sContexts, k8sconfig };
 };
 
 const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreators(updateLoadTestData, dispatch) });
