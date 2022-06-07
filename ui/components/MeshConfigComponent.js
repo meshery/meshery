@@ -1,48 +1,29 @@
 // @ts-check
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
 import {
-  NoSsr,
-  Button,
-  FormGroup,
-  InputAdornment,
-  Chip,
-  IconButton,
-  MenuItem,
-  Tooltip,
-  Paper,
-  Grid,
-  FormControlLabel,
-  Switch,
-  TextField,
-  List,
+  Box, Button, Chip, CircularProgress, FormControl, FormControlLabel, FormGroup, Grid, IconButton, InputAdornment, InputLabel, List,
   ListItem,
-  ListItemText,
-  CircularProgress,
-  Select,
-  Box,
-  FormControl,
-  InputLabel,
+  ListItemText, MenuItem, NoSsr, Paper, Select, Switch,
+  TextField, Tooltip
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
+import { withStyles } from "@material-ui/core/styles";
+import CloseIcon from "@material-ui/icons/Close";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
-import { updateK8SConfig, updateProgress } from "../lib/store";
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
-import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
-import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
-import changeOperatorState from "./graphql/mutations/OperatorStatusMutation";
-import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
-import NatsStatusQuery from "./graphql/queries/NatsStatusQuery";
-import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
-import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
-import PromptComponent from "./PromptComponent";
+import { updateK8SConfig, updateProgress } from "../lib/store";
 import { getFirstCtxIdFromSelectedCtxIds, getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
+import changeOperatorState from "./graphql/mutations/OperatorStatusMutation";
+import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
+import NatsStatusQuery from "./graphql/queries/NatsStatusQuery";
+import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
+import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
+import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
   clusterConfiguratorWrapper : { padding : theme.spacing(5), },
@@ -209,6 +190,7 @@ class MeshConfigComponent extends React.Component {
     const self = this;
     // Subscribe to the operator events
     let meshSyncStatusEventsSubscription = subscribeMeshSyncStatusEvents((res) => {
+      console.log("oh no", res)
       if (res.meshsync?.error) {
         self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
         return;
@@ -221,42 +203,42 @@ class MeshConfigComponent extends React.Component {
       .then(res => self.setState({ contexts : res.contexts }))
       .catch(self.handleError("failed to fetch contexts for the instance"))
 
-    let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState, getK8sConfigIdsFromK8sConfig(this.props.k8sconfig));
-    fetchMesheryOperatorStatus({ k8scontextID : this.getSelectedContextId() }).subscribe({ // TODO: How to Manage operator status for Multiple contexts @ashish
-      next : (res) => {
-        console.log("meshery operator status", res);
-        self.setOperatorState(res);
-      },
-      error : (err) => console.log("error at operator scan: " + err),
-    });
+    // let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(self.setOperatorState, getK8sConfigIdsFromK8sConfig(this.props.k8sconfig));
+    // fetchMesheryOperatorStatus({ k8scontextID : this.getSelectedContextId() }).subscribe({ // TODO: How to Manage operator status for Multiple contexts @ashish
+    //   next : (res) => {
+    //     console.log("meshery operator status", res);
+    //     self.setOperatorState(res);
+    //   },
+    //   error : (err) => console.log("error at operator scan: " + err),
+    // });
 
-    self.setState({ meshSyncStatusEventsSubscription, operatorStatusEventsSubscription })
+    self.setState({ meshSyncStatusEventsSubscription })
   }
 
-  disposeSubscription = () => {
-    console.debug("disposing subscriptions", this.state)
-    this.state.meshSyncStatusEventsSubscription.dispose()
-    this.state.operatorStatusEventsSubscription.dispose()
-  }
+  // disposeSubscription = () => {
+  //   console.debug("disposing subscriptions", this.state)
+  //   this.state.meshSyncStatusEventsSubscription.dispose()
+  //   this.state.operatorStatusEventsSubscription.dispose()
+  // }
 
   componentDidMount() {
     this.initSubscription();
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.k8sconfig !== this.props.k8sconfig) {
-      console.debug("k8sconfig changed")
-      this.disposeSubscription();
-      this.initSubscription();
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.k8sconfig !== this.props.k8sconfig) {
+  //     console.debug("k8sconfig changed")
+  //     this.disposeSubscription();
+  //     this.initSubscription();
+  //   }
+  // }
 
   componentWillUnmount () {
-    this.disposeSubscription();
+    // this.disposeSubscription();
   }
 
   setOperatorState = (res) => {
-    console.log("incoming change")
+    console.log("incoming change operator", res)
     const self = this;
     if (res.operator?.error) {
       self.handleError("Operator could not be reached")(res.operator?.error?.description);
@@ -420,25 +402,27 @@ class MeshConfigComponent extends React.Component {
   };
 
   handleOperatorClick = () => {
-    this.props.updateProgress({ showProgress : true });
-    const self = this;
-    fetchMesheryOperatorStatus({ k8scontextID : this.getSelectedContextId() }).subscribe({ next : (res) => {
-      console.log(res);
-      let state = self.setOperatorState(res);
-      self.props.updateProgress({ showProgress : false });
-      if (state == true) {
-        this.props.enqueueSnackbar("Operator was successfully pinged!", { variant : "success",
-          autoHideDuration : 2000,
-          action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ), });
-      } else {
-        self.handleError("Operator could not be reached")("Operator is disabled");
-      }
-    },
-    error : self.handleError("Operator could not be pinged"), });
+    // this.props.updateProgress({ showProgress : true });
+    // const self = this;
+    // fetchMesheryOperatorStatus({ k8scontextID : this.getSelectedContextId() }).subscribe({ next : (res) => {
+    //   console.log(res);
+    //   let state = self.setOperatorState(res);
+    //   self.props.updateProgress({ showProgress : false });
+    //   if (state == true) {
+    //     this.props.enqueueSnackbar("Operator was successfully pinged!", { variant : "success",
+    //       autoHideDuration : 2000,
+    //       action : (key) => (
+    //         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+    //           <CloseIcon />
+    //         </IconButton>
+    //       ), });
+    //   } else {
+    //     self.handleError("Operator could not be reached")("Operator is disabled");
+    //   }
+    // },
+
+
+    // error : self.handleError("Operator could not be pinged"), });
   };
 
 handleNATSClick = () => {

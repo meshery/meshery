@@ -34,14 +34,13 @@ import CloseIcon from "@material-ui/icons/Close";
 import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from "../lib/store";
 import subscribeDataPlaneEvents from "./graphql/subscriptions/DataPlanesSubscription";
 import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
-import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import { versionMapper } from "../utils/nameMapper";
-import { getK8sClusterIdsFromCtxId, getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
+import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
@@ -127,7 +126,6 @@ class DashboardComponent extends React.Component {
       // subscriptions disposable
       dataPlaneSubscription : null,
       controlPlaneSubscription : null,
-      operatorStatusSubscription : null,
     };
   }
 
@@ -147,9 +145,6 @@ class DashboardComponent extends React.Component {
 
   disposeSubscriptions = () => {
     console.debug("disposing subscriptions, state", this.state);
-    if (this.state.operatorStatusSubscription) {
-      this.state.operatorStatusSubscription.dispose()
-    }
     if (this.state.dataPlaneSubscription) {
       this.state.dataPlaneSubscription.dispose()
     }
@@ -168,7 +163,7 @@ class DashboardComponent extends React.Component {
     const ALL_MESH = { type : "ALL_MESH", k8sClusterIDs : self.getK8sClusterIds() };
 
     if (self._isMounted) {
-      const opSub = subscribeOperatorStatusEvents(self.setOperatorState, getK8sConfigIdsFromK8sConfig(self.props.k8sConfig));
+      // const opSub = subscribeOperatorStatusEvents(self.setOperatorState, getK8sConfigIdsFromK8sConfig(self.props.k8sConfig));
       // subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH, this.state, e => this.setState({ ...e }));
       const cpSub = subscribeControlPlaneEvents((res) => {
         if (res?.controlPlanesState !== undefined){
@@ -186,7 +181,7 @@ class DashboardComponent extends React.Component {
 
       this.disposeSubscriptions()
 
-      this.setState({ operatorStatusSubscription : opSub, dataPlaneSubscription : dpSub, controlPlaneSubscription : cpSub })
+      this.setState({ dataPlaneSubscription : dpSub, controlPlaneSubscription : cpSub })
       fetchControlPlanes(ALL_MESH).subscribe({
         next : (controlPlaneRes) => {
           console.log("control plane query subscription --> ", controlPlaneRes)
@@ -346,43 +341,6 @@ class DashboardComponent extends React.Component {
       },
       self.handleError("Unable to fetch list of adapters.")
     );
-  };
-
-  setOperatorState = (res) => {
-    console.debug("[requires change] response from subscription: " + JSON.stringify(res));
-    const self = this;
-    if (res.operator?.error) {
-      self.handleError("Operator could not be reached")(res.operator?.error?.description);
-      return false;
-    }
-
-    if (res.operator?.status === "ENABLED") {
-      res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status == "ENABLED") {
-          self.setState({ NATSInstalled : true,
-            NATSVersion : controller.version, });
-        } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
-          self.setState({ meshSyncInstalled : true,
-            meshSyncVersion : controller.version, });
-        }
-      });
-      self.setState({ operatorInstalled : true,
-        operatorSwitch : true,
-        operatorVersion : res.operator?.version, });
-      return true;
-    }
-
-    self.setState({
-      operatorInstalled : false,
-      NATSInstalled : false,
-      meshSyncInstalled : false,
-      operatorSwitch : false,
-      operatorVersion : "N/A",
-      meshSyncVersion : "N/A",
-      NATSVersion : "N/A",
-    });
-
-    return false;
   };
 
   setMeshScanData = (controlPlanesData, dataPlanesData) => {

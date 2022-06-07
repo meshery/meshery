@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fcb37c20254322bbfe89341e0301eeae>>
+ * @generated SignedSource<<fb4f2e789f74ac2e7d93af7785c3e673>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -15,6 +15,7 @@ export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKN
 export type ReSyncActions = {|
   clearDB: string,
   ReSync: string,
+  hardReset: string,
 |};
 export type ResetDatabaseQuery$variables = {|
   selector: ReSyncActions,

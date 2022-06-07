@@ -54,6 +54,10 @@ const initialState = fromJS({
   showProgress : false,
   isDrawerCollapsed: false,
   selectedAdapter : '',
+  
+  // global gql-subscriptions
+  operatorState: null,
+  meshSyncState: null
 });
 
 export const actionTypes = {
@@ -78,6 +82,8 @@ export const actionTypes = {
   UPDATE_PROGRESS : 'UPDATE_PROGRESS',
   TOOGLE_DRAWER : 'TOOGLE_DRAWER',
   SET_ADAPTER : 'SET_ADAPTER',
+  SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
+  SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION'
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
 };
 
@@ -177,6 +183,12 @@ export const reducer = (state = initialState, action) => {
       //   else
       //     return state
 
+    case actionTypes.SET_OPERATOR_SUBSCRIPTION: 
+      return state.merge({operatorSubscription: action.operatorState});
+
+    case actionTypes.SET_MESHSYNC_SUBSCRIPTION: 
+      return state.merge({meshSyncSubscription: action.meshSyncState});
+
     default:
       return state;
   }
@@ -261,6 +273,15 @@ export const toggleDrawer = ({isDrawerCollapsed}) => dispatch => {
 export const setAdapter = ({selectedAdapter}) => dispatch => {
   return dispatch({ type : actionTypes.SET_ADAPTER, selectedAdapter });
 }
+
+export const setOperatorSubscription = ({operatorState}) => dispatch => {
+  return dispatch({type: actionTypes.SET_OPERATOR_SUBSCRIPTION, operatorState})
+}
+
+export const setMeshsyncSubscription = ({meshSyncState}) => dispatch => {
+  return dispatch({type: actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState})
+}
+
 // export const updateSMIResults = ({smi_result}) => dispatch => {
 //   console.log("invoking the updateSMIResults action creator. . .",smi_result);
 //   return dispatch({ type: actionTypes.UPDATE_SMI_RESULT, smi_result });
