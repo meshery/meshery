@@ -101,6 +101,7 @@ func persistData(msg broker.Message,
 				Type:   "health",
 			})
 		}
+
 		err = recordMeshSyncData(msg.EventType, handler, &object)
 		if err != nil {
 			log.Error(err)

@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"path"
 	"time"
@@ -30,7 +29,6 @@ var (
 )
 
 func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
-	fmt.Println("started ----->")
 	channel := make(chan *model.OperatorControllerStatusPerK8sContext)
 	if r.brokerChannel == nil {
 		r.brokerChannel = make(chan *broker.Message)

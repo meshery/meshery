@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
@@ -269,7 +268,6 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 
 func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error) {
 	operatorChannel := make(chan *model.OperatorStatusPerK8sContext)
-	fmt.Println("OPerator state subscription callled")
 
 	k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 	if !ok || len(k8sctxs) == 0 {
