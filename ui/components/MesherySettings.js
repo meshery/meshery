@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCloud, faPoll } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCloud, faPoll, faDatabase } from '@fortawesome/free-solid-svg-icons';
 // import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
@@ -79,6 +79,8 @@ class MesherySettings extends React.Component {
         case 'metrics':
           tabVal = 2;
           break;
+        case 'system':
+          tabVal = 3;
         // case 'performance':
         //   tabVal = 3;
         //   break;
@@ -236,6 +238,8 @@ class MesherySettings extends React.Component {
           case 2:
             newRoute += '#metrics'
             break;
+          case 3:
+            newRoute += '#system'
           // case 3:
           //   newRoute += '#performance'
           //   break;
@@ -327,6 +331,16 @@ class MesherySettings extends React.Component {
                 tab="tabMetrics"
               />
             </Tooltip>
+            <Tooltip title="Reset System" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <FontAwesomeIcon icon={faDatabase} transform={mainIconScale} fixedWidth />
+                }
+                label="Reset"
+                tab="systemReset"
+              />
+            </Tooltip>
 
             {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
 
@@ -343,30 +357,7 @@ class MesherySettings extends React.Component {
           </Tabs>
         </Paper>
         {tabVal === 0 && (
-          <TabContainer>
-            <AppBar position="static" color="default">
-              <Tabs
-                value={subTabVal}
-                onChange={this.handleChange('subTabVal')}
-                indicatorColor="primary"
-                textColor="primary"
-                variant="fullWidth"
-              >
-                <Tab className={classes.tab} label="Out of Cluster Deployment" data-cy="tabOutOfClusterDeployment" />
-                <Tab className={classes.tab} label="In Cluster Deployment" data-cy="tabInClusterDeployment" />
-              </Tabs>
-            </AppBar>
-            {subTabVal === 0 && (
-              <TabContainer>
-                <MeshConfigComponent tabs={subTabVal} />
-              </TabContainer>
-            )}
-            {subTabVal === 1 && (
-              <TabContainer>
-                <MeshConfigComponent tabs={subTabVal} />
-              </TabContainer>
-            )}
-          </TabContainer>
+          <MeshConfigComponent />
         )}
         {tabVal === 1 && (
           <TabContainer>
