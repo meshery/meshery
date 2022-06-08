@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
-import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
+import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
 import { versionMapper } from "../utils/nameMapper";
 import { submitGrafanaConfigure } from "./GrafanaComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
@@ -475,10 +475,16 @@ class DashboardComponent extends React.Component {
     this.props.router.push(`/settings#metrics/${val}`);
   };
 
+  getSelectedK8sContextsNames = () => {
+    return getK8sClusterNamesFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+  }
+
   handleKubernetesClick = (id) => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
     const selectedCtx = this.props.k8sconfig?.find((ctx) => ctx.contextID === id);
+    if (!selectedCtx) return;
+
     const { configuredServer, contextName } = selectedCtx;
     dataFetch(
       "/api/system/kubernetes/ping?context=" + id,
@@ -889,7 +895,7 @@ class DashboardComponent extends React.Component {
               }}
             >
               <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-              No service meshes detected in the {self.state.contexts?.map(ctx => ctx.name).join(",")} cluster(s).
+              No service meshes detected in the {this.getSelectedK8sContextsNames()?.map(ctx => ctx.name).join(",")} cluster(s).
               </Typography>
               <Button
                 aria-label="Add Meshes"
