@@ -101,6 +101,7 @@ func persistData(msg broker.Message,
 				Type:   "health",
 			})
 		}
+
 		err = recordMeshSyncData(msg.EventType, handler, &object)
 		if err != nil {
 			log.Error(err)
@@ -142,12 +143,6 @@ func PersistClusterNames(
 			log.Error(err)
 		}
 	}
-	// clusterConfig, err := h.GetCurrentContext(tokenString, provider)
-	// if err != nil {
-	// 	log.Error(err)
-	// 	return
-	// }
-
 	meshsyncCh <- struct{}{}
 }
 

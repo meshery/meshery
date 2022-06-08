@@ -65,7 +65,7 @@ class MesheryApp extends App {
     this.state = {
       mobileOpen : false,
       isDrawerCollapsed : false,
-      k8sContexts : {},
+      k8sContexts : [],
       activeK8sContexts : [],
       operatorSubscription : null,
       meshSyncSubscription : null,
@@ -78,7 +78,7 @@ class MesheryApp extends App {
 
     fetchContexts()
       .then(ctx => {
-        this.setState({ k8sContexts : ctx })
+        this.setState({ k8sContexts : ctx }, () => this.setActiveContexts("all"))
         const active = ctx?.contexts?.find(c => c.is_current_context === true);
         if (active) this.setState({ activeK8sContexts : [active?.id] })
       })
@@ -130,7 +130,7 @@ class MesheryApp extends App {
   };
 
   /**
-   * Sets the active k8s context on global level.
+   * Sets the selected k8s context on global level.
    * @param {Array.<string>} activeK8sContexts
    */
   activeContextChangeCallback = (activeK8sContexts)  => {
@@ -141,25 +141,36 @@ class MesheryApp extends App {
   }
 
   setActiveContexts = (id) => {
-    if (id === "all") {
-      let activeContexts = []
-      this.state.k8sContexts.contexts.forEach(ctx =>
-        activeContexts.push(ctx.id)
-      );
-      activeContexts.push("all");
-      this.setState(state => {
-        if (state.activeK8sContexts?.includes("all")) return { activeK8sContexts : [] };
-        return { activeK8sContexts : activeContexts };
-      },
-      () => this.activeContextChangeCallback(this.state.activeK8sContexts));
-      return;
-    }
+    if (this.state.k8sContexts?.contexts) {
+      if (id === "all") {
+        let activeContexts = [];
+        this.state.k8sContexts.contexts.forEach(ctx =>
+          activeContexts.push(ctx.id)
+        );
+        activeContexts.push("all");
+        this.setState(state => {
+          if (state.activeK8sContexts?.includes("all")) return { activeK8sContexts : [] };
+          return { activeK8sContexts : activeContexts };
+        },
+        () => this.activeContextChangeCallback(this.state.activeK8sContexts));
+        return;
+      }
 
-    this.setState(state => {
-      const ids = [...(state.activeK8sContexts || [])];
-      if (ids.includes(id)) return { activeK8sContexts : ids.filter(cid => cid !== id) };
-      return { activeK8sContexts : [...ids, id] }
-    }, () => this.activeContextChangeCallback(this.state.activeK8sContexts))
+      this.setState(state => {
+        let ids = [...(state.activeK8sContexts || [])];
+        //pop event
+        if (ids.includes(id)) {
+          ids  = ids.filter(id => id != "all")
+          return { activeK8sContexts : ids.filter(cid => cid !== id) }
+        }
+
+        //push event
+        if (ids.length === this.state.k8sContexts.contexts.length - 1) {
+          ids.push("all");
+        }
+        return { activeK8sContexts : [...ids, id] }
+      }, () => this.activeContextChangeCallback(this.state.activeK8sContexts))
+    }
   }
 
   searchContexts = (search = "") => {
