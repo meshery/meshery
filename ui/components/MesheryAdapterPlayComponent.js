@@ -1,58 +1,33 @@
-import NoSsr from "@material-ui/core/NoSsr";
-import React from "react";
-import { Controlled as CodeMirror } from "react-codemirror2";
 import {
-  withStyles,
-  Grid,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Divider,
-  Card,
-  CardHeader,
-  CardActions,
-  Menu,
-  MenuItem,
-  Chip,
-  TableCell,
-  TableRow,
-  TableBody,
-  TableHead,
-  Table,
-  Tooltip,
-  Typography,
-  FormLabel,
-  FormControl,
-  FormGroup,
-  FormControlLabel,
-  Switch,
+  Card, CardActions, CardHeader, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Grid,
+  IconButton, Menu,
+  MenuItem, Switch, Table, TableBody, TableCell, TableHead, TableRow, Tooltip,
+  Typography, withStyles
 } from "@material-ui/core";
 import { blue } from "@material-ui/core/colors";
-import PropTypes from "prop-types";
-import { withRouter } from "next/router";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import CloseIcon from "@material-ui/icons/Close";
-import { withSnackbar } from "notistack";
+import NoSsr from "@material-ui/core/NoSsr";
 import AddIcon from "@material-ui/icons/Add";
+import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PlayIcon from "@material-ui/icons/PlayArrow";
+import MUIDataTable from "mui-datatables";
+import { withRouter } from "next/router";
+import { withSnackbar } from "notistack";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controlled as CodeMirror } from "react-codemirror2";
+import Moment from "react-moment";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import dataFetch from "../lib/data-fetch";
 // import { updateSMIResults } from '../lib/store';
 import { updateProgress } from "../lib/store";
-import dataFetch from "../lib/data-fetch";
-import MUIDataTable from "mui-datatables";
-import Moment from "react-moment";
-import MesheryResultDialog from "./MesheryResultDialog";
-// import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubscription';
-// import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
-import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
+import { ctxUrl, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
+import MesheryMetrics from "./MesheryMetrics";
+import MesheryResultDialog from "./MesheryResultDialog";
 import ReactSelectWrapper from "./ReactSelectWrapper";
-import MesheryMetrics from "./MesheryMetrics"
-import { ctxUrl, getFirstCtxIdFromSelectedCtxIds, getK8sClusterIdsFromCtxId, getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },
@@ -170,66 +145,14 @@ class MesheryAdapterPlayComponent extends React.Component {
       sortOrder : "",
       pageSize : 10,
       namespaceList : [],
-      meshsyncStatusEvent : null,
-      operatorStatusEvent : null,
-      addonStatusEvent : null,
+      namespaceSubscription : null
     };
   }
 
   initSubscription = () => {
     const self = this;
 
-    const meshsyncStatusEvent = subscribeMeshSyncStatusEvents(res => {
-      if (res.meshsync?.error) {
-        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
-        return
-      }
-    },
-    getK8sConfigIdsFromK8sConfig(this.props.k8sconfig)
-    )
-    // @AShish do we need this subscription here?
-    // const operatorStatusEvent = subscribeOperatorStatusEvents(self.setOperatorState, this.getSelectedContextId())
-    // const addonStatusEvent = subscribeAddonStatusEvents(self.setAddonsState, variables)
-
-    this.setState({ meshsyncStatusEvent,/* operatorStatusEvent, addonStatusEvent*/ });
-  }
-
-  disposeSubscritions = () => {
-    const { meshsyncStatusEvent, operatorStatusEvent, addonStatusEvent } = this.state;
-    if (meshsyncStatusEvent) {
-      meshsyncStatusEvent.dispose()
-    }
-    if (operatorStatusEvent) {
-      operatorStatusEvent.dispose()
-    }
-    if (addonStatusEvent) {
-      addonStatusEvent.dispose()
-    }
-  }
-
-  componentDidMount() {
-    const self = this;
-    const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
-    const variables = { type : meshname, k8sClusterIDs : this.getK8sClusterIds() }
-
-    this.initSubscription();
-    // subscribeMeshSyncStatusEvents(res => {
-    //   if (res.meshsync?.error) {
-    //     self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
-    //     return
-    //   }
-    // },
-    // this.props.k8sconfig
-    // )
-    // subscribeOperatorStatusEvents(self.setOperatorState, this.getSelectedContextId())
-    // subscribeAddonStatusEvents(self.setAddonsState, variables)
-
-    fetchAvailableAddons(variables)
-      .subscribe({ next : res => {
-        self.setAddonsState(res)
-      },
-      error : (err) => console.log("error at addon fetch: " + err), })
-    fetchAvailableNamespaces({ k8sClusterIDs : self.getK8sClusterIds() })
+    const namespaceSubscription = fetchAvailableNamespaces({ k8sClusterIDs : self.getK8sClusterIds() })
       .subscribe({ next : res => {
         let namespaces = []
         res?.namespaces?.map(ns => {
@@ -249,23 +172,39 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ namespaceList : namespaces })
       },
       error : (err) => console.log("error at namespace fetch: " + err), })
+
+    this.setState({ namespaceSubscription })
+  }
+
+  disposeSubscriptions = () => {
+    if (this.state.namespaceSubscription) {
+      this.state.namespaceSubscription.unsubscribe()
+    }
+  }
+
+  componentDidMount() {
+    const self = this;
+    const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
+    const variables = { type : meshname, k8sClusterIDs : this.getK8sClusterIds() }
+
+    this.initSubscription();
+
+    fetchAvailableAddons(variables)
+      .subscribe({ next : res => {
+        self.setAddonsState(res)
+      },
+      error : (err) => console.log("error at addon fetch: " + err), })
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.k8sconfig !== this.props.k8sconfig) {
-      console.debug("k8sconfig changedin meshAdapterPlayComponent")
-      this.disposeSubscription();
+    if (prevProps.selectedK8sContexts.length !== this.props.selectedK8sContexts.length) {
+      this.disposeSubscriptions();
       this.initSubscription();
     }
   }
 
-
   getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
-  }
-
-  getSelectedContextId = () => {
-    return getFirstCtxIdFromSelectedCtxIds(this.props.selectedK8sContexts, this.props.k8sconfig)
   }
 
   mapAdapterNameToMeshName(name) {
@@ -1180,10 +1119,6 @@ class MesheryAdapterPlayComponent extends React.Component {
 MesheryAdapterPlayComponent.propTypes = { classes : PropTypes.object.isRequired,
   adapter : PropTypes.object.isRequired, };
 
-// const mapStateToProps = (state) => {
-//   const smi_result = state.get('smi_result').toJS();
-//   return { smi_result, };
-// };
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
   const k8sconfig = st.get("k8sConfig");
