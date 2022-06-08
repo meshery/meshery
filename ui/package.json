@@ -25,6 +25,7 @@
     "@date-io/moment": "^2.11.0",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-brands-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.16",
@@ -55,7 +56,6 @@
     "subscriptions-transport-ws": "^0.9.19"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.15.0",
     "@babel/core": "^7.16.5",
     "@babel/preset-env": "^7.16.5",
     "@testing-library/jest-dom": "^5.14.1",
@@ -65,7 +65,7 @@
     "eslint-plugin-react": "^7.25.1",
     "graphql": "^15.5.1",
     "http-proxy": "^1.18.1",
-    "husky": "^7.0.0",
+    "husky": "^8.0.1",
     "jest": "^27.1.0",
     "lint-staged": "^11.1.2",
     "pinst": "^2.1.6",
