@@ -106,7 +106,7 @@ func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *me
 	}
 	if err == nil {
 		status := fmt.Sprintf("%s %s", StatusConnected, broker.Status.Endpoint.External)
-		if brokerConn.Info() == brokerpkg.NotConnected {
+		if brokerConn.Info() != brokerpkg.NotConnected {
 			brokerStatus.Status = Status(status)
 		}
 		brokerStatus.Name = "broker"
