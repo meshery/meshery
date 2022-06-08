@@ -10,7 +10,7 @@ import {
   DialogTitle
 } from "@material-ui/core";
 
-const styles = () => ({
+const styles = (theme) => ({
   title : {
     textAlign : 'center',
     minWidth : 400,
@@ -26,21 +26,25 @@ const styles = () => ({
   },
   actions : {
     display : 'flex',
-    justifyContent : 'center',
+    justifyContent : 'space-evenly',
   },
   button0 : {
-    margin : '8px 0px',
-    width : '100%',
+    margin: theme.spacing(0.5),
+    padding: theme.spacing(1),
+    borderRadius: 5,
+    minWidth : 100,
   },
   button1 : {
-    margin : '8px 0px',
-    width : '100%',
+    margin: theme.spacing(0.5),
+    padding: theme.spacing(1),
+    borderRadius: 5,
     backgroundColor : "#e0e0e0",
     color : "rgba(0, 0, 0, 0.87)",
     "&:hover" : {
       backgroundColor : "#d5d5d5",
       boxShadow : "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
-    }
+    },
+    minWidth : 100,
   }
 });
 
@@ -108,7 +112,7 @@ class PromptComponent extends React.Component {
               resolve(options[1]);
             }} key={options[1]} className={classes.button1}
             >
-              {options[1]}
+             <Typography variant body2> {options[1]} </Typography>
             </Button>
             <Button onClick={() => {
               this.hide();
@@ -117,7 +121,7 @@ class PromptComponent extends React.Component {
             type="submit"
             variant="contained"
             color="primary">
-              {options[0]}
+              <Typography variant body2 > {options[0]} </Typography>
             </Button>
           </DialogActions>
         </Dialog>
