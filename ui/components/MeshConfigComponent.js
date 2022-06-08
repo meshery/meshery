@@ -1,7 +1,7 @@
 import {
   Chip, Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem, Switch,
   Tooltip, Paper, NoSsr, TableCell, TableContainer, Table, Button, Typography,
-  TextField, FormGroup, InputAdornment
+  TextField, FormGroup, InputAdornment, darken
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CloseIcon from "@material-ui/icons/Close";
@@ -19,7 +19,7 @@ import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
 import NatsStatusQuery from './graphql/queries/NatsStatusQuery';
 import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
 import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
-import { updateK8SConfig, updateProgress, actionTypes } from "../lib/store";
+import { updateK8SConfig, updateProgress, actionTypes, setMeshsyncSubscription } from "../lib/store";
 import { getFirstCtxIdFromSelectedCtxIds } from "../utils/multi-ctx";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 
@@ -88,7 +88,7 @@ const styles = (theme) => ({
 });
 
 function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updateProgress,
-  selectedK8sContexts, k8sconfig, operatorState, MeshSyncState }) {
+  selectedK8sContexts, k8sconfig, operatorState, MeshSyncState, setMeshsyncSubscription }) {
   const [data, setData] = useState([])
   let k8sfileElementVal ="";
   const [showMenu, setShowMenu] = useState([false])
@@ -118,6 +118,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const dateOptions = { weekday : 'long', year : 'numeric', month : 'long', day : 'numeric' };
 
   const stateUpdater = (state, updateFunc, updateValue, index) => {
+    console.log("HAHAH");
     let newState = [...state];
     newState[index] = updateValue;
     updateFunc(newState);
@@ -136,6 +137,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     MeshSyncState?.forEach((state) => {
       meshsync.push(state.OperatorControllerStatus);
     })
+
+    let opSwitch = [];
+    operatorState?.forEach((state, idx) => {
+      opSwitch[idx] = isOperatorActive(state.contextID)
+    })
+    setOperatorSwitch(opSwitch);
     // setOperatorState(operator);
     setMeshSyncState(meshsync);
     let tableInfo = [];
@@ -174,8 +181,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   }, [])
 
-  const isOperatoractive = (ctx) => {
-    return operatorState.forEach((state) => )
+  const isOperatorActive = (ctx) => {
+    return operatorState.filter((state) => state.contextID === ctx ).length > 0;
+  }
+
+  const isMeshSyncActive = (ctx) => {
+    return MeshSyncState.filter((state) => state.contextID === ctx ).length > 0;
   }
 
   const handleResetDatabase = () => {
@@ -416,7 +427,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     changeOperatorState((response, errors) => {
       updateProgress({ showProgress : false });
       if (errors !== undefined) {
-        handleError("Unable to install operator");
+        handleError(`Unable to ${operatorSwitch[index] === true ? "Uni" : "I"} nstall operator`);
       }
       enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), { variant : "success",
         autoHideDuration : 2000,
@@ -515,12 +526,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
-        setCellHeaderProps : (value) => ({
-          style : {
-            display : "flex",
-            justifyContent : "center"
-          }
-        })
+        // setCellHeaderProps : (value) => ({
+        //   style : {
+        //     display : "flex",
+        //     textAlign : "center"
+        //   }
+        // })
       }
     },
     {
@@ -581,7 +592,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 </Button>
                 <MenuItem>
                   <Switch
-                    checked={operatorSwitch[tableMeta.rowIndex] !== null}
+                    checked={operatorSwitch[tableMeta.rowIndex]}
                     onClick={() => handleOperatorSwitch(tableMeta.rowIndex)}
                     disabled={operatorProcessing[tableMeta.rowIndex]}
                     name="OperatorSwitch"
@@ -605,11 +616,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     expandableRowsOnClick : false,
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
-        console.log("D", item);
+        console.log("Dmm", item);
         handleConfigDelete(data[item.index].id)
       })
     },
     renderExpandableRow : (rowData, rowMetaData) => {
+      console.log("LLLLL", rowData);
       return (
         <NoSsr>
           <TableCell colSpan={6}>
@@ -701,13 +713,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                             </ListItem>
                           </List>
                         </Grid>
-                        {operatorState[rowMetaData.rowIndex] !== null &&
+                        {operatorSwitch[rowMetaData.rowIndex] &&
                             <>
                               <Grid item xs={12} md={4}>
                                 <List>
                                   <ListItem>
                                     <Tooltip
-                                      title={MeshSyncState[rowMetaData.rowIndex] !== null ? `Redeploy MeshSync` : "Not Available"}
+                                      title={isMeshSyncActive(data[rowMetaData.rowIndex].id) ? `Redeploy MeshSync` : "Not Available"}
                                       aria-label="meshSync"
                                     >
                                       <Chip
@@ -746,24 +758,24 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="Operator State" secondary={operatorState[rowMetaData.rowIndex]!== null
+                              <ListItemText primary="Operator State" secondary={operatorSwitch[rowMetaData.rowIndex]
                                 ? "Active"
                                 : "Disabled"} />
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="Operator Version" secondary={operatorState[rowMetaData.rowIndex].operatorStatus.version} />
+                              <ListItemText primary="Operator Version" secondary={operatorState[rowMetaData.rowIndex]?.operatorStatus.version} />
                             </ListItem>
                           </List>
                         </Grid>
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="MeshSync State" secondary={MeshSyncState[rowMetaData.rowIndex] !== null
+                              <ListItemText primary="MeshSync State" secondary={isMeshSyncActive(data[rowMetaData.rowIndex].id)
                                 ? "Enabled"
                                 : "Disabled"} />
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="MeshSync Version" secondary={MeshSyncState[rowMetaData.rowIndex].OperatorControllerStatus.version} />
+                              <ListItemText primary="MeshSync Version" secondary={MeshSyncState[rowMetaData.rowIndex]?.OperatorControllerStatus.version} />
                             </ListItem>
                           </List>
                         </Grid>
@@ -861,11 +873,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       </>,
       options : ["CANCEL", "UPLOAD"]
     })
-    if (response === "Upload") {
+    if (response === "UPLOAD") {
       uploadK8SConfig().then(() => {
         handleSuccess("successfully uploaded kubernetes config");
         fetchAllContexts(25)
-          .then(res => setContexts(res.contexts))
+          .then(res => { 
+            let newData = [...data];
+            setData(newData);
+            setContexts(res.contexts)
+          })
           .catch(handleError("failed to get contexts"))
       }).
         catch(err => {
@@ -963,15 +979,19 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     updateProgress({ showProgress : true });
     MeshsyncStatusQuery(({ k8scontextID : contexts[index].id })).subscribe({ next : (res) => {
       updateProgress({ showProgress : false });
-      if (res.controller.name === "meshsync" && res.controller.status.includes("ENABLED")) {
+      if (res.controller.name !== "meshsync" || !res.controller.status.includes("ENABLED")) {
         // stateUpdater(meshSyncInstalled, setMeshSyncInstalled, true, index);
         // stateUpdater(meshSyncVersion, setMeshSyncVersion, res.controller.version, index);
         // stateUpdater(meshSyncState, setMeshSyncState, res.controller.status, index);
-
+        let newMeshSyncState = [...MeshSyncState]
+        newMeshSyncState[index] = null;
+        setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
+        handleError("MeshSync could not be reached")("MeshSync is unavailable");
         
         // setMeshSyncInstalled(true);
         // setMeshSyncVersion(res.controller.version);
         // setMeshSyncState(res.controller.status);
+      } else {
         let publishEndpoint = res.controller.status.substring("ENABLED".length)
         enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
           variant : "success",
@@ -982,8 +1002,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           ),
           autohideduration : 2000,
         })
-      } else {
-        handleError("MeshSync could not be reached")("MeshSync is unavailable");
         // stateUpdater(meshSyncInstalled, setMeshSyncInstalled, false, index);
         // stateUpdater(meshSyncVersion, setMeshSyncVersion, "", index);
         // stateUpdater(meshSyncState, setMeshSyncState, res.controller.status, index);
@@ -991,7 +1009,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         // setMeshSyncVersion("");
         // setMeshSyncState(res.controller.status);
       }
-      dispatch({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : res })
     },
     error : handleError("MeshSync status could not be retrieved"), });
 
@@ -1060,7 +1077,9 @@ const mapStateToProps = (state) => {
   const MeshSyncState = state.get('meshSyncState');
   return { k8sconfig, selectedK8sContexts, operatorState, MeshSyncState };
 }
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), 
+  setMeshsyncSubscription : bindActionCreators(setMeshsyncSubscription, dispatch)
+});
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesherySettingsNew)));
 
