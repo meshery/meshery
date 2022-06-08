@@ -17,12 +17,11 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 import { updateK8SConfig, updateProgress } from "../lib/store";
-import { getFirstCtxIdFromSelectedCtxIds, getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
+import { getFirstCtxIdFromSelectedCtxIds } from "../utils/multi-ctx";
 import changeOperatorState from "./graphql/mutations/OperatorStatusMutation";
 import MeshsyncStatusQuery from "./graphql/queries/MeshsyncStatusQuery";
 import NatsStatusQuery from "./graphql/queries/NatsStatusQuery";
 import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
-import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
 import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
@@ -189,15 +188,14 @@ class MeshConfigComponent extends React.Component {
   initSubscription = () => {
     const self = this;
     // Subscribe to the operator events
-    let meshSyncStatusEventsSubscription = subscribeMeshSyncStatusEvents((res) => {
-      console.log("oh no", res)
-      if (res.meshsync?.error) {
-        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
-        return;
-      }
-    },
-    getK8sConfigIdsFromK8sConfig(this.props.k8sconfig)
-    );
+    // let meshSyncStatusEventsSubscription = subscribeMeshSyncStatusEvents((res) => {
+    //   if (res.meshsync?.error) {
+    //     self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
+    //     return;
+    //   }
+    // },
+    //   getK8sConfigIdsFromK8sConfig(this.props.k8sconfig)
+    // );
 
     fetchAllContexts(25)
       .then(res => self.setState({ contexts : res.contexts }))
@@ -212,7 +210,7 @@ class MeshConfigComponent extends React.Component {
     //   error : (err) => console.log("error at operator scan: " + err),
     // });
 
-    self.setState({ meshSyncStatusEventsSubscription })
+    // self.setState({ meshSyncStatusEventsSubscription })
   }
 
   // disposeSubscription = () => {

@@ -141,34 +141,36 @@ class MesheryApp extends App {
   }
 
   setActiveContexts = (id) => {
-    if (id === "all") {
-      let activeContexts = [];
-      this.state.k8sContexts.contexts.forEach(ctx =>
-        activeContexts.push(ctx.id)
-      );
-      activeContexts.push("all");
+    if (this.state.k8sContexts?.contexts) {
+      if (id === "all") {
+        let activeContexts = [];
+        this.state.k8sContexts.contexts.forEach(ctx =>
+          activeContexts.push(ctx.id)
+        );
+        activeContexts.push("all");
+        this.setState(state => {
+          if (state.activeK8sContexts?.includes("all")) return { activeK8sContexts : [] };
+          return { activeK8sContexts : activeContexts };
+        },
+        () => this.activeContextChangeCallback(this.state.activeK8sContexts));
+        return;
+      }
+
       this.setState(state => {
-        if (state.activeK8sContexts?.includes("all")) return { activeK8sContexts : [] };
-        return { activeK8sContexts : activeContexts };
-      },
-      () => this.activeContextChangeCallback(this.state.activeK8sContexts));
-      return;
+        let ids = [...(state.activeK8sContexts || [])];
+        //pop event
+        if (ids.includes(id)) {
+          ids  = ids.filter(id => id != "all")
+          return { activeK8sContexts : ids.filter(cid => cid !== id) }
+        }
+
+        //push event
+        if (ids.length === this.state.k8sContexts.contexts.length - 1) {
+          ids.push("all");
+        }
+        return { activeK8sContexts : [...ids, id] }
+      }, () => this.activeContextChangeCallback(this.state.activeK8sContexts))
     }
-
-    this.setState(state => {
-      let ids = [...(state.activeK8sContexts || [])];
-      //pop event
-      if (ids.includes(id)) {
-        ids  = ids.filter(id => id != "all")
-        return { activeK8sContexts : ids.filter(cid => cid !== id) }
-      }
-
-      //push event
-      if (ids.length === this.state.k8sContexts.contexts.length - 1) {
-        ids.push("all");
-      }
-      return { activeK8sContexts : [...ids, id] }
-    }, () => this.activeContextChangeCallback(this.state.activeK8sContexts))
   }
 
   searchContexts = (search = "") => {
