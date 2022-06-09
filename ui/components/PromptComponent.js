@@ -29,15 +29,15 @@ const styles = (theme) => ({
     justifyContent : 'space-evenly',
   },
   button0 : {
-    margin: theme.spacing(0.5),
-    padding: theme.spacing(1),
-    borderRadius: 5,
+    margin : theme.spacing(0.5),
+    padding : theme.spacing(1),
+    borderRadius : 5,
     minWidth : 100,
   },
   button1 : {
-    margin: theme.spacing(0.5),
-    padding: theme.spacing(1),
-    borderRadius: 5,
+    margin : theme.spacing(0.5),
+    padding : theme.spacing(1),
+    borderRadius : 5,
     backgroundColor : "#e0e0e0",
     color : "rgba(0, 0, 0, 0.87)",
     "&:hover" : {
@@ -112,7 +112,7 @@ class PromptComponent extends React.Component {
               resolve(options[1]);
             }} key={options[1]} className={classes.button1}
             >
-             <Typography variant body2> {options[1]} </Typography>
+              <Typography variant body2> {options[1]} </Typography>
             </Button>
             <Button onClick={() => {
               this.hide();

@@ -1,7 +1,7 @@
 import {
   Chip, Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem, Switch,
   Tooltip, Paper, NoSsr, TableCell, TableContainer, Table, Button, Typography,
-  TextField, FormGroup, InputAdornment, darken
+  TextField, FormGroup, InputAdornment
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CloseIcon from "@material-ui/icons/Close";
@@ -19,8 +19,7 @@ import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
 import NatsStatusQuery from './graphql/queries/NatsStatusQuery';
 import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
 import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
-import { updateK8SConfig, updateProgress, actionTypes, setMeshsyncSubscription } from "../lib/store";
-import { getFirstCtxIdFromSelectedCtxIds } from "../utils/multi-ctx";
+import { updateProgress, actionTypes, setMeshsyncSubscription } from "../lib/store";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 
 
@@ -88,7 +87,7 @@ const styles = (theme) => ({
 });
 
 function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updateProgress,
-  selectedK8sContexts, k8sconfig, operatorState, MeshSyncState, setMeshsyncSubscription }) {
+  operatorState, MeshSyncState, setMeshsyncSubscription }) {
   const [data, setData] = useState([])
   let k8sfileElementVal ="";
   const [showMenu, setShowMenu] = useState([false])
@@ -108,7 +107,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [contexts, setContexts] = useState([]);
   const [k8sVersion, setK8sVersion] = useState(["N/A"]);
   // const [toUploadContexts, setToUploadContexts] = useState([]);
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState(null);
 
   const ref = useRef(null);
@@ -147,11 +146,11 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     setMeshSyncState(meshsync);
     let tableInfo = [];
     fetchAllContexts(25)
-    .then(res => {
-      console.log(res, "CTX");
-      handleContexts(res.contexts);
-      res.contexts.forEach((ctx) => {
-        let data = {
+      .then(res => {
+        console.log(res, "CTX");
+        handleContexts(res.contexts);
+        res.contexts.forEach((ctx) => {
+          let data = {
             context : ctx.name,
             location : ctx.server,
             deployment_type : "fix",
@@ -189,42 +188,42 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     return MeshSyncState.filter((state) => state.contextID === ctx ).length > 0;
   }
 
-  const handleResetDatabase = () => {
-    return async () => {
-      systemResetRef.current.show({
-        title : "Reset Meshery Database?",
-        subtitle : "Are you sure to reset all the data of Meshery?",
-        options : ["Proceed", "Cancel"]
-      });
-      if (responseOfResetDatabase === "Continue Reset") {
-        this.props.updateProgress({ showProgress : true });
-        const self = this;
-        resetDatabase({
-          selector : {
-            clearDB : "true",
-            ReSync : "true",
-            hardReset : "true",
-          },
-        }).subscribe({
-          next : (res) => {
-            self.props.updateProgress({ showProgress : false });
-            if (res.resetStatus === "PROCESSING") {
-              this.props.enqueueSnackbar(`Database reset successful.`, {
-                variant : "success",
-                action : (key) => (
-                  <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                    <CloseIcon />
-                  </IconButton>
-                ),
-                autohideduration : 3000,
-              })
-            }
-          },
-          error : self.handleError("Database is not reachable, try restarting server.")
-        });
-      }
-    }
-  }
+  // const handleResetDatabase = () => {
+  //   return async () => {
+  //     systemResetRef.current.show({
+  //       title : "Reset Meshery Database?",
+  //       subtitle : "Are you sure to reset all the data of Meshery?",
+  //       options : ["Proceed", "Cancel"]
+  //     });
+  //     if (responseOfResetDatabase === "Continue Reset") {
+  //       this.props.updateProgress({ showProgress : true });
+  //       const self = this;
+  //       resetDatabase({
+  //         selector : {
+  //           clearDB : "true",
+  //           ReSync : "true",
+  //           hardReset : "true",
+  //         },
+  //       }).subscribe({
+  //         next : (res) => {
+  //           self.props.updateProgress({ showProgress : false });
+  //           if (res.resetStatus === "PROCESSING") {
+  //             this.props.enqueueSnackbar(`Database reset successful.`, {
+  //               variant : "success",
+  //               action : (key) => (
+  //                 <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+  //                   <CloseIcon />
+  //                 </IconButton>
+  //               ),
+  //               autohideduration : 3000,
+  //             })
+  //           }
+  //         },
+  //         error : self.handleError("Database is not reachable, try restarting server.")
+  //       });
+  //     }
+  //   }
+  // }
 
   const handleFlushMeshSync = (index) => {
     return async () => { // add backend support to delete context realted data
@@ -541,7 +540,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
-        customBodyRender: (value, tableMeta) => <p>{ discover[tableMeta.rowIndex] }</p>
+        customBodyRender : (value, tableMeta) => <p>{ discover[tableMeta.rowIndex] }</p>
       }
     },
     {
@@ -877,7 +876,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       uploadK8SConfig().then(() => {
         handleSuccess("successfully uploaded kubernetes config");
         fetchAllContexts(25)
-          .then(res => { 
+          .then(res => {
             let newData = [...data];
             setData(newData);
             setContexts(res.contexts)
@@ -892,24 +891,24 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const handleOperatorClick = (index) => {
     updateProgress({ showProgress : true });
-    fetchMesheryOperatorStatus({ k8scontextID :contexts[index].id })
-    .subscribe({ next : (res) => {
-      console.log(res);
-      let state = setOperatorState(res);
-      updateProgress({ showProgress : false });
-      if (state == true) {
-        enqueueSnackbar("Operator was successfully pinged!", { variant : "success",
-          autoHideDuration : 2000,
-          action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ), });
-      } else {
-        handleError("Operator could not be reached")("Operator is disabled");
-      }
-    },
-    error : handleError("Operator could not be pinged"), });
+    fetchMesheryOperatorStatus({ k8scontextID : contexts[index].id })
+      .subscribe({ next : (res) => {
+        console.log(res);
+        let state = setOperatorState(res);
+        updateProgress({ showProgress : false });
+        if (state == true) {
+          enqueueSnackbar("Operator was successfully pinged!", { variant : "success",
+            autoHideDuration : 2000,
+            action : (key) => (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ), });
+        } else {
+          handleError("Operator could not be reached")("Operator is disabled");
+        }
+      },
+      error : handleError("Operator could not be pinged"), });
   };
 
   // done
@@ -987,7 +986,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         newMeshSyncState[index] = null;
         setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
         handleError("MeshSync could not be reached")("MeshSync is unavailable");
-        
+
         // setMeshSyncInstalled(true);
         // setMeshSyncVersion(res.controller.version);
         // setMeshSyncState(res.controller.status);
@@ -1077,7 +1076,7 @@ const mapStateToProps = (state) => {
   const MeshSyncState = state.get('meshSyncState');
   return { k8sconfig, selectedK8sContexts, operatorState, MeshSyncState };
 }
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), 
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
   setMeshsyncSubscription : bindActionCreators(setMeshsyncSubscription, dispatch)
 });
 
