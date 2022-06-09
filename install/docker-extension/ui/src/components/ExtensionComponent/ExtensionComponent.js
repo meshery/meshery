@@ -142,10 +142,10 @@ const ExtensionsComponent = () => {
   }, [isLoggedIn])
 
   useEffect(() => {
-    fetch("http://127.0.0.1:7877/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build)) 
-    .catch((error) => {
-      console.log(error)
-    })
+    fetch("http://127.0.0.1:7877/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build))
+      .catch((error) => {
+        console.log(error)
+      })
   })
 
 
@@ -238,14 +238,14 @@ const ExtensionsComponent = () => {
       <CssBaseline />
       {changing && <LoadingDiv sx={{ opacity: "1" }}>
         <LoadComp />
-      </LoadingDiv>  }
-      <ComponentWrapper sx={{opacity: changing ? "0.3" : "1"}}>
-     {isLoggedIn && <Tour /> }
+      </LoadingDiv>}
+      <ComponentWrapper sx={{ opacity: changing ? "0.3" : "1" }}>
+        {isLoggedIn && <Tour />}
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
         <Typography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</Typography>
 
         <SectionWrapper>
-         <ExtensionWrapper className="third-step" sx={{  backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE", }}>
+          <ExtensionWrapper className="third-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE", }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 Launch Meshery
@@ -275,7 +275,7 @@ const ExtensionsComponent = () => {
               }
             </AccountDiv>
           </ExtensionWrapper>
-       
+
 
           {isLoggedIn && <ExtensionWrapper className="second-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
             <AccountDiv>
@@ -290,77 +290,39 @@ const ExtensionsComponent = () => {
               </div>
             </AccountDiv>
           </ExtensionWrapper>
-        }
-        {!!isLoggedIn &&
-           <div style={{ paddingTop: isLoggedIn ? "1.2rem" : null}}> 
-             <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
-              <div>
-              <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
-              <ServiceMeshAdapters>
-                {meshAdapters && switchesState && meshAdapters.map(adapter =>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={switchesState ? !switchesState[adapter.name] : true}>{adapters[adapter.name].icon}</AdapterDiv>
-                    <Typography sx={{ whiteSpace: "nowrap" }}>{adapters[adapter.name].displayName}</Typography>
-                    <Switch checked={switchesState ? switchesState[adapter.name] : false} disabled={!isLoggedIn} onChange={() => {
-                      submitConfig(adapter.name, switchesState[adapter.name], meshAdapters)
-                      setSwitchesState({ ...switchesState, [adapter.name]: !switchesState[adapter.name] })
-                    }
-                    } color="primary"></Switch>
-                  </StyledDiv>
-                )}
-
-              </ServiceMeshAdapters>
-            </div>
-          </ExtensionWrapper>
-          <Tooltip title="Meshery server version">
-        <VersionText variant="p" component="p" align="end">
-       {mesheryVersion}
-          </VersionText>
-          </Tooltip>
-}
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!istioChecked}>
-                      <IstioIcon width={40} height={40} /></AdapterDiv>
-                    <Typography >Istio</Typography>
-                    <Switch checked={istioChecked} disabled={!isLoggedIn} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
-                    <Typography>Kuma</Typography>
-                    <Switch checked={kumaChecked} disabled={!isLoggedIn} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
-                    <Typography>Linkerd</Typography>
-                    <Switch checked={linkerdChecked} disabled={!isLoggedIn} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv>
-                    <Typography>NGINX</Typography>
-                    <Switch checked={nginxChecked} disabled={!isLoggedIn} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!osmChecked}><OsmIcon width={40} height={40} /></AdapterDiv>
-                    <Typography>OSM</Typography>
-                    <Switch checked={osmChecked} disabled={!isLoggedIn} onChange={handleOSM} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!traefikChecked}><TraefikIcon width={40} height={40} /></AdapterDiv>
-                    <Typography sx={{ whiteSpace: "nowrap" }}>Traefik Mesh</Typography>
-                    <Switch checked={traefikChecked} disabled={!isLoggedIn} onChange={handleTraefik} color="primary"></Switch> </StyledDiv>
-                </ServiceMeshAdapters>
-             
-  
-       
-
-           </div>
-          </ExtensionWrapper>
-      
-   
-           
-          </div>
           }
-        </SectionWrapper>
-       
-      </ComponentWrapper>
-      
-  
-    </DockerMuiThemeProvider>
+          {!!isLoggedIn &&
+            <div style={{ paddingTop: isLoggedIn ? "1.2rem" : null }}>
+              <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
+                <div>
+                  <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
+                  <ServiceMeshAdapters>
+                    {meshAdapters && switchesState && meshAdapters.map(adapter =>
+                      <StyledDiv>
+                        <AdapterDiv inactiveAdapter={switchesState ? !switchesState[adapter.name] : true}>{adapters[adapter.name].icon}</AdapterDiv>
+                        <Typography sx={{ whiteSpace: "nowrap" }}>{adapters[adapter.name].displayName}</Typography>
+                        <Switch checked={switchesState ? switchesState[adapter.name] : false} disabled={!isLoggedIn} onChange={() => {
+                          submitConfig(adapter.name, switchesState[adapter.name], meshAdapters)
+                          setSwitchesState({ ...switchesState, [adapter.name]: !switchesState[adapter.name] })
+                        }
+                        } color="primary"></Switch>
+                      </StyledDiv>
+                    )}
+                  </ServiceMeshAdapters>
+                </div>
+              </ExtensionWrapper>
+            </div>}
+          <Tooltip title="Meshery server version">
+            <VersionText variant="p" component="p" align="end">
+              {mesheryVersion}
+            </VersionText>
+          </Tooltip>
+        </SectionWrapper >
+
+      </ComponentWrapper >
+
+
+    </DockerMuiThemeProvider >
   );
 }
 
