@@ -17,16 +17,15 @@ export const AccountDiv = styled('div')(() => ({
 
 export const ServiceMeshAdapters = styled('div')(({ theme }) => ({
   display: "flex",
- alignItems: 'center',
- [theme.breakpoints.down("md")]: {
-  display: "flex",
-  flexWrap: "wrap",
-},
+  alignItems: 'center',
+  [theme.breakpoints.down("md")]: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
 }));
 
 export const AdapterDiv = styled("div")(({ theme, inactiveAdapter }) => ({
   filter: inactiveAdapter ? "grayscale(1) invert(0.35)" : ""
-
 }))
 
 
@@ -52,11 +51,11 @@ export const SectionWrapper = styled('div')(({ theme }) => ({
   justifyContent: 'center', alignItems: 'center',
 }))
 
-export const LoadingDiv = styled('div')(({theme}) => ({
- top: "40%",
- left: "43%",
+export const LoadingDiv = styled('div')(({ theme }) => ({
+  top: "40%",
+  left: "43%",
   position: "absolute",
-  
+
   zIndex: 10,
 }))  
 
