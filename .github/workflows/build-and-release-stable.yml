@@ -38,7 +38,7 @@ jobs:
       #     DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       #     DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       #     DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
-  mesheryctl-and-extension:
+  release:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery'
     runs-on: macos-latest
@@ -59,6 +59,8 @@ jobs:
         with:
           version: latest
           args: release --rm-dist --skip-validate
-      - name: Build and Release Docker Extension
-        uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
-        secrets: inherit
+  call-dde-release-workflow:
+    name: Build and Release Docker Extension
+    uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
+    secrets: inherit
+
