@@ -310,15 +310,16 @@ const ExtensionsComponent = () => {
                     )}
                   </ServiceMeshAdapters>
                 </div>
-              </ExtensionWrapper>
-            </div>}
-          <Tooltip title="Meshery server version">
-            <VersionText variant="p" component="p" align="end">
-              {mesheryVersion}
-            </VersionText>
-          </Tooltip>
-        </SectionWrapper >
 
+              </ExtensionWrapper>
+              <Tooltip title="Meshery server version">
+                <VersionText variant="p" component="p" align="end">
+                  {mesheryVersion}
+                </VersionText>
+              </Tooltip>
+            </div>}
+
+        </SectionWrapper >
       </ComponentWrapper >
 
 
