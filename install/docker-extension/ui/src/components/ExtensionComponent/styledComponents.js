@@ -1,5 +1,6 @@
 
 import { styled } from "@mui/material/styles";
+import {Typography} from "@mui/material";
 
 export const StyledDiv = styled('div')(() => ({
   paddingLeft: "0.2rem",
@@ -57,3 +58,16 @@ export const LoadingDiv = styled('div')(({ theme }) => ({
 
   zIndex: 10,
 }))  
+
+export const VersionDiv = styled('div')(({theme}) => ({
+  position: "relative",
+  bottom: 0,
+  right: 0,
+}))
+
+export const VersionText = styled(Typography)(({ theme }) => ({
+  padding: "0rem 3rem",
+  paddingBottom: "0",
+  width: "fit-content",
+  marginLeft: "auto",
+}));

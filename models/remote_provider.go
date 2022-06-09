@@ -51,7 +51,7 @@ type RemoteProvider struct {
 
 	ProviderVersion    string
 	SmiResultPersister *SMIResultsPersister
-	GenericPersister   database.Handler
+	GenericPersister   *database.Handler
 	KubeClient         *mesherykube.Client
 }
 
@@ -1046,7 +1046,7 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 	bf := bytes.NewBuffer(data)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	logrus.Debugf("saving pattern to remote provider - constructed URL: %s", remoteProviderURL.String())
+	// logrus.Debugf("saving pattern to remote provider - constructed URL: %s", remoteProviderURL.String())
 	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	if err != nil {
 		return nil, err
@@ -2747,7 +2747,7 @@ func validateExtractPath(filePath string, destination string) error {
 
 // GetGenericPersister - to return persister
 func (l *RemoteProvider) GetGenericPersister() *database.Handler {
-	return &l.GenericPersister
+	return l.GenericPersister
 }
 
 // SetKubeClient - to set meshery kubernetes client

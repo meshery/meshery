@@ -44,7 +44,7 @@ type DefaultLocalProvider struct {
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
-	GenericPersister                database.Handler
+	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
 }
 
@@ -936,7 +936,7 @@ func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 
 // GetGenericPersister - to return persister
 func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
-	return &l.GenericPersister
+	return l.GenericPersister
 }
 
 // SetKubeClient - to set meshery kubernetes client
@@ -962,7 +962,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 			if err != nil {
 				log.Error(ErrGettingSeededComponents(err, comp))
 			} else {
-				log.Info("starting to seed ", comp)
+				log.Info("seeding sample ", comp, "s")
 				switch comp {
 				case "Pattern":
 					for i, name := range names {
@@ -972,7 +972,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 							Name:        name,
 							ID:          &id,
 						}
-						log.Info("saving "+comp+"- ", name)
+						log.Debug("seeding "+comp+": ", name)
 						switch comp {
 
 						}
@@ -990,7 +990,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 							Name:       name,
 							ID:         &id,
 						}
-						log.Info("saving "+comp+"- ", name)
+						log.Debug("seeding "+comp+": ", name)
 						switch comp {
 
 						}
@@ -1008,7 +1008,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 							Name:            name,
 							ID:              &id,
 						}
-						log.Info("saving "+comp+"- ", name)
+						log.Debug("seeding "+comp+": ", name)
 						switch comp {
 
 						}
