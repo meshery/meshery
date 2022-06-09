@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  Grid,
-  Button, Switch, Typography
+  Grid, Box,
+  Button, Switch, Typography, Tooltip
 } from "@mui/material";
 import ConsulIcon from "../../img/SVGs/consulIcon";
 import IstioIcon from "../../img/SVGs/IstioIcon";
@@ -10,6 +10,7 @@ import Joyride from 'react-joyride';
 import Tour from "../Walkthrough/Tour";
 import { createTheme } from '@mui/material/styles';
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
+
 import NginxIcon from "../../img/SVGs/nginxIcon";
 import OsmIcon from "../../img/SVGs/osmIcon";
 import AppmeshIcon from "../../img/SVGs/appmeshIcon";
@@ -20,7 +21,7 @@ import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LoadComp } from "../LoadingComponent/LoadComp";
-import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
+import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper, VersionDiv, VersionText } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 import axios from "axios";
 
@@ -66,7 +67,7 @@ const ExtensionsComponent = () => {
   const [userName, setUserName] = useState("")
   const [token, setToken] = useState()
   const [changing, isChanging] = useState(false)
-
+  const [mesheryVersion, setMesheryVersion] = useState(null)
 
   useEffect(() => {
     fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
@@ -85,6 +86,13 @@ const ExtensionsComponent = () => {
       }
     }).catch(console.log)
   }, [isLoggedIn])
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:7877/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build)) 
+    .catch((error) => {
+      console.log(error)
+    })
+  })
 
 
   const onMouseOver = e => {
@@ -228,14 +236,14 @@ const ExtensionsComponent = () => {
         <LoadComp />
       </LoadingDiv>  }
       <ComponentWrapper sx={{opacity: changing ? "0.3" : "1"}}>
-     {isLoggedIn && <Tour />}
+     {isLoggedIn && <Tour /> }
   
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
         <Typography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</Typography>
 
         <SectionWrapper>
 
-          <ExtensionWrapper className="third-step" sx={{  backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE", }}>
+         <ExtensionWrapper className="third-step" sx={{  backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE", }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 Launch Meshery
@@ -265,6 +273,7 @@ const ExtensionsComponent = () => {
               }
             </AccountDiv>
           </ExtensionWrapper>
+       
 
           {isLoggedIn && <ExtensionWrapper className="second-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
             <AccountDiv>
@@ -278,12 +287,16 @@ const ExtensionsComponent = () => {
                 </label>
               </div>
             </AccountDiv>
-          </ExtensionWrapper>}
+          </ExtensionWrapper>
+        }
 
         
 
-          {!!isLoggedIn && <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
-            <div>
+        {!!isLoggedIn &&
+           <div style={{ paddingTop: isLoggedIn ? "1.2rem" : null}}> 
+             <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
+              <div>
+       
               <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
                 <ServiceMeshAdapters>
                   <StyledDiv>
@@ -326,10 +339,27 @@ const ExtensionsComponent = () => {
                     <Typography sx={{ whiteSpace: "nowrap" }}>Traefik Mesh</Typography>
                     <Switch checked={traefikChecked} disabled={!isLoggedIn} onChange={handleTraefik} color="primary"></Switch> </StyledDiv>
                 </ServiceMeshAdapters>
-              </div>
-          </ExtensionWrapper>}
+             
+  
+       
+
+           </div>
+          </ExtensionWrapper>
+      
+             <Tooltip title="Meshery server version">
+        <VersionText variant="p" component="p" align="end">
+       {mesheryVersion}
+          </VersionText>
+          </Tooltip>
+           
+          </div>
+          }
+      
         </SectionWrapper>
+       
       </ComponentWrapper>
+      
+  
     </DockerMuiThemeProvider>
   );
 }
