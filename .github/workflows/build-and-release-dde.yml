@@ -4,10 +4,6 @@ on:
   push:
     tags:
       - "v*"
-    branches:
-      - "master"
-    paths:
-      - "install/docker-extension/**"
   workflow_dispatch:
     inputs:
       release-ver:

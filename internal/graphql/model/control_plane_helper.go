@@ -36,7 +36,9 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid st
 				}
 				var imageOrgs = make(map[string]bool)
 				for _, c := range objspec.Containers {
-					imageOrgs[strings.Split(c.Image, "/")[1]] = true // Extracting image org from <domainname>/<imageorg>/<imagename>
+					if len(strings.Split(c.Image, "/")) > 1 {
+						imageOrgs[strings.Split(c.Image, "/")[1]] = true // Extracting image org from <domainname>/<imageorg>/<imagename>
+					}
 				}
 				version := "unknown"
 
