@@ -114,6 +114,7 @@ module.exports = {
     "@material-ui/icons/CenterFocusStrong" : require("@material-ui/icons/CenterFocusStrong"),
     "@material-ui/icons/Publish" : require("@material-ui/icons/Publish"),
     "@material-ui/icons/DragIndicator" : require("@material-ui/icons/DragIndicator"),
+    '@material-ui/icons/Visibility' : require("@material-ui/icons/Visibility"),
     "@material-ui/icons/Undo" : require("@material-ui/icons/Undo"),
     "@material-ui/icons/Redo" : require("@material-ui/icons/Redo"),
     "@material-ui/icons/Settings" : require("@material-ui/icons/Settings"),
