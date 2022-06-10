@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"reflect"
 	"strings"
 
@@ -11,17 +12,24 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid []string) ([]*DataPlane, error) {
+func GetDataPlaneState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*DataPlane, error) {
 	object := []meshsyncmodel.Object{}
 	dataPlaneList := make([]*DataPlane, 0)
 	cidMap := make(map[string]bool)
-	var foundall bool
-	for _, c := range cid {
-		if c == "all" {
-			foundall = true
-			break
+	if len(cid) == 1 && cid[0] == "all" {
+		k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		if !ok || len(k8sctxs) == 0 {
+			return nil, ErrMesheryClient(nil)
 		}
-		cidMap[c] = true
+		for _, k8ctx := range k8sctxs {
+			if k8ctx.KubernetesServerID != nil {
+				cidMap[k8ctx.KubernetesServerID.String()] = true
+			}
+		}
+	} else {
+		for _, c := range cid {
+			cidMap[c] = true
+		}
 	}
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
@@ -38,7 +46,7 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider, cid []str
 		}
 		proxies := make([]*Container, 0)
 		for _, obj := range object {
-			if !foundall && !cidMap[obj.ClusterID] {
+			if !cidMap[obj.ClusterID] {
 				continue
 			}
 			if meshsyncmodel.IsObject(obj) {

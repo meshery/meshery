@@ -1,23 +1,32 @@
 package model
 
 import (
+	"context"
+
 	"github.com/layer5io/meshery/models"
 	"gorm.io/gorm"
 
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
-func GetAddonsState(selectors []MeshType, provider models.Provider, cid []string) ([]*AddonList, error) {
+func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*AddonList, error) {
 	addonlist := make([]*AddonList, 0)
 	objects := make([]meshsyncmodel.Object, 0)
 	cidMap := make(map[string]bool)
-	var foundall bool
-	for _, c := range cid {
-		if c == "all" {
-			foundall = true
-			break
+	if len(cid) == 1 && cid[0] == "all" {
+		k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		if !ok || len(k8sctxs) == 0 {
+			return nil, ErrMesheryClient(nil)
 		}
-		cidMap[c] = true
+		for _, k8ctx := range k8sctxs {
+			if k8ctx.KubernetesServerID != nil {
+				cidMap[k8ctx.KubernetesServerID.String()] = true
+			}
+		}
+	} else {
+		for _, c := range cid {
+			cidMap[c] = true
+		}
 	}
 	for _, selector := range selectors {
 		//subquery1 := r.DBHandler.Select("id").Where("kind = ? AND key = ? AND value = ?", meshsyncmodel.KindAnnotation, "meshery/component-type", "control-plane").Table("key_values")
@@ -37,7 +46,7 @@ func GetAddonsState(selectors []MeshType, provider models.Provider, cid []string
 		}
 
 		for _, obj := range objects {
-			if !foundall && !cidMap[obj.ClusterID] {
+			if !cidMap[obj.ClusterID] {
 				continue
 			}
 			if meshsyncmodel.IsObject(obj) && len(addonPortSelector[obj.ObjectMeta.Name]) > 0 {
