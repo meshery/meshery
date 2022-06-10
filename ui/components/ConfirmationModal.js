@@ -111,7 +111,7 @@ function ConfirmationMsg(props) {
     });
     // setContext(matchedCtx)
   }
-  console.log(selectedK8sContexts, "state")
+  // console.log(selectedK8sContexts, "state")
   return (
     <div className={classes.root}>
       <Dialog
