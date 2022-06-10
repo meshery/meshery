@@ -46,9 +46,11 @@ const styles = (theme) => ({
   title : {
     textAlign : 'center',
     minWidth : 400,
-    padding : '10px',
+    padding : theme.spacing(1.5),
     color : '#fff',
-    backgroundColor : '#607d8b'
+    backgroundColor : '#607d8b',
+    fontSize:"1.6rem",
+
   },
   subtitle : {
     minWidth : 400,
@@ -89,8 +91,8 @@ const styles = (theme) => ({
 
 function ConfirmationMsg(props) {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { classes, open, handleClose, submit, category,
-    operation, isDelete, activeContexts, setContextViewer,
+  const { classes, open, handleClose, submit, category, selectedOp,
+    isDelete, activeContexts, setContextViewer,
     selectedK8sContexts, k8scontext } = props
   const [context, setContext] = useState(k8scontext)
 
@@ -127,85 +129,85 @@ function ConfirmationMsg(props) {
         {selectedK8sContexts.length > 0
           ?
           <>
-        <DialogTitle id="alert-dialog-title" className={classes.title}>
-          <b>{"The selected operation will be applied to following contexts."}</b>
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-              <Typography variant="body1">
-                <div>
-                  <TextField
-                    id="search-ctx"
-                    label="Search"
-                    size="small"
-                    variant="outlined"
-                    onChange={(event) => searchContexts(event.target.value)}
-                    style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
-                    InputProps={{
-                      endAdornment : (
-                        <Search />
-                      )
-                    }}
-                  />
-                </div>
-                <div className={classes.all}>
-                  <Checkbox
-                    checked={selectedK8sContexts.includes("all")}
-                    onChange={() => setContextViewer("all")}
-                    color="primary"
-                  />
-                  <span>Select All</span>
-                </div>
-                <div className={classes.contexts}>
-                  {context.map((ctx) => (
-                    <div id={ctx.id} className={classes.chip}>
-                      <Tooltip title={`Server: ${ctx.server}`}>
-                        <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
-                          <Checkbox
-                            checked={activeContexts.filter(c => c.id === ctx.id).length > 0}
-                            onChange={() => setContextViewer(ctx.id)}
-                            color="primary"
-                          />
-                          <Chip
-                            label={ctx.name}
-                            className={classes.ctxChip}
-                            onClick={handleKubernetesClick}
-                            icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
-                            variant="outlined"
-                            data-cy="chipContextName"
-                          />
-                        </div>
+            <DialogTitle id="alert-dialog-title" className={classes.title}>
+              {"The selected operation will be applied to following contexts."}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                <Typography variant="body1">
+                  <div>
+                    <TextField
+                      id="search-ctx"
+                      label="Search"
+                      size="small"
+                      variant="outlined"
+                      onChange={(event) => searchContexts(event.target.value)}
+                      style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
+                      InputProps={{
+                        endAdornment : (
+                          <Search />
+                        )
+                      }}
+                    />
+                  </div>
+                  <div className={classes.all}>
+                    <Checkbox
+                      checked={selectedK8sContexts.includes("all")}
+                      onChange={() => setContextViewer("all")}
+                      color="primary"
+                    />
+                    <span>Select All</span>
+                  </div>
+                  <div className={classes.contexts}>
+                    {context.map((ctx) => (
+                      <div id={ctx.id} className={classes.chip}>
+                        <Tooltip title={`Server: ${ctx.server}`}>
+                          <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
+                            <Checkbox
+                              checked={activeContexts.filter(c => c.id === ctx.id).length > 0}
+                              onChange={() => setContextViewer(ctx.id)}
+                              color="primary"
+                            />
+                            <Chip
+                              label={ctx.name}
+                              className={classes.ctxChip}
+                              onClick={handleKubernetesClick}
+                              icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
+                              variant="outlined"
+                              data-cy="chipContextName"
+                            />
+                          </div>
 
-                      </Tooltip>
-                    </div>
-                  ))}
-                </div>
-              </Typography>    
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions className={classes.actions}>
-          <Button onClick={handleClose} className={classes.button1}>
-            <Typography variant body2> Cancel </Typography>
-          </Button>
-          <Button onClick={() => submit(category, operation, isDelete)}
-            className={classes.button0} autoFocus type="submit"
-            variant="contained"
-            color="primary">
-            <Typography variant body2 > DEPLOY </Typography>
-          </Button>
-        </DialogActions>
-        </>
-      : 
-        enqueueSnackbar(`Please select Kubernets context before proceeding with the deployment`, {
-          variant : "info",
-          action : (key) => (
-            <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ),
-          autohideduration : 2000,
-        })
-      }
+                        </Tooltip>
+                      </div>
+                    ))}
+                  </div>
+                </Typography>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions className={classes.actions}>
+              <Button onClick={handleClose} className={classes.button1}>
+                <Typography variant body2> Cancel </Typography>
+              </Button>
+              <Button onClick={() => submit(category, selectedOp, isDelete)}
+                className={classes.button0} autoFocus type="submit"
+                variant="contained"
+                color="primary">
+                <Typography variant body2 > DEPLOY </Typography>
+              </Button>
+            </DialogActions>
+          </>
+          :
+          enqueueSnackbar(`Please select Kubernets context before proceeding with the deployment`, {
+            variant : "info",
+            action : (key) => (
+              <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+            autohideduration : 2000,
+          })
+        }
       </Dialog>
     </div>
   )

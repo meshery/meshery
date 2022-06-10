@@ -213,7 +213,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const self = this;
     const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
     const variables = { type : meshname, k8sClusterIDs : this.getK8sClusterIds() }
-
+console.log("K8S", this.props.k8sconfig);
     this.initSubscription();
     this.fetchAllContexts(10)
       .then(res => {
@@ -1316,6 +1316,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             activeContexts={this.state.activeContexts}
             setContextViewer={this.setActiveContexts}
             k8scontext={this.state.k8scontext}
+            selectedOp={this.state.selectedOp}
           />
         </React.Fragment>
       </NoSsr>

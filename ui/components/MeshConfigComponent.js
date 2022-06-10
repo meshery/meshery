@@ -101,7 +101,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [discover, setLastDiscover] = useState(['']);
   const [contexts, setContexts] = useState([]);
   const [k8sVersion, setK8sVersion] = useState(["N/A"]);
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState(new FormData());
 
   const ref = useRef(null);
   const meshSyncResetRef = useRef(null);
@@ -124,7 +124,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     //     return;
     //   }
     // });
-    
+
 
     let tableInfo = [];
     fetchAllContexts(25)
@@ -454,10 +454,10 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     if (field instanceof HTMLInputElement) {
       if (field.files.length < 1) return;
       const name = field.files[0].name;
-      const formData = new FormData();
-      formData.append("k8sfile", field.files[0])
+      const formdata = new FormData();
+      formdata.append("k8sfile", field.files[0])
       textField.value=name;
-      setFormData(formData);
+      setFormData(formdata);
     }
   }
 
@@ -808,7 +808,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
               variant="outlined"
               fullWidth
               onClick={() => {
-                document.querySelector("#k8sfile")?.click(); setOpen(true);
+                document.querySelector("#k8sfile")?.click();
               }}
               margin="normal"
               InputProps={{ readOnly : true,
