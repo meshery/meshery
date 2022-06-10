@@ -20,7 +20,7 @@ func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, 
 	if len(filter.K8sClusterIDs) != 0 {
 		cids = filter.K8sClusterIDs
 	}
-	dataPlaneList, err := model.GetDataPlaneState(selectors, provider, cids)
+	dataPlaneList, err := model.GetDataPlaneState(ctx, selectors, provider, cids)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err

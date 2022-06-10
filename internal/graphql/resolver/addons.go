@@ -20,7 +20,7 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provi
 		selectors = append(selectors, *filter.Type)
 	}
 
-	addonlist, err := model.GetAddonsState(selectors, provider, cids)
+	addonlist, err := model.GetAddonsState(ctx, selectors, provider, cids)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err
