@@ -31,7 +31,6 @@ import MesheryMetrics from "./MesheryMetrics";
 import MesheryResultDialog from "./MesheryResultDialog";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import ConfirmationMsg from "./ConfirmationModal";
-import { Satellite } from "@material-ui/icons";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },
@@ -217,17 +216,17 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.initSubscription();
     // this.fetchAllContexts(10)
     //   .then(res => {
-      if (this.props.selectedK8sContexts[0] === 'all') {
-        let active = [];
-        this.props.k8sconfig.forEach((ctx) => {
-          
-            active.push(ctx.contextID);
-          
-        })
-        this.setState({ activeContexts :active})
-      } else {
-        this.setState({ activeContexts : selectedK8sContexts });
-      }
+    if (this.props.selectedK8sContexts[0] === 'all') {
+      let active = [];
+      this.props.k8sconfig.forEach((ctx) => {
+
+        active.push(ctx.contextID);
+
+      })
+      this.setState({ activeContexts : active })
+    } else {
+      this.setState({ activeContexts : selectedK8sContexts });
+    }
     //   });
     fetchAvailableAddons(variables)
       .subscribe({ next : res => {
@@ -255,7 +254,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   // }
 
   handleContexts() {
-    
+
   }
 
   componentDidUpdate(prevProps) {
@@ -586,7 +585,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 
   setActiveContexts = (id) => {
-    
+
     if (this.props.k8sconfig) {
       if (id === "all") {
         let activecontexts = [];
@@ -601,7 +600,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         () => this.activeContextChangeCallback(this.state.activeContexts));
         return;
       }
-console.log("state", this.state.activeContexts);
+      console.log("state", this.state.activeContexts);
       this.setState(state => {
         let ids = [...(state.activeContexts || [])];
         //pop event
@@ -617,7 +616,7 @@ console.log("state", this.state.activeContexts);
         return { activeContexts : [...ids, id] }
       }, () => this.activeContextChangeCallback(this.state.activeContexts))
     }
- 
+
   }
 
   /**
@@ -1267,7 +1266,7 @@ console.log("state", this.state.activeContexts);
             open={this.state.modalOpen}
             handleClose={this.handleClose}
             submit={this.submitOp}
-            category={this.category}
+            category={this.state.category}
             isDelete={this.state.isDeleteOp}
             activeContexts={this.state.activeContexts}
             setContextViewer={this.setActiveContexts}
