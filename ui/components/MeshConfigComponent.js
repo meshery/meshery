@@ -93,21 +93,14 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [showMenu, setShowMenu] = useState([false])
   const [anchorEl, setAnchorEl] = useState(null);
   const [operatorInstalled, setOperatorInstalled] = useState([false]);
-  const [meshSyncInstalled, setMeshSyncInstalled] = useState([false]);
-  const [meshSyncState, setMeshSyncState] = useState(["N/A"]);
   const [NATSState, setNATSState] = useState(["UNKNOWN"]);
   const [NATSVersion, setNATSVersion] = useState(["N/A"]);
-  const [meshSyncVersion, setMeshSyncVersion] = useState(["N/A"]);
   const [operatorVersion, setOperatorVersion] = useState(["N/A"]);
   const [operatorProcessing, setOperatorProcessing] = useState([false]);
   const [operatorSwitch, setOperatorSwitch] = useState([false]);
   const [discover, setLastDiscover] = useState(['']);
-  // const [meshSyncStatusSubscription, setMeshSyncStatusSubscription] = useState(null);
-  // const [operatorStatusSubscription, setOperatorStatusSubscription] = useState(null);
   const [contexts, setContexts] = useState([]);
   const [k8sVersion, setK8sVersion] = useState(["N/A"]);
-  // const [toUploadContexts, setToUploadContexts] = useState([]);
-  // const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState(null);
 
   const ref = useRef(null);
@@ -131,19 +124,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     //     return;
     //   }
     // });
-    console.log("OPCA", MeshSyncState, "klklj", operatorState);
-    let meshsync = [];
-    MeshSyncState?.forEach((state) => {
-      meshsync.push(state.OperatorControllerStatus);
-    })
+    
 
-    let opSwitch = [];
-    operatorState?.forEach((state, idx) => {
-      opSwitch[idx] = isOperatorActive(state.contextID)
-    })
-    setOperatorSwitch(opSwitch);
-    // setOperatorState(operator);
-    setMeshSyncState(meshsync);
     let tableInfo = [];
     fetchAllContexts(25)
       .then(res => {
@@ -180,7 +162,28 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   }, [])
 
+  useEffect(() => {
+    let opSwitch = [];
+    console.log("OPSSSSS", operatorState);
+    operatorState?.forEach((state, idx) => {
+      opSwitch[idx] = state.operatorStatus.status !== 'ENABLED' ? false : true;
+      setOperatorState(state.operatorStatus, idx);
+    })
+    setOperatorSwitch(opSwitch);
+  }, [operatorState])
+
+  // useEffect(() => {
+  //   console.log("OPCA", MeshSyncState, "klklj", operatorState);
+  //   let meshsync = [];
+  //   MeshSyncState?.forEach((state) => {
+  //     meshsync.push(state.OperatorControllerStatus);
+  //   })
+
+  //   setMeshSyncState(meshsync);
+  // }, [operatorState, MeshSyncState, operatorSwitch])
+
   const isOperatorActive = (ctx) => {
+    console.log("OPSSSS", ctx);
     return operatorState.filter((state) => state.contextID === ctx ).length > 0;
   }
 
@@ -227,7 +230,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const handleFlushMeshSync = (index) => {
     return async () => { // add backend support to delete context realted data
-      console.log("POOO", meshSyncState, operatorState);
       handleMenuClose(index);
       let response = await meshSyncResetRef.current.show({
         title : "Flush MeshSync data?",
@@ -285,49 +287,36 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const setOperatorState = (res, index) => {
-    console.log("incoming change")
+    console.log("incoming change", res)
+
     if (res.operator?.error) {
       handleError("Operator could not be reached")(res.operator?.error?.description);
+      setMeshsyncSubscription( { action : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : null })
       stateUpdater(operatorProcessing, setOperatorProcessing, false, index);
-      // setOperatorProcessing(false);
       return false;
     }
 
     if (res.operator?.status === "ENABLED") {
       stateUpdater(operatorProcessing, setOperatorProcessing, false, index);
-      // setOperatorProcessing(false);
       res.operator?.controllers?.forEach((controller) => {
         if (controller.name === "broker" && controller.status.includes("CONNECTED")) {
           stateUpdater(NATSState, setNATSState, controller.status, index);
           stateUpdater(NATSVersion, setNATSVersion, controller.version, index);
-          // setNATSState(controller.status);
-          // setNATSVersion(controller.version);
-        } else if (controller.name === "meshsync" && controller.status.includes("ENABLED")) {
-          stateUpdater(meshSyncInstalled, setMeshSyncInstalled, true, index);
-          stateUpdater(meshSyncVersion, setMeshSyncVersion, controller.version, index);
-          stateUpdater(meshSyncState, setMeshSyncState, controller.status, index);
-          // setMeshSyncInstalled(true);
-          // setMeshSyncVersion(controller.version);
-          // setMeshSyncState(controller.status);
+
         }
       });
       stateUpdater(operatorInstalled, setOperatorInstalled, true, index);
       stateUpdater(operatorSwitch, setOperatorSwitch, true, index);
       stateUpdater(operatorVersion, setOperatorVersion, res.operator?.version, index);
-      // setOperatorInstalled(true);
-      // setOperatorSwitch(true);
-      // setOperatorVersion(res.operator?.version);
       return true;
     }
     if (res.operator?.status === "DISABLED") {
       stateUpdater(operatorProcessing, setOperatorProcessing, false, index);
-      // setOperatorProcessing(false);
     }
 
     if (res.operator?.status === "PROCESSING") {
       console.log("setting to processing");
       stateUpdater(operatorProcessing, setOperatorProcessing, true, index);
-      // setOperatorProcessing(true);
     }
   }
 
@@ -436,7 +425,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           </IconButton>
         ), });
       stateUpdater(operatorSwitch, setOperatorSwitch, !operatorSwitch[index], index);
-      // setOperatorSwitch(operatorSwitch => !operatorSwitch);
     }, variables);
   };
 
@@ -525,12 +513,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
-        // setCellHeaderProps : (value) => ({
-        //   style : {
-        //     display : "flex",
-        //     textAlign : "center"
-        //   }
-        // })
       }
     },
     {
@@ -571,12 +553,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 anchorEl={anchorEl}
                 open={showMenu[tableMeta.rowIndex]}
                 onClose={() => handleMenuClose(tableMeta.rowIndex)}
-                // PaperProps={{
-                //   style : {
-                //     maxHeight : 48 * 4.5,
-                //     width : '20ch',
-                //   },
-                // }}
               >
                 <Button
                   type="submit"
@@ -623,6 +599,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       console.log("LLLLL", rowData);
       return (
         <NoSsr>
+          { operatorState &&
           <TableCell colSpan={6}>
             <TableContainer>
               <Table>
@@ -757,34 +734,34 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="Operator State" secondary={operatorSwitch[rowMetaData.rowIndex]
+                              <ListItemText primary="Operator State" secondary={operatorSwitch[rowMetaData?.rowIndex]
                                 ? "Active"
                                 : "Disabled"} />
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="Operator Version" secondary={operatorState[rowMetaData.rowIndex]?.operatorStatus.version} />
+                              <ListItemText primary="Operator Version" secondary={operatorState[rowMetaData?.rowIndex]?.operatorStatus.version} />
                             </ListItem>
                           </List>
                         </Grid>
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="MeshSync State" secondary={isMeshSyncActive(data[rowMetaData.rowIndex].id)
+                              <ListItemText primary="MeshSync State" secondary={isMeshSyncActive(data[rowMetaData?.rowIndex].id)
                                 ? "Enabled"
                                 : "Disabled"} />
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="MeshSync Version" secondary={MeshSyncState[rowMetaData.rowIndex]?.OperatorControllerStatus.version} />
+                              <ListItemText primary="MeshSync Version" secondary={MeshSyncState[rowMetaData?.rowIndex]?.OperatorControllerStatus.version} />
                             </ListItem>
                           </List>
                         </Grid>
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="NATS State" secondary={NATSState[rowMetaData.rowIndex]} />
+                              <ListItemText primary="NATS State" secondary={NATSState[rowMetaData?.rowIndex]} />
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="NATS Version" secondary={NATSVersion[rowMetaData.rowIndex]} />
+                              <ListItemText primary="NATS Version" secondary={NATSVersion[rowMetaData?.rowIndex]} />
                             </ListItem>
                           </List>
                         </Grid>
@@ -796,6 +773,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
               </Table>
             </TableContainer>
           </TableCell>
+          }
         </NoSsr>
       )
     }
@@ -894,7 +872,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     fetchMesheryOperatorStatus({ k8scontextID : contexts[index].id })
       .subscribe({ next : (res) => {
         console.log(res);
-        let state = setOperatorState(res);
+        let state = setOperatorState(res, index);
         updateProgress({ showProgress : false });
         if (state == true) {
           enqueueSnackbar("Operator was successfully pinged!", { variant : "success",
@@ -973,23 +951,14 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   };
 
   const handleMeshSyncClick = (index) => {
-    // handle individual index state update
-    console.log(contexts[index].id, "index");
     updateProgress({ showProgress : true });
     MeshsyncStatusQuery(({ k8scontextID : contexts[index].id })).subscribe({ next : (res) => {
       updateProgress({ showProgress : false });
       if (res.controller.name !== "meshsync" || !res.controller.status.includes("ENABLED")) {
-        // stateUpdater(meshSyncInstalled, setMeshSyncInstalled, true, index);
-        // stateUpdater(meshSyncVersion, setMeshSyncVersion, res.controller.version, index);
-        // stateUpdater(meshSyncState, setMeshSyncState, res.controller.status, index);
         let newMeshSyncState = [...MeshSyncState]
         newMeshSyncState[index] = null;
         setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
         handleError("MeshSync could not be reached")("MeshSync is unavailable");
-
-        // setMeshSyncInstalled(true);
-        // setMeshSyncVersion(res.controller.version);
-        // setMeshSyncState(res.controller.status);
       } else {
         let publishEndpoint = res.controller.status.substring("ENABLED".length)
         enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
@@ -1001,12 +970,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           ),
           autohideduration : 2000,
         })
-        // stateUpdater(meshSyncInstalled, setMeshSyncInstalled, false, index);
-        // stateUpdater(meshSyncVersion, setMeshSyncVersion, "", index);
-        // stateUpdater(meshSyncState, setMeshSyncState, res.controller.status, index);
-        // setMeshSyncInstalled(false);
-        // setMeshSyncVersion("");
-        // setMeshSyncState(res.controller.status);
       }
     },
     error : handleError("MeshSync status could not be retrieved"), });
