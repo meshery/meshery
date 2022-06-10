@@ -89,7 +89,6 @@ const styles = (theme) => ({
 function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updateProgress,
   operatorState, MeshSyncState, setMeshsyncSubscription }) {
   const [data, setData] = useState([])
-  let k8sfileElementVal ="";
   const [showMenu, setShowMenu] = useState([false])
   const [anchorEl, setAnchorEl] = useState(null);
   const [operatorInstalled, setOperatorInstalled] = useState([false]);
@@ -101,7 +100,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [discover, setLastDiscover] = useState(['']);
   const [contexts, setContexts] = useState([]);
   const [k8sVersion, setK8sVersion] = useState(["N/A"]);
-  const [formData, setFormData] = useState(new FormData());
+
 
   const ref = useRef(null);
   const meshSyncResetRef = useRef(null);
@@ -109,6 +108,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const dateOptions = { weekday : 'long', year : 'numeric', month : 'long', day : 'numeric' };
 
+  let k8sfileElementVal ="";
+  let formData = new FormData();
   const stateUpdater = (state, updateFunc, updateValue, index) => {
     console.log("HAHAH");
     let newState = [...state];
@@ -135,7 +136,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           let data = {
             context : ctx.name,
             location : ctx.server,
-            deployment_type : "fix",
+            deployment_type : "-",
             last_discovery : "",
             name : ctx.name,
             id : ctx.id
@@ -440,7 +441,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       const formdata = new FormData();
       formdata.append("k8sfile", field.files[0])
       textField.value=name;
-      setFormData(formdata);
+      formData = formdata;
+
     }
   }
 

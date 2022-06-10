@@ -93,7 +93,6 @@ function ConfirmationMsg(props) {
     selectedK8sContexts, k8scontext } = props
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  // const [context, setContext] = useState(k8scontext) //This should goi @uzair, the context variable is not at all used here
 
   const handleKubernetesClick = () => {
     showProgress()
@@ -109,9 +108,9 @@ function ConfirmationMsg(props) {
     matchedCtx.forEach(ctx => {
       matchedCtxID.push(ctx.id);
     });
-    // setContext(matchedCtx)
+
   }
-  // console.log(selectedK8sContexts, "state")
+
   return (
     <div className={classes.root}>
       <Dialog

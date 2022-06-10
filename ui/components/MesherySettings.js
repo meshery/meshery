@@ -8,7 +8,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import {
-  AppBar, Paper, Tooltip, IconButton
+  AppBar, Paper, Tooltip, IconButton, Button
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,6 +25,8 @@ import dataFetch from '../lib/data-fetch';
 import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
 import { ctxUrl } from '../utils/multi-ctx';
+import PromptComponent from './PromptComponent';
+import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 
 const styles = (theme) => ({
   wrapperClss : { flexGrow : 1,
@@ -43,6 +45,15 @@ const styles = (theme) => ({
     verticalAlign : 'middle', },
   backToPlay : { margin : theme.spacing(2), },
   link : { cursor : 'pointer', },
+  DBBtn : {
+    margin : theme.spacing(0.5),
+    padding : theme.spacing(1),
+    borderRadius : 5
+  },
+  container : {
+    display : "flex",
+    justifyContent : "center"
+  }
 });
 
 function TabContainer(props) {
@@ -118,6 +129,8 @@ class MesherySettings extends React.Component {
       // Array of scanned grafan urls
       scannedGrafana : []
     };
+
+    this.systemResetRef = React.createRef();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -270,6 +283,45 @@ class MesherySettings extends React.Component {
     };
   }
 
+  handleResetDatabase = () => {
+    return async () => {
+      let responseOfResetDatabase = await this.systemResetRef.current.show({
+        title : "Reset Meshery Database?",
+        subtitle : "Are you sure to reset all the data of Meshery?",
+        options : ["PROCEED", "CANCEL"]
+      });
+      if (responseOfResetDatabase === "PROCEED") {
+        this.props.updateProgress({ showProgress : true });
+        const self = this;
+        resetDatabase({
+          selector : {
+            clearDB : "true",
+            ReSync : "true",
+            hardReset : "true",
+          },
+          k8scontextID : ""
+        }).subscribe({
+          next : (res) => {
+            self.props.updateProgress({ showProgress : false });
+            if (res.resetStatus === "PROCESSING") {
+              this.props.enqueueSnackbar(`Database reset successful.`, {
+                variant : "success",
+                action : (key) => (
+                  <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+                    <CloseIcon />
+                  </IconButton>
+                ),
+                autohideduration : 3000,
+              })
+            }
+          },
+          error : self.handleError("Database is not reachable, try restarting server.")
+        });
+      }
+    }
+  }
+
+
   render() {
     const { classes } = this.props;
     const {
@@ -404,6 +456,24 @@ class MesherySettings extends React.Component {
               )}
             </TabContainer>
           )}
+        {tabVal === 3 && (
+          <TabContainer>
+            <div className={classes.container}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={this.handleResetDatabase()}
+                className={classes.DBBtn}
+                data-cy="btnResetDatabase"
+
+              >
+                <Typography> System Reset </Typography>
+              </Button>
+            </div>
+          </TabContainer>
+        )}
         {/* {tabVal === 3 && (
           <TabContainer>
             <MesherySettingsPerformanceComponent />
@@ -412,6 +482,7 @@ class MesherySettings extends React.Component {
         )} */}
 
         {backToPlay}
+        <PromptComponent ref={this.systemResetRef} />
       </div>
     );
   }
