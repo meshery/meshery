@@ -216,18 +216,18 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.initSubscription();
     // this.fetchAllContexts(10)
     //   .then(res => {
-    if (this.props.selectedK8sContexts[0] !== undefined && this.props.selectedK8sContexts[0] === 'all') {
-      let active = [];
-      this.props.k8sconfig.forEach((ctx) => {
-
-        active.push(ctx.contextID);
-
-      })
-      this.setState({ activeContexts : active })
-    } else {
-      this.setState({ activeContexts : selectedK8sContexts });
+    if (this.props.selectedK8sContexts) {
+      if ( this.props.selectedK8sContexts.includes("all")) {
+        let active = [];
+        this.props.k8sconfig.forEach((ctx) => {
+          active.push(ctx.contextID);
+        })
+        this.setState({ activeContexts : active })
+      } else {
+        this.setState({ activeContexts : this.props.selectedK8sContexts });
+      }
     }
-    //   });
+
     fetchAvailableAddons(variables)
       .subscribe({ next : res => {
         self.setAddonsState(res)
