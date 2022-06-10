@@ -106,7 +106,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
 		ctx = context.WithValue(ctx, models.BrokerURLCtxKey, h.config.BrokerEndpointURL) // nolint
 		ctxpage, err := provider.GetK8sContexts(token, "", "", "", "")
-		if err != nil || len(ctxpage.Contexts) == 0 {
+		if err != nil || len(ctxpage.Contexts) == 0 { //Try to load the contexts when there are no contexts available
 			logrus.Warn("failed to get kubernetes contexts")
 			err = h.LoadContexts(token, provider)
 			if err != nil {

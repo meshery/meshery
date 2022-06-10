@@ -49,7 +49,7 @@ const styles = (theme) => ({
     padding : theme.spacing(1.5),
     color : '#fff',
     backgroundColor : '#607d8b',
-    fontSize:"1.6rem",
+    fontSize : "1.6rem",
 
   },
   subtitle : {

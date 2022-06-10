@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/layer5io/meshery/models"
@@ -24,7 +23,6 @@ func GetControlPlaneState(selectors []MeshType, provider models.Provider, cid []
 		cidMap[c] = true
 	}
 	for _, selector := range selectors {
-		fmt.Println("meshtype selector: ", MeshType(selector))
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
 			Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
