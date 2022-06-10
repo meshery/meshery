@@ -101,7 +101,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.17.0",
+    "@babel/eslint-parser": "^7.18.2",
     "@babel/traverse": "^7.17.3",
     "@babel/types": "^7.17.0",
     "@types/react-relay": "^13.0.2",
