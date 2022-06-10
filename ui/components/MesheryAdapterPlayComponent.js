@@ -216,7 +216,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.initSubscription();
     // this.fetchAllContexts(10)
     //   .then(res => {
-    if (this.props.selectedK8sContexts[0] === 'all') {
+    if (this.props.selectedK8sContexts[0] !== undefined && this.props.selectedK8sContexts[0] === 'all') {
       let active = [];
       this.props.k8sconfig.forEach((ctx) => {
 
@@ -258,7 +258,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.selectedK8sContexts.length !== this.props.selectedK8sContexts.length) {
+    if (prevProps?.selectedK8sContexts.length !== this.props?.selectedK8sContexts.length) {
       this.disposeSubscriptions();
       this.initSubscription();
     }
@@ -269,7 +269,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 
   getK8sClusterIds = () => {
-    return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+    return getK8sClusterIdsFromCtxId(this.props?.selectedK8sContexts, this.props.k8sconfig)
   }
 
   mapAdapterNameToMeshName(name) {

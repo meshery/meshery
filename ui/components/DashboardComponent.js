@@ -208,7 +208,7 @@ class DashboardComponent extends React.Component {
     }
 
     // handle subscriptions update on switching K8s Contexts
-    if (prevProps.selectedK8sContexts !== this.props.selectedK8sContexts
+    if (prevProps?.selectedK8sContexts !== this.props?.selectedK8sContexts
       || prevProps.k8sconfig !== this.props.k8sconfig){
       this.disposeSubscriptions()
       this.initMeshSyncControlPlaneSubscription()
@@ -216,7 +216,8 @@ class DashboardComponent extends React.Component {
   }
 
   getK8sClusterIds = () => {
-    return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+    const self = this;
+    return getK8sClusterIdsFromCtxId(self.props?.selectedK8sContexts, self.props.k8sconfig)
   }
 
   fetchMetricComponents = () => {
@@ -476,7 +477,7 @@ class DashboardComponent extends React.Component {
   };
 
   getSelectedK8sContextsNames = () => {
-    return getK8sClusterNamesFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+    return getK8sClusterNamesFromCtxId(this.props?.selectedK8sContexts, this.props.k8sconfig)
   }
 
   handleKubernetesClick = (id) => {

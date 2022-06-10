@@ -513,7 +513,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     dataFetch(
-      ctxUrl("/api/user/prefs", this.props.selectedK8sContexts),
+      ctxUrl("/api/user/prefs", this.props?.selectedK8sContexts),
       { credentials : "same-origin", method : "GET" },
       (result) => {
         if (typeof result !== "undefined") {
