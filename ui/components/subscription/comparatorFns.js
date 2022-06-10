@@ -14,7 +14,6 @@ export function isMeshSyncSubscriptionDataUpdated(currentState, newData) {
 }
 
 export function isOperatorStateSubscriptionDataUpdated(currentState, newData) {
-  console.log("newData", newData);
   if (!currentState) {
     return true;
   }

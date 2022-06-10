@@ -111,7 +111,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   let k8sfileElementVal ="";
   let formData = new FormData();
   const stateUpdater = (state, updateFunc, updateValue, index) => {
-    console.log("HAHAH");
     let newState = [...state];
     newState[index] = updateValue;
     updateFunc(newState);
@@ -130,7 +129,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     let tableInfo = [];
     fetchAllContexts(25)
       .then(res => {
-        console.log(res, "CTX");
         handleContexts(res.contexts);
         res.contexts.forEach((ctx) => {
           let data = {
@@ -271,7 +269,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const setOperatorState = (res, index) => {
-    console.log("incoming change", res)
 
     if (res.operator?.error) {
       handleError("Operator could not be reached")(res.operator?.error?.description);
@@ -324,7 +321,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     let menu = [...showMenu];
     menu[index] = true;
     setShowMenu(menu);
-    console.log(contexts, "CTX");
   }
 
   const handleSuccess = msg => {
@@ -387,7 +383,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   };
 
   const handleOperatorSwitch = (index) => {
-    console.log("REACHED");
 
     const variables = {
       status : `${!operatorSwitch[index] ? "ENABLED" : "DISABLED"}`,
@@ -413,19 +408,16 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   };
 
   const handleConfigDelete = (id, index) => {
-    console.log("test");
     updateProgress({ showProgress : true });
     dataFetch(
       "/api/system/kubernetes/contexts/" + id,
       { credentials : "same-origin",
         method : "DELETE" },
-      (result) => {
+      () => {
         updateProgress({ showProgress : false });
         if (index != undefined) {
           let newData = data.filter((dt, idx) => index != idx);
-          console.log(index, "LL");
           setData(newData);
-          console.log("result", result);
         }
       },
       handleError("failed to delete kubernetes context")
@@ -454,7 +446,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         body : formData,
       }
     )
-    console.log("changed");
   }
 
   const columns = [
@@ -465,8 +456,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
-        customBodyRender : (value, tableMeta, updateValue) => {
-          console.log("v", value, "tm", tableMeta, "uv", updateValue);
+        customBodyRender : (_, tableMeta, ) => {
           return (
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
@@ -576,12 +566,10 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     expandableRowsOnClick : false,
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
-        console.log("Dmm", item);
         handleConfigDelete(data[item.index].id)
       })
     },
     renderExpandableRow : (rowData, rowMetaData) => {
-      console.log("LLLLL", rowData);
       return (
         <NoSsr>
           { operatorState &&
@@ -856,7 +844,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     updateProgress({ showProgress : true });
     fetchMesheryOperatorStatus({ k8scontextID : contexts[index].id })
       .subscribe({ next : (res) => {
-        console.log(res);
         let state = setOperatorState(res, index);
         updateProgress({ showProgress : false });
         if (state == true) {
