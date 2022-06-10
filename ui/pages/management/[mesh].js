@@ -51,6 +51,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems : "center",
     height : "100%"
   },
+  settings : {
+    flexBasis : "100%",
+    height : "0",
+    padding : "2rem"
+  },
   btn : {
     marginBottom : theme.spacing(2),
   }
@@ -79,16 +84,18 @@ function Mesh() {
             <Typography variant="subtitle">
               Connect Meshery Adapter(s) in Settings
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={handleConfigure}
-              className={classes.btn}
-            >
-              <SettingsIcon className={classes.icon} />
-              Settings
-            </Button>
+            <div className={classes.settings}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={handleConfigure}
+                className={classes.btn}
+              >
+                <SettingsIcon className={classes.icon} />
+                Settings
+              </Button>
+            </div>
           </Container>
         </div>
       </NoSsr>

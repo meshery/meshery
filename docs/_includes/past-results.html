@@ -10,11 +10,14 @@
 
     {% for item in sorted_tests_istio  %}
         {% if item.overall-status == "passing" %}
-            {% assign overall-status = "background-color: #83B71E; color: white;" %}
+            {% assign overall-status = "background-color: #56b257; color: white;" %}
+            {% assign result-state = "/assets/img/passing.svg"></td>" %}
         {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
+            {% assign result-state = "/assets/img/YellowCheck.svg" %}
         {% elsif item.overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
+            {% assign result-state = "/assets/img/failing.svg" %}
         {% else %}
             {% assign overall-status = "" %}
         {% endif %}
@@ -45,11 +48,11 @@
             </td>
             <td colspan="4" class="details">
                 <i>Test results:</i>
-                <ol>
+                <table style="border:0">
                 {% for test in item.tests %}
-                    <li>{{ test[0] }}: {{test[1] }}</li>
+                   <tr><td><img style="height:24px; width: 24px" src={{result-state}}></td><td>{{test[0]}}</td></tr>
                 {% endfor %}      
-                </ol>      
+                </table>      
             </td>
         </tr>
     {% endfor %}

@@ -957,7 +957,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			if err != nil {
 				log.Error(ErrGettingSeededComponents(err, comp))
 			} else {
-				log.Info("starting to seed ", comp)
+				log.Info("seeding sample ", comp, "s")
 				switch comp {
 				case "Pattern":
 					for i, name := range names {
@@ -967,7 +967,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							Name:        name,
 							ID:          &id,
 						}
-						log.Info("saving "+comp+"- ", name)
+						log.Debug("seeding "+comp+": ", name)
 						switch comp {
 
 						}
@@ -985,7 +985,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							Name:       name,
 							ID:         &id,
 						}
-						log.Info("saving "+comp+"- ", name)
+						log.Debug("seeding "+comp+": ", name)
 						switch comp {
 
 						}
@@ -1003,7 +1003,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							Name:            name,
 							ID:              &id,
 						}
-						log.Info("saving "+comp+"- ", name)
+						log.Debug("seeding "+comp+": ", name)
 						switch comp {
 
 						}
