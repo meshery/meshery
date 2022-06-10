@@ -51,7 +51,7 @@ func (r *queryResolver) GetOperatorStatus(ctx context.Context, k8scontextID stri
 
 func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions, k8scontextID string) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.resyncCluster(ctx, provider, selector)
+	return r.resyncCluster(ctx, provider, selector, k8scontextID)
 }
 
 func (r *queryResolver) GetMeshsyncStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error) {

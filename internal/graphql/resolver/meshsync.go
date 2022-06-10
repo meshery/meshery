@@ -114,7 +114,7 @@ func (r *Resolver) getMeshSyncStatus(k8sctx models.K8sContext) model.OperatorCon
 	return status
 }
 
-func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions) (model.Status, error) {
+func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions, k8scontextID string) (model.Status, error) {
 	if actions.ClearDb == "true" {
 		if actions.HardReset == "true" {
 			dbPath := path.Join(utils.GetHome(), ".meshery/config")
@@ -157,33 +157,25 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			if err != nil {
 				r.Log.Error(err)
 			}
-		} else {
-			// Clear existing data
-			err := provider.GetGenericPersister().Migrator().DropTable(
-				&meshsyncmodel.KeyValue{},
-				&meshsyncmodel.Object{},
-				&meshsyncmodel.ResourceSpec{},
-				&meshsyncmodel.ResourceStatus{},
-				&meshsyncmodel.ResourceObjectMeta{},
-			)
-			if err != nil {
-				if provider.GetGenericPersister() == nil {
-					return "", ErrEmptyHandler
-				}
-				r.Log.Warn(ErrDeleteData(err))
+		} else { //Delete meshsync objects coming from a particular cluster
+			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+			if !ok || len(k8sctxs) == 0 {
+				r.Log.Error(ErrEmptyCurrentK8sContext)
+				return "", ErrEmptyCurrentK8sContext
 			}
-			err = provider.GetGenericPersister().Migrator().CreateTable(
-				&meshsyncmodel.KeyValue{},
-				&meshsyncmodel.Object{},
-				&meshsyncmodel.ResourceSpec{},
-				&meshsyncmodel.ResourceStatus{},
-				&meshsyncmodel.ResourceObjectMeta{},
-			)
-			if err != nil {
-				if provider.GetGenericPersister() == nil {
-					return "", ErrEmptyHandler
+			var sid string
+			for _, k8ctx := range k8sctxs {
+				if k8ctx.ID == k8scontextID && k8ctx.KubernetesServerID != nil {
+					sid = k8ctx.KubernetesServerID.String()
+					break
 				}
-				r.Log.Warn(ErrDeleteData(err))
+			}
+			if provider.GetGenericPersister() == nil {
+				return "", ErrEmptyHandler
+			}
+			err := provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
+			if err != nil {
+				return "", ErrEmptyHandler
 			}
 		}
 	}

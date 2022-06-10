@@ -85,7 +85,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 				ReSync:    "false",
 				ClearDb:   "true",
 				HardReset: "false",
-			})
+			}, ctxID)
 			if err != nil {
 				r.Log.Error(err)
 				r.Broadcast.Submit(broadcast.BroadcastMessage{
