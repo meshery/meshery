@@ -94,12 +94,11 @@ function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit, category, selectedOp,
     isDelete, activeContexts, setContextViewer,
     selectedK8sContexts, k8scontext } = props
-  const [context, setContext] = useState(k8scontext)
-
-  useEffect(() => {
-    setContext(activeContexts)
-  }, [activeContexts])
-
+    const [context, setContext] = useState(k8scontext)
+  // useEffect(() => {
+  //   setContext(activeContexts)
+  // }, [activeContexts])
+console.log("TES", selectedK8sContexts);
   const handleKubernetesClick = () => {
     showProgress()
     pingKubernetes(
@@ -116,7 +115,7 @@ function ConfirmationMsg(props) {
     });
     setContext(matchedCtx)
   }
-  console.log(context, "state")
+  console.log(selectedK8sContexts, "state")
   return (
     <div className={classes.root}>
       <Dialog
@@ -126,8 +125,8 @@ function ConfirmationMsg(props) {
         aria-describedby="alert-dialog-description"
         className={classes.dialogBox}
       >
-        {selectedK8sContexts.length > 0
-          ?
+        {/* {selectedK8sContexts.length > 0 */}
+          {/* ? */}
           <>
             <DialogTitle id="alert-dialog-title" className={classes.title}>
               {"The selected operation will be applied to following contexts."}
@@ -159,17 +158,17 @@ function ConfirmationMsg(props) {
                     <span>Select All</span>
                   </div>
                   <div className={classes.contexts}>
-                    {context.map((ctx) => (
-                      <div id={ctx.id} className={classes.chip}>
-                        <Tooltip title={`Server: ${ctx.server}`}>
+                    {k8scontext.map((ctx) => (
+                      <div id={ctx.contextID} className={classes.chip}>
+                        <Tooltip title={`Server: ${ctx.configuredServer}`}>
                           <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
                             <Checkbox
-                              checked={activeContexts.filter(c => c.id === ctx.id).length > 0}
-                              onChange={() => setContextViewer(ctx.id)}
+                              checked={selectedK8sContexts.includes(ctx.contextID) || selectedK8sContexts[0] === "all"}
+                              onChange={() => setContextViewer(ctx.contextID)}
                               color="primary"
                             />
                             <Chip
-                              label={ctx.name}
+                              label={ctx.contextName}
                               className={classes.ctxChip}
                               onClick={handleKubernetesClick}
                               icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
@@ -197,17 +196,17 @@ function ConfirmationMsg(props) {
               </Button>
             </DialogActions>
           </>
-          :
-          enqueueSnackbar(`Please select Kubernets context before proceeding with the deployment`, {
-            variant : "info",
-            action : (key) => (
+          {/* : */}
+          {/* enqueueSnackbar(`Please select Kubernets context before proceeding with the deployment`, { */}
+            {/* variant : "info", */}
+            {/* action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
             ),
             autohideduration : 2000,
           })
-        }
+        } */}
       </Dialog>
     </div>
   )
@@ -215,7 +214,8 @@ function ConfirmationMsg(props) {
 
 const mapStateToProps = state => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
-  return { selectedK8sContexts : selectedK8sContexts };
+  const k8scontext = state.get("k8sConfig");
+  return { selectedK8sContexts : selectedK8sContexts, k8scontext : k8scontext };
 }
 
 const mapDispatchToProps = (dispatch) => ({

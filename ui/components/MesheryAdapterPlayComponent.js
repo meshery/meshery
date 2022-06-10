@@ -31,6 +31,7 @@ import MesheryMetrics from "./MesheryMetrics";
 import MesheryResultDialog from "./MesheryResultDialog";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import ConfirmationMsg from "./ConfirmationModal";
+import { Satellite } from "@material-ui/icons";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },
@@ -167,7 +168,6 @@ class MesheryAdapterPlayComponent extends React.Component {
       pageSize : 10,
       namespaceList : [],
       namespaceSubscription : null,
-      k8scontext : [], // store fetched context
       activeContexts : [],
       deployModalOpen : false,
       category : 0,
@@ -215,25 +215,47 @@ class MesheryAdapterPlayComponent extends React.Component {
     const variables = { type : meshname, k8sClusterIDs : this.getK8sClusterIds() }
     console.log("K8S", this.props.k8sconfig);
     this.initSubscription();
-    this.fetchAllContexts(10)
-      .then(res => {
-        if (this.props.selectedK8sContexts[0] === 'all') {
-          this.setState({ activeContexts : res.contexts, k8scontext : res.contexts })
-        } else {
-          let active = [];
-          res.contexts.forEach((ctx) => {
-            if (this.props.selectedK8sContexts.includes(ctx.id)) {
-              active.push(ctx);
-            }
-          })
-          this.setState({ activeContexts : active,  k8scontext : res.contexts });
-        }
-      });
+    // this.fetchAllContexts(10)
+    //   .then(res => {
+      if (this.props.selectedK8sContexts[0] === 'all') {
+        let active = [];
+        this.props.k8sconfig.forEach((ctx) => {
+          
+            active.push(ctx.contextID);
+          
+        })
+        this.setState({ activeContexts :active})
+      } else {
+        this.setState({ activeContexts : selectedK8sContexts });
+      }
+    //   });
     fetchAvailableAddons(variables)
       .subscribe({ next : res => {
         self.setAddonsState(res)
       },
       error : (err) => console.log("error at addon fetch: " + err), })
+  }
+
+  // static getDerivedStateFromProps(props, state) {
+  //   if (props.selectedK8sContexts.length !== state.activeContexts) {
+  //     if (props.selectedK8sContexts[0] === 'all') {
+  //       state.activeContexts = props.k8sconfig;
+  //       return state;
+  //     } else {
+  //       let active = [];
+  //       props.k8sconfig.forEach((ctx) => {
+  //         if (props.selectedK8sContexts.includes(ctx.contextID)) {
+  //           active.push(ctx);
+  //         }
+  //       })
+  //     state.activeContexts = active;
+  //     return state;
+  //     }
+  //   }
+  // }
+
+  handleContexts() {
+    
   }
 
   componentDidUpdate(prevProps) {
@@ -564,105 +586,39 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 
   setActiveContexts = (id) => {
-    console.log("SDASDAsD", this.props.selectedK8sContexts);
-    if (this.props.selectedK8sContexts) {
-      let activecontexts = [];
-      this.state.k8scontext.forEach(ctx =>
-        activecontexts.push(ctx.id)
-      );
-
+    
+    if (this.props.k8sconfig) {
       if (id === "all") {
-        this.setState((state) => {
-          if (this.props.selectedK8sContexts?.includes("all")) {
-            console.log("YES");
-            activecontexts = [];
-            return { activeContexts : [] };
-          }
-          activecontexts.push("all");
-          // activecontexts
-          return { activeContexts : state.k8scontext };
+        let activecontexts = [];
+        this.props.k8sconfig.forEach(ctx =>
+          activecontexts.push(ctx.id)
+        );
+        activecontexts.push("all");
+        this.setState(state => {
+          if (state.activeContexts?.includes("all")) return { activeContexts : [] };
+          return { activeContexts : activecontexts };
         },
-        () => this.activeContextChangeCallback(activecontexts));
+        () => this.activeContextChangeCallback(this.state.activeContexts));
         return;
       }
-      let ids = [];
+console.log("state", this.state.activeContexts);
       this.setState(state => {
-        state.activeContexts.forEach((ctx) => ids.push(ctx.id))
-        if (this.props.selectedK8sContexts.includes("all")) {
-          // ids.push("all");
-        }
-        console.log("NOO)))", ids.includes(id));
-
+        let ids = [...(state.activeContexts || [])];
         //pop event
         if (ids.includes(id)) {
-          ids  = ids.filter(cid => (cid !== "all" || cid !== id))
-          return { activeContexts : state.activeContexts.filter(ctx => ctx.id !== id) }
+          ids  = ids.filter(id => id != "all")
+          return { activeContexts : ids.filter(cid => cid !== id) }
         }
 
         //push event
-        if (ids.length === state.k8scontext.length - 1) {
-          // ids.push("all");
-          ids = ["all"]
-          return { activeContexts : state.k8scontext }
+        if (ids.length === this.props.k8sconfig.length - 1) {
+          ids.push("all");
         }
-        console.log("NOOOO");
-        return { activeContexts : [...state.activeContexts, state.k8scontext.find((ctx) => ctx.id === id)] }
-      }, () => this.activeContextChangeCallback(ids))
+        return { activeContexts : [...ids, id] }
+      }, () => this.activeContextChangeCallback(this.state.activeContexts))
     }
+ 
   }
-
-  // async showModal() {
-  //   console.log("ASD", this.props.selectedK8sContexts);
-  //   const { classes } = this.props;
-  //   let response = await this.modalRef.current.show({
-  //     title : "The selected operation will be applied to following contexts.",
-  //     subtitle :
-  //         <>
-  //           <div>
-  //             <TextField
-  //               id="search-ctx"
-  //               label="Search"
-  //               size="small"
-  //               variant="outlined"
-  //               onChange={this.searchContexts}
-  //               style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
-  //               InputProps={{ endAdornment : (
-  //                 <Search />
-  //               ) }}
-  //             />
-  //           </div>
-  //           <Checkbox
-  //             checked={this.props.selectedK8sContexts.includes("all")}
-  //             onChange={() => this.setActiveContexts("all")}
-  //             color="primary"
-  //           />
-  //           <span>Select All</span>
-  //           { this.state.k8scontext.map((ctx) => (
-  //             <div id={ctx.id} className={classes.chip}>
-  //               <Tooltip title={`Server: ${ctx.server}`}>
-  //                 <div style={{ display : "flex", justifyContent : "flex-start", alignItems : "center" }}>
-  //                   <Checkbox
-  //                     checked={this.state.activeContexts.filter(c => c.id === ctx.id).length > 0}
-  //                     onChange={() => this.setActiveContexts(ctx.id)}
-  //                     color="primary"
-  //                   />
-  //                   <Chip
-  //                     label={ctx.name}
-  //                     className={classes.ctxChip}
-  //                     onClick={this.handleKubernetesClick}
-  //                     icon={<img src = "/static/img/kubernetes.svg" className={classes.ctxIcon}  />}
-  //                     variant="outlined"
-  //                     data-cy="chipContextName"
-  //                   />
-  //                 </div>
-  //               </Tooltip>
-  //             </div>
-  //           ))}
-  //         </>,
-  //     options : ["CANCEL", "DEPLOY"],
-  //   })
-  //   return response;
-  // }
 
   /**
    * generateMenu generates the management menus for the adapater management plane
@@ -1315,7 +1271,6 @@ class MesheryAdapterPlayComponent extends React.Component {
             isDelete={this.state.isDeleteOp}
             activeContexts={this.state.activeContexts}
             setContextViewer={this.setActiveContexts}
-            k8scontext={this.state.k8scontext}
             selectedOp={this.state.selectedOp}
           />
         </React.Fragment>
