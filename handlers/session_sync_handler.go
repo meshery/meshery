@@ -10,14 +10,15 @@ import (
 
 type SessionSyncData struct {
 	*models.Preference `json:",inline"`
-	K8sConfig          SessionSyncDataK8sConfig `json:"k8sConfig,omitempty"`
+	K8sConfigs         []SessionSyncDataK8sConfig `json:"k8sConfig,omitempty"`
 }
 
 type SessionSyncDataK8sConfig struct {
-	K8sFile           string `json:"k8sfile,omitempty"`
+	ContextID         string `json:"contextID,omitempty"`
 	ContextName       string `json:"contextName,omitempty"`
 	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
 	ConfiguredServer  string `json:"configuredServer,omitempty"`
+	ClusterID         string `json:"clusterID,omitempty"`
 }
 
 // swagger:route GET /api/system/sync SystemAPI idSystemSync
@@ -40,6 +41,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	meshAdapters := []*models.Adapter{}
 
 	adapters := h.config.AdapterTracker.GetAdapters(req.Context())
+
 	for _, adapter := range adapters {
 		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, prefObj, adapter.Location, provider)
 	}
@@ -49,30 +51,26 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	if err != nil { // ignoring errors in this context
 		h.log.Error(ErrSaveSession(err))
 	}
-
-	// Get the kubernetes context
-	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || mk8scontext == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
+	s := []SessionSyncDataK8sConfig{}
+	k8scontexts, ok := req.Context().Value(models.AllKubeClusterKey).([]models.K8sContext)
+	if ok {
+		for _, k8scontext := range k8scontexts {
+			var cid string
+			if k8scontext.KubernetesServerID != nil {
+				cid = k8scontext.KubernetesServerID.String()
+			}
+			s = append(s, SessionSyncDataK8sConfig{
+				ContextID:         k8scontext.ID,
+				ContextName:       k8scontext.Name,
+				ClusterConfigured: true,
+				ClusterID:         cid,
+				ConfiguredServer:  k8scontext.Server,
+			})
+		}
 	}
-
-	// Get the k8sconfig
-	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
-	if !ok || k8sconfig == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
 	data := SessionSyncData{
 		Preference: prefObj,
-		K8sConfig: SessionSyncDataK8sConfig{
-			ContextName:       mk8scontext.Name,
-			ClusterConfigured: true,
-			ConfiguredServer:  mk8scontext.Server,
-		},
+		K8sConfigs: s,
 	}
 
 	err = json.NewEncoder(w).Encode(data)

@@ -154,14 +154,8 @@ const (
 	// UserPrefsCtxKey is the context key for persisting user preferences to context
 	PerfObjCtxKey ContextKey = "perf_obj"
 
-	KubeHanderKey ContextKey = "kube_handler"
-
-	KubeConfigKey ContextKey = "kubeconfig"
-
-	KubeContextKey ContextKey = "kubecontext"
-
-	KubeClustersKey ContextKey = "kubeclusters"
-
+	KubeClustersKey   ContextKey = "kubeclusters"
+	AllKubeClusterKey ContextKey = "allkubeclusters"
 	// UserPrefsCtxKey is the context key for latest broker endpoint to context
 	BrokerURLCtxKey = "broker_endpoint"
 )
@@ -234,8 +228,8 @@ type Provider interface {
 	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, id string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)
-	SetCurrentContext(token, id string) (K8sContext, error)
-	GetCurrentContext(token string) (K8sContext, error)
+	// SetCurrentContext(token, id string) (K8sContext, error)
+	// GetCurrentContext(token string) (K8sContext, error)
 
 	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
 	SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error)

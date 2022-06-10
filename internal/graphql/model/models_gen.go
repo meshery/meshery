@@ -9,13 +9,13 @@ import (
 )
 
 type AddonList struct {
-	Name     string `json:"name"`
-	Owner    string `json:"owner"`
-	Endpoint string `json:"endpoint"`
+	Name  string `json:"name"`
+	Owner string `json:"owner"`
 }
 
 type AddonStatusInput struct {
 	Selector     *MeshType `json:"selector"`
+	K8scontextID string    `json:"k8scontextID"`
 	TargetStatus Status    `json:"targetStatus"`
 }
 
@@ -71,6 +71,7 @@ type Error struct {
 
 type KctlDescribeDetails struct {
 	Describe *string `json:"describe"`
+	Ctxid    *string `json:"ctxid"`
 }
 
 type MesheryResult struct {
@@ -102,10 +103,16 @@ type OAMCapability struct {
 }
 
 type OperatorControllerStatus struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
-	Status  Status `json:"status"`
-	Error   *Error `json:"error"`
+	Name      string `json:"name"`
+	Version   string `json:"version"`
+	Status    Status `json:"status"`
+	Error     *Error `json:"error"`
+	ContextID string `json:"contextID"`
+}
+
+type OperatorControllerStatusPerK8sContext struct {
+	ContextID                string                    `json:"contextID"`
+	OperatorControllerStatus *OperatorControllerStatus `json:"OperatorControllerStatus"`
 }
 
 type OperatorStatus struct {
@@ -113,10 +120,17 @@ type OperatorStatus struct {
 	Version     string                      `json:"version"`
 	Controllers []*OperatorControllerStatus `json:"controllers"`
 	Error       *Error                      `json:"error"`
+	ContextID   string                      `json:"contextID"`
 }
 
 type OperatorStatusInput struct {
 	TargetStatus Status `json:"targetStatus"`
+	ContextID    string `json:"contextID"`
+}
+
+type OperatorStatusPerK8sContext struct {
+	ContextID      string          `json:"contextID"`
+	OperatorStatus *OperatorStatus `json:"operatorStatus"`
 }
 
 type PageFilter struct {
@@ -195,7 +209,8 @@ type ReSyncActions struct {
 }
 
 type ServiceMeshFilter struct {
-	Type *MeshType `json:"type"`
+	Type          *MeshType `json:"type"`
+	K8sClusterIDs []string  `json:"k8sClusterIDs"`
 }
 
 type MeshType string

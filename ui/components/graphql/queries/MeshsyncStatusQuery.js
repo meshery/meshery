@@ -1,11 +1,12 @@
 import { graphql, fetchQuery } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
-export default function MeshsyncStatusQuery() {
+export default function MeshsyncStatusQuery(variables) {
+  const vars = { k8scontextID : variables.k8scontextID };
 
   const query = graphql`
-    query MeshsyncStatusQuery {
-        controller: getMeshsyncStatus{
+    query MeshsyncStatusQuery($k8scontextID: String!)  {
+        controller: getMeshsyncStatus(k8scontextID: $k8scontextID){
             name
             version
             status
@@ -13,5 +14,5 @@ export default function MeshsyncStatusQuery() {
     }
   `;
 
-  return fetchQuery(environment, query);
+  return fetchQuery(environment, query, vars);
 }

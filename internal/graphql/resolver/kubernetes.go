@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"database/sql"
 	"strings"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
@@ -11,15 +12,33 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes/describe"
 )
 
-func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider) ([]*model.NameSpace, error) {
-	k8sctx, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || k8sctx == nil || k8sctx.KubernetesServerID == nil {
-		r.Log.Error(ErrEmptyCurrentK8sContext)
-		return nil, ErrEmptyCurrentK8sContext
+func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider, k8sClusterIDs []string) ([]*model.NameSpace, error) {
+	var cids []string
+	if len(k8sClusterIDs) != 0 {
+		cids = k8sClusterIDs
+	} else { //This is a fallback
+		k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+		if !ok || len(k8sctxs) == 0 {
+			r.Log.Error(ErrEmptyCurrentK8sContext)
+			return nil, ErrEmptyCurrentK8sContext
+		}
+		for _, context := range k8sctxs {
+			if context.KubernetesServerID == nil {
+				r.Log.Error(ErrEmptyCurrentK8sContext)
+				return nil, ErrEmptyCurrentK8sContext
+			}
+			cids = append(cids, context.KubernetesServerID.String())
+		}
 	}
 	// resourceobjects := make([]meshsyncmodel.ResourceObjectMeta, 0)
 	namespaces := make([]string, 0)
-	rows, err := provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace' AND o.cluster_id = ?", k8sctx.KubernetesServerID.String()).Rows()
+	var rows *sql.Rows
+	var err error
+	if len(cids) == 1 && cids[0] == "all" {
+		rows, err = provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace'").Rows()
+	} else {
+		rows, err = provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace' AND o.cluster_id IN ?", cids).Rows()
+	}
 
 	if err != nil {
 		r.Log.Error(ErrGettingNamespace(err))

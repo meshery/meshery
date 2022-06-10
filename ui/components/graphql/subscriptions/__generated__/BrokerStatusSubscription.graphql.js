@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<b5bafefd8ea424078209f23685fb6ae5>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,25 +10,18 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type BrokerStatusSubscriptionVariables = {||};
-export type BrokerStatusSubscriptionResponse = {|
-  +subscribeBrokerConnection: boolean
+import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
+export type BrokerStatusSubscription$variables = {||};
+export type BrokerStatusSubscription$data = {|
+  +subscribeBrokerConnection: boolean,
 |};
 export type BrokerStatusSubscription = {|
-  variables: BrokerStatusSubscriptionVariables,
-  response: BrokerStatusSubscriptionResponse,
+  variables: BrokerStatusSubscription$variables,
+  response: BrokerStatusSubscription$data,
 |};
 */
 
-
-/*
-subscription BrokerStatusSubscription {
-  subscribeBrokerConnection
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "alias": null,
@@ -62,7 +58,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'c3d1793f9ca896edd7ce6ec58cb79a59';
 
-module.exports = node;
+(node/*: any*/).hash = "c3d1793f9ca896edd7ce6ec58cb79a59";
+
+module.exports = ((node/*: any*/)/*: GraphQLSubscription<
+  BrokerStatusSubscription$variables,
+  BrokerStatusSubscription$data,
+>*/);

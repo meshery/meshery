@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<421f4334a6a6f8ba072a28874d1839a3>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,10 +10,12 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type OperatorStatusQueryVariables = {||};
-export type OperatorStatusQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type OperatorStatusQuery$variables = {|
+  k8scontextID: string,
+|};
+export type OperatorStatusQuery$data = {|
   +operator: ?{|
     +status: Status,
     +version: string,
@@ -23,59 +28,53 @@ export type OperatorStatusQueryResponse = {|
       +code: string,
       +description: string,
     |},
-  |}
+  |},
 |};
 export type OperatorStatusQuery = {|
-  variables: OperatorStatusQueryVariables,
-  response: OperatorStatusQueryResponse,
+  variables: OperatorStatusQuery$variables,
+  response: OperatorStatusQuery$data,
 |};
 */
 
-
-/*
-query OperatorStatusQuery {
-  operator: getOperatorStatus {
-    status
-    version
-    controllers {
-      name
-      version
-      status
-    }
-    error {
-      code
-      description
-    }
+var node/*: ConcreteRequest*/ = (function(){
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "k8scontextID"
   }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
-var v0 = {
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "version",
   "storageKey": null
 },
-v2 = [
+v3 = [
   {
     "alias": "operator",
-    "args": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "k8scontextID",
+        "variableName": "k8scontextID"
+      }
+    ],
     "concreteType": "OperatorStatus",
     "kind": "LinkedField",
     "name": "getOperatorStatus",
     "plural": false,
     "selections": [
-      (v0/*: any*/),
       (v1/*: any*/),
+      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -91,8 +90,8 @@ v2 = [
             "name": "name",
             "storageKey": null
           },
-          (v1/*: any*/),
-          (v0/*: any*/)
+          (v2/*: any*/),
+          (v1/*: any*/)
         ],
         "storageKey": null
       },
@@ -127,32 +126,35 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "OperatorStatusQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "OperatorStatusQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "fe94be1b823f90868194ca09bfd4de28",
+    "cacheID": "841b7f336722e3bf6a6c57a9aba6ddd2",
     "id": null,
     "metadata": {},
     "name": "OperatorStatusQuery",
     "operationKind": "query",
-    "text": "query OperatorStatusQuery {\n  operator: getOperatorStatus {\n    status\n    version\n    controllers {\n      name\n      version\n      status\n    }\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "text": "query OperatorStatusQuery(\n  $k8scontextID: String!\n) {\n  operator: getOperatorStatus(k8scontextID: $k8scontextID) {\n    status\n    version\n    controllers {\n      name\n      version\n      status\n    }\n    error {\n      code\n      description\n    }\n  }\n}\n"
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '9d8069b0d65a41383aba2700c5f837d1';
 
-module.exports = node;
+(node/*: any*/).hash = "ee746a7c43a6c4b8aa38b143e8a5b01e";
+
+module.exports = ((node/*: any*/)/*: Query<
+  OperatorStatusQuery$variables,
+  OperatorStatusQuery$data,
+>*/);

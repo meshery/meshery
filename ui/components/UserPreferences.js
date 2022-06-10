@@ -22,6 +22,7 @@ import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidato
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceComponent';
+import { ctxUrl } from '../utils/multi-ctx';
 
 
 const styles = (theme) => ({
@@ -148,31 +149,32 @@ class UserPreference extends React.Component {
     console.log(requestBody,anonymousStats,perfResultStats);
 
     this.props.updateProgress({ showProgress : true });
-    dataFetch('/api/user/prefs', {
-      credentials : 'same-origin',
-      method : 'POST',
-      credentials : 'include',
-      headers : { 'Content-Type' : 'application/json;charset=UTF-8', },
-      body : requestBody,
-    }, (result) => {
-      this.props.updateProgress({ showProgress : false });
-      if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar(msg, { variant : val
-          ? 'success'
-          : 'info',
-        autoHideDuration : 4000,
-        action : (key) => (
-          <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => self.props.closeSnackbar(key)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ), });
-      }
-    }, self.handleError('There was an error sending your preference'));
+    dataFetch(
+      ctxUrl('/api/user/prefs', this.props.selectedK8sContexts), {
+        credentials : 'same-origin',
+        method : 'POST',
+        credentials : 'include',
+        headers : { 'Content-Type' : 'application/json;charset=UTF-8', },
+        body : requestBody,
+      }, (result) => {
+        this.props.updateProgress({ showProgress : false });
+        if (typeof result !== 'undefined') {
+          this.props.enqueueSnackbar(msg, { variant : val
+            ? 'success'
+            : 'info',
+          autoHideDuration : 4000,
+          action : (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ), });
+        }
+      }, self.handleError('There was an error sending your preference'));
   }
 
   handleTabValChange = (event, newVal) => {
@@ -305,7 +307,16 @@ class UserPreference extends React.Component {
 const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch), });
 
+const mapStateToProps = (state) => {
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
+  return {
+    selectedK8sContexts,
+  };
+};
+
+
 export default withStyles(styles)(connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(withRouter(withSnackbar(UserPreference))));

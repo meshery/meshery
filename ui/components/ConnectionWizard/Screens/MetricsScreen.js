@@ -15,7 +15,7 @@ import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../
 import { fetchPromGrafanaScanData, verifyGrafanaConnection, verifyPrometheusConnection } from "../helpers/metrics"
 import { ScrollIndicator } from "../ScrollIndicator"
 
-const MetricsScreen = ({ grafana, prometheus }) => {
+const MetricsScreen = ({ grafana, prometheus, selectedK8sContexts }) => {
 
   const [isGrafanaConnected, setIsGrafanaConnected] = useState(false)
   const [isPrometheusConnected, setIsPrometheusConnected] = useState(false)
@@ -71,7 +71,7 @@ const MetricsScreen = ({ grafana, prometheus }) => {
   }, [grafana.ts])
 
   useEffect(() => {
-    fetchPromGrafanaScanData()
+    fetchPromGrafanaScanData(selectedK8sContexts)
       .then(res => setMetricsScanUrls(res))
       .catch(console.log)
 
@@ -117,8 +117,13 @@ const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCrea
 const mapStateToProps = (state) => {
   const grafana = state.get("grafana").toJS();
   const prometheus = state.get("prometheus").toJS();
-  return { grafana,
-    prometheus };
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
+  return {
+    grafana,
+    prometheus,
+    selectedK8sContexts
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MetricsScreen)

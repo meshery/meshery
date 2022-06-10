@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<81a68e742a5d0e408ab7c56bbbdbf849>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,43 +10,33 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type MeshType = "ALL_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "INVALID_MESH" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORK_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "OCTARINE" | "OPEN_SERVICE_MESH" | "TANZU" | "TRAEFIK_MESH" | "%future added value";
-export type AddonsStatusQueryVariables = {|
-  selector?: ?MeshType
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type MeshType = "ALL_MESH" | "INVALID_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "TRAEFIK_MESH" | "OCTARINE" | "NETWORK_SERVICE_MESH" | "TANZU" | "OPEN_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "CILIUM_SERVICE_MESH" | "%future added value";
+export type ServiceMeshFilter = {|
+  type?: ?MeshType,
+  k8sClusterIDs?: ?$ReadOnlyArray<string>,
 |};
-export type AddonsStatusQueryResponse = {|
+export type AddonsStatusQuery$variables = {|
+  filter?: ?ServiceMeshFilter,
+|};
+export type AddonsStatusQuery$data = {|
   +addonsState: $ReadOnlyArray<{|
     +name: string,
     +owner: string,
-    +endpoint: string,
-  |}>
+  |}>,
 |};
 export type AddonsStatusQuery = {|
-  variables: AddonsStatusQueryVariables,
-  response: AddonsStatusQueryResponse,
+  variables: AddonsStatusQuery$variables,
+  response: AddonsStatusQuery$data,
 |};
 */
 
-
-/*
-query AddonsStatusQuery(
-  $selector: MeshType
-) {
-  addonsState: getAvailableAddons(selector: $selector) {
-    name
-    owner
-    endpoint
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "selector"
+    "name": "filter"
   }
 ],
 v1 = [
@@ -52,8 +45,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "selector",
-        "variableName": "selector"
+        "name": "filter",
+        "variableName": "filter"
       }
     ],
     "concreteType": "AddonList",
@@ -73,13 +66,6 @@ v1 = [
         "args": null,
         "kind": "ScalarField",
         "name": "owner",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "endpoint",
         "storageKey": null
       }
     ],
@@ -104,16 +90,19 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "55e095b3cd951912fb7921aeac4d0401",
+    "cacheID": "49f96950f100465ccdab36e9903b9281",
     "id": null,
     "metadata": {},
     "name": "AddonsStatusQuery",
     "operationKind": "query",
-    "text": "query AddonsStatusQuery(\n  $selector: MeshType\n) {\n  addonsState: getAvailableAddons(selector: $selector) {\n    name\n    owner\n    endpoint\n  }\n}\n"
+    "text": "query AddonsStatusQuery(\n  $filter: ServiceMeshFilter\n) {\n  addonsState: getAvailableAddons(filter: $filter) {\n    name\n    owner\n  }\n}\n"
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '8d4c22678eba8c8078d3f4051e07abf2';
 
-module.exports = node;
+(node/*: any*/).hash = "9cbf0a827a321dead7e3e6d0c2e9cbe7";
+
+module.exports = ((node/*: any*/)/*: Query<
+  AddonsStatusQuery$variables,
+  AddonsStatusQuery$data,
+>*/);

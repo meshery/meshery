@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<5745a37785e352c724b509449718f8ac>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,43 +10,33 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type MeshType = "ALL_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "INVALID_MESH" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORK_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "OCTARINE" | "OPEN_SERVICE_MESH" | "TANZU" | "TRAEFIK_MESH" | "%future added value";
-export type AddonStatusSubscriptionVariables = {|
-  selector?: ?MeshType
+import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
+export type MeshType = "ALL_MESH" | "INVALID_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "TRAEFIK_MESH" | "OCTARINE" | "NETWORK_SERVICE_MESH" | "TANZU" | "OPEN_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "CILIUM_SERVICE_MESH" | "%future added value";
+export type ServiceMeshFilter = {|
+  type?: ?MeshType,
+  k8sClusterIDs?: ?$ReadOnlyArray<string>,
 |};
-export type AddonStatusSubscriptionResponse = {|
+export type AddonStatusSubscription$variables = {|
+  filter?: ?ServiceMeshFilter,
+|};
+export type AddonStatusSubscription$data = {|
   +addonsState: $ReadOnlyArray<{|
     +name: string,
     +owner: string,
-    +endpoint: string,
-  |}>
+  |}>,
 |};
 export type AddonStatusSubscription = {|
-  variables: AddonStatusSubscriptionVariables,
-  response: AddonStatusSubscriptionResponse,
+  variables: AddonStatusSubscription$variables,
+  response: AddonStatusSubscription$data,
 |};
 */
 
-
-/*
-subscription AddonStatusSubscription(
-  $selector: MeshType
-) {
-  addonsState: listenToAddonState(selector: $selector) {
-    name
-    owner
-    endpoint
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "selector"
+    "name": "filter"
   }
 ],
 v1 = [
@@ -52,8 +45,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "selector",
-        "variableName": "selector"
+        "name": "filter",
+        "variableName": "filter"
       }
     ],
     "concreteType": "AddonList",
@@ -73,13 +66,6 @@ v1 = [
         "args": null,
         "kind": "ScalarField",
         "name": "owner",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "endpoint",
         "storageKey": null
       }
     ],
@@ -104,16 +90,19 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "653204021c7317b7444668f2cc8771d0",
+    "cacheID": "b7f42d3b9c1ab13f1d78c3048eb9a5db",
     "id": null,
     "metadata": {},
     "name": "AddonStatusSubscription",
     "operationKind": "subscription",
-    "text": "subscription AddonStatusSubscription(\n  $selector: MeshType\n) {\n  addonsState: listenToAddonState(selector: $selector) {\n    name\n    owner\n    endpoint\n  }\n}\n"
+    "text": "subscription AddonStatusSubscription(\n  $filter: ServiceMeshFilter\n) {\n  addonsState: listenToAddonState(filter: $filter) {\n    name\n    owner\n  }\n}\n"
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'b2bd87e95067d7db68c966ac0ec0717f';
 
-module.exports = node;
+(node/*: any*/).hash = "7cef73e9bfdcc63d12dfe54d2a0f3fbf";
+
+module.exports = ((node/*: any*/)/*: GraphQLSubscription<
+  AddonStatusSubscription$variables,
+  AddonStatusSubscription$data,
+>*/);

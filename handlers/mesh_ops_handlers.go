@@ -11,7 +11,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -80,38 +79,21 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	// Get the kubernetes context
-	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || mk8scontext == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Get the k8sconfig
-	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
-	if !ok || k8sconfig == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	mClient, err := meshes.CreateClient(req.Context(), k8sconfig, mk8scontext.Name, meshAdapters[aID].Location)
+	mClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
 	if err != nil {
-		h.log.Error(ErrMeshClient)
-		http.Error(w, ErrMeshClient.Error(), http.StatusBadRequest)
+		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer func() {
 		_ = mClient.Close()
 	}()
-
 	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
 	if err != nil {
 		h.log.Error(ErrMeshClient)
 		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	_, _ = w.Write([]byte("{}"))
 }
 
@@ -136,6 +118,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 		meshAdapters = []*models.Adapter{}
 	}
 	var err error
+
 	switch req.Method {
 	case http.MethodPost:
 		meshLocationURL := req.FormValue("meshLocationURL")
@@ -146,15 +129,6 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 			http.Error(w, ErrAddAdapter.Error(), http.StatusBadRequest)
 			return
 		}
-
-		// Get the k8sconfig
-		k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
-		if !ok || k8sconfig == nil {
-			h.log.Error(ErrInvalidK8SConfig)
-			http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-			return
-		}
-
 		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL, provider)
 		if err != nil {
 			// h.log.Error(ErrRetrieveData(err))
@@ -206,28 +180,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		return meshAdapters, nil
 	}
 
-	// Get the kubernetes context
-	mk8scontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || mk8scontext == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		return nil, ErrInvalidK8SConfig
-	}
-
-	// Get the k8sconfig
-	k8sconfig, ok := ctx.Value(models.KubeConfigKey).([]byte)
-	if !ok || k8sconfig == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		return nil, ErrInvalidK8SConfig
-	}
-
-	// Get the kubehandler
-	kubeclient, ok := ctx.Value(models.KubeHanderKey).(*mesherykube.Client)
-	if !ok || kubeclient == nil {
-		h.log.Error(ErrNilClient)
-		return nil, ErrNilClient
-	}
-
-	mClient, err := meshes.CreateClient(ctx, k8sconfig, mk8scontext.Name, meshLocationURL)
+	mClient, err := meshes.CreateClient(ctx, meshLocationURL)
 	if err != nil {
 		h.log.Error(ErrMeshClient)
 		// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
@@ -347,41 +300,36 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	if namespace == "" {
 		namespace = "default"
 	}
-
-	// Get the kubernetes context
-	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || mk8scontext == nil {
+	mk8sContexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok || len(mk8sContexts) == 0 {
 		h.log.Error(ErrInvalidK8SConfig)
 		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
+	var configs []string
+	for _, c := range mk8sContexts {
+		// Generate Kube Handler
+		kc, err := c.GenerateKubeConfig()
+		if err != nil {
+			return
+		}
+		configs = append(configs, string(kc))
 
-	// Get the k8sconfig
-	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
-	if !ok || k8sconfig == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
 	}
-
-	mClient, err := meshes.CreateClient(req.Context(), k8sconfig, mk8scontext.Name, meshAdapters[aID].Location)
+	mClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
 	if err != nil {
-		//h.log.Error(ErrMeshClient)
-		http.Error(w, ErrMeshClient.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer func() {
 		_ = mClient.Close()
 	}()
-
 	operationID, err := uuid.NewV4()
 
 	if err != nil {
-		h.log.Error(ErrOperationID(err))
-		http.Error(w, ErrOperationID(err).Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OperationId: operationID.String(),
 		OpName:      opName,
@@ -389,11 +337,10 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		Namespace:   namespace,
 		CustomBody:  customBody,
 		DeleteOp:    (delete != ""),
+		KubeConfigs: configs,
 	})
 	if err != nil {
-		h.log.Error(ErrApplyChange(err))
-		http.Error(w, ErrApplyChange(err).Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write([]byte("{}"))
 }

@@ -80,17 +80,6 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (K
 			return nil
 		}
 
-		// If the context claims to be the current context then verify that there is no other active context
-		if mkc.IsCurrentContext {
-			var mesheryK8sContext K8sContext
-
-			if err := tx.First(&mesheryK8sContext, "is_current_context = true").Error; err == nil {
-				if mesheryK8sContext.IsCurrentContext {
-					mkc.IsCurrentContext = false
-				}
-			}
-		}
-
 		return tx.Save(&mkc).Error
 	})
 
@@ -104,36 +93,34 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContext(id string) (K8sCont
 	return mesheryK8sContext, err
 }
 
-func (mkcp *MesheryK8sContextPersister) SetMesheryK8sCurrentContext(id string) error {
-	// Perform the operation in a transaction
-	return mkcp.DB.Transaction(func(tx *gorm.DB) error {
-		var mesheryK8sContext K8sContext
+// func (mkcp *MesheryK8sContextPersister) SetMesheryK8sCurrentContext(id string) error {
+// 	// Perform the operation in a transaction
+// 	return mkcp.DB.Transaction(func(tx *gorm.DB) error {
+// 		var mesheryK8sContext K8sContext
 
-		// Get context which is currently in use
-		if err := tx.First(&mesheryK8sContext, "is_current_context = true").Error; err != nil {
-			return err
-		}
+// 		// Get context which is currently in use
+// 		if err := tx.First(&mesheryK8sContext, "is_current_context = true").Error; err != nil {
+// 			return err
+// 		}
 
-		// If the context id matches with the provided id then skip the next steps
-		if mesheryK8sContext.ID == id {
-			return nil
-		}
+// 		// If the context id matches with the provided id then skip the next steps
+// 		if mesheryK8sContext.ID == id {
+// 			return nil
+// 		}
 
-		// Set the currently use to "false"
-		mesheryK8sContext.IsCurrentContext = false
-		if err := tx.Save(&mesheryK8sContext).Error; err != nil {
-			return err
-		}
+// 		if err := tx.Save(&mesheryK8sContext).Error; err != nil {
+// 			return err
+// 		}
 
-		// Set the specified context as active
-		return tx.Model(K8sContext{}).Where("id = ?", id).Update("is_current_context", true).Error
-	})
-}
+// 		// Set the specified context as active
+// 		return tx.Model(K8sContext{}).Where("id = ?", id).Update("is_current_context", true).Error
+// 	})
+// }
 
-func (mkcp *MesheryK8sContextPersister) GetMesheryK8sCurrentContext() (K8sContext, error) {
-	var mesheryK8sContext K8sContext
+// func (mkcp *MesheryK8sContextPersister) GetMesheryK8sCurrentContext() (K8sContext, error) {
+// 	var mesheryK8sContext K8sContext
 
-	err := mkcp.DB.First(&mesheryK8sContext, "is_current_context = true").Error
+// 	err := mkcp.DB.First(&mesheryK8sContext, "is_current_context = true").Error
 
-	return mesheryK8sContext, err
-}
+// 	return mesheryK8sContext, err
+// }

@@ -1,57 +1,36 @@
-import NoSsr from "@material-ui/core/NoSsr";
-import React from "react";
-import { Controlled as CodeMirror } from "react-codemirror2";
 import {
-  withStyles,
-  Grid,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Divider,
-  Card,
-  CardHeader,
-  CardActions,
-  Menu,
-  MenuItem,
-  Chip,
-  TableCell,
-  TableRow,
-  TableBody,
-  TableHead,
-  Table,
-  Tooltip,
-  Typography,
-  FormLabel,
-  FormControl,
-  FormGroup,
-  FormControlLabel,
-  Switch,
+  Card, CardActions, CardHeader, Chip, Dialog, DialogActions, DialogContent,
+  DialogTitle, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Grid,
+  IconButton, Menu, MenuItem, Switch, Table, TableBody, TableCell, TableHead, TableRow,
+  Tooltip, Typography, withStyles
 } from "@material-ui/core";
 import { blue } from "@material-ui/core/colors";
-import PropTypes from "prop-types";
-import { withRouter } from "next/router";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import CloseIcon from "@material-ui/icons/Close";
-import { withSnackbar } from "notistack";
+import NoSsr from "@material-ui/core/NoSsr";
 import AddIcon from "@material-ui/icons/Add";
+import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PlayIcon from "@material-ui/icons/PlayArrow";
-// import { updateSMIResults } from '../lib/store';
-import { updateProgress } from "../lib/store";
-import dataFetch from "../lib/data-fetch";
 import MUIDataTable from "mui-datatables";
+import { withRouter } from "next/router";
+import { withSnackbar } from "notistack";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controlled as CodeMirror } from "react-codemirror2";
 import Moment from "react-moment";
-import MesheryResultDialog from "./MesheryResultDialog";
-import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubscription';
-import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
-import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
+// import { updateSMIResults } from '../lib/store';
+import { setK8sContexts, updateProgress, actionTypes } from "../lib/store";
+import { ctxUrl, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
+import { closeButtonForSnackbarAction, errorHandlerGenerator, hideProgress, showProgress, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
+import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
+import MesheryMetrics from "./MesheryMetrics";
+import MesheryResultDialog from "./MesheryResultDialog";
 import ReactSelectWrapper from "./ReactSelectWrapper";
-import MesheryMetrics from "./MesheryMetrics"
+import ConfirmationMsg from "./ConfirmationModal";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },
@@ -111,7 +90,23 @@ const styles = (theme) => ({
     minWidth : '250px' },
   card : { height : '100%',
     display : 'flex',
-    flexDirection : 'column' }
+    flexDirection : 'column' },
+  ctxIcon : {
+    display : 'inline',
+    verticalAlign : 'text-top',
+    width : theme.spacing(2.5),
+    marginLeft : theme.spacing(0.5),
+  },
+  ctxChip : {
+    backgroundColor : "white",
+    cursor : "pointer",
+    marginRight : theme.spacing(1),
+    marginLeft : theme.spacing(1),
+    marginBottom : theme.spacing(1),
+    height : "100%",
+    padding : theme.spacing(0.5)
+  },
+  modalOpen : false
 });
 
 class MesheryAdapterPlayComponent extends React.Component {
@@ -137,6 +132,8 @@ class MesheryAdapterPlayComponent extends React.Component {
     }
 
     this.activeMesh = adapter.name;
+
+    this.modalRef = React.createRef();
 
     this.state = {
       selectedOp : "",
@@ -169,28 +166,19 @@ class MesheryAdapterPlayComponent extends React.Component {
       sortOrder : "",
       pageSize : 10,
       namespaceList : [],
+      namespaceSubscription : null,
+      activeContexts : [],
+      deployModalOpen : false,
+      category : 0,
+      selectedOp : '',
+      isDeleteOp : false
     };
   }
 
-  componentDidMount() {
+  initSubscription = () => {
     const self = this;
-    const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
-    const variables = { serviceMesh : meshname }
-    subscribeMeshSyncStatusEvents(res => {
-      if (res.meshsync?.error) {
-        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
-        return
-      }
-    })
-    subscribeOperatorStatusEvents(self.setOperatorState)
-    subscribeAddonStatusEvents(self.setAddonsState, variables)
 
-    fetchAvailableAddons(variables)
-      .subscribe({ next : res => {
-        self.setAddonsState(res)
-      },
-      error : (err) => console.log("error at addon fetch: " + err), })
-    fetchAvailableNamespaces()
+    const namespaceSubscription = fetchAvailableNamespaces({ k8sClusterIDs : self.getK8sClusterIds() })
       .subscribe({ next : res => {
         let namespaces = []
         res?.namespaces?.map(ns => {
@@ -210,6 +198,77 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ namespaceList : namespaces })
       },
       error : (err) => console.log("error at namespace fetch: " + err), })
+
+    this.setState({ namespaceSubscription })
+  }
+
+  disposeSubscriptions = () => {
+    if (this.state.namespaceSubscription) {
+      this.state.namespaceSubscription.unsubscribe()
+    }
+  }
+
+  componentDidMount() {
+    const self = this;
+    const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
+    const variables = { type : meshname, k8sClusterIDs : this.getK8sClusterIds() }
+    this.initSubscription();
+    // this.fetchAllContexts(10)
+    //   .then(res => {
+    if (this.props.selectedK8sContexts) {
+      if ( this.props.selectedK8sContexts.includes("all")) {
+        let active = [];
+        this.props.k8sconfig.forEach((ctx) => {
+          active.push(ctx.contextID);
+        })
+        this.setState({ activeContexts : active })
+      } else {
+        this.setState({ activeContexts : this.props.selectedK8sContexts });
+      }
+    }
+
+    fetchAvailableAddons(variables)
+      .subscribe({ next : res => {
+        self.setAddonsState(res)
+      },
+      error : (err) => console.log("error at addon fetch: " + err), })
+  }
+
+  // static getDerivedStateFromProps(props, state) {
+  //   if (props.selectedK8sContexts.length !== state.activeContexts) {
+  //     if (props.selectedK8sContexts[0] === 'all') {
+  //       state.activeContexts = props.k8sconfig;
+  //       return state;
+  //     } else {
+  //       let active = [];
+  //       props.k8sconfig.forEach((ctx) => {
+  //         if (props.selectedK8sContexts.includes(ctx.contextID)) {
+  //           active.push(ctx);
+  //         }
+  //       })
+  //     state.activeContexts = active;
+  //     return state;
+  //     }
+  //   }
+  // }
+
+  handleContexts() {
+
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps?.selectedK8sContexts.length !== this.props?.selectedK8sContexts.length) {
+      this.disposeSubscriptions();
+      this.initSubscription();
+    }
+  }
+
+  async fetchAllContexts(number) {
+    return await promisifiedDataFetch("/api/system/kubernetes/contexts?pageSize=" + number)
+  }
+
+  getK8sClusterIds = () => {
+    return getK8sClusterIdsFromCtxId(this.props?.selectedK8sContexts, this.props.k8sconfig)
   }
 
   mapAdapterNameToMeshName(name) {
@@ -298,9 +357,18 @@ class MesheryAdapterPlayComponent extends React.Component {
     };
   }
 
+  handleKubernetesClick() {
+    showProgress()
+    pingKubernetes(
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
+    )
+  }
+
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
-    return () => {
+    return async () => {
+      self.handleOpen();
       const { namespace, cmEditorValAdd, cmEditorValDel } = self.state;
       const { adapter } = self.props;
       const filteredOp = adapter.ops.filter(({ key }) => key === selectedOp);
@@ -321,7 +389,17 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ namespaceError : true });
         return;
       }
-      self.submitOp(cat, selectedOp, deleteOp);
+      self.setState({
+        category : cat,
+        selectedOp : selectedOp,
+        isDeleteOp : deleteOp
+      })
+
+      // let response = await this.showModal()
+      // if (response === "DEPLOY") {
+      //   this.submitOp(cat, selectedOp, deleteOp)
+      // }
+      // self.submitOp(cat, selectedOp, deleteOp);
     };
   };
 
@@ -348,9 +426,10 @@ class MesheryAdapterPlayComponent extends React.Component {
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join("&");
     this.props.updateProgress({ showProgress : true });
+    this.handleClose()
     const self = this;
     dataFetch(
-      "/api/system/adapter/operation",
+      ctxUrl("/api/system/adapter/operation", this.props.selectedK8sContexts),
       {
         credentials : "same-origin",
         method : "POST",
@@ -472,6 +551,72 @@ class MesheryAdapterPlayComponent extends React.Component {
     // setExpanded(!expanded);
   }
 
+  // searchContexts = (e) => {
+  //   // if (search === '') {
+  //   //   this.setState({ k8scontext: this.state.contexts });
+  //   //   return
+  //   // }
+  //   let search = e.target.value;
+  //   console.log("SDS",  search);
+  //   const matchedCtx = this.state.contexts.filter((ctx) => ctx.name.startsWith(search))
+  //   this.setState({ k8scontext : matchedCtx });
+  //   console.log("SDS", this.state.k8scontext);
+  // }
+
+  handleDeployModalOpen = () => {
+    this.setState({ deployModalOpen : true });
+  }
+
+  handleDeployModalClose = () => {
+    this.setState({ deployModalOpen : false });
+  }
+
+  /**
+   * Sets the selected k8s context on global level.
+   * @param {Array.<string>} activeK8sContexts
+   */
+  activeContextChangeCallback = (activeK8sContexts)  => {
+    console.log("QWE", activeK8sContexts);
+    if (activeK8sContexts.includes("all")) {
+      activeK8sContexts = ["all"];
+    }
+    this.props.setK8sContexts({ type : actionTypes.SET_K8S_CONTEXT, selectedK8sContexts : activeK8sContexts });
+  }
+
+  setActiveContexts = (id) => {
+
+    if (this.props.k8sconfig) {
+      if (id === "all") {
+        let activecontexts = [];
+        this.props.k8sconfig.forEach(ctx =>
+          activecontexts.push(ctx.id)
+        );
+        activecontexts.push("all");
+        this.setState(state => {
+          if (state.activeContexts?.includes("all")) return { activeContexts : [] };
+          return { activeContexts : activecontexts };
+        },
+        () => this.activeContextChangeCallback(this.state.activeContexts));
+        return;
+      }
+      this.setState(state => {
+        let ids = [...(state.activeContexts || [])];
+        //pop event
+        if (ids.includes(id)) {
+          ids  = ids.filter(id => id != "all")
+          return { activeContexts : ids.filter(cid => cid !== id) }
+        }
+
+        //push event
+        if (ids.length === this.props.k8sconfig.length - 1) {
+          ids.push("all");
+        }
+        return { activeContexts : [...ids, id] }
+      }, () => this.activeContextChangeCallback(this.state.activeContexts))
+    }
+
+  }
+
   /**
    * generateMenu generates the management menus for the adapater management plane
    * @param {*} cat
@@ -507,11 +652,11 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 
   handleOpen = () => {
-    setOpen(true);
+    this.setState({ modalOpen : true });
   };
 
   handleClose = () => {
-    setOpen(false);
+    this.setState({ modalOpen : false });
   };
 
   generateSMIResult() {
@@ -1115,6 +1260,16 @@ class MesheryAdapterPlayComponent extends React.Component {
               </Grid>
             </Grid>
           </div>
+          <ConfirmationMsg
+            open={this.state.modalOpen}
+            handleClose={this.handleClose}
+            submit={this.submitOp}
+            category={this.state.category}
+            isDelete={this.state.isDeleteOp}
+            activeContexts={this.state.activeContexts}
+            setContextViewer={this.setActiveContexts}
+            selectedOp={this.state.selectedOp}
+          />
         </React.Fragment>
       </NoSsr>
     );
@@ -1124,16 +1279,16 @@ class MesheryAdapterPlayComponent extends React.Component {
 MesheryAdapterPlayComponent.propTypes = { classes : PropTypes.object.isRequired,
   adapter : PropTypes.object.isRequired, };
 
-// const mapStateToProps = (state) => {
-//   const smi_result = state.get('smi_result').toJS();
-//   return { smi_result, };
-// };
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
-  return { grafana : { ...grafana, ts : new Date(grafana.ts) } };
+  const k8sconfig = st.get("k8sConfig");
+  const selectedK8sContexts = st.get('selectedK8sContexts');
+
+  return { grafana : { ...grafana, ts : new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
 };
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+  setK8sContexts : bindActionCreators(setK8sContexts, dispatch)
   // updateSMIResults: bindActionCreators(updateSMIResults, dispatch),
 });
 

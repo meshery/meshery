@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<d35797043a537ffb6e902f975fae8edd>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,38 +10,42 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type MeshsyncStatusQueryVariables = {||};
-export type MeshsyncStatusQueryResponse = {|
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type MeshsyncStatusQuery$variables = {|
+  k8scontextID: string,
+|};
+export type MeshsyncStatusQuery$data = {|
   +controller: {|
     +name: string,
     +version: string,
     +status: Status,
-  |}
+  |},
 |};
 export type MeshsyncStatusQuery = {|
-  variables: MeshsyncStatusQueryVariables,
-  response: MeshsyncStatusQueryResponse,
+  variables: MeshsyncStatusQuery$variables,
+  response: MeshsyncStatusQuery$data,
 |};
 */
 
-
-/*
-query MeshsyncStatusQuery {
-  controller: getMeshsyncStatus {
-    name
-    version
-    status
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "k8scontextID"
+  }
+],
+v1 = [
+  {
     "alias": "controller",
-    "args": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "k8scontextID",
+        "variableName": "k8scontextID"
+      }
+    ],
     "concreteType": "OperatorControllerStatus",
     "kind": "LinkedField",
     "name": "getMeshsyncStatus",
@@ -71,32 +78,35 @@ var v0 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "MeshsyncStatusQuery",
-    "selections": (v0/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "MeshsyncStatusQuery",
-    "selections": (v0/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d3b1a1a67c5b3f740e169a86665e1751",
+    "cacheID": "88b5a4baae947adb519f9e528b995fca",
     "id": null,
     "metadata": {},
     "name": "MeshsyncStatusQuery",
     "operationKind": "query",
-    "text": "query MeshsyncStatusQuery {\n  controller: getMeshsyncStatus {\n    name\n    version\n    status\n  }\n}\n"
+    "text": "query MeshsyncStatusQuery(\n  $k8scontextID: String!\n) {\n  controller: getMeshsyncStatus(k8scontextID: $k8scontextID) {\n    name\n    version\n    status\n  }\n}\n"
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'c009f646493c799c1dd4d6fd9e996ac8';
 
-module.exports = node;
+(node/*: any*/).hash = "57b05e27fe69c3f807a81378bcbc5471";
+
+module.exports = ((node/*: any*/)/*: Query<
+  MeshsyncStatusQuery$variables,
+  MeshsyncStatusQuery$data,
+>*/);

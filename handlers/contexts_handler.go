@@ -30,20 +30,20 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, prefO
 }
 
 func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.URL.Query().Get("current") != "" {
-		context, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-		if !ok || context == nil {
-			http.Error(w, "failed to get context", http.StatusInternalServerError)
-			return
-		}
+	// if req.URL.Query().Get("current") != "" {
+	// 	context, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
+	// 	if !ok || context == nil {
+	// 		http.Error(w, "failed to get context", http.StatusInternalServerError)
+	// 		return
+	// 	}
 
-		if err := json.NewEncoder(w).Encode(context); err != nil {
-			http.Error(w, "failed to encode context", http.StatusInternalServerError)
-			return
-		}
+	// 	if err := json.NewEncoder(w).Encode(context); err != nil {
+	// 		http.Error(w, "failed to encode context", http.StatusInternalServerError)
+	// 		return
+	// 	}
 
-		return
-	}
+	// 	return
+	// }
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -77,35 +77,35 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, prefOb
 	}
 }
 
-func (h *Handler) GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	token, ok := req.Context().Value(models.TokenCtxKey).(string)
-	if !ok {
-		http.Error(w, "failed to get token", http.StatusInternalServerError)
-		return
-	}
+// func (h *Handler) GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+// 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
+// 	if !ok {
+// 		http.Error(w, "failed to get token", http.StatusInternalServerError)
+// 		return
+// 	}
 
-	val, err := h.GetCurrentContext(token, provider)
-	if err != nil {
-		http.Error(w, "failed to get current context", http.StatusInternalServerError)
-		return
-	}
+// 	val, err := h.GetCurrentContext(token, provider)
+// 	if err != nil {
+// 		http.Error(w, "failed to get current context", http.StatusInternalServerError)
+// 		return
+// 	}
 
-	if err := json.NewEncoder(w).Encode(val); err != nil {
-		http.Error(w, "failed to encode context", http.StatusInternalServerError)
-		return
-	}
-}
+// 	if err := json.NewEncoder(w).Encode(val); err != nil {
+// 		http.Error(w, "failed to encode context", http.StatusInternalServerError)
+// 		return
+// 	}
+// }
 
-func (h *Handler) SetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	token, ok := req.Context().Value(models.TokenCtxKey).(string)
-	if !ok {
-		http.Error(w, "failed to get token", http.StatusInternalServerError)
-		return
-	}
+// func (h *Handler) SetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+// 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
+// 	if !ok {
+// 		http.Error(w, "failed to get token", http.StatusInternalServerError)
+// 		return
+// 	}
 
-	_, err := provider.SetCurrentContext(token, mux.Vars(req)["id"])
-	if err != nil {
-		http.Error(w, "failed to set current context", http.StatusInternalServerError)
-		return
-	}
-}
+// 	_, err := provider.SetCurrentContext(token, mux.Vars(req)["id"])
+// 	if err != nil {
+// 		http.Error(w, "failed to set current context", http.StatusInternalServerError)
+// 		return
+// 	}
+// }

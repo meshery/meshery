@@ -64,7 +64,7 @@ func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 	return dep.ObjectMeta.Name, version, nil
 }
 
-func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler, ch chan struct{}) ([]*OperatorControllerStatus, error) {
+func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler) ([]*OperatorControllerStatus, error) {
 	controllers := make([]*OperatorControllerStatus, 0)
 
 	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
@@ -82,7 +82,7 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 
 	controllers = append(controllers, &broker)
 
-	meshsync, err := GetMeshSyncInfo(mesheryclient, mesheryKubeClient, ch)
+	meshsync, err := GetMeshSyncInfo(mesheryclient, mesheryKubeClient)
 	if err != nil {
 		return controllers, err
 	}
@@ -116,36 +116,19 @@ func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *me
 	return brokerStatus, nil
 }
 
-func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client, ch chan struct{}) (OperatorControllerStatus, error) {
+func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client) (OperatorControllerStatus, error) {
 	var meshsyncStatus OperatorControllerStatus
 	meshsync, err := mesheryclient.CoreV1Alpha1().MeshSyncs(Namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return meshsyncStatus, ErrMesheryClient(err)
 	}
 
-	// Synthetic Check for MeshSync data is too time consuming. Commented for now.
+	meshsyncDeployment, err := mesheryKubeClient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
+	meshsyncVersion := ""
+	if err == nil {
+		meshsyncVersion = imageVersionExtractUtil(meshsyncDeployment.Spec.Template, "meshsync")
+	}
 
-	// if err == nil {
-	// 	status := StatusDisabled
-	// 	flag := false
-	// 	for start := time.Now(); time.Since(start) < 5*time.Second; {
-	// 		select {
-	// 		case <-ch:
-	// 			flag = true
-	// 			break
-	// 		default:
-	// 			continue
-	// 		}
-	// 	}
-	// 	if flag {
-	// 		status = StatusEnabled
-	// 	}
-	// 	meshsyncStatus = OperatorControllerStatus{
-	// 		Name:    "meshsync",
-	// 		Version: meshsync.Labels["version"],
-	// 		Status:  status,
-	// 	})
-	// }
 	status := fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
 	meshsyncStatus.Status = Status(status)
 	meshsyncStatus.Name = "meshsync"

@@ -27,34 +27,40 @@ func init() {
 
 // ScanPromGrafanaHandler - fetches  Prometheus and Grafana
 func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	// Get the kubernetes context
-	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || mk8scontext == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
+	errs := []string{}
+	var wg sync.WaitGroup
+	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
+	if ok && len(customK8scontexts) > 0 {
+		for _, mk8scontext := range customK8scontexts {
+			wg.Add(1)
+			go func(mk8scontext models.K8sContext) {
+				defer wg.Done()
+				k8sconfig, err := mk8scontext.GenerateKubeConfig()
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				availablePromGrafana, err := helpers.ScanPromGrafana(k8sconfig, mk8scontext.Name)
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
+					obj := "payloads"
+					h.log.Error(ErrMarshal(err, obj))
+					errs = append(errs, ErrMarshal(err, obj).Error())
+					return
+				}
+			}(mk8scontext)
 
-	// Get the k8sconfig
-	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
-	if !ok || k8sconfig == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
+		}
 	}
-
-	availablePromGrafana, err := helpers.ScanPromGrafana(k8sconfig, mk8scontext.Name)
-	if err != nil {
-		h.log.Error(err)
-		http.Error(w, "unable to scan Kubernetes", http.StatusInternalServerError)
-		return
+	if len(errs) != 0 {
+		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
 	}
-	if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-		obj := "payloads"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-		return
-	}
+	wg.Wait()
 }
 
 // swagger:route GET /api/system/meshsync/prometheus SystemAPI idMeshSyncPrometheus
@@ -66,34 +72,40 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 
 // ScanPrometheusHandler - fetches  Prometheus
 func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	// Get the kubernetes context
-	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || mk8scontext == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
+	errs := []string{}
+	var wg sync.WaitGroup
+	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
+	if ok && len(customK8scontexts) > 0 {
+		for _, mk8scontext := range customK8scontexts {
+			wg.Add(1)
+			go func(mk8scontext models.K8sContext) {
+				defer wg.Done()
+				k8sconfig, err := mk8scontext.GenerateKubeConfig()
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				availablePromGrafana, err := helpers.ScanPrometheus(k8sconfig, mk8scontext.Name)
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
+					obj := "payloads"
+					h.log.Error(ErrMarshal(err, obj))
+					errs = append(errs, ErrMarshal(err, obj).Error())
+					return
+				}
+			}(mk8scontext)
 
-	// Get the k8sconfig
-	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
-	if !ok || k8sconfig == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
+		}
 	}
-
-	availablePrometheus, err := helpers.ScanPrometheus(k8sconfig, mk8scontext.Name)
-	if err != nil {
-		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if len(errs) != 0 {
+		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
 	}
-	if err = json.NewEncoder(w).Encode(availablePrometheus); err != nil {
-		obj := "payloads"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-		return
-	}
+	wg.Wait()
 }
 
 // swagger:route GET /api/telemetry/metrics/grafana/scan GrafanaAPI idGetGrafana
@@ -105,34 +117,40 @@ func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request
 
 // ScanGrafanaHandler - fetches  Grafana
 func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	// Get the kubernetes context
-	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || mk8scontext == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
+	errs := []string{}
+	var wg sync.WaitGroup
+	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
+	if ok && len(customK8scontexts) > 0 {
+		for _, mk8scontext := range customK8scontexts {
+			wg.Add(1)
+			go func(mk8scontext models.K8sContext) {
+				defer wg.Done()
+				k8sconfig, err := mk8scontext.GenerateKubeConfig()
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				availablePromGrafana, err := helpers.ScanGrafana(k8sconfig, mk8scontext.Name)
+				if err != nil {
+					errs = append(errs, err.Error())
+					h.log.Error(err)
+					return
+				}
+				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
+					obj := "payloads"
+					h.log.Error(ErrMarshal(err, obj))
+					errs = append(errs, ErrMarshal(err, obj).Error())
+					return
+				}
+			}(mk8scontext)
 
-	// Get the k8sconfig
-	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
-	if !ok || k8sconfig == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
+		}
 	}
-
-	availableGrafana, err := helpers.ScanGrafana(k8sconfig, mk8scontext.Name)
-	if err != nil {
-		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if len(errs) != 0 {
+		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
 	}
-	if err = json.NewEncoder(w).Encode(availableGrafana); err != nil {
-		obj := "payloads"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-		return
-	}
+	wg.Wait()
 }
 
 // swagger:route GET /api/telemetry/metrics/config PrometheusAPI idGetPrometheusConfig
@@ -225,22 +243,6 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		h.log.Error(ErrPrometheusConfig)
 		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Get the kubernetes context
-	mk8scontext, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
-	if !ok || mk8scontext == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Get the k8sconfig
-	k8sconfig, ok := req.Context().Value(models.KubeConfigKey).([]byte)
-	if !ok || k8sconfig == nil {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 

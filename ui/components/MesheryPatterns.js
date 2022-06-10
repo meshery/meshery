@@ -28,6 +28,7 @@ import GridOnIcon from "@material-ui/icons/GridOn";
 import { updateProgress } from "../lib/store";
 import PatternForm from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
+import { ctxUrl } from "../utils/multi-ctx";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
@@ -246,7 +247,7 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
 }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
@@ -350,7 +351,7 @@ function MesheryPatterns({
   const handleDeploy = (pattern_file) => {
     updateProgress({ showProgress : true });
     dataFetch(
-      DEPLOY_URL,
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials : "include",
         method : "POST",
@@ -864,7 +865,7 @@ function MesheryPatterns({
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"), };
 };
 
 // @ts-ignore

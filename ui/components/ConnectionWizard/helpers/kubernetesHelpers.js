@@ -6,9 +6,9 @@ import { updateProgress } from "../../../lib/store";
   * @param  {(res) => void} successHandler
   * @param  {(err) => void} errorHandler
 */
-export const pingKubernetes = (successHandler,errorHandler) => {
+export const pingKubernetes = (successHandler,errorHandler, context) => {
   dataFetch(
-    "/api/system/kubernetes/ping",
+    "/api/system/kubernetes/ping?context=" + context,
     { credentials : "same-origin",
       credentials : "include", },
     successHandler,

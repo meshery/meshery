@@ -390,7 +390,7 @@ class MesheryNotification extends React.Component {
 // });
 
 const mapStateToProps = (state) => {
-  const k8sConfig = state.get('k8sConfig').toJS();
+  const k8sConfig = state.get('k8sConfig');
   const meshAdapters = state.get('meshAdapters').toJS();
   return { k8sConfig, meshAdapters };
 };

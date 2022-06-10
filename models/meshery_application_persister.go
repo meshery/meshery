@@ -57,9 +57,9 @@ func (maap *MesheryApplicationPersister) GetMesheryApplications(search, order st
 // DeleteMesheryApplication takes in an application id and delete it if it already exists
 func (maap *MesheryApplicationPersister) DeleteMesheryApplication(id uuid.UUID) ([]byte, error) {
 	application := MesheryApplication{ID: &id}
-	maap.DB.Delete(&application)
+	err := maap.DB.Delete(&application).Error
 
-	return marshalMesheryApplication(&application), nil
+	return marshalMesheryApplication(&application), err
 }
 
 func (maap *MesheryApplicationPersister) SaveMesheryApplication(application *MesheryApplication) ([]byte, error) {

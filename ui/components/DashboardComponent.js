@@ -1,46 +1,32 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
 import {
-  NoSsr,
-  Chip,
-  IconButton,
   Button,
   Card,
-  CardContent,
-  Typography,
-  CardHeader,
-  Tooltip,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper,
-  Select,
-  MenuItem,
+  CardContent, CardHeader, Chip,
+  IconButton, MenuItem, NoSsr, Paper,
+  Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
-import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import SettingsIcon from "@material-ui/icons/Settings";
+import Grid from "@material-ui/core/Grid";
+import { withStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
+import CloseIcon from "@material-ui/icons/Close";
+import SettingsIcon from "@material-ui/icons/Settings";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
-import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from "../lib/store";
-import subscribeDataPlaneEvents from "./graphql/subscriptions/DataPlanesSubscription";
-import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
-import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
+import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
+import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
+import { versionMapper } from "../utils/nameMapper";
+import { submitGrafanaConfigure } from "./GrafanaComponent";
+import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
-import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
-import { submitGrafanaConfigure } from "./GrafanaComponent";
-import { versionMapper } from "../utils/nameMapper";
+
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
   chip : { marginRight : theme.spacing(1),
@@ -87,7 +73,7 @@ class DashboardComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      meshAdapters, k8sconfig, grafana, prometheus
+      meshAdapters, grafana, prometheus
     } = props;
     this._isMounted = false;
     this.state = {
@@ -97,12 +83,6 @@ class DashboardComponent extends React.Component {
       mts : new Date(),
       meshLocationURLError : false,
 
-      inClusterConfig : k8sconfig.inClusterConfig, // read from store
-      k8sfile : k8sconfig.k8sfile, // read from store
-      contextName : k8sconfig.contextName, // read from store
-
-      clusterConfigured : k8sconfig.clusterConfigured, // read from store
-      configuredServer : k8sconfig.configuredServer,
       grafanaUrl : grafana.grafanaURL,
       prometheusUrl : prometheus.prometheusURL,
       k8sfileError : false,
@@ -124,20 +104,19 @@ class DashboardComponent extends React.Component {
       activeMeshScanNamespace : {},
       meshScanNamespaces : {},
 
-      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '' && k8sconfig.clusterConfigured,
+      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
       controlPlaneState : "",
       dataPlaneState : "",
 
       // subscriptions disposable
       dataPlaneSubscription : null,
       controlPlaneSubscription : null,
-      operatorStatusSubscription : null,
     };
   }
 
   static getDerivedStateFromProps(props, state) {
     const {
-      meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus, contextName
+      meshAdapters, meshAdaptersts, grafana, prometheus
     } = props;
     const st = {};
     if (meshAdaptersts > state.mts) {
@@ -146,29 +125,15 @@ class DashboardComponent extends React.Component {
     }
     st.grafana = grafana;
     st.prometheus = prometheus;
-    if (k8sconfig.ts > state.kts) {
-      st.inClusterConfig = k8sconfig.inClusterConfig;
-      st.k8sfile = k8sconfig.k8sfile;
-      st.contextName = k8sconfig.contextName;
-      st.clusterConfigured = k8sconfig.clusterConfigured;
-      st.configuredServer = k8sconfig.configuredServer;
-      st.kts = props.ts;
-      if (!state.contextsFromFile?.length)
-        st.contextsFromFile = { ...(st.contextsFromFile || []), contextsFromFile : [{ contextName, currentContext : true }] };
-      return st;
-    }
     return st;
   }
 
   disposeSubscriptions = () => {
-    if (this.state.operatorStatusSubscription) {
-      this.state.operatorStatusSubscription.dispose()
-    }
     if (this.state.dataPlaneSubscription) {
-      this.state.dataPlaneSubscription.dispose()
+      this.state.dataPlaneSubscription.unsubscribe()
     }
     if (this.state.controlPlaneSubscription) {
-      this.state.controlPlaneSubscription.dispose()
+      this.state.controlPlaneSubscription.unsubscribe()
     }
   }
 
@@ -177,41 +142,28 @@ class DashboardComponent extends React.Component {
      * ALL_MESH indicates that we are interested in control plane
      * component of all of the service meshes supported by meshsync v2
      */
-    const ALL_MESH = {};
-
     const self = this;
+    const ALL_MESH = { type : "ALL_MESH", k8sClusterIDs : self.getK8sClusterIds() };
 
-    if (self._isMounted){
-      const opSub = subscribeOperatorStatusEvents(self.setOperatorState);
-      // subscribeServiceMeshEvents(self.setMeshScanData, ALL_MESH, this.state, e => this.setState({ ...e }));
-      const cpSub = subscribeControlPlaneEvents((res) => {
-        if (res?.controlPlanesState !== undefined){
-          this.setState({ controlPlaneState : res })
-        }
-      }, ALL_MESH)
-      const dpSub = subscribeDataPlaneEvents((res) => {
-        if (res?.dataPlanesState !== undefined){
-          this.setState({ dataPlaneState : res })
-        }
-      }, ALL_MESH)
-      this.disposeSubscriptions()
-      this.setState({ operatorStatusSubscription : opSub, dataPlaneSubscription : dpSub, controlPlaneSubscription : cpSub })
-      fetchControlPlanes(ALL_MESH).subscribe({
+    if (self._isMounted) {
+      const controlPlaneSubscription = fetchControlPlanes(ALL_MESH).subscribe({
         next : (controlPlaneRes) => {
+          console.log("control plane query subscription --> ", controlPlaneRes)
           this.setState({ controlPlaneState : controlPlaneRes })
-          // self.setMeshScanData(controlPlaneRes, null);
-          fetchDataPlanes(ALL_MESH).subscribe({
-            next : (dataPlaneRes) => {
-              this.setState({ dataPlaneState : dataPlaneRes })
-              // if (controlPlaneRes) self.setMeshScanData(controlPlaneRes, dataPlaneRes);
-            },
-            error : (err) => console.error(err),
-          });
         },
         error : (err) => console.error(err),
       });
-    }
 
+      const dataPlaneSubscription = fetchDataPlanes(ALL_MESH).subscribe({
+        next : (dataPlaneRes) => {
+          console.log("data plane query subscription --> ", dataPlaneRes)
+          this.setState({ dataPlaneState : dataPlaneRes })
+        },
+        error : (err) => console.error(err),
+      });
+
+      this.setState({ controlPlaneSubscription, dataPlaneSubscription });
+    }
   }
 
   componentWillUnmount = () => {
@@ -222,7 +174,7 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this._isMounted = true
     this.fetchAvailableAdapters();
-
+    console.log("", this.props.k8sconfig);
     fetchAllContexts(25)
       .then(res => this.setState({ contexts : res?.contexts || [] }))
       .catch(this.handleError("failed to fetch contexts for the instance"))
@@ -255,10 +207,22 @@ class DashboardComponent extends React.Component {
       )
     }
 
+    // handle subscriptions update on switching K8s Contexts
+    if (prevProps?.selectedK8sContexts !== this.props?.selectedK8sContexts
+      || prevProps.k8sconfig !== this.props.k8sconfig){
+      this.disposeSubscriptions()
+      this.initMeshSyncControlPlaneSubscription()
+    }
+  }
+
+  getK8sClusterIds = () => {
+    const self = this;
+    return getK8sClusterIdsFromCtxId(self.props?.selectedK8sContexts, self.props.k8sconfig)
   }
 
   fetchMetricComponents = () => {
     const self = this;
+    let selector = { type : "ALL_MESH", k8sClusterIDs : this.getK8sClusterIds() };
 
     dataFetch(
       "/api/telemetry/metrics/config",
@@ -268,7 +232,6 @@ class DashboardComponent extends React.Component {
       (result) => {
         self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL != "") {
-          let selector = { serviceMesh : "ALL_MESH", };
           fetchAvailableAddons(selector).subscribe({ next : (res) => {
             res?.addonsState?.forEach((addon) => {
               if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
@@ -291,14 +254,13 @@ class DashboardComponent extends React.Component {
       (result) => {
         self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="") {
-          let selector = { serviceMesh : "ALL_MESH", };
           fetchAvailableAddons(selector).subscribe({ next : (res) => {
             res?.addonsState?.forEach((addon) => {
               if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
                 self.setState({ grafanaURL : "http://" + addon.endpoint })
                 submitGrafanaConfigure(self, () => {
                   self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-                  console.log("Grafana added");
+                  console.info("Grafana added");
                 });
               }
             });
@@ -309,7 +271,6 @@ class DashboardComponent extends React.Component {
       self.handleError("There was an error communicating with grafana config")
     );
 
-    let selector = { serviceMesh : "ALL_MESH", };
 
     fetchAvailableAddons(selector).subscribe({ next : (res) => {
       res?.addonsState?.forEach((addon) => {
@@ -346,42 +307,6 @@ class DashboardComponent extends React.Component {
       },
       self.handleError("Unable to fetch list of adapters.")
     );
-  };
-
-  setOperatorState = (res) => {
-    const self = this;
-    if (res.operator?.error) {
-      self.handleError("Operator could not be reached")(res.operator?.error?.description);
-      return false;
-    }
-
-    if (res.operator?.status === "ENABLED") {
-      res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status == "ENABLED") {
-          self.setState({ NATSInstalled : true,
-            NATSVersion : controller.version, });
-        } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
-          self.setState({ meshSyncInstalled : true,
-            meshSyncVersion : controller.version, });
-        }
-      });
-      self.setState({ operatorInstalled : true,
-        operatorSwitch : true,
-        operatorVersion : res.operator?.version, });
-      return true;
-    }
-
-    self.setState({
-      operatorInstalled : false,
-      NATSInstalled : false,
-      meshSyncInstalled : false,
-      operatorSwitch : false,
-      operatorVersion : "N/A",
-      meshSyncVersion : "N/A",
-      NATSVersion : "N/A",
-    });
-
-    return false;
   };
 
   setMeshScanData = (controlPlanesData, dataPlanesData) => {
@@ -551,18 +476,26 @@ class DashboardComponent extends React.Component {
     this.props.router.push(`/settings#metrics/${val}`);
   };
 
-  handleKubernetesClick = () => {
+  getSelectedK8sContextsNames = () => {
+    return getK8sClusterNamesFromCtxId(this.props?.selectedK8sContexts, this.props.k8sconfig)
+  }
+
+  handleKubernetesClick = (id) => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
-    const { configuredServer } = this.state;
+    const selectedCtx = this.props.k8sconfig?.find((ctx) => ctx.contextID === id);
+    if (!selectedCtx) return;
+
+    const { configuredServer, contextName } = selectedCtx;
     dataFetch(
-      "/api/system/kubernetes/ping",
+      "/api/system/kubernetes/ping?context=" + id,
       { credentials : "same-origin",
         credentials : "include", },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Kubernetes connected at "  + `${configuredServer}` , { variant : "success",
+          this.props.enqueueSnackbar(`${contextName} is connected at ${configuredServer}` , {
+            variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -763,8 +696,6 @@ class DashboardComponent extends React.Component {
   configureTemplate = () => {
     const { classes } = this.props;
     const {
-      clusterConfigured,
-      configuredServer,
       meshAdapters,
       grafanaUrl,
       prometheusUrl,
@@ -772,34 +703,31 @@ class DashboardComponent extends React.Component {
       grafana,
       contexts,
       prometheus,
-      contextName
     } = this.state;
     const self = this;
     let showConfigured = "Not connected to Kubernetes.";
-    if (clusterConfigured) {
-      let chp = (
-        <div>
-          {contexts?.map(ctx => (
-            <Tooltip title={`Server: ${ctx.server}`}>
-              <Chip
-                label={ctx?.name}
-                className={classes.chip}
-                onClick={() => self.handleKubernetesClick(ctx.id)}
-                icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
-                disabled={contextName==ctx.name? false : true}
-                variant="outlined"
-                data-cy="chipContextName"
-              />
-            </Tooltip>
-          ))}
-        </div>
-      );
+    let chp = (
+      <div>
+        {contexts?.map(ctx => (
+          <Tooltip title={`Server: ${ctx.server}`}>
+            <Chip
+              label={ctx?.name}
+              className={classes.chip}
+              onClick={() => self.handleKubernetesClick(ctx.id)}
+              icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
+              variant="outlined"
+              data-cy="chipContextName"
+            />
+          </Tooltip>
+        ))}
+      </div>
+    );
 
-      if (!configuredServer) {
-        chp=showConfigured;
-      }
-      showConfigured = <div showConfigured>{chp}</div>;
+    if (!contexts?.length) {
+      chp=showConfigured;
     }
+
+    showConfigured = <div showConfigured>{chp}</div>;
 
     let showAdapters = "No adapters configured.";
     if (availableAdapters.length > 0) {
@@ -968,7 +896,7 @@ class DashboardComponent extends React.Component {
               }}
             >
               <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-              No service meshes detected in the {self.state.contextName} cluster.
+              No service meshes detected in the {this.getSelectedK8sContextsNames()?.map(ctx => ctx.name).join(",")} cluster(s).
               </Typography>
               <Button
                 aria-label="Add Meshes"
@@ -1022,18 +950,22 @@ DashboardComponent.propTypes = { classes : PropTypes.object.isRequired, };
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
   updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
   updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch), });
+
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get("k8sConfig").toJS();
-  const meshAdapters = state.get("meshAdapters").toJS();
+  const k8sconfig = state.get("k8sConfig");
+  const meshAdapters = state.get("meshAdapters");
   const meshAdaptersts = state.get("meshAdaptersts");
-  const grafana = state.get("grafana").toJS();
-  const prometheus = state.get("prometheus").toJS();
+  const grafana = state.get("grafana");
+  const prometheus = state.get("prometheus");
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
   return {
     meshAdapters,
     meshAdaptersts,
     k8sconfig,
     grafana,
     prometheus,
+    selectedK8sContexts
   };
 };
 

@@ -87,7 +87,8 @@ type Error {
 input AddonStatusInput {
   # Filter by Serice Mesh
   selector: MeshType
-
+  #kubernetes context ID
+  k8scontextID: String!
   # Desired Status
   targetStatus: Status!
 }
@@ -99,9 +100,6 @@ type AddonList {
 
   # Owner
   owner: String!
-
-  # Endpoint (if applicable)
-  endpoint: String!
 }
 
 # ============== DATA PLANE =======================
@@ -153,6 +151,7 @@ type Container_Port {
 input ServiceMeshFilter {
   # Filter by Service Mesh
   type: MeshType
+  k8sClusterIDs: [String!] 
 }
 
 # Control Plane data for a particular Mesh
@@ -188,8 +187,18 @@ type ControlPlaneMember {
 input OperatorStatusInput {
   # Desired status for Meshery Operator
   targetStatus: Status!
+  
+  contextID: String!
 }
 
+type OperatorStatusPerK8sContext{
+  contextID: String!
+  operatorStatus: OperatorStatus!
+}
+type OperatorControllerStatusPerK8sContext{
+  contextID: String!
+  OperatorControllerStatus: OperatorControllerStatus!
+}
 # Status of Meshery Operator and its controllers
 type OperatorStatus {
   # Status of Meshery Operator
@@ -203,6 +212,8 @@ type OperatorStatus {
 
   # Error Logs encountered by Meshery Operator
   error: Error
+
+  contextID: String!
 }
 
 # Controllers of Meshery Operator
@@ -218,6 +229,9 @@ type OperatorControllerStatus {
 
   # Controller Error Log
   error: Error
+
+  contextID: String!
+
 }
 
 # ============== NAMESPACE =============================
@@ -334,7 +348,7 @@ type Query {
   # Query details about Addons available (Eg. Prometheus and Grafana)
   getAvailableAddons(
     # Select Mesh Type
-    selector: MeshType
+     filter: ServiceMeshFilter
   ): [AddonList!]!
 
   # Query Control Plane data for a Service Mesh (or all) in your cluster
@@ -350,28 +364,41 @@ type Query {
   ): [DataPlane!]!
 
   # Query status of Meshery Operator in your cluster
-  getOperatorStatus: OperatorStatus
+  getOperatorStatus(
+        k8scontextID: String!
+  ): OperatorStatus
 
   # Query to resync the cluster discovery
   resyncCluster(
     # Selector to control several resync actions
     selector: ReSyncActions
+    k8scontextID: String!
   ): Status!
 
   # Check the Meshsync Status
-  getMeshsyncStatus: OperatorControllerStatus!
+  getMeshsyncStatus(
+        k8scontextID: String!
+  ): OperatorControllerStatus!
 
   # Check the Meshsync Status and deploy if not enabled
-  deployMeshsync: Status!
+  deployMeshsync( # what to do in-order to deploy meshsync on multiple clusters/contexts
+        k8scontextID: String!
+  ): Status!
 
   # Check is Meshey Server is connected to NATS
-  getNatsStatus: OperatorControllerStatus!
+  getNatsStatus(
+        k8scontextID: String!
+  ): OperatorControllerStatus!
 
   # Check is Meshey Server is connected to NATS, if not connect to the NATS Server
-  connectToNats: Status!
+  connectToNats(
+        k8scontextID: String!
+  ): Status!
 
   # Query available Namesapces in your cluster
-  getAvailableNamespaces: [NameSpace!]!
+  getAvailableNamespaces(
+        k8sClusterIDs: [String!]
+  ): [NameSpace!]!
 
   # Query for performance result
   getPerfResult(id: ID!): MesheryResult
@@ -402,9 +429,6 @@ type Query {
 #
 
 type Mutation {
-  # Change the Addon Status
-  changeAddonStatus(input: AddonStatusInput): Status!
-
   # Change the Operator Status
   changeOperatorStatus(input: OperatorStatusInput): Status!
 }
@@ -413,7 +437,7 @@ type Subscription {
   # Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
   listenToAddonState(
     # Select Mesh Type
-    selector: MeshType
+    filter: ServiceMeshFilter
   ): [AddonList!]!
 
   # Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
@@ -429,10 +453,14 @@ type Subscription {
   ): [DataPlane!]!
 
   # Listen to changes in status of Meshery Operator in your cluster
-  listenToOperatorState: OperatorStatus!
+  listenToOperatorState(
+    k8scontextIDs: [String!]
+  ): OperatorStatusPerK8sContext
 
   # Listen to changes in the list of available Namesapces in your cluster
-  listenToMeshSyncEvents: OperatorControllerStatus!
+  listenToMeshSyncEvents(
+    k8scontextIDs: [String!]
+  ): OperatorControllerStatusPerK8sContext
 
   # Listen to changes in Performance Profiles
   subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
@@ -455,4 +483,5 @@ type OAMCapability {
 
 type KctlDescribeDetails {
   describe: String
+  ctxid: String
 }

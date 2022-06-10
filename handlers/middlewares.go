@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 )
 
@@ -106,44 +105,29 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
 		ctx = context.WithValue(ctx, models.BrokerURLCtxKey, h.config.BrokerEndpointURL) // nolint
-
-		k8scontext, err := h.GetCurrentContext(token, provider)
-		if err != nil {
-			logrus.Warn("failed to find kubernetes context")
-
-			// Set some defaults in the context so that the casting doesn't fails
-			ctx = context.WithValue(ctx, models.KubeContextKey, nil)
-			ctx = context.WithValue(ctx, models.KubeHanderKey, nil)
-			ctx = context.WithValue(ctx, models.KubeConfigKey, nil)
-		} else {
-			cfg, err := k8scontext.GenerateKubeConfig()
+		ctxpage, err := provider.GetK8sContexts(token, "", "", "", "")
+		if err != nil || len(ctxpage.Contexts) == 0 { //Try to load the contexts when there are no contexts available
+			logrus.Warn("failed to get kubernetes contexts")
+			err = h.LoadContexts(token, provider)
 			if err != nil {
-				logrus.Warn("failed to load kube config for the user: ", err)
+				logrus.Warn("failed to load kubernetes contexts: ", err.Error())
 			}
-
-			// Create mesherykube handler
-			client, err := kubernetes.New(cfg)
-			if err != nil {
-				logrus.Warn("failed to create kubeconfig handler for the user")
-				// http.Error(w, "failed to create kubeconfig handler for the user", http.StatusInternalServerError)
-				// return
-			}
-
-			ctx = context.WithValue(ctx, models.KubeContextKey, k8scontext)
-			ctx = context.WithValue(ctx, models.KubeHanderKey, client)
-			ctx = context.WithValue(ctx, models.KubeConfigKey, cfg)
 		}
-
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]
-		k8scontexts := []models.K8sContext{}
-
-		if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
-			contexts, err := provider.LoadAllK8sContext(token)
-			if err != nil {
-				logrus.Warn("failed to load all k8scontext")
+		k8scontexts := []models.K8sContext{}    //The contexts passed by the user
+		allk8scontexts := []models.K8sContext{} //All contexts to track all the connected clusters
+		contexts, err := provider.LoadAllK8sContext(token)
+		if err != nil {
+			logrus.Warn("failed to load all k8scontext")
+		}
+		if len(k8sContextIDs) == 0 { //This is for backwards compabitibility with clients. This will work fine for single cluster.
+			//For multi cluster, it is expected of clients to explicitly pass the k8scontextID.
+			//So for now, randomly one of the contexts from available ones will be pushed to the array to stop anything from breaking in case of no contexts recieved(with single cluster, the behavior would be as expected).
+			if len(contexts) > 0 && contexts[0] != nil {
+				k8scontexts = append(k8scontexts, *contexts[0])
 			}
-
+		} else if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
 			for _, c := range contexts {
 				if c != nil {
 					k8scontexts = append(k8scontexts, *c)
@@ -156,13 +140,17 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 					logrus.Warn("invalid context ID found")
 					continue
 				}
-
 				k8scontexts = append(k8scontexts, kctx)
+			}
+		}
+		for _, k8scontext := range contexts {
+			if k8scontext != nil {
+				allk8scontexts = append(allk8scontexts, *k8scontext)
 			}
 		}
 
 		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
-
+		ctx = context.WithValue(ctx, models.AllKubeClusterKey, allk8scontexts)
 		req1 := req.WithContext(ctx)
 
 		next(w, req1, prefObj, user, provider)

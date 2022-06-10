@@ -16,7 +16,6 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Chip from '@material-ui/core/Chip';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
-import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -31,6 +30,7 @@ import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpe
 import {
   successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction, showProgress, hideProgress
 } from './ConnectionWizard/helpers/common';
+import { getFirstCtxIdFromSelectedCtxIds } from '../utils/multi-ctx';
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
   secondaryBar : { zIndex : 0, },
@@ -140,6 +140,8 @@ function K8sContextMenu({
   classes = {},
   contexts = {},
   activeContexts = [],
+  runningStatus,
+
   setActiveContexts = () => {},
   searchContexts = () => {}
 }) {
@@ -157,11 +159,26 @@ function K8sContextMenu({
     transform : showFullContextMenu ? `translateY(${transformProperty}%)`: "translateY(0)"
   }
 
-  const handleKubernetesClick = () => {
+  const getOperatorStatus = (contextId) => {
+    const state = runningStatus.operatorStatus;
+    if (!state) {
+      return false;
+    }
+
+    const context = state.find(st => st.contextID === contextId)
+    if (!context) {
+      return false;
+    }
+
+    return context.operatorStatus.status === "ENABLED";
+  }
+
+  const handleKubernetesClick = (id) => {
     showProgress()
     pingKubernetes(
       successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress()),
+      id
     )
 
   }
@@ -195,13 +212,11 @@ function K8sContextMenu({
         }}
         onMouseOver={(e) => {
           e.preventDefault();
-          console.log(contexts);
           setAnchorEl(true);
         }}
 
         onMouseLeave={(e) => {
           e.preventDefault();
-          console.log(contexts);
           setAnchorEl(false)
         }}
 
@@ -221,7 +236,7 @@ function K8sContextMenu({
         <div>
           <ClickAwayListener onClickAway={(e) => {
 
-            if (!e.target.className.includes("cbadge") && e.target.className !="k8s-image" && !e.target.className.includes("k8s-icon-button")) {
+            if (!e.target.className?.includes("cbadge") && e.target?.className !="k8s-image" && !e.target.className.includes("k8s-icon-button")) {
               setAnchorEl(false)
               setShowFullContextMenu(false)
             }
@@ -248,8 +263,8 @@ function K8sContextMenu({
                     ?
                     <>
                       <Checkbox
-                        checked={activeContexts.includes(".all")}
-                        onChange={() => setActiveContexts(".all")}
+                        checked={activeContexts.includes("all")}
+                        onChange={() => setActiveContexts("all")}
                         color="primary"
                       />
                       <span>Select All</span>
@@ -280,8 +295,11 @@ function K8sContextMenu({
                         <Chip
                           label={ctx?.name}
                           onDelete={handleKubernetesDelete}
-                          onClick={handleKubernetesClick}
-                          avatar={<Avatar src="/static/img/kubernetes.svg" className={classes.icon} />}
+                          onClick={() => handleKubernetesClick(ctx.id)}
+                          avatar={
+                            <Avatar src="/static/img/kubernetes.svg" className={classes.icon}
+                              style={getOperatorStatus(ctx.id) ? {} : { opacity : 0.2 }}
+                            />}
                           variant="filled"
                           className={classes.Chip}
                           data-cy="chipContextName"
@@ -318,29 +336,34 @@ class Header extends React.Component {
   }
   componentDidMount(){
     this._isMounted = true;
-    const meshSyncStatusSub = subscribeMeshSyncStatusEvents(data => this.setState({ meshSyncStatus : data?.listenToMeshSyncEvents }));
+    // const meshSyncStatusSub = subscribeMeshSyncStatusEvents(
+    //   data => this.setState({ meshSyncStatus : data?.listenToMeshSyncEvents }),
+    //   this.getSelectedContextId()
+    // );
     const brokerStatusSub = subscribeBrokerStatusEvents(data => {
       console.log({ brokerData : data })
       this.setState({ brokerStatus : data?.subscribeBrokerConnection })
     });
-    this.setState({ meshSyncStatusSubscription : meshSyncStatusSub, brokerStatusSubscription : brokerStatusSub })
+    this.setState({ brokerStatusSubscription : brokerStatusSub })
+  }
+
+  getSelectedContextId = () => {
+    return getFirstCtxIdFromSelectedCtxIds(["all"], this.props.k8sconfig)
   }
 
   componentWillUnmount = () => {
     this._isMounted = false;
-    this.disposeSubscriptions()
+    // this.disposeSubscriptions()
   }
 
-  disposeSubscriptions = () => {
-    if (this.state.meshSyncStatusSubscription) {
-      this.state.meshSyncStatusSubscription.dispose();
-    }
-  }
+  // disposeSubscriptions = () => {
+  //   if (this.state.meshSyncStatusSubscription) {
+  //     this.state.meshSyncStatusSubscription.dispose();
+  //   }
+  // }
 
   render() {
-    const {
-      classes, title, onDrawerToggle ,onDrawerCollapse ,isBeta
-    } = this.props;
+    const { classes, title, onDrawerToggle ,onDrawerCollapse ,isBeta } = this.props;
     return (
       <NoSsr>
         <React.Fragment>
@@ -403,6 +426,7 @@ class Header extends React.Component {
                       activeContexts={this.props.activeContexts}
                       setActiveContexts={this.props.setActiveContexts}
                       searchContexts={this.props.searchContexts}
+                      runningStatus={{ operatorStatus : this.props.operatorState, meshSyncStatus : this.props.meshSyncState }}
                     />
                   </div>
 
@@ -420,13 +444,13 @@ class Header extends React.Component {
                     <MesheryNotification />
                   </div>
 
-                  <Tooltip title={this.state?.meshSyncStatus?.status === "ENABLED" ? "Active" : "Inactive" }>
+                  {/* <Tooltip title={this.state?.meshSyncStatus?.status === "ENABLED" ? "Active" : "Inactive" }>
                     <IconButton>
                       <Link href="/settings#environment">
                         <img className={classes.headerIcons} src={this.state?.meshSyncStatus?.status === "ENABLED" ? "/static/img/meshsync.svg" : "/static/img/meshsync-white.svg"} />
                       </Link>
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip> */}
 
                   {/* <Tooltip title="Broker Status">
                     <div style={{ padding : "1rem", height : "2rem", width : "2rem", borderRadius : "50%", backgroundColor : this.state.brokerStatus ? "green" : "red" }} />
@@ -490,10 +514,16 @@ class Header extends React.Component {
 Header.propTypes = { classes : PropTypes.object.isRequired,
   onDrawerToggle : PropTypes.func.isRequired, };
 
-const mapStateToProps = (state) =>
-  // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
-  // console.log("state: " + JSON.stringify(state));
-  ({ title : state.get('page').get('title'), isBeta : state.get('page').get('isBeta') })
+const mapStateToProps = (state) => {
+  return ({
+    title : state.get('page').get('title'),
+    isBeta : state.get('page').get('isBeta'),
+    selectedK8sContexts : state.get('selectedK8sContexts'),
+    k8sconfig : state.get('k8sConfig'),
+    operatorState : state.get('operatorState'),
+    meshSyncState : state.get('meshSyncState')
+  })
+}
 ;
 
 // const mapDispatchToProps = dispatch => {

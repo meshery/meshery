@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<a71c67c0427ff681836b039233aa40d9>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,115 +10,132 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type OperatorStatusSubscriptionVariables = {||};
-export type OperatorStatusSubscriptionResponse = {|
-  +operator: {|
-    +status: Status,
-    +version: string,
-    +controllers: $ReadOnlyArray<{|
-      +name: string,
-      +version: string,
+import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
+export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type OperatorStatusSubscription$variables = {|
+  k8scontextIDs?: ?$ReadOnlyArray<string>,
+|};
+export type OperatorStatusSubscription$data = {|
+  +operator: ?{|
+    +contextID: string,
+    +operatorStatus: {|
       +status: Status,
-    |}>,
-    +error: ?{|
-      +code: string,
-      +description: string,
+      +version: string,
+      +controllers: $ReadOnlyArray<{|
+        +name: string,
+        +version: string,
+        +status: Status,
+      |}>,
+      +error: ?{|
+        +code: string,
+        +description: string,
+      |},
     |},
-  |}
+  |},
 |};
 export type OperatorStatusSubscription = {|
-  variables: OperatorStatusSubscriptionVariables,
-  response: OperatorStatusSubscriptionResponse,
+  variables: OperatorStatusSubscription$variables,
+  response: OperatorStatusSubscription$data,
 |};
 */
 
-
-/*
-subscription OperatorStatusSubscription {
-  operator: listenToOperatorState {
-    status
-    version
-    controllers {
-      name
-      version
-      status
-    }
-    error {
-      code
-      description
-    }
+var node/*: ConcreteRequest*/ = (function(){
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "k8scontextIDs"
   }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
-var v0 = {
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "version",
   "storageKey": null
 },
-v2 = [
+v3 = [
   {
     "alias": "operator",
-    "args": null,
-    "concreteType": "OperatorStatus",
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "k8scontextIDs",
+        "variableName": "k8scontextIDs"
+      }
+    ],
+    "concreteType": "OperatorStatusPerK8sContext",
     "kind": "LinkedField",
     "name": "listenToOperatorState",
     "plural": false,
     "selections": [
-      (v0/*: any*/),
-      (v1/*: any*/),
       {
         "alias": null,
         "args": null,
-        "concreteType": "OperatorControllerStatus",
-        "kind": "LinkedField",
-        "name": "controllers",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          (v1/*: any*/),
-          (v0/*: any*/)
-        ],
+        "kind": "ScalarField",
+        "name": "contextID",
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
-        "concreteType": "Error",
+        "concreteType": "OperatorStatus",
         "kind": "LinkedField",
-        "name": "error",
+        "name": "operatorStatus",
         "plural": false,
         "selections": [
+          (v1/*: any*/),
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "code",
+            "concreteType": "OperatorControllerStatus",
+            "kind": "LinkedField",
+            "name": "controllers",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              },
+              (v2/*: any*/),
+              (v1/*: any*/)
+            ],
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "description",
+            "concreteType": "Error",
+            "kind": "LinkedField",
+            "name": "error",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "code",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "description",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
@@ -127,32 +147,35 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "OperatorStatusSubscription",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Subscription",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "OperatorStatusSubscription",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "0af2621c80400239283d6c4a668f71ac",
+    "cacheID": "8a1bb7537702e43181f395fdcaeceaa0",
     "id": null,
     "metadata": {},
     "name": "OperatorStatusSubscription",
     "operationKind": "subscription",
-    "text": "subscription OperatorStatusSubscription {\n  operator: listenToOperatorState {\n    status\n    version\n    controllers {\n      name\n      version\n      status\n    }\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "text": "subscription OperatorStatusSubscription(\n  $k8scontextIDs: [String!]\n) {\n  operator: listenToOperatorState(k8scontextIDs: $k8scontextIDs) {\n    contextID\n    operatorStatus {\n      status\n      version\n      controllers {\n        name\n        version\n        status\n      }\n      error {\n        code\n        description\n      }\n    }\n  }\n}\n"
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '5c90d86b91eae1249f0aa443a994a378';
 
-module.exports = node;
+(node/*: any*/).hash = "5728620b5666bd13a414080f9d90778e";
+
+module.exports = ((node/*: any*/)/*: GraphQLSubscription<
+  OperatorStatusSubscription$variables,
+  OperatorStatusSubscription$data,
+>*/);

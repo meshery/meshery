@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<961ee8b78a38b33ad9b63126264132db>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
 export type PageFilter = {|
   page: string,
   pageSize: string,
@@ -16,11 +19,11 @@ export type PageFilter = {|
   from?: ?string,
   to?: ?string,
 |};
-export type PerformanceResultSubscriptionVariables = {|
+export type PerformanceResultSubscription$variables = {|
   selector: PageFilter,
   profileID: string,
 |};
-export type PerformanceResultSubscriptionResponse = {|
+export type PerformanceResultSubscription$data = {|
   +subscribePerfResults: {|
     +page: number,
     +page_size: number,
@@ -38,42 +41,15 @@ export type PerformanceResultSubscriptionResponse = {|
       +updated_at: ?string,
       +runner_results: ?any,
     |}>,
-  |}
+  |},
 |};
 export type PerformanceResultSubscription = {|
-  variables: PerformanceResultSubscriptionVariables,
-  response: PerformanceResultSubscriptionResponse,
+  variables: PerformanceResultSubscription$variables,
+  response: PerformanceResultSubscription$data,
 |};
 */
 
-
-/*
-subscription PerformanceResultSubscription(
-  $selector: PageFilter!
-  $profileID: String!
-) {
-  subscribePerfResults(selector: $selector, profileID: $profileID) {
-    page
-    page_size
-    total_count
-    results {
-      meshery_id
-      name
-      mesh
-      performance_profile
-      test_id
-      server_metrics
-      test_start_time
-      created_at
-      user_id
-      updated_at
-      runner_results
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -250,7 +226,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '4cd62dfb1b40f60dbc14b2ad7ffea32e';
 
-module.exports = node;
+(node/*: any*/).hash = "4cd62dfb1b40f60dbc14b2ad7ffea32e";
+
+module.exports = ((node/*: any*/)/*: GraphQLSubscription<
+  PerformanceResultSubscription$variables,
+  PerformanceResultSubscription$data,
+>*/);
