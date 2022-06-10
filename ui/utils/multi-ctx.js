@@ -74,5 +74,5 @@ export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
     return ["all"]
   }
 
-  return selectedContexts.map(c => k8sconfig.find(cfg => cfg.contextID === c)?.name) || []
+  return selectedContexts.map(c => k8sconfig.find(cfg => cfg.contextID === c)?.contextName) || []
 }

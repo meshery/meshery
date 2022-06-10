@@ -192,7 +192,7 @@ console.log("TES", selectedK8sContexts);
                 className={classes.button0} autoFocus type="submit"
                 variant="contained"
                 color="primary">
-                <Typography variant body2 > DEPLOY </Typography>
+                <Typography variant body2 > {isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
               </Button>
             </DialogActions>
           </>

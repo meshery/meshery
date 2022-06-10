@@ -174,7 +174,7 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this._isMounted = true
     this.fetchAvailableAdapters();
-
+    console.log("", this.props.k8sconfig);
     fetchAllContexts(25)
       .then(res => this.setState({ contexts : res?.contexts || [] }))
       .catch(this.handleError("failed to fetch contexts for the instance"))
