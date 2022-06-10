@@ -1,6 +1,6 @@
 import {
   Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField,
-  Tooltip, Typography, Checkbox, IconButton
+  Tooltip, Typography, Checkbox
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
@@ -8,10 +8,8 @@ import { closeButtonForSnackbarAction, errorHandlerGenerator, hideProgress, show
 import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
 import { useSnackbar, withSnackbar } from "notistack";
 import { Search } from "@material-ui/icons";
-import { useEffect, useState } from "react";
 import { bindActionCreators } from "redux";
 import { updateProgress } from "../lib/store";
-import CloseIcon from "@material-ui/icons/Close";
 
 const styles = (theme) => ({
   icon : {
@@ -98,7 +96,7 @@ function ConfirmationMsg(props) {
   // useEffect(() => {
   //   setContext(activeContexts)
   // }, [activeContexts])
-console.log("TES", selectedK8sContexts);
+// console.log("TES", selectedK8sContexts);
   const handleKubernetesClick = () => {
     showProgress()
     pingKubernetes(
@@ -115,7 +113,7 @@ console.log("TES", selectedK8sContexts);
     });
     setContext(matchedCtx)
   }
-  console.log(selectedK8sContexts, "state")
+  // console.log(selectedK8sContexts, "state")
   return (
     <div className={classes.root}>
       <Dialog
