@@ -159,7 +159,7 @@ function ConfirmationMsg(props) {
                         <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
                           <Checkbox
                             checked={selectedK8sContexts.includes(ctx.contextID) || selectedK8sContexts[0] === "all"}
-                            // onChange={() => setContextViewer(ctx.contextID)}
+                            onChange={() => setContextViewer(ctx.contextID)}
                             color="primary"
                           />
                           <Chip
