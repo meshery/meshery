@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  Grid,
-  Button, Switch, Typography
+  Grid, Box,
+  Button, Switch, Typography, Tooltip
 } from "@mui/material";
 import ConsulIcon from "../../img/SVGs/consulIcon";
 import IstioIcon from "../../img/SVGs/IstioIcon";
@@ -10,6 +10,7 @@ import Joyride from 'react-joyride';
 import Tour from "../Walkthrough/Tour";
 import { createTheme } from '@mui/material/styles';
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
+
 import NginxIcon from "../../img/SVGs/nginxIcon";
 import OsmIcon from "../../img/SVGs/osmIcon";
 import AppmeshIcon from "../../img/SVGs/appmeshIcon";
@@ -20,9 +21,57 @@ import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LoadComp } from "../LoadingComponent/LoadComp";
-import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper } from "./styledComponents";
+import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper, VersionDiv, VersionText } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
-import axios from "axios";
+
+
+const adapters = {
+  'TRAEFIK_MESH': {
+    displayName: "Traefix Mesh",
+    icon: <TraefikIcon width={40} height={40} />,
+    name: 'TRAEFIK_MESH'
+  },
+  'NGINX_SERVICE_MESH': {
+    displayName: "NGINX",
+    icon: <NginxIcon width={38} height={40} />,
+    name: 'NGINX_SERVICE_MESH'
+  },
+  'APP_MESH': {
+    displayName: "App Mesh",
+    icon: <AppmeshIcon width={40} height={40} />,
+    name: 'APP_MESH'
+  },
+  'OPEN_SERVICE_MESH': {
+    displayName: "OSM",
+    icon: <OsmIcon width={40} height={40} />,
+    name: 'OPEN_SERVICE_MESH'
+  },
+  'KUMA': {
+    displayName: "Kuma",
+    icon: <KumaIcon width={40} height={40} />,
+    name: 'KUMA'
+  },
+  'CILIUM_SERVICE_MESH': {
+    displayName: "Cilium",
+    icon: <CiliumIcon width={40} height={40} />,
+    name: 'CILIUM_SERVICE_MESH'
+  },
+  'ISTIO': {
+    displayName: "Istio",
+    icon: <IstioIcon width={40} height={40} />,
+    name: 'ISTIO'
+  },
+  'LINKERD': {
+    displayName: "Linkerd",
+    icon: <LinkerdIcon width={40} height={40} />,
+    name: 'LINKERD'
+  },
+  'CONSUL': {
+    displayName: "Consul",
+    icon: <ConsulIcon width={40} height={40} />,
+    name: 'CONSUL'
+  },
+}
 
 
 const baseURL = "http://localhost:9081"
@@ -51,22 +100,23 @@ const useThemeDetector = () => {
 }
 
 const ExtensionsComponent = () => {
-  const [consulChecked, setConsulChecked] = useState(false);
-  const [istioChecked, isIstioChecked] = useState(false);
-  const [linkerdChecked, isLinkerdChecked] = useState(false);
-  const [nginxChecked, isNginxChecked] = useState(false);
-  const [kumaChecked, isKumaChecked] = useState(false);
-  const [appmeshChecked, isAppmeshChecked] = useState(false);
-  const [osmChecked, isOSMChecked] = useState(false);
-  const [traefikChecked, isTraefikChecked] = useState(false);
-  const [ciliumChecked, isCiliumChecked] = useState(false);
+  const [switchesState, setSwitchesState] = useState(null)
   const [isHovered, setIsHovered] = useState(false);
   const isDarkTheme = useThemeDetector();
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userName, setUserName] = useState("")
   const [token, setToken] = useState()
   const [changing, isChanging] = useState(false)
+  const [meshAdapters, setMeshAdapters] = useState(null)
 
+  useEffect(() => {
+    if (meshAdapters && meshAdapters.length != 0) {
+      setSwitchesState(meshAdapters.map(adapter => ({
+        [adapter.name]: false
+      })))
+    }
+  }, [meshAdapters])
+  const [mesheryVersion, setMesheryVersion] = useState(null)
 
   useEffect(() => {
     fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
@@ -75,6 +125,11 @@ const ExtensionsComponent = () => {
         setIsLoggedIn(true)
         setToken(res)
         fetch("http://localhost:7877/api/user").then(res => res.text()).then(res => setUserName(JSON.parse(res)?.user_id))
+        fetch(
+          "http://localhost:7877/api/system/sync",
+          {
+            method: "GET",
+          }).then(res => res.json()).then(data => setMeshAdapters(data.meshAdapters)).catch(console.err)
       } else {
         let ws = new WebSocket("ws://127.0.0.1:7877/ws")
         ws.onmessage = msg => {
@@ -85,6 +140,13 @@ const ExtensionsComponent = () => {
       }
     }).catch(console.log)
   }, [isLoggedIn])
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:7877/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build))
+      .catch((error) => {
+        console.log(error)
+      })
+  })
 
 
   const onMouseOver = e => {
@@ -113,83 +175,37 @@ const ExtensionsComponent = () => {
 
 
 
-  const submitConfig = (adapterLocation) => {
-    const data = { meshLocationURL: adapterLocation };
+  const submitConfig = (mesh, deprovision = false, meshAdapters) => {
+    const targetMesh = meshAdapters.find(msh => msh.name === mesh)
+    const deployQuery = targetMesh.ops.find(op => !op.category).key
+    const data = {
+      adapter: targetMesh.adapter_location,
+      query: deployQuery,
+      namespace: "default",
+      customBody: "",
+      deleteOp: deprovision
+        ? "on"
+        : "",
+    };
 
     const params = Object.keys(data)
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
-
-    fetch("http://127.0.0.1:7877/api/system/adapter/manage", {
-      credentials: "same-origin",
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
-      mode: "no-cors",
-      body: params,
-    }).then(() => {
-      window.ddClient.desktopUI.toast.success("Service Mesh was successfully provisioned.")
-    }).catch(() => window.ddClient.desktopUI.toast.error("Some error occured while trying to provision the service mesh."));
+      .join("&");
+    fetch(
+      "http://127.0.0.1:7877/api/system/adapter/operation",
+      {
+        credentials: "same-origin",
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
+        mode: "no-cors",
+        body: params,
+      }).then(() => {
+        window.ddClient.desktopUI.toast.success(`Request received. ${deprovision ? "Deprovisioning" : "Provisioning"} Service Mesh...`);
+      }).catch(() => {
+        window.ddClient.desktopUI.toast.error(`Could not ${deprovision ? "Deprovision" : "Provision"} the Service Mesh due to some error.`);
+      })
   }
-
-
-  // Wrote separate functions since we need these functions to provision the adapters as well
-  const handleConsul = () => {
-    // window.ddClient.desktopUI.toast.success(`Request received. ${consulChecked ? "Deprovisioning" : "Provisioning"} Consul Service Mesh...`);
-    // setTimeout(() => {
-    //   window.ddClient.desktopUI.toast.success(`Consul Service Mesh ${consulChecked ? "Deprovisioned" : "Provisioned"} successfully`);
-    // }, 3000)
-    submitConfig("localhost:10002")
-    setConsulChecked(prev => !prev)
-  }
-  const handleIstio = () => {
-    // window.ddClient.desktopUI.toast.success(`Request received. ${istioChecked ? "Deprovisioning" : "Provisioning"} Istio Service Mesh...`);
-    // setTimeout(() => {
-    //   window.ddClient.desktopUI.toast.success(`Istio Service Mesh ${istioChecked ? "Deprovisioned" : "Provisioned"} successfully`);
-    // }, 3000)
-    submitConfig("localhost:10000")
-    isIstioChecked(prev => !prev);
-  }
-  const handleLinkerd = () => {
-    // window.ddClient.desktopUI.toast.success(`Request received. ${linkerdChecked ? "Deprovisioning" : "Provisioning"} Linkerd Service Mesh...`);
-    // setTimeout(() => {
-    //   window.ddClient.desktopUI.toast.success(`Linkerd Service Mesh ${linkerdChecked ? "Deprovisioned" : "Provisioned"} successfully`);
-    // }, 3000)
-    submitConfig("localhost:10001")
-    isLinkerdChecked(prev => !prev);
-  }
-  const handleNginx = () => {
-    // window.ddClient.desktopUI.toast.success(`Request received. ${nginxChecked ? "Deprovisioning" : "Provisioning"} Nginx Service Mesh...`);
-    // setTimeout(() => {
-    //   window.ddClient.desktopUI.toast.success(`Nginx Service Mesh ${nginxChecked ? "Deprovisioned" : "Provisioned"} successfully`);
-    // }, 3000)
-    submitConfig("localhost:10010")
-    isNginxChecked(prev => !prev);
-  }
-  const handleKuma = () => {
-    // window.ddClient.desktopUI.toast.success(`Request received. ${kumaChecked ? "Deprovisioning" : "Provisioning"} Kuma Service Mesh...`);
-    // setTimeout(() => {
-    //   window.ddClient.desktopUI.toast.success(`Kuma Service Mesh ${kumaChecked ? "Deprovisioned" : "Provisioned"} successfully`);
-    // }, 3000)
-    submitConfig("localhost:10007")
-    isKumaChecked(prev => !prev);
-  }
-  const handleOSM = () => {
-    submitConfig("localhost:10009")
-    isOSMChecked(prev => !prev);
-  }
-  const handleAppMesh = () => {
-    submitConfig("localhost:10005")
-    isAppmeshChecked(prev => !prev);
-  }
-  const handleTraefik = () => {
-    submitConfig("localhost:10006")
-    isTraefikChecked(prev => !prev);
-  }
-  const handleCilium = () => {
-    submitConfig("localhost:10012")
-    isCiliumChecked(prev => !prev);
-  }
-
 
   const handleImport = () => {
     const file = document.getElementById("upload-button").files[0];
@@ -215,27 +231,21 @@ const ExtensionsComponent = () => {
     });
     reader.readAsText(file);
 
-    // window.ddClient.desktopUI.toast.success(`Importing Compose App...`);
-    // setTimeout(() => {
-    //   window.ddClient.desktopUI.toast.success(`Compose App imported successfully`);
-    // }, 3000)
   }
 
   return (
     <DockerMuiThemeProvider>
       <CssBaseline />
-      {changing && <LoadingDiv sx={{opacity: "1"}}>
+      {changing && <LoadingDiv sx={{ opacity: "1" }}>
         <LoadComp />
-      </LoadingDiv>  }
-      <ComponentWrapper sx={{opacity: changing ? "0.3" : "1"}}>
-     {isLoggedIn && <Tour />}
-  
+      </LoadingDiv>}
+      <ComponentWrapper sx={{ opacity: changing ? "0.3" : "1" }}>
+        {isLoggedIn && <Tour />}
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
         <Typography sx={{ margin: "auto", paddingTop: "1rem" }}>Design and operate your cloud native deployments with the extensible management plane, Meshery.</Typography>
 
         <SectionWrapper>
-
-          <ExtensionWrapper className="third-step" sx={{  backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE", }}>
+          <ExtensionWrapper className="third-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE", }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                 Launch Meshery
@@ -266,6 +276,7 @@ const ExtensionsComponent = () => {
             </AccountDiv>
           </ExtensionWrapper>
 
+
           {isLoggedIn && <ExtensionWrapper className="second-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
@@ -278,59 +289,41 @@ const ExtensionsComponent = () => {
                 </label>
               </div>
             </AccountDiv>
-          </ExtensionWrapper>}
+          </ExtensionWrapper>
+          }
+          {!!isLoggedIn &&
+            <div style={{ paddingTop: isLoggedIn ? "1.2rem" : null }}>
+              <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
+                <div>
+                  <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
+                  <ServiceMeshAdapters>
+                    {meshAdapters && switchesState && meshAdapters.map(adapter =>
+                      <StyledDiv>
+                        <AdapterDiv inactiveAdapter={switchesState ? !switchesState[adapter.name] : true}>{adapters[adapter.name].icon}</AdapterDiv>
+                        <Typography sx={{ whiteSpace: "nowrap" }}>{adapters[adapter.name].displayName}</Typography>
+                        <Switch checked={switchesState ? switchesState[adapter.name] : false} disabled={!isLoggedIn} onChange={() => {
+                          submitConfig(adapter.name, switchesState[adapter.name], meshAdapters)
+                          setSwitchesState({ ...switchesState, [adapter.name]: !switchesState[adapter.name] })
+                        }
+                        } color="primary"></Switch>
+                      </StyledDiv>
+                    )}
+                  </ServiceMeshAdapters>
+                </div>
 
-        
+              </ExtensionWrapper>
+              <Tooltip title="Meshery server version">
+                <VersionText variant="p" component="p" align="end">
+                  {mesheryVersion}
+                </VersionText>
+              </Tooltip>
+            </div>}
 
-          {!!isLoggedIn && <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
-            <div>
-              <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
-                <ServiceMeshAdapters>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!appmeshChecked}><AppmeshIcon width={40} height={40} /></AdapterDiv>
-                    <Typography sx={{ whiteSpace: "nowrap" }}>App Mesh</Typography>
-                    <Switch checked={appmeshChecked} disabled={!isLoggedIn} onChange={handleAppMesh} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!ciliumChecked}><CiliumIcon width={40} height={40} /></AdapterDiv>
-                    <Typography>Cilium</Typography>
-                    <Switch checked={ciliumChecked} disabled={!isLoggedIn} onChange={handleCilium} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!consulChecked}>
-                      <ConsulIcon width={40} height={40} /> </AdapterDiv>
-                    <Typography>Consul</Typography>
-                    <Switch checked={consulChecked} disabled={!isLoggedIn} onChange={handleConsul} color="primary" ></Switch>
-                  </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!istioChecked}>
-                      <IstioIcon width={40} height={40} /></AdapterDiv>
-                    <Typography >Istio</Typography>
-                    <Switch checked={istioChecked} disabled={!isLoggedIn} onChange={handleIstio} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!kumaChecked}><KumaIcon width={40} height={40} /></AdapterDiv>
-                    <Typography>Kuma</Typography>
-                    <Switch checked={kumaChecked} disabled={!isLoggedIn} onChange={handleKuma} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!linkerdChecked}><LinkerdIcon width={40} height={40} /></AdapterDiv>
-                    <Typography>Linkerd</Typography>
-                    <Switch checked={linkerdChecked} disabled={!isLoggedIn} onChange={handleLinkerd} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!nginxChecked}><NginxIcon width={38} height={40} /></AdapterDiv>
-                    <Typography>NGINX</Typography>
-                    <Switch checked={nginxChecked} disabled={!isLoggedIn} onChange={handleNginx} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!osmChecked}><OsmIcon width={40} height={40} /></AdapterDiv>
-                    <Typography>OSM</Typography>
-                    <Switch checked={osmChecked} disabled={!isLoggedIn} onChange={handleOSM} color="primary"></Switch> </StyledDiv>
-                  <StyledDiv>
-                    <AdapterDiv inactiveAdapter={!traefikChecked}><TraefikIcon width={40} height={40} /></AdapterDiv>
-                    <Typography sx={{ whiteSpace: "nowrap" }}>Traefik Mesh</Typography>
-                    <Switch checked={traefikChecked} disabled={!isLoggedIn} onChange={handleTraefik} color="primary"></Switch> </StyledDiv>
-                </ServiceMeshAdapters>
-              </div>
-          </ExtensionWrapper>}
-        </SectionWrapper>
-      </ComponentWrapper>
-    </DockerMuiThemeProvider>
+        </SectionWrapper >
+      </ComponentWrapper >
+
+
+    </DockerMuiThemeProvider >
   );
 }
 

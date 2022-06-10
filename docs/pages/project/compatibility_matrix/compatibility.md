@@ -300,13 +300,13 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
         {% if item.meshery-component-version == "edge" %}
           {% if item.overall-status == "passing" %}
             {% assign overall-status = "background-color: #56B257; color: white;" %}
-            {% assign result-state = "✅" %}
+            {% assign result-state = "/assets/img/passing.svg" %}
           {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
-            {% assign result-state = "⚠️" %}
+            {% assign result-state = "/assets/img/YellowCheck.svg" %}
           {% elsif item.overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
-            {% assign result-state = "❌" %}
+            {% assign result-state = "/assets/img/failing.svg" %}
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
@@ -335,7 +335,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               <i>Test results:</i>
               <table border="0">
               {% for test in item.tests %}
-                  <tr><td>{{ result-state }}</td><td>{{test[0] }}</td></tr>
+                  <tr><td><img style="height: 24px; width: 24px" src="{{ result-state }}"></td><td>{{test[0] }}</td></tr>
               {% endfor %}
               </table>
             </td>
@@ -349,13 +349,13 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
         {% elsif items[1].meshery-component-version == "edge" %}
           {% if items[1].overall-status == "passing" %}
             {% assign overall-status = "background-color: #56B257; color: white;" %}
-            {% assign result-state = "✅" %}
+            {% assign result-state = "/assets/img/passing.svg" %}
           {% elsif items[1].overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
-            {% assign result-state = "⚠️" %} \
+            {% assign result-state = "/assets/img/YellowCheck.svg" %} \
           {% elsif items[1].overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
-            {% assign result-state = "❌" %}
+            {% assign result-state = "/assets/img/failing.svg" %}
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
@@ -384,7 +384,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               <i>Test results:</i>
               <table border="0">
               {% for test in item.tests %}
-                  <tr><td>{{ result-state }}</td><td>{{test[0] }}</td></tr>
+                  <tr><td><img style="height:24px; width: 24px" src="{{result-state}}"></td><td>{{test[0] }}</td></tr>
               {% endfor %}
               </table>
             </td>
@@ -404,13 +404,13 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
         {% if item.meshery-component-version != "edge" %}
           {% if item.overall-status == "passing" %}
             {% assign overall-status = "background-color: #56B257; color: white;" %}
-            {% assign result-state = "✅" %}
+            {% assign result-state = "/assets/img/passing.svg" %}
           {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
-            {% assign result-state = "⚠️" %}
+            {% assign result-state = "/assets/img/YellowCheck.svg" %}
           {% elsif item.overall-status == "failing" %}
             {% assign overall-status = "background-color: #B32700; color: white;" %}
-            {% assign result-state = "❌" %}
+            {% assign result-state = "/assets/img/failing.svg" %}
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
@@ -431,7 +431,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               <i>Test results:</i>
               <table border="0">
               {% for test in item.tests %}
-                  <tr><td>{{ result-state }}</td><td>{{test[0] }}</td></tr>
+                  <tr><td><img style="height:24px; width: 24px" src="{{result-state}}"></td><td>{{test[0] }}</td></tr>
               {% endfor %}
               </table>
             </td>

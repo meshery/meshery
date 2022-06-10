@@ -1,6 +1,7 @@
 // @ts-check
 import {
   Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  Paper,
   TableCell, Tooltip, Typography
 } from "@material-ui/core";
 import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
@@ -20,13 +21,17 @@ import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
-import FILE_OPS from "../utils/configurationFileHandlersEnum"
-import { updateProgress } from "../lib/store";
-import PatternForm from "./configuratorComponents/patternConfigurator";
+import TableChartIcon from "@material-ui/icons/TableChart";
+import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import PromptComponent from "./PromptComponent";
+import GridOnIcon from "@material-ui/icons/GridOn";
+import { updateProgress } from "../lib/store";
+import PatternForm from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
-import { randomPatternNameGenerator as getRandomName } from "../utils/utils"
 import { ctxUrl } from "../utils/multi-ctx";
+import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 
 const styles = (theme) => ({
   grid : {
@@ -45,15 +50,49 @@ const styles = (theme) => ({
     width : "24px",
     height : "24px",
   },
+  topToolbar : {
+    margin : "2rem auto",
+    display : "flex",
+    justifyContent : "space-between",
+    paddingLeft : "1rem"
+  },
+  viewSwitchButton : {
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem"
+  },
   createButton : {
     display : "flex",
     justifyContent : "flex-start",
     alignItems : "center",
     whiteSpace : "nowrap",
-    margin : "1rem auto 2rem auto"
   },
   UploadImport : {
-    paddingLeft : "1.5rem"
+    paddingLeft : "1.5rem",
+  },
+  noDesignAddButton : {
+    marginTop : "0.5rem"
+  },
+  noDesignContainer : {
+    padding : "2rem",
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "column",
+  },
+  noDesignButtons : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "row",
+  },
+  noDesignPaper : {
+    padding : "0.5rem",
+    fontSize : "3rem"
+  },
+  noDesignText : {
+    fontSize : "2rem",
+    marginBottom : "2rem",
   }
 });
 
@@ -90,6 +129,35 @@ const useStyles = makeStyles((theme) => ({
     }
   }
 }));
+/**
+ * Type Definition for View Type
+ * @typedef {"grid" | "table"} TypeView
+ */
+
+/**
+ * ViewSwitch component renders a switch for toggling between
+ * grid and table views
+ * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
+ */
+function ViewSwitch({ view, changeView }) {
+  console.log(view)
+  return (
+    <ToggleButtonGroup
+      size="small"
+      value={view}
+      exclusive
+      onChange={(_, newView) => changeView(newView)}
+      aria-label="Switch View"
+    >
+      <ToggleButton value="grid">
+        <GridOnIcon />
+      </ToggleButton>
+      <ToggleButton value="table">
+        <TableChartIcon />
+      </ToggleButton>
+    </ToggleButtonGroup>
+  )
+}
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -135,6 +203,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
             lineNumbers : true,
             lineWrapping : true,
             gutters : ["CodeMirror-lint-markers"],
+            // @ts-ignore
             lint : true,
             mode : "text/x-yaml",
           }}
@@ -147,9 +216,9 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() =>
-              onSubmit( { data : yaml, id : pattern.id, name : pattern.name, type : FILE_OPS.UPDATE } )
-            }
+            onClick={() => onSubmit({
+              data : yaml, id : pattern.id, name : pattern.name, type : FILE_OPS.UPDATE
+            })}
           >
             <SaveIcon />
           </IconButton>
@@ -189,8 +258,10 @@ function MesheryPatterns({
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
-  const [close, handleClose] = useState(true);
-
+  const [viewType, setViewType] = useState(
+    /**  @type {TypeView} */
+    ("grid")
+  );
   const DEPLOY_URL = '/api/pattern/deploy';
 
   const getMuiTheme = () => createTheme({
@@ -269,12 +340,13 @@ function MesheryPatterns({
   /**
    * fetch patterns when the page loads
    */
+  // @ts-ignore
   useEffect(() => {
     fetchPatterns(page, pageSize, search, sortOrder);
     document.body.style.overflowX = "hidden"
 
     return (() => document.body.style.overflowX = "auto")
-  }, []);
+  }, [page,pageSize,search,sortOrder]);
 
   const handleDeploy = (pattern_file) => {
     updateProgress({ showProgress : true });
@@ -306,10 +378,10 @@ function MesheryPatterns({
   function fetchPatterns(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
-
     const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
+
     updateProgress({ showProgress : true });
 
     dataFetch(
@@ -351,7 +423,7 @@ function MesheryPatterns({
     };
   }
 
-  function handleSubmit( { data, id, name, type }) {
+  function handleSubmit({ data, id, name, type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       dataFetch(
@@ -399,7 +471,7 @@ function MesheryPatterns({
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url : data, name, save : true })
+        body = JSON.stringify({ url : data, save : true })
       }
       dataFetch(
         `/api/pattern`,
@@ -411,7 +483,6 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern`);
           updateProgress({ showProgress : false });
-          handleClose(true);
           fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPLOAD_PATTERN)
@@ -420,13 +491,15 @@ function MesheryPatterns({
   }
 
   function uploadHandler(ev) {
-    handleClose(false);
     if (!ev.target.files?.length) return;
+
+    console.log("top level event", ev)
 
     const file = ev.target.files[0];
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
+      console.log("Bottom level event", event)
       // @ts-ignore
       handleSubmit({
         data : event.target.result,
@@ -686,54 +759,106 @@ function MesheryPatterns({
     }
   };
 
+  console.log(patterns)
   return (
-    <NoSsr>
-      {selectedPattern.show &&
+    <>
+
+      <NoSsr>
+        {selectedPattern.show &&
         <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
 
-      {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-        <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
-      )}
-      {!selectedPattern.show && <div className={classes.createButton}>
-
-
-        <Button
-          aria-label="Add Pattern"
-          variant="contained"
-          color="primary"
-          size="large"
-          // @ts-ignore
-          onClick={() => setSelectedPattern({
-            pattern : { id : "", name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-            show : true,
-          })}
-        >
-          <AddIcon />
+        {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+          <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
+        )}
+        <div className={classes.topToolbar} >
+          {!selectedPattern.show && (patterns.length>0 || viewType==="table") && <div className={classes.createButton}>
+            <Button
+              aria-label="Add Pattern"
+              variant="contained"
+              color="primary"
+              size="large"
+              // @ts-ignore
+              onClick={() => setSelectedPattern({
+                pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                show : true,
+              })}
+            >
+              <AddIcon />
            Create Design
-        </Button>
-        <div className={classes.UploadImport}>
-          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" modalStatus={close} />
+            </Button>
+            <div className={classes.UploadImport}>
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+            </div>
+
+          </div>
+          }
+          {!selectedPattern.show &&
+          <div className={classes.viewSwitchButton}>
+            <ViewSwitch view={viewType} changeView={setViewType} />
+          </div>
+          }
         </div>
+        {
+          !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
+            <MUIDataTable
+              title={<div className={classes.tableHeader}>Designs</div>}
+              data={patterns}
+              columns={columns}
+              // @ts-ignore
+              options={options}
+              className={classes.muiRow}
+            />
+          </MuiThemeProvider>
+        }
+        {!selectedPattern.show && viewType==="grid" && patterns.length===0 &&
+          <Paper className={classes.noDesignPaper} >
+            <div className={classes.noDesignContainer}>
+              <Typography className={classes.noDesignText} align="center" color="textSecondary">
+              No Designs Found
+              </Typography>
+              <div className={classes.noDesignButtons}>
+                <Button
+                  aria-label="Create Design"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  className={classes.noDesignAddButton}
+                  // @ts-ignore
+                  onClick={() => setSelectedPattern({
+                    pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                    show : true,
+                  })}
+                >
+                  <AddIcon />
+              Create Design
 
-      </div>
+                </Button>
+                <div className={classes.UploadImport}>
+                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+                </div>
+              </div>
+            </div>
+          </Paper>
+        }
 
+        {
+          !selectedPattern.show && viewType==="grid" &&
+            // grid vieww
+            <MesheryPatternGrid
+              patterns={patterns}
+              handleDeploy={handleDeploy}
+              handleSubmit={handleSubmit}
+              setSelectedPattern={setSelectedPattern}
+              selectedPattern={selectedPattern}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+            />
+        }
 
-
-      }
-      {
-        !selectedPattern.show && <MuiThemeProvider theme={getMuiTheme()}>
-          <MUIDataTable
-            title={<div className={classes.tableHeader}>Designs</div>}
-            data={patterns}
-            columns={columns}
-            // @ts-ignore
-            options={options}
-            className={classes.muiRow}
-          />
-        </MuiThemeProvider>
-      }
-      <PromptComponent ref={modalRef} />
-    </NoSsr>
+        <PromptComponent ref={modalRef} />
+      </NoSsr>
+    </>
   );
 }
 

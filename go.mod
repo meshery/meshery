@@ -45,7 +45,7 @@ require (
 	github.com/layer5io/meshsync v0.5.6
 	github.com/layer5io/nighthawk-go v0.5.0
 	github.com/layer5io/service-mesh-performance v0.3.4
-	github.com/lib/pq v1.10.5
+	github.com/lib/pq v1.10.6
 	github.com/manifoldco/promptui v0.9.0
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
@@ -62,7 +62,7 @@ require (
 	github.com/vmihailenco/taskq/v3 v3.2.7
 	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5
 	gonum.org/v1/gonum v0.11.0
-	google.golang.org/grpc v1.46.2
+	google.golang.org/grpc v1.47.0
 	google.golang.org/protobuf v1.28.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.23.5

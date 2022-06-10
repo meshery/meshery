@@ -164,29 +164,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   useEffect(() => {
     let opSwitch = [];
-    console.log("OPSSSSS", operatorState);
     operatorState?.forEach((state, idx) => {
       opSwitch[idx] = state.operatorStatus.status !== 'ENABLED' ? false : true;
       setOperatorState(state.operatorStatus, idx);
     })
     setOperatorSwitch(opSwitch);
   }, [operatorState])
-
-  // useEffect(() => {
-  //   console.log("OPCA", MeshSyncState, "klklj", operatorState);
-  //   let meshsync = [];
-  //   MeshSyncState?.forEach((state) => {
-  //     meshsync.push(state.OperatorControllerStatus);
-  //   })
-
-  //   setMeshSyncState(meshsync);
-  // }, [operatorState, MeshSyncState, operatorSwitch])
-
-  const isOperatorActive = (ctx) => {
-    console.log("OPSSSS", ctx);
-    return operatorState.filter((state) => state.contextID === ctx ).length > 0;
-  }
-
   const isMeshSyncActive = (ctx) => {
     return MeshSyncState.filter((state) => state.contextID === ctx ).length > 0;
   }

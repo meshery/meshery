@@ -229,7 +229,6 @@ class MesheryProviderApp extends App {
           </Head>
           <MuiThemeProvider theme={theme}>
             <div className={classes.root}>
-              <CssBaseline />
 
               <div className={classes.appContent}>
                 <main className={classes.mainContent}>
