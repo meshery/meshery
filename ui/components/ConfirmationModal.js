@@ -88,9 +88,8 @@ const styles = (theme) => ({
 })
 
 function ConfirmationMsg(props) {
-  const { classes, open, handleClose, submit, category, selectedOp,
-    isDelete, setContextViewer,
-    selectedK8sContexts, k8scontext } = props
+  const { classes, open, handleClose, submit, isDelete,
+    selectedK8sContexts, k8scontext, setContextViewer, title } = props
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -124,7 +123,7 @@ function ConfirmationMsg(props) {
         {/* ? */}
         <>
           <DialogTitle id="alert-dialog-title" className={classes.title}>
-            {"The selected operation will be applied to following contexts."}
+            {title}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
@@ -146,7 +145,7 @@ function ConfirmationMsg(props) {
                 </div>
                 <div className={classes.all}>
                   <Checkbox
-                    checked={selectedK8sContexts.includes("all")}
+                    checked={selectedK8sContexts?.includes("all")}
                     onChange={() => setContextViewer("all")}
                     color="primary"
                   />
@@ -158,7 +157,7 @@ function ConfirmationMsg(props) {
                       <Tooltip title={`Server: ${ctx.configuredServer}`}>
                         <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
                           <Checkbox
-                            checked={selectedK8sContexts.includes(ctx.contextID) || selectedK8sContexts[0] === "all"}
+                            checked={selectedK8sContexts?.includes(ctx.contextID) || (selectedK8sContexts?.length > 0 && selectedK8sContexts[0] === "all")}
                             onChange={() => setContextViewer(ctx.contextID)}
                             color="primary"
                           />
@@ -183,7 +182,13 @@ function ConfirmationMsg(props) {
             <Button onClick={handleClose} className={classes.button1}>
               <Typography variant body2> Cancel </Typography>
             </Button>
-            <Button onClick={() => submit(category, selectedOp, isDelete)}
+            <Button  disabled
+              className={classes.button0} autoFocus type="submit"
+              variant="contained"
+              color="primary">
+              <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY"} </Typography>
+            </Button>
+            <Button onClick={submit}
               className={classes.button0} autoFocus type="submit"
               variant="contained"
               color="primary">
