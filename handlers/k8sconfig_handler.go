@@ -242,11 +242,15 @@ func (h *Handler) LoadContexts(token string, prov models.Provider) error {
 		ctxName := "in-cluster"
 
 		cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid)
-		if err != nil {
+		if err != nil || cc == nil {
 			logrus.Warn("failed to generate in cluster context: ", err)
 			return err
 		}
-
+		_, err = prov.SaveK8sContext(token, *cc)
+		if err != nil {
+			logrus.Warn("failed to save the context for incluster: ", err)
+			return err
+		}
 		// Generate Kube Config
 		if !viper.GetBool("SKIP_COMP_GEN") {
 			ctxID := cc.ID
