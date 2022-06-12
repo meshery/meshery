@@ -83,15 +83,15 @@ func main() {
 
 	// Register local OAM traits and workloads
 	if err := core.RegisterMesheryOAMTraits(); err != nil {
-		logrus.Error(err)
+		log.Error(err)
 	}
 	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
-		logrus.Error(err)
+		log.Error(err)
 	}
-	logrus.Info("Local Provider capabilities are: ", version)
+	log.Info("Local Provider capabilities are: ", version)
 
 	// Get the channel
-	logrus.Info("Meshery Server release channel is: ", releasechannel)
+	log.Info("Meshery Server release channel is: ", releasechannel)
 
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
@@ -106,19 +106,19 @@ func main() {
 		logrus.Fatalf("unable to create the directory for storing user data at %v", viper.GetString("USER_DATA_FOLDER"))
 	}
 
-	logrus.Infof("Meshery Database is at: %s", viper.GetString("USER_DATA_FOLDER"))
+	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
 		if err != nil {
 			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
 		}
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
-	logrus.Infof("Using kubeconfig at: %s", viper.GetString("KUBECONFIG_FOLDER"))
+	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
 
 	if viper.GetBool("DEBUG") {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
-	logrus.Infof("Log level: %s", logrus.GetLevel())
+	log.Info("Log level: ", logrus.GetLevel())
 
 	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
 
@@ -262,7 +262,7 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	go func() {
-		logrus.Infof("Meshery Server listening on :%d", port)
+		log.Info("Meshery Server listening on: ", port)
 		if err := r.Run(); err != nil {
 			logrus.Fatalf("ListenAndServe Error: %v", err)
 		}
@@ -274,11 +274,11 @@ func main() {
 		log.Error(err)
 	}
 
-	logrus.Info("Closing database instance...")
+	log.Info("Closing database instance...")
 	err = dbHandler.DBClose()
 	if err != nil {
 		log.Error(err)
 	}
 
-	logrus.Info("Shutting down Meshery Server...")
+	log.Info("Shutting down Meshery Server...")
 }
