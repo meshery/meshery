@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/url"
 	"os"
@@ -194,7 +195,8 @@ func main() {
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
-			logrus.Error(providerurl, "is invalid url skipping provider")
+			er := errors.New(providerurl + "is invalid url skipping provider")
+			log.Error(er)
 			continue
 		}
 		cp := &models.RemoteProvider{
