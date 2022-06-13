@@ -111,6 +111,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   let k8sfileElementVal ="";
   let formData = new FormData();
   const stateUpdater = (state, updateFunc, updateValue, index) => {
+    console.log("LOLO");
     let newState = [...state];
     newState[index] = updateValue;
     updateFunc(newState);
@@ -161,15 +162,16 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }, [])
 
   useEffect(() => {
+    console.log("ASAS", operatorState);
     let opSwitch = [];
     operatorState?.forEach((state, idx) => {
       opSwitch[idx] = state.operatorStatus.status !== 'ENABLED' ? false : true;
-      setOperatorState(state.operatorStatus, idx);
+      setOperatorState({ "operator" : state.operatorStatus }, idx);
     })
     setOperatorSwitch(opSwitch);
   }, [operatorState])
-  const isMeshSyncActive = (ctx) => {
-    return MeshSyncState.filter((state) => state.contextID === ctx ).length > 0;
+  const isMeshSyncActive = (ctxID) => {
+    return MeshSyncState?.filter((state) => state?.contextID === ctxID && state.OperatorControllerStatus.status !== "DISABLED" ).length > 0;
   }
 
   // const handleResetDatabase = () => {
@@ -271,12 +273,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
     if (res.operator?.error) {
       handleError("Operator could not be reached")(res.operator?.error?.description);
-      setMeshsyncSubscription( { action : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : null })
+      let meshSyncdata = [...MeshSyncState];
+      meshSyncdata[index] = null;
+      setMeshsyncSubscription( { action : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : meshSyncdata })
       stateUpdater(operatorProcessing, setOperatorProcessing, false, index);
       return false;
     }
 
     if (res.operator?.status === "ENABLED") {
+      console.log("HOHO", res.operator);
       stateUpdater(operatorProcessing, setOperatorProcessing, false, index);
       res.operator?.controllers?.forEach((controller) => {
         if (controller.name === "broker" && controller.status.includes("CONNECTED")) {
@@ -583,7 +588,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5} className={classes.operationButton}>
                           <List>
                             <ListItem>
-                              <Tooltip title={`Server: ${rowData[2].server}`}
+                              <Tooltip title={`Server: ${contexts[rowMetaData.rowIndex].server}`}
                               >
                                 <Chip
                                   label={data[rowMetaData.rowIndex].name}
@@ -643,7 +648,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                           <List>
                             <ListItem>
                               <Tooltip
-                                title={operatorInstalled[rowData.rowIndex]
+                                title={operatorInstalled[rowMetaData.rowIndex]
                                   ? `Version: ${operatorVersion[rowMetaData.rowIndex]}`
                                   : "Not Available"}
                                 aria-label="meshSync"
@@ -685,7 +690,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                                 <List>
                                   <ListItem>
                                     <Tooltip
-                                      title={NATSState[rowMetaData.rowIndex] === "CONNECTED" ? `Reconnect NATS` : "Not Available"}
+                                      title={NATSState[rowMetaData.rowIndex]?.includes("CONNECTED") ? `Reconnect NATS` : "Not Available"}
                                       aria-label="nats"
                                     >
                                       <Chip
@@ -723,7 +728,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                                 : "Disabled"} />
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="MeshSync Version" secondary={MeshSyncState[rowMetaData?.rowIndex]?.OperatorControllerStatus.version} />
+                              <ListItemText primary="MeshSync Version" secondary={MeshSyncState ? MeshSyncState[rowMetaData?.rowIndex]?.OperatorControllerStatus.version : ""} />
                             </ListItem>
                           </List>
                         </Grid>
@@ -843,6 +848,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     updateProgress({ showProgress : true });
     fetchMesheryOperatorStatus({ k8scontextID : contexts[index].id })
       .subscribe({ next : (res) => {
+        console.log("POP", res);
         let state = setOperatorState(res, index);
         updateProgress({ showProgress : false });
         if (state == true) {
@@ -862,6 +868,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   // done
   const handleNATSClick = (index) => {
+    console.log("NAS", NATSState);
     updateProgress({ showProgress : true });
     NatsStatusQuery({ k8scontextID : contexts[index].id }).subscribe({
       next : (res) => {
@@ -922,6 +929,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   };
 
   const handleMeshSyncClick = (index) => {
+    console.log("MESH", MeshSyncState);
     updateProgress({ showProgress : true });
     MeshsyncStatusQuery(({ k8scontextID : contexts[index].id })).subscribe({ next : (res) => {
       updateProgress({ showProgress : false });
