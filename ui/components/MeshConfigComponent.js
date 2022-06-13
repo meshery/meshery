@@ -111,7 +111,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   let k8sfileElementVal ="";
   let formData = new FormData();
   const stateUpdater = (state, updateFunc, updateValue, index) => {
-    console.log("LOLO");
     let newState = [...state];
     newState[index] = updateValue;
     updateFunc(newState);
@@ -162,7 +161,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }, [])
 
   useEffect(() => {
-    console.log("ASAS", operatorState);
     let opSwitch = [];
     operatorState?.forEach((state, idx) => {
       opSwitch[idx] = state.operatorStatus.status !== 'ENABLED' ? false : true;
@@ -281,7 +279,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     }
 
     if (res.operator?.status === "ENABLED") {
-      console.log("HOHO", res.operator);
       stateUpdater(operatorProcessing, setOperatorProcessing, false, index);
       res.operator?.controllers?.forEach((controller) => {
         if (controller.name === "broker" && controller.status.includes("CONNECTED")) {
@@ -848,7 +845,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     updateProgress({ showProgress : true });
     fetchMesheryOperatorStatus({ k8scontextID : contexts[index].id })
       .subscribe({ next : (res) => {
-        console.log("POP", res);
         let state = setOperatorState(res, index);
         updateProgress({ showProgress : false });
         if (state == true) {
@@ -868,7 +864,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   // done
   const handleNATSClick = (index) => {
-    console.log("NAS", NATSState);
     updateProgress({ showProgress : true });
     NatsStatusQuery({ k8scontextID : contexts[index].id }).subscribe({
       next : (res) => {
@@ -929,7 +924,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   };
 
   const handleMeshSyncClick = (index) => {
-    console.log("MESH", MeshSyncState);
     updateProgress({ showProgress : true });
     MeshsyncStatusQuery(({ k8scontextID : contexts[index].id })).subscribe({ next : (res) => {
       updateProgress({ showProgress : false });
