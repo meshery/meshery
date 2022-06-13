@@ -6,10 +6,12 @@ import { withStyles } from "@material-ui/core/styles";
 import { Search } from "@material-ui/icons";
 import { useSnackbar, withSnackbar } from "notistack";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { updateProgress } from "../lib/store";
+import { setK8sContexts, updateProgress } from "../lib/store";
 import { closeButtonForSnackbarAction, errorHandlerGenerator, hideProgress, showProgress, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
 import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
+import { getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
+import { bindActionCreators } from "redux";
+import { useState } from "react";
 
 const styles = (theme) => ({
   icon : {
@@ -89,9 +91,11 @@ const styles = (theme) => ({
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit, isDelete,
-    selectedK8sContexts, k8scontext, setContextViewer, title } = props
+    selectedK8sContexts, k8scontext, title, setK8sContexts } = props
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const [contexts, setContexts] = useState(k8scontext);
 
   const handleKubernetesClick = () => {
     showProgress()
@@ -102,14 +106,43 @@ function ConfirmationMsg(props) {
   }
 
   const searchContexts = (search) => {
-    const matchedCtx = k8scontext.filter((ctx) => ctx.name.includes(search))
-    let matchedCtxID = [];
-    matchedCtx.forEach(ctx => {
-      matchedCtxID.push(ctx.id);
+    if (search === "") {
+      setContexts(k8scontext);
+    }
+    let matchedCtx = [];
+    k8scontext.forEach(ctx => {
+      if (ctx.contextName.includes(search)) {
+        matchedCtx.push(ctx);
+      }
     });
-
+    setContexts(matchedCtx);
   }
 
+  const setContextViewer = (id) => {
+    if (id === "all") {
+      if (selectedK8sContexts.includes("all")) {
+        updateProgress({ showProgress : true })
+        setK8sContexts({ selectedK8sContexts : [] })
+      } else {
+        setK8sContexts({ selectedK8sContexts : ["all"] });
+      }
+      return;
+    }
+
+    if (selectedK8sContexts.includes(id)) {
+      const filteredContexts = selectedK8sContexts.filter(cid => cid !== id );
+      setK8sContexts({ selectedK8sContexts : filteredContexts })
+    } else if (selectedK8sContexts[0] === "all") {
+      const allContextIds = getK8sConfigIdsFromK8sConfig(k8scontext);
+      setK8sContexts({ selectedK8sContexts : allContextIds.filter(cid => cid !== id) });
+    } else {
+      if (selectedK8sContexts.length === k8scontext.length - 1) {
+        setK8sContexts({ selectedK8sContexts : ["all"] })
+        return;
+      }
+      setK8sContexts({ selectedK8sContexts : [...selectedK8sContexts, id] });
+    }
+  }
   return (
     <div className={classes.root}>
       <Dialog
@@ -128,21 +161,19 @@ function ConfirmationMsg(props) {
           <DialogContent>
             <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
               <Typography variant="body1">
-                <div>
-                  <TextField
-                    id="search-ctx"
-                    label="Search"
-                    size="small"
-                    variant="outlined"
-                    onChange={(event) => searchContexts(event.target.value)}
-                    style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
-                    InputProps={{
-                      endAdornment : (
-                        <Search />
-                      )
-                    }}
-                  />
-                </div>
+                <TextField
+                  id="search-ctx"
+                  label="Search"
+                  size="small"
+                  variant="outlined"
+                  onChange={(event) => searchContexts(event.target.value)}
+                  style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
+                  InputProps={{
+                    endAdornment : (
+                      <Search />
+                    )
+                  }}
+                />
                 <div className={classes.all}>
                   <Checkbox
                     checked={selectedK8sContexts?.includes("all")}
@@ -152,12 +183,12 @@ function ConfirmationMsg(props) {
                   <span>Select All</span>
                 </div>
                 <div className={classes.contexts}>
-                  {k8scontext.map((ctx) => (
+                  {contexts.map((ctx) => (
                     <div id={ctx.contextID} className={classes.chip}>
                       <Tooltip title={`Server: ${ctx.configuredServer}`}>
                         <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
                           <Checkbox
-                            checked={selectedK8sContexts?.includes(ctx.contextID) || (selectedK8sContexts?.length > 0 && selectedK8sContexts[0] === "all")}
+                            checked={selectedK8sContexts.includes(ctx.contextID) || (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === "all")}
                             onChange={() => setContextViewer(ctx.contextID)}
                             color="primary"
                           />
@@ -219,7 +250,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  updateProgress : bindActionCreators(updateProgress, dispatch)
+  updateProgress : bindActionCreators(updateProgress, dispatch),
+  setK8sContexts : bindActionCreators(setK8sContexts, dispatch)
 });
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(ConfirmationMsg)));

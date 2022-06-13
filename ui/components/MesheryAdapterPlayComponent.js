@@ -583,40 +583,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.props.setK8sContexts({ type : actionTypes.SET_K8S_CONTEXT, selectedK8sContexts : activeK8sContexts });
   }
 
-  setActiveContexts = (id) => {
-
-    if (this.props.k8sconfig) {
-      if (id === "all") {
-        let activecontexts = [];
-        this.props.k8sconfig.forEach(ctx =>
-          activecontexts.push(ctx.contextID)
-        );
-        activecontexts.push("all");
-        this.setState(state => {
-          if (state.activeContexts?.includes("all")) return { activeContexts : [] };
-          return { activeContexts : activecontexts };
-        },
-        () => this.activeContextChangeCallback(this.state.activeContexts));
-        return;
-      }
-      this.setState(state => {
-        let ids = [...(state.activeContexts || [])];
-        //pop event
-        if (ids.includes(id)) {
-          ids  = ids.filter(id => id != "all")
-          return { activeContexts : ids.filter(cid => cid !== id) }
-        }
-
-        //push event
-        if (ids.length === this.props.k8sconfig.length - 1) {
-          ids.push("all");
-        }
-        return { activeContexts : [...ids, id] }
-      }, () => this.activeContextChangeCallback(this.state.activeContexts))
-    }
-
-  }
-
   /**
    * generateMenu generates the management menus for the adapater management plane
    * @param {*} cat
@@ -1265,7 +1231,6 @@ class MesheryAdapterPlayComponent extends React.Component {
             handleClose={this.handleClose}
             submit={() => this.submitOp(this.state.category, this.state.selectedOp, this.state.isDeleteOp)}
             isDelete={this.state.isDeleteOp}
-            setContextViewer={this.setActiveContexts}
             title={"The selected operation will be applied to following contexts."}
           />
         </React.Fragment>
