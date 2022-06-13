@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { createUseRemoteComponent, getDependencies, createRequires } from "@paciolan/remote-component";
 import { bindActionCreators } from "redux";
-import { updateLoadTestData } from "../lib/store";
+import { updateLoadTestData, setK8sContexts } from "../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch";
@@ -13,6 +13,7 @@ import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/M
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeavingPage";
 import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
+import ConfirmationModal from "./ConfirmationModal"
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -50,6 +51,8 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         preventLeavingHook : usePreventUserFromLeavingPage,
         getSelectedK8sClusters,
         selectedK8sContexts,
+        setK8sContexts,
+        k8sconfig,
         resolver : {
           query : {},
           mutation : {},
@@ -57,6 +60,7 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
             subscribeMeshSyncStatusEvents,
           },
         },
+        ConfirmationModal
       }}
     />
   );
@@ -72,6 +76,8 @@ const mapStateToProps = (st) => {
   return { grafana, prometheus, isDrawerCollapsed, selectedK8sContexts, k8sconfig };
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreators(updateLoadTestData, dispatch) });
+const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreators(updateLoadTestData, dispatch),
+  setK8sContexts : bindActionCreators(setK8sContexts, dispatch) }
+);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Extension);

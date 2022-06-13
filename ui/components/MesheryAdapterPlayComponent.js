@@ -576,7 +576,7 @@ class MesheryAdapterPlayComponent extends React.Component {
    * @param {Array.<string>} activeK8sContexts
    */
   activeContextChangeCallback = (activeK8sContexts)  => {
-    console.log("QWE", activeK8sContexts);
+
     if (activeK8sContexts.includes("all")) {
       activeK8sContexts = ["all"];
     }
@@ -589,7 +589,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       if (id === "all") {
         let activecontexts = [];
         this.props.k8sconfig.forEach(ctx =>
-          activecontexts.push(ctx.id)
+          activecontexts.push(ctx.contextID)
         );
         activecontexts.push("all");
         this.setState(state => {
@@ -1263,12 +1263,10 @@ class MesheryAdapterPlayComponent extends React.Component {
           <ConfirmationMsg
             open={this.state.modalOpen}
             handleClose={this.handleClose}
-            submit={this.submitOp}
-            category={this.state.category}
+            submit={() => this.submitOp(this.state.category, this.state.selectedOp, this.state.isDeleteOp)}
             isDelete={this.state.isDeleteOp}
-            activeContexts={this.state.activeContexts}
             setContextViewer={this.setActiveContexts}
-            selectedOp={this.state.selectedOp}
+            title={"The selected operation will be applied to following contexts."}
           />
         </React.Fragment>
       </NoSsr>

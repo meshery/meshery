@@ -145,7 +145,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       })
       .catch(handleError("failed to fetch contexts for the instance"))
       // console.log(contexts[0].id, "CTX");
-
     getKubernetesVersion();
 
     // let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(setOperatorState);
